@@ -1,47 +1,15 @@
 @import 'calypso/dashboard/app/dark-theme';
 
 @mixin themes-dark-mode-color-scheme {
-	@include dashboard-dark-theme;
-	@include dashboard-dark-theme-color-palette-alias( 'color-primary', 'studio-blue' );
-	@include dashboard-dark-theme-color-palette-alias( 'color-accent', 'studio-wordpress-blue' );
+	@include dashboard-dark-theme-calypso-color-scheme;
 	@include dashboard-dark-theme-color-palette-alias( 'theme-highlight-color', 'color-accent' );
-	@include dashboard-dark-theme-color-palette(
-		'color-success',
-		var( --dashboard__foreground-color-success )
-	);
-	@include dashboard-dark-theme-color-palette(
-		'color-warning',
-		var( --dashboard__foreground-color-warning )
-	);
-	@include dashboard-dark-theme-color-palette(
-		'color-error',
-		var( --dashboard__foreground-color-error )
-	);
 
-	--color-neutral-10: var( --dashboard__text-muted-color );
-	--color-neutral-dark: var( --color-neutral-70 );
-	--color-neutral-light: var( --dashboard__text-muted-color );
-	--color-neutral-70: var( --dashboard__text-color );
 	--color-success-dark: var( --color-success-70 );
 	--color-success-light: var( --color-success-30 );
 	--color-warning-dark: var( --color-warning-70 );
 	--color-warning-light: var( --color-warning-30 );
 	--color-error-dark: var( --color-error-70 );
 	--color-error-light: var( --color-error-30 );
-	--color-main-background: var( --dashboard__background-color );
-	--color-surface: var( --dashboard-surface__background-color );
-	--color-surface-backdrop: var( --dashboard__background-color );
-	--color-text: var( --dashboard__text-color );
-	--color-text-subtle: var( --dashboard__text-muted-color );
-	--color-border: var( --dashboard-surface__border-color );
-	--color-border-subtle: var( --dashboard-surface__border-color );
-	--color-border-shadow: var( --dashboard-surface__border-color );
-	--color-border-inverted: var( --wp-components-color-accent-inverted );
-	--color-border-secondary: var( --dashboard-surface__border-color );
-	--color-link: var( --wp-admin-theme-color-darker-20 );
-	--color-link-dark: var( --wp-admin-theme-color-darker-10 );
-	--color-link-light: var( --wp-admin-theme-color );
-	--color-print: var( --dashboard-item-selected__background-color );
 	--theme-text-color: var( --dashboard__text-color );
 	--theme-base-color: var( --dashboard__background-color );
 	--theme-submenu-text-color: var( --dashboard__text-muted-color );
@@ -53,43 +21,12 @@
 @mixin themes-dark-mode-root {
 	@include themes-dark-mode-color-scheme;
 
-	#wpnc-panel .color-scheme.is-global {
-		@include themes-dark-mode-color-scheme;
+	@include dashboard-dark-theme-wpnc-panel;
+	@include dashboard-dark-theme-community-translator;
 
-		--color-primary: var( --wp-admin-theme-color-darker-20 );
-		--color-secondary: var( --wp-admin-theme-color-darker-20 );
-		--color-neutral-40: var( --dashboard__text-muted-color );
-
-		.wpnc__store_order .wpnc__image {
-			filter: invert( 1 );
-		}
-	}
-
-	.community-translator.is-incompatible {
-		--color-neutral-20: var( --dashboard__text-muted-color );
-	}
-
-	.masterbar {
-		--color-masterbar-submenu-text: var( --dashboard__text-color );
-		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
-		--color-global-masterbar-submenu-background: var( --dashboard-surface__background-color );
-		--color-global-masterbar-submenu-hover-background: var(
-			--dashboard-item-selected-hover__background-color
-		);
-		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
-	}
-
-	.navigation-header .breadcrumbs {
-		--studio-gray-50: var( --dashboard__text-muted-color );
-		--studio-gray-80: var( --dashboard__text-color );
-		--studio-gray-100: var( --dashboard__text-color );
-	}
+	@include dashboard-dark-theme-masterbar;
 
 	.global-styles-variations__header {
-		--studio-gray-50: var( --dashboard__text-muted-color );
-		--studio-gray-100: var( --dashboard__text-color );
-		--color-neutral-60: var( --dashboard__text-muted-color );
-
 		.premium-badge {
 			--studio-black: var( --dashboard-surface__background-color );
 			--studio-white: var( --dashboard__text-color );

@@ -393,8 +393,12 @@
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
+	grid-template-columns: 1fr;
 	gap: 12px;
+
+	@include break-small {
+		grid-template-columns: repeat( 2, 1fr );
+	}
 }
 
 .social-spotlight__card {

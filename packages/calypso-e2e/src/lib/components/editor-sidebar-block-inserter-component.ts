@@ -41,23 +41,50 @@ export class EditorSidebarBlockInserterComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		const sidebarParentSelectorDetachedPromise = this.page
-			.locator( sidebarParentSelector )
-			.waitFor( { state: 'detached' } );
+		const sidebarLocator = this.page.locator( sidebarParentSelector );
 		const closeBlockInserterButtonLocator = editorParent.locator(
 			selectors.closeBlockInserterButton
 		);
 
-		// Gutenberg 22.4.0 closes the sidebar automatically in some cases, so sometimes the button won't be there to click.
+		// Gutenberg 22.4.0+ auto-closes the sidebar after insertion in some cases,
+		// so the button may never appear. Race the two terminal states.
 		await Promise.any( [
 			closeBlockInserterButtonLocator.waitFor(),
-			sidebarParentSelectorDetachedPromise,
+			sidebarLocator.waitFor( { state: 'detached' } ),
 		] );
 
-		// If the button is there, click it.
-		if ( await closeBlockInserterButtonLocator.isVisible() ) {
-			await closeBlockInserterButtonLocator.click();
-			await sidebarParentSelectorDetachedPromise;
+		// If the sidebar is already gone, nothing to do.
+		if ( ( await sidebarLocator.count() ) === 0 ) {
+			return;
+		}
+
+		// On mobile, the button can pass actionability checks but detach
+		// mid-animation while the click is in-flight, hanging the click until
+		// the action timeout. Bound each attempt with `timeout`, use
+		// `noWaitAfter` to skip post-click navigation heuristics, and treat
+		// sidebar detachment as success regardless of which attempt landed it.
+		const maxAttempts = 3;
+		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+			try {
+				await closeBlockInserterButtonLocator.click( {
+					timeout: 5000,
+					noWaitAfter: true,
+				} );
+			} catch {
+				// The button may have detached between the isVisible-style check
+				// above and the click. That is the success case here.
+			}
+
+			try {
+				await sidebarLocator.waitFor( { state: 'detached', timeout: 5000 } );
+				return;
+			} catch {
+				if ( attempt === maxAttempts ) {
+					throw new Error(
+						`Block inserter sidebar did not close after ${ maxAttempts } click attempts.`
+					);
+				}
+			}
 		}
 	}
 

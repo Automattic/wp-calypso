@@ -86,6 +86,7 @@
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/self-service-downgrade": false,
+		"plugins/plugin-compass": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
 		"publicize-preview": true,

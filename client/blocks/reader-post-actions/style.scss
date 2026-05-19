@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 :root .reader-post-actions {
 	display: flex;
 	flex-direction: row;
@@ -84,5 +86,25 @@
 	// Float freshly-pressed button to the right
 	.reader-post-actions__item:has(.freshly-pressed) {
 		margin-inline-start: auto;
+	}
+}
+
+.reader-post-actions {
+	@include ui-mixins.when-dark-theme {
+		.reader-post-actions__item button {
+			background: transparent;
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus {
+				border-color: var( --color-link );
+				color: var( --color-link );
+			}
+
+			svg {
+				opacity: 1;
+			}
+		}
 	}
 }

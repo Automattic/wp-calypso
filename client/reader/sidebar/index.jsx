@@ -4,7 +4,7 @@ import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { Icon, plus } from '@wordpress/icons';
+import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
@@ -283,6 +283,20 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
+
+					<SidebarItem
+						label={ translate( 'Reader Profile' ) }
+						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_profile_clicked' ) }
+						customIcon={
+							<Icon
+								className="sidebar__menu-icon"
+								icon={ commentAuthorAvatar }
+								viewBox="2 0 24 24"
+							/>
+						}
+						link="/reader/users/me"
+					/>
+
 					{ /*
 					Keep a separator at the end to avoid having the last item covered by browser breadcrumbs,
 					url links when hovering other items, etc. Otherwise when a user scrolls to the end of the

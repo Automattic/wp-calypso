@@ -124,8 +124,8 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			}
 
 			&.is-selected {
-				background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
-				border-color: color-mix( in srgb, var( --color-accent ) 25%, #fff );
+				background-color: color-mix( in srgb, var( --color-accent ) 8%, var( --color-surface ) );
+				border-color: color-mix( in srgb, var( --color-accent ) 25%, var( --color-surface ) );
 
 				@media ( min-width: 700px ) {
 					&::after {
@@ -135,9 +135,21 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 						inset-inline-end: -1px;
 						width: 20px;
 						height: 20px;
-						background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
-						border-top: 1px solid color-mix( in srgb, var( --color-accent ) 25%, #fff );
-						border-right: 1px solid color-mix( in srgb, var( --color-accent ) 25%, #fff );
+						background-color: color-mix(
+							in srgb,
+							var( --color-accent ) 8%,
+							var( --color-surface )
+						);
+						border-top: 1px solid color-mix(
+							in srgb,
+							var( --color-accent ) 25%,
+							var( --color-surface )
+						);
+						border-right: 1px solid color-mix(
+							in srgb,
+							var( --color-accent ) 25%,
+							var( --color-surface )
+						);
 						border-radius: 2px;
 						transform: translate( 50%, -50% ) rotate( 45deg );
 					}
@@ -217,10 +229,10 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		flex-direction: column;
 		flex: 1;
 		min-height: 0;
-		border: 1px solid var( --color-neutral-5 );
+		border: 1px solid var( --color-border-subtle );
 		border-block-end: none;
 		border-radius: 6px 6px 0 0; /* stylelint-disable-line scales/radii */
-		background-color: #fff;
+		background-color: var( --color-surface );
 		overflow: hidden;
 		position: relative;
 	}
@@ -230,8 +242,8 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		align-items: center;
 		justify-content: space-between;
 		padding: 10px 14px;
-		background-color: #fff;
-		border-bottom: 1px solid var( --color-neutral-5 );
+		background-color: var( --color-surface );
+		border-bottom: 1px solid var( --color-border-subtle );
 
 		.follow-button.has-button-style {
 			box-sizing: border-box;
@@ -304,7 +316,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		min-height: 0;
 		overflow-y: auto;
 		padding: 0;
-		background: #fff;
+		background: var( --color-surface );
 
 		.reader,
 		.reader__content,

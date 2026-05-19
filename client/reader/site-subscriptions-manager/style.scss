@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
@@ -27,6 +29,24 @@
 }
 
 body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
+	@include ui-mixins.when-dark-theme {
+		.search-component {
+			border-color: var( --color-border-subtle );
+
+			input.search-component__input[type="search"] {
+				color: var( --color-text );
+
+				&::placeholder {
+					color: var( --color-text-subtle );
+				}
+			}
+
+			.subscriptions-manager__search-icon {
+				color: var( --color-text-subtle );
+			}
+		}
+	}
+
 	&.main {
 		min-height: 100vh;
 		margin: 0 auto;
@@ -51,7 +71,7 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 					font-family: inherit;
 					line-height: inherit;
 					text-decoration: none;
-					color: var(--color-primary);
+					color: var(--color-link);
 				}
 			}
 		}
@@ -63,7 +83,7 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		margin: 0;
 		padding: 0;
 		border: none;
-		border-top: 1px solid $studio-gray-5;
+		border-top: 1px solid var(--color-border-subtle);
 	}
 
 	&__import-export-popover {
@@ -85,7 +105,7 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 	}
 
 	.not-found-site-subscriptions {
-		color: $studio-gray-60;
+		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 		font-weight: 500;
 		font-family: "SF Pro Text", $sans;
@@ -115,7 +135,7 @@ hr.subscriptions__separator {
 	margin: 0;
 	padding: 0;
 	border: none;
-	border-top: 1px solid $studio-gray-5;
+	border-top: 1px solid var(--color-border-subtle);
 }
 
 .subscriptions-ellipsis-menu__popover.popover.site-subscriptions-manager__import-export-popover .popover__inner,

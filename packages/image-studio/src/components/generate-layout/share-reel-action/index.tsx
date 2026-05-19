@@ -8,8 +8,8 @@ import { ReelShareConfirmationDialog } from '../../reel-share-confirmation-dialo
 import './style.scss';
 
 export function ShareReelAction(): JSX.Element | null {
-	const reel = useReelShare();
-	const generic = useGenericShare();
+	const reel = useReelShare( 'modal' );
+	const generic = useGenericShare( 'modal' );
 
 	if ( ! reel.isVisible && ! generic.isVisible ) {
 		return null;

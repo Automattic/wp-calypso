@@ -804,6 +804,8 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		isPending: isMutationPending,
 	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
+	const navigate = useNavigate();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return null;
@@ -818,6 +820,14 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 					form={ form }
 					onChange={ ( newData ) => {
 						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
+							if ( ! newData.is_auto_renew_enabled && isSplitCancelRemoveEnabled ) {
+								navigate( {
+									to: cancelPurchaseRoute.fullPath,
+									params: { purchaseId: purchase.ID },
+									search: { intent: 'auto-renew' as const },
+								} );
+								return;
+							}
 							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
 						}
 					} }

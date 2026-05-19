@@ -540,127 +540,222 @@ export function trackImageStudioImageDeletedPermanently( {
 }
 
 /**
+ * Surface a clip share originated from. Distinguishes the post-editor Feature
+ * Clip sidebar from the in-modal Image Studio share row so per-surface share
+ * funnels can be computed.
+ */
+export type ShareSurface = 'sidebar' | 'modal';
+
+/**
  * Tracks when the Reel share button is clicked, before any pre-checks run.
  * @param options                  - Tracking options
+ * @param options.surface          - Where the share originated ('sidebar' | 'modal')
  * @param options.attachmentId     - The video attachment ID
  * @param options.durationSeconds  - Optional duration of the clip in seconds
  */
 export function trackImageStudioReelShareClicked( {
+	surface,
 	attachmentId,
 	durationSeconds,
 }: {
+	surface: ShareSurface;
 	attachmentId: number;
 	durationSeconds?: number | null;
 } ): void {
-	const properties: Record< string, string | number > = { attachment_id: attachmentId };
+	const properties: Record< string, string | number > = {
+		surface,
+		attachment_id: attachmentId,
+	};
 	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
-	recordImageStudioEvent( 'image_studio_reel_share_clicked', properties );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_clicked', properties );
 }
 
 /**
  * Tracks when the Reel share is blocked by a missing Instagram Business connection.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareNotConnected(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_not_connected' );
+export function trackImageStudioReelShareNotConnected( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
 }
 
 /**
  * Tracks when the Reel share is blocked because the IG connection exists but is
  * toggled off for this post in the Jetpack Social sidebar.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareConnectionDisabled(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_connection_disabled' );
+export function trackImageStudioReelShareConnectionDisabled( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
 }
 
 /**
  * Tracks when the Reel share is blocked because the post isn't published yet.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareNotPublished(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_post_not_published' );
+export function trackImageStudioReelShareNotPublished( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
 }
 
 /**
  * Tracks when the Reel share is blocked by missing video state (defensive).
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareInvalidState(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_invalid_state' );
+export function trackImageStudioReelShareInvalidState( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
 }
 
 /**
  * Tracks when the user dismisses the Reel share confirmation dialog.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareCancelled(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_cancelled' );
+export function trackImageStudioReelShareCancelled( { surface }: { surface: ShareSurface } ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
 }
 
 /**
  * Tracks when shareCurrentPost successfully dispatched the IG submission.
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
-export function trackImageStudioReelShareDispatched(): void {
-	recordImageStudioEvent( 'image_studio_reel_share_dispatched' );
+export function trackImageStudioReelShareDispatched( {
+	surface,
+}: {
+	surface: ShareSurface;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
 }
 
 /**
  * Tracks when shareCurrentPost returned false or threw.
- * @param errorMessage - Optional error description from the thunk/exception.
+ * @param options              - Tracking options
+ * @param options.surface      - Where the share originated ('sidebar' | 'modal')
+ * @param options.errorMessage - Optional error description from the thunk/exception.
  */
-export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
-	const properties: Record< string, string | number > = {};
+export function trackImageStudioReelShareFailed( {
+	surface,
+	errorMessage,
+}: {
+	surface: ShareSurface;
+	errorMessage?: string;
+} ): void {
+	const properties: Record< string, string | number > = { surface };
 	if ( errorMessage ) {
 		properties.error_message = errorMessage;
 	}
-	recordImageStudioEvent( 'image_studio_reel_share_failed', properties );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_failed', properties );
 }
 
 /**
  * Tracks when the generic share initiates a particular method. Fires once per
  * attempted method, before the work runs.
- * @param options        - Tracking options
- * @param options.method - 'web-share' (Web Share API attempt) or 'web-share-unsupported'
- *                         (canShare rejected files / Web Share unavailable).
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
+ * @param options.method  - 'web-share' (Web Share API attempt) or 'web-share-unsupported'
+ *                          (canShare rejected files / Web Share unavailable).
  */
 export function trackImageStudioGenericShareClicked( {
+	surface,
 	method,
 }: {
+	surface: ShareSurface;
 	method: 'web-share' | 'web-share-unsupported';
 } ): void {
-	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
+	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
 }
 
 /**
  * Tracks when the generic share completed successfully.
- * @param options        - Tracking options
- * @param options.method - 'web-share' (the only method that can complete;
- *                         'web-share-unsupported' is a precondition failure).
+ * @param options         - Tracking options
+ * @param options.surface - Where the share originated ('sidebar' | 'modal')
+ * @param options.method  - 'web-share' (the only method that can complete;
+ *                          'web-share-unsupported' is a precondition failure).
  */
-export function trackImageStudioGenericShareCompleted( { method }: { method: 'web-share' } ): void {
-	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
+export function trackImageStudioGenericShareCompleted( {
+	surface,
+	method,
+}: {
+	surface: ShareSurface;
+	method: 'web-share';
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_completed', {
+		surface,
+		method,
+	} );
 }
 
 /**
  * Tracks when the generic share failed.
  * @param options             - Tracking options
+ * @param options.surface     - Where the share originated ('sidebar' | 'modal')
  * @param options.method      - 'web-share' or 'web-share-unsupported'
  * @param options.message     - Optional error message
  * @param options.failureKind - Optional categorical reason: 'http' (fetch returned !ok).
  */
 export function trackImageStudioGenericShareFailed( {
+	surface,
 	method,
 	message,
 	failureKind,
 }: {
+	surface: ShareSurface;
 	method: 'web-share' | 'web-share-unsupported';
 	message?: string;
 	failureKind?: 'http';
 } ): void {
-	const properties: Record< string, string | number > = { method };
+	const properties: Record< string, string | number > = { surface, method };
 	if ( message ) {
 		properties.error_message = message;
 	}
 	if ( failureKind ) {
 		properties.failure_kind = failureKind;
 	}
-	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
+	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_failed', properties );
+}
+
+/**
+ * Tracks when a generated Feature Clip is inserted into the post via the
+ * sidebar's "Add to post" action — the primary clip → post conversion.
+ * @param options              - Tracking options
+ * @param options.attachmentId - The video attachment ID added to the post
+ */
+export function trackImageStudioFeatureClipAddedToPost( {
+	attachmentId,
+}: {
+	attachmentId: number;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_added_to_post', {
+		attachment_id: attachmentId,
+		surface: 'sidebar',
+	} );
+}
+
+/**
+ * Tracks when the Feature Clip sidebar panel is rendered in the post editor.
+ * Fires once per panel mount — the impression denominator for sidebar
+ * engagement rates.
+ */
+export function trackImageStudioFeatureClipPanelViewed(): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed' );
 }

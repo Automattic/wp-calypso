@@ -4,7 +4,6 @@ import {
 	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
@@ -18,6 +17,7 @@ import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
+import { useIsSplitCancelRemoveEnabled } from './cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	WIDE_FIELDS,
 	DESKTOP_FIELDS,
@@ -30,6 +30,7 @@ import {
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
 	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
 	// Capture notice data on first render — useSearch() may lose the values
@@ -126,7 +127,7 @@ export default function PurchasesList() {
 				/>
 			}
 		>
-			{ config.isEnabled( 'purchases/split-cancel-remove' ) && showRemovedNotice && (
+			{ isSplitCancelRemoveEnabled && showRemovedNotice && (
 				<PurchaseRemovedNotice
 					productNoun={ removedNoticeData?.productNoun ?? '' }
 					atomicDomain={ removedNoticeData?.atomicDomain }

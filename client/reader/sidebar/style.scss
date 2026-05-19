@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@automattic/typography/styles/variables';
 
 /* Override very specific css on an attribute */
@@ -270,18 +272,65 @@ body.is-section-reader {
 }
 
 .is-reader-page.theme-default .sidebar .sidebar__menu-link::after {
-	border-right-color: #fff;
+	border-inline-end-color: var( --color-surface );
 }
 
 .theme-default .global-sidebar .sidebar .sidebar__menu {
 	&:is( .is-togglable ) {
+		@include ui-mixins.when-dark-theme {
+			.sidebar__expandable-button.components-button {
+				color: inherit;
+			}
+
+			.sidebar__expandable-arrow {
+				fill: currentColor;
+			}
+		}
+
 		&.is-toggle-open {
 			outline: 1px solid #e0e0e0;
 			border-radius: 4px;
 			.sidebar__heading {
-				background-color: #fff;
+				background-color: var( --color-surface );
 			}
 			margin-bottom: 16px;
+
+			@include ui-mixins.when-dark-theme {
+				background-color: var( --color-surface );
+				outline-color: var( --color-border-subtle );
+
+				.sidebar__heading,
+				.sidebar__expandable-content {
+					background-color: var( --color-surface );
+				}
+
+				.sidebar__expandable-content {
+					.selected .sidebar__menu-link,
+					.sidebar__menu--selected .sidebar__menu-link {
+						background-color: var( --dashboard-item-selected__background-color );
+						color: var( --color-sidebar-menu-selected-text );
+					}
+
+					.sidebar__menu-item:not( .selected ):not( .sidebar__menu--selected ) .sidebar__menu-link {
+						color: var( --color-text-subtle );
+					}
+
+					.sidebar__menu-link:hover,
+					.sidebar__menu-link:focus {
+						background-color: var( --color-sidebar-menu-hover-background );
+						color: var( --color-sidebar-menu-hover-text );
+					}
+
+					.sidebar__menu-link:hover .a8c-count,
+					.sidebar__menu-link:focus .a8c-count {
+						outline-color: var( --color-sidebar-menu-hover-text );
+					}
+				}
+
+				.sidebar__menu-item-last-updated {
+					color: var( --color-text-subtle );
+				}
+			}
 		}
 
 		&.has-counts .sidebar__menu-link {

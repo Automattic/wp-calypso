@@ -38,19 +38,33 @@ export default function ConfirmCheckbox( {
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { setNewMessagingChat } = useHelpCenter();
 
-	const supportHeadingText =
-		displayVariant === 'remove'
-			? __( 'Questions before you remove?' )
-			: __( 'Have a question before canceling?' );
+	const getSupportHeadingText = () => {
+		if ( displayVariant === 'remove' ) {
+			return __( 'Questions before you remove?' );
+		}
+		if ( displayVariant === 'auto-renew' ) {
+			return __( 'Have a question before turning off auto-renew?' );
+		}
+		return __( 'Have a question before canceling?' );
+	};
+
+	const getContactInitialMessage = () => {
+		if ( displayVariant === 'remove' ) {
+			return `I have questions about removing my ${ purchase.product_name }. Can I speak with a human?`;
+		}
+		if ( displayVariant === 'auto-renew' ) {
+			return `I have questions about turning off auto-renew for my ${ purchase.product_name }. Can I speak with a human?`;
+		}
+		return `I have questions about canceling my ${ purchase.product_name }. Can I speak with a human?`;
+	};
+
+	const supportHeadingText = getSupportHeadingText();
 
 	const planConfirmationLabel = getCheckboxLabel();
 
 	const handleContactClick = () => {
 		setNewMessagingChat( {
-			initialMessage:
-				displayVariant === 'remove'
-					? `I have questions about removing my ${ purchase.product_name }. Can I speak with a human?`
-					: `I have questions about canceling my ${ purchase.product_name }. Can I speak with a human?`,
+			initialMessage: getContactInitialMessage(),
 			siteUrl: purchase.site_slug,
 			siteId: String( purchase.blog_id ),
 		} );

@@ -48,7 +48,7 @@ export default function CancelButton( {
 		? __( 'Continue with cancellation' )
 		: getButtonLabels( {
 				purchase,
-				intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+				intent: displayVariant,
 		  } ).primary;
 
 	return (

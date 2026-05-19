@@ -5,10 +5,14 @@ import {
 } from './internal/experiment-assignment-store';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import { createFlagPayloadLoader } from './internal/flag-payload';
 import * as Request from './internal/requests';
+import { createExPlatRuntimeReader } from './internal/runtime';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
-import type { ExperimentAssignment, Config } from './types';
+import { evalFeature } from './sdk/evaluator';
+import type { Attributes, FeatureValue, WidenPrimitives } from './sdk/types';
+import type { ExperimentAssignment, Config, FeatureAssignmentBeacon } from './types';
 
 /**
  * The number of milliseconds before we abandon fetching an experiment
@@ -44,6 +48,25 @@ export interface ExPlatClient {
 	dangerouslyGetMaybeLoadedExperimentAssignment: (
 		experimentName: string
 	) => null | ExperimentAssignment;
+
+	/**
+	 * Evaluate a feature flag client-side against the public `/flags` payload.
+	 *
+	 * Returns the caller-provided default when:
+	 *  - the host has not provided `fetchFlagPayload` / `getAttributes`,
+	 *  - the runtime bootstrap forbids evaluation (e2e/support/blocked modes),
+	 *  - the flag is unknown, or
+	 *  - the payload is malformed / on an unsupported schema_version.
+	 *
+	 * For experiment-rule matches, fires a fire-and-forget beacon to
+	 * `logFeatureAssignment` only when the runtime is in `mode='normal'` with
+	 * `can_log_assignment` and `can_create_assignment` both true. The server
+	 * recomputes and enforces gates regardless.
+	 */
+	getFeatureValue: < T extends FeatureValue >(
+		flagKey: string,
+		defaultValue: T
+	) => Promise< WidenPrimitives< T > >;
 
 	/**
 	 * INTERNAL USE ONLY
@@ -97,6 +120,24 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		try {
 			config.logError( ...args );
 		} catch ( e ) {}
+	};
+
+	const fetchFlagPayload = config.fetchFlagPayload;
+	const loadFlagPayload = fetchFlagPayload
+		? createFlagPayloadLoader( fetchFlagPayload, safeLogError )
+		: null;
+	const getExPlatRuntime = createExPlatRuntimeReader();
+
+	const fireFeatureAssignmentBeacon = async ( body: FeatureAssignmentBeacon ): Promise< void > => {
+		try {
+			await config.logFeatureAssignment?.( body );
+		} catch ( e ) {
+			safeLogError( {
+				message: ( e as Error ).message,
+				flag_key: body.flag_key,
+				source: 'logFeatureAssignment-error',
+			} );
+		}
 	};
 
 	// Clean up LocalStorage on start up
@@ -222,6 +263,66 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return createFallbackExperimentAssignment( experimentName );
 			}
 		},
+		getFeatureValue: async < T extends FeatureValue >(
+			flagKey: string,
+			defaultValue: T
+		): Promise< WidenPrimitives< T > > => {
+			const fallback = defaultValue as unknown as WidenPrimitives< T >;
+			try {
+				if ( ! loadFlagPayload || ! config.getAttributes ) {
+					return fallback;
+				}
+
+				const runtime = getExPlatRuntime();
+				if ( ! runtime.can_evaluate ) {
+					return fallback;
+				}
+
+				const payload = await loadFlagPayload();
+				if ( ! payload ) {
+					return fallback;
+				}
+
+				const feature = payload.flags[ flagKey ];
+				if ( ! feature ) {
+					return fallback;
+				}
+
+				const localAttributes = await config.getAttributes();
+				const attributes = {
+					...localAttributes,
+					...runtime.attributes,
+				} as Attributes;
+
+				const result = evalFeature( feature, attributes );
+
+				if (
+					result.source === 'experiment' &&
+					runtime.mode === 'normal' &&
+					runtime.can_log_assignment &&
+					runtime.can_create_assignment
+				) {
+					// No client-side dedupe — the server's `Assigned_Variation` writers
+					// already short-circuit duplicate `(user|anon, experiment)` rows.
+					void fireFeatureAssignmentBeacon( {
+						flag_key: flagKey,
+						experiment_id: result.experiment_id,
+						experiment_variation_id: result.experiment_variation_id,
+						hash_attribute: result.hash_attribute,
+						hash_value: result.hash_value,
+					} );
+				}
+
+				return result.value as WidenPrimitives< T >;
+			} catch ( error ) {
+				safeLogError( {
+					message: ( error as Error ).message,
+					flag_key: flagKey,
+					source: 'getFeatureValue-error',
+				} );
+				return fallback;
+			}
+		},
 		dangerouslyGetMaybeLoadedExperimentAssignment: (
 			experimentName: string
 		): ExperimentAssignment | null => {
@@ -277,6 +378,12 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 				experimentName,
 			} );
 			return createFallbackExperimentAssignment( experimentName );
+		},
+		getFeatureValue: async < T extends FeatureValue >(
+			_flagKey: string,
+			defaultValue: T
+		): Promise< WidenPrimitives< T > > => {
+			return defaultValue as unknown as WidenPrimitives< T >;
 		},
 		config,
 	};
