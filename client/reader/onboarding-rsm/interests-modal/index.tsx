@@ -32,6 +32,13 @@ import './style.scss';
 interface InterestsModalProps {
 	onContinue: () => void;
 	promptVerification: boolean;
+	// Whether the user has performed any subscribe action (individual tag
+	// follow or pack subscribe) during the current onboarding session. The
+	// parent owns this flag so it persists across remounts of this modal —
+	// e.g. user subscribes to a tagless pack, advances to discover, then uses
+	// Back; the relaxed Continue gate must still apply on return.
+	hasFollowed: boolean;
+	onFollowed: () => void;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
@@ -41,7 +48,12 @@ const MAX_INTEREST_TOPICS = 40;
 // provided by the parent (`ReaderOnboardingRsm`); this component is only
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`.
-const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVerification } ) => {
+const InterestsModal: React.FC< InterestsModalProps > = ( {
+	onContinue,
+	promptVerification,
+	hasFollowed,
+	onFollowed,
+} ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
@@ -55,7 +67,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
 	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
-	const [ hasFollowedOnPage, setHasFollowedOnPage ] = useState( false );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
@@ -130,7 +141,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 	};
 
 	const isContinueDisabled =
-		followedTags.length < READER_ONBOARDING_MIN_FOLLOWED_TAGS && ! hasFollowedOnPage;
+		followedTags.length < READER_ONBOARDING_MIN_FOLLOWED_TAGS && ! hasFollowed;
 
 	const handleTopicChange = async ( checked: boolean, tag: string ): Promise< boolean > => {
 		const existingOperation = inFlightTagOpsRef.current.get( tag );
@@ -140,7 +151,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 
 		const operation = ( async (): Promise< boolean > => {
 			if ( checked ) {
-				setHasFollowedOnPage( true );
+				onFollowed();
 			}
 
 			// Mark the tag as being processed.
@@ -208,7 +219,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		}
 
 		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
-		setHasFollowedOnPage( true );
+		onFollowed();
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
 			for ( const tag of pack.tags ) {

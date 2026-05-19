@@ -126,6 +126,14 @@ const ReaderOnboardingRsm = ( {
 	const [ startingForceShow, setStartingForceShow ] = useState< boolean | null >( null );
 	const [ hasFinished, setHasFinished ] = useState( false );
 
+	// Tracks whether the user has used any subscribe action (individual tag
+	// follow or pack subscribe) inside the interests step. Owned by the parent
+	// so it persists across remounts of `InterestsModal` — without that, a
+	// user could subscribe to a tagless pack, advance to discover, click Back,
+	// and find the relaxed Continue gate forgotten on the fresh modal.
+	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
+	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
+
 	useEffect( () => {
 		if ( startingForceShow !== null || subscriptionsLoading ) {
 			return;
@@ -305,7 +313,10 @@ const ReaderOnboardingRsm = ( {
 			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: () => openStep( 'discover' ),
 			completed: hasFollowedSites,
-			disabled: ! hasFollowedTags,
+			// Mirror the interests-step Continue relaxation: once the user has
+			// performed any subscribe action there (e.g. a tagless pack), the
+			// discover task is reachable even without 3 followed tags.
+			disabled: ! hasFollowedTags && ! hasFollowedInInterestsStep,
 		},
 	];
 
@@ -375,6 +386,8 @@ const ReaderOnboardingRsm = ( {
 						<InterestsModal
 							onContinue={ handleInterestsContinue }
 							promptVerification={ promptVerification }
+							hasFollowed={ hasFollowedInInterestsStep }
+							onFollowed={ markFollowedInInterestsStep }
 						/>
 					) }
 					{ currentStep === 'discover' && (

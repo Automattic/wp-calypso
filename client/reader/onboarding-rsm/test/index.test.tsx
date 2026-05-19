@@ -39,7 +39,19 @@ jest.mock( '@automattic/components', () => ( {
 
 jest.mock( '@automattic/launchpad', () => ( {
 	Checklist: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
-	ChecklistItem: () => null,
+	// Render each task as a div with data-attributes so tests can introspect
+	// `task.disabled` and `task.completed` without needing the real Checklist UI.
+	ChecklistItem: ( {
+		task,
+	}: {
+		task: { id: string; title: string; disabled: boolean; completed: boolean };
+	} ) => (
+		<div
+			data-testid={ `checklist-item-${ task.id }` }
+			data-disabled={ String( !! task.disabled ) }
+			data-completed={ String( !! task.completed ) }
+		/>
+	),
 } ) );
 
 // Render the WP Modal without a portal so headerActions and children
@@ -77,9 +89,18 @@ jest.mock( 'calypso/reader/onboarding-rsm/welcome-modal', () => ( {
 
 jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 	__esModule: true,
-	default: ( { onContinue }: { onContinue: () => void } ) => (
-		<div data-testid="interests-modal-content">
+	default: ( {
+		onContinue,
+		hasFollowed,
+		onFollowed,
+	}: {
+		onContinue: () => void;
+		hasFollowed: boolean;
+		onFollowed: () => void;
+	} ) => (
+		<div data-testid="interests-modal-content" data-has-followed={ String( hasFollowed ) }>
 			<button onClick={ onContinue }>Continue</button>
+			<button onClick={ onFollowed }>Mark followed</button>
 		</div>
 	),
 } ) );
@@ -722,5 +743,90 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 
 	afterEach( () => {
 		getPreferenceMock().mockReturnValue( null );
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to parent', () => {
+	// The interests-step relaxation (Continue allowed once the user has used any
+	// subscribe action on that step) must survive remounts of `InterestsModal`.
+	// The parent owns the flag and threads it back through the `hasFollowed`
+	// prop, and the discover checklist task mirrors the same relaxation.
+
+	it( 'persists hasFollowed across step transitions (interests → discover → back → interests)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		// Open interests; initial hasFollowed is false (no prior subscribe).
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		const interestsContent = await screen.findByTestId( 'interests-modal-content' );
+		expect( interestsContent ).toHaveAttribute( 'data-has-followed', 'false' );
+
+		// Simulate the user subscribing (individual tag or pack).
+		await user.click( screen.getByRole( 'button', { name: 'Mark followed' } ) );
+		expect( screen.getByTestId( 'interests-modal-content' ) ).toHaveAttribute(
+			'data-has-followed',
+			'true'
+		);
+
+		// Advance to discover and then Back to interests; the modal remounts.
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		// Fresh `InterestsModal` instance, but the parent still reports
+		// hasFollowed=true so the relaxed Continue gate carries over.
+		expect( await screen.findByTestId( 'interests-modal-content' ) ).toHaveAttribute(
+			'data-has-followed',
+			'true'
+		);
+	} );
+
+	it( 'enables the discover task once the user has subscribed in interests, even without enough tags', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		// Discover task starts disabled because hasFollowedTags is false and
+		// the user hasn't used any interests-step subscribe action yet.
+		expect( screen.getByTestId( 'checklist-item-discover-sites' ) ).toHaveAttribute(
+			'data-disabled',
+			'true'
+		);
+
+		// Open interests, simulate any subscribe action, and close.
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Mark followed' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		// Discover task is now reachable from the checklist even though
+		// `useFollowedReaderTags` is still empty (default mock).
+		expect( screen.getByTestId( 'checklist-item-discover-sites' ) ).toHaveAttribute(
+			'data-disabled',
+			'false'
+		);
+	} );
+
+	it( 'leaves the discover task disabled if the user opens interests without subscribing', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		expect( screen.getByTestId( 'checklist-item-discover-sites' ) ).toHaveAttribute(
+			'data-disabled',
+			'true'
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		// No subscribe action happened; the discover task stays disabled.
+		expect( screen.getByTestId( 'checklist-item-discover-sites' ) ).toHaveAttribute(
+			'data-disabled',
+			'true'
+		);
 	} );
 } );
