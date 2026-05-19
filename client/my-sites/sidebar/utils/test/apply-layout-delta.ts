@@ -2,10 +2,9 @@ import { applyLayoutDelta } from '../apply-layout-delta';
 import type { AdminMenuItem } from 'calypso/state/admin-menu/types';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
 
-// `AdminMenuItem` doesn't include `itemId` today (the redesigned endpoint
-// adds it but it's not yet on the typed surface — see types.ts comment).
-// Tests cast through `unknown` to attach `itemId` without churning the
-// public type for unrelated callers.
+// Legacy admin-menu responses do not carry `itemId`, so the field stays
+// optional on `AdminMenuItem`. These test helpers force it present for
+// layout-delta assertions.
 type ItemWithId = AdminMenuItem & { itemId: string };
 
 function makeItem( id: string, group: string | null = null ): ItemWithId {
