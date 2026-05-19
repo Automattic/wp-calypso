@@ -21,7 +21,7 @@ const loadFediverseFollowingView = () =>
 	);
 
 function ensureFediverseEnabled(): boolean {
-	if ( ! isEnabled( 'reader/fediverse' ) ) {
+	if ( ! isEnabled( 'reader/social' ) ) {
 		page.redirect( '/reader' );
 		return false;
 	}

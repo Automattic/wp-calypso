@@ -156,23 +156,23 @@ export function SocialOverviewView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const fediverseEnabled = isEnabled( 'reader/fediverse' );
+	const socialEnabled = isEnabled( 'reader/social' );
 	const atmosphere = useConnectionsQuery();
 	const mastodon = useMastodonConnectionsQuery();
-	const fediverse = useFediverseConnectionsQuery( { enabled: fediverseEnabled } );
+	const fediverse = useFediverseConnectionsQuery( { enabled: socialEnabled } );
 
 	const isLoading =
-		atmosphere.isPending || mastodon.isPending || ( fediverseEnabled && fediverse.isPending );
+		atmosphere.isPending || mastodon.isPending || ( socialEnabled && fediverse.isPending );
 	const hasAllErrored =
-		atmosphere.isError && mastodon.isError && ( ! fediverseEnabled || fediverse.isError );
+		atmosphere.isError && mastodon.isError && ( ! socialEnabled || fediverse.isError );
 
 	const cards: SocialCard[] = useMemo(
 		() => [
 			...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
 			...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
-			...( fediverseEnabled ? ( fediverse.data?.connections ?? [] ).map( mapFediverse ) : [] ),
+			...( socialEnabled ? ( fediverse.data?.connections ?? [] ).map( mapFediverse ) : [] ),
 		],
-		[ atmosphere.data, mastodon.data, fediverse.data, fediverseEnabled ]
+		[ atmosphere.data, mastodon.data, fediverse.data, socialEnabled ]
 	);
 
 	// Flat protocol+id (+instance/host) list for the Spotlight strip.

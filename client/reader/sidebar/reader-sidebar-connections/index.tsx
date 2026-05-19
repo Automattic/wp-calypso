@@ -146,37 +146,35 @@ function ReaderSidebarConnections( { path }: Props ) {
 	// Reader page (e.g. `/reader/search`) would see no connections at all
 	// because the queries never fire. The queries don't refetch every
 	// render thanks to React Query caching.
-	const fediverseEnabled = isEnabled( 'reader/fediverse' );
+	const socialEnabled = isEnabled( 'reader/social' );
 	const shouldFetch = isOnConnections || isOpen;
 	const atmosphereQuery = useConnectionsQuery( { enabled: shouldFetch } );
 	const mastodonQuery = useMastodonConnectionsQuery( { enabled: shouldFetch } );
 	const fediverseQuery = useFediverseConnectionsQuery( {
-		enabled: shouldFetch && fediverseEnabled,
+		enabled: shouldFetch && socialEnabled,
 	} );
 
 	const connections = useMemo( () => {
 		const all: UnifiedConnection[] = [
 			...( atmosphereQuery.data?.connections ?? [] ).map( mapAtmosphere ),
 			...( mastodonQuery.data?.connections ?? [] ).map( mapMastodon ),
-			...( fediverseEnabled ? ( fediverseQuery.data?.connections ?? [] ).map( mapFediverse ) : [] ),
+			...( socialEnabled ? ( fediverseQuery.data?.connections ?? [] ).map( mapFediverse ) : [] ),
 		];
 		return all.sort( sortConnections );
-	}, [ atmosphereQuery.data, mastodonQuery.data, fediverseQuery.data, fediverseEnabled ] );
+	}, [ atmosphereQuery.data, mastodonQuery.data, fediverseQuery.data, socialEnabled ] );
 
 	// Distinguish "we haven't fetched yet" from "we fetched and found none",
 	// and separate both from "the fetch errored". A query that errors stays
 	// at `data: undefined` forever, so without the explicit error check the
 	// menu would sit silently empty when the backend is degraded. When the
-	// fediverse flag is off its query never runs, so it doesn't gate settled
-	// or error state.
+	// social flag is off the fediverse query never runs, so it doesn't gate
+	// settled or error state.
 	const hasSettled =
 		( atmosphereQuery.isSuccess || atmosphereQuery.isError ) &&
 		( mastodonQuery.isSuccess || mastodonQuery.isError ) &&
-		( ! fediverseEnabled || fediverseQuery.isSuccess || fediverseQuery.isError );
+		( ! socialEnabled || fediverseQuery.isSuccess || fediverseQuery.isError );
 	const hasError =
-		atmosphereQuery.isError ||
-		mastodonQuery.isError ||
-		( fediverseEnabled && fediverseQuery.isError );
+		atmosphereQuery.isError || mastodonQuery.isError || ( socialEnabled && fediverseQuery.isError );
 	const showEmptyHint = shouldFetch && hasSettled && ! hasError && connections.length === 0;
 	const showErrorHint = shouldFetch && hasError && connections.length === 0;
 

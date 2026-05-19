@@ -54,11 +54,10 @@ export function ConnectionsNewView() {
 	const dispatch = useDispatch();
 
 	const socialEnabled = isEnabled( 'reader/social' );
-	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 
-	const fediverseConnectionsQuery = useFediverseConnectionsQuery( { enabled: fediverseEnabled } );
+	const fediverseConnectionsQuery = useFediverseConnectionsQuery( { enabled: socialEnabled } );
 	const fediverseConnectionCount = fediverseConnectionsQuery.data?.connections?.length ?? 0;
-	const hasFediverseConnection = fediverseEnabled && fediverseConnectionCount > 0;
+	const hasFediverseConnection = socialEnabled && fediverseConnectionCount > 0;
 
 	const adminSites = useSelector( ( state ) =>
 		getSites( state ).filter( ( site ) => !! site?.capabilities?.manage_options )
@@ -74,7 +73,7 @@ export function ConnectionsNewView() {
 			key: 'fediverse' as const,
 			label: 'Fediverse',
 			icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
-			available: fediverseEnabled,
+			available: socialEnabled,
 			docHref: fediverseDocHref,
 			docLabel: learnMoreLabel,
 		};
