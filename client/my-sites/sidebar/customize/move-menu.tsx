@@ -43,15 +43,11 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 
 	// Compute one-step move directions from the rendered DOM so the menu
 	// crosses group / top-level boundaries naturally (matches plugin's
-	// `collectRows` semantics). After computing the position, both
-	// DOM-mutate the item to the target slot AND commit to state — mirrors
-	// the public plugin's `move-menu.js` `commit()` and matches drag-drop's
-	// `onPointerUp` pattern, so the visual reflects the move immediately.
+	// `collectRows` semantics). The committed working delta drives the
+	// subsequent React render.
 	const moveByDirection = useCallback(
 		( direction: -1 | 1 ) => {
-			const li = document.querySelector(
-				`li[data-wp-admin-sidebar-item-id="${ itemId }"]`
-			) as HTMLElement | null;
+			const li = document.querySelector( itemSelector( itemId ) ) as HTMLElement | null;
 			if ( ! li || ! customizeCtx ) {
 				return;
 			}
@@ -62,53 +58,10 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 				return;
 			}
 			const target = rows[ targetIdx ];
-
-			if ( target.classList.contains( 'wp-admin-sidebar-group' ) ) {
-				if ( direction > 0 ) {
-					// Down into the group → land at the start of its children.
-					const childrenUl = target.querySelector( ':scope > .wp-admin-sidebar-group__children' );
-					if ( ! childrenUl ) {
-						return;
-					}
-					childrenUl.insertBefore( li, childrenUl.firstElementChild );
-				} else {
-					// Up out of the group → become a top-level sibling just
-					// before the group container LI.
-					if ( ! target.parentElement ) {
-						return;
-					}
-					target.parentElement.insertBefore( li, target );
-				}
-			} else if ( direction > 0 ) {
-				if ( ! target.parentElement ) {
-					return;
-				}
-				target.parentElement.insertBefore( li, target.nextElementSibling );
-			} else {
-				if ( ! target.parentElement ) {
-					return;
-				}
-				target.parentElement.insertBefore( li, target );
-			}
-
-			// Recompute the canonical position from the post-move DOM so the
-			// committed delta agrees with what the user sees.
-			const newParent = li.parentElement;
-			if ( ! newParent ) {
+			const nextPosition = positionForMoveTarget( li, target, direction );
+			if ( ! nextPosition ) {
 				return;
 			}
-			const enclosingGroup = newParent.closest( 'li.wp-admin-sidebar-group' );
-			const allLiSiblings = Array.from( newParent.children ).filter(
-				( el ) => el.tagName === 'LI'
-			);
-			const newLocalIdx = allLiSiblings.indexOf( li );
-			const nextPosition: LayoutPosition = enclosingGroup
-				? {
-						kind: 'in_group',
-						group_id: enclosingGroup.getAttribute( 'data-group' ) || '',
-						index: newLocalIdx,
-				  }
-				: { kind: 'top_level', index: newLocalIdx };
 			customizeCtx.commitMove( itemId, nextPosition );
 			customizeCtx.announce(
 				translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
@@ -126,38 +79,6 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 	const resetToDefault = useCallback( () => {
 		if ( ! customizeCtx ) {
 			return;
-		}
-		// Snap the LI back to its baseline container in the DOM, then
-		// clear the working override. Without the DOM-mutate, resetItem
-		// only changes state — the rendered tree doesn't reflect the
-		// reset because the saved-delta render path in
-		// `use-site-menu-items.js` doesn't observe the customize draft.
-		//
-		// Baseline derivation: the compound itemId from the schema is
-		// `<sourceKind>:<ref>:<parent>:<slug>`. `<parent>` is the
-		// baseline group_id (empty for items that were originally
-		// top-level). Mirrors the public plugin's
-		// `move-menu.js#findBaselinePosition`, which reads the same
-		// information off the navModel.
-		const li = document.querySelector(
-			`li[data-wp-admin-sidebar-item-id="${ itemId }"]`
-		) as HTMLElement | null;
-		if ( li ) {
-			const segments = itemId.split( ':' );
-			const baselineGroupId = segments[ 2 ] || '';
-			if ( baselineGroupId ) {
-				const childList = document.querySelector(
-					`li.wp-admin-sidebar-group[data-group="${ baselineGroupId }"] > .wp-admin-sidebar-group__children`
-				);
-				if ( childList ) {
-					childList.appendChild( li );
-				}
-			} else {
-				const sidebar = document.querySelector( '.sidebar' );
-				if ( sidebar ) {
-					sidebar.appendChild( li );
-				}
-			}
 		}
 		customizeCtx.resetItem( itemId );
 		customizeCtx.announce(
@@ -282,6 +203,61 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		document.body
 	);
 };
+
+function escapeSelectorValue( value: string ): string {
+	if ( typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ) {
+		return CSS.escape( value );
+	}
+	return value.replace( /["\\]/g, '\\$&' );
+}
+
+function itemSelector( itemId: string ): string {
+	return `li[data-wp-admin-sidebar-item-id="${ escapeSelectorValue( itemId ) }"]`;
+}
+
+function positionForMoveTarget(
+	source: HTMLElement,
+	target: HTMLLIElement,
+	direction: -1 | 1
+): LayoutPosition | null {
+	if ( target.classList.contains( 'wp-admin-sidebar-group' ) ) {
+		const groupId = target.getAttribute( 'data-group' );
+		if ( ! groupId ) {
+			return null;
+		}
+		if ( direction > 0 ) {
+			return { kind: 'in_group', group_id: groupId, index: 0 };
+		}
+		const parent = target.parentElement;
+		if ( ! parent ) {
+			return null;
+		}
+		return {
+			kind: 'top_level',
+			index: Array.prototype.indexOf.call( parent.children, target ),
+		};
+	}
+
+	const container = target.parentElement;
+	if ( ! container ) {
+		return null;
+	}
+	const targetIndex = Array.prototype.indexOf.call( container.children, target );
+	let slot = direction > 0 ? targetIndex + 1 : targetIndex;
+	if ( source.parentElement === container ) {
+		const sourceIndex = Array.prototype.indexOf.call( container.children, source );
+		if ( sourceIndex !== -1 && sourceIndex < slot ) {
+			slot -= 1;
+		}
+	}
+
+	const enclosingGroup = container.closest( 'li.wp-admin-sidebar-group' );
+	if ( enclosingGroup ) {
+		const groupId = enclosingGroup.getAttribute( 'data-group' );
+		return groupId ? { kind: 'in_group', group_id: groupId, index: slot } : null;
+	}
+	return { kind: 'top_level', index: slot };
+}
 
 /**
  * Build the ordered list of "rows" treated as one-step targets for Move up /

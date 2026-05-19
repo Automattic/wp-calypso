@@ -12,13 +12,14 @@ import {
 	getSelectedSiteId,
 	getSelectedSite,
 } from 'calypso/state/ui/selectors';
-import { CustomizeProvider } from './customize';
+import { CustomizeProvider, useCustomizeContext } from './customize';
 import { CustomizeFooter } from './customize/footer';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import MySitesSidebarUnifiedSidebarGroup from './sidebar-group';
 import useSiteMenuItems from './use-site-menu-items';
 import { isItemSelected } from './utils';
+import { applyAdminSidebarDevMock } from './utils/admin-sidebar-dev-mock';
 import groupMenuItems from './utils/group-menu-items';
 import 'calypso/state/admin-menu/init';
 import 'calypso/state/admin-sidebar/expand-state/init';
@@ -32,8 +33,30 @@ export const MySitesSidebarUnifiedBody = ( {
 	children,
 	onMenuItemClick,
 	isUnifiedSiteSidebarVisible,
-} ) => {
-	const menuItems = useSiteMenuItems();
+} ) => (
+	<CustomizeProvider>
+		<MySitesSidebarUnifiedBodyContent
+			isGlobalSidebarCollapsed={ isGlobalSidebarCollapsed }
+			path={ path }
+			onMenuItemClick={ onMenuItemClick }
+			isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+		>
+			{ children }
+		</MySitesSidebarUnifiedBodyContent>
+		<CustomizeFooter />
+	</CustomizeProvider>
+);
+
+function MySitesSidebarUnifiedBodyContent( {
+	isGlobalSidebarCollapsed,
+	path,
+	children,
+	onMenuItemClick,
+	isUnifiedSiteSidebarVisible,
+} ) {
+	const customizeCtx = useCustomizeContext();
+	const workingDelta = customizeCtx?.isCustomizing ? customizeCtx.draft.workingDelta : undefined;
+	const menuItems = useSiteMenuItems( workingDelta );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const site = useSelector( getSelectedSite );
 	const siteId = useSelector( getSelectedSiteId );
@@ -51,9 +74,13 @@ export const MySitesSidebarUnifiedBody = ( {
 	// Phase 1 redesign: partition the flat menu into top-level items plus group
 	// sections. Until the endpoint emits `groups[]`, all items remain ungrouped
 	// and the legacy flat shape is preserved.
-	const { ungroupedItems, groupedSections } = useMemo(
-		() => groupMenuItems( menuItems ?? [], groups ),
+	const mockedMenu = useMemo(
+		() => applyAdminSidebarDevMock( menuItems ?? [], groups ),
 		[ menuItems, groups ]
+	);
+	const { ungroupedItems, groupedSections } = useMemo(
+		() => groupMenuItems( mockedMenu.menuItems ?? [], mockedMenu.groups ),
+		[ mockedMenu ]
 	);
 
 	const renderItem = ( item, i ) => {
@@ -102,7 +129,7 @@ export const MySitesSidebarUnifiedBody = ( {
 	};
 
 	return (
-		<CustomizeProvider>
+		<>
 			{ ungroupedItems.map( ( item, i ) => renderItem( item, i ) ) }
 			{ groupedSections.map( ( section ) => (
 				<MySitesSidebarUnifiedSidebarGroup
@@ -113,9 +140,8 @@ export const MySitesSidebarUnifiedBody = ( {
 				</MySitesSidebarUnifiedSidebarGroup>
 			) ) }
 			{ children }
-			<CustomizeFooter />
-		</CustomizeProvider>
+		</>
 	);
-};
+}
 
 export default MySitesSidebarUnifiedBody;

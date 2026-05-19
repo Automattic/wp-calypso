@@ -12,7 +12,7 @@
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/customizer.js#save
  * @see WordPress/wp-admin-sidebar v0.1.4 src/class-sidebar-rest.php
  */
-
+import { translate } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
 import { receiveAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/actions';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
@@ -63,12 +63,12 @@ export async function saveLayout(
 		const message =
 			err && typeof err === 'object' && 'message' in err && typeof err.message === 'string'
 				? err.message
-				: 'Save failed.';
+				: ( translate( 'Save failed.' ) as string );
 		throw new Error( message );
 	}
 
 	if ( ! saved || typeof saved !== 'object' || ! Array.isArray( saved.overrides ) ) {
-		throw new Error( 'Save failed: malformed server response.' );
+		throw new Error( translate( 'Save failed: malformed server response.' ) as string );
 	}
 
 	dispatch( receiveAdminSidebarLayout( options.siteId, saved ) );

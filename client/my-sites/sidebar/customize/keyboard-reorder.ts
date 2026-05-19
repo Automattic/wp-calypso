@@ -12,7 +12,7 @@
  * reorder + live regions).
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/keyboard-reorder.js
  */
-
+import { translate } from 'i18n-calypso';
 import type { DragDropController } from './drag-drop';
 
 const REASSIGNABLE_SELECTOR = 'li[data-wp-admin-sidebar-item-id]';
@@ -75,7 +75,15 @@ export function attachKeyboardReorder( controller: DragDropController ): () => v
 		controller.commitMove( itemId, position );
 		const total = siblings.length;
 		const label = ( li.textContent || itemId ).trim();
-		controller.announce( `Moved ${ label } to position ${ target_idx + 1 } of ${ total }.` );
+		controller.announce(
+			translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
+				args: {
+					label,
+					index: target_idx + 1,
+					total,
+				},
+			} ) as string
+		);
 	}
 
 	document.addEventListener( 'keydown', onKeyDown );

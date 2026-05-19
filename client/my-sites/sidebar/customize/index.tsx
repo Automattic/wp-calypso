@@ -28,6 +28,7 @@
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/customizer.js
  */
 
+import { translate } from 'i18n-calypso';
 import {
 	createContext,
 	useCallback,
@@ -184,13 +185,12 @@ export function CustomizeProvider( {
 		// Expand all groups containing reassignable items so the user can see
 		// what they're meant to be reordering. Mirrors `expandGroupsForCustomizing`
 		// in the public plugin's `customizer.js`. (Phase 2 row 16.)
-		// We delegate to the expand-state slice so the user's stored choices
-		// are preserved — entering customize mode forces expanded for the
-		// duration; we don't permanently mutate their preference.
+		// We delegate to the expand-state slice, so entering customize mode
+		// persists the expanded state as the user's current preference.
 		if ( siteId ) {
 			dispatch_expandReassignableGroups( reduxDispatch, siteId );
 		}
-		announce( 'Customize mode entered.' );
+		announce( translate( 'Customize mode entered.' ) as string );
 	}, [ enableCustomize, savedDelta, siteId, reduxDispatch, announce ] );
 
 	const exit = useCallback(
@@ -198,14 +198,14 @@ export function CustomizeProvider( {
 			if ( options.confirmIfDirty && draftRef.current.isDirty ) {
 				if ( typeof window !== 'undefined' ) {
 					// eslint-disable-next-line no-alert
-					if ( ! window.confirm( 'Discard your unsaved changes?' ) ) {
+					if ( ! window.confirm( translate( 'Discard your unsaved changes?' ) as string ) ) {
 						return;
 					}
 				}
 			}
 			dispatch( { type: 'cancel' } );
 			setCustomizing( false );
-			announce( 'Customize mode exited.' );
+			announce( translate( 'Customize mode exited.' ) as string );
 		},
 		[ announce ]
 	);
@@ -238,12 +238,12 @@ export function CustomizeProvider( {
 			} );
 			dispatch( { type: 'apply_saved', saved: persisted } );
 			setCustomizing( false );
-			announce( 'Sidebar saved.' );
+			announce( translate( 'Sidebar saved.' ) as string );
 		} catch ( err ) {
 			const message =
 				err && typeof err === 'object' && 'message' in err && typeof err.message === 'string'
 					? err.message
-					: 'Save failed.';
+					: ( translate( 'Save failed.' ) as string );
 			dispatch( {
 				type: 'set_save_error',
 				error: { code: 'save_failed', message },

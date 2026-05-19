@@ -31,7 +31,7 @@
  * scopes `pointer-events: none` to non-reassignable inner content).
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/drag-drop.js
  */
-
+import { translate } from 'i18n-calypso';
 import { BODY_DRAGGING_CLASS } from './index';
 import type { LayoutPosition } from 'calypso/state/admin-sidebar/layout/types';
 
@@ -146,20 +146,17 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 			return;
 		}
 		if ( lastTarget && lastTarget.position && lastTarget.container ) {
-			// Mirror the public plugin's drag-drop.js: DOM-insert the row
-			// at the target slot so the visual reflects the drop
-			// immediately, then commit to state. Calypso's render path
-			// (use-site-menu-items.js → applyLayoutDelta) only applies the
-			// *saved* delta today, so without the DOM insert here the
-			// dropped row would visually snap back to its original slot
-			// until Save persists the working delta. (Threading the
-			// working delta into use-site-menu-items is a separate task;
-			// the DOM insert is the public plugin's pattern anyway.)
-			lastTarget.container.insertBefore( activeItem.li, lastTarget.beforeLi || null );
 			controller.commitMove( activeItem.itemId, lastTarget.position );
 			const label = ( activeItem.li.textContent || activeItem.itemId ).trim();
 			const indexLabel = lastTarget.position.index + 1;
-			controller.announce( `Moved ${ label } to position ${ indexLabel }.` );
+			controller.announce(
+				translate( 'Moved %(label)s to position %(index)d.', {
+					args: {
+						label,
+						index: indexLabel,
+					},
+				} ) as string
+			);
 		}
 		cleanup();
 	}
