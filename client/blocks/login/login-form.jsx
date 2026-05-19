@@ -137,14 +137,13 @@ export class LoginForm extends Component {
 			window.history.replaceState( {}, document.title, url );
 		}
 
-		// Mirror impression event for the password "Last used" hint rendered below.
-		// The social-button variant of the badge fires its own impression from
-		// <LastUsedBadge> in client/components/social-buttons/last-used-badge.tsx.
-		if ( this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password' ) {
-			this.props.recordTracksEvent( 'calypso_login_last_used_badge_view', {
-				method: 'password',
-			} );
-		}
+		// Impression event for the password login method. Fires on every mount
+		// (not only when last-used=password) so we record an impression for
+		// the password method whenever the login form renders, with
+		// `badge_view` reflecting whether the "Last used" pill is shown. The
+		// social-button variant fires its own impression from
+		// <LoginMethodImpression> in social.jsx for each method shown.
+		this.recordPasswordMethodImpression();
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -154,16 +153,15 @@ export class LoginForm extends Component {
 			handleUsernameChange( this.state.usernameOrEmail );
 		}
 
-		// Fire the password-badge impression when the hint becomes visible mid-session
-		// (e.g. social-link flow flips lastUsedAuthenticationMethod to 'password').
+		// Re-fire the password impression with badge_view=true when the
+		// "Last used" pill appears mid-session (e.g. social-link flow flips
+		// lastUsedAuthenticationMethod to 'password').
 		const wasPasswordBadge =
 			this.props.isSocialFirst && prevState.lastUsedAuthenticationMethod === 'password';
 		const isPasswordBadge =
 			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
 		if ( isPasswordBadge && ! wasPasswordBadge ) {
-			this.props.recordTracksEvent( 'calypso_login_last_used_badge_view', {
-				method: 'password',
-			} );
+			this.recordPasswordMethodImpression();
 		}
 
 		if ( prevProps.requestError || ! requestError ) {
@@ -293,9 +291,31 @@ export class LoginForm extends Component {
 		this.props.resetAuthAccountType();
 	};
 
+	recordPasswordMethodImpression() {
+		const isLastUsedPassword =
+			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
+
+		this.props.recordTracksEvent( 'calypso_login_method_impression', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'password',
+			badge_view: isLastUsedPassword,
+		} );
+	}
+
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo, domain } = this.props;
+
+		const isLastUsedPassword =
+			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
+
+		this.props.recordTracksEvent( 'calypso_login_method_click', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'password',
+			badge_view: isLastUsedPassword,
+		} );
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 		this.props
@@ -623,8 +643,19 @@ export class LoginForm extends Component {
 	trackLoginAndRememberRedirect = ( event, isLastUsedAuthenticationMethod = false ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
 
+		// Legacy click event. Kept firing as the funnel #61428 bridge: it
+		// carries the only signal the pre-badge UI also recorded, so it's the
+		// before/after comparison anchor for social methods.
 		this.recordSocialLoginEvent( 'calypso_login_social_button_click', service, {
 			is_last_used_authentication_method: isLastUsedAuthenticationMethod,
+		} );
+
+		// Standardized click event used across every login method.
+		this.props.recordTracksEvent( 'calypso_login_method_click', {
+			flow: 'login',
+			step: 'login-form',
+			method: service,
+			badge_view: isLastUsedAuthenticationMethod,
 		} );
 
 		if ( this.props.redirectTo && typeof window !== 'undefined' ) {

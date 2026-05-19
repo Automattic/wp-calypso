@@ -73,25 +73,79 @@ describe( 'SocialLoginForm', () => {
 		expect( screen.queryByText( /Continue with email/i ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'clicking the badged social button fires the badge-click event and the last-used flag', () => {
+	test( 'fires calypso_login_method_impression for every rendered method on mount', () => {
+		render(
+			<SocialLoginForm
+				{ ...defaultProps }
+				isSocialFirst
+				magicLoginLink="https://wordpress.com/log-in/link"
+				qrLoginLink="https://wordpress.com/log-in/jetpack"
+				lastUsedAuthenticationMethod="google"
+			/>
+		);
+
+		// One impression per method, with badge_view=true for the last-used one.
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'google',
+			badge_view: true,
+		} );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'apple',
+			badge_view: false,
+		} );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'magic-login',
+			badge_view: false,
+		} );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'qr-code',
+			badge_view: false,
+		} );
+	} );
+
+	test( 'clicking the badged social button fires social_button_click (legacy) and method_click (new) with badge_view=true', () => {
 		render(
 			<SocialLoginForm { ...defaultProps } isSocialFirst lastUsedAuthenticationMethod="github" />
 		);
 
 		fireEvent.click( screen.getByText( /Continue with GitHub/i ).closest( 'button' ) );
 
-		// Click counterpart to the `calypso_login_last_used_badge_view` impression.
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_last_used_badge_click', {
-			method: 'github',
-		} );
-
-		// Social buttons also re-fire the legacy click event with the last-used
-		// flag set — the only signal the pre-badge UI recorded, so it's the
-		// bridge for before/after analysis.
+		// Legacy social click event keeps firing as the funnel #61428 bridge:
+		// it carries the only signal the pre-badge UI also recorded.
 		expect( defaultProps.trackLoginAndRememberRedirect ).toHaveBeenCalledWith(
 			expect.anything(),
 			true
 		);
+	} );
+
+	test( 'clicking a non-badged magic-login button fires method_click with badge_view=false', () => {
+		render(
+			<SocialLoginForm
+				{ ...defaultProps }
+				isSocialFirst
+				magicLoginLink="https://wordpress.com/log-in/link"
+				lastUsedAuthenticationMethod="google"
+			/>
+		);
+
+		mockRecordTracksEvent.mockClear();
+
+		fireEvent.click( screen.getByText( /Email me a login/i ).closest( 'a' ) );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_click', {
+			flow: 'login',
+			step: 'login-form',
+			method: 'magic-login',
+			badge_view: false,
+		} );
 	} );
 
 	test( 'renders UsernameOrEmailButton when lastUsedAuthenticationMethod is not in allowedSocialServices', () => {

@@ -13,8 +13,9 @@ import './style.scss';
 
 type QrCodeLoginButtonProps = {
 	loginUrl: string;
-	// Optional click hook. social.jsx injects this when this button is the
-	// badged "Last used" option, to fire `calypso_login_last_used_badge_click`.
+	// Optional click hook. social.jsx injects this so it can fire the
+	// standardized `calypso_login_method_click` Tracks event for every
+	// method shown (badged or not).
 	onClick?: () => void;
 };
 
