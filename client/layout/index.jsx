@@ -287,7 +287,7 @@ class Layout extends Component {
 					/>
 				) }
 				<MasterbarComponent
-					siteId={ this.props.siteId }
+					siteId={ this.props.siteIdForLaunch }
 					section={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
@@ -308,7 +308,7 @@ class Layout extends Component {
 			<AsyncLoad
 				require={ loadCelebrateSiteLaunchModal }
 				placeholder={ null }
-				siteId={ this.props.siteId }
+				siteId={ this.props.siteIdForLaunch }
 			/>
 		);
 	}
@@ -472,15 +472,18 @@ export default withCurrentRoute(
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 
-		const selectedSiteId = getSelectedSiteId( state );
-		// Falls back to using the user's primary site only for UI that needs a concrete site
-		// outside a site-specific route, such as the launch button and celebration modal.
-		const siteIdForSiteUi =
-			selectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
+		const siteId = getSelectedSiteId( state );
+		// Falls back to using the user's primary site if no site has been selected
+		// by the user yet. Only consumed by the masterbar launch button and the
+		// site launch celebration modal — other layout logic (sidebar type,
+		// universal header, color scheme, jetpack detection) must keep using the
+		// actually-selected site.
+		const siteIdForLaunch =
+			siteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
-			( isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ) ) ||
+			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
@@ -489,7 +492,7 @@ export default withCurrentRoute(
 
 		const sidebarType = getSidebarType( {
 			state,
-			siteId: selectedSiteId,
+			siteId,
 			section: currentSection,
 			route: currentRoute,
 		} );
@@ -569,7 +572,7 @@ export default withCurrentRoute(
 
 		const hasUniversalHeader =
 			dashboardOptIn &&
-			! selectedSiteId &&
+			! siteId &&
 			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
 		return {
@@ -594,9 +597,10 @@ export default withCurrentRoute(
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			needsColorScheme,
-			isFetchingColorScheme: isFetchingAdminColor( state, selectedSiteId ),
-			siteId: siteIdForSiteUi,
-			site: getSite( state, siteIdForSiteUi ),
+			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
+			siteId,
+			siteIdForLaunch,
+			site: getSite( state, siteIdForLaunch ),
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
 			// request to lack the newly authorized site, and when the request finishes after

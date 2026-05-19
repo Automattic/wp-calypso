@@ -124,6 +124,9 @@ a.social-post-card-header__author:hover .social-post-card-header__display-name {
 	border-radius: 50%;
 	object-fit: cover;
 	background: var( --color-border-subtle );
+	// Calypso's global `img { height: auto }` overrides the height attribute,
+	// so non-square sources skew. Square the box so object-fit can crop.
+	aspect-ratio: 1 / 1;
 }
 
 .social-post-card-header__avatar--placeholder {
