@@ -96,6 +96,10 @@ jest.mock( 'calypso/state/preferences/actions', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
+	// Default to a registration date well before the eligibility cutoff so the
+	// registration-date OR clause is OFF by default in tests — count-based
+	// cases stay isolated. Individual tests can override per-case.
+	getCurrentUserDate: jest.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 } ) );
 
@@ -155,6 +159,9 @@ beforeEach( () => {
 	const { useSiteSubscriptions } = jest.requireMock( '../../following/use-site-subscriptions' ) as {
 		useSiteSubscriptions: jest.Mock;
 	};
+	const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
+		getCurrentUserDate: jest.Mock;
+	};
 	getReaderFollows.mockReturnValue( [] );
 	getReaderFollowsLastSyncTime.mockReturnValue( 1 );
 	useFollowedReaderTags.mockImplementation( () => ( { data: [], isPending: false } ) );
@@ -162,6 +169,7 @@ beforeEach( () => {
 		isLoading: false,
 		hasNonSelfSubscriptions: false,
 	} ) );
+	getCurrentUserDate.mockReturnValue( '2020-01-01T00:00:00Z' );
 } );
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
@@ -329,11 +337,13 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		tags = { data: [] as Array< { slug: string } >, isPending: false },
 		lastSyncTime = 1 as number | null,
 		hasNonSelfSubscriptions = true,
+		userRegistrationDate,
 	}: {
 		follows?: Array< { feed_ID: number; is_owner: boolean } >;
 		tags?: { data?: Array< { slug: string } >; isPending?: boolean };
 		lastSyncTime?: number | null;
 		hasNonSelfSubscriptions?: boolean;
+		userRegistrationDate?: string | null;
 	} = {} ) => {
 		const { getReaderFollows, getReaderFollowsLastSyncTime } = jest.requireMock(
 			'calypso/state/reader/follows/selectors'
@@ -344,6 +354,9 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		const { useSiteSubscriptions } = jest.requireMock(
 			'../../following/use-site-subscriptions'
 		) as { useSiteSubscriptions: jest.Mock };
+		const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
+			getCurrentUserDate: jest.Mock;
+		};
 
 		getReaderFollows.mockReturnValue( follows );
 		getReaderFollowsLastSyncTime.mockReturnValue( lastSyncTime );
@@ -355,6 +368,9 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			isLoading: false,
 			hasNonSelfSubscriptions,
 		} ) );
+		if ( userRegistrationDate !== undefined ) {
+			getCurrentUserDate.mockReturnValue( userRegistrationDate );
+		}
 
 		return { getReaderFollows };
 	};
@@ -436,6 +452,52 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		rerender( <ReaderOnboardingRsm /> );
 
 		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'renders for users registered on/after the eligibility cutoff even when above both follow thresholds', async () => {
+		overrideMocks( {
+			follows: makeFollows( 4 ),
+			tags: { data: makeTags( 3 ) },
+			userRegistrationDate: '2024-10-01T00:00:00Z',
+		} );
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'does not render for users registered before the eligibility cutoff when above both follow thresholds', async () => {
+		overrideMocks( {
+			follows: makeFollows( 4 ),
+			tags: { data: makeTags( 3 ) },
+			userRegistrationDate: '2024-09-30T23:59:59Z',
+		} );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render when the registration date is null and follow counts are above both thresholds', async () => {
+		overrideMocks( {
+			follows: makeFollows( 4 ),
+			tags: { data: makeTags( 3 ) },
+			userRegistrationDate: null,
+		} );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
 	} );
 } );
 

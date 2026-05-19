@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
+	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
@@ -21,7 +22,10 @@ import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import {
@@ -62,6 +66,7 @@ const ReaderOnboardingRsm = ( {
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
 	const follows = useSelector( getReaderFollows );
 	const followsLastSyncTime = useSelector( getReaderFollowsLastSyncTime );
+	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
@@ -96,11 +101,19 @@ const ReaderOnboardingRsm = ( {
 		} );
 	}, [ startingCounts, eligibilityDataLoaded, followedTags, follows ] );
 
+	// Users registered on or after the cutoff date are eligible regardless of
+	// their follow counts — they're new enough that we still want to walk them
+	// through onboarding even if they already accumulated subs/tags elsewhere.
+	const registeredAfterEligibilityCutoff =
+		userRegistrationDate !== null &&
+		new Date( userRegistrationDate ) >= new Date( READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE );
+
 	const meetsEligibility =
 		startingCounts !== null &&
 		! hasCompletedOnboarding &&
 		( startingCounts.followedSitesCount < READER_ONBOARDING_MIN_FOLLOWED_SITES ||
-			startingCounts.followedTagsCount < READER_ONBOARDING_MIN_FOLLOWED_TAGS );
+			startingCounts.followedTagsCount < READER_ONBOARDING_MIN_FOLLOWED_TAGS ||
+			registeredAfterEligibilityCutoff );
 
 	// Snapshot the "no non-self subscriptions" forceShow signal the first time
 	// the subscriptions query loads. Subscribing to a site inside the discover
