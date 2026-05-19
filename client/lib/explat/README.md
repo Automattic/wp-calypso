@@ -31,14 +31,9 @@ if ( enabled ) {
 }
 ```
 
-Create flags via the `explat/create-feature-flag` MCP ability or by talking to whoever owns the flag registry. Calls against an unknown or archived flag, a failed payload fetch, or a flag with no matching rule return the supplied `defaultValue`.
+Create flags via the `explat/create-feature-flag` MCP ability. The supplied `defaultValue` is returned on any failure — unknown or archived flag, fetch error, or no matching rule.
 
-Behavior:
-
-- The public static flag payload (rules only, no request attributes) is fetched once per session and cached per its TTL.
-- Request-specific runtime state comes from private wpcom bootstrapping via `window.__EXPLAT_RUNTIME__`. Missing runtime is tolerated; logging only fires on wpcom backends that emit it.
-- Force-rule matches return immediately with no Tracks event.
-- Experiment-rule matches return the typed value associated with the assigned variation and beacon to `POST /assignments/log`. The server recomputes and verifies before writing Tracks.
+The flag payload is fetched lazily on the first `getFeatureValue` call and cached per its TTL; subsequent calls within the TTL are local. Experiment-rule matches additionally beacon to `POST /assignments/log` so the server can write Tracks.
 
 ## Tips
 
