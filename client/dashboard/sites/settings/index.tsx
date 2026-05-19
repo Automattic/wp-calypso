@@ -3,6 +3,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
+import { prefetchFlagPayload } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -37,6 +39,10 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+
+	useEffect( () => {
+		prefetchFlagPayload();
+	}, [] );
 
 	return (
 		<PageLayout

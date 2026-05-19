@@ -9,7 +9,8 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getFeatureValue } from 'calypso/lib/explat';
 import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -103,8 +104,24 @@ function BetaProgramContent( { site }: { site: Site } ) {
 	);
 }
 
+const HEADER_AA_FLAG_KEY = 'dashboard_settings_wordpress_header_aa_2026_05';
+const HEADER_DEFAULT_TITLE = 'WordPress';
+
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ headerTitle, setHeaderTitle ] = useState< string >( HEADER_DEFAULT_TITLE );
+
+	useEffect( () => {
+		let cancelled = false;
+		getFeatureValue( HEADER_AA_FLAG_KEY, HEADER_DEFAULT_TITLE ).then( ( value ) => {
+			if ( ! cancelled ) {
+				setHeaderTitle( value );
+			}
+		} );
+		return () => {
+			cancelled = true;
+		};
+	}, [] );
 
 	const renderContent = () => {
 		if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
@@ -148,7 +165,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title="WordPress"
+					title={ headerTitle }
 					description={ __( 'Manage your WordPress version.' ) }
 				/>
 			}
