@@ -330,6 +330,52 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
 		} );
 	} );
+
+	it( 'invalidates the subscription queries when Back is clicked on the interests step', async () => {
+		// Back from interests still leaves the step, so the same close
+		// side-effects (including invalidation) must run — otherwise a user
+		// could subscribe to a pack, go Back to welcome, and close from there
+		// without ever refreshing the cached subscription counts.
+		const user = userEvent.setup();
+		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		invalidateSpy.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
+		} );
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
+		} );
+	} );
+
+	it( 'invalidates the subscription queries when Back is clicked on the discover step', async () => {
+		// Back from discover (e.g. user followed a few sites then went back
+		// to revise interests) must also flush the legacy-follow cache.
+		const user = userEvent.setup();
+		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		invalidateSpy.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
+		} );
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
+		} );
+	} );
 } );
 
 describe( 'ReaderOnboardingRsm – onboarding completion', () => {

@@ -216,11 +216,13 @@ const ReaderOnboardingRsm = ( {
 
 	const handleInterestsBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
+		performStepCloseSideEffects( 'interests' );
 		openStep( 'welcome' );
 	};
 
 	const handleDiscoverBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back` );
+		performStepCloseSideEffects( 'discover' );
 		openStep( 'interests' );
 	};
 
