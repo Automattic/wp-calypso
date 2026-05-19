@@ -154,6 +154,7 @@ jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 jest.mock( '../../following/use-site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn( () => ( {
 		isLoading: false,
+		hasLoadedAllSubscriptions: true,
 		hasNonSelfSubscriptions: false,
 		nonSelfSubscriptionsCount: 0,
 	} ) ),
@@ -188,6 +189,7 @@ beforeEach( () => {
 	useFollowedReaderTags.mockImplementation( () => ( { data: [], isPending: false } ) );
 	useSiteSubscriptions.mockImplementation( () => ( {
 		isLoading: false,
+		hasLoadedAllSubscriptions: true,
 		hasNonSelfSubscriptions: false,
 		nonSelfSubscriptionsCount: 0,
 	} ) );
@@ -448,6 +450,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		// happen to be above the thresholds.
 		useSiteSubscriptions.mockImplementation( () => ( {
 			isLoading: false,
+			hasLoadedAllSubscriptions: true,
 			hasNonSelfSubscriptions: false,
 			nonSelfSubscriptionsCount: 4,
 		} ) );
@@ -481,12 +484,18 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		nonSelfSubscriptionsCount = 0,
 		tags = { data: [] as Array< { slug: string } >, isPending: false },
 		subscriptionsLoading = false,
+		hasLoadedAllSubscriptions,
 		hasNonSelfSubscriptions = true,
 		userRegistrationDate,
 	}: {
 		nonSelfSubscriptionsCount?: number;
 		tags?: { data?: Array< { slug: string } >; isPending?: boolean };
 		subscriptionsLoading?: boolean;
+		// Defaults to `! subscriptionsLoading` so tests that don't care about
+		// pagination get sensible behavior (loaded = done). Explicitly pass
+		// `false` while `subscriptionsLoading: false` to model the mid-
+		// pagination case (page 1 in, later pages still streaming).
+		hasLoadedAllSubscriptions?: boolean;
 		hasNonSelfSubscriptions?: boolean;
 		userRegistrationDate?: string | null;
 	} = {} ) => {
@@ -506,6 +515,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		} ) );
 		useSiteSubscriptions.mockImplementation( () => ( {
 			isLoading: subscriptionsLoading,
+			hasLoadedAllSubscriptions: hasLoadedAllSubscriptions ?? ! subscriptionsLoading,
 			hasNonSelfSubscriptions,
 			nonSelfSubscriptionsCount,
 		} ) );
@@ -579,6 +589,64 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'does not snapshot eligibility while later subscription pages are still streaming', async () => {
+		// Page 1 has landed (`subscriptionsLoading: false`), but the infinite
+		// query has more pages → `hasLoadedAllSubscriptions: false`. The first
+		// page returned 0 non-self subs, which would otherwise (incorrectly)
+		// classify the user as eligible. The snapshot must wait for the rest.
+		overrideMocks( {
+			subscriptionsLoading: false,
+			hasLoadedAllSubscriptions: false,
+			nonSelfSubscriptionsCount: 0,
+			tags: { data: makeTags( 5 ) },
+		} );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'snapshots eligibility against the full subscription count once all pages have loaded', async () => {
+		// Same shape as above (page 1 = 0 non-self subs), but this time
+		// pagination finishes and later pages bring the real count up to 10 —
+		// over the 4-site threshold. Eligibility should reflect the true total,
+		// not the partial page-1 count.
+		const { useSiteSubscriptions } = overrideMocks( {
+			subscriptionsLoading: false,
+			hasLoadedAllSubscriptions: false,
+			nonSelfSubscriptionsCount: 0,
+			tags: { data: makeTags( 5 ) },
+		} );
+		const onRender = jest.fn();
+
+		const { rerender } = renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		// Mid-pagination: snapshot has not fired, modal is hidden.
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+
+		// Final page arrives; count is now well above the threshold.
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasLoadedAllSubscriptions: true,
+			hasNonSelfSubscriptions: true,
+			nonSelfSubscriptionsCount: 10,
+		} ) );
+		rerender( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenLastCalledWith( false );
+		} );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps the modal open mid-flow even after the user crosses the thresholds', async () => {
 		const { useSiteSubscriptions } = overrideMocks( {
 			nonSelfSubscriptionsCount: 0,
@@ -591,6 +659,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 
 		useSiteSubscriptions.mockImplementation( () => ( {
 			isLoading: false,
+			hasLoadedAllSubscriptions: true,
 			hasNonSelfSubscriptions: true,
 			nonSelfSubscriptionsCount: 10,
 		} ) );
@@ -680,6 +749,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
 		useSiteSubscriptions.mockImplementation( () => ( {
 			isLoading: false,
+			hasLoadedAllSubscriptions: true,
 			hasNonSelfSubscriptions: false,
 			nonSelfSubscriptionsCount: 4,
 		} ) );
@@ -691,6 +761,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		// Simulate the user subscribing to a site mid-flow.
 		useSiteSubscriptions.mockImplementation( () => ( {
 			isLoading: false,
+			hasLoadedAllSubscriptions: true,
 			hasNonSelfSubscriptions: true,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
@@ -704,6 +775,7 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
 		useSiteSubscriptions.mockImplementation( () => ( {
 			isLoading: false,
+			hasLoadedAllSubscriptions: true,
 			hasNonSelfSubscriptions: false,
 			nonSelfSubscriptionsCount: 4,
 		} ) );

@@ -158,4 +158,70 @@ describe( 'useSiteSubscriptions', () => {
 
 		expect( refetchMock ).toHaveBeenCalled();
 	} );
+
+	// The underlying site-subscriptions query is an infinite query that
+	// auto-paginates; `isLoading` flips false after page 1 arrives even though
+	// later pages may still be in flight. `hasLoadedAllSubscriptions` is the
+	// signal callers should use when they need an exact count.
+	describe( 'hasLoadedAllSubscriptions', () => {
+		const setup = ( siteQueryOverrides: Record< string, unknown > ) => {
+			( SubscriptionManager.useSubscriptionsCountQuery as jest.Mock ).mockReturnValue( {
+				data: { blogs: 250 },
+				isLoading: false,
+			} );
+			( SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock ).mockReturnValue( {
+				data: { subscriptions: [ { is_owner: true } ] },
+				isLoading: false,
+				hasNextPage: false,
+				isFetching: false,
+				isFetchingNextPage: false,
+				refetch: jest.fn(),
+				...siteQueryOverrides,
+			} );
+			return renderHook( () => useSiteSubscriptions() );
+		};
+
+		it( 'is true once page 1 has loaded and no more pages are queued', () => {
+			const { result } = setup( {} );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
+		} );
+
+		it( 'is false while later pages are still queued (hasNextPage)', () => {
+			const { result } = setup( { hasNextPage: true } );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
+		} );
+
+		it( 'is false while a follow-up page is in flight (isFetchingNextPage)', () => {
+			const { result } = setup( { isFetchingNextPage: true } );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
+		} );
+
+		it( 'is false during any background refetch (isFetching)', () => {
+			const { result } = setup( { isFetching: true } );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
+		} );
+
+		it( 'is false until page 1 itself has loaded', () => {
+			( SubscriptionManager.useSubscriptionsCountQuery as jest.Mock ).mockReturnValue( {
+				data: { blogs: 250 },
+				isLoading: false,
+			} );
+			( SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock ).mockReturnValue( {
+				data: undefined,
+				isLoading: true,
+				hasNextPage: false,
+				isFetching: true,
+				isFetchingNextPage: false,
+				refetch: jest.fn(),
+			} );
+
+			const { result } = renderHook( () => useSiteSubscriptions() );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
+		} );
+	} );
 } );

@@ -59,11 +59,8 @@ const ReaderOnboardingRsm = ( {
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const {
-		isLoading: subscriptionsLoading,
-		hasNonSelfSubscriptions,
-		nonSelfSubscriptionsCount,
-	} = useSiteSubscriptions();
+	const { hasLoadedAllSubscriptions, hasNonSelfSubscriptions, nonSelfSubscriptionsCount } =
+		useSiteSubscriptions();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
@@ -103,11 +100,13 @@ const ReaderOnboardingRsm = ( {
 	// stays stable for the rest of the component's life — the modal won't
 	// disappear mid-flow as the user follows tags/sites during onboarding.
 	//
-	// `subscriptionsLoading` (from useSiteSubscriptions / TanStack Query) is only
-	// false once the subscriptions response has actually arrived, so the snapshot
-	// reflects the real starting count rather than an empty/stale value taken
-	// mid-sync.
-	const eligibilityDataLoaded = preferencesLoaded && ! tagsPending && ! subscriptionsLoading;
+	// `hasLoadedAllSubscriptions` is only true once every page of the underlying
+	// infinite query has resolved. We can't gate on `isLoading` here because that
+	// flips false after page 1, which would let the snapshot capture a
+	// non-self count for only the first 100 subs — wrong for users with many
+	// self-owned blogs that fill the first page(s) before any non-self subs
+	// appear on later pages.
+	const eligibilityDataLoaded = preferencesLoaded && ! tagsPending && hasLoadedAllSubscriptions;
 	const [ startingCounts, setStartingCounts ] = useState< {
 		followedTagsCount: number;
 		followedSitesCount: number;
@@ -138,17 +137,20 @@ const ReaderOnboardingRsm = ( {
 			registeredAfterEligibilityCutoff );
 
 	// Snapshot the "no non-self subscriptions" forceShow signal the first time
-	// the subscriptions query loads. Subscribing to a site inside the discover
-	// step (or any later step) would otherwise flip `hasNonSelfSubscriptions` to
-	// true and drop the modal mid-flow.
+	// every page of the subscriptions query has loaded. Subscribing to a site
+	// inside the discover step (or any later step) would otherwise flip
+	// `hasNonSelfSubscriptions` to true and drop the modal mid-flow; gating on
+	// `hasLoadedAllSubscriptions` (rather than page-1 `isLoading`) also avoids
+	// the partial-page case where the first page is dominated by self-owned
+	// blogs and `hasNonSelfSubscriptions` is transiently false.
 	const [ startingForceShow, setStartingForceShow ] = useState< boolean | null >( null );
 
 	useEffect( () => {
-		if ( startingForceShow !== null || subscriptionsLoading ) {
+		if ( startingForceShow !== null || ! hasLoadedAllSubscriptions ) {
 			return;
 		}
 		setStartingForceShow( ! hasNonSelfSubscriptions );
-	}, [ startingForceShow, subscriptionsLoading, hasNonSelfSubscriptions ] );
+	}, [ startingForceShow, hasLoadedAllSubscriptions, hasNonSelfSubscriptions ] );
 
 	const forceShow = ! hasFinished && startingForceShow === true;
 
