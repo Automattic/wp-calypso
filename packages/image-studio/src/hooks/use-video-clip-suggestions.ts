@@ -231,8 +231,11 @@ export function useVideoClipSuggestions( {
 	}
 
 	// Pair the right system-prompt builder with the user-prompt variant.
-	// The cinematic system prompt hard-codes the three-axes JSON shape that
-	// conflicts with the editorial Highlights user prompt.
+	// Both return exactly 3 suggestion items, but the constraints differ:
+	// the cinematic system prompt mandates 2-4 word labels and 60-120-word
+	// prompts weaving 5-7 cinematography axes, whereas Highlights needs
+	// 2-8 word labels and 12-30-word multi-axis editorial steers. Using the
+	// cinematic builder for Highlights would force the wrong shape/length.
 	const buildSystemPrompt =
 		styleKey === 'highlights' ? buildHighlightsClipSystemPrompt : buildVideoClipSystemPrompt;
 
