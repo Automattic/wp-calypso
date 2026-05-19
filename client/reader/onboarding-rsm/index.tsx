@@ -2,7 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
@@ -53,6 +55,7 @@ const ReaderOnboardingRsm = ( {
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 
@@ -137,6 +140,24 @@ const ReaderOnboardingRsm = ( {
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
+	// Site follows inside the onboarding flow (discover-step `ReaderFollowButton`
+	// and interests-step pack subscriptions) go through the legacy Redux
+	// `READER_FOLLOW` action, which doesn't touch the SubscriptionManager
+	// TanStack Query caches. Invalidate them explicitly when leaving either
+	// step so the next mount of `useSiteSubscriptions` (here or anywhere else
+	// in Reader) sees the user's real, post-onboarding follow counts rather
+	// than the pre-onboarding cached snapshot. Without this, remounting
+	// onboarding-rsm right after a user clicks Finish can still surface
+	// `forceShow=true` against a stale `hasNonSelfSubscriptions=false`.
+	const invalidateSubscriptionQueries = () => {
+		queryClient.invalidateQueries( {
+			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
+		} );
+		queryClient.invalidateQueries( {
+			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
+		} );
+	};
+
 	// Side-effects that run when a given step is closed (whether via the X /
 	// escape, or via the "continue" button transitioning to the next step).
 	// Centralised so the same effects fire on either path.
@@ -149,9 +170,11 @@ const ReaderOnboardingRsm = ( {
 		} else if ( step === 'interests' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 			refreshFollowingStreams();
+			invalidateSubscriptionQueries();
 		} else if ( step === 'discover' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
 			refreshFollowingStreams();
+			invalidateSubscriptionQueries();
 		}
 	};
 

@@ -3,6 +3,8 @@
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { SubscriptionManager } from '@automattic/data-stores';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -14,6 +16,13 @@ import {
 import { savePreference } from 'calypso/state/preferences/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingRsm from '../index';
+
+const renderWithInvalidateSpy = ( ui: React.ReactElement ) => {
+	const queryClient = new QueryClient();
+	const invalidateSpy = jest.spyOn( queryClient, 'invalidateQueries' );
+	const result = renderWithProvider( ui, { queryClient } );
+	return { ...result, invalidateSpy };
+};
 
 // ── Router ────────────────────────────────────────────────────────────────────
 
@@ -250,6 +259,76 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 		// welcome close side-effects fire on Continue; refresh should NOT be called
 		expect( mockRefreshFollowingStreams ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – subscription query invalidation on step close', () => {
+	// Site follows during onboarding (discover-step `ReaderFollowButton` and
+	// interests-step pack subscriptions) go through the legacy Redux follow
+	// path, which doesn't touch the SubscriptionManager TanStack Query caches.
+	// The component invalidates those caches whenever the interests or discover
+	// step closes so the next mount of `useSiteSubscriptions` (here or elsewhere
+	// in Reader) reflects the user's real post-onboarding follow counts instead
+	// of the pre-onboarding cached snapshot.
+
+	it( 'invalidates the subscription queries when Finish is clicked on the discover step', async () => {
+		const user = userEvent.setup();
+		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		invalidateSpy.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
+		} );
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
+		} );
+	} );
+
+	it( 'does not invalidate the subscription queries when the welcome step is closed', async () => {
+		const user = userEvent.setup();
+		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		invalidateSpy.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+
+		expect( invalidateSpy ).not.toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
+		} );
+		expect( invalidateSpy ).not.toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
+		} );
+	} );
+
+	it( 'invalidates the subscription queries when Continue is clicked on the interests step', async () => {
+		// Pack subscriptions in the interests step can follow blogs via the
+		// legacy Redux follow path, so closing this step must also kick a
+		// fresh fetch of the subscription queries.
+		const user = userEvent.setup();
+		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		invalidateSpy.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
+		} );
+		expect( invalidateSpy ).toHaveBeenCalledWith( {
+			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
+		} );
 	} );
 } );
 
