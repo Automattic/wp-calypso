@@ -41,19 +41,26 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 		return () => document.body.classList.remove( 'has-help-center-fab' );
 	}, [] );
 
+	useEffect( () => {
+		recordTracksEvent( 'calypso_inlinehelp_impression', {
+			location: 'fab',
+			section: sectionName,
+		} );
+	}, [ sectionName ] );
+
 	const handleClick = () => {
 		const willShow = ! isHelpCenterShown;
 		recordTracksEvent( `calypso_inlinehelp_${ willShow ? 'show' : 'close' }`, {
-			location: 'help-center-fab',
+			location: 'fab',
 			section: sectionName,
 		} );
 		setShowHelpCenter( willShow );
 	};
 
 	const label = isHelpCenterShown
-		? /* translators: Tooltip on the floating Help button when the Help Center panel is open. */
+		? /* translators: Accessible label on the floating Help button when the Help Center panel is open. */
 		  __( 'Close help' )
-		: /* translators: Tooltip on the floating Help button that opens the Help Center. */
+		: /* translators: Accessible label on the floating Help button that opens the Help Center. */
 		  __( 'Help' );
 
 	return (
@@ -71,8 +78,7 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 			<Button
 				className={ clsx( 'help-center-fab', { 'is-active': isHelpCenterShown } ) }
 				onClick={ handleClick }
-				label={ label }
-				showTooltip
+				aria-label={ label }
 				aria-haspopup="dialog"
 				aria-expanded={ isHelpCenterShown }
 			>

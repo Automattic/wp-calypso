@@ -55,6 +55,33 @@
 			--wp-components-color-accent-inverted: var( --color-text-inverted );
 		}
 
+		.site__badge:not( .is-p2 ):not( .is-p2-workspace ) {
+			background-color: var( --wp-components-color-gray-200 );
+			border: 0;
+			box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+			color: var( --wp-components-color-gray-800 );
+
+			&[class*="SitesStagingBadge"] {
+				background-color: var( --color-warning-10 );
+				box-shadow: inset 0 0 0 1px var( --color-warning-30 );
+				color: var( --color-warning-80 );
+			}
+		}
+
+		.site-selector .site.is-selected {
+			.site__title {
+				color: var( --color-text );
+			}
+
+			&.is-private .site__title::before {
+				color: var( --color-text );
+			}
+
+			.site__domain {
+				color: var( --color-text-subtle );
+			}
+		}
+
 		.sites-dropdown__selected {
 			.site__title,
 			.site__title-chevron-icon {
@@ -67,14 +94,6 @@
 
 			.site__domain {
 				color: var( --color-text-subtle );
-			}
-
-			.site__badge.site__badge-private,
-			.site__badge.site__badge-coming-soon {
-				background-color: var( --wp-components-color-gray-200 );
-				border: 0;
-				box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
-				color: var( --wp-components-color-gray-800 );
 			}
 		}
 	}

@@ -5,11 +5,17 @@ import type { ReactNode } from 'react';
 
 export const A4A_MCP_URL = 'https://public-api.wordpress.com/wpcom/v2/a4a-mcp/v1';
 
+export interface QuickSetupGroup {
+	title: ReactNode;
+	steps: ReactNode[];
+}
+
 export interface AgentConfig {
 	id: string;
 	label: string;
 	quickSetupDescription?: string;
 	quickSetup?: ReactNode[];
+	quickSetupGroups?: QuickSetupGroup[];
 	installAction?: {
 		label: string;
 		deepLink: string;
@@ -88,20 +94,45 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 	{
 		id: 'claude-desktop',
 		label: 'Claude Desktop',
-		quickSetup: [
-			__( 'Open Claude Desktop and go to Settings → Connectors (or Customize).' ),
-			__( 'Click “Add custom connector”.' ),
-			createInterpolateElement(
-				sprintf(
-					/* translators: %s: A4A MCP server URL, kept inside <code> */
-					__(
-						'Enter a name (for example, “A4A MCP”) and paste <code>%s</code> into the Remote MCP server URL field.'
+		quickSetupDescription: __( 'Choose the method that matches your Claude Desktop account.' ),
+		quickSetupGroups: [
+			{
+				title: __( 'Connectors (recommended)' ),
+				steps: [
+					__( 'Open Claude Desktop and go to Settings → Connectors (or Customize).' ),
+					__( 'Click “Add custom connector”.' ),
+					createInterpolateElement(
+						sprintf(
+							/* translators: %s: A4A MCP server URL, kept inside <code> */
+							__(
+								'Enter a name (for example, “A4A MCP”) and paste <code>%s</code> into the Remote MCP server URL field.'
+							),
+							A4A_MCP_URL
+						),
+						{ code: <code /> }
 					),
-					A4A_MCP_URL
-				),
-				{ code: <code /> }
-			),
-			__( 'Authenticate when Claude Desktop prompts you in your browser.' ),
+					__( 'Authenticate when Claude Desktop prompts you in your browser.' ),
+				],
+			},
+			{
+				title: __( 'Developer config (for Claude Enterprise accounts)' ),
+				steps: [
+					__( 'Install Node 20 or later (required by mcp-remote).' ),
+					__(
+						'Open Claude Desktop → Settings → Developer, then click “Edit Config” under Local MCP servers.'
+					),
+					createInterpolateElement(
+						__(
+							'Add the configuration below to <code>claude_desktop_config.json</code> (typically at <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>).'
+						),
+						{ code: <code /> }
+					),
+					__( 'Restart Claude Desktop.' ),
+					__(
+						'If you haven’t authenticated yet, Claude Desktop will prompt you in your browser as soon as it reopens.'
+					),
+				],
+			},
 		],
 		manualSetupFile: 'claude_desktop_config.json',
 		manualSetupLanguage: 'json',
