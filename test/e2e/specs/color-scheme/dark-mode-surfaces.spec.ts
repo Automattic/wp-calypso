@@ -52,30 +52,32 @@ function addDarkModePreference(
 ): Record< string, unknown > {
 	const preferencesResponse = response ?? {};
 	const responseBody = preferencesResponse.body;
-	if (
-		typeof responseBody === 'object' &&
-		responseBody !== null &&
-		! Array.isArray( responseBody )
-	) {
-		return {
-			...preferencesResponse,
-			body: addDarkModePreference( responseBody as Record< string, unknown > ),
-		};
-	}
-
 	const calypsoPreferences =
 		typeof preferencesResponse.calypso_preferences === 'object' &&
 		preferencesResponse.calypso_preferences !== null
 			? preferencesResponse.calypso_preferences
 			: {};
 
-	return {
+	const darkPreferencesResponse = {
 		...preferencesResponse,
 		calypso_preferences: {
 			...calypsoPreferences,
 			[ COLOR_SCHEME_PREFERENCE ]: 'dark',
 		},
 	};
+
+	if (
+		typeof responseBody === 'object' &&
+		responseBody !== null &&
+		! Array.isArray( responseBody )
+	) {
+		return {
+			...darkPreferencesResponse,
+			body: addDarkModePreference( responseBody as Record< string, unknown > ),
+		};
+	}
+
+	return darkPreferencesResponse;
 }
 
 async function forceDarkModePreference( page: Page ) {
