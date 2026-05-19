@@ -11,19 +11,25 @@ import { SocialAvatar } from '../../avatar';
 import type {
 	AtmosphereNotification,
 	AtmosphereNotificationCanonicalType,
+	FediverseNotification,
+	FediverseNotificationCanonicalType,
 	MastodonNotification,
 	MastodonNotificationCanonicalType,
 } from '@automattic/api-core';
 
 // The wpcom backend ships byte-compatible notification envelopes across
-// protocols; both per-protocol types share the same canonical_type union.
-// Aliased here so the renderer takes either without per-protocol branching.
-// Keep both arms in the union so a future per-protocol widening surfaces as
+// protocols; the per-protocol types share the same canonical_type union.
+// Aliased here so the renderer takes any of them without per-protocol branching.
+// Keep all arms in the union so a future per-protocol widening surfaces as
 // a switch-exhaustiveness error instead of being silently funneled to 'other'.
-type SocialNotification = AtmosphereNotification | MastodonNotification;
+export type SocialNotification =
+	| AtmosphereNotification
+	| MastodonNotification
+	| FediverseNotification;
 type SocialNotificationCanonicalType =
 	| AtmosphereNotificationCanonicalType
-	| MastodonNotificationCanonicalType;
+	| MastodonNotificationCanonicalType
+	| FediverseNotificationCanonicalType;
 
 interface Props {
 	notification: SocialNotification;

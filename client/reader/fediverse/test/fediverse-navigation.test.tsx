@@ -29,13 +29,15 @@ describe( 'FediverseNavigation', () => {
 	} );
 	afterEach( () => jest.restoreAllMocks() );
 
-	it( 'renders the Timeline and Profile tabs with paths scoped to the connection id', () => {
+	it( 'renders the Timeline, Notifications, and Profile tabs with paths scoped to the connection id', () => {
 		renderWithProvider( <FediverseNavigation connectionId={ 7 } selectedTab="timeline" /> );
 
 		const timeline = screen.getByRole( 'menuitem', { name: 'Timeline' } );
+		const notifications = screen.getByRole( 'menuitem', { name: 'Notifications' } );
 		const profile = screen.getByRole( 'menuitem', { name: 'Profile' } );
 
 		expect( timeline ).toHaveAttribute( 'href', '/reader/fediverse/7/timeline' );
+		expect( notifications ).toHaveAttribute( 'href', '/reader/fediverse/7/notifications' );
 		expect( profile ).toHaveAttribute( 'href', '/reader/fediverse/7/profile' );
 		// Settings tab was removed alongside the Mastodon / ATmosphere drop —
 		// no dead nav item leaks through.
