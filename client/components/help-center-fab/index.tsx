@@ -41,10 +41,17 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 		return () => document.body.classList.remove( 'has-help-center-fab' );
 	}, [] );
 
+	useEffect( () => {
+		recordTracksEvent( 'calypso_inlinehelp_impression', {
+			location: 'fab',
+			section: sectionName,
+		} );
+	}, [ sectionName ] );
+
 	const handleClick = () => {
 		const willShow = ! isHelpCenterShown;
 		recordTracksEvent( `calypso_inlinehelp_${ willShow ? 'show' : 'close' }`, {
-			location: 'help-center-fab',
+			location: 'fab',
 			section: sectionName,
 		} );
 		setShowHelpCenter( willShow );
