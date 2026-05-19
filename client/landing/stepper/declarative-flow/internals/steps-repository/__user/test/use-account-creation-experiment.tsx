@@ -22,7 +22,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
 const mockUseExperiment = useExperiment as jest.Mock;
-const mockUseViewportMatch = useViewportMatch as jest.Mock;
+const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUseQuery = useQuery as jest.Mock;
 
 describe( 'useAccountCreationExperiment', () => {
