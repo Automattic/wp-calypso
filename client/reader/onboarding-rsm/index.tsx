@@ -19,10 +19,7 @@ import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
-import {
-	getCurrentUserDate,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
@@ -57,7 +54,6 @@ const ReaderOnboardingRsm = ( {
 	const [ hasCompletedWelcomeStep, setHasCompletedWelcomeStep ] = useState( false );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
 	const { data: followedTags } = useFollowedReaderTags();
@@ -74,11 +70,7 @@ const ReaderOnboardingRsm = ( {
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
-	const meetsEligibility =
-		preferencesLoaded &&
-		! hasCompletedOnboarding &&
-		userRegistrationDate !== null &&
-		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+	const meetsEligibility = preferencesLoaded && ! hasCompletedOnboarding;
 
 	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
 
