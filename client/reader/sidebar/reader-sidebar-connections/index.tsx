@@ -261,7 +261,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 							href={ BASE_PATH }
 							onClick={ recordViewMoreClick }
 						>
-							<span>{ translate( 'View more' ) }</span>
+							<span>{ translate( 'View More' ) }</span>
 						</MenuItemLink>
 					</MenuItem>
 				) }
