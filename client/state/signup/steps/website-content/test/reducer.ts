@@ -1,4 +1,13 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
+let mockInstanceIdCounter = 0;
+jest.mock( 'calypso/signup/difm/page-instances', () => {
+	const actual = jest.requireActual( 'calypso/signup/difm/page-instances' );
+	return {
+		...actual,
+		newInstanceId: jest.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
+	};
+} );
+
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	ABOUT_PAGE,
@@ -99,6 +108,10 @@ const translatedPageTitles = {
 };
 
 describe( 'reducer', () => {
+	beforeEach( () => {
+		mockInstanceIdCounter = 0;
+	} );
+
 	test( 'should update the current index', () => {
 		expect(
 			websiteContentCollectionReducer(
@@ -134,7 +147,7 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: CONTACT_PAGE,
+						id: 'instance-1',
 						type: CONTACT_PAGE,
 						title: 'Contact',
 						content: '',
@@ -147,7 +160,7 @@ describe( 'reducer', () => {
 						],
 					},
 					{
-						id: VIDEO_GALLERY_PAGE,
+						id: 'instance-2',
 						type: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: '',
@@ -160,7 +173,7 @@ describe( 'reducer', () => {
 						],
 					},
 					{
-						id: PORTFOLIO_PAGE,
+						id: 'instance-3',
 						type: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: '',
@@ -226,7 +239,7 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: CONTACT_PAGE,
+						id: 'instance-1',
 						type: CONTACT_PAGE,
 						title: 'Contact',
 						content: 'test contact page content',
@@ -239,7 +252,7 @@ describe( 'reducer', () => {
 						useFillerContent: false,
 					},
 					{
-						id: VIDEO_GALLERY_PAGE,
+						id: 'instance-2',
 						type: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: 'test video gallery page content',
@@ -252,7 +265,7 @@ describe( 'reducer', () => {
 						useFillerContent: true,
 					},
 					{
-						id: PORTFOLIO_PAGE,
+						id: 'instance-3',
 						type: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: 'test portfolio page content',
