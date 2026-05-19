@@ -647,10 +647,8 @@ export const sitePerformanceBackendTransactionsRoute = createRoute( {
 	path: 'transactions',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmTransactionsQuery } = await import(
-			'../../sites/performance/backend/mock-data'
-		);
-		await queryClient.ensureQueryData( siteApmTransactionsQuery( site.ID ) );
+		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
+		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -672,8 +670,8 @@ export const sitePerformanceBackendDatabaseRoute = createRoute( {
 	path: 'database',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmSlowQueriesQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmSlowQueriesQuery( site.ID ) );
+		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
+		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -695,10 +693,8 @@ export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
 	path: 'external-requests',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmExternalRequestsQuery } = await import(
-			'../../sites/performance/backend/mock-data'
-		);
-		await queryClient.ensureQueryData( siteApmExternalRequestsQuery( site.ID ) );
+		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
+		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -722,8 +718,8 @@ export const sitePerformanceBackendWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmWordPressQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmWordPressQuery( site.ID ) );
+		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
+		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
