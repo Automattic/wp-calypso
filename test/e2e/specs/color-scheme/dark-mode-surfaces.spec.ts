@@ -3,6 +3,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 import type { Locator, Page } from '@playwright/test';
 
 const COLOR_SCHEME_PREFERENCE = 'hosting-dashboard-color-scheme';
+const REACT_QUERY_CACHE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
 const REQUIRED_TOKENS = [
 	'--dashboard__background-color',
 	'--dashboard-surface__background-color',
@@ -32,6 +33,10 @@ type RGB = {
 };
 
 async function forceDarkModePreference( page: Page ) {
+	await page.addInitScript( ( cacheKey ) => {
+		window.localStorage.removeItem( cacheKey );
+	}, REACT_QUERY_CACHE_KEY );
+
 	await page.route( '**/rest/v1.1/me/preferences**', async ( route ) => {
 		if ( route.request().method() !== 'GET' ) {
 			await route.continue();

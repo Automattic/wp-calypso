@@ -332,7 +332,7 @@ This mixin generates alias variables for a color palette. For example, the
 			color: var( --dashboard__text-color );
 		}
 
-		&__input-container {
+		.components-form-token-field__input-container {
 			background: transparent;
 			border-color: var( --dashboard-field__border-color );
 			color: var( --dashboard__text-color );
@@ -359,11 +359,11 @@ This mixin generates alias variables for a color palette. For example, the
 			}
 		}
 
-		&__help {
+		.components-form-token-field__help {
 			color: var( --dashboard__text-muted-color );
 		}
 
-		&__token {
+		.components-form-token-field__token {
 			color: var( --dashboard__text-color );
 
 			&.is-validating .components-form-token-field__token-text,
@@ -384,23 +384,23 @@ This mixin generates alias variables for a color palette. For example, the
 			}
 		}
 
-		&__token-text,
-		&__remove-token.components-button {
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token.components-button {
 			background: var( --wp-components-color-gray-200 );
 			color: var( --dashboard__text-color );
 		}
 
-		&__remove-token.components-button:hover:not( :disabled ) {
+		.components-form-token-field__remove-token.components-button:hover:not( :disabled ) {
 			background: var( --wp-components-color-gray-300 );
 			color: var( --dashboard__text-color );
 		}
 
-		&__suggestions-list {
+		.components-form-token-field__suggestions-list {
 			background: var( --dashboard-surface__background-color );
 			box-shadow: inset 0 1px 0 0 var( --dashboard-field__border-color );
 		}
 
-		&__suggestion {
+		.components-form-token-field__suggestion {
 			color: var( --dashboard__text-color );
 
 			&.is-selected {
