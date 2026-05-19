@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
@@ -49,7 +49,6 @@ const ReaderOnboardingRsm = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
-	const completionRecordedRef = useRef( false );
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
@@ -143,10 +142,9 @@ const ReaderOnboardingRsm = ( {
 	};
 
 	const recordOnboardingCompleted = () => {
-		if ( hasCompletedOnboarding || completionRecordedRef.current ) {
+		if ( hasCompletedOnboarding ) {
 			return;
 		}
-		completionRecordedRef.current = true;
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	};
