@@ -72,7 +72,15 @@ export default function PaymentRiskNoticeBanner( {
 	}
 
 	const fixPaymentMethodCta = (
-		<Button key="update-payment-method" variant="primary" href={ ctaUrl } onClick={ onCtaClick }>
+		<Button
+			key="update-payment-method"
+			variant="primary"
+			href={ ctaUrl }
+			onClick={ onCtaClick }
+			target="_blank"
+			rel="noopener noreferrer"
+			__next40pxDefaultSize
+		>
 			{ translate( 'Fix payment method' ) }
 		</Button>
 	);
@@ -83,6 +91,7 @@ export default function PaymentRiskNoticeBanner( {
 			variant="secondary"
 			href={ CONTACT_URL_HASH_FRAGMENT }
 			onClick={ onContactUsClick }
+			__next40pxDefaultSize
 		>
 			{ translate( 'Contact us' ) }
 		</Button>

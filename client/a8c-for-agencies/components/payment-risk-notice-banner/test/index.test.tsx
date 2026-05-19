@@ -39,12 +39,21 @@ jest.mock( '@wordpress/components', () => ( {
 		children,
 		href,
 		onClick,
+		rel,
+		target,
 	}: {
 		children: ReactNode;
 		href?: string;
 		onClick?: ( event: { preventDefault: () => void } ) => void;
+		rel?: string;
+		target?: string;
 	} ) => (
-		<button data-href={ href } onClick={ () => onClick?.( { preventDefault: jest.fn() } ) }>
+		<button
+			data-href={ href }
+			data-rel={ rel }
+			data-target={ target }
+			onClick={ () => onClick?.( { preventDefault: jest.fn() } ) }
+		>
 			{ children }
 		</button>
 	),
@@ -126,7 +135,12 @@ describe( 'PaymentRiskNoticeBanner', () => {
 			{ source: 'overview' }
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Fix payment method' } ) );
+		const fixPaymentMethodButton = screen.getByRole( 'button', { name: 'Fix payment method' } );
+
+		expect( fixPaymentMethodButton ).toHaveAttribute( 'data-target', '_blank' );
+		expect( fixPaymentMethodButton ).toHaveAttribute( 'data-rel', 'noopener noreferrer' );
+
+		await user.click( fixPaymentMethodButton );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_payment_risk_notice_banner_cta_click',

@@ -1,6 +1,11 @@
 .a4a-payment-risk-notice-banner {
 	.notice-banner__action-bar {
+		gap: 8px;
 		margin-block-start: 16px;
+
+		> * {
+			margin: 0;
+		}
 
 		a.components-button.is-primary,
 		a.components-button.is-primary:hover,
