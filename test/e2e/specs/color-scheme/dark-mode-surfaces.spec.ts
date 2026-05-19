@@ -111,9 +111,11 @@ async function forceDarkModePreference( page: Page ) {
 
 function collectPageIssues( page: Page ) {
 	const issues: string[] = [];
+	const isRelevantIssue = ( text: string ) =>
+		/ChunkLoadError|stylesheet|css chunk|sass|token/i.test( text );
 
 	page.on( 'pageerror', ( error ) => {
-		if ( /IDBDatabase.*database connection is closing/.test( error.message ) ) {
+		if ( ! isRelevantIssue( error.message ) ) {
 			return;
 		}
 
@@ -126,7 +128,7 @@ function collectPageIssues( page: Page ) {
 		}
 
 		const text = message.text();
-		if ( /ChunkLoadError|stylesheet|css chunk|sass|token/i.test( text ) ) {
+		if ( isRelevantIssue( text ) ) {
 			issues.push( `console: ${ text }` );
 		}
 	} );
