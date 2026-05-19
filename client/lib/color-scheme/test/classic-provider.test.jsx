@@ -11,6 +11,7 @@ import {
 } from 'calypso/lib/color-scheme';
 
 const mockStore = configureStore();
+const surfaceBodyClasses = [ 'is-reader-dark-mode', 'is-themes-dark-mode' ];
 
 function buildRemoteValues( { received, scheme } ) {
 	if ( ! received ) {
@@ -34,6 +35,10 @@ function buildState( { received = true, scheme } = {} ) {
 function renderWithStore( state, ui ) {
 	const store = mockStore( state );
 	return render( <Provider store={ store }>{ ui }</Provider> );
+}
+
+function removeSurfaceBodyClasses() {
+	surfaceBodyClasses.forEach( ( bodyClass ) => document.body.classList.remove( bodyClass ) );
 }
 
 describe( 'ClassicColorSchemeProvider', () => {
@@ -81,7 +86,7 @@ describe( 'ClassicColorSchemeProvider', () => {
 		expect( document.documentElement.dataset.theme ).toBe( 'light' );
 	} );
 
-	test( 'applies saved dark scheme', () => {
+	test( 'applies saved dark scheme to html[data-theme]', () => {
 		renderWithStore(
 			buildState( { scheme: 'dark' } ),
 			<ClassicColorSchemeProvider>
@@ -152,53 +157,45 @@ describe( 'ClassicColorSchemeProvider', () => {
 describe( 'withColorScheme', () => {
 	beforeEach( () => {
 		delete document.documentElement.dataset.theme;
-		document.body.classList.remove( 'is-themes-dark-mode' );
+		removeSurfaceBodyClasses();
 	} );
 
-	test( 'returns children unchanged on site routes (no provider, no body class)', () => {
-		renderWithStore(
-			buildState( { scheme: 'dark' } ),
-			withColorScheme( <span>child</span>, {
-				bodyClass: 'is-themes-dark-mode',
-				enabled: false,
-				Provider: ClassicColorSchemeProvider,
-			} )
-		);
-		expect( screen.getByText( 'child' ) ).toBeVisible();
-		expect( document.documentElement.dataset.theme ).toBeUndefined();
-		expect( document.body.classList.contains( 'is-themes-dark-mode' ) ).toBe( false );
+	afterEach( () => {
+		removeSurfaceBodyClasses();
 	} );
 
-	test( 'returns children unchanged for logged-out users (no provider, no body class)', () => {
-		renderWithStore(
-			buildState( { scheme: 'dark' } ),
-			withColorScheme( <span>child</span>, {
-				bodyClass: 'is-themes-dark-mode',
-				enabled: false,
-				Provider: ClassicColorSchemeProvider,
-			} )
-		);
-		expect( screen.getByText( 'child' ) ).toBeVisible();
-		expect( document.documentElement.dataset.theme ).toBeUndefined();
-		expect( document.body.classList.contains( 'is-themes-dark-mode' ) ).toBe( false );
-	} );
+	describe.each( surfaceBodyClasses )( 'body class %s', ( bodyClass ) => {
+		test( 'returns children unchanged when disabled', () => {
+			renderWithStore(
+				buildState( { scheme: 'dark' } ),
+				withColorScheme( <span>child</span>, {
+					bodyClass,
+					enabled: false,
+					Provider: ClassicColorSchemeProvider,
+				} )
+			);
+			expect( screen.getByText( 'child' ) ).toBeVisible();
+			expect( document.documentElement.dataset.theme ).toBeUndefined();
+			expect( document.body.classList.contains( bodyClass ) ).toBe( false );
+		} );
 
-	test( 'wraps children with provider and body class for logged-in non-site routes', () => {
-		const { unmount } = renderWithStore(
-			buildState( { scheme: 'dark' } ),
-			withColorScheme( <span>child</span>, {
-				bodyClass: 'is-themes-dark-mode',
-				enabled: true,
-				Provider: ClassicColorSchemeProvider,
-			} )
-		);
-		expect( screen.getByText( 'child' ) ).toBeVisible();
-		expect( document.documentElement.dataset.theme ).toBe( 'dark' );
-		expect( document.body.classList.contains( 'is-themes-dark-mode' ) ).toBe( true );
+		test( 'wraps children with provider and cleans up the body class on unmount', () => {
+			const { unmount } = renderWithStore(
+				buildState( { scheme: 'dark' } ),
+				withColorScheme( <span>child</span>, {
+					bodyClass,
+					enabled: true,
+					Provider: ClassicColorSchemeProvider,
+				} )
+			);
+			expect( screen.getByText( 'child' ) ).toBeVisible();
+			expect( document.documentElement.dataset.theme ).toBe( 'dark' );
+			expect( document.body.classList.contains( bodyClass ) ).toBe( true );
 
-		unmount();
+			unmount();
 
-		expect( document.body.classList.contains( 'is-themes-dark-mode' ) ).toBe( false );
+			expect( document.body.classList.contains( bodyClass ) ).toBe( false );
+		} );
 	} );
 
 	test( 'keeps the body class effect stable across re-renders', () => {
