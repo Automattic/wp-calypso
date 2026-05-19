@@ -365,7 +365,6 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 					/>
 				) }
-				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 				{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 				<BodySectionCssClass
 					group={ sectionGroup }
@@ -431,6 +430,8 @@ const LayoutLoggedOut = ( {
 							} }
 						/>
 					) }
+				{ /* Rendered last so the FAB tabs after the form, just before the dev badge. */ }
+				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 			</div>
 		</Step.StepContainerV2Provider>
 	);
