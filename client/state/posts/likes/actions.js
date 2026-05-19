@@ -77,13 +77,14 @@ export const receivePostLikers = ( siteId, postId, { likes, found } ) => ( {
 	found,
 } );
 
-export const receiveLikes = ( siteId, postId, { likes, iLike, found } ) => ( {
+export const receiveLikes = ( siteId, postId, { likes, iLike, found }, meta ) => ( {
 	type: POST_LIKES_RECEIVE,
 	siteId,
 	postId,
 	likes,
 	iLike,
 	found,
+	meta,
 } );
 
 export const addLiker = ( siteId, postId, likeCount, liker ) => ( {

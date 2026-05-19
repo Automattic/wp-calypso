@@ -270,12 +270,27 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'a POST_LIKE action', () => {
+			test( 'should mark the item fresh while the like request is pending', () => {
+				const state = itemReducer(
+					deepFreeze( {
+						likes: [],
+						iLike: false,
+						found: 1,
+						lastUpdated: undefined,
+					} ),
+					like( 1, 1 )
+				);
+
+				expect( state.lastUpdated ).toBe( FAKE_NOW );
+			} );
+
 			test( 'should create a new state item if none is found', () => {
 				const state = itemReducer( undefined, like( 1, 1 ) );
 				expect( state ).toEqual( {
 					likes: undefined,
 					iLike: true,
 					found: 1,
+					lastUpdated: FAKE_NOW,
 				} );
 			} );
 
@@ -292,6 +307,7 @@ describe( 'reducer', () => {
 					likes: [],
 					iLike: true,
 					found: 2,
+					lastUpdated: FAKE_NOW,
 				} );
 			} );
 
@@ -307,6 +323,20 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'a POST_UNLIKE action', () => {
+			test( 'should mark the item fresh while the unlike request is pending', () => {
+				const state = itemReducer(
+					deepFreeze( {
+						likes: [],
+						iLike: true,
+						found: 1,
+						lastUpdated: undefined,
+					} ),
+					unlike( 1, 1 )
+				);
+
+				expect( state.lastUpdated ).toBe( FAKE_NOW );
+			} );
+
 			test( 'should not create a new state item if none is found', () => {
 				const state = itemReducer( DEFAULT_ITEM_STATE, unlike( 1, 1 ) );
 				expect( state ).toBe( DEFAULT_ITEM_STATE );
@@ -325,6 +355,7 @@ describe( 'reducer', () => {
 					likes: [],
 					iLike: false,
 					found: 0,
+					lastUpdated: FAKE_NOW,
 				} );
 			} );
 

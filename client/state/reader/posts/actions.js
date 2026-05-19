@@ -40,10 +40,15 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 	forEach( normalizedPosts, ( post ) => {
 		if ( ! post.is_external ) {
 			dispatch(
-				receiveLikes( post.site_ID, post.ID, {
-					iLike: Boolean( post.i_like ),
-					found: +post.like_count,
-				} )
+				receiveLikes(
+					post.site_ID,
+					post.ID,
+					{
+						iLike: Boolean( post.i_like ),
+						found: +post.like_count,
+					},
+					{ source: READER_POSTS_RECEIVE }
+				)
 			);
 		}
 	} );

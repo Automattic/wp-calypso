@@ -7,6 +7,7 @@ import {
 import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import readerPostEntitiesMiddleware from 'calypso/reader/data/reader-post-entities-middleware';
 import { WithAddReducer } from 'calypso/state/add-reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
@@ -35,6 +36,7 @@ export function createReduxStore(
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
 		wpcomApiMiddleware,
+		readerPostEntitiesMiddleware,
 		dynamicMiddlewares,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,

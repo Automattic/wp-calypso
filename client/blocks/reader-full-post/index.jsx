@@ -30,6 +30,7 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
@@ -947,7 +948,7 @@ const ConnectedFullPostView = connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
+		const post = ownProps.canonicalPost || getPostByKey( state, postKey ) || { _state: 'pending' };
 		const currentPath = state.route.path.current;
 
 		const { site_ID: siteId, is_external: isExternal } = post;
@@ -1012,18 +1013,25 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
+		const canonicalPost = useReaderPostEntity(
+			Object.keys( currentPostKey ).length ? currentPostKey : null
+		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const previousPost = useSelector( ( state ) =>
+		const canonicalPreviousPost = useReaderPostEntity( previousPostKey );
+		const canonicalNextPost = useReaderPostEntity( nextPostKey );
+		const previousPostFromRedux = useSelector( ( state ) =>
 			previousPostKey ? getPostByKey( state, previousPostKey ) : null
 		);
-		const nextPost = useSelector( ( state ) =>
+		const nextPostFromRedux = useSelector( ( state ) =>
 			nextPostKey ? getPostByKey( state, nextPostKey ) : null
 		);
+		const previousPost = canonicalPreviousPost ?? previousPostFromRedux;
+		const nextPost = canonicalNextPost ?? nextPostFromRedux;
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1043,6 +1051,7 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 				{ ...props }
 				previousPostKey={ previousPostKey }
 				nextPostKey={ nextPostKey }
+				canonicalPost={ canonicalPost }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
 				previousPostUrl={ previousPostUrl }

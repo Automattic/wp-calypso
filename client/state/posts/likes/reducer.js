@@ -73,7 +73,7 @@ export const itemReducer = withSchemaValidation(
 					likes: state.likes,
 					iLike: true,
 					found: state.found + 1,
-					lastUpdated: state.lastUpdated,
+					lastUpdated: Date.now(),
 				};
 			}
 			case POST_UNLIKE: {
@@ -85,7 +85,7 @@ export const itemReducer = withSchemaValidation(
 					likes: state.likes,
 					iLike: false,
 					found: Math.max( 0, state.found - 1 ),
-					lastUpdated: state.lastUpdated,
+					lastUpdated: Date.now(),
 				};
 			}
 			case POST_LIKES_ADD_LIKER: {
