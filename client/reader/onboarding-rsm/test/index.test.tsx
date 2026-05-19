@@ -368,7 +368,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 	} );
 
 	it( 'renders when sites < 4 even though tags >= 3', async () => {
-		overrideMocks( { follows: makeFollows( 2 ), tags: { data: makeTags( 5 ) } } );
+		overrideMocks( { follows: makeFollows( 3 ), tags: { data: makeTags( 5 ) } } );
 
 		renderWithProvider( <ReaderOnboardingRsm /> );
 

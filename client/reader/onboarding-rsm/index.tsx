@@ -11,6 +11,8 @@ import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
+	READER_ONBOARDING_MIN_FOLLOWED_SITES,
+	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
@@ -69,8 +71,10 @@ const ReaderOnboardingRsm = ( {
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
 	);
 
-	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
-	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
+	const hasFollowedTags = ( followedTags?.length ?? 0 ) >= READER_ONBOARDING_MIN_FOLLOWED_TAGS;
+	const hasFollowedSites =
+		( follows?.filter( ( follow ) => ! follow.is_owner ).length ?? 0 ) >=
+		READER_ONBOARDING_MIN_FOLLOWED_SITES;
 
 	// Snapshot the user's tag/site follow counts the first time all eligibility
 	// inputs are loaded. Eligibility is then evaluated against the snapshot so it
@@ -95,7 +99,8 @@ const ReaderOnboardingRsm = ( {
 	const meetsEligibility =
 		startingCounts !== null &&
 		! hasCompletedOnboarding &&
-		( startingCounts.followedSitesCount < 4 || startingCounts.followedTagsCount < 3 );
+		( startingCounts.followedSitesCount < READER_ONBOARDING_MIN_FOLLOWED_SITES ||
+			startingCounts.followedTagsCount < READER_ONBOARDING_MIN_FOLLOWED_TAGS );
 
 	// Snapshot the "no non-self subscriptions" forceShow signal the first time
 	// the subscriptions query loads. Subscribing to a site inside the discover
