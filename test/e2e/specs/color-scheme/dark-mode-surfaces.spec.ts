@@ -3,7 +3,6 @@ import { expect, tags, test } from '../../lib/pw-base';
 import type { Locator, Page } from '@playwright/test';
 
 const COLOR_SCHEME_PREFERENCE = 'hosting-dashboard-color-scheme';
-const REACT_QUERY_CACHE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
 const REQUIRED_TOKENS = [
 	'--dashboard__background-color',
 	'--dashboard-surface__background-color',
@@ -32,13 +31,70 @@ type RGB = {
 	red: number;
 };
 
-async function forceDarkModePreference( page: Page ) {
-	await page.addInitScript( ( cacheKey ) => {
-		window.localStorage.removeItem( cacheKey );
-	}, REACT_QUERY_CACHE_KEY );
+function clearPersistedCalypsoState() {
+	const persistedStatePattern = /^(redux-state|query-state)-/;
 
-	await page.route( '**/rest/v1.1/me/preferences**', async ( route ) => {
-		if ( route.request().method() !== 'GET' ) {
+	try {
+		window.localStorage.removeItem( 'REACT_QUERY_OFFLINE_CACHE' );
+
+		for ( const key of Object.keys( window.localStorage ) ) {
+			if ( persistedStatePattern.test( key ) ) {
+				window.localStorage.removeItem( key );
+			}
+		}
+	} catch {
+		// Ignore storage access errors so the test can still rely on the API response override.
+	}
+
+	try {
+		window.indexedDB?.deleteDatabase( 'calypso' );
+	} catch {
+		// Ignore storage access errors so the test can still rely on the API response override.
+	}
+}
+
+function addDarkModePreference(
+	response: Record< string, unknown > | undefined
+): Record< string, unknown > {
+	const preferencesResponse = response ?? {};
+	const responseBody = preferencesResponse.body;
+	if (
+		typeof responseBody === 'object' &&
+		responseBody !== null &&
+		! Array.isArray( responseBody )
+	) {
+		return {
+			...preferencesResponse,
+			body: addDarkModePreference( responseBody as Record< string, unknown > ),
+		};
+	}
+
+	const calypsoPreferences =
+		typeof preferencesResponse.calypso_preferences === 'object' &&
+		preferencesResponse.calypso_preferences !== null
+			? preferencesResponse.calypso_preferences
+			: {};
+
+	return {
+		...preferencesResponse,
+		calypso_preferences: {
+			...calypsoPreferences,
+			[ COLOR_SCHEME_PREFERENCE ]: 'dark',
+		},
+	};
+}
+
+async function forceDarkModePreference( page: Page ) {
+	await page.addInitScript( clearPersistedCalypsoState );
+	await page.evaluate( clearPersistedCalypsoState ).catch( () => undefined );
+
+	await page.context().route( '**/me/preferences**', async ( route ) => {
+		const url = new URL( route.request().url() );
+		const isPreferencesApiRequest = /\/(?:(?:rest|wpcom)\/v[\d.]+\/)?me\/preferences\/?$/.test(
+			url.pathname
+		);
+
+		if ( route.request().method() !== 'GET' || ! isPreferencesApiRequest ) {
 			await route.continue();
 			return;
 		}
@@ -51,22 +107,10 @@ async function forceDarkModePreference( page: Page ) {
 			preferencesResponse = {};
 		}
 
-		const calypsoPreferences =
-			typeof preferencesResponse.calypso_preferences === 'object' &&
-			preferencesResponse.calypso_preferences !== null
-				? preferencesResponse.calypso_preferences
-				: {};
-
 		await route.fulfill( {
 			contentType: 'application/json',
 			status: 200,
-			body: JSON.stringify( {
-				...preferencesResponse,
-				calypso_preferences: {
-					...calypsoPreferences,
-					[ COLOR_SCHEME_PREFERENCE ]: 'dark',
-				},
-			} ),
+			body: JSON.stringify( addDarkModePreference( preferencesResponse ) ),
 		} );
 	} );
 }
