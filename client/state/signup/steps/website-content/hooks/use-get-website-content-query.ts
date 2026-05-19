@@ -1,7 +1,6 @@
 import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { synthesizeInstancesFromTitles } from 'calypso/signup/difm/page-instances';
 import type { WebsiteContentResponseDTO, WebsiteContentServerState } from '../types';
 import type { SiteId, SiteSlug } from 'calypso/types';
 
@@ -17,9 +16,13 @@ export function useGetWebsiteContentQuery( siteSlugOrId: SiteSlug | SiteId | und
 		meta: { persist: false },
 		select: ( data: WebsiteContentResponseDTO ) => {
 			const selectedPageTitles = data.selected_page_titles ?? [];
-			const selectedPageInstances =
-				data.selected_page_instances?.map( ( i ) => ( { id: i.id, type: i.type } ) ) ??
-				synthesizeInstancesFromTitles( selectedPageTitles );
+			// Only use server-provided instances. Synthesizing instances with random UUIDs
+			// on every fetch breaks the saved-content lookup in initializeWebsiteContentForm
+			// because server pages are keyed by PageId strings, not UUIDs.
+			const selectedPageInstances = data.selected_page_instances?.map( ( i ) => ( {
+				id: i.id,
+				type: i.type,
+			} ) );
 			return {
 				selectedPageTitles,
 				selectedPageInstances,

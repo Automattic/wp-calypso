@@ -12,6 +12,7 @@ import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	ABOUT_PAGE,
 	CONTACT_PAGE,
+	CUSTOM_PAGE,
 	HOME_PAGE,
 	PORTFOLIO_PAGE,
 	VIDEO_GALLERY_PAGE,
@@ -270,6 +271,150 @@ describe( 'reducer', () => {
 						content: 'test portfolio page content',
 						media: [
 							{ url: 'test media url 3', mediaType: 'IMAGE' },
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+						],
+						useFillerContent: false,
+					},
+				],
+			},
+		} );
+	} );
+
+	test( 'State should be initialized correctly with saved page content when server provides selectedPageInstances', () => {
+		// Simulates the multi-custom-pages flow where the server returns selected_page_instances
+		// with stable UUIDs and pages are keyed by those same UUIDs.
+		const instanceId1 = 'server-uuid-home-001';
+		const instanceId2 = 'server-uuid-custom-001';
+
+		expect(
+			websiteContentCollectionReducer(
+				{ ...initialState },
+				initializeWebsiteContentForm(
+					{
+						selectedPageTitles: [ HOME_PAGE, CUSTOM_PAGE ],
+						selectedPageInstances: [
+							{ id: instanceId1, type: HOME_PAGE },
+							{ id: instanceId2, type: CUSTOM_PAGE, title: 'My Custom Page' },
+						],
+						isWebsiteContentSubmitted: false,
+						isStoreFlow: false,
+						pages: [
+							{
+								id: instanceId1,
+								title: 'Home',
+								content: 'saved home content',
+								media: [ { url: 'home-image.jpg', mediaType: 'IMAGE' } ],
+								useFillerContent: false,
+							},
+							{
+								id: instanceId2,
+								title: 'My Custom Page',
+								content: 'saved custom content',
+								media: [],
+								useFillerContent: false,
+							},
+						],
+						siteLogoUrl: '',
+						genericFeedback: '',
+						searchTerms: '',
+					},
+					translatedPageTitles
+				)
+			)
+		).toEqual( {
+			...initialState,
+			websiteContent: {
+				...initialState.websiteContent,
+				pages: [
+					{
+						id: instanceId1,
+						type: HOME_PAGE,
+						title: 'Home',
+						content: 'saved home content',
+						media: [
+							{ url: 'home-image.jpg', mediaType: 'IMAGE' },
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+						],
+						useFillerContent: false,
+					},
+					{
+						id: instanceId2,
+						type: CUSTOM_PAGE,
+						title: 'My Custom Page',
+						content: 'saved custom content',
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+						],
+						useFillerContent: false,
+					},
+				],
+			},
+		} );
+	} );
+
+	test( 'State should be initialized with empty content when selectedPageInstances have no matching pages', () => {
+		// Verifies that the instances path returns empty content when instance IDs
+		// do not match any saved page IDs (e.g. newly added pages).
+		expect(
+			websiteContentCollectionReducer(
+				{ ...initialState },
+				initializeWebsiteContentForm(
+					{
+						selectedPageTitles: [ HOME_PAGE, CUSTOM_PAGE ],
+						selectedPageInstances: [
+							{ id: 'new-uuid-1', type: HOME_PAGE },
+							{ id: 'new-uuid-2', type: CUSTOM_PAGE, title: 'Brand New Page' },
+						],
+						isWebsiteContentSubmitted: false,
+						isStoreFlow: false,
+						pages: [],
+						siteLogoUrl: '',
+						genericFeedback: '',
+						searchTerms: '',
+					},
+					translatedPageTitles
+				)
+			)
+		).toEqual( {
+			...initialState,
+			websiteContent: {
+				...initialState.websiteContent,
+				pages: [
+					{
+						id: 'new-uuid-1',
+						type: HOME_PAGE,
+						title: translatedPageTitles[ HOME_PAGE ],
+						content: '',
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+						],
+						useFillerContent: false,
+					},
+					{
+						id: 'new-uuid-2',
+						type: CUSTOM_PAGE,
+						title: 'Brand New Page',
+						content: '',
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
