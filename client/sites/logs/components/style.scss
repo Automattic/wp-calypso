@@ -31,7 +31,11 @@
 }
 
 // This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
-.site-logs .dataviews-wrapper {
+// `.wpcom-site` is included to match the broad rule's (0,4,0) specificity so
+// the `padding-inline: 0` override below actually wins on `.dataviews-filters__container`
+// (which retained the broad rule's 24px and indented the chip row inside the
+// negative-margin frame).
+.wpcom-site .site-logs .dataviews-wrapper {
 	margin-right: -24px;
 	margin-left: -24px;
 
