@@ -22,7 +22,10 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import {
+	getReaderFollows,
+	getReaderFollowsLastSyncTime,
+} from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
@@ -54,8 +57,9 @@ const ReaderOnboardingRsm = ( {
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
-	const { data: followedTags } = useFollowedReaderTags();
+	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
 	const follows = useSelector( getReaderFollows );
+	const followsLastSyncTime = useSelector( getReaderFollowsLastSyncTime );
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
@@ -68,7 +72,30 @@ const ReaderOnboardingRsm = ( {
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
-	const meetsEligibility = preferencesLoaded && ! hasCompletedOnboarding;
+	// Snapshot the user's tag/site follow counts the first time all eligibility
+	// inputs are loaded. Eligibility is then evaluated against the snapshot so it
+	// stays stable for the rest of the component's life — the modal won't
+	// disappear mid-flow as the user follows tags/sites during onboarding.
+	const eligibilityDataLoaded = preferencesLoaded && ! tagsPending && followsLastSyncTime !== null;
+	const [ startingCounts, setStartingCounts ] = useState< {
+		followedTagsCount: number;
+		followedSitesCount: number;
+	} | null >( null );
+
+	useEffect( () => {
+		if ( startingCounts !== null || ! eligibilityDataLoaded ) {
+			return;
+		}
+		setStartingCounts( {
+			followedTagsCount: followedTags?.length ?? 0,
+			followedSitesCount: follows?.filter( ( follow ) => ! follow.is_owner ).length ?? 0,
+		} );
+	}, [ startingCounts, eligibilityDataLoaded, followedTags, follows ] );
+
+	const meetsEligibility =
+		startingCounts !== null &&
+		! hasCompletedOnboarding &&
+		( startingCounts.followedSitesCount < 4 || startingCounts.followedTagsCount < 3 );
 
 	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
 

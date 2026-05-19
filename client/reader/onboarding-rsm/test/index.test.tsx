@@ -3,7 +3,7 @@
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {
@@ -101,6 +101,7 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 
 jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
 	getReaderFollows: jest.fn().mockReturnValue( [] ),
+	getReaderFollowsLastSyncTime: jest.fn().mockReturnValue( 1 ),
 } ) );
 
 jest.mock( 'calypso/state/reader/follows/actions', () => ( {
@@ -121,11 +122,11 @@ jest.mock( '../use-refresh-following-streams', () => ( {
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
 jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: jest.fn( () => ( { data: [] } ) ),
+	useFollowedReaderTags: jest.fn( () => ( { data: [], isPending: false } ) ),
 } ) );
 
 jest.mock( '../../following/use-site-subscriptions', () => ( {
-	useSiteSubscriptions: () => ( { isLoading: false, hasNonSelfSubscriptions: false } ),
+	useSiteSubscriptions: jest.fn( () => ( { isLoading: false, hasNonSelfSubscriptions: false } ) ),
 } ) );
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -145,14 +146,22 @@ beforeEach( () => {
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
 
-	const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
-		getReaderFollows: jest.Mock;
-	};
+	const { getReaderFollows, getReaderFollowsLastSyncTime } = jest.requireMock(
+		'calypso/state/reader/follows/selectors'
+	) as { getReaderFollows: jest.Mock; getReaderFollowsLastSyncTime: jest.Mock };
 	const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
 		useFollowedReaderTags: jest.Mock;
 	};
+	const { useSiteSubscriptions } = jest.requireMock( '../../following/use-site-subscriptions' ) as {
+		useSiteSubscriptions: jest.Mock;
+	};
 	getReaderFollows.mockReturnValue( [] );
-	useFollowedReaderTags.mockImplementation( () => ( { data: [] } ) );
+	getReaderFollowsLastSyncTime.mockReturnValue( 1 );
+	useFollowedReaderTags.mockImplementation( () => ( { data: [], isPending: false } ) );
+	useSiteSubscriptions.mockImplementation( () => ( {
+		isLoading: false,
+		hasNonSelfSubscriptions: false,
+	} ) );
 } );
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
@@ -305,5 +314,127 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		getReaderFollows.mockReturnValue( [] );
 		useFollowedReaderTags.mockImplementation( () => ( { data: [] } ) );
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – eligibility', () => {
+	const makeFollows = ( count: number ) =>
+		Array.from( { length: count }, ( _, i ) => ( { feed_ID: i + 1, is_owner: false } ) );
+
+	const makeTags = ( count: number ) =>
+		Array.from( { length: count }, ( _, i ) => ( { slug: `tag-${ i }` } ) );
+
+	const overrideMocks = ( {
+		follows = [],
+		tags = { data: [] as Array< { slug: string } >, isPending: false },
+		lastSyncTime = 1 as number | null,
+		hasNonSelfSubscriptions = true,
+	}: {
+		follows?: Array< { feed_ID: number; is_owner: boolean } >;
+		tags?: { data?: Array< { slug: string } >; isPending?: boolean };
+		lastSyncTime?: number | null;
+		hasNonSelfSubscriptions?: boolean;
+	} = {} ) => {
+		const { getReaderFollows, getReaderFollowsLastSyncTime } = jest.requireMock(
+			'calypso/state/reader/follows/selectors'
+		) as { getReaderFollows: jest.Mock; getReaderFollowsLastSyncTime: jest.Mock };
+		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
+			useFollowedReaderTags: jest.Mock;
+		};
+		const { useSiteSubscriptions } = jest.requireMock(
+			'../../following/use-site-subscriptions'
+		) as { useSiteSubscriptions: jest.Mock };
+
+		getReaderFollows.mockReturnValue( follows );
+		getReaderFollowsLastSyncTime.mockReturnValue( lastSyncTime );
+		useFollowedReaderTags.mockImplementation( () => ( {
+			data: tags.data ?? [],
+			isPending: tags.isPending ?? false,
+		} ) );
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions,
+		} ) );
+
+		return { getReaderFollows };
+	};
+
+	it( 'renders when starting counts are below both thresholds (0 sites / 0 tags)', async () => {
+		overrideMocks( { follows: [], tags: { data: [] } } );
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'renders when sites < 4 even though tags >= 3', async () => {
+		overrideMocks( { follows: makeFollows( 2 ), tags: { data: makeTags( 5 ) } } );
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'renders when tags < 3 even though sites >= 4', async () => {
+		overrideMocks( { follows: makeFollows( 5 ), tags: { data: makeTags( 1 ) } } );
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'does not render when the user starts with >= 4 sites AND >= 3 tags', async () => {
+		overrideMocks( { follows: makeFollows( 4 ), tags: { data: makeTags( 3 ) } } );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render while the followed tags query is still pending', async () => {
+		overrideMocks( { tags: { data: [], isPending: true } } );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render while the reader follows have not synced yet', async () => {
+		overrideMocks( { lastSyncTime: null } );
+		const onRender = jest.fn();
+
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenCalled();
+		} );
+		expect( onRender ).toHaveBeenLastCalledWith( false );
+		expect( screen.queryByTestId( 'welcome-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the modal open mid-flow even after the user crosses the thresholds', async () => {
+		const { getReaderFollows } = overrideMocks( {
+			follows: [],
+			tags: { data: [] },
+		} );
+
+		const { rerender } = renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+
+		getReaderFollows.mockReturnValue( makeFollows( 10 ) );
+		rerender( <ReaderOnboardingRsm /> );
+
+		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
 	} );
 } );
