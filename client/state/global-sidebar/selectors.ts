@@ -32,6 +32,7 @@ export function getSidebarType( params: GetSidebarTypeParams ): SidebarType {
 		group === 'me' ||
 		group === 'reader' ||
 		group === 'sites-dashboard' ||
+		( group === 'sites' && route === '/themes' ) ||
 		( group === 'sites' && ! siteId ) ||
 		( group === 'sites' && siteId && route === '/domains/manage' )
 	) {

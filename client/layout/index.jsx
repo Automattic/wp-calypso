@@ -472,16 +472,15 @@ export default withCurrentRoute(
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 
-		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet
-		const siteId =
-			getSelectedSiteId( state ) ||
-			getMostRecentlySelectedSiteId( state ) ||
-			getPrimarySiteId( state );
+		const selectedSiteId = getSelectedSiteId( state );
+		// Falls back to using the user's primary site only for UI that needs a concrete site
+		// outside a site-specific route, such as the launch button and celebration modal.
+		const siteIdForSiteUi =
+			selectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
-			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
+			( isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
@@ -490,7 +489,7 @@ export default withCurrentRoute(
 
 		const sidebarType = getSidebarType( {
 			state,
-			siteId,
+			siteId: selectedSiteId,
 			section: currentSection,
 			route: currentRoute,
 		} );
@@ -570,7 +569,7 @@ export default withCurrentRoute(
 
 		const hasUniversalHeader =
 			dashboardOptIn &&
-			! siteId &&
+			! selectedSiteId &&
 			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
 		return {
@@ -595,9 +594,9 @@ export default withCurrentRoute(
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			needsColorScheme,
-			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
-			siteId,
-			site: getSite( state, siteId ),
+			isFetchingColorScheme: isFetchingAdminColor( state, selectedSiteId ),
+			siteId: siteIdForSiteUi,
+			site: getSite( state, siteIdForSiteUi ),
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
 			// request to lack the newly authorized site, and when the request finishes after

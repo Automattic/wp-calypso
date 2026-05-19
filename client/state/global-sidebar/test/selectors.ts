@@ -46,6 +46,7 @@ describe( 'getSidebarType', () => {
 		[ null, '/plugins/scheduled-updates', SidebarType.Global ],
 		[ null, '/me', SidebarType.Global ],
 		[ null, '/reader', SidebarType.Global ],
+		[ siteDefault, '/themes', SidebarType.Global ],
 
 		[ site, '/overview/example.com', SidebarType.GlobalCollapsed ],
 		[ site, '/hosting-features/example.com', SidebarType.GlobalCollapsed ],
