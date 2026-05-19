@@ -1,13 +1,4 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-let mockInstanceIdCounter = 0;
-jest.mock( 'calypso/signup/difm/page-instances', () => {
-	const actual = jest.requireActual( 'calypso/signup/difm/page-instances' );
-	return {
-		...actual,
-		newInstanceId: jest.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
-	};
-} );
-
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	ABOUT_PAGE,
@@ -108,10 +99,6 @@ const translatedPageTitles = {
 };
 
 describe( 'reducer', () => {
-	beforeEach( () => {
-		mockInstanceIdCounter = 0;
-	} );
-
 	test( 'should update the current index', () => {
 		expect(
 			websiteContentCollectionReducer(
@@ -147,7 +134,7 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'instance-1',
+						id: CONTACT_PAGE,
 						type: CONTACT_PAGE,
 						title: 'Contact',
 						content: '',
@@ -160,7 +147,7 @@ describe( 'reducer', () => {
 						],
 					},
 					{
-						id: 'instance-2',
+						id: VIDEO_GALLERY_PAGE,
 						type: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: '',
@@ -173,7 +160,7 @@ describe( 'reducer', () => {
 						],
 					},
 					{
-						id: 'instance-3',
+						id: PORTFOLIO_PAGE,
 						type: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: '',
@@ -239,7 +226,7 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'instance-1',
+						id: CONTACT_PAGE,
 						type: CONTACT_PAGE,
 						title: 'Contact',
 						content: 'test contact page content',
@@ -252,7 +239,7 @@ describe( 'reducer', () => {
 						useFillerContent: false,
 					},
 					{
-						id: 'instance-2',
+						id: VIDEO_GALLERY_PAGE,
 						type: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: 'test video gallery page content',
@@ -265,7 +252,7 @@ describe( 'reducer', () => {
 						useFillerContent: true,
 					},
 					{
-						id: 'instance-3',
+						id: PORTFOLIO_PAGE,
 						type: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: 'test portfolio page content',
@@ -274,6 +261,82 @@ describe( 'reducer', () => {
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+						],
+						useFillerContent: false,
+					},
+				],
+			},
+		} );
+	} );
+
+	test( 'Standard DIFM flow: pages saved with PageId keys are correctly restored on reload (no selectedPageInstances)', () => {
+		// Simulates the round-trip for the standard DIFM flow:
+		// 1. initializeWebsiteContentForm (no selectedPageInstances) produces pages with id === PageId.
+		// 2. buildDIFMWebsiteContentRequestDTO sends those ids to the server.
+		// 3. On reload the server returns pages keyed by the same PageId strings.
+		// 4. initializeWebsiteContentForm must find and restore the saved content.
+		const serverPagesAfterSave = [
+			{
+				id: HOME_PAGE,
+				title: 'Home',
+				content: 'saved home content',
+				media: [ { url: 'home.jpg', mediaType: 'IMAGE' } ],
+				useFillerContent: false,
+			},
+			{
+				id: CONTACT_PAGE,
+				title: 'Contact',
+				content: 'saved contact content',
+				media: [],
+				useFillerContent: false,
+			},
+		];
+
+		expect(
+			websiteContentCollectionReducer(
+				{ ...initialState },
+				initializeWebsiteContentForm(
+					{
+						selectedPageTitles: [ HOME_PAGE, CONTACT_PAGE ],
+						// No selectedPageInstances — standard DIFM fallback path
+						isWebsiteContentSubmitted: false,
+						isStoreFlow: false,
+						pages: serverPagesAfterSave,
+						siteLogoUrl: '',
+						genericFeedback: '',
+						searchTerms: '',
+					},
+					translatedPageTitles
+				)
+			)
+		).toEqual( {
+			...initialState,
+			websiteContent: {
+				...initialState.websiteContent,
+				pages: [
+					{
+						id: HOME_PAGE,
+						type: HOME_PAGE,
+						title: 'Home',
+						content: 'saved home content',
+						media: [
+							{ url: 'home.jpg', mediaType: 'IMAGE' },
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
+						],
+						useFillerContent: false,
+					},
+					{
+						id: CONTACT_PAGE,
+						type: CONTACT_PAGE,
+						title: 'Contact',
+						content: 'saved contact content',
+						media: [
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),
 							getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ),

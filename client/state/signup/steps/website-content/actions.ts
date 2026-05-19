@@ -4,7 +4,6 @@ import {
 	PageId,
 	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
-import { newInstanceId } from 'calypso/signup/difm/page-instances';
 import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_COMPLETED,
@@ -263,7 +262,7 @@ export function initializeWebsiteContentForm(
 		usedIndexById[ pageId ] = usedIndex + 1;
 
 		return {
-			id: newInstanceId(),
+			id: pageId,
 			type: pageId,
 			title: getInitialTitle( {
 				pageId,
