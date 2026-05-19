@@ -2,9 +2,10 @@
  * Types for the admin-menu state slice.
  *
  * Companion contract for the redesigned `/wpcom/v2/admin-menu` response:
- * existing fields stay as-is; the redesign adds two optional per-item fields
- * (`group_id`, `signal`) and a top-level `groups[]` array describing group
- * identity + aggregated signal.
+ * existing fields stay as-is; the redesign adds optional classifier fields
+ * (`itemId`, `source`, `default_weight`, `reassignable`, `group_id`,
+ * `signal`) and a top-level `groups[]` array describing group identity +
+ * aggregated signal.
  *
  * Both Phase 1 task 1.1 (Jetpack endpoint, `class_exists( 'Sidebar_Classifier' )`
  * guarded) and Phase 1 tasks 1.3/1.4 (this file's consumers) build from this
@@ -44,8 +45,8 @@ export interface AdminMenuSignal {
 /**
  * Existing Calypso admin-menu item shape, with the redesign's optional
  * additions. `slug`/`title`/`type`/`url`/`icon`/`children` are the legacy
- * fields the endpoint already returns. `group_id` + `signal` are optional
- * — consumers that ignore them keep the legacy flat behaviour.
+ * fields the endpoint already returns. Classifier fields are optional,
+ * consumers that ignore them keep the legacy flat behaviour.
  */
 export interface AdminMenuItem {
 	slug: string;
@@ -58,6 +59,14 @@ export interface AdminMenuItem {
 	inlineIcon?: string;
 	parent?: string;
 	children?: AdminMenuItem[];
+	/** Compound item identifier used by customize-mode layout deltas. */
+	itemId?: string;
+	/** Classifier source, e.g. `"core"`, `"plugin"`, or `"wpcom"`. */
+	source?: string;
+	/** Default ordering hint from the classifier. */
+	default_weight?: number;
+	/** Whether customize mode may move this item. */
+	reassignable?: boolean;
 	/** The group this item belongs to (e.g. `"plugins"`). `null` / undefined = top-level. */
 	group_id?: string | null;
 	/** Attention / count / badge metadata. `null` if the item produced no signal. */

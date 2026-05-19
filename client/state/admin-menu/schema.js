@@ -1,12 +1,13 @@
 /**
  * Schema for the cached `/wpcom/v2/admin-menu` response.
  *
- * The redesign (DES-575 / `WordPress/wp-admin-sidebar` v0.1.4) adds two
- * optional per-item fields (`group_id`, `signal`) and a top-level `groups[]`
- * array. The new per-item fields are accepted here in lock-step with the
- * Jetpack endpoint PR (Phase 1 task 1.1) so that `withSchemaValidation` in
- * `reducer.js` does not silently drop a payload that carries them. Existing
- * consumers that ignore these fields see no change in behaviour.
+ * The redesign (DES-575 / `WordPress/wp-admin-sidebar` v0.1.4) adds optional
+ * classifier fields (`itemId`, `source`, `default_weight`, `reassignable`,
+ * `group_id`, `signal`) and a top-level `groups[]` array. The new per-item
+ * fields are accepted here in lock-step with the Jetpack endpoint PR (Phase 1
+ * task 1.1) so that `withSchemaValidation` in `reducer.js` does not silently
+ * drop a payload that carries them. Existing consumers that ignore these
+ * fields see no change in behaviour.
  *
  * The top-level `groups[]` array travels through the data layer as a sibling
  * to `menu[]` and is normalised on the way into the reducer (see
@@ -35,6 +36,14 @@ const commonItemPropsSchema = {
 	type: { type: 'string' },
 	url: { type: 'string' },
 	badge: { type: 'string' },
+	// Optional: compound item identifier used by customize-mode layout deltas.
+	itemId: { type: 'string' },
+	// Optional: classifier source, e.g. `core`, `plugin`, or `wpcom`.
+	source: { type: 'string' },
+	// Optional: classifier ordering hint. Server-side order is already applied.
+	default_weight: { type: 'integer' },
+	// Optional: whether customize mode may move this item.
+	reassignable: { type: 'boolean' },
 	// Optional: the group this item belongs to. `null` / missing = top-level.
 	group_id: { type: [ 'string', 'null' ] },
 	// Optional: attention / count / badge data. `null` = item produced no signal.
