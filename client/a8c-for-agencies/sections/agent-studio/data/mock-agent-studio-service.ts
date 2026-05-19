@@ -1,8 +1,10 @@
+import { __ } from '@wordpress/i18n';
 import type {
 	AgentStudioOutput,
 	AgentStudioProject,
 	AgentStudioProjectSummary,
 	AgentStudioService,
+	CreateAgentStudioOutputInput,
 	CreateAgentStudioProjectInput,
 } from '../types';
 
@@ -63,6 +65,40 @@ const summarizeProject = (
 
 const makeProjectId = () => `project-${ Date.now().toString( 36 ) }`;
 
+const makeOutputId = () => `output-${ Date.now().toString( 36 ) }`;
+
+/**
+ * Resolves the default project that every deliverable lands in, creating it on
+ * first use. The service owns this so the client never has to know a "Default"
+ * project exists — when the wpcom endpoint replaces this mock, the server will
+ * provision it the same way.
+ * @param state - The current mock state.
+ * @returns The default project and the (possibly updated) state.
+ */
+const ensureDefaultProject = (
+	state: AgentStudioMockState
+): { project: AgentStudioProject; state: AgentStudioMockState } => {
+	const existing = state.projects.find( ( project ) => project.isDefault );
+
+	if ( existing ) {
+		return { project: existing, state };
+	}
+
+	const now = new Date().toISOString();
+	const project: AgentStudioProject = {
+		id: makeProjectId(),
+		name: __( 'Default' ),
+		isDefault: true,
+		createdAt: now,
+		updatedAt: now,
+	};
+	const nextState = { ...state, projects: [ project, ...state.projects ] };
+
+	writeState( nextState );
+
+	return { project, state: nextState };
+};
+
 export const mockAgentStudioService: AgentStudioService = {
 	async listProjects() {
 		const state = readState();
@@ -108,5 +144,56 @@ export const mockAgentStudioService: AgentStudioService = {
 		return sortByUpdatedAt(
 			readState().outputs.filter( ( output ) => output.projectId === projectId )
 		);
+	},
+
+	async listOutputs() {
+		const { project, state } = ensureDefaultProject( readState() );
+
+		return sortByUpdatedAt( state.outputs.filter( ( output ) => output.projectId === project.id ) );
+	},
+
+	async createOutput( input: CreateAgentStudioOutputInput ) {
+		const { project, state } = ensureDefaultProject( readState() );
+		const now = new Date().toISOString();
+		const output: AgentStudioOutput = {
+			id: makeOutputId(),
+			projectId: project.id,
+			title: input.title,
+			description: input.description,
+			agentName: input.agentName,
+			deliverableType: input.deliverableType,
+			status: 'generating',
+			createdAt: now,
+			updatedAt: now,
+		};
+
+		writeState( {
+			...state,
+			outputs: [ output, ...state.outputs ],
+		} );
+
+		return output;
+	},
+
+	async suggestOnePagerContent( brief, field ) {
+		// Heuristic stand-in for the AI suggestion: the first line tends to be
+		// the headline, the sentences after it frame the document. Swapped for
+		// the real model call when the wpcom endpoint lands.
+		const lines = brief
+			.split( '\n' )
+			.map( ( line ) => line.trim() )
+			.filter( Boolean );
+
+		if ( field === 'title' ) {
+			const firstLine = lines[ 0 ] ?? '';
+			return firstLine.length > 80 ? `${ firstLine.slice( 0, 79 ).trimEnd() }…` : firstLine;
+		}
+
+		const body = lines.slice( 1 ).join( ' ' ).trim();
+		const sentences = ( body.match( /[^.!?]+[.!?]+/g ) ?? ( body ? [ body ] : [] ) ).map(
+			( sentence ) => sentence.trim()
+		);
+		const blurbText = sentences.slice( 0, 2 ).join( ' ' ).trim();
+		return blurbText.length > 200 ? `${ blurbText.slice( 0, 199 ).trimEnd() }…` : blurbText;
 	},
 };

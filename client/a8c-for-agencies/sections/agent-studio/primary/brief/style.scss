@@ -1,0 +1,88 @@
+.a4a-agent-studio-brief {
+	.hosting-dashboard-layout__body-wrapper {
+		max-width: 760px;
+	}
+}
+
+.a4a-agent-studio-brief__content {
+	margin-block-start: 24px;
+}
+
+.a4a-agent-studio-brief__agent-icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+	color: var( --color-neutral-60 );
+}
+
+.a4a-agent-studio-brief__agent-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.a4a-agent-studio-brief__form-actions {
+	width: 100%;
+	border-top: 1px solid var( --color-neutral-10 );
+	padding-block-start: 24px;
+}
+
+.a4a-agent-studio-image-upload__grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.a4a-agent-studio-image-upload__thumb {
+	position: relative;
+	box-sizing: border-box;
+	width: 62px;
+	height: 62px;
+	overflow: hidden;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	background: var( --color-surface );
+	cursor: grab;
+}
+
+.a4a-agent-studio-image-upload__thumb:active {
+	cursor: grabbing;
+}
+
+.a4a-agent-studio-image-upload__thumb.is-drag-over {
+	border-color: var( --color-primary );
+	box-shadow: 0 0 0 1px var( --color-primary );
+}
+
+.a4a-agent-studio-image-upload__thumb-image {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	pointer-events: none;
+}
+
+.a4a-agent-studio-image-upload__thumb-remove.components-button {
+	position: absolute;
+	inset-block-start: 1px;
+	inset-inline-end: 1px;
+	min-width: 18px;
+	width: 18px;
+	height: 18px;
+	padding: 0;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	background: var( --color-surface );
+}
+
+.a4a-agent-studio-image-upload__thumb-remove.components-button svg {
+	width: 14px;
+	height: 14px;
+}
