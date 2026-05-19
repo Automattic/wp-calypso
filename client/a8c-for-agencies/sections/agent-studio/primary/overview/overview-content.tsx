@@ -5,14 +5,15 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, page } from '@wordpress/icons';
+import { page } from '@wordpress/icons';
 import A4AEmptyState from 'calypso/a8c-for-agencies/components/a4a-empty-state';
 import A4AIntroVideoStrip from 'calypso/a8c-for-agencies/components/a4a-intro-video-strip';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
-import DashboardSummaryButton from 'calypso/dashboard/components/summary-button';
 import useAgentStudioOutputs from '../../data/use-agent-studio-outputs';
 import useAgentStudioWelcomeVideos from '../../data/use-agent-studio-welcome-videos';
-import type { AgentStudioOutput } from '../../types';
+import DeliverableCard from './deliverable-card';
+
+import './style.scss';
 
 interface Props {
 	onCreateDeliverable: () => void;
@@ -63,42 +64,13 @@ export default function AgentStudioOverviewContent( { onCreateDeliverable }: Pro
 				) }
 
 				{ ! isLoading && !! outputs?.length && (
-					<VStack spacing={ 3 }>
+					<div className="a4a-agent-studio-deliverables-grid">
 						{ outputs.map( ( output ) => (
-							<OutputSummaryButton key={ output.id } output={ output } />
+							<DeliverableCard key={ output.id } output={ output } />
 						) ) }
-					</VStack>
+					</div>
 				) }
 			</VStack>
 		</VStack>
 	);
-}
-
-function OutputSummaryButton( { output }: { output: AgentStudioOutput } ) {
-	return (
-		<DashboardSummaryButton
-			title={ output.title }
-			description={ output.description }
-			decoration={ <Icon icon={ page } size={ 24 } /> }
-			badges={ [
-				{ text: output.agentName },
-				{ text: output.deliverableType },
-				{
-					text: getStatusLabel( output ),
-					intent: output.status === 'failed' ? 'error' : undefined,
-				},
-			] }
-		/>
-	);
-}
-
-function getStatusLabel( output: AgentStudioOutput ) {
-	switch ( output.status ) {
-		case 'ready':
-			return __( 'Ready' );
-		case 'generating':
-			return __( 'Generating' );
-		case 'failed':
-			return __( 'Failed' );
-	}
 }

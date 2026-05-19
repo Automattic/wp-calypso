@@ -48,6 +48,32 @@ describe( 'mockAgentStudioService default project', () => {
 		const output = await mockAgentStudioService.createOutput( briefInput );
 		expect( output.status ).toBe( 'generating' );
 	} );
+
+	it( 'resolves a generating deliverable to ready after the generation window', async () => {
+		jest.useFakeTimers();
+		try {
+			jest.setSystemTime( new Date( '2026-05-19T10:00:00Z' ) );
+			await mockAgentStudioService.createOutput( briefInput );
+
+			const [ stillGenerating ] = await mockAgentStudioService.listOutputs();
+			expect( stillGenerating.status ).toBe( 'generating' );
+
+			jest.setSystemTime( new Date( '2026-05-19T10:00:10Z' ) );
+			const [ resolved ] = await mockAgentStudioService.listOutputs();
+			expect( resolved.status ).toBe( 'ready' );
+			expect( resolved.previewUrls?.length ).toBeGreaterThan( 0 );
+			expect( resolved.assetCount ).toBeGreaterThan( 0 );
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'removes a deliverable from the list when deleted', async () => {
+		const output = await mockAgentStudioService.createOutput( briefInput );
+		await mockAgentStudioService.deleteOutput( output.id );
+
+		expect( await mockAgentStudioService.listOutputs() ).toEqual( [] );
+	} );
 } );
 
 describe( 'mockAgentStudioService.suggestOnePagerContent', () => {

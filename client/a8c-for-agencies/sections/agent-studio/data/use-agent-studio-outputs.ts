@@ -9,5 +9,9 @@ export default function useAgentStudioOutputs() {
 		queryKey: getAgentStudioOutputsQueryKey(),
 		queryFn: () => agentStudioService.listOutputs(),
 		refetchOnWindowFocus: false,
+		// Poll while a deliverable is generating so the card flips to ready
+		// without the agency having to reload the page.
+		refetchInterval: ( query ) =>
+			query.state.data?.some( ( output ) => output.status === 'generating' ) ? 2000 : false,
 	} );
 }

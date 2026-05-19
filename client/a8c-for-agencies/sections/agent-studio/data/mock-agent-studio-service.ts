@@ -1,4 +1,7 @@
 import { __ } from '@wordpress/i18n';
+import eventAssetsPreview from '../assets/agent-previews/event-assets.webp';
+import onePagerPreview from '../assets/agent-previews/one-pager.webp';
+import socialAssetsPreview from '../assets/agent-previews/social-assets.webp';
 import type {
 	AgentStudioOutput,
 	AgentStudioProject,
@@ -66,6 +69,68 @@ const summarizeProject = (
 const makeProjectId = () => `project-${ Date.now().toString( 36 ) }`;
 
 const makeOutputId = () => `output-${ Date.now().toString( 36 ) }`;
+
+// How long a deliverable stays in the "generating" state before the mock
+// resolves it. Stands in for the async generation job the wpcom endpoint runs.
+const GENERATION_DURATION_MS = 6000;
+
+// Stand-in preview images for a resolved deliverable, reusing the agent
+// preview art until generation streams real assets.
+const MOCK_PREVIEW_URLS = [ socialAssetsPreview, onePagerPreview, eventAssetsPreview ];
+
+/**
+ * Derives a stable, deliverable-specific asset count from its id so a card
+ * shows the same number on every render without persisting an extra field
+ * before generation finishes.
+ * @param outputId - The deliverable id.
+ * @returns An asset count in the 12–72 range.
+ */
+const deriveAssetCount = ( outputId: string ): number => {
+	let hash = 0;
+	for ( let i = 0; i < outputId.length; i++ ) {
+		hash = ( hash * 31 + outputId.charCodeAt( i ) ) >>> 0;
+	}
+	return 12 + ( hash % 61 );
+};
+
+/**
+ * Flips any deliverable that has been generating past the generation window
+ * into a ready state with mock previews, persisting the change. Stands in for
+ * the async job that streams real results once the wpcom endpoint lands.
+ * @param state - The current mock state.
+ * @returns The state with elapsed deliverables resolved.
+ */
+const resolveGeneratingOutputs = ( state: AgentStudioMockState ): AgentStudioMockState => {
+	const now = Date.now();
+	let changed = false;
+
+	const outputs = state.outputs.map( ( output ) => {
+		if (
+			output.status !== 'generating' ||
+			now - new Date( output.createdAt ).getTime() < GENERATION_DURATION_MS
+		) {
+			return output;
+		}
+
+		changed = true;
+		return {
+			...output,
+			status: 'ready' as const,
+			previewUrls: MOCK_PREVIEW_URLS,
+			assetCount: deriveAssetCount( output.id ),
+			updatedAt: new Date( now ).toISOString(),
+		};
+	} );
+
+	if ( ! changed ) {
+		return state;
+	}
+
+	const nextState = { ...state, outputs };
+	writeState( nextState );
+
+	return nextState;
+};
 
 /**
  * Resolves the default project that every deliverable lands in, creating it on
@@ -148,8 +213,11 @@ export const mockAgentStudioService: AgentStudioService = {
 
 	async listOutputs() {
 		const { project, state } = ensureDefaultProject( readState() );
+		const resolved = resolveGeneratingOutputs( state );
 
-		return sortByUpdatedAt( state.outputs.filter( ( output ) => output.projectId === project.id ) );
+		return sortByUpdatedAt(
+			resolved.outputs.filter( ( output ) => output.projectId === project.id )
+		);
 	},
 
 	async createOutput( input: CreateAgentStudioOutputInput ) {
@@ -173,6 +241,14 @@ export const mockAgentStudioService: AgentStudioService = {
 		} );
 
 		return output;
+	},
+
+	async deleteOutput( outputId ) {
+		const state = readState();
+		writeState( {
+			...state,
+			outputs: state.outputs.filter( ( output ) => output.id !== outputId ),
+		} );
 	},
 
 	async suggestOnePagerContent( brief, field ) {
