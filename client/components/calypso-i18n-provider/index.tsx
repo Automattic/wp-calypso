@@ -4,6 +4,7 @@ import { defaultI18n } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
 import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 import type { LocaleData } from '@wordpress/i18n';
 import type { I18N } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
@@ -29,8 +30,9 @@ const CalypsoI18nProvider: FunctionComponent< { i18n?: I18N; children?: React.Re
 		if ( localeSlug ) {
 			// Propagate the locale to @automattic/number-formatters
 			setLocaleNumberFormatters( localeSlug );
+			loadAndSetCurrencyOverrides();
 		}
-	}, [ localeSlug ] );
+	}, [ localeSlug, i18n ] );
 
 	return (
 		<I18NContext.Provider value={ i18n }>
