@@ -12,6 +12,8 @@ Before touching anything else, the skill verifies that the two required tools ar
 
 Before each step, tell the user in one short sentence what you're about to do and why, so they aren't surprised by a Bash call or a follow-up setup request.
 
+See [`examples/worked-run.md`](examples/worked-run.md) for an illustrative end-to-end walk-through — useful for pattern-matching the shape of each step's input and output before running the skill for the first time.
+
 ## Step 1: Verify GitHub CLI access
 
 The skill uses `gh` (the GitHub CLI command, from <https://cli.github.com/>) to read PR metadata and check runs. Confirm `gh` is installed **and** its stored token actually works — `gh auth status` alone is not enough, as it can report success while the keyring token is stale and every API call returns 401.
