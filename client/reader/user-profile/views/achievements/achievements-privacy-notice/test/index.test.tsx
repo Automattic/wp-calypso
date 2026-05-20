@@ -47,9 +47,8 @@ describe( 'AchievementsPrivacyNotice', () => {
 
 		const { container } = render( <AchievementsPrivacyNotice /> );
 
-		expect( container ).toHaveTextContent(
-			'Your achievements are private — only you can see them.'
-		);
+		expect( container ).toHaveTextContent( 'Your achievements are private' );
+		expect( container ).toHaveTextContent( 'Only you can see them.' );
 		expect( screen.getByRole( 'button', { name: 'Make public' } ) ).toBeVisible();
 	} );
 

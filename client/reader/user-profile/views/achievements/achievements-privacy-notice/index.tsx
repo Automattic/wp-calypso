@@ -1,6 +1,6 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Notice } from '@wordpress/components';
+import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useSetAchievementsVisibility from 'calypso/reader/components/achievements/use-set-achievements-visibility';
@@ -36,23 +36,23 @@ export default function AchievementsPrivacyNotice() {
 
 	return (
 		<div className="achievements-privacy-notice">
-			<Notice
-				status="info"
-				isDismissible={ false }
-				actions={ [
-					{
-						label: translate( 'Make public' ),
-						onClick: handleMakePublic,
-						variant: 'primary',
-						disabled: isPending,
-					},
-				] }
-			>
-				{ translate(
-					'Your achievements are private — only you can see them. ' +
-						'Share them with the WordPress.com community by making your page public.'
-				) }
-			</Notice>
+			<Notice.Root intent="info">
+				<Notice.Title>{ translate( 'Your achievements are private' ) }</Notice.Title>
+				<Notice.Description>
+					{ translate(
+						'Only you can see them. Share them with the WordPress.com community by making your page public.'
+					) }
+				</Notice.Description>
+				<Notice.Actions>
+					<Notice.ActionButton
+						onClick={ handleMakePublic }
+						loading={ isPending }
+						loadingAnnouncement={ translate( 'Making your achievements page public…' ) }
+					>
+						{ translate( 'Make public' ) }
+					</Notice.ActionButton>
+				</Notice.Actions>
+			</Notice.Root>
 		</div>
 	);
 }
