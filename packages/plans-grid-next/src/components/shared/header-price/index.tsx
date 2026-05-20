@@ -132,6 +132,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
+		// Use the monthly plan price for renewal pricing, instead of the intro offer renewal price
 		const compareToMonthlyPrice =
 			( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing
 				? termVariantPricing.originalPrice.monthly
@@ -140,8 +141,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
 				: introOffer.rawPrice.monthly;
-		// Recalculate the savings for monthly plans with introductory offers
-		// since we are comparing the introductory price with the same plan's
+		// Recalculate the savings for Monthly plans with introductory offers
+		// since we are comparing the introductory price with the same plan
 		// renewal price, instead of comparing yearly to monthly costs for
 		// the same period.
 		if (
@@ -168,17 +169,15 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
-					{ compareToMonthlyPrice > monthlyPrice && (
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ compareToMonthlyPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							original
-						/>
-					) }
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ compareToMonthlyPrice }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }
