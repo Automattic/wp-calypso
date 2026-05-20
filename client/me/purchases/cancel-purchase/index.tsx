@@ -1371,7 +1371,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								mode="refund-eligibility"
 								refundAmount={ refundAmountString }
 								purchase={ purchase }
-								siteSlug={ this.props.siteSlug }
 							/>
 						) }
 					{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (

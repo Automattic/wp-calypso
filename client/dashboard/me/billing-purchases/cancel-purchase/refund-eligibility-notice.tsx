@@ -40,6 +40,7 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 				>
 					{ __( 'Remove plan and claim refund' ) }
 				</Link>
+				.
 			</Notice>
 		);
 	}

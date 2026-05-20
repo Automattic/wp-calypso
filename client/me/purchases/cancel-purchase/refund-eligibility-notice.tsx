@@ -3,7 +3,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { getRefundNoticeCopy } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
-import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
 
@@ -14,7 +13,6 @@ interface RefundEligibilityNoticeBaseProps {
 
 interface RefundEligibilityNoticeRefundEligibilityProps extends RefundEligibilityNoticeBaseProps {
 	mode?: 'refund-eligibility';
-	siteSlug: string;
 }
 
 interface RefundEligibilityNoticeConfirmedProps extends RefundEligibilityNoticeBaseProps {
@@ -42,7 +40,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 	}
 
 	const onRemoveClick = () => {
-		page( `${ cancelPurchase( props.siteSlug, props.purchase.id ) }?intent=remove` );
+		page( `${ window.location.pathname }?intent=remove` );
 	};
 
 	return (
@@ -62,6 +60,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 				>
 					{ translate( 'Remove plan and claim refund' ) }
 				</Button>
+				.
 			</p>
 		</Notice>
 	);
