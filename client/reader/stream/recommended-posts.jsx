@@ -5,10 +5,9 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import { useReaderPost } from 'calypso/reader/data/reader-post';
 import { keyForPost } from 'calypso/reader/post-key';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
-import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 
 function dismissPostAnalytics( uiIndex, storeId, post ) {
@@ -44,12 +43,10 @@ export class RecommendedPosts extends PureComponent {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace, wpcalypso/jsx-gridicon-size */
 	render() {
-		const { posts, recommendations } = this.props;
+		const { posts } = this.props;
 
 		return (
 			<div className="reader-stream__recommended-posts">
-				<QueryReaderPost postKey={ recommendations[ 0 ] } />
-				<QueryReaderPost postKey={ recommendations[ 1 ] } />
 				<h1 className="reader-stream__recommended-posts-header">
 					<Gridicon icon="thumbs-up" size={ 18 } />
 					&nbsp;
@@ -94,9 +91,13 @@ export class RecommendedPosts extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		posts: getPostsByKeys( state, ownProps.recommendations ),
-	} ),
-	{ dismissPost }
-)( localize( RecommendedPosts ) );
+const RecommendedPostsWithPosts = ( props ) => {
+	const { recommendations = [] } = props;
+	const { data: firstPost } = useReaderPost( recommendations[ 0 ] );
+	const { data: secondPost } = useReaderPost( recommendations[ 1 ] );
+	const posts = [ firstPost, secondPost ].filter( Boolean );
+
+	return <RecommendedPosts { ...props } posts={ posts } />;
+};
+
+export default connect( null, { dismissPost } )( localize( RecommendedPostsWithPosts ) );
