@@ -438,17 +438,10 @@ EOF
 )"
 ```
 
-PR body structure (per `.github/PULL_REQUEST_TEMPLATE.md` and AGENTS.md):
+PR body structure: follow `.github/PULL_REQUEST_TEMPLATE.md` and AGENTS.md's PR rules. Skill-specific deltas from the template:
 
-The fix PR targets the parent PR's branch, not trunk — it's a piece of the parent PR's work, not an independent change to the default branch. Two template sections are therefore omitted:
-
-- **Omit `Part of #`** entirely. The parent PR carries that reference; this one is scoped to that PR's work.
-- **Omit the `Pre-merge Checklist`** entirely. The checklist is a gate for merges into trunk; this PR merges into the parent PR's branch, so it doesn't apply. The parent PR keeps its own checklist.
-
-Start the body at **Proposed Changes** and include only these sections:
-
-- **Proposed Changes** — 2–3 bullets describing what changed in the test.
-- **Why are these changes being made?** — the Healer's root-cause paragraph, with a link to the TeamCity build URL as evidence of the failure.
+- **Omit `Part of #`** and **omit the `Pre-merge Checklist`.** Both apply only to PRs that target trunk. This PR targets the parent PR's branch, so the parent PR carries those concerns.
+- **Why are these changes being made?** — use the Healer's root-cause paragraph and include the TeamCity build URL as evidence of the failure.
 - **Testing Instructions** — `Run \`yarn playwright test <spec> --reporter=list --repeat-each=10\` locally; all runs should pass.` Don't claim you verified unless you actually did.
 
 Do not mention individuals by name. Do not link to wordpress.com URLs (AGENTS.md).
