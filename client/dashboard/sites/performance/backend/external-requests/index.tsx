@@ -1,20 +1,23 @@
+import { siteApmAggregateQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { siteApmExternalRequestsQuery } from '../mock-data';
+import { useMemo } from 'react';
+import { mergeAggregates, type MergedExternal } from '../aggregate';
 import SlowList, { type SlowListItem } from '../slow-list';
-import type { ApmExternalRequest, Site } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
-function toItems( requests: ApmExternalRequest[] ): SlowListItem[] {
-	return requests.map( ( request ) => ( {
-		id: `${ request.method } ${ request.host }${ request.endpoint }`,
-		label: `${ request.method } ${ request.host }${ request.endpoint }`,
-		avg_ms: request.avg_ms,
-		max_ms: request.max_ms,
+function toItems( externals: MergedExternal[] ): SlowListItem[] {
+	return externals.map( ( external ) => ( {
+		id: external.id,
+		label: `${ external.method } ${ external.host }`,
+		avg_ms: external.avg_ms,
+		max_ms: external.max_ms,
 	} ) );
 }
 
 export default function ExternalRequests( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmExternalRequestsQuery( site.ID ) );
+	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
+	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
 
 	return (
 		<SlowList
@@ -25,7 +28,7 @@ export default function ExternalRequests( { site }: { site: Site } ) {
 			maxDescription={ __(
 				'Slowest single outbound call observed to each third-party host in the selected period.'
 			) }
-			items={ toItems( data ) }
+			items={ toItems( merged.slowest.externals ) }
 		/>
 	);
 }

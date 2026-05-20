@@ -4,11 +4,30 @@
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import React, { useState } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { getPackBlogs } from '../get-pack-blogs';
 import InterestsModal from '../index';
 import { getTopicGroups } from '../topic-groups';
+
+// The parent owns `hasFollowed` so it persists across remounts of this modal.
+// Most tests don't care about that flag (they exercise the initial false case)
+// and pass `hasFollowed={ false }` + a noop `onFollowed`. Tests that need the
+// flag to flip in response to a user action mount this wrapper, which mirrors
+// what the parent does.
+type InterestsModalProps = React.ComponentProps< typeof InterestsModal >;
+const InterestsModalWithFollowedState = (
+	props: Omit< InterestsModalProps, 'hasFollowed' | 'onFollowed' >
+) => {
+	const [ hasFollowed, setHasFollowed ] = useState( false );
+	return (
+		<InterestsModal
+			{ ...props }
+			hasFollowed={ hasFollowed }
+			onFollowed={ () => setHasFollowed( true ) }
+		/>
+	);
+};
 
 // ── External data hooks ──────────────────────────────────────────────────────
 
@@ -110,19 +129,40 @@ jest.mock( 'calypso/reader/onboarding-rsm/step-indicator', () => ( {
 
 describe( 'InterestsModal – verification nudge', () => {
 	it( 'does not render the verification nudge when promptVerification is false', () => {
-		renderWithProvider( <InterestsModal onContinue={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				hasFollowed={ false }
+				onFollowed={ jest.fn() }
+			/>
+		);
 
 		expect( screen.queryByTestId( 'interests-verification-nudge' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the verification nudge when promptVerification is true', () => {
-		renderWithProvider( <InterestsModal onContinue={ jest.fn() } promptVerification /> );
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ jest.fn() }
+				promptVerification
+				hasFollowed={ false }
+				onFollowed={ jest.fn() }
+			/>
+		);
 
 		expect( screen.getByTestId( 'interests-verification-nudge' ) ).toBeVisible();
 	} );
 
 	it( 'disables the Continue button when promptVerification is true', () => {
-		renderWithProvider( <InterestsModal onContinue={ jest.fn() } promptVerification /> );
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ jest.fn() }
+				promptVerification
+				hasFollowed={ false }
+				onFollowed={ jest.fn() }
+			/>
+		);
 
 		// accessibleWhenDisabled renders aria-disabled instead of the native disabled attribute.
 		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
@@ -135,7 +175,14 @@ describe( 'InterestsModal – verification nudge', () => {
 		const user = userEvent.setup();
 		const onContinue = jest.fn();
 
-		renderWithProvider( <InterestsModal onContinue={ onContinue } promptVerification /> );
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ onContinue }
+				promptVerification
+				hasFollowed={ false }
+				onFollowed={ jest.fn() }
+			/>
+		);
 
 		// The button is aria-disabled; userEvent still fires a click event but the
 		// component's onClick guard should prevent calling onContinue.
@@ -145,7 +192,14 @@ describe( 'InterestsModal – verification nudge', () => {
 	} );
 
 	it( 'disables the Continue button from tag count when promptVerification is false and no tags are followed', () => {
-		renderWithProvider( <InterestsModal onContinue={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				hasFollowed={ false }
+				onFollowed={ jest.fn() }
+			/>
+		);
 
 		// Still disabled (< 3 tags), but the nudge is absent.
 		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
@@ -153,6 +207,24 @@ describe( 'InterestsModal – verification nudge', () => {
 			'true'
 		);
 		expect( screen.queryByTestId( 'interests-verification-nudge' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'enables the Continue button when hasFollowed is true even with no followed tags', () => {
+		// Mirrors the parent passing `hasFollowed={ true }` on a remount after
+		// the user already subscribed in an earlier visit to this step.
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				hasFollowed
+				onFollowed={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
 	} );
 } );
 
@@ -171,7 +243,7 @@ describe( 'InterestsModal – most subscribed pack', () => {
 		jest.mocked( getPackBlogs ).mockReset().mockReturnValue( [] );
 	} );
 
-	it( 'renders the tagless pack with blog count from getPackBlogs( [], { directKey } ) and keeps Continue disabled after subscribe', async () => {
+	it( 'renders the tagless pack with blog count from getPackBlogs( [], { directKey } ) and enables Continue after subscribe', async () => {
 		const user = userEvent.setup();
 
 		jest.mocked( getTopicGroups ).mockReturnValue( [
@@ -190,7 +262,12 @@ describe( 'InterestsModal – most subscribed pack', () => {
 			return fivePackBlogs;
 		} );
 
-		renderWithProvider( <InterestsModal onContinue={ jest.fn() } promptVerification={ false } /> );
+		// Uses the stateful wrapper so the pack-subscribe `onFollowed` callback
+		// flows back through `hasFollowed` and relaxes the Continue gate, the
+		// same way the real parent (`ReaderOnboardingRsm`) does it.
+		renderWithProvider(
+			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+		);
 
 		const packCard = screen.getByTestId( 'topic-pack-card' );
 		expect( packCard ).toHaveAttribute( 'data-title', 'Most Subscribed' );
@@ -198,7 +275,7 @@ describe( 'InterestsModal – most subscribed pack', () => {
 
 		await user.click( packCard );
 
-		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);

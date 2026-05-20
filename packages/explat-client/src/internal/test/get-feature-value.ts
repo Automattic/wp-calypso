@@ -351,3 +351,75 @@ describe( 'getFeatureValue', () => {
 		expect( config.fetchFlagPayload ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
+
+describe( 'prefetchFlagPayload', () => {
+	beforeEach( () => {
+		jest.restoreAllMocks();
+		setBrowserContext();
+	} );
+
+	test( 'triggers exactly one fetch and never beacons', async () => {
+		const { client, config } = makeClient(
+			{ schema_version: 1, flags: {}, ttl: 7200 },
+			{ wpcom_user_id: '1' }
+		);
+		await client.prefetchFlagPayload();
+		expect( config.fetchFlagPayload ).toHaveBeenCalledTimes( 1 );
+		expect( config.logFeatureAssignment ).not.toHaveBeenCalled();
+	} );
+
+	test( 'a later getFeatureValue reuses the warmed cache', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client, config } = makeClient(
+			{ schema_version: 1, flags: {}, ttl: 7200 },
+			{ wpcom_user_id: '1' }
+		);
+		await client.prefetchFlagPayload();
+		await client.getFeatureValue( 'unknown', 'fallback' );
+		expect( config.fetchFlagPayload ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'concurrent prefetch + getFeatureValue share a single fetch', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client, config } = makeClient(
+			{ schema_version: 1, flags: {}, ttl: 7200 },
+			{ wpcom_user_id: '1' }
+		);
+		await Promise.all( [
+			client.prefetchFlagPayload(),
+			client.prefetchFlagPayload(),
+			client.getFeatureValue( 'unknown', 'fallback' ),
+		] );
+		expect( config.fetchFlagPayload ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'no-op (no fetch, no throw) when fetchFlagPayload is not configured', async () => {
+		setBrowserContext();
+		const config: Config = {
+			fetchExperimentAssignment: jest.fn(),
+			getAnonId: jest.fn().mockResolvedValue( null ),
+			logError: jest.fn(),
+			isDevelopmentMode: false,
+		};
+		const client = createExPlatClient( config );
+		await expect( client.prefetchFlagPayload() ).resolves.toBeUndefined();
+	} );
+
+	test( 'swallows fetch errors so callers can fire-and-forget', async () => {
+		const { client, config } = makeClient( null );
+		( config.fetchFlagPayload as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
+		await expect( client.prefetchFlagPayload() ).resolves.toBeUndefined();
+	} );
+} );

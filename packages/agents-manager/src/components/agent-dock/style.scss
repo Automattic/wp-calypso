@@ -276,6 +276,21 @@ body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '#wpcom .dashboard-root__layout' );
 
+		// Reposition the omnibar to fit inside the framed layout, mirroring
+		// the wp-admin masterbar / Calypso #header pattern above. Without this
+		// the omnibar (top: 0, full-width) overlaps with the docked chat strip
+		// in the top-right corner.
+		#wpcom-omnibar {
+			top: $layout-spacing;
+			inset-inline: $layout-spacing calc( $sidebar-width + $layout-spacing );
+		}
+
+		// Tuck the desktop nav sidebar inside the frame as well.
+		// Mirrors the wp-admin `#adminmenuback` / `#adminmenuwrap` treatment above.
+		.dashboard-responsive-sidebar__sidebar {
+			inset-inline-start: $layout-spacing;
+		}
+
 		.dashboard-root__layout {
 			height: calc( 100vh - ( $layout-spacing * 2 ) );
 			min-height: unset;
@@ -629,7 +644,7 @@ body.post-new-php.agents-manager-sidebar-container {
 		&.is-active,
 		&:focus-visible {
 			.edit-site-global-styles-variations_item-preview {
-				outline: var(--wp-admin-theme-color, #3858e9) solid 2px !important;
+				outline: var( --wp-admin-theme-color, #3858e9 ) solid 2px !important;
 			}
 		}
 	}
@@ -713,9 +728,9 @@ body.agents-manager-sidebar-container.is-split-screen {
 	// width but stay capped at split-screen widths, leaving the empty view
 	// stuck in a small box on a wide canvas. Bump them via attribute-prefix
 	// selectors so the override survives CSS-modules class hashing.
-	[class*="EmptyView-module_heading"],
-	[class*="EmptyView-module_help"],
-	[class*="EmptyView-module_suggestionsWrapper"] {
+	[class*='EmptyView-module_heading'],
+	[class*='EmptyView-module_help'],
+	[class*='EmptyView-module_suggestionsWrapper'] {
 		max-width: none;
 	}
 
@@ -723,7 +738,7 @@ body.agents-manager-sidebar-container.is-split-screen {
 	// wide viewports the container shrinks to content and the Sources card
 	// never wraps. `flex: 0 0 100%` then makes the card a non-shrinking full
 	// row so the existing -32px overlay lands on the actions row reliably.
-	.MessageActions-module_container:has(.agents-manager-sources-display) {
+	.MessageActions-module_container:has( .agents-manager-sources-display ) {
 		inline-size: 100%;
 	}
 

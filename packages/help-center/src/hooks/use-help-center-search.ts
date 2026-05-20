@@ -33,7 +33,7 @@ export const useHelpCenterSearch = ( onSearchChange?: ( query: string ) => void 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that
 	useEffect( () => {
-		if ( query ) {
+		if ( query !== null && searchQuery !== query ) {
 			navigate( '/?query=' + searchQuery );
 		}
 	}, [ searchQuery, query, navigate ] );

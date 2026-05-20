@@ -151,7 +151,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
-	'agent-studio': /^\/resources-and-tools\/agent-studio\/projects\/[^/]+(\/.*)?$/,
+	'agent-studio': /^\/resources-and-tools\/agent-studio\/(projects|agents)\/[^/]+(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {

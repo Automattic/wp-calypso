@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import AchievementsGrid from './achievements-grid';
+import AchievementsPrivacyNotice from './achievements-privacy-notice';
 import AchievementsSettings from './achievements-settings';
 import { ActivityStreak } from './activity-streak';
 import type { ReaderUser } from '@automattic/api-core';
@@ -34,6 +35,7 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 
 	return (
 		<div className="achievements">
+			{ isOwnProfile && <AchievementsPrivacyNotice /> }
 			<div className="achievements__header">
 				<ActivityStreak streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
 				{ isOwnProfile && (
