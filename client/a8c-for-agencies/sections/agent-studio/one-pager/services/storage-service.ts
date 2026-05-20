@@ -14,9 +14,12 @@ export const defaultStorageService: StorageService = {
 		brandPackSlug,
 		input,
 		usage,
+		previewUrls,
 	} ) {
 		await agentStudioService.updateOutput( outputId, {
 			status: 'ready',
+			previewUrls,
+			assetCount: bodyPages.length + 1,
 			onePagerData: {
 				covers: covers.map( ( page ) => ( {
 					id: `${ page.coverLayoutId ?? 'cover' }__${ page.theme ?? 'light' }`,

@@ -125,6 +125,13 @@ export interface OnePagerStorageInput {
 		usd: number;
 		durationMs: number;
 	};
+	/**
+	 * Pre-rendered preview thumbnail PNG data URLs (typically just the active
+	 * cover) so the deliverable card can show an image instead of
+	 * live-rendering HTML on every list visit. Generated once after the engine
+	 * finishes and persisted on the output.
+	 */
+	previewUrls?: string[];
 }
 
 export interface StorageService {

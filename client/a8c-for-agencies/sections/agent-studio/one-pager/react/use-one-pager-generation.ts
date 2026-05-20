@@ -134,6 +134,28 @@ export function useOnePagerGeneration() {
 					brandPackSlug: request.pack,
 				};
 
+				// Snapshot the active cover to a PNG once so the deliverables
+				// list can show an <img> instead of live-rendering HTML on
+				// every visit. Best-effort: if it fails, the card falls back
+				// to the dark placeholder until the user reopens the output.
+				let previewUrls: string[] | undefined;
+				const activeCover = coverRenders[ 0 ];
+				if ( activeCover ) {
+					try {
+						const dataUrl = await services.thumbnail.renderPagePng( {
+							html: activeCover.html,
+							width: activeCover.width,
+							height: activeCover.height,
+						} );
+						if ( dataUrl ) {
+							previewUrls = [ dataUrl ];
+						}
+					} catch ( thumbErr ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[one-pager] cover thumbnail failed:', thumbErr );
+					}
+				}
+
 				await services.storage.saveGenerationResult( {
 					outputId: request.outputId,
 					covers: coverRenders,
@@ -149,6 +171,7 @@ export function useOnePagerGeneration() {
 						usd: result.usage.usd,
 						durationMs: result.usage.durationMs,
 					},
+					previewUrls,
 				} );
 
 				dispatch(
