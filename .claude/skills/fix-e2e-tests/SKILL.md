@@ -291,6 +291,20 @@ git show-ref --verify --quiet refs/heads/fix/e2e-<slug>
 
 Exit 0 means the branch exists. Set **BRANCH** to `fix/e2e-<slug>-<timestamp>` (same timestamp as the worktree path). Exit 1 means it doesn't — set BRANCH to the unsuffixed `fix/e2e-<slug>`. Inline the chosen value everywhere `<BRANCH>` appears below. Don't auto-delete the prior branch — the user may still want it (or its PR).
 
+Check for stale worktrees from prior runs of this skill. Step 5.5 normally cleans up after itself, but a crashed or interrupted run can leave a `.claude/worktrees/fix-e2e-*` directory behind. These don't block the new run (the timestamp keeps paths unique), but they accumulate and confuse later diagnosis.
+
+```bash
+git -C <REPO_ROOT> worktree list | grep "/.claude/worktrees/fix-e2e-" || true
+```
+
+If empty, continue. If one or more orphans are listed, show them to the user verbatim and ask in plain chat whether to clean them up before creating the new worktree. On agreement, remove each one (and only the worktree — leave its branch in place since it may still hold the user's prior work):
+
+```bash
+git -C <REPO_ROOT> worktree remove <orphan-path> --force
+```
+
+On decline, proceed without cleanup.
+
 1. Fetch the PR's branch so its HEAD is locally resolvable:
 
    ```bash
