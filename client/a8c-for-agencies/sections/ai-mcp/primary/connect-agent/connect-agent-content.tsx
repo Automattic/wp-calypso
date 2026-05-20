@@ -96,8 +96,7 @@ export default function AiMcpConnectAgentContent() {
 					</CardBody>
 				</Card>
 
-				{ ( ( selectedAgent.quickSetup && selectedAgent.quickSetup.length > 0 ) ||
-					( selectedAgent.quickSetupGroups && selectedAgent.quickSetupGroups.length > 0 ) ) && (
+				{ selectedAgent.quickSetup && selectedAgent.quickSetup.length > 0 && (
 					<Card>
 						<CardBody>
 							<VStack spacing={ 3 }>
@@ -107,28 +106,13 @@ export default function AiMcpConnectAgentContent() {
 								{ selectedAgent.quickSetupDescription && (
 									<Text variant="muted">{ selectedAgent.quickSetupDescription }</Text>
 								) }
-								{ selectedAgent.quickSetupGroups ? (
-									selectedAgent.quickSetupGroups.map( ( group, gIdx ) => (
-										<VStack key={ gIdx } spacing={ 2 }>
-											<Text weight={ 500 }>{ group.title }</Text>
-											<ol>
-												{ group.steps.map( ( step, idx ) => (
-													<li key={ idx }>
-														<Text>{ step }</Text>
-													</li>
-												) ) }
-											</ol>
-										</VStack>
-									) )
-								) : (
-									<ol>
-										{ selectedAgent.quickSetup?.map( ( step, idx ) => (
-											<li key={ idx }>
-												<Text>{ step }</Text>
-											</li>
-										) ) }
-									</ol>
-								) }
+								<ol>
+									{ selectedAgent.quickSetup.map( ( step, idx ) => (
+										<li key={ idx }>
+											<Text>{ step }</Text>
+										</li>
+									) ) }
+								</ol>
 								{ selectedAgent.installAction && (
 									<>
 										<Text>
