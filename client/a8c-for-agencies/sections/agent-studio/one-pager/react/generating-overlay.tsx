@@ -53,6 +53,7 @@ export default function GeneratingOverlay( { agentName, isOpen, onCancel }: Prop
 			) }
 			onRequestClose={ onCancel }
 			className="a4a-one-pager-generating-overlay"
+			isDismissible={ false }
 			shouldCloseOnClickOutside={ false }
 			shouldCloseOnEsc={ false }
 		>
