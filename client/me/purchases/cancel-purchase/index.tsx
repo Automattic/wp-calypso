@@ -385,6 +385,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		// For Jetpack/Akismet products and domain registrations, call onCancellationComplete to show the dialog
 		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
+			// Capture the intent before opening the dialog. onSurveyComplete reads
+			// state.cancelIntent when it falls through to the mutation block; without
+			// this, intent=cancel / intent=auto-renew on a refundable purchase would
+			// route through cancelAndRefund (issuing an unwanted refund) instead of
+			// the auto-renew disable path.
+			if ( intent && this.state.cancelIntent !== intent ) {
+				this.setState( { cancelIntent: intent } );
+			}
 			this.onCancellationComplete();
 			return;
 		}
@@ -608,12 +616,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	onSurveyComplete = async () => {
+		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
+		// Dialog products (Jetpack/Akismet/domain registrations) bypass the
+		// fire-on-confirm path: their onCancellationStart early-returns to
+		// onCancellationComplete to open a survey dialog without firing the
+		// mutation. They must fall through to the post-survey mutation block
+		// below so the cancel request actually fires when the dialog closes.
+		const isDialogProduct = isJetpack || isAkismet || isDomainRegistrationPurchase;
+
 		// Flag-on path: the mutation already fired at confirm-click via
 		// fireMutationFromConfirm. fireMutationFromConfirm intentionally
 		// skipped clearPurchases / refreshSitePlans so they wouldn't flip
 		// isDataLoading mid-survey; we run them here, immediately before
 		// the redirect, so the destination page picks up fresh server data.
-		if ( this.shouldFireMutationOnConfirm() ) {
+		if ( this.shouldFireMutationOnConfirm() && ! isDialogProduct ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
 			if ( this.state.fireMutationWasRefund ) {
