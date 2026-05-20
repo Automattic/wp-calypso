@@ -67,12 +67,39 @@ export default function OutputDetailContent( { output }: Props ) {
 	const safeCoverIdx = Math.min( activeCoverIdx, Math.max( 0, data.covers.length - 1 ) );
 	const selectedCover = data.covers[ safeCoverIdx ];
 
-	const onSelectCover = ( nextIdx: number ) => {
+	const onSelectCover = async ( nextIdx: number ) => {
 		setActiveCoverIdx( nextIdx );
+		const nextCover = data.covers[ nextIdx ];
+		if ( ! nextCover ) {
+			return;
+		}
+		// Persist the selection immediately so a fast reload before the
+		// cover snapshot completes still lands on the right cover.
 		updateOutput.mutate( {
 			outputId: output.id,
 			updates: { onePagerData: { ...data, selectedCoverIdx: nextIdx } },
 		} );
+		// Re-rasterize the new cover so the deliverable card's thumbnail
+		// strip shows the cover the user picked. Best-effort: keep the
+		// body-page thumbs intact and only replace previewUrls[0].
+		try {
+			const nextCoverPng = await getOnePagerServices().thumbnail.renderPagePng( {
+				html: nextCover.html,
+				width: ELA_PAGE_WIDTH,
+				height: ELA_PAGE_HEIGHT,
+			} );
+			if ( ! nextCoverPng ) {
+				return;
+			}
+			const existing = output.previewUrls ?? [];
+			updateOutput.mutate( {
+				outputId: output.id,
+				updates: { previewUrls: [ nextCoverPng, ...existing.slice( 1 ) ] },
+			} );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( '[one-pager] cover thumb refresh failed:', error );
+		}
 	};
 
 	const onDownload = async () => {
