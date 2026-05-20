@@ -9,7 +9,7 @@ module.exports = {
 	resolver: require.resolve( './src/module-resolver.js' ),
 	setupFilesAfterEnv: [ require.resolve( './src/setup.js' ) ],
 	testEnvironment: 'node',
-	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
+	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/*.d.ts', '!**/.eslintrc.*' ],
 	transform: {
 		'\\.(?:[jt]sx?|mjs)$': [ 'babel-jest', { rootMode: 'upward' } ],
 		'\\.(gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$': require.resolve(
