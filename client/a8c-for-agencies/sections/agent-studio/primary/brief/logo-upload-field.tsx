@@ -2,16 +2,25 @@ import { FormFileUpload, __experimentalText as Text } from '@wordpress/component
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, closeSmall, upload } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import type { LogoUpload } from '../../one-pager/engine/types';
 import type { ChangeEvent } from 'react';
 
 interface Props {
 	label: string;
-	file: File | null;
-	onChange: ( file: File | null ) => void;
+	logo: LogoUpload | null;
+	onChange: ( logo: LogoUpload | null ) => void;
 	disabled?: boolean;
 	/** Renders the well with a dark background so a white-on-dark logo reads. */
 	darkBackground?: boolean;
+}
+
+function readAsDataUrl( file: File ): Promise< string > {
+	return new Promise( ( resolve, reject ) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve( reader.result as string );
+		reader.onerror = () => reject( reader.error );
+		reader.readAsDataURL( file );
+	} );
 }
 
 /**
@@ -22,41 +31,26 @@ interface Props {
  */
 export default function LogoUploadField( {
 	label,
-	file,
+	logo,
 	onChange,
 	disabled,
 	darkBackground,
 }: Props ) {
-	const objectUrlRef = useRef< { file: File; url: string } | null >( null );
+	const previewUrl = logo?.dataUrl ?? null;
 
-	const previewUrl = ( () => {
-		if ( ! file ) {
-			return null;
-		}
-		if ( objectUrlRef.current?.file === file ) {
-			return objectUrlRef.current.url;
-		}
-		if ( objectUrlRef.current ) {
-			URL.revokeObjectURL( objectUrlRef.current.url );
-		}
-		objectUrlRef.current = { file, url: URL.createObjectURL( file ) };
-		return objectUrlRef.current.url;
-	} )();
-
-	useEffect( () => {
-		return () => {
-			if ( objectUrlRef.current ) {
-				URL.revokeObjectURL( objectUrlRef.current.url );
-				objectUrlRef.current = null;
-			}
-		};
-	}, [] );
-
-	const onSelect = ( event: ChangeEvent< HTMLInputElement > ) => {
-		const next = event.target.files?.[ 0 ] ?? null;
+	const onSelect = async ( event: ChangeEvent< HTMLInputElement > ) => {
+		const file = event.target.files?.[ 0 ] ?? null;
 		event.target.value = '';
-		if ( next ) {
-			onChange( next );
+		if ( ! file ) {
+			return;
+		}
+		try {
+			const dataUrl = await readAsDataUrl( file );
+			onChange( { fileName: file.name, dataUrl } );
+		} catch {
+			// File read failures here are vanishingly rare in practice
+			// (FileReader.onerror only fires on a real I/O error). Swallowing
+			// keeps the form from getting stuck — user can retry.
 		}
 	};
 

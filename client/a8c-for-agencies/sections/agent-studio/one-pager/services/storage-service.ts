@@ -42,4 +42,10 @@ export const defaultStorageService: StorageService = {
 			errorMessage: error,
 		} );
 	},
+	async getDefaults() {
+		return agentStudioService.getOnePagerDefaults();
+	},
+	async setDefaults( defaults ) {
+		await agentStudioService.setOnePagerDefaults( defaults );
+	},
 };

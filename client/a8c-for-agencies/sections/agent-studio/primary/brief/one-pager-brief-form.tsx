@@ -11,7 +11,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -21,6 +21,7 @@ import { DEFAULT_PACK_SLUG } from '../../one-pager/brand-packs';
 import GeneratingOverlay from '../../one-pager/react/generating-overlay';
 import { useOnePagerGeneration } from '../../one-pager/react/use-one-pager-generation';
 import useSuggestOnePagerContent from '../../one-pager/react/use-suggest-one-pager-content';
+import { getOnePagerServices } from '../../one-pager/services';
 import { getBriefExcerpt } from './brief-helpers';
 import ImageUploadField from './image-upload-field';
 import LogoUploadField from './logo-upload-field';
@@ -48,11 +49,38 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	const [ title, setTitle ] = useState( '' );
 	const [ blurb, setBlurb ] = useState( '' );
 	const [ images, setImages ] = useState< File[] >( [] );
-	const [ primaryLogoLight, setPrimaryLogoLight ] = useState< File | null >( null );
-	const [ primaryLogoDark, setPrimaryLogoDark ] = useState< File | null >( null );
-	const [ partnerLogoLight, setPartnerLogoLight ] = useState< File | null >( null );
-	const [ partnerLogoDark, setPartnerLogoDark ] = useState< File | null >( null );
+	const [ primaryLogoLight, setPrimaryLogoLight ] = useState< LogoUpload | null >( null );
+	const [ primaryLogoDark, setPrimaryLogoDark ] = useState< LogoUpload | null >( null );
+	const [ partnerLogoLight, setPartnerLogoLight ] = useState< LogoUpload | null >( null );
+	const [ partnerLogoDark, setPartnerLogoDark ] = useState< LogoUpload | null >( null );
 	const [ partnerLogoOrder, setPartnerLogoOrder ] = useState< DualLogoOrder >( 'brand-first' );
+
+	// Rehydrate the user's last-used logos so a returning visit doesn't
+	// ask them to re-upload. Only fills empty slots — anything the user
+	// has touched this session wins.
+	useEffect( () => {
+		let cancelled = false;
+		( async () => {
+			try {
+				const defaults = await getOnePagerServices().storage.getDefaults();
+				if ( cancelled || ! defaults ) {
+					return;
+				}
+				setPrimaryLogoLight( ( current ) => current ?? defaults.primaryLogoLight ?? null );
+				setPrimaryLogoDark( ( current ) => current ?? defaults.primaryLogoDark ?? null );
+				setPartnerLogoLight( ( current ) => current ?? defaults.partnerLogoLight ?? null );
+				setPartnerLogoDark( ( current ) => current ?? defaults.partnerLogoDark ?? null );
+				if ( defaults.partnerLogoOrder ) {
+					setPartnerLogoOrder( defaults.partnerLogoOrder );
+				}
+			} catch {
+				// Best effort — empty form is the safe fallback.
+			}
+		} )();
+		return () => {
+			cancelled = true;
+		};
+	}, [] );
 
 	const generation = useOnePagerGeneration();
 	const createOutput = useCreateAgentStudioOutput();
@@ -103,24 +131,6 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				} ) )
 			);
 
-			const toLogoUpload = async ( file: File | null ): Promise< LogoUpload | undefined > => {
-				if ( ! file ) {
-					return undefined;
-				}
-				return { fileName: file.name, dataUrl: await readAsDataUrl( file ) };
-			};
-			const [
-				primaryLogoLightUpload,
-				primaryLogoDarkUpload,
-				partnerLogoLightUpload,
-				partnerLogoDarkUpload,
-			] = await Promise.all( [
-				toLogoUpload( primaryLogoLight ),
-				toLogoUpload( primaryLogoDark ),
-				toLogoUpload( partnerLogoLight ),
-				toLogoUpload( partnerLogoDark ),
-			] );
-
 			const result = await generation.run( {
 				outputId: output.id,
 				agentId: agent.id,
@@ -129,14 +139,29 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				blurb: blurb.trim(),
 				text: brief,
 				images: elaImages,
-				primaryLogoLight: primaryLogoLightUpload,
-				primaryLogoDark: primaryLogoDarkUpload,
-				partnerLogoLight: partnerLogoLightUpload,
-				partnerLogoDark: partnerLogoDarkUpload,
+				primaryLogoLight: primaryLogoLight ?? undefined,
+				primaryLogoDark: primaryLogoDark ?? undefined,
+				partnerLogoLight: partnerLogoLight ?? undefined,
+				partnerLogoDark: partnerLogoDark ?? undefined,
 				partnerLogoOrder: hasPartnerLogo ? partnerLogoOrder : undefined,
 			} );
 
 			if ( result.ok ) {
+				// Remember the user's logo choices for the next brief so we
+				// don't ask them to re-upload. Best-effort, never block
+				// success on a persistence error.
+				try {
+					await getOnePagerServices().storage.setDefaults( {
+						primaryLogoLight: primaryLogoLight ?? undefined,
+						primaryLogoDark: primaryLogoDark ?? undefined,
+						partnerLogoLight: partnerLogoLight ?? undefined,
+						partnerLogoDark: partnerLogoDark ?? undefined,
+						partnerLogoOrder: hasPartnerLogo ? partnerLogoOrder : undefined,
+					} );
+				} catch ( saveErr ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[one-pager] could not persist logo defaults:', saveErr );
+				}
 				dispatch(
 					successNotice(
 						sprintf(
@@ -281,14 +306,14 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 							<LogoUploadField
 								label={ __( 'Light' ) }
-								file={ primaryLogoLight }
-								onChange={ setPrimaryLogoLight }
+								logo={ primaryLogoLight }
+								onChange={ ( next ) => setPrimaryLogoLight( next ) }
 								disabled={ isBusy }
 							/>
 							<LogoUploadField
 								label={ __( 'Dark (optional)' ) }
-								file={ primaryLogoDark }
-								onChange={ setPrimaryLogoDark }
+								logo={ primaryLogoDark }
+								onChange={ ( next ) => setPrimaryLogoDark( next ) }
 								disabled={ isBusy }
 								darkBackground
 							/>
@@ -303,14 +328,14 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 							<LogoUploadField
 								label={ __( 'Light' ) }
-								file={ partnerLogoLight }
-								onChange={ setPartnerLogoLight }
+								logo={ partnerLogoLight }
+								onChange={ ( next ) => setPartnerLogoLight( next ) }
 								disabled={ isBusy }
 							/>
 							<LogoUploadField
 								label={ __( 'Dark (optional)' ) }
-								file={ partnerLogoDark }
-								onChange={ setPartnerLogoDark }
+								logo={ partnerLogoDark }
+								onChange={ ( next ) => setPartnerLogoDark( next ) }
 								disabled={ isBusy }
 								darkBackground
 							/>

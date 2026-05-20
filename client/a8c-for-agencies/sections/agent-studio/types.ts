@@ -1,4 +1,9 @@
-import type { ElaCover, OnePagerInputSnapshot } from './one-pager/engine/types';
+import type {
+	DualLogoOrder,
+	ElaCover,
+	LogoUpload,
+	OnePagerInputSnapshot,
+} from './one-pager/engine/types';
 
 export type AgentStudioOutputStatus = 'ready' | 'generating' | 'failed';
 
@@ -83,6 +88,20 @@ export interface UpdateAgentStudioOutputInput {
 
 export type OnePagerContentField = 'title' | 'blurb';
 
+/**
+ * Per-user defaults remembered between briefs — currently just the
+ * last-used logos so we don't ask the user to re-upload them every time.
+ * The mock impl stores this in IDB; a server impl would back it with a
+ * per-user profile row.
+ */
+export interface OnePagerDefaults {
+	primaryLogoLight?: LogoUpload;
+	primaryLogoDark?: LogoUpload;
+	partnerLogoLight?: LogoUpload;
+	partnerLogoDark?: LogoUpload;
+	partnerLogoOrder?: DualLogoOrder;
+}
+
 export interface AgentStudioService {
 	listProjects(): Promise< AgentStudioProjectSummary[] >;
 	getProject( projectId: string ): Promise< AgentStudioProject | undefined >;
@@ -98,4 +117,6 @@ export interface AgentStudioService {
 	): Promise< AgentStudioOutput | undefined >;
 	deleteOutput( outputId: string ): Promise< void >;
 	suggestOnePagerContent( brief: string, field: OnePagerContentField ): Promise< string >;
+	getOnePagerDefaults(): Promise< OnePagerDefaults | undefined >;
+	setOnePagerDefaults( defaults: OnePagerDefaults ): Promise< void >;
 }

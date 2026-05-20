@@ -134,6 +134,20 @@ export interface OnePagerStorageInput {
 	previewUrls?: string[];
 }
 
+/**
+ * Per-user defaults the brief form remembers between visits. Right now this
+ * is just the last-used logos so the agent doesn't ask the user to
+ * re-upload them every brief. Lives under a meta store on the client; a
+ * server impl backs it with a per-user profile.
+ */
+export interface OnePagerDefaults {
+	primaryLogoLight?: LogoUpload;
+	primaryLogoDark?: LogoUpload;
+	partnerLogoLight?: LogoUpload;
+	partnerLogoDark?: LogoUpload;
+	partnerLogoOrder?: DualLogoOrder;
+}
+
 export interface StorageService {
 	/**
 	 * Persists the result of a successful generation against the agent-studio
@@ -142,4 +156,15 @@ export interface StorageService {
 	 */
 	saveGenerationResult( request: OnePagerStorageInput ): Promise< void >;
 	markGenerationFailed( request: { outputId: string; error: string } ): Promise< void >;
+	/**
+	 * Read the user's last-used logo selections so the brief form can
+	 * pre-fill them. Returns undefined when nothing is stored yet.
+	 */
+	getDefaults(): Promise< OnePagerDefaults | undefined >;
+	/**
+	 * Persist the user's logo selections after a successful generation so
+	 * the next brief starts pre-filled. Merges with whatever was stored
+	 * before — pass undefined for a field to leave that field unchanged.
+	 */
+	setDefaults( defaults: OnePagerDefaults ): Promise< void >;
 }

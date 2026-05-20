@@ -9,6 +9,7 @@ import type {
 	AgentStudioService,
 	CreateAgentStudioOutputInput,
 	CreateAgentStudioProjectInput,
+	OnePagerDefaults,
 	UpdateAgentStudioOutputInput,
 } from '../types';
 
@@ -19,9 +20,13 @@ import type {
 // replaces this mock, the server will provision the same shape.
 
 const DB_NAME = 'a4a-agent-studio-mock';
-const DB_VERSION = 1;
+// Bump version when adding object stores. v2 added the `meta` store for
+// per-user defaults (last-used logos).
+const DB_VERSION = 2;
 const PROJECTS_STORE = 'projects';
 const OUTPUTS_STORE = 'outputs';
+const META_STORE = 'meta';
+const ONE_PAGER_DEFAULTS_KEY = 'one-pager-defaults';
 
 interface MockState {
 	projects: AgentStudioProject[];
@@ -54,6 +59,9 @@ function openDb(): Promise< IDBDatabase > {
 			if ( ! db.objectStoreNames.contains( OUTPUTS_STORE ) ) {
 				const store = db.createObjectStore( OUTPUTS_STORE, { keyPath: 'id' } );
 				store.createIndex( 'projectId', 'projectId' );
+			}
+			if ( ! db.objectStoreNames.contains( META_STORE ) ) {
+				db.createObjectStore( META_STORE, { keyPath: 'key' } );
 			}
 		};
 		req.onsuccess = () => resolve( req.result );
@@ -326,6 +334,40 @@ export const mockAgentStudioService: AgentStudioService = {
 
 	async suggestOnePagerContent( brief, field ) {
 		return _suggestOnePagerContent( brief, field );
+	},
+
+	async getOnePagerDefaults(): Promise< OnePagerDefaults | undefined > {
+		if ( ! isBrowser() ) {
+			return undefined;
+		}
+		try {
+			const db = await openDb();
+			const row = await new Promise< { key: string; value: OnePagerDefaults } | undefined >(
+				( resolve, reject ) => {
+					const tx = db.transaction( META_STORE, 'readonly' );
+					const req = tx.objectStore( META_STORE ).get( ONE_PAGER_DEFAULTS_KEY );
+					req.onsuccess = () =>
+						resolve( req.result as { key: string; value: OnePagerDefaults } | undefined );
+					req.onerror = () => reject( req.error );
+				}
+			);
+			return row?.value;
+		} catch ( err ) {
+			// eslint-disable-next-line no-console
+			console.warn( '[agent-studio mock] getOnePagerDefaults failed:', err );
+			return undefined;
+		}
+	},
+
+	async setOnePagerDefaults( defaults: OnePagerDefaults ): Promise< void > {
+		if ( ! isBrowser() ) {
+			return;
+		}
+		// Merge with existing so a partial write (e.g. only the partner logo
+		// changed) preserves the rest of the defaults.
+		const existing = ( await this.getOnePagerDefaults() ) ?? {};
+		const next: OnePagerDefaults = { ...existing, ...defaults };
+		await persist( META_STORE, { key: ONE_PAGER_DEFAULTS_KEY, value: next } );
 	},
 };
 

@@ -276,6 +276,28 @@ function extractPagesAndNotes( raw: string ): { pages: string[]; notes: string }
 	return { pages, notes };
 }
 
+// Quick recipe hint per body-image count, mirroring the SYSTEM_PROMPT's
+// "4 images → U or E+E or D+D+E" guidance so the LLM has a concrete plan
+// when it sees N images in the user message.
+function recipeForImageCount( n: number ): string {
+	switch ( n ) {
+		case 1:
+			return 'one D (or G as a quiet plate page)';
+		case 2:
+			return 'one E (side-by-side), or D + D';
+		case 3:
+			return 'D + D + D, or D + E';
+		case 4:
+			return 'one U (2×2 grid, when the four belong together), or E + E, or D + D + E';
+		case 5:
+			return 'U + D, or E + D + D, or E + E + D';
+		case 6:
+			return 'U + E, or E + E + E, or D + D + D + D + D + D';
+		default:
+			return `${ Math.ceil( n / 2 ) } pages of E plus ${ n % 2 === 1 ? '1 page of D' : 'mirrors' }`;
+	}
+}
+
 export async function generateOnePager( args: {
 	llm: LLMService;
 	pack: BrandPack;
@@ -306,10 +328,17 @@ export async function generateOnePager( args: {
 	const bodyImages = images.slice( 1 );
 	const imageList =
 		bodyImages.length > 0
-			? '\nUSER-PROVIDED IMAGES (use placeholder URLs in <img> tags; only use ones that fit the composition):\n' +
+			? `\nUSER-PROVIDED IMAGES (use ALL ${ bodyImages.length } of these — see the SYSTEM IMAGES rules; never drop one, never cram one into a small grid-row, give each a full image-pattern page):\n` +
 			  bodyImages
 					.map( ( img, i ) => `- {{IMAGE_${ i + 1 }_URL}} (file: "${ img.fileName }")` )
-					.join( '\n' )
+					.join( '\n' ) +
+			  `\n\nIMAGE-PATTERN BUDGET: with ${ bodyImages.length } body image${
+					bodyImages.length === 1 ? '' : 's'
+			  }, plan at least ${ bodyImages.length } image-pattern page${
+					bodyImages.length === 1 ? '' : 's'
+			  } (D, E, F, G, N, U or their -R mirrors) — for example: ${ recipeForImageCount(
+					bodyImages.length
+			  ) }. Pick image patterns over their bare-text equivalents on every page that can carry a photo.`
 			: '\nNO IMAGES PROVIDED: do NOT use {{IMAGE_N_URL}} placeholders.';
 
 	const userMessage = [
