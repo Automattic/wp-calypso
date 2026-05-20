@@ -313,6 +313,50 @@
 	font-size: 13px;
 }
 
+/* Failed state shown in the Download column when a pending row has been
+ * stuck for more than STALE_PENDING_THRESHOLD_MS (30 min). Uses the A4A
+ * error color so the row reads as "something went wrong" at a glance,
+ * paired with a notice-outline Gridicon and an info popover that offers
+ * Try again / Archive it actions. */
+.amplify-reports-failed {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--color-error);
+}
+
+.amplify-reports-failed-icon {
+	flex-shrink: 0;
+	fill: var(--color-error);
+}
+
+.amplify-reports-failed-label {
+	font-weight: 500;
+}
+
+.amplify-reports-failed-popover {
+	max-inline-size: 260px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.amplify-reports-failed-popover-body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--color-text);
+}
+
+/* Single "Try again" link aligned to the start of the popover, matching
+ * the archived popover's CTA treatment. Archiving the row is available via
+ * the row's ellipsis menu — no second link here. */
+.amplify-reports-failed-popover-cta {
+	align-self: flex-start;
+	font-size: 13px;
+}
+
 .amplify-reports-in-progress {
 	display: inline-flex;
 	align-items: center;

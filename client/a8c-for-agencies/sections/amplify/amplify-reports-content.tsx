@@ -14,6 +14,7 @@
  *     └── displayed until the page is reloaded and R2 reflects the real status
  */
 
+import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
@@ -54,6 +55,13 @@ type Report = {
 	/** True for jobs submitted this session that haven't yet appeared in R2. */
 	pending?: boolean;
 	/**
+	 * True for pending jobs whose startedAt is older than
+	 * STALE_PENDING_THRESHOLD_MS — i.e. the Trigger.dev run almost certainly
+	 * failed and we should surface that to the user. Derived per render so
+	 * it flips as soon as the threshold is crossed (within a polling cycle).
+	 */
+	failed?: boolean;
+	/**
 	 * Derived per render from useArchivedReports() (localStorage-backed).
 	 * Pending jobs are always 'active'. Once the wpcom endpoint replaces
 	 * the R2 + localStorage split, this becomes a server-driven field on
@@ -63,6 +71,18 @@ type Report = {
 };
 
 const INDEX_URL = 'https://pub-d85717c601eb44398d8336c65ac7cfbb.r2.dev/reports/index.json';
+
+/**
+ * A pending job that hasn't been resolved by an R2 entry within this many
+ * milliseconds is treated as failed. The Trigger.dev task's maxDuration is
+ * 20 minutes; the fail-loud guard there turns silent worker failures into
+ * visible task failures, but Calypso has no direct signal of those failures
+ * today — so we use a client-side timeout to convert the never-resolving
+ * pending row into a user-facing error state. 30 minutes gives us a 10-min
+ * cushion above maxDuration so a slow-but-legitimate run isn't prematurely
+ * marked as failed.
+ */
+const STALE_PENDING_THRESHOLD_MS = 30 * 60 * 1000;
 
 const MODE_LABELS: Record< AnalysisMode, string > = {
 	human: 'Human',
@@ -222,11 +242,19 @@ export default function AmplifyReportsContent( {
 	onPendingJobsResolved?: ( jobIds: string[] ) => void;
 } ) {
 	const dispatch = useDispatch();
-	// Poll the R2 index while at least one job is in flight so the table can
-	// flip "Report in progress" rows to downloadable ones without a manual
-	// page refresh. Polling stops automatically the moment pendingJobs is
-	// empty (the hook re-runs its effect when shouldPoll changes).
-	const { reports: fetchedReports, isLoading, error } = useAmplifyReports( pendingJobs.length > 0 );
+	// Poll the R2 index while at least one *non-stale* pending job is in
+	// flight so the table can flip the row to "Download PDF" without a
+	// manual page refresh. Stale pendings (past STALE_PENDING_THRESHOLD_MS)
+	// are effectively failed — polling for them is wasted traffic since the
+	// Trigger.dev run is either already errored out or way past its max
+	// duration. The boolean is recomputed on every render rather than
+	// memoized so the staleness check stays correct as the wall clock
+	// advances even when `pendingJobs` itself doesn't change.
+	const cutoff = Date.now() - STALE_PENDING_THRESHOLD_MS;
+	const hasNonStalePending = pendingJobs.some(
+		( job ) => new Date( job.startedAt ).getTime() >= cutoff
+	);
+	const { reports: fetchedReports, isLoading, error } = useAmplifyReports( hasNonStalePending );
 
 	// Archive state is held client-side (localStorage). See the header of
 	// hooks/use-archived-reports.ts for the migration plan to a wpcom endpoint.
@@ -252,15 +280,25 @@ export default function AmplifyReportsContent( {
 	const reports = useMemo< Report[] >( () => {
 		const pendingReports: Report[] = pendingJobs
 			.filter( ( job ) => ! isPendingJobResolved( job, fetchedReports ) )
-			.map( ( job ) => ( {
-				id: job.jobId,
-				agencyName: '',
-				url: job.site,
-				mode: job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode ),
-				timestamp: job.startedAt,
-				pending: true,
-				status: 'active' as const,
-			} ) );
+			.map( ( job ) => {
+				// A pending job whose startedAt is older than the stale
+				// threshold is treated as failed (see STALE_PENDING_THRESHOLD_MS).
+				// `failed` rides alongside `pending` rather than replacing it
+				// because the row is still in sessionStorage and still
+				// pending-by-state — it just won't resolve.
+				const startedAtMs = new Date( job.startedAt ).getTime();
+				const failed = Date.now() - startedAtMs > STALE_PENDING_THRESHOLD_MS;
+				return {
+					id: job.jobId,
+					agencyName: '',
+					url: job.site,
+					mode: job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode ),
+					timestamp: job.startedAt,
+					pending: true,
+					failed,
+					status: 'active' as const,
+				};
+			} );
 		const completedReports: Report[] = fetchedReports.map( ( report ) => ( {
 			...report,
 			status: isArchived( report.id ) ? ( 'archived' as const ) : ( 'active' as const ),
@@ -370,6 +408,46 @@ export default function AmplifyReportsContent( {
 		[ dispatch, onSiteSelected ]
 	);
 
+	// Triggered from the "Try again" CTA inside the failed-report popover.
+	// Drops the stale pending row from sessionStorage and opens the analysis
+	// modal pre-loaded with the same site so the user can re-run cleanly.
+	// We reuse onPendingJobsResolved for the removal — semantically it's
+	// "the job is no longer pending in our view", which fits whether the
+	// resolution was a real R2 entry or a user-initiated dismissal.
+	const handleRetryFailed = useCallback(
+		( item: Report ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_report_failed_retry_click', {
+					site_url: item.url,
+					analysis_type: item.mode,
+				} )
+			);
+			onPendingJobsResolved?.( [ item.id ] );
+			onSiteSelected( item.url );
+		},
+		[ dispatch, onPendingJobsResolved, onSiteSelected ]
+	);
+
+	// Triggered from "Archive it" inside the failed-report popover OR from
+	// the new Archive action in the row's ellipsis menu (eligible only on
+	// failed rows). "Archive" here is user-facing language — mechanically
+	// we just remove the stale pending entry from sessionStorage so the
+	// row goes away. Pending jobs don't have an R2 entry to flip into the
+	// localStorage archive list, and tab-scoped sessionStorage means
+	// "archive" can't be undone after a tab close anyway.
+	const handleArchiveFailed = useCallback(
+		( item: Report ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_report_failed_dismiss_click', {
+					site_url: item.url,
+					analysis_type: item.mode,
+				} )
+			);
+			onPendingJobsResolved?.( [ item.id ] );
+		},
+		[ dispatch, onPendingJobsResolved ]
+	);
+
 	// Memoized separately so the fields array below doesn't recreate on every render.
 	const handleDownload = useCallback(
 		( item: Report ) => {
@@ -441,14 +519,18 @@ export default function AmplifyReportsContent( {
 				label: __( 'Scores' ),
 				getValue: () => '',
 				render: ( { item }: { item: Report } ): ReactNode => {
-					// Pending rows have no scores yet — render an em dash
-					// placeholder rather than an empty cell so the column
-					// visibly tracks the row instead of looking broken.
+					// Pending and failed rows have no scores — render an em
+					// dash placeholder rather than an empty cell so the
+					// column visibly tracks the row instead of looking broken.
 					if ( item.pending ) {
 						return (
 							<span
 								className="amplify-reports-scores-placeholder"
-								aria-label={ __( 'Scores not yet available' ) }
+								aria-label={
+									item.failed
+										? __( 'Scores unavailable — analysis failed' )
+										: __( 'Scores not yet available' )
+								}
 							>
 								—
 							</span>
@@ -488,6 +570,44 @@ export default function AmplifyReportsContent( {
 				label: __( 'Download' ),
 				getValue: () => '',
 				render: ( { item }: { item: Report } ): ReactNode => {
+					// `failed` is a stale subset of `pending`, so this branch
+					// MUST sit above the plain pending branch — otherwise the
+					// failed row would render as "Analysis in progress".
+					if ( item.failed ) {
+						return (
+							<span className="amplify-reports-failed">
+								<Gridicon
+									className="amplify-reports-failed-icon"
+									icon="notice-outline"
+									size={ 18 }
+								/>
+								<span className="amplify-reports-failed-label">{ __( 'Analysis failed' ) }</span>
+								<AmplifyInfoPopover ariaLabel={ __( 'About this failed analysis' ) }>
+									{ ( { close }: { close: () => void } ) => (
+										<div className="amplify-reports-failed-popover">
+											<p className="amplify-reports-failed-popover-body">
+												{ __(
+													'We couldn’t generate this report. The analysis may have timed out or hit an error.'
+												) }
+											</p>
+											{ /* Single CTA — archiving the failed row is still available
+											     via the row's ellipsis menu, no need to surface it twice. */ }
+											<Button
+												variant="link"
+												className="amplify-reports-failed-popover-cta"
+												onClick={ () => {
+													close();
+													handleRetryFailed( item );
+												} }
+											>
+												{ __( 'Try again' ) }
+											</Button>
+										</div>
+									) }
+								</AmplifyInfoPopover>
+							</span>
+						);
+					}
 					if ( item.pending ) {
 						return (
 							<span className="amplify-reports-in-progress">{ __( 'Analysis in progress' ) }</span>
@@ -567,7 +687,7 @@ export default function AmplifyReportsContent( {
 				enableSorting: false,
 			},
 		];
-	}, [ handleDownload, handleAmplifyNow ] );
+	}, [ handleDownload, handleAmplifyNow, handleRetryFailed ] );
 
 	// DataViews actions appear in a built-in column at the end of each row.
 	// `isPrimary: false` puts them under the row's ellipsis menu rather than
@@ -586,7 +706,12 @@ export default function AmplifyReportsContent( {
 						handleArchive( report );
 					}
 				},
-				isEligible: ( item: Report ) => ! item.pending && item.status !== 'archived',
+				// Eligible only for active completed reports — not for pending,
+				// not for already-archived, and not for failed (failed rows
+				// have their own Archive action below that hits the right
+				// dismiss path).
+				isEligible: ( item: Report ) =>
+					! item.pending && ! item.failed && item.status !== 'archived',
 			},
 			{
 				id: 'unarchive-report',
@@ -598,10 +723,26 @@ export default function AmplifyReportsContent( {
 						handleUnarchive( report );
 					}
 				},
-				isEligible: ( item: Report ) => ! item.pending && item.status === 'archived',
+				isEligible: ( item: Report ) =>
+					! item.pending && ! item.failed && item.status === 'archived',
+			},
+			{
+				// Failed-row archive surfaces the same removal we offer
+				// inside the popover, just as an ellipsis-menu shortcut so
+				// users can clear the row without opening the popover first.
+				id: 'archive-failed-report',
+				label: __( 'Archive' ),
+				isPrimary: false,
+				callback: ( items: Report[] ) => {
+					const report = items[ 0 ];
+					if ( report ) {
+						handleArchiveFailed( report );
+					}
+				},
+				isEligible: ( item: Report ) => !! item.failed,
 			},
 		],
-		[ handleArchive, handleUnarchive ]
+		[ handleArchive, handleUnarchive, handleArchiveFailed ]
 	);
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
