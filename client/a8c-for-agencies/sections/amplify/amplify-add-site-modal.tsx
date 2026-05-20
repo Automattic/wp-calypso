@@ -31,6 +31,12 @@ function AmplifySiteTable( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		fields: [ 'site' ],
+		// Default to compact density so more rows are visible without
+		// scrolling — the modal is a quick site picker, not a browse view,
+		// so vertical density matters more than per-row breathing room.
+		// User can switch back to Comfortable via the settings cog
+		// (Appearance → Density).
+		layout: { density: 'compact' },
 	} );
 
 	const items: SiteItem[] = useMemo(

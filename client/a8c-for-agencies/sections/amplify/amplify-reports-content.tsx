@@ -28,12 +28,17 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import AmplifySiteSelect from './amplify-site-select';
+import AmplifyInfoPopover from './components/amplify-info-popover';
+import useArchivedReports from './hooks/use-archived-reports';
 import type { PendingJob } from './amplify-analysis-modal';
-import type { Field } from '@wordpress/dataviews';
+import type { Action, Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
 type AnalysisMode = 'human' | 'ai' | 'fullanalysis';
+
+type ReportStatus = 'active' | 'archived';
 
 type Report = {
 	id: string;
@@ -48,6 +53,13 @@ type Report = {
 	reportUrl?: string;
 	/** True for jobs submitted this session that haven't yet appeared in R2. */
 	pending?: boolean;
+	/**
+	 * Derived per render from useArchivedReports() (localStorage-backed).
+	 * Pending jobs are always 'active'. Once the wpcom endpoint replaces
+	 * the R2 + localStorage split, this becomes a server-driven field on
+	 * the report record itself — see hooks/use-archived-reports.ts.
+	 */
+	status: ReportStatus;
 };
 
 const INDEX_URL = 'https://pub-d85717c601eb44398d8336c65ac7cfbb.r2.dev/reports/index.json';
@@ -81,7 +93,21 @@ function isPendingJobResolved( job: PendingJob, fetchedReports: Report[] ): bool
 	);
 }
 
-function useAmplifyReports(): { reports: Report[]; isLoading: boolean; error: string | null } {
+/**
+ * Fetches the R2 reports index on mount, and (when `shouldPoll` is true)
+ * re-fetches every POLL_INTERVAL_MS so an in-progress job can flip to a
+ * downloadable row without the user reloading the page.
+ *
+ * Callers pass `shouldPoll = pendingJobs.length > 0` so we only poll while a
+ * job is actually outstanding. When the last pending job resolves and the
+ * caller stops passing `true`, this effect tears down the interval and we
+ * go back to the cheap on-mount-only mode.
+ */
+function useAmplifyReports( shouldPoll: boolean ): {
+	reports: Report[];
+	isLoading: boolean;
+	error: string | null;
+} {
 	const [ reports, setReports ] = useState< Report[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState< string | null >( null );
@@ -89,38 +115,56 @@ function useAmplifyReports(): { reports: Report[]; isLoading: boolean; error: st
 	useEffect( () => {
 		let cancelled = false;
 
-		window
-			.fetch( `${ INDEX_URL }?_=${ Date.now() }` )
-			.then( ( res ) => {
-				// 404 means no analyses have been run yet — treat as empty, not error.
-				if ( res.status === 404 ) {
-					return { reports: [] };
-				}
-				if ( ! res.ok ) {
-					throw new Error( `Failed to load reports: ${ res.status }` );
-				}
-				return res.json();
-			} )
-			.then( ( data ) => {
-				if ( ! cancelled ) {
+		const fetchReports = () => {
+			window
+				.fetch( `${ INDEX_URL }?_=${ Date.now() }` )
+				.then( ( res ) => {
+					// 404 means no analyses have been run yet — treat as empty, not error.
+					if ( res.status === 404 ) {
+						return { reports: [] };
+					}
+					if ( ! res.ok ) {
+						throw new Error( `Failed to load reports: ${ res.status }` );
+					}
+					return res.json();
+				} )
+				.then( ( data ) => {
+					if ( cancelled ) {
+						return;
+					}
 					setReports( Array.isArray( data.reports ) ? data.reports : [] );
-				}
-			} )
-			.catch( ( err ) => {
-				if ( ! cancelled ) {
-					setError( err.message );
-				}
-			} )
-			.finally( () => {
-				if ( ! cancelled ) {
-					setIsLoading( false );
-				}
-			} );
+					// Clear any previous error once a poll succeeds, so an intermittent
+					// R2 hiccup doesn't pin the table in an error state forever.
+					setError( null );
+				} )
+				.catch( ( err ) => {
+					if ( ! cancelled ) {
+						setError( err.message );
+					}
+				} )
+				.finally( () => {
+					if ( ! cancelled ) {
+						setIsLoading( false );
+					}
+				} );
+		};
+
+		fetchReports();
+
+		// 20s is responsive enough that a finished report flips within ~half a
+		// minute, while keeping the fetch volume tiny — the index payload is
+		// small JSON and Trigger runs take 5–15 minutes, so this is well under
+		// any meaningful R2 traffic threshold.
+		const POLL_INTERVAL_MS = 20_000;
+		const intervalId = shouldPoll ? setInterval( fetchReports, POLL_INTERVAL_MS ) : null;
 
 		return () => {
 			cancelled = true;
+			if ( intervalId !== null ) {
+				clearInterval( intervalId );
+			}
 		};
-	}, [] );
+	}, [ shouldPoll ] );
 
 	return { reports, isLoading, error };
 }
@@ -178,7 +222,15 @@ export default function AmplifyReportsContent( {
 	onPendingJobsResolved?: ( jobIds: string[] ) => void;
 } ) {
 	const dispatch = useDispatch();
-	const { reports: fetchedReports, isLoading, error } = useAmplifyReports();
+	// Poll the R2 index while at least one job is in flight so the table can
+	// flip "Report in progress" rows to downloadable ones without a manual
+	// page refresh. Polling stops automatically the moment pendingJobs is
+	// empty (the hook re-runs its effect when shouldPoll changes).
+	const { reports: fetchedReports, isLoading, error } = useAmplifyReports( pendingJobs.length > 0 );
+
+	// Archive state is held client-side (localStorage). See the header of
+	// hooks/use-archived-reports.ts for the migration plan to a wpcom endpoint.
+	const { isArchived, archive, unarchive } = useArchivedReports();
 
 	// Merge pending jobs into the reports list. A pending job is shown at the
 	// top with the `pending` flag set. Once the R2 index updates and a real
@@ -195,7 +247,9 @@ export default function AmplifyReportsContent( {
 	//
 	// Memoized so that table interactions (sort/filter/paginate) that trigger a
 	// re-render don't rebuild the match index and re-map the arrays unnecessarily.
-	const reports = useMemo( () => {
+	// Pending jobs are always `status: 'active'` — you can't archive a job that
+	// hasn't finished. Completed reports take their status from useArchivedReports.
+	const reports = useMemo< Report[] >( () => {
 		const pendingReports: Report[] = pendingJobs
 			.filter( ( job ) => ! isPendingJobResolved( job, fetchedReports ) )
 			.map( ( job ) => ( {
@@ -205,9 +259,14 @@ export default function AmplifyReportsContent( {
 				mode: job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode ),
 				timestamp: job.startedAt,
 				pending: true,
+				status: 'active' as const,
 			} ) );
-		return [ ...pendingReports, ...fetchedReports ];
-	}, [ fetchedReports, pendingJobs ] );
+		const completedReports: Report[] = fetchedReports.map( ( report ) => ( {
+			...report,
+			status: isArchived( report.id ) ? ( 'archived' as const ) : ( 'active' as const ),
+		} ) );
+		return [ ...pendingReports, ...completedReports ];
+	}, [ fetchedReports, pendingJobs, isArchived ] );
 
 	// Once a pending job is resolved by an R2 entry, tell the parent so it can
 	// drop the job from its state + sessionStorage. Without this, resolved jobs
@@ -237,7 +296,79 @@ export default function AmplifyReportsContent( {
 		...initialDataViewsState,
 		type: DATAVIEWS_TABLE,
 		fields: [ 'site', 'mode', 'scores', 'timestamp', 'download' ],
+		// Default to showing Active reports only. The user can switch to
+		// Archived or remove the filter for All via the DataViews filter UI.
+		filters: [ { field: 'status', operator: 'is', value: 'active' } ],
+		// Override the shared a4a default of 50 — the reports list grows one
+		// row per analysis, so 50/page would push pagination controls off
+		// indefinitely. 10 keeps the page scannable and surfaces pagination
+		// once a Partner Manager has run their 11th analysis. Users can bump
+		// this up via the DataViews settings cog (Items per page).
+		perPage: 10,
 	} );
+
+	// Memoized so the actions array below doesn't recreate on every render,
+	// which in turn keeps DataViews from re-mounting the row action menus.
+	const handleArchive = useCallback(
+		( item: Report ) => {
+			archive( item.id );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_report_archive', {
+					report_id: item.id,
+					site_url: item.url,
+					analysis_type: item.mode,
+				} )
+			);
+			dispatch(
+				successNotice( __( 'Report archived.' ), {
+					id: 'amplify-report-archive-success',
+					duration: 4000,
+				} )
+			);
+		},
+		[ archive, dispatch ]
+	);
+
+	const handleUnarchive = useCallback(
+		( item: Report ) => {
+			unarchive( item.id );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_report_unarchive', {
+					report_id: item.id,
+					site_url: item.url,
+					analysis_type: item.mode,
+				} )
+			);
+			dispatch(
+				successNotice( __( 'Report restored.' ), {
+					id: 'amplify-report-unarchive-success',
+					duration: 4000,
+				} )
+			);
+		},
+		[ unarchive, dispatch ]
+	);
+
+	// Triggered from the "Amplify now" CTA inside the archived-report
+	// popover. Opens the analysis-type modal pre-loaded with this report's
+	// site URL, skipping the site picker — the parent (amplify-page.tsx)
+	// handles the modal flow via onSiteSelected. The original archived
+	// report stays archived; this only kicks off a brand-new analysis for
+	// the same site. We also fire a dedicated tracks event so we can tell
+	// archive-driven re-runs apart from normal new-analysis flows.
+	const handleAmplifyNow = useCallback(
+		( item: Report ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_archived_amplify_now_click', {
+					report_id: item.id,
+					site_url: item.url,
+					analysis_type: item.mode,
+				} )
+			);
+			onSiteSelected( item.url );
+		},
+		[ dispatch, onSiteSelected ]
+	);
 
 	// Memoized separately so the fields array below doesn't recreate on every render.
 	const handleDownload = useCallback(
@@ -274,7 +405,15 @@ export default function AmplifyReportsContent( {
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: Report } ) => item.agencyName || item.url,
+				// Concatenate agencyName and url so DataViews' built-in search
+				// matches against either token. Sort order is still effectively
+				// alphabetical by agencyName (when present) then url, because the
+				// agencyName lands first in the returned string. `enableGlobalSearch`
+				// is required for the search box to apply to this field —
+				// DataViews ignores fields that don't opt in. (Confirmed against
+				// the existing add-site-modal in this same section.)
+				getValue: ( { item }: { item: Report } ) =>
+					[ item.agencyName, item.url ].filter( Boolean ).join( ' ' ),
 				render: ( { item }: { item: Report } ): ReactNode => (
 					<span className="amplify-reports-site">
 						<span className="amplify-reports-site-name">{ item.agencyName || item.url }</span>
@@ -283,6 +422,7 @@ export default function AmplifyReportsContent( {
 				),
 				enableHiding: false,
 				enableSorting: true,
+				enableGlobalSearch: true,
 			},
 			{
 				id: 'mode',
@@ -300,21 +440,36 @@ export default function AmplifyReportsContent( {
 				id: 'scores',
 				label: __( 'Scores' ),
 				getValue: () => '',
-				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className="amplify-reports-scores">
-						{ item.mode === 'fullanalysis' ? (
-							<>
-								<ScoreBadge score={ item.humanScore } label={ __( 'Human' ) } />
-								<ScoreBadge score={ item.aiScore } label={ __( 'AI' ) } />
-							</>
-						) : (
-							<ScoreBadge
-								score={ item.score }
-								label={ item.mode === 'human' ? __( 'Human' ) : __( 'AI' ) }
-							/>
-						) }
-					</span>
-				),
+				render: ( { item }: { item: Report } ): ReactNode => {
+					// Pending rows have no scores yet — render an em dash
+					// placeholder rather than an empty cell so the column
+					// visibly tracks the row instead of looking broken.
+					if ( item.pending ) {
+						return (
+							<span
+								className="amplify-reports-scores-placeholder"
+								aria-label={ __( 'Scores not yet available' ) }
+							>
+								—
+							</span>
+						);
+					}
+					return (
+						<span className="amplify-reports-scores">
+							{ item.mode === 'fullanalysis' ? (
+								<>
+									<ScoreBadge score={ item.humanScore } label={ __( 'Human' ) } />
+									<ScoreBadge score={ item.aiScore } label={ __( 'AI' ) } />
+								</>
+							) : (
+								<ScoreBadge
+									score={ item.score }
+									label={ item.mode === 'human' ? __( 'Human' ) : __( 'AI' ) }
+								/>
+							) }
+						</span>
+					);
+				},
 				enableHiding: true,
 				enableSorting: false,
 			},
@@ -332,10 +487,51 @@ export default function AmplifyReportsContent( {
 				id: 'download',
 				label: __( 'Download' ),
 				getValue: () => '',
-				render: ( { item }: { item: Report } ): ReactNode =>
-					item.pending ? (
-						<span className="amplify-reports-in-progress">{ __( 'Report in progress' ) }</span>
-					) : (
+				render: ( { item }: { item: Report } ): ReactNode => {
+					if ( item.pending ) {
+						return (
+							<span className="amplify-reports-in-progress">{ __( 'Analysis in progress' ) }</span>
+						);
+					}
+					if ( item.status === 'archived' ) {
+						// Archived reports intentionally hide the Download PDF
+						// button. The underlying PDF still lives in R2 and the
+						// user can Restore the report from the row's ellipsis
+						// menu to get the button back. The popover here tells
+						// them why the action is gone and offers an inline
+						// "Amplify now" link that kicks off a fresh analysis
+						// for the same site. The render-prop form gives us a
+						// `close` handle so the popover dismisses cleanly the
+						// moment the modal flow takes over — we don't want it
+						// to linger underneath the analysis modal.
+						return (
+							<span className="amplify-reports-archived">
+								<span className="amplify-reports-archived-label">{ __( 'Archived' ) }</span>
+								<AmplifyInfoPopover ariaLabel={ __( 'About archived reports' ) }>
+									{ ( { close }: { close: () => void } ) => (
+										<div className="amplify-reports-archived-popover">
+											<p className="amplify-reports-archived-popover-body">
+												{ __(
+													'This report is archived. Sites change quickly. Amplify the site again to see what’s different.'
+												) }
+											</p>
+											<Button
+												variant="link"
+												className="amplify-reports-archived-popover-cta"
+												onClick={ () => {
+													close();
+													handleAmplifyNow( item );
+												} }
+											>
+												{ __( 'Amplify now' ) }
+											</Button>
+										</div>
+									) }
+								</AmplifyInfoPopover>
+							</span>
+						);
+					}
+					return (
 						<Button
 							variant="secondary"
 							size="compact"
@@ -346,12 +542,67 @@ export default function AmplifyReportsContent( {
 						>
 							{ __( 'Download PDF' ) }
 						</Button>
-					),
+					);
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},
+			{
+				// Status field exists for filtering (and for filterSortAndPaginate's
+				// matcher) — it's not added to the visible `fields` array in the
+				// DataViews state, so it doesn't render as a column. The
+				// `elements` here populate the All / Active / Archived filter UI.
+				id: 'status',
+				label: __( 'Status' ),
+				getValue: ( { item }: { item: Report } ) => item.status,
+				elements: [
+					{ value: 'active', label: __( 'Active' ) },
+					{ value: 'archived', label: __( 'Archived' ) },
+				],
+				filterBy: {
+					operators: [ 'is' ],
+					isPrimary: true,
+				},
+				enableHiding: true,
+				enableSorting: false,
+			},
 		];
-	}, [ dispatch ] );
+	}, [ handleDownload, handleAmplifyNow ] );
+
+	// DataViews actions appear in a built-in column at the end of each row.
+	// `isPrimary: false` puts them under the row's ellipsis menu rather than
+	// rendering an inline button. `isEligible` is evaluated per row so we
+	// hide Archive on already-archived (and pending) reports, and hide
+	// Restore on active ones.
+	const actions: Action< Report >[] = useMemo(
+		() => [
+			{
+				id: 'archive-report',
+				label: __( 'Archive' ),
+				isPrimary: false,
+				callback: ( items: Report[] ) => {
+					const report = items[ 0 ];
+					if ( report ) {
+						handleArchive( report );
+					}
+				},
+				isEligible: ( item: Report ) => ! item.pending && item.status !== 'archived',
+			},
+			{
+				id: 'unarchive-report',
+				label: __( 'Restore' ),
+				isPrimary: false,
+				callback: ( items: Report[] ) => {
+					const report = items[ 0 ];
+					if ( report ) {
+						handleUnarchive( report );
+					}
+				},
+				isEligible: ( item: Report ) => ! item.pending && item.status === 'archived',
+			},
+		],
+		[ handleArchive, handleUnarchive ]
+	);
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
 		return filterSortAndPaginate( reports, dataViewsState, fields );
@@ -390,9 +641,10 @@ export default function AmplifyReportsContent( {
 					items,
 					getItemId: ( item: Report ) => item.id,
 					pagination,
-					enableSearch: false,
+					enableSearch: true,
+					searchLabel: __( 'Search by site or URL' ),
 					fields,
-					actions: [],
+					actions,
 					setDataViewsState,
 					dataViewsState,
 					defaultLayouts: { table: {} },

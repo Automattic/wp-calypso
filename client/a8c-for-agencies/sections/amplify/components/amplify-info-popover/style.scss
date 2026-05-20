@@ -1,0 +1,23 @@
+.amplify-info-popover__trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-text-subtle);
+	cursor: pointer;
+	border-radius: 50%;
+	line-height: 0;
+
+	&:hover {
+		color: var(--color-text);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-primary-50);
+		outline-offset: 2px;
+	}
+
+	svg {
+		display: block;
+		fill: currentColor;
+	}
+}

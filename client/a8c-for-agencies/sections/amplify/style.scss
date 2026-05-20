@@ -86,6 +86,29 @@
 	}
 }
 
+/* The active-filter chips row (e.g. "Status is: Active" + Reset) is a
+ * separate DataViews container directly below the toolbar. It needs the
+ * same horizontal padding so the chips line up flush-left with the search
+ * box above and the first table column below. */
+.amplify-reports .dataviews-filters__container {
+	padding-inline: 16px;
+
+	@media ( min-width: 661px ) {
+		padding-inline: 64px;
+	}
+}
+
+/* The pagination footer (next/prev page controls) only renders when there
+ * are 2+ pages of results. Align it with the toolbar / filter row / table
+ * content so it doesn't jump in at a different inset when it does appear. */
+.amplify-reports .dataviews-footer {
+	padding-inline: 16px;
+
+	@media ( min-width: 661px ) {
+		padding-inline: 64px;
+	}
+}
+
 .amplify-reports .dataviews-view-table {
 	table-layout: fixed;
 	inline-size: 100%;
@@ -99,12 +122,18 @@
 	padding-inline-start: 0;
 }
 
-/* No checkbox column when actions=[] — user columns start at nth-child(1) */
+/* No checkbox column when bulk-select isn't used — user columns start at
+ * nth-child(1). The 6th column is the DataViews actions column (.dataviews-
+ * view-table__actions-column), which holds the ellipsis menu trigger. The
+ * five user columns + the actions column must sum to 100% under
+ * table-layout: fixed; previously the user columns already summed to 100%
+ * and the added actions column overflowed the table, which is what produced
+ * the horizontal scrollbar on large viewports. */
 
 /* Site */
 .amplify-reports .dataviews-view-table th:nth-child(1),
 .amplify-reports .dataviews-view-table td:nth-child(1) {
-	inline-size: 35%;
+	inline-size: 25%;
 }
 
 /* Analysis type */
@@ -128,7 +157,18 @@
 /* Download */
 .amplify-reports .dataviews-view-table th:nth-child(5),
 .amplify-reports .dataviews-view-table td:nth-child(5) {
-	inline-size: 14%;
+	inline-size: 16%;
+}
+
+/* Actions (ellipsis menu) — sized just wide enough for the trigger button
+ * plus the 64px end padding that full-width-layout-with-table applies to the
+ * last column for page-edge alignment. The DataViews default text-align is
+ * already `right`, but reasserting it here is defensive against any future
+ * cascade change and pairs nicely with the explicit column width. */
+.amplify-reports .dataviews-view-table th.dataviews-view-table__actions-column,
+.amplify-reports .dataviews-view-table td.dataviews-view-table__actions-column {
+	inline-size: 8%;
+	text-align: end;
 }
 
 /* .amplify-reports-site styles moved below with site-name/site-url children */
@@ -194,6 +234,16 @@
 	gap: 4px;
 }
 
+/* Pending rows have no scores yet — show an em dash in a soft gray that
+ * matches the row dividers so it reads as "intentionally empty" rather than
+ * a missing value. */
+.amplify-reports-scores-placeholder {
+	color: var(--color-neutral-20);
+	font-size: 16px;
+	line-height: 1;
+	user-select: none;
+}
+
 .amplify-reports-score {
 	display: inline-flex;
 	align-items: center;
@@ -218,6 +268,49 @@
 .amplify-reports-score.is-at-risk {
 	background: var(--color-error-5);
 	color: var(--color-error);
+}
+
+/* Archived state shown in the Download column in place of the Download PDF
+ * button. Visually muted, paired with an info icon that opens a popover
+ * explaining why the download is hidden and nudging the user to amplify
+ * the site again for current data. */
+.amplify-reports-archived {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--color-text-subtle);
+}
+
+.amplify-reports-archived-label {
+	font-style: italic;
+}
+
+/* Popover body is rendered into A4APopover's content slot. A4APopover sets
+ * its own padding via the wrapper, so these rules only handle inner
+ * typography and the link styling. */
+.amplify-reports-archived-popover {
+	max-inline-size: 240px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.amplify-reports-archived-popover-body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--color-text);
+}
+
+/* The "Amplify now" CTA is rendered via <Button variant="link">, which gives
+ * us the standard link affordance for free. We just need to align it to the
+ * start of the popover (the @wordpress/components default centers Button
+ * text-style as flex content in some contexts) and remove any inherited
+ * margin so the gap above does the spacing. */
+.amplify-reports-archived-popover-cta {
+	align-self: flex-start;
+	font-size: 13px;
 }
 
 .amplify-reports-in-progress {
