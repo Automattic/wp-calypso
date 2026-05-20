@@ -56,10 +56,18 @@ export default function GeneratingOverlay( { agentName, isOpen, onCancel }: Prop
 			isDismissible={ false }
 			shouldCloseOnClickOutside={ false }
 			shouldCloseOnEsc={ false }
+			__experimentalHideHeader
 		>
 			<VStack spacing={ 5 } alignment="center">
 				<Spinner />
-				<VStack spacing={ 2 } alignment="center">
+				<VStack spacing={ 1 } alignment="center">
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s is an agent name. */
+							__( '%s is designing' ),
+							agentName
+						) }
+					</Text>
 					<Text size={ 15 } weight={ 600 }>
 						{ thinkingLine }
 					</Text>
