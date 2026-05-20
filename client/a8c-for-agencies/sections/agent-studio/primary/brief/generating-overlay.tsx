@@ -7,47 +7,38 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import useAgentStudioRun from '../../data/use-agent-studio-run';
 
 import './generating-overlay.scss';
 
 interface Props {
 	agentName: string;
-	isOpen: boolean;
+	/** When set, the overlay polls this run id and reflects its status. */
+	runId: string | null;
+	/** Whether the brief form is still uploading + firing POST /a4a/runs. */
+	isUploading: boolean;
+	/** Fires when the polled run flips to a ready terminal status. */
+	onReady: ( runId: string ) => void;
+	/** Fires when the polled run flips to a failed terminal status. */
+	onFailed: ( errorMessage?: string ) => void;
+	/** Fires when the user clicks Cancel. */
 	onCancel: () => void;
 }
 
-const THINKING_LINES = [
-	__( 'Reading the brief' ),
-	__( 'Studying the brand' ),
-	__( 'Considering the hierarchy' ),
-	__( 'Sketching a grid' ),
-	__( 'Picking type sizes' ),
-	__( 'Composing the layout' ),
-	__( 'Balancing the columns' ),
-	__( 'Weighing the negative space' ),
-	__( 'Choosing the accents' ),
-	__( 'Assembling the page' ),
-];
+const STEP_COPY: Record< string, string > = {
+	extract_brief: __( 'Reading the brief' ),
+	compose_page_frame: __( 'Composing cover variants' ),
+	layout_director_ela: __( 'Designing the layout' ),
+	layout_director_ela_v2: __( 'Designing the layout' ),
+	persist_as_html_post: __( 'Finalizing the deliverable' ),
+};
 
-function useThinkingLine( active: boolean ): string {
-	const [ index, setIndex ] = useState( 0 );
-
-	useEffect( () => {
-		if ( ! active ) {
-			setIndex( 0 );
-			return;
-		}
-		const id = setInterval( () => setIndex( ( i ) => i + 1 ), 3000 );
-		return () => clearInterval( id );
-	}, [ active ] );
-
-	return THINKING_LINES[ index % THINKING_LINES.length ];
-}
+const PRE_RUN_LINE = __( 'Sending the brief to the agent' );
+const FALLBACK_LINE = __( 'Working on it' );
 
 function useElapsedMs( active: boolean ): number {
 	const [ elapsed, setElapsed ] = useState( 0 );
-
 	useEffect( () => {
 		if ( ! active ) {
 			setElapsed( 0 );
@@ -57,7 +48,6 @@ function useElapsedMs( active: boolean ): number {
 		const id = setInterval( () => setElapsed( Date.now() - startedAt ), 250 );
 		return () => clearInterval( id );
 	}, [ active ] );
-
 	return elapsed;
 }
 
@@ -80,13 +70,74 @@ function formatElapsed( ms: number ): string {
 	);
 }
 
-export default function GeneratingOverlay( { agentName, isOpen, onCancel }: Props ) {
-	const thinkingLine = useThinkingLine( isOpen );
+const isReadyStatus = ( status?: string ): boolean => status === 'ready';
+const isFailedStatus = ( status?: string ): boolean =>
+	status === 'failed' || status === 'cancelled' || status === 'error';
+
+export default function GeneratingOverlay( {
+	agentName,
+	runId,
+	isUploading,
+	onReady,
+	onFailed,
+	onCancel,
+}: Props ) {
+	const isOpen = isUploading || !! runId;
+
+	// While a run is in flight, poll its status every 2s so the
+	// overlay's copy line reflects the real pipeline step. Stops as
+	// soon as the run reaches a terminal status (handled below by the
+	// onReady / onFailed effect).
+	const runQuery = useAgentStudioRun( runId ?? undefined );
+	useEffect( () => {
+		if ( ! runId ) {
+			return;
+		}
+		const interval = setInterval( () => {
+			runQuery.refetch();
+		}, 2000 );
+		return () => clearInterval( interval );
+		// We only want this interval to attach/detach when the run id
+		// changes — `runQuery` itself is stable across refetches.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ runId ] );
+
+	const status = runQuery.data?.status;
+	const currentStep = runQuery.data?.current_step;
+	const errorMessage = runQuery.data?.error?.message;
+
+	// Fire the terminal callbacks exactly once per run id.
+	const firedRef = useRef< string | null >( null );
+	useEffect( () => {
+		if ( ! runId || firedRef.current === runId ) {
+			return;
+		}
+		if ( isReadyStatus( status ) ) {
+			firedRef.current = runId;
+			onReady( runId );
+			return;
+		}
+		if ( isFailedStatus( status ) ) {
+			firedRef.current = runId;
+			onFailed( errorMessage );
+		}
+	}, [ runId, status, errorMessage, onReady, onFailed ] );
+
 	const elapsedMs = useElapsedMs( isOpen );
 
 	if ( ! isOpen ) {
 		return null;
 	}
+
+	const copyLine = ( () => {
+		if ( isUploading || ! runId ) {
+			return PRE_RUN_LINE;
+		}
+		if ( currentStep && STEP_COPY[ currentStep ] ) {
+			return STEP_COPY[ currentStep ];
+		}
+		return FALLBACK_LINE;
+	} )();
 
 	return (
 		<Modal
@@ -113,7 +164,7 @@ export default function GeneratingOverlay( { agentName, isOpen, onCancel }: Prop
 						) }
 					</Text>
 					<Text size={ 15 } weight={ 600 }>
-						{ thinkingLine }
+						{ copyLine }
 					</Text>
 					<Text variant="muted">{ formatElapsed( elapsedMs ) }</Text>
 				</VStack>

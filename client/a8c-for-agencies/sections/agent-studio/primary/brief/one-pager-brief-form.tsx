@@ -1,3 +1,4 @@
+import pageRouter from '@automattic/calypso-router';
 import {
 	Button,
 	TextControl,
@@ -10,6 +11,10 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
+import useDeleteAgentStudioOutput from '../../data/use-delete-agent-studio-output';
+import { getAgentStudioOutputPath, getAgentStudioPath } from '../../lib/paths';
 import { getBriefExcerpt } from './brief-helpers';
 import GeneratingOverlay from './generating-overlay';
 import ImageUploadField from './image-upload-field';
@@ -24,6 +29,7 @@ interface Props {
 }
 
 export default function OnePagerBriefForm( { agent }: Props ) {
+	const dispatch = useDispatch();
 	const [ brief, setBrief ] = useState( '' );
 	const [ title, setTitle ] = useState( '' );
 	const [ blurb, setBlurb ] = useState( '' );
@@ -33,9 +39,12 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	const [ images, setImages ] = useState< File[] >( [] );
 
 	const submit = useSubmitOnePagerBrief( agent );
+	const deleteOutput = useDeleteAgentStudioOutput();
+	const runId = submit.data?.id ?? null;
+	const isOverlayActive = submit.isPending || !! runId;
 
 	// At least one image is required so June has a cover to design around.
-	const canSubmit = !! brief.trim() && !! title.trim() && images.length > 0 && ! submit.isPending;
+	const canSubmit = !! brief.trim() && !! title.trim() && images.length > 0 && ! isOverlayActive;
 
 	const onSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
@@ -66,7 +75,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						value={ brief }
 						onChange={ setBrief }
 						rows={ 8 }
-						disabled={ submit.isPending }
+						disabled={ isOverlayActive }
 						__nextHasNoMarginBottom
 					/>
 
@@ -78,7 +87,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 							placeholder={ __( 'A clear, confident headline for the cover' ) }
 							value={ title }
 							onChange={ setTitle }
-							disabled={ submit.isPending }
+							disabled={ isOverlayActive }
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 						/>
@@ -93,7 +102,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 							value={ blurb }
 							onChange={ setBlurb }
 							rows={ 3 }
-							disabled={ submit.isPending }
+							disabled={ isOverlayActive }
 							__nextHasNoMarginBottom
 						/>
 					</VStack>
@@ -108,13 +117,13 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 								label={ __( 'Primary logo' ) }
 								file={ logoFile }
 								onChange={ setLogoFile }
-								disabled={ submit.isPending }
+								disabled={ isOverlayActive }
 							/>
 							<LogoUploadField
 								label={ __( 'Partner logo' ) }
 								file={ partnerLogoFile }
 								onChange={ setPartnerLogoFile }
-								disabled={ submit.isPending }
+								disabled={ isOverlayActive }
 							/>
 						</HStack>
 						{ partnerLogoFile && (
@@ -122,7 +131,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 								label={ __( 'Partner logo position' ) }
 								value={ partnerLogoOrder }
 								onChange={ ( value ) => setPartnerLogoOrder( value as DualLogoOrder ) }
-								disabled={ submit.isPending }
+								disabled={ isOverlayActive }
 								isBlock
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
@@ -139,7 +148,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						help={ __( 'Add at least one image and I’ll place them in the design.' ) }
 						images={ images }
 						onChange={ setImages }
-						disabled={ submit.isPending }
+						disabled={ isOverlayActive }
 						firstImageIsCover
 					/>
 
@@ -148,7 +157,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 							variant="primary"
 							type="submit"
 							disabled={ ! canSubmit }
-							isBusy={ submit.isPending }
+							isBusy={ isOverlayActive }
 						>
 							{ sprintf(
 								/* translators: %s is an agent name. */
@@ -161,8 +170,29 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 			</form>
 			<GeneratingOverlay
 				agentName={ agent.name }
-				isOpen={ submit.isPending }
-				onCancel={ () => submit.reset() }
+				runId={ runId }
+				isUploading={ submit.isPending }
+				onReady={ ( readyRunId ) => {
+					pageRouter( getAgentStudioOutputPath( readyRunId ) );
+				} }
+				onFailed={ ( message ) => {
+					dispatch(
+						errorNotice(
+							message || __( 'Something went wrong while generating your deliverable.' )
+						)
+					);
+					submit.reset();
+				} }
+				onCancel={ () => {
+					// DELETE server-side so the orphaned run doesn't keep
+					// burning pipeline cycles. Don't await — the overview
+					// skips the row once the user navigates away.
+					if ( runId ) {
+						deleteOutput.mutate( runId );
+					}
+					submit.reset();
+					pageRouter( getAgentStudioPath() );
+				} }
 			/>
 		</>
 	);

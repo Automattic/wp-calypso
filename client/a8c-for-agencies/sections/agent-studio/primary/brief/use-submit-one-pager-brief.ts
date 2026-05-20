@@ -1,13 +1,11 @@
-import pageRouter from '@automattic/calypso-router';
 import { useMutation } from '@tanstack/react-query';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateAgentStudioOutput from '../../data/use-create-agent-studio-output';
 import { uploadAgentMedia } from '../../data/use-upload-agent-media';
-import { getAgentStudioPath } from '../../lib/paths';
 import type { AgentStudioAgent } from '../../lib/agents';
 import type { AgentStudioOutput, DualLogoOrder } from '../../types';
 
@@ -71,17 +69,9 @@ export default function useSubmitOnePagerBrief( agent: AgentStudioAgent ) {
 					output_id: output.id,
 				} )
 			);
-			dispatch(
-				successNotice(
-					sprintf(
-						/* translators: %s is an agent name. */
-						__( '%s is on it. Your deliverable is generating.' ),
-						output.agentName
-					),
-					{ duration: 5000 }
-				)
-			);
-			pageRouter( getAgentStudioPath() );
+			// No navigation here — the brief form keeps GeneratingOverlay
+			// open and redirects from its `onReady` callback once the run
+			// status poll hits a terminal status.
 		},
 		onError: () => {
 			dispatch( errorNotice( __( 'Could not start the deliverable. Please try again.' ) ) );
