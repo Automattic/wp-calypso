@@ -93,17 +93,18 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 80px;
-	height: 48px;
-	padding-inline: 12px;
+	width: 120px;
+	height: 56px;
+	padding: 8px;
 	overflow: hidden;
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
-	background: var(--color-surface);
+	background-color: var(--color-surface);
+	flex-shrink: 0;
 }
 
 .a4a-agent-studio-logo-upload__thumb.is-dark {
-	background: var(--color-neutral-90);
+	background-color: var(--color-neutral-90);
 	border-color: var(--color-neutral-80);
 }
 

@@ -77,20 +77,12 @@ export default function LogoUploadField( {
 			<Text weight={ 600 }>{ label }</Text>
 			{ help && <Text variant="muted">{ help }</Text> }
 			<HStack spacing={ 3 } justify="flex-start" alignment="center">
-				<FormFileUpload
-					accept="image/*"
-					onChange={ onSelect }
-					render={ ( { openFileDialog } ) => (
-						<Button variant="secondary" onClick={ openFileDialog } disabled={ disabled }>
-							{ file ? __( 'Replace' ) : uploadLabel ?? __( 'Upload logo' ) }
-						</Button>
-					) }
-				/>
 				{ previewUrl && file && (
 					<div
 						className={ clsx( 'a4a-agent-studio-logo-upload__thumb', {
 							'is-dark': darkBackground,
 						} ) }
+						title={ file.name }
 					>
 						<img
 							className="a4a-agent-studio-logo-upload__thumb-image"
@@ -111,7 +103,15 @@ export default function LogoUploadField( {
 						/>
 					</div>
 				) }
-				{ file && <Text variant="muted">{ file.name }</Text> }
+				<FormFileUpload
+					accept="image/*"
+					onChange={ onSelect }
+					render={ ( { openFileDialog } ) => (
+						<Button variant="secondary" onClick={ openFileDialog } disabled={ disabled }>
+							{ file ? __( 'Replace' ) : uploadLabel ?? __( 'Upload logo' ) }
+						</Button>
+					) }
+				/>
 			</HStack>
 		</VStack>
 	);
