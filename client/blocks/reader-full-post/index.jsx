@@ -33,6 +33,7 @@ import { useReaderPost } from 'calypso/reader/data/reader-post';
 import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
@@ -50,7 +51,6 @@ import {
 	getReaderFollowForFeed,
 	hasReaderFollowOrganization,
 } from 'calypso/state/reader/follows/selectors';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
@@ -546,7 +546,7 @@ export class FullPostView extends Component {
 			! site.is_error &&
 			! this.hasSentPageView
 		) {
-			this.props.markPostSeen( post, site );
+			markPostSeen( post, site );
 			this.hasSentPageView = true;
 
 			// mark post as currently viewing
@@ -971,7 +971,6 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	disableAppBanner,
 	enableAppBanner,
-	markPostSeen,
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 	requestMarkAsSeen,

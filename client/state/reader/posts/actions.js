@@ -1,16 +1,12 @@
-import { filter, forEach, partition, get } from 'lodash';
-import { bumpStat } from 'calypso/lib/analytics/mc';
+import { filter, forEach, partition } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { keyForPost } from 'calypso/reader/post-key';
-import { pageViewForPost } from 'calypso/reader/stats';
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
+import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
 
 import 'calypso/state/reader/init';
-
-const seenPostGlobalIds = new Set();
 
 function trackRailcarRender( post ) {
 	recordTracksEvent( 'calypso_traintracks_render', post.railcar );
@@ -85,26 +81,3 @@ export function reloadPost( post ) {
 		} );
 	};
 }
-
-export const markPostSeen = ( post, site ) => ( dispatch ) => {
-	if ( ! post || seenPostGlobalIds.has( post.global_ID ) ) {
-		return;
-	}
-
-	if ( post.global_ID ) {
-		seenPostGlobalIds.add( post.global_ID );
-	}
-
-	dispatch( { type: READER_POST_SEEN, payload: { post, site } } );
-
-	if ( post.site_ID ) {
-		// they have a site ID, let's try to push a page view
-		const isAdmin = !! get( site, 'capabilities.manage_options', false );
-		if ( site && site.ID ) {
-			if ( site.is_private || ! isAdmin ) {
-				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
-				bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
-			}
-		}
-	}
-};

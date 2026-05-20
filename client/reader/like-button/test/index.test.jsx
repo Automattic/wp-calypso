@@ -7,8 +7,8 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordTrackForPost } from 'calypso/reader/stats';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import LikeButton from '../index';
 
 jest.mock( '@automattic/calypso-config', () => ( {
@@ -55,12 +55,8 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isUserLoggedIn: () => true,
 } ) );
 
-jest.mock( 'calypso/state/reader/posts/actions', () => ( {
-	markPostSeen: jest.fn( ( post, site ) => ( {
-		type: 'MARK_POST_SEEN_TEST',
-		post,
-		site,
-	} ) ),
+jest.mock( 'calypso/reader/mark-post-seen', () => ( {
+	markPostSeen: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/selectors/get-previous-path', () => () => '/reader' );

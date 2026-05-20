@@ -13,9 +13,9 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { withCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
+import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 import './style.scss';
@@ -67,7 +67,7 @@ class ReaderLikeButton extends Component {
 			}
 		);
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
-			this.props.markPostSeen( post, this.props.site );
+			markPostSeen( post, this.props.site );
 		}
 	};
 
@@ -127,15 +127,12 @@ class ReaderLikeButton extends Component {
 }
 
 export default flowRight(
-	connect(
-		( state ) => {
-			return {
-				isLoggedIn: isUserLoggedIn( state ),
-				previousPath: getPreviousPath( state ),
-			};
-		},
-		{ markPostSeen }
-	),
+	connect( ( state ) => {
+		return {
+			isLoggedIn: isUserLoggedIn( state ),
+			previousPath: getPreviousPath( state ),
+		};
+	} ),
 	withPostLikes,
 	withReaderPostLikeActions,
 	withCachedReaderPost( ( { siteId, postId } ) => ( {
