@@ -58,9 +58,8 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 					className="cancel-purchase__refund-eligibility-link"
 					onClick={ onRemoveClick }
 				>
-					{ translate( 'Remove plan and claim refund' ) }
+					{ translate( 'Remove plan and claim refund.' ) }
 				</Button>
-				.
 			</p>
 		</Notice>
 	);

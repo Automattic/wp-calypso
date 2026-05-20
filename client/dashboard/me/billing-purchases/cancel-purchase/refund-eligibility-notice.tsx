@@ -38,9 +38,8 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 					params={ { purchaseId: String( purchase.ID ) } }
 					search={ { intent: 'remove' as const } }
 				>
-					{ __( 'Remove plan and claim refund' ) }
+					{ __( 'Remove plan and claim refund.' ) }
 				</Link>
-				.
 			</Notice>
 		);
 	}
