@@ -40,6 +40,7 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 	const customizeCtx = useCustomizeContext();
 	const menuRef = useRef< HTMLUListElement >( null );
 	const [ position, setPosition ] = useState< { top: number; left: number } | null >( null );
+	const destinations = getMoveDestinations( itemId );
 
 	// Compute one-step move directions from the rendered DOM so the menu
 	// crosses group / top-level boundaries naturally (matches plugin's
@@ -47,7 +48,7 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 	// subsequent React render.
 	const moveByDirection = useCallback(
 		( direction: -1 | 1 ) => {
-			const li = document.querySelector( itemSelector( itemId ) ) as HTMLElement | null;
+			const li = document.querySelector( itemSelector( itemId ) ) as HTMLLIElement | null;
 			if ( ! li || ! customizeCtx ) {
 				return;
 			}
@@ -88,9 +89,52 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		);
 	}, [ itemId, itemLabel, customizeCtx ] );
 
+	const moveToGroup = useCallback(
+		( groupId: string, groupLabel: string ) => {
+			if ( ! customizeCtx ) {
+				return;
+			}
+			customizeCtx.commitMove( itemId, {
+				kind: 'in_group',
+				group_id: groupId,
+				index: 0,
+			} );
+			customizeCtx.announce(
+				translate( 'Moved %(label)s to %(destination)s.', {
+					args: {
+						label: itemLabel,
+						destination: groupLabel,
+					},
+				} ) as string
+			);
+		},
+		[ itemId, itemLabel, customizeCtx ]
+	);
+
+	const moveToTopLevel = useCallback( () => {
+		if ( ! customizeCtx ) {
+			return;
+		}
+		customizeCtx.commitMove( itemId, { kind: 'top_level', index: 0 } );
+		customizeCtx.announce(
+			translate( 'Moved %(label)s to top level.', {
+				args: { label: itemLabel },
+			} ) as string
+		);
+	}, [ itemId, itemLabel, customizeCtx ] );
+
 	const choices: MenuChoice[] = [
 		{ label: translate( 'Move up' ) as string, action: () => moveByDirection( -1 ) },
 		{ label: translate( 'Move down' ) as string, action: () => moveByDirection( 1 ) },
+		...destinations.groups.map( ( group ) => ( {
+			label: translate( 'Move to %(destination)s', {
+				args: { destination: group.label },
+			} ) as string,
+			action: () => moveToGroup( group.id, group.label ),
+		} ) ),
+		...( destinations.isInGroup
+			? [ { label: translate( 'Move to top level' ) as string, action: moveToTopLevel } ]
+			: [] ),
 		{ label: translate( 'Reset to default' ) as string, action: resetToDefault },
 	];
 
@@ -213,6 +257,48 @@ function escapeSelectorValue( value: string ): string {
 
 function itemSelector( itemId: string ): string {
 	return `li[data-wp-admin-sidebar-item-id="${ escapeSelectorValue( itemId ) }"]`;
+}
+
+interface GroupDestination {
+	id: string;
+	label: string;
+}
+
+function getMoveDestinations( itemId: string ): {
+	groups: GroupDestination[];
+	isInGroup: boolean;
+} {
+	if ( typeof document === 'undefined' ) {
+		return { groups: [], isInGroup: false };
+	}
+	const li = document.querySelector( itemSelector( itemId ) ) as HTMLElement | null;
+	const sidebar =
+		( li?.closest( 'ul.sidebar' ) as HTMLElement | null ) ||
+		( document.querySelector( 'ul.sidebar' ) as HTMLElement | null );
+	const currentGroupId = li
+		? li.parentElement?.closest( 'li.wp-admin-sidebar-group' )?.getAttribute( 'data-group' ) ?? null
+		: null;
+	if ( ! sidebar ) {
+		return { groups: [], isInGroup: currentGroupId !== null };
+	}
+	const groups = Array.from(
+		sidebar.querySelectorAll( ':scope > li.wp-admin-sidebar-group[data-group]' )
+	)
+		.map( ( groupEl ) => {
+			const id = groupEl.getAttribute( 'data-group' );
+			if ( ! id || id === currentGroupId ) {
+				return null;
+			}
+			const label =
+				groupEl
+					.querySelector(
+						':scope > .wp-admin-sidebar-group__header .wp-admin-sidebar-group__label'
+					)
+					?.textContent?.trim() || id;
+			return { id, label };
+		} )
+		.filter( ( group ): group is GroupDestination => group !== null );
+	return { groups, isInGroup: currentGroupId !== null };
 }
 
 function positionForMoveTarget(

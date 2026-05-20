@@ -17,6 +17,7 @@ import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-s
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useCustomizeContext } from './customize';
 import MySitesSidebarUnifiedItem from './item';
 import { itemLinkMatches } from './utils';
 
@@ -45,6 +46,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const childIsSelected = !! selectedMenuItem;
 	const isDesktop = isWithinBreakpoint( '>782px' );
 	const isMobile = ! isDesktop;
+	const customizeCtx = useCustomizeContext();
+	const isCustomizing = customizeCtx?.isCustomizing === true;
 	const showAsExpanded =
 		( isMobile && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
 		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
@@ -78,6 +81,10 @@ export const MySitesSidebarUnifiedMenu = ( {
 	};
 
 	const onClick = ( event ) => {
+		if ( isCustomizing ) {
+			event?.preventDefault();
+			return;
+		}
 		// Block the navigation on mobile viewports and just toggle the section,
 		// since we don't show the child items on hover and users should have a
 		// chance to see them.
@@ -112,6 +119,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				inlineText={ props.inlineText }
 				href={ link }
 				{ ...props }
+				tabIndex={ isCustomizing ? -1 : undefined }
 			>
 				{ children.map( ( item, index ) => {
 					if ( ! shouldShowAdvertisingOption && item?.url?.includes( '/advertising/' ) ) {

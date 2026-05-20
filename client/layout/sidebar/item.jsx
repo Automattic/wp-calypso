@@ -2,7 +2,7 @@ import { Count, Badge, Gridicon } from '@automattic/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -20,6 +20,9 @@ export default function SidebarItem( props ) {
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const { icon, customIcon, count, badge, inlineIcon } = props;
+	const selected = props.selected;
+	const expandSectionRef = useRef( props.expandSection );
+	expandSectionRef.current = props.expandSection;
 
 	let _preloaded = false;
 
@@ -31,18 +34,18 @@ export default function SidebarItem( props ) {
 	};
 
 	const handleNavigate = ( event ) => {
+		if ( props.preventLinkNavigation ) {
+			event?.preventDefault();
+			return;
+		}
 		props.onNavigate?.( event, props.link );
 	};
 
-	const expandSectionIfSelected = () => {
-		const { expandSection, selected } = props;
-
-		if ( selected && typeof expandSection === 'function' ) {
-			expandSection();
+	useEffect( () => {
+		if ( selected && typeof expandSectionRef.current === 'function' ) {
+			expandSectionRef.current();
 		}
-	};
-
-	useEffect( expandSectionIfSelected, [ props.selected ] );
+	}, [ selected ] );
 
 	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
 
@@ -63,6 +66,7 @@ export default function SidebarItem( props ) {
 				className="sidebar__menu-link"
 				onClick={ handleNavigate }
 				href={ props.link }
+				tabIndex={ props.linkTabIndex }
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
@@ -143,4 +147,10 @@ SidebarItem.propTypes = {
 	// Optional content rendered as the first child of the link. Used by the
 	// wp-admin-sidebar customize mode to inject the drag grip.
 	prependContent: PropTypes.node,
+	// Optional override for callers that need to remove the anchor from the
+	// tab order while keeping the row's visual link structure.
+	linkTabIndex: PropTypes.number,
+	// Suppresses anchor navigation when a caller uses the row for a custom
+	// interaction mode.
+	preventLinkNavigation: PropTypes.bool,
 };

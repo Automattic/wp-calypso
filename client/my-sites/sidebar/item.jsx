@@ -70,6 +70,7 @@ export const MySitesSidebarUnifiedItem = ( {
 		itemId,
 		reassignable
 	);
+	const isCustomizing = customizeCtx?.isCustomizing === true;
 	const gripLabel = title
 		? translate( 'Reorder %(label)s', { args: { label: title } } )
 		: translate( 'Reorder' );
@@ -109,6 +110,8 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
 			forceChevronIcon={ forceChevronIcon }
+			linkTabIndex={ isCustomizing ? -1 : undefined }
+			preventLinkNavigation={ isCustomizing }
 			wpAdminSidebarItemId={ showCustomizeDecorations ? itemId : undefined }
 			prependContent={
 				showCustomizeDecorations ? (

@@ -87,8 +87,11 @@ function MySitesSidebarUnifiedBodyContent( {
 		[ groups ]
 	);
 	const { ungroupedItems, groupedSections } = useMemo(
-		() => groupMenuItems( menuItems ?? [], renderGroups ),
-		[ menuItems, renderGroups ]
+		() =>
+			groupMenuItems( menuItems ?? [], renderGroups, {
+				includeEmptyGroups: customizeCtx?.isCustomizing === true,
+			} ),
+		[ menuItems, renderGroups, customizeCtx?.isCustomizing ]
 	);
 
 	const renderItem = ( item, i ) => {

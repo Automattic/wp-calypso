@@ -56,7 +56,11 @@ import {
 import { attachDragDrop } from './drag-drop';
 import { attachKeyboardReorder } from './keyboard-reorder';
 import { saveLayout } from './save-flow';
-import type { LayoutDelta, LayoutPosition } from 'calypso/state/admin-sidebar/layout/types';
+import type {
+	AdminSidebarLayoutSlice,
+	LayoutDelta,
+	LayoutPosition,
+} from 'calypso/state/admin-sidebar/layout/types';
 import type { ReactNode } from 'react';
 
 export const BODY_CUSTOMIZE_CLASS = 'is-admin-sidebar-customize-mode';
@@ -162,7 +166,9 @@ export function CustomizeProvider( {
 } ) {
 	const reduxDispatch = useReduxDispatch();
 	const siteId = useSelector( getSelectedSiteId );
-	const savedDelta = useSelector( ( state ) => getAdminSidebarLayout( state, siteId ) );
+	const savedDelta = useSelector( ( state ) =>
+		getAdminSidebarLayout( state as AdminSidebarLayoutSlice, siteId )
+	);
 	const [ isCustomizing, setCustomizing ] = useState( false );
 	const [ draft, dispatch ] = useReducer( reducer, savedDelta, createDraftState );
 	const { liveRef, announce } = useLiveRegion();
