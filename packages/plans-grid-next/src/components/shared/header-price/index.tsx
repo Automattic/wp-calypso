@@ -13,6 +13,11 @@ import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
+import {
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	getPlanPriceForDuration,
+} from '../../../lib/plan-pricing-utils';
 import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
 import './style.scss';
@@ -62,6 +67,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
+		isMonthlyPlan,
 	} = gridPlansIndex[ planSlug ];
 	const isPricedPlan = null !== originalPrice.monthly;
 
@@ -90,12 +96,16 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} )?.[ termVariantPlanSlug ?? '' ];
 
-	const termVariantPrice =
-		termVariantPricing?.discountedPrice.monthly ?? termVariantPricing?.originalPrice.monthly ?? 0;
-	const planPrice = discountedPrice.monthly ?? originalPrice.monthly ?? 0;
+	const termVariantInfo = termVariantPricing
+		? fromPricingMetaForGridPlan( termVariantPricing )
+		: null;
+	const currentPlanInfo = fromPricingMetaForGridPlan( gridPlansIndex[ planSlug ].pricing );
 	let savings =
-		termVariantPrice > planPrice
-			? Math.floor( ( ( termVariantPrice - planPrice ) / termVariantPrice ) * 100 )
+		termVariantInfo && currentPlanInfo
+			? calculateDiscountPercentage(
+					getPlanPriceForDuration( termVariantInfo, currentPlanInfo.termMonths ),
+					getPlanPriceForDuration( currentPlanInfo, currentPlanInfo.termMonths )
+			  ) ?? 0
 			: 0;
 
 	useEffect( () => {
@@ -128,10 +138,16 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
 				: introOffer.rawPrice.monthly;
-		if ( showBillingDescriptionForIncreasedRenewalPrice && compareToMonthlyPrice > monthlyPrice ) {
-			savings = Math.floor(
-				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
-			);
+		// Recalculate the savings for Monthly plans with introductory offers
+		// since we are comparing the introductory price with the same plan
+		// renewal price, instead of comparing yearly to monthly costs for
+		// the same period.
+		if (
+			showBillingDescriptionForIncreasedRenewalPrice &&
+			compareToMonthlyPrice > monthlyPrice &&
+			isMonthlyPlan
+		) {
+			savings = calculateDiscountPercentage( compareToMonthlyPrice, monthlyPrice ) ?? 0;
 		}
 		return (
 			<div className="plans-grid-next-header-price">

@@ -42,7 +42,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/components": "^32.1.0",
+		"@wordpress/components": "^33.1.0",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",

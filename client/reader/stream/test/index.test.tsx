@@ -8,6 +8,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
 import Stream from '../index';
 import type { ReactNode } from 'react';
 
@@ -138,6 +139,8 @@ interface ApiPost {
 	site_ID: number;
 	URL?: string;
 	date_liked?: string;
+	i_like?: boolean;
+	like_count?: number;
 }
 
 function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
@@ -167,7 +170,6 @@ const baseState = {
 		posts: { items: {} },
 		streams: {},
 	},
-	posts: { likes: {} },
 };
 
 const followedFeedState = {
@@ -187,7 +189,10 @@ function renderStream(
 	const store = createStore(
 		( state = seedState ) => state,
 		seedState,
-		applyMiddleware( thunkMiddleware )
+		applyMiddleware(
+			thunkMiddleware,
+			createReaderPostEntitiesMiddleware( () => queryClient )
+		)
 	);
 	const utils = render(
 		<QueryClientProvider client={ queryClient }>
@@ -361,5 +366,37 @@ describe( 'Stream — keyboard navigation', () => {
 		await waitFor( () => expect( getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
 		fireEvent.keyDown( document, { key: 'k' } );
 		await waitFor( () => expect( getByTestId( 'post-10' ) ).toHaveClass( 'is-selected' ) );
+	} );
+
+	it( 'l toggles the selected post like state from the seeded Reader post likes data', async () => {
+		mockLikesEndpoint( [ apiPost( 10, { i_like: true, like_count: 72 } ) ] );
+		const unlikeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/100/posts/10/likes/mine/delete', {} )
+			.query( { source: 'reader' } )
+			.reply( 200, {
+				success: true,
+				like_count: '71',
+				liker: { ID: 1, login: 'alice' },
+			} );
+		nock( BASE ).get( '/rest/v1.1/sites/100/posts/10/likes' ).reply( 200, {
+			found: 71,
+			i_like: false,
+			likes: [],
+		} );
+
+		const { getByTestId, queryClient } = renderStream();
+		await waitFor( () => expect( getByTestId( 'post-10' ) ).toBeVisible() );
+		fireEvent.click( getByTestId( 'post-10' ) );
+		await waitFor( () => expect( getByTestId( 'post-10' ) ).toHaveClass( 'is-selected' ) );
+
+		fireEvent.keyDown( document, { key: 'l' } );
+
+		await waitFor( () =>
+			expect( queryClient.getQueryData( [ 'sites', 100, 'posts', 10, 'likes' ] ) ).toMatchObject( {
+				found: 71,
+				iLike: false,
+			} )
+		);
+		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
 	} );
 } );

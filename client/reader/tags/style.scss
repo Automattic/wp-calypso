@@ -111,10 +111,10 @@
 }
 
 .tags__header {
-	border-bottom: 1px solid var(--studio-gray-5);
+	border-bottom: 1px solid var(--color-border-subtle);
 
 	h4 {
-		color: var(--studio-gray-50);
+		color: var(--color-text-subtle);
 		margin-bottom: 15px;
 	}
 }
@@ -132,13 +132,13 @@
 		// we need to set the border on the column for mobile and the row for desktop
 		//border-top: 1px solid var(--studio-gray-5);
 		&:not(:last-child) {
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--color-border-subtle);
 		}
 	}
 	.trending-tags__column {
 		width: 100%;
 		// we need to set the border on the column for mobile and the row for desktop
-		border-top: 1px solid var(--studio-gray-5);
+		border-top: 1px solid var(--color-border-subtle);
 		padding: 10px 0;
 		box-sizing: border-box;
 		@include break-small {
@@ -166,11 +166,11 @@
 		}
 		.trending-tags__count {
 			font-size: 16px;
-			color: var(--studio-gray-50);
+			color: var(--color-text-subtle);
 		}
 	}
 	&:last-child .trending-tags__column:last-child {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--color-border-subtle);
 		@include break-small {
 			border-bottom: none;
 		}
@@ -180,8 +180,8 @@
 .alphabetic-tags__header {
 	position: sticky;
 	top: 0;
-	background-color: var(--studio-white);
-	border-bottom: 1px solid var(--studio-gray-5);
+	background-color: var(--color-surface);
+	border-bottom: 1px solid var(--color-border-subtle);
 	margin-bottom: 26px;
 	padding: 20px 0;
 
@@ -192,7 +192,7 @@
 
 	h2 {
 		font-size: 16px;
-		color: var(--studio-gray-50);
+		color: var(--color-text-subtle);
 		font-weight: 500;
 		width: 100%;
 		margin-bottom: 20px;
@@ -211,7 +211,7 @@
 		}
 		button {
 			font-size: 16px;
-			color: var(--studio-gray-50);
+			color: var(--color-text-subtle);
 			text-decoration: none;
 			font-weight: 500;
 			flex-grow: 1;
@@ -261,7 +261,7 @@
 .alphabetic-tags__table {
 	padding-bottom: 26px;
 	&:not(:last-child) {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--color-border-subtle);
 	}
 	margin-bottom: 26px;
 
@@ -292,13 +292,13 @@
 			}
 
 			a {
-				color: var(--studio-gray-80);
+				color: var(--color-text);
 				font-weight: 400;
 				display: inline-block;
 				border-bottom: 1px solid transparent;
 
 				&:hover {
-					border-bottom: 1px solid var(--studio-gray-80);
+					border-bottom: 1px solid var(--color-text);
 				}
 				&:focus {
 					outline: none;

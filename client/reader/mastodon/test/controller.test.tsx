@@ -34,6 +34,14 @@ beforeEach( () => {
 	jest.mocked( isEnabled ).mockReturnValue( true );
 } );
 
+describe( 'mastodonLanding controller', () => {
+	it( 'redirects to /reader/connections without calling next', () => {
+		mastodonLanding();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+} );
+
 describe( 'mastodonProfile controller', () => {
 	it( 'sets context.primary and calls next on a numeric id', () => {
 		const ctx = makeContext( { id: '7', actor: '108020' } );
@@ -49,10 +57,10 @@ describe( 'mastodonProfile controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/mastodon when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', actor: '108020' } );
 		mastodonProfile( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/mastodon' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -86,10 +94,10 @@ describe( 'mastodonThread controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/mastodon when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', status_id: '108020' } );
 		mastodonThread( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/mastodon' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -109,10 +117,10 @@ describe( 'mastodonTagFeed controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/mastodon when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', hashtag: 'rust' } );
 		mastodonTagFeed( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/mastodon' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -138,8 +146,7 @@ describe( 'reader/social flag gating', () => {
 	} );
 
 	it( 'mastodonLanding redirects to /reader when flag is off', () => {
-		const ctx = makeContext( {} );
-		mastodonLanding( ctx, mockNext );
+		mastodonLanding();
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );

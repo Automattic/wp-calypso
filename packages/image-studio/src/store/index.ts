@@ -27,7 +27,7 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success' | 'warning';
+export type NoticeType = 'error' | 'success' | 'warning' | 'info';
 export interface NoticeAction {
 	label: string;
 	url: string;

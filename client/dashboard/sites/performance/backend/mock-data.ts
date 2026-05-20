@@ -1,9 +1,11 @@
-// Temporary scaffold: real APM endpoints don't exist yet, so the queries below
-// resolve against deterministic mock generators. When the WPCOM endpoints land,
-// move the fetchers to `@automattic/api-core` and the queries to
-// `@automattic/api-queries`, then delete this file.
+// Temporary scaffold: the /request-detail screen still resolves against a
+// deterministic mock generator because the WPCOM aggregate endpoint doesn't
+// yet expose per-transaction details. Every other backend APM screen is now
+// wired to the real /hosting/apm/aggregate endpoint via aggregate.ts. Delete
+// this file once /request-detail is migrated (likely against the per-route
+// /hosting/apm/detail endpoint).
 import { queryOptions } from '@tanstack/react-query';
-import type { ApmOverview, ApmRequestDetail, ApmSlowRequest } from '@automattic/api-core';
+import type { ApmRequestDetail } from '@automattic/api-core';
 
 function rng( seed: number ) {
 	let state = seed | 0;
@@ -37,93 +39,21 @@ const SAMPLE_PATHS = [
 	'/feed/',
 ];
 
-function pickWeighted< T >( random: () => number, choices: Array< [ T, number ] > ): T {
-	const r = random();
-	let acc = 0;
-	for ( const [ value, weight ] of choices ) {
-		acc += weight;
-		if ( r < acc ) {
-			return value;
-		}
-	}
-	return choices[ choices.length - 1 ][ 0 ];
-}
-
-function generateSlowRequests( seed: number, count: number ): ApmSlowRequest[] {
-	const random = rng( seed );
-	const now = Date.now();
-	const requests: ApmSlowRequest[] = [];
-	for ( let i = 0; i < count; i++ ) {
-		const url = SAMPLE_PATHS[ Math.floor( random() * SAMPLE_PATHS.length ) ];
-		const method = pickWeighted( random, [
-			[ 'GET', 0.7 ],
-			[ 'POST', 0.15 ],
-			[ 'PUT', 0.15 ],
-		] );
-		const duration_ms = Math.round( 1500 + random() * 8500 );
-		const status = pickWeighted( random, [
-			[ 200, 0.8 ],
-			[ 302, 0.15 ],
-			[ 500, 0.05 ],
-		] );
-		requests.push( {
-			id: `req-${ seed.toString( 36 ) }-${ i }`,
-			url,
-			method,
-			duration_ms,
-			status,
-			timestamp: now - Math.round( random() * 24 * 60 * 60 * 1000 ),
-		} );
-	}
-	return requests.sort( ( a, b ) => b.duration_ms - a.duration_ms );
-}
-
-function fetchApmOverview( siteId: number ): Promise< ApmOverview > {
-	const random = rng( siteId );
-	const now = Date.now();
-	const timeseries = Array.from( { length: 24 }, ( _, i ) => ( {
-		timestamp: now - ( 23 - i ) * 60 * 60 * 1000,
-		db: Math.round( 80 + random() * 220 ),
-		wp_core: Math.round( 50 + random() * 120 ),
-		plugins: Math.round( 60 + random() * 260 ),
-		external: Math.round( 20 + random() * 180 ),
-	} ) );
-
-	return Promise.resolve( {
-		timeseries,
-		slow_requests: generateSlowRequests( siteId, 8 ),
-	} );
-}
-
-function fetchApmSlowRequests( siteId: number ): Promise< ApmSlowRequest[] > {
-	return Promise.resolve( generateSlowRequests( siteId * 7, 25 ) );
-}
-
 function fetchApmRequest( siteId: number, requestId: string ): Promise< ApmRequestDetail > {
 	const seed = siteId ^ hashString( requestId );
 	const random = rng( seed );
+	const duration_ms = Math.round( 1500 + random() * 8500 );
 
 	return Promise.resolve( {
 		id: requestId,
 		url: SAMPLE_PATHS[ Math.floor( random() * SAMPLE_PATHS.length ) ],
 		method: random() < 0.7 ? 'GET' : 'POST',
-		duration_ms: Math.round( 1500 + random() * 8500 ),
+		avg_duration_ms: Math.round( duration_ms * ( 0.25 + random() * 0.4 ) ),
+		duration_ms,
 		status: 200,
 		timestamp: Date.now() - Math.round( random() * 60 * 60 * 1000 ),
 	} );
 }
-
-export const siteApmOverviewQuery = ( siteId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'apm', 'overview' ],
-		queryFn: () => fetchApmOverview( siteId ),
-	} );
-
-export const siteApmSlowRequestsQuery = ( siteId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'apm', 'slow-requests' ],
-		queryFn: () => fetchApmSlowRequests( siteId ),
-	} );
 
 export const siteApmRequestQuery = ( siteId: number, requestId: string ) =>
 	queryOptions( {

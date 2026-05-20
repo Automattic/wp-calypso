@@ -3,7 +3,9 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { createStreamItemFromPost } from 'calypso/state/reader/streams/normalize';
 import { useStreamPostKeySelection } from '../use-stream-post-key-selection';
+import streamResponse from './fixtures/following-stream-response.json';
 import type { PostKey } from '../use-stream-posts';
 import type { ReactNode } from 'react';
 
@@ -17,64 +19,132 @@ function makeWrapper( queryClient: QueryClient ) {
 	};
 }
 
-function postKey( postId: number, blogId = 100 ): PostKey {
-	return { blogId, postId };
-}
+const items: PostKey[] = streamResponse.posts.map( ( post ) =>
+	createStreamItemFromPost( post, 'date' )
+);
 
-const items = [ postKey( 1 ), postKey( 2 ), postKey( 3 ) ];
+const FIRST = items[ 0 ];
+const SECOND = items[ 1 ];
+const THIRD = items[ 2 ];
 
 describe( 'useStreamPostKeySelection', () => {
-	it( 'selects posts and computes previous/current/next from PostKey items', async () => {
+	it( 'navigates from the first to the second post via selectNextPost', async () => {
 		const queryClient = makeQueryClient();
 		const { result } = renderHook(
-			() => useStreamPostKeySelection( { streamKey: 'likes', items } ),
+			() => useStreamPostKeySelection( { streamKey: 'following', items } ),
 			{ wrapper: makeWrapper( queryClient ) }
 		);
 
 		expect( result.current.selectedPostKey ).toBeNull();
-		expect( result.current.currentPostKey ).toBeNull();
-		expect( result.current.previousPostKey ).toBeNull();
 		expect( result.current.nextPostKey ).toBeNull();
 
 		act( () => {
-			result.current.selectPostKey( items[ 1 ] );
+			result.current.selectPostKey( FIRST );
 		} );
 
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 2 ) ) );
-		expect( result.current.currentPostKey ).toMatchObject( postKey( 2 ) );
-		expect( result.current.previousPostKey ).toMatchObject( postKey( 1 ) );
-		expect( result.current.nextPostKey ).toMatchObject( postKey( 3 ) );
+		await waitFor( () =>
+			expect( result.current.selectedPostKey ).toMatchObject( {
+				feedId: FIRST.feedId,
+				postId: FIRST.postId,
+			} )
+		);
+		expect( result.current.nextPostKey ).toMatchObject( {
+			feedId: SECOND.feedId,
+			postId: SECOND.postId,
+		} );
+		expect( result.current.previousPostKey ).toBeNull();
+
+		act( () => {
+			result.current.selectNextPost();
+		} );
+
+		await waitFor( () =>
+			expect( result.current.selectedPostKey ).toMatchObject( {
+				feedId: SECOND.feedId,
+				postId: SECOND.postId,
+			} )
+		);
+		expect( result.current.previousPostKey ).toMatchObject( {
+			feedId: FIRST.feedId,
+			postId: FIRST.postId,
+		} );
+		expect( result.current.nextPostKey ).toMatchObject( {
+			feedId: THIRD.feedId,
+			postId: THIRD.postId,
+		} );
 	} );
 
-	it( 'moves forward and backward through the item list', async () => {
+	it( 'walks the whole list forward via selectNextPost and back via selectPreviousPost', async () => {
 		const queryClient = makeQueryClient();
 		const { result } = renderHook(
-			() => useStreamPostKeySelection( { streamKey: 'likes', items } ),
+			() => useStreamPostKeySelection( { streamKey: 'following', items } ),
 			{ wrapper: makeWrapper( queryClient ) }
 		);
 
 		act( () => {
-			result.current.selectNextPost();
+			result.current.selectPostKey( FIRST );
 		} );
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 1 ) ) );
+		await waitFor( () =>
+			expect( result.current.selectedPostKey ).toMatchObject( {
+				feedId: FIRST.feedId,
+				postId: FIRST.postId,
+			} )
+		);
 
-		act( () => {
-			result.current.selectNextPost();
-		} );
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 2 ) ) );
+		for ( let i = 1; i < items.length; i++ ) {
+			act( () => {
+				result.current.selectNextPost();
+			} );
+			const expected = { feedId: items[ i ].feedId, postId: items[ i ].postId };
+			await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( expected ) );
+		}
+		expect( result.current.nextPostKey ).toBeNull();
 
-		act( () => {
-			result.current.selectPreviousPost();
-		} );
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 1 ) ) );
+		for ( let i = items.length - 2; i >= 0; i-- ) {
+			act( () => {
+				result.current.selectPreviousPost();
+			} );
+			const expected = { feedId: items[ i ].feedId, postId: items[ i ].postId };
+			await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( expected ) );
+		}
+		expect( result.current.previousPostKey ).toBeNull();
 	} );
 
-	it( 'uses a controlled currentPostKey for previous/next without replacing cached selection', async () => {
+	it( 'matches the current item by xPostMetadata', () => {
+		// `SECOND` is mid-list and has a valid `xpost_origin`; addressing it
+		// via the xPostMetadata target should still resolve to it (and to
+		// FIRST/THIRD as prev/next).
+		const xMeta = SECOND.xPostMetadata as { blogId: number; postId: number };
+		expect( xMeta?.blogId ).toBeTruthy();
+		expect( xMeta?.postId ).toBeTruthy();
+
+		const queryClient = makeQueryClient();
+		const { result } = renderHook(
+			() =>
+				useStreamPostKeySelection( {
+					streamKey: 'following',
+					items,
+					currentPostKey: { blogId: xMeta.blogId, postId: xMeta.postId },
+				} ),
+			{ wrapper: makeWrapper( queryClient ) }
+		);
+
+		expect( result.current.previousPostKey ).toMatchObject( {
+			feedId: FIRST.feedId,
+			postId: FIRST.postId,
+		} );
+		expect( result.current.nextPostKey ).toMatchObject( {
+			feedId: THIRD.feedId,
+			postId: THIRD.postId,
+		} );
+	} );
+
+	it( 'uses a controlled currentPostKey for prev/next without replacing the cached selection', async () => {
 		const queryClient = makeQueryClient();
 		const { result, rerender } = renderHook(
 			( { currentPostKey }: { currentPostKey?: PostKey } ) =>
 				useStreamPostKeySelection( {
-					streamKey: 'likes',
+					streamKey: 'following',
 					items,
 					currentPostKey,
 				} ),
@@ -82,89 +152,95 @@ describe( 'useStreamPostKeySelection', () => {
 		);
 
 		act( () => {
-			result.current.selectPostKey( items[ 0 ] );
+			result.current.selectPostKey( FIRST );
 		} );
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 1 ) ) );
-
-		rerender( { currentPostKey: items[ 1 ] } );
-
-		expect( result.current.selectedPostKey ).toMatchObject( postKey( 1 ) );
-		expect( result.current.currentPostKey ).toMatchObject( postKey( 2 ) );
-		expect( result.current.previousPostKey ).toMatchObject( postKey( 1 ) );
-		expect( result.current.nextPostKey ).toMatchObject( postKey( 3 ) );
-	} );
-
-	it( 'matches the current item by xPostMetadata for full-post navigation', () => {
-		const xpostItems: PostKey[] = [
-			{ blogId: 100, postId: 1, xPostMetadata: { blogId: 200, postId: 2 } },
-			postKey( 3 ),
-		];
-		const queryClient = makeQueryClient();
-		const { result } = renderHook(
-			() =>
-				useStreamPostKeySelection( {
-					streamKey: 'likes',
-					items: xpostItems,
-					currentPostKey: { blogId: 200, postId: 2 },
-				} ),
-			{ wrapper: makeWrapper( queryClient ) }
+		await waitFor( () =>
+			expect( result.current.selectedPostKey ).toMatchObject( {
+				feedId: FIRST.feedId,
+				postId: FIRST.postId,
+			} )
 		);
 
-		expect( result.current.currentPostKey ).toMatchObject( { blogId: 200, postId: 2 } );
-		expect( result.current.previousPostKey ).toBeNull();
-		expect( result.current.nextPostKey ).toMatchObject( postKey( 3 ) );
+		rerender( { currentPostKey: SECOND } );
+
+		expect( result.current.selectedPostKey ).toMatchObject( {
+			feedId: FIRST.feedId,
+			postId: FIRST.postId,
+		} );
+		expect( result.current.currentPostKey ).toMatchObject( {
+			feedId: SECOND.feedId,
+			postId: SECOND.postId,
+		} );
+		expect( result.current.previousPostKey ).toMatchObject( {
+			feedId: FIRST.feedId,
+			postId: FIRST.postId,
+		} );
+		expect( result.current.nextPostKey ).toMatchObject( {
+			feedId: THIRD.feedId,
+			postId: THIRD.postId,
+		} );
 	} );
 
 	it( 'keeps selection isolated per stream identity', async () => {
 		const queryClient = makeQueryClient();
 		const { result, rerender } = renderHook(
 			( { streamKey }: { streamKey: string } ) => useStreamPostKeySelection( { streamKey, items } ),
-			{ wrapper: makeWrapper( queryClient ), initialProps: { streamKey: 'likes' } }
+			{ wrapper: makeWrapper( queryClient ), initialProps: { streamKey: 'following' } }
 		);
 
 		act( () => {
-			result.current.selectPostKey( items[ 1 ] );
+			result.current.selectPostKey( SECOND );
 		} );
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 2 ) ) );
+		await waitFor( () =>
+			expect( result.current.selectedPostKey ).toMatchObject( {
+				feedId: SECOND.feedId,
+				postId: SECOND.postId,
+			} )
+		);
 
-		rerender( { streamKey: 'following' } );
+		rerender( { streamKey: 'a8c' } );
 		expect( result.current.selectedPostKey ).toBeNull();
 
 		act( () => {
-			result.current.selectPostKey( items[ 2 ] );
+			result.current.selectPostKey( THIRD );
 		} );
-		await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( postKey( 3 ) ) );
+		await waitFor( () =>
+			expect( result.current.selectedPostKey ).toMatchObject( {
+				feedId: THIRD.feedId,
+				postId: THIRD.postId,
+			} )
+		);
 
-		rerender( { streamKey: 'likes' } );
-		expect( result.current.selectedPostKey ).toMatchObject( postKey( 2 ) );
+		rerender( { streamKey: 'following' } );
+		expect( result.current.selectedPostKey ).toMatchObject( {
+			feedId: SECOND.feedId,
+			postId: SECOND.postId,
+		} );
 	} );
 
-	it( 'derives previous/next from react-query cache when items are omitted', () => {
+	it( 'derives previous/next from the react-query cache when items are omitted', () => {
 		const queryClient = makeQueryClient();
-		queryClient.setQueryData( [ 'read', 'stream', 'infinite', 'likes', null, null ], {
-			pages: [
-				{
-					posts: [
-						{ ID: 1, site_ID: 100, date_liked: '2026-04-01T00:00:00Z' },
-						{ ID: 2, site_ID: 100, date_liked: '2026-04-02T00:00:00Z' },
-						{ ID: 3, site_ID: 100, date_liked: '2026-04-03T00:00:00Z' },
-					],
-					date_range: { after: null, before: null },
-				},
-			],
+		queryClient.setQueryData( [ 'read', 'stream', 'infinite', 'following', null, null, null ], {
+			pages: [ streamResponse ],
 		} );
 
+		const post = streamResponse.posts[ 4 ];
 		const { result } = renderHook(
 			() =>
 				useStreamPostKeySelection( {
-					streamKey: 'likes',
-					currentPostKey: postKey( 2 ),
+					streamKey: 'following',
+					currentPostKey: { feedId: post.feed_ID, postId: post.feed_item_ID },
 				} ),
 			{ wrapper: makeWrapper( queryClient ) }
 		);
 
-		expect( result.current.currentPostKey ).toMatchObject( postKey( 2 ) );
-		expect( result.current.previousPostKey ).toMatchObject( postKey( 1 ) );
-		expect( result.current.nextPostKey ).toMatchObject( postKey( 3 ) );
+		expect( result.current.previousPostKey ).toMatchObject( {
+			feedId: items[ 3 ].feedId,
+			postId: items[ 3 ].postId,
+		} );
+		expect( result.current.nextPostKey ).toMatchObject( {
+			feedId: items[ 5 ].feedId,
+			postId: items[ 5 ].postId,
+		} );
 	} );
 } );

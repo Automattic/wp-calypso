@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
@@ -32,6 +34,10 @@
 	border-radius: 4px;
 	padding: 30px 15px;
 	margin: 0 auto;
+
+	@include ui-mixins.when-dark-theme {
+		border-color: var( --color-border-subtle );
+	}
 
 	@include break-mobile {
 		padding: 30px 45px;

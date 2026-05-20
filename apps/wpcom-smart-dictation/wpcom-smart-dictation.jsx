@@ -6,12 +6,15 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 
 const SMART_DICTATION_SIDEBAR_NAME = 'wpcom-smart-dictation';
-const MicrophoneIcon = () => <MicIcon animated size={ 20 } />;
+const MicrophoneIcon = ( { width = 20 } ) => <MicIcon animated size={ width } />;
 
 function WpcomSmartDictationPlugin() {
 	return (
 		<>
-			<PluginSidebarMoreMenuItem target={ SMART_DICTATION_SIDEBAR_NAME } icon={ MicrophoneIcon }>
+			<PluginSidebarMoreMenuItem
+				target={ SMART_DICTATION_SIDEBAR_NAME }
+				icon={ MicrophoneIcon( { width: 14 } ) }
+			>
 				{ __( 'WP.com Smart Dictation', __i18n_text_domain__ ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar

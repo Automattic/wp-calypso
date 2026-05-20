@@ -67,6 +67,26 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		};
 	}
 
+	if ( site.is_multisite ) {
+		return {
+			deployments: true,
+			performance: true,
+			monitoring: true,
+			logs: true,
+			backups: false,
+			scan: false,
+			domains: true,
+			emails: true,
+			settings: true,
+			settingsGeneral: true,
+			settingsGeneralAITools: true,
+			settingsGeneralRedirect: true,
+			settingsGeneralDotcomSiteVisibility: true,
+			settingsServer: true,
+			settingsSecurity: true,
+		};
+	}
+
 	return {
 		deployments: true,
 		performance: true,

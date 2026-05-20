@@ -56,7 +56,9 @@ describe( 'AtmosphereConnectView', () => {
 		renderWithProvider( <AtmosphereConnectView /> );
 		expect( screen.getByRole( 'heading', { name: /Connect a Bluesky account/i } ) ).toBeVisible();
 		expect( screen.getByTestId( 'atmosphere-section-logo' ) ).toBeVisible();
-		expect( screen.getByText( /Bring your Bluesky account into the Reader\./i ) ).toBeVisible();
+		expect(
+			screen.getByText( /Bring your Bluesky account into the Reader, from bsky\.social/i )
+		).toBeVisible();
 		const intro = screen.getByText( /your Bluesky timeline appears alongside your blog feeds/i );
 		expect( intro ).toBeVisible();
 		const input = screen.getByLabelText( /Bluesky username/ );

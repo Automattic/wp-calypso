@@ -1,6 +1,7 @@
 import { creativeArtsBlogs } from './creative-arts';
 import { industryBlogs } from './industry';
 import { lifestyleBlogs } from './lifestyle';
+import { popularBlogs } from './popular';
 import { societyBlogs } from './society';
 import { technologyBlogs } from './technology';
 
@@ -10,6 +11,7 @@ export const curatedBlogs = {
 	...creativeArtsBlogs,
 	...societyBlogs,
 	...industryBlogs,
+	...popularBlogs,
 };
 
 export type CuratedBlog = {
@@ -17,12 +19,8 @@ export type CuratedBlog = {
 	site_ID: number;
 	site_URL: string;
 	site_name: string;
-	// Optional during the curated-review backfill. Tightened to required once
-	// every entry has been reviewed and pasted back via the curated-review
-	// tool. (Entries the operator marks as broken are simply omitted from the
-	// regenerated source, so there's no `isBroken` field to track here.)
-	feedUrl?: string;
-	hasIcon?: boolean;
+	feed_URL: string;
+	has_icon: boolean;
 };
 
 export type CuratedBlogsList = Record< string, CuratedBlog[] >;

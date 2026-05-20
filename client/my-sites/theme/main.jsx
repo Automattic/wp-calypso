@@ -56,6 +56,7 @@ import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
@@ -173,6 +174,7 @@ class ThemeSheet extends Component {
 		isThemePurchased: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isStandaloneJetpack: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -1413,7 +1415,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	return (
+	return withColorScheme(
 		<ConnectedThemeSheet
 			{ ...props }
 			themeTier={ themeTier }
@@ -1425,7 +1427,12 @@ const ThemeSheetWithOptions = ( props ) => {
 			source="showcase-sheet"
 			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
-		/>
+		/>,
+		{
+			bodyClass: 'is-themes-dark-mode',
+			enabled: ! props.isSiteRoute && props.isLoggedIn,
+			Provider: ClassicColorSchemeProvider,
+		}
 	);
 };
 

@@ -16,6 +16,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	siteByIdQuery,
+	siteDomainsQuery,
 	sitePurchasesQuery,
 	userPreferenceMutation,
 	hasPurchaseBeenExtendedQuery,
@@ -23,10 +24,17 @@ import {
 	siteFeaturesQuery,
 	removePurchaseMutation,
 	userPreferenceQuery,
+	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
+import {
+	useSuspenseQuery,
+	useQuery,
+	useMutation,
+	useQueryClient,
+	type QueryCacheNotifyEvent,
+} from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -47,6 +55,8 @@ import {
 	getCancelIntentFromSearch,
 	getDisplayVariant,
 	getIncludedDomainPurchase,
+	type CancelIntent,
+	type DisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
@@ -59,6 +69,10 @@ import {
 	isPartnerPurchase,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
+import {
+	classifyPurchaseForCopy,
+	getProductNounForCategory,
+} from '../purchase-settings/classify-purchase-for-copy';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
@@ -100,10 +114,16 @@ import './style.scss';
 type TopNoticeArgs = {
 	surveyShown?: boolean;
 	showDomainOptionsStep?: boolean;
-	displayVariant: 'cancel' | 'remove';
+	displayVariant: DisplayVariant;
 	purchase: Purchase;
-	intent: 'cancel' | 'remove' | null;
+	intent: CancelIntent | null;
 };
+
+/**
+ * How long the cache-subscription guard stays active after a remove mutation,
+ * re-stripping stale server data that still includes the just-deleted purchase.
+ */
+const CACHE_GUARD_DURATION_MS = 15_000;
 
 function renderTopNotice( args: TopNoticeArgs ) {
 	const { surveyShown, showDomainOptionsStep, displayVariant, purchase, intent } = args;
@@ -321,11 +341,13 @@ export default function CancelPurchase() {
 	// swaps intent (e.g. navigating from Cancel to Remove on Purchase Settings).
 	// Keying the inner component on intent lets React remount it, resetting all
 	// local state to its initial values.
-	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	const search = useSearch( { from: cancelPurchaseRoute.fullPath } );
+	const intent = getCancelIntentFromSearch( search );
 	return <CancelPurchaseInner key={ intent ?? 'fallback' } />;
 }
 
 function CancelPurchaseInner() {
+	const queryClient = useQueryClient();
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
@@ -376,8 +398,12 @@ function CancelPurchaseInner() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery() );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures } = useQuery(
-		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
+		purchaseCancelFeaturesQuery(
+			parseInt( purchaseId, 10 ),
+			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
+		)
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
@@ -401,6 +427,11 @@ function CancelPurchaseInner() {
 		...domainQuery( purchase.meta ?? '' ),
 		enabled: Boolean( purchase.meta ),
 	} );
+	// site.options.unmapped_url is incorrect for .home.blog sites — read the
+	// actual WPCOM domain from the site's domain list instead.
+	const { data: siteDomains } = useQuery( siteDomainsQuery( purchase.blog_id ) );
+	const wpcomDomain =
+		siteDomains?.find( ( d ) => d.wpcom_domain || d.is_wpcom_staging_domain )?.domain ?? null;
 	const { data: cancellationOffers } = useQuery(
 		cancellationOffersQuery( purchase.blog_id, purchase.ID )
 	);
@@ -420,8 +451,6 @@ function CancelPurchaseInner() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
-
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
@@ -459,8 +488,13 @@ function CancelPurchaseInner() {
 	// Settings (behind the split cancel/remove experiment). When present,
 	// it drives both the screen variant (copy) and the backend mutation.
 	// When absent (flag-off, old deep link), fall back to today's flowType heuristic.
-	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	const cancelSearch = useSearch( { from: cancelPurchaseRoute.fullPath } );
+	const intent = getCancelIntentFromSearch( cancelSearch );
 	const displayVariant = getDisplayVariant( intent, flowType );
+	const getCancelledSearch = () => ( {
+		cancelled: true as const,
+		...( intent === 'auto-renew' ? { intent: 'auto-renew' as const } : {} ),
+	} );
 	const mutationFlowType = getMutationFlowType( intent, purchase );
 
 	const cancellationOffer = cancellationOffers?.length ? cancellationOffers[ 0 ] : undefined;
@@ -842,13 +876,13 @@ function CancelPurchaseInner() {
 		}
 	};
 
-	// Fire-on-confirm applies to the URL-intent Cancel path only — the user
-	// clicked "Cancel" on Purchase Settings and we want their cancellation to
-	// settle before the survey appears (so the heading can read "Cancellation
-	// confirmed"). Remove (and the no-intent legacy deep link) defer the
-	// mutation to onSurveyComplete, matching trunk's submit-handlers.
+	// Fire-on-confirm applies to the URL-intent Cancel and Auto-renew paths —
+	// the user clicked "Cancel" on Purchase Settings or toggled off auto-renew,
+	// and we want the mutation to settle before the survey appears (so the
+	// heading can read "Cancellation confirmed" / "Auto-renew disabled"). Remove
+	// (and the no-intent legacy deep link) defer the mutation to onSurveyComplete.
 	const shouldFireMutationOnConfirm = (): boolean =>
-		isSplitCancelRemoveEnabled && intent === 'cancel';
+		isSplitCancelRemoveEnabled && ( intent === 'cancel' || intent === 'auto-renew' );
 
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
@@ -1064,6 +1098,7 @@ function CancelPurchaseInner() {
 					options: {
 						product_id: purchase.product_id,
 						cancel_bundled_domain: state.cancelBundledDomain ?? false,
+						email_variant: isSplitCancelRemoveEnabled ? 'treatment' : 'control',
 					},
 				},
 				{
@@ -1093,7 +1128,7 @@ function CancelPurchaseInner() {
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
-						search: { cancelled: true },
+						search: getCancelledSearch(),
 					} );
 				},
 				onError: () => {
@@ -1119,30 +1154,93 @@ function CancelPurchaseInner() {
 			return;
 		}
 
-		removePurchaseMutator.mutate( purchase.ID, {
-			onSuccess: () => {
-				invokeSurvicateEvent( 'purchaseRemoved' );
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: purchase.ID },
-					search: { cancelled: true },
-				} );
-			},
-			onError: () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				createErrorNotice(
-					sprintf(
-						/* translators: %(purchaseName)s is the name of the product that was purchased. */
-						__(
-							'There was a problem removing %(purchaseName)s. Please try again later or contact support.'
-						),
-						{ purchaseName }
-					),
-					{ type: 'snackbar' }
+		setTimeout( () => {
+			// 1. Optimistic cache strip
+			const stripPurchaseFromList = () => {
+				queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
+					( old ?? [] ).filter( ( p ) => p.ID !== purchase.ID )
 				);
-				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
-			},
-		} );
+			};
+
+			stripPurchaseFromList();
+
+			// 2. Cache guard — re-strip if a stale refetch brings the purchase back.
+			// Pattern: packages/api-queries/src/site-collision-listener.ts
+			let guardActive = true;
+			let processing = false;
+
+			const unsubscribeGuard = queryClient
+				.getQueryCache()
+				.subscribe( ( event: QueryCacheNotifyEvent ) => {
+					if (
+						! guardActive ||
+						processing ||
+						event.type !== 'updated' ||
+						event.action.type !== 'success' ||
+						event.query.queryKey[ 0 ] !== 'upgrades'
+					) {
+						return;
+					}
+
+					const data = event.query.state.data as Purchase[] | undefined;
+					if ( data?.some( ( p ) => p.ID === purchase.ID ) ) {
+						processing = true;
+						try {
+							stripPurchaseFromList();
+						} finally {
+							processing = false;
+						}
+					}
+				} );
+
+			const cleanupGuard = () => {
+				if ( ! guardActive ) {
+					return;
+				}
+				guardActive = false;
+				unsubscribeGuard();
+			};
+
+			// Self-terminate after 15s with a final authoritative fetch
+			setTimeout( () => {
+				cleanupGuard();
+				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
+			}, CACHE_GUARD_DURATION_MS );
+
+			// 3. Navigate with notice params
+			invokeSurvicateEvent( 'purchaseRemoved' );
+			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
+			navigate( {
+				to: purchasesRoute.to,
+				search: {
+					removed: productNoun,
+					removedId: purchase.ID,
+					...( purchase.will_atomic_revert_after_removal
+						? { removedDomain: purchase.domain }
+						: {} ),
+				},
+			} );
+
+			// 4. Fire mutation in background. On failure, restore the purchase to
+			//    the cache — the list watches userPurchasesQuery for reappearance
+			//    and self-dismisses its notice. The cache guard's re-strip happens
+			//    synchronously inside the QueryCache notify callback, so the list's
+			//    useEffect never observes transient successes-path reappearances.
+			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
+				cleanupGuard();
+				queryClient.setQueryData(
+					userPurchasesQuery().queryKey,
+					( old: Purchase[] | undefined ) => {
+						const list = old ?? [];
+						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+					}
+				);
+				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
+					type: 'snackbar',
+				} );
+				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
+			} );
+		}, 1500 );
 	};
 
 	const submitTurnOffAutoRenew = ( purchase: Purchase ) => {
@@ -1154,7 +1252,7 @@ function CancelPurchaseInner() {
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
-						search: { cancelled: true },
+						search: getCancelledSearch(),
 					} );
 				},
 				onError: () => {
@@ -1191,7 +1289,7 @@ function CancelPurchaseInner() {
 				search:
 					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
 						? { refunded: true }
-						: { cancelled: true },
+						: getCancelledSearch(),
 			} );
 			return;
 		}
@@ -1276,6 +1374,20 @@ function CancelPurchaseInner() {
 			return false;
 		}
 
+		// Under the split flag, if intent=cancel/auto-renew but auto-renew is
+		// already off (e.g. page refresh after the mutation), redirect to
+		// Purchase Settings instead of re-showing the confirmation screen.
+		// Bypass when surveyShown is true — the post-mutation survey should
+		// still render within the same session.
+		const isAlreadyCancelledForSplitFlag =
+			isSplitCancelRemoveEnabled &&
+			( intent === 'cancel' || intent === 'auto-renew' ) &&
+			! purchase.is_auto_renew_enabled;
+
+		if ( isAlreadyCancelledForSplitFlag && ! state.surveyShown ) {
+			return false;
+		}
+
 		if ( ! purchase.is_cancelable && state.surveyShown ) {
 			return true;
 		}
@@ -1320,7 +1432,14 @@ function CancelPurchaseInner() {
 		}
 
 		return true;
-	}, [ createErrorNotice, isDataLoading, purchase, state.surveyShown ] );
+	}, [
+		createErrorNotice,
+		intent,
+		isDataLoading,
+		isSplitCancelRemoveEnabled,
+		purchase,
+		state.surveyShown,
+	] );
 
 	const didRunEffect = useRef< boolean >( false );
 
@@ -1549,6 +1668,9 @@ function CancelPurchaseInner() {
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
+									site={ site }
+									wpcomDomain={ wpcomDomain }
+									activeMarketplaceSubscriptions={ activeSubscriptions }
 									state={ state }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
 									isBusy={ isMutationPending }

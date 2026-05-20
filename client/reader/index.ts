@@ -31,6 +31,7 @@ import {
 	setBeforePrimary,
 	loadNewSubscriptionPage,
 } from './controller';
+import readerPostEntitiesMiddleware from './data/reader-post-entities-middleware';
 import {
 	createList,
 	deleteList,
@@ -48,6 +49,8 @@ function forceTeamA8C( context: Context, next: () => void ): void {
 }
 
 export async function lazyLoadDependencies(): Promise< void > {
+	addMiddleware( readerPostEntitiesMiddleware );
+
 	const isBrowser = typeof window === 'object';
 	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
 		const lasagnaMiddleware = await import(

@@ -153,7 +153,7 @@ describe( 'AchievementsGrid', () => {
 		expect( screen.queryByText( /You.*unlocked them all/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders locked secret with the secret title and mystery description', () => {
+	test( 'renders locked secret with the secret title', () => {
 		useAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
@@ -163,9 +163,6 @@ describe( 'AchievementsGrid', () => {
 		renderGrid( { userLogin: 'me', isOwnProfile: true } );
 
 		expect( screen.getByText( 'Secret achievement' ) ).toBeVisible();
-		expect(
-			screen.getByText( /This one.*s a mystery\. Earn it to reveal the details\./ )
-		).toBeVisible();
 	} );
 
 	test( 'renders masked secret in earned list with caption Unlocked: <time>', () => {
@@ -259,6 +256,66 @@ describe( 'AchievementsGrid', () => {
 		renderGrid( { userLogin: 'me', isOwnProfile: true } );
 
 		expect( screen.getByText( 'First Post' ) ).toBeVisible();
+		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'prepends a Years of Service card when yearsOfService > 0', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 5,
+		} );
+
+		const { container } = renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'Years of Service' ) ).toBeVisible();
+		expect( screen.getByText( '5 years on WordPress.com.' ) ).toBeVisible();
+
+		const titles = within( container.querySelector( '.achievements-grid' ) as HTMLElement )
+			.getAllByRole( 'heading', { level: 3 } )
+			.map( ( h ) => h.textContent );
+		expect( titles[ 0 ] ).toBe( 'Years of Service' );
+
+		expect(
+			container.querySelector( '.achievement-card.is-years-of-service' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'pluralizes the Years of Service description for 1 year', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 1,
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( '1 year on WordPress.com.' ) ).toBeVisible();
+	} );
+
+	test( 'omits the Years of Service card when yearsOfService is 0 or undefined', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 0,
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.queryByText( 'Years of Service' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'still surfaces the Years of Service card when there are no other achievements', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [],
+			lockedAchievements: [],
+			yearsOfService: 3,
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'Years of Service' ) ).toBeVisible();
 		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
 	} );
 
