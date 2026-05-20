@@ -6,7 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -27,6 +27,13 @@ export default function OutputDetailContent( { output }: Props ) {
 	const dispatch = useDispatch();
 	const [ isDownloading, setIsDownloading ] = useState( false );
 	const updateOutput = useUpdateAgentStudioOutput();
+	// Local cover index keeps the chevrons feel instant — we don't wait for
+	// the persisted state to round-trip through IndexedDB + React Query.
+	const persistedCoverIdx = output.onePagerData?.selectedCoverIdx ?? 0;
+	const [ activeCoverIdx, setActiveCoverIdx ] = useState( persistedCoverIdx );
+	useEffect( () => {
+		setActiveCoverIdx( persistedCoverIdx );
+	}, [ output.id, persistedCoverIdx ] );
 
 	if ( output.status === 'generating' ) {
 		return (
@@ -57,11 +64,11 @@ export default function OutputDetailContent( { output }: Props ) {
 		);
 	}
 
-	const coverIdx = data.selectedCoverIdx ?? 0;
-	const safeCoverIdx = Math.min( coverIdx, Math.max( 0, data.covers.length - 1 ) );
+	const safeCoverIdx = Math.min( activeCoverIdx, Math.max( 0, data.covers.length - 1 ) );
 	const selectedCover = data.covers[ safeCoverIdx ];
 
 	const onSelectCover = ( nextIdx: number ) => {
+		setActiveCoverIdx( nextIdx );
 		updateOutput.mutate( {
 			outputId: output.id,
 			updates: { onePagerData: { ...data, selectedCoverIdx: nextIdx } },

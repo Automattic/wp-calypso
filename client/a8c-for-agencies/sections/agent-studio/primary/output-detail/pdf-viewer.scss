@@ -77,13 +77,22 @@
 	border: 1px solid rgba(255, 255, 255, 0.18);
 	border-radius: 50%;
 	background-color: rgba(18, 18, 18, 0.88);
-	color: rgba(255, 255, 255, 0.9);
+	color: rgba(255, 255, 255, 0.95);
 	box-sizing: border-box;
 	cursor: pointer;
 	line-height: 0;
 	appearance: none;
 	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.26);
 	backdrop-filter: blur(10px);
+}
+
+// @wordpress/icons SVGs default to the surrounding text color via
+// fill="currentColor" on the path elements, but the wrapping <svg> sometimes
+// gets a darker fill from the inherited Calypso color cascade. Force every
+// descendant SVG and path inside the dark glass button to the button color.
+.a4a-one-pager-viewer__circle-button svg,
+.a4a-one-pager-viewer__circle-button svg path {
+	fill: currentColor;
 }
 
 .a4a-one-pager-viewer__circle-button:hover {
