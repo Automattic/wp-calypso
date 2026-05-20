@@ -21,7 +21,7 @@
 	// scale so 60+ are mixed with white — pick higher-index blues here.
 	.iframe-preview-card {
 		// Lower the default so the hover step matches light mode in magnitude.
-		border-color: var( --color-neutral-80 );
+		border-color: var( --color-neutral-50 );
 
 		&:hover {
 			border-color: var( --color-neutral-70 );
@@ -36,8 +36,17 @@
 		}
 
 		.form-radio {
+			border-color: var( --color-neutral-50 );
+
 			&:hover {
 				border-color: var( --color-neutral-70 );
+			}
+
+			// The default focus halo uses --color-primary-10, which lands in
+			// the surface-blended end of the regenerated studio-blue scale —
+			// invisible against the dark card. Swap in a lighter blue.
+			&:focus {
+				box-shadow: 0 0 0 2px var( --studio-blue-70 );
 			}
 
 			&:checked::before {
@@ -45,15 +54,16 @@
 			}
 		}
 
-		// Overlays an always-light iframe, so pin the background to a stable
-		// dark token instead of letting it follow the dark-mode neutrals.
+		// Overlays an always-light iframe, so use the dashboard page background
+		// (a stable dark color) instead of any neutral that the dark-mode mixin
+		// has remapped toward the foreground.
 		.iframe-preview-card__enter-preview {
-			background: var( --studio-black );
+			background: var( --dashboard__background-color );
 		}
 	}
 
 	.themes__activation-modal .components-button.is-tertiary {
-		color: var( --studio-blue-60 );
+		color: var( --studio-blue-70 );
 	}
 }
 
