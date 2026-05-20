@@ -71,9 +71,11 @@ describe( 'usePressableAddonCapacityContext', () => {
 			install: 1,
 			storage: 10,
 			visits: 5000,
+			phpMemory: 0,
 			formattedInstall: '1',
 			formattedStorage: '10 GB',
 			formattedVisits: '5,000',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
@@ -96,9 +98,11 @@ describe( 'usePressableAddonCapacityContext', () => {
 			install: 0,
 			storage: 50,
 			visits: 0,
+			phpMemory: 0,
 			formattedInstall: '0',
 			formattedStorage: '50 GB',
 			formattedVisits: '0',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
@@ -121,9 +125,11 @@ describe( 'usePressableAddonCapacityContext', () => {
 			install: 0,
 			storage: 0,
 			visits: 50000,
+			phpMemory: 0,
 			formattedInstall: '0',
 			formattedStorage: '0 GB',
 			formattedVisits: '50,000',
+			formattedPhpMemory: '0 MB',
 		} );
 	} );
 
