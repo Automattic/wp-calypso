@@ -51,7 +51,7 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 			if ( ! li || ! customizeCtx ) {
 				return;
 			}
-			const rows = collectRows();
+			const rows = collectRows( li );
 			const idx = rows.indexOf( li );
 			const targetIdx = idx + direction;
 			if ( idx === -1 || targetIdx < 0 || targetIdx >= rows.length ) {
@@ -271,12 +271,12 @@ function positionForMoveTarget(
  * of vertical space; the move handler treats it specially (down → enter
  * the group; up → exit to top-level just before the group container).
  */
-function collectRows(): HTMLLIElement[] {
+function collectRows( source?: HTMLElement ): HTMLLIElement[] {
 	const rows: HTMLLIElement[] = [];
 	const sidebar =
-		( document.querySelector(
-			'.sidebar__menu, .sidebar, [class*="sidebar__"] ul'
-		) as HTMLElement | null ) || document.body;
+		( source?.closest( 'ul.sidebar' ) as HTMLElement | null ) ||
+		( document.querySelector( 'ul.sidebar' ) as HTMLElement | null ) ||
+		document.body;
 	const walkChildren = ( parent: Element ) => {
 		for ( const child of Array.from( parent.children ) ) {
 			if ( child.tagName !== 'LI' ) {

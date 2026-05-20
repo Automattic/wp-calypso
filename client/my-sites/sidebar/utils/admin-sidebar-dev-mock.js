@@ -1,4 +1,29 @@
 const MOCK_GROUP_ID = 'plugins';
+const MOCK_ITEM_TARGET_COUNT = 3;
+
+const MOCK_FALLBACK_ITEMS = [
+	{
+		slug: 'mock-plugin-forms',
+		title: 'Forms',
+		type: 'menu-item',
+		url: '#mock-plugin-forms',
+		icon: 'dashicons-feedback',
+	},
+	{
+		slug: 'mock-plugin-seo',
+		title: 'SEO',
+		type: 'menu-item',
+		url: '#mock-plugin-seo',
+		icon: 'dashicons-chart-line',
+	},
+	{
+		slug: 'mock-plugin-cache',
+		title: 'Cache',
+		type: 'menu-item',
+		url: '#mock-plugin-cache',
+		icon: 'dashicons-performance',
+	},
+];
 
 const EXEMPT_SLUGS = new Set( [
 	'home',
@@ -73,10 +98,23 @@ function isExemptItem( item ) {
 	return !! ( title && EXEMPT_TITLES.has( title ) );
 }
 
-function mockSignalForIndex( index ) {
+function buildMockGroup( count ) {
+	return {
+		id: MOCK_GROUP_ID,
+		label: 'My Plugins',
+		default_expanded: false,
+		signal: { attention: true, count },
+	};
+}
+
+export function getAdminSidebarDevMockGroups() {
+	return [ buildMockGroup( MOCK_ITEM_TARGET_COUNT ) ];
+}
+
+function mockSignalForIndex( index, count = MOCK_ITEM_TARGET_COUNT ) {
 	if ( index === 0 ) {
 		return {
-			count: 3,
+			count,
 			numeric_badge: null,
 			badge: null,
 			inline_text: null,
@@ -97,6 +135,22 @@ function mockSignalForIndex( index ) {
 	return null;
 }
 
+function canUseItemAsMockSource( item ) {
+	return item?.type !== 'separator' && item?.type !== 'current-site' && ! isExemptItem( item );
+}
+
+function buildMockItem( item, sourceId, index, count ) {
+	const slug = item.slug || `idx-${ sourceId }`;
+	return {
+		...item,
+		children: undefined,
+		group_id: MOCK_GROUP_ID,
+		itemId: `mock:menu:${ MOCK_GROUP_ID }:${ slug }`,
+		reassignable: true,
+		signal: mockSignalForIndex( index, count ),
+	};
+}
+
 export function buildAdminSidebarDevMock( menuItems ) {
 	if ( ! Array.isArray( menuItems ) ) {
 		return { menuItems: [], groups: [] };
@@ -104,41 +158,26 @@ export function buildAdminSidebarDevMock( menuItems ) {
 
 	let picked = 0;
 	const mockedMenuItems = menuItems.map( ( item, index ) => {
-		if (
-			picked >= 3 ||
-			item?.type === 'separator' ||
-			item?.type === 'current-site' ||
-			item?.children?.length ||
-			isExemptItem( item )
-		) {
+		if ( picked >= MOCK_ITEM_TARGET_COUNT || ! canUseItemAsMockSource( item ) ) {
 			return item;
 		}
 
-		const itemId = `mock:menu:${ MOCK_GROUP_ID }:${ item.slug || `idx-${ index }` }`;
-		const mocked = {
-			...item,
-			group_id: MOCK_GROUP_ID,
-			itemId,
-			reassignable: true,
-			signal: mockSignalForIndex( picked ),
-		};
+		const mocked = buildMockItem( item, index, picked, MOCK_ITEM_TARGET_COUNT );
 		picked += 1;
 		return mocked;
 	} );
 
+	for ( const item of MOCK_FALLBACK_ITEMS ) {
+		if ( picked >= MOCK_ITEM_TARGET_COUNT ) {
+			break;
+		}
+		mockedMenuItems.push( buildMockItem( item, item.slug, picked, MOCK_ITEM_TARGET_COUNT ) );
+		picked += 1;
+	}
+
 	return {
 		menuItems: mockedMenuItems,
-		groups:
-			picked > 0
-				? [
-						{
-							id: MOCK_GROUP_ID,
-							label: 'My Plugins',
-							default_expanded: false,
-							signal: { attention: true, count: 3 },
-						},
-				  ]
-				: [],
+		groups: picked > 0 ? [ buildMockGroup( picked ) ] : [],
 	};
 }
 

@@ -23,7 +23,7 @@ import globalSidebarMenu from './static-data/global-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 import { applyLayoutDelta } from './utils/apply-layout-delta';
 
-const useSiteMenuItems = ( layoutDeltaOverride ) => {
+const useSiteMenuItems = ( layoutDeltaOverride, transformBaseMenu ) => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
@@ -126,11 +126,13 @@ const useSiteMenuItems = ( layoutDeltaOverride ) => {
 	};
 
 	const baseMenu = menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	const transformedBaseMenu =
+		typeof transformBaseMenu === 'function' ? transformBaseMenu( baseMenu ) : baseMenu;
 	// Apply the user's saved layout-delta (Phase 2 task 2.5). When no delta
 	// is stored, `applyLayoutDelta` returns a copy of `baseMenu` unmodified.
 	// The cost on the no-delta path is one shallow array clone per render;
 	// memoisation lives upstream where the menu is read.
-	return applyLayoutDelta( baseMenu, layoutDelta );
+	return applyLayoutDelta( transformedBaseMenu, layoutDelta );
 };
 
 export default useSiteMenuItems;

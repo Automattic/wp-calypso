@@ -81,9 +81,22 @@ async function defaultRequest( params: {
 	method: 'POST';
 	body: LayoutDelta;
 } ): Promise< LayoutDelta > {
+	if ( isAdminSidebarDevMockActive() ) {
+		return {
+			...params.body,
+			updated_at: Date.now(),
+		};
+	}
 	// `wpcom-proxy-request` types the response as `unknown`; we narrow on the
 	// way out. The signature `( params, callback? )` returns a Promise when
 	// no callback is supplied.
 	const response = ( await wpcomRequest( params ) ) as LayoutDelta;
 	return response;
+}
+
+function isAdminSidebarDevMockActive() {
+	if ( typeof window === 'undefined' || typeof window.location?.search !== 'string' ) {
+		return false;
+	}
+	return new URLSearchParams( window.location.search ).get( 'adminSidebarMock' ) === '1';
 }

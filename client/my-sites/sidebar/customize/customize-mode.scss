@@ -94,26 +94,37 @@ body.is-admin-sidebar-customize-mode {
 	// `elementsFromPoint` lookup (so plugins can be dragged to between any
 	// sidebar rows, not just within the My Plugins group).
 	.sidebar li.sidebar__menu-item-parent:not([data-wp-admin-sidebar-item-id]):not(.wp-admin-sidebar-group) {
+		&,
+		&:hover,
+		&.selected {
+			background-color: transparent !important;
+		}
+
 		.sidebar__menu-link {
 			pointer-events: none;
 			cursor: default;
 			transition: none;
 		}
 
+		.sidebar__menu-link,
 		&:hover .sidebar__menu-link,
 		&.selected .sidebar__menu-link,
 		&.selected .sidebar__menu-link:hover,
 		.sidebar__menu-link:focus {
-			background-color: var(--color-sidebar-background);
-			color: var(--color-sidebar-text);
-			box-shadow: none;
+			background-color: transparent !important;
+			color: var(--color-sidebar-text) !important;
+			box-shadow: none !important;
+		}
+
+		&.selected .sidebar__menu-link::after {
+			display: none !important;
 		}
 
 		// Icon stays at idle color too.
 		&:hover .sidebar__menu-link .sidebar__menu-icon,
 		&.selected .sidebar__menu-link .sidebar__menu-icon {
-			fill: var(--color-sidebar-text);
-			color: var(--color-sidebar-text);
+			fill: var(--color-sidebar-text) !important;
+			color: var(--color-sidebar-text) !important;
 		}
 	}
 
@@ -130,10 +141,16 @@ body.is-admin-sidebar-customize-mode {
 		}
 		&:hover .sidebar__menu-link,
 		&.hovered .sidebar__menu-link,
+		&.hovered .sidebar__heading,
+		&.sidebar__menu--selected .sidebar__heading,
 		.sidebar__heading:hover {
-			background-color: var(--color-sidebar-background);
-			color: var(--color-sidebar-text);
-			box-shadow: none;
+			background-color: transparent !important;
+			color: var(--color-sidebar-text) !important;
+			box-shadow: none !important;
+		}
+		&.hovered .sidebar__heading::after,
+		&.sidebar__menu--selected .sidebar__heading::after {
+			display: none !important;
 		}
 		&.hovered .sidebar__expandable-content {
 			display: none !important;
