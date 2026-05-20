@@ -2,7 +2,6 @@
 @import '@wordpress/base-styles/breakpoints';
 
 $font-sf-pro-text: 'SF Pro Text', $sans;
-$recoleta-font-family: 'Recoleta', sans-serif;
 body.is-section-accept-invite {
 	.logged-out-wp-logo {
 		position: absolute;
@@ -47,7 +46,7 @@ body.is-section-accept-invite {
 	}
 
 	.invite-form-header--logged-out.is-wpcom-brand .connect-screen-brand-header__title {
-		font-family: $recoleta-font-family;
+		@extend .wp-brand-font;
 	}
 
 	.invite-form-header--logged-out .connect-screen-brand-header__description {
