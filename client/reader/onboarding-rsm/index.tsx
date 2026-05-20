@@ -76,11 +76,17 @@ const ReaderOnboardingRsm = ( {
 	// `getReaderFollows` retains stale rows (`is_following: false`) and
 	// self-owned subs (`is_owner: true`); we filter both out so the count
 	// matches the rest of the onboarding eligibility logic, which uses
-	// `nonSelfSubscriptionsCount` (also excludes self-owned).
+	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
+	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
+	// under-report follows before the Redux follows slice has hydrated.
 	const reduxFollows = useSelector( getReaderFollows );
-	const followedNonSelfSitesCount = reduxFollows.filter(
+	const reduxFollowedNonSelfSitesCount = reduxFollows.filter(
 		( f ) => f.is_following && ! f.is_owner
 	).length;
+	const followedNonSelfSitesCount = Math.max(
+		nonSelfSubscriptionsCount,
+		reduxFollowedNonSelfSitesCount
+	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
