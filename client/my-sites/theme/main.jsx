@@ -109,6 +109,7 @@ import {
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
+	shouldShowActivationModal,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -343,11 +344,8 @@ class ThemeSheet extends Component {
 		this.onBeforeOptionAction();
 
 		// Intercept activation so the user can preview the new theme and choose
-		// between a basic and a full setup. Skip the modal on Jetpack/Atomic
-		// sites where the full-setup path (theme-headstart) doesn't apply, leaving
-		// only one effective choice.
-		const { isAtomic, isStandaloneJetpack } = this.props;
-		if ( this.props.defaultOption?.key === 'activate' && ! isAtomic && ! isStandaloneJetpack ) {
+		// between a basic and a full setup, when applicable.
+		if ( this.props.defaultOption?.key === 'activate' && this.props.shouldShowActivationModal ) {
 			event?.preventDefault();
 			this.setState( { isActivationModalVisible: true } );
 			return;
@@ -1524,6 +1522,7 @@ export default connect(
 		return {
 			...theme,
 			themeId,
+			shouldShowActivationModal: shouldShowActivationModal( state, siteId, themeId ),
 			error,
 			siteId,
 			siteSlug,

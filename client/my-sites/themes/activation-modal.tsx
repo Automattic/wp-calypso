@@ -7,8 +7,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { activate as activateTheme } from 'calypso/state/themes/actions';
 import { getCanonicalTheme, isRequestingTheme } from 'calypso/state/themes/selectors';
 import IframePreviewCard from './iframe-preview-card';
@@ -37,7 +36,6 @@ interface OwnProps {
 interface ConnectedProps {
 	theme: Theme | null;
 	siteDomain?: string | null;
-	supportsFullSetup: boolean;
 	isLoadingTheme: boolean;
 }
 
@@ -51,7 +49,6 @@ const ActivationModal = ( {
 	theme,
 	siteId,
 	siteDomain,
-	supportsFullSetup,
 	isLoadingTheme,
 	source = 'details',
 	styleVariation,
@@ -117,14 +114,13 @@ const ActivationModal = ( {
 		  } )
 		: null;
 
-	const showFullSetupOption = supportsFullSetup && !! fullSetupIframeSrc;
-
-	// Wait for the canonical theme to finish loading; otherwise a late-arriving
-	// `demo_uri` would briefly leave the basic-setup card stretched alone.
-	const isWaitingForFullSetup = supportsFullSetup && ! fullSetupIframeSrc && isLoadingTheme;
+	// `demo_uri` can land a tick after the canonical theme is first cached, so
+	// show a spinner until it arrives. Without this, the basic-setup card would
+	// briefly stretch alone before the full-setup card pops in.
+	const isWaitingForFullSetup = ! fullSetupIframeSrc && isLoadingTheme;
 
 	const handleActivate = async () => {
-		const setupChoice = showFullSetupOption && choice === 'full_setup' ? 'full' : 'basic';
+		const setupChoice = choice === 'full_setup' ? 'full' : 'basic';
 		recordTracksEvent( 'calypso_theme_activation_modal_activate_click', {
 			theme: themeId,
 			source,
@@ -170,10 +166,7 @@ const ActivationModal = ( {
 			shouldCloseOnClickOutside={ ! isActivating }
 			shouldCloseOnEsc={ ! isActivating }
 		>
-			<div
-				className="themes__activation-modal-previews"
-				role={ showFullSetupOption ? 'radiogroup' : undefined }
-			>
+			<div className="themes__activation-modal-previews" role="radiogroup">
 				{ isWaitingForFullSetup ? (
 					<div className="themes__activation-modal-loading">
 						<Spinner size={ 50 } />
@@ -183,7 +176,7 @@ const ActivationModal = ( {
 						<IframePreviewCard
 							name={ RADIO_GROUP_NAME }
 							value="basic_setup"
-							isSelected={ ! showFullSetupOption || choice === 'basic_setup' }
+							isSelected={ choice === 'basic_setup' }
 							onSelect={ ( value ) => setChoice( value as SetupChoice ) }
 							label={ basicSetupLabel }
 							optionName={ basicSetupOptionName }
@@ -196,24 +189,22 @@ const ActivationModal = ( {
 							caption={ basicSetupLabel }
 							disabled={ isActivating }
 						/>
-						{ showFullSetupOption && (
-							<IframePreviewCard
-								name={ RADIO_GROUP_NAME }
-								value="full_setup"
-								isSelected={ choice === 'full_setup' }
-								onSelect={ ( value ) => setChoice( value as SetupChoice ) }
-								label={ fullSetupLabel }
-								optionName={ fullSetupOptionName }
-								iframeUrl={ fullSetupIframeSrc as string }
-								iframeTitle={
-									translate( "Preview of your site with %(themeName)s's full setup applied", {
-										args: { themeName },
-									} ) as string
-								}
-								caption={ fullSetupLabel }
-								disabled={ isActivating }
-							/>
-						) }
+						<IframePreviewCard
+							name={ RADIO_GROUP_NAME }
+							value="full_setup"
+							isSelected={ choice === 'full_setup' }
+							onSelect={ ( value ) => setChoice( value as SetupChoice ) }
+							label={ fullSetupLabel }
+							optionName={ fullSetupOptionName }
+							iframeUrl={ fullSetupIframeSrc as string }
+							iframeTitle={
+								translate( "Preview of your site with %(themeName)s's full setup applied", {
+									args: { themeName },
+								} ) as string
+							}
+							caption={ fullSetupLabel }
+							disabled={ isActivating }
+						/>
 					</>
 				) }
 			</div>
@@ -235,19 +226,11 @@ const ActivationModal = ( {
 };
 
 export default connect(
-	( state: IAppState, { themeId, siteId }: OwnProps ): ConnectedProps => {
-		const isJetpackOrAtomic =
-			!! isJetpackSite( state, siteId ) || !! isSiteWpcomAtomic( state, siteId );
-
-		return {
-			theme: getCanonicalTheme( state, siteId, themeId ),
-			siteDomain: getSiteDomain( state, siteId ),
-			// The "Full setup" path runs the theme-headstart endpoint, which doesn't
-			// apply on Jetpack/Atomic sites.
-			supportsFullSetup: ! isJetpackOrAtomic,
-			isLoadingTheme: isRequestingTheme( state, 'wpcom', themeId ),
-		};
-	},
+	( state: IAppState, { themeId, siteId }: OwnProps ): ConnectedProps => ( {
+		theme: getCanonicalTheme( state, siteId, themeId ),
+		siteDomain: getSiteDomain( state, siteId ),
+		isLoadingTheme: isRequestingTheme( state, 'wpcom', themeId ),
+	} ),
 	{
 		dispatchActivateTheme: activateTheme,
 	}
