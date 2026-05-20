@@ -1363,6 +1363,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						align="left"
 					/>
 
+					{ ! this.state.showDomainOptionsStep &&
+						this.props.isSplitCancelRemoveEnabled &&
+						refundAmountString &&
+						intent === 'cancel' && (
+							<RefundEligibilityNotice
+								mode="refund-eligibility"
+								refundAmount={ refundAmountString }
+								purchase={ purchase }
+								siteSlug={ this.props.siteSlug }
+							/>
+						) }
 					{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
 						<RefundEligibilityNotice
 							refundAmount={ refundAmountString }
@@ -1371,7 +1382,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						/>
 					) }
 					{ ! this.state.showDomainOptionsStep &&
-						( ! refundAmountString || intent === 'cancel' || intent === 'auto-renew' ) && (
+						( ! refundAmountString ||
+							intent === 'auto-renew' ||
+							( intent === 'cancel' && ! this.props.isSplitCancelRemoveEnabled ) ) && (
 							<TimeRemainingNotice
 								purchase={ purchase }
 								displayVariant={ displayVariant }
