@@ -80,19 +80,25 @@ describe( 'actions', () => {
 			expect( dispatch.mock.calls ).toHaveLength( 0 );
 		} );
 
-		test( 'should not dispatch if post has already been seen', () => {
-			const post = { global_ID: 1 };
-			const state = { reader: { posts: { seen: { 1: true } } } };
-			see( post )( dispatch, () => state );
+		test( 'should not dispatch twice for the same post in one session', () => {
+			const post = { global_ID: 1, site_ID: 1 };
+			const site = { ID: 1 };
+			see( post, site )( dispatch );
+			dispatch.mockReset();
+			pageViewForPost.mockReset();
+			bumpStat.mockReset();
+
+			see( post, site )( dispatch );
 
 			expect( dispatch.mock.calls ).toHaveLength( 0 );
+			expect( pageViewForPost ).not.toHaveBeenCalled();
+			expect( bumpStat ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should dispatch POST_SEEN and send pageviews for unseen posts with sites', () => {
-			const post = { global_ID: 1, site_ID: 1 };
+			const post = { global_ID: 2, site_ID: 1 };
 			const site = { ID: 1 };
-			const state = { reader: { posts: { seen: {} } } };
-			see( post, site )( dispatch, () => state );
+			see( post, site )( dispatch );
 
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: READER_POST_SEEN,
