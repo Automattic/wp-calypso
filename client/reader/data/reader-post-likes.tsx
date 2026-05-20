@@ -33,7 +33,7 @@ const displayName = ( WrappedComponent: { displayName?: string; name?: string } 
 
 const currentLikeCount = ( value: unknown ) => ( typeof value === 'number' ? value : 0 );
 
-export function useReaderPostLikeActions(): ReaderPostLikeActionsInjectedProps {
+export const useReaderPostLikeActions = (): ReaderPostLikeActionsInjectedProps => {
 	const queryClient = useQueryClient();
 
 	return usePostLikeActions( {
@@ -64,7 +64,7 @@ export function useReaderPostLikeActions(): ReaderPostLikeActionsInjectedProps {
 			};
 		},
 	} );
-}
+};
 
 export const withReaderPostLikeActions = < Props extends ReaderPostLikeActionsInjectedProps >(
 	WrappedComponent: ComponentType< Props >

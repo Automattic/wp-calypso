@@ -4,12 +4,12 @@ import type { QueryClient } from '@tanstack/react-query';
 
 export type ReaderPostEntityPost = Record< string, unknown >;
 
-export interface ReaderPostEntityData {
+interface ReaderPostEntityData {
 	base: ReaderPostEntityPost;
 	overlay: ReaderPostEntityPost;
 }
 
-export interface ReaderPostEntityKey {
+interface ReaderPostEntityKey {
 	blogId?: number | string | null;
 	feedId?: number | string | null;
 	postId?: number | string | null;
@@ -17,7 +17,7 @@ export interface ReaderPostEntityKey {
 
 type ReaderPostEntityTarget = ReaderPostEntityKey | ReaderPostEntityPost | null | undefined;
 
-export type ReaderPostEntityQueryKey = readonly [ 'read', 'post', 'entity', string ];
+type ReaderPostEntityQueryKey = readonly [ 'read', 'post', 'entity', string ];
 const READER_POST_ENTITY_QUERY_KEY_PREFIX = [ 'read', 'post', 'entity' ] as const;
 const READER_POST_ENTITY_QUERY_OPTIONS = {
 	staleTime: Infinity,
@@ -111,7 +111,7 @@ const isReaderPostEntityKey = ( target: ReaderPostEntityTarget ): target is Read
 	);
 };
 
-export const readerPostEntityKeyString = ( target: ReaderPostEntityTarget ): string | null => {
+const readerPostEntityKeyString = ( target: ReaderPostEntityTarget ): string | null => {
 	if ( ! target ) {
 		return null;
 	}
@@ -121,9 +121,7 @@ export const readerPostEntityKeyString = ( target: ReaderPostEntityTarget ): str
 	return postKeyStringFromPost( target );
 };
 
-export const readerPostEntityQueryKey = (
-	target: ReaderPostEntityTarget
-): ReaderPostEntityQueryKey => {
+const readerPostEntityQueryKey = ( target: ReaderPostEntityTarget ): ReaderPostEntityQueryKey => {
 	return [ 'read', 'post', 'entity', readerPostEntityKeyString( target ) ?? 'unknown' ] as const;
 };
 
@@ -155,7 +153,7 @@ const mergeReaderPost = (
 	};
 };
 
-export const mergeReaderPostEntityData = (
+const mergeReaderPostEntityData = (
 	data: ReaderPostEntityData | null | undefined
 ): ReaderPostEntityPost | null => {
 	if ( ! data ) {

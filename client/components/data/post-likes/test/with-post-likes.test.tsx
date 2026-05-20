@@ -28,7 +28,6 @@ class PostLikesView extends Component< {
 	iLike: boolean;
 	liked: boolean;
 	likes: PostLiker[] | null;
-	isPostLikesLoading: boolean;
 } > {
 	render() {
 		const { likeCount, iLike, likes } = this.props;

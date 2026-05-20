@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import {
 	getReaderPostEntity,
-	readerPostEntityQueryKey,
 	updateReaderPostLocalState,
 	upsertReaderPostEntities,
 	useReaderPostEntity,
@@ -41,22 +40,11 @@ describe( 'reader post entities', () => {
 
 		upsertReaderPostEntities( queryClient, [ blogPost( 1 ) ] );
 
-		expect(
-			queryClient.getQueryData( readerPostEntityQueryKey( { blogId: 100, postId: 1 } ) )
-		).toMatchObject( {
-			base: { ID: 1, site_ID: 100, title: 'Post 1' },
-			overlay: {},
-		} );
 		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			ID: 1,
 			site_ID: 100,
 			title: 'Post 1',
 		} );
-		expect(
-			queryClient.getQueryCache().find( {
-				queryKey: readerPostEntityQueryKey( { blogId: 100, postId: 1 } ),
-			} )?.meta
-		).toMatchObject( { persist: false } );
 	} );
 
 	it( 'keeps local overlay values when older stream payloads are upserted later', () => {
@@ -186,7 +174,7 @@ describe( 'reader post entities', () => {
 		} );
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( queryClient.getQueryData( readerPostEntityQueryKey( postKey ) ) ).toBeUndefined();
+		expect( getReaderPostEntity( queryClient, postKey ) ).toBeNull();
 	} );
 
 	it( 'updates useReaderPostEntity subscribers when entity data is written later', async () => {

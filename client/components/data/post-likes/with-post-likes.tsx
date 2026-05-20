@@ -22,7 +22,6 @@ type PostLikesInjectedProps = {
 	countLikes: number | null;
 	iLike: boolean;
 	liked: boolean;
-	isPostLikesLoading: boolean;
 };
 
 type PostLikeActionsInjectedProps = {
@@ -52,6 +51,60 @@ const normalizeId = ( value: number | string | null | undefined ) => {
 	}
 
 	return Number( value );
+};
+
+export const usePostLikes = (
+	siteId: number | string | null | undefined,
+	postId: number | string | null | undefined
+): PostLikesInjectedProps => {
+	const normalizedSiteId = normalizeId( siteId );
+	const normalizedPostId = normalizeId( postId );
+	const query = useQuery( postLikesQuery( normalizedSiteId, normalizedPostId ) );
+	const likeCount = query.data?.found ?? 0;
+
+	return {
+		postLikes: query.data ?? null,
+		likes: query.data?.likes ?? null,
+		likeCount,
+		countLikes: query.data?.found ?? null,
+		iLike: query.data?.iLike ?? false,
+		liked: query.data?.iLike ?? false,
+	};
+};
+
+export const usePostLikeActions = (
+	actionOptions: PostLikeActionsOptions = {}
+): PostLikeActionsInjectedProps => {
+	const queryClient = useQueryClient();
+	const likeMutation = useMutation( likePostMutation( queryClient ) );
+	const unlikeMutation = useMutation( unlikePostMutation( queryClient ) );
+
+	const mutatePostLike = (
+		siteId: number,
+		postId: number,
+		iLike: boolean,
+		options: LikeOptions = {}
+	) => {
+		const variables = { siteId, postId, source: options.source };
+		const restoreOptimisticUpdate = actionOptions.onMutate?.( variables, iLike );
+
+		const mutation = iLike ? likeMutation : unlikeMutation;
+		mutation.mutateAsync( variables ).catch( () => restoreOptimisticUpdate?.() );
+	};
+
+	const like = ( siteId: number, postId: number, options?: LikeOptions ) =>
+		mutatePostLike( siteId, postId, true, options );
+	const unlike = ( siteId: number, postId: number, options?: LikeOptions ) =>
+		mutatePostLike( siteId, postId, false, options );
+
+	return {
+		like,
+		unlike,
+		likePost: like,
+		unlikePost: unlike,
+		isLikePending: likeMutation.isPending,
+		isUnlikePending: unlikeMutation.isPending,
+	};
 };
 
 export const withPostLikes = < Props extends PostLikeTargetProps & PostLikesInjectedProps >(
@@ -100,59 +153,3 @@ export const withPostLikeActions = <
 
 	return WithPostLikeActions;
 };
-
-export function usePostLikes(
-	siteId: number | string | null | undefined,
-	postId: number | string | null | undefined
-): PostLikesInjectedProps {
-	const normalizedSiteId = normalizeId( siteId );
-	const normalizedPostId = normalizeId( postId );
-	const query = useQuery( postLikesQuery( normalizedSiteId, normalizedPostId ) );
-	const likeCount = query.data?.found ?? 0;
-
-	return {
-		postLikes: query.data ?? null,
-		likes: query.data?.likes ?? null,
-		likeCount,
-		countLikes: query.data?.found ?? null,
-		iLike: query.data?.iLike ?? false,
-		liked: query.data?.iLike ?? false,
-		isPostLikesLoading:
-			Boolean( normalizedSiteId && normalizedPostId ) && ! query.data && query.isLoading,
-	};
-}
-
-export function usePostLikeActions(
-	actionOptions: PostLikeActionsOptions = {}
-): PostLikeActionsInjectedProps {
-	const queryClient = useQueryClient();
-	const likeMutation = useMutation( likePostMutation( queryClient ) );
-	const unlikeMutation = useMutation( unlikePostMutation( queryClient ) );
-
-	const mutatePostLike = (
-		siteId: number,
-		postId: number,
-		iLike: boolean,
-		options: LikeOptions = {}
-	) => {
-		const variables = { siteId, postId, source: options.source };
-		const restoreOptimisticUpdate = actionOptions.onMutate?.( variables, iLike );
-
-		const mutation = iLike ? likeMutation : unlikeMutation;
-		mutation.mutateAsync( variables ).catch( () => restoreOptimisticUpdate?.() );
-	};
-
-	const like = ( siteId: number, postId: number, options?: LikeOptions ) =>
-		mutatePostLike( siteId, postId, true, options );
-	const unlike = ( siteId: number, postId: number, options?: LikeOptions ) =>
-		mutatePostLike( siteId, postId, false, options );
-
-	return {
-		like,
-		unlike,
-		likePost: like,
-		unlikePost: unlike,
-		isLikePending: likeMutation.isPending,
-		isUnlikePending: unlikeMutation.isPending,
-	};
-}
