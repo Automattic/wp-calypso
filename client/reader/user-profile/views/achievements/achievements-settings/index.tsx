@@ -31,8 +31,8 @@ export default function AchievementsSettings() {
 		[ savedNotifications ]
 	);
 
-	const { setVisibility, isPending: isSetVisibilityPending } = useSetAchievementsVisibility();
-	const { mutate: setNotifications, isPending: isSetNotificationsPending } = useMutation(
+	const { setVisibility } = useSetAchievementsVisibility();
+	const { mutate: setNotifications } = useMutation(
 		userPreferenceOptimisticMutation( 'achievements-global-notifications' )
 	);
 
@@ -98,14 +98,12 @@ export default function AchievementsSettings() {
 				<div className="achievements-settings__content">
 					<ToggleControl
 						checked={ visibility === 'public' }
-						disabled={ isSetVisibilityPending }
 						onChange={ handleSetVisibility }
 						label={ translate( 'Public achievements' ) }
 						help={ translate( 'When enabled, your achievements page is visible to other users.' ) }
 					/>
 					<ToggleControl
 						checked={ notifications !== 'disabled' }
-						disabled={ isSetNotificationsPending }
 						onChange={ handleSetNotifications }
 						label={ translate( 'Achievement notifications' ) }
 						help={ translate(
