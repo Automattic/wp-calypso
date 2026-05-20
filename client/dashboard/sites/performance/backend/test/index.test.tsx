@@ -62,8 +62,7 @@ function mockApmToggle( expectedActive: boolean ) {
 
 function mockApmAggregate( response: ApmAggregateResponse = { aggregates: [] } ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/sites/${ siteId }/hosting/apm/aggregate` )
-		.query( true )
+		.get( ( uri ) => uri.includes( `/wpcom/v2/sites/${ siteId }/hosting/apm/aggregate` ) )
 		.reply( 200, response );
 }
 
@@ -213,14 +212,14 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByText( /api\.stripe\.com/ ) ).toBeVisible();
 	} );
 
-	test( 'shows a status notice with the average response time', async () => {
+	test( 'shows an intent-based status notice when data is present', async () => {
 		mockSite( businessSite( true ) );
-		mockApmAggregate();
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		// The notice variant depends on seeded mock data, but one of these three
-		// titles must always appear and must include the formatted avg duration.
+		// With real data, the notice variant depends on the avg response time,
+		// but one of these three titles must always appear with the formatted avg.
 		expect(
 			await screen.findByText(
 				/(Healthy backend|Backend needs improvement|Backend is slow) — avg /
@@ -228,9 +227,30 @@ describe( '<SitePerformanceBackend>', () => {
 		).toBeVisible();
 	} );
 
-	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
+	test( 'shows the Capturing notice when APM is on but no data has come in yet', async () => {
 		mockSite( businessSite( true ) );
 		mockApmAggregate();
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		expect( await screen.findByText( /Performance data is being collected/ ) ).toBeVisible();
+		expect(
+			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the Capturing-is-off notice when APM is off and no data has come in yet', async () => {
+		mockSite( businessSite( false ) );
+		mockApmAggregate();
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		expect( await screen.findByText( /Turn capturing on to start collecting/ ) ).toBeVisible();
+	} );
+
+	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
+		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 

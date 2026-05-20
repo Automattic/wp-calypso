@@ -1,22 +1,18 @@
-import { siteApmAggregateQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import {
-	mergeAggregates,
+	type MergedAggregate,
 	type MergedHook,
 	type MergedPlugin,
 	type MergedTemplate,
 } from '../aggregate';
 import BarList, { type BarListRow } from '../bar-list';
 import { formatMs } from '../utils';
-import type { Site } from '@automattic/api-core';
 
 function Section( {
 	title,
@@ -79,10 +75,7 @@ function sumValues( rows: BarListRow[] ): number {
 	return rows.reduce( ( sum, row ) => sum + row.value, 0 );
 }
 
-export default function WordPress( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
-	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
-
+export default function WordPress( { merged }: { merged: MergedAggregate } ) {
 	const pluginRows = pluginsToRows( merged.slowest.plugins );
 	const hookRows = hooksToRows( merged.slowest.hooks );
 	const templateRows = templatesToRows( merged.slowest.templates );

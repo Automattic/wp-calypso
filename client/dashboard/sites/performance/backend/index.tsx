@@ -32,6 +32,13 @@ import Database from './database';
 import ExternalRequests from './external-requests';
 import Overview from './overview';
 import BackendSubtitle from './subtitle';
+import {
+	isRollingTimeframe,
+	timeframeToParams,
+	usePersistedTimeframe,
+	type Timeframe,
+} from './timeframe';
+import TimeframeSelector from './timeframe-selector';
 import Transactions from './transactions';
 import WordPress from './wordpress';
 
@@ -81,12 +88,25 @@ function StartCapturingButton( { site }: { site: Site } ) {
 	);
 }
 
-function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
+function ApmDashboard( {
+	site,
+	tab,
+	timeframe,
+}: {
+	site: Site;
+	tab: ApmTab;
+	timeframe: Timeframe;
+} ) {
 	const router = useRouter();
 	const siteSlug = site.slug;
 	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
-	const { summary } = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
+	const params = useMemo( () => timeframeToParams( timeframe ), [ timeframe ] );
+	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID, params ) );
+	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
+	const { summary } = merged;
+
+	const apmEnabled = !! site.options?.apm_enabled;
+	const isRollingWindow = isRollingTimeframe( timeframe );
 
 	const handleTabChange = ( name: string ) => {
 		const next = name as ApmTab;
@@ -104,21 +124,25 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 	const renderTab = () => {
 		switch ( tab ) {
 			case 'overview':
-				return <Overview site={ site } />;
+				return <Overview merged={ merged } />;
 			case 'transactions':
-				return <Transactions site={ site } />;
+				return <Transactions merged={ merged } />;
 			case 'wordpress':
-				return <WordPress site={ site } />;
+				return <WordPress merged={ merged } />;
 			case 'database':
-				return <Database site={ site } />;
+				return <Database merged={ merged } />;
 			case 'external-requests':
-				return <ExternalRequests site={ site } />;
+				return <ExternalRequests merged={ merged } />;
 		}
 	};
 
 	return (
 		<VStack spacing={ 6 }>
-			<BackendStatusNotice avgResponseMs={ summary.avg_response_ms } />
+			<BackendStatusNotice
+				summary={ summary }
+				apmEnabled={ apmEnabled }
+				isRollingWindow={ isRollingWindow }
+			/>
 			<Tabs
 				orientation={ isDesktop ? 'vertical' : 'horizontal' }
 				selectedTabId={ tab }
@@ -153,6 +177,7 @@ export default function SitePerformanceBackend( {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const userHasBackendAccess = hasBackendAccess( site.plan?.product_slug );
 	const apmEnabled = !! site.options?.apm_enabled;
+	const [ timeframe, setTimeframe ] = usePersistedTimeframe();
 
 	return (
 		<PageLayout
@@ -163,8 +188,11 @@ export default function SitePerformanceBackend( {
 						userHasBackendAccess ? <BackendSubtitle capturing={ apmEnabled } /> : undefined
 					}
 					actions={
-						userHasBackendAccess && ! apmEnabled ? (
-							<StartCapturingButton site={ site } />
+						userHasBackendAccess ? (
+							<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+								<TimeframeSelector value={ timeframe } onChange={ setTimeframe } />
+								{ ! apmEnabled && <StartCapturingButton site={ site } /> }
+							</HStack>
 						) : undefined
 					}
 				/>
@@ -172,7 +200,7 @@ export default function SitePerformanceBackend( {
 		>
 			<PerformanceTabs siteSlug={ siteSlug } activeTab="backend" />
 			{ userHasBackendAccess ? (
-				<ApmDashboard site={ site } tab={ tab } />
+				<ApmDashboard site={ site } tab={ tab } timeframe={ timeframe } />
 			) : (
 				<UpsellCallout site={ site } { ...getBackendCalloutProps() } />
 			) }

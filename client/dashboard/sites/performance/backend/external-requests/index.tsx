@@ -1,10 +1,6 @@
-import { siteApmAggregateQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
-import { mergeAggregates, type MergedExternal } from '../aggregate';
 import SlowList, { type SlowListItem } from '../slow-list';
-import type { Site } from '@automattic/api-core';
+import type { MergedAggregate, MergedExternal } from '../aggregate';
 
 function toItems( externals: MergedExternal[] ): SlowListItem[] {
 	return externals.map( ( external ) => ( {
@@ -15,10 +11,7 @@ function toItems( externals: MergedExternal[] ): SlowListItem[] {
 	} ) );
 }
 
-export default function ExternalRequests( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
-	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
-
+export default function ExternalRequests( { merged }: { merged: MergedAggregate } ) {
 	return (
 		<SlowList
 			title={ __( 'Slowest external requests' ) }

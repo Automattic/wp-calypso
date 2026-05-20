@@ -1,10 +1,6 @@
-import { siteApmAggregateQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
-import { mergeAggregates, type MergedRoute } from '../aggregate';
 import SlowList, { type SlowListItem } from '../slow-list';
-import type { Site } from '@automattic/api-core';
+import type { MergedAggregate, MergedRoute } from '../aggregate';
 
 function toItems( routes: MergedRoute[] ): SlowListItem[] {
 	return routes.map( ( route ) => ( {
@@ -15,10 +11,7 @@ function toItems( routes: MergedRoute[] ): SlowListItem[] {
 	} ) );
 }
 
-export default function Transactions( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
-	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
-
+export default function Transactions( { merged }: { merged: MergedAggregate } ) {
 	return (
 		<SlowList
 			title={ __( 'Slowest transactions' ) }

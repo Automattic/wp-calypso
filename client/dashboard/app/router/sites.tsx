@@ -624,8 +624,14 @@ export const sitePerformanceBackendIndexRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
-		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
+		const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+			await Promise.all( [
+				import( '@automattic/api-queries' ),
+				import( '../../sites/performance/backend/timeframe' ),
+			] );
+		await queryClient.ensureQueryData(
+			siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -647,8 +653,14 @@ export const sitePerformanceBackendTransactionsRoute = createRoute( {
 	path: 'transactions',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
-		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
+		const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+			await Promise.all( [
+				import( '@automattic/api-queries' ),
+				import( '../../sites/performance/backend/timeframe' ),
+			] );
+		await queryClient.ensureQueryData(
+			siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -670,8 +682,14 @@ export const sitePerformanceBackendDatabaseRoute = createRoute( {
 	path: 'database',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
-		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
+		const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+			await Promise.all( [
+				import( '@automattic/api-queries' ),
+				import( '../../sites/performance/backend/timeframe' ),
+			] );
+		await queryClient.ensureQueryData(
+			siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -693,8 +711,14 @@ export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
 	path: 'external-requests',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
-		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
+		const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+			await Promise.all( [
+				import( '@automattic/api-queries' ),
+				import( '../../sites/performance/backend/timeframe' ),
+			] );
+		await queryClient.ensureQueryData(
+			siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
@@ -718,8 +742,14 @@ export const sitePerformanceBackendWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
-		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
+		const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+			await Promise.all( [
+				import( '@automattic/api-queries' ),
+				import( '../../sites/performance/backend/timeframe' ),
+			] );
+		await queryClient.ensureQueryData(
+			siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>

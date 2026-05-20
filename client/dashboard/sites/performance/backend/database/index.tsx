@@ -1,10 +1,6 @@
-import { siteApmAggregateQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
-import { mergeAggregates, type MergedDbQuery } from '../aggregate';
 import SlowList, { type SlowListItem } from '../slow-list';
-import type { Site } from '@automattic/api-core';
+import type { MergedAggregate, MergedDbQuery } from '../aggregate';
 
 function toItems( queries: MergedDbQuery[] ): SlowListItem[] {
 	return queries.map( ( query ) => ( {
@@ -15,10 +11,7 @@ function toItems( queries: MergedDbQuery[] ): SlowListItem[] {
 	} ) );
 }
 
-export default function Database( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
-	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
-
+export default function Database( { merged }: { merged: MergedAggregate } ) {
 	return (
 		<SlowList
 			title={ __( 'Slowest queries' ) }
