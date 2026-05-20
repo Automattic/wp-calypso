@@ -183,40 +183,29 @@ If zero failing E2E checks exist at all, tell the user "no failing E2E tests on 
 
 ### 4.2: Fetch failing test occurrences
 
-For each failing build ID from 4.1, query TeamCity in **one curl statement per build, self-contained** — no pre-call token-loading loop, no shell variable carryover from Step 2. Each Bash invocation is isolated (shell state doesn't persist between calls), so the token must be read inline from its persisted file, and the proxy flag must be inlined literally based on the `TC_PROXY` value recorded in Step 2.
-
-Avoid compound scripts with `{ ... }` group commands and quoted `"$VAR"` expansions in the same statement — Claude Code's Bash permission heuristic flags the combination as potential "expansion obfuscation" and will prompt for every run. A single `curl` invocation with a `$(cut ...)` command substitution doesn't trigger the heuristic.
-
-**Slim the response with `jq` at the Bash layer** so the assistant doesn't receive a wall of JSON that overflows its context. If the response is too big to hold in-head, the model will be tempted to grep the raw JSON out of the tool-results cache on disk — and that cache lives under `/home/<user>/.claude/projects/...`, which triggers the same `.claude/` path heuristic that has prompted us repeatedly before. Don't let it get there: produce a compact, ready-to-read list from the curl call itself.
+For each failing build ID from 4.1, run the helper script. It probes for the SOCKS5 proxy, rides out transient TeamCity errors, drops muted occurrences, and emits a JSON array of `{build, name, reason, details}` objects:
 
 ```bash
-curl -sS --fail --retry 3 --retry-delay 2 --retry-max-time 30 --socks5 localhost:8080 -H "Authorization: Bearer $(cut -d= -f2 ~/.config/teamcity-access-token)" -H "Accept: application/json" "https://teamcity.a8c.com/app/rest/testOccurrences?locator=build:(id:<BUILD_ID>,defaultFilter:false),status:FAILURE,count:100&fields=count,testOccurrence(id,name,muted,currentlyMuted,build(buildType(name)),details)" | jq '.testOccurrence | map(select(.muted == false and .currentlyMuted == false)) | map({build: .build.buildType.name, name, reason: ((.details // "") as $d | ($d | split("\n") | map(select(test("^[[:space:]]*(TimeoutError|Error|expect|AssertionError)"))) | first) // ($d | split("\n") | first) | .[0:160])})'
+.claude/skills/fix-e2e-tests/identify-failing-tests.sh <BUILD_ID>
 ```
 
-**Keep this entire bash command on a single line, no line continuations.** Two Claude Code heuristics combine to make any other shape prompt for permission on every run:
+- **`reason`** is a one-line summary (≤160 chars), suitable for the 4.3 candidate table.
+- **`details`** is the full `details` field (stack trace + Playwright call log), passed verbatim to the Healer in Step 5.2.
 
-- `jq -f <script-file>` is flagged as "dangerous flags that could execute code or read arbitrary files" — `-f` is hardcoded into the heuristic, no allowlist pattern overrides it. So the script must be inline.
-- A multi-line jq script with embedded `|` operators confuses the command parser: it reads the jq's internal `|` as extra shell pipeline stages and can't form a stable pattern, so the resulting prompt doesn't offer a "session-allow" option either. Single-line keeps the parser happy.
+If the output is `[]`, the build has no non-muted failing tests — move to the next build.
 
-The regex deliberately matches `expect` rather than `expect\(` for the same parser-friendliness reason: `\\(` inside the quoted jq string risks tripping the "expansion obfuscation" heuristic. `expect` alone is good enough to catch `expect(...)` lines without the escape.
+If the script exits non-zero, the failure mode is in stderr. Likely cases:
 
-What this pipeline does and why each piece:
+| Exit | Cause | Action |
+| --- | --- | --- |
+| 1 | Token missing/unreadable | Re-run Step 2's setup flow. |
+| 3 | Cannot reach TeamCity (direct or SOCKS5) | Check the VPN / proxy tunnel, then retry. |
+| 22 + HTTP 401/403 in stderr | Token expired or revoked mid-run | Re-run Step 2's setup flow. |
+| 22 + HTTP 5xx after retries | TeamCity is having a bad day | Retry the script; if it keeps failing, check TC status. |
 
-- `--fail --retry 3 --retry-delay 2 --retry-max-time 30` makes curl ride out transient TeamCity hiccups (5xx, connection drops) up to three times with a 2-second gap, capping total retry time at 30s. `--fail` surfaces any unretried non-2xx as a non-zero exit so the assistant sees the failure rather than feeding garbage through jq. By design, curl retries 5xx but exits immediately on 401/403 — those aren't transient (token expired mid-run), and silently retrying would hide the real cause.
-- The `fields=` projection deliberately omits `currentlyInvestigated` and `id`: the flag isn't a reliable filter on this TeamCity instance (see the project memory), and the occurrence ID isn't used downstream.
-- Filters muted/currentlyMuted occurrences **at the jq layer**. Applying `muted:false` in the TeamCity locator alongside `defaultFilter:false` has given inconsistent results in practice; doing it in jq is reliable and easy to verify from the output.
-- Picks the first line of `details` that contains a recognizable error class (`TimeoutError`, `Error`, `expect`, `AssertionError`) and truncates to 160 chars. Falls back to the first line if no match.
-- Three jq subtleties (don't try to simplify them away — each is load-bearing):
-  - `(.details // "") as $d` binds the original details to `$d` before the pipeline starts. Without this, the `// (.details | …)` fallback runs in the inner context (where `.` is the matched line, not the occurrence object) and errors with `Cannot index array with string "details"`.
-  - The regex anchor allows leading whitespace: `^[[:space:]]*(…)`. Playwright's `details` blob indents the actual error class line (e.g., `    TimeoutError: …`); a strict `^(…)` anchor misses it and you get only the unhelpful `FAILURE:` summary line. POSIX bracket class `[[:space:]]` is used instead of `\s` because the backslash risks tripping Claude Code's expansion-obfuscation heuristic.
-  - `.details // ""` defaults missing `details` to an empty string, so a stray occurrence without that field doesn't crash the pipeline.
-- Leaves the object with just three fields per candidate (`build`, `name`, `reason`). Typical output for a 9-occurrence build is maybe 2–5 objects totaling a few hundred tokens — small enough to process in-head.
+See [`identify-failing-tests.sh`](identify-failing-tests.sh) itself for the curl/jq rationale (`defaultFilter:false`, muted-at-jq filtering, `currentlyInvestigated` omission, regex anchor, `$d` binding). The skill no longer carries that rationale inline — it lives next to the code that depends on it.
 
-If Step 2 recorded no proxy (`TC_PROXY=""`, direct connection works), drop the `--socks5 localhost:8080` flag. The proxy flag is known at this point in the skill run — inline it, don't dereference shell variables. The token path is always `~/.config/teamcity-access-token`.
-
-**Do not re-parse the raw JSON by grepping tool-results files on disk.** If the output above isn't enough — e.g., you need the full `details` for the Healer's prompt — re-issue the curl with a build+test-specific locator to fetch only that one occurrence's details. Never reach into `/home/*/.claude/projects/...` for any reason.
-
-`defaultFilter:false` is required: the top-level build is a matrix with snapshot dependencies (`[Desktop]`, `[Mobile]`, etc.), and the actual test failures live in those children. Without it, the response is empty.
+**Do not re-parse the raw JSON by grepping tool-results files on disk.** The script's output is the canonical view of failing tests; never reach into `/home/*/.claude/projects/...` for any reason.
 
 ### 4.3: Filter and present candidates
 
