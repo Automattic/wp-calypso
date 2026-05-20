@@ -4,12 +4,11 @@ import { SupportArticleHeader } from '@automattic/support-articles';
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
 import Placeholders from './placeholders';
 
 import './style.scss';
@@ -51,7 +50,7 @@ const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 
 const DialogContent = ( { postId, blogId, articleUrl } ) => {
 	const postKey = useSupportArticleAlternatePostKey( blogId ?? SUPPORT_BLOG_ID, postId );
-	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
+	const post = useReaderPostEntity( postKey );
 	const isLoading = ! post || ! postKey;
 	const siteId = post?.site_ID;
 	const shouldQueryReaderPost = ! post && postKey;
