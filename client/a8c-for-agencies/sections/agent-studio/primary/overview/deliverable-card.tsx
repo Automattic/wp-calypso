@@ -42,7 +42,7 @@ export default function DeliverableCard( { output }: Props ) {
 					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
 					<Text variant="muted">{ getMetaLabel( output ) }</Text>
 				</VStack>
-				<HStack justify="flex-end" alignment="center" spacing={ 2 }>
+				<HStack justify="space-between" alignment="center">
 					{ output.kind === 'one-pager' && output.status === 'ready' && (
 						<Button variant="primary" href={ getAgentStudioOutputPath( output.id ) }>
 							{ __( 'View' ) }
