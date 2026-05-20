@@ -30,14 +30,14 @@ Anything not overridden keeps using the default. The engine never sees the chang
 
 ### The six services
 
-| Service | Interface | Default impl | What a server impl would do |
-|---|---|---|---|
-| **`llm`** | `LLMService.chat( { model, messages, responseFormat?, signal? } )` | OpenAI Chat Completions from the browser, reads `.env` (`services/llm-service.ts`) | Hit `/wpcom/v2/ai/agent` via `packages/agents-manager`, with a pre-registered agent id |
-| **`pdf`** | `PdfService.exportPdf( { title, pages } )` → `{ blob, fileName }` | Client-side jsPDF stitching PNGs (`services/pdf-service.ts`) | Server Puppeteer / headless Chrome render |
-| **`thumbnail`** | `ThumbnailService.renderPagePng( { html, width, height } )` → data URL | html-to-image (`services/thumbnail-service.ts`) | Server PNG render returning a URL |
-| **`brandPack`** | `BrandPackService.listPacks() / getPack( slug )` | In-bundle `BRAND_PACKS` registry (`services/brand-pack-service.ts`) | Fetch user-authored packs from wpcom |
-| **`storage`** | `StorageService.saveGenerationResult / markGenerationFailed` | Wraps `agentStudioService.updateOutput` (IDB mock) (`services/storage-service.ts`) | Wpcom endpoint that owns deliverable persistence |
-| **`telemetry`** | `TelemetryService.track*` | No-op (`services/telemetry-service.ts`); the React hooks dispatch Tracks directly | Optional — most installs use the no-op since React already dispatches Tracks |
+| Service         | Interface                                                              | Default impl                                                                       | What a server impl would do                                                            |
+| --------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **`llm`**       | `LLMService.chat( { model, messages, responseFormat?, signal? } )`     | OpenAI Chat Completions from the browser, reads `.env` (`services/llm-service.ts`) | Hit `/wpcom/v2/ai/agent` via `packages/agents-manager`, with a pre-registered agent id |
+| **`pdf`**       | `PdfService.exportPdf( { title, pages } )` → `{ blob, fileName }`      | Client-side jsPDF stitching PNGs (`services/pdf-service.ts`)                       | Server Puppeteer / headless Chrome render                                              |
+| **`thumbnail`** | `ThumbnailService.renderPagePng( { html, width, height } )` → data URL | html-to-image (`services/thumbnail-service.ts`)                                    | Server PNG render returning a URL                                                      |
+| **`brandPack`** | `BrandPackService.listPacks() / getPack( slug )`                       | In-bundle `BRAND_PACKS` registry (`services/brand-pack-service.ts`)                | Fetch user-authored packs from wpcom                                                   |
+| **`storage`**   | `StorageService.saveGenerationResult / markGenerationFailed`           | Wraps `agentStudioService.updateOutput` (IDB mock) (`services/storage-service.ts`) | Wpcom endpoint that owns deliverable persistence                                       |
+| **`telemetry`** | `TelemetryService.track*`                                              | No-op (`services/telemetry-service.ts`); the React hooks dispatch Tracks directly  | Optional — most installs use the no-op since React already dispatches Tracks           |
 
 The interfaces are intentionally small. If you need to add a method, edit `services/types.ts` and every impl will tell you what's missing at the type level.
 
@@ -57,6 +57,7 @@ A4A_LLM_OUTPUT_PRICE=4.50
 ## What's in v1 vs deferred
 
 **Shipping in v1:**
+
 - Full engine (prompt + CSS + 22 layouts + cover composer + renderer).
 - Single neutral brand pack (A4A blue accent).
 - IndexedDB-backed mock storage so renders + image data URLs don't blow localStorage.
@@ -65,6 +66,7 @@ A4A_LLM_OUTPUT_PRICE=4.50
 - Cover variant picker + single / facing page viewer.
 
 **Deferred:**
+
 - LLM repair loop (coverage + additions check + re-call).
 - Paginator for body overflow across pages.
 - Multiple brand packs (WPCom, VIP, Woo).

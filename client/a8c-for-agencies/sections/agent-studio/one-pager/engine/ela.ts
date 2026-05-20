@@ -12,11 +12,19 @@
 // the React hook; this module owns single-shot generation.
 
 import { BASE_CSS } from './base-css';
+import { composeDualLogo } from './composite-logo';
 import { composeCoverPage, COVER_LAYOUTS, FALLBACK_TRANSPARENT_PNG } from './cover-composer';
 import { applySentenceCase } from './sentence-case';
 import { SYSTEM_PROMPT } from './system-prompt';
 import { applyPageTheme, luminance, pageThemeColors, pickThemeSequence } from './theme';
-import type { BrandPack, ElaCover, ElaImage, ElaPageTheme, ElaResult } from './types';
+import type {
+	BrandPack,
+	DualLogoOrder,
+	ElaCover,
+	ElaImage,
+	ElaPageTheme,
+	ElaResult,
+} from './types';
 import type { LLMService } from '../services/types';
 
 const ROLE_DEFAULTS = {
@@ -275,6 +283,16 @@ export async function generateOnePager( args: {
 	title: string;
 	blurb?: string;
 	images?: ElaImage[];
+	/** Override the brand pack's light-page logo with an uploaded one. */
+	primaryLogoLightDataUrl?: string;
+	/** Override the brand pack's dark-page logo with an uploaded one. */
+	primaryLogoDarkDataUrl?: string;
+	/** Optional partner logo (light-page variant). Triggers dual-logo composition. */
+	partnerLogoLightDataUrl?: string;
+	/** Optional partner logo (dark-page variant). Falls back to the light variant. */
+	partnerLogoDarkDataUrl?: string;
+	/** Which logo sits on the leading edge of the dual-logo separator. */
+	partnerLogoOrder?: DualLogoOrder;
 	model?: string;
 	signal?: AbortSignal;
 } ): Promise< ElaResult > {
@@ -319,10 +337,41 @@ export async function generateOnePager( args: {
 	const themeBgFor = ( theme: ElaPageTheme ): string =>
 		pageThemeColors( theme, tokens )?.bg ?? '#FFFFFF';
 	const isDarkTheme = ( theme: ElaPageTheme ): boolean => luminance( themeBgFor( theme ) ) < 0.5;
-	const logoUrlFor = ( theme: ElaPageTheme ): string => {
-		const isDark = isDarkTheme( theme );
-		return ( isDark && args.pack.logoDarkUrl ) || args.pack.logoLightUrl || '';
-	};
+	// Primary logo: form upload overrides the pack's built-in. Falls back to
+	// the pack's URL when no upload was provided (most v1 callers use the
+	// neutral pack which has no logo, so the form upload is the only source).
+	const primaryLight = args.primaryLogoLightDataUrl?.trim() || args.pack.logoLightUrl || '';
+	const primaryDark = args.primaryLogoDarkDataUrl?.trim() || args.pack.logoDarkUrl || primaryLight;
+	const baseLogoFor = ( theme: ElaPageTheme ): string =>
+		isDarkTheme( theme ) ? primaryDark || primaryLight : primaryLight;
+	// Partner-logo composite: when the user supplies a second logo, draw
+	// "[primary] | [partner]" into a single PNG/SVG per theme so every
+	// existing {{LOGO_URL}} site keeps working unchanged. Skipped silently
+	// if the canvas draw fails — fall back to primary alone.
+	const partnerLight = args.partnerLogoLightDataUrl?.trim();
+	const partnerDark = args.partnerLogoDarkDataUrl?.trim();
+	const partnerFor = ( theme: ElaPageTheme ): string | undefined =>
+		isDarkTheme( theme ) ? partnerDark || partnerLight : partnerLight;
+	const composedLogos = new Map< ElaPageTheme, string >();
+	for ( const theme of [ 'light', 'ink', 'brand', 'accent' ] as ElaPageTheme[] ) {
+		const base = baseLogoFor( theme );
+		const partner = partnerFor( theme );
+		if ( partner && base ) {
+			try {
+				composedLogos.set(
+					theme,
+					await composeDualLogo( base, partner, theme, args.partnerLogoOrder ?? 'brand-first' )
+				);
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[one-pager] dual-logo composite failed, using primary alone:', err );
+				composedLogos.set( theme, base );
+			}
+		} else {
+			composedLogos.set( theme, base );
+		}
+	}
+	const logoUrlFor = ( theme: ElaPageTheme ): string => composedLogos.get( theme ) ?? '';
 
 	const coverImageUrl = images[ 0 ]?.dataUrl ?? FALLBACK_TRANSPARENT_PNG;
 

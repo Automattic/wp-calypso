@@ -4,7 +4,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { generateOnePager } from '../engine/ela';
 import { ELA_PAGE_HEIGHT, ELA_PAGE_WIDTH } from '../engine/types';
 import { getOnePagerServices } from '../services';
-import type { ElaImage, OnePagerInputSnapshot } from '../engine/types';
+import type { DualLogoOrder, ElaImage, LogoUpload, OnePagerInputSnapshot } from '../engine/types';
 import type { PageRender } from '../services/types';
 
 export interface GenerationRequest {
@@ -15,6 +15,19 @@ export interface GenerationRequest {
 	blurb: string;
 	text: string;
 	images: ElaImage[];
+	/**
+	 * Primary brand logo override (light-page variant). When the brand pack
+	 * has no built-in logo this is the only source.
+	 */
+	primaryLogoLight?: LogoUpload;
+	/** Primary brand logo override (dark-page variant). Falls back to light. */
+	primaryLogoDark?: LogoUpload;
+	/** Optional partner logo (light-page variant). Triggers dual composition. */
+	partnerLogoLight?: LogoUpload;
+	/** Optional partner logo (dark-page variant). Falls back to light. */
+	partnerLogoDark?: LogoUpload;
+	/** Which logo sits on the leading edge of the dual-logo separator. */
+	partnerLogoOrder?: DualLogoOrder;
 }
 
 export type GenerationPhase = 'idle' | 'thinking' | 'designing' | 'done' | 'failed';
@@ -108,6 +121,11 @@ export function useOnePagerGeneration() {
 					title: request.title,
 					blurb: request.blurb,
 					images: request.images,
+					primaryLogoLightDataUrl: request.primaryLogoLight?.dataUrl,
+					primaryLogoDarkDataUrl: request.primaryLogoDark?.dataUrl,
+					partnerLogoLightDataUrl: request.partnerLogoLight?.dataUrl,
+					partnerLogoDarkDataUrl: request.partnerLogoDark?.dataUrl,
+					partnerLogoOrder: request.partnerLogoOrder,
 					signal: controller.signal,
 				} );
 
@@ -132,6 +150,11 @@ export function useOnePagerGeneration() {
 					blurb: request.blurb,
 					images: request.images,
 					brandPackSlug: request.pack,
+					primaryLogoLight: request.primaryLogoLight,
+					primaryLogoDark: request.primaryLogoDark,
+					partnerLogoLight: request.partnerLogoLight,
+					partnerLogoDark: request.partnerLogoDark,
+					partnerLogoOrder: request.partnerLogoOrder,
 				};
 
 				// Snapshot the active cover + first few body pages to PNGs

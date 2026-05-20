@@ -6,6 +6,8 @@ import {
 	TextareaControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -21,8 +23,9 @@ import { useOnePagerGeneration } from '../../one-pager/react/use-one-pager-gener
 import useSuggestOnePagerContent from '../../one-pager/react/use-suggest-one-pager-content';
 import { getBriefExcerpt } from './brief-helpers';
 import ImageUploadField from './image-upload-field';
+import LogoUploadField from './logo-upload-field';
 import type { AgentStudioAgent } from '../../lib/agents';
-import type { ElaImage } from '../../one-pager/engine/types';
+import type { DualLogoOrder, ElaImage, LogoUpload } from '../../one-pager/engine/types';
 import type { OnePagerContentField } from '../../types';
 import type { FormEvent } from 'react';
 
@@ -45,6 +48,11 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	const [ title, setTitle ] = useState( '' );
 	const [ blurb, setBlurb ] = useState( '' );
 	const [ images, setImages ] = useState< File[] >( [] );
+	const [ primaryLogoLight, setPrimaryLogoLight ] = useState< File | null >( null );
+	const [ primaryLogoDark, setPrimaryLogoDark ] = useState< File | null >( null );
+	const [ partnerLogoLight, setPartnerLogoLight ] = useState< File | null >( null );
+	const [ partnerLogoDark, setPartnerLogoDark ] = useState< File | null >( null );
+	const [ partnerLogoOrder, setPartnerLogoOrder ] = useState< DualLogoOrder >( 'brand-first' );
 
 	const generation = useOnePagerGeneration();
 	const createOutput = useCreateAgentStudioOutput();
@@ -54,7 +62,11 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	);
 
 	const isBusy = createOutput.isPending || generation.isRunning;
-	const canSubmit = !! brief.trim() && !! title.trim() && images.length > 0 && ! isBusy;
+	// Primary logo is required because the neutral brand pack ships without
+	// one — without it covers and footers render with a transparent stand-in.
+	const canSubmit =
+		!! brief.trim() && !! title.trim() && images.length > 0 && !! primaryLogoLight && ! isBusy;
+	const hasPartnerLogo = !! partnerLogoLight || !! partnerLogoDark;
 	const isFieldSuggesting = ( field: OnePagerContentField ) => suggestingFields.has( field );
 	const canSuggestField = ( field: OnePagerContentField ) =>
 		!! brief.trim() && ! isBusy && ! isFieldSuggesting( field );
@@ -91,6 +103,24 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				} ) )
 			);
 
+			const toLogoUpload = async ( file: File | null ): Promise< LogoUpload | undefined > => {
+				if ( ! file ) {
+					return undefined;
+				}
+				return { fileName: file.name, dataUrl: await readAsDataUrl( file ) };
+			};
+			const [
+				primaryLogoLightUpload,
+				primaryLogoDarkUpload,
+				partnerLogoLightUpload,
+				partnerLogoDarkUpload,
+			] = await Promise.all( [
+				toLogoUpload( primaryLogoLight ),
+				toLogoUpload( primaryLogoDark ),
+				toLogoUpload( partnerLogoLight ),
+				toLogoUpload( partnerLogoDark ),
+			] );
+
 			const result = await generation.run( {
 				outputId: output.id,
 				agentId: agent.id,
@@ -99,6 +129,11 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				blurb: blurb.trim(),
 				text: brief,
 				images: elaImages,
+				primaryLogoLight: primaryLogoLightUpload,
+				primaryLogoDark: primaryLogoDarkUpload,
+				partnerLogoLight: partnerLogoLightUpload,
+				partnerLogoDark: partnerLogoDarkUpload,
+				partnerLogoOrder: hasPartnerLogo ? partnerLogoOrder : undefined,
 			} );
 
 			if ( result.ok ) {
@@ -235,6 +270,76 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						disabled={ isBusy }
 						firstImageIsCover
 					/>
+
+					<VStack spacing={ 3 }>
+						<Text weight={ 600 }>{ __( 'Brand logo' ) }</Text>
+						<Text variant="muted">
+							{ __(
+								'Sits on every cover and footer. Add a dark-page variant if your logo doesn’t read on inky pages.'
+							) }
+						</Text>
+						<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
+							<LogoUploadField
+								label={ __( 'Light-page logo' ) }
+								help={ __( 'For white and light backgrounds.' ) }
+								file={ primaryLogoLight }
+								onChange={ setPrimaryLogoLight }
+								disabled={ isBusy }
+								uploadLabel={ __( 'Upload logo' ) }
+							/>
+							<LogoUploadField
+								label={ __( 'Dark-page logo (optional)' ) }
+								help={ __( 'Falls back to the light variant.' ) }
+								file={ primaryLogoDark }
+								onChange={ setPrimaryLogoDark }
+								disabled={ isBusy }
+								darkBackground
+								uploadLabel={ __( 'Upload dark variant' ) }
+							/>
+						</HStack>
+					</VStack>
+
+					<VStack spacing={ 3 }>
+						<Text weight={ 600 }>{ __( 'Partner logo (optional)' ) }</Text>
+						<Text variant="muted">
+							{ __( 'For co-branded pieces. Sits next to your brand logo with a separator.' ) }
+						</Text>
+						<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
+							<LogoUploadField
+								label={ __( 'Light-page logo' ) }
+								help={ __( 'For white and light backgrounds.' ) }
+								file={ partnerLogoLight }
+								onChange={ setPartnerLogoLight }
+								disabled={ isBusy }
+								uploadLabel={ __( 'Upload partner logo' ) }
+							/>
+							<LogoUploadField
+								label={ __( 'Dark-page logo (optional)' ) }
+								help={ __( 'Falls back to the light variant.' ) }
+								file={ partnerLogoDark }
+								onChange={ setPartnerLogoDark }
+								disabled={ isBusy }
+								darkBackground
+								uploadLabel={ __( 'Upload dark variant' ) }
+							/>
+						</HStack>
+						{ hasPartnerLogo && (
+							<ToggleGroupControl
+								label={ __( 'Logo order' ) }
+								help={ __( 'Which logo sits on the left of the separator.' ) }
+								value={ partnerLogoOrder }
+								onChange={ ( value ) =>
+									setPartnerLogoOrder( ( value ?? 'brand-first' ) as DualLogoOrder )
+								}
+								isBlock={ false }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+							>
+								<ToggleGroupControlOption value="brand-first" label={ __( 'Brand first' ) } />
+								<ToggleGroupControlOption value="partner-first" label={ __( 'Partner first' ) } />
+							</ToggleGroupControl>
+						) }
+					</VStack>
 
 					<HStack className="a4a-agent-studio-brief__form-actions" justify="flex-end" spacing={ 2 }>
 						<Button variant="primary" type="submit" disabled={ ! canSubmit } isBusy={ isBusy }>

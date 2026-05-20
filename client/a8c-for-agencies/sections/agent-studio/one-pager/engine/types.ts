@@ -50,6 +50,14 @@ export interface ElaImage {
 	fileName: string;
 }
 
+/** A logo upload — file name + base64 data URL. */
+export interface LogoUpload {
+	dataUrl: string;
+	fileName: string;
+}
+
+export type DualLogoOrder = 'brand-first' | 'partner-first';
+
 export const PAGE_THEMES = [ 'light', 'ink', 'brand', 'accent' ] as const;
 export type ElaPageTheme = ( typeof PAGE_THEMES )[ number ];
 
@@ -81,6 +89,19 @@ export interface OnePagerInputSnapshot {
 	blurb: string;
 	images: ElaImage[];
 	brandPackSlug: string;
+	/**
+	 * Primary brand logo (light-page variant). Overrides the brand pack's
+	 * built-in light logo when set — required when the pack ships no logo.
+	 */
+	primaryLogoLight?: LogoUpload;
+	/** Primary brand logo (dark-page variant). Falls back to the light variant. */
+	primaryLogoDark?: LogoUpload;
+	/** Optional partner logo (light-page variant). Triggers dual-logo composition. */
+	partnerLogoLight?: LogoUpload;
+	/** Optional partner logo (dark-page variant). Falls back to the light variant. */
+	partnerLogoDark?: LogoUpload;
+	/** Which logo sits on the leading edge of the dual-logo separator. */
+	partnerLogoOrder?: DualLogoOrder;
 }
 
 export interface OnePagerOutputData {
