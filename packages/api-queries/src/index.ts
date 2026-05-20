@@ -64,6 +64,7 @@ export * from './p2';
 export * from './payment-methods';
 export * from './plans';
 export * from './plugin';
+export * from './post-likes';
 export * from './products';
 export * from './read-achievements';
 export * from './read-achievements-settings';

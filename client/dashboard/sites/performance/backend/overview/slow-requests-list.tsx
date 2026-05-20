@@ -1,17 +1,17 @@
 import { __ } from '@wordpress/i18n';
 import SlowList, { type SlowListItem } from '../slow-list';
-import type { ApmSlowRequest } from '@automattic/api-core';
+import type { MergedRoute } from '../aggregate';
 
-function toItems( requests: ApmSlowRequest[] ): SlowListItem[] {
-	return requests.map( ( request ) => ( {
-		id: request.id,
-		label: `${ request.method } ${ request.url }`,
-		avg_ms: request.avg_duration_ms,
-		max_ms: request.duration_ms,
+function toItems( routes: MergedRoute[] ): SlowListItem[] {
+	return routes.map( ( route ) => ( {
+		id: route.id,
+		label: `${ route.method } ${ route.route }`,
+		avg_ms: route.duration_ms.avg,
+		max_ms: route.duration_ms.max,
 	} ) );
 }
 
-export default function SlowRequestsList( { slowRequests }: { slowRequests: ApmSlowRequest[] } ) {
+export default function SlowRequestsList( { routes }: { routes: MergedRoute[] } ) {
 	return (
 		<SlowList
 			title={ __( 'Slowest requests' ) }
@@ -21,7 +21,7 @@ export default function SlowRequestsList( { slowRequests }: { slowRequests: ApmS
 			maxDescription={ __(
 				'Slowest single response observed across these endpoints in the selected period.'
 			) }
-			items={ toItems( slowRequests ) }
+			items={ toItems( routes ) }
 		/>
 	);
 }

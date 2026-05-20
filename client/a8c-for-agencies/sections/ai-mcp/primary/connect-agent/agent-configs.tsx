@@ -5,6 +5,13 @@ import type { ReactNode } from 'react';
 
 export const A4A_MCP_URL = 'https://public-api.wordpress.com/wpcom/v2/a4a-mcp/v1';
 
+// `@automattic/mcp-remote` is our published fork of `mcp-remote` that preserves the
+// WWW-Authenticate `resource_metadata` URL across OAuth transport instances, which
+// upstream loses. Without this fix, OAuth to wpcom-hosted MCP servers fails with
+// "Protected resource ... does not match expected ...". See:
+// https://github.com/automattic/mcp-remote
+const MCP_REMOTE_PACKAGE = '@automattic/mcp-remote';
+
 export interface QuickSetupGroup {
 	title: ReactNode;
 	steps: ReactNode[];
@@ -28,8 +35,19 @@ export interface AgentConfig {
 }
 
 const cursorInstallDeepLink = `cursor://anysphere.cursor-deeplink/mcp/install?name=a4a-mcp&config=${ encodeURIComponent(
-	btoa( JSON.stringify( { command: `npx -y mcp-remote ${ A4A_MCP_URL }` } ) )
+	btoa( JSON.stringify( { command: `npx -y ${ MCP_REMOTE_PACKAGE } ${ A4A_MCP_URL }` } ) )
 ) }`;
+
+// Shared quick-setup step for clients that shell out to `@automattic/mcp-remote` via npx
+// (Claude Desktop Developer config, Cursor, VS Code).
+const installNodeStep = createInterpolateElement(
+	sprintf(
+		/* translators: %s: npm package name, kept inside <code> */
+		__( 'Install Node 20 or later (required by <code>%s</code>).' ),
+		MCP_REMOTE_PACKAGE
+	),
+	{ code: <code /> }
+);
 
 export const AGENT_CONFIGS: AgentConfig[] = [
 	{
@@ -117,7 +135,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			{
 				title: __( 'Developer config (for Claude Enterprise accounts)' ),
 				steps: [
-					__( 'Install Node 20 or later (required by mcp-remote).' ),
+					installNodeStep,
 					__(
 						'Open Claude Desktop → Settings → Developer, then click “Edit Config” under Local MCP servers.'
 					),
@@ -141,7 +159,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				mcpServers: {
 					'a4a-mcp': {
 						command: 'npx',
-						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+						args: [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ],
 					},
 				},
 			},
@@ -159,7 +177,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			deepLink: cursorInstallDeepLink,
 		},
 		quickSetup: [
-			__( 'Install Node 20 or later (required by mcp-remote).' ),
+			installNodeStep,
 			createInterpolateElement( __( 'Open <code>~/.cursor/mcp.json</code> in your editor.' ), {
 				code: <code />,
 			} ),
@@ -178,7 +196,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				mcpServers: {
 					'a4a-mcp': {
 						command: 'npx',
-						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+						args: [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ],
 					},
 				},
 			},
@@ -213,7 +231,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 		id: 'vscode',
 		label: 'VS Code',
 		quickSetup: [
-			__( 'Install Node 20 or later (required by mcp-remote).' ),
+			installNodeStep,
 			createInterpolateElement(
 				__(
 					'Open <code>~/Library/Application Support/Code/User/mcp.json</code> (create if missing).'
@@ -235,7 +253,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				servers: {
 					'a4a-mcp': {
 						command: 'npx',
-						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+						args: [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ],
 					},
 				},
 			},

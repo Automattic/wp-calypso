@@ -261,9 +261,9 @@ export function readStreamInfiniteQuery(
 		// touches the network. After that, the cache is still rendered
 		// immediately; a refetch happens silently in the background.
 		staleTime: STREAM_INFINITE_QUERY_STALE_TIME,
-		// `meta.persist` is intentionally omitted so the consumer's
-		// persistence layer (Calypso's localStorage cache) can dehydrate
-		// loaded pages and rehydrate on reload.
+		// Stream pages contain mutable per-post state, such as likes. Keep them
+		// out of localStorage so reloads do not rehydrate stale stream payloads.
+		meta: { persist: false },
 		refetchOnWindowFocus: false,
 	} );
 }

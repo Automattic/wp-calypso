@@ -18,6 +18,11 @@ import {
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import {
+	isPaymentRiskNoticeBannerEnabled,
+	PAYMENT_RISK_NOTICE_SEVERITY,
+} from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/constants';
+import PaymentRiskNoticeMenuIndicator from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/menu-indicator';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
@@ -52,6 +57,7 @@ const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const agency = useSelector( getActiveAgency );
+	const showPaymentRiskIndicator = isPaymentRiskNoticeBannerEnabled();
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -150,7 +156,14 @@ const useMainMenuItems = ( path: string ) => {
 				icon: currencyDollar,
 				path: A4A_PURCHASES_LINK,
 				link: A4A_LICENSES_LINK,
-				title: translate( 'Purchases' ),
+				title: showPaymentRiskIndicator ? (
+					<span className="a4a-payment-risk-notice-menu-title">
+						<span>{ translate( 'Purchases' ) }</span>
+						<PaymentRiskNoticeMenuIndicator severity={ PAYMENT_RISK_NOTICE_SEVERITY } />
+					</span>
+				) : (
+					translate( 'Purchases' )
+				),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Purchases',
 				},
@@ -235,7 +248,7 @@ const useMainMenuItems = ( path: string ) => {
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, path, translate ] );
+	}, [ agency, path, showPaymentRiskIndicator, translate ] );
 	return menuItems;
 };
 

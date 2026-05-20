@@ -18,7 +18,7 @@ import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -30,6 +30,8 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
+import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
@@ -44,8 +46,6 @@ import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -464,6 +464,10 @@ export class FullPostView extends Component {
 			return;
 		}
 
+		if ( this.props.isLikePending || this.props.isUnlikePending ) {
+			return;
+		}
+
 		const { site_ID: siteId, ID: postId } = this.props.post;
 		let liked = this.props.liked;
 
@@ -754,7 +758,6 @@ export class FullPostView extends Component {
 			// add extra div wrapper for consistent content frame layout/styling for reader.
 			<div style={ { position: 'relative' } }>
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
-					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
@@ -947,17 +950,17 @@ const ConnectedFullPostView = connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
+		const post = ownProps.canonicalPost || getPostByKey( state, postKey ) || { _state: 'pending' };
 		const currentPath = state.route.path.current;
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
+			siteId,
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 			notificationsOpen: isNotificationsOpen( state ),
 			hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 			post,
-			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
 			currentPath,
 			referralStream: getPreviousPath( state ),
@@ -989,8 +992,6 @@ const ConnectedFullPostView = connect(
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,
-		likePost,
-		unlikePost,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,
@@ -998,7 +999,7 @@ const ConnectedFullPostView = connect(
 		showSelectedPost,
 		requestPostComments,
 	}
-)( FullPostView );
+)( withPostLikes( withReaderPostLikeActions( FullPostView ) ) );
 
 const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -1012,18 +1013,25 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
+		const canonicalPost = useReaderPostEntity(
+			Object.keys( currentPostKey ).length ? currentPostKey : null
+		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const previousPost = useSelector( ( state ) =>
+		const canonicalPreviousPost = useReaderPostEntity( previousPostKey );
+		const canonicalNextPost = useReaderPostEntity( nextPostKey );
+		const previousPostFromRedux = useSelector( ( state ) =>
 			previousPostKey ? getPostByKey( state, previousPostKey ) : null
 		);
-		const nextPost = useSelector( ( state ) =>
+		const nextPostFromRedux = useSelector( ( state ) =>
 			nextPostKey ? getPostByKey( state, nextPostKey ) : null
 		);
+		const previousPost = canonicalPreviousPost ?? previousPostFromRedux;
+		const nextPost = canonicalNextPost ?? nextPostFromRedux;
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1043,6 +1051,7 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 				{ ...props }
 				previousPostKey={ previousPostKey }
 				nextPostKey={ nextPostKey }
+				canonicalPost={ canonicalPost }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
 				previousPostUrl={ previousPostUrl }

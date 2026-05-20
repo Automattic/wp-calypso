@@ -1,15 +1,14 @@
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import QueryPostLikers from 'calypso/components/data/query-post-likers';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import Gravatar from 'calypso/components/gravatar';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
-import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './style.scss';
@@ -75,7 +74,6 @@ class PostLikes extends PureComponent {
 			likes,
 			postId,
 			postType,
-			siteId,
 			translate,
 			showDisplayNames,
 			onMouseEnter,
@@ -120,7 +118,6 @@ class PostLikes extends PureComponent {
 
 		return (
 			<div className={ classes } { ...extraProps }>
-				{ !! postId && <QueryPostLikers siteId={ siteId } postId={ postId } /> }
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">
 						…
@@ -134,18 +131,18 @@ class PostLikes extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId, postId } ) => {
-		const likeCount = countPostLikes( state, siteId, postId );
-		const likes = getPostLikes( state, siteId, postId );
-		const currentUserId = getCurrentUserId( state );
-		const slug = getSiteSlug( state, siteId );
-		return {
-			likeCount,
-			likes,
-			currentUserId,
-			slug,
-		};
-	},
-	{ recordGoogleEvent }
-)( localize( PostLikes ) );
+export default flowRight(
+	connect(
+		( state, { siteId } ) => {
+			const currentUserId = getCurrentUserId( state );
+			const slug = getSiteSlug( state, siteId );
+			return {
+				currentUserId,
+				slug,
+			};
+		},
+		{ recordGoogleEvent }
+	),
+	localize,
+	withPostLikes
+)( PostLikes );
