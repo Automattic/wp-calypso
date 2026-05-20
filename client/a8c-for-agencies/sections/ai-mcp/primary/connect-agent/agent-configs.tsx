@@ -5,6 +5,13 @@ import type { ReactNode } from 'react';
 
 export const A4A_MCP_URL = 'https://public-api.wordpress.com/wpcom/v2/a4a-mcp/v1';
 
+// `@automattic/mcp-remote` is our published fork of `mcp-remote` that preserves the
+// WWW-Authenticate `resource_metadata` URL across OAuth transport instances, which
+// upstream loses. Without this fix, OAuth to wpcom-hosted MCP servers fails with
+// "Protected resource ... does not match expected ...". See:
+// https://github.com/automattic/mcp-remote
+const MCP_REMOTE_PACKAGE = '@automattic/mcp-remote';
+
 export interface QuickSetupGroup {
 	title: ReactNode;
 	steps: ReactNode[];
@@ -28,7 +35,7 @@ export interface AgentConfig {
 }
 
 const cursorInstallDeepLink = `cursor://anysphere.cursor-deeplink/mcp/install?name=a4a-mcp&config=${ encodeURIComponent(
-	btoa( JSON.stringify( { command: `npx -y mcp-remote ${ A4A_MCP_URL }` } ) )
+	btoa( JSON.stringify( { command: `npx -y ${ MCP_REMOTE_PACKAGE } ${ A4A_MCP_URL }` } ) )
 ) }`;
 
 export const AGENT_CONFIGS: AgentConfig[] = [
@@ -141,7 +148,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				mcpServers: {
 					'a4a-mcp': {
 						command: 'npx',
-						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+						args: [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ],
 					},
 				},
 			},
@@ -178,7 +185,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				mcpServers: {
 					'a4a-mcp': {
 						command: 'npx',
-						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+						args: [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ],
 					},
 				},
 			},
@@ -235,7 +242,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				servers: {
 					'a4a-mcp': {
 						command: 'npx',
-						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+						args: [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ],
 					},
 				},
 			},
