@@ -31,18 +31,10 @@ export interface CoverLayout {
 	blocks: CoverBlock[];
 }
 
+// Order matters — the first layout becomes the default cover (selectedCoverIdx
+// = 0) so an image-driven cover lands on the deliverable first. The text-only
+// stack sits last as the fallback shape.
 export const COVER_LAYOUTS: CoverLayout[] = [
-	{
-		id: 'type-stack',
-		label: 'Type stack',
-		description:
-			'No image. Pure typographic stack with generous negative space. Logo, then display, then blurb.',
-		blocks: [
-			{ type: 'logo', col: 1, row: 1, colSpan: 2, rowSpan: 1 },
-			{ type: 'display', col: 1, row: 3, colSpan: 5, rowSpan: 6, align: 'top' },
-			{ type: 'blurb', col: 1, row: 10, colSpan: 4, rowSpan: 3, align: 'top' },
-		],
-	},
 	{
 		id: 'image-top',
 		label: 'Image top',
@@ -79,6 +71,17 @@ export const COVER_LAYOUTS: CoverLayout[] = [
 				rowSpan: 7,
 				bleed: { l: true, r: true, b: true },
 			},
+		],
+	},
+	{
+		id: 'type-stack',
+		label: 'Type stack',
+		description:
+			'No image. Pure typographic stack with generous negative space. Logo, then display, then blurb. Fallback when no image is uploaded.',
+		blocks: [
+			{ type: 'logo', col: 1, row: 1, colSpan: 2, rowSpan: 1 },
+			{ type: 'display', col: 1, row: 3, colSpan: 5, rowSpan: 6, align: 'top' },
+			{ type: 'blurb', col: 1, row: 10, colSpan: 4, rowSpan: 3, align: 'top' },
 		],
 	},
 	{
