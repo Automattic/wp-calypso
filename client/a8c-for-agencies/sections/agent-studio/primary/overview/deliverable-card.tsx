@@ -117,12 +117,17 @@ function useOnePagerCoverBackfill( output: AgentStudioOutput ): void {
 		if ( output.status !== 'ready' ) {
 			return;
 		}
-		if ( output.previewUrls && output.previewUrls.length > 0 ) {
-			return;
-		}
 		const data = output.onePagerData;
 		const cover = data?.covers[ data.selectedCoverIdx ?? 0 ];
 		if ( ! cover || ! data ) {
+			return;
+		}
+		// Expect cover + first 3 body pages, capped at the actual page count.
+		// Re-snapshot when fewer thumbs were persisted than we'd render now —
+		// covers outputs that were generated before the magazine strip
+		// shipped with only a single cover thumb.
+		const expected = Math.min( 4, 1 + data.bodyPages.length );
+		if ( output.previewUrls && output.previewUrls.length >= expected ) {
 			return;
 		}
 		if ( inFlightRef.current ) {
