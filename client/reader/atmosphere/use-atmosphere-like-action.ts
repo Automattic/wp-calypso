@@ -159,11 +159,17 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 		};
 
 		const accessibleLabel = ( count: number ) =>
-			translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
-				count,
-				args: { count: formatNumber( count ) },
-				textOnly: true,
-			} );
+			count > 0
+				? translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
+						count,
+						args: { count: formatNumber( count ) },
+						textOnly: true,
+				  } )
+				: translate( 'Like', {
+						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the like button on a Bluesky/ATmosphere post card when the post has no likes yet. Verb.',
+				  } );
 
 		const statRowText = ( count: number ) =>
 			translate( '{{strong}}%(count)s{{/strong}} like', '{{strong}}%(count)s{{/strong}} likes', {

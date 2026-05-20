@@ -122,6 +122,21 @@ describe( 'makeUseMastodonRepostAction', () => {
 		expect( await screen.findByRole( 'menuitem', { name: 'Boost' } ) ).toBeInTheDocument();
 	} );
 
+	it( 'omits the zero-count clause when there are no boosts', () => {
+		renderRepostButton( makePost( { counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 } } ) );
+		expect( screen.getByRole( 'button', { name: /^boost$/i } ) ).toBeVisible();
+	} );
+
+	it( 'omits the zero-count clause from the "Undo boost" label when the viewer has boosted but the count is zero', () => {
+		renderRepostButton(
+			makePost( {
+				counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+				viewer: { like: null, repost: 'reblogged' },
+			} )
+		);
+		expect( screen.getByRole( 'button', { name: /^undo boost$/i } ) ).toBeVisible();
+	} );
+
 	it( 'repost() POSTs to the reposts endpoint and fires _boost_clicked Tracks', async () => {
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/reposts`, {

@@ -7,11 +7,14 @@
 	letter-spacing: 0.02em;
 	border-radius: 2px;
 	padding: 2px 8px;
+	// Keep the two-word label on a single line. Without this, the badge can
+	// break "Experimental Preview" onto two rows when the sidebar is narrow
+	// or when the title-line has limited horizontal room.
+	white-space: nowrap;
 
 	&--light {
 		color: #7d4d00;
 		background: #fcf0d6;
-		cursor: help;
 
 		&:focus-visible {
 			outline: 2px solid #7d4d00;

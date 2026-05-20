@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -33,6 +34,7 @@ import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {
@@ -68,9 +70,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
+		// Restore `signupDomainOrigin` here if the PWYW /choose A/B test is reverted in the 'plans' submit case below.
+		const { planCartItem, blueprint } = useSelect(
 			( select ) => ( {
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
@@ -192,15 +194,23 @@ const onboarding: FlowV2< typeof initialize > = {
 					setPlanCartItem( pickedPlan );
 
 					if ( ! pickedPlan ) {
+						// Redirect free plan selections to /choose for the PWYW A/B test.
+						// If we end the A/B test without shipping it, restore the
+						// commented-out block below and remove this redirect.
+						window.location.assign(
+							addQueryArgs( '/choose', getQueryArgs( window.location.href ) )
+						);
+						return;
+
 						// Since we're removing the paid domain, it means that the user chose to continue
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
 						// selection status before they land on the checkout page, this value can be
 						// 'free' or 'choose-later'
-						if ( signupDomainOrigin === 'choose-later' ) {
-							setSignupDomainOrigin( signupDomainOrigin );
-						} else {
-							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
-						}
+						// if ( signupDomainOrigin === 'choose-later' ) {
+						// 	setSignupDomainOrigin( signupDomainOrigin );
+						// } else {
+						// 	setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						// }
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
@@ -219,19 +229,31 @@ const onboarding: FlowV2< typeof initialize > = {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
+					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
-									siteId,
+									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+									// the site object hydrates, and "0" in the URL poisons the
+									// next page's site lookup.
+									...( siteId && siteId !== '0' ? { siteId } : {} ),
 									fromPostCheckoutSetupSite: '1',
+									...( refParameter ? { ref: refParameter } : {} ),
+									...( prompt ? { prompt } : {} ),
 								} )
 							);
 							return;
 						case 'blank-site':
-							window.location.assign( `/sites/${ siteSlug }` );
+							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+							} else {
+								window.location.assign( `/sites/${ siteSlug }` );
+							}
 							return;
 						default:
 							return;
@@ -288,6 +310,8 @@ const onboarding: FlowV2< typeof initialize > = {
 											}
 									  );
 
+							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
@@ -295,8 +319,15 @@ const onboarding: FlowV2< typeof initialize > = {
 									signup: 1,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 									coupon,
+									steps_current: checkoutStepperPosition.current,
+									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if (
+							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
+							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
+						) {
+							return navigate( 'setup-your-site-ai' );
 						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {

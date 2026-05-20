@@ -459,6 +459,12 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	padding: 0;
 	margin: 1rem 0 2rem;
 	text-align: center;
+
+	&.is-disabled {
+		color: var( --studio-gray-20, #ccc );
+		pointer-events: none;
+		cursor: default;
+	}
 }
 
 // "Already have a WordPress.com account? Log in" link rendered between the

@@ -16,9 +16,11 @@ import {
 	getMastodonConnection,
 	getMastodonConnections,
 	getMastodonInstanceConfig,
+	getMastodonNotifications,
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
+	mapNotificationsFilter,
 	readerMastodonKeys,
 	uploadMastodonMedia,
 } from '@automattic/api-core';
@@ -57,11 +59,13 @@ import type {
 	MastodonInstanceConfig,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
+	MastodonNotificationsPage,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadNode,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
+	NotificationsFilter,
 } from '@automattic/api-core';
 
 export const mastodonConnectionsQueryOptions = () =>
@@ -200,6 +204,59 @@ export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
 }
 
+export interface UseMastodonNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const mastodonNotificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
+	infiniteQueryOptions<
+		MastodonNotificationsPage,
+		MastodonError,
+		InfiniteData< MastodonNotificationsPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Mirror the timeline policy: transient errors get one extra
+		// attempt with backoff keyed off `retry_after` where present;
+		// terminal errors (`auth_required`, `not_found`, `unknown`) fall
+		// through to the EmptyContent immediately.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseMastodonNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( mastodonNotificationsInfiniteQuery( connectionId, filter ) );
+}
+
 export const mastodonThreadQueryOptions = ( connectionId: number, statusId: string ) =>
 	queryOptions< MastodonThreadResponse, MastodonError >( {
 		queryKey: readerMastodonKeys.thread( connectionId, statusId ),
@@ -328,6 +385,14 @@ export function useMastodonAuthorFeedInfiniteQuery(
 export interface MastodonActorPageQueryParams {
 	connectionId: number;
 	actor: string;
+	/**
+	 * Lets the caller suppress the request even when connectionId and actor
+	 * are valid — used by the followers / following views to short-circuit
+	 * when the upstream profile reports `hide_collections: true` so we don't
+	 * burn an upstream call only to render the empty-state placeholder.
+	 * Defaults to enabled.
+	 */
+	enabled?: boolean;
 }
 
 export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
@@ -350,7 +415,7 @@ export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQu
 		// `|| undefined` (not `??`): an empty-string cursor terminates pagination,
 		// matching the slice-6 author-feed hardening.
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0 && params.enabled !== false,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
@@ -390,7 +455,7 @@ export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQu
 			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0 && params.enabled !== false,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {

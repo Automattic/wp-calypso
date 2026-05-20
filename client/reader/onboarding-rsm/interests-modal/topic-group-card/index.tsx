@@ -1,5 +1,6 @@
 import { readFeedQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { formatNumberCompact } from '@automattic/number-formatters';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf, _n } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -58,6 +59,36 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 	isBusy = false,
 	onSubscribe,
 } ) => {
+	const { ref: cardRef, inView: cardInView } = useInView( {
+		triggerOnce: true,
+		fallbackInView: true,
+	} );
+
+	// Fetch subscriber counts for all pack blogs when the card enters the viewport.
+	// useQueries handles a dynamic-length array and deduplicates requests with
+	// BlogAvatar's per-avatar queries via the shared React Query cache.
+	const feedResults = useQueries( {
+		queries: blogs.map( ( blog ) => {
+			const fq = readFeedQuery( blog.feed_ID );
+			return { ...fq, enabled: Boolean( fq.enabled ) && cardInView };
+		} ),
+	} );
+
+	const totalSubscribers = feedResults.reduce(
+		( sum, r ) => sum + ( r.data?.subscribers_count ?? 0 ),
+		0
+	);
+	// Wait for all enabled feed queries to settle so we never show a partial/undercount.
+	const allSettled = cardInView && feedResults.every( ( r ) => r.status !== 'pending' );
+	const subscriberLabel =
+		allSettled && totalSubscribers > 0
+			? sprintf(
+					/* translators: %s is a compact number like "10.4K" */
+					_n( '%s reader', '%s readers', totalSubscribers ),
+					formatNumberCompact( totalSubscribers )
+			  )
+			: null;
+
 	const visibleBlogs = blogs.slice( 0, MAX_VISIBLE_AVATARS );
 	const remainingCount = Math.max( 0, blogs.length - MAX_VISIBLE_AVATARS );
 
@@ -102,12 +133,20 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 
 	return (
 		<article
+			ref={ cardRef }
 			className={ clsx( 'topic-group-card', { 'is-subscribed': isSubscribed } ) }
 			aria-label={ title }
 		>
 			<header className="topic-group-card__header">
 				<h3 className="topic-group-card__title">{ title }</h3>
-				{ meta && <p className="topic-group-card__meta">{ meta }</p> }
+				{ meta && (
+					<div className="topic-group-card__meta">
+						<span>{ meta }</span>
+						{ subscriberLabel && (
+							<span className="topic-group-card__subscribers">{ subscriberLabel }</span>
+						) }
+					</div>
+				) }
 			</header>
 			{ imageUrl && (
 				<div className="topic-group-card__image-wrap">

@@ -10,6 +10,9 @@ import type {
 	MastodonDeleteFollowParams,
 	MastodonFeedItem,
 	MastodonFollowResponse,
+	MastodonNotification,
+	MastodonNotificationCanonicalType,
+	MastodonNotificationsPage,
 	MastodonProfileCounts,
 	MastodonTagFilter,
 	MastodonTagInfo,
@@ -143,6 +146,37 @@ describe( 'follow types', () => {
 		expect( p.is_self ).toBe( false );
 	} );
 
+	it( 'MastodonAuthorProfile exposes hide_collections as an optional boolean', () => {
+		const hidden: MastodonAuthorProfile = {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 0, following: 0, posts: 0 },
+			locked: false,
+			hide_collections: true,
+			raw: {},
+		};
+		expect( hidden.hide_collections ).toBe( true );
+
+		// Older backend response — field absent. Consumers must treat
+		// `undefined` as `false` (visible), not as "hidden".
+		const visible: MastodonAuthorProfile = {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 0, following: 0, posts: 0 },
+			locked: false,
+			raw: {},
+		};
+		expect( visible.hide_collections ).toBeUndefined();
+	} );
+
 	it( 'MastodonCreateFollowParams + DeleteFollowParams shape', () => {
 		const c: MastodonCreateFollowParams = { connectionId: 1, accountId: '200' };
 		const d: MastodonDeleteFollowParams = { connectionId: 1, accountId: '200' };
@@ -155,5 +189,80 @@ describe( 'follow types', () => {
 			viewer: { following: true, followed_by: false, requested: false },
 		};
 		expect( r.viewer.following ).toBe( true );
+	} );
+} );
+
+describe( 'MastodonNotification types', () => {
+	it( 'canonical type accepts the documented enum values', () => {
+		const types: MastodonNotificationCanonicalType[] = [
+			'like',
+			'repost',
+			'follow',
+			'mention',
+			'reply',
+			'quote',
+			'other',
+		];
+		expect( types ).toHaveLength( 7 );
+	} );
+
+	it( 'MastodonNotification + page canonical shapes', () => {
+		const canonical: MastodonNotificationCanonicalType = 'mention';
+		const item: MastodonNotification = {
+			id: '13371337',
+			protocol_type: 'mention',
+			canonical_type: canonical,
+			actor: {
+				handle: 'alice@mastodon.social',
+				display_name: 'Alice',
+				avatar_url: 'https://example.invalid/a.png',
+				profile_uri: 'https://mastodon.social/@alice',
+			},
+			target: {
+				kind: 'post',
+				uri: 'https://mastodon.social/@me/110000000000000001',
+				excerpt: '@me hi there',
+			},
+			target_url: 'https://mastodon.social/@me/110000000000000001',
+			created_at: '2026-05-11T12:34:56Z',
+			is_read: false,
+		};
+		const page: MastodonNotificationsPage = {
+			items: [ item ],
+			next_cursor: null,
+			seen_at: '2026-05-11T00:00:00Z',
+		};
+		expect( page.items ).toHaveLength( 1 );
+		expect( page.items[ 0 ].canonical_type ).toBe( 'mention' );
+	} );
+
+	it( 'MastodonNotification permits null target + null created_at', () => {
+		// `null` target shape is the documented contract for forward-compat
+		// types where the wpcom backend has no subject post to project
+		// (e.g. follow, `other` items). `null` created_at covers
+		// unparseable upstream timestamps.
+		const item: MastodonNotification = {
+			id: '13371338',
+			protocol_type: 'admin.sign_up',
+			canonical_type: 'other',
+			actor: {
+				handle: 'newbie@mastodon.social',
+				display_name: null,
+				avatar_url: null,
+				profile_uri: 'https://mastodon.social/@newbie',
+			},
+			target: null,
+			target_url: '',
+			created_at: null,
+			is_read: true,
+		};
+		expect( item.target ).toBeNull();
+		expect( item.target_url ).toBe( '' );
+	} );
+
+	it( '@ts-expect-error rejects unknown canonical types', () => {
+		// @ts-expect-error — string-literal union rejects bogus values.
+		const bad: MastodonNotificationCanonicalType = 'bogus';
+		expect( bad ).toBe( 'bogus' );
 	} );
 } );

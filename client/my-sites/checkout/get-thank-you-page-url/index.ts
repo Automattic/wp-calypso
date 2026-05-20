@@ -84,6 +84,23 @@ const allowedExternalSites = [
 	'difmrequest.com',
 ];
 
+/**
+ * Returns the full set of external hostnames that checkout may redirect to.
+ *
+ * The base list lives in `allowedExternalSites` (cross-environment defaults).
+ * The `checkout_additional_allowed_redirect_hosts` config key supplies
+ * per-environment additions (e.g., partner hostnames in production,
+ * `*.localhost` entries in development).
+ *
+ * Any value added here is trusted by the redirect logic — treat changes
+ * with the same care as changes to `allowedExternalSites`.
+ */
+export function getAllowedExternalRedirectHosts(): readonly string[] {
+	const extras = config< unknown >( 'checkout_additional_allowed_redirect_hosts' );
+	const safeExtras = Array.isArray( extras ) ? ( extras as string[] ) : [];
+	return [ ...allowedExternalSites, ...safeExtras ];
+}
+
 export interface PostCheckoutUrlArguments {
 	siteSlug?: string;
 	siteId?: number;
@@ -191,7 +208,7 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( allowedExternalSites.includes( hostname ) ) {
+		if ( getAllowedExternalRedirectHosts().includes( hostname ) ) {
 			debug( 'returning Jetpack.com, Jetpack Cloud, or Akismet redirectTo', redirectTo );
 			return redirectTo;
 		}

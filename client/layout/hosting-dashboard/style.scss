@@ -232,6 +232,10 @@
 .hosting-dashboard-layout__header-breadcrumb {
 	margin-block-end: 4px;
 
+	&:last-child {
+		margin-block-end: 0;
+	}
+
 	&.is-hidden-on-mobile {
 		@include breakpoint-deprecated( '<660px' ) {
 			display: none;

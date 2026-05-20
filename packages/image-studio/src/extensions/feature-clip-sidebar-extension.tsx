@@ -1,29 +1,40 @@
 /**
  * "Generate Feature Clip" post-editor sidebar panel.
  *
- * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
- * Gutenberg post editor. When no clip is linked to the post, shows a short
- * description + Generate clip button. Once a clip exists (via the
- * `_jetpack_feature_clip_id` post meta registered by Jetpack's Image Studio
- * extension), shows a small video preview, a share row mirroring the modal,
- * and a Regenerate button.
+ * Dual-rendered, mirroring Jetpack SEO's pattern: the same body renders into
+ * BOTH the default WordPress document sidebar (via `PluginDocumentSettingPanel`
+ * from `@wordpress/editor`) AND the Jetpack sidebar (via a `Fill` into
+ * Jetpack's `"JetpackPluginSidebar"` SlotFill). The Fill is inert when the
+ * Jetpack editor bundle isn't loaded, so the document-sidebar copy always
+ * shows and the Jetpack-sidebar copy is purely additive.
+ *
+ * When no clip is linked to the post, shows a short description + Generate
+ * clip button. Once a clip exists (via the `_jetpack_feature_clip_id` post
+ * meta registered by Jetpack's Image Studio extension), shows a small video
+ * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button } from '@wordpress/components';
+import { Button, Fill, PanelBody } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { SocialLogo } from 'social-logos';
 import { ExperimentalBadge } from '../components/experimental-badge';
+import { ReelShareConfirmationDialog } from '../components/reel-share-confirmation-dialog';
 import { useGenericShare } from '../hooks/use-generic-share';
 import { useReelShare } from '../hooks/use-reel-share';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
-import { trackImageStudioOpened } from '../utils/tracking';
+import {
+	trackImageStudioFeatureClipAddedToPost,
+	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioOpened,
+} from '../utils/tracking';
 import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
 import './feature-clip-sidebar.scss';
 
@@ -71,8 +82,8 @@ function FeatureClipPreview( {
 	attachmentId,
 	durationSeconds,
 }: FeatureClipPreviewProps ): JSX.Element {
-	const reel = useReelShare( { url: videoUrl, attachmentId, durationSeconds } );
-	const generic = useGenericShare( { url: videoUrl, attachmentId } );
+	const reel = useReelShare( 'sidebar', { url: videoUrl, attachmentId, durationSeconds } );
+	const generic = useGenericShare( 'sidebar', { url: videoUrl, attachmentId } );
 
 	const reelLabel = reel.isSharing
 		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
@@ -86,7 +97,14 @@ function FeatureClipPreview( {
 		const { insertBlocks } = dispatch( 'core/block-editor' ) as {
 			insertBlocks?: ( blocks: unknown ) => void;
 		};
-		insertBlocks?.( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		// Bail before tracking if the block-editor dispatcher is unavailable —
+		// recording the conversion when no block was inserted would log a
+		// phantom add-to-post.
+		if ( ! insertBlocks ) {
+			return;
+		}
+		insertBlocks( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId } );
 	};
 
 	return (
@@ -124,11 +142,17 @@ function FeatureClipPreview( {
 					__next40pxDefaultSize
 					disabled={ reel.isSharing }
 					isBusy={ reel.isSharing }
-					onClick={ reel.handleShare }
+					onClick={ reel.requestShare }
 				>
 					{ reelLabel }
 				</Button>
 			) }
+			<ReelShareConfirmationDialog
+				isOpen={ reel.isConfirming }
+				igDisplayName={ reel.igDisplayName }
+				onConfirm={ reel.confirmShare }
+				onCancel={ reel.cancelShare }
+			/>
 			<div className="image-studio-feature-clip-panel__bottom-actions">
 				<Button
 					variant="secondary"
@@ -230,6 +254,12 @@ function FeatureClipPanel(): JSX.Element {
 		[ featureClipId ]
 	);
 
+	// Fire one impression per panel mount — the denominator for sidebar
+	// engagement rates. Empty deps: the panel mounts once per editor load.
+	useEffect( () => {
+		trackImageStudioFeatureClipPanelViewed();
+	}, [] );
+
 	const titleNode = (
 		<span className="image-studio-feature-clip-panel__title">
 			<span className="image-studio-feature-clip-panel__title-line">
@@ -247,30 +277,49 @@ function FeatureClipPanel(): JSX.Element {
 	// reload doesn't briefly flash the empty CTA before the preview appears.
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
 
+	// Body is described once and rendered into both sidebars. Each SlotFill
+	// portal instantiates its own subtree, so FeatureClipPreview's share
+	// hooks get one instance per sidebar — safe: the hooks have no
+	// mount-time side effects and only the visible sidebar is interacted
+	// with (same dual-instance shape as Jetpack SEO's shared panels).
+	const body = ( () => {
+		if ( hasUsableClip ) {
+			return (
+				<FeatureClipPreview
+					videoUrl={ videoUrl }
+					attachmentId={ featureClipId }
+					durationSeconds={ durationSeconds }
+				/>
+			);
+		}
+		if ( isResolvingAttachment ) {
+			return null;
+		}
+		return <FeatureClipEmptyState />;
+	} )();
+
 	return (
-		<PluginDocumentSettingPanel
-			name={ PANEL_NAME }
-			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-			// the badge must live in the title row so it stays visible when the panel is collapsed.
-			title={ titleNode as unknown as string }
-			className="image-studio-feature-clip-panel"
-		>
-			{ ( () => {
-				if ( hasUsableClip ) {
-					return (
-						<FeatureClipPreview
-							videoUrl={ videoUrl }
-							attachmentId={ featureClipId }
-							durationSeconds={ durationSeconds }
-						/>
-					);
-				}
-				if ( isResolvingAttachment ) {
-					return null;
-				}
-				return <FeatureClipEmptyState />;
-			} )() }
-		</PluginDocumentSettingPanel>
+		<>
+			<PluginDocumentSettingPanel
+				name={ PANEL_NAME }
+				// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+				// the badge must live in the title row so it stays visible when the panel is collapsed.
+				title={ titleNode as unknown as string }
+				className="image-studio-feature-clip-panel"
+			>
+				{ body }
+			</PluginDocumentSettingPanel>
+			<Fill name="JetpackPluginSidebar">
+				<PanelBody
+					// PanelBody.title is typed as string but renders any ReactNode
+					// at runtime — same cast rationale as the document panel above.
+					title={ titleNode as unknown as string }
+					className="image-studio-feature-clip-panel"
+				>
+					{ body }
+				</PanelBody>
+			</Fill>
+		</>
 	);
 }
 
@@ -283,11 +332,7 @@ let pluginRegistered = false;
  * editor package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
-	if ( window.imageStudioData?.canGenerateVideoClips === false ) {
-		return;
-	}
-
-	if ( ! window.imageStudioData?.isDevMode ) {
+	if ( window.imageStudioData?.canGenerateVideoClips !== true ) {
 		return;
 	}
 

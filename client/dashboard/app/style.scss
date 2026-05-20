@@ -42,19 +42,34 @@ a {
 // Currently, there is an issue with @automattic/charts where svgLabelSmall.fill is defined with var().
 // This causes the visx tooltip to render a malformed box-shadow value, given that it interpolates the color. e.g: `${theme?.color}55`.
 // Pie charts also use @visx/tooltip directly, so they do not get the background from the chart theme.
-.visx-tooltip:has(div[role="tooltip"]) {
+.visx-tooltip:has( div[role='tooltip'] ) {
 	box-shadow: 0 1px 2px var( --dashboard-surface__border-color ) !important;
 	background: var( --dashboard-surface__background-color ) !important;
 	border: 1px solid var( --dashboard-surface__border-color );
 	color: var( --dashboard__text-color ) !important;
 }
 
-:root[data-theme='dark'] {
-	@include dashboard-dark-theme;
+// Keep dashboard dark mode out of browser print/PDF output. Printed pages should
+// fall back to the default light theme variables even when the screen is dark.
+@media screen {
+	:root[data-theme='dark'] {
+		@include dashboard-dark-theme;
+	}
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen and ( prefers-color-scheme: dark ) {
 	:root[data-theme='system'] {
 		@include dashboard-dark-theme;
+	}
+}
+
+@media print {
+	#wpcom-omnibar {
+		display: none;
+	}
+
+	body:has( #wpcom-omnibar ) #wpcom {
+		padding-block-start: 0;
+		min-height: auto;
 	}
 }

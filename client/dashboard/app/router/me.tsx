@@ -44,6 +44,7 @@ import {
 	getDisplayVariant,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
+	type CancelIntent,
 } from '../../utils/purchase';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -235,11 +236,23 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
 		queryClient.prefetchQuery( allSitesQuery() );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+		removed?: string;
+		removedDomain?: string;
+		removedId?: number;
+	} => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'number' ? search.site : undefined,
+			removed: typeof search.removed === 'string' ? search.removed : undefined,
+			removedDomain: typeof search.removedDomain === 'string' ? search.removedDomain : undefined,
+			removedId: typeof search.removedId === 'number' ? search.removedId : undefined,
 		};
 	},
 } ).lazy( () =>
@@ -266,14 +279,23 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true; upgraded?: true; cancelled?: true } => {
+	validateSearch: (
+		search
+	): {
+		refunded?: true;
+		upgraded?: true;
+		cancelled?: true;
+		intent?: 'auto-renew';
+	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
 		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
 			...( isUpgraded ? { upgraded: true } : {} ),
 			...( isCancelled ? { cancelled: true } : {} ),
+			...( intent ? { intent } : {} ),
 		};
 	},
 } );
@@ -388,7 +410,10 @@ export const cancelPurchaseRoute = createRoute( {
 	head: ( {
 		loaderData,
 	}: {
-		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
+		loaderData?: {
+			purchase?: Purchase;
+			intent?: CancelIntent;
+		};
 	} ) => {
 		// URL intent is authoritative; when absent, fall back to the flow-type
 		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
@@ -405,8 +430,10 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
-		return search.intent === 'cancel' || search.intent === 'remove'
+	validateSearch: ( search ): { intent?: CancelIntent } => {
+		return search.intent === 'cancel' ||
+			search.intent === 'remove' ||
+			search.intent === 'auto-renew'
 			? { intent: search.intent }
 			: {};
 	},
@@ -422,6 +449,8 @@ export const cancelPurchaseRoute = createRoute( {
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			// Prefetch the default (control) variant; the component refetches
+			// under the 'treatment' key when the split-cancel-remove flag is on.
 			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
 		return { purchase, intent };

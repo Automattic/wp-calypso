@@ -11,13 +11,16 @@ import { useMutation } from '@tanstack/react-query';
 import * as heading from '@wordpress/block-library/build-module/heading';
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
+import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/lib/color-scheme';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -25,6 +28,7 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { savePostMutation } from './hooks/use-post-mutation';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -43,6 +47,31 @@ addApiMiddleware(
 	} )
 );
 
+const QUICK_POST_EDITOR_BASE_STYLES = `
+	div.is-root-container.block-editor-block-list__layout {
+		padding-bottom: 20px;
+	}
+`;
+
+const QUICK_POST_EDITOR_DARK_STYLES = `
+	html,
+	body,
+	.editor-styles-wrapper,
+	div.is-root-container.block-editor-block-list__layout {
+		background-color: #2a2a2a;
+		color: #e0e0e0;
+	}
+
+	.block-editor-rich-text__editable,
+	.block-editor-block-list__layout .block-editor-block-list__block {
+		color: #e0e0e0;
+	}
+
+	.block-editor-default-block-appender__content {
+		color: #bdbdbd;
+	}
+`;
+
 export default function QuickPost(): JSX.Element | null {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -58,6 +87,13 @@ export default function QuickPost(): JSX.Element | null {
 	const mostRecentlySelectedSiteId = useSelector( getMostRecentlySelectedSiteId );
 	const primarySiteId = useSelector( getPrimarySiteId );
 	const hasLoaded = useSelector( hasLoadedSites );
+	const savedColorScheme = useSelector( ( state: AppState ) =>
+		getPreference( state, PREFERENCE_KEY )
+	);
+	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
+	const systemPrefersDark = useMediaQuery( '(prefers-color-scheme: dark)' );
+	const isReaderDarkMode =
+		colorScheme === 'dark' || ( colorScheme === 'system' && systemPrefersDark );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
 	const siteAdminUrl = useSelector( ( state ) =>
@@ -197,12 +233,10 @@ export default function QuickPost(): JSX.Element | null {
 					initialContent={ postContent }
 					onChange={ setPostContent }
 					isRTL={ isLocaleRtl( locale ) ?? false }
-					isDarkMode={ false }
-					customStyles={ `
-						div.is-root-container.block-editor-block-list__layout {
-							padding-bottom: 20px;
-						}
-					` }
+					isDarkMode={ isReaderDarkMode }
+					customStyles={ `${
+						isReaderDarkMode ? QUICK_POST_EDITOR_DARK_STYLES : ''
+					}${ QUICK_POST_EDITOR_BASE_STYLES }` }
 				/>
 			</div>
 

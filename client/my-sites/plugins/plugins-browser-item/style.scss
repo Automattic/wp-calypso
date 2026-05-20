@@ -258,6 +258,122 @@
 	color: var(--color-link);
 }
 
+// Editorial "why" annotation — opt-in via the `why` prop. The label is
+// hidden by default; containers that want it visible (e.g.
+// `.hero-pick`) re-show it.
+.plugins-browser-item__why {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin: 0 0 16px;
+	padding: 8px 12px;
+	border-left: 2.5px solid var(--studio-blue-50);
+	background: var(--studio-blue-0);
+	border-radius: 8px;
+}
+
+.plugins-browser-item__why-icon {
+	flex-shrink: 0;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--studio-blue-50);
+}
+
+.plugins-browser-item__why-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.plugins-browser-item__why-label {
+	display: none;
+	margin: 0 0 4px;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--studio-blue-50);
+}
+
+.plugins-browser-item__why-text {
+	margin: 0;
+	font-size: $font-body-small;
+	line-height: 1.45;
+	color: var(--studio-gray-80);
+}
+
+// Hero variant used on /plugins/browse/describe to feature the agent's
+// top recommendation as a full-width single-card row. Larger icon in
+// its own left column; title, description, "why", and footer all align
+// against the right column under the title.
+//
+// All layout overrides are gated behind a container query so the card
+// falls back to the default layout when the surrounding column shrinks
+// (AI dock docked open, narrow viewport, etc.).
+.hero-pick {
+	container-type: inline-size;
+
+	.plugins-browser-item.extended {
+		width: 100%;
+	}
+
+	// The "why this fits" callout shows on hero at every width — keep it
+	// visible even when we fall back to the default card layout.
+	.plugins-browser-item__why-label {
+		display: block;
+	}
+
+	@container (min-width: 560px) {
+		// Position the icon as a left column. The base card uses
+		// `margin-left` on text rows to clear the inline icon; on hero we
+		// pad the link to make room and absolute-position the icon, so the
+		// content below the title aligns too.
+		.plugins-browser-item__link {
+			position: relative;
+			padding-left: 124px; // base padding (24) + icon (80) + gap (20)
+		}
+
+		// PluginIcon hardcodes `max-width / max-height: 48px` inline via the
+		// `size` prop (default 48), so plain `width: 80px` is capped. We
+		// don't want to thread an `iconSize` prop through this widely-used
+		// component for one consumer — `!important` is scoped to the hero
+		// container only.
+		.plugins-browser-item .plugin-icon {
+			position: absolute;
+			top: 24px;
+			left: 24px;
+			width: 80px;
+			height: 80px;
+			max-width: 80px !important;
+			max-height: 80px !important;
+
+			.plugin-icon__img {
+				max-width: 80px !important;
+				max-height: 80px !important;
+			}
+		}
+
+		// Base header forces `min-height: 66px` to keep card heights uniform
+		// in a grid; on hero the icon owns the height and the extra min-height
+		// adds dead space between the title block and the description below.
+		.plugins-browser-item__header {
+			min-height: 0;
+		}
+
+		.plugins-browser-item__title,
+		.plugins-browser-item__author,
+		.plugins-browser-item__last-updated {
+			margin-left: 0;
+		}
+
+		.plugins-browser-item__description {
+			height: auto;
+			display: block;
+			-webkit-line-clamp: none;
+			margin-top: 8px;
+		}
+	}
+}
+
 .plugins-browser-item__last-updated,
 .plugins-browser-item__rating-value,
 .plugins-browser-item__active-installs {

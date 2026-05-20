@@ -6,12 +6,20 @@
 	overflow: hidden;
 
 	.wpnc__note-list-item {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		white-space: pre-wrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		.wpnc__subject,
+		.wpnc__excerpt {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			white-space: pre-wrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.wpnc__excerpt {
+			color: var(--color-text-subtle);
+			padding-top: 2px;
+		}
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

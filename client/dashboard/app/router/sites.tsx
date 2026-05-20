@@ -619,36 +619,26 @@ export const sitePerformanceBackendRoute = createRoute( {
 	path: 'backend',
 } );
 
+async function prefetchApmAggregate( siteSlug: string ) {
+	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+		await Promise.all( [
+			import( '@automattic/api-queries' ),
+			import( '../../sites/performance/backend/timeframe' ),
+		] );
+	await queryClient.ensureQueryData(
+		siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+	);
+}
+
 export const sitePerformanceBackendIndexRoute = createRoute( {
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmOverviewQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmOverviewQuery( site.ID ) );
-	},
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="overview" />,
-		} )
-	)
-);
-
-export const sitePerformanceBackendRequestsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Requests' ) : undefined,
-			},
-		],
-	} ),
-	getParentRoute: () => sitePerformanceBackendRoute,
-	path: 'requests',
-} ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
-		createLazyRoute( 'site-performance-backend-requests' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="requests" />,
 		} )
 	)
 );
@@ -663,6 +653,7 @@ export const sitePerformanceBackendTransactionsRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'transactions',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-transactions' )( {
@@ -681,6 +672,7 @@ export const sitePerformanceBackendDatabaseRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'database',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-database' )( {
@@ -699,12 +691,32 @@ export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'external-requests',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-external-requests' )( {
 			component: () => (
 				<d.default siteSlug={ siteRoute.useParams().siteSlug } tab="external-requests" />
 			),
+		} )
+	)
+);
+
+export const sitePerformanceBackendWordPressRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'WordPress' ) : undefined,
+			},
+		],
+	} ),
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: 'wordpress',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend-wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="wordpress" />,
 		} )
 	)
 );
@@ -1792,8 +1804,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				? [
 						sitePerformanceBackendRoute.addChildren( [
 							sitePerformanceBackendIndexRoute,
-							sitePerformanceBackendRequestsRoute,
 							sitePerformanceBackendTransactionsRoute,
+							sitePerformanceBackendWordPressRoute,
 							sitePerformanceBackendDatabaseRoute,
 							sitePerformanceBackendExternalRequestsRoute,
 							sitePerformanceBackendRequestDetailRoute,

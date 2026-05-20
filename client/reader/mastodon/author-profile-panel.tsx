@@ -107,6 +107,12 @@ export function MastodonAuthorProfilePanel( {
 	const followMutate = followMut.mutate;
 	const unfollowMutate = unfollowMut.mutate;
 
+	// Scope the error-notice id to `(connectionId, actor)` so a successful
+	// follow on one surface doesn't silently dismiss an unresolved error
+	// toast posted by a different surface (the followers / following lists
+	// share the same notice space).
+	const noticeId = `mastodon-follow-error-${ connection.id }-${ actor }`;
+
 	const showFollowError = useCallback(
 		( error: MastodonError, action: 'follow' | 'unfollow', accountId: string ) => {
 			dispatch(
@@ -119,11 +125,14 @@ export function MastodonAuthorProfilePanel( {
 			);
 			dispatch(
 				errorNotice( followErrorMessage( error, action, translate ), {
-					id: 'mastodon-follow-error',
+					id: noticeId,
 				} )
 			);
 			// Pipeline-level log so failures stay observable in dashboards
-			// even when no Tracks dashboard is consulted.
+			// even when no Tracks dashboard is consulted. Swallow rejections —
+			// the logstash POST going down must not bubble to the global
+			// handler, which is exactly the silent failure this breadcrumb
+			// exists to surface.
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: `Reader Mastodon ${ action } mutation failed`,
@@ -134,9 +143,9 @@ export function MastodonAuthorProfilePanel( {
 					account_id: accountId,
 					error_kind: error.kind,
 				},
-			} );
+			} ).catch( () => undefined );
 		},
-		[ connection.id, dispatch, translate ]
+		[ connection.id, dispatch, translate, noticeId ]
 	);
 
 	const handleFollow = useCallback( () => {
@@ -159,12 +168,12 @@ export function MastodonAuthorProfilePanel( {
 			{ connectionId: connection.id, actor, accountId, locked },
 			{
 				onSuccess: () => {
-					dispatch( removeNotice( 'mastodon-follow-error' ) );
+					dispatch( removeNotice( noticeId ) );
 				},
 				onError: ( error ) => showFollowError( error, 'follow', accountId ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
+	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError, noticeId ] );
 
 	const handleUnfollow = useCallback( () => {
 		if ( ! profile.data ) {
@@ -182,12 +191,12 @@ export function MastodonAuthorProfilePanel( {
 			{ connectionId: connection.id, actor, accountId },
 			{
 				onSuccess: () => {
-					dispatch( removeNotice( 'mastodon-follow-error' ) );
+					dispatch( removeNotice( noticeId ) );
 				},
 				onError: ( error ) => showFollowError( error, 'unfollow', accountId ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError, noticeId ] );
 
 	const renderProfileBody = useCallback(
 		( profileData: MastodonAuthorProfile ) => {

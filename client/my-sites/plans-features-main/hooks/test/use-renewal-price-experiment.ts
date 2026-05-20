@@ -78,40 +78,103 @@ describe( 'useRenewalPricingExperiment', () => {
 		expect( result.current ).toEqual( [ true, null ] );
 	} );
 
+	it( 'blocks when V2 non-USD is loading', () => {
+		mockPlansWithCurrency( 'EUR' ); // non-USD → V2 non-USD is eligible and may be loading
+		( useExperiment as jest.Mock )
+			.mockReturnValueOnce( [ false, null ] ) // V2 USD: ineligible for EUR, returns immediately
+			.mockReturnValueOnce( [ true, null ] ); // V2 non-USD: eligible, still loading
+		const { result } = renderHook( () => useRenewalPricingExperiment() );
+		expect( result.current ).toEqual( [ true, null ] );
+	} );
+
 	it( 'falls back to V1 when V2 is loaded and assignment is null (control)', () => {
 		( useExperiment as jest.Mock ).mockReturnValue( [ false, null ] );
 		const { result } = renderHook( () => useRenewalPricingExperiment() );
 		expect( result.current ).toEqual( [ false, 'crossed_price' ] );
 	} );
 
-	it( 'uses V2 variationName when assigned', () => {
-		( useExperiment as jest.Mock ).mockReturnValue( [ false, { variationName: 'variant_a' } ] );
+	it( 'uses V2 USD variationName when assigned', () => {
+		( useExperiment as jest.Mock )
+			.mockReturnValueOnce( [ false, { variationName: 'usd_variant' } ] ) // V2 USD assigned
+			.mockReturnValueOnce( [ false, null ] ); // V2 non-USD not assigned
 		const { result } = renderHook( () => useRenewalPricingExperiment() );
-		expect( result.current ).toEqual( [ false, 'variant_a' ] );
+		expect( result.current ).toEqual( [ false, 'usd_variant' ] );
 	} );
 
-	it( 'uses V1 when V2 is ineligible', () => {
-		( isJetpackCheckout as jest.Mock ).mockReturnValue( true ); // makes V2 ineligible by isEligibleForExperiment
+	it( 'uses V2 non-USD variationName when assigned', () => {
+		mockPlansWithCurrency( 'EUR' );
+		( useExperiment as jest.Mock )
+			.mockReturnValueOnce( [ false, null ] ) // V2 USD not assigned
+			.mockReturnValueOnce( [ false, { variationName: 'non_usd_variant' } ] ); // V2 non-USD assigned
+		const { result } = renderHook( () => useRenewalPricingExperiment() );
+		expect( result.current ).toEqual( [ false, 'non_usd_variant' ] );
+	} );
+
+	it( 'uses V1 when both V2s are ineligible', () => {
+		( isJetpackCheckout as jest.Mock ).mockReturnValue( true ); // makes both V2s ineligible by isEligibleForExperiment
 		const { result } = renderHook( () => useRenewalPricingExperiment() );
 		expect( result.current ).toEqual( [ false, null ] ); // V1 also ineligible because Jetpack checkout is excluded
 	} );
 
 	describe( 'locale gating', () => {
-		it( 'disqualifies non-English locales', () => {
+		it( 'disqualifies non-English locales from V1 and V2 USD', () => {
 			( useLocale as jest.Mock ).mockReturnValue( 'fr' );
+			// V2 non-USD is eligible for non-EN locale; mock returns null (control/not assigned)
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
 		} );
 
-		it( 'qualifies English locale', () => {
+		it( 'qualifies English locale for V1', () => {
 			( useLocale as jest.Mock ).mockReturnValue( 'en' );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current[ 1 ] ).toBe( 'crossed_price' );
 		} );
+
+		it( 'skips V2 USD API call for non-EN locale', () => {
+			( useLocale as jest.Mock ).mockReturnValue( 'fr' );
+			renderHook( () => useRenewalPricingExperiment() );
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				1,
+				'wpcom_renewal_pricing_increase_v2_usd_202604_v1',
+				expect.objectContaining( { isEligible: false } )
+			);
+		} );
+
+		it( 'makes V2 non-USD API call for non-EN locale regardless of currency', () => {
+			( useLocale as jest.Mock ).mockReturnValue( 'fr' );
+			// USD currency — normally ineligible for non-USD experiment, but non-EN locale overrides
+			mockPlansWithCurrency( 'USD' );
+			renderHook( () => useRenewalPricingExperiment() );
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				2,
+				'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1',
+				expect.objectContaining( { isEligible: true } )
+			);
+		} );
+
+		it( 'non-EN locale with V2 non-USD assignment returns that assignment', () => {
+			( useLocale as jest.Mock ).mockReturnValue( 'fr' );
+			( useExperiment as jest.Mock )
+				.mockReturnValueOnce( [ false, null ] ) // V2 USD: ineligible
+				.mockReturnValueOnce( [ false, { variationName: 'non_usd_variant' } ] ); // V2 non-USD assigned
+			const { result } = renderHook( () => useRenewalPricingExperiment() );
+			expect( result.current ).toEqual( [ false, 'non_usd_variant' ] );
+		} );
+
+		it( 'non-EN locale does not wait for plans to load before calling V2 non-USD API', () => {
+			( useLocale as jest.Mock ).mockReturnValue( 'fr' );
+			mockPlansWithCurrency( undefined ); // plans not yet loaded
+			renderHook( () => useRenewalPricingExperiment() );
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				2,
+				'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1',
+				expect.objectContaining( { isEligible: true } )
+			);
+		} );
 	} );
 
 	describe( 'currency gating', () => {
-		it( 'disqualifies non-USD currencies', () => {
+		it( 'disqualifies non-USD currencies from V1', () => {
 			mockPlansWithCurrency( 'EUR' );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
@@ -121,6 +184,42 @@ describe( 'useRenewalPricingExperiment', () => {
 			mockPlansWithCurrency( undefined );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
+		} );
+
+		it( 'skips V2 non-USD API call for EN + USD users', () => {
+			// EN locale + USD currency → both conditions for non-USD experiment fail
+			renderHook( () => useRenewalPricingExperiment() );
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				2,
+				'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1',
+				expect.objectContaining( { isEligible: false } )
+			);
+		} );
+
+		it( 'skips V2 USD API call for non-USD users', () => {
+			mockPlansWithCurrency( 'EUR' );
+			renderHook( () => useRenewalPricingExperiment() );
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				1,
+				'wpcom_renewal_pricing_increase_v2_usd_202604_v1',
+				expect.objectContaining( { isEligible: false } )
+			);
+		} );
+
+		it( 'skips both V2 API calls for EN locale when plans are not loaded', () => {
+			// EN locale: V2 USD needs currency=USD (not loaded), V2 non-USD needs currency≠USD (unknown)
+			mockPlansWithCurrency( undefined );
+			renderHook( () => useRenewalPricingExperiment() );
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				1,
+				'wpcom_renewal_pricing_increase_v2_usd_202604_v1',
+				expect.objectContaining( { isEligible: false } )
+			);
+			expect( useExperiment ).toHaveBeenNthCalledWith(
+				2,
+				'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1',
+				expect.objectContaining( { isEligible: false } )
+			);
 		} );
 	} );
 

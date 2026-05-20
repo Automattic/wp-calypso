@@ -119,7 +119,7 @@ describe( 'PostCardCounts', () => {
 		const onClick = jest.fn();
 		const user = userEvent.setup();
 		render( wrap( <PostCardCounts post={ post } />, undefined, onClick, onReplyClick ) );
-		const button = screen.getByRole( 'button', { name: /reply/i } );
+		const button = screen.getByRole( 'button', { name: /^reply, 5 replies$/i } );
 		expect( button ).toHaveTextContent( '5' );
 		await user.click( button );
 		expect( onReplyClick ).toHaveBeenCalledWith( post );
@@ -153,6 +153,15 @@ describe( 'PostCardCounts', () => {
 		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );
 		const link = screen.getByRole( 'link', { name: /replies/i } );
 		expect( link ).toHaveAttribute( 'href', '/threads/x' );
+	} );
+
+	it( 'omits the zero-count clause from the reply accessible label when there are no replies', () => {
+		const onReplyClick = jest.fn();
+		const zeroRepliesPost = { ...post, counts: { ...post.counts, replies: 0 } };
+		render(
+			wrap( <PostCardCounts post={ zeroRepliesPost } />, undefined, jest.fn(), onReplyClick )
+		);
+		expect( screen.getByRole( 'button', { name: /^reply$/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders reposts as a menu trigger when a RepostProvider is mounted', () => {

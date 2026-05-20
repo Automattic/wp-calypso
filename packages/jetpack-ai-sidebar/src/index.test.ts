@@ -7,6 +7,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, render } from '@testing-library/react';
 import React from 'react';
 import ReviewMediation from './components/review-mediation';
@@ -25,7 +26,14 @@ import {
 	useSuggestions,
 } from './index';
 
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
 const mockSetIsSplitScreen = jest.fn();
+const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
+	typeof recordTracksEvent
+>;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 
@@ -66,14 +74,15 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
-// can read/write the post title via the core/editor store.
-function installWpDataMock( initialTitle: string ) {
+// can read/write the post title and current post id via the core/editor store.
+function installWpDataMock( initialTitle: string, postId = 123 ) {
 	const state = { title: initialTitle };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
+						getCurrentPostId: () => postId,
 						getEditedPostAttribute: ( attr: string ) =>
 							attr === 'title' ? state.title : undefined,
 					};
@@ -143,43 +152,51 @@ describe( 'getChatComponent', () => {
 } );
 
 describe( 'getEmptyViewSuggestions', () => {
+	beforeEach( () => {
+		mockedRecordTracksEvent.mockClear();
+	} );
+
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
 
-	it( 'hides Review Mediator by default', () => {
+	it( 'hides AI Editorial Review by default', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Mediate review notes' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'shows Review Mediator when enabled by agentsManagerData', () => {
+	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Mediate review notes' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_rendered',
+			{}
+		);
 	} );
 
-	it( 'hides Review Mediator on page editors', () => {
+	it( 'hides AI Editorial Review on page editors', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Mediate review notes' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'hides Review Mediator until the post type is known', () => {
+	it( 'hides AI Editorial Review until the post type is known', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Mediate review notes' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 } );
 
@@ -188,6 +205,7 @@ describe( 'useSuggestions', () => {
 		mockSelectedBlock = null;
 		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
+		mockedRecordTracksEvent.mockClear();
 		delete ( globalThis as any ).agentsManagerData;
 	} );
 
@@ -196,7 +214,7 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not append Review Mediator to block-specific suggestions', () => {
+	it( 'does not append AI Editorial Review to block-specific suggestions', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -206,11 +224,11 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
-			'Mediate review notes'
+			'AI Editorial Review'
 		);
 	} );
 
-	it( 'opens split-screen when the Review Mediator suggestion is clicked', () => {
+	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
@@ -228,9 +246,13 @@ describe( 'useSuggestions', () => {
 		} );
 
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_click',
+			{}
+		);
 	} );
 
-	it( 'does not open split-screen when Review Mediator is unavailable', () => {
+	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
@@ -240,10 +262,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: {
-						value:
-							'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
-					},
+					detail: { value: 'unavailable suggestion prompt' },
 				} )
 			);
 		} );
@@ -336,6 +355,7 @@ describe( 'toolProvider', () => {
 			expect( parsed.tool_id ).toBe( 'big_sky__show_component' );
 			expect( parsed.data.type ).toBe( 'title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
+			expect( parsed.data.postId ).toBeUndefined();
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
@@ -359,6 +379,28 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.postId ).toBe( 123 );
+			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'does not stamp review-mediation components without a saved editor post ID', async () => {
+			installWpDataMock( 'Original Title', 0 );
+
+			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+			expect( parsed.data.postId ).toBeUndefined();
+			expect( parsed.data.props.postId ).toBeUndefined();
 		} );
 
 		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {
@@ -488,6 +530,7 @@ describe( 'applyReviewEdit', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		document.body.innerHTML = '';
 	} );
 
 	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
@@ -514,6 +557,54 @@ describe( 'applyReviewEdit', () => {
 				attrs: { content: 'new text' },
 			},
 		] );
+	} );
+
+	it( 'does not snapshot or write when shouldApply is already false', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const result = await applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			undefined,
+			() => false
+		);
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'context changed',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+	} );
+
+	it( 'does not write and clears processing state when shouldApply turns false before the delayed write', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', '550e8400-e29b-41d4-a716-446655440000' );
+		document.body.appendChild( blockEl );
+		let shouldApply = true;
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			undefined,
+			() => shouldApply
+		);
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+
+		shouldApply = false;
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'context changed',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
 	} );
 
 	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {

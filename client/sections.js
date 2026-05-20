@@ -517,6 +517,14 @@ const sections = [
 	},
 	{
 		name: 'reader',
+		paths: [ '/reader/connections', '/reader/connections/new' ],
+		module: 'calypso/reader/connections',
+		group: 'reader',
+		enableLoggedOut: false,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
 		paths: [
 			'/reader/atmosphere',
 			'/reader/atmosphere/connect',
@@ -901,7 +909,9 @@ const sections = [
 		paths: [
 			'/resources-and-tools',
 			'/resources-and-tools/learn',
+			'/resources-and-tools/agent-studio',
 			'/resources-and-tools/dev-tools',
+			'/resources-and-tools/benchmarks',
 		],
 		module: 'calypso/a8c-for-agencies/sections/learn',
 		group: 'a8c-for-agencies',

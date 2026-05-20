@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -97,7 +98,8 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Post-level workflow:',
 		'- Use set_post_title_tool when the user dictates a title or says "make this the title" / "the title is …". The title is NOT a block — it has its own field above the blocks.',
 		'- Use save_post_tool when the user says "save", "save draft", "save my work". This does not change publish status.',
-		'- Use stop_dictation_tool immediately when the user asks to stop, end, cancel, or finish dictation.',
+		'- Use stop_dictation_tool when the user clearly wants to end the entire dictation session — e.g. "stop dictation", "end the session", "I\'m done", "finish up", "that\'s all", "exit", "close". This kills the mic and the panel, so only call it when they really mean to wrap up.',
+		'- Use cancel_image_generation_tool — NOT stop_dictation_tool — when an image is currently being generated (you previously called generate_image_tool and have not yet received its result) and the user says a bare "stop", "cancel", "never mind", "abort", "scratch that", "don\'t make that", "forget the image", or similar. Bare "stop" / "cancel" while an image is in flight always means "abandon the image, keep dictating", never "end the session". After cancelling, stay in the session and wait for the next instruction.',
 		'- Use publish_post_tool ONLY when the user explicitly says "publish" / "publish it" / "go ahead and publish". Never publish proactively.',
 		'- Use undo_tool / redo_tool for "undo that" / "redo".',
 		'- Use get_post_info_tool sparingly, e.g. when the user asks "is it saved?" / "did it publish?" / "what\'s the status?".',
@@ -137,6 +139,14 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 	}
 }
 
+function formatRemainingTime( remainingMs: number ): string {
+	const totalSeconds = Math.max( 0, Math.ceil( remainingMs / 1000 ) );
+	const minutes = Math.floor( totalSeconds / 60 );
+	const seconds = totalSeconds % 60;
+
+	return `${ minutes }:${ seconds.toString().padStart( 2, '0' ) }`;
+}
+
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
 	const instructions = useMemo(
@@ -147,6 +157,9 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const {
 		status,
 		error,
+		errorIntent,
+		sessionTimeLimitMs,
+		sessionTimeRemainingMs,
 		isMuted,
 		localStream,
 		transcript,
@@ -183,6 +196,12 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 		status === 'requesting-mic' ||
 		status === 'connecting' ||
 		status === 'ending';
+	const sessionTimeLimit = sessionTimeLimitMs ?? 0;
+	const sessionTimeRemaining = sessionTimeRemainingMs ?? 0;
+	const hasSessionTimeRemaining = sessionTimeLimit > 0;
+	const sessionTimeProgress = hasSessionTimeRemaining
+		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
+		: 0;
 
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
@@ -248,8 +267,10 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 						) }
 
 						{ error && (
-							<Notice.Root intent="error">
-								<Notice.Title>{ __( 'Error' ) }</Notice.Title>
+							<Notice.Root intent={ errorIntent }>
+								<Notice.Title>
+									{ errorIntent === 'warning' ? __( 'Notice' ) : __( 'Error' ) }
+								</Notice.Title>
 								<Notice.Description>{ error }</Notice.Description>
 							</Notice.Root>
 						) }
@@ -291,12 +312,17 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 					<div className="live-ai-assistant__footer">
 						<Notice.Root intent="info">
 							<Notice.Title>Beta feature</Notice.Title>
-							<Notice.Description>Only available for proxied a11ns</Notice.Description>
-							<Notice.Actions>
-								<Notice.ActionLink href="https://wp.me/phcsdm-3kj" openInNewTab>
-									Share feedback
-								</Notice.ActionLink>
-							</Notice.Actions>
+							<Notice.Description>
+								{ createInterpolateElement( __( 'Share your feedback <link>here</link>.' ), {
+									link: (
+										<a
+											href="https://wordpressdotcom.survey.fm/wordpress-com-smart-dictation-survey"
+											target="_blank"
+											rel="noreferrer"
+										/>
+									),
+								} ) }
+							</Notice.Description>
 						</Notice.Root>
 						<div className="live-ai-assistant__controls">
 							<Button
@@ -330,6 +356,27 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								) }
 							</Button>
 						</div>
+						{ hasSessionTimeRemaining && (
+							<div className="live-ai-assistant__time">
+								<div className="live-ai-assistant__time-label">
+									<span>{ __( 'Daily quota' ) }</span>
+									<span>{ formatRemainingTime( sessionTimeRemaining ) }</span>
+								</div>
+								<div
+									className="live-ai-assistant__time-bar"
+									role="progressbar"
+									aria-label={ __( 'Daily quota' ) }
+									aria-valuemin={ 0 }
+									aria-valuemax={ 100 }
+									aria-valuenow={ Math.round( sessionTimeProgress ) }
+								>
+									<div
+										className="live-ai-assistant__time-bar-fill"
+										style={ { width: `${ sessionTimeProgress }%` } }
+									/>
+								</div>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>

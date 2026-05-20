@@ -135,7 +135,13 @@ interface ReaderState {
 		follows: {
 			items: Record<
 				string,
-				{ feed_ID: number | null; blog_ID: number | null; is_following: boolean }
+				{
+					feed_ID: number | null;
+					blog_ID: number | null;
+					is_following: boolean;
+					feed_URL?: string;
+					alias_feed_URLs?: string[];
+				}
 			>;
 		};
 	};
@@ -387,6 +393,55 @@ describe( 'useSubscribeRecommendations', () => {
 			expect(
 				result.current.combinedRecommendations.map( ( s: CardData ) => s.feed_ID )
 			).not.toContain( 101 );
+		} );
+
+		it( 'excludes feeds already followed when feed_URL matches but feed_ID differs', async () => {
+			const state = buildReaderState( {
+				follows: {
+					items: {
+						'https://food1.example': {
+							feed_ID: 99_999,
+							blog_ID: null,
+							is_following: true,
+							feed_URL: 'https://food1.example/feed',
+							alias_feed_URLs: [],
+						},
+					},
+				},
+			} );
+
+			const { result } = renderHook( state );
+
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+			expect(
+				result.current.combinedRecommendations.map( ( s: CardData ) => s.feed_ID )
+			).not.toContain( 100 );
+		} );
+
+		it( 'treats http and https feed_URL as the same subscription for exclusion', async () => {
+			const state = buildReaderState( {
+				follows: {
+					items: {
+						'http://food1.example': {
+							feed_ID: 99_999,
+							blog_ID: null,
+							is_following: true,
+							feed_URL: 'http://food1.example/feed',
+							alias_feed_URLs: [],
+						},
+					},
+				},
+			} );
+
+			const { result } = renderHook( state );
+
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+			// Curated fixture uses https://food1.example/feed for feed_ID 100.
+			expect(
+				result.current.combinedRecommendations.map( ( s: CardData ) => s.feed_ID )
+			).not.toContain( 100 );
 		} );
 	} );
 

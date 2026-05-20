@@ -8,8 +8,11 @@ import type {
 	FediverseConnection,
 	FediverseConnectionsResponse,
 	FediverseCreateFollowParams,
+	FediverseCreatePostParams,
+	FediverseCreatePostResult,
 	FediverseDeleteFollowParams,
 	FediverseFollowResponse,
+	FediverseNotificationsPage,
 	FediverseTimelinePage,
 } from './types';
 
@@ -80,6 +83,47 @@ export async function getFediverseTimeline(
 			},
 			query
 		) ) as FediverseTimelinePage;
+	} catch ( raw ) {
+		throw classifyFediverseError( raw );
+	}
+}
+
+export interface GetFediverseNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+	types?: string;
+}
+
+/**
+ * Fetches the home notifications for a Fediverse connection. Cursor-paginated
+ * — pass the previous page's `next_cursor` in subsequent calls. The optional
+ * `types` filter is the wire-comma-joined list (`like,repost,…`) produced by
+ * the shared `mapNotificationsFilter` helper. Mirrors
+ * `getMastodonNotifications`.
+ */
+export async function getFediverseNotifications(
+	params: GetFediverseNotificationsParams
+): Promise< FediverseNotificationsPage > {
+	const { connectionId, cursor, limit, types } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/fediverse/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as FediverseNotificationsPage;
 	} catch ( raw ) {
 		throw classifyFediverseError( raw );
 	}
@@ -258,6 +302,41 @@ export async function deleteFediverseFollow(
 			) }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as FediverseFollowResponse;
+	} catch ( raw ) {
+		throw classifyFediverseError( raw );
+	}
+}
+
+/**
+ * Publish a new ActivityPub post via the connected blog. Slice 2's
+ * standalone composer entry point — reply / quote variants will extend
+ * this fetcher (or sibling ones) in later slices. Forwards the
+ * caller-supplied `idempotencyKey` as the `Idempotency-Key` request
+ * header so a network retry can't double-post: the backend keys the
+ * de-dupe table on this header.
+ */
+export async function createFediversePost(
+	params: FediverseCreatePostParams
+): Promise< FediverseCreatePostResult > {
+	const { connectionId, content, visibility, summary, sensitive, language, idempotencyKey } =
+		params;
+	const body: Record< string, unknown > = { content, visibility };
+	if ( summary !== undefined && summary.length > 0 ) {
+		body.summary = summary;
+	}
+	if ( sensitive !== undefined ) {
+		body.sensitive = sensitive;
+	}
+	if ( language !== undefined ) {
+		body.language = language;
+	}
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/fediverse/connections/${ connectionId }/posts`,
+			apiNamespace: NAMESPACE,
+			body,
+			...( idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : {} ),
+		} ) ) as FediverseCreatePostResult;
 	} catch ( raw ) {
 		throw classifyFediverseError( raw );
 	}

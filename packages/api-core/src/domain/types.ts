@@ -85,8 +85,6 @@ export interface Domain extends DomainSummary {
 	nominet_pending_contact_verification_request: boolean;
 	nominet_domain_suspended: boolean;
 	owner: string;
-	is_pending_registration: boolean;
-	is_pending_registration_at_registry: boolean;
 	private_domain: boolean;
 	privacy_available: boolean;
 	points_to_wpcom: boolean;

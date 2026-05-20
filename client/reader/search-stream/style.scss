@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
@@ -55,10 +57,27 @@
 			box-shadow: none;
 		}
 	}
+
+	@include ui-mixins.when-dark-theme {
+		.search__icon-navigation {
+			background-color: var( --color-surface );
+			color: var( --color-link );
+		}
+
+		.search__open-icon,
+		.search__close-icon {
+			color: var( --color-link );
+		}
+
+		.search__open-icon:hover,
+		.search__close-icon:hover {
+			color: var( --color-link-dark );
+		}
+	}
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background: var(--studio-white);
+	background: var(--color-surface);
 	position: sticky;
 	top: 0;
 	z-index: 20;
@@ -331,11 +350,11 @@ div.is-section-reader:not(.is-logged-in) {
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: var(--color-primary);
+		color: var(--color-link);
 		padding: 16px;
 
 		&:hover {
-			color: var(--color-primary);
+			color: var(--color-link);
 		}
 	}
 

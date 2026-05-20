@@ -12,6 +12,7 @@ import AnniversaryAchievement from './anniversary-achievement';
 import GenericAchievement from './generic-achievement';
 import LockedAchievementCard from './locked-achievement-card';
 import SecretAchievementCard from './secret-achievement-card';
+import YearsOfServiceAchievementCard from './years-of-service-achievement-card';
 
 import './style.scss';
 
@@ -25,6 +26,7 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 	const {
 		achievements,
 		lockedAchievements,
+		yearsOfService,
 		isLoading,
 		isError,
 		hasNextPage,
@@ -46,7 +48,7 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 		);
 	}
 
-	if ( ! achievements.length && ! lockedAchievements.length ) {
+	if ( ! achievements.length && ! lockedAchievements.length && ! yearsOfService ) {
 		return <p className="achievements-grid__empty">{ translate( 'No achievements yet.' ) }</p>;
 	}
 
@@ -57,13 +59,18 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 		[ ...lockedAchievements ].sort( ( a, b ) => a.date_created.localeCompare( b.date_created ) )
 	);
 
+	const showYearsOfService = !! yearsOfService;
 	const showCelebratory = isOwnProfile && earned.length > 0 && lockedAchievements.length === 0;
 	const showLockedSection = isOwnProfile && sortedLocked.length > 0;
+	const showEarnedGrid = dedupedEarned.length > 0 || maskedSecrets.length > 0 || showYearsOfService;
 
 	return (
 		<>
-			{ ( dedupedEarned.length > 0 || maskedSecrets.length > 0 ) && (
+			{ showEarnedGrid && (
 				<div className="achievements-grid">
+					{ showYearsOfService && (
+						<YearsOfServiceAchievementCard yearsOfService={ yearsOfService } />
+					) }
 					{ dedupedEarned.map( ( a ) =>
 						a.slug === 'user_anniversary' ? (
 							<AnniversaryAchievement
