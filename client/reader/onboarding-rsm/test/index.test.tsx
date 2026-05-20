@@ -149,7 +149,7 @@ jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 
 // The real selector traverses `state.reader.follows`, which the lightweight
 // test store does not seed. Default to an empty follow list so the parent
-// completion event still has a valid `followed_sites_count`.
+// completion event still has a valid `followed_non_self_sites_count`.
 jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
 	getReaderFollows: jest.fn().mockReturnValue( [] ),
 } ) );
