@@ -3,7 +3,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
@@ -43,7 +43,11 @@ function getAverageTotal( timeseries: ApmTimePoint[] ): number {
 }
 
 function formatMsValue( value: number ): string {
-	return `${ Math.round( value ).toLocaleString() } ms`;
+	return sprintf(
+		/* translators: %s is a formatted number of milliseconds, e.g. 2,500 */
+		__( '%s ms' ),
+		Math.round( value ).toLocaleString()
+	);
 }
 
 function formatTooltipDate( date: Date ): string {
