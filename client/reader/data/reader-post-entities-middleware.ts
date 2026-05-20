@@ -1,14 +1,8 @@
-import {
-	POST_LIKE,
-	POST_LIKES_ADD_LIKER,
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REMOVE_LIKER,
-	POST_UNLIKE,
-} from 'calypso/state/action-types';
+import { postLikesQuery } from '@automattic/api-queries';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
-	READER_POSTS_RECEIVE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+	READER_POSTS_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
@@ -25,11 +19,6 @@ import type { Middleware } from 'redux';
 
 type ReaderPostEntityAction = {
 	type: string;
-	siteId?: number;
-	postId?: number;
-	iLike?: boolean;
-	found?: number;
-	likeCount?: number;
 	globalIds?: string[];
 	posts?: Array< ReaderPostEntityPost | null | undefined >;
 	payload?: {
@@ -37,50 +26,45 @@ type ReaderPostEntityAction = {
 		postId?: number;
 		followStatus?: string;
 	};
-	meta?: {
-		source?: string;
-	};
 };
 
 type GetQueryClient = () => QueryClient | null;
 
-const currentLikeCount = ( post: ReaderPostEntityPost | null ): number => {
-	return typeof post?.like_count === 'number' ? post.like_count : 0;
+const numberValue = ( value: unknown ): number | null => {
+	if ( value === undefined || value === null || value === '' ) {
+		return null;
+	}
+
+	const number = Number( value );
+	return Number.isFinite( number ) ? number : null;
 };
 
-const patchLikeState = ( queryClient: QueryClient, action: ReaderPostEntityAction ) => {
-	if ( ! action.siteId || ! action.postId ) {
-		return;
-	}
-	if ( action.type === POST_LIKES_RECEIVE && action.meta?.source === READER_POSTS_RECEIVE ) {
-		return;
-	}
-
-	updateReaderPostLocalState(
-		queryClient,
-		{ blogId: action.siteId, postId: action.postId },
-		( post ) => {
-			switch ( action.type ) {
-				case POST_LIKE:
-					return {
-						i_like: true,
-						like_count: currentLikeCount( post ) + ( post?.i_like ? 0 : 1 ),
-					};
-				case POST_UNLIKE:
-					return {
-						i_like: false,
-						like_count: Math.max( 0, currentLikeCount( post ) - ( post?.i_like ? 1 : 0 ) ),
-					};
-				case POST_LIKES_RECEIVE:
-					return { i_like: Boolean( action.iLike ), like_count: action.found ?? 0 };
-				case POST_LIKES_ADD_LIKER:
-				case POST_LIKES_REMOVE_LIKER:
-					return {};
-			}
-
-			return {};
+const seedPostLikesQueries = (
+	queryClient: QueryClient,
+	posts: Array< ReaderPostEntityPost | null | undefined >
+) => {
+	for ( const post of posts ) {
+		if ( ! post || post.is_external ) {
+			continue;
 		}
-	);
+
+		const siteId = numberValue( post.site_ID );
+		const postId = numberValue( post.ID );
+		if ( ! siteId || ! postId ) {
+			continue;
+		}
+
+		const key = postLikesQuery( siteId, postId ).queryKey;
+		if ( queryClient.getQueryData( key ) ) {
+			continue;
+		}
+
+		queryClient.setQueryData( key, {
+			found: numberValue( post.like_count ) ?? 0,
+			iLike: Boolean( post.i_like ),
+			likes: [],
+		} );
+	}
 };
 
 const patchSeenState = ( queryClient: QueryClient, action: ReaderPostEntityAction ) => {
@@ -125,13 +109,6 @@ export const createReaderPostEntitiesMiddleware =
 		}
 
 		switch ( readerAction.type ) {
-			case POST_LIKE:
-			case POST_UNLIKE:
-			case POST_LIKES_RECEIVE:
-			case POST_LIKES_ADD_LIKER:
-			case POST_LIKES_REMOVE_LIKER:
-				patchLikeState( queryClient, readerAction );
-				break;
 			case READER_SEEN_MARK_AS_SEEN_RECEIVE:
 			case READER_SEEN_MARK_AS_UNSEEN_RECEIVE:
 			case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE:
@@ -142,6 +119,7 @@ export const createReaderPostEntitiesMiddleware =
 				break;
 			case READER_POSTS_RECEIVE:
 				upsertReaderPostEntities( queryClient, readerAction.posts ?? [] );
+				seedPostLikesQueries( queryClient, readerAction.posts ?? [] );
 				break;
 		}
 

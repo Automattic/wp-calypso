@@ -1,23 +1,20 @@
+import { postLikesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import {
-	POST_LIKE,
-	POST_LIKES_ADD_LIKER,
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REMOVE_LIKER,
-	POST_UNLIKE,
-} from 'calypso/state/action-types';
-import {
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-	READER_POSTS_RECEIVE,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getReaderPostEntity, upsertReaderPostEntities } from '../reader-post-entities';
+import {
+	getReaderPostEntity,
+	updateReaderPostLocalState,
+	upsertReaderPostEntities,
+} from '../reader-post-entities';
 import { createReaderPostEntitiesMiddleware } from '../reader-post-entities-middleware';
 
 describe( 'reader post entities middleware', () => {
@@ -44,86 +41,6 @@ describe( 'reader post entities middleware', () => {
 		] );
 	} );
 
-	it( 'optimistically patches like and unlike state', () => {
-		dispatch( { type: POST_LIKE, siteId: 100, postId: 1 } );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: true,
-			like_count: 1,
-		} );
-
-		dispatch( { type: POST_UNLIKE, siteId: 100, postId: 1 } );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: false,
-			like_count: 0,
-		} );
-	} );
-
-	it( 'patches authoritative like receive responses', () => {
-		dispatch( { type: POST_LIKES_RECEIVE, siteId: 100, postId: 1, iLike: true, found: 12 } );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: true,
-			like_count: 12,
-		} );
-	} );
-
-	it( 'keeps like state from optimistic actions when liker responses arrive', () => {
-		dispatch( { type: POST_LIKE, siteId: 100, postId: 1 } );
-		dispatch( { type: POST_LIKES_ADD_LIKER, siteId: 100, postId: 1, likeCount: 12 } );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: true,
-			like_count: 1,
-		} );
-
-		dispatch( { type: POST_UNLIKE, siteId: 100, postId: 1 } );
-		dispatch( { type: POST_LIKES_REMOVE_LIKER, siteId: 100, postId: 1, likeCount: 11 } );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: false,
-			like_count: 0,
-		} );
-	} );
-
-	it( 'keeps the optimistic unlike count when the remove-liker response returns the stale count', () => {
-		upsertReaderPostEntities( queryClient, [
-			{
-				ID: 1,
-				site_ID: 100,
-				global_ID: 'global-1',
-				i_like: true,
-				like_count: 72,
-			},
-		] );
-
-		dispatch( { type: POST_UNLIKE, siteId: 100, postId: 1 } );
-		dispatch( { type: POST_LIKES_REMOVE_LIKER, siteId: 100, postId: 1, likeCount: 72 } );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: false,
-			like_count: 71,
-		} );
-	} );
-
-	it( 'does not patch like responses derived from post ingestion', () => {
-		dispatch( { type: POST_LIKE, siteId: 100, postId: 1 } );
-		dispatch( {
-			type: POST_LIKES_RECEIVE,
-			siteId: 100,
-			postId: 1,
-			iLike: false,
-			found: 0,
-			meta: { source: READER_POSTS_RECEIVE },
-		} );
-
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			i_like: true,
-			like_count: 1,
-		} );
-	} );
-
 	it( 'ingests posts from the real receivePosts Redux bridge without overwriting local like overlays', async () => {
 		const store = createStore(
 			( state = {} ) => state,
@@ -133,7 +50,10 @@ describe( 'reader post entities middleware', () => {
 			)
 		);
 
-		dispatch( { type: POST_LIKE, siteId: 100, postId: 1 } );
+		updateReaderPostLocalState( queryClient, { blogId: 100, postId: 1 }, ( post ) => ( {
+			i_like: true,
+			like_count: Number( post?.like_count ?? 0 ) + 1,
+		} ) );
 
 		await store.dispatch(
 			receivePosts( [
@@ -155,24 +75,65 @@ describe( 'reader post entities middleware', () => {
 		} );
 	} );
 
-	it( 'patches like state through feed aliases', () => {
-		upsertReaderPostEntities( queryClient, [
-			{
-				ID: 2,
-				site_ID: 100,
-				feed_ID: 200,
-				feed_item_ID: 300,
-				global_ID: 'global-2',
-				i_like: false,
-				like_count: 0,
-			},
-		] );
+	it( 'seeds the post likes query from received Reader post data', async () => {
+		const store = createStore(
+			( state = {} ) => state,
+			applyMiddleware(
+				thunkMiddleware,
+				createReaderPostEntitiesMiddleware( () => queryClient )
+			)
+		);
 
-		dispatch( { type: POST_LIKE, siteId: 100, postId: 2 } );
+		await store.dispatch(
+			receivePosts( [
+				{
+					ID: 2,
+					site_ID: 100,
+					global_ID: 'global-2',
+					i_like: true,
+					like_count: 72,
+				},
+			] ) as never
+		);
 
-		expect( getReaderPostEntity( queryClient, { feedId: 200, postId: 300 } ) ).toMatchObject( {
-			i_like: true,
-			like_count: 1,
+		expect( queryClient.getQueryData( postLikesQuery( 100, 2 ).queryKey ) ).toEqual( {
+			found: 72,
+			iLike: true,
+			likes: [],
+		} );
+	} );
+
+	it( 'does not overwrite existing post likes query data when receiving Reader posts', async () => {
+		queryClient.setQueryData( postLikesQuery( 100, 1 ).queryKey, {
+			found: 73,
+			iLike: true,
+			likes: [ { ID: 1, login: 'alice' } ],
+		} );
+
+		const store = createStore(
+			( state = {} ) => state,
+			applyMiddleware(
+				thunkMiddleware,
+				createReaderPostEntitiesMiddleware( () => queryClient )
+			)
+		);
+
+		await store.dispatch(
+			receivePosts( [
+				{
+					ID: 1,
+					site_ID: 100,
+					global_ID: 'global-1',
+					i_like: false,
+					like_count: 72,
+				},
+			] ) as never
+		);
+
+		expect( queryClient.getQueryData( postLikesQuery( 100, 1 ).queryKey ) ).toEqual( {
+			found: 73,
+			iLike: true,
+			likes: [ { ID: 1, login: 'alice' } ],
 		} );
 	} );
 
