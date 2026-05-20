@@ -14,7 +14,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateAgentStudioOutput from '../../data/use-create-agent-studio-output';
-import { getAgentStudioOutputPath, getAgentStudioPath } from '../../lib/paths';
+import { getAgentStudioOutputPath } from '../../lib/paths';
 import { DEFAULT_PACK_SLUG } from '../../one-pager/brand-packs';
 import GeneratingOverlay from '../../one-pager/react/generating-overlay';
 import { useOnePagerGeneration } from '../../one-pager/react/use-one-pager-generation';
@@ -48,26 +48,16 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 
 	const generation = useOnePagerGeneration();
 	const createOutput = useCreateAgentStudioOutput();
-
-	const suggestion = useSuggestOnePagerContent( {
-		onSuccess: ( value, variables ) => {
-			if ( variables.field === 'title' ) {
-				setTitle( value );
-			} else {
-				setBlurb( value );
-			}
-		},
-		onError: ( error ) => {
-			dispatch(
-				errorNotice( error.message || __( 'Could not suggest content. Please try again.' ) )
-			);
-		},
-	} );
+	const suggestion = useSuggestOnePagerContent();
+	const [ suggestingFields, setSuggestingFields ] = useState< Set< OnePagerContentField > >(
+		() => new Set()
+	);
 
 	const isBusy = createOutput.isPending || generation.isRunning;
 	const canSubmit = !! brief.trim() && !! title.trim() && images.length > 0 && ! isBusy;
-	const canSuggest = !! brief.trim() && ! suggestion.isPending && ! isBusy;
-	const suggestingField = suggestion.isPending ? suggestion.variables?.field : undefined;
+	const isFieldSuggesting = ( field: OnePagerContentField ) => suggestingFields.has( field );
+	const canSuggestField = ( field: OnePagerContentField ) =>
+		!! brief.trim() && ! isBusy && ! isFieldSuggesting( field );
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
@@ -101,7 +91,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				} ) )
 			);
 
-			const ok = await generation.run( {
+			const result = await generation.run( {
 				outputId: output.id,
 				agentId: agent.id,
 				pack: DEFAULT_PACK_SLUG,
@@ -111,7 +101,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				images: elaImages,
 			} );
 
-			if ( ok ) {
+			if ( result.ok ) {
 				dispatch(
 					successNotice(
 						sprintf(
@@ -123,9 +113,16 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 					)
 				);
 				pageRouter( getAgentStudioOutputPath( output.id ) );
-			} else if ( generation.error ) {
-				dispatch( errorNotice( generation.error ) );
-				pageRouter( getAgentStudioPath() );
+			} else {
+				// Stay on the brief screen so the user can read the error and
+				// fix the input (e.g. an invalid model id or a missing key)
+				// without losing what they typed.
+				dispatch(
+					errorNotice( result.error, {
+						duration: 12000,
+						id: `one-pager-generation-failed-${ output.id }`,
+					} )
+				);
 			}
 		} catch ( error ) {
 			const message =
@@ -136,14 +133,41 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 		}
 	};
 
-	const onSuggest = ( field: OnePagerContentField ) => {
+	const onSuggest = async ( field: OnePagerContentField ) => {
+		if ( ! canSuggestField( field ) ) {
+			return;
+		}
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agent_studio_suggest_content', {
 				agent_id: agent.id,
 				field,
 			} )
 		);
-		suggestion.mutate( { brief, field } );
+		setSuggestingFields( ( prev ) => {
+			const next = new Set( prev );
+			next.add( field );
+			return next;
+		} );
+		try {
+			const value = await suggestion.mutateAsync( { brief, field } );
+			if ( field === 'title' ) {
+				setTitle( value );
+			} else {
+				setBlurb( value );
+			}
+		} catch ( error ) {
+			const message =
+				error instanceof Error && error.message
+					? error.message
+					: __( 'Could not suggest content. Please try again.' );
+			dispatch( errorNotice( message ) );
+		} finally {
+			setSuggestingFields( ( prev ) => {
+				const next = new Set( prev );
+				next.delete( field );
+				return next;
+			} );
+		}
 	};
 
 	return (
@@ -164,8 +188,8 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						<HStack justify="space-between" alignment="center">
 							<Text weight={ 600 }>{ __( 'Title' ) }</Text>
 							<SuggestButton
-								isBusy={ suggestingField === 'title' }
-								disabled={ ! canSuggest }
+								isBusy={ isFieldSuggesting( 'title' ) }
+								disabled={ ! canSuggestField( 'title' ) }
 								onClick={ () => onSuggest( 'title' ) }
 							/>
 						</HStack>
@@ -185,8 +209,8 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						<HStack justify="space-between" alignment="center">
 							<Text weight={ 600 }>{ __( 'Blurb (optional)' ) }</Text>
 							<SuggestButton
-								isBusy={ suggestingField === 'blurb' }
-								disabled={ ! canSuggest }
+								isBusy={ isFieldSuggesting( 'blurb' ) }
+								disabled={ ! canSuggestField( 'blurb' ) }
 								onClick={ () => onSuggest( 'blurb' ) }
 							/>
 						</HStack>

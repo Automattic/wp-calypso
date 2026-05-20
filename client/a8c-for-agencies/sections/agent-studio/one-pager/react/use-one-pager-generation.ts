@@ -81,7 +81,9 @@ export function useOnePagerGeneration() {
 	}, [] );
 
 	const run = useCallback(
-		async ( request: GenerationRequest ): Promise< boolean > => {
+		async (
+			request: GenerationRequest
+		): Promise< { ok: true } | { ok: false; error: string } > => {
 			const services = getOnePagerServices();
 			const controller = new AbortController();
 			abortRef.current = controller;
@@ -165,7 +167,7 @@ export function useOnePagerGeneration() {
 
 				setPhase( 'done' );
 				abortRef.current = null;
-				return true;
+				return { ok: true };
 			} catch ( err ) {
 				const message = err instanceof Error ? err.message : String( err );
 				// eslint-disable-next-line no-console
@@ -189,7 +191,7 @@ export function useOnePagerGeneration() {
 					// Best effort.
 				}
 				abortRef.current = null;
-				return false;
+				return { ok: false, error: message };
 			}
 		},
 		[ dispatch ]
