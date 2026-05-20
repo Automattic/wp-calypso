@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
@@ -18,7 +18,7 @@ import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -30,6 +30,8 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
+import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
@@ -40,11 +42,10 @@ import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
+import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -463,6 +464,10 @@ export class FullPostView extends Component {
 			return;
 		}
 
+		if ( this.props.isLikePending || this.props.isUnlikePending ) {
+			return;
+		}
+
 		const { site_ID: siteId, ID: postId } = this.props.post;
 		let liked = this.props.liked;
 
@@ -753,7 +758,6 @@ export class FullPostView extends Component {
 			// add extra div wrapper for consistent content frame layout/styling for reader.
 			<div style={ { position: 'relative' } }>
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
-					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
@@ -882,6 +886,8 @@ export class FullPostView extends Component {
 									nextPost={ this.props.nextPost }
 									previousPostKey={ this.props.previousPostKey }
 									nextPostKey={ this.props.nextPostKey }
+									previousPostUrl={ this.props.previousPostUrl }
+									nextPostUrl={ this.props.nextPostUrl }
 									onNavigate={ this.goToPost }
 								/>
 							) }
@@ -944,17 +950,17 @@ const ConnectedFullPostView = connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
+		const post = ownProps.canonicalPost || getPostByKey( state, postKey ) || { _state: 'pending' };
 		const currentPath = state.route.path.current;
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
+			siteId,
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 			notificationsOpen: isNotificationsOpen( state ),
 			hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 			post,
-			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
 			currentPath,
 			referralStream: getPreviousPath( state ),
@@ -986,8 +992,6 @@ const ConnectedFullPostView = connect(
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,
-		likePost,
-		unlikePost,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,
@@ -995,7 +999,7 @@ const ConnectedFullPostView = connect(
 		showSelectedPost,
 		requestPostComments,
 	}
-)( FullPostView );
+)( withPostLikes( withReaderPostLikeActions( FullPostView ) ) );
 
 const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -1009,26 +1013,81 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
+		const canonicalPost = useReaderPostEntity(
+			Object.keys( currentPostKey ).length ? currentPostKey : null
+		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
-		const previousPost = useSelector( ( state ) =>
+
+		const canonicalPreviousPost = useReaderPostEntity( previousPostKey );
+		const canonicalNextPost = useReaderPostEntity( nextPostKey );
+		const previousPostFromRedux = useSelector( ( state ) =>
 			previousPostKey ? getPostByKey( state, previousPostKey ) : null
 		);
-		const nextPost = useSelector( ( state ) =>
+		const nextPostFromRedux = useSelector( ( state ) =>
 			nextPostKey ? getPostByKey( state, nextPostKey ) : null
+		);
+		const previousPost = canonicalPreviousPost ?? previousPostFromRedux;
+		const nextPost = canonicalNextPost ?? nextPostFromRedux;
+
+		// Pre-compute the navigation URL so the prev/next card's `<a href>`
+		// points at the destination the user lands on (middle-click /
+		// open-in-new-tab respect it). For x-posts that's the original
+		// blog/post — `showSelectedPost` handles the same redirection on
+		// regular clicks, but the visible link must match.
+		const previousPostUrl = useMemo(
+			() => navigationUrlFor( previousPost, previousPostKey ),
+			[ previousPost, previousPostKey ]
+		);
+		const nextPostUrl = useMemo(
+			() => navigationUrlFor( nextPost, nextPostKey ),
+			[ nextPost, nextPostKey ]
 		);
 		return (
 			<WrappedComponent
 				{ ...props }
 				previousPostKey={ previousPostKey }
 				nextPostKey={ nextPostKey }
+				canonicalPost={ canonicalPost }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
+				previousPostUrl={ previousPostUrl }
+				nextPostUrl={ nextPostUrl }
 			/>
 		);
 	};
+
+/**
+ * Picks the URL the prev/next navigation card should link to. For x-posts the
+ * stream-item wrapper is just a "X-post: …" stub on the local site; the user
+ * actually lands on the original blog/post (`showSelectedPost` redirects on
+ * click). Building the same URL here keeps the visible `<a href>` honest for
+ * middle-click / open-in-new-tab. Falls back to the wrapper URL when the
+ * wrapper isn't hydrated yet or has no resolvable x-post target.
+ */
+function navigationUrlFor( post, postKey ) {
+	if ( ! postKey ) {
+		return undefined;
+	}
+	if ( post && isXPost( post ) ) {
+		const xMeta = XPostHelper.getXPostMetadata( post );
+		if ( xMeta?.blogId && xMeta?.postId ) {
+			return `/reader/blogs/${ xMeta.blogId }/posts/${ xMeta.postId }`;
+		}
+		// No `xpost_origin` IDs (P2 xposts without the metadata pair) — mirror
+		// `showFullXPost`'s `window.open( xMeta.postURL )` fallback so the
+		// visible `<a href>` matches where the click actually lands.
+		if ( xMeta?.postURL ) {
+			return xMeta.postURL;
+		}
+	}
+	if ( postKey.feedId ) {
+		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;
+	}
+	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
+}
 
 export default withFullPostNavigation( ConnectedFullPostView );

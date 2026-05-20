@@ -1,4 +1,4 @@
-@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
 // The Dropdown component doesn't support to hide the header if the `expandOnMobile` is enabled.
 .dashboard-notifications.components-popover.is-expanded {

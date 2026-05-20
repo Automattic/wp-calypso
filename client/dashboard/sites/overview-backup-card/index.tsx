@@ -106,6 +106,16 @@ export default function BackupCard( { site }: { site: Site } ) {
 		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
 	}
 
+	if ( site.is_multisite ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'Not supported on multisite' ) }
+				description={ __( 'Backup is not available for multisite installations.' ) }
+			/>
+		);
+	}
+
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }

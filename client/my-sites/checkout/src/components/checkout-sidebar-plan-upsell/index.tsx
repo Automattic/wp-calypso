@@ -1,6 +1,11 @@
 import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -12,10 +17,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import {
-	getItemVariantCompareToPrice,
-	getItemVariantDiscount,
-} from '../item-variation-picker/util';
 import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
@@ -174,11 +175,18 @@ export function CheckoutSidebarPlanUpsell() {
 		}
 	};
 
-	const compareToPriceForVariantTerm = getItemVariantCompareToPrice(
-		upsellVariant,
-		currentVariant
+	const currentInfo = fromVariantPriceData( currentVariant );
+	const upsellInfo = fromVariantPriceData( upsellVariant );
+	const compareToPriceForVariantTerm = getPlanPriceForDuration(
+		currentInfo,
+		upsellInfo.termMonths
 	);
-	const percentSavings = getItemVariantDiscount( upsellVariant, currentVariant );
+	const percentSavings =
+		calculateDiscountPercentage(
+			compareToPriceForVariantTerm,
+			getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths )
+		) ?? 0;
+
 	if ( percentSavings <= 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;

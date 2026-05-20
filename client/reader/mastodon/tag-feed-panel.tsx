@@ -222,7 +222,11 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 							<h1 className="mastodon-tag-feed__heading">{ `#${ hashtag }` }</h1>
 							{ countLine ? <p className="mastodon-tag-feed__count">{ countLine }</p> : null }
 							{ externalTagUrl ? (
-								<ExternalLink className="mastodon-tag-feed__external-link" href={ externalTagUrl }>
+								<ExternalLink
+									className="mastodon-tag-feed__external-link"
+									href={ externalTagUrl }
+									rel="noreferrer"
+								>
 									{ translate( 'View on Mastodon' ) }
 								</ExternalLink>
 							) : null }

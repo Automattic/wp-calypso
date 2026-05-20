@@ -19,6 +19,7 @@ import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-mo
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
@@ -105,6 +106,7 @@ class ThemeShowcase extends Component {
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		isSiteECommerceFreeTrial: PropTypes.bool,
@@ -719,7 +721,7 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
-		return (
+		const showcase = (
 			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
@@ -872,6 +874,12 @@ class ThemeShowcase extends Component {
 				</div>
 			</div>
 		);
+
+		return withColorScheme( showcase, {
+			bodyClass: 'is-themes-dark-mode',
+			enabled: ! this.props.isSiteRoute && isLoggedIn,
+			Provider: ClassicColorSchemeProvider,
+		} );
 	}
 }
 

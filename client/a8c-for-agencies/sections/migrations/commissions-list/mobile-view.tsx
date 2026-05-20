@@ -11,8 +11,10 @@ import './style.scss';
 
 export default function MigrationsCommissionsListMobileView( {
 	commissions,
+	canTagSitesForCommission,
 }: {
 	commissions: TaggedSite[];
+	canTagSitesForCommission: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -37,7 +39,10 @@ export default function MigrationsCommissionsListMobileView( {
 								</ListItemCardContent>
 							}
 							<ListItemCardContent title={ translate( 'Review status' ) }>
-								<ReviewStatusColumn reviewStatus={ commission.incentive_status } />
+								<ReviewStatusColumn
+									reviewStatus={ commission.incentive_status }
+									canTagSitesForCommission={ canTagSitesForCommission }
+								/>
 							</ListItemCardContent>
 						</ListItemCard>
 					);

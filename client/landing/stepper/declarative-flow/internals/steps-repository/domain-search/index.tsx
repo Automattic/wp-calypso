@@ -12,6 +12,7 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -42,6 +43,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
@@ -79,6 +81,7 @@ const DomainSearchStep: StepType< {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -93,6 +96,7 @@ const DomainSearchStep: StepType< {
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -434,14 +438,40 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query ) {
+			// Surface the "Use a domain I own" CTA whenever:
+			//   - the user has searched (query is non-empty), OR
+			//   - we're on a mobile viewport (where the in-body
+			//     empty-state card is hidden — see style.scss).
+			// On desktop empty state, the link stays hidden and the
+			// in-body card carries the same CTA.
+			const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
+
+			if ( ! stepCounter && ! showUseMyDomain ) {
 				return;
 			}
 
 			return (
 				<>
-					{ config.allowsUsingOwnDomain && (
-						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+					{ stepCounter && (
+						<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
+					) }
+					{ showUseMyDomain && (
+						<Step.LinkButton
+							onClick={ () => {
+								// Mobile empty state replaced the in-body card,
+								// which fired this Tracks event. Fire it here so
+								// the mobile metric doesn't drop. Other top-bar
+								// paths stay silent — they always have been.
+								if ( isMobileViewport && ! query ) {
+									recordTracksEvent( 'calypso_domain_search_results_use_my_domain_button_click', {
+										section: 'signup',
+										source: 'top-bar-mobile',
+										flow_name: flow,
+									} );
+								}
+								events.onExternalDomainClick( query );
+							} }
+						>
 							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
 					) }
@@ -459,7 +489,16 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				heading={
+					// On mobile, once the user has searched the persistent fixed
+					// search overlay (rendered by @automattic/domain-search) is the
+					// page's primary affordance — the H1/subText are dropped so
+					// high-quality results can fill the limited vertical space.
+					// The empty/initial state keeps the heading on mobile.
+					isMobileViewport && query ? undefined : (
+						<Step.Heading text={ headerText } subText={ subHeaderText } />
+					)
+				}
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>

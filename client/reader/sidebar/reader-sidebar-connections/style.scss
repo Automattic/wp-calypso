@@ -1,0 +1,64 @@
+// Avatar with a small protocol-badge overlay in the bottom-right corner.
+// The badge sits visually on top of the avatar so users can distinguish
+// Bluesky / Mastodon / Fediverse accounts at a glance.
+.sidebar-connections__avatar-wrap {
+	position: relative;
+	display: inline-flex;
+	flex-shrink: 0;
+}
+
+.sidebar-connections__badge {
+	position: absolute;
+	inset-block-end: -2px;
+	inset-inline-end: -4px;
+	width: 14px;
+	height: 14px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var( --color-sidebar-background );
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px var( --color-sidebar-background );
+	pointer-events: none;
+
+	// The brand SVGs render at 24×24 and inherit a sidebar-icon class
+	// that targets the top-level menu icon size — including a section-
+	// scoped `margin-inline-end` meant for the menu's text gap. That
+	// margin pushes the glyph off-centre inside the 14px badge slot, so
+	// zero it out alongside the size override. Size the SVG to match the
+	// badge so the glyph fills the slot edge-to-edge; the badge's
+	// `box-shadow` ring separates it from the avatar behind. The
+	// `!important` is scoped to this badge and only needed because the
+	// section-wide selector (`:root .theme-default .is-section-reader …`)
+	// outranks element selectors.
+	svg {
+		width: 14px;
+		height: 14px;
+		margin: 0 !important;
+	}
+}
+
+// Per-protocol brand tint. Each protocol gets its own colour cue so the
+// badge reads at a glance even at 10px. Studio palette tokens chosen to
+// approximate the public brand of each protocol while staying inside the
+// design system: Bluesky→blue, Mastodon→purple (indigo-adjacent),
+// Fediverse→pink (the ActivityPub-ecosystem convention).
+.sidebar-connections__badge--atmosphere {
+	color: var( --studio-blue-50 );
+}
+
+.sidebar-connections__badge--mastodon {
+	color: var( --studio-purple-50 );
+}
+
+.sidebar-connections__badge--fediverse {
+	color: var( --studio-pink-50 );
+}
+
+.sidebar-connections__empty {
+	padding: 4px 16px 8px;
+	font-size: 0.75rem;
+	color: var( --color-sidebar-text-alternative );
+	font-style: italic;
+	list-style: none;
+}

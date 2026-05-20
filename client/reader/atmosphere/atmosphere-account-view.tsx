@@ -1,6 +1,6 @@
 import { useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,13 +11,13 @@ import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/soci
 import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { AtmosphereNavigation } from './atmosphere-navigation';
 import { atmosphereComposerConfig } from './composer-config';
-import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from './helper';
+import { NotificationsPanel } from './notifications-panel';
 import { ProfilePanel } from './profile-panel';
-import { SettingsPanel } from './settings-panel';
 import { TimelinePanel } from './timeline-panel';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
-const VALID_TABS = new Set( [ TIMELINE_TAB, PROFILE_TAB, SETTINGS_TAB ] );
+const VALID_TABS = new Set( [ TIMELINE_TAB, NOTIFICATIONS_TAB, PROFILE_TAB ] );
 
 interface Props {
 	connectionId: number;
@@ -49,8 +49,9 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 		return (
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( 'ATmosphere ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
@@ -94,8 +95,8 @@ function renderTab( slug: string, connection: AtmosphereConnection ) {
 	switch ( slug ) {
 		case PROFILE_TAB:
 			return <ProfilePanel connection={ connection } />;
-		case SETTINGS_TAB:
-			return <SettingsPanel />;
+		case NOTIFICATIONS_TAB:
+			return <NotificationsPanel connection={ connection } />;
 		case TIMELINE_TAB:
 		default:
 			return <TimelinePanel connection={ connection } />;

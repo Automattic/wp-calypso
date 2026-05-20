@@ -48,6 +48,28 @@ export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
 	return uniqueValue > 0 && totalValue > 0;
 };
 
+export const getClicksDisplayValue = (
+	item: Pick< EmailStatsItem, 'unique_clicks' | 'clicks' | 'clicks_rate' >
+) => {
+	const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+	const clicks = parseInt( String( item.clicks ), 10 );
+	const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+
+	if ( hasUniques ) {
+		return `${ formatNumber( item.clicks_rate, {
+			numberFormatOptions: {
+				maximumFractionDigits: 2,
+			},
+		} ) }%`;
+	}
+
+	if ( clicks > 0 ) {
+		return formatNumber( item.clicks );
+	}
+
+	return '—';
+};
+
 export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
 	const hasUniques = hasUniqueMetrics(

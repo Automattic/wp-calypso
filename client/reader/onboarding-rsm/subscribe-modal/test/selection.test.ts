@@ -6,6 +6,7 @@ const card = ( feed_ID: number ): CardData => ( {
 	site_ID: 0,
 	site_URL: `https://example-${ feed_ID }.test`,
 	site_name: `Example ${ feed_ID }`,
+	feed_URL: `https://example-${ feed_ID }.test/feed`,
 } );
 
 describe( 'nextSelectedSite', () => {
@@ -51,6 +52,7 @@ describe( 'nextSelectedSite', () => {
 			site_ID: 0,
 			site_URL: 'https://example-1.test',
 			site_name: 'Example 1',
+			feed_URL: 'https://example-1.test/feed',
 		};
 		const list = [ card( 1 ), card( 2 ) ];
 		expect( nextSelectedSite( sameFeedFreshRef, list ) ).toBeUndefined();

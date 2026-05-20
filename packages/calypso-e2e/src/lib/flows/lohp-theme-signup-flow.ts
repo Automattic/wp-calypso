@@ -50,19 +50,6 @@ export class LOHPThemeSignupFlow {
 	}
 
 	/**
-	 * Navigates to the Calypso Get Started link for the selected theme.
-	 * @returns {Promise<string>} The theme slug of the selected theme.
-	 */
-	async visitCalypsoGetStartedLinkForTheme(): Promise< string > {
-		const pageThemeDetails = new ThemesDetailPage( this.page );
-		const calypsoGetStartedLink = await pageThemeDetails.calypsoGetStartedLink();
-		const themeSlug =
-			pageThemeDetails.getThemeSlugFromCalypsoGetStartedLink( calypsoGetStartedLink );
-		await this.page.goto( calypsoGetStartedLink );
-		return themeSlug;
-	}
-
-	/**
 	 * Cancels the plan purchase during the flow.
 	 * @returns {Promise<void>}
 	 */

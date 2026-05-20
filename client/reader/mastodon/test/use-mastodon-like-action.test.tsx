@@ -105,6 +105,11 @@ describe( 'makeUseMastodonLikeAction', () => {
 		expect( button ).toHaveTextContent( '7' );
 	} );
 
+	it( 'omits the zero-count clause from the accessible label when there are no favorites', () => {
+		renderLikeButton( makePost( { counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 } } ) );
+		expect( screen.getByRole( 'button', { name: /^favorite$/i } ) ).toBeVisible();
+	} );
+
 	it( 'like() POSTs to the likes endpoint and fires _favorite_clicked Tracks', async () => {
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {

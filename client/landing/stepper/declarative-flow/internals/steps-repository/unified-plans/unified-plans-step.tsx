@@ -50,6 +50,7 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -267,6 +268,7 @@ function UnifiedPlansStep( {
 		[]
 	);
 	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -311,7 +313,7 @@ function UnifiedPlansStep( {
 
 	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
-	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
+	const isPaidTheme = Boolean( selectedThemeType && selectedThemeType !== FREE_THEME );
 
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
@@ -460,6 +462,9 @@ function UnifiedPlansStep( {
 			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
+	const shouldUseModalBackedFreePlanCTA =
+		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
+
 	const getSubheaderText = () => {
 		const freePlanButton = (
 			<Button
@@ -495,6 +500,12 @@ function UnifiedPlansStep( {
 
 		if ( intent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan ) {
+				if ( shouldUseModalBackedFreePlanCTA ) {
+					return translate(
+						'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+					);
+				}
+
 				return translate(
 					'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
 					{ components: { link: freePlanButton } }
@@ -543,10 +554,9 @@ function UnifiedPlansStep( {
 			);
 		}
 
-		// In stepper-v2, <PlansPageSubheader>'s deemphasize branch is suppressed,
-		// so surface its "Unlock a powerful bundle…" copy here as Step.Heading subText
-		// to keep the free-plan CTA visible.
-		if ( useStepContainerV2 && deemphasizeFreePlan ) {
+		// Keep the non-modal CTA in Step.Heading. Paid-domain/theme flows use
+		// <PlansPageSubheader> so the CTA can open PlanUpsellModal first.
+		if ( useStepContainerV2 && deemphasizeFreePlan && ! shouldUseModalBackedFreePlanCTA ) {
 			return translate(
 				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 				{ components: { link: freePlanButton } }
@@ -639,6 +649,7 @@ function UnifiedPlansStep( {
 				onUpgradeClick={ handleUpgradeClick }
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
+				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
@@ -684,9 +695,17 @@ function UnifiedPlansStep( {
 							}
 							rightElement={
 								isOnboardingFlow( flowName ) ? (
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ translate( 'Need help?' ) }
-									</Step.LinkButton>
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										<Step.LinkButton onClick={ toggleHelpCenter }>
+											{ translate( 'Need help?' ) }
+										</Step.LinkButton>
+									</>
 								) : undefined
 							}
 						/>

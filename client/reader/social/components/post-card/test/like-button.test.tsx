@@ -147,7 +147,7 @@ describe( '<LikeButton>', () => {
 		const user = userEvent.setup();
 		renderLikeButton( makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) );
 		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
-		expect( button ).toBeDisabled();
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
 		await user.click( button );
 
 		expect( interceptor.isDone() ).toBe( false );
@@ -214,6 +214,23 @@ describe( '<LikeButton>', () => {
 		expect( errorNoticeSpy ).toHaveBeenCalledWith(
 			'Reconnect your Bluesky account to like posts.'
 		);
+	} );
+
+	it( 'omits the visible count when hideCount is true but keeps the aria-label count', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
+		const socialPost = makePost( { counts: { replies: 0, reposts: 0, likes: 9, quotes: 0 } } );
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					<LikeButton post={ socialPost } hideCount />
+				</LikeProvider>
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		const button = screen.getByRole( 'button', { name: /like, 9 likes/i } );
+		expect( button ).not.toHaveTextContent( '9' );
 	} );
 
 	it( 'click does not bubble to parent listener', async () => {
