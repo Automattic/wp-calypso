@@ -43,8 +43,8 @@ export function getModuleCheckpointApi(): CheckpointApi | null {
  * @returns The block element, or null.
  */
 export function findBlockElement( clientId: string ): HTMLElement | null {
-	// Validate clientId format to prevent selector injection.
-	if ( ! /^[0-9a-f-]+$/i.test( clientId ) ) {
+	// Gutenberg clientIds can be short mixed-case strings, not only UUIDs.
+	if ( ! /^[A-Za-z0-9_-]+$/.test( clientId ) ) {
 		return null;
 	}
 

@@ -1050,6 +1050,13 @@ describe( 'findBlockElement', () => {
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440000' ) ).toBe( el );
 	} );
 
+	it( 'supports short mixed-case Gutenberg clientIds', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', 'lQ0k' );
+		document.body.appendChild( el );
+		expect( findBlockElement( 'lQ0k' ) ).toBe( el );
+	} );
+
 	it( 'returns null when the clientId is not in the DOM', () => {
 		// Returns null from the regex guard, the main-doc querySelector miss,
 		// or the optional editor-canvas iframe lookup chain (coerced via ?? null).
@@ -1059,8 +1066,7 @@ describe( 'findBlockElement', () => {
 	it( 'rejects malformed clientIds to prevent selector injection', () => {
 		expect( findBlockElement( '"][onerror="alert(1)"]' ) ).toBeNull();
 		expect( findBlockElement( 'contains space' ) ).toBeNull();
-		// Non-hex characters fail the regex guard.
-		expect( findBlockElement( 'not-a-real-clientid-g' ) ).toBeNull();
+		expect( findBlockElement( 'client.id' ) ).toBeNull();
 	} );
 } );
 
