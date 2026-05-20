@@ -5,17 +5,20 @@ import { readerPostQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
+import waitForImagesToLoad from 'calypso/lib/post-normalizer/rule-wait-for-images-to-load';
 import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { syncReaderPostCache } from 'calypso/reader/data/reader-post-cache-sync';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
 jest.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {
 	__esModule: true,
-	default: ( post: Record< string, unknown > ) =>
-		Promise.resolve( { ...post, slow_cache_test_marker: true } ),
+	default: jest.fn( ( post: Record< string, unknown > ) =>
+		Promise.resolve( { ...post, slow_cache_test_marker: true } )
+	),
 } ) );
 
 const makeQueryClient = () => new QueryClient();
+const mockWaitForImagesToLoad = waitForImagesToLoad as jest.Mock;
 
 describe( 'syncReaderPostCache', () => {
 	beforeAll( () => {
@@ -24,6 +27,7 @@ describe( 'syncReaderPostCache', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
+		mockWaitForImagesToLoad.mockClear();
 	} );
 
 	it( 'normalizes posts before writing them into the canonical post cache', () => {
@@ -71,6 +75,26 @@ describe( 'syncReaderPostCache', () => {
 				slow_cache_test_marker: true,
 			} );
 		} );
+	} );
+
+	it( 'coalesces duplicate slow normalization work in the same tick', async () => {
+		const queryClient = makeQueryClient();
+		const post = {
+			ID: 1,
+			site_ID: 100,
+			global_ID: 'global-1',
+			content: '<p>Hello duplicate slow normalization</p>',
+		};
+
+		syncReaderPostCache( queryClient, [ post ] );
+		syncReaderPostCache( queryClient, [ post ] );
+
+		await waitFor( () => {
+			expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+				slow_cache_test_marker: true,
+			} );
+		} );
+		expect( mockWaitForImagesToLoad ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'reloads posts marked as stale before writing them into the canonical post cache', async () => {

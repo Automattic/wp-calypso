@@ -9,6 +9,7 @@ import {
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_ERROR,
 	READER_RECOMMENDED_SITES_RECEIVE,
+	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 } from 'calypso/state/reader/action-types';
 import { requestPage, requestPaginatedStream } from '../actions';
 
@@ -154,7 +155,13 @@ describe( 'requestPage thunk', () => {
 
 		it( 'falls back to a direct fetch when the QueryClient is null', async () => {
 			mockQueryClient = null;
-			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
+			nock( BASE )
+				.get( '/rest/v1.2/read/following' )
+				.query( true )
+				.reply( 200, {
+					...followingResponse,
+					posts: [ { ...followingResponse.posts[ 0 ], is_following_conversation: true } ],
+				} );
 
 			const { dispatch, result } = runThunk( { streamKey: 'following' } );
 			await result;
@@ -164,6 +171,7 @@ describe( 'requestPage thunk', () => {
 				.filter( ( a ) => a && typeof a === 'object' && a.type )
 				.map( ( a ) => a.type );
 			expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+			expect( types ).toContain( READER_CONVERSATION_UPDATE_FOLLOW_STATUS );
 		} );
 	} );
 

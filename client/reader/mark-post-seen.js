@@ -4,6 +4,12 @@ import { pageViewForPost } from 'calypso/reader/stats';
 
 const seenPostGlobalIds = new Set();
 
+export const resetSeenPostGlobalIdsForTests = () => {
+	if ( process.env.NODE_ENV === 'test' ) {
+		seenPostGlobalIds.clear();
+	}
+};
+
 export const markPostSeen = ( post, site ) => {
 	if ( ! post || seenPostGlobalIds.has( post.global_ID ) ) {
 		return;

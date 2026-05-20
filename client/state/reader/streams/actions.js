@@ -152,8 +152,10 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	} );
 	analyticsActions.forEach( ( a ) => dispatch( a ) );
 
-	if ( queryClient && streamPosts.length > 0 ) {
-		syncReaderPostCache( queryClient, streamPosts );
+	if ( streamPosts.length > 0 ) {
+		if ( queryClient ) {
+			syncReaderPostCache( queryClient, streamPosts );
+		}
 		syncReaderConversationFollowStatus( dispatch, streamPosts );
 	}
 	if ( streamSites.length > 0 ) {

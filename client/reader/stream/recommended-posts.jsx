@@ -6,7 +6,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { useReaderPost } from 'calypso/reader/data/reader-post';
-import { keyForPost } from 'calypso/reader/post-key';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 
@@ -55,26 +55,31 @@ export class RecommendedPosts extends PureComponent {
 				<ul className="reader-stream__recommended-posts-list">
 					{ map( posts, ( post, index ) => {
 						const uiIndex = this.props.index + index;
+						const recommendationKey = this.props.recommendations?.[ index ];
 						return (
 							<li
 								className="reader-stream__recommended-posts-list-item"
-								key={ `${ index }-${ post && post.global_ID }` }
+								key={
+									keyToString( recommendationKey ) ?? `${ index }-${ post?.global_ID ?? 'pending' }`
+								}
 							>
-								<div className="reader-stream__recommended-post-dismiss">
-									<Button
-										borderless
-										title={ this.props.translate( 'Dismiss this recommendation' ) }
-										onClick={ () => {
-											dismissPostAnalytics( uiIndex, this.props.streamKey, post );
-											this.props.dismissPost( {
-												streamKey: this.props.streamKey,
-												postKey: keyForPost( post ),
-											} );
-										} }
-									>
-										<Gridicon icon="cross" size={ 14 } />
-									</Button>
-								</div>
+								{ post && (
+									<div className="reader-stream__recommended-post-dismiss">
+										<Button
+											borderless
+											title={ this.props.translate( 'Dismiss this recommendation' ) }
+											onClick={ () => {
+												dismissPostAnalytics( uiIndex, this.props.streamKey, post );
+												this.props.dismissPost( {
+													streamKey: this.props.streamKey,
+													postKey: keyForPost( post ),
+												} );
+											} }
+										>
+											<Gridicon icon="cross" size={ 14 } />
+										</Button>
+									</div>
+								) }
 								<RelatedPostCard
 									post={ post }
 									onPostClick={ handlePostClick( uiIndex ) }
@@ -95,7 +100,9 @@ const RecommendedPostsWithPosts = ( props ) => {
 	const { recommendations = [] } = props;
 	const { data: firstPost } = useReaderPost( recommendations[ 0 ] );
 	const { data: secondPost } = useReaderPost( recommendations[ 1 ] );
-	const posts = [ firstPost, secondPost ].filter( Boolean );
+	const posts = recommendations.slice( 0, 2 ).map( ( _recommendation, index ) => {
+		return index === 0 ? firstPost ?? null : secondPost ?? null;
+	} );
 
 	return <RecommendedPosts { ...props } posts={ posts } />;
 };

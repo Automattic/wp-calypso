@@ -1,6 +1,6 @@
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { pageViewForPost } from 'calypso/reader/stats';
-import { markPostSeen } from '../mark-post-seen';
+import { markPostSeen, resetSeenPostGlobalIdsForTests } from '../mark-post-seen';
 
 jest.mock( 'calypso/lib/analytics/mc', () => ( {
 	bumpStat: jest.fn(),
@@ -12,6 +12,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 
 describe( 'markPostSeen', () => {
 	beforeEach( () => {
+		resetSeenPostGlobalIdsForTests();
 		pageViewForPost.mockReset();
 		bumpStat.mockReset();
 	} );

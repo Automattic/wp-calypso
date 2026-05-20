@@ -58,6 +58,26 @@ const seedPostLikesQueries = (
 
 const hideRejections = ( promise: Promise< ReaderPostCachePost > ) => promise.catch( () => null );
 
+type SlowNormalizationQueue = {
+	postsByKey: Map< string, ReaderPostCachePost >;
+	scheduled: boolean;
+};
+
+const slowNormalizationQueues = new WeakMap< QueryClient, SlowNormalizationQueue >();
+
+const cacheKeyForPost = ( post: ReaderPostCachePost ): string | null => {
+	if ( typeof post.global_ID === 'string' && post.global_ID ) {
+		return post.global_ID;
+	}
+
+	const key = keyForPost( post );
+	if ( ! key ) {
+		return null;
+	}
+
+	return JSON.stringify( key );
+};
+
 export const normalizeReaderPostsForCache = (
 	posts: Array< ReaderPostCachePost | null | undefined >
 ) =>
@@ -72,6 +92,41 @@ export const syncNormalizedReaderPostCache = (
 ) => {
 	upsertReaderPostCache( queryClient, normalizedPosts );
 	seedPostLikesQueries( queryClient, normalizedPosts );
+};
+
+const scheduleSlowNormalization = (
+	queryClient: QueryClient,
+	normalizedPosts: ReaderPostCachePost[]
+) => {
+	let queue = slowNormalizationQueues.get( queryClient );
+	if ( ! queue ) {
+		queue = { postsByKey: new Map(), scheduled: false };
+		slowNormalizationQueues.set( queryClient, queue );
+	}
+
+	for ( const post of normalizedPosts ) {
+		const key = cacheKeyForPost( post );
+		if ( key ) {
+			queue.postsByKey.set( key, post );
+		}
+	}
+
+	if ( queue.scheduled ) {
+		return;
+	}
+
+	queue.scheduled = true;
+	void Promise.resolve().then( () => {
+		const posts = [ ...queue.postsByKey.values() ];
+		queue.postsByKey.clear();
+		queue.scheduled = false;
+
+		void Promise.all( posts.map( ( post ) => hideRejections( runSlowRules( post ) ) ) ).then(
+			( processedPosts ) => {
+				syncNormalizedReaderPostCache( queryClient, processedPosts.filter( Boolean ) );
+			}
+		);
+	} );
 };
 
 function reloadReaderPostIntoCache( queryClient: QueryClient, post: ReaderPostCachePost ) {
@@ -105,12 +160,7 @@ export function syncReaderPostCache(
 
 	const normalizedPosts = normalizeReaderPostsForCache( posts );
 	syncNormalizedReaderPostCache( queryClient, normalizedPosts );
-
-	void Promise.all(
-		normalizedPosts.map( ( post ) => hideRejections( runSlowRules( post ) ) )
-	).then( ( processedPosts ) => {
-		syncNormalizedReaderPostCache( queryClient, processedPosts.filter( Boolean ) );
-	} );
+	scheduleSlowNormalization( queryClient, normalizedPosts );
 }
 
 export const syncReaderConversationFollowStatus = (

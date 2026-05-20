@@ -15,7 +15,7 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 jest.mock( 'calypso/blocks/reader-related-card', () => ( {
-	RelatedPostCard: ( { post } ) => <article>{ post.title }</article>,
+	RelatedPostCard: ( { post } ) => <article>{ post?.title ?? 'Loading recommendation' }</article>,
 } ) );
 
 jest.mock( 'calypso/reader/stats', () => ( {
@@ -75,5 +75,43 @@ describe( 'RecommendedPostsWithPosts', () => {
 			expect( screen.getByText( 'Second recommendation' ) ).toBeInTheDocument();
 		} );
 		expect( nock.isDone() ).toBe( true );
+	} );
+
+	it( 'keeps recommendation slots stable while individual posts load', async () => {
+		nock( BASE ).get( '/rest/v1.1/read/sites/100/posts/1' ).query( true ).delay( 50 ).reply( 200, {
+			ID: 1,
+			site_ID: 100,
+			global_ID: 'global-1',
+			title: 'First recommendation',
+			content: '<p>First recommendation body</p>',
+		} );
+		nock( BASE ).get( '/rest/v1.1/read/sites/100/posts/2' ).query( true ).reply( 200, {
+			ID: 2,
+			site_ID: 100,
+			global_ID: 'global-2',
+			title: 'Second recommendation',
+			content: '<p>Second recommendation body</p>',
+		} );
+
+		render(
+			<RecommendedPosts
+				index={ 0 }
+				recommendations={ [
+					{ blogId: 100, postId: 1 },
+					{ blogId: 100, postId: 2 },
+				] }
+			/>,
+			{
+				wrapper: makeWrapper(
+					new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+				),
+			}
+		);
+
+		await waitFor( () =>
+			expect( screen.getByText( 'Second recommendation' ) ).toBeInTheDocument()
+		);
+		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+		expect( screen.getByText( 'Loading recommendation' ) ).toBeInTheDocument();
 	} );
 } );

@@ -1,6 +1,6 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
 import {
 	syncReaderConversationFollowStatus,
@@ -58,6 +58,14 @@ type PollHeadQueryKey = readonly [
 const postKeyId = ( postKey: PostKey | null | undefined ): string =>
 	postKey ? keyToString( postKey ) ?? '' : '';
 
+const railcarId = ( railcar: unknown ): string | null => {
+	if ( ! railcar || typeof railcar !== 'object' ) {
+		return null;
+	}
+	const id = ( railcar as { railcar?: unknown } ).railcar;
+	return typeof id === 'string' ? id : JSON.stringify( railcar );
+};
+
 /**
  * Drives the "X new posts" pill. A separate `useQuery` polls the head of the
  * stream every minute (`refetchInterval`); the diff between the polled head
@@ -82,6 +90,7 @@ export function useStreamPendingPosts( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const streamType = getStreamType( streamKey );
+	const renderedRailcars = useRef< Set< string > >( new Set() );
 
 	const pollQueryKey = useMemo< PollHeadQueryKey >(
 		() => [ 'read', 'stream', 'poll-head', streamKey, feedId, localeSlug, startDate ] as const,
@@ -121,6 +130,10 @@ export function useStreamPendingPosts( {
 		meta: { persist: false },
 	} );
 
+	useEffect( () => {
+		renderedRailcars.current.clear();
+	}, [ pollQueryKey ] );
+
 	// Hydrate the canonical cache on every poll tick so post bodies are ready
 	// before the user clicks "X new posts".
 	useEffect( () => {
@@ -129,10 +142,18 @@ export function useStreamPendingPosts( {
 		}
 		const { streamPosts } = normalizeStreamPage( pollHead.data, streamType );
 		if ( streamPosts.length > 0 ) {
+			const unrenderedRailcarPosts = streamPosts.filter( ( post ) => {
+				const id = railcarId( post.railcar );
+				if ( ! id || renderedRailcars.current.has( id ) ) {
+					return false;
+				}
+				renderedRailcars.current.add( id );
+				return true;
+			} );
 			analyticsForStream( {
 				streamKey,
 				algorithm: pollHead.data.algorithm,
-				items: streamPosts,
+				items: unrenderedRailcarPosts,
 			} ).forEach( ( action ) => dispatch( action ) );
 			syncReaderPostCache( queryClient, streamPosts );
 			syncReaderConversationFollowStatus( dispatch, streamPosts );

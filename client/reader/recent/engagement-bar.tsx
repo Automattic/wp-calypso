@@ -13,6 +13,25 @@ interface EngagementBarProps {
 	commentsApiDisabled?: boolean;
 }
 
+const numberValue = ( value: unknown ): number => {
+	const number = Number( value );
+	return Number.isFinite( number ) ? number : 0;
+};
+
+const postToTrackPostData = ( post: Record< string, unknown > ): TrackPostData => ( {
+	site_ID: numberValue( post.site_ID ),
+	ID: numberValue( post.ID ),
+	feed_ID: numberValue( post.feed_ID ),
+	feed_item_ID: numberValue( post.feed_item_ID ),
+	is_external: Boolean( post.is_external ),
+	is_jetpack: Boolean( post.is_jetpack ),
+	railcar: ( post.railcar ?? {} ) as Record< string, unknown >,
+	blog_id: numberValue( post.site_ID ),
+	post_id: numberValue( post.ID ),
+	feed_id: numberValue( post.feed_ID ),
+	feed_item_id: numberValue( post.feed_item_ID ),
+} );
+
 const EngagementBar = ( {
 	className = '',
 	feedId,
@@ -41,7 +60,7 @@ const EngagementBar = ( {
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost(
 			'calypso_reader_post_comments_button_clicked',
-			post as unknown as TrackPostData
+			postToTrackPostData( post )
 		);
 		scrollToComments( { focusTextArea: true } );
 	};

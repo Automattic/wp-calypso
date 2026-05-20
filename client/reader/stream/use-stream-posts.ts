@@ -5,7 +5,7 @@ import {
 	type ReadStreamInfiniteQueryHelpers,
 } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
 	syncReaderConversationFollowStatus,
 	syncReaderPostCache,
@@ -157,6 +157,7 @@ export function useStreamPosts( {
 	);
 
 	const query = useInfiniteQuery( queryOptions );
+	const processedPages = useRef< WeakSet< ReadStreamResponse > >( new WeakSet() );
 
 	useEffect( () => {
 		const pages = query.data?.pages;
@@ -164,11 +165,16 @@ export function useStreamPosts( {
 			return;
 		}
 		for ( let i = 0; i < pages.length; i++ ) {
-			const { streamPosts } = normalizeStreamPage( pages[ i ] as ReadStreamResponse, streamType );
+			const page = pages[ i ] as ReadStreamResponse;
+			if ( processedPages.current.has( page ) ) {
+				continue;
+			}
+			processedPages.current.add( page );
+			const { streamPosts } = normalizeStreamPage( page, streamType );
 			if ( streamPosts.length > 0 ) {
 				analyticsForStream( {
 					streamKey: resolvedStreamKey,
-					algorithm: ( pages[ i ] as ReadStreamResponse ).algorithm,
+					algorithm: page.algorithm,
 					items: streamPosts,
 				} ).forEach( ( action ) => dispatch( action ) );
 				syncReaderPostCache( queryClient, streamPosts );
