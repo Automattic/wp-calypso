@@ -87,6 +87,12 @@ export default function TailoredLaunchpad( { tasks }: Props ) {
 	// Otherwise a re-render with a new `tasks` array would yank focus back to
 	// the first task and surprise them.
 	const [ userTouched, setUserTouched ] = useState< boolean >( false );
+	// Tasks the user skipped this session. Skipped tasks render with the same
+	// resolved (struck-through) treatment as completed ones. Session-only by
+	// design — a reload clears it and the task returns to the list.
+	const [ skippedIds, setSkippedIds ] = useState< Set< string > >( () => new Set() );
+
+	const isResolved = ( task: SelectedTask ) => task.completed || skippedIds.has( task.id );
 
 	// Land on the first incomplete task once tasks become available. This
 	// runs whenever the tasks list changes (e.g. when Dolly's response lands
@@ -97,11 +103,12 @@ export default function TailoredLaunchpad( { tasks }: Props ) {
 		if ( userTouched || tasks.length === 0 ) {
 			return;
 		}
-		const firstIncomplete = tasks.find( ( task ) => ! task.completed )?.id ?? null;
-		if ( firstIncomplete && firstIncomplete !== openTaskId ) {
-			setOpenTaskId( firstIncomplete );
+		const firstUnresolved =
+			tasks.find( ( task ) => ! task.completed && ! skippedIds.has( task.id ) )?.id ?? null;
+		if ( firstUnresolved && firstUnresolved !== openTaskId ) {
+			setOpenTaskId( firstUnresolved );
 		}
-	}, [ tasks, openTaskId, userTouched ] );
+	}, [ tasks, openTaskId, userTouched, skippedIds ] );
 
 	if ( tasks.length === 0 ) {
 		return (
@@ -114,9 +121,11 @@ export default function TailoredLaunchpad( { tasks }: Props ) {
 	return (
 		<div className="tailored-launchpad">
 			{ tasks.map( ( task, index ) => {
-				// Completed tasks aren't expandable — there's nothing left to do.
-				// Render them as a plain Card so there's no dangling chevron.
-				if ( task.completed ) {
+				// Resolved tasks (completed OR skipped) aren't expandable — there's
+				// nothing left to do. Render them as a plain Card so there's no
+				// dangling chevron. Skipped tasks intentionally look identical to
+				// completed ones.
+				if ( isResolved( task ) ) {
 					return (
 						<Card.Root key={ task.id } className="tailored-launchpad__card is-completed">
 							<Card.Header>
@@ -131,12 +140,20 @@ export default function TailoredLaunchpad( { tasks }: Props ) {
 					);
 				}
 
-				// "Skip" moves the user along the checklist: collapse this card
-				// and open the next one (or close everything if it was last).
-				const nextTask = tasks[ index + 1 ];
+				// "Skip" resolves this card (it takes the same struck-through style
+				// as a completed task) and advances to the next unresolved task —
+				// or closes everything if none remain.
 				const skipToNext = () => {
 					setUserTouched( true );
-					setOpenTaskId( nextTask ? nextTask.id : null );
+					setSkippedIds( ( prev ) => {
+						const next = new Set( prev );
+						next.add( task.id );
+						return next;
+					} );
+					const nextUnresolved = tasks
+						.slice( index + 1 )
+						.find( ( candidate ) => ! candidate.completed && ! skippedIds.has( candidate.id ) );
+					setOpenTaskId( nextUnresolved ? nextUnresolved.id : null );
 				};
 
 				return (

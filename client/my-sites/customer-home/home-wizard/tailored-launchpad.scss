@@ -26,8 +26,8 @@
 
 // Status icon next to each task title:
 //   - active (dashed circle): neutral-weak fg, hints "todo, not started"
-//   - done   (filled-stroke circle + check): brand accent so completed tasks
-//     read as a positive state.
+//   - done   (filled-stroke circle + check): neutral fg — a completed/skipped
+//     task reads as quietly resolved, not as a loud accent.
 // @wordpress/ui's Icon puts the className on the <svg> itself, so this
 // targets the SVG directly — `color` cascades into `currentColor` on the
 // inline strokes/fills.
@@ -36,7 +36,7 @@
 	flex-shrink: 0;
 
 	&.is-done {
-		color: var(--wp-admin-theme-color, #3858e9);
+		color: var(--wpds-color-fg-content-neutral-weak, #707070);
 	}
 }
 
