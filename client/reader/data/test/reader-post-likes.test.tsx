@@ -29,7 +29,7 @@ describe( 'useReaderPostLikeActions', () => {
 				site_ID: 100,
 				global_ID: 'global-1',
 				i_like: true,
-				like_count: 72,
+				like_count: '72',
 			},
 		] );
 		queryClient.setQueryData( postLikesQuery( 100, 1 ).queryKey, {
@@ -58,7 +58,7 @@ describe( 'useReaderPostLikeActions', () => {
 		await waitFor( () =>
 			expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 				i_like: true,
-				like_count: 72,
+				like_count: '72',
 			} )
 		);
 	} );

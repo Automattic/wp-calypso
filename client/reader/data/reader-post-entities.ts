@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import type { QueryClient } from '@tanstack/react-query';
 
 export type ReaderPostEntityPost = Record< string, unknown >;
@@ -32,42 +33,11 @@ const valueToString = ( value: unknown ): string | null => {
 };
 
 const postKeyStringFromKey = ( postKey: ReaderPostEntityKey ): string | null => {
-	const postId = valueToString( postKey.postId );
-	if ( ! postId ) {
-		return null;
-	}
-	const feedId = valueToString( postKey.feedId );
-	if ( feedId ) {
-		return `feed-${ postId }-${ feedId }`;
-	}
-	const blogId = valueToString( postKey.blogId );
-	if ( blogId ) {
-		return `blog-${ postId }-${ blogId }`;
-	}
-	return null;
+	return keyToString( postKey );
 };
 
 const postKeyStringFromPost = ( post: ReaderPostEntityPost ): string | null => {
-	const feedId = valueToString( post.feed_ID );
-	const feedItemId =
-		valueToString( post.feed_item_ID ) ??
-		( Array.isArray( post.feed_item_IDs ) ? valueToString( post.feed_item_IDs[ 0 ] ) : null );
-	if ( feedId && feedItemId ) {
-		return `feed-${ feedItemId }-${ feedId }`;
-	}
-
-	const siteId = valueToString( post.site_ID );
-	const postId = valueToString( post.ID );
-	if ( Boolean( post.is_external ) && postId ) {
-		const externalFeedId = feedId ?? siteId;
-		if ( externalFeedId ) {
-			return `feed-${ postId }-${ externalFeedId }`;
-		}
-	}
-	if ( siteId && postId ) {
-		return `blog-${ postId }-${ siteId }`;
-	}
-	return null;
+	return keyToString( keyForPost( post ) );
 };
 
 const postKeyStringsFromPost = ( post: ReaderPostEntityPost ): string[] => {
@@ -273,29 +243,36 @@ const getMatchingEntityKeyStrings = (
 	return [ ...matchingKeyStrings ];
 };
 
-const getUpsertEntityKeyStrings = (
-	queryClient: QueryClient,
-	post: ReaderPostEntityPost
-): string[] => {
-	return [
-		...new Set( [
-			...postKeyStringsFromPost( post ),
-			...getMatchingEntityKeyStrings( queryClient, post ),
-		] ),
-	];
-};
-
 export const upsertReaderPostEntities = (
 	queryClient: QueryClient,
 	posts: Array< ReaderPostEntityPost | null | undefined >
 ) => {
 	ensureReaderPostEntityQueryDefaults( queryClient );
 
-	for ( const post of posts ) {
-		if ( ! post ) {
+	const validPosts = posts.filter( Boolean ) as ReaderPostEntityPost[];
+	const keyStringsByPost = new Map(
+		validPosts.map( ( post ) => [ post, new Set( postKeyStringsFromPost( post ) ) ] )
+	);
+	const entityQueries = queryClient.getQueriesData< ReaderPostEntityData >( {
+		queryKey: READER_POST_ENTITY_QUERY_KEY_PREFIX,
+	} );
+
+	for ( const [ queryKey, current ] of entityQueries ) {
+		const merged = mergeReaderPostEntityData( current );
+		const keyString = ( queryKey as ReaderPostEntityQueryKey )[ 3 ];
+		if ( ! merged || ! keyString ) {
 			continue;
 		}
-		getUpsertEntityKeyStrings( queryClient, post ).forEach( ( keyString ) => {
+
+		validPosts.forEach( ( post ) => {
+			if ( entityMatchesTarget( merged, post ) ) {
+				keyStringsByPost.get( post )?.add( keyString );
+			}
+		} );
+	}
+
+	validPosts.forEach( ( post ) => {
+		keyStringsByPost.get( post )?.forEach( ( keyString ) => {
 			queryClient.setQueryData< ReaderPostEntityData >(
 				readerPostEntityQueryKeyFromString( keyString ),
 				( current ) => ( {
@@ -304,7 +281,7 @@ export const upsertReaderPostEntities = (
 				} )
 			);
 		} );
-	}
+	} );
 };
 
 export const getReaderPostEntity = (

@@ -50,7 +50,8 @@ const normalizeId = ( value: number | string | null | undefined ) => {
 		return null;
 	}
 
-	return Number( value );
+	const numericValue = Number( value );
+	return Number.isFinite( numericValue ) ? numericValue : null;
 };
 
 export const usePostLikes = (

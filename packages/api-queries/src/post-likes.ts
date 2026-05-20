@@ -27,6 +27,17 @@ export const postLikesQuery = ( siteId?: number | null, postId?: number | null )
 
 const queryKey = ( siteId: number, postId: number ) => postLikesQuery( siteId, postId ).queryKey;
 
+const ensurePostLikesQueryDefaults = (
+	queryClient: QueryClient,
+	siteId: number,
+	postId: number
+) => {
+	queryClient.setQueryDefaults( queryKey( siteId, postId ), {
+		staleTime: STALE_TIME,
+		meta: { persist: false },
+	} );
+};
+
 const pendingPostLikeMutationCount = ( queryClient: QueryClient, siteId: number, postId: number ) =>
 	queryClient.isMutating( {
 		predicate: ( mutation ) => {
@@ -85,6 +96,7 @@ const snapshotAndUpdate = async (
 	iLike: boolean
 ): Promise< PostLikeMutationContext > => {
 	const key = queryKey( siteId, postId );
+	ensurePostLikesQueryDefaults( queryClient, siteId, postId );
 	await queryClient.cancelQueries( { queryKey: key } );
 	const previous = queryClient.getQueryData< PostLikesResponse >( key );
 	queryClient.setQueryData< PostLikesResponse >( key, optimisticLikeData( previous, iLike ) );
@@ -127,6 +139,7 @@ export const likePostMutation = ( queryClient: QueryClient ) =>
 		mutationFn: likePost,
 		onMutate: ( variables ) => snapshotAndUpdate( queryClient, variables, true ),
 		onSuccess: ( data, { siteId, postId } ) => {
+			ensurePostLikesQueryDefaults( queryClient, siteId, postId );
 			queryClient.setQueryData< PostLikesResponse >( queryKey( siteId, postId ), ( current ) => {
 				const optimisticData = optimisticLikeData( current, true );
 				return {
@@ -151,6 +164,7 @@ export const unlikePostMutation = ( queryClient: QueryClient ) =>
 		mutationFn: unlikePost,
 		onMutate: ( variables ) => snapshotAndUpdate( queryClient, variables, false ),
 		onSuccess: ( data, { siteId, postId } ) => {
+			ensurePostLikesQueryDefaults( queryClient, siteId, postId );
 			queryClient.setQueryData< PostLikesResponse >( queryKey( siteId, postId ), ( current ) => {
 				const optimisticData = optimisticLikeData( current, false );
 				return {

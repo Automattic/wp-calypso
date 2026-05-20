@@ -54,7 +54,12 @@ const seedPostLikesQueries = (
 			continue;
 		}
 
-		const key = postLikesQuery( siteId, postId ).queryKey;
+		const query = postLikesQuery( siteId, postId );
+		queryClient.setQueryDefaults( query.queryKey, {
+			staleTime: query.staleTime,
+			meta: query.meta,
+		} );
+		const key = query.queryKey;
 		if ( queryClient.getQueryData( key ) ) {
 			continue;
 		}

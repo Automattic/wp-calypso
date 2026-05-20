@@ -42,30 +42,6 @@ export function getCalypsoQueryClient(): QueryClient | null {
 	return calypsoQueryClient;
 }
 
-const isReaderStreamInfiniteQueryKey = ( queryKey: unknown ): boolean =>
-	Array.isArray( queryKey ) &&
-	queryKey[ 0 ] === 'read' &&
-	queryKey[ 1 ] === 'stream' &&
-	queryKey[ 2 ] === 'infinite';
-
-export function filterPersistedQueryClientState(
-	state: PersistedClient | null
-): PersistedClient | null {
-	if ( ! state?.clientState?.queries ) {
-		return state;
-	}
-
-	return {
-		...state,
-		clientState: {
-			...state.clientState,
-			queries: state.clientState.queries.filter(
-				( query ) => ! isReaderStreamInfiniteQueryKey( query.queryKey )
-			),
-		},
-	};
-}
-
 export async function createQueryClient(
 	persistenceKey?: string | number
 ): Promise< CreateQueryClientReturn > {
@@ -123,7 +99,7 @@ export async function hydrateBrowserState(
 				SERIALIZE_THROTTLE,
 				{ leading: false, trailing: true }
 			),
-			restoreClient: () => filterPersistedQueryClientState( getPersistedStateItem( storeKey ) ),
+			restoreClient: () => getPersistedStateItem( storeKey ),
 			removeClient: () => {
 				// not implemented
 			},

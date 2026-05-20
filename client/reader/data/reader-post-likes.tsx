@@ -31,7 +31,10 @@ type ReaderPostLikeSnapshot = {
 const displayName = ( WrappedComponent: { displayName?: string; name?: string } ) =>
 	WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-const currentLikeCount = ( value: unknown ) => ( typeof value === 'number' ? value : 0 );
+const currentLikeCount = ( value: unknown ) => {
+	const numericValue = Number( value );
+	return Number.isFinite( numericValue ) ? numericValue : 0;
+};
 
 export const useReaderPostLikeActions = (): ReaderPostLikeActionsInjectedProps => {
 	const queryClient = useQueryClient();
