@@ -4,15 +4,6 @@ import {
 	FEATURE_READER,
 	FEATURE_STATS,
 	FEATURE_SUPPORT,
-	LAUNCHPAD_ENTREPRENEUR_SITE_SETUP,
-	LAUNCHPAD_INTENT_BUILD,
-	LAUNCHPAD_INTENT_FREE_NEWSLETTER,
-	LAUNCHPAD_INTENT_HOSTING,
-	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
-	LAUNCHPAD_INTENT_WRITE,
-	LAUNCHPAD_PRE_LAUNCH,
-	LAUNCHPAD_LEGACY_SITE_SETUP,
-	LAUNCHPAD_POST_MIGRATION,
 	NOTICE_CELEBRATE_SITE_CREATION,
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
@@ -45,24 +36,11 @@ import {
 	TASK_USE_BUILT_BY,
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
-	LAUNCHPAD_INTENT_NEWSLETTER_GOAL,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import ReaderCard from 'calypso/my-sites/customer-home/cards/features/reader';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
-import LaunchpadEntrepreneurSiteSetup from 'calypso/my-sites/customer-home/cards/launchpad/entrepreneur-site-setup';
-import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
-import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
-import {
-	LaunchpadIntentNewsletterGoal,
-	LaunchpadIntentFreeNewsletter,
-	LaunchpadIntentPaidNewsletter,
-} from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
-import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
-import { LaunchpadPostMigration } from 'calypso/my-sites/customer-home/cards/launchpad/post-migration';
-import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/pre-launch';
-import { LaunchpadSiteSetup } from 'calypso/my-sites/customer-home/cards/launchpad/site-setup';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -97,8 +75,6 @@ type CardComponentMap = Record<
 >;
 
 const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
-	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
-	[ LAUNCHPAD_INTENT_HOSTING ]: LaunchpadIntentHosting,
 	[ NOTICE_CELEBRATE_SITE_COPY ]: CelebrateSiteCopy,
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
@@ -136,16 +112,6 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ FEATURE_READER ]: ReaderCard,
 	[ FEATURE_SUPPORT ]: HelpSearch,
 	[ FEATURE_STATS ]: Stats,
-	[ LAUNCHPAD_ENTREPRENEUR_SITE_SETUP ]: LaunchpadEntrepreneurSiteSetup,
-	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
-	[ LAUNCHPAD_INTENT_FREE_NEWSLETTER ]: LaunchpadIntentFreeNewsletter,
-	[ LAUNCHPAD_INTENT_HOSTING ]: LaunchpadIntentHosting,
-	[ LAUNCHPAD_INTENT_PAID_NEWSLETTER ]: LaunchpadIntentPaidNewsletter,
-	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
-	[ LAUNCHPAD_PRE_LAUNCH ]: LaunchpadPreLaunch,
-	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
-	[ LAUNCHPAD_INTENT_NEWSLETTER_GOAL ]: LaunchpadIntentNewsletterGoal,
-	[ LAUNCHPAD_POST_MIGRATION ]: LaunchpadPostMigration,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_BLOGANUARY_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_LEARN_GROW ]: LearnGrow,

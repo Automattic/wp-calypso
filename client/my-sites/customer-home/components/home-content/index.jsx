@@ -187,7 +187,7 @@ const HomeContentControl = ( {
 				compactBreadcrumb={ false }
 				navigationItems={ [] }
 				mobileItem={ null }
-				title={ translate( 'My Home' ) }
+				title={ translate( 'Home' ) }
 				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
 				{ headerActions }
@@ -474,7 +474,7 @@ const HomeContentTreatment = ( {
 				compactBreadcrumb={ false }
 				navigationItems={ [] }
 				mobileItem={ null }
-				title={ translate( 'My Home' ) }
+				title={ translate( 'Home' ) }
 				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
 				{ headerActions }
