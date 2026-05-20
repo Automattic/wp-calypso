@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertReaderPostEntities } from 'calypso/reader/data/reader-post-entities';
-import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
+import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import EngagementBar from '../engagement-bar';
 import type { ReactNode } from 'react';
@@ -28,7 +28,7 @@ const makeStore = ( queryClient: QueryClient ) =>
 		undefined,
 		applyMiddleware(
 			thunkMiddleware,
-			createReaderPostEntitiesMiddleware( () => queryClient )
+			createReaderPostCacheMiddleware( () => queryClient )
 		)
 	);
 
@@ -45,9 +45,9 @@ describe( 'EngagementBar', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'renders actions from the canonical Reader post entity cache', () => {
+	it( 'renders actions from the canonical Reader post cache', () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostEntities( queryClient, [
+		upsertReaderPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -63,7 +63,7 @@ describe( 'EngagementBar', () => {
 		expect( screen.getByTestId( 'reader-post-actions' ) ).toHaveTextContent( 'Cached post' );
 	} );
 
-	it( 'loads the post when it is missing from the canonical entity cache', async () => {
+	it( 'loads the post when it is missing from the canonical post cache', async () => {
 		const queryClient = makeQueryClient();
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/feed/200/posts/300' )

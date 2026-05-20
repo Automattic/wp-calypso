@@ -5,8 +5,10 @@ import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
 import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
-import { useReaderPostEntity } from './reader-post-entities';
+import { useCachedReaderPost } from './reader-post-cache';
+import type { ReaderPostCachePost } from './reader-post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 	const blogId = ( postKey as { blogId?: number } ).blogId;
@@ -30,9 +32,17 @@ const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 	};
 };
 
-export const useReaderPost = ( postKey: Partial< ReadPostKey > | null | undefined ) => {
+export type ReaderPostResult = Omit< UseQueryResult< ReaderPostCachePost, Error >, 'data' > & {
+	data: ReaderPostCachePost | undefined;
+};
+
+// UI-facing hook: returns the React Query result shape, with `data` resolved
+// from the Reader post cache when available and fetched when missing.
+export const useReaderPost = (
+	postKey: Partial< ReadPostKey > | null | undefined
+): ReaderPostResult => {
 	const dispatch = useDispatch();
-	const cachedPost = useReaderPostEntity( postKey );
+	const cachedPost = useCachedReaderPost( postKey );
 	const hasRenderablePostContent = !! (
 		cachedPost?.content ||
 		cachedPost?.excerpt ||
@@ -45,28 +55,31 @@ export const useReaderPost = ( postKey: Partial< ReadPostKey > | null | undefine
 		( ! cachedPost.is_error && ! hasRenderablePostContent );
 
 	const queryOptions = readerPostQuery( postKey, readerContentWidth() );
-	const { data, isError, error } = useQuery( {
+	const query = useQuery( {
 		...queryOptions,
 		enabled: queryOptions.enabled !== false && shouldFetch,
 	} );
 
 	useEffect( () => {
-		if ( data ) {
-			dispatch( receivePosts( [ data ] ) );
+		if ( query.data ) {
+			dispatch( receivePosts( [ query.data ] ) );
 		}
-	}, [ data, dispatch ] );
+	}, [ query.data, dispatch ] );
 
 	// Dispatch the raw action to bypass `receivePosts`' normalization, which
 	// doesn't apply to a post that never loaded.
 	useEffect( () => {
-		if ( ! isError || ! postKey ) {
+		if ( ! query.isError || ! postKey ) {
 			return;
 		}
 		dispatch( {
 			type: READER_POSTS_RECEIVE,
-			posts: [ buildErrorPost( postKey, error ) ],
+			posts: [ buildErrorPost( postKey, query.error ) ],
 		} );
-	}, [ isError, error, postKey, dispatch ] );
+	}, [ query.isError, query.error, postKey, dispatch ] );
 
-	return cachedPost;
+	return {
+		...query,
+		data: cachedPost ?? query.data,
+	};
 };

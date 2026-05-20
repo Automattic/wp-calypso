@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertReaderPostEntities } from 'calypso/reader/data/reader-post-entities';
+import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
 import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
 import readerReducer from 'calypso/state/reader/reducer';
 import PostLifecycle from '../post-lifecycle';
@@ -53,9 +53,9 @@ function makeWrapper( queryClient: QueryClient, posts: Array< Record< string, un
 }
 
 describe( 'PostLifecycle', () => {
-	it( 'renders posts from the canonical post entity cache', () => {
+	it( 'renders posts from the canonical post cache', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		upsertReaderPostEntities( queryClient, [
+		upsertReaderPostCache( queryClient, [
 			{ ID: 1, site_ID: 100, global_ID: 'global-1', title: 'Canonical title' },
 		] );
 		const Wrapper = makeWrapper( queryClient );
@@ -70,7 +70,7 @@ describe( 'PostLifecycle', () => {
 		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'queries the post when no canonical entity exists', () => {
+	it( 'queries the post when no canonical cache entry exists', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		const Wrapper = makeWrapper( queryClient, [
 			{ ID: 1, site_ID: 100, global_ID: 'global-1', title: 'Redux title' },

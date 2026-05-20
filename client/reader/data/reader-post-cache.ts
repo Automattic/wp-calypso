@@ -4,24 +4,24 @@ import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 
-export type ReaderPostEntityPost = Record< string, unknown >;
+export type ReaderPostCachePost = Record< string, unknown >;
 
-interface ReaderPostEntityData {
-	base: ReaderPostEntityPost;
-	overlay: ReaderPostEntityPost;
+interface ReaderPostCacheData {
+	base: ReaderPostCachePost;
+	overlay: ReaderPostCachePost;
 }
 
-interface ReaderPostEntityKey {
+interface ReaderPostCacheKey {
 	blogId?: number | string | null;
 	feedId?: number | string | null;
 	postId?: number | string | null;
 }
 
-type ReaderPostEntityTarget = ReaderPostEntityKey | ReaderPostEntityPost | null | undefined;
+type ReaderPostCacheTarget = ReaderPostCacheKey | ReaderPostCachePost | null | undefined;
 
-type ReaderPostEntityQueryKey = readonly [ 'read', 'post', 'entity', string ];
-const READER_POST_ENTITY_QUERY_KEY_PREFIX = [ 'read', 'post', 'entity' ] as const;
-const READER_POST_ENTITY_QUERY_OPTIONS = {
+type ReaderPostCacheQueryKey = readonly [ 'read', 'post', 'cache', string ];
+const READER_POST_CACHE_QUERY_KEY_PREFIX = [ 'read', 'post', 'cache' ] as const;
+const READER_POST_CACHE_QUERY_OPTIONS = {
 	staleTime: Infinity,
 	meta: { persist: false },
 } as const;
@@ -33,15 +33,15 @@ const valueToString = ( value: unknown ): string | null => {
 	return String( value );
 };
 
-const postKeyStringFromKey = ( postKey: ReaderPostEntityKey ): string | null => {
+const postKeyStringFromKey = ( postKey: ReaderPostCacheKey ): string | null => {
 	return keyToString( postKey );
 };
 
-const postKeyStringFromPost = ( post: ReaderPostEntityPost ): string | null => {
+const postKeyStringFromPost = ( post: ReaderPostCachePost ): string | null => {
 	return keyToString( keyForPost( post ) );
 };
 
-const postKeyStringsFromPost = ( post: ReaderPostEntityPost ): string[] => {
+const postKeyStringsFromPost = ( post: ReaderPostCachePost ): string[] => {
 	const keyStrings = new Set< string >();
 	const siteId = valueToString( post.site_ID );
 	const postId = valueToString( post.ID );
@@ -74,7 +74,7 @@ const postKeyStringsFromPost = ( post: ReaderPostEntityPost ): string[] => {
 	return [ ...keyStrings ];
 };
 
-const isReaderPostEntityKey = ( target: ReaderPostEntityTarget ): target is ReaderPostEntityKey => {
+const isReaderPostCacheKey = ( target: ReaderPostCacheTarget ): target is ReaderPostCacheKey => {
 	return (
 		typeof target === 'object' &&
 		target !== null &&
@@ -82,28 +82,28 @@ const isReaderPostEntityKey = ( target: ReaderPostEntityTarget ): target is Read
 	);
 };
 
-const readerPostEntityKeyString = ( target: ReaderPostEntityTarget ): string | null => {
+const readerPostCacheKeyString = ( target: ReaderPostCacheTarget ): string | null => {
 	if ( ! target ) {
 		return null;
 	}
-	if ( isReaderPostEntityKey( target ) ) {
+	if ( isReaderPostCacheKey( target ) ) {
 		return postKeyStringFromKey( target );
 	}
 	return postKeyStringFromPost( target );
 };
 
-const readerPostEntityQueryKey = ( target: ReaderPostEntityTarget ): ReaderPostEntityQueryKey => {
-	return [ 'read', 'post', 'entity', readerPostEntityKeyString( target ) ?? 'unknown' ] as const;
+const readerPostCacheQueryKey = ( target: ReaderPostCacheTarget ): ReaderPostCacheQueryKey => {
+	return [ 'read', 'post', 'cache', readerPostCacheKeyString( target ) ?? 'unknown' ] as const;
 };
 
-const readerPostEntityQueryKeyFromString = ( keyString: string ): ReaderPostEntityQueryKey => {
-	return [ 'read', 'post', 'entity', keyString ] as const;
+const readerPostCacheQueryKeyFromString = ( keyString: string ): ReaderPostCacheQueryKey => {
+	return [ 'read', 'post', 'cache', keyString ] as const;
 };
 
 const mergeReaderPost = (
-	base: ReaderPostEntityPost | null | undefined,
-	patch: ReaderPostEntityPost | null | undefined
-): ReaderPostEntityPost => {
+	base: ReaderPostCachePost | null | undefined,
+	patch: ReaderPostCachePost | null | undefined
+): ReaderPostCachePost => {
 	if ( ! base ) {
 		return { ...( patch ?? {} ) };
 	}
@@ -116,27 +116,27 @@ const mergeReaderPost = (
 		...( base.discussion || patch.discussion
 			? {
 					discussion: {
-						...( ( base.discussion as ReaderPostEntityPost | undefined ) ?? {} ),
-						...( ( patch.discussion as ReaderPostEntityPost | undefined ) ?? {} ),
+						...( ( base.discussion as ReaderPostCachePost | undefined ) ?? {} ),
+						...( ( patch.discussion as ReaderPostCachePost | undefined ) ?? {} ),
 					},
 			  }
 			: {} ),
 	};
 };
 
-const mergeReaderPostEntityData = (
-	data: ReaderPostEntityData | null | undefined
-): ReaderPostEntityPost | null => {
+const mergeReaderPostCacheData = (
+	data: ReaderPostCacheData | null | undefined
+): ReaderPostCachePost | null => {
 	if ( ! data ) {
 		return null;
 	}
 	return mergeReaderPost( data.base, data.overlay );
 };
 
-const ensureReaderPostEntityQueryDefaults = ( queryClient: QueryClient ) => {
+const ensureReaderPostCacheQueryDefaults = ( queryClient: QueryClient ) => {
 	queryClient.setQueryDefaults(
-		READER_POST_ENTITY_QUERY_KEY_PREFIX,
-		READER_POST_ENTITY_QUERY_OPTIONS
+		READER_POST_CACHE_QUERY_KEY_PREFIX,
+		READER_POST_CACHE_QUERY_OPTIONS
 	);
 };
 
@@ -160,7 +160,7 @@ const arraysShareMatchingValue = ( left: unknown, right: unknown ): boolean => {
 	);
 };
 
-const postMatchesKey = ( post: ReaderPostEntityPost, key: ReaderPostEntityKey ): boolean => {
+const postMatchesKey = ( post: ReaderPostCachePost, key: ReaderPostCacheKey ): boolean => {
 	if ( key.blogId && key.postId ) {
 		return valuesMatch( post.site_ID, key.blogId ) && valuesMatch( post.ID, key.postId );
 	}
@@ -180,7 +180,7 @@ const postMatchesKey = ( post: ReaderPostEntityPost, key: ReaderPostEntityKey ):
 	return false;
 };
 
-const postsShareIdentity = ( left: ReaderPostEntityPost, right: ReaderPostEntityPost ): boolean => {
+const postsShareIdentity = ( left: ReaderPostCachePost, right: ReaderPostCachePost ): boolean => {
 	if ( valuesMatch( left.global_ID, right.global_ID ) ) {
 		return true;
 	}
@@ -200,28 +200,28 @@ const postsShareIdentity = ( left: ReaderPostEntityPost, right: ReaderPostEntity
 	return false;
 };
 
-const entityMatchesTarget = (
-	entity: ReaderPostEntityPost,
-	target: ReaderPostEntityTarget
+const cacheEntryMatchesTarget = (
+	post: ReaderPostCachePost,
+	target: ReaderPostCacheTarget
 ): boolean => {
 	if ( ! target ) {
 		return false;
 	}
-	if ( isReaderPostEntityKey( target ) ) {
-		return postMatchesKey( entity, target );
+	if ( isReaderPostCacheKey( target ) ) {
+		return postMatchesKey( post, target );
 	}
-	return postsShareIdentity( entity, target );
+	return postsShareIdentity( post, target );
 };
 
-const getMatchingEntityKeyStrings = (
+const getMatchingCacheKeyStrings = (
 	queryClient: QueryClient,
-	target: ReaderPostEntityTarget
+	target: ReaderPostCacheTarget
 ): string[] => {
 	const matchingKeyStrings = new Set< string >();
-	const targetKeyString = readerPostEntityKeyString( target );
+	const targetKeyString = readerPostCacheKeyString( target );
 	const targetQueryData = targetKeyString
-		? queryClient.getQueryData< ReaderPostEntityData >(
-				readerPostEntityQueryKeyFromString( targetKeyString )
+		? queryClient.getQueryData< ReaderPostCacheData >(
+				readerPostCacheQueryKeyFromString( targetKeyString )
 		  )
 		: null;
 
@@ -229,14 +229,14 @@ const getMatchingEntityKeyStrings = (
 		matchingKeyStrings.add( targetKeyString as string );
 	}
 
-	const entityQueries = queryClient.getQueriesData< ReaderPostEntityData >( {
-		queryKey: READER_POST_ENTITY_QUERY_KEY_PREFIX,
+	const cacheQueries = queryClient.getQueriesData< ReaderPostCacheData >( {
+		queryKey: READER_POST_CACHE_QUERY_KEY_PREFIX,
 	} );
 
-	for ( const [ queryKey, current ] of entityQueries ) {
-		const merged = mergeReaderPostEntityData( current );
-		const keyString = ( queryKey as ReaderPostEntityQueryKey )[ 3 ];
-		if ( merged && keyString && entityMatchesTarget( merged, target ) ) {
+	for ( const [ queryKey, current ] of cacheQueries ) {
+		const merged = mergeReaderPostCacheData( current );
+		const keyString = ( queryKey as ReaderPostCacheQueryKey )[ 3 ];
+		if ( merged && keyString && cacheEntryMatchesTarget( merged, target ) ) {
 			matchingKeyStrings.add( keyString );
 		}
 	}
@@ -244,29 +244,29 @@ const getMatchingEntityKeyStrings = (
 	return [ ...matchingKeyStrings ];
 };
 
-export const upsertReaderPostEntities = (
+export const upsertReaderPostCache = (
 	queryClient: QueryClient,
-	posts: Array< ReaderPostEntityPost | null | undefined >
+	posts: Array< ReaderPostCachePost | null | undefined >
 ) => {
-	ensureReaderPostEntityQueryDefaults( queryClient );
+	ensureReaderPostCacheQueryDefaults( queryClient );
 
-	const validPosts = posts.filter( Boolean ) as ReaderPostEntityPost[];
+	const validPosts = posts.filter( Boolean ) as ReaderPostCachePost[];
 	const keyStringsByPost = new Map(
 		validPosts.map( ( post ) => [ post, new Set( postKeyStringsFromPost( post ) ) ] )
 	);
-	const entityQueries = queryClient.getQueriesData< ReaderPostEntityData >( {
-		queryKey: READER_POST_ENTITY_QUERY_KEY_PREFIX,
+	const cacheQueries = queryClient.getQueriesData< ReaderPostCacheData >( {
+		queryKey: READER_POST_CACHE_QUERY_KEY_PREFIX,
 	} );
 
-	for ( const [ queryKey, current ] of entityQueries ) {
-		const merged = mergeReaderPostEntityData( current );
-		const keyString = ( queryKey as ReaderPostEntityQueryKey )[ 3 ];
+	for ( const [ queryKey, current ] of cacheQueries ) {
+		const merged = mergeReaderPostCacheData( current );
+		const keyString = ( queryKey as ReaderPostCacheQueryKey )[ 3 ];
 		if ( ! merged || ! keyString ) {
 			continue;
 		}
 
 		validPosts.forEach( ( post ) => {
-			if ( entityMatchesTarget( merged, post ) ) {
+			if ( cacheEntryMatchesTarget( merged, post ) ) {
 				keyStringsByPost.get( post )?.add( keyString );
 			}
 		} );
@@ -274,8 +274,8 @@ export const upsertReaderPostEntities = (
 
 	validPosts.forEach( ( post ) => {
 		keyStringsByPost.get( post )?.forEach( ( keyString ) => {
-			queryClient.setQueryData< ReaderPostEntityData >(
-				readerPostEntityQueryKeyFromString( keyString ),
+			queryClient.setQueryData< ReaderPostCacheData >(
+				readerPostCacheQueryKeyFromString( keyString ),
 				( current ) => ( {
 					base: mergeReaderPost( current?.base, post ),
 					overlay: current?.overlay ?? {},
@@ -285,33 +285,33 @@ export const upsertReaderPostEntities = (
 	} );
 };
 
-export const getReaderPostEntity = (
+export const getCachedReaderPost = (
 	queryClient: QueryClient,
-	target: ReaderPostEntityTarget
-): ReaderPostEntityPost | null => {
-	const keyString = readerPostEntityKeyString( target );
+	target: ReaderPostCacheTarget
+): ReaderPostCachePost | null => {
+	const keyString = readerPostCacheKeyString( target );
 	if ( ! keyString ) {
 		return null;
 	}
 	return (
-		mergeReaderPostEntityData(
-			queryClient.getQueryData< ReaderPostEntityData >( readerPostEntityQueryKey( target ) )
+		mergeReaderPostCacheData(
+			queryClient.getQueryData< ReaderPostCacheData >( readerPostCacheQueryKey( target ) )
 		) ?? null
 	);
 };
 
-export const updateReaderPostLocalState = (
+export const updateCachedReaderPost = (
 	queryClient: QueryClient,
-	target: ReaderPostEntityTarget,
-	patch: ( post: ReaderPostEntityPost | null ) => ReaderPostEntityPost
+	target: ReaderPostCacheTarget,
+	patch: ( post: ReaderPostCachePost | null ) => ReaderPostCachePost
 ) => {
-	ensureReaderPostEntityQueryDefaults( queryClient );
+	ensureReaderPostCacheQueryDefaults( queryClient );
 
-	getMatchingEntityKeyStrings( queryClient, target ).forEach( ( keyString ) => {
-		queryClient.setQueryData< ReaderPostEntityData >(
-			readerPostEntityQueryKeyFromString( keyString ),
+	getMatchingCacheKeyStrings( queryClient, target ).forEach( ( keyString ) => {
+		queryClient.setQueryData< ReaderPostCacheData >(
+			readerPostCacheQueryKeyFromString( keyString ),
 			( current ) => {
-				const merged = mergeReaderPostEntityData( current );
+				const merged = mergeReaderPostCacheData( current );
 				if ( ! current || ! merged ) {
 					return current;
 				}
@@ -325,54 +325,55 @@ export const updateReaderPostLocalState = (
 	} );
 };
 
-export const updateReaderPostLocalStateMatching = (
+export const updateCachedReaderPostsMatching = (
 	queryClient: QueryClient,
-	predicate: ( post: ReaderPostEntityPost ) => boolean,
-	patch: ( post: ReaderPostEntityPost ) => ReaderPostEntityPost
+	predicate: ( post: ReaderPostCachePost ) => boolean,
+	patch: ( post: ReaderPostCachePost ) => ReaderPostCachePost
 ) => {
-	ensureReaderPostEntityQueryDefaults( queryClient );
+	ensureReaderPostCacheQueryDefaults( queryClient );
 
-	const entityQueries = queryClient.getQueriesData< ReaderPostEntityData >( {
-		queryKey: READER_POST_ENTITY_QUERY_KEY_PREFIX,
+	const cacheQueries = queryClient.getQueriesData< ReaderPostCacheData >( {
+		queryKey: READER_POST_CACHE_QUERY_KEY_PREFIX,
 	} );
 
-	for ( const [ queryKey, current ] of entityQueries ) {
-		const merged = mergeReaderPostEntityData( current );
+	for ( const [ queryKey, current ] of cacheQueries ) {
+		const merged = mergeReaderPostCacheData( current );
 		if ( ! merged || ! predicate( merged ) ) {
 			continue;
 		}
 
-		queryClient.setQueryData< ReaderPostEntityData >( queryKey, {
+		queryClient.setQueryData< ReaderPostCacheData >( queryKey, {
 			base: current?.base ?? {},
 			overlay: mergeReaderPost( current?.overlay, patch( merged ) ),
 		} );
 	}
 };
 
-export const useReaderPostEntity = (
-	target: ReaderPostEntityTarget
-): ReaderPostEntityPost | null => {
-	const query = useQuery< ReaderPostEntityData | null >( {
-		queryKey: readerPostEntityQueryKey( target ),
+export const useCachedReaderPost = (
+	target: ReaderPostCacheTarget
+): ReaderPostCachePost | null => {
+	// Cache-only read. UI that can fetch missing posts should use useReaderPost instead.
+	const query = useQuery< ReaderPostCacheData | null >( {
+		queryKey: readerPostCacheQueryKey( target ),
 		queryFn: () => Promise.resolve( null ),
 		enabled: false,
-		...READER_POST_ENTITY_QUERY_OPTIONS,
+		...READER_POST_CACHE_QUERY_OPTIONS,
 	} );
 
-	return useMemo( () => mergeReaderPostEntityData( query.data ), [ query.data ] );
+	return useMemo( () => mergeReaderPostCacheData( query.data ), [ query.data ] );
 };
 
-interface WithReaderPostEntityProps {
-	post?: ReaderPostEntityPost | null;
+interface WithCachedReaderPostProps {
+	post?: ReaderPostCachePost | null;
 }
 
-export const withReaderPostEntity =
-	< Props extends WithReaderPostEntityProps >(
-		getTarget: ( props: Props ) => ReaderPostEntityTarget
+export const withCachedReaderPost =
+	< Props extends WithCachedReaderPostProps >(
+		getTarget: ( props: Props ) => ReaderPostCacheTarget
 	) =>
 	( WrappedComponent: ComponentType< Props > ) => {
-		const ReaderPostEntityContainer = ( props: Props ) => {
-			const canonicalPost = useReaderPostEntity( getTarget( props ) );
+		const CachedReaderPostContainer = ( props: Props ) => {
+			const canonicalPost = useCachedReaderPost( getTarget( props ) );
 			const nextProps = {
 				...props,
 				post: props.post ?? canonicalPost,
@@ -381,9 +382,9 @@ export const withReaderPostEntity =
 			return createElement( WrappedComponent, nextProps );
 		};
 
-		ReaderPostEntityContainer.displayName = `withReaderPostEntity(${
+		CachedReaderPostContainer.displayName = `withCachedReaderPost(${
 			WrappedComponent.displayName || WrappedComponent.name || 'Component'
 		})`;
 
-		return ReaderPostEntityContainer;
+		return CachedReaderPostContainer;
 	};

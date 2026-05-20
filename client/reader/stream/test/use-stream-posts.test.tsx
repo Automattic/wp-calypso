@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
-import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
+import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import readerReducer from 'calypso/state/reader/reducer';
 import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
@@ -27,7 +27,7 @@ function makeWrapper( queryClient: QueryClient ) {
 		undefined,
 		applyMiddleware(
 			thunkMiddleware,
-			createReaderPostEntitiesMiddleware( () => queryClient )
+			createReaderPostCacheMiddleware( () => queryClient )
 		)
 	);
 	const Wrapper = ( { children }: { children: ReactNode } ) => (
@@ -85,7 +85,7 @@ describe( 'useStreamPosts — fetching', () => {
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
 		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) );
 		expect( result.current.items[ 1 ] ).toMatchObject( postKey( 2 ) );
-		expect( getReaderPostEntity( queryClient, postKey( 1 ) ) ).toMatchObject( {
+		expect( getCachedReaderPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
 			ID: 1,
 			site_ID: 100,
 		} );

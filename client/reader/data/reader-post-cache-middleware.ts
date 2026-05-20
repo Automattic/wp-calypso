@@ -9,18 +9,18 @@ import {
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import {
-	ReaderPostEntityPost,
-	updateReaderPostLocalState,
-	updateReaderPostLocalStateMatching,
-	upsertReaderPostEntities,
-} from './reader-post-entities';
+	ReaderPostCachePost,
+	updateCachedReaderPost,
+	updateCachedReaderPostsMatching,
+	upsertReaderPostCache,
+} from './reader-post-cache';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
-type ReaderPostEntityAction = {
+type ReaderPostCacheAction = {
 	type: string;
 	globalIds?: string[];
-	posts?: Array< ReaderPostEntityPost | null | undefined >;
+	posts?: Array< ReaderPostCachePost | null | undefined >;
 	payload?: {
 		siteId?: number;
 		postId?: number;
@@ -41,7 +41,7 @@ const numberValue = ( value: unknown ): number | null => {
 
 const seedPostLikesQueries = (
 	queryClient: QueryClient,
-	posts: Array< ReaderPostEntityPost | null | undefined >
+	posts: Array< ReaderPostCachePost | null | undefined >
 ) => {
 	for ( const post of posts ) {
 		if ( ! post || post.is_external ) {
@@ -77,7 +77,7 @@ const seedPostLikesQueries = (
 	}
 };
 
-const patchSeenState = ( queryClient: QueryClient, action: ReaderPostEntityAction ) => {
+const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction ) => {
 	const globalIds = new Set( action.globalIds );
 	if ( ! globalIds.size ) {
 		return;
@@ -87,31 +87,31 @@ const patchSeenState = ( queryClient: QueryClient, action: ReaderPostEntityActio
 		action.type === READER_SEEN_MARK_AS_SEEN_RECEIVE ||
 		action.type === READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE;
 
-	updateReaderPostLocalStateMatching(
+	updateCachedReaderPostsMatching(
 		queryClient,
 		( post ) => typeof post.global_ID === 'string' && globalIds.has( post.global_ID ),
 		() => ( { is_seen: isSeen } )
 	);
 };
 
-const patchConversationState = ( queryClient: QueryClient, action: ReaderPostEntityAction ) => {
+const patchConversationState = ( queryClient: QueryClient, action: ReaderPostCacheAction ) => {
 	const { siteId, postId, followStatus } = action.payload ?? {};
 	if ( ! siteId || ! postId ) {
 		return;
 	}
 
-	updateReaderPostLocalState( queryClient, { blogId: siteId, postId }, () => ( {
+	updateCachedReaderPost( queryClient, { blogId: siteId, postId }, () => ( {
 		is_following_conversation: followStatus === CONVERSATION_FOLLOW_STATUS.following,
 	} ) );
 };
 
-export const createReaderPostEntitiesMiddleware =
+export const createReaderPostCacheMiddleware =
 	( getQueryClient: GetQueryClient = getCalypsoQueryClient ): Middleware =>
 	() =>
 	( next ) =>
 	( action: unknown ) => {
 		const result = next( action );
-		const readerAction = action as ReaderPostEntityAction;
+		const readerAction = action as ReaderPostCacheAction;
 		const queryClient = getQueryClient();
 
 		if ( ! queryClient ) {
@@ -128,7 +128,7 @@ export const createReaderPostEntitiesMiddleware =
 				patchConversationState( queryClient, readerAction );
 				break;
 			case READER_POSTS_RECEIVE:
-				upsertReaderPostEntities( queryClient, readerAction.posts ?? [] );
+				upsertReaderPostCache( queryClient, readerAction.posts ?? [] );
 				seedPostLikesQueries( queryClient, readerAction.posts ?? [] );
 				break;
 		}
@@ -136,4 +136,4 @@ export const createReaderPostEntitiesMiddleware =
 		return result;
 	};
 
-export default createReaderPostEntitiesMiddleware();
+export default createReaderPostCacheMiddleware();

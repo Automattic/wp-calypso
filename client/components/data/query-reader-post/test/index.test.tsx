@@ -2,16 +2,14 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, waitFor } from '@testing-library/react';
+import { render, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import {
-	getReaderPostEntity,
-	upsertReaderPostEntities,
-} from 'calypso/reader/data/reader-post-entities';
-import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
+import { useReaderPost } from 'calypso/reader/data/reader-post';
+import { getCachedReaderPost, upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import QueryReaderPost from '../index';
 
@@ -21,7 +19,7 @@ const buildStore = ( queryClient: QueryClient, preloadedState?: { reader?: unkno
 		preloadedState as never,
 		applyMiddleware(
 			thunkMiddleware,
-			createReaderPostEntitiesMiddleware( () => queryClient )
+			createReaderPostCacheMiddleware( () => queryClient )
 		)
 	);
 
@@ -73,7 +71,7 @@ describe( 'QueryReaderPost', () => {
 		} );
 	} );
 
-	it( 'writes successful fetches into the canonical post entity cache', async () => {
+	it( 'writes successful fetches into the canonical post cache', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/read/sites/1/posts/2' )
 			.query( true )
@@ -87,7 +85,7 @@ describe( 'QueryReaderPost', () => {
 		const { queryClient } = renderBridge( { postKey: { blogId: 1, postId: 2 } } );
 
 		await waitFor( () => {
-			expect( getReaderPostEntity( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				ID: 2,
 				site_ID: 1,
 				content: '<p>full</p>',
@@ -105,7 +103,7 @@ describe( 'QueryReaderPost', () => {
 
 		await waitFor( () => {
 			expect( getReceivedPosts( store ) ).toHaveProperty( 'global-feed-4' );
-			expect( getReaderPostEntity( queryClient, { feedId: 3, postId: 4 } ) ).toMatchObject( {
+			expect( getCachedReaderPost( queryClient, { feedId: 3, postId: 4 } ) ).toMatchObject( {
 				ID: 4,
 				feed_ID: 3,
 				feed_item_ID: 4,
@@ -178,11 +176,72 @@ describe( 'QueryReaderPost', () => {
 		expect( getReceivedPosts( store ) ).toEqual( {} );
 	} );
 
-	it( 'skips the network call when the post is already in the canonical entity cache', () => {
+	it( 'exposes loading state while fetching a missing post', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
+
+		const queryClient = buildQueryClient();
+		const store = buildStore( queryClient );
+		const wrapper = ( { children }: { children: React.ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useReaderPost( { blogId: 1, postId: 2 } ), {
+			wrapper,
+		} );
+
+		expect( result.current ).toMatchObject( {
+			isLoading: true,
+			isError: false,
+		} );
+		expect( result.current.data ).toBeUndefined();
+
+		await waitFor( () => {
+			expect( result.current ).toMatchObject( {
+				data: { ID: 2, site_ID: 1, content: '<p>full</p>' },
+				isLoading: false,
+				isError: false,
+			} );
+		} );
+	} );
+
+	it( 'exposes error state when fetching a missing post fails', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 500, { message: 'Internal Server Error' } );
+
+		const queryClient = buildQueryClient();
+		const store = buildStore( queryClient );
+		const wrapper = ( { children }: { children: React.ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useReaderPost( { blogId: 1, postId: 2 } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => {
+			expect( result.current ).toMatchObject( {
+				data: { ID: 2, site_ID: 1, is_error: true },
+				isLoading: false,
+				isError: true,
+			} );
+			expect( result.current.error ).toBeTruthy();
+		} );
+	} );
+
+	it( 'skips the network call when the post is already in the canonical post cache', () => {
 		// No nock scope: any request would throw because of disableNetConnect.
 		const cached = { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>cached</p>' };
 		const queryClient = buildQueryClient();
-		upsertReaderPostEntities( queryClient, [ cached ] );
+		upsertReaderPostCache( queryClient, [ cached ] );
 
 		const { store } = renderBridge( { postKey: { blogId: 1, postId: 2 } }, undefined, queryClient );
 		expect( getReceivedPosts( store ) ).toEqual( {} );

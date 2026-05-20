@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { upsertReaderPostEntities } from 'calypso/reader/data/reader-post-entities';
+import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
 import { recordTrackForPost } from 'calypso/reader/stats';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import LikeButton from '../index';
@@ -70,7 +70,7 @@ const makeStore = () => createStore( ( state = { reader: { posts: { items: {} } 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 describe( 'ReaderLikeButton', () => {
-	it( 'uses the canonical Reader post entity cache when no post prop is provided', async () => {
+	it( 'uses the canonical Reader post cache when no post prop is provided', async () => {
 		const queryClient = makeQueryClient();
 		const post = {
 			ID: 10,
@@ -79,7 +79,7 @@ describe( 'ReaderLikeButton', () => {
 			title: 'Cached post',
 			_seen: false,
 		};
-		upsertReaderPostEntities( queryClient, [ post ] );
+		upsertReaderPostCache( queryClient, [ post ] );
 
 		render(
 			<QueryClientProvider client={ queryClient }>

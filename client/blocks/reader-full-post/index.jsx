@@ -30,7 +30,7 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
+import { useCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -1013,7 +1013,7 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
-		const canonicalPost = useReaderPostEntity(
+		const canonicalPost = useCachedReaderPost(
 			Object.keys( currentPostKey ).length ? currentPostKey : null
 		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
@@ -1022,8 +1022,8 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const canonicalPreviousPost = useReaderPostEntity( previousPostKey );
-		const canonicalNextPost = useReaderPostEntity( nextPostKey );
+		const canonicalPreviousPost = useCachedReaderPost( previousPostKey );
+		const canonicalNextPost = useCachedReaderPost( nextPostKey );
 		const previousPostFromRedux = useSelector( ( state ) =>
 			previousPostKey ? getPostByKey( state, previousPostKey ) : null
 		);

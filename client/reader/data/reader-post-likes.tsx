@@ -1,10 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { forwardRef } from 'react';
 import { usePostLikeActions } from 'calypso/components/data/post-likes';
-import {
-	getReaderPostEntity,
-	updateReaderPostLocalState,
-} from 'calypso/reader/data/reader-post-entities';
+import { getCachedReaderPost, updateCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import type { PostLikeMutationParams } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -41,12 +38,12 @@ export const useReaderPostLikeActions = (): ReaderPostLikeActionsInjectedProps =
 
 	return usePostLikeActions( {
 		onMutate: ( { siteId, postId }: PostLikeMutationParams, iLike: boolean ) => {
-			const post = getReaderPostEntity( queryClient, { blogId: siteId, postId } );
+			const post = getCachedReaderPost( queryClient, { blogId: siteId, postId } );
 			const snapshot: ReaderPostLikeSnapshot = post
 				? { i_like: post.i_like, like_count: post.like_count }
 				: null;
 
-			updateReaderPostLocalState( queryClient, { blogId: siteId, postId }, ( currentPost ) => {
+			updateCachedReaderPost( queryClient, { blogId: siteId, postId }, ( currentPost ) => {
 				const wasLiked = Boolean( currentPost?.i_like );
 				const likeCount = currentLikeCount( currentPost?.like_count );
 
@@ -63,7 +60,7 @@ export const useReaderPostLikeActions = (): ReaderPostLikeActionsInjectedProps =
 			}
 
 			return () => {
-				updateReaderPostLocalState( queryClient, { blogId: siteId, postId }, () => snapshot );
+				updateCachedReaderPost( queryClient, { blogId: siteId, postId }, () => snapshot );
 			};
 		},
 	} );

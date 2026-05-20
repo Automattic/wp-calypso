@@ -27,7 +27,7 @@ const EngagementBar = ( {
 					postId: Number( postId ),
 			  }
 			: null;
-	const post = useReaderPost( postKey );
+	const { data: post } = useReaderPost( postKey );
 
 	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
 	const [ actionsElement, setActionsElement ] = useState< Element | null >( null );

@@ -3,7 +3,7 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { upsertReaderPostEntities } from 'calypso/reader/data/reader-post-entities';
+import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
 import DialogContent from '../dialog-content';
 
 jest.mock( '@automattic/components', () => ( {
@@ -35,9 +35,9 @@ jest.mock( 'calypso/components/data/query-reader-site', () => ( {
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 describe( 'DialogContent', () => {
-	it( 'renders a support article from the canonical Reader post entity cache', () => {
+	it( 'renders a support article from the canonical Reader post cache', () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostEntities( queryClient, [
+		upsertReaderPostCache( queryClient, [
 			{
 				ID: 123,
 				site_ID: 456,

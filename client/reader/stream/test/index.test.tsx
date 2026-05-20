@@ -8,7 +8,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
 import Stream from '../index';
 import type { ReactNode } from 'react';
 
@@ -191,7 +191,7 @@ function renderStream(
 		seedState,
 		applyMiddleware(
 			thunkMiddleware,
-			createReaderPostEntitiesMiddleware( () => queryClient )
+			createReaderPostCacheMiddleware( () => queryClient )
 		)
 	);
 	const utils = render(

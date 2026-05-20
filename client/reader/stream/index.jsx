@@ -19,7 +19,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
+import { useCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -901,9 +901,9 @@ const withStreamPosts = ( WrappedComponent ) =>
 		} );
 
 		// `<Stream>` reads the selected post body for keyboard actions from the
-		// canonical Reader entity cache, then uses the post likes query as the
+		// canonical Reader post cache, then uses the post likes query as the
 		// source of truth for the current liked state.
-		const canonicalSelectedPost = useReaderPostEntity( selectedPostKey );
+		const canonicalSelectedPost = useCachedReaderPost( selectedPostKey );
 		const selectedPost = canonicalSelectedPost;
 		const { postLikes } = usePostLikes( selectedPost?.site_ID, selectedPost?.ID );
 		const likedPost = selectedPost ? postLikes?.iLike ?? Boolean( selectedPost.i_like ) : null;
