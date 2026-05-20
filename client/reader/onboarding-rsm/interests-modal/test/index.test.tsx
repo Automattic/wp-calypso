@@ -2,9 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
+import { recordFollow } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { getPackBlogs } from '../get-pack-blogs';
 import InterestsModal from '../index';
@@ -102,6 +105,23 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+// Mock as a thunk action creator so `dispatch( recordReaderTracksEvent(...) )`
+// still works against the real Redux store inside `renderWithProvider`, while
+// letting tests assert on the call arguments.
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: jest.fn(
+		( name: string, properties: Record< string, unknown > ) => () => ( {
+			type: 'READER_RECORD_TRACKS_EVENT',
+			name,
+			properties,
+		} )
+	),
+} ) );
+
+jest.mock( 'calypso/reader/stats', () => ( {
+	recordFollow: jest.fn(),
+} ) );
+
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	fixMe: ( { newCopy }: { newCopy: string } ) => newCopy,
@@ -111,7 +131,7 @@ jest.mock( 'i18n-calypso', () => ( {
 
 jest.mock( '@tanstack/react-query', () => ( {
 	...jest.requireActual( '@tanstack/react-query' ),
-	useMutation: () => ( { mutateAsync: jest.fn() } ),
+	useMutation: () => ( { mutateAsync: jest.fn().mockResolvedValue( undefined ) } ),
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
@@ -278,6 +298,127 @@ describe( 'InterestsModal – most subscribed pack', () => {
 		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
+		);
+	} );
+} );
+
+describe( 'InterestsModal – analytics for pack subscribe', () => {
+	const packBlogs = Array.from( { length: 3 }, ( _, i ) => ( {
+		feed_ID: 900 + i,
+		site_ID: 800 + i,
+		site_URL: `https://pack-${ i }.example`,
+		site_name: `Pack site ${ i }`,
+		feed_URL: `https://pack-${ i }.example/feed`,
+		has_icon: true,
+	} ) );
+
+	beforeEach( () => {
+		jest.mocked( recordTracksEvent ).mockClear();
+		jest.mocked( recordFollow ).mockClear();
+		jest.mocked( recordReaderTracksEvent ).mockClear();
+	} );
+
+	afterEach( () => {
+		jest.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
+		jest.mocked( getPackBlogs ).mockReset().mockReturnValue( [] );
+	} );
+
+	it( 'records pack_subscribed with pack_id when a pack is subscribed', async () => {
+		const user = userEvent.setup();
+
+		jest.mocked( getTopicGroups ).mockReturnValue( [
+			{
+				id: 'most-subscribed',
+				title: 'Most Subscribed',
+				description: 'Popular reads.',
+				imageUrl: 'https://images.example/subscribed.webp',
+				tags: [],
+			},
+		] );
+		jest.mocked( getPackBlogs ).mockReturnValue( packBlogs );
+
+		renderWithProvider(
+			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+		);
+
+		await user.click( screen.getByTestId( 'topic-pack-card' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_onboarding_interests_modal_pack_subscribed',
+			expect.objectContaining( {
+				pack_id: 'most-subscribed',
+				tag_count: 0,
+				blog_count: packBlogs.length,
+			} )
+		);
+	} );
+
+	it( 'records calypso_reader_site_followed with reader-onboarding-modal follow_source for each pack blog', async () => {
+		const user = userEvent.setup();
+
+		jest.mocked( getTopicGroups ).mockReturnValue( [
+			{
+				id: 'most-subscribed',
+				title: 'Most Subscribed',
+				description: 'Popular reads.',
+				imageUrl: 'https://images.example/subscribed.webp',
+				tags: [],
+			},
+		] );
+		jest.mocked( getPackBlogs ).mockReturnValue( packBlogs );
+
+		renderWithProvider(
+			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+		);
+
+		await user.click( screen.getByTestId( 'topic-pack-card' ) );
+
+		expect( recordFollow ).toHaveBeenCalledTimes( packBlogs.length );
+		for ( const blog of packBlogs ) {
+			expect( recordFollow ).toHaveBeenCalledWith( blog.feed_URL, undefined, {
+				follow_source: 'reader-onboarding-modal',
+			} );
+		}
+	} );
+
+	it( 'records calypso_reader_reader_tag_followed via recordReaderTracksEvent for each tag in the pack', async () => {
+		const user = userEvent.setup();
+
+		jest.mocked( getTopicGroups ).mockReturnValue( [
+			{
+				id: 'tech',
+				title: 'Tech',
+				description: 'Tech reads.',
+				imageUrl: 'https://images.example/tech.webp',
+				tags: [ 'javascript', 'react' ],
+			},
+		] );
+		jest.mocked( getPackBlogs ).mockReturnValue( [] );
+
+		renderWithProvider(
+			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+		);
+
+		await user.click( screen.getByTestId( 'topic-pack-card' ) );
+
+		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_reader_tag_followed',
+			expect.objectContaining( {
+				tag: 'javascript',
+				follow_source: 'reader-onboarding-modal',
+			} )
+		);
+		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_reader_tag_followed',
+			expect.objectContaining( {
+				tag: 'react',
+				follow_source: 'reader-onboarding-modal',
+			} )
+		);
+		// Confirm the legacy onboarding-specific event name is no longer used.
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_reader_onboarding_interests_modal_tag_followed',
+			expect.anything()
 		);
 	} );
 } );

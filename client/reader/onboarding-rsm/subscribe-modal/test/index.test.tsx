@@ -2,24 +2,33 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SubscribeModal from '../index';
+import type { CardData } from '../use-subscribe-recommendations';
 
 // ── Recommendations hook ─────────────────────────────────────────────────────
 
+// Explicit array element types so per-test overrides that supply `CardData[]`
+// (or `string[]` for `followedTagSlugs`) don't get inferred as `never[]` from
+// the empty defaults — keeps TypeScript happy without an `as` cast.
+const defaultRecommendationsHookValue = {
+	combinedRecommendations: [] as CardData[],
+	recommendations: [] as CardData[],
+	isLoading: false,
+	isValidating: false,
+	hasNoRecommendations: false,
+	followedTagSlugs: [] as string[],
+	markSessionFollow: jest.fn(),
+};
+
+const mockedRecommendationsHook = jest.fn( () => defaultRecommendationsHookValue );
+
 jest.mock( '../use-subscribe-recommendations', () => ( {
-	useSubscribeRecommendations: () => ( {
-		combinedRecommendations: [],
-		recommendations: [],
-		isLoading: false,
-		isValidating: false,
-		hasNoRecommendations: false,
-		followedTagSlugs: [],
-		markSessionFollow: jest.fn(),
-	} ),
+	useSubscribeRecommendations: () => mockedRecommendationsHook(),
 } ) );
 
 // ── Heavy UI dependencies ────────────────────────────────────────────────────
@@ -29,9 +38,23 @@ jest.mock( 'calypso/reader/stream', () => ( {
 	default: () => null,
 } ) );
 
+// Render the list item as a button so tests can click it and exercise the
+// `onItemClick` callback (which is what fires the site-previewed event).
 jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: ( {
+		feedId,
+		site,
+		onItemClick,
+	}: {
+		feedId: number;
+		site: { site_name: string };
+		onItemClick: () => void;
+	} ) => (
+		<button type="button" data-testid={ `reader-list-item-${ feedId }` } onClick={ onItemClick }>
+			{ site.site_name }
+		</button>
+	),
 } ) );
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
@@ -138,5 +161,70 @@ describe( 'SubscribeModal – verification nudge', () => {
 		const button = screen.getByRole( 'button', { name: 'Finish' } );
 		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
 		expect( button ).not.toBeDisabled();
+	} );
+} );
+
+describe( 'SubscribeModal – site preview analytics', () => {
+	const makeRecommendation = ( i: number ) => ( {
+		feed_ID: 100 + i,
+		site_ID: 200 + i,
+		site_URL: `https://site-${ i }.example`,
+		site_name: `Site ${ i }`,
+		feed_URL: `https://site-${ i }.example/feed`,
+		has_icon: true,
+	} );
+
+	beforeEach( () => {
+		jest.mocked( recordTracksEvent ).mockClear();
+		mockedRecommendationsHook.mockReturnValue( defaultRecommendationsHookValue );
+	} );
+
+	it( 'records discover_modal_site_previewed when the user picks a different site in the list', async () => {
+		const user = userEvent.setup();
+		const recommendations = [ makeRecommendation( 0 ), makeRecommendation( 1 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+
+		// First recommendation is auto-selected on mount, so clicking it again is
+		// a no-op and must NOT fire the previewed event. Clicking a *different*
+		// site is what should fire it.
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByTestId( 'reader-list-item-101' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_onboarding_discover_modal_site_previewed',
+			expect.objectContaining( {
+				feed_id: 101,
+				site_id: 201,
+				site_name: 'Site 1',
+			} )
+		);
+	} );
+
+	it( 'does not record discover_modal_site_previewed when the same site is clicked again', async () => {
+		const user = userEvent.setup();
+		const recommendations = [ makeRecommendation( 0 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+
+		// First (and only) recommendation is auto-selected; clicking it should not
+		// fire a duplicate previewed event.
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByTestId( 'reader-list-item-100' ) );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_reader_onboarding_discover_modal_site_previewed',
+			expect.anything()
+		);
 	} );
 } );

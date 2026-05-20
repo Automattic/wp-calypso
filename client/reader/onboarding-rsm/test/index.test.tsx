@@ -55,7 +55,9 @@ jest.mock( '@automattic/launchpad', () => ( {
 } ) );
 
 // Render the WP Modal without a portal so headerActions and children
-// are reachable via standard screen queries.
+// are reachable via standard screen queries. Expose `onRequestClose` as a
+// dedicated "Close modal" button so tests can simulate the X / escape /
+// outside-click dismiss path that the real <Modal> wires up.
 jest.mock( '@wordpress/components', () => {
 	const { Button } =
 		jest.requireActual< typeof import('@wordpress/components') >( '@wordpress/components' );
@@ -64,12 +66,17 @@ jest.mock( '@wordpress/components', () => {
 		Modal: ( {
 			children,
 			headerActions,
+			onRequestClose,
 		}: {
 			children: React.ReactNode;
 			headerActions?: React.ReactNode;
+			onRequestClose?: () => void;
 		} ) => (
 			<div role="dialog">
 				{ headerActions }
+				<button type="button" onClick={ onRequestClose }>
+					Close modal
+				</button>
 				{ children }
 			</div>
 		),
@@ -138,6 +145,13 @@ jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 	clearStream: jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) ),
 	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
 	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
+} ) );
+
+// The real selector traverses `state.reader.follows`, which the lightweight
+// test store does not seed. Default to an empty follow list so the parent
+// completion event still has a valid `followed_non_self_sites_count`.
+jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
+	getReaderFollows: jest.fn().mockReturnValue( [] ),
 } ) );
 
 const mockRefreshFollowingStreams = jest.fn();
@@ -399,6 +413,149 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 	} );
 } );
 
+describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
+	// The *_modal_close events should fire only when the user explicitly
+	// dismisses a step (X / escape / outside click), not when they navigate
+	// forward via Continue/Finish or backward via Back. Each navigation path
+	// has its own dedicated continue/back/finish event so the close event no
+	// longer doubles up on every transition.
+
+	const closeEventFor = ( step: 'welcome' | 'interests' | 'discover' ) =>
+		`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }${ step }_modal_close`;
+
+	it( 'does not record welcome_modal_close when the user clicks Continue from welcome', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'welcome' ) );
+	} );
+
+	it( 'does not record interests_modal_close when the user clicks Continue from interests', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'interests' ) );
+	} );
+
+	it( 'does not record interests_modal_close when the user clicks Back from interests', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'interests' ) );
+	} );
+
+	it( 'does not record discover_modal_close when the user clicks Back from discover', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'discover' ) );
+	} );
+
+	it( 'does not record discover_modal_close when the user clicks Finish from discover', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'discover' ) );
+	} );
+
+	it( 'records welcome_modal_close when the user dismisses the welcome step (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'welcome' ) );
+	} );
+
+	it( 'records interests_modal_close when the user dismisses the interests step (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'interests' ) );
+	} );
+
+	it( 'records discover_modal_close when the user dismisses the discover step (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'discover' ) );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
+		);
+	} );
+} );
+
 describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 	const navigateToSubscribeStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
 		await screen.findByTestId( 'welcome-modal-content' );
@@ -417,7 +574,11 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( {
+				followed_tags_count: expect.any( Number ),
+				followed_non_self_sites_count: expect.any( Number ),
+			} )
 		);
 	} );
 
@@ -430,8 +591,104 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
 		);
+	} );
+
+	it( 'records completed with followed_tags_count and followed_non_self_sites_count reflecting the user\u2019s current follows', async () => {
+		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
+			useFollowedReaderTags: jest.Mock;
+		};
+		const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
+			getReaderFollows: jest.Mock;
+		};
+
+		useFollowedReaderTags.mockImplementation( () => ( {
+			data: [ { slug: 'tech' }, { slug: 'food' } ],
+			isPending: false,
+		} ) );
+		// Mix of active non-self, stale (unfollowed), and self-owned to verify
+		// the filter — only the two active non-self entries should be counted.
+		// `nonSelfSubscriptionsCount` defaults to 0 here (per beforeEach), so
+		// the reported count comes from the Redux-derived count, not the
+		// TanStack-query baseline.
+		getReaderFollows.mockReturnValue( [
+			{ is_following: true, is_owner: false },
+			{ is_following: true, is_owner: false },
+			{ is_following: false, is_owner: false },
+			{ is_following: true, is_owner: true },
+		] );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( {
+				followed_tags_count: 2,
+				followed_non_self_sites_count: 2,
+			} )
+		);
+
+		getReaderFollows.mockReturnValue( [] );
+	} );
+
+	it( 'falls back to nonSelfSubscriptionsCount when the Redux follows slice has not hydrated yet', async () => {
+		// Guards the `Math.max( nonSelfSubscriptionsCount, reduxCount )` merge:
+		// if the Redux follows slice is empty (e.g. slow network, lazy load)
+		// but `useSiteSubscriptions` is already populated, the completion event
+		// should report the TanStack-query count rather than 0.
+		const { useSiteSubscriptions } = jest.requireMock(
+			'../../following/use-site-subscriptions'
+		) as { useSiteSubscriptions: jest.Mock };
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions: true,
+			nonSelfSubscriptionsCount: 5,
+		} ) );
+		// Redux follows slice intentionally empty — default mock returns [].
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( { followed_non_self_sites_count: 5 } )
+		);
+	} );
+
+	it( 'still records completed (without re-saving preference) when the user has already completed onboarding', async () => {
+		// Mirrors the forceShow case: a returning user can re-enter the modal
+		// and click Finish again — the `completed` event should still fire so
+		// we can attribute the funnel, but the preference is already set so we
+		// skip the redundant write.
+		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+			getPreference: jest.Mock;
+		};
+		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+
+		getPreference.mockReturnValue( null );
 	} );
 
 	it( 'does not auto-save completion when the user has enough follows without clicking Finish', async () => {
@@ -461,7 +718,8 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
 		);
 	} );
 } );

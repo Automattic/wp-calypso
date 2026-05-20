@@ -30,6 +30,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
@@ -66,6 +67,36 @@ const ReaderOnboardingRsm = ( {
 	} = useSiteSubscriptions();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
+	// Used in the `completed` event for an instant in-session site-follow
+	// count: legacy `READER_FOLLOW` (used by the discover step and interests
+	// pack subscribe) updates this slice synchronously, whereas
+	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` is a TanStack
+	// query that doesn't reflect in-session follows until its refetch resolves.
+	//
+	// `getReaderFollows` retains stale rows (`is_following: false`) and
+	// self-owned subs (`is_owner: true`); we filter both out so the count
+	// matches the rest of the onboarding eligibility logic, which uses
+	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
+	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
+	// under-report follows before the Redux follows slice has hydrated.
+	//
+	// `Math.max` is safe in onboarding because the UI only nets follow
+	// additions: discover-step recommendations exclude pre-session
+	// subscriptions (so in-session unfollows only target in-session adds),
+	// and interests-step pack subscribe never unfollows. The invariant is
+	// therefore `reduxFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
+	// so the max picks the live Redux value. If a future flow ever allows
+	// unfollowing a pre-session subscription from within onboarding, revisit
+	// this — gate on Redux hydration (e.g. `getReaderFollowsLastSyncTime !==
+	// null`) rather than blindly take the max.
+	const reduxFollows = useSelector( getReaderFollows );
+	const reduxFollowedNonSelfSitesCount = reduxFollows.filter(
+		( f ) => f.is_following && ! f.is_owner
+	).length;
+	const followedNonSelfSitesCount = Math.max(
+		nonSelfSubscriptionsCount,
+		reduxFollowedNonSelfSitesCount
+	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -175,23 +206,31 @@ const ReaderOnboardingRsm = ( {
 		} );
 	};
 
-	// Side-effects that run when a given step is closed (whether via the X /
-	// escape, or via the "continue" button transitioning to the next step).
-	// Centralised so the same effects fire on either path.
-	const performStepCloseSideEffects = ( step: Step ) => {
+	// Non-analytics side effects that run when leaving a step (whether via the
+	// X / escape, or via the "continue"/"back"/"finish" button transitioning
+	// to the next step). Centralised so the same effects fire on either path.
+	// Analytics is intentionally split out into `recordStepClose` so the
+	// `*_modal_close` event fires only on an explicit dismiss, not on
+	// navigation actions that already have their own continue/back/finish
+	// events.
+	const runStepSideEffects = ( step: Step ) => {
 		if ( step === 'welcome' ) {
-			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
 			if ( ! hasSeenOnboarding ) {
 				dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
 			}
+		} else if ( step === 'interests' || step === 'discover' ) {
+			refreshFollowingStreams();
+			invalidateSubscriptionQueries();
+		}
+	};
+
+	const recordStepClose = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
 		} else if ( step === 'interests' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
-			refreshFollowingStreams();
-			invalidateSubscriptionQueries();
 		} else if ( step === 'discover' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
-			refreshFollowingStreams();
-			invalidateSubscriptionQueries();
 		}
 	};
 
@@ -212,48 +251,53 @@ const ReaderOnboardingRsm = ( {
 
 	const handleStepClose = () => {
 		if ( currentStep ) {
-			performStepCloseSideEffects( currentStep );
+			recordStepClose( currentStep );
+			runStepSideEffects( currentStep );
 		}
 		setCurrentStep( null );
 	};
 
 	const handleWelcomeContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue` );
-		performStepCloseSideEffects( 'welcome' );
+		runStepSideEffects( 'welcome' );
 		recordStepOpen( 'interests' );
 		setCurrentStep( 'interests' );
 	};
 
 	const handleInterestsContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue` );
-		performStepCloseSideEffects( 'interests' );
+		runStepSideEffects( 'interests' );
 		recordStepOpen( 'discover' );
 		setCurrentStep( 'discover' );
 	};
 
 	const handleInterestsBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
-		performStepCloseSideEffects( 'interests' );
+		runStepSideEffects( 'interests' );
 		openStep( 'welcome' );
 	};
 
 	const handleDiscoverBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back` );
-		performStepCloseSideEffects( 'discover' );
+		runStepSideEffects( 'discover' );
 		openStep( 'interests' );
 	};
 
 	const recordOnboardingCompleted = () => {
+		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
+			followed_tags_count: followedTags?.length ?? 0,
+			followed_non_self_sites_count: followedNonSelfSitesCount,
+		} );
 		if ( hasCompletedOnboarding ) {
 			return;
 		}
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	};
 
 	const handleDiscoverFinish = () => {
 		recordOnboardingCompleted();
-		performStepCloseSideEffects( 'discover' );
+		runStepSideEffects( 'discover' );
 		setCurrentStep( null );
 		setHasFinished( true );
 	};
