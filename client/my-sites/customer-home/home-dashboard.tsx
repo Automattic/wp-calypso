@@ -506,7 +506,9 @@ function useTailoredFlow() {
 		)
 			.then( ( result ) => {
 				const patch: Partial< HomeWizardState > = {
-					goal: answers.goal,
+					// answers.goal is GoalKey | null; the stored field is optional
+					// (GoalKey | undefined), so coerce null → undefined.
+					goal: answers.goal ?? undefined,
 					intent: composed,
 					inferred: result.inferred ?? {},
 					firstPostDraft: result.first_post_draft,
