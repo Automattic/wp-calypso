@@ -16,7 +16,7 @@ const TestComponent = ( { posts }: WithReaderRelatedPostsInjectedProps ) => {
 	if ( ! posts ) {
 		return <div>loading</div>;
 	}
-	return <>{ posts.join( ',' ) }</>;
+	return <>{ posts.map( ( post ) => post.global_ID ).join( ',' ) }</>;
 };
 
 const SameSite = withReaderRelatedPosts( 'same' )( TestComponent );
@@ -36,7 +36,7 @@ describe( 'withReaderRelatedPosts', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'injects posts as global_ID strings on the wrapped component', async () => {
+	it( 'injects post objects on the wrapped component', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/site/1/post/2/related' )
 			.query( true )

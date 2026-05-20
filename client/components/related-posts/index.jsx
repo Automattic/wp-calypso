@@ -1,7 +1,7 @@
 import { SCOPE_OTHER, SCOPE_SAME } from '@automattic/api-core';
 import clsx from 'clsx';
 import { times } from 'lodash';
-import RelatedPost from 'calypso/blocks/reader-related-card';
+import { RelatedPostCard as RelatedPost } from 'calypso/blocks/reader-related-card';
 import { withReaderRelatedPosts } from 'calypso/components/data/with-reader-related-posts';
 
 const noop = () => {};
@@ -23,11 +23,11 @@ function RelatedPosts( { posts, title, className = '', onPostClick = noop, onSit
 	} else if ( posts.length === 0 ) {
 		return null;
 	} else {
-		listItems = posts.map( ( post_id ) => {
+		listItems = posts.map( ( post ) => {
 			return (
 				/* eslint-disable */
-				<li key={ post_id } className="reader-related-card__list-item">
-					<RelatedPost post={ post_id } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
+				<li key={ post.global_ID } className="reader-related-card__list-item">
+					<RelatedPost post={ post } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
 				</li>
 				/* eslint-enable */
 			);
