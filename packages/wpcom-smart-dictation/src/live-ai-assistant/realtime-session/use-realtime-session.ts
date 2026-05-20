@@ -477,7 +477,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 			setStatus( 'requesting-token' );
 			const clientSecret = await fetchClientSecret( {
-				model,
 				instructions,
 			} );
 			clientSecretSessionIdRef.current = clientSecret.sessionId;

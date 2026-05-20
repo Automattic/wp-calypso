@@ -11,7 +11,6 @@ const ACTIVE_SESSION_ERROR_MESSAGE =
 	'Another dictation session is already active. Stop dictation in the other tab or window, then try again.';
 
 interface FetchClientSecretArgs {
-	model: string;
 	instructions: string;
 }
 
@@ -77,8 +76,8 @@ function extractClientSecret( data: unknown ): DictationClientSecret {
 
 function extractRemainingTime( data: unknown ): DictationRemainingTime {
 	const body = data as {
-		minutes_used?: number;
-		minutes_remaining?: number;
+		seconds_used?: number;
+		seconds_remaining?: number;
 		remaining_time_seconds?: number;
 		active_session?: {
 			session_id?: string;
@@ -87,12 +86,12 @@ function extractRemainingTime( data: unknown ): DictationRemainingTime {
 			remaining_time_seconds?: number;
 		} | null;
 	};
-	const minutesUsed = typeof body.minutes_used === 'number' ? body.minutes_used : 0;
-	const minutesRemaining = typeof body.minutes_remaining === 'number' ? body.minutes_remaining : 0;
+	const secondsUsed = typeof body.seconds_used === 'number' ? body.seconds_used : 0;
+	const secondsRemaining = typeof body.seconds_remaining === 'number' ? body.seconds_remaining : 0;
 	const remainingTimeSeconds =
 		typeof body.remaining_time_seconds === 'number'
 			? body.remaining_time_seconds
-			: minutesRemaining * 60;
+			: secondsRemaining;
 	const activeSession = body.active_session
 		? {
 				sessionId: body.active_session.session_id ?? '',
@@ -104,13 +103,12 @@ function extractRemainingTime( data: unknown ): DictationRemainingTime {
 
 	return {
 		remainingTimeSeconds,
-		totalTimeSeconds: ( minutesUsed + minutesRemaining ) * 60,
+		totalTimeSeconds: secondsUsed + secondsRemaining,
 		activeSession,
 	};
 }
 
 export async function fetchClientSecret( {
-	model,
 	instructions,
 }: FetchClientSecretArgs ): Promise< DictationClientSecret > {
 	let response: unknown;
@@ -122,7 +120,6 @@ export async function fetchClientSecret( {
 			apiNamespace: 'wpcom/v2',
 			body: {
 				session: {
-					model,
 					instructions,
 				},
 			},

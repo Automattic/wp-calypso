@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -311,12 +312,17 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 					<div className="live-ai-assistant__footer">
 						<Notice.Root intent="info">
 							<Notice.Title>Beta feature</Notice.Title>
-							<Notice.Description>Only available for proxied a11ns</Notice.Description>
-							<Notice.Actions>
-								<Notice.ActionLink href="https://wp.me/phcsdm-3kj" openInNewTab>
-									Share feedback
-								</Notice.ActionLink>
-							</Notice.Actions>
+							<Notice.Description>
+								{ createInterpolateElement( __( 'Share your feedback <link>here</link>.' ), {
+									link: (
+										<a
+											href="https://wordpressdotcom.survey.fm/wordpress-com-smart-dictation-survey"
+											target="_blank"
+											rel="noreferrer"
+										/>
+									),
+								} ) }
+							</Notice.Description>
 						</Notice.Root>
 						<div className="live-ai-assistant__controls">
 							<Button
