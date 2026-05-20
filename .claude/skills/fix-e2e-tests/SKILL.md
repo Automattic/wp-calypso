@@ -159,15 +159,27 @@ Using the `statusCheckRollup` captured in Step 3, find the failing E2E checks an
 
 ### 4.1: Find the failing E2E check(s)
 
-From `statusCheckRollup`, pick entries where the context (`StatusContext.context`) or name (`CheckRun.name`) contains `E2E` and state/conclusion is `FAILURE`. Each points at TeamCity via a URL of the form:
+From `statusCheckRollup`, pick entries that meet **all** of:
 
-```
-https://teamcity.a8c.com/buildConfiguration/<config-id>/<build-id>
-```
+- state/conclusion is `FAILURE`
+- URL starts with `https://teamcity.a8c.com/buildConfiguration/`
+- context (`StatusContext.context`) or name (`CheckRun.name`) contains the phrase `E2E Tests`
 
-Extract the trailing numeric `<build-id>` from each. Collect them all — a PR may have more than one failing E2E check.
+The known PR-level E2E checks on wp-calypso are defined in `.teamcity/_self/projects/WebApp.kt`:
 
-If zero failing E2E checks exist, tell the user "no failing E2E tests on this PR" and stop.
+| Check name | Runner | Healer-compatible? |
+| --- | --- | --- |
+| `E2E Tests (Playwright Test)` | Playwright Test | yes |
+| `Dashboard E2E Tests (PR)` | Playwright Test | yes |
+| `A4A E2E Tests (PR)` | Playwright Test | yes |
+| `E2E Tests (desktop)` | Jest runner (legacy) | no |
+| `E2E Tests (mobile)` | Jest runner (legacy) | no |
+
+Each match's URL has the form `https://teamcity.a8c.com/buildConfiguration/<config-id>/<build-id>`. Extract the trailing numeric `<build-id>` from each. The `<config-id>` segment identifies the runner: anything containing `_Playwright_Test_Matrix`, `_Dashboard_`, or `_A4A_` is Playwright Test; `_Playwright_desktop` / `_Playwright_mobile` are Jest legacy.
+
+If **only** Jest-legacy builds failed, tell the user the Healer can't fix Jest-runner tests (that framework is being phased out per `test/e2e/AGENTS.md`) and stop. Otherwise collect the Playwright-Test build IDs and proceed.
+
+If zero failing E2E checks exist at all, tell the user "no failing E2E tests on this PR" and stop.
 
 ### 4.2: Fetch failing test occurrences
 
