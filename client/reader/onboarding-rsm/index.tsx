@@ -253,7 +253,7 @@ const ReaderOnboardingRsm = ( {
 	};
 
 	const recordOnboardingCompleted = () => {
-		// record completion regardless of setting, to still track it in flows that forceShow.
+		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 		if ( hasCompletedOnboarding ) {
 			return;
