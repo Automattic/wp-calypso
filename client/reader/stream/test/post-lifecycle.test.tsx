@@ -2,8 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
-import nock from 'nock';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
@@ -50,14 +49,6 @@ function makeWrapper( queryClient: QueryClient, posts: Array< Record< string, un
 }
 
 describe( 'PostLifecycle', () => {
-	beforeAll( () => {
-		nock.disableNetConnect();
-	} );
-
-	beforeEach( () => {
-		nock.cleanAll();
-	} );
-
 	it( 'renders posts from the canonical post cache', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		upsertReaderPostCache( queryClient, [
@@ -80,18 +71,8 @@ describe( 'PostLifecycle', () => {
 		expect( screen.getByTestId( 'stream-post' ) ).toHaveTextContent( 'Canonical title' );
 	} );
 
-	it( 'fetches the post when no canonical cache entry exists', async () => {
+	it( 'renders a placeholder when no canonical cache entry exists', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/read/sites/100/posts/1' )
-			.query( true )
-			.reply( 200, {
-				ID: 1,
-				site_ID: 100,
-				global_ID: 'global-1',
-				title: 'Fetched title',
-				content: '<p>Fetched body</p>',
-			} );
 		const Wrapper = makeWrapper( queryClient, [
 			{ ID: 1, site_ID: 100, global_ID: 'global-1', title: 'Redux title' },
 		] );
@@ -103,9 +84,6 @@ describe( 'PostLifecycle', () => {
 		);
 
 		expect( screen.getByTestId( 'post-placeholder' ) ).toBeInTheDocument();
-
-		await waitFor( () =>
-			expect( screen.getByTestId( 'stream-post' ) ).toHaveTextContent( 'Fetched title' )
-		);
+		expect( screen.queryByTestId( 'stream-post' ) ).not.toBeInTheDocument();
 	} );
 } );

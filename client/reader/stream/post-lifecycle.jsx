@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import compareProps from 'calypso/lib/compare-props';
-import { useReaderPost } from 'calypso/reader/data/reader-post';
+import { useCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -160,6 +160,6 @@ const ConnectedPostLifecycle = connect(
 )( PostLifecycle );
 
 export default function PostLifecycleWithCanonicalPost( props ) {
-	const { data: canonicalPost } = useReaderPost( props.postKey );
+	const canonicalPost = useCachedReaderPost( props.postKey );
 	return <ConnectedPostLifecycle { ...props } canonicalPost={ canonicalPost } />;
 }

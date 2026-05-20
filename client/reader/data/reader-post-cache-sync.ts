@@ -1,6 +1,7 @@
 import { postLikesQuery } from '@automattic/api-queries';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
+import { runFastRules, runSlowRules } from 'calypso/state/reader/posts/normalization-rules';
 import { ReaderPostCachePost, upsertReaderPostCache } from './reader-post-cache';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Dispatch } from 'redux';
@@ -52,12 +53,27 @@ const seedPostLikesQueries = (
 	}
 };
 
+const hideRejections = ( promise: Promise< ReaderPostCachePost > ) => promise.catch( () => null );
+
+const normalizeReaderPosts = ( posts: Array< ReaderPostCachePost | null | undefined > ) =>
+	posts
+		.filter( Boolean )
+		.filter( ( post ) => ! post?._should_reload )
+		.map( ( post ) => runFastRules( post ) as ReaderPostCachePost );
+
 export const syncReaderPostCache = (
 	queryClient: QueryClient,
 	posts: Array< ReaderPostCachePost | null | undefined >
 ) => {
-	upsertReaderPostCache( queryClient, posts );
-	seedPostLikesQueries( queryClient, posts );
+	const normalizedPosts = normalizeReaderPosts( posts );
+	upsertReaderPostCache( queryClient, normalizedPosts );
+	seedPostLikesQueries( queryClient, normalizedPosts );
+
+	void Promise.all(
+		normalizedPosts.map( ( post ) => hideRejections( runSlowRules( post ) ) )
+	).then( ( processedPosts ) => {
+		upsertReaderPostCache( queryClient, processedPosts.filter( Boolean ) );
+	} );
 };
 
 export const syncReaderConversationFollowStatus = (
