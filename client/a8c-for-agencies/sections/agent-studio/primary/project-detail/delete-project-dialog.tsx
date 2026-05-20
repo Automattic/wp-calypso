@@ -1,3 +1,4 @@
+import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { useDispatch } from 'calypso/state';
@@ -52,11 +53,11 @@ export default function DeleteProjectDialog( { project, onClose, onDeleted }: Pr
 			isLoading={ mutation.isPending }
 			isDestructive
 		>
-			<p>
+			<Text>
 				{ __(
 					'This permanently deletes the project and every output inside it. This can’t be undone.'
 				) }
-			</p>
+			</Text>
 		</A4AConfirmationDialog>
 	);
 }
