@@ -666,14 +666,19 @@ export function useSuggestions(): {
 		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
+	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
+
 	if ( ! isBlockTransformationsEnabled() ) {
-		return { suggestions: [] };
+		return { suggestions: aiEditorialReviewSuggestions };
 	}
 
 	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
 		s.condition( editorContext.selectedBlock )
 	);
 	return {
-		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		suggestions: [
+			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+			...aiEditorialReviewSuggestions,
+		],
 	};
 }

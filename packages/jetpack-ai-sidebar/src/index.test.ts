@@ -267,7 +267,7 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not append AI Editorial Review to block-specific suggestions', () => {
+	it( 'appends AI Editorial Review to block-specific suggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -276,12 +276,16 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
-			'AI Editorial Review'
-		);
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+			'AI Editorial Review',
+		] );
 	} );
 
-	it( 'hides block transformation suggestions when the preview feature disables them', () => {
+	it( 'keeps AI Editorial Review when the preview feature disables block transformations', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -290,10 +294,12 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions ).toEqual( [] );
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
 	} );
 
-	it( 'hides block transformation suggestions when the preview feature is missing', () => {
+	it( 'keeps AI Editorial Review when the block transformations preview feature is missing', () => {
 		( globalThis as any ).agentsManagerData = {
 			aiEditorialReviewEnabled: true,
 			jetpackAiSidebarPreview: {
@@ -308,7 +314,9 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions ).toEqual( [] );
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
 	} );
 
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
