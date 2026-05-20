@@ -10,11 +10,11 @@ import type { Purchases } from '@automattic/data-stores';
 interface RefundEligibilityNoticeBaseProps {
 	refundAmount: string;
 	purchase: Purchases.Purchase;
-	siteSlug?: string;
 }
 
 interface RefundEligibilityNoticeRefundEligibilityProps extends RefundEligibilityNoticeBaseProps {
 	mode?: 'refund-eligibility';
+	siteSlug: string;
 }
 
 interface RefundEligibilityNoticeConfirmedProps extends RefundEligibilityNoticeBaseProps {
@@ -41,11 +41,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 		);
 	}
 
-	const onRemoveClick = ( event: React.MouseEvent ) => {
-		event.preventDefault();
-		if ( ! props.siteSlug ) {
-			return;
-		}
+	const onRemoveClick = () => {
 		page( `${ cancelPurchase( props.siteSlug, props.purchase.id ) }?intent=remove` );
 	};
 
