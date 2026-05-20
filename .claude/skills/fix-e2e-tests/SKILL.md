@@ -250,6 +250,14 @@ Fetch the PR's tip and create the worktree. Run each command as a **separate Bas
 
 Substitute the literal values from Step 3 directly into each command. Pick a unique worktree path like `.claude/worktrees/fix-e2e-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
 
+First, capture the absolute path of the main checkout. The symlinks in 5.1.3 and the cleanup in 5.5 need an absolute path that works on every developer's machine, and shell variables don't carry between Bash calls — so this one call gets the value, and you inline the literal result into the later calls:
+
+```bash
+git rev-parse --show-toplevel
+```
+
+Record the result as **REPO_ROOT**.
+
 1. Fetch the PR's branch so its HEAD is locally resolvable:
 
    ```bash
@@ -267,11 +275,11 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
 3. Link two auto-generated bits from the main checkout into the worktree so the pre-commit hook can run. Both are gitignored on the main side — they exist after `yarn install` and `husky install` but aren't in the tracked tree the worktree sees.
 
    ```bash
-   ln -s /var/www/wp-calypso/node_modules .claude/worktrees/fix-e2e-<slug>-<timestamp>/node_modules
+   ln -s <REPO_ROOT>/node_modules .claude/worktrees/fix-e2e-<slug>-<timestamp>/node_modules
    ```
 
    ```bash
-   ln -s /var/www/wp-calypso/.husky/_ .claude/worktrees/fix-e2e-<slug>-<timestamp>/.husky/_
+   ln -s <REPO_ROOT>/.husky/_ .claude/worktrees/fix-e2e-<slug>-<timestamp>/.husky/_
    ```
 
    **Why both are needed.** The worktree shares `.git` with the main checkout but has its own working tree, so anything `yarn install` or `husky install` generated locally isn't there. wp-calypso's pre-commit hook reads:
@@ -301,6 +309,7 @@ Record these values for later sub-steps (keep them in your working memory; later
 - **BRANCH** — `fix/e2e-<slug>`
 - **PR_SHA** — from Step 3
 - **TARGET_BRANCH** — from Step 3
+- **REPO_ROOT** — absolute path of the main checkout (captured above)
 
 ### 5.2: Delegate the fix to the Healer
 
@@ -435,10 +444,10 @@ Once the PR is pushed and created, the worktree has done its job — the branch 
 
 Announce: "PR opened. Cleaning up the worktree."
 
-Run the cleanup as a single Bash call with the worktree path inlined, using `git -C /var/www/wp-calypso` to avoid any reliance on the shell's cwd (which can be broken if a prior step left it pointing inside a removed directory):
+Run the cleanup as a single Bash call with the worktree path inlined, using `git -C <REPO_ROOT>` (the absolute path captured at the start of 5.1) to avoid any reliance on the shell's cwd (which can be broken if a prior step left it pointing inside a removed directory):
 
 ```bash
-git -C /var/www/wp-calypso worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> --force
+git -C <REPO_ROOT> worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> --force
 ```
 
 `--force` is used deliberately: the worktree contains a symlinked `node_modules` (from Step 5.1.3) and uncommitted husky-generated state from the pre-commit hook, neither of which should block removal. Nothing of value lives only in the worktree — everything worth keeping is in the branch on origin.
