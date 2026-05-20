@@ -38,6 +38,17 @@ const cursorInstallDeepLink = `cursor://anysphere.cursor-deeplink/mcp/install?na
 	btoa( JSON.stringify( { command: `npx -y ${ MCP_REMOTE_PACKAGE } ${ A4A_MCP_URL }` } ) )
 ) }`;
 
+// Shared quick-setup step for clients that shell out to `@automattic/mcp-remote` via npx
+// (Claude Desktop Developer config, Cursor, VS Code).
+const installNodeStep = createInterpolateElement(
+	sprintf(
+		/* translators: %s: npm package name, kept inside <code> */
+		__( 'Install Node 20 or later (required by <code>%s</code>).' ),
+		MCP_REMOTE_PACKAGE
+	),
+	{ code: <code /> }
+);
+
 export const AGENT_CONFIGS: AgentConfig[] = [
 	{
 		id: 'claude-code',
@@ -124,14 +135,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			{
 				title: __( 'Developer config (for Claude Enterprise accounts)' ),
 				steps: [
-					createInterpolateElement(
-						sprintf(
-							/* translators: %s: npm package name, kept inside <code> */
-							__( 'Install Node 20 or later (required by <code>%s</code>).' ),
-							MCP_REMOTE_PACKAGE
-						),
-						{ code: <code /> }
-					),
+					installNodeStep,
 					__(
 						'Open Claude Desktop → Settings → Developer, then click “Edit Config” under Local MCP servers.'
 					),
@@ -173,14 +177,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 			deepLink: cursorInstallDeepLink,
 		},
 		quickSetup: [
-			createInterpolateElement(
-				sprintf(
-					/* translators: %s: npm package name, kept inside <code> */
-					__( 'Install Node 20 or later (required by <code>%s</code>).' ),
-					MCP_REMOTE_PACKAGE
-				),
-				{ code: <code /> }
-			),
+			installNodeStep,
 			createInterpolateElement( __( 'Open <code>~/.cursor/mcp.json</code> in your editor.' ), {
 				code: <code />,
 			} ),
@@ -234,14 +231,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 		id: 'vscode',
 		label: 'VS Code',
 		quickSetup: [
-			createInterpolateElement(
-				sprintf(
-					/* translators: %s: npm package name, kept inside <code> */
-					__( 'Install Node 20 or later (required by <code>%s</code>).' ),
-					MCP_REMOTE_PACKAGE
-				),
-				{ code: <code /> }
-			),
+			installNodeStep,
 			createInterpolateElement(
 				__(
 					'Open <code>~/Library/Application Support/Code/User/mcp.json</code> (create if missing).'
