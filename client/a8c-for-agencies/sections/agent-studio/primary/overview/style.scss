@@ -74,3 +74,21 @@
 	min-height: 160px;
 	color: var( --color-text-inverted );
 }
+
+// Placeholder thumbnail rendered while PR #5 ships a real `png_url`
+// projection on the collateral. A flat surface with a small icon so
+// cards still feel composed without a real preview.
+.a4a-agent-studio-deliverable-card__placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 160px;
+	background: var( --color-neutral-80 );
+	color: var( --color-text-inverted );
+}
+
+.a4a-agent-studio-deliverable-card__placeholder svg,
+.a4a-agent-studio-deliverable-card__placeholder svg path {
+	fill: currentColor;
+}
