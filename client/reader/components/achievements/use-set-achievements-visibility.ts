@@ -1,0 +1,48 @@
+import { userPreferenceOptimisticMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
+import { recordAction } from 'calypso/reader/stats';
+import { useDispatch } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+
+export type AchievementsVisibility = 'public' | 'private';
+
+export default function useSetAchievementsVisibility() {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+
+	const { mutate, isPending } = useMutation(
+		userPreferenceOptimisticMutation( 'achievements-visibility' )
+	);
+
+	const setVisibility = ( next: AchievementsVisibility ) => {
+		mutate( next, {
+			onSuccess() {
+				dispatch(
+					successNotice(
+						next === 'public'
+							? translate( 'Your achievements page is now public.' )
+							: translate( 'Your achievements page is now private.' ),
+						{ duration: 4000 }
+					)
+				);
+				recordAction( `set_achievements_visibility_${ next }` );
+				recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
+					setting: 'achievements-visibility',
+					value: next,
+				} );
+			},
+			onError() {
+				dispatch(
+					errorNotice( translate( 'Failed to save the achievements visibility settings.' ), {
+						duration: 4000,
+					} )
+				);
+			},
+		} );
+	};
+
+	return { setVisibility, isPending };
+}
