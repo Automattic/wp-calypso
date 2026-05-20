@@ -20,8 +20,8 @@ const makeWrapper = ( queryClient: QueryClient, children: ReactNode ) => (
 );
 
 class PostLikesView extends Component< {
-	siteId?: number;
-	postId?: number;
+	siteId?: number | string | null;
+	postId?: number | string | null;
 	postLikes: PostLikesResponse | null;
 	likeCount: number;
 	countLikes: number | null;
@@ -77,6 +77,23 @@ describe( 'withPostLikes', () => {
 		await screen.findByText( 'count:72' );
 		expect( screen.getByText( 'liked:true' ) ).toBeVisible();
 		expect( screen.getByText( 'likers:1' ) ).toBeVisible();
+	} );
+
+	it( 'does not create NaN query keys for invalid string IDs', () => {
+		const queryClient = makeQueryClient();
+		const View = withPostLikes( PostLikesView );
+
+		render( makeWrapper( queryClient, <View siteId="not-a-number" postId={ 456 } /> ) );
+
+		const queryKeys = queryClient
+			.getQueryCache()
+			.getAll()
+			.map( ( query ) => query.queryKey );
+
+		expect( queryKeys ).toContainEqual( [ 'sites', null, 'posts', 456, 'likes' ] );
+		expect(
+			queryKeys.some( ( queryKey ) => Array.isArray( queryKey ) && queryKey.some( Number.isNaN ) )
+		).toBe( false );
 	} );
 } );
 
