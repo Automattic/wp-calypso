@@ -52,42 +52,13 @@ Do not proceed past Step 1 until the check reports `GH_OK`.
 
 The E2E pipeline runs on TeamCity (`teamcity.a8c.com`). GitHub's commit-status description is a generic "TeamCity build failed" — individual failing tests must be fetched from TeamCity's REST API, which requires a per-user access token and, on most Automattic workstations, a SOCKS5 tunnel on `localhost:8080`.
 
-Announce what you're checking (e.g., "Checking access to TeamCity — this is where the E2E pipeline runs, and the skill gathers the failing tests from its REST API."), then run this probe once per skill invocation. It autodetects the network path, loads the persisted token, and validates it.
+Announce what you're checking (e.g., "Checking access to TeamCity — this is where the E2E pipeline runs, and the skill gathers the failing tests from its REST API."), then run the probe script once per skill invocation. It autodetects the network path (direct vs SOCKS5), loads the persisted token, and validates it against TC's API:
 
 ```bash
-# Load token. Canonical (and only) location is ~/.config/teamcity-access-token — outside any
-# .claude/ path so Claude Code's path heuristic doesn't treat it as a project file and prompt
-# on every read. setup-token.sh writes here.
-if [ -f "$HOME/.config/teamcity-access-token" ]; then
-  TEAMCITY_TOKEN=$(cut -d= -f2 "$HOME/.config/teamcity-access-token" 2>/dev/null)
-  [ -z "$TEAMCITY_TOKEN" ] && TEAMCITY_TOKEN=$(cat "$HOME/.config/teamcity-access-token")
-fi
-
-probe() { curl -sS -o /dev/null -w "%{http_code}" --max-time 6 "$@" "https://teamcity.a8c.com/" 2>/dev/null; }
-TC_PROXY=""
-if [[ ! "$(probe)" =~ ^(200|302|401|403)$ ]]; then
-  if [[ "$(probe --socks5 localhost:8080)" =~ ^(200|302|401|403)$ ]]; then
-    TC_PROXY="--socks5 localhost:8080"
-  else
-    echo "NET_UNREACHABLE"; exit 0
-  fi
-fi
-
-if [ -z "${TEAMCITY_TOKEN:-}" ]; then
-  echo "TC_TOKEN_MISSING proxy=[$TC_PROXY]"; exit 0
-fi
-
-CODE=$(curl -sS $TC_PROXY -o /dev/null -w "%{http_code}" \
-  -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
-  "https://teamcity.a8c.com/app/rest/server")
-case "$CODE" in
-  200)     echo "TC_OK proxy=[$TC_PROXY]";;
-  401|403) echo "TC_TOKEN_BAD proxy=[$TC_PROXY]";;
-  *)       echo "TC_HTTP_$CODE proxy=[$TC_PROXY]";;
-esac
+.claude/skills/fix-e2e-tests/check-teamcity.sh
 ```
 
-Interpret:
+The script always exits 0 and prints exactly one status line. Interpret it:
 
 - `TC_OK` → record the `proxy=[...]` value. Every subsequent TeamCity call in later steps must use `curl $TC_PROXY ...` with that value. Continue to Step 3.
 - `NET_UNREACHABLE` → ask the user whether a VPN / proxy tunnel is running; stop until they confirm one way or another, then retry the probe.
@@ -246,11 +217,7 @@ Given a selected failing test from Step 4, create a git worktree at the right ba
 
 ### 5.1: Create the worktree on top of the PR's branch
 
-The fix has to be applied at a commit that actually contains the failing spec, and the user running the skill usually wants CI on the PR under investigation to go green. Always branch the fix off the **PR's HEAD** (captured as `headRefOid` in Step 3) and always target the fix PR at the **PR's branch** (`headRefName`). This:
-
-- guarantees the spec exists in the worktree (it's the tree that just failed CI);
-- unblocks the PR directly — merging the fix PR into the original PR turns that PR's next CI run green;
-- keeps scope predictable. If the failure actually lives on trunk too and the user prefers a trunk-targeted fix, they can re-target the base from the GitHub UI after review.
+Always branch the fix off the **PR's HEAD** (captured as `headRefOid` in Step 3) and target the fix PR at the **PR's branch** (`headRefName`) — that way the failing spec is guaranteed to be in the tree, and merging the fix into the parent PR turns its next CI run green. The user can re-target the base from the GitHub UI after review if they later want a trunk-scoped fix.
 
 Do **not** use the Agent tool's built-in `isolation: "worktree"` — it bases the worktree on the current `HEAD`, which is almost never the PR branch.
 
@@ -265,9 +232,7 @@ gh pr view <PR_NUMBER> --repo Automattic/wp-calypso --json headRefOid --jq .head
   - On **proceed**: continue with `<PR_SHA>` unchanged.
   - On **restart**: stop the skill cleanly. No worktree has been created yet, so there's nothing to clean up.
 
-Fetch the PR's tip and create the worktree. Run each command as a **separate Bash call** with the values inlined, not as one compound script — Claude Code's permission allowlist matches the entire command string against prefix patterns, so multi-statement scripts starting with a variable assignment don't match `Bash(git fetch:*)` etc. and trigger a permission prompt on every run.
-
-Substitute the literal values from Step 3 directly into each command. Pick a unique worktree path like `.claude/worktrees/fix-e2e-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
+Substitute the literal values from Step 3 into each command — separate Bash calls with values inlined, not compound scripts (see [`references/permission-heuristics.md`](references/permission-heuristics.md) for why). Pick a unique worktree path like `.claude/worktrees/fix-e2e-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
 
 Derive **slug** from the failing spec's filename (carried out of Step 4 — e.g., `infrastructure__flaky-fixture.spec.ts`): strip the trailing `.spec.ts`, lowercase, and replace any character outside `[a-z0-9_-]` with `-`. Cap at 50 characters. The example becomes `infrastructure__flaky-fixture`. The slug feeds the worktree path and the branch name (`fix/e2e-<slug>`); the human-readable commit/PR titles in 5.4 use the **test title** instead. Slug from spec basename rather than test title because it's stable, already URL-safe, and unique enough — one spec is usually the unit of fix even if several test cases inside it failed.
 
@@ -346,10 +311,10 @@ Exit conditions (also documented at the bottom of the template):
 
 ### 5.3: Review the diff with the user
 
-Show the user the root-cause + fix summary from the Healer and the diff. Two things matter here:
+Show the user the root-cause + fix summary from the Healer and the diff. Two things matter:
 
 1. **The Healer's edits are uncommitted at this point.** So `git diff <BASE>...HEAD` (three-dot, committed-history form) returns empty. Use `git diff <BASE>` (two-dot, compares working tree against the base) — that reflects what the Healer actually changed.
-2. **The diff must land in the chat message, not just in the Bash tool output.** Claude Code folds Bash output into a collapsed block; if the skill says "Diff above" while the diff is hidden behind "ctrl+o to expand", the user is being asked to confirm a push they can't see. Capture the diff and quote it inline in your next chat message.
+2. **Quote the diff inline in your next chat message**, not just in the Bash output (Claude Code folds tool output by default — see [`references/permission-heuristics.md`](references/permission-heuristics.md)).
 
 Run each `git` call separately with literal values inlined (not shell variables), so each matches the allowlist prefix without prompting:
 
@@ -426,7 +391,7 @@ git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> push -u origin <BRANCH>
 
 Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head <BRANCH> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This sidesteps two harness gotchas (see [`references/permission-heuristics.md`](references/permission-heuristics.md)): the persistent-cwd issue (cd into a soon-to-be-removed dir leaves the shell stranded) and the `cd && git` "untrusted directory" prompt.
 
-**Open the PR as ready-for-review, not draft.** AGENTS.md's default PR guidance is "create as draft", but this skill deliberately diverges: wp-calypso's E2E test matrix (and several other checks) is configured to skip draft PRs, and the whole point of opening the fix PR is to let CI validate the Healer's change. Opening as draft would leave the dev with no CI signal until they manually clicked "Ready for review", which is the opposite of what this skill is trying to accomplish.
+**Open the PR as ready-for-review, not draft** (this diverges from AGENTS.md's default). wp-calypso's E2E matrix is configured to skip draft PRs, and the point of the fix PR is to let CI validate the Healer's change.
 
 ```bash
 gh pr create --repo Automattic/wp-calypso --assignee @me \
@@ -448,7 +413,7 @@ Do not mention individuals by name. Do not link to wordpress.com URLs (AGENTS.md
 
 ### 5.5: Clean up and report
 
-Once the PR is pushed and created, the worktree has done its job — the branch and commits live on the `origin` remote, and the local worktree is disposable. Remove it so stale worktrees don't accumulate across runs (previous iterations of this skill left orphaned directories behind, which then confused diagnosis on later runs).
+Once the PR is pushed, the worktree has done its job — the branch lives on `origin`. Remove the worktree so orphans don't accumulate (5.1's stale-worktree check picks them up on later runs, but cleaning here avoids that hop).
 
 Announce: "PR opened. Cleaning up the worktree."
 
