@@ -52,7 +52,6 @@ import {
 	hasReaderFollowOrganization,
 } from 'calypso/state/reader/follows/selectors';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
@@ -946,60 +945,59 @@ export class FullPostView extends Component {
 	}
 }
 
-const ConnectedFullPostView = connect(
-	( state, ownProps ) => {
-		const { feedId, blogId, postId } = ownProps;
-		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-		const post = ownProps.canonicalPost || getPostByKey( state, postKey ) || { _state: 'pending' };
-		const currentPath = state.route.path.current;
+export const mapStateToFullPostProps = ( state, ownProps ) => {
+	const { feedId, blogId, postId } = ownProps;
+	const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
+	const post = ownProps.canonicalPost || { _state: 'pending' };
+	const currentPath = state.route.path.current;
 
-		const { site_ID: siteId, is_external: isExternal } = post;
+	const { site_ID: siteId, is_external: isExternal } = post;
 
-		const props = {
-			siteId,
-			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
-			notificationsOpen: isNotificationsOpen( state ),
-			hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
-			post,
-			postKey,
-			currentPath,
-			referralStream: getPreviousPath( state ),
-			previousRoute: getPreviousRoute( state ),
-			commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
-		};
+	const props = {
+		siteId,
+		isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+		notificationsOpen: isNotificationsOpen( state ),
+		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
+		post,
+		postKey,
+		currentPath,
+		referralStream: getPreviousPath( state ),
+		previousRoute: getPreviousRoute( state ),
+		commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
+	};
 
-		if ( ! isExternal && siteId ) {
-			props.site = getSite( state, siteId );
-		}
-		if ( feedId ) {
-			props.feed = getFeed( state, feedId );
-
-			// Add site icon to feed object so have icon for external feeds
-			if ( props.feed ) {
-				const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-				props.feed.site_icon = follow?.site_icon;
-			}
-		}
-		if ( ownProps.referral ) {
-			props.referralPost = getPostByKey( state, ownProps.referral );
-		}
-
-		return props;
-	},
-	{
-		disableAppBanner,
-		enableAppBanner,
-		markPostSeen,
-		setViewingFullPostKey,
-		unsetViewingFullPostKey,
-		requestMarkAsSeen,
-		requestMarkAsUnseen,
-		requestMarkAsSeenBlog,
-		requestMarkAsUnseenBlog,
-		showSelectedPost,
-		requestPostComments,
+	if ( ! isExternal && siteId ) {
+		props.site = getSite( state, siteId );
 	}
-)( withPostLikes( withReaderPostLikeActions( FullPostView ) ) );
+	if ( feedId ) {
+		props.feed = getFeed( state, feedId );
+
+		// Add site icon to feed object so have icon for external feeds
+		if ( props.feed ) {
+			const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+			props.feed.site_icon = follow?.site_icon;
+		}
+	}
+	if ( ownProps.referral ) {
+		props.referralPost = ownProps.canonicalReferralPost;
+	}
+
+	return props;
+};
+
+const ConnectedFullPostView = connect( mapStateToFullPostProps, {
+	disableAppBanner,
+	enableAppBanner,
+	markPostSeen,
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+	showSelectedPost,
+	requestPostComments,
+} )( withPostLikes( withReaderPostLikeActions( FullPostView ) ) );
 
 const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -1016,6 +1014,7 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 		const canonicalPost = useCachedReaderPost(
 			Object.keys( currentPostKey ).length ? currentPostKey : null
 		);
+		const canonicalReferralPost = useCachedReaderPost( props.referral );
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
@@ -1024,14 +1023,8 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 
 		const canonicalPreviousPost = useCachedReaderPost( previousPostKey );
 		const canonicalNextPost = useCachedReaderPost( nextPostKey );
-		const previousPostFromRedux = useSelector( ( state ) =>
-			previousPostKey ? getPostByKey( state, previousPostKey ) : null
-		);
-		const nextPostFromRedux = useSelector( ( state ) =>
-			nextPostKey ? getPostByKey( state, nextPostKey ) : null
-		);
-		const previousPost = canonicalPreviousPost ?? previousPostFromRedux;
-		const nextPost = canonicalNextPost ?? nextPostFromRedux;
+		const previousPost = canonicalPreviousPost;
+		const nextPost = canonicalNextPost;
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1052,8 +1045,9 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 				previousPostKey={ previousPostKey }
 				nextPostKey={ nextPostKey }
 				canonicalPost={ canonicalPost }
-				previousPost={ previousPost }
-				nextPost={ nextPost }
+				canonicalReferralPost={ canonicalReferralPost }
+				previousPost={ canonicalPreviousPost }
+				nextPost={ canonicalNextPost }
 				previousPostUrl={ previousPostUrl }
 				nextPostUrl={ nextPostUrl }
 			/>

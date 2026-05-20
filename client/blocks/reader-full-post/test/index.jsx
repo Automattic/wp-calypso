@@ -4,6 +4,7 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { mapStateToFullPostProps } from '../index';
 
 // Mock the entire FullPostView component to focus on the specific logic we're testing
 const MockFullPostView = ( { commentsApiDisabled, shouldShowComments } ) => {
@@ -26,6 +27,56 @@ const createMockStore = () => {
 	const reducer = ( state = {} ) => state;
 	return createStore( reducer );
 };
+
+const fullPostState = {
+	route: { path: { current: '/reader/blogs/100/posts/1' } },
+	ui: { appBanner: {}, section: {}, selectedSiteId: null },
+	comments: { apiDisabled: {} },
+	reader: {
+		feeds: { items: {} },
+		follows: { items: {} },
+		posts: {
+			items: {
+				'stale-global': {
+					ID: 1,
+					site_ID: 100,
+					global_ID: 'stale-global',
+					title: 'Stale Redux post',
+				},
+			},
+		},
+		sites: { items: {} },
+	},
+};
+
+describe( 'mapStateToFullPostProps', () => {
+	it( 'does not fall back to state.reader.posts for the main post', () => {
+		const props = mapStateToFullPostProps( fullPostState, {
+			blogId: 100,
+			postId: 1,
+		} );
+
+		expect( props.post ).toEqual( { _state: 'pending' } );
+	} );
+
+	it( 'uses cached post props for referral posts', () => {
+		const referralPost = {
+			ID: 2,
+			site_ID: 100,
+			global_ID: 'referral-global',
+			title: 'Cached referral',
+		};
+
+		const props = mapStateToFullPostProps( fullPostState, {
+			blogId: 100,
+			postId: 1,
+			referral: { blogId: 100, postId: 2 },
+			canonicalReferralPost: referralPost,
+		} );
+
+		expect( props.referralPost ).toBe( referralPost );
+	} );
+} );
 
 describe( 'FullPostView Comments API Disabled Logic', () => {
 	describe( 'when comments API is disabled', () => {
