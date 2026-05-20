@@ -1,4 +1,3 @@
-import { postLikesQuery } from '@automattic/api-queries';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
@@ -12,8 +11,8 @@ import {
 	ReaderPostCachePost,
 	updateCachedReaderPost,
 	updateCachedReaderPostsMatching,
-	upsertReaderPostCache,
 } from './reader-post-cache';
+import { syncReaderPostCache } from './reader-post-cache-sync';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
@@ -29,53 +28,6 @@ type ReaderPostCacheAction = {
 };
 
 type GetQueryClient = () => QueryClient | null;
-
-const numberValue = ( value: unknown ): number | null => {
-	if ( value === undefined || value === null || value === '' ) {
-		return null;
-	}
-
-	const number = Number( value );
-	return Number.isFinite( number ) ? number : null;
-};
-
-const seedPostLikesQueries = (
-	queryClient: QueryClient,
-	posts: Array< ReaderPostCachePost | null | undefined >
-) => {
-	for ( const post of posts ) {
-		if ( ! post || post.is_external ) {
-			continue;
-		}
-
-		const siteId = numberValue( post.site_ID );
-		const postId = numberValue( post.ID );
-		if ( ! siteId || ! postId ) {
-			continue;
-		}
-
-		const query = postLikesQuery( siteId, postId );
-		queryClient.setQueryDefaults( query.queryKey, {
-			staleTime: query.staleTime,
-			refetchInterval: query.refetchInterval,
-			meta: query.meta,
-		} );
-		const key = query.queryKey;
-		if ( queryClient.getQueryData( key ) ) {
-			continue;
-		}
-
-		queryClient.setQueryData(
-			key,
-			{
-				found: numberValue( post.like_count ) ?? 0,
-				iLike: Boolean( post.i_like ),
-				likes: [],
-			},
-			{ updatedAt: 0 }
-		);
-	}
-};
 
 const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction ) => {
 	const globalIds = new Set( action.globalIds );
@@ -128,8 +80,7 @@ export const createReaderPostCacheMiddleware =
 				patchConversationState( queryClient, readerAction );
 				break;
 			case READER_POSTS_RECEIVE:
-				upsertReaderPostCache( queryClient, readerAction.posts ?? [] );
-				seedPostLikesQueries( queryClient, readerAction.posts ?? [] );
+				syncReaderPostCache( queryClient, readerAction.posts ?? [] );
 				break;
 		}
 

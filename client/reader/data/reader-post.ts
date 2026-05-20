@@ -1,11 +1,10 @@
 import { readerPostQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
-import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { useCachedReaderPost } from './reader-post-cache';
+import { syncReaderConversationFollowStatus, syncReaderPostCache } from './reader-post-cache-sync';
 import type { ReaderPostCachePost } from './reader-post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -42,6 +41,7 @@ export const useReaderPost = (
 	postKey: Partial< ReadPostKey > | null | undefined
 ): ReaderPostResult => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const cachedPost = useCachedReaderPost( postKey );
 	const hasRenderablePostContent = !! (
 		cachedPost?.content ||
@@ -62,21 +62,17 @@ export const useReaderPost = (
 
 	useEffect( () => {
 		if ( query.data ) {
-			dispatch( receivePosts( [ query.data ] ) );
+			syncReaderPostCache( queryClient, [ query.data ] );
+			syncReaderConversationFollowStatus( dispatch, [ query.data ] );
 		}
-	}, [ query.data, dispatch ] );
+	}, [ query.data, queryClient, dispatch ] );
 
-	// Dispatch the raw action to bypass `receivePosts`' normalization, which
-	// doesn't apply to a post that never loaded.
 	useEffect( () => {
 		if ( ! query.isError || ! postKey ) {
 			return;
 		}
-		dispatch( {
-			type: READER_POSTS_RECEIVE,
-			posts: [ buildErrorPost( postKey, query.error ) ],
-		} );
-	}, [ query.isError, query.error, postKey, dispatch ] );
+		syncReaderPostCache( queryClient, [ buildErrorPost( postKey, query.error ) ] );
+	}, [ query.isError, query.error, postKey, queryClient ] );
 
 	return {
 		...query,

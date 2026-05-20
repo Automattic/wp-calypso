@@ -3,11 +3,11 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import nock from 'nock';
+import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_ERROR,
-	READER_POSTS_RECEIVE,
 	READER_RECOMMENDED_SITES_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { requestPage, requestPaginatedStream } from '../actions';
@@ -20,7 +20,6 @@ jest.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: () => mockQueryClient,
 } ) );
 
-// Hide railcar/analytics noise in receivePosts.
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
@@ -32,7 +31,6 @@ function newClient() {
 
 function runThunk( params ) {
 	const dispatch = jest.fn( ( action ) => {
-		// Pass thunks through (e.g. receivePosts is itself a thunk that dispatches READER_POSTS_RECEIVE).
 		if ( typeof action === 'function' ) {
 			return action( dispatch, () => ( {} ) );
 		}
@@ -101,7 +99,7 @@ describe( 'requestPage thunk', () => {
 			found: 1,
 		};
 
-		it( 'fetches and dispatches PAGE_REQUEST, receivePosts, then receivePage in order', async () => {
+		it( 'fetches, caches posts, and dispatches PAGE_REQUEST then receivePage in order', async () => {
 			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
 
 			const { dispatch, result } = runThunk( { streamKey: 'following' } );
@@ -114,13 +112,14 @@ describe( 'requestPage thunk', () => {
 
 			// PAGE_REQUEST must be dispatched first so the reducer's
 			// `isRequesting`/`error` transitions still fire for migrated streams.
-			// receivePosts dispatches READER_POSTS_RECEIVE; receivePage dispatches READER_STREAMS_PAGE_RECEIVE.
 			const requestIdx = types.indexOf( READER_STREAMS_PAGE_REQUEST );
-			const postsIdx = types.indexOf( READER_POSTS_RECEIVE );
 			const pageIdx = types.indexOf( READER_STREAMS_PAGE_RECEIVE );
 			expect( requestIdx ).toBe( 0 );
-			expect( postsIdx ).toBeGreaterThan( requestIdx );
-			expect( pageIdx ).toBeGreaterThan( postsIdx );
+			expect( pageIdx ).toBeGreaterThan( requestIdx );
+			expect( getCachedReaderPost( mockQueryClient, { blogId: 200, postId: 10 } ) ).toMatchObject( {
+				ID: 10,
+				site_ID: 200,
+			} );
 		} );
 
 		it( 'extracts the page handle from date_range.after', async () => {
@@ -903,7 +902,7 @@ describe( 'requestPage thunk', () => {
 			// `getQueryStringForPoll` no longer restricts fields — the API
 			// returns `date_liked` (and other stream extras) by default. The
 			// response shape mirrors a regular page fetch so consumers can
-			// dispatch the head straight into `state.reader.posts`.
+			// hydrate the canonical Reader post cache directly.
 			expect( captured.fields ).toBeUndefined();
 			expect( captured.meta ).toBe( 'post,discover_original_post' );
 		} );

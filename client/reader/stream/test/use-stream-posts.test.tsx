@@ -9,7 +9,6 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import readerReducer from 'calypso/state/reader/reducer';
 import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
@@ -319,7 +318,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 } );
 
 describe( 'useStreamPosts — cache replacement', () => {
-	it( 'dispatches posts when the first cached page is replaced', async () => {
+	it( 'updates cached posts when the first cached page is replaced', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -329,7 +328,7 @@ describe( 'useStreamPosts — cache replacement', () => {
 			} );
 
 		const queryClient = makeQueryClient();
-		const { Wrapper, store } = makeWrapper( queryClient );
+		const { Wrapper } = makeWrapper( queryClient );
 		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
@@ -356,7 +355,7 @@ describe( 'useStreamPosts — cache replacement', () => {
 		} );
 
 		await waitFor( () =>
-			expect( getPostByKey( store.getState(), postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
+			expect( getCachedReaderPost( queryClient, postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
 		);
 	} );
 } );

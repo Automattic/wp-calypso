@@ -49,10 +49,6 @@ const renderReaderPost = (
 	};
 };
 
-const getReceivedPosts = ( store: ReturnType< typeof buildStore > ) =>
-	( store.getState() as { reader: { posts: { items: Record< string, unknown > } } } ).reader.posts
-		.items;
-
 describe( 'useReaderPost', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
@@ -62,16 +58,19 @@ describe( 'useReaderPost', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'fetches a blog post and writes it into state.reader.posts', async () => {
+	it( 'fetches a blog post and exposes it through the canonical post cache', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/read/sites/1/posts/2' )
 			.query( true )
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2' } );
 
-		const { store } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => {
-			expect( getReceivedPosts( store ) ).toHaveProperty( 'global-2' );
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+				ID: 2,
+				site_ID: 1,
+			} );
 		} );
 	} );
 
@@ -103,10 +102,9 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 200, { ID: 4, feed_ID: 3, feed_item_ID: 4, global_ID: 'global-feed-4' } );
 
-		const { store, queryClient } = renderReaderPost( { feedId: 3, postId: 4 } );
+		const { queryClient } = renderReaderPost( { feedId: 3, postId: 4 } );
 
 		await waitFor( () => {
-			expect( getReceivedPosts( store ) ).toHaveProperty( 'global-feed-4' );
 			expect( getCachedReaderPost( queryClient, { feedId: 3, postId: 4 } ) ).toMatchObject( {
 				ID: 4,
 				feed_ID: 3,
@@ -121,19 +119,17 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 500, { message: 'Internal Server Error' } );
 
-		const { store } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 
 		await waitFor( () => {
-			const items = getReceivedPosts( store );
-			const errorPosts = Object.values( items ).filter(
-				( p ) => ( p as { is_error?: boolean } ).is_error
-			) as Array< { ID: number; site_ID: number; global_ID: string; is_error: boolean } >;
-			expect( errorPosts ).toHaveLength( 1 );
-			expect( errorPosts[ 0 ].ID ).toBe( 2 );
-			expect( errorPosts[ 0 ].site_ID ).toBe( 1 );
-			expect( errorPosts[ 0 ].global_ID ).toBe( 'error-1-2' );
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+				ID: 2,
+				site_ID: 1,
+				global_ID: 'error-1-2',
+				is_error: true,
+			} );
 		} );
 	} );
 
@@ -157,10 +153,9 @@ describe( 'useReaderPost', () => {
 		} );
 
 		await waitFor( () => {
-			const errorPosts = Object.values( getReceivedPosts( store ) ).filter(
-				( p ) => ( p as { is_error?: boolean } ).is_error
-			);
-			expect( errorPosts ).toHaveLength( 1 );
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+				is_error: true,
+			} );
 		} );
 
 		// Re-render with a new object literal of the same shape. The deterministic
@@ -168,16 +163,16 @@ describe( 'useReaderPost', () => {
 		rerender( { postKey: { blogId: 1, postId: 2 } } );
 		rerender( { postKey: { blogId: 1, postId: 2 } } );
 
-		const errorPosts = Object.values( getReceivedPosts( store ) ).filter(
-			( p ) => ( p as { is_error?: boolean } ).is_error
-		);
-		expect( errorPosts ).toHaveLength( 1 );
+		expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			global_ID: 'error-1-2',
+			is_error: true,
+		} );
 	} );
 
 	it( 'does not fetch when postKey is incomplete', () => {
 		// nock.disableNetConnect would throw on any unexpected request.
-		const { store } = renderReaderPost( { blogId: 1 } as never );
-		expect( getReceivedPosts( store ) ).toEqual( {} );
+		const { queryClient } = renderReaderPost( { blogId: 1 } as never );
+		expect( getCachedReaderPost( queryClient, { blogId: 1 } as never ) ).toBeNull();
 	} );
 
 	it( 'exposes loading state while fetching a missing post', async () => {
@@ -227,19 +222,18 @@ describe( 'useReaderPost', () => {
 		const queryClient = buildQueryClient();
 		upsertReaderPostCache( queryClient, [ cached ] );
 
-		const { result, store } = renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
+		const { result } = renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		expect( result.current.data ).toMatchObject( cached );
-		expect( getReceivedPosts( store ) ).toEqual( {} );
 	} );
 
-	it( 'fetches when the post only exists in Redux', async () => {
+	it( 'fetches when the post only exists in legacy Redux post state', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/read/sites/1/posts/2' )
 			.query( true )
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
 
-		const { store } = renderReaderPost(
+		const { queryClient } = renderReaderPost(
 			{ blogId: 1, postId: 2 },
 			{
 				reader: {
@@ -254,8 +248,8 @@ describe( 'useReaderPost', () => {
 		);
 
 		await waitFor( () => {
-			expect( getReceivedPosts( store ) ).toMatchObject( {
-				'global-2': { content: '<p>full</p>' },
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+				content: '<p>full</p>',
 			} );
 		} );
 	} );
@@ -270,11 +264,11 @@ describe( 'useReaderPost', () => {
 		upsertReaderPostCache( queryClient, [
 			{ ID: 2, site_ID: 1, global_ID: 'global-2', _state: 'minimal' },
 		] );
-		const { store } = renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
+		renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		await waitFor( () => {
-			expect( getReceivedPosts( store ) ).toMatchObject( {
-				'global-2': { title: 'full' },
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+				title: 'full',
 			} );
 		} );
 	} );
@@ -289,11 +283,11 @@ describe( 'useReaderPost', () => {
 		upsertReaderPostCache( queryClient, [
 			{ ID: 2, site_ID: 1, global_ID: 'global-2', title: 'from stream' },
 		] );
-		const { store } = renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
+		renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		await waitFor( () => {
-			expect( getReceivedPosts( store ) ).toMatchObject( {
-				'global-2': { content: '<p>full</p>' },
+			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+				content: '<p>full</p>',
 			} );
 		} );
 	} );

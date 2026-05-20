@@ -1,5 +1,6 @@
+import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { keyToString } from 'calypso/reader/post-key';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import type { PostKey, SavedPostItem } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -29,9 +30,14 @@ export function getSavedPostsError( state: AppState ): string | null {
 }
 
 export function getSavedPostsTotalReadingTime( state: AppState ): number {
+	const queryClient = getCalypsoQueryClient();
+	if ( ! queryClient ) {
+		return 0;
+	}
+
 	return getItems( state ).reduce( ( total: number, item: SavedPostItem ) => {
-		const post = getPostByKey( state, item.postKey );
-		const minutes = post?.minutes_to_read ?? 0;
-		return total + minutes;
+		const post = getCachedReaderPost( queryClient, item.postKey );
+		const minutes = Number( post?.minutes_to_read ?? 0 );
+		return total + ( Number.isFinite( minutes ) ? minutes : 0 );
 	}, 0 );
 }

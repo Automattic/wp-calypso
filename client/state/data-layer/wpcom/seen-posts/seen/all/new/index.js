@@ -1,9 +1,10 @@
+import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_SEEN_MARK_ALL_AS_SEEN_REQUEST } from 'calypso/state/reader/action-types';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { getStream } from 'calypso/state/reader/streams/selectors';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
@@ -42,7 +43,10 @@ export const onSuccess = ( action, response ) => ( dispatch, getState ) => {
 		if ( ! stream.items ) {
 			return;
 		}
-		const posts = getPostsByKeys( state, stream.items );
+		const queryClient = getCalypsoQueryClient();
+		const posts = queryClient
+			? stream.items.map( ( item ) => getCachedReaderPost( queryClient, item ) ).filter( Boolean )
+			: [];
 
 		// get their global ids
 		const globalIds = posts.reduce( ( acc, item ) => {

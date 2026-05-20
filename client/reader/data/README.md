@@ -14,14 +14,15 @@ migration, the Reader has two post access layers with different contracts:
   stream.
 
 The canonical cache lives in `reader-post-cache.ts`. Stream responses, full post
-fetches, and optimistic updates write into this cache. The cache query keys are
-memory-only and are not persisted to localStorage.
+fetches, and optimistic updates write into this cache through
+`reader-post-cache-sync.ts`. The cache query keys are memory-only and are not
+persisted to localStorage.
 
 `reader-post-cache-middleware.ts` keeps legacy Redux post receives mirrored into
-the canonical cache while older code still dispatches `receivePosts`. This is a
-compatibility layer, not the target architecture. Once remaining consumers stop
-reading `state.reader.posts`, the middleware and Redux post mirroring can be
-removed.
+the canonical cache while older legacy code still dispatches `receivePosts`.
+This is a compatibility layer, not the target architecture. New Reader post
+producers should call `syncReaderPostCache()` instead of dispatching
+`receivePosts()`.
 
 ## Migration Rules
 

@@ -6,8 +6,11 @@ import {
 } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
+import {
+	syncReaderConversationFollowStatus,
+	syncReaderPostCache,
+} from 'calypso/reader/data/reader-post-cache-sync';
 import { useDispatch } from 'calypso/state';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
@@ -75,9 +78,8 @@ interface UseStreamPostsOptions {
 /**
  * Cursor-paginated reader stream hook backed by `useInfiniteQuery`. Owns
  * `removedIds` locally; the legacy Redux slice (`state.reader.streams`) is
- * not touched. `state.reader.posts` is still populated via `receivePosts`
- * because `<PostLifecycle>` and the full-post navigation read post bodies from
- * there.
+ * not touched. Stream post bodies are written into the canonical Reader post
+ * cache so card/detail consumers can read them without Redux post storage.
  */
 export function useStreamPosts( {
 	streamKey,
@@ -164,10 +166,11 @@ export function useStreamPosts( {
 		for ( let i = 0; i < pages.length; i++ ) {
 			const { streamPosts } = normalizeStreamPage( pages[ i ] as ReadStreamResponse, streamType );
 			if ( streamPosts.length > 0 ) {
-				dispatch( receivePosts( streamPosts ) );
+				syncReaderPostCache( queryClient, streamPosts );
+				syncReaderConversationFollowStatus( dispatch, streamPosts );
 			}
 		}
-	}, [ resolvedStreamKey, streamType, query.data, dispatch ] );
+	}, [ resolvedStreamKey, streamType, query.data, queryClient, dispatch ] );
 
 	const items: PostKey[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];

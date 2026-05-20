@@ -2,9 +2,12 @@ import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
+import {
+	syncReaderConversationFollowStatus,
+	syncReaderPostCache,
+} from 'calypso/reader/data/reader-post-cache-sync';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { normalizeStreamPage } from './stream-normalization';
 import type { PostKey } from './use-stream-posts';
@@ -59,9 +62,9 @@ const postKeyId = ( postKey: PostKey | null | undefined ): string =>
  * stream every minute (`refetchInterval`); the diff between the polled head
  * and the currently visible items is exposed as `pendingCount`. The polled
  * payload carries full post bodies (see `getQueryStringForPoll`), and is
- * dispatched into `state.reader.posts` on every tick so `<PostLifecycle>`
- * resolves rich cards immediately when the consumer triggers a refetch of the
- * infinite query.
+ * written into the canonical Reader post cache on every tick so
+ * `<PostLifecycle>` resolves rich cards immediately when the consumer triggers
+ * a refetch of the infinite query.
  *
  * The hook is purely informational. Reacting to a non-zero `hasPendingPosts`
  * (passive invalidate, imperative refetch on click) is the consumer's job —
@@ -117,19 +120,18 @@ export function useStreamPendingPosts( {
 		meta: { persist: false },
 	} );
 
-	// Hydrate Redux on every poll tick so the post bodies are ready before the
-	// user clicks "X new posts". Idempotent — `READER_POSTS_RECEIVE` overwrites
-	// by `global_ID`, and the rich poll shape matches what regular fetches
-	// return.
+	// Hydrate the canonical cache on every poll tick so post bodies are ready
+	// before the user clicks "X new posts".
 	useEffect( () => {
 		if ( ! pollHead.data ) {
 			return;
 		}
 		const { streamPosts } = normalizeStreamPage( pollHead.data, streamType );
 		if ( streamPosts.length > 0 ) {
-			dispatch( receivePosts( streamPosts ) as never );
+			syncReaderPostCache( queryClient, streamPosts );
+			syncReaderConversationFollowStatus( dispatch, streamPosts );
 		}
-	}, [ pollHead.data, streamType, dispatch ] );
+	}, [ pollHead.data, streamType, queryClient, dispatch ] );
 
 	const pendingCount = useMemo( () => {
 		const streamItems = pollHead.data
