@@ -308,7 +308,13 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		// delete endpoints all accept the call in pending-renewal state, so we
 		// don't need to special-case it.
 		const showCancel = autoRenewOn && ! isTransferNonRefundable;
-		const showRemove = ! autoRenewOn || hasRefund;
+		// When auto-renew is on and a refund is available we used to show both
+		// Cancel and Remove side-by-side. Per the blended treatment the entry
+		// point is now a single "Cancel" CTA; the refund path is surfaced inside
+		// the cancel flow via RefundEligibilityNotice. Remove only appears when
+		// auto-renew is already off (cancelled subscriptions awaiting removal,
+		// expired-grace, etc.).
+		const showRemove = ! autoRenewOn;
 
 		if ( ! showCancel && ! showRemove ) {
 			return null;
