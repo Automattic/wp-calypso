@@ -112,7 +112,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		if (
 			isGridPlanOneTimeDiscounted ||
 			isGridPlanOnIntroOffer ||
-			( enableTermSavingsPriceDisplay && savings )
+			( enableTermSavingsPriceDisplay && savings ) ||
+			( showBillingDescriptionForIncreasedRenewalPrice && !! termVariantPricing )
 		) {
 			setIsAnyPlanPriceDiscounted( true );
 		}
@@ -122,22 +123,37 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		isGridPlanOneTimeDiscounted,
 		savings,
 		setIsAnyPlanPriceDiscounted,
+		showBillingDescriptionForIncreasedRenewalPrice,
+		termVariantPricing,
 	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
 	}
 
-	if ( isGridPlanOnIntroOffer ) {
+	if (
+		isGridPlanOnIntroOffer ||
+		( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing )
+	) {
 		// Use the monthly plan price for renewal pricing, instead of the intro offer renewal price
 		const compareToMonthlyPrice =
 			( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing
 				? termVariantPricing.originalPrice.monthly
 				: originalPrice.monthly ) ?? 0;
-		const monthlyPrice =
-			typeof discountedPrice.monthly === 'number'
-				? discountedPrice.monthly
-				: introOffer.rawPrice.monthly;
+		let monthlyPrice: number;
+		if ( isGridPlanOnIntroOffer ) {
+			monthlyPrice =
+				typeof discountedPrice.monthly === 'number'
+					? discountedPrice.monthly
+					: introOffer.rawPrice.monthly;
+		} else {
+			// For a plan without an intro offer, use the discounted price
+			// if available, otherwise the regular price.
+			monthlyPrice =
+				typeof discountedPrice.monthly === 'number'
+					? discountedPrice.monthly
+					: originalPrice.monthly ?? 0;
+		}
 		// Recalculate the savings for Monthly plans with introductory offers
 		// since we are comparing the introductory price with the same plan
 		// renewal price, instead of comparing yearly to monthly costs for
@@ -166,15 +182,17 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ compareToMonthlyPrice }
-						displayPerMonthNotation={ false }
-						isLargeCurrency={ isLargeCurrency }
-						isSmallestUnit
-						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-						original
-					/>
+					{ compareToMonthlyPrice > monthlyPrice && (
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ compareToMonthlyPrice }
+							displayPerMonthNotation={ false }
+							isLargeCurrency={ isLargeCurrency }
+							isSmallestUnit
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+							original
+						/>
+					) }
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }
