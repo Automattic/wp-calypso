@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -21,8 +21,7 @@ import './style.scss';
 const DEVELOPER_PATH = '/me/developer';
 
 function getTelegramBotUrl( bot ) {
-	const botUsername = bot || config( 'dolly_telegram_bot_username' );
-	return botUsername ? `https://t.me/${ encodeURIComponent( botUsername ) }` : null;
+	return bot ? `https://t.me/${ encodeURIComponent( bot ) }` : null;
 }
 
 function TelegramConnectMessageLayout( { documentTitle, title, children } ) {
@@ -91,7 +90,11 @@ export default function TelegramConnectPage( { telegramId, token, ts, bot } ) {
 						TELEGRAM_TRANSIENT_NOTICE
 					)
 				);
-				setStatus( 'success' );
+				if ( bot ) {
+					setStatus( 'success' );
+				} else {
+					page.redirect( DEVELOPER_PATH );
+				}
 			} )
 			.catch( ( err ) => {
 				recordTracksEvent( 'calypso_telegram_connect_via_token_error', {
