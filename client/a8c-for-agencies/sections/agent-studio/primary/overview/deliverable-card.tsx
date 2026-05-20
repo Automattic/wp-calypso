@@ -41,15 +41,20 @@ export default function DeliverableCard( { output }: Props ) {
 					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
 					<Text variant="muted">{ getMetaLabel( output ) }</Text>
 				</VStack>
-				<HStack justify="flex-end" spacing={ 2 }>
-					{ output.kind === 'one-pager' && output.status === 'ready' && (
-						<Button variant="primary" href={ getAgentStudioOutputPath( output.id ) }>
-							{ __( 'Open' ) }
-						</Button>
-					) }
-					<Button variant="secondary" isDestructive onClick={ () => setIsDeleteDialogOpen( true ) }>
+				<HStack justify="space-between" alignment="center">
+					<Button
+						variant="tertiary"
+						isDestructive
+						size="small"
+						onClick={ () => setIsDeleteDialogOpen( true ) }
+					>
 						{ __( 'Delete' ) }
 					</Button>
+					{ output.kind === 'one-pager' && output.status === 'ready' && (
+						<Button variant="primary" href={ getAgentStudioOutputPath( output.id ) }>
+							{ __( 'View' ) }
+						</Button>
+					) }
 				</HStack>
 			</CardBody>
 			{ isDeleteDialogOpen && (
