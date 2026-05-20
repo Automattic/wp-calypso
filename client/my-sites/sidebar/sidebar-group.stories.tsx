@@ -28,7 +28,13 @@ const buildStore = ( preloaded: Record< string, unknown > = {} ) =>
 		...preloaded,
 	} );
 
-const StoryFrame = ( { children, state = {} }: { children: React.ReactNode; state?: object } ) => (
+const StoryFrame = ( {
+	children,
+	state = {},
+}: {
+	children: React.ReactNode;
+	state?: Record< string, unknown >;
+} ) => (
 	<Provider store={ buildStore( state ) }>
 		<div
 			style={ {
