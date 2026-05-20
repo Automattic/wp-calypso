@@ -34,7 +34,7 @@ export default function AgentStudioOutputDetail( { outputId }: Props ) {
 						hideOnMobile
 						items={ [
 							{ label: __( 'Agent studio' ), href: getAgentStudioPath() },
-							{ label: output?.title ?? __( 'Deliverable' ) },
+							{ label: __( 'Viewer' ) },
 						] }
 					/>
 					<Actions>

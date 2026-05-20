@@ -137,13 +137,18 @@ export default function OutputDetailContent( { output }: Props ) {
 				justify="space-between"
 				className="a4a-agent-studio-output-detail__header"
 			>
-				<Text variant="muted">
-					{ sprintf(
-						/* translators: %d is a page count. */
-						__( '%d pages' ),
-						totalPages
-					) }
-				</Text>
+				<VStack spacing={ 1 }>
+					<Text size={ 20 } weight={ 600 }>
+						{ output.title }
+					</Text>
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %d is a page count. */
+							__( '%d pages' ),
+							totalPages
+						) }
+					</Text>
+				</VStack>
 				<Button
 					variant="primary"
 					onClick={ onDownload }
