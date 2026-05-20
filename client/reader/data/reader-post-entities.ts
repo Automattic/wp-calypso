@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { createElement, useMemo } from 'react';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import type { QueryClient } from '@tanstack/react-query';
+import type { ComponentType } from 'react';
 
 export type ReaderPostEntityPost = Record< string, unknown >;
 
@@ -360,3 +361,29 @@ export const useReaderPostEntity = (
 
 	return useMemo( () => mergeReaderPostEntityData( query.data ), [ query.data ] );
 };
+
+interface WithReaderPostEntityProps {
+	post?: ReaderPostEntityPost | null;
+}
+
+export const withReaderPostEntity =
+	< Props extends WithReaderPostEntityProps >(
+		getTarget: ( props: Props ) => ReaderPostEntityTarget
+	) =>
+	( WrappedComponent: ComponentType< Props > ) => {
+		const ReaderPostEntityContainer = ( props: Props ) => {
+			const canonicalPost = useReaderPostEntity( getTarget( props ) );
+			const nextProps = {
+				...props,
+				post: props.post ?? canonicalPost,
+			} as Props;
+
+			return createElement( WrappedComponent, nextProps );
+		};
+
+		ReaderPostEntityContainer.displayName = `withReaderPostEntity(${
+			WrappedComponent.displayName || WrappedComponent.name || 'Component'
+		})`;
+
+		return ReaderPostEntityContainer;
+	};
