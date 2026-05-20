@@ -1,9 +1,10 @@
+import { isLockedSecret } from '../utils';
 import AchievementCard from './achievement-card';
 import SecretAchievementCard from './secret-achievement-card';
 import type { LockedAchievementEntry } from '@automattic/api-core';
 
 export default function LockedAchievementCard( { entry }: { entry: LockedAchievementEntry } ) {
-	if ( entry.is_secret ) {
+	if ( isLockedSecret( entry ) ) {
 		return <SecretAchievementCard locked />;
 	}
 

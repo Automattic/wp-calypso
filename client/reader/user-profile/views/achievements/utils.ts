@@ -65,11 +65,17 @@ export function deduplicateAchievementsById< T extends { achievement_id: number 
 	return result;
 }
 
-export const isFullyEarned = ( a: EarnedAchievementEntry ): a is Achievement =>
-	a.is_secret !== true;
+// A masked secret carries `is_secret: true` AND an empty/missing `name`.
+// `is_secret` alone is not enough: the endpoint now reflects the registry on
+// full payloads, so a self-read of an earned secret returns `is_secret: true`
+// with a populated name. Treat that as fully earned.
+const hasVisibleName = ( a: { name?: string } ): boolean => !! a.name;
 
 export const isMaskedSecret = ( a: EarnedAchievementEntry ): a is MaskedSecretAchievement =>
-	a.is_secret === true;
+	a.is_secret === true && ! hasVisibleName( a );
+
+export const isFullyEarned = ( a: EarnedAchievementEntry ): a is Achievement =>
+	! isMaskedSecret( a );
 
 export const isLockedSecret = ( a: LockedAchievementEntry ): a is LockedSecretAchievement =>
-	a.is_secret === true;
+	a.is_secret === true && ! hasVisibleName( a );

@@ -21,8 +21,21 @@ const fullyEarned: Achievement = {
 	level: 1,
 	date: '2026-01-01T00:00:00Z',
 	image: 'https://example.com/img.png',
-	retired: false,
+	is_retired: false,
 	is_secret: false,
+};
+
+const earnedSecret: Achievement = {
+	achievement_id: 5,
+	slug: 'secret-earned',
+	name: 'Revealed Secret',
+	description: 'You found it.',
+	badge_prefix: 'p',
+	level: 1,
+	date: '2026-01-05T00:00:00Z',
+	image: 'https://example.com/secret.png',
+	is_retired: false,
+	is_secret: true,
 };
 
 const maskedSecret: MaskedSecretAchievement = {
@@ -60,6 +73,10 @@ describe( 'isFullyEarned', () => {
 		const { is_secret: _omit, ...legacy } = fullyEarned;
 		expect( isFullyEarned( legacy as Achievement ) ).toBe( true );
 	} );
+
+	test( 'returns true for an earned secret with full payload (is_secret: true + name)', () => {
+		expect( isFullyEarned( earnedSecret ) ).toBe( true );
+	} );
 } );
 
 describe( 'isMaskedSecret', () => {
@@ -67,8 +84,16 @@ describe( 'isMaskedSecret', () => {
 		expect( isMaskedSecret( maskedSecret ) ).toBe( true );
 	} );
 
+	test( 'returns true for a masked secret that sends an explicit empty name', () => {
+		expect( isMaskedSecret( { ...maskedSecret, name: '' } ) ).toBe( true );
+	} );
+
 	test( 'returns false for a fully earned Achievement', () => {
 		expect( isMaskedSecret( fullyEarned ) ).toBe( false );
+	} );
+
+	test( 'returns false for an earned secret with full payload (is_secret: true + name)', () => {
+		expect( isMaskedSecret( earnedSecret ) ).toBe( false );
 	} );
 } );
 

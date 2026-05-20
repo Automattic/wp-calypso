@@ -21,7 +21,7 @@ const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 	level: 1,
 	date: '2026-01-15T00:00:00Z',
 	image: 'https://example.com/first.png',
-	retired: false,
+	is_retired: false,
 	is_secret: false,
 	...overrides,
 } );
@@ -257,6 +257,28 @@ describe( 'AchievementsGrid', () => {
 
 		expect( screen.getByText( 'First Post' ) ).toBeVisible();
 		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders a self-read earned secret (is_secret: true with full payload) as a regular card', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [
+				earned( {
+					achievement_id: 30,
+					slug: 'hidden_gem',
+					name: 'Hidden Gem',
+					description: 'You found the easter egg.',
+					is_secret: true,
+				} ),
+			],
+			lockedAchievements: [],
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'Hidden Gem' ) ).toBeVisible();
+		expect( screen.getByText( 'You found the easter egg.' ) ).toBeVisible();
+		expect( screen.queryByText( 'Secret achievement' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'prepends a Years of Service card when yearsOfService > 0', () => {

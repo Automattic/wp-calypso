@@ -1,6 +1,8 @@
 /**
  * Earned, fully-visible achievement. The shape returned for own-profile reads
- * and for non-secret entries on cross-user reads.
+ * and for non-secret entries on cross-user reads. A self-read of an earned
+ * secret achievement also uses this shape — `is_secret` then reflects the
+ * registry (`true`) but the payload is fully populated.
  */
 export interface Achievement {
 	achievement_id: number;
@@ -11,9 +13,13 @@ export interface Achievement {
 	level: number;
 	date: string;
 	image: string;
-	retired: boolean;
-	/** Optional — legacy responses (pre-locked-achievements rollout) omit it. */
-	is_secret?: false;
+	is_retired: boolean;
+	/**
+	 * Reflects the registry: `true` if the achievement is secret, even when
+	 * the payload is fully visible (self-read of an earned secret). Optional —
+	 * legacy responses (pre-locked-achievements rollout) omit it.
+	 */
+	is_secret?: boolean;
 	/** Only present when viewing your own achievements. */
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
@@ -22,11 +28,14 @@ export interface Achievement {
 
 /**
  * Earned by the profile owner, masked because the requester has not earned
- * the same secret. Cross-user reads only.
+ * the same secret. Cross-user reads only. Discriminated from {@link Achievement}
+ * at runtime by an empty/missing `name`.
  */
 export interface MaskedSecretAchievement {
 	achievement_id: number;
 	is_secret: true;
+	/** Empty string (or omitted) — the masked payload carries no name. */
+	name?: '';
 	date: string;
 }
 
@@ -49,11 +58,14 @@ export interface LockedAchievement {
 }
 
 /**
- * Locked + secret. Self-reads only.
+ * Locked + secret. Self-reads only. Discriminated from {@link LockedAchievement}
+ * at runtime by an empty/missing `name`.
  */
 export interface LockedSecretAchievement {
 	achievement_id: number;
 	is_secret: true;
+	/** Empty string (or omitted) — the masked payload carries no name. */
+	name?: '';
 	date_created: string;
 }
 
