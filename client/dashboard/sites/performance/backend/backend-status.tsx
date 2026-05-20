@@ -26,13 +26,8 @@ export default function BackendStatusNotice( {
 		}
 
 		if ( ! apmEnabled ) {
-			return (
-				<Notice variant="info" title={ __( 'Capturing is off' ) }>
-					{ __(
-						'Turn capturing on to start collecting performance data for the selected timeframe.'
-					) }
-				</Notice>
-			);
+			// The subtitle already says "Capturing is off..." — skip the duplicate notice.
+			return null;
 		}
 
 		return (

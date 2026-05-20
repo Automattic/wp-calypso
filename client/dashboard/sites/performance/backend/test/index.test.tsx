@@ -239,13 +239,22 @@ describe( '<SitePerformanceBackend>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the Capturing-is-off notice when APM is off and no data has come in yet', async () => {
+	test( 'omits the status notice when APM is off and no data has come in yet', async () => {
+		// The subtitle already says "Capturing is off..." so we skip the
+		// redundant notice in this state.
 		mockSite( businessSite( false ) );
 		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByText( /Turn capturing on to start collecting/ ) ).toBeVisible();
+		// Wait for the page to render before asserting absence.
+		await screen.findByRole( 'heading', { name: 'Response time breakdown' } );
+
+		expect( screen.queryByText( /Turn capturing on to start collecting/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Performance data is being collected/ ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
