@@ -195,10 +195,11 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					if ( ! pickedPlan ) {
 						// Redirect free plan selections to /choose for the PWYW A/B test.
-						// See https://radicalupdates.wordpress.com/2026/05/07/pwyw-pick-your-reward-on-dotcom/
 						// If we end the A/B test without shipping it, restore the
 						// commented-out block below and remove this redirect.
-						window.location.assign( '/choose' );
+						window.location.assign(
+							addQueryArgs( '/choose', getQueryArgs( window.location.href ) )
+						);
 						return;
 
 						// Since we're removing the paid domain, it means that the user chose to continue
