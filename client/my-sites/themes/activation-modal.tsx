@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Spinner } from '@automattic/components';
+import { ScreenReaderText, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -166,10 +166,15 @@ const ActivationModal = ( {
 			shouldCloseOnClickOutside={ ! isActivating }
 			shouldCloseOnEsc={ ! isActivating }
 		>
-			<div className="themes__activation-modal-previews" role="radiogroup">
+			<div
+				className="themes__activation-modal-previews"
+				role="radiogroup"
+				aria-label={ translate( 'Setup option' ) as string }
+			>
 				{ isWaitingForFullSetup ? (
-					<div className="themes__activation-modal-loading">
+					<div className="themes__activation-modal-loading" role="status">
 						<Spinner size={ 50 } />
+						<ScreenReaderText>{ translate( 'Loading preview…' ) }</ScreenReaderText>
 					</div>
 				) : (
 					<>
@@ -207,6 +212,15 @@ const ActivationModal = ( {
 						/>
 					</>
 				) }
+			</div>
+			{ /*
+				Persistent live region so screen readers hear when activation
+				starts. Success and error outcomes are announced separately via
+				Calypso's notice system after the modal closes.
+			*/ }
+			<div className="screen-reader-text" role="status">
+				{ isActivating &&
+					( translate( 'Activating %(themeName)s…', { args: { themeName } } ) as string ) }
 			</div>
 			<div className="themes__activation-modal-actions">
 				<Button variant="tertiary" onClick={ handleDismiss } disabled={ isActivating }>
