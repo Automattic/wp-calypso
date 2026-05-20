@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { mockAgentStudioService } from '../mock-agent-studio-service';
+import 'fake-indexeddb/auto';
+import {
+	__resetMockAgentStudioServiceForTests,
+	mockAgentStudioService,
+} from '../mock-agent-studio-service';
 
 const briefInput = {
 	agentId: 'one-pager',
@@ -11,11 +15,11 @@ const briefInput = {
 	description: 'A leave-behind for the pitch.',
 };
 
-describe( 'mockAgentStudioService default project', () => {
-	beforeEach( () => {
-		window.localStorage.clear();
-	} );
+beforeEach( async () => {
+	await __resetMockAgentStudioServiceForTests();
+} );
 
+describe( 'mockAgentStudioService default project', () => {
 	it( 'creates the default project when listing outputs before any exist', async () => {
 		const outputs = await mockAgentStudioService.listOutputs();
 		expect( outputs ).toEqual( [] );

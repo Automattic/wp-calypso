@@ -54,7 +54,7 @@ export function getLLMModel(): string {
 	if ( runtime ) {
 		return runtime;
 	}
-	return process.env.A4A_LLM_MODEL || 'gpt-4o-mini';
+	return process.env.A4A_LLM_MODEL || 'gpt-5.4-mini';
 }
 
 export function setLocalDevKey( key: string | undefined ): void {
@@ -75,4 +75,26 @@ export function getLocalDevModel(): string | undefined {
 
 export function isDevEnvironment(): boolean {
 	return process.env.NODE_ENV !== 'production';
+}
+
+/**
+ * Per-million-token pricing override. The prototype shipped its own
+ * `*_LLM_INPUT_PRICE` / `*_LLM_OUTPUT_PRICE` env vars so cost tracking stays
+ * accurate when the model id isn't in the built-in pricing table (e.g. custom
+ * model aliases). Returns undefined when no override is set, letting the
+ * built-in MODEL_PRICING fall through.
+ * @returns Override pricing, or undefined.
+ */
+export function getLLMPricingOverride(): { input: number; output: number } | undefined {
+	const inputRaw = process.env.A4A_LLM_INPUT_PRICE;
+	const outputRaw = process.env.A4A_LLM_OUTPUT_PRICE;
+	if ( ! inputRaw && ! outputRaw ) {
+		return undefined;
+	}
+	const input = parseFloat( inputRaw ?? '' );
+	const output = parseFloat( outputRaw ?? '' );
+	if ( ! Number.isFinite( input ) || ! Number.isFinite( output ) ) {
+		return undefined;
+	}
+	return { input, output };
 }

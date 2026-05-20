@@ -15,14 +15,14 @@ Everything in this directory is self-contained and depends on the rest of A4A on
 
 The default `LLMService` calls the OpenAI Chat Completions API directly from the browser. Provide a key one of two ways:
 
-1. **Build-time** — add to your repo-root `.env.local`:
+1. **Build-time** — add to your repo-root `.env` (gitignored, picked up by Calypso's `dotenv-webpack`):
 
    ```
    A4A_OPENAI_API_KEY=sk-...
    A4A_LLM_MODEL=gpt-4o-mini
    ```
 
-   Restart `yarn start` after changes. `.env.local` is gitignored.
+   Restart `yarn start` after changes for the new values to bake into the bundle.
 
 2. **Runtime override** — the brief screen surfaces a "Set local key" link in non-production builds. The key is stored in `localStorage` under `a4a-agent-studio-one-pager-dev-key`. The runtime key always wins over the build-time key.
 

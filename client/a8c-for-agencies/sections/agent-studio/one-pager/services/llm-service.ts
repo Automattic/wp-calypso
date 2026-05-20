@@ -1,4 +1,4 @@
-import { getLLMModel, getOpenAIApiKey } from './env';
+import { getLLMModel, getLLMPricingOverride, getOpenAIApiKey } from './env';
 import type { LLMChatRequest, LLMChatResponse, LLMService } from './types';
 
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
@@ -13,13 +13,13 @@ const MODEL_PRICING: Record< string, { input: number; output: number } > = {
 };
 
 function priceFor( model: string ): { input: number; output: number } | undefined {
-	return MODEL_PRICING[ model ];
+	return getLLMPricingOverride() ?? MODEL_PRICING[ model ];
 }
 
 export class OpenAIMissingKeyError extends Error {
 	constructor() {
 		super(
-			'OpenAI API key is not configured. Set A4A_OPENAI_API_KEY in .env.local or use the Set local key link in the brief screen.'
+			'OpenAI API key is not configured. Set A4A_OPENAI_API_KEY in .env or use the Set local key link in the brief screen.'
 		);
 		this.name = 'OpenAIMissingKeyError';
 	}

@@ -303,7 +303,7 @@ export async function generateOnePager( args: {
 	].join( '\n' );
 
 	const llmResponse = await args.llm.chat( {
-		model: args.model || 'gpt-4o-mini',
+		model: args.model || 'gpt-5.4-mini',
 		messages: [
 			{ role: 'system', content: SYSTEM_PROMPT },
 			{ role: 'user', content: userMessage },
@@ -405,7 +405,7 @@ export async function suggestTitleAndBlurb( args: {
 	signal?: AbortSignal;
 } ): Promise< string > {
 	const response = await args.llm.chat( {
-		model: args.model || 'gpt-4o-mini',
+		model: args.model || 'gpt-5.4-mini',
 		messages: [
 			{ role: 'system', content: TITLE_BLURB_PROMPT },
 			{ role: 'user', content: `Brief:\n${ args.inputText }` },

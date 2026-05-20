@@ -18283,6 +18283,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fake-indexeddb@npm:^6.0.0":
+  version: 6.2.5
+  resolution: "fake-indexeddb@npm:6.2.5"
+  checksum: 6c5e2fe84a61daa06d7ad63699d1041fe61847f15f92db12415634b3db94f363a64be9e08a3c3c4434af9c3c0132086b85c4d5dc5e8e06edae1e7daf70ce1f3c
+  languageName: node
+  linkType: hard
+
 "fast-average-color@npm:^9.1.1":
   version: 9.3.0
   resolution: "fast-average-color@npm:9.3.0"
@@ -33857,6 +33864,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^4.6.2"
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.14.0"
+    fake-indexeddb: "npm:^6.0.0"
     fsevents: "npm:^2.3.3"
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.2.3"
