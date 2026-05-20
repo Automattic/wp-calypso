@@ -2,8 +2,14 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { Provider } from 'react-redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
+import readerReducer from 'calypso/state/reader/reducer';
 import DialogContent from '../dialog-content';
 
 jest.mock( '@automattic/components', () => ( {
@@ -22,11 +28,6 @@ jest.mock( '@automattic/support-articles', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/data/query-reader-post', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="query-reader-post" />,
-} ) );
-
 jest.mock( 'calypso/components/data/query-reader-site', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="query-reader-site" />,
@@ -34,7 +35,28 @@ jest.mock( 'calypso/components/data/query-reader-site', () => ( {
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
+const makeStore = ( queryClient ) =>
+	createStore(
+		combineReducers( { reader: readerReducer } ),
+		undefined,
+		applyMiddleware(
+			thunkMiddleware,
+			createReaderPostCacheMiddleware( () => queryClient )
+		)
+	);
+
+const renderWithProviders = ( queryClient, children ) =>
+	render(
+		<QueryClientProvider client={ queryClient }>
+			<Provider store={ makeStore( queryClient ) }>{ children }</Provider>
+		</QueryClientProvider>
+	);
+
 describe( 'DialogContent', () => {
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'renders a support article from the canonical Reader post cache', () => {
 		const queryClient = makeQueryClient();
 		upsertReaderPostCache( queryClient, [
@@ -47,11 +69,7 @@ describe( 'DialogContent', () => {
 			},
 		] );
 
-		render(
-			<QueryClientProvider client={ queryClient }>
-				<DialogContent blogId={ 456 } postId={ 123 } />
-			</QueryClientProvider>
-		);
+		renderWithProviders( queryClient, <DialogContent blogId={ 456 } postId={ 123 } /> );
 
 		expect( screen.getByTestId( 'support-article-header' ) ).toHaveTextContent(
 			'Cached support article'
@@ -61,6 +79,30 @@ describe( 'DialogContent', () => {
 			'false'
 		);
 		expect( screen.getByText( 'Cached support article body' ) ).toBeInTheDocument();
+		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'fetches a support article when it is missing from the post cache', async () => {
+		const queryClient = makeQueryClient();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/456/posts/123' )
+			.query( true )
+			.reply( 200, {
+				ID: 123,
+				site_ID: 456,
+				global_ID: 'support-article-123',
+				title: 'Fetched support article',
+				content: '<p>Fetched support article body</p>',
+			} );
+
+		renderWithProviders( queryClient, <DialogContent blogId={ 456 } postId={ 123 } /> );
+
+		await waitFor( () =>
+			expect( screen.getByTestId( 'support-article-header' ) ).toHaveTextContent(
+				'Fetched support article'
+			)
+		);
+		expect( screen.getByText( 'Fetched support article body' ) ).toBeInTheDocument();
 		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
 	} );
 } );

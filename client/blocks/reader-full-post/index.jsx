@@ -20,7 +20,6 @@ import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
@@ -30,7 +29,7 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
+import { useReaderPost } from 'calypso/reader/data/reader-post';
 import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -701,8 +700,6 @@ export class FullPostView extends Component {
 			site,
 			feed,
 			referralPost,
-			referral,
-			postKey,
 			hasOrganization,
 			isWPForTeamsItem,
 			commentsApiDisabled,
@@ -768,20 +765,6 @@ export class FullPostView extends Component {
 					{ post && ! post.is_external && post.site_ID && (
 						<QueryReaderSite siteId={ +post.site_ID } />
 					) }
-					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
-					<QueryReaderPost postKey={ postKey } />
-					{ ! isLoading &&
-						post &&
-						! post.is_error &&
-						this.props.previousPostKey &&
-						! this.props.previousPost && (
-							<QueryReaderPost postKey={ this.props.previousPostKey } />
-						) }
-					{ ! isLoading &&
-						post &&
-						! post.is_error &&
-						this.props.nextPostKey &&
-						! this.props.nextPost && <QueryReaderPost postKey={ this.props.nextPostKey } /> }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -1011,18 +994,18 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
-		const canonicalPost = useCachedReaderPost(
+		const { data: canonicalPost } = useReaderPost(
 			Object.keys( currentPostKey ).length ? currentPostKey : null
 		);
-		const canonicalReferralPost = useCachedReaderPost( props.referral );
+		const { data: canonicalReferralPost } = useReaderPost( props.referral );
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const canonicalPreviousPost = useCachedReaderPost( previousPostKey );
-		const canonicalNextPost = useCachedReaderPost( nextPostKey );
+		const { data: canonicalPreviousPost } = useReaderPost( previousPostKey );
+		const { data: canonicalNextPost } = useReaderPost( nextPostKey );
 		const previousPost = canonicalPreviousPost;
 		const nextPost = canonicalNextPost;
 
