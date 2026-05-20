@@ -110,15 +110,13 @@ Guide the user as follows:
 > 6. Click **Create**.
 > 7. Copy the token to your clipboard — TeamCity only shows it once, so if you dismiss the dialog before copying you'll have to regenerate.
 >
-> **Do not paste the token into this chat.** Anything you type here ends up in the conversation transcript. The next step is run in a _separate_ terminal so the hidden-password prompt stays hidden.
->
 > 8. In a **separate terminal window (not Claude Code)**, `cd` to the wp-calypso repo and run:
 >
 >    ```bash
 >    bash .claude/skills/fix-e2e-tests/setup-token.sh
 >    ```
 >
->    At the hidden prompt, paste the token and press Enter. The script refuses to run under a non-TTY stdin precisely to defeat the `!`-prefix footgun, so if you run it via `!` it will abort and remind you to use a separate terminal.
+>    At the hidden prompt, paste the token and press Enter.
 >
 > 9. Come back here and say **done**.
 
