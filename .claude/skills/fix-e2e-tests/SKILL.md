@@ -181,6 +181,8 @@ If **only** Jest-legacy builds failed, tell the user the Healer can't fix Jest-r
 
 If zero failing E2E checks exist at all, tell the user "no failing E2E tests on this PR" and stop.
 
+See [`references/teamcity-api.md`](references/teamcity-api.md) for the full table of build IDs and the higher-level API behavior we depend on.
+
 ### 4.2: Fetch failing test occurrences
 
 For each failing build ID from 4.1, run the helper script. It probes for the SOCKS5 proxy, rides out transient TeamCity errors, drops muted occurrences, and emits a JSON array of `{build, name, reason, details}` objects:
@@ -203,7 +205,7 @@ If the script exits non-zero, the failure mode is in stderr. Likely cases:
 | 22 + HTTP 401/403 in stderr | Token expired or revoked mid-run | Re-run Step 2's setup flow. |
 | 22 + HTTP 5xx after retries | TeamCity is having a bad day | Retry the script; if it keeps failing, check TC status. |
 
-See [`identify-failing-tests.sh`](identify-failing-tests.sh) itself for the curl/jq rationale (`defaultFilter:false`, muted-at-jq filtering, `currentlyInvestigated` omission, regex anchor, `$d` binding). The skill no longer carries that rationale inline — it lives next to the code that depends on it.
+See [`identify-failing-tests.sh`](identify-failing-tests.sh) for the curl/jq specifics, and [`references/teamcity-api.md`](references/teamcity-api.md) for the higher-level API behavior (locator gotchas, why `defaultFilter:false`, `currentlyInvestigated` unreliability, the indented-error-class quirk in `details`).
 
 **Do not re-parse the raw JSON by grepping tool-results files on disk.** The script's output is the canonical view of failing tests; never reach into `/home/*/.claude/projects/...` for any reason.
 
