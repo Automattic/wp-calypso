@@ -260,18 +260,26 @@ git rev-parse --show-toplevel
 
 Record the result as **REPO_ROOT**.
 
+Check whether a `fix/e2e-<slug>` branch already exists locally from a prior run of this skill (when a PR was opened in 5.4, the cleanup in 5.5 deliberately keeps the local branch — so this is the common case when re-running against the same spec):
+
+```bash
+git show-ref --verify --quiet refs/heads/fix/e2e-<slug>
+```
+
+Exit 0 means the branch exists. Set **BRANCH** to `fix/e2e-<slug>-<timestamp>` (same timestamp as the worktree path). Exit 1 means it doesn't — set BRANCH to the unsuffixed `fix/e2e-<slug>`. Inline the chosen value everywhere `<BRANCH>` appears below. Don't auto-delete the prior branch — the user may still want it (or its PR).
+
 1. Fetch the PR's branch so its HEAD is locally resolvable:
 
    ```bash
    git fetch origin <TARGET_BRANCH>
    ```
 
-2. Create the worktree on a new `fix/e2e-<slug>` branch pointing at the PR's HEAD. Before running this, announce to the user what you're about to do **and** that the worktree will be cleaned up automatically at the end of the skill (Step 5.5), so they're not surprised when it disappears:
+2. Create the worktree on a new `<BRANCH>` branch pointing at the PR's HEAD. Before running this, announce to the user what you're about to do **and** that the worktree will be cleaned up automatically at the end of the skill (Step 5.5), so they're not surprised when it disappears:
 
-   > Creating a worktree at `.claude/worktrees/fix-e2e-<slug>-<timestamp>` on a new `fix/e2e-<slug>` branch pointing at the PR's HEAD. It's local, ignored by git, and will be removed automatically when the skill finishes (after the PR is opened or if the skill exits earlier).
+   > Creating a worktree at `.claude/worktrees/fix-e2e-<slug>-<timestamp>` on a new `<BRANCH>` branch pointing at the PR's HEAD. It's local, ignored by git, and will be removed automatically when the skill finishes (after the PR is opened or if the skill exits earlier).
 
    ```bash
-   git worktree add -b fix/e2e-<slug> .claude/worktrees/fix-e2e-<slug>-<timestamp> <PR_SHA>
+   git worktree add -b <BRANCH> .claude/worktrees/fix-e2e-<slug>-<timestamp> <PR_SHA>
    ```
 
 3. Link two auto-generated bits from the main checkout into the worktree so the pre-commit hook can run. Both are gitignored on the main side — they exist after `yarn install` and `husky install` but aren't in the tracked tree the worktree sees.
@@ -309,7 +317,7 @@ Record these values for later sub-steps (keep them in your working memory; later
 
 - **SLUG** — derived from the spec basename (see lead-in above)
 - **WORKTREE_DIR** — `.claude/worktrees/fix-e2e-<slug>-<timestamp>`
-- **BRANCH** — `fix/e2e-<slug>`
+- **BRANCH** — `fix/e2e-<slug>`, or `fix/e2e-<slug>-<timestamp>` if the unsuffixed form already exists locally
 - **PR_SHA** — from Step 3
 - **TARGET_BRANCH** — from Step 3
 - **REPO_ROOT** — absolute path of the main checkout (captured above)
@@ -404,12 +412,12 @@ EOF
 **Push** (announce: "Pushing the branch to origin."):
 
 ```bash
-git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> push -u origin fix/e2e-<slug>
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> push -u origin <BRANCH>
 ```
 
 **Open the PR** (announce: "Opening the PR against `<TARGET_BRANCH>` and assigning it to you.").
 
-Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head fix/e2e-<slug> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This matters because:
+Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head <BRANCH> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This matters because:
 
 - The Bash tool's cwd persists across calls; cd-ing into the worktree and then removing it in 5.5 leaves the shell with an invalid cwd (`pwd` fails with `getcwd: cannot access parent directories`).
 - The harness flags `cd <path> && git <cmd>` as "potentially running hooks from untrusted directory" and prompts every time. `gh pr create --head` sidesteps that entirely.
@@ -418,7 +426,7 @@ Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calyps
 
 ```bash
 gh pr create --repo Automattic/wp-calypso --assignee @me \
-  --head fix/e2e-<slug> --base <TARGET_BRANCH> \
+  --head <BRANCH> --base <TARGET_BRANCH> \
   --title "E2E: fix <short test title>" \
   --body "$(cat <<'EOF'
 ...body...
@@ -457,13 +465,13 @@ git -C <REPO_ROOT> worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> 
 
 Do **not** `cd` into or near the worktree before this call. The heuristic "command changes directory before running git" will prompt, and the call is allowlisted only as `Bash(git worktree:*)` / `Bash(git -C:*)`, not as `cd && git worktree`.
 
-Do **not** also delete the `fix/e2e-<slug>` local branch: that branch points at the commit you just pushed, and leaving it in place is helpful if the user wants to pull new changes into it or amend later. Remove it only if the PR is abandoned.
+Do **not** also delete the `<BRANCH>` local branch: that branch points at the commit you just pushed, and leaving it in place is helpful if the user wants to pull new changes into it or amend later. Remove it only if the PR is abandoned.
 
 If the PR was **not** opened (e.g., the Healer reported a product bug in 5.2 and the skill stopped, or the user declined to push in 5.3), also remove the worktree — but _do_ delete the local branch too, since nothing was pushed:
 
 ```bash
 git worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> --force
-git branch -D fix/e2e-<slug>
+git branch -D <BRANCH>
 ```
 
 Then tell the user the outcome. The message must make it clear that **the Healer's fix is heuristic and the developer is responsible for validating it before requesting review or merging**. The fix was generated from the CI failure trace, not a local rerun — CI will exercise it again now that the PR is open (not draft), but that's one signal, not a guarantee.
