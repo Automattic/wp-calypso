@@ -1,11 +1,4 @@
 .achievements-privacy-notice {
 	max-width: 720px;
 	margin: 16px auto 24px;
-
-	// @wordpress/ui Button resolves to `cursor: default` because the WPDS
-	// `--wpds-cursor-control` token is set to `default` for non-link controls
-	// (Mac convention). Restore the web-conventional pointer cursor here.
-	button:not([disabled]):not([data-disabled]) {
-		cursor: pointer;
-	}
 }
