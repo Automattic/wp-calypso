@@ -610,6 +610,9 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		} ) );
 		// Mix of active non-self, stale (unfollowed), and self-owned to verify
 		// the filter — only the two active non-self entries should be counted.
+		// `nonSelfSubscriptionsCount` defaults to 0 here (per beforeEach), so
+		// the reported count comes from the Redux-derived count, not the
+		// TanStack-query baseline.
 		getReaderFollows.mockReturnValue( [
 			{ is_following: true, is_owner: false },
 			{ is_following: true, is_owner: false },
@@ -632,6 +635,33 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		);
 
 		getReaderFollows.mockReturnValue( [] );
+	} );
+
+	it( 'falls back to nonSelfSubscriptionsCount when the Redux follows slice has not hydrated yet', async () => {
+		// Guards the `Math.max( nonSelfSubscriptionsCount, reduxCount )` merge:
+		// if the Redux follows slice is empty (e.g. slow network, lazy load)
+		// but `useSiteSubscriptions` is already populated, the completion event
+		// should report the TanStack-query count rather than 0.
+		const { useSiteSubscriptions } = jest.requireMock(
+			'../../following/use-site-subscriptions'
+		) as { useSiteSubscriptions: jest.Mock };
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions: true,
+			nonSelfSubscriptionsCount: 5,
+		} ) );
+		// Redux follows slice intentionally empty — default mock returns [].
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( { followed_non_self_sites_count: 5 } )
+		);
 	} );
 
 	it( 'still records completed (without re-saving preference) when the user has already completed onboarding', async () => {
