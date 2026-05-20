@@ -303,7 +303,7 @@ describe( 'InterestsModal – most subscribed pack', () => {
 } );
 
 describe( 'InterestsModal – analytics for pack subscribe', () => {
-	const fivePackBlogs = Array.from( { length: 3 }, ( _, i ) => ( {
+	const packBlogs = Array.from( { length: 3 }, ( _, i ) => ( {
 		feed_ID: 900 + i,
 		site_ID: 800 + i,
 		site_URL: `https://pack-${ i }.example`,
@@ -335,7 +335,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 				tags: [],
 			},
 		] );
-		jest.mocked( getPackBlogs ).mockReturnValue( fivePackBlogs );
+		jest.mocked( getPackBlogs ).mockReturnValue( packBlogs );
 
 		renderWithProvider(
 			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
@@ -348,7 +348,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 			expect.objectContaining( {
 				pack_id: 'most-subscribed',
 				tag_count: 0,
-				blog_count: 3,
+				blog_count: packBlogs.length,
 			} )
 		);
 	} );
@@ -365,7 +365,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 				tags: [],
 			},
 		] );
-		jest.mocked( getPackBlogs ).mockReturnValue( fivePackBlogs );
+		jest.mocked( getPackBlogs ).mockReturnValue( packBlogs );
 
 		renderWithProvider(
 			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
@@ -373,8 +373,8 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 
 		await user.click( screen.getByTestId( 'topic-pack-card' ) );
 
-		expect( recordFollow ).toHaveBeenCalledTimes( fivePackBlogs.length );
-		for ( const blog of fivePackBlogs ) {
+		expect( recordFollow ).toHaveBeenCalledTimes( packBlogs.length );
+		for ( const blog of packBlogs ) {
 			expect( recordFollow ).toHaveBeenCalledWith( blog.feed_URL, undefined, {
 				follow_source: 'reader-onboarding-modal',
 			} );
