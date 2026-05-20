@@ -580,7 +580,10 @@ describe( 'useCheckpoint', () => {
 // core/block-editor (for updateBlockAttributes / getBlock). Tracks calls so
 // tests can assert exact dispatches.
 function installWpDataMockWithBlockEditor(
-	blocks: Record< string, { name: string; attributes: { content?: string } } > = {
+	blocks: Record<
+		string,
+		{ name: string; attributes: { content?: string }; innerBlocks?: any[] }
+	> = {
 		'550e8400-e29b-41d4-a716-446655440000': {
 			name: 'core/paragraph',
 			attributes: { content: 'original block content' },
@@ -600,7 +603,13 @@ function installWpDataMockWithBlockEditor(
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
-						getBlock: ( clientId: string ) => blocks[ clientId ] ?? null,
+						getBlock: ( clientId: string ) =>
+							blocks[ clientId ] ? { clientId, ...blocks[ clientId ] } : null,
+						getBlocks: () =>
+							Object.entries( blocks ).map( ( [ clientId, block ] ) => ( {
+								clientId,
+								...block,
+							} ) ),
 					};
 				}
 				return undefined;
@@ -789,6 +798,40 @@ describe( 'applyReviewEdit', () => {
 				attrs: { content: 'The board voted on Tuesday on the proposal.' },
 			},
 		] );
+	} );
+
+	it( 'falls back to a unique currentText match when the clientId is stale', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'live-client-id': {
+				name: 'core/paragraph',
+				attributes: { content: 'hello world this is my firsst post' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'stale-client-id',
+			'Hello world, this is my first post.',
+			undefined,
+			'hello world this is my firsst post'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			clientId: 'live-client-id',
+			contentBefore: 'hello world this is my firsst post',
+			contentAfter: 'Hello world, this is my first post.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'live-client-id',
+				attrs: { content: 'Hello world, this is my first post.' },
+			},
+		] );
+		warn.mockRestore();
 	} );
 
 	it( 'revalidates currentText against the latest block content before writing', async () => {

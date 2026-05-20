@@ -192,14 +192,56 @@ function countOccurrences( source: string, needle: string ): number {
 	}
 }
 
-function getBlockSnapshot( clientId: string ): { name: string; content: string } | null {
+function getEditableBlockContent( block: any ): string {
+	const raw = block.attributes?.content;
+	return typeof raw === 'string' ? raw : raw?.toHTMLString?.() ?? '';
+}
+
+function getBlockSnapshot(
+	clientId: string
+): { clientId: string; name: string; content: string } | null {
 	const block = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlock?.( clientId );
 	if ( ! block ) {
 		return null;
 	}
-	const raw = block.attributes?.content;
-	const content = typeof raw === 'string' ? raw : raw?.toHTMLString?.() ?? '';
-	return { name: block.name, content };
+	return { clientId: block.clientId ?? clientId, name: block.name, content: getEditableBlockContent( block ) };
+}
+
+function findBlockSnapshotByCurrentText(
+	currentText: string
+): { snapshot?: { clientId: string; name: string; content: string }; error?: string } {
+	const blocks = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlocks?.() ?? [];
+	const matches: Array< { clientId: string; name: string; content: string } > = [];
+
+	const visit = ( block: any ) => {
+		if ( ! block ) {
+			return;
+		}
+		const snapshot = {
+			clientId: block.clientId,
+			name: block.name,
+			content: getEditableBlockContent( block ),
+		};
+
+		if ( snapshot.clientId && isSupportedEditBlockType( snapshot.name ) ) {
+			const matchCount = countOccurrences( snapshot.content, currentText );
+			for ( let i = 0; i < matchCount; i++ ) {
+				matches.push( snapshot );
+			}
+		}
+
+		( block.innerBlocks ?? [] ).forEach( visit );
+	};
+
+	blocks.forEach( visit );
+
+	if ( matches.length === 1 ) {
+		return { snapshot: matches[ 0 ] };
+	}
+	if ( matches.length > 1 ) {
+		return { error: 'currentText matches multiple spans in block content' };
+	}
+	return {};
 }
 
 /**
@@ -231,9 +273,37 @@ export function handleUpdateBlockContent( input: any ): any {
 		return { success: false, error: 'context changed', returnToAgent: false };
 	}
 
-	const snapshot = getBlockSnapshot( clientId );
+	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
+	let targetClientId = clientId;
+	let snapshot = getBlockSnapshot( targetClientId );
 	if ( ! snapshot ) {
-		return { success: false, error: 'block not found', returnToAgent: false };
+		if ( hasCurrentText ) {
+			const fallback = findBlockSnapshotByCurrentText( currentText );
+			if ( fallback.error ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+					clientId,
+				} );
+				return {
+					success: false,
+					error: fallback.error,
+					returnToAgent: false,
+				};
+			}
+			if ( fallback.snapshot ) {
+				targetClientId = fallback.snapshot.clientId;
+				snapshot = fallback.snapshot;
+				// eslint-disable-next-line no-console
+				console.warn( '[ReviewMediation] stale clientId matched by currentText', {
+					clientId,
+					targetClientId,
+				} );
+			}
+		}
+
+		if ( ! snapshot ) {
+			return { success: false, error: 'block not found', returnToAgent: false };
+		}
 	}
 	if ( ! isSupportedEditBlockType( snapshot.name ) ) {
 		return {
@@ -246,7 +316,6 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Substring replace when currentText is a non-empty span present in the block.
 	// If that span no longer exists, fail rather than replacing the whole block
 	// with a partial suggested edit.
-	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
 	if ( hasCurrentText ) {
 		const matchCount = countOccurrences( snapshot.content, currentText );
 		if ( matchCount === 0 ) {
@@ -272,7 +341,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	}
 
 	// Apply shimmer briefly, then update content and show highlight
-	const blockEl = findBlockElement( clientId );
+	const blockEl = findBlockElement( targetClientId );
 	if ( blockEl ) {
 		applyProcessingEffect( blockEl );
 	}
@@ -280,7 +349,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			const latestSnapshot = getBlockSnapshot( clientId );
+			const latestSnapshot = getBlockSnapshot( targetClientId );
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -307,14 +376,16 @@ export function handleUpdateBlockContent( input: any ): any {
 				const matchCount = countOccurrences( latestSnapshot.content, currentText );
 				if ( matchCount === 0 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
+					console.warn( '[ReviewMediation] currentText not found in block content', {
+						clientId: targetClientId,
+					} );
 					resolveFailure( 'currentText not found in block content' );
 					return;
 				}
 				if ( matchCount > 1 ) {
 					// eslint-disable-next-line no-console
 					console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
-						clientId,
+						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText matches multiple spans in block content' );
 					return;
@@ -322,12 +393,14 @@ export function handleUpdateBlockContent( input: any ): any {
 				nextContent = latestSnapshot.content.replace( currentText, content );
 			} else if ( latestSnapshot.content !== snapshot.content ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] block content changed while applying edit', { clientId } );
+				console.warn( '[ReviewMediation] block content changed while applying edit', {
+					clientId: targetClientId,
+				} );
 				resolveFailure( 'block content changed while applying edit' );
 				return;
 			}
 
-			blockEditor.updateBlockAttributes( clientId, { content: nextContent } );
+			blockEditor.updateBlockAttributes( targetClientId, { content: nextContent } );
 
 			if ( blockEl ) {
 				removeProcessingEffect( blockEl );
@@ -346,6 +419,7 @@ export function handleUpdateBlockContent( input: any ): any {
 
 			resolve( {
 				success: true,
+				clientId: targetClientId,
 				contentBefore: latestSnapshot.content,
 				contentAfter: nextContent,
 				returnToAgent: false,
@@ -371,6 +445,7 @@ export async function applyReviewEdit(
 	shouldApply?: () => boolean
 ): Promise< {
 	success: boolean;
+	clientId?: string;
 	contentBefore?: string;
 	contentAfter?: string;
 	error?: string;
