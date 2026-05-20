@@ -34,6 +34,7 @@ import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {
@@ -301,6 +302,8 @@ const onboarding: FlowV2< typeof initialize > = {
 											}
 									  );
 
+							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
@@ -308,6 +311,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									signup: 1,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 									coupon,
+									steps_current: checkoutStepperPosition.current,
+									steps_total: checkoutStepperPosition.total,
 								} )
 							);
 						} else if (
