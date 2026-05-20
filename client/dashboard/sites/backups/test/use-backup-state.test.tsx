@@ -357,6 +357,5 @@ describe( 'useBackupState', () => {
 				expect( result.current.status ).toBe( 'idle' );
 			} );
 		} );
-
 	} );
 } );
