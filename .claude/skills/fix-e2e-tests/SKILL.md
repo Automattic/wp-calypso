@@ -444,10 +444,7 @@ git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> push -u origin <BRANCH>
 
 **Open the PR** (announce: "Opening the PR against `<TARGET_BRANCH>` and assigning it to you.").
 
-Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head <BRANCH> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This matters because:
-
-- The Bash tool's cwd persists across calls; cd-ing into the worktree and then removing it in 5.5 leaves the shell with an invalid cwd (`pwd` fails with `getcwd: cannot access parent directories`).
-- The harness flags `cd <path> && git <cmd>` as "potentially running hooks from untrusted directory" and prompts every time. `gh pr create --head` sidesteps that entirely.
+Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head <BRANCH> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This sidesteps two harness gotchas (see [`references/permission-heuristics.md`](references/permission-heuristics.md)): the persistent-cwd issue (cd into a soon-to-be-removed dir leaves the shell stranded) and the `cd && git` "untrusted directory" prompt.
 
 **Open the PR as ready-for-review, not draft.** AGENTS.md's default PR guidance is "create as draft", but this skill deliberately diverges: wp-calypso's E2E test matrix (and several other checks) is configured to skip draft PRs, and the whole point of opening the fix PR is to let CI validate the Healer's change. Opening as draft would leave the dev with no CI signal until they manually clicked "Ready for review", which is the opposite of what this skill is trying to accomplish.
 
@@ -490,7 +487,7 @@ git -C <REPO_ROOT> worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> 
 
 `--force` is used deliberately: the worktree contains a symlinked `node_modules` (from Step 5.1.3) and uncommitted husky-generated state from the pre-commit hook, neither of which should block removal. Nothing of value lives only in the worktree — everything worth keeping is in the branch on origin.
 
-Do **not** `cd` into or near the worktree before this call. The heuristic "command changes directory before running git" will prompt, and the call is allowlisted only as `Bash(git worktree:*)` / `Bash(git -C:*)`, not as `cd && git worktree`.
+Do **not** `cd` into or near the worktree before this call (see [`references/permission-heuristics.md`](references/permission-heuristics.md) for the `cd && git` heuristic).
 
 Do **not** also delete the `<BRANCH>` local branch: that branch points at the commit you just pushed, and leaving it in place is helpful if the user wants to pull new changes into it or amend later. Remove it only if the PR is abandoned.
 
