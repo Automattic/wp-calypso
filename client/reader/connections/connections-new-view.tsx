@@ -93,7 +93,7 @@ export function ConnectionsNewView() {
 				tagline: String( translate( 'Your WordPress site is already social.' ) ),
 				body: String(
 					translate(
-						'Flip the ActivityPub switch on your blog and it shows up here. No new account — your site already does the talking.'
+						'Flip the ActivityPub switch in your site’s settings, and your blog slots in next to everything else you read here.'
 					)
 				),
 				href: adminUrl ? `${ adminUrl }options-general.php?page=activitypub` : null,

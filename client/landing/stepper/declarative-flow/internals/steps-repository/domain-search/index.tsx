@@ -489,7 +489,16 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				heading={
+					// On mobile, once the user has searched the persistent fixed
+					// search overlay (rendered by @automattic/domain-search) is the
+					// page's primary affordance — the H1/subText are dropped so
+					// high-quality results can fill the limited vertical space.
+					// The empty/initial state keeps the heading on mobile.
+					isMobileViewport && query ? undefined : (
+						<Step.Heading text={ headerText } subText={ subHeaderText } />
+					)
+				}
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>

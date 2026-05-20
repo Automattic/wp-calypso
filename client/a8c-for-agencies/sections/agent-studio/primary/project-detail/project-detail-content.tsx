@@ -70,7 +70,7 @@ export default function ProjectDetailContent( { projectId, project, onBriefAgent
 						icon={ page }
 						title={ __( 'Brief your first agent' ) }
 						description={ __(
-							'Agents create sales decks, social graphics, and more. Their work lands here.'
+							'Agents create PDFs, social graphics, and more. Their work lands here.'
 						) }
 					>
 						<Button variant="tertiary" onClick={ onBriefAgent }>

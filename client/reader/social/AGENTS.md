@@ -490,13 +490,19 @@ loaded row lands in a single bucket the lone divider is also suppressed
 (it would feel like noise). `now` is captured inside the bucketing
 `useMemo`, not lifted to its own hook.
 
-**Stacking** — `groupNotifications( items )` in
+**Stacking** — `groupNotifications( items, now )` in
 `group-notifications.ts` is a pure function that buckets a flat
 newest-first `SocialNotification[]` into `GroupedRow[]`. Group key:
-`canonical_type:target.uri` for like/repost/mention/reply/quote, the
-literal `'follow'` for follow rows (no target needed), and a per-item
+`canonical_type:target.uri` for like/repost/mention/reply/quote,
+`follow:<date-bucket>` for follow rows (using the same `bucketFor`
+vocabulary the renderer uses for date dividers — a long-tailed
+follower history would otherwise collapse into a single mega-stack,
+since every follow shares the same target = "you"), and a per-item
 singleton key for `other` (never stacks) or for any row missing a
-`target.uri`. Stacks form only at `members.length >= 2`; singletons
+`target.uri`. The `now` argument is shared by `<SocialNotificationsList>`
+with the divider computation so each follow stack lands under the
+matching bucket heading. Stacks form only at `members.length >= 2`;
+singletons
 render via `<SocialNotificationItem>` unchanged. Position of a stack in
 the rendered list is the position of its newest member, which falls out
 of the algorithm because the first time a key is seen creates its

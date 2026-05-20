@@ -5,6 +5,7 @@ export interface AgentStudioProject {
 	name: string;
 	clientName?: string;
 	brief?: string;
+	isDefault?: boolean;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -17,6 +18,10 @@ export interface AgentStudioOutput {
 	agentName: string;
 	deliverableType: string;
 	status: AgentStudioOutputStatus;
+	/** Preview images of the generated assets, populated once status is ready. */
+	previewUrls?: string[];
+	/** Total number of assets the agent produced, populated once status is ready. */
+	assetCount?: number;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -32,10 +37,24 @@ export interface CreateAgentStudioProjectInput {
 	brief?: string;
 }
 
+export interface CreateAgentStudioOutputInput {
+	agentId: string;
+	agentName: string;
+	deliverableType: string;
+	title: string;
+	description: string;
+}
+
+export type OnePagerContentField = 'title' | 'blurb';
+
 export interface AgentStudioService {
 	listProjects(): Promise< AgentStudioProjectSummary[] >;
 	getProject( projectId: string ): Promise< AgentStudioProject | undefined >;
 	createProject( input: CreateAgentStudioProjectInput ): Promise< AgentStudioProject >;
 	deleteProject( projectId: string ): Promise< void >;
 	listProjectOutputs( projectId: string ): Promise< AgentStudioOutput[] >;
+	listOutputs(): Promise< AgentStudioOutput[] >;
+	createOutput( input: CreateAgentStudioOutputInput ): Promise< AgentStudioOutput >;
+	deleteOutput( outputId: string ): Promise< void >;
+	suggestOnePagerContent( brief: string, field: OnePagerContentField ): Promise< string >;
 }

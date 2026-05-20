@@ -69,6 +69,20 @@ export interface ExPlatClient {
 	) => Promise< WidenPrimitives< T > >;
 
 	/**
+	 * Warm the `/flags` payload cache without evaluating a specific flag.
+	 *
+	 * Fire-and-forget from an app entry point (route handler, section root) so
+	 * the first `getFeatureValue` call hits a primed cache. Concurrent calls and
+	 * any later `getFeatureValue` calls share the same in-flight fetch via the
+	 * loader's internal `asyncOneAtATime`.
+	 *
+	 * Resolves once the payload is loaded (or once the fetch fails — errors are
+	 * logged via `logError` but never rejected here). Resolves immediately when
+	 * the host has not configured `fetchFlagPayload`.
+	 */
+	prefetchFlagPayload: () => Promise< void >;
+
+	/**
 	 * INTERNAL USE ONLY
 	 */
 	config: Config;
@@ -323,6 +337,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return fallback;
 			}
 		},
+		prefetchFlagPayload: async (): Promise< void > => {
+			if ( ! loadFlagPayload ) {
+				return;
+			}
+			await loadFlagPayload();
+		},
 		dangerouslyGetMaybeLoadedExperimentAssignment: (
 			experimentName: string
 		): ExperimentAssignment | null => {
@@ -384,6 +404,9 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			defaultValue: T
 		): Promise< WidenPrimitives< T > > => {
 			return defaultValue as unknown as WidenPrimitives< T >;
+		},
+		prefetchFlagPayload: async (): Promise< void > => {
+			// No-op under SSR; the browser client warms the cache.
 		},
 		config,
 	};

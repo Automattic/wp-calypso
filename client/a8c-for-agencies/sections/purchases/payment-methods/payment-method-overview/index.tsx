@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import PaymentRiskNoticeBanner from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_PAYMENT_METHODS_ADD_LINK,
@@ -123,6 +124,7 @@ export default function PaymentMethodOverview() {
 	return (
 		<Layout className="payment-method-overview" title={ translate( 'Payment methods' ) } wide>
 			<LayoutTop>
+				<PaymentRiskNoticeBanner source="purchases_payment_methods" />
 				<LayoutHeader>
 					<Title>{ translate( 'Payment methods' ) } </Title>
 					<Subtitle>

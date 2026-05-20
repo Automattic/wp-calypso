@@ -67,8 +67,8 @@ export default function QueryReaderPost( { postKey }: QueryReaderPostProps ) {
 		}
 	};
 
-	// Dispatch the raw action to bypass `receivePosts`' normalization and
-	// `receiveLikes` side effects, which don't apply to a post that never loaded.
+	// Dispatch the raw action to bypass `receivePosts`' normalization, which
+	// doesn't apply to a post that never loaded.
 	const handleError = () => {
 		if ( ! isError || ! postKey ) {
 			return;

@@ -1,6 +1,8 @@
 export const DEFAULT_MODEL = 'gpt-realtime';
-/** Proxied by WP.com REST to OpenAI `/v1/realtime/client_secrets`. */
-export const REALTIME_CLIENT_SECRETS_PATH = '/ai-api-proxy/v1/realtime/client_secrets';
+export const DICTATION_CLIENT_SECRET_PATH = '/dictation-client-secret';
+export const DICTATION_CLIENT_SECRET_REMAINING_TIME_PATH =
+	'/dictation-client-secret/remaining-time';
+export const DICTATION_CLIENT_SECRET_SETTLE_PATH = '/dictation-client-secret/settle';
 export const OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
 export const MAX_TOOL_EVENTS = 40;
 export const PROGRAMMATIC_SEND_TIMEOUT_MS = 15000;

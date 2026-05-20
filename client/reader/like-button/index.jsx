@@ -1,19 +1,19 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { isMobile } from '@automattic/viewport';
+import { flowRight } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
+import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
@@ -97,7 +97,6 @@ class ReaderLikeButton extends Component {
 
 		return (
 			<Fragment>
-				<QueryPostLikes siteId={ siteId } postId={ postId } />
 				<LikeButtonContainer
 					{ ...this.props }
 					ref={ this.likeButtonRef }
@@ -124,18 +123,20 @@ class ReaderLikeButton extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId, postId } ) => {
-		return {
-			postByKey: getPostByKey( state, {
-				blogId: siteId,
-				postId,
-			} ),
-			likeCount: getPostLikeCount( state, siteId, postId ),
-			iLike: isLikedPost( state, siteId, postId ),
-			isLoggedIn: isUserLoggedIn( state ),
-			previousPath: getPreviousPath( state ),
-		};
-	},
-	{ markPostSeen }
+export default flowRight(
+	connect(
+		( state, { siteId, postId } ) => {
+			return {
+				postByKey: getPostByKey( state, {
+					blogId: siteId,
+					postId,
+				} ),
+				isLoggedIn: isUserLoggedIn( state ),
+				previousPath: getPreviousPath( state ),
+			};
+		},
+		{ markPostSeen }
+	),
+	withPostLikes,
+	withReaderPostLikeActions
 )( ReaderLikeButton );
