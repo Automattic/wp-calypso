@@ -10,11 +10,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useCachedReaderPosts } from 'calypso/reader/data/reader-post-cache';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -76,36 +76,57 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 
 	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
 
-	const posts = useSelector( ( state: AppState ) => {
+	const postItems = useMemo(
+		() =>
+			( ( data?.items ?? [] ) as Array< ReaderPost | PaddingItem > ).filter(
+				( item ) => ! isPaddingItem( item )
+			) as ReaderPost[],
+		[ data?.items ]
+	);
+	const postKeys = useMemo(
+		() =>
+			postItems.map( ( item ) => ( {
+				feedId: item.feedId,
+				postId: item.postId,
+			} ) ),
+		[ postItems ]
+	);
+	const cachedPosts = useCachedReaderPosts( postKeys );
+	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
 		const items = data?.items;
 		if ( ! items ) {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
+		return items.reduce( ( acc: Record< number, unknown >, item: ReaderPost | PaddingItem ) => {
 			if ( isPaddingItem( item ) ) {
 				return acc;
 			}
 
-			const post = getPostByKey( state, {
-				feedId: item.feedId,
-				postId: item.postId,
-			} );
-			if ( ! post ) {
-				return acc;
+			const feedSubscription = getReaderFollowForFeed( state, item.feedId );
+			if ( feedSubscription?.site_icon ) {
+				acc[ item.feedId ] = feedSubscription.site_icon;
 			}
-
-			// Add site icon to feed object so have icon for external feeds
-			if ( ! post.site_icon ) {
-				const feedSubscription = getReaderFollowForFeed( state, item.feedId );
-				post.site_icon = feedSubscription?.site_icon;
-			}
-
-			acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
 
 			return acc;
 		}, {} );
 	}, shallowEqual );
+
+	const posts = useMemo( () => {
+		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {
+			const post = cachedPosts[ index ];
+			if ( ! post ) {
+				return acc;
+			}
+
+			acc[ `${ item.feedId }-${ item.postId }` ] = {
+				...post,
+				site_icon: post.site_icon ?? siteIconsByFeedId[ item.feedId ],
+			} as PostItem;
+
+			return acc;
+		}, {} );
+	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
 
 	const getPostFromItem = useCallback(
 		( item: ReaderPost ) => {

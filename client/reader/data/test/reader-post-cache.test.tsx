@@ -8,6 +8,7 @@ import {
 	updateCachedReaderPost,
 	upsertReaderPostCache,
 	useCachedReaderPost,
+	useCachedReaderPosts,
 } from '../reader-post-cache';
 import type { ReactNode } from 'react';
 
@@ -191,6 +192,32 @@ describe( 'reader post cache', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toMatchObject( { ID: 1, site_ID: 100 } );
+		} );
+	} );
+
+	it( 'exposes dynamic cached post lists through useCachedReaderPosts', async () => {
+		const queryClient = makeQueryClient();
+		const postKeys = [
+			{ blogId: 100, postId: 1 },
+			{ feedId: 200, postId: 300 },
+		];
+
+		const { result } = renderHook( () => useCachedReaderPosts( postKeys ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		expect( result.current ).toEqual( [ null, null ] );
+
+		upsertReaderPostCache( queryClient, [
+			blogPost( 1 ),
+			blogPost( 2, { feed_ID: 200, feed_item_ID: 300 } ),
+		] );
+
+		await waitFor( () => {
+			expect( result.current ).toEqual( [
+				expect.objectContaining( { ID: 1, site_ID: 100 } ),
+				expect.objectContaining( { ID: 2, site_ID: 100, feed_ID: 200 } ),
+			] );
 		} );
 	} );
 } );

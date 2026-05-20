@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { createElement, useMemo } from 'react';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import type { QueryClient } from '@tanstack/react-query';
@@ -361,6 +361,27 @@ export const useCachedReaderPost = (
 	} );
 
 	return useMemo( () => mergeReaderPostCacheData( query.data ), [ query.data ] );
+};
+
+export const useCachedReaderPosts = (
+	targets: ReaderPostCacheTarget[]
+): Array< ReaderPostCachePost | null > => {
+	const queries = useQueries( {
+		queries: targets.map( ( target ) => ( {
+			queryKey: readerPostCacheQueryKey( target ),
+			queryFn: () => Promise.resolve( null ),
+			enabled: false,
+			...READER_POST_CACHE_QUERY_OPTIONS,
+		} ) ),
+	} );
+
+	return useMemo(
+		() =>
+			queries.map( ( query ) =>
+				mergeReaderPostCacheData( query.data as ReaderPostCacheData | null | undefined )
+			),
+		[ queries ]
+	);
 };
 
 interface WithCachedReaderPostProps {

@@ -5,13 +5,16 @@ export interface ReaderPost {
 }
 
 export interface PostItem {
-	title: string;
-	featured_image: string;
+	title?: string;
+	excerpt?: string;
+	content?: string;
+	featured_image?: string;
 	site_icon: {
 		img: string;
 	};
 	author: {
 		avatar_URL: string;
 	};
-	site_name: string;
+	site_name?: string;
+	site_ID?: number;
 }
