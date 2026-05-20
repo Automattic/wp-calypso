@@ -57,6 +57,7 @@ const seedPostLikesQueries = (
 		const query = postLikesQuery( siteId, postId );
 		queryClient.setQueryDefaults( query.queryKey, {
 			staleTime: query.staleTime,
+			refetchInterval: query.refetchInterval,
 			meta: query.meta,
 		} );
 		const key = query.queryKey;
@@ -64,11 +65,15 @@ const seedPostLikesQueries = (
 			continue;
 		}
 
-		queryClient.setQueryData( key, {
-			found: numberValue( post.like_count ) ?? 0,
-			iLike: Boolean( post.i_like ),
-			likes: [],
-		} );
+		queryClient.setQueryData(
+			key,
+			{
+				found: numberValue( post.like_count ) ?? 0,
+				iLike: Boolean( post.i_like ),
+				likes: [],
+			},
+			{ updatedAt: 0 }
+		);
 	}
 };
 

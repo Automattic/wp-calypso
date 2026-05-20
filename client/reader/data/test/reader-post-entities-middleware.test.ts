@@ -101,6 +101,9 @@ describe( 'reader post entities middleware', () => {
 			iLike: true,
 			likes: [],
 		} );
+		expect( queryClient.getQueryState( postLikesQuery( 100, 2 ).queryKey )?.dataUpdatedAt ).toBe(
+			0
+		);
 	} );
 
 	it( 'does not overwrite existing post likes query data when receiving Reader posts', async () => {

@@ -26,6 +26,10 @@ describe( 'postLikesQuery', () => {
 		] );
 		expect( postLikesQuery( 123, 456 ).meta ).toEqual( { persist: false } );
 	} );
+
+	it( 'refreshes active likes queries on the legacy interval', () => {
+		expect( postLikesQuery( 123, 456 ).refetchInterval ).toBe( 120001 );
+	} );
 } );
 
 describe( 'post like mutations', () => {
@@ -150,6 +154,44 @@ describe( 'post like mutations', () => {
 			found: 73,
 			iLike: true,
 			likes: [ { ID: 1, login: 'alice' } ],
+		} );
+	} );
+
+	it( 'optimistically likes before the API responds', async () => {
+		nock( BASE )
+			.post( '/rest/v1.1/sites/123/posts/456/likes/new', {} )
+			.delay( 100 )
+			.reply( 200, {
+				success: true,
+				like_count: '73',
+				liker: { ID: 1, login: 'alice' },
+			} );
+
+		const client = newClient();
+		client.setQueryData( postLikesQuery( 123, 456 ).queryKey, {
+			found: 72,
+			iLike: false,
+			likes: [],
+		} );
+
+		const { result } = renderHook( () => useMutation( likePostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		let promise: Promise< unknown > | undefined;
+		act( () => {
+			promise = result.current.mutateAsync( { siteId: 123, postId: 456 } );
+		} );
+
+		await waitFor( () =>
+			expect( client.getQueryData( postLikesQuery( 123, 456 ).queryKey ) ).toMatchObject( {
+				found: 73,
+				iLike: true,
+			} )
+		);
+
+		await act( async () => {
+			await promise;
 		} );
 	} );
 

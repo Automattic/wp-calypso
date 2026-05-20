@@ -10,6 +10,7 @@ import {
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
 
 const STALE_TIME = 120 * 1000;
+const REFRESH_INTERVAL = STALE_TIME + 1;
 
 interface PostLikeMutationContext {
 	hadPrevious: boolean;
@@ -22,6 +23,7 @@ export const postLikesQuery = ( siteId?: number | null, postId?: number | null )
 		queryFn: () => fetchPostLikes( siteId as number, postId as number ),
 		enabled: Boolean( siteId && postId ),
 		staleTime: STALE_TIME,
+		refetchInterval: REFRESH_INTERVAL,
 		meta: { persist: false },
 	} );
 
@@ -34,6 +36,7 @@ const ensurePostLikesQueryDefaults = (
 ) => {
 	queryClient.setQueryDefaults( queryKey( siteId, postId ), {
 		staleTime: STALE_TIME,
+		refetchInterval: REFRESH_INTERVAL,
 		meta: { persist: false },
 	} );
 };

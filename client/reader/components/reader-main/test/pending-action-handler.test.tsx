@@ -115,4 +115,56 @@ describe( 'ReaderPendingActionHandler', () => {
 		jest.useRealTimers();
 		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
 	} );
+
+	it( 'replays a pending like through the Reader post like adapter', async () => {
+		jest.useFakeTimers();
+		const queryClient = makeQueryClient();
+		const clearedActions: Array< { type: string } > = [];
+		upsertReaderPostEntities( queryClient, [
+			{
+				ID: 1,
+				site_ID: 100,
+				global_ID: 'global-1',
+				i_like: false,
+				like_count: 72,
+			},
+		] );
+		queryClient.setQueryData( postLikesQuery( 100, 1 ).queryKey, {
+			found: 72,
+			iLike: false,
+			likes: [],
+		} );
+
+		const likeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/100/posts/1/likes/new', {} )
+			.reply( 200, {
+				success: true,
+				like_count: '73',
+				liker: { ID: 1, login: 'alice' },
+			} );
+
+		renderWithProviders(
+			queryClient,
+			{
+				currentUser: { id: 1 },
+				readerUi: {
+					persistedLastActionPriorToLogin: { type: 'like', siteId: 100, postId: 1 },
+				},
+			},
+			( action ) => clearedActions.push( action )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 2000 );
+		} );
+
+		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			i_like: true,
+			like_count: 73,
+		} );
+		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
+
+		jest.useRealTimers();
+		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
+	} );
 } );
