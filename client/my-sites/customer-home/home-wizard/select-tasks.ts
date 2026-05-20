@@ -127,7 +127,13 @@ export function selectTasks(
 	features: FeatureKey[],
 	site: SiteState
 ): SelectedTask[] {
-	const visibleTemplates = TASK_REGISTRY.filter( ( t ) => ! shouldHide( t, site ) );
+	// Keep completed tasks visible so they render as struck-through "done"
+	// rows instead of vanishing. `hideWhen` and `completesOn` often key off the
+	// same signal (e.g. publish-first-post hides on hasPosts AND completes on
+	// first_published_post) — completion should win and show the done state.
+	const visibleTemplates = TASK_REGISTRY.filter(
+		( t ) => isCompleted( t, site ) || ! shouldHide( t, site )
+	);
 
 	const primary = visibleTemplates.filter( ( t ) => isTemplateEligible( t, goal, features ) );
 
@@ -194,7 +200,11 @@ export function selectTasks(
  */
 export function materializeTasks( taskIds: string[], site: SiteState ): SelectedTask[] {
 	const idSet = new Set( taskIds );
-	const matched = TASK_REGISTRY.filter( ( t ) => idSet.has( t.id ) && ! shouldHide( t, site ) );
+	// Completed tasks stay in the list (rendered struck-through) rather than
+	// being hidden — see the note in selectTasks.
+	const matched = TASK_REGISTRY.filter(
+		( t ) => idSet.has( t.id ) && ( isCompleted( t, site ) || ! shouldHide( t, site ) )
+	);
 	const sorted = sortTasks(
 		matched.map( ( template ) => ( {
 			template,
