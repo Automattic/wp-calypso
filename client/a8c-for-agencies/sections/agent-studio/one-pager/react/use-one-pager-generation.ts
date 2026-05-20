@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { generateOnePager } from '../engine/ela';
+import { paginatePages } from '../engine/paginate';
 import { ELA_PAGE_HEIGHT, ELA_PAGE_WIDTH } from '../engine/types';
 import { getOnePagerServices } from '../services';
 import type { DualLogoOrder, ElaImage, LogoUpload, OnePagerInputSnapshot } from '../engine/types';
@@ -129,6 +130,12 @@ export function useOnePagerGeneration() {
 					signal: controller.signal,
 				} );
 
+				// Run the smart-walk paginator over body pages so a long
+				// b-section doesn't get clipped by its grid cell — it peels
+				// trailing sentences onto a Pattern-B continuation page,
+				// renumbers footers, and balances sparse trailing pages.
+				const paginatedBody = await paginatePages( result.bodyPages );
+
 				const coverRenders: PageRender[] = result.covers.map( ( cover ) => ( {
 					html: cover.html,
 					width: ELA_PAGE_WIDTH,
@@ -137,7 +144,7 @@ export function useOnePagerGeneration() {
 					theme: cover.theme,
 					coverLayoutId: cover.layoutId,
 				} ) );
-				const bodyRenders: PageRender[] = result.bodyPages.map( ( html ) => ( {
+				const bodyRenders: PageRender[] = paginatedBody.map( ( html ) => ( {
 					html,
 					width: ELA_PAGE_WIDTH,
 					height: ELA_PAGE_HEIGHT,
