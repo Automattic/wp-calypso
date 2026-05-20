@@ -251,7 +251,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
 				{
 					pack_id: pack.id,
-					pack_name: pack.title,
 					tag_count: pack.tags.length,
 					blog_count: pack.blogs.length,
 				}
