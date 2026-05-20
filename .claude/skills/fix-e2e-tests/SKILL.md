@@ -258,6 +258,17 @@ The fix has to be applied at a commit that actually contains the failing spec, a
 
 Do **not** use the Agent tool's built-in `isolation: "worktree"` — it bases the worktree on the current `HEAD`, which is almost never the PR branch.
 
+Before any setup, confirm the PR's HEAD hasn't moved since Step 3. The CI failure we identified was tied to the SHA captured then; if the author has pushed since, the test code at the new HEAD may differ from the version that failed.
+
+```bash
+gh pr view <PR_NUMBER> --repo Automattic/wp-calypso --json headRefOid --jq .headRefOid
+```
+
+- If the output equals `<PR_SHA>` from Step 3 → proceed.
+- If it differs → tell the user in plain chat (don't use `AskUserQuestion`): "PR has been pushed to since I looked it up — HEAD is now `<new>`, was `<old>`. The CI failure we triaged was on the old HEAD; the test may have changed at the new HEAD. Reply **proceed** to fix against the old HEAD anyway (the resulting PR will reach back in history, which reviewers may find confusing), or **restart** to re-run the skill against the current state."
+  - On **proceed**: continue with `<PR_SHA>` unchanged.
+  - On **restart**: stop the skill cleanly. No worktree has been created yet, so there's nothing to clean up.
+
 Fetch the PR's tip and create the worktree. Run each command as a **separate Bash call** with the values inlined, not as one compound script — Claude Code's permission allowlist matches the entire command string against prefix patterns, so multi-statement scripts starting with a variable assignment don't match `Bash(git fetch:*)` etc. and trigger a permission prompt on every run.
 
 Substitute the literal values from Step 3 directly into each command. Pick a unique worktree path like `.claude/worktrees/fix-e2e-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
