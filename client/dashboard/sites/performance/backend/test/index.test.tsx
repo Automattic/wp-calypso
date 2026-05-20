@@ -62,7 +62,8 @@ function mockApmToggle( expectedActive: boolean ) {
 
 function mockApmAggregate( response: ApmAggregateResponse = { aggregates: [] } ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( ( uri ) => uri.includes( `/wpcom/v2/sites/${ siteId }/hosting/apm/aggregate` ) )
+		.get( `/wpcom/v2/sites/${ siteId }/hosting/apm/aggregate` )
+		.query( true )
 		.reply( 200, response );
 }
 
