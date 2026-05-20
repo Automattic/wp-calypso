@@ -1,3 +1,4 @@
+import { captureException } from '@automattic/calypso-sentry';
 import wpcom from 'calypso/lib/wp';
 
 /**
@@ -21,7 +22,14 @@ interface LogToLogstashParams {
 /**
  * Log to logstash. This function is inefficient because
  * the data goes over the REST API, so use sparingly.
+ *
+ * Rejections from the underlying request are reported to Sentry so callers can
+ * keep the fire-and-forget pattern without producing unhandled promise rejections.
  */
 export async function logToLogstash( params: LogToLogstashParams ): Promise< void > {
-	await wpcom.req.post( '/logstash', { params: JSON.stringify( params ) } );
+	try {
+		await wpcom.req.post( '/logstash', { params: JSON.stringify( params ) } );
+	} catch ( error ) {
+		captureException( error );
+	}
 }
