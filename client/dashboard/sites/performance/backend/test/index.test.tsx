@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import SitePerformanceBackend from '../index';
-import type { Site } from '@automattic/api-core';
+import type { ApmAggregateResponse, Site } from '@automattic/api-core';
 
 jest.mock( '@automattic/charts', () => ( {
 	AreaChart: () => null,
@@ -60,9 +60,17 @@ function mockApmToggle( expectedActive: boolean ) {
 		.reply( 200, JSON.stringify( expectedActive ), { 'Content-Type': 'application/json' } );
 }
 
+function mockApmAggregate( response: ApmAggregateResponse = { aggregates: [] } ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ siteId }/hosting/apm/aggregate` )
+		.query( true )
+		.reply( 200, response );
+}
+
 describe( '<SitePerformanceBackend>', () => {
 	test( 'renders the dashboard with a Start capturing CTA when APM is disabled', async () => {
 		mockSite( businessSite( false ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -76,6 +84,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders the tabbed dashboard without the Start capturing CTA when APM is enabled', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -90,6 +99,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="wordpress" /> );
 
@@ -100,6 +110,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Slowest transactions on the Transactions tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="transactions" /> );
 
@@ -110,6 +121,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Slowest queries on the Database tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="database" /> );
 
@@ -119,6 +131,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Slowest external requests on the External tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="external-requests" /> );
 
@@ -130,6 +143,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'shows a status notice with the average response time', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -144,6 +158,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -162,6 +177,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'clicking Start capturing POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
+		mockApmAggregate();
 		const scope = mockApmToggle( true );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
