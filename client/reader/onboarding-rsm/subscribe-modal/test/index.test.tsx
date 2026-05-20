@@ -8,16 +8,20 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SubscribeModal from '../index';
+import type { CardData } from '../use-subscribe-recommendations';
 
 // ── Recommendations hook ─────────────────────────────────────────────────────
 
+// Explicit array element types so per-test overrides that supply `CardData[]`
+// (or `string[]` for `followedTagSlugs`) don't get inferred as `never[]` from
+// the empty defaults — keeps TypeScript happy without an `as` cast.
 const defaultRecommendationsHookValue = {
-	combinedRecommendations: [],
-	recommendations: [],
+	combinedRecommendations: [] as CardData[],
+	recommendations: [] as CardData[],
 	isLoading: false,
 	isValidating: false,
 	hasNoRecommendations: false,
-	followedTagSlugs: [],
+	followedTagSlugs: [] as string[],
 	markSessionFollow: jest.fn(),
 };
 
