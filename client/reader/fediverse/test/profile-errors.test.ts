@@ -46,10 +46,10 @@ describe( 'followErrorMessage', () => {
 } );
 
 describe( 'errorMessage', () => {
-	it( 'projects auth_required to a reauth-shaped string', () => {
+	it( 'projects auth_required to a connection-error string', () => {
 		const translate = getTranslate();
 		const message = String( errorMessage( { kind: 'auth_required' }, translate ) );
-		expect( message ).toMatch( /re-author/i );
+		expect( message ).toMatch( /Fediverse connection/i );
 	} );
 
 	it( 'projects connection_not_found to a reconnect-shaped string', () => {

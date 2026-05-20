@@ -244,14 +244,12 @@ export function FediverseAuthorProfilePanel( {
 	const renderProfileError = useCallback(
 		( error: FediverseError, retry: () => void ) => {
 			const noRetry = new Set< FediverseError[ 'kind' ] >( [
-				'auth_required',
 				'not_found',
 				'connection_not_found',
 			] );
 			const showRetry = ! noRetry.has( error.kind );
 			const titleByKind: Partial< Record< FediverseError[ 'kind' ], TranslateResult > > = {
 				not_found: translate( 'Profile not found' ),
-				auth_required: translate( 'Reconnect needed' ),
 				rate_limited: translate( 'Slow down' ),
 				upstream_unavailable: translate( 'Fediverse unreachable' ),
 			};

@@ -221,13 +221,7 @@ function errorMessageFor( err: AtmosphereError, t: Translate ): ReactNode {
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return t( 'Your Bluesky connection needs to be reconnected. {{a}}Reconnect{{/a}}', {
-				components: {
-					a: <a href="/reader/atmosphere/connect" target="_blank" rel="noopener noreferrer" />,
-				},
-				comment:
-					'Composer error shown when the user’s Bluesky session expired; {{a}}…{{/a}} wraps a link to reconnect.',
-			} );
+			return t( 'Something went wrong with your Bluesky connection.' );
 		case 'reply_disabled':
 			return t( 'The author has restricted who can reply to this post.' );
 		case 'quote_disabled':

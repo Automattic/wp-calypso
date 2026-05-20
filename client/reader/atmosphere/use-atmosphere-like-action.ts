@@ -22,7 +22,7 @@ function errorMessageForLike(
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return translate( 'Reconnect your Bluesky account to like posts.' );
+			return translate( 'Something went wrong with your Bluesky connection. Try again.' );
 		case 'rate_limited':
 			return translate( "You're liking posts too quickly. Try again in a moment." );
 		case 'connection_not_found':
