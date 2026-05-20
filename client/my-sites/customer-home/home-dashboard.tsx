@@ -1,10 +1,11 @@
+import page from '@automattic/calypso-router';
 import { useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
 import { Dropdown, MenuGroup, MenuItem, __experimentalText as Text } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
-import { Icon, settings } from '@wordpress/icons';
-import { Card as UICard, Text as UIText, Stack } from '@wordpress/ui';
+import { Icon, external, settings } from '@wordpress/icons';
+import { Button, Card as UICard, Text as UIText, Stack } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -314,11 +315,16 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
  * theme's public demo (a coming-soon site's own URL is a wp.com placeholder).
  */
 function ThemePreviewCard() {
+	const translate = useTranslate();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const site = useSelector( getSelectedSite );
+	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const siteUrl = useSelector( ( state: AppState ) =>
 		siteId ? getSiteUrl( state, siteId ) : null
 	);
+	// Display host for the caption: strip protocol + trailing slash off the
+	// site's public URL (e.g. "susuwata.wordpress.com").
+	const displayUrl = site?.URL ? site.URL.replace( /^https?:\/\//, '' ).replace( /\/$/, '' ) : '';
 	const activeThemeId = useSelector( ( state: AppState ) =>
 		siteId ? getActiveTheme( state, siteId ) : null
 	);
@@ -342,22 +348,57 @@ function ThemePreviewCard() {
 	const scale = width ? width / 1200 : 0;
 
 	return (
-		<UICard.Root className="site-setup__theme">
-			{ siteId && <QueryActiveTheme siteId={ siteId } /> }
-			{ siteId && activeThemeId && (
-				<QueryCanonicalTheme siteId={ siteId } themeId={ activeThemeId } />
-			) }
-			<UICard.Content className="site-setup__theme-content">
-				<UICard.FullBleed className="site-setup__theme-bleed">
-					{ resizeListener }
-					{ previewTarget && width && height && (
-						<div className="site-setup__theme-iframe">
-							<SitePreview url={ previewTarget } scale={ scale } height={ height / scale } />
-						</div>
+		<div className="site-setup__theme-wrap">
+			<UICard.Root className="site-setup__theme">
+				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
+				{ siteId && activeThemeId && (
+					<QueryCanonicalTheme siteId={ siteId } themeId={ activeThemeId } />
+				) }
+				<UICard.Content className="site-setup__theme-content">
+					<UICard.FullBleed className="site-setup__theme-bleed">
+						{ resizeListener }
+						{ previewTarget && width && height && (
+							<div className="site-setup__theme-iframe">
+								<SitePreview url={ previewTarget } scale={ scale } height={ height / scale } />
+							</div>
+						) }
+						{ /* Reveal a "Edit site" CTA on hover/focus so the preview doubles
+						   as an entry point into the Site Editor (stays in Calypso). */ }
+						{ siteSlug && (
+							<div className="site-setup__theme-overlay">
+								<Button
+									variant="solid"
+									tone="brand"
+									onClick={ () => page( `/site-editor/${ siteSlug }` ) }
+								>
+									{ translate( 'Edit site' ) }
+								</Button>
+							</div>
+						) }
+					</UICard.FullBleed>
+				</UICard.Content>
+			</UICard.Root>
+			{ ( site?.name || displayUrl ) && (
+				<div className="site-setup__theme-caption">
+					{ site?.name && (
+						<UIText variant="body-md" className="site-setup__theme-name">
+							{ site.name }
+						</UIText>
 					) }
-				</UICard.FullBleed>
-			</UICard.Content>
-		</UICard.Root>
+					{ displayUrl && site?.URL && (
+						<a
+							className="site-setup__theme-url"
+							href={ site.URL }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<span className="site-setup__theme-url-text">{ displayUrl }</span>
+							<Icon icon={ external } size={ 16 } />
+						</a>
+					) }
+				</div>
+			) }
+		</div>
 	);
 }
 
