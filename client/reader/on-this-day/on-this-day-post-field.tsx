@@ -5,12 +5,12 @@ import { getPostTitleFallback } from 'calypso/reader/utils';
 
 interface OnThisDayPostFieldProps {
 	post: {
-		title: string;
-		excerpt: string;
-		content: string;
-		featured_image: string;
-		site_name: string;
-		date: string;
+		title?: string;
+		excerpt?: string;
+		content?: string;
+		featured_image?: string;
+		site_name?: string;
+		date?: string;
 	};
 }
 
@@ -27,7 +27,12 @@ export const OnThisDayPostField = forwardRef< HTMLDivElement, OnThisDayPostField
 				<AutoDirection>
 					<div className="on-this-day-post-field__title">
 						<div className="on-this-day-post-field__title-text">
-							{ post?.title || getPostTitleFallback( post ) }
+							{ post?.title ||
+								getPostTitleFallback( {
+									title: post?.title ?? '',
+									excerpt: post?.excerpt ?? '',
+									content: post?.content ?? '',
+								} ) }
 						</div>
 						<div className="on-this-day-post-field__meta">
 							<span className="on-this-day-post-field__site-name">{ post?.site_name }</span>
