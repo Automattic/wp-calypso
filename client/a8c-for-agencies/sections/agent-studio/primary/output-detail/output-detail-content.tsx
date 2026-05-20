@@ -12,8 +12,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useUpdateAgentStudioOutput from '../../data/use-update-agent-studio-output';
 import { ELA_PAGE_HEIGHT, ELA_PAGE_WIDTH } from '../../one-pager/engine/types';
-import HtmlRenderPreview from '../../one-pager/react/html-render-preview';
 import { getOnePagerServices } from '../../one-pager/services';
+import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
 import type { PageRender } from '../../one-pager/services/types';
 import type { AgentStudioOutput } from '../../types';
 
@@ -22,9 +22,6 @@ import './style.scss';
 interface Props {
 	output: AgentStudioOutput;
 }
-
-const PREVIEW_WIDTH = 560;
-const COVER_THUMB_WIDTH = 140;
 
 export default function OutputDetailContent( { output }: Props ) {
 	const dispatch = useDispatch();
@@ -61,14 +58,13 @@ export default function OutputDetailContent( { output }: Props ) {
 	}
 
 	const coverIdx = data.selectedCoverIdx ?? 0;
-	const selectedCover = data.covers[ coverIdx ] ?? data.covers[ 0 ];
+	const safeCoverIdx = Math.min( coverIdx, Math.max( 0, data.covers.length - 1 ) );
+	const selectedCover = data.covers[ safeCoverIdx ];
 
 	const onSelectCover = ( nextIdx: number ) => {
 		updateOutput.mutate( {
 			outputId: output.id,
-			updates: {
-				onePagerData: { ...data, selectedCoverIdx: nextIdx },
-			},
+			updates: { onePagerData: { ...data, selectedCoverIdx: nextIdx } },
 		} );
 	};
 
@@ -122,8 +118,13 @@ export default function OutputDetailContent( { output }: Props ) {
 
 	const totalPages = data.bodyPages.length + 1;
 
+	const viewerPages: PdfViewerPage[] = [
+		{ html: selectedCover.html, role: 'cover' },
+		...data.bodyPages.map( ( html ) => ( { html, role: 'body' as const } ) ),
+	];
+
 	return (
-		<VStack spacing={ 6 } className="a4a-agent-studio-output-detail__content">
+		<VStack spacing={ 5 } className="a4a-agent-studio-output-detail__content">
 			<HStack
 				alignment="center"
 				justify="space-between"
@@ -151,33 +152,18 @@ export default function OutputDetailContent( { output }: Props ) {
 				</Button>
 			</HStack>
 
-			{ data.covers.length > 1 && (
-				<VStack spacing={ 2 }>
-					<Text weight={ 600 }>{ __( 'Pick a cover' ) }</Text>
-					<HStack spacing={ 2 } wrap className="a4a-agent-studio-output-detail__covers">
-						{ data.covers.map( ( cover, idx ) => (
-							<button
-								key={ cover.id }
-								type="button"
-								className={ `a4a-agent-studio-output-detail__cover-pick${
-									idx === coverIdx ? ' is-selected' : ''
-								}` }
-								onClick={ () => onSelectCover( idx ) }
-								aria-pressed={ idx === coverIdx }
-							>
-								<HtmlRenderPreview html={ cover.html } width={ COVER_THUMB_WIDTH } />
-							</button>
-						) ) }
-					</HStack>
-				</VStack>
-			) }
-
-			<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__pages">
-				<HtmlRenderPreview html={ selectedCover.html } width={ PREVIEW_WIDTH } />
-				{ data.bodyPages.map( ( html, idx ) => (
-					<HtmlRenderPreview key={ idx } html={ html } width={ PREVIEW_WIDTH } />
-				) ) }
-			</VStack>
+			<PdfViewer
+				pages={ viewerPages }
+				coverNavigation={
+					data.covers.length > 1
+						? {
+								count: data.covers.length,
+								activeIndex: safeCoverIdx,
+								onSelect: onSelectCover,
+						  }
+						: undefined
+				}
+			/>
 		</VStack>
 	);
 }
