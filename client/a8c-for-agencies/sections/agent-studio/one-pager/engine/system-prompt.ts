@@ -80,8 +80,11 @@ PATTERN PICKING — vary the rhythm. Don't pick A for every page; mix patterns s
 ${ BODY_LAYOUT_PICKING_RULES }
 
 IMAGES
-- {{IMAGE_N_URL}} placeholders are user-supplied photos. They may ONLY appear inside PATTERN ${ BODY_IMAGE_LAYOUT_IDS }, filling that pattern's full image cell (data-rowspan 4 or more).
-- USE THE IMAGES. They are core to the deliverable, not optional decoration.
+- {{IMAGE_N_URL}} placeholders are user-supplied photos. They may ONLY appear inside PATTERN ${ BODY_IMAGE_LAYOUT_IDS }, filling that pattern's full image cell (data-rowspan 4 or more — never a small grid-row). Never place a b-image on a page built from any other pattern.
+- USE THE IMAGES. They are core to the deliverable, not optional decoration. Work through the {{IMAGE_N_URL}} list in source order and give each image a real image-pattern page. Default to using ALL of them — a normal multi-page brief has plenty of room, because most content sections can be rendered as an image pattern (${ BODY_IMAGE_LAYOUT_IDS }) instead of their bare-text equivalent.
+- Two failure modes, both wrong. (a) DROPPING an image because the document "feels done" — wrong: turn a text section into an image pattern, or add a dedicated image page. (b) CRAMMING an image into a corner with a small grid-row (span 1-3) — wrong: that renders a broken floating chip. When an image seems to have "no home", the fix is ALWAYS to give it a proper full-size image-pattern page — never to shrink it, never to silently drop it.
+- The only time you may leave an image out is if you genuinely have more images than the brief can justify as pages. With a normal brief and a handful of images that does not happen — use every one.
+- Let the images SHAPE your pattern choice: for each page whose content can carry a photo, pick an image pattern (${ BODY_IMAGE_LAYOUT_IDS }) over the bare-text equivalent. An image-led page is almost always stronger than the same content as a sparse stat or text page. Pattern D / G / N and their -R mirrors use 1 image; Pattern F and F-R use 1 image with a side note; Pattern E and E-R use 2 images; Pattern U is a 2×2 grid that uses 4 images on a single page. Mix image patterns to absorb the count: e.g., 4 images → a single U, or E + E, or D + D + E; 6 images → U + E, or E + E + E. When you have four or more images that belong together as a set, prefer one Pattern U over scattering them across pages. Don't repeat the same image-pattern more than twice in a row.
 - Reference each image with its placeholder ({{IMAGE_1_URL}}, {{IMAGE_2_URL}}, …) in source order.
 - If no images are provided, do not use any image pattern.
 
