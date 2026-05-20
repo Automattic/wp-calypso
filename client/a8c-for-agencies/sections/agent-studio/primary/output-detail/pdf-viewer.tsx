@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import { Icon, chevronLeft, chevronRight, columns, page } from '@wordpress/icons';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import HtmlRenderPreview from '../../one-pager/react/html-render-preview';
 
 import './pdf-viewer.scss';
@@ -23,30 +23,19 @@ interface Props {
 	coverNavigation?: CoverNavigation;
 }
 
-type ViewMode = 'single' | 'facing';
-
 /**
- * Stacked page viewer modeled on the prototype: dark canvas, single or
- * facing-spread layouts, hover-revealed cover variant chevrons. The first
- * page is rendered as a standalone cover; subsequent pages pair up as
- * spreads when facing mode is on.
+ * Stacked single-page viewer for one-pager deliverables. Dark canvas, pages
+ * stacked top-to-bottom at a uniform width, hover-revealed cover-variant
+ * chevrons over the first page. v1 ships single-page only; spread / facing
+ * layout is deferred.
  */
 export default function PdfViewer( { pages, coverNavigation }: Props ) {
-	const [ viewMode, setViewMode ] = useState< ViewMode >( 'single' );
-
 	if ( pages.length === 0 ) {
 		return null;
 	}
 
 	return (
-		<div className={ clsx( 'a4a-one-pager-viewer', `a4a-one-pager-viewer--${ viewMode }` ) }>
-			<CircleButton
-				className="a4a-one-pager-viewer__view-toggle"
-				onClick={ () => setViewMode( ( m ) => ( m === 'single' ? 'facing' : 'single' ) ) }
-				label={ viewMode === 'single' ? __( 'Show facing pages' ) : __( 'Show single pages' ) }
-			>
-				<Icon icon={ viewMode === 'single' ? columns : page } size={ 22 } />
-			</CircleButton>
+		<div className="a4a-one-pager-viewer">
 			{ pages.map( ( pdfPage, idx ) => (
 				<div
 					key={ idx }
@@ -58,13 +47,7 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 						<HtmlRenderPreview
 							html={ pdfPage.html }
 							className="a4a-one-pager-viewer__html"
-							refitToken={ viewMode }
-							ariaLabel={
-								pdfPage.role === 'cover'
-									? __( 'Cover' )
-									: /* translators: %d is a page number. */
-									  __( 'Page' )
-							}
+							ariaLabel={ pdfPage.role === 'cover' ? __( 'Cover' ) : __( 'Page' ) }
 						/>
 						{ idx === 0 && coverNavigation && coverNavigation.count > 1 && (
 							<div className="a4a-one-pager-viewer__cover-nav">

@@ -39,33 +39,6 @@
 	border: 0;
 }
 
-// Facing layout: cover stands alone on its own row, body pages pair as spreads.
-.a4a-one-pager-viewer--facing {
-	flex-flow: row wrap;
-	align-items: flex-start;
-	justify-content: center;
-	align-content: flex-start;
-	gap: 24px;
-}
-
-.a4a-one-pager-viewer--facing .a4a-one-pager-viewer__page {
-	width: min(44%, 540px);
-	align-items: stretch;
-}
-
-.a4a-one-pager-viewer--facing .a4a-one-pager-viewer__frame {
-	width: 100%;
-}
-
-.a4a-one-pager-viewer--facing .a4a-one-pager-viewer__page.is-cover {
-	width: 100%;
-	align-items: center;
-}
-
-.a4a-one-pager-viewer--facing .a4a-one-pager-viewer__page.is-cover .a4a-one-pager-viewer__frame {
-	width: min(44%, 540px);
-}
-
 // Circle buttons — dark glass treatment matching the prototype.
 .a4a-one-pager-viewer__circle-button {
 	display: inline-grid;
@@ -102,13 +75,6 @@
 .a4a-one-pager-viewer__circle-button:focus-visible {
 	outline: 2px solid rgba(255, 255, 255, 0.72);
 	outline-offset: 2px;
-}
-
-.a4a-one-pager-viewer__view-toggle {
-	position: absolute;
-	inset-block-start: 16px;
-	inset-inline-end: 16px;
-	z-index: 10;
 }
 
 // Cover navigation chevrons — hidden until the cover frame is hovered/focused.
