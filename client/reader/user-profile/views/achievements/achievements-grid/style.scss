@@ -55,6 +55,19 @@
 		margin-inline-start: 8px;
 	}
 
+	.achievement-card__label {
+		background: var( --studio-gray-5 );
+		border-radius: 4px;
+		color: var( --studio-gray-60 );
+		display: inline-block;
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		line-height: 1.2;
+		margin-inline-start: 8px;
+		padding: 2px 4px;
+		vertical-align: text-bottom;
+	}
+
 	.achievement-card__description {
 		font-size: $font-body-small;
 		margin: 4px 0 0;

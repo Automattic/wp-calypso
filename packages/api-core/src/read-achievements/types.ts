@@ -20,6 +20,8 @@ export interface Achievement {
 	 * legacy responses (pre-locked-achievements rollout) omit it.
 	 */
 	is_secret?: boolean;
+	/** `true` for Automattic-only achievements. */
+	is_a8c_only?: boolean;
 	/** Only present when viewing your own achievements. */
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
@@ -50,6 +52,8 @@ export interface LockedAchievement {
 	description: string;
 	badge_prefix: string;
 	is_secret: false;
+	/** `true` for Automattic-only achievements. */
+	is_a8c_only?: boolean;
 	date_created: string;
 	/** Current progress toward `target`. Present alongside `target` for incremental achievements. */
 	progress?: number;

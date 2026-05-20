@@ -59,6 +59,9 @@ export default function GenericAchievement( {
 					? translate( 'Level %(level)d', { args: { level: achievement.level } } )
 					: undefined
 			}
+			isSecret={ achievement.is_secret }
+			isRetired={ achievement.is_retired }
+			isA8cOnly={ achievement.is_a8c_only }
 			description={ achievement.description }
 			caption={ caption() }
 		/>

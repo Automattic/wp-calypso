@@ -12,6 +12,7 @@ export default function LockedAchievementCard( { entry }: { entry: LockedAchieve
 		<AchievementCard
 			locked
 			title={ entry.name }
+			isA8cOnly={ entry.is_a8c_only }
 			description={ entry.description }
 			progressCurrent={ entry.progress }
 			progressTarget={ entry.target }

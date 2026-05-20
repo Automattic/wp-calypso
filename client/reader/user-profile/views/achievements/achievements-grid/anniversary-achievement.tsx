@@ -20,6 +20,9 @@ export default function AnniversaryAchievement( {
 		<AchievementCard
 			image={ achievement.image }
 			title={ achievement.name }
+			isSecret={ achievement.is_secret }
+			isRetired={ achievement.is_retired }
+			isA8cOnly={ achievement.is_a8c_only }
 			description={ achievement.description }
 			caption={ translate( 'Last unlocked: {{timeSince/}}', {
 				components: {
