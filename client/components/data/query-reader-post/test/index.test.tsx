@@ -7,7 +7,10 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
+import {
+	getReaderPostEntity,
+	upsertReaderPostEntities,
+} from 'calypso/reader/data/reader-post-entities';
 import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import QueryReaderPost from '../index';
@@ -175,14 +178,41 @@ describe( 'QueryReaderPost', () => {
 		expect( getReceivedPosts( store ) ).toEqual( {} );
 	} );
 
-	it( 'skips the network call when the post is already in Redux', () => {
+	it( 'skips the network call when the post is already in the canonical entity cache', () => {
 		// No nock scope: any request would throw because of disableNetConnect.
-		const cached = { ID: 2, site_ID: 1, global_ID: 'global-2' };
+		const cached = { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>cached</p>' };
+		const queryClient = buildQueryClient();
+		upsertReaderPostEntities( queryClient, [ cached ] );
+
+		const { store } = renderBridge( { postKey: { blogId: 1, postId: 2 } }, undefined, queryClient );
+		expect( getReceivedPosts( store ) ).toEqual( {} );
+	} );
+
+	it( 'fetches when the post only exists in Redux', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
+
 		const { store } = renderBridge(
 			{ postKey: { blogId: 1, postId: 2 } },
-			{ reader: { posts: { items: { 'global-2': cached }, seen: {} } } }
+			{
+				reader: {
+					posts: {
+						items: {
+							'global-2': { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>redux</p>' },
+						},
+						seen: {},
+					},
+				},
+			}
 		);
-		expect( getReceivedPosts( store ) ).toEqual( { 'global-2': cached } );
+
+		await waitFor( () => {
+			expect( getReceivedPosts( store ) ).toMatchObject( {
+				'global-2': { content: '<p>full</p>' },
+			} );
+		} );
 	} );
 
 	it( 'still fetches when the cached post is in the minimal state', async () => {
