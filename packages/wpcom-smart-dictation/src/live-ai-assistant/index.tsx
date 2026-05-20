@@ -66,23 +66,7 @@ interface LiveAIAssistantProps {
 	contextualInstructions?: string;
 }
 
-declare global {
-	interface Window {
-		wpcomSmartDictationData?: {
-			currentUser?: {
-				display_name?: string;
-			};
-		};
-	}
-}
-
-function getCurrentUserDisplayName(): string | undefined {
-	const displayName = window.wpcomSmartDictationData?.currentUser?.display_name?.trim();
-
-	return displayName ? displayName.slice( 0, 120 ) : undefined;
-}
-
-function buildInstructions( locale: string, displayName?: string, extra?: string ): string {
+function buildInstructions( locale: string, extra?: string ): string {
 	const base = [
 		'You are the WordPress.com Dictation Assistant for the Gutenberg block editor.',
 		'Your job is to let the user write and structure a full article entirely by voice, without ever touching the keyboard.',
@@ -97,11 +81,6 @@ function buildInstructions( locale: string, displayName?: string, extra?: string
 		'Punctuation: convert spoken cues like "comma", "period" / "full stop", "question mark", "exclamation mark", "colon", "semicolon", "open quote" / "close quote", "new line" into actual punctuation. Capitalize sentence beginnings and proper nouns.',
 		'Never greet proactively, never narrate what you are doing, never explain the tools, and never volunteer extra commentary. Focus on writing.',
 		`The current UI locale is "${ locale }". Write the article in the language the user is dictating in. Spoken responses to the user should be in English unless they explicitly switch.`,
-		displayName
-			? `The current user's display name is ${ JSON.stringify(
-					displayName
-			  ) }. When you speak directly to the user, address them by this display name.`
-			: '',
 		'Never ask follow-up questions while the user is dictating. If something is genuinely ambiguous, make the most reasonable choice and continue; the user can correct you afterwards.',
 		'Block workflow:',
 		'1. get_block_types_tool returns registered block names only (strings). Use it sparingly to discover or search names. Before EVERY insert_block_tool, insert_blocks_tool, update_block_attributes_tool, replace_block_tool, or any write that sets attributes on a block, you MUST call get_block_type_tool with that block\'s exact name first — every time, including each distinct type in inner_blocks. Never skip this for "simple" blocks. After the first discovery pass, do not spam get_block_types_tool; reuse get_block_type_tool per type as needed. From the get_block_type_tool response, when block_type.example.attributes exists, use it as the scheme for your attributes object (preserve structure and keys; fill with the user\'s content). If there is no example, derive attribute values from block_type.attributes (defaults and types).',
@@ -170,10 +149,9 @@ function formatRemainingTime( remainingMs: number ): string {
 
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
-	const displayName = getCurrentUserDisplayName();
 	const instructions = useMemo(
-		() => buildInstructions( locale, displayName, contextualInstructions ),
-		[ locale, displayName, contextualInstructions ]
+		() => buildInstructions( locale, contextualInstructions ),
+		[ locale, contextualInstructions ]
 	);
 
 	const {
