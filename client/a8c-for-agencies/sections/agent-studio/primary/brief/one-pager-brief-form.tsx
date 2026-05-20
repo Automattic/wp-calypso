@@ -54,6 +54,8 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	const [ partnerLogoLight, setPartnerLogoLight ] = useState< LogoUpload | null >( null );
 	const [ partnerLogoDark, setPartnerLogoDark ] = useState< LogoUpload | null >( null );
 	const [ partnerLogoOrder, setPartnerLogoOrder ] = useState< DualLogoOrder >( 'brand-first' );
+	const [ defaultsHydrated, setDefaultsHydrated ] = useState( false );
+	const hasPartnerLogo = !! partnerLogoLight || !! partnerLogoDark;
 
 	// Rehydrate the user's last-used logos so a returning visit doesn't
 	// ask them to re-upload. Only fills empty slots — anything the user
@@ -75,12 +77,44 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				}
 			} catch {
 				// Best effort — empty form is the safe fallback.
+			} finally {
+				if ( ! cancelled ) {
+					setDefaultsHydrated( true );
+				}
 			}
 		} )();
 		return () => {
 			cancelled = true;
 		};
 	}, [] );
+
+	useEffect( () => {
+		if ( ! defaultsHydrated ) {
+			return;
+		}
+		( async () => {
+			try {
+				await getOnePagerServices().storage.setDefaults( {
+					primaryLogoLight: primaryLogoLight ?? undefined,
+					primaryLogoDark: primaryLogoDark ?? undefined,
+					partnerLogoLight: partnerLogoLight ?? undefined,
+					partnerLogoDark: partnerLogoDark ?? undefined,
+					partnerLogoOrder: hasPartnerLogo ? partnerLogoOrder : undefined,
+				} );
+			} catch ( saveErr ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[one-pager] could not persist logo defaults:', saveErr );
+			}
+		} )();
+	}, [
+		defaultsHydrated,
+		primaryLogoLight,
+		primaryLogoDark,
+		partnerLogoLight,
+		partnerLogoDark,
+		partnerLogoOrder,
+		hasPartnerLogo,
+	] );
 
 	const generation = useOnePagerGeneration();
 	const createOutput = useCreateAgentStudioOutput();
@@ -94,7 +128,6 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	// one — without it covers and footers render with a transparent stand-in.
 	const canSubmit =
 		!! brief.trim() && !! title.trim() && images.length > 0 && !! primaryLogoLight && ! isBusy;
-	const hasPartnerLogo = !! partnerLogoLight || !! partnerLogoDark;
 	const isFieldSuggesting = ( field: OnePagerContentField ) => suggestingFields.has( field );
 	const canSuggestField = ( field: OnePagerContentField ) =>
 		!! brief.trim() && ! isBusy && ! isFieldSuggesting( field );
@@ -147,21 +180,6 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 			} );
 
 			if ( result.ok ) {
-				// Remember the user's logo choices for the next brief so we
-				// don't ask them to re-upload. Best-effort, never block
-				// success on a persistence error.
-				try {
-					await getOnePagerServices().storage.setDefaults( {
-						primaryLogoLight: primaryLogoLight ?? undefined,
-						primaryLogoDark: primaryLogoDark ?? undefined,
-						partnerLogoLight: partnerLogoLight ?? undefined,
-						partnerLogoDark: partnerLogoDark ?? undefined,
-						partnerLogoOrder: hasPartnerLogo ? partnerLogoOrder : undefined,
-					} );
-				} catch ( saveErr ) {
-					// eslint-disable-next-line no-console
-					console.warn( '[one-pager] could not persist logo defaults:', saveErr );
-				}
 				dispatch(
 					successNotice(
 						sprintf(

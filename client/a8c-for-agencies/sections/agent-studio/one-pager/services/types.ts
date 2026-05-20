@@ -2,7 +2,13 @@
 // instead of calling fetch / localStorage / DOM rasterizers directly so a
 // server impl can drop in without touching the prompt or layouts.
 
-import type { BrandPack, ElaPageTheme, OnePagerInputSnapshot } from '../engine/types';
+import type {
+	BrandPack,
+	DualLogoOrder,
+	ElaPageTheme,
+	LogoUpload,
+	OnePagerInputSnapshot,
+} from '../engine/types';
 
 /**
  * Chat completion call shape. Modeled after OpenAI's API so the default impl
@@ -162,9 +168,9 @@ export interface StorageService {
 	 */
 	getDefaults(): Promise< OnePagerDefaults | undefined >;
 	/**
-	 * Persist the user's logo selections after a successful generation so
-	 * the next brief starts pre-filled. Merges with whatever was stored
-	 * before — pass undefined for a field to leave that field unchanged.
+	 * Persist the user's current logo selections so the next brief starts
+	 * pre-filled. Optional fields may be undefined when the user has not
+	 * provided, or has removed, that logo variant.
 	 */
 	setDefaults( defaults: OnePagerDefaults ): Promise< void >;
 }

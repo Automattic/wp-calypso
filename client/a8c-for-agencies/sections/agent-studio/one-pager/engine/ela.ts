@@ -195,6 +195,11 @@ function substitutePlaceholders(
 	vars.images.forEach( ( img, i ) => {
 		out = out.replaceAll( `{{IMAGE_${ i + 1 }_URL}}`, img.dataUrl );
 	} );
+	let genericImageIndex = 0;
+	out = out.replace( /\{\{IMAGE_N_URL\}\}/g, () => {
+		const image = vars.images[ genericImageIndex++ ];
+		return image?.dataUrl ?? FALLBACK_TRANSPARENT_PNG;
+	} );
 	out = out.replace( /\{\{IMAGE_\d+_URL\}\}/g, FALLBACK_TRANSPARENT_PNG );
 	return ensureNonEmptyImgSrc( out, FALLBACK_TRANSPARENT_PNG );
 }
@@ -328,15 +333,13 @@ export async function generateOnePager( args: {
 	const bodyImages = images.slice( 1 );
 	const imageList =
 		bodyImages.length > 0
-			? `\nUSER-PROVIDED IMAGES (use ALL ${ bodyImages.length } of these — see the SYSTEM IMAGES rules; never drop one, never cram one into a small grid-row, give each a full image-pattern page):\n` +
+			? `\nUSER-PROVIDED IMAGES (use ALL ${ bodyImages.length } of these in the body pages — see the SYSTEM IMAGES rules; never drop one, never cram one into a small grid-row, give each a full-size image slot):\n` +
 			  bodyImages
 					.map( ( img, i ) => `- {{IMAGE_${ i + 1 }_URL}} (file: "${ img.fileName }")` )
 					.join( '\n' ) +
 			  `\n\nIMAGE-PATTERN BUDGET: with ${ bodyImages.length } body image${
 					bodyImages.length === 1 ? '' : 's'
-			  }, plan at least ${ bodyImages.length } image-pattern page${
-					bodyImages.length === 1 ? '' : 's'
-			  } (D, E, F, G, N, U or their -R mirrors) — for example: ${ recipeForImageCount(
+			  }, plan enough image-pattern capacity for all of them (D, E, F, G, N, U or their -R mirrors) — for example: ${ recipeForImageCount(
 					bodyImages.length
 			  ) }. Pick image patterns over their bare-text equivalents on every page that can carry a photo.`
 			: '\nNO IMAGES PROVIDED: do NOT use {{IMAGE_N_URL}} placeholders.';

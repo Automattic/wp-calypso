@@ -79,6 +79,16 @@ export function useElapsedMs( active: boolean ) {
 	return elapsed;
 }
 
+function checkImageCoverage( imageDataUrls: string[], pages: string[] ) {
+	const expected = imageDataUrls.length;
+	if ( expected === 0 ) {
+		return { complete: true, expected: 0, placed: 0 };
+	}
+	const haystack = pages.join( '\n' );
+	const placed = imageDataUrls.filter( ( url ) => url && haystack.includes( url ) ).length;
+	return { complete: placed >= expected, expected, placed };
+}
+
 /**
  * Runs the one-pager generation pipeline against the configured services.
  * Owns the phase + cancel controller; the caller renders the overlay and
@@ -115,7 +125,7 @@ export function useOnePagerGeneration() {
 			try {
 				const pack = await services.brandPack.getPack( request.pack );
 				setPhase( 'designing' );
-				const result = await generateOnePager( {
+				let result = await generateOnePager( {
 					llm: services.llm,
 					pack,
 					inputText: request.text,
@@ -129,6 +139,53 @@ export function useOnePagerGeneration() {
 					partnerLogoOrder: request.partnerLogoOrder,
 					signal: controller.signal,
 				} );
+				let generationNotes = result.notes;
+				const bodyImageUrls = request.images.slice( 1 ).map( ( img ) => img.dataUrl );
+				let imageCoverage = checkImageCoverage( bodyImageUrls, result.bodyPages );
+				let repairAttempts = 0;
+				const maxRepairAttempts = 2;
+				while ( ! imageCoverage.complete && repairAttempts < maxRepairAttempts ) {
+					repairAttempts += 1;
+					const repaired = await generateOnePager( {
+						llm: services.llm,
+						pack,
+						inputText: [
+							request.text,
+							'',
+							'IMAGE PLACEMENT REPAIR REQUIREMENT',
+							`A previous draft placed only ${ imageCoverage.placed } of the ${ imageCoverage.expected } provided images. You MUST place ALL ${ imageCoverage.expected } body images. Render appropriate content sections as image patterns instead of their bare-text equivalents. D, F, G, and N carry one image; E carries two images; U is a 2x2 grid for four. Regenerate the full document from the original brief, keep every source item, and use every {{IMAGE_N_URL}} placeholder exactly once. Return full Ela HTML with ELA_NOTES.`,
+						].join( '\n' ),
+						title: request.title,
+						blurb: request.blurb,
+						images: request.images,
+						primaryLogoLightDataUrl: request.primaryLogoLight?.dataUrl,
+						primaryLogoDarkDataUrl: request.primaryLogoDark?.dataUrl,
+						partnerLogoLightDataUrl: request.partnerLogoLight?.dataUrl,
+						partnerLogoDarkDataUrl: request.partnerLogoDark?.dataUrl,
+						partnerLogoOrder: request.partnerLogoOrder,
+						signal: controller.signal,
+					} );
+					result = {
+						...repaired,
+						usage: {
+							...repaired.usage,
+							inputTokens: result.usage.inputTokens + repaired.usage.inputTokens,
+							outputTokens: result.usage.outputTokens + repaired.usage.outputTokens,
+							usd: result.usage.usd + repaired.usage.usd,
+							durationMs: result.usage.durationMs + repaired.usage.durationMs,
+						},
+					};
+					generationNotes = [ repaired.notes, generationNotes ].filter( Boolean ).join( '\n\n' );
+					imageCoverage = checkImageCoverage( bodyImageUrls, result.bodyPages );
+				}
+				if ( ! imageCoverage.complete ) {
+					generationNotes = [
+						generationNotes,
+						`Image warning: ${ imageCoverage.placed } of ${ imageCoverage.expected } uploaded body images were placed after repair attempts.`,
+					]
+						.filter( Boolean )
+						.join( '\n\n' );
+				}
 
 				// Run the smart-walk paginator over body pages so a long
 				// b-section doesn't get clipped by its grid cell — it peels
@@ -204,7 +261,7 @@ export function useOnePagerGeneration() {
 					covers: coverRenders,
 					bodyPages: bodyRenders,
 					selectedCoverIdx: 0,
-					notes: result.notes,
+					notes: generationNotes,
 					brandPackSlug: request.pack,
 					input: snapshot,
 					usage: {

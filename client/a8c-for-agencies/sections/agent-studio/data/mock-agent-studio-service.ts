@@ -363,8 +363,8 @@ export const mockAgentStudioService: AgentStudioService = {
 		if ( ! isBrowser() ) {
 			return;
 		}
-		// Merge with existing so a partial write (e.g. only the partner logo
-		// changed) preserves the rest of the defaults.
+		// Merge with existing so omitted keys preserve stored defaults.
+		// Keys present as undefined intentionally clear optional logo variants.
 		const existing = ( await this.getOnePagerDefaults() ) ?? {};
 		const next: OnePagerDefaults = { ...existing, ...defaults };
 		await persist( META_STORE, { key: ONE_PAGER_DEFAULTS_KEY, value: next } );

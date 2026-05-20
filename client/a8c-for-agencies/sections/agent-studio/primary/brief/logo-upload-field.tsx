@@ -37,6 +37,7 @@ export default function LogoUploadField( {
 	darkBackground,
 }: Props ) {
 	const previewUrl = logo?.dataUrl ?? null;
+	const fileName = logo?.fileName ?? '';
 
 	const onSelect = async ( event: ChangeEvent< HTMLInputElement > ) => {
 		const file = event.target.files?.[ 0 ] ?? null;
@@ -63,18 +64,18 @@ export default function LogoUploadField( {
 					<button
 						type="button"
 						className={ clsx( 'a4a-agent-studio-logo-upload__well', {
-							'is-filled': !! file,
+							'is-filled': !! logo,
 							'is-dark': darkBackground,
 						} ) }
 						onClick={ openFileDialog }
 						disabled={ disabled }
 						aria-label={
-							file
+							logo
 								? sprintf(
 										/* translators: 1: field label, 2: file name. */
 										__( 'Replace %1$s (current: %2$s)' ),
 										label,
-										file.name
+										fileName
 								  )
 								: sprintf(
 										/* translators: %s is the field label. */
@@ -83,11 +84,11 @@ export default function LogoUploadField( {
 								  )
 						}
 					>
-						{ previewUrl && file ? (
+						{ previewUrl && logo ? (
 							<img
 								className="a4a-agent-studio-logo-upload__image"
 								src={ previewUrl }
-								alt={ file.name }
+								alt={ fileName }
 							/>
 						) : (
 							<span className="a4a-agent-studio-logo-upload__prompt">
@@ -98,7 +99,7 @@ export default function LogoUploadField( {
 					</button>
 				) }
 			/>
-			{ file && (
+			{ logo && (
 				<button
 					type="button"
 					className="a4a-agent-studio-logo-upload__remove"
@@ -107,7 +108,7 @@ export default function LogoUploadField( {
 					aria-label={ sprintf(
 						/* translators: %s is a logo file name. */
 						__( 'Remove %s' ),
-						file.name
+						fileName
 					) }
 					title={ __( 'Remove' ) }
 				>
