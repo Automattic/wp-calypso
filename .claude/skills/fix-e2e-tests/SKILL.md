@@ -336,28 +336,11 @@ Record these values for later sub-steps (keep them in your working memory; later
 
 Dispatch the Agent tool with `subagent_type: "Playwright Test Healer"` and **no** `isolation` parameter (we manage the worktree ourselves).
 
-The prompt **must be self-contained** — the agent has no access to this conversation. Include:
+Use the **initial-dispatch template** in [`references/healer-prompt.md`](references/healer-prompt.md). Fill in the placeholders (`<WORKTREE_DIR>`, `<SPEC_ABS>`, `<TEST_TITLE>`, `<BUILD>`, `<TC_BUILD_URL>`, `<HINT>`, `<DETAILS>`) from values recorded in 5.1 and 4.3, then send the filled prompt as the Agent dispatch. The template carries all constraints (no skip/mute, no product-code edits unless reporting a bug, framework docs to follow, tool restrictions) — don't restate them inline here.
 
-- **Working directory**: absolute path to `$WORKTREE_DIR`. Instruct the Healer to read, edit, and write files only under this path. All relative paths in its prompt should be resolved against this root.
-- **Absolute spec path**: `$WORKTREE_DIR/$SPEC_REL`.
-- **Test title** (exactly as in `test(...)` / `it(...)`).
-- **Build configuration** the failure was observed on (e.g., `[Mobile]`).
-- **TeamCity build URL** from Step 4.
-- **Likely cause hint** from 4.3 (`flake?` / `regression?` / `?`) — heuristic only, the full stack trace below is authoritative.
-- **Failure details** from Step 4.2 verbatim (the `details` field — stack trace and Playwright call log).
-- **Constraints**:
-  - **Bias by the likely cause hint:**
-    - `flake?` → harden the test (waits, locators, fixtures, isolation). Don't change behavioral assertions unless you're sure they're stale.
-    - `regression?` → the test's behavioral assertion didn't hold. Investigate whether the assertion is correct. If it is (the test is right, the product is wrong), **stop and report the bug back instead of applying a fix**. If the assertion is stale (the product changed deliberately and the test wasn't updated), adjust it minimally.
-    - `?` → no classifier signal; verify carefully against the stack trace and code before changing either side.
-  - Do not delete, `.skip(...)`, quarantine, or mute the test.
-  - Follow `test/e2e/docs-new/creating_reliable_tests.md` and `test/e2e/docs-new/new_style_guide.md`.
-  - **Use only `LS`, `Glob`, `Read`, `Grep`, `Edit`, `MultiEdit`, and `Write`** for analysis and edits. Do **not** call `browser_evaluate`, `test_run`, `test_debug`, or any other `mcp__playwright-test__*` tool — those trigger permission prompts and are unnecessary: the failure details above are the authoritative signal. Rely on code-level analysis, not on running the test.
-- **Expected return**: a short summary of (a) why the test was failing (root cause, one paragraph) and (b) what the fix does (one paragraph), plus the edits applied under `$WORKTREE_DIR`. Capture both paragraphs — they become the commit body and PR body.
+Exit conditions (also documented at the bottom of the template):
 
-Exit conditions:
-
-- Healer reports a **product bug** → surface verbatim to the user, `git worktree remove "$WORKTREE_DIR" --force`, stop.
+- Healer reports a **product bug** → surface verbatim to the user, remove the worktree (`git -C <REPO_ROOT> worktree remove <WORKTREE_DIR> --force`), stop.
 - Healer returns **no changes** → tell the user, remove the worktree, stop.
 - Otherwise → proceed to 5.3.
 
@@ -398,20 +381,15 @@ Then in the **next assistant message**, present the root cause + fix summary fro
 
 If the user asks to see the elided portion, re-render with no truncation. Wait for an explicit affirmative before pushing.
 
-**If the user asks for changes**, re-dispatch the Healer to revise the same worktree. Keep its prior uncommitted edits in place — they may be partially right, and resetting them throws away signal — but make the prior attempt explicit in the new prompt so the Healer can revise or replace it as the feedback warrants. The re-dispatch prompt must include:
+**If the user asks for changes**, re-dispatch the Healer to revise the same worktree. Keep its prior uncommitted edits in place (resetting them throws away signal that may be partially right) and use the **re-dispatch template** in [`references/healer-prompt.md`](references/healer-prompt.md).
 
-- The user's feedback **verbatim**.
-- The diff of the prior attempt, captured fresh just before re-dispatch:
+Capture a fresh diff just before re-dispatch so `<PRIOR_DIFF>` reflects the current state of the worktree, including any earlier iterations in this loop:
 
-  ```bash
-  git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> --no-pager diff <PR_SHA>
-  ```
+```bash
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> --no-pager diff <PR_SHA>
+```
 
-  Embed the full output as a `<PRIOR_DIFF>...</PRIOR_DIFF>` block so the Healer knows exactly what's currently on disk versus the original PR HEAD.
-- The same Step 5.2 context (failure details, spec path, framework constraints, tool restrictions) so the Healer doesn't lose the root failure signal.
-- An instruction: "The worktree already contains the prior attempt shown in `<PRIOR_DIFF>`. Revise it in place — keep what still applies, edit or rewrite what doesn't. To revert a specific change, write the file's pre-attempt content (visible in `<PRIOR_DIFF>` as removed lines); you don't have shell access, so revert via Edit/Write rather than git."
-
-Then loop back to the diff review at the top of 5.3.
+Fill in `<USER_FEEDBACK>` and `<PRIOR_DIFF>` (plus the unchanged `<WORKTREE_DIR>` / `<SPEC_ABS>` / etc. from the initial dispatch), then dispatch and loop back to the diff review at the top of 5.3.
 
 ### 5.4: Commit, push, and open the PR
 
