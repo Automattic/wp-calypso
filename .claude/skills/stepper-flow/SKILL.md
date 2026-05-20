@@ -81,7 +81,7 @@ Hi! Let's build your flow together. I'll ask a few questions, then show you a pr
 
 7. OWNER
    Who owns this flow? A team name or GitHub handle — goes in the README.
-   Example: "@growth-team" or "@victor-espigares"
+   Example: "@growthteam"
 
 8. CONTEXT LINK (optional)
    A Linear issue or P2 post link for background context. Goes in the README.
