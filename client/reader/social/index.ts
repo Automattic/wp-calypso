@@ -51,6 +51,7 @@ export type {
 	SocialError,
 } from './types';
 export { AuthorProfileHeader } from './author-profile-header';
+export { SocialTagFeedHeader } from './tag-feed-header';
 export { SocialAuthorProfileTabs } from './author-profile-tabs';
 export type { TabSpec } from './author-profile-tabs';
 export { useTabSlug } from './use-tab-slug';
