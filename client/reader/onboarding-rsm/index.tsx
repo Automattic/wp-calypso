@@ -30,6 +30,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
@@ -66,6 +67,12 @@ const ReaderOnboardingRsm = ( {
 	} = useSiteSubscriptions();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
+	// Used in the `completed` event for an instant in-session site-follow
+	// count: legacy `READER_FOLLOW` (used by the discover step and interests
+	// pack subscribe) updates this slice synchronously, whereas
+	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` is a TanStack
+	// query that doesn't reflect in-session follows until its refetch resolves.
+	const reduxFollows = useSelector( getReaderFollows );
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -254,7 +261,10 @@ const ReaderOnboardingRsm = ( {
 
 	const recordOnboardingCompleted = () => {
 		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
+			followed_tags_count: followedTags?.length ?? 0,
+			followed_sites_count: reduxFollows.length,
+		} );
 		if ( hasCompletedOnboarding ) {
 			return;
 		}

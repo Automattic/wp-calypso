@@ -147,6 +147,13 @@ jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
 } ) );
 
+// The real selector traverses `state.reader.follows`, which the lightweight
+// test store does not seed. Default to an empty follow list so the parent
+// completion event still has a valid `followed_sites_count`.
+jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
+	getReaderFollows: jest.fn().mockReturnValue( [] ),
+} ) );
+
 const mockRefreshFollowingStreams = jest.fn();
 jest.mock( '../use-refresh-following-streams', () => ( {
 	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
@@ -496,7 +503,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
 		);
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'discover' ) );
 	} );
@@ -542,7 +550,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'discover' ) );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
 		);
 	} );
 } );
@@ -565,7 +574,11 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( {
+				followed_tags_count: expect.any( Number ),
+				followed_sites_count: expect.any( Number ),
+			} )
 		);
 	} );
 
@@ -578,8 +591,60 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
 		);
+	} );
+
+	it( 'records completed with followed_tags_count and followed_sites_count reflecting the user\u2019s current follows', async () => {
+		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
+			useFollowedReaderTags: jest.Mock;
+		};
+		useFollowedReaderTags.mockImplementation( () => ( {
+			data: [ { slug: 'tech' }, { slug: 'food' } ],
+			isPending: false,
+		} ) );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( {
+				followed_tags_count: 2,
+				followed_sites_count: expect.any( Number ),
+			} )
+		);
+	} );
+
+	it( 'still records completed (without re-saving preference) when the user has already completed onboarding', async () => {
+		// Mirrors the forceShow case: a returning user can re-enter the modal
+		// and click Finish again — the `completed` event should still fire so
+		// we can attribute the funnel, but the preference is already set so we
+		// skip the redundant write.
+		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+			getPreference: jest.Mock;
+		};
+		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+
+		getPreference.mockReturnValue( null );
 	} );
 
 	it( 'does not auto-save completion when the user has enough follows without clicking Finish', async () => {
@@ -609,7 +674,8 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 
 		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
 		);
 	} );
 } );
