@@ -399,4 +399,43 @@ describe( 'Stream — keyboard navigation', () => {
 		);
 		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
 	} );
+
+	it( 'does not toggle like from a Redux-only selected post', async () => {
+		mockLikesEndpoint( [] );
+		const unlikeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/100/posts/10/likes/mine/delete', {} )
+			.query( { source: 'reader' } )
+			.reply( 200, { success: true } );
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( [ 'read', 'stream', 'selected', 'likes', null ], {
+			blogId: 100,
+			postId: 10,
+		} );
+
+		renderStream(
+			{},
+			{
+				reader: {
+					...baseState.reader,
+					posts: {
+						items: {
+							'global-10': {
+								ID: 10,
+								site_ID: 100,
+								global_ID: 'global-10',
+								i_like: true,
+							},
+						},
+					},
+				},
+			},
+			queryClient
+		);
+		await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
+
+		fireEvent.keyDown( document, { key: 'l' } );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+
+		expect( unlikeScope.isDone() ).toBe( false );
+	} );
 } );

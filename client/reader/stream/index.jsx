@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { usePostLikes } from 'calypso/components/data/post-likes';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -30,7 +30,6 @@ import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -905,10 +904,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 		// canonical Reader entity cache, then uses the post likes query as the
 		// source of truth for the current liked state.
 		const canonicalSelectedPost = useReaderPostEntity( selectedPostKey );
-		const selectedPostFromRedux = useSelector( ( state ) =>
-			getPostByKey( state, selectedPostKey )
-		);
-		const selectedPost = canonicalSelectedPost ?? selectedPostFromRedux;
+		const selectedPost = canonicalSelectedPost;
 		const { postLikes } = usePostLikes( selectedPost?.site_ID, selectedPost?.ID );
 		const likedPost = selectedPost ? postLikes?.iLike ?? Boolean( selectedPost.i_like ) : null;
 
