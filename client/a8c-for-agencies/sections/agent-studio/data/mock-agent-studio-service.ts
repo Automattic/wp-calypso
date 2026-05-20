@@ -9,6 +9,7 @@ import type {
 	AgentStudioService,
 	CreateAgentStudioOutputInput,
 	CreateAgentStudioProjectInput,
+	UpdateAgentStudioOutputInput,
 } from '../types';
 
 interface AgentStudioMockState {
@@ -70,8 +71,10 @@ const makeProjectId = () => `project-${ Date.now().toString( 36 ) }`;
 
 const makeOutputId = () => `output-${ Date.now().toString( 36 ) }`;
 
-// How long a deliverable stays in the "generating" state before the mock
-// resolves it. Stands in for the async generation job the wpcom endpoint runs.
+// How long a non-one-pager deliverable stays in the "generating" state
+// before the mock resolves it with placeholder assets. The one-pager kind
+// runs real generation on the client and updates the output explicitly, so
+// it bypasses this auto-resolution path.
 const GENERATION_DURATION_MS = 6000;
 
 // Stand-in preview images for a resolved deliverable, reusing the agent
@@ -105,6 +108,13 @@ const resolveGeneratingOutputs = ( state: AgentStudioMockState ): AgentStudioMoc
 	let changed = false;
 
 	const outputs = state.outputs.map( ( output ) => {
+		// One-pager deliverables run real client-side generation and write
+		// their result back via updateOutput. Skipping them here so the auto
+		// resolver doesn't flip them to ready with placeholder previews
+		// before the engine finishes.
+		if ( output.kind === 'one-pager' ) {
+			return output;
+		}
 		if (
 			output.status !== 'generating' ||
 			now - new Date( output.createdAt ).getTime() < GENERATION_DURATION_MS
@@ -230,6 +240,7 @@ export const mockAgentStudioService: AgentStudioService = {
 			description: input.description,
 			agentName: input.agentName,
 			deliverableType: input.deliverableType,
+			kind: input.kind,
 			status: 'generating',
 			createdAt: now,
 			updatedAt: now,
@@ -241,6 +252,30 @@ export const mockAgentStudioService: AgentStudioService = {
 		} );
 
 		return output;
+	},
+
+	async getOutput( outputId ) {
+		const state = resolveGeneratingOutputs( readState() );
+		return state.outputs.find( ( output ) => output.id === outputId );
+	},
+
+	async updateOutput( outputId: string, updates: UpdateAgentStudioOutputInput ) {
+		const state = readState();
+		const existing = state.outputs.find( ( output ) => output.id === outputId );
+		if ( ! existing ) {
+			return undefined;
+		}
+		const now = new Date().toISOString();
+		const next: AgentStudioOutput = {
+			...existing,
+			...updates,
+			updatedAt: now,
+		};
+		writeState( {
+			...state,
+			outputs: state.outputs.map( ( output ) => ( output.id === outputId ? next : output ) ),
+		} );
+		return next;
 	},
 
 	async deleteOutput( outputId ) {

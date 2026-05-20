@@ -1,0 +1,183 @@
+import {
+	Button,
+	Spinner,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import useUpdateAgentStudioOutput from '../../data/use-update-agent-studio-output';
+import { ELA_PAGE_HEIGHT, ELA_PAGE_WIDTH } from '../../one-pager/engine/types';
+import HtmlRenderPreview from '../../one-pager/react/html-render-preview';
+import { getOnePagerServices } from '../../one-pager/services';
+import type { PageRender } from '../../one-pager/services/types';
+import type { AgentStudioOutput } from '../../types';
+
+import './style.scss';
+
+interface Props {
+	output: AgentStudioOutput;
+}
+
+const PREVIEW_WIDTH = 560;
+const COVER_THUMB_WIDTH = 140;
+
+export default function OutputDetailContent( { output }: Props ) {
+	const dispatch = useDispatch();
+	const [ isDownloading, setIsDownloading ] = useState( false );
+	const updateOutput = useUpdateAgentStudioOutput();
+
+	if ( output.status === 'generating' ) {
+		return (
+			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+				<Spinner />
+				<Text>{ __( 'Generating your deliverable…' ) }</Text>
+			</VStack>
+		);
+	}
+
+	if ( output.status === 'failed' ) {
+		return (
+			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+				<Text size={ 15 } weight={ 600 }>
+					{ __( 'Generation failed' ) }
+				</Text>
+				{ output.errorMessage && <Text variant="muted">{ output.errorMessage }</Text> }
+			</VStack>
+		);
+	}
+
+	const data = output.onePagerData;
+	if ( ! data || data.covers.length === 0 ) {
+		return (
+			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+				<Text>{ __( 'No preview available.' ) }</Text>
+			</VStack>
+		);
+	}
+
+	const coverIdx = data.selectedCoverIdx ?? 0;
+	const selectedCover = data.covers[ coverIdx ] ?? data.covers[ 0 ];
+
+	const onSelectCover = ( nextIdx: number ) => {
+		updateOutput.mutate( {
+			outputId: output.id,
+			updates: {
+				onePagerData: { ...data, selectedCoverIdx: nextIdx },
+			},
+		} );
+	};
+
+	const onDownload = async () => {
+		setIsDownloading( true );
+		try {
+			const pages: PageRender[] = [
+				{
+					html: selectedCover.html,
+					width: ELA_PAGE_WIDTH,
+					height: ELA_PAGE_HEIGHT,
+					role: 'cover',
+					theme: selectedCover.theme,
+					coverLayoutId: selectedCover.layoutId,
+				},
+				...data.bodyPages.map( ( html ) => ( {
+					html,
+					width: ELA_PAGE_WIDTH,
+					height: ELA_PAGE_HEIGHT,
+					role: 'body' as const,
+				} ) ),
+			];
+			const { blob, fileName } = await getOnePagerServices().pdf.exportPdf( {
+				title: output.title,
+				pages,
+			} );
+			const url = URL.createObjectURL( blob );
+			const a = document.createElement( 'a' );
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild( a );
+			a.click();
+			a.remove();
+			URL.revokeObjectURL( url );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_one_pager_download', {
+					output_id: output.id,
+					download_type: 'pdf',
+				} )
+			);
+		} catch ( error ) {
+			const message =
+				error instanceof Error
+					? error.message
+					: __( 'Could not export the PDF. Please try again.' );
+			dispatch( errorNotice( message ) );
+		} finally {
+			setIsDownloading( false );
+		}
+	};
+
+	const totalPages = data.bodyPages.length + 1;
+
+	return (
+		<VStack spacing={ 6 } className="a4a-agent-studio-output-detail__content">
+			<HStack
+				alignment="center"
+				justify="space-between"
+				className="a4a-agent-studio-output-detail__header"
+			>
+				<VStack spacing={ 1 }>
+					<Text size={ 20 } weight={ 600 }>
+						{ output.title }
+					</Text>
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %d is a page count. */
+							__( '%d pages' ),
+							totalPages
+						) }
+					</Text>
+				</VStack>
+				<Button
+					variant="primary"
+					onClick={ onDownload }
+					isBusy={ isDownloading }
+					disabled={ isDownloading }
+				>
+					{ isDownloading ? __( 'Building PDF…' ) : __( 'Download PDF' ) }
+				</Button>
+			</HStack>
+
+			{ data.covers.length > 1 && (
+				<VStack spacing={ 2 }>
+					<Text weight={ 600 }>{ __( 'Pick a cover' ) }</Text>
+					<HStack spacing={ 2 } wrap className="a4a-agent-studio-output-detail__covers">
+						{ data.covers.map( ( cover, idx ) => (
+							<button
+								key={ cover.id }
+								type="button"
+								className={ `a4a-agent-studio-output-detail__cover-pick${
+									idx === coverIdx ? ' is-selected' : ''
+								}` }
+								onClick={ () => onSelectCover( idx ) }
+								aria-pressed={ idx === coverIdx }
+							>
+								<HtmlRenderPreview html={ cover.html } width={ COVER_THUMB_WIDTH } />
+							</button>
+						) ) }
+					</HStack>
+				</VStack>
+			) }
+
+			<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__pages">
+				<HtmlRenderPreview html={ selectedCover.html } width={ PREVIEW_WIDTH } />
+				{ data.bodyPages.map( ( html, idx ) => (
+					<HtmlRenderPreview key={ idx } html={ html } width={ PREVIEW_WIDTH } />
+				) ) }
+			</VStack>
+		</VStack>
+	);
+}

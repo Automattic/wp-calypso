@@ -1,0 +1,34 @@
+.a4a-agent-studio-output-detail__content {
+	max-width: 720px;
+	margin-inline: auto;
+}
+
+.a4a-agent-studio-output-detail__state {
+	padding-block: 64px;
+}
+
+.a4a-agent-studio-output-detail__pages {
+	align-items: center;
+}
+
+.a4a-agent-studio-output-detail__covers {
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.a4a-agent-studio-output-detail__cover-pick {
+	background: none;
+	border: 2px solid transparent;
+	border-radius: 4px;
+	padding: 4px;
+	cursor: pointer;
+	transition: border-color 0.15s ease;
+}
+
+.a4a-agent-studio-output-detail__cover-pick:hover {
+	border-color: var(--color-border-subtle);
+}
+
+.a4a-agent-studio-output-detail__cover-pick.is-selected {
+	border-color: var(--color-primary);
+}

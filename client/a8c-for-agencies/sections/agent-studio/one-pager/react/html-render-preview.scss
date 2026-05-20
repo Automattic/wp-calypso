@@ -1,0 +1,12 @@
+.a4a-one-pager-preview {
+	position: relative;
+	overflow: hidden;
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 4px;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.a4a-one-pager-preview__inner {
+	pointer-events: none;
+}

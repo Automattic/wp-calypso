@@ -12,6 +12,7 @@ import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, warning } from '@wordpress/icons';
 import { useState } from 'react';
+import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
 import type { AgentStudioOutput } from '../../types';
 
@@ -37,7 +38,12 @@ export default function DeliverableCard( { output }: Props ) {
 					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
 					<Text variant="muted">{ getMetaLabel( output ) }</Text>
 				</VStack>
-				<HStack justify="flex-end">
+				<HStack justify="flex-end" spacing={ 2 }>
+					{ output.kind === 'one-pager' && output.status === 'ready' && (
+						<Button variant="primary" href={ getAgentStudioOutputPath( output.id ) }>
+							{ __( 'Open' ) }
+						</Button>
+					) }
 					<Button variant="secondary" isDestructive onClick={ () => setIsDeleteDialogOpen( true ) }>
 						{ __( 'Delete' ) }
 					</Button>

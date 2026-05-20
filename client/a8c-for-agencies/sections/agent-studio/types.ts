@@ -1,3 +1,5 @@
+import type { ElaCover, OnePagerInputSnapshot } from './one-pager/engine/types';
+
 export type AgentStudioOutputStatus = 'ready' | 'generating' | 'failed';
 
 export interface AgentStudioProject {
@@ -8,6 +10,25 @@ export interface AgentStudioProject {
 	isDefault?: boolean;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface OnePagerUsage {
+	model: string;
+	inputTokens: number;
+	outputTokens: number;
+	usd: number;
+	durationMs: number;
+}
+
+/** Payload the one-pager engine writes when generation succeeds. */
+export interface OnePagerOutputData {
+	covers: ElaCover[];
+	bodyPages: string[];
+	selectedCoverIdx: number;
+	notes: string;
+	brandPackSlug: string;
+	input: OnePagerInputSnapshot;
+	usage: OnePagerUsage;
 }
 
 export interface AgentStudioOutput {
@@ -22,6 +43,12 @@ export interface AgentStudioOutput {
 	previewUrls?: string[];
 	/** Total number of assets the agent produced, populated once status is ready. */
 	assetCount?: number;
+	/** Tags the output to a specific agent renderer in the output detail UI. */
+	kind?: 'one-pager';
+	/** Engine result, present when kind === 'one-pager' and status === 'ready'. */
+	onePagerData?: OnePagerOutputData;
+	/** Surfaced on the deliverable card when generation fails. */
+	errorMessage?: string;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -43,6 +70,15 @@ export interface CreateAgentStudioOutputInput {
 	deliverableType: string;
 	title: string;
 	description: string;
+	kind?: 'one-pager';
+}
+
+export interface UpdateAgentStudioOutputInput {
+	status?: AgentStudioOutputStatus;
+	previewUrls?: string[];
+	assetCount?: number;
+	onePagerData?: OnePagerOutputData;
+	errorMessage?: string;
 }
 
 export type OnePagerContentField = 'title' | 'blurb';
@@ -54,7 +90,12 @@ export interface AgentStudioService {
 	deleteProject( projectId: string ): Promise< void >;
 	listProjectOutputs( projectId: string ): Promise< AgentStudioOutput[] >;
 	listOutputs(): Promise< AgentStudioOutput[] >;
+	getOutput( outputId: string ): Promise< AgentStudioOutput | undefined >;
 	createOutput( input: CreateAgentStudioOutputInput ): Promise< AgentStudioOutput >;
+	updateOutput(
+		outputId: string,
+		updates: UpdateAgentStudioOutputInput
+	): Promise< AgentStudioOutput | undefined >;
 	deleteOutput( outputId: string ): Promise< void >;
 	suggestOnePagerContent( brief: string, field: OnePagerContentField ): Promise< string >;
 }
