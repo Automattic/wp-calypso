@@ -16,7 +16,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateAgentStudioOutput from '../../data/use-create-agent-studio-output';
 import { getAgentStudioOutputPath, getAgentStudioPath } from '../../lib/paths';
 import { DEFAULT_PACK_SLUG } from '../../one-pager/brand-packs';
-import DevKeyModal, { DevKeyTrigger } from '../../one-pager/react/dev-key-modal';
 import GeneratingOverlay from '../../one-pager/react/generating-overlay';
 import { useOnePagerGeneration } from '../../one-pager/react/use-one-pager-generation';
 import useSuggestOnePagerContent from '../../one-pager/react/use-suggest-one-pager-content';
@@ -46,7 +45,6 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 	const [ title, setTitle ] = useState( '' );
 	const [ blurb, setBlurb ] = useState( '' );
 	const [ images, setImages ] = useState< File[] >( [] );
-	const [ devKeyOpen, setDevKeyOpen ] = useState( false );
 
 	const generation = useOnePagerGeneration();
 	const createOutput = useCreateAgentStudioOutput();
@@ -214,12 +212,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						firstImageIsCover
 					/>
 
-					<HStack
-						className="a4a-agent-studio-brief__form-actions"
-						justify="space-between"
-						spacing={ 2 }
-					>
-						<DevKeyTrigger onOpen={ () => setDevKeyOpen( true ) } />
+					<HStack className="a4a-agent-studio-brief__form-actions" justify="flex-end" spacing={ 2 }>
 						<Button variant="primary" type="submit" disabled={ ! canSubmit } isBusy={ isBusy }>
 							{ sprintf(
 								/* translators: %s is an agent name. */
@@ -235,7 +228,6 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 				isOpen={ generation.isRunning }
 				onCancel={ generation.cancel }
 			/>
-			<DevKeyModal isOpen={ devKeyOpen } onClose={ () => setDevKeyOpen( false ) } />
 		</>
 	);
 }
