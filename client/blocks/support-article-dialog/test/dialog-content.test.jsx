@@ -79,7 +79,6 @@ describe( 'DialogContent', () => {
 			'false'
 		);
 		expect( screen.getByText( 'Cached support article body' ) ).toBeInTheDocument();
-		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'fetches a support article when it is missing from the post cache', async () => {
@@ -103,6 +102,5 @@ describe( 'DialogContent', () => {
 			)
 		);
 		expect( screen.getByText( 'Fetched support article body' ) ).toBeInTheDocument();
-		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
 	} );
 } );

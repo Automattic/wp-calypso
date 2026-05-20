@@ -1,12 +1,11 @@
 import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment, useCallback, useRef } from 'react';
+import { Component, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
-import { useCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
+import { useReaderPost } from 'calypso/reader/data/reader-post';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -120,12 +119,7 @@ class PostLifecycle extends Component {
 				/>
 			);
 		} else if ( ! post ) {
-			return (
-				<Fragment>
-					<QueryReaderPost postKey={ postKey } />
-					<PostPlaceholder />
-				</Fragment>
-			);
+			return <PostPlaceholder />;
 		} else if ( post.is_error ) {
 			return <PostUnavailable post={ post } />;
 		} else if (
@@ -166,6 +160,6 @@ const ConnectedPostLifecycle = connect(
 )( PostLifecycle );
 
 export default function PostLifecycleWithCanonicalPost( props ) {
-	const canonicalPost = useCachedReaderPost( props.postKey );
+	const { data: canonicalPost } = useReaderPost( props.postKey );
 	return <ConnectedPostLifecycle { ...props } canonicalPost={ canonicalPost } />;
 }
