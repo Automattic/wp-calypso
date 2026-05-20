@@ -1,12 +1,9 @@
-import { omit } from 'lodash';
+import { flowRight, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { withPostLikeActions, withPostLikes } from 'calypso/components/data/post-likes';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { like, unlike } from 'calypso/state/posts/likes/actions';
-import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import LikeButton from './button';
 
@@ -38,6 +35,10 @@ class LikeButtonContainer extends Component {
 			} );
 		}
 
+		if ( this.props.isLikePending || this.props.isUnlikePending ) {
+			return;
+		}
+
 		const toggler = liked ? this.props.like : this.props.unlike;
 		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 		this.props.onLikeToggle( liked );
@@ -54,7 +55,6 @@ class LikeButtonContainer extends Component {
 		] );
 		return (
 			<Fragment>
-				<QueryPostLikes siteId={ this.props.siteId } postId={ this.props.postId } />
 				<LikeButton
 					{ ...props }
 					likeCount={ this.props.likeCount }
@@ -68,15 +68,17 @@ class LikeButtonContainer extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId, postId } ) => {
-		return {
-			likeCount: getPostLikeCount( state, siteId, postId ),
-			iLike: isLikedPost( state, siteId, postId ),
-			isLoggedIn: isUserLoggedIn( state ),
-		};
-	},
-	{ like, unlike, registerLastActionRequiresLogin },
-	null,
-	{ forwardRef: true }
+export default flowRight(
+	connect(
+		( state ) => {
+			return {
+				isLoggedIn: isUserLoggedIn( state ),
+			};
+		},
+		{ registerLastActionRequiresLogin },
+		null,
+		{ forwardRef: true }
+	),
+	withPostLikes,
+	withPostLikeActions
 )( LikeButtonContainer );
