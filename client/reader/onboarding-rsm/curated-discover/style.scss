@@ -1,0 +1,221 @@
+.curated-discover {
+	max-inline-size: 1100px;
+	margin-inline: auto;
+	padding-block: 24px;
+	padding-inline: 24px;
+	font-family: var( --font-base );
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-block-end: 24px;
+		padding-block-end: 16px;
+		border-block-end: 1px solid var( --color-border-subtle, #ddd );
+	}
+
+	&__subtitle {
+		color: var( --color-text-subtle, #555 );
+		margin: 0;
+	}
+
+	&__progress {
+		display: flex;
+		gap: 16px;
+		font-size: 14px;
+	}
+
+	&__filters {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+
+	&__copy-buttons {
+		display: flex;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	&__tag-section {
+		border: 1px solid var( --color-border-subtle, #ddd );
+		border-radius: 4px;
+		background: var( --color-surface, #fff );
+	}
+
+	&__tag-header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 10px 16px;
+		border-block-end: 1px solid var( --color-border-subtle, #ddd );
+		background: var( --color-neutral-0, #fafafa );
+	}
+
+	&__tag-toggle {
+		flex: 1 1 auto;
+		text-align: start;
+		background: none;
+		border: none;
+		padding: 0;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		font-family: var( --font-base );
+	}
+
+	&__tag-counts {
+		color: var( --color-text-subtle, #555 );
+		font-size: 13px;
+	}
+
+	&__tag-body {
+		padding: 12px 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	&__candidates {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	&__empty {
+		padding-block: 12px;
+		color: var( --color-text-subtle, #555 );
+	}
+
+	&__error {
+		color: var( --color-error, #d63638 );
+	}
+
+	&__row {
+		display: grid;
+		grid-template-columns: 48px 1fr auto;
+		gap: 16px;
+		padding: 12px 16px;
+		border: 1px solid var( --color-border-subtle, #ddd );
+		border-radius: 4px;
+		background: var( --color-surface, #fff );
+		align-items: start;
+		transition: opacity 150ms ease;
+
+		&.is-added {
+			border-color: var( --color-success, #008a20 );
+			background: var( --color-success-surface, rgba( 0, 138, 32, 0.04 ) );
+		}
+
+		&.is-feed-error {
+			border-color: var( --color-warning, #dba617 );
+		}
+
+		&.is-has-icon-forced-false:not( .is-feed-error ) {
+			border-color: var( --color-warning, #dba617 );
+			background: var( --color-warning-surface, rgba( 219, 166, 23, 0.06 ) );
+		}
+	}
+
+	&__row-icon {
+		inline-size: 36px;
+		block-size: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__row-body {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		min-inline-size: 0;
+	}
+
+	&__row-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	&__row-title {
+		font-size: 16px;
+		font-weight: 600;
+		margin: 0;
+	}
+
+	&__row-tag {
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: 2px 6px;
+		background: var( --color-neutral-5, #f0f0f0 );
+		border-radius: 3px;
+		color: var( --color-text-subtle, #555 );
+	}
+
+	&__row-flag {
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: 2px 6px;
+		color: #fff;
+		border-radius: 3px;
+		background: var( --color-success, #008a20 );
+
+		&.is-warning {
+			background: var( --color-warning, #dba617 );
+		}
+	}
+
+	&__hint {
+		color: var( --color-text-subtle, #555 );
+		font-size: 12px;
+	}
+
+	&__row-fields {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr ) minmax( 0, 2fr );
+		gap: 4px 12px;
+		font-size: 13px;
+	}
+
+	&__kv {
+		display: contents;
+	}
+
+	&__kv-label {
+		font-family: var( --font-code, monospace );
+		color: var( --color-text-subtle, #555 );
+		font-size: 12px;
+	}
+
+	&__kv-value {
+		min-inline-size: 0;
+		overflow-wrap: anywhere;
+
+		a {
+			color: var( --color-link, #2271b1 );
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&__row-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		align-self: center;
+	}
+}

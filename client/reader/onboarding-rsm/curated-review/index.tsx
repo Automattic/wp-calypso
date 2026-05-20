@@ -2,36 +2,16 @@ import { readFeedQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { Button, SelectControl, ToggleControl } from '@wordpress/components';
 import React, { useCallback, useMemo, useState } from 'react';
-import { creativeArtsBlogs } from '../curated-blogs/creative-arts';
-import { industryBlogs } from '../curated-blogs/industry';
-import { lifestyleBlogs } from '../curated-blogs/lifestyle';
-import { societyBlogs } from '../curated-blogs/society';
-import { technologyBlogs } from '../curated-blogs/technology';
+import { CURATED_FILES, type CuratedFile } from '../curated-blogs/files';
 import { CuratedRow, type DetectedRow } from './curated-row';
 import { serializeCurated, type CuratedRowMetadata } from './serialize-curated';
 import { usePersistedFeedIdSet } from './use-persisted-feed-ids';
-import type { CuratedBlog, CuratedBlogsList } from '../curated-blogs';
+import type { CuratedBlog } from '../curated-blogs';
 
 import './style.scss';
 
 const STORAGE_KEY_BROKEN = 'reader/curated-review/broken-feed-ids';
 const STORAGE_KEY_HAS_ICON_FALSE = 'reader/curated-review/has-icon-false-feed-ids';
-
-interface CuratedFile {
-	/** Filename under `curated-blogs/`, sans extension. */
-	slug: string;
-	/** Variable name exported by that file. */
-	variableName: string;
-	tagMap: CuratedBlogsList;
-}
-
-const FILES: CuratedFile[] = [
-	{ slug: 'creative-arts', variableName: 'creativeArtsBlogs', tagMap: creativeArtsBlogs },
-	{ slug: 'industry', variableName: 'industryBlogs', tagMap: industryBlogs },
-	{ slug: 'lifestyle', variableName: 'lifestyleBlogs', tagMap: lifestyleBlogs },
-	{ slug: 'society', variableName: 'societyBlogs', tagMap: societyBlogs },
-	{ slug: 'technology', variableName: 'technologyBlogs', tagMap: technologyBlogs },
-];
 
 interface FlatRow {
 	fileSlug: string;
@@ -54,7 +34,7 @@ function flatten( files: CuratedFile[] ): FlatRow[] {
 const ALL_FILES_SENTINEL = 'all';
 
 const CuratedReviewPage: React.FC = () => {
-	const flatRows = useMemo( () => flatten( FILES ), [] );
+	const flatRows = useMemo( () => flatten( CURATED_FILES ), [] );
 
 	const fileRowCounts = useMemo( () => {
 		const counts = new Map< string, number >();
@@ -126,8 +106,10 @@ const CuratedReviewPage: React.FC = () => {
 				};
 			}
 			const hasIcon = Boolean( feed.image );
+			const subscribersCount =
+				typeof feed.subscribers_count === 'number' ? feed.subscribers_count : null;
 			return {
-				detected: { feedUrl, hasIcon } as DetectedRow,
+				detected: { feedUrl, hasIcon, subscribersCount } as DetectedRow,
 				iconUrl: hasIcon ? feed.image : null,
 				autoFlaggedBroken: false,
 			};
@@ -158,7 +140,7 @@ const CuratedReviewPage: React.FC = () => {
 
 	// Group consecutive visible rows by file so we can render section
 	// headings between them when "all files" is active. Order is preserved
-	// from `queryableRows`, which itself follows the FILES array order.
+	// from `queryableRows`, which itself follows the CURATED_FILES array order.
 	const visibleGroups = useMemo( () => {
 		const groups: { fileSlug: string; indices: number[] }[] = [];
 		for ( const index of visibleIndices ) {
@@ -251,9 +233,9 @@ const CuratedReviewPage: React.FC = () => {
 	// export — the others would skip every row.
 	const copyableFiles = useMemo( () => {
 		if ( selectedFileSlug === ALL_FILES_SENTINEL ) {
-			return FILES;
+			return CURATED_FILES;
 		}
-		return FILES.filter( ( file ) => file.slug === selectedFileSlug );
+		return CURATED_FILES.filter( ( file ) => file.slug === selectedFileSlug );
 	}, [ selectedFileSlug ] );
 
 	return (
@@ -292,7 +274,7 @@ const CuratedReviewPage: React.FC = () => {
 						onChange={ setSelectedFileSlug }
 						options={ [
 							{ label: `All files (${ flatRows.length })`, value: ALL_FILES_SENTINEL },
-							...FILES.map( ( file ) => ( {
+							...CURATED_FILES.map( ( file ) => ( {
 								label: `${ file.slug } (${ fileRowCounts.get( file.slug ) ?? 0 })`,
 								value: file.slug,
 							} ) ),
@@ -343,7 +325,7 @@ const CuratedReviewPage: React.FC = () => {
 
 			<main className="curated-review__list">
 				{ visibleGroups.map( ( group ) => {
-					const file = FILES.find( ( f ) => f.slug === group.fileSlug );
+					const file = CURATED_FILES.find( ( f ) => f.slug === group.fileSlug );
 					return (
 						<section key={ group.fileSlug } className="curated-review__file-group">
 							{ selectedFileSlug === ALL_FILES_SENTINEL && (

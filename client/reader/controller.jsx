@@ -156,6 +156,21 @@ export function curatedReview( context, next ) {
 	next();
 }
 
+const loadCuratedDiscover = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-onboarding-rsm-curated-discover" */ 'calypso/reader/onboarding-rsm/curated-discover'
+	);
+
+export function curatedDiscover( context, next ) {
+	context.primary = <AsyncLoad require={ loadCuratedDiscover } placeholder={ null } />;
+	trackPageLoad(
+		'/reader/dev/curated-discover',
+		'Reader > Curated discover',
+		'reader-curated-discover'
+	);
+	next();
+}
+
 export function feedDiscovery( context, next ) {
 	if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 		const url = context.params.feed_id;

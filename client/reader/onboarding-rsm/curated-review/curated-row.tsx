@@ -1,3 +1,4 @@
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import React from 'react';
@@ -10,6 +11,12 @@ export interface DetectedRow {
 	feedUrl: string;
 	/** Auto-detected `Boolean(feed.image)`. */
 	hasIcon: boolean;
+	/**
+	 * `feed.subscribers_count` from the API. `null` when the response did not
+	 * include a numeric value. Display-only — never serialized into the curated
+	 * source because the count is volatile.
+	 */
+	subscribersCount: number | null;
 }
 
 interface CuratedRowProps {
@@ -39,6 +46,22 @@ const KeyValue: React.FC< { label: string; children: React.ReactNode } > = ( {
 		<span className="curated-review__kv-value">{ children }</span>
 	</div>
 );
+
+function renderSubscribersValue( detected: DetectedRow | null ): React.ReactNode {
+	if ( ! detected || detected.subscribersCount === null ) {
+		return '—';
+	}
+	const compact = formatNumberCompact( detected.subscribersCount );
+	// Compact form alone hides large differences (e.g. 12,345 vs 12,500 both
+	// render as "12.3K"); show the exact value alongside so the operator can
+	// rank candidates precisely.
+	return (
+		<>
+			{ compact ?? detected.subscribersCount.toLocaleString() }{ ' ' }
+			<span className="curated-review__hint">({ detected.subscribersCount.toLocaleString() })</span>
+		</>
+	);
+}
 
 function renderHasIconValue(
 	detected: DetectedRow | null,
@@ -147,6 +170,7 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 							<em className="curated-review__error">error: { queryError.message }</em>
 						) }
 					</KeyValue>
+					<KeyValue label="subscribers">{ renderSubscribersValue( detected ) }</KeyValue>
 					<KeyValue label="hasIcon">
 						{ renderHasIconValue( detected, isHasIconForcedFalse ) }
 					</KeyValue>
