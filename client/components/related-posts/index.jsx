@@ -2,7 +2,7 @@ import { SCOPE_OTHER, SCOPE_SAME } from '@automattic/api-core';
 import clsx from 'clsx';
 import { times } from 'lodash';
 import { RelatedPostCard as RelatedPost } from 'calypso/blocks/reader-related-card';
-import { withReaderRelatedPosts } from 'calypso/components/data/with-reader-related-posts';
+import { useReaderRelatedPosts } from 'calypso/components/data/with-reader-related-posts';
 
 const noop = () => {};
 
@@ -44,5 +44,22 @@ function RelatedPosts( { posts, title, className = '', onPostClick = noop, onSit
 	);
 }
 
-export const RelatedPostsFromSameSite = withReaderRelatedPosts( SCOPE_SAME )( RelatedPosts );
-export const RelatedPostsFromOtherSites = withReaderRelatedPosts( SCOPE_OTHER )( RelatedPosts );
+export const RelatedPostsFromSameSite = ( { siteId, postId, ...props } ) => {
+	const { posts, isError } = useReaderRelatedPosts( siteId, postId, SCOPE_SAME );
+
+	if ( isError && ! posts ) {
+		return null;
+	}
+
+	return <RelatedPosts { ...props } posts={ posts } />;
+};
+
+export const RelatedPostsFromOtherSites = ( { siteId, postId, ...props } ) => {
+	const { posts, isError } = useReaderRelatedPosts( siteId, postId, SCOPE_OTHER );
+
+	if ( isError && ! posts ) {
+		return null;
+	}
+
+	return <RelatedPosts { ...props } posts={ posts } />;
+};

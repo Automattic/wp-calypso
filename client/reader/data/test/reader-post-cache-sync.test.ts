@@ -1,11 +1,13 @@
 /*
  * @jest-environment jsdom
  */
+import { readerPostQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { syncReaderPostCache } from 'calypso/reader/data/reader-post-cache-sync';
+import readerContentWidth from 'calypso/reader/lib/content-width';
 
 jest.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {
 	__esModule: true,
@@ -101,6 +103,15 @@ describe( 'syncReaderPostCache', () => {
 				content_no_html: 'Reloaded post',
 				better_excerpt_no_html: 'Reloaded post',
 			} );
+		} );
+		expect(
+			queryClient.getQueryData(
+				readerPostQuery( { blogId: 100, postId: 1 }, readerContentWidth() ).queryKey
+			)
+		).toMatchObject( {
+			ID: 1,
+			site_ID: 100,
+			content: '<p>Reloaded post</p>',
 		} );
 	} );
 } );

@@ -39,13 +39,11 @@ export const onSuccess = ( action, response ) => ( dispatch, getState ) => {
 		// get stream post identifier
 		const state = getState();
 		const stream = getStream( state, identifier );
-
-		if ( ! stream.items ) {
-			return;
-		}
 		const queryClient = getCalypsoQueryClient();
 		const posts = queryClient
-			? stream.items.map( ( item ) => getCachedReaderPost( queryClient, item ) ).filter( Boolean )
+			? ( stream.items ?? [] )
+					.map( ( item ) => getCachedReaderPost( queryClient, item ) )
+					.filter( Boolean )
 			: [];
 
 		// get their global ids

@@ -24,6 +24,8 @@ describe( 'reader post cache middleware', () => {
 			{
 				ID: 1,
 				site_ID: 100,
+				feed_ID: 200,
+				feed_URL: 'https://example.com/feed',
 				global_ID: 'global-1',
 				i_like: false,
 				like_count: 0,
@@ -49,6 +51,20 @@ describe( 'reader post cache middleware', () => {
 
 	it( 'patches mark-all-as-seen state by global id', () => {
 		dispatch( receiveMarkAllAsSeen( { feedIds: [], feedUrls: [], globalIds: [ 'global-1' ] } ) );
+
+		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			is_seen: true,
+		} );
+	} );
+
+	it( 'patches mark-all-as-seen state by feed when stream global ids are unavailable', () => {
+		dispatch(
+			receiveMarkAllAsSeen( {
+				feedIds: [ 200 ],
+				feedUrls: [ 'https://example.com/feed' ],
+				globalIds: [],
+			} )
+		);
 
 		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_seen: true,

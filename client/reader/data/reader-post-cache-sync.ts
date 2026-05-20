@@ -1,5 +1,4 @@
-import { fetchReadPost } from '@automattic/api-core';
-import { postLikesQuery } from '@automattic/api-queries';
+import { postLikesQuery, readerPostQuery } from '@automattic/api-queries';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { keyForPost } from 'calypso/reader/post-key';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
@@ -86,7 +85,8 @@ function reloadReaderPostIntoCache( queryClient: QueryClient, post: ReaderPostCa
 		return;
 	}
 
-	void fetchReadPost( postKey, readerContentWidth() )
+	void queryClient
+		.fetchQuery( { ...readerPostQuery( postKey, readerContentWidth() ), staleTime: 0 } )
 		.then( ( data ) =>
 			syncReaderPostCache( queryClient, [ { ...data, ...( railcar ? { railcar } : {} ) } ] )
 		)

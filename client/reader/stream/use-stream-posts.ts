@@ -12,7 +12,7 @@ import {
 } from 'calypso/reader/data/reader-post-cache-sync';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
-import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
+import { analyticsForStream, extractPageHandle } from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import { normalizeStreamPage } from './stream-normalization';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
@@ -166,6 +166,11 @@ export function useStreamPosts( {
 		for ( let i = 0; i < pages.length; i++ ) {
 			const { streamPosts } = normalizeStreamPage( pages[ i ] as ReadStreamResponse, streamType );
 			if ( streamPosts.length > 0 ) {
+				analyticsForStream( {
+					streamKey: resolvedStreamKey,
+					algorithm: ( pages[ i ] as ReadStreamResponse ).algorithm,
+					items: streamPosts,
+				} ).forEach( ( action ) => dispatch( action ) );
 				syncReaderPostCache( queryClient, streamPosts );
 				syncReaderConversationFollowStatus( dispatch, streamPosts );
 			}

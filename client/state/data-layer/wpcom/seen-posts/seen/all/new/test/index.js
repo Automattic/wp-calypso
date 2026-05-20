@@ -60,4 +60,24 @@ describe( 'seen-posts/seen/all/new data layer', () => {
 			} )
 		);
 	} );
+
+	it( 'still dispatches mark-all-as-seen receive when Redux stream items are unavailable', () => {
+		getCalypsoQueryClient.mockReturnValue( new QueryClient() );
+
+		const dispatch = jest.fn();
+		const getState = () => ( { reader: { streams: {} } } );
+
+		onSuccess(
+			{ identifier: 'following', feedIds: [ 200 ], feedUrls: [ 'https://example.com/feed' ] },
+			{ status: true }
+		)( dispatch, getState );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			receiveMarkAllAsSeen( {
+				feedIds: [ 200 ],
+				feedUrls: [ 'https://example.com/feed' ],
+				globalIds: [],
+			} )
+		);
+	} );
 } );

@@ -9,6 +9,7 @@ import {
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
+import { analyticsForStream } from 'calypso/state/reader/streams/normalize';
 import { normalizeStreamPage } from './stream-normalization';
 import type { PostKey } from './use-stream-posts';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
@@ -128,10 +129,15 @@ export function useStreamPendingPosts( {
 		}
 		const { streamPosts } = normalizeStreamPage( pollHead.data, streamType );
 		if ( streamPosts.length > 0 ) {
+			analyticsForStream( {
+				streamKey,
+				algorithm: pollHead.data.algorithm,
+				items: streamPosts,
+			} ).forEach( ( action ) => dispatch( action ) );
 			syncReaderPostCache( queryClient, streamPosts );
 			syncReaderConversationFollowStatus( dispatch, streamPosts );
 		}
-	}, [ pollHead.data, streamType, queryClient, dispatch ] );
+	}, [ pollHead.data, streamKey, streamType, queryClient, dispatch ] );
 
 	const pendingCount = useMemo( () => {
 		const streamItems = pollHead.data

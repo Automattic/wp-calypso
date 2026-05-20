@@ -18,11 +18,11 @@ fetches, and optimistic updates write into this cache through
 `reader-post-cache-sync.ts`. The cache query keys are memory-only and are not
 persisted to localStorage.
 
-`reader-post-cache-middleware.ts` keeps legacy Redux post receives mirrored into
-the canonical cache while older legacy code still dispatches `receivePosts`.
-This is a compatibility layer, not the target architecture. New Reader post
-producers should call `syncReaderPostCache()` instead of dispatching
-`receivePosts()`.
+`reader-post-cache-middleware.ts` only mirrors legacy Redux actions that still
+represent post-adjacent state, such as seen/unseen and conversation follow
+updates. It does not receive or normalize post payloads. New Reader post
+producers should call `syncReaderPostCache()` after fetching posts so cache-only
+surfaces have the data they need before rendering.
 
 ## Migration Rules
 

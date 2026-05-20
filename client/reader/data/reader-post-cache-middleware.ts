@@ -17,6 +17,8 @@ import type { Middleware } from 'redux';
 type ReaderPostCacheAction = {
 	type: string;
 	globalIds?: string[];
+	feedIds?: Array< number | string >;
+	feedUrls?: string[];
 	posts?: Array< ReaderPostCachePost | null | undefined >;
 	payload?: {
 		siteId?: number;
@@ -29,9 +31,8 @@ type GetQueryClient = () => QueryClient | null;
 
 const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction ) => {
 	const globalIds = new Set( action.globalIds );
-	if ( ! globalIds.size ) {
-		return;
-	}
+	const feedIds = new Set( ( action.feedIds ?? [] ).map( String ) );
+	const feedUrls = new Set( action.feedUrls ?? [] );
 
 	const isSeen =
 		action.type === READER_SEEN_MARK_AS_SEEN_RECEIVE ||
@@ -39,7 +40,17 @@ const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction
 
 	updateCachedReaderPostsMatching(
 		queryClient,
-		( post ) => typeof post.global_ID === 'string' && globalIds.has( post.global_ID ),
+		( post ) => {
+			if ( typeof post.global_ID === 'string' && globalIds.has( post.global_ID ) ) {
+				return true;
+			}
+
+			return (
+				action.type === READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE &&
+				( ( post.feed_ID != null && feedIds.has( String( post.feed_ID ) ) ) ||
+					( typeof post.feed_URL === 'string' && feedUrls.has( post.feed_URL ) ) )
+			);
+		},
 		() => ( { is_seen: isSeen } )
 	);
 };

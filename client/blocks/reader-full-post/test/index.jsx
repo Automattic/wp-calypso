@@ -4,7 +4,17 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { mapStateToFullPostProps } from '../index';
+import { useReaderPost } from 'calypso/reader/data/reader-post';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
+import { mapStateToFullPostProps, withFullPostNavigation } from '../index';
+
+jest.mock( 'calypso/reader/data/reader-post', () => ( {
+	useReaderPost: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
+	useStreamPostKeySelection: jest.fn(),
+} ) );
 
 // Mock the entire FullPostView component to focus on the specific logic we're testing
 const MockFullPostView = ( { commentsApiDisabled, shouldShowComments } ) => {
@@ -65,6 +75,52 @@ describe( 'mapStateToFullPostProps', () => {
 		} );
 
 		expect( props.referralPost ).toBe( referralPost );
+	} );
+} );
+
+describe( 'withFullPostNavigation', () => {
+	beforeEach( () => {
+		useReaderPost.mockImplementation( ( postKey ) => ( {
+			data: postKey?.postId ? { ID: postKey.postId, site_ID: postKey.blogId } : undefined,
+		} ) );
+		useStreamPostKeySelection.mockReturnValue( {
+			previousPostKey: { blogId: 100, postId: 1 },
+			nextPostKey: { blogId: 100, postId: 3 },
+		} );
+	} );
+
+	it( 'resolves current, referral, previous, and next posts from Reader post queries', () => {
+		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
+		const store = createStore( ( state = {} ) => state, {
+			readerUi: { currentStream: 'following' },
+			ui: { language: { localeSlug: 'en' } },
+		} );
+
+		render(
+			<Provider store={ store }>
+				<FullPostNavigation blogId="100" postId="2" referral={ { blogId: 100, postId: 9 } } />
+			</Provider>
+		);
+
+		expect( useStreamPostKeySelection ).toHaveBeenCalledWith( {
+			streamKey: 'following',
+			localeSlug: null,
+			currentPostKey: { blogId: 100, postId: 2 },
+		} );
+		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 2 } );
+		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 9 } );
+		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 1 } );
+		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 3 } );
+		expect( WrappedComponent ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				canonicalPost: { ID: 2, site_ID: 100 },
+				canonicalReferralPost: { ID: 9, site_ID: 100 },
+				previousPost: { ID: 1, site_ID: 100 },
+				nextPost: { ID: 3, site_ID: 100 },
+			} ),
+			{}
+		);
 	} );
 } );
 

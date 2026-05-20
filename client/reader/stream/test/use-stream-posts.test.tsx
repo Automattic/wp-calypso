@@ -9,6 +9,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
+import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import readerReducer from 'calypso/state/reader/reducer';
 import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
@@ -21,10 +22,16 @@ afterEach( () => {
 } );
 
 function makeWrapper( queryClient: QueryClient ) {
+	const actions: unknown[] = [];
+	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
+		actions.push( action );
+		return next( action );
+	};
 	const store = createStore(
 		combineReducers( { reader: readerReducer } ),
 		undefined,
 		applyMiddleware(
+			actionRecorder,
 			thunkMiddleware,
 			createReaderPostCacheMiddleware( () => queryClient )
 		)
@@ -34,7 +41,7 @@ function makeWrapper( queryClient: QueryClient ) {
 			<Provider store={ store }>{ children }</Provider>
 		</QueryClientProvider>
 	);
-	return { Wrapper, store };
+	return { Wrapper, store, actions };
 }
 
 function makeQueryClient() {
@@ -48,6 +55,7 @@ interface ApiPost {
 	URL?: string;
 	date_liked?: string;
 	xPostMetadata?: { blogId: number; postId: number };
+	railcar?: Record< string, unknown >;
 }
 
 function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
@@ -89,6 +97,42 @@ describe( 'useStreamPosts — fetching', () => {
 			site_ID: 100,
 		} );
 		expect( result.current.lastPage ).toBe( true );
+	} );
+
+	it( 'records railcar render events for fetched stream posts', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1, { railcar: { railcar: 'railcar-1' } } ) ],
+				algorithm: 'railcar-test',
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper, actions } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
+		expect( actions ).toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					type: ANALYTICS_EVENT_RECORD,
+					meta: expect.objectContaining( {
+						analytics: expect.arrayContaining( [
+							expect.objectContaining( {
+								payload: expect.objectContaining( {
+									name: 'calypso_traintracks_render',
+									properties: { railcar: 'railcar-1' },
+								} ),
+							} ),
+						] ),
+					} ),
+				} ),
+			] )
+		);
 	} );
 
 	it( 'paginates via the `before` cursor when `date_range.after` is set', async () => {

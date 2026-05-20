@@ -981,7 +981,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	requestPostComments,
 } )( withPostLikes( withReaderPostLikeActions( FullPostView ) ) );
 
-const withFullPostNavigation = ( WrappedComponent ) =>
+export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
 		const currentStreamKey = useSelector( getCurrentStream );
 		const rawLocale = useSelector( getCurrentLocaleSlug );
