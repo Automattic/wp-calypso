@@ -65,6 +65,9 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 			deliverableType: agent.deliverableType,
 			title: title.trim(),
 			description: blurb.trim() || getBriefExcerpt( brief ),
+			brief: brief.trim(),
+			blurb: blurb.trim(),
+			images,
 		} );
 	};
 

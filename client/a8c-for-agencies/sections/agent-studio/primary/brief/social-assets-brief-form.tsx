@@ -77,6 +77,12 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 			deliverableType: agent.deliverableType,
 			title,
 			description,
+			// Iris is currently disabled (no `compose-social-assets` recipe yet),
+			// so this branch is unreachable. The recipe-input fields are kept
+			// empty to satisfy the typed mutation contract.
+			brief: mode === 'source' ? sourceText.trim() : '',
+			blurb: mode === 'manual' ? statContext.trim() : '',
+			images,
 		} );
 	};
 

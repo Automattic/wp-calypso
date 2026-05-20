@@ -211,7 +211,9 @@ export const mockAgentStudioService: AgentStudioService = {
 		);
 	},
 
-	async listOutputs() {
+	// The mock ignores `agencyId` — it shares a single localStorage bucket.
+	async listOutputs( agencyId: number ) {
+		void agencyId;
 		const { project, state } = ensureDefaultProject( readState() );
 		const resolved = resolveGeneratingOutputs( state );
 
@@ -220,7 +222,8 @@ export const mockAgentStudioService: AgentStudioService = {
 		);
 	},
 
-	async createOutput( input: CreateAgentStudioOutputInput ) {
+	async createOutput( agencyId: number, input: CreateAgentStudioOutputInput ) {
+		void agencyId;
 		const { project, state } = ensureDefaultProject( readState() );
 		const now = new Date().toISOString();
 		const output: AgentStudioOutput = {
@@ -243,7 +246,8 @@ export const mockAgentStudioService: AgentStudioService = {
 		return output;
 	},
 
-	async deleteOutput( outputId ) {
+	async deleteOutput( agencyId: number, outputId: string ) {
+		void agencyId;
 		const state = readState();
 		writeState( {
 			...state,

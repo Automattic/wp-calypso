@@ -44,6 +44,9 @@ export function useAgentStudioAgents(): AgentStudioAgent[] {
 				],
 				icon: image,
 				previewImage: socialAssetsPreview,
+				// No `compose-social-assets` recipe on the server yet — see the
+				// "Deferred gaps" section in docs/api-migration.md.
+				disabled: true,
 			},
 			{
 				id: 'one-pager',

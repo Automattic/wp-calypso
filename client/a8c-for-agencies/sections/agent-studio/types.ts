@@ -22,6 +22,10 @@ export interface AgentStudioOutput {
 	previewUrls?: string[];
 	/** Total number of assets the agent produced, populated once status is ready. */
 	assetCount?: number;
+	/** PDF download URL for a ready one-pager deliverable. */
+	downloadUrl?: string;
+	/** Page count for a ready one-pager deliverable. */
+	pageCount?: number;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -41,8 +45,13 @@ export interface CreateAgentStudioOutputInput {
 	agentId: string;
 	agentName: string;
 	deliverableType: string;
+	// User-typed metadata, surfaced on the card.
 	title: string;
 	description: string;
+	// Recipe input — used only when the agent has a recipe (today: one-pager).
+	brief: string;
+	blurb: string;
+	images: File[];
 }
 
 export type OnePagerContentField = 'title' | 'blurb';
@@ -53,8 +62,11 @@ export interface AgentStudioService {
 	createProject( input: CreateAgentStudioProjectInput ): Promise< AgentStudioProject >;
 	deleteProject( projectId: string ): Promise< void >;
 	listProjectOutputs( projectId: string ): Promise< AgentStudioOutput[] >;
-	listOutputs(): Promise< AgentStudioOutput[] >;
-	createOutput( input: CreateAgentStudioOutputInput ): Promise< AgentStudioOutput >;
-	deleteOutput( outputId: string ): Promise< void >;
+	listOutputs( agencyId: number ): Promise< AgentStudioOutput[] >;
+	createOutput(
+		agencyId: number,
+		input: CreateAgentStudioOutputInput
+	): Promise< AgentStudioOutput >;
+	deleteOutput( agencyId: number, outputId: string ): Promise< void >;
 	suggestOnePagerContent( brief: string, field: OnePagerContentField ): Promise< string >;
 }

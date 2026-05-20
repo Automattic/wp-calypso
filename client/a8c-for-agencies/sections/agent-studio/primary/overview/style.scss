@@ -22,6 +22,14 @@
 	height: 100%;
 }
 
+.a4a-agent-studio-deliverable-card.is-openable {
+	cursor: pointer;
+}
+
+.a4a-agent-studio-deliverable-card.is-openable:hover {
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+}
+
 .a4a-agent-studio-deliverable-card__media.components-card__media {
 	display: flex;
 	align-items: center;

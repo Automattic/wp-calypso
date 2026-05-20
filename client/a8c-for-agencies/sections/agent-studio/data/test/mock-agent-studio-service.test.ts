@@ -3,12 +3,17 @@
  */
 import { mockAgentStudioService } from '../mock-agent-studio-service';
 
+const AGENCY_ID = 1234;
+
 const briefInput = {
 	agentId: 'one-pager',
 	agentName: 'June',
 	deliverableType: 'One-pager',
 	title: 'Client launch one-pager',
 	description: 'A leave-behind for the pitch.',
+	brief: '',
+	blurb: '',
+	images: [],
 };
 
 describe( 'mockAgentStudioService default project', () => {
@@ -17,7 +22,7 @@ describe( 'mockAgentStudioService default project', () => {
 	} );
 
 	it( 'creates the default project when listing outputs before any exist', async () => {
-		const outputs = await mockAgentStudioService.listOutputs();
+		const outputs = await mockAgentStudioService.listOutputs( AGENCY_ID );
 		expect( outputs ).toEqual( [] );
 
 		const projects = await mockAgentStudioService.listProjects();
@@ -25,8 +30,8 @@ describe( 'mockAgentStudioService default project', () => {
 	} );
 
 	it( 'routes new outputs into a single shared default project', async () => {
-		await mockAgentStudioService.createOutput( briefInput );
-		await mockAgentStudioService.createOutput( {
+		await mockAgentStudioService.createOutput( AGENCY_ID, briefInput );
+		await mockAgentStudioService.createOutput( AGENCY_ID, {
 			...briefInput,
 			agentId: 'social-assets',
 			agentName: 'Iris',
@@ -37,7 +42,7 @@ describe( 'mockAgentStudioService default project', () => {
 		);
 		expect( defaultProjects ).toHaveLength( 1 );
 
-		const outputs = await mockAgentStudioService.listOutputs();
+		const outputs = await mockAgentStudioService.listOutputs( AGENCY_ID );
 		expect( outputs ).toHaveLength( 2 );
 		expect( outputs.every( ( output ) => output.projectId === defaultProjects[ 0 ].id ) ).toBe(
 			true
@@ -45,7 +50,7 @@ describe( 'mockAgentStudioService default project', () => {
 	} );
 
 	it( 'starts every created output in the generating state', async () => {
-		const output = await mockAgentStudioService.createOutput( briefInput );
+		const output = await mockAgentStudioService.createOutput( AGENCY_ID, briefInput );
 		expect( output.status ).toBe( 'generating' );
 	} );
 
@@ -53,13 +58,13 @@ describe( 'mockAgentStudioService default project', () => {
 		jest.useFakeTimers();
 		try {
 			jest.setSystemTime( new Date( '2026-05-19T10:00:00Z' ) );
-			await mockAgentStudioService.createOutput( briefInput );
+			await mockAgentStudioService.createOutput( AGENCY_ID, briefInput );
 
-			const [ stillGenerating ] = await mockAgentStudioService.listOutputs();
+			const [ stillGenerating ] = await mockAgentStudioService.listOutputs( AGENCY_ID );
 			expect( stillGenerating.status ).toBe( 'generating' );
 
 			jest.setSystemTime( new Date( '2026-05-19T10:00:10Z' ) );
-			const [ resolved ] = await mockAgentStudioService.listOutputs();
+			const [ resolved ] = await mockAgentStudioService.listOutputs( AGENCY_ID );
 			expect( resolved.status ).toBe( 'ready' );
 			expect( resolved.previewUrls?.length ).toBeGreaterThan( 0 );
 			expect( resolved.assetCount ).toBeGreaterThan( 0 );
@@ -69,10 +74,10 @@ describe( 'mockAgentStudioService default project', () => {
 	} );
 
 	it( 'removes a deliverable from the list when deleted', async () => {
-		const output = await mockAgentStudioService.createOutput( briefInput );
-		await mockAgentStudioService.deleteOutput( output.id );
+		const output = await mockAgentStudioService.createOutput( AGENCY_ID, briefInput );
+		await mockAgentStudioService.deleteOutput( AGENCY_ID, output.id );
 
-		expect( await mockAgentStudioService.listOutputs() ).toEqual( [] );
+		expect( await mockAgentStudioService.listOutputs( AGENCY_ID ) ).toEqual( [] );
 	} );
 } );
 
