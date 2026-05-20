@@ -191,8 +191,14 @@ export function mergeUseSuggestionsHooks(
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
  *
- * Each provider module ID is dynamically imported using WordPress's script module
+ * Providers can be dynamically imported using WordPress's script module
  * system. Modules should export { toolProvider, contextProvider }.
+ *
+ * Alternatively, an already-loaded provider object can be passed in.
+ *
+ * Both shapes feed the same downstream merge: any of `toolProvider`,
+ * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
+ * up from each entry and merged across all entries.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
@@ -244,17 +250,21 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
 	const loadedModules = await Promise.all(
-		agentProviders.map( async ( moduleId ) => {
+		agentProviders.map( async ( providerEntry ) => {
+			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
+				return providerEntry;
+			}
+
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = await import( /* webpackIgnore: true */ moduleId );
+				const module = await import( /* webpackIgnore: true */ providerEntry );
 				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
+				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
 				return module;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
+				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
 				return null;
 			}
 		} )

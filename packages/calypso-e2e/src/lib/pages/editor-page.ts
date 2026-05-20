@@ -903,8 +903,15 @@ export class EditorPage {
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
 		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
-		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+
+		// The "Post reverted to draft" snackbar auto-dismisses after ~5s, so
+		// waiting on its dismiss button races the timer. Instead wait for the
+		// toolbar primary button to revert from "Update" to "Publish", which is
+		// only committed once the draft transition has been persisted.
+		await editorParent
+			.locator( '.editor-post-publish-button__button' )
+			.getByText( 'Publish', { exact: true } )
+			.waitFor();
 	}
 
 	/**

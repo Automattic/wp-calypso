@@ -1,5 +1,8 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
+@import 'client/assets/stylesheets/shared/mixins/long-content-fade';
 
 .following {
 
@@ -97,6 +100,10 @@
 			color: transparent;
 			background-color: var( --color-neutral-0 );
 			animation: loading-fade 1.6s ease-in-out infinite;
+
+			@include ui-mixins.when-dark-theme {
+				background-color: var( --color-border-subtle );
+			}
 		}
 
 		.site-icon {
@@ -336,7 +343,7 @@
 			display: none;
 
 			&.stream__init-overlay-enabled {
-				background: var( --studio-white );
+				background: var( --color-surface );
 				position: absolute;
 				display: block;
 				left: 0;
@@ -740,7 +747,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 				width: 225px;
 			}
 			.stream__two-column &::after {
-				@include long-content-fade( $size: 5%, $color: var( --studio-white ) );
+				@include long-content-fade( $size: 5% );
 			}
 		}
 	}
@@ -985,16 +992,16 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: var( --color-primary );
+		color: var( --color-link );
 		padding: 16px;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var( --color-link );
 		}
 	}
 
 	.section-nav-tab__text {
-		color: var( --color-primary );
+		color: var( --color-link );
 		font-weight: 600;
 		font-size: $font-body-small;
 		text-transform: uppercase;

@@ -49,7 +49,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.1.0",
+		"@automattic/number-formatters": "^1.1.9",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@fnando/cnpj": "2.0.0",

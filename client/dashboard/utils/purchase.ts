@@ -707,17 +707,26 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 }
 
 /**
- * Cancel intent sourced from the Purchase Settings button the user clicked.
- * `cancel` = clicked "Cancel subscription"; `remove` = clicked "Remove subscription / Remove {product}".
+ * Cancel intent sourced from the entry point the user came from.
+ * `cancel`      = clicked "Cancel subscription" on Purchase Settings.
+ * `remove`      = clicked "Remove subscription / Remove {product}" on Purchase Settings.
+ * `auto-renew`  = toggled off auto-renew on Purchase Settings.
  * Absent means flag-off, old deep link, or flow-type heuristic fallback.
  */
-export type CancelIntent = 'cancel' | 'remove';
+export type CancelIntent = 'cancel' | 'remove' | 'auto-renew';
 
 export function getCancelIntentFromSearch( search: { intent?: unknown } ): CancelIntent | null {
-	return search.intent === 'cancel' || search.intent === 'remove' ? search.intent : null;
+	return search.intent === 'cancel' || search.intent === 'remove' || search.intent === 'auto-renew'
+		? search.intent
+		: null;
 }
 
-export type DisplayVariant = 'cancel' | 'remove';
+/**
+ * The set of UI variants the cancel/confirmation screens can render. Currently
+ * 1:1 with CancelIntent — kept as a separate alias because callers often
+ * compute a display variant from intent plus a flow-type fallback.
+ */
+export type DisplayVariant = 'cancel' | 'remove' | 'auto-renew';
 
 /**
  * Derives which screen variant to show from intent, with a flow-type fallback when intent is absent.
@@ -726,11 +735,8 @@ export function getDisplayVariant(
 	intent: CancelIntent | null,
 	flowType: CancelFlowType
 ): DisplayVariant {
-	if ( intent === 'remove' ) {
-		return 'remove';
-	}
-	if ( intent === 'cancel' ) {
-		return 'cancel';
+	if ( intent ) {
+		return intent;
 	}
 	return flowType === CANCEL_FLOW_TYPE.REMOVE ? 'remove' : 'cancel';
 }
@@ -747,7 +753,9 @@ export function getMutationFlowType(
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( intent === 'cancel' ) {
+	// 'cancel' and 'auto-renew' both map to the disable-auto-renew flow when
+	// auto-renew is on; both fall back to flow-type otherwise.
+	if ( intent === 'cancel' || intent === 'auto-renew' ) {
 		if ( purchase.is_auto_renew_enabled ) {
 			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}

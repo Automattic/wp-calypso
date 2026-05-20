@@ -24,7 +24,7 @@ export function OmnibarSiteNode( {
 	const siteActionNodes = isDesktop ? actionNodes : undefined;
 
 	return [
-		<OmnibarMenu key={ siteNode.id } node={ siteNode } />,
+		<OmnibarMenu key={ siteNode.id } node={ siteNode } style={ { minWidth: 0 } } />,
 		pluginNodes && <OmnibarSitePluginsNode nodes={ pluginNodes } />,
 		siteActionNodes && <OmnibarSiteActionsNode nodes={ siteActionNodes } />,
 	].filter( Boolean );

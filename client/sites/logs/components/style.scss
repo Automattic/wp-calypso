@@ -34,6 +34,30 @@
 .site-logs .dataviews-wrapper {
 	margin-right: -24px;
 	margin-left: -24px;
+
+	// Neutralize the 24px `padding-inline` applied broadly by
+	// `client/sites/components/sites-dataviews/dataview-style.scss` (intended for
+	// the Sites dashboard listing). Logs already bleeds out of its parent padding
+	// via the negative margins above, so adding 24px back here re-indents the
+	// funnel button, filter chips, Add filter, and Reset controls inside the
+	// negative-margin frame and misaligns them with the page heading.
+	.dataviews__view-actions,
+	.dataviews-filters__container,
+	.dataviews-footer {
+		padding-inline: 0;
+	}
+
+	// Center-align the custom header controls (Download button + Auto-refresh
+	// toggle) with the sibling icon-only buttons (LayoutSwitcher / ViewConfig).
+	// WPDataViews' DefaultUI uses `align: top` on the actions row, and the
+	// `ToggleControl` is taller than icon buttons, so they don't share a baseline.
+	.dataviews__view-actions {
+		align-items: center;
+	}
+
+	.site-logs__auto-refresh {
+		align-self: center;
+	}
 }
 
 // https://github.com/WordPress/gutenberg/issues/69194

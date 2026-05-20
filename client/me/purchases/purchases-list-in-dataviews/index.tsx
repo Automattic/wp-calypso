@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
@@ -17,6 +16,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -96,6 +96,7 @@ const PurchasesListDataView: React.FC<
 	userId,
 } ) => {
 	const translate = useTranslate();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	// Read ?removed, ?removedDomain, and ?removedId from URL on mount, then strip params.
 	const [ removedNoticeData ] = useState( () => {
@@ -184,38 +185,36 @@ const PurchasesListDataView: React.FC<
 				) }
 			/>
 			<PurchasesNavigation section="activeUpgrades" />
-			{ config.isEnabled( 'purchases/split-cancel-remove' ) &&
-				showRemovedNotice &&
-				removedNoticeData && (
-					<Notice
-						showDismiss
-						onDismissClick={ () => setShowRemovedNotice( false ) }
-						status="is-success"
-					>
-						{ removedNoticeData.atomicDomain
-							? translate(
-									'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 {{a}}download a backup{{/a}} to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.',
-									{
-										args: { productNoun: removedNoticeData.productNoun },
-										components: {
-											a: (
-												<a
-													href={ `https://${ removedNoticeData.atomicDomain }/wp-admin/export.php` }
-													target="_blank"
-													rel="noreferrer"
-												/>
-											),
-										},
-									}
-							  )
-							: translate(
-									'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.',
-									{
-										args: { productNoun: removedNoticeData.productNoun },
-									}
-							  ) }
-					</Notice>
-				) }
+			{ isSplitCancelRemoveEnabled && showRemovedNotice && removedNoticeData && (
+				<Notice
+					showDismiss
+					onDismissClick={ () => setShowRemovedNotice( false ) }
+					status="is-success"
+				>
+					{ removedNoticeData.atomicDomain
+						? translate(
+								'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 {{a}}download a backup{{/a}} to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.',
+								{
+									args: { productNoun: removedNoticeData.productNoun },
+									components: {
+										a: (
+											<a
+												href={ `https://${ removedNoticeData.atomicDomain }/wp-admin/export.php` }
+												target="_blank"
+												rel="noreferrer"
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.',
+								{
+									args: { productNoun: removedNoticeData.productNoun },
+								}
+						  ) }
+				</Notice>
+			) }
 			<PurchasesContent
 				isDataLoading={ isDataLoading() }
 				allPurchases={ allPurchases }
