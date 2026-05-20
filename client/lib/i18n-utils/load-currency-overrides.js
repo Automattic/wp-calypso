@@ -1,9 +1,8 @@
+import { fetchCurrencyOverrides } from '@automattic/api-core';
 import { setCurrencyOverrides } from '@automattic/number-formatters';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:i18n:currency-overrides' );
-
-const CURRENCY_OVERRIDES_URL = 'https://public-api.wordpress.com/wpcom/v2/currency-overrides';
 
 let pendingLoad = null;
 
@@ -22,14 +21,7 @@ export function loadAndSetCurrencyOverrides() {
 		return pendingLoad;
 	}
 
-	pendingLoad = globalThis
-		.fetch( CURRENCY_OVERRIDES_URL )
-		.then( ( response ) => {
-			if ( ! response.ok ) {
-				throw new Error( `Unexpected status ${ response.status }` );
-			}
-			return response.json();
-		} )
+	pendingLoad = fetchCurrencyOverrides()
 		.then( ( overrides ) => {
 			if ( overrides && typeof overrides === 'object' ) {
 				setCurrencyOverrides( overrides );
