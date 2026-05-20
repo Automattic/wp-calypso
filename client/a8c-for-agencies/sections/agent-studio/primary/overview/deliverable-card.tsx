@@ -44,7 +44,7 @@ export default function DeliverableCard( { output }: Props ) {
 				</VStack>
 				<HStack justify="space-between" alignment="center">
 					{ output.kind === 'one-pager' && output.status === 'ready' && (
-						<Button variant="primary" href={ getAgentStudioOutputPath( output.id ) }>
+						<Button variant="secondary" href={ getAgentStudioOutputPath( output.id ) }>
 							{ __( 'View' ) }
 						</Button>
 					) }
