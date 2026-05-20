@@ -175,23 +175,31 @@ const ReaderOnboardingRsm = ( {
 		} );
 	};
 
-	// Side-effects that run when a given step is closed (whether via the X /
-	// escape, or via the "continue" button transitioning to the next step).
-	// Centralised so the same effects fire on either path.
-	const performStepCloseSideEffects = ( step: Step ) => {
+	// Non-analytics side effects that run when leaving a step (whether via the
+	// X / escape, or via the "continue"/"back"/"finish" button transitioning
+	// to the next step). Centralised so the same effects fire on either path.
+	// Analytics is intentionally split out into `recordStepClose` so the
+	// `*_modal_close` event fires only on an explicit dismiss, not on
+	// navigation actions that already have their own continue/back/finish
+	// events.
+	const runStepSideEffects = ( step: Step ) => {
 		if ( step === 'welcome' ) {
-			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
 			if ( ! hasSeenOnboarding ) {
 				dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
 			}
+		} else if ( step === 'interests' || step === 'discover' ) {
+			refreshFollowingStreams();
+			invalidateSubscriptionQueries();
+		}
+	};
+
+	const recordStepClose = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
 		} else if ( step === 'interests' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
-			refreshFollowingStreams();
-			invalidateSubscriptionQueries();
 		} else if ( step === 'discover' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
-			refreshFollowingStreams();
-			invalidateSubscriptionQueries();
 		}
 	};
 
@@ -212,48 +220,50 @@ const ReaderOnboardingRsm = ( {
 
 	const handleStepClose = () => {
 		if ( currentStep ) {
-			performStepCloseSideEffects( currentStep );
+			recordStepClose( currentStep );
+			runStepSideEffects( currentStep );
 		}
 		setCurrentStep( null );
 	};
 
 	const handleWelcomeContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue` );
-		performStepCloseSideEffects( 'welcome' );
+		runStepSideEffects( 'welcome' );
 		recordStepOpen( 'interests' );
 		setCurrentStep( 'interests' );
 	};
 
 	const handleInterestsContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue` );
-		performStepCloseSideEffects( 'interests' );
+		runStepSideEffects( 'interests' );
 		recordStepOpen( 'discover' );
 		setCurrentStep( 'discover' );
 	};
 
 	const handleInterestsBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
-		performStepCloseSideEffects( 'interests' );
+		runStepSideEffects( 'interests' );
 		openStep( 'welcome' );
 	};
 
 	const handleDiscoverBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back` );
-		performStepCloseSideEffects( 'discover' );
+		runStepSideEffects( 'discover' );
 		openStep( 'interests' );
 	};
 
 	const recordOnboardingCompleted = () => {
+		// record completion regardless of setting, to still track it in flows that forceShow.
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 		if ( hasCompletedOnboarding ) {
 			return;
 		}
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	};
 
 	const handleDiscoverFinish = () => {
 		recordOnboardingCompleted();
-		performStepCloseSideEffects( 'discover' );
+		runStepSideEffects( 'discover' );
 		setCurrentStep( null );
 		setHasFinished( true );
 	};

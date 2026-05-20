@@ -55,7 +55,9 @@ jest.mock( '@automattic/launchpad', () => ( {
 } ) );
 
 // Render the WP Modal without a portal so headerActions and children
-// are reachable via standard screen queries.
+// are reachable via standard screen queries. Expose `onRequestClose` as a
+// dedicated "Close modal" button so tests can simulate the X / escape /
+// outside-click dismiss path that the real <Modal> wires up.
 jest.mock( '@wordpress/components', () => {
 	const { Button } =
 		jest.requireActual< typeof import('@wordpress/components') >( '@wordpress/components' );
@@ -64,12 +66,17 @@ jest.mock( '@wordpress/components', () => {
 		Modal: ( {
 			children,
 			headerActions,
+			onRequestClose,
 		}: {
 			children: React.ReactNode;
 			headerActions?: React.ReactNode;
+			onRequestClose?: () => void;
 		} ) => (
 			<div role="dialog">
 				{ headerActions }
+				<button type="button" onClick={ onRequestClose }>
+					Close modal
+				</button>
 				{ children }
 			</div>
 		),
@@ -396,6 +403,147 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 		expect( invalidateSpy ).toHaveBeenCalledWith( {
 			queryKey: SubscriptionManager.siteSubscriptionsQueryKeyPrefix,
 		} );
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
+	// The *_modal_close events should fire only when the user explicitly
+	// dismisses a step (X / escape / outside click), not when they navigate
+	// forward via Continue/Finish or backward via Back. Each navigation path
+	// has its own dedicated continue/back/finish event so the close event no
+	// longer doubles up on every transition.
+
+	const closeEventFor = ( step: 'welcome' | 'interests' | 'discover' ) =>
+		`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }${ step }_modal_close`;
+
+	it( 'does not record welcome_modal_close when the user clicks Continue from welcome', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'welcome' ) );
+	} );
+
+	it( 'does not record interests_modal_close when the user clicks Continue from interests', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'interests' ) );
+	} );
+
+	it( 'does not record interests_modal_close when the user clicks Back from interests', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'interests' ) );
+	} );
+
+	it( 'does not record discover_modal_close when the user clicks Back from discover', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'discover' ) );
+	} );
+
+	it( 'does not record discover_modal_close when the user clicks Finish from discover', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+		);
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'discover' ) );
+	} );
+
+	it( 'records welcome_modal_close when the user dismisses the welcome step (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'welcome' ) );
+	} );
+
+	it( 'records interests_modal_close when the user dismisses the interests step (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'interests' ) );
+	} );
+
+	it( 'records discover_modal_close when the user dismisses the discover step (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'discover' ) );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+		);
 	} );
 } );
 

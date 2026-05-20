@@ -17,8 +17,10 @@ import {
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
+import { recordFollow } from 'calypso/reader/stats';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { getPackBlogs } from './get-pack-blogs';
@@ -166,14 +168,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 			followedTagsRef.current = nextTags;
 			setFollowedTags( nextTags );
 
-			recordTracksEvent(
-				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
-					checked ? 'followed' : 'unfollowed'
-				}`,
-				{
-					tag,
-					total_followed: nextTags.length,
-				}
+			dispatch(
+				recordReaderTracksEvent(
+					checked ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed',
+					{
+						tag,
+						follow_source: 'reader-onboarding-modal',
+						total_followed: nextTags.length,
+					}
+				)
 			);
 
 			try {
@@ -248,6 +251,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
 				{
 					pack_id: pack.id,
+					pack_name: pack.title,
 					tag_count: pack.tags.length,
 					blog_count: pack.blogs.length,
 				}
@@ -265,6 +269,12 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				// Best effort only: site-specific failures are handled by existing
 				// follow data-layer notices and should not block pack completion.
 				dispatch( follow( blog.feed_URL, followData, null ) );
+				// Mirror how the rest of Reader tracks site follows so pack-blog
+				// follows show up under the standard `calypso_reader_site_followed`
+				// event with a `reader-onboarding-modal` follow source.
+				recordFollow( blog.feed_URL, undefined, {
+					follow_source: 'reader-onboarding-modal',
+				} );
 			}
 		} finally {
 			setProcessingPacks( ( current ) => {

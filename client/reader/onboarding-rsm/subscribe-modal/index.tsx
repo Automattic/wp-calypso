@@ -155,6 +155,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 				if ( previewContainer ) {
 					previewContainer.scrollTop = 0;
 				}
+				recordTracksEvent(
+					`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_site_previewed`,
+					{
+						feed_id: site.feed_ID,
+						site_id: site.site_ID,
+						site_name: site.site_name,
+					}
+				);
 			}
 			setSelectedSite( site );
 		},
