@@ -3,8 +3,15 @@
  */
 
 import { QueryClient } from '@tanstack/react-query';
+import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import OmnibarAgentsManager from '../omnibar-agents-manager';
+
+jest.mock( '@automattic/agents-manager', () => ( {
+	...jest.requireActual( '@automattic/agents-manager' ),
+	__esModule: true,
+	default: () => <div role="region" aria-label="Agents Manager" />,
+} ) );
 
 function createQueryClient( unifiedAiChat: boolean ) {
 	const queryClient = new QueryClient( {
@@ -21,5 +28,13 @@ describe( '<OmnibarAgentsManager />', () => {
 		} );
 
 		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'renders the agents-manager when the user is eligible for the unified AI chat', async () => {
+		render( <OmnibarAgentsManager />, {
+			queryClient: createQueryClient( true ),
+		} );
+
+		expect( await screen.findByRole( 'region', { name: 'Agents Manager' } ) ).toBeVisible();
 	} );
 } );
