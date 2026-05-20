@@ -1,0 +1,79 @@
+// Dev-only "Preview all tasks" widget. Compact one-row-per-task list grouped
+// by category, rendered inside a @wordpress/components Modal (size large).
+
+.task-preview {
+	&__section {
+		margin-bottom: var(--wpds-dimension-gap-2xl, 24px);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__section-title {
+		display: block;
+		margin-bottom: var(--wpds-dimension-gap-sm, 8px);
+		color: var(--wpds-color-foreground-neutral-weak, #757575);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	&__list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	// Left: title / description / id-meta / url stacked. Right: the real
+	// production CTA, vertically centered against the info block.
+	&__row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-lg, 16px);
+		padding: var(--wpds-dimension-gap-md, 12px) 0;
+		border-bottom: 1px solid var(--wpds-color-border-neutral-subtle, #e0e0e0);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	&__info {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		min-width: 0;
+	}
+
+	&__title {
+		font-weight: 600;
+	}
+
+	&__desc {
+		color: var(--wpds-color-foreground-neutral-weak, #757575);
+	}
+
+	// id + goals/features as inline monospace, dimmed — QA metadata, not chrome.
+	&__meta {
+		margin-top: 2px;
+		font-size: 0.75rem;
+		color: var(--wpds-color-foreground-neutral-weak, #757575);
+		background: none;
+		padding: 0;
+	}
+
+	// Resolved Calypso route in blue monospace so it reads as a link target.
+	&__url {
+		font-size: 0.75rem;
+		color: var(--wpds-color-foreground-accent, #3858e9);
+		background: none;
+		padding: 0;
+		word-break: break-all;
+	}
+
+	&__cta {
+		display: flex;
+		justify-content: flex-end;
+	}
+}

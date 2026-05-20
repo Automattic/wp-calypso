@@ -1,6 +1,6 @@
 import { useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
-import { __experimentalText as Text } from '@wordpress/components';
+import { Dropdown, MenuGroup, MenuItem, __experimentalText as Text } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { Icon, settings } from '@wordpress/icons';
@@ -23,6 +23,7 @@ import { buildPickThemeSubtitle } from './home-wizard/recommend-themes';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
 import { prewarmTailorAndDraft, tailorAndDraftFromIntent } from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
+import TaskRegistryPreview from './home-wizard/task-preview';
 import { TASK_REGISTRY, type SiteState } from './home-wizard/task-registry';
 import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './home-wizard/wizard-state';
 import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
@@ -570,6 +571,10 @@ export default function HomeDashboard() {
 		( state: AppState ) => getSelectedSite( state )?.name ?? ''
 	);
 
+	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
+	const siteState = useSiteState( siteSlug );
+	const [ isPreviewOpen, setIsPreviewOpen ] = useState( false );
+
 	useBodyClass( 'is-home-wizard-open', isWizardOpen );
 
 	const handleWizardComplete = ( answers: WizardAnswers ) => {
@@ -599,16 +604,47 @@ export default function HomeDashboard() {
 					onPrewarm={ prewarm }
 				/>
 			) }
+			{ isPreviewOpen && (
+				<TaskRegistryPreview siteState={ siteState } onClose={ () => setIsPreviewOpen( false ) } />
+			) }
 			{ ! isWizardOpen && (
-				<button
-					type="button"
-					className="home-dashboard__wizard-fab"
-					onClick={ openWizard }
-					aria-label={ translate( 'Open setup wizard' ) as string }
-				>
-					<Icon icon={ settings } size={ 20 } />
-					<span>{ translate( 'Wizard' ) }</span>
-				</button>
+				<Dropdown
+					className="home-dashboard__wizard-fab-dropdown"
+					popoverProps={ { placement: 'top-end', offset: 8 } }
+					renderToggle={ ( { isOpen, onToggle } ) => (
+						<button
+							type="button"
+							className="home-dashboard__wizard-fab"
+							onClick={ onToggle }
+							aria-expanded={ isOpen }
+							aria-haspopup="menu"
+							aria-label={ translate( 'Open Launchpad menu' ) as string }
+						>
+							<Icon icon={ settings } size={ 20 } />
+							<span>{ translate( 'Launchpad' ) }</span>
+						</button>
+					) }
+					renderContent={ ( { onClose } ) => (
+						<MenuGroup>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									openWizard();
+								} }
+							>
+								{ translate( 'Run wizard' ) }
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									setIsPreviewOpen( true );
+								} }
+							>
+								{ translate( 'Preview all tasks' ) }
+							</MenuItem>
+						</MenuGroup>
+					) }
+				/>
 			) }
 		</div>
 	);
