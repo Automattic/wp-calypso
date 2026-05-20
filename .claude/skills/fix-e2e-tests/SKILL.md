@@ -230,12 +230,16 @@ For each candidate in the slimmed list, derive the display fields:
 - **Test title** — everything after the last `›` in `name`.
 - **Build** — already projected as `build` (e.g., `[Desktop]`, `[Mobile]`).
 - **Reason** — already projected as `reason`, already truncated.
+- **Hint** — a one-word classifier derived from `reason`. The trailing `?` is deliberate: this is a heuristic from a single line of the trace, not a verdict.
+  - `flake?` if `reason` starts with `TimeoutError` or contains `not visible` / `not found` / `not attached`.
+  - `regression?` if `reason` looks like an `expect(...)` failure or `AssertionError` (a behavioral assertion didn't hold).
+  - `?` if neither pattern matches.
 
 Always render the full table to the user, **even if the list looks identical to a prior run in the same conversation**. This is the user's decision surface — don't collapse it into a one-line reference to "the same candidates as before", because the user needs the spec paths, test titles, and failure reasons in front of them to make a choice.
 
-| #   | Spec                                                                  | Test                    | Build    | Reason                                                      |
-| --- | --------------------------------------------------------------------- | ----------------------- | -------- | ----------------------------------------------------------- |
-| 1   | `test/e2e/specs/infrastructure/infrastructure__flaky-fixture.spec.ts` | Flaky by race condition | [Mobile] | TimeoutError: page locator '#late' not visible within 150ms |
+| #   | Spec                                                                  | Test                    | Build    | Hint   | Reason                                                      |
+| --- | --------------------------------------------------------------------- | ----------------------- | -------- | ------ | ----------------------------------------------------------- |
+| 1   | `test/e2e/specs/infrastructure/infrastructure__flaky-fixture.spec.ts` | Flaky by race condition | [Mobile] | flake? | TimeoutError: page locator '#late' not visible within 150ms |
 
 Then:
 
@@ -371,9 +375,13 @@ The prompt **must be self-contained** — the agent has no access to this conver
 - **Test title** (exactly as in `test(...)` / `it(...)`).
 - **Build configuration** the failure was observed on (e.g., `[Mobile]`).
 - **TeamCity build URL** from Step 4.
+- **Likely cause hint** from 4.3 (`flake?` / `regression?` / `?`) — heuristic only, the full stack trace below is authoritative.
 - **Failure details** from Step 4.2 verbatim (the `details` field — stack trace and Playwright call log).
 - **Constraints**:
-  - Fix the test's stability; do not touch product code unless the failure is clearly a product bug, in which case **stop and report the bug back instead of applying a fix**.
+  - **Bias by the likely cause hint:**
+    - `flake?` → harden the test (waits, locators, fixtures, isolation). Don't change behavioral assertions unless you're sure they're stale.
+    - `regression?` → the test's behavioral assertion didn't hold. Investigate whether the assertion is correct. If it is (the test is right, the product is wrong), **stop and report the bug back instead of applying a fix**. If the assertion is stale (the product changed deliberately and the test wasn't updated), adjust it minimally.
+    - `?` → no classifier signal; verify carefully against the stack trace and code before changing either side.
   - Do not delete, `.skip(...)`, quarantine, or mute the test.
   - Follow `test/e2e/docs-new/creating_reliable_tests.md` and `test/e2e/docs-new/new_style_guide.md`.
   - **Use only `LS`, `Glob`, `Read`, `Grep`, `Edit`, `MultiEdit`, and `Write`** for analysis and edits. Do **not** call `browser_evaluate`, `test_run`, `test_debug`, or any other `mcp__playwright-test__*` tool — those trigger permission prompts and are unnecessary: the failure details above are the authoritative signal. Rely on code-level analysis, not on running the test.
