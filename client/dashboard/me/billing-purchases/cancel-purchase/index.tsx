@@ -117,7 +117,6 @@ type TopNoticeArgs = {
 	displayVariant: DisplayVariant;
 	purchase: Purchase;
 	intent: CancelIntent | null;
-	isSplitCancelRemoveEnabled: boolean;
 };
 
 /**
@@ -127,32 +126,15 @@ type TopNoticeArgs = {
 const CACHE_GUARD_DURATION_MS = 15_000;
 
 function renderTopNotice( args: TopNoticeArgs ) {
-	const {
-		surveyShown,
-		showDomainOptionsStep,
-		displayVariant,
-		purchase,
-		intent,
-		isSplitCancelRemoveEnabled,
-	} = args;
+	const { surveyShown, showDomainOptionsStep, displayVariant, purchase, intent } = args;
 
 	if ( surveyShown || showDomainOptionsStep ) {
 		return null;
 	}
 
-	// Intent-cancel with a refund (flag-on) → promo notice with inline link to
-	// switch the user into the remove flow.
-	if (
-		isSplitCancelRemoveEnabled &&
-		displayVariant === 'cancel' &&
-		hasAmountAvailableToRefund( purchase )
-	) {
-		return <RefundEligibilityNotice mode="refund-eligibility" purchase={ purchase } />;
-	}
-
 	// Intent-remove with a refund → confirmed refund-amount notice (no CTA).
 	if ( displayVariant === 'remove' && hasAmountAvailableToRefund( purchase ) ) {
-		return <RefundEligibilityNotice mode="confirmed" purchase={ purchase } />;
+		return <RefundEligibilityNotice purchase={ purchase } />;
 	}
 
 	// Everything else → time-remaining notice (itself suppressed on
@@ -1670,7 +1652,6 @@ function CancelPurchaseInner() {
 				displayVariant,
 				purchase,
 				intent,
-				isSplitCancelRemoveEnabled,
 			} ) }
 		>
 			{ isSolutionsStep ? (
