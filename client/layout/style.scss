@@ -422,6 +422,16 @@ body.is-mobile-app-view {
 	}
 }
 
+// Stepper-v2 flows render their own Step.TopBar instead of a masterbar. Publish
+// the TopBar's rendered height to `--masterbar-height` so consumers that
+// position relative to it (e.g. the Help Center mobile sheet) align correctly.
+// Matches the heights defined on `.step-container-v2` in the onboarding package:
+// `--step-container-v2-top-bar-content-height` (24px) plus 2 ×
+// `--step-container-v2-top-bar-padding` (1rem).
+.layout.is-step-container-v2-flow {
+	--masterbar-height: calc( 24px + 2rem );
+}
+
 // Ensure sidebar is visually separate from the content in the Contrast color scheme
 .theme-default.is-contrast {
 	.layout__secondary {

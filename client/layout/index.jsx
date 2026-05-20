@@ -206,6 +206,7 @@ class Layout extends Component {
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
+		isInStepContainerV2FlowCtx: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -253,6 +254,15 @@ class Layout extends Component {
 
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
+			// Stepper-v2 flows render their own top bar (`Step.TopBar`). Rendering
+			// EmptyMasterbar here would inject `--masterbar-height: 0 !important`
+			// onto :root and misalign consumers (e.g. the Help Center mobile sheet)
+			// that position themselves relative to the visible top bar. The
+			// `.is-step-container-v2-flow` SCSS rule sets the variable to the
+			// correct height instead.
+			if ( this.props.isInStepContainerV2FlowCtx ) {
+				return null;
+			}
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooJPC ) {
@@ -339,6 +349,7 @@ class Layout extends Component {
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 			'is-domain-for-gravatar': this.props.isGravatarDomain,
 			'is-reader-msd-enabled': this.props.isMSDEnabledForReader,
+			'is-step-container-v2-flow': this.props.isInStepContainerV2FlowCtx,
 		} );
 
 		const optionalBodyProps = () => {
@@ -517,6 +528,7 @@ export default withCurrentRoute(
 			( ! isWooJPC && ! isBlazePro && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
+		const isInStepContainerV2FlowCtx = isInStepContainerV2FlowContext( currentRoute, currentQuery );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
@@ -525,7 +537,7 @@ export default withCurrentRoute(
 			isWcMobileApp() ||
 			isJetpackCloud() ||
 			isA8CForAgencies() ||
-			isInStepContainerV2FlowContext( currentRoute, currentQuery );
+			isInStepContainerV2FlowCtx;
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
@@ -577,6 +589,7 @@ export default withCurrentRoute(
 
 		return {
 			masterbarIsHidden,
+			isInStepContainerV2FlowCtx,
 			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
