@@ -303,17 +303,15 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
 		// Visibility is driven purely by what the user controls:
 		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
-		// - Remove: auto-renew is off, or a refund is available (dual-button).
+		// - Remove: auto-renew is already off (cancelled subscriptions awaiting
+		//   removal, expired-grace, etc.).
+		// When a refund is available with auto-renew still on, the refund path is
+		// surfaced inside the cancel flow via RefundEligibilityNotice instead of
+		// a second CTA here.
 		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
 		// delete endpoints all accept the call in pending-renewal state, so we
 		// don't need to special-case it.
 		const showCancel = autoRenewOn && ! isTransferNonRefundable;
-		// When auto-renew is on and a refund is available we used to show both
-		// Cancel and Remove side-by-side. Per the blended treatment the entry
-		// point is now a single "Cancel" CTA; the refund path is surfaced inside
-		// the cancel flow via RefundEligibilityNotice. Remove only appears when
-		// auto-renew is already off (cancelled subscriptions awaiting removal,
-		// expired-grace, etc.).
 		const showRemove = ! autoRenewOn;
 
 		if ( ! showCancel && ! showRemove ) {
