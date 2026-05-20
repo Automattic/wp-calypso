@@ -95,8 +95,8 @@ export const ProviderWrappedLayout = ( {
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
 
 /**
- * For logged in users with bootstrap (production), ReactDOM.hydrate().
- * Otherwise (development), ReactDOM.render().
+ * For logged in users with bootstrap (production), hydrate the server-rendered
+ * markup (`hydrateRoot`). Otherwise (development), render from scratch (`createRoot`).
  * See: https://wp.me/pd2qbF-P#comment-20
  * @param context - Middleware context
  */
