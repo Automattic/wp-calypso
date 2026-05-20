@@ -72,7 +72,15 @@ const ReaderOnboardingRsm = ( {
 	// pack subscribe) updates this slice synchronously, whereas
 	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` is a TanStack
 	// query that doesn't reflect in-session follows until its refetch resolves.
+	//
+	// `getReaderFollows` retains stale rows (`is_following: false`) and
+	// self-owned subs (`is_owner: true`); we filter both out so the count
+	// matches the rest of the onboarding eligibility logic, which uses
+	// `nonSelfSubscriptionsCount` (also excludes self-owned).
 	const reduxFollows = useSelector( getReaderFollows );
+	const followedNonSelfSitesCount = reduxFollows.filter(
+		( f ) => f.is_following && ! f.is_owner
+	).length;
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -263,7 +271,7 @@ const ReaderOnboardingRsm = ( {
 		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
 			followed_tags_count: followedTags?.length ?? 0,
-			followed_sites_count: reduxFollows.length,
+			followed_non_self_sites_count: followedNonSelfSitesCount,
 		} );
 		if ( hasCompletedOnboarding ) {
 			return;

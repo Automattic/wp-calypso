@@ -577,7 +577,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.objectContaining( {
 				followed_tags_count: expect.any( Number ),
-				followed_sites_count: expect.any( Number ),
+				followed_non_self_sites_count: expect.any( Number ),
 			} )
 		);
 	} );
@@ -596,14 +596,26 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		);
 	} );
 
-	it( 'records completed with followed_tags_count and followed_sites_count reflecting the user\u2019s current follows', async () => {
+	it( 'records completed with followed_tags_count and followed_non_self_sites_count reflecting the user\u2019s current follows', async () => {
 		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
 			useFollowedReaderTags: jest.Mock;
 		};
+		const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
+			getReaderFollows: jest.Mock;
+		};
+
 		useFollowedReaderTags.mockImplementation( () => ( {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
+		// Mix of active non-self, stale (unfollowed), and self-owned to verify
+		// the filter — only the two active non-self entries should be counted.
+		getReaderFollows.mockReturnValue( [
+			{ is_following: true, is_owner: false },
+			{ is_following: true, is_owner: false },
+			{ is_following: false, is_owner: false },
+			{ is_following: true, is_owner: true },
+		] );
 
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
@@ -615,9 +627,11 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.objectContaining( {
 				followed_tags_count: 2,
-				followed_sites_count: expect.any( Number ),
+				followed_non_self_sites_count: 2,
 			} )
 		);
+
+		getReaderFollows.mockReturnValue( [] );
 	} );
 
 	it( 'still records completed (without re-saving preference) when the user has already completed onboarding', async () => {
