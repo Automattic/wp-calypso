@@ -1,28 +1,16 @@
 import deepfreeze from 'deep-freeze';
-import moment from 'moment';
+import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
-import {
-	receivePage,
-	selectItem,
-	receiveUpdates,
-	selectNextItem,
-	selectPrevItem,
-	requestPage,
-	receiveStreamError,
-	clearStream,
-} from '../actions';
-import {
-	items,
-	selected,
-	pendingItems,
-	pageHandle,
-	isRequesting,
-	lastPage,
-	error,
-	PENDING_ITEMS_DEFAULT,
-} from '../reducer';
+import { receivePage, receiveStreamError, clearStream } from '../actions';
+import { items, pageHandle, isRequesting, lastPage, error } from '../reducer';
 
 jest.mock( '@wordpress/warning', () => () => {} );
+
+// `requestPage` is now a thunk; for reducer tests we only need the legacy
+// action it would dispatch for unmigrated streams, so build it inline.
+function pageRequestAction( streamKey ) {
+	return { type: READER_STREAMS_PAGE_REQUEST, payload: { streamKey } };
+}
 
 const TIME1 = '2018-01-01T00:00:00.000Z';
 const TIME2 = '2018-01-02T00:00:00.000Z';
@@ -117,160 +105,6 @@ describe( 'streams.items reducer', () => {
 	} );
 } );
 
-describe( 'streams.pendingItems reducer', () => {
-	it( 'should return an empty object by default', () => {
-		expect( pendingItems( undefined, {} ) ).toEqual( PENDING_ITEMS_DEFAULT );
-	} );
-
-	it( 'should accept new items', () => {
-		const prevState = deepfreeze( PENDING_ITEMS_DEFAULT );
-		const action = receiveUpdates( { streamItems: [ time2PostKey, time1PostKey ] } );
-		const nextState = pendingItems( prevState, action );
-
-		expect( nextState ).toEqual( {
-			items: [ time2PostKey, time1PostKey ],
-			lastUpdated: moment( TIME2 ),
-		} );
-	} );
-
-	it( 'should not create a gap if we can see posts from before lastUpdated', () => {
-		const newKey = { postId: '3', feedId: '4', date: TIME2 };
-		const prevState = deepfreeze( {
-			items: [ time2PostKey ],
-			lastUpdated: moment( time1PostKey.date ),
-		} );
-		const action = receiveUpdates( { streamItems: [ newKey, time2PostKey, time1PostKey ] } );
-		const nextState = pendingItems( prevState, action );
-
-		expect( nextState ).toEqual( {
-			items: [ newKey, time2PostKey ],
-			lastUpdated: moment( TIME2 ),
-		} );
-	} );
-
-	it( 'should create a gap if oldest poll item is newer than lastUpdated', () => {
-		const prevState = deepfreeze( { items: [], lastUpdated: moment( TIME1 ) } );
-
-		const newKey = { postId: '3', feedId: '4', date: TIME2 };
-		const action = receiveUpdates( { streamItems: [ newKey, time2PostKey ] } );
-		const nextState = pendingItems( prevState, action );
-
-		expect( nextState ).toEqual( {
-			items: [ newKey, time2PostKey, { isGap: true, from: moment( TIME1 ), to: moment( TIME2 ) } ],
-			lastUpdated: moment( TIME2 ),
-		} );
-	} );
-
-	it( 'should return the original state when no new changes come in', () => {
-		const prevState = deepfreeze( { items: [], lastUpdated: moment( TIME2 ) } );
-		const action = receiveUpdates( { streamItems: [ time2PostKey ] } );
-		const nextState = pendingItems( prevState, action );
-
-		expect( nextState ).toBe( prevState );
-	} );
-
-	it( 'should return the original state with empty changes', () => {
-		const prevState = deepfreeze( { items: [], lastUpdated: moment( TIME2 ) } );
-		const action = receiveUpdates( { streamItems: [] } );
-		const nextState = pendingItems( prevState, action );
-
-		expect( nextState ).toBe( prevState );
-	} );
-
-	it( 'should combine consecutive x-posts for the same original post', () => {
-		const xPostMetadata = {
-			blogId: 123,
-			postId: 1,
-		};
-
-		// First x-post
-		const postKey1 = {
-			...time2PostKey,
-			url: 'http://example.com/posts/one',
-			xPostMetadata,
-		};
-
-		// Second x-post (should merge into first x-post)
-		const postKey2 = {
-			...time2PostKey,
-			url: 'http://example.com/posts/two',
-			xPostMetadata,
-		};
-
-		// Third x-post (should also merge into first x-post)
-		const postKey3 = {
-			...time2PostKey,
-			postId: 3,
-			url: 'http://example.com/posts/three',
-			xPostMetadata,
-		};
-
-		const postKey4 = {
-			...time2PostKey,
-			postId: 4,
-			url: 'http://example.com/posts/four',
-			xPostMetadata: null,
-		};
-
-		const prevState = deepfreeze( { items: [], lastUpdated: moment( TIME1 ) } );
-		const action = receiveUpdates( {
-			streamItems: [ postKey1, postKey2, postKey3, postKey4 ],
-		} );
-		const nextState = pendingItems( prevState, action );
-
-		expect( nextState.items ).toEqual( [
-			{
-				...postKey1,
-				xPostUrls: [ postKey2.url, postKey3.url ],
-			},
-			postKey4,
-			{ isGap: true, from: moment( TIME1 ), to: moment( TIME2 ) },
-		] );
-	} );
-} );
-
-describe( 'streams.selected reducer', () => {
-	const streamItems = [ time1PostKey, time2PostKey ];
-	it( 'should return null by default', () => {
-		expect( selected( undefined, {} ) ).toEqual( null );
-	} );
-
-	it( 'should store the selected postKey', () => {
-		const action = selectItem( { postKey: time1PostKey } );
-		const state = selected( undefined, action );
-
-		expect( state ).toBe( time1PostKey );
-	} );
-
-	it( 'should update the index for a stream', () => {
-		const prevState = time1PostKey;
-		const action = selectItem( { postKey: time2PostKey } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( time2PostKey );
-	} );
-
-	it( 'should return state unchanged if at last item and trying to select next one', () => {
-		const prevState = time2PostKey;
-		const action = selectNextItem( { items: streamItems } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( prevState );
-	} );
-
-	it( 'should select previous item', () => {
-		const prevState = time2PostKey;
-		const action = selectPrevItem( { items: streamItems } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( time1PostKey );
-	} );
-
-	it( 'should return state unchanged if at first item and trying to select previous item', () => {
-		const prevState = time1PostKey;
-		const action = selectPrevItem( { items: streamItems } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( prevState );
-	} );
-} );
-
 describe( 'streams.pageHandle', () => {
 	it( 'should default to null', () => {
 		expect( pageHandle( undefined, {} ) ).toBe( null );
@@ -288,7 +122,7 @@ describe( 'streams.isRequesting', () => {
 	} );
 
 	it( 'should set to true after request is initiated', () => {
-		const action = requestPage( { streamKey: 'following' } );
+		const action = pageRequestAction( 'following' );
 		expect( isRequesting( undefined, action ) ).toBe( true );
 	} );
 
@@ -313,7 +147,7 @@ describe( 'streams.error', () => {
 
 	it( 'should cleanup the error after a page request', () => {
 		const previousError = new Error( 'test error' );
-		const action = requestPage( { streamKey: 'following' } );
+		const action = pageRequestAction( 'following' );
 
 		expect( error( previousError, action ) ).toBe( null );
 	} );

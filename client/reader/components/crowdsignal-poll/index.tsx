@@ -1,9 +1,11 @@
+import { readTeamsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import ErrorBoundary from './error-boundary';
 import CrowdsignalPollComponent from './main';
 
@@ -16,7 +18,8 @@ const CrowdsignalPoll = () => {
 	const dispatch = useDispatch();
 
 	const remotePrefsLoaded = useSelector( hasReceivedRemotePreferences );
-	const isAutomattician = useSelector( isA8cTeamMember );
+	const { data: teamsData } = useQuery( readTeamsQuery() );
+	const isAutomattician = isAutomatticTeamMember( teamsData?.teams ?? [] );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
 	const hasViewedPollPref = useSelector( ( state ): boolean | undefined | null =>
 		getPreference( state, READER_CROWDSIGNAL_POLL_VIEWED_PREFERENCE )

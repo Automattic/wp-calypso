@@ -11,6 +11,7 @@ import {
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -264,9 +265,15 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: ( search ): { refunded?: true; upgraded?: true; cancelled?: true } => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
+		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		return {
+			...( isRefunded ? { refunded: true } : {} ),
+			...( isUpgraded ? { upgraded: true } : {} ),
+			...( isCancelled ? { cancelled: true } : {} ),
+		};
 	},
 } );
 
@@ -414,6 +421,7 @@ export const cancelPurchaseRoute = createRoute( {
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
 		return { purchase, intent };
 	},
@@ -890,6 +898,36 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const appearanceRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Appearance' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'appearance',
+	beforeLoad: async ( { context } ) => {
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const optIn = preferences[ 'hosting-dashboard-opt-in' ];
+		const isDashboardEnrolled =
+			context.config.optIn &&
+			( optIn?.value === 'opt-in' ||
+				optIn?.value === 'forced-opt-in' ||
+				isEnabled( 'dashboard/forced-opt-in' ) );
+		if ( ! context.config.supports.colorScheme || ! isDashboardEnrolled ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/appearance' ).then( ( d ) =>
+		createLazyRoute( 'appearance' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const languageRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1108,6 +1146,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( config.supports.colorScheme && config.optIn ) {
+		preferencesChildren.push( appearanceRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {
 		preferencesChildren.push(

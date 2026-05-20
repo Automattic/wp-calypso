@@ -127,6 +127,7 @@ export const TrialPlans = [
 ];
 
 export const DotcomFeatures = {
+	APM: 'apm',
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
 	BACKUPS_SELF_SERVE: 'backups-self-serve',
@@ -183,6 +184,7 @@ export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackM
 // Features that needs Atomic or self-hosted infrastructure,
 // mapped to the required WordPress.com plan feature.
 export const HostingFeatures = {
+	APM: DotcomFeatures.APM,
 	BACKUPS: DotcomFeatures.BACKUPS,
 	BACKUPS_SELF_SERVE: DotcomFeatures.BACKUPS_SELF_SERVE,
 	BIG_SKY: DotcomFeatures.BIG_SKY,

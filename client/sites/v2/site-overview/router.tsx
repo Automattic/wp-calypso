@@ -7,7 +7,7 @@ import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-rout
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
-import { hasJetpackCriticalError } from 'calypso/dashboard/sites/site/notices';
+import { isInJetpackCriticalErrorState } from 'calypso/dashboard/utils/site-jetpack-critical-error';
 import CriticalErrorOverview from 'calypso/sites/overview/components/critical-error';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import siteSettingsRouter from '../site-settings/router';
@@ -27,7 +27,7 @@ const siteOverviewRoute = createRoute( {
 				const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 				const isWide = useBreakpoint( WIDE_BREAKPOINT );
 
-				if ( site?.__inaccessible_jetpack_error && hasJetpackCriticalError( site ) ) {
+				if ( site && isInJetpackCriticalErrorState( site ) ) {
 					return <CriticalErrorOverview siteSlug={ siteSlug } />;
 				}
 

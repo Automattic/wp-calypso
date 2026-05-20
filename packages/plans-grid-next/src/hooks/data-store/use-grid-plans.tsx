@@ -403,6 +403,26 @@ const useGridPlans: UseGridPlansType = ( {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+		} else if ( 'plans-woo-hosting-solutions' === intent ) {
+			if ( isPersonalPlan( planSlug ) ) {
+				tagline = translate(
+					'Try out a store idea with low commitment. Custom domain and basic tools.'
+				);
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline = translate(
+					'A solid foundation for new stores. More design options and faster support when you need help.'
+				);
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline = translate(
+					'Built for real stores. 24/7 priority support, advanced features, and the performance your customers expect.'
+				);
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline = translate(
+					'For serious stores. Priority support, advanced extensions, and premium store themes.'
+				);
+			} else {
+				tagline = planConstantObj.getPlanTagline?.() ?? '';
+			}
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}

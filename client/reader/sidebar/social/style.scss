@@ -1,0 +1,23 @@
+@import '@automattic/typography/styles/variables';
+
+// Inside .is-togglable, the base sidebar rule
+// (.selected .sidebar__menu-link { background-color: ... } in
+// client/layout/sidebar/style.scss) doesn't reach the link — the
+// togglable cascade leaves selected social rows without a background.
+// Match the togglable selector specificity (7 classes) and apply the
+// standard selected background so the active connection row reads as
+// "you are here" alongside its bold weight + selected text color.
+.theme-default
+	.global-sidebar
+	.sidebar
+	.sidebar__menu.is-togglable
+	.sidebar-social__account-item.selected
+	.sidebar__menu-link {
+	background-color: var( --color-sidebar-menu-selected-background );
+}
+
+.sidebar-social__account-handle {
+	display: block;
+	font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
+	color: var( --color-sidebar-text-alternative );
+}

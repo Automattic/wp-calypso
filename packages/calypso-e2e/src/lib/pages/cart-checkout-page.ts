@@ -311,12 +311,15 @@ export class CartCheckoutPage {
 	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
-		// Click on the Credit or debit card input in order
-		// to expand the fields.
-		const cardInputLocator = await this.page.waitForSelector(
-			'span:has-text("Credit or debit card")'
-		);
-		await cardInputLocator.click();
+		// Select the Credit or debit card payment method to expand the fields.
+		// On mobile the sticky Pay CTA and the auto-selected Google Pay tile sit
+		// over the card label, so a real click can't reach it. Wait for the
+		// labelled, enabled card option to appear, then dispatch the click on
+		// its underlying radio input.
+		await this.page
+			.locator( 'label[for="card"]:has-text("credit or debit card"):not([disabled])' )
+			.waitFor( { state: 'attached', timeout: 10 * 1000 } );
+		await this.page.locator( 'input#card[type="radio"]' ).dispatchEvent( 'click' );
 
 		// Begin filling in the card details from
 		// top to bottom.

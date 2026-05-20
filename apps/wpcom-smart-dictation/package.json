@@ -1,0 +1,64 @@
+{
+	"name": "@automattic/wpcom-smart-dictation-app",
+	"version": "1.0.0",
+	"description": "WordPress.com Smart Dictation app.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"sideEffects": [
+		"*.css",
+		"*.scss",
+		"./config.js"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/wpcom-smart-dictation"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "rm -rf dist",
+		"teamcity:build-app": "yarn run build",
+		"build": "NODE_ENV=production yarn dev",
+		"build:app": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/wpcom-smart-dictation",
+		"prepack": "yarn run clean && yarn run build",
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --jobs 4 --output './dist/wpcom-smart-dictation.pot' && build-app-languages --stringsFilePath='./dist/wpcom-smart-dictation.pot' --outputPath='./dist/languages' --outputFormat='JS'"
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-config": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/wpcom-smart-dictation": "workspace:^",
+		"@wordpress/components": "^32.1.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/editor": "^14.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/plugins": "^7.23.0",
+		"@wordpress/ui": "^0.9.0",
+		"clsx": "^2.1.1",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
+	},
+	"peerDependencies": {
+		"@wordpress/element": "^6.23.0",
+		"postcss": "*",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"private": true
+}

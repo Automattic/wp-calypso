@@ -16,8 +16,9 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
+import { DarkModeAnnouncement } from '../components/dark-mode-announcement';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
-import OptInSurvey from '../components/opt-in-survey';
+import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -33,6 +34,7 @@ import {
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNotices } from './notices';
+import { useAiSiteBuilderPath } from './use-ai-site-builder-path';
 import { OptInWelcomeModal } from './welcome-modal';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -179,12 +181,17 @@ export default function Sites() {
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
+	// Hoisted out of the modal so the ExPlat assignment is fetched on mount
+	// rather than when the popover opens.
+	const aiSiteBuilderPath = useAiSiteBuilderPath();
+
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
 		updateView( nextView );
 	};
 
 	const userHasSites = user.site_count > 0;
+	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
 		sites ?? [],
@@ -198,7 +205,7 @@ export default function Sites() {
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite context="sites-dashboard" aiSiteBuilderPath={ aiSiteBuilderPath } />
 				</Modal>
 			) }
 			<PageLayout
@@ -221,7 +228,12 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						{ ! isDashboardBackport() && <OptInSurvey /> }
+						{ ! isDashboardBackport() &&
+							( shouldShowOptInSurvey ? (
+								<OptInSurvey />
+							) : (
+								<DarkModeAnnouncement tracksContext="sites" />
+							) ) }
 					</>
 				}
 			>

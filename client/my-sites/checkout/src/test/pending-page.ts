@@ -330,6 +330,67 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/1234' } );
 	} );
 
+	it( 'returns a purchase-id interpolated url if the transaction is successful and a purchaseId is provided', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/me/billing/purchases/:purchaseId?upgraded=true',
+			siteSlug: 'example.com',
+			purchaseId: 9876,
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://wordpress.com/me/billing/purchases/9876?upgraded=true',
+		} );
+	} );
+
+	it( 'falls back to the default thank-you URL if the URL needs a purchaseId but none is resolved', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/me/billing/purchases/:purchaseId?upgraded=true',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/1234' } );
+	} );
+
+	it( 'interpolates both receiptId and purchaseId when both placeholders are present', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/done/:receiptId/:purchaseId',
+			siteSlug: 'example.com',
+			purchaseId: 9876,
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: 'https://wordpress.com/done/1234/9876' } );
+	} );
+
+	it( 'interpolates a purchaseId on the receipt-only path (no transaction)', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/me/billing/purchases/:purchaseId?upgraded=true',
+			receiptId: 12345,
+			purchaseId: 9876,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://wordpress.com/me/billing/purchases/9876?upgraded=true',
+		} );
+	} );
+
 	it( 'returns a saas redirect url if saas redirect url is not empty', () => {
 		const url = 'https://vendor-app-url.com/thank-you-page/?intent-id=234234';
 

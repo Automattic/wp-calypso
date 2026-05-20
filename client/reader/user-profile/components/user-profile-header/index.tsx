@@ -1,5 +1,4 @@
 import './style.scss';
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -9,8 +8,9 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
+import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-import useAchievementsVisibility from 'calypso/reader/user-profile/views/achievements/use-achievements-visibility';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
 
@@ -60,7 +60,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
-		...( isEnabled( 'reader/achievements' ) && showAchievements
+		...( showAchievements
 			? [
 					{
 						label: translate( 'Achievements' ),
@@ -95,6 +95,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									/>
 								</a>
 							) }
+							<AuthorAchievementBadges authorLogin={ user.user_login } size="medium" />
 						</h1>
 						<p>
 							<span dir="ltr">@{ user.user_login }</span>

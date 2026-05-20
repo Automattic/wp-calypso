@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -114,6 +115,8 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
+			'isFromJetpackConnector',
+			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
 			'currentQuery',
@@ -219,12 +222,12 @@ export class Login extends Component {
 
 	getSupportLink() {
 		return (
-			<a
+			<ExternalLink
 				className="one-login__footer-link"
 				href="/support/category/manage-your-account/account-settings/"
 			>
 				{ this.props.translate( 'Support' ) }
-			</a>
+			</ExternalLink>
 		);
 	}
 
@@ -370,9 +373,12 @@ export class Login extends Component {
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
+						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
+						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 					>
 						{ mainContent }
 					</OneLoginLayout>
@@ -398,6 +404,8 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
+		isFromJetpackConnector,
+		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -421,6 +429,8 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
+		isFromJetpackConnector,
+		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -435,6 +445,8 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
 	} );
 
 	return {
@@ -462,11 +474,23 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
+const trimString = ( s ) => s.trim();
+
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
+
+		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
+		const connectorFromParam = redirectParams.get( 'from' ) || get( currentQuery, 'from' );
+		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
+		const connectorPlugins = isFromJetpackConnector
+			? ( redirectParams.get( 'plugins' ) || get( currentQuery, 'plugins' ) || '' )
+					.split( ',' )
+					.map( trimString )
+					.filter( Boolean )
+			: [];
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -506,6 +530,8 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isFromJetpackConnector,
+			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),

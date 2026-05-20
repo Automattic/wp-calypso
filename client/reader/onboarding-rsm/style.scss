@@ -18,28 +18,98 @@
 
 $actions-height: 64px;
 
-.reader-onboarding-modal__footer {
-	height: $actions-height;
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	background-color: #fff;
-	margin-left: -32px; // $grid-unit-40
-	margin-right: -32px;
-	padding-left: 32px;
-	padding-right: 32px;
-	border-top: 1px solid #ddd; //$gray-300;
+// Shared layout for all reader-onboarding-rsm modals (welcome, interests,
+// subscribe). All three share the same overall size, the same flex-column
+// scroll/footer architecture, and the same footer styling. Per-modal
+// stylesheets only handle modal-specific content, padding, and visuals.
+.reader-welcome-modal,
+.interests-modal,
+.subscribe-modal {
+	// Frame size: 980 × 740 max, clamped to the viewport in either axis when
+	// smaller, so the modal itself never forces page-level scrolling.
+	// `margin: auto` keeps WP's default centering working for both axes.
+	&.components-modal__frame,
+	.components-modal__frame {
+		width: min( 980px, 100vw );
+		max-width: min( 980px, 100vw );
+		height: min( 740px, 100vh );
+		max-height: min( 740px, 100vh );
+		margin: auto;
+	}
 
-	.reader-onboarding-modal__footer-actions {
-		height: 100%;
+	// Make the WP modal content + its children-container a flex column with no
+	// scroll on itself, so the inner scrollable region and footer can stack as
+	// siblings. This keeps the scrollbar's track entirely above the footer (no
+	// overlap, no peek-through), regardless of OS scrollbar width.
+	.components-modal__content {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
+		flex-direction: column;
+		overflow: hidden;
+		padding-inline: 0;
+		padding-block-end: 0;
 	}
 
-	.reader-onboarding-modal__footer-buttons {
-		width: auto;
-		flex: 0 0 auto;
-		justify-content: flex-end;
+	.components-modal__children-container {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: hidden;
 	}
+
+	// Footer is a normal flex item below the scroll region (not an absolute
+	// overlay), so the scrollbar's track stays entirely above it.
+	.reader-onboarding-modal__footer {
+		height: $actions-height;
+		flex: 0 0 auto;
+		background-color: #fff;
+		padding-inline: 32px;
+		border-top: 1px solid #ddd; //$gray-300;
+
+		.reader-onboarding-modal__footer-actions {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.reader-onboarding-modal__footer-buttons {
+			width: auto;
+			flex: 0 0 auto;
+			justify-content: flex-end;
+		}
+	}
+}
+
+// Welcome doesn't show a divider above its footer.
+.reader-welcome-modal .reader-onboarding-modal__footer {
+	border-top: 0;
+}
+
+// VStack-based modals (welcome, interests) make the inner content the scroll
+// region. Padding differs per-modal and stays in the per-modal stylesheets.
+.reader-welcome-modal,
+.interests-modal {
+	&__content {
+		flex: 1 1 auto;
+		min-height: 0; // critical for flex item to shrink and trigger overflow
+		overflow-y: auto;
+
+		// VStack applies `min-height: 0` to its direct children, which
+		// otherwise lets them collapse rather than overflow. Restore natural
+		// sizing so the scroll container can detect overflow and scroll.
+		> * {
+			flex-shrink: 0;
+		}
+	}
+}
+
+// VStack defaults `justify-content: center`, which centers overflowing
+// children vertically — pushing the top portion (title/description) above
+// the scroll viewport where it can't be reached. Force start alignment so
+// content scrolls from the top. The doubled selector raises specificity
+// above WP's emotion-injected single-class rule.
+.reader-welcome-modal__content.reader-welcome-modal__content,
+.interests-modal__content.interests-modal__content {
+	justify-content: flex-start;
 }

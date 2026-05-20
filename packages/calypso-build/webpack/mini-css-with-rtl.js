@@ -3,7 +3,7 @@ const PLUGIN_NAME = 'MiniCSSWithRTL';
 
 class MiniCSSWithRTLModule extends webpack.RuntimeModule {
 	constructor( { globalVar = null } = {} ) {
-		super( 'get mini-css chunk filename with rtl' );
+		super( 'get mini-css chunk filename with rtl', webpack.RuntimeModule.STAGE_ATTACH );
 		this.globalVar = globalVar;
 	}
 
