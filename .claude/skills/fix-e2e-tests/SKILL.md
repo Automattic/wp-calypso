@@ -250,7 +250,9 @@ Fetch the PR's tip and create the worktree. Run each command as a **separate Bas
 
 Substitute the literal values from Step 3 directly into each command. Pick a unique worktree path like `.claude/worktrees/fix-e2e-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
 
-First, capture the absolute path of the main checkout. The symlinks in 5.1.3 and the cleanup in 5.5 need an absolute path that works on every developer's machine, and shell variables don't carry between Bash calls — so this one call gets the value, and you inline the literal result into the later calls:
+Derive **slug** from the failing spec's filename (carried out of Step 4 — e.g., `infrastructure__flaky-fixture.spec.ts`): strip the trailing `.spec.ts`, lowercase, and replace any character outside `[a-z0-9_-]` with `-`. Cap at 50 characters. The example becomes `infrastructure__flaky-fixture`. The slug feeds the worktree path and the branch name (`fix/e2e-<slug>`); the human-readable commit/PR titles in 5.4 use the **test title** instead. Slug from spec basename rather than test title because it's stable, already URL-safe, and unique enough — one spec is usually the unit of fix even if several test cases inside it failed.
+
+Then capture the absolute path of the main checkout. The symlinks in 5.1.3 and the cleanup in 5.5 need an absolute path that works on every developer's machine, and shell variables don't carry between Bash calls — so this one call gets the value, and you inline the literal result into the later calls:
 
 ```bash
 git rev-parse --show-toplevel
@@ -305,6 +307,7 @@ Don't add extra sanity-check calls (e.g., `ls` on the spec path) — the harness
 
 Record these values for later sub-steps (keep them in your working memory; later Bash calls must inline them rather than reference shell variables):
 
+- **SLUG** — derived from the spec basename (see lead-in above)
 - **WORKTREE_DIR** — `.claude/worktrees/fix-e2e-<slug>-<timestamp>`
 - **BRANCH** — `fix/e2e-<slug>`
 - **PR_SHA** — from Step 3
