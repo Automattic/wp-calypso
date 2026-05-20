@@ -271,56 +271,48 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 						firstImageIsCover
 					/>
 
-					<VStack spacing={ 3 }>
+					<VStack spacing={ 2 }>
 						<Text weight={ 600 }>{ __( 'Brand logo' ) }</Text>
 						<Text variant="muted">
 							{ __(
 								'Sits on every cover and footer. Add a dark-page variant if your logo doesn’t read on inky pages.'
 							) }
 						</Text>
-						<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
+						<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 							<LogoUploadField
-								label={ __( 'Light-page logo' ) }
-								help={ __( 'For white and light backgrounds.' ) }
+								label={ __( 'Light' ) }
 								file={ primaryLogoLight }
 								onChange={ setPrimaryLogoLight }
 								disabled={ isBusy }
-								uploadLabel={ __( 'Upload logo' ) }
 							/>
 							<LogoUploadField
-								label={ __( 'Dark-page logo (optional)' ) }
-								help={ __( 'Falls back to the light variant.' ) }
+								label={ __( 'Dark (optional)' ) }
 								file={ primaryLogoDark }
 								onChange={ setPrimaryLogoDark }
 								disabled={ isBusy }
 								darkBackground
-								uploadLabel={ __( 'Upload dark variant' ) }
 							/>
 						</HStack>
 					</VStack>
 
-					<VStack spacing={ 3 }>
+					<VStack spacing={ 2 }>
 						<Text weight={ 600 }>{ __( 'Partner logo (optional)' ) }</Text>
 						<Text variant="muted">
 							{ __( 'For co-branded pieces. Sits next to your brand logo with a separator.' ) }
 						</Text>
-						<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
+						<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 							<LogoUploadField
-								label={ __( 'Light-page logo' ) }
-								help={ __( 'For white and light backgrounds.' ) }
+								label={ __( 'Light' ) }
 								file={ partnerLogoLight }
 								onChange={ setPartnerLogoLight }
 								disabled={ isBusy }
-								uploadLabel={ __( 'Upload partner logo' ) }
 							/>
 							<LogoUploadField
-								label={ __( 'Dark-page logo (optional)' ) }
-								help={ __( 'Falls back to the light variant.' ) }
+								label={ __( 'Dark (optional)' ) }
 								file={ partnerLogoDark }
 								onChange={ setPartnerLogoDark }
 								disabled={ isBusy }
 								darkBackground
-								uploadLabel={ __( 'Upload dark variant' ) }
 							/>
 						</HStack>
 						{ hasPartnerLogo && (
@@ -328,10 +320,10 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 								label={ __( 'Logo order' ) }
 								help={ __( 'Which logo sits on the left of the separator.' ) }
 								value={ partnerLogoOrder }
-								onChange={ ( value ) =>
+								onChange={ ( value: string | number | undefined ) =>
 									setPartnerLogoOrder( ( value ?? 'brand-first' ) as DualLogoOrder )
 								}
-								isBlock={ false }
+								isBlock
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
 							>
