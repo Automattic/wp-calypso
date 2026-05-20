@@ -79,6 +79,16 @@ const ReaderOnboardingRsm = ( {
 	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
 	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
 	// under-report follows before the Redux follows slice has hydrated.
+	//
+	// `Math.max` is safe in onboarding because the UI only nets follow
+	// additions: discover-step recommendations exclude pre-session
+	// subscriptions (so in-session unfollows only target in-session adds),
+	// and interests-step pack subscribe never unfollows. The invariant is
+	// therefore `reduxFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
+	// so the max picks the live Redux value. If a future flow ever allows
+	// unfollowing a pre-session subscription from within onboarding, revisit
+	// this — gate on Redux hydration (e.g. `getReaderFollowsLastSyncTime !==
+	// null`) rather than blindly take the max.
 	const reduxFollows = useSelector( getReaderFollows );
 	const reduxFollowedNonSelfSitesCount = reduxFollows.filter(
 		( f ) => f.is_following && ! f.is_owner
