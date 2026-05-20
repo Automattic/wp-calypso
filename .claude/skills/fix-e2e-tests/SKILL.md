@@ -394,7 +394,22 @@ Then in the **next assistant message**, present the root cause + fix summary fro
 >
 > Ready to push and open a draft PR against `<TARGET_BRANCH>`? Say **yes** to proceed, or tell me what to change first.
 
-If the user asks to see the elided portion, re-render with no truncation. Wait for an explicit affirmative before pushing. If the user asks for changes, re-dispatch the Healer with their feedback (operating on the same worktree), then loop back here.
+If the user asks to see the elided portion, re-render with no truncation. Wait for an explicit affirmative before pushing.
+
+**If the user asks for changes**, re-dispatch the Healer to revise the same worktree. Keep its prior uncommitted edits in place — they may be partially right, and resetting them throws away signal — but make the prior attempt explicit in the new prompt so the Healer can revise or replace it as the feedback warrants. The re-dispatch prompt must include:
+
+- The user's feedback **verbatim**.
+- The diff of the prior attempt, captured fresh just before re-dispatch:
+
+  ```bash
+  git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> --no-pager diff <PR_SHA>
+  ```
+
+  Embed the full output as a `<PRIOR_DIFF>...</PRIOR_DIFF>` block so the Healer knows exactly what's currently on disk versus the original PR HEAD.
+- The same Step 5.2 context (failure details, spec path, framework constraints, tool restrictions) so the Healer doesn't lose the root failure signal.
+- An instruction: "The worktree already contains the prior attempt shown in `<PRIOR_DIFF>`. Revise it in place — keep what still applies, edit or rewrite what doesn't. To revert a specific change, write the file's pre-attempt content (visible in `<PRIOR_DIFF>` as removed lines); you don't have shell access, so revert via Edit/Write rather than git."
+
+Then loop back to the diff review at the top of 5.3.
 
 ### 5.4: Commit, push, and open the PR
 
