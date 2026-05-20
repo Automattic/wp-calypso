@@ -98,7 +98,7 @@ export default function ScanCard( { site }: { site: Site } ) {
 		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
 	}
 
-	if ( site.is_multisite ) {
+	if ( isSelfHostedJetpackConnected( site ) && site.is_multisite ) {
 		return (
 			<OverviewCard
 				{ ...CARD_PROPS }
