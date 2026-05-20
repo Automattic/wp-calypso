@@ -144,7 +144,7 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	const newPageHandle = extractPageHandle( streamType, { payload: { pageHandle } }, data );
 
 	// Dispatch in the same order as the legacy `handlePage`, but hydrate post
-	// data into the canonical React Query cache instead of `state.reader.posts`.
+	// data into the canonical React Query cache.
 	const analyticsActions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,

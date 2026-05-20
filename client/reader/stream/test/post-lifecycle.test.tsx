@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
-import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
 import readerReducer from 'calypso/state/reader/reducer';
 import PostLifecycle from '../post-lifecycle';
 import type { ReactNode } from 'react';
@@ -31,13 +30,12 @@ jest.mock( 'calypso/blocks/reader-post-card/blocked', () => () => (
 	<div data-testid="post-blocked" />
 ) );
 
-function makeWrapper( queryClient: QueryClient, posts: Array< Record< string, unknown > > = [] ) {
+function makeWrapper( queryClient: QueryClient ) {
 	const store = createStore(
 		combineReducers( { reader: readerReducer } ),
 		undefined,
 		applyMiddleware( thunkMiddleware )
 	);
-	store.dispatch( { type: READER_POSTS_RECEIVE, posts } );
 
 	return function Wrapper( { children }: { children: ReactNode } ) {
 		return (
@@ -73,9 +71,7 @@ describe( 'PostLifecycle', () => {
 
 	it( 'renders a placeholder when no canonical cache entry exists', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		const Wrapper = makeWrapper( queryClient, [
-			{ ID: 1, site_ID: 100, global_ID: 'global-1', title: 'Redux title' },
-		] );
+		const Wrapper = makeWrapper( queryClient );
 
 		render(
 			<Wrapper>

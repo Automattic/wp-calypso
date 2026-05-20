@@ -35,22 +35,12 @@ const fullPostState = {
 	reader: {
 		feeds: { items: {} },
 		follows: { items: {} },
-		posts: {
-			items: {
-				'stale-global': {
-					ID: 1,
-					site_ID: 100,
-					global_ID: 'stale-global',
-					title: 'Stale Redux post',
-				},
-			},
-		},
 		sites: { items: {} },
 	},
 };
 
 describe( 'mapStateToFullPostProps', () => {
-	it( 'does not fall back to state.reader.posts for the main post', () => {
+	it( 'returns a pending post when no canonical post prop exists', () => {
 		const props = mapStateToFullPostProps( fullPostState, {
 			blogId: 100,
 			postId: 1,

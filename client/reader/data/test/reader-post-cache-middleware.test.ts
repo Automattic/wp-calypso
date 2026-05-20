@@ -1,20 +1,12 @@
-import { postLikesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { applyMiddleware, createStore } from 'redux';
-import { thunk as thunkMiddleware } from 'redux-thunk';
 import {
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import {
-	getCachedReaderPost,
-	updateCachedReaderPost,
-	upsertReaderPostCache,
-} from '../reader-post-cache';
+import { getCachedReaderPost, upsertReaderPostCache } from '../reader-post-cache';
 import { createReaderPostCacheMiddleware } from '../reader-post-cache-middleware';
 
 describe( 'reader post cache middleware', () => {
@@ -39,105 +31,6 @@ describe( 'reader post cache middleware', () => {
 				is_following_conversation: false,
 			},
 		] );
-	} );
-
-	it( 'ingests posts from the real receivePosts Redux bridge without overwriting local like overlays', async () => {
-		const store = createStore(
-			( state = {} ) => state,
-			applyMiddleware(
-				thunkMiddleware,
-				createReaderPostCacheMiddleware( () => queryClient )
-			)
-		);
-
-		updateCachedReaderPost( queryClient, { blogId: 100, postId: 1 }, ( post ) => ( {
-			i_like: true,
-			like_count: Number( post?.like_count ?? 0 ) + 1,
-		} ) );
-
-		await store.dispatch(
-			receivePosts( [
-				{
-					ID: 1,
-					site_ID: 100,
-					global_ID: 'global-1',
-					title: 'Updated title',
-					i_like: false,
-					like_count: 0,
-				},
-			] ) as never
-		);
-
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
-			title: 'Updated title',
-			i_like: true,
-			like_count: 1,
-		} );
-	} );
-
-	it( 'seeds the post likes query from received Reader post data', async () => {
-		const store = createStore(
-			( state = {} ) => state,
-			applyMiddleware(
-				thunkMiddleware,
-				createReaderPostCacheMiddleware( () => queryClient )
-			)
-		);
-
-		await store.dispatch(
-			receivePosts( [
-				{
-					ID: 2,
-					site_ID: 100,
-					global_ID: 'global-2',
-					i_like: true,
-					like_count: 72,
-				},
-			] ) as never
-		);
-
-		expect( queryClient.getQueryData( postLikesQuery( 100, 2 ).queryKey ) ).toEqual( {
-			found: 72,
-			iLike: true,
-			likes: [],
-		} );
-		expect( queryClient.getQueryState( postLikesQuery( 100, 2 ).queryKey )?.dataUpdatedAt ).toBe(
-			0
-		);
-	} );
-
-	it( 'does not overwrite existing post likes query data when receiving Reader posts', async () => {
-		queryClient.setQueryData( postLikesQuery( 100, 1 ).queryKey, {
-			found: 73,
-			iLike: true,
-			likes: [ { ID: 1, login: 'alice' } ],
-		} );
-
-		const store = createStore(
-			( state = {} ) => state,
-			applyMiddleware(
-				thunkMiddleware,
-				createReaderPostCacheMiddleware( () => queryClient )
-			)
-		);
-
-		await store.dispatch(
-			receivePosts( [
-				{
-					ID: 1,
-					site_ID: 100,
-					global_ID: 'global-1',
-					i_like: false,
-					like_count: 72,
-				},
-			] ) as never
-		);
-
-		expect( queryClient.getQueryData( postLikesQuery( 100, 1 ).queryKey ) ).toEqual( {
-			found: 73,
-			iLike: true,
-			likes: [ { ID: 1, login: 'alice' } ],
-		} );
 	} );
 
 	it( 'patches seen state by global id', () => {

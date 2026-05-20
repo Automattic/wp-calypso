@@ -1,7 +1,6 @@
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-	READER_POSTS_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
@@ -12,7 +11,6 @@ import {
 	updateCachedReaderPost,
 	updateCachedReaderPostsMatching,
 } from './reader-post-cache';
-import { syncNormalizedReaderPostCache } from './reader-post-cache-sync';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
@@ -78,9 +76,6 @@ export const createReaderPostCacheMiddleware =
 				break;
 			case READER_CONVERSATION_UPDATE_FOLLOW_STATUS:
 				patchConversationState( queryClient, readerAction );
-				break;
-			case READER_POSTS_RECEIVE:
-				syncNormalizedReaderPostCache( queryClient, readerAction.posts ?? [] );
 				break;
 		}
 
