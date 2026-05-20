@@ -1,5 +1,76 @@
-.a4a-agent-studio-overview {
-	.hosting-dashboard-layout__body-wrapper {
-		max-width: 760px;
+.a4a-agent-studio-deliverables-grid {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+}
+
+@media ( max-width: 781px ) {
+	.a4a-agent-studio-deliverables-grid {
+		grid-template-columns: repeat( 2, 1fr );
 	}
+}
+
+@media ( max-width: 540px ) {
+	.a4a-agent-studio-deliverables-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.a4a-agent-studio-deliverable-card.components-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.a4a-agent-studio-deliverable-card__media.components-card__media {
+	display: flex;
+	align-items: center;
+	min-height: 160px;
+	background: var( --color-neutral-80 );
+}
+
+// Stretch the body to fill the (equal-height) card and keep the delete
+// action pinned to the bottom, so the buttons line up across the row.
+.a4a-agent-studio-deliverable-card__body.components-card__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.a4a-agent-studio-deliverable-card__info {
+	flex: 1;
+}
+
+// Clamp long titles to two lines so cards in a row stay the same height.
+.a4a-agent-studio-deliverable-card__title {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+.a4a-agent-studio-deliverable-card__strip {
+	display: flex;
+	gap: 8px;
+	padding: 16px;
+	overflow: hidden;
+}
+
+.a4a-agent-studio-deliverable-card__strip img {
+	flex-shrink: 0;
+	height: 128px;
+	width: auto;
+	border-radius: 4px;
+}
+
+.a4a-agent-studio-deliverable-card__state {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: center;
+	justify-content: center;
+	min-height: 160px;
+	color: var( --color-text-inverted );
 }
