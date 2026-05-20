@@ -134,25 +134,38 @@ export function useOnePagerGeneration() {
 					brandPackSlug: request.pack,
 				};
 
-				// Snapshot the active cover to a PNG once so the deliverables
-				// list can show an <img> instead of live-rendering HTML on
-				// every visit. Best-effort: if it fails, the card falls back
-				// to the dark placeholder until the user reopens the output.
-				let previewUrls: string[] | undefined;
+				// Snapshot the active cover + first few body pages to PNGs
+				// once so the deliverables list shows a magazine-style strip
+				// instead of live-rendering HTML on every visit. Sequential
+				// so the off-screen renderer never has two pages mounted at
+				// the same time. Best-effort: failures fall back to a dark
+				// placeholder card until the user reopens the output.
+				const thumbHtmls: Array< { html: string; width: number; height: number } > = [];
 				const activeCover = coverRenders[ 0 ];
 				if ( activeCover ) {
+					thumbHtmls.push( {
+						html: activeCover.html,
+						width: activeCover.width,
+						height: activeCover.height,
+					} );
+				}
+				for ( const body of bodyRenders.slice( 0, 3 ) ) {
+					thumbHtmls.push( {
+						html: body.html,
+						width: body.width,
+						height: body.height,
+					} );
+				}
+				const previewUrls: string[] = [];
+				for ( const thumb of thumbHtmls ) {
 					try {
-						const dataUrl = await services.thumbnail.renderPagePng( {
-							html: activeCover.html,
-							width: activeCover.width,
-							height: activeCover.height,
-						} );
+						const dataUrl = await services.thumbnail.renderPagePng( thumb );
 						if ( dataUrl ) {
-							previewUrls = [ dataUrl ];
+							previewUrls.push( dataUrl );
 						}
 					} catch ( thumbErr ) {
 						// eslint-disable-next-line no-console
-						console.warn( '[one-pager] cover thumbnail failed:', thumbErr );
+						console.warn( '[one-pager] thumbnail failed:', thumbErr );
 					}
 				}
 
@@ -171,7 +184,7 @@ export function useOnePagerGeneration() {
 						usd: result.usage.usd,
 						durationMs: result.usage.durationMs,
 					},
-					previewUrls,
+					previewUrls: previewUrls.length > 0 ? previewUrls : undefined,
 				} );
 
 				dispatch(
