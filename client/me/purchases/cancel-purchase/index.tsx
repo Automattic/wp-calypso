@@ -1364,23 +1364,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					/>
 
 					{ ! this.state.showDomainOptionsStep &&
-						this.props.isSplitCancelRemoveEnabled &&
-						refundAmountString &&
-						intent === 'cancel' && (
-							<RefundEligibilityNotice
-								mode="refund-eligibility"
-								refundAmount={ refundAmountString }
-								purchase={ purchase }
-							/>
-						) }
-					{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
-						<RefundEligibilityNotice
-							refundAmount={ refundAmountString }
-							mode="confirmed"
-							purchase={ purchase }
-						/>
-					) }
-					{ ! this.state.showDomainOptionsStep &&
 						( ! refundAmountString ||
 							intent === 'auto-renew' ||
 							( intent === 'cancel' && ! this.props.isSplitCancelRemoveEnabled ) ) && (
@@ -1393,6 +1376,23 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
+							{ ! this.state.showDomainOptionsStep &&
+								this.props.isSplitCancelRemoveEnabled &&
+								refundAmountString &&
+								intent === 'cancel' && (
+									<RefundEligibilityNotice
+										mode="refund-eligibility"
+										refundAmount={ refundAmountString }
+										purchase={ purchase }
+									/>
+								) }
+							{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
+								<RefundEligibilityNotice
+									refundAmount={ refundAmountString }
+									mode="confirmed"
+									purchase={ purchase }
+								/>
+							) }
 							{ this.state.showDomainOptionsStep
 								? this.renderDomainOptionsContent()
 								: this.renderMainContent() }
