@@ -9,12 +9,10 @@ import { Button, Card as UICard, Text as UIText, Stack } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import SitePreview from 'calypso/dashboard/sites/site-preview';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -50,15 +48,18 @@ const TAILORING_TIMEOUT_MS = 40_000;
 
 const LAUNCHPAD_CONTEXT = 'customer-home';
 
-// Every new WordPress site ships a default "Hello world!" post (slug
-// `hello-world`). It must not count as the user's first post — otherwise a
-// brand-new site reads as already having published one. We fetch the published
-// posts and exclude this slug. (English-default slug; localized installs may
-// differ, but it's stable on wp.com new sites.)
+// Every new WordPress site ships default seed content: a "Hello world!" post
+// (slug `hello-world`) and a "Sample Page" (slug `sample-page`). Neither must
+// count as the user's own first post/page — otherwise a brand-new site reads
+// as already having published one, which marks the task done / hides it. We
+// fetch the published posts + pages and exclude these slugs. (English-default
+// slugs; localized installs may differ, but they're stable on wp.com new sites.)
 const DEFAULT_POST_SLUG = 'hello-world';
-// Stable query reference (module-level) for the published-posts fetch +
-// selector. A small page is enough to detect whether any real post exists.
+const DEFAULT_PAGE_SLUG = 'sample-page';
+// Stable query references (module-level) for the published-posts / -pages
+// fetch + selector. A small page is enough to detect whether any real one exists.
 const PUBLISHED_POSTS_QUERY = { status: 'publish', number: 20 };
+const PUBLISHED_PAGES_QUERY = { status: 'publish', number: 20, type: 'page' };
 
 // Map wizard goal answers onto a Launchpad checklist slug. Anything that
 // doesn't have a dedicated launchpad falls back to the generic "build" list.
@@ -84,9 +85,14 @@ function useSiteState( siteSlug: string ): SiteState {
 	const postCount = ( publishedPosts ?? [] ).filter(
 		( post: { slug?: string } ) => post?.slug !== DEFAULT_POST_SLUG
 	).length;
-	const pageCount = useSelector( ( state: AppState ) =>
-		siteId ? getAllPostCount( state, siteId, 'page', 'publish' ) : 0
-	) as number;
+	// Same treatment for pages: count the user's published pages, excluding the
+	// default "Sample Page" seed.
+	const publishedPages = useSelector( ( state: AppState ) =>
+		siteId ? getPostsForQuery( state, siteId, PUBLISHED_PAGES_QUERY ) : null
+	);
+	const pageCount = ( publishedPages ?? [] ).filter(
+		( page: { slug?: string } ) => page?.slug !== DEFAULT_PAGE_SLUG
+	).length;
 
 	const subscriberCount = Number(
 		( site?.options as { subscribers_count?: number } | undefined )?.subscribers_count ?? 0
@@ -287,14 +293,17 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 
 	return (
 		<section className="home-dashboard__site-setup site-setup">
-			{ /* Refetch posts + page counts whenever the dashboard mounts (e.g. on
-			   return from the editor) so a freshly published post flips the
-			   relevant task to completed without a manual reload. Posts (not
-			   counts) so we can exclude the default "Hello world!" seed by slug. */ }
+			{ /* Refetch posts + pages whenever the dashboard mounts (e.g. on return
+			   from the editor) so a freshly published post/page flips the relevant
+			   task to completed without a manual reload. Posts/pages (not counts)
+			   so we can exclude the default "Hello world!" / "Sample Page" seeds
+			   by slug. */ }
 			{ site?.ID && (
 				<QueryPosts siteId={ site.ID } postId={ undefined } query={ PUBLISHED_POSTS_QUERY } />
 			) }
-			{ site?.ID && <QueryPostCounts siteId={ site.ID } type="page" /> }
+			{ site?.ID && (
+				<QueryPosts siteId={ site.ID } postId={ undefined } query={ PUBLISHED_PAGES_QUERY } />
+			) }
 			<Stack direction="column" gap="2xl">
 				<Stack direction="column" gap="xs" className="site-setup__heading">
 					{ /* WPDS injects the text content via the render prop, but the
