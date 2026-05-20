@@ -3,6 +3,7 @@ import {
 	Card,
 	CardBody,
 	CardMedia,
+	DropdownMenu,
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -10,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, warning } from '@wordpress/icons';
+import { Icon, moreVertical, trash, warning } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import useUpdateAgentStudioOutput from '../../data/use-update-agent-studio-output';
 import { getAgentStudioOutputPath } from '../../lib/paths';
@@ -41,20 +42,23 @@ export default function DeliverableCard( { output }: Props ) {
 					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
 					<Text variant="muted">{ getMetaLabel( output ) }</Text>
 				</VStack>
-				<HStack justify="space-between" alignment="center">
-					<Button
-						variant="tertiary"
-						isDestructive
-						size="small"
-						onClick={ () => setIsDeleteDialogOpen( true ) }
-					>
-						{ __( 'Delete' ) }
-					</Button>
+				<HStack justify="flex-end" alignment="center" spacing={ 2 }>
 					{ output.kind === 'one-pager' && output.status === 'ready' && (
 						<Button variant="primary" href={ getAgentStudioOutputPath( output.id ) }>
 							{ __( 'View' ) }
 						</Button>
 					) }
+					<DropdownMenu
+						icon={ moreVertical }
+						label={ __( 'Deliverable actions' ) }
+						controls={ [
+							{
+								title: __( 'Delete' ),
+								icon: trash,
+								onClick: () => setIsDeleteDialogOpen( true ),
+							},
+						] }
+					/>
 				</HStack>
 			</CardBody>
 			{ isDeleteDialogOpen && (
