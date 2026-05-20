@@ -1,5 +1,28 @@
 @import "@wordpress/base-styles/colors";
 
+/* @wordpress/components Menu workaround ---------------------------------------------- *
+ * The `Menu.Popover` refactor in @wordpress/components 33.0.0 (Gutenberg #77460) split
+ * the popover into `MenuMotionRoot` (motion styles) > `MenuSurface` (panel chrome) and
+ * spread Ariakit's `htmlProps` on the inner `MenuSurface`. Ariakit's `useDisclosureContent`
+ * reads `getComputedStyle(MenuSurface).transitionDuration`, which is `0s` (the transitions
+ * live on the outer `MenuMotionRoot`). In isolation this still works because Ariakit also
+ * reads from the disclosure trigger element which usually has a non-zero `box-shadow`
+ * transition — Gutenberg Storybook confirms the Menu component itself is fine.
+ *
+ * In classic Calypso, something in the surrounding React tree (masterbar / Help Center /
+ * focus management) trips Ariakit's `animated` state machine into `false` before the
+ * trigger's transition can be measured, so `data-enter` is never stamped on `MenuSurface`,
+ * the companion `MenuMotionRoot:has(> MenuSurface[data-enter])` rule never matches, and
+ * the popover stays at `opacity: 0`. This breaks the DataViews "Add filter" popover on
+ * /p2s, /sites/<slug>/logs/*, etc.
+ *
+ * Adding a tiny transition directly on `MenuSurface` makes Ariakit's `getComputedStyle()`
+ * check non-zero regardless of trigger timing, so the pipeline always stamps `data-enter`.
+ * The real fade/slide motion still comes from `MenuMotionRoot`, unchanged. */
+[data-dialog][role="menu"] {
+	transition: opacity 1ms;
+}
+
 /* @wordpress/components FormToggle overrides ----------------------------------------- */
 .components-form-toggle {
 	input[type="checkbox"] {

@@ -17,6 +17,8 @@
 	--domain-search-warning-badge-background-color: #f9edb4;
 	--domain-search-success-badge-border-color: #b8e5be;
 	--domain-search-success-badge-background-color: #d1eed5;
+	--domain-search-sticky-overlay-z-index: 1;
+	--domain-search-full-cart-z-index: 2;
 	--domain-search-mini-cart-height: 80px;
 	--domain-search-mini-cart-inline-padding: 1rem;
 	--domain-search-content-max-width: 64rem;
@@ -80,4 +82,121 @@
 	@media ( max-width: #{ $break-small - 1px } ) {
 		gap: 1.5rem;
 	}
+}
+
+// The in-flow SearchBar and in-flow promo card are the desktop affordances. On
+// mobile, the persistent fixed overlay below replaces both, so we hide these
+// in-flow nodes via CSS rather than unmounting them — keeping desktop markup
+// trunk-identical.
+@media ( max-width: #{ $break-small - 1px } ) {
+	.domain-search--results__in-flow-search,
+	.domain-search--results__in-flow-before-results {
+		display: none;
+	}
+
+	// The persistent fixed overlay (position: fixed at top:
+	// var(--step-container-v2-top-bar-height)) visually obscures the first
+	// ~123px of in-flow content. Reserve that vertical space at the top of the
+	// results region so the first row of suggestions renders just below the
+	// overlay rather than behind it.
+	//   - compact banner (collapsed): 12px + 24px + 12px + 2px borders = 50px
+	//   - search-bar row: 12px + var(--domain-search-input-size) + 12px + 1px border
+	// When the banner is expanded inline (subtitle visible), the additional
+	// ~20px briefly overlaps the first result — acceptable for a user-initiated
+	// affordance, the user can scroll to recover.
+	.domain-search--results {
+		padding-block-start: calc(
+			50px + ( 12px * 2 ) + var( --domain-search-input-size ) + 1px
+		);
+	}
+}
+
+// Persistent fixed overlay — mobile-only. Always pinned at the top of the
+// viewport, directly below the WP top bar (the stepper makes the top bar
+// position:sticky on this step so the two surfaces read as one fixed region).
+.domain-search--results__sticky-overlay {
+	// The overlay is mobile-only; on desktop the in-flow promo card +
+	// SearchBar carry the layout.
+	display: none;
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		display: flex;
+		flex-direction: column;
+		position: fixed;
+		// Sit immediately below the WP top bar so they form a single fixed
+		// top region. Falls back to 0 when consumers don't render inside
+		// StepContainerV2.
+		inset-block-start: var( --step-container-v2-top-bar-height, 0 );
+		inset-inline: 0;
+		z-index: var( --domain-search-sticky-overlay-z-index );
+	}
+}
+
+// Search bar row inside the overlay — white background, padding, and bottom
+// border matching the Figma spec. These styles apply only inside the overlay;
+// the identical in-flow <SearchBar> has no wrapper and retains trunk styling.
+.domain-search--results__search-bar-row {
+	background-color: var( --color-surface );
+	padding-block: 12px;
+	padding-inline: var( --step-container-v2-content-inline-padding, 1rem );
+	border-block-end: 1px solid rgba( 0, 0, 0, 0.08 ); // exact Figma spec; no semantic token matches
+	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.02 );
+}
+
+// Compact sticky banner — sits at the top of the overlay, above the search bar.
+.domain-search--results__compact-banner {
+	// Reset button defaults.
+	appearance: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	width: 100%;
+	border: none;
+	border-block-start: 1px solid rgba( 0, 0, 0, 0.08 ); // exact Figma spec; no semantic token matches
+	border-block-end: 1px solid rgba( 0, 0, 0, 0.08 ); // exact Figma spec; no semantic token matches
+	padding-block: 12px;
+	padding-inline: var( --step-container-v2-content-inline-padding, 1rem );
+	// #f6f7f9 is the exact Figma spec. --studio-gray-0 resolves to #f6f7f7
+	// (2-channel delta); no semantic token matches this value.
+	background-color: #f6f7f9;
+	cursor: pointer;
+	text-align: start;
+	box-shadow: none;
+}
+
+.domain-search--results__compact-banner-title {
+	flex: 1;
+	font-size: 13px;
+	font-weight: 400;
+	// Figma line-height 24px on a 13px element.
+	line-height: 24px;
+	// #2f2f2f is the Figma-exact value. --studio-gray-80 resolves to #2c3338
+	// (3-channel delta on R); no semantic token matches this value.
+	color: #2f2f2f;
+	letter-spacing: -0.08px;
+}
+
+.domain-search--results__compact-banner-chevron {
+	flex-shrink: 0;
+	// rgba(0,0,0,0.32) is Figma-exact. No semantic token matches this value.
+	// `fill` (not `color`) is required: @wordpress/icons chevron-down has no
+	// explicit `fill="currentColor"`, so SVG fill must be set directly.
+	fill: rgba( 0, 0, 0, 0.32 );
+}
+
+.domain-search--results__compact-banner-subtitle {
+	// Force the subtitle onto its own line by taking full width.
+	width: 100%;
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	// Figma line-height 20px on a 13px element.
+	line-height: 20px;
+	// #757575 is the Figma-exact value. --studio-gray-50 resolves to #646970
+	// (3-channel delta on G and B); no semantic token matches this value.
+	color: #757575;
+	letter-spacing: -0.08px;
+	text-align: start;
 }
