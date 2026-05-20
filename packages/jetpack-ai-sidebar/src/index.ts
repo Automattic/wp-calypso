@@ -74,8 +74,51 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	),
 };
 
+type JetpackAiSidebarPreviewFeature =
+	| 'aiEditorialReview'
+	| 'blockTransformations'
+	| 'optimizeTitleSuggestion'
+	| 'chatHistory'
+	| 'supportGuides';
+
+function getAgentsManagerData() {
+	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
+}
+
+function isJetpackAiSidebarPreviewFeatureEnabled(
+	feature: JetpackAiSidebarPreviewFeature,
+	defaultValue: boolean
+): boolean {
+	const preview = getAgentsManagerData()?.jetpackAiSidebarPreview;
+	if ( ! preview ) {
+		return defaultValue;
+	}
+	if ( ! preview.enabled ) {
+		return false;
+	}
+	return preview.features?.[ feature ] === true;
+}
+
 function isAiEditorialReviewEnabled(): boolean {
-	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
+	const data = getAgentsManagerData();
+	if ( ! data ) {
+		return false;
+	}
+	if ( data.jetpackAiSidebarPreview ) {
+		return isJetpackAiSidebarPreviewFeatureEnabled(
+			'aiEditorialReview',
+			!! data.aiEditorialReviewEnabled
+		);
+	}
+	return !! data.aiEditorialReviewEnabled || !! data.reviewMediatorEnabled;
+}
+
+function isOptimizeTitleSuggestionEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'optimizeTitleSuggestion', true );
+}
+
+function isBlockTransformationsEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
 }
 
 function getCurrentEditorPostType(): string | undefined {
@@ -108,7 +151,10 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
-	return [ OPTIMIZE_TITLE_SUGGESTION, ...getAiEditorialReviewSuggestions( currentPostType ) ];
+	return [
+		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...getAiEditorialReviewSuggestions( currentPostType ),
+	];
 }
 
 // ---------- Show-component ability ----------
@@ -285,17 +331,21 @@ export const toolProvider = {
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
 		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
-		abilities.unshift(
-			{
-				...UPDATE_BLOCK_CONTENT_ABILITY,
-				callback: handleUpdateBlockContent,
-			},
+		const jetpackAbilities = [
+			...( isBlockTransformationsEnabled()
+				? [
+						{
+							...UPDATE_BLOCK_CONTENT_ABILITY,
+							callback: handleUpdateBlockContent,
+						},
+				  ]
+				: [] ),
 			{
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
-			}
-		);
-
+			},
+		];
+		abilities.unshift( ...jetpackAbilities );
 		return abilities;
 	},
 
@@ -614,6 +664,10 @@ export function useSuggestions(): {
 
 	if ( ! editorContext.selectedBlock ) {
 		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
+	}
+
+	if ( ! isBlockTransformationsEnabled() ) {
+		return { suggestions: [] };
 	}
 
 	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>

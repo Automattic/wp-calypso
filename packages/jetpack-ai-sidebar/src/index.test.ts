@@ -127,6 +127,23 @@ function installPostTypeMock( postType?: string ) {
 	};
 }
 
+function installAiEditorialReviewData( features: Record< string, boolean > = {} ) {
+	( globalThis as any ).agentsManagerData = {
+		aiEditorialReviewEnabled: true,
+		jetpackAiSidebarPreview: {
+			enabled: true,
+			features: {
+				aiEditorialReview: true,
+				blockTransformations: true,
+				optimizeTitleSuggestion: false,
+				chatHistory: false,
+				supportGuides: false,
+				...features,
+			},
+		},
+	};
+}
+
 function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
 	const { suggestions } = useSuggestions();
 	React.useEffect( () => {
@@ -168,10 +185,10 @@ describe( 'getEmptyViewSuggestions', () => {
 	} );
 
 	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_editorial_review_suggestion_rendered',
@@ -179,24 +196,60 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 	} );
 
-	it( 'hides AI Editorial Review on page editors', () => {
+	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides AI Editorial Review on page editors', () => {
+		installAiEditorialReviewData();
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
 	it( 'hides AI Editorial Review until the post type is known', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Optimize Title when the preview feature disables it', () => {
+		installAiEditorialReviewData( { aiEditorialReview: false, optimizeTitleSuggestion: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'treats missing preview features as disabled', () => {
+		( globalThis as any ).agentsManagerData = {
+			aiEditorialReviewEnabled: true,
+			jetpackAiSidebarPreview: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		};
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'AI Editorial Review' );
 	} );
 } );
 
@@ -215,7 +268,7 @@ describe( 'useSuggestions', () => {
 	} );
 
 	it( 'does not append AI Editorial Review to block-specific suggestions', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
 
@@ -228,8 +281,38 @@ describe( 'useSuggestions', () => {
 		);
 	} );
 
+	it( 'hides block transformation suggestions when the preview feature disables them', () => {
+		installAiEditorialReviewData( { blockTransformations: false } );
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+	} );
+
+	it( 'hides block transformation suggestions when the preview feature is missing', () => {
+		( globalThis as any ).agentsManagerData = {
+			aiEditorialReviewEnabled: true,
+			jetpackAiSidebarPreview: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		};
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+	} );
+
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
 			( suggestion ) => suggestion.id === 'mediate-review-notes'
@@ -253,7 +336,7 @@ describe( 'useSuggestions', () => {
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
 
@@ -293,6 +376,11 @@ describe( 'toolProvider', () => {
 		( window as any ).wp = {};
 	} );
 
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+	} );
+
 	describe( 'getAbilities', () => {
 		it( 'includes update-block-content and big_sky__show_component', async () => {
 			const abilities = await toolProvider.getAbilities();
@@ -309,6 +397,16 @@ describe( 'toolProvider', () => {
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'omits update-block-content when block transformations are disabled', async () => {
+			installAiEditorialReviewData( { blockTransformations: false } );
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).not.toContain( 'wpcom/update-block-content' );
+			expect( names ).toContain( 'big_sky__show_component' );
 		} );
 	} );
 
