@@ -11,7 +11,6 @@ export default function TimeframeSelector( {
 } ) {
 	return (
 		<SelectControl
-			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			label={ __( 'Timeframe' ) }
 			hideLabelFromVision

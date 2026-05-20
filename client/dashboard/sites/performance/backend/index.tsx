@@ -82,13 +82,7 @@ function StartCapturingButton( { site }: { site: Site } ) {
 	};
 
 	return (
-		<Button
-			__next40pxDefaultSize
-			variant="primary"
-			isBusy={ isPending }
-			disabled={ isPending }
-			onClick={ handleClick }
-		>
+		<Button variant="primary" isBusy={ isPending } disabled={ isPending } onClick={ handleClick }>
 			{ __( 'Start capturing' ) }
 		</Button>
 	);
