@@ -70,7 +70,7 @@ describe( 'PostLifecycle', () => {
 		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'falls back to Redux posts when no canonical entity exists', () => {
+	it( 'queries the post when no canonical entity exists', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		const Wrapper = makeWrapper( queryClient, [
 			{ ID: 1, site_ID: 100, global_ID: 'global-1', title: 'Redux title' },
@@ -82,7 +82,8 @@ describe( 'PostLifecycle', () => {
 			</Wrapper>
 		);
 
-		expect( screen.getByTestId( 'stream-post' ) ).toHaveTextContent( 'Redux title' );
-		expect( screen.queryByTestId( 'query-reader-post' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'query-reader-post' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'post-placeholder' ) ).toBeInTheDocument();
+		expect( screen.queryByTestId( 'stream-post' ) ).not.toBeInTheDocument();
 	} );
 } );

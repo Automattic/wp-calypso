@@ -10,7 +10,6 @@ import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
@@ -151,11 +150,9 @@ class PostLifecycle extends Component {
 }
 
 const ConnectedPostLifecycle = connect(
-	( state, ownProps ) => {
+	( _state, ownProps ) => {
 		return {
-			post: ownProps.postKey.isSynthetic
-				? ownProps.postKey
-				: ownProps.canonicalPost ?? getPostByKey( state, ownProps.postKey ),
+			post: ownProps.postKey.isSynthetic ? ownProps.postKey : ownProps.canonicalPost,
 		};
 	},
 	{
