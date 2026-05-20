@@ -1,12 +1,5 @@
 import pageRouter from '@automattic/calypso-router';
-import {
-	Button,
-	DropdownMenu,
-	Modal,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { moreVertical, plus, trash } from '@wordpress/icons';
 import { useCallback, useState } from 'react';
@@ -21,10 +14,12 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import AgentPickerModal from '../../components/agent-picker-modal';
 import useAgentStudioProject from '../../data/use-agent-studio-project';
-import { getAgentStudioPath } from '../../lib/paths';
+import { getAgentStudioBriefPath, getAgentStudioPath } from '../../lib/paths';
 import DeleteProjectDialog from './delete-project-dialog';
 import ProjectDetailContent from './project-detail-content';
+import type { AgentStudioAgentId } from '../../lib/agents';
 
 interface Props {
 	projectId?: string;
@@ -35,7 +30,7 @@ export default function AgentStudioProjectDetail( { projectId }: Props ) {
 	const { data: project, isLoading } = useAgentStudioProject( projectId );
 	const title = project?.name ?? __( 'Project' );
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
-	const [ isComingSoonOpen, setIsComingSoonOpen ] = useState( false );
+	const [ isAgentPickerOpen, setIsAgentPickerOpen ] = useState( false );
 
 	const openDeleteDialog = useCallback( () => {
 		setIsDeleteDialogOpen( true );
@@ -50,18 +45,29 @@ export default function AgentStudioProjectDetail( { projectId }: Props ) {
 		pageRouter( getAgentStudioPath() );
 	}, [] );
 
-	const openComingSoon = useCallback( () => {
+	const openAgentPicker = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_agent_studio_brief_agent_click', {
+			recordTracksEvent( 'calypso_a4a_agent_studio_new_deliverable_click', {
 				project_id: projectId,
 			} )
 		);
-		setIsComingSoonOpen( true );
+		setIsAgentPickerOpen( true );
 	}, [ dispatch, projectId ] );
 
-	const closeComingSoon = useCallback( () => {
-		setIsComingSoonOpen( false );
+	const closeAgentPicker = useCallback( () => {
+		setIsAgentPickerOpen( false );
 	}, [] );
+
+	const onPickAgent = useCallback(
+		( agentId: AgentStudioAgentId ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_agent_picked', { agent_id: agentId } )
+			);
+			setIsAgentPickerOpen( false );
+			pageRouter( getAgentStudioBriefPath( agentId ) );
+		},
+		[ dispatch ]
+	);
 
 	return (
 		<Layout title={ title } wide className="a4a-agent-studio-project-detail">
@@ -94,8 +100,8 @@ export default function AgentStudioProjectDetail( { projectId }: Props ) {
 								] }
 							/>
 						) }
-						<Button variant="primary" icon={ plus } onClick={ openComingSoon }>
-							{ __( 'Brief an agent' ) }
+						<Button variant="primary" icon={ plus } onClick={ openAgentPicker }>
+							{ __( 'New deliverable' ) }
 						</Button>
 					</Actions>
 				</LayoutHeader>
@@ -107,7 +113,7 @@ export default function AgentStudioProjectDetail( { projectId }: Props ) {
 					<ProjectDetailContent
 						projectId={ projectId }
 						project={ project }
-						onBriefAgent={ openComingSoon }
+						onBriefAgent={ openAgentPicker }
 					/>
 				) }
 			</LayoutBody>
@@ -118,31 +124,9 @@ export default function AgentStudioProjectDetail( { projectId }: Props ) {
 					onDeleted={ onDeleted }
 				/>
 			) }
-			{ isComingSoonOpen && <BriefAgentComingSoonModal onClose={ closeComingSoon } /> }
+			{ isAgentPickerOpen && (
+				<AgentPickerModal onClose={ closeAgentPicker } onPick={ onPickAgent } />
+			) }
 		</Layout>
-	);
-}
-
-function BriefAgentComingSoonModal( { onClose }: { onClose: () => void } ) {
-	return (
-		<Modal
-			title={ __( 'Coming soon' ) }
-			onRequestClose={ onClose }
-			className="a4a-agent-studio-coming-soon-modal"
-			size="small"
-		>
-			<VStack spacing={ 4 }>
-				<Text>
-					{ __(
-						'Briefing agents isn’t quite ready yet. We’re putting the finishing touches on it — check back soon.'
-					) }
-				</Text>
-				<HStack justify="flex-end">
-					<Button variant="primary" onClick={ onClose }>
-						{ __( 'Got it' ) }
-					</Button>
-				</HStack>
-			</VStack>
-		</Modal>
 	);
 }

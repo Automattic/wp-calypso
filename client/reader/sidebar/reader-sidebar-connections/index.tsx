@@ -3,7 +3,6 @@ import {
 	useFediverseConnectionsQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Icon, people } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -12,6 +11,7 @@ import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
 import { DEFAULT_FEDIVERSE_TAB } from 'calypso/reader/fediverse/helper';
 import { DEFAULT_MASTODON_TAB } from 'calypso/reader/mastodon/helper';
+import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
 import { SocialAddAccountMenuItem } from 'calypso/reader/sidebar/social';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -31,6 +31,7 @@ interface Props {
 
 const BASE_PATH = '/reader/connections';
 const NEW_CONNECTION_PATH = `${ BASE_PATH }/new`;
+const CONNECTION_DISPLAY_CUTOFF = 10;
 const PROTOCOL_PATHS: Record< ConnectionProtocol, string > = {
 	atmosphere: '/reader/atmosphere',
 	mastodon: '/reader/mastodon',
@@ -146,37 +147,29 @@ function ReaderSidebarConnections( { path }: Props ) {
 	// Reader page (e.g. `/reader/search`) would see no connections at all
 	// because the queries never fire. The queries don't refetch every
 	// render thanks to React Query caching.
-	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 	const shouldFetch = isOnConnections || isOpen;
 	const atmosphereQuery = useConnectionsQuery( { enabled: shouldFetch } );
 	const mastodonQuery = useMastodonConnectionsQuery( { enabled: shouldFetch } );
-	const fediverseQuery = useFediverseConnectionsQuery( {
-		enabled: shouldFetch && fediverseEnabled,
-	} );
+	const fediverseQuery = useFediverseConnectionsQuery( { enabled: shouldFetch } );
 
 	const connections = useMemo( () => {
 		const all: UnifiedConnection[] = [
 			...( atmosphereQuery.data?.connections ?? [] ).map( mapAtmosphere ),
 			...( mastodonQuery.data?.connections ?? [] ).map( mapMastodon ),
-			...( fediverseEnabled ? ( fediverseQuery.data?.connections ?? [] ).map( mapFediverse ) : [] ),
+			...( fediverseQuery.data?.connections ?? [] ).map( mapFediverse ),
 		];
 		return all.sort( sortConnections );
-	}, [ atmosphereQuery.data, mastodonQuery.data, fediverseQuery.data, fediverseEnabled ] );
+	}, [ atmosphereQuery.data, mastodonQuery.data, fediverseQuery.data ] );
 
 	// Distinguish "we haven't fetched yet" from "we fetched and found none",
 	// and separate both from "the fetch errored". A query that errors stays
 	// at `data: undefined` forever, so without the explicit error check the
-	// menu would sit silently empty when the backend is degraded. When the
-	// fediverse flag is off its query never runs, so it doesn't gate settled
-	// or error state.
+	// menu would sit silently empty when the backend is degraded.
 	const hasSettled =
 		( atmosphereQuery.isSuccess || atmosphereQuery.isError ) &&
 		( mastodonQuery.isSuccess || mastodonQuery.isError ) &&
-		( ! fediverseEnabled || fediverseQuery.isSuccess || fediverseQuery.isError );
-	const hasError =
-		atmosphereQuery.isError ||
-		mastodonQuery.isError ||
-		( fediverseEnabled && fediverseQuery.isError );
+		( fediverseQuery.isSuccess || fediverseQuery.isError );
+	const hasError = atmosphereQuery.isError || mastodonQuery.isError || fediverseQuery.isError;
 	const showEmptyHint = shouldFetch && hasSettled && ! hasError && connections.length === 0;
 	const showErrorHint = shouldFetch && hasError && connections.length === 0;
 
@@ -195,6 +188,32 @@ function ReaderSidebarConnections( { path }: Props ) {
 
 	const recordAddAccountClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_connections_add_account_clicked' ) );
+	};
+
+	let connectionsToShow = connections.slice( 0, CONNECTION_DISPLAY_CUTOFF );
+
+	// Keep the currently active connection visible even when it falls
+	// outside the cutoff, so the user never loses the row representing
+	// the page they're on.
+	if ( active ) {
+		const activeConnection = connections.find(
+			( c ) => c.protocol === active.protocol && c.id === active.id
+		);
+		if ( activeConnection && ! connectionsToShow.includes( activeConnection ) ) {
+			connectionsToShow = [ ...connectionsToShow, activeConnection ];
+		}
+	}
+
+	// Compare against what we actually render: if active-preservation
+	// already surfaced the overflow row, there's nothing left to reveal.
+	const hasMoreConnections = connections.length > connectionsToShow.length;
+
+	const recordViewMoreClick = () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_sidebar_connections_view_more_clicked', {
+				connections_total_count: connections.length,
+			} )
+		);
 	};
 
 	const handleMainClick = () => {
@@ -227,7 +246,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 				materialIcon={ null }
 				materialIconStyle={ null }
 			>
-				{ connections.map( ( connection ) => (
+				{ connectionsToShow.map( ( connection ) => (
 					<ConnectionMenuItem
 						key={ `${ connection.protocol }-${ connection.id }` }
 						connection={ connection }
@@ -235,8 +254,19 @@ function ReaderSidebarConnections( { path }: Props ) {
 						onClick={ () => recordConnectionClick( connection ) }
 					/>
 				) ) }
+				{ hasMoreConnections && (
+					<MenuItem selected={ false }>
+						<MenuItemLink
+							className="view-more-link"
+							href={ BASE_PATH }
+							onClick={ recordViewMoreClick }
+						>
+							<span>{ translate( 'View More' ) }</span>
+						</MenuItemLink>
+					</MenuItem>
+				) }
 				{ showEmptyHint && (
-					<li className="sidebar-connections__empty" aria-live="polite">
+					<li className="screen-reader-text">
 						{ translate( 'Nothing here yet — connect one below.' ) }
 					</li>
 				) }

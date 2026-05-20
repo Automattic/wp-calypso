@@ -34,7 +34,9 @@ export function AtmosphereConnectView() {
 			<DocumentHead title={ translate( 'Connect account ‹ ATmosphere ‹ Reader' ) } />
 			<NavigationHeader
 				title={ title }
-				subtitle={ translate( 'Bring your Bluesky account into the Reader.' ) }
+				subtitle={ translate(
+					'Bring your Bluesky account into the Reader, from bsky.social or any other ATproto server.'
+				) }
 			/>
 			<VStack spacing={ 4 } className="atmosphere-view__body">
 				<ConnectForm

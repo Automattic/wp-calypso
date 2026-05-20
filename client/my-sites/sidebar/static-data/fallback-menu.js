@@ -569,9 +569,9 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'options-podcasting.php',
 					slug: 'options-podcasting-php',
-					title: translate( 'Podcasting' ),
+					title: translate( 'Podcast' ),
 					type: 'submenu-item',
-					url: `/settings/podcasting/${ siteDomain }`,
+					url: `https://${ siteDomain }/wp-admin/admin.php?page=jetpack-podcast`,
 				},
 				{
 					parent: 'options-general.php',

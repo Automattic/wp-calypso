@@ -13,7 +13,11 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { agentStudioContext, agentStudioProjectContext } from '../agent-studio/controller';
+import {
+	agentStudioBriefContext,
+	agentStudioContext,
+	agentStudioProjectContext,
+} from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
 	aiMcpConnectContext,
@@ -38,6 +42,13 @@ export default function () {
 			A4A_AGENT_STUDIO_LINK,
 			requireAccessContext,
 			agentStudioContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			`${ A4A_AGENT_STUDIO_LINK }/agents/:agentId/new`,
+			requireAccessContext,
+			agentStudioBriefContext,
 			makeLayout,
 			clientRender
 		);
@@ -72,5 +83,7 @@ export default function () {
 		);
 	}
 
-	page( A4A_RESOURCES_LINK, () => page.redirect( A4A_LEARN_LINK ) );
+	page( A4A_RESOURCES_LINK, () =>
+		page.redirect( isEnabled( 'a4a-agent-studio' ) ? A4A_AGENT_STUDIO_LINK : A4A_LEARN_LINK )
+	);
 }

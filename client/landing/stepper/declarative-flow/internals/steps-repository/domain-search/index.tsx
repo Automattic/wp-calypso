@@ -43,6 +43,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
@@ -95,6 +96,7 @@ const DomainSearchStep: StepType< {
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -442,13 +444,18 @@ const DomainSearchStep: StepType< {
 			//     empty-state card is hidden — see style.scss).
 			// On desktop empty state, the link stays hidden and the
 			// in-body card carries the same CTA.
-			if ( ! query && ! isMobileViewport ) {
+			const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
+
+			if ( ! stepCounter && ! showUseMyDomain ) {
 				return;
 			}
 
 			return (
 				<>
-					{ config.allowsUsingOwnDomain && (
+					{ stepCounter && (
+						<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
+					) }
+					{ showUseMyDomain && (
 						<Step.LinkButton
 							onClick={ () => {
 								// Mobile empty state replaced the in-body card,
@@ -482,7 +489,16 @@ const DomainSearchStep: StepType< {
 				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				heading={
+					// On mobile, once the user has searched the persistent fixed
+					// search overlay (rendered by @automattic/domain-search) is the
+					// page's primary affordance — the H1/subText are dropped so
+					// high-quality results can fill the limited vertical space.
+					// The empty/initial state keeps the heading on mobile.
+					isMobileViewport && query ? undefined : (
+						<Step.Heading text={ headerText } subText={ subHeaderText } />
+					)
+				}
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>

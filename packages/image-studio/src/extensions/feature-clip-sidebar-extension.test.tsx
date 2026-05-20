@@ -13,6 +13,7 @@ const mockRegisterPlugin = jest.fn();
 const mockTrackOpened = jest.fn();
 const mockTrackAddedToPost = jest.fn();
 const mockTrackPanelViewed = jest.fn();
+const mockFill = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -55,6 +56,15 @@ jest.mock( '@wordpress/components', () => ( {
 			{ children ?? icon }
 		</button>
 	),
+	// Faithful to real SlotFill semantics: a Fill with no matching Slot
+	// mounted (none in jsdom) renders nothing. Recording the name lets us
+	// assert the Jetpack-sidebar wiring without duplicating the body in the
+	// DOM (which would break every single-match query below).
+	Fill: ( { name }: { name: string } ) => {
+		mockFill( name );
+		return null;
+	},
+	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
@@ -192,6 +202,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockTrackOpened.mockClear();
 		mockTrackAddedToPost.mockClear();
 		mockTrackPanelViewed.mockClear();
+		mockFill.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -244,6 +255,38 @@ describe( 'feature-clip-sidebar-extension', () => {
 
 		expect( mockRegisterPlugin ).toHaveBeenCalledTimes( 1 );
 		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'image-studio-feature-clip' );
+	} );
+
+	describe( 'dual-render (document + Jetpack sidebars)', () => {
+		it( 'also fills the Jetpack sidebar SlotFill', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			// The document-sidebar copy is asserted by every other test; this
+			// confirms the second render target — Jetpack's sidebar slot.
+			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+		} );
+
+		it( 'fills the Jetpack sidebar regardless of clip state', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = {
+				id: 42,
+				source_url: 'https://example.com/clip.mp4',
+				mime_type: 'video/mp4',
+				media_details: { length: 8 },
+			};
+			mockHasResolvedMedia = true;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+		} );
+
+		it( 'fires the panel-viewed impression only once despite dual-render', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			// Both wrappers share one FeatureClipPanel mount, so the
+			// impression must not double-count.
+			expect( mockTrackPanelViewed ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 
 	describe( 'empty state (no clip linked)', () => {

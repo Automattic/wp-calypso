@@ -1,15 +1,20 @@
 /**
  * "Generate Feature Clip" post-editor sidebar panel.
  *
- * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
- * Gutenberg post editor. When no clip is linked to the post, shows a short
- * description + Generate clip button. Once a clip exists (via the
- * `_jetpack_feature_clip_id` post meta registered by Jetpack's Image Studio
- * extension), shows a small video preview, a share row mirroring the modal,
- * and a Regenerate button.
+ * Dual-rendered, mirroring Jetpack SEO's pattern: the same body renders into
+ * BOTH the default WordPress document sidebar (via `PluginDocumentSettingPanel`
+ * from `@wordpress/editor`) AND the Jetpack sidebar (via a `Fill` into
+ * Jetpack's `"JetpackPluginSidebar"` SlotFill). The Fill is inert when the
+ * Jetpack editor bundle isn't loaded, so the document-sidebar copy always
+ * shows and the Jetpack-sidebar copy is purely additive.
+ *
+ * When no clip is linked to the post, shows a short description + Generate
+ * clip button. Once a clip exists (via the `_jetpack_feature_clip_id` post
+ * meta registered by Jetpack's Image Studio extension), shows a small video
+ * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button } from '@wordpress/components';
+import { Button, Fill, PanelBody } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
@@ -272,30 +277,49 @@ function FeatureClipPanel(): JSX.Element {
 	// reload doesn't briefly flash the empty CTA before the preview appears.
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
 
+	// Body is described once and rendered into both sidebars. Each SlotFill
+	// portal instantiates its own subtree, so FeatureClipPreview's share
+	// hooks get one instance per sidebar — safe: the hooks have no
+	// mount-time side effects and only the visible sidebar is interacted
+	// with (same dual-instance shape as Jetpack SEO's shared panels).
+	const body = ( () => {
+		if ( hasUsableClip ) {
+			return (
+				<FeatureClipPreview
+					videoUrl={ videoUrl }
+					attachmentId={ featureClipId }
+					durationSeconds={ durationSeconds }
+				/>
+			);
+		}
+		if ( isResolvingAttachment ) {
+			return null;
+		}
+		return <FeatureClipEmptyState />;
+	} )();
+
 	return (
-		<PluginDocumentSettingPanel
-			name={ PANEL_NAME }
-			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-			// the badge must live in the title row so it stays visible when the panel is collapsed.
-			title={ titleNode as unknown as string }
-			className="image-studio-feature-clip-panel"
-		>
-			{ ( () => {
-				if ( hasUsableClip ) {
-					return (
-						<FeatureClipPreview
-							videoUrl={ videoUrl }
-							attachmentId={ featureClipId }
-							durationSeconds={ durationSeconds }
-						/>
-					);
-				}
-				if ( isResolvingAttachment ) {
-					return null;
-				}
-				return <FeatureClipEmptyState />;
-			} )() }
-		</PluginDocumentSettingPanel>
+		<>
+			<PluginDocumentSettingPanel
+				name={ PANEL_NAME }
+				// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+				// the badge must live in the title row so it stays visible when the panel is collapsed.
+				title={ titleNode as unknown as string }
+				className="image-studio-feature-clip-panel"
+			>
+				{ body }
+			</PluginDocumentSettingPanel>
+			<Fill name="JetpackPluginSidebar">
+				<PanelBody
+					// PanelBody.title is typed as string but renders any ReactNode
+					// at runtime — same cast rationale as the document panel above.
+					title={ titleNode as unknown as string }
+					className="image-studio-feature-clip-panel"
+				>
+					{ body }
+				</PanelBody>
+			</Fill>
+		</>
 	);
 }
 

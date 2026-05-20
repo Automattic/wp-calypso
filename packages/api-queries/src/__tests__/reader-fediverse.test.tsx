@@ -25,6 +25,7 @@ import {
 	followFediverseActorMutation,
 	normalizeFediverseActor,
 	unfollowFediverseActorMutation,
+	useFediverseNotificationsInfiniteQuery,
 } from '../reader-fediverse';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -604,5 +605,148 @@ describe( 'createFediversePostMutation', () => {
 		await act( async () => {
 			await Promise.all( [ firstSubmit, secondSubmit ] );
 		} );
+	} );
+} );
+
+describe( 'useFediverseNotificationsInfiniteQuery', () => {
+	const PATH = '/wpcom/v2/reader/fediverse/connections/42/notifications';
+
+	function createWrapper() {
+		const client = new QueryClient( {
+			defaultOptions: { queries: { retry: false } },
+		} );
+		return makeWrapper( client );
+	}
+
+	// Touch tracked properties inside the render callback so React Query's
+	// `notifyOnChangeProps: 'tracked'` observer fires on later updates.
+	// Without this, `fetchNextPage()` resolves but the rendered `data` /
+	// `hasNextPage` lag, producing flaky pagination assertions. Mirrors
+	// the mastodon notifications-query helper.
+	const renderNotificationsHook = (
+		connectionId: number,
+		wrapper: ReturnType< typeof createWrapper >
+	) =>
+		renderHook(
+			() => {
+				const q = useFediverseNotificationsInfiniteQuery( connectionId );
+				void q.data;
+				void q.hasNextPage;
+				void q.isFetchingNextPage;
+				void q.isError;
+				void q.error;
+				return q;
+			},
+			{ wrapper }
+		);
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'is disabled when connectionId is 0', () => {
+		const { result } = renderNotificationsHook( 0, createWrapper() );
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+		expect( result.current.data ).toBeUndefined();
+	} );
+
+	it( 'fetches the first page on mount', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, {
+			items: [],
+			next_cursor: null,
+			seen_at: null,
+		} );
+		const { result } = renderNotificationsHook( 42, createWrapper() );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.pages[ 0 ].items ).toEqual( [] );
+	} );
+
+	it( 'paginates via next_cursor returned by the previous page', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, {
+			items: [],
+			next_cursor: 'page-2',
+			seen_at: null,
+		} );
+		nock( BASE )
+			.get( PATH )
+			.query( { cursor: 'page-2' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderNotificationsHook( 42, createWrapper() );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		await act( async () => {
+			await result.current.fetchNextPage();
+		} );
+		expect( result.current.data?.pages.length ).toBe( 2 );
+		expect( result.current.hasNextPage ).toBe( false );
+	} );
+
+	it( 'does not retry terminal errors', async () => {
+		// Mirror the timeline test policy: auth_required is terminal — no
+		// extra requests beyond the first. nock would throw if a retry
+		// happened (only one interceptor registered).
+		nock( BASE ).get( PATH ).query( {} ).reply( 401, {
+			code: 'reader_fediverse_auth_required',
+		} );
+		const { result } = renderNotificationsHook( 42, createWrapper() );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+		expect( ( result.current.error as { kind: string } ).kind ).toBe( 'auth_required' );
+	} );
+} );
+
+describe( 'useFediverseNotificationsInfiniteQuery — filter', () => {
+	let wrapper: ReturnType< typeof makeWrapper >;
+
+	beforeEach( () => {
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		wrapper = makeWrapper( client );
+	} );
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'forwards filter as types= query param', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderHook(
+			() => useFediverseNotificationsInfiniteQuery( 101, { filter: 'likes' } ),
+			{ wrapper }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'omits types= when filter is "all"', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderHook(
+			() => useFediverseNotificationsInfiniteQuery( 101, { filter: 'all' } ),
+			{ wrapper }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'each filter caches under its own query key', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result, rerender } = renderHook(
+			( { filter }: { filter: 'all' | 'likes' } ) =>
+				useFediverseNotificationsInfiniteQuery( 101, { filter } ),
+			{ wrapper, initialProps: { filter: 'all' as const } }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		rerender( { filter: 'likes' as const } );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( nock.isDone() ).toBe( true );
 	} );
 } );

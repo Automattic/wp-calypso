@@ -4,6 +4,7 @@ import { Button, Dropdown, ToggleControl } from '@wordpress/components';
 import { settings } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import useSetAchievementsVisibility from 'calypso/reader/components/achievements/use-set-achievements-visibility';
 import { recordAction } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -30,40 +31,15 @@ export default function AchievementsSettings() {
 		[ savedNotifications ]
 	);
 
-	const { mutate: setVisibility, isPending: isSetVisibilityPending } = useMutation(
-		userPreferenceOptimisticMutation( 'achievements-visibility' )
-	);
-	const { mutate: setNotifications, isPending: isSetNotificationsPending } = useMutation(
+	const { setVisibility } = useSetAchievementsVisibility();
+	const { mutate: setNotifications } = useMutation(
 		userPreferenceOptimisticMutation( 'achievements-global-notifications' )
 	);
 
 	const handleSetVisibility = ( checked: boolean ) => {
 		const newVisibility = checked ? 'public' : 'private';
 		setLocalVisibility( newVisibility );
-		setVisibility( newVisibility, {
-			onSuccess() {
-				dispatch(
-					successNotice(
-						newVisibility === 'public'
-							? translate( 'Your achievements page is now public.' )
-							: translate( 'Your achievements page is now private.' ),
-						{ duration: 4000 }
-					)
-				);
-				recordAction( `set_achievements_visibility_${ newVisibility }` );
-				recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-					setting: 'achievements-visibility',
-					value: newVisibility,
-				} );
-			},
-			onError() {
-				dispatch(
-					errorNotice( translate( 'Failed to save the achievements visibility settings.' ), {
-						duration: 4000,
-					} )
-				);
-			},
-		} );
+		setVisibility( newVisibility );
 	};
 
 	const handleSetNotifications = ( checked: boolean ) => {
@@ -122,14 +98,12 @@ export default function AchievementsSettings() {
 				<div className="achievements-settings__content">
 					<ToggleControl
 						checked={ visibility === 'public' }
-						disabled={ isSetVisibilityPending }
 						onChange={ handleSetVisibility }
 						label={ translate( 'Public achievements' ) }
 						help={ translate( 'When enabled, your achievements page is visible to other users.' ) }
 					/>
 					<ToggleControl
 						checked={ notifications !== 'disabled' }
-						disabled={ isSetNotificationsPending }
 						onChange={ handleSetNotifications }
 						label={ translate( 'Achievement notifications' ) }
 						help={ translate(

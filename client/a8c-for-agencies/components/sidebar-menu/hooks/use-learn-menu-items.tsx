@@ -20,36 +20,22 @@ const useLearnMenuItems = ( path: string ) => {
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
 
 	const menuItems = useMemo( () => {
-		const items = [
-			createItem(
-				{
-					icon: pages,
-					path: A4A_RESOURCES_LINK,
-					link: A4A_LEARN_LINK,
-					title: translate( 'Learn' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resources and tools / Learn',
-					},
-				},
-				path
-			),
-			...( isAgentStudioEnabled
-				? [
-						createItem(
-							{
-								icon: brush,
-								path: A4A_AGENT_STUDIO_LINK,
-								link: A4A_AGENT_STUDIO_LINK,
-								title: translate( 'Agent studio' ),
-								trackEventProps: {
-									menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
-								},
+		const items = isAgentStudioEnabled
+			? [
+					createItem(
+						{
+							icon: brush,
+							path: A4A_AGENT_STUDIO_LINK,
+							link: A4A_AGENT_STUDIO_LINK,
+							title: translate( 'Agent studio' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
 							},
-							path
-						),
-				  ]
-				: [] ),
-		];
+						},
+						path
+					),
+			  ]
+			: [];
 
 		if ( isBenchmarksEnabled ) {
 			items.push(
@@ -94,6 +80,21 @@ const useLearnMenuItems = ( path: string ) => {
 					title: translate( 'Developer tools' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
+					},
+				},
+				path
+			)
+		);
+
+		items.push(
+			createItem(
+				{
+					icon: pages,
+					path: A4A_RESOURCES_LINK,
+					link: A4A_LEARN_LINK,
+					title: translate( 'Learn' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Resources and tools / Learn',
 					},
 				},
 				path
