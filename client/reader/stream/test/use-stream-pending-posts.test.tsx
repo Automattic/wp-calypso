@@ -7,6 +7,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
 import initialReducer from 'calypso/state/reducer';
 import { useStreamPendingPosts } from '../use-stream-pending-posts';
 import { type PostKey } from '../use-stream-posts';
@@ -38,6 +39,7 @@ interface ApiPost {
 	site_ID: number;
 	URL?: string;
 	date_liked?: string;
+	content?: string;
 }
 
 function apiPost( id: number ): ApiPost {
@@ -46,6 +48,7 @@ function apiPost( id: number ): ApiPost {
 		site_ID: 100,
 		URL: `https://example.com/post-${ id }`,
 		date_liked: `2026-04-${ String( id ).padStart( 2, '0' ) }T00:00:00Z`,
+		content: `<p>Pending post ${ id }</p>`,
 	};
 }
 
@@ -113,6 +116,12 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 		expect( result.current.hasPendingPosts ).toBe( true );
+		expect( getCachedReaderPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
+			ID: 1,
+			site_ID: 100,
+			content_no_html: 'Pending post 1',
+			better_excerpt_no_html: 'Pending post 1',
+		} );
 	} );
 
 	it( 'hasPendingPosts is false when there are no pending items', async () => {
