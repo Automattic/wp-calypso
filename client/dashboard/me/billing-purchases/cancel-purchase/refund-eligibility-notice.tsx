@@ -25,21 +25,25 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 
 	if ( props.mode === 'refund-eligibility' ) {
 		return (
-			<Notice variant="info">
+			<Notice
+				variant="info"
+				actions={
+					<Link
+						to={ cancelPurchaseRoute.fullPath }
+						params={ { purchaseId: String( purchase.ID ) } }
+						search={ { intent: 'remove' as const } }
+					>
+						{ __( 'Remove plan and claim refund.' ) }
+					</Link>
+				}
+			>
 				{ sprintf(
 					/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
 					__(
 						'You’re eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away.'
 					),
 					{ refundAmount }
-				) }{ ' ' }
-				<Link
-					to={ cancelPurchaseRoute.fullPath }
-					params={ { purchaseId: String( purchase.ID ) } }
-					search={ { intent: 'remove' as const } }
-				>
-					{ __( 'Remove plan and claim refund.' ) }
-				</Link>
+				) }
 			</Notice>
 		);
 	}
