@@ -495,3 +495,9 @@ On the no-PR path (Healer flagged a product bug, or the user declined to push), 
 > Healer reported a product bug — no PR opened. Worktree and branch cleaned up.
 
 Stop.
+
+## Maintenance helpers
+
+Lives next to the skill but not part of its runtime flow:
+
+- [`baseline-failures.sh`](baseline-failures.sh) — counts failed E2E builds on TeamCity over a trailing window (default 30 days; override with `DAYS=14 ./baseline-failures.sh`). Run periodically to see if the skill is moving the needle on E2E reliability. Reuses the same token + connectivity probe as `identify-failing-tests.sh`.
