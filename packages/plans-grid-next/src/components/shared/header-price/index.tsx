@@ -132,7 +132,10 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
-		const compareToMonthlyPrice = originalPrice.monthly ?? 0;
+		const compareToMonthlyPrice =
+			( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing
+				? termVariantPricing.originalPrice.monthly
+				: originalPrice.monthly ) ?? 0;
 		const monthlyPrice =
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
