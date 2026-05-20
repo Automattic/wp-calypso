@@ -19,6 +19,7 @@ const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',
 	wix: 'Wix',
 	blogger: 'Blogger',
+	instagram: 'Instagram',
 	medium: 'Medium',
 	'godaddy-central': 'GoDaddy Central',
 	tumblr: 'Tumblr',
