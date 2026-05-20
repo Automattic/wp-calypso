@@ -1,8 +1,13 @@
 import { readRelatedPostsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { ComponentType } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ComponentType, useEffect, useMemo } from 'react';
+import {
+	normalizeReaderPostsForCache,
+	syncReaderPostCache,
+} from 'calypso/reader/data/reader-post-cache-sync';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import type { ReadRelatedPostsScope } from '@automattic/api-core';
+import type { ReaderPostCachePost } from 'calypso/reader/data/reader-post-cache';
 
 export interface WithReaderRelatedPostsOwnProps {
 	siteId: number;
@@ -10,7 +15,7 @@ export interface WithReaderRelatedPostsOwnProps {
 }
 
 export interface WithReaderRelatedPostsInjectedProps {
-	posts: Array< { global_ID: string } > | undefined;
+	posts: ReaderPostCachePost[] | undefined;
 }
 
 /**
@@ -32,18 +37,33 @@ export function withReaderRelatedPosts( scope: ReadRelatedPostsScope ) {
 			props: Omit< P, keyof WithReaderRelatedPostsInjectedProps > & WithReaderRelatedPostsOwnProps
 		) {
 			const { siteId, postId, ...rest } = props;
+			const queryClient = useQueryClient();
 			const contentWidth = readerContentWidth();
 			const { data, isError } = useQuery(
 				readRelatedPostsQuery( siteId, postId, scope, 2, contentWidth )
 			);
-			const fetchedPosts = data?.posts;
+			const fetchedPosts = useMemo(
+				() => normalizeReaderPostsForCache( data?.posts ?? [] ),
+				[ data?.posts ]
+			);
+
+			useEffect( () => {
+				if ( data?.posts?.length ) {
+					syncReaderPostCache( queryClient, data.posts );
+				}
+			}, [ data?.posts, queryClient ] );
 
 			// Keep cached posts visible across transient refetch errors.
-			if ( isError && ! fetchedPosts ) {
+			if ( isError && fetchedPosts.length === 0 ) {
 				return null;
 			}
 
-			return <WrappedComponent { ...( rest as unknown as P ) } posts={ fetchedPosts } />;
+			return (
+				<WrappedComponent
+					{ ...( rest as unknown as P ) }
+					posts={ fetchedPosts.length > 0 ? fetchedPosts : undefined }
+				/>
+			);
 		}
 
 		WithReaderRelatedPosts.displayName = `withReaderRelatedPosts(${ scope })(${ displayName })`;

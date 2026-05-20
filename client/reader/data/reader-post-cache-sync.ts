@@ -1,8 +1,12 @@
+import { fetchReadPost } from '@automattic/api-core';
 import { postLikesQuery } from '@automattic/api-queries';
+import readerContentWidth from 'calypso/reader/lib/content-width';
+import { keyForPost } from 'calypso/reader/post-key';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { runFastRules, runSlowRules } from 'calypso/state/reader/posts/normalization-rules';
 import { ReaderPostCachePost, upsertReaderPostCache } from './reader-post-cache';
+import type { ReadPostKey } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Dispatch } from 'redux';
 
@@ -55,26 +59,59 @@ const seedPostLikesQueries = (
 
 const hideRejections = ( promise: Promise< ReaderPostCachePost > ) => promise.catch( () => null );
 
-const normalizeReaderPosts = ( posts: Array< ReaderPostCachePost | null | undefined > ) =>
+export const normalizeReaderPostsForCache = (
+	posts: Array< ReaderPostCachePost | null | undefined >
+) =>
 	posts
 		.filter( Boolean )
 		.filter( ( post ) => ! post?._should_reload )
 		.map( ( post ) => runFastRules( post ) as ReaderPostCachePost );
 
-export const syncReaderPostCache = (
+export const syncNormalizedReaderPostCache = (
 	queryClient: QueryClient,
-	posts: Array< ReaderPostCachePost | null | undefined >
+	normalizedPosts: Array< ReaderPostCachePost | null | undefined >
 ) => {
-	const normalizedPosts = normalizeReaderPosts( posts );
 	upsertReaderPostCache( queryClient, normalizedPosts );
 	seedPostLikesQueries( queryClient, normalizedPosts );
+};
+
+function reloadReaderPostIntoCache( queryClient: QueryClient, post: ReaderPostCachePost ) {
+	const railcar = post.railcar;
+	const postKey = keyForPost( post ) as ReadPostKey;
+
+	if (
+		! postKey?.postId ||
+		( ! ( 'blogId' in postKey && postKey.blogId ) && ! ( 'feedId' in postKey && postKey.feedId ) )
+	) {
+		return;
+	}
+
+	void fetchReadPost( postKey, readerContentWidth() )
+		.then( ( data ) =>
+			syncReaderPostCache( queryClient, [ { ...data, ...( railcar ? { railcar } : {} ) } ] )
+		)
+		.catch( () => null );
+}
+
+export function syncReaderPostCache(
+	queryClient: QueryClient,
+	posts: Array< ReaderPostCachePost | null | undefined >
+) {
+	posts
+		.filter( ( post ) => post?._should_reload )
+		.forEach( ( post ) => {
+			reloadReaderPostIntoCache( queryClient, post as ReaderPostCachePost );
+		} );
+
+	const normalizedPosts = normalizeReaderPostsForCache( posts );
+	syncNormalizedReaderPostCache( queryClient, normalizedPosts );
 
 	void Promise.all(
 		normalizedPosts.map( ( post ) => hideRejections( runSlowRules( post ) ) )
 	).then( ( processedPosts ) => {
-		upsertReaderPostCache( queryClient, processedPosts.filter( Boolean ) );
+		syncNormalizedReaderPostCache( queryClient, processedPosts.filter( Boolean ) );
 	} );
-};
+}
 
 export const syncReaderConversationFollowStatus = (
 	dispatch: Dispatch,

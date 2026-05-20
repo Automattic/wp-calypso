@@ -12,7 +12,7 @@ import {
 	updateCachedReaderPost,
 	updateCachedReaderPostsMatching,
 } from './reader-post-cache';
-import { syncReaderPostCache } from './reader-post-cache-sync';
+import { syncNormalizedReaderPostCache } from './reader-post-cache-sync';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
@@ -80,7 +80,7 @@ export const createReaderPostCacheMiddleware =
 				patchConversationState( queryClient, readerAction );
 				break;
 			case READER_POSTS_RECEIVE:
-				syncReaderPostCache( queryClient, readerAction.posts ?? [] );
+				syncNormalizedReaderPostCache( queryClient, readerAction.posts ?? [] );
 				break;
 		}
 

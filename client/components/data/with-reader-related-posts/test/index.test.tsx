@@ -8,15 +8,20 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { withReaderRelatedPosts, WithReaderRelatedPostsInjectedProps } from '../index';
 
 const mockPosts = [
-	{ ID: 11, site_ID: 1, global_ID: 'g11' },
-	{ ID: 12, site_ID: 1, global_ID: 'g12' },
+	{
+		ID: 11,
+		site_ID: 1,
+		global_ID: 'g11',
+		content: '<p>First <strong>related</strong> post</p>',
+	},
+	{ ID: 12, site_ID: 1, global_ID: 'g12', content: '<p>Second related post</p>' },
 ];
 
 const TestComponent = ( { posts }: WithReaderRelatedPostsInjectedProps ) => {
 	if ( ! posts ) {
 		return <div>loading</div>;
 	}
-	return <>{ posts.map( ( post ) => post.global_ID ).join( ',' ) }</>;
+	return <>{ posts.map( ( post ) => post.better_excerpt_no_html ).join( ',' ) }</>;
 };
 
 const SameSite = withReaderRelatedPosts( 'same' )( TestComponent );
@@ -47,7 +52,7 @@ describe( 'withReaderRelatedPosts', () => {
 		} );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'g11,g12' ) ).toBeVisible();
+			expect( screen.getByText( 'First related post,Second related post' ) ).toBeVisible();
 		} );
 	} );
 

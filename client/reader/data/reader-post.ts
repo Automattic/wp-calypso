@@ -1,10 +1,14 @@
 import { readerPostQuery } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
 import { useCachedReaderPost } from './reader-post-cache';
-import { syncReaderConversationFollowStatus, syncReaderPostCache } from './reader-post-cache-sync';
+import {
+	normalizeReaderPostsForCache,
+	syncReaderConversationFollowStatus,
+	syncReaderPostCache,
+} from './reader-post-cache-sync';
 import type { ReaderPostCachePost } from './reader-post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -59,6 +63,10 @@ export const useReaderPost = (
 		...queryOptions,
 		enabled: queryOptions.enabled !== false && shouldFetch,
 	} );
+	const normalizedQueryPost = useMemo(
+		() => ( query.data ? normalizeReaderPostsForCache( [ query.data ] )[ 0 ] : undefined ),
+		[ query.data ]
+	);
 
 	useEffect( () => {
 		if ( query.data ) {
@@ -76,6 +84,6 @@ export const useReaderPost = (
 
 	return {
 		...query,
-		data: cachedPost ?? query.data,
+		data: cachedPost ?? normalizedQueryPost,
 	};
 };

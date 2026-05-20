@@ -191,7 +191,13 @@ describe( 'useReaderPost', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toMatchObject( {
-				data: { ID: 2, site_ID: 1, content: '<p>full</p>' },
+				data: {
+					ID: 2,
+					site_ID: 1,
+					content: '<p>full</p>',
+					content_no_html: 'full',
+					better_excerpt_no_html: 'full',
+				},
 				isLoading: false,
 				isError: false,
 			} );
