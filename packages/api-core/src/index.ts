@@ -72,6 +72,7 @@ export * from './odie';
 export * from './p2';
 export * from './payment-methods';
 export * from './plugins';
+export * from './post-likes';
 export * from './products';
 export * from './plans';
 export * from './read-achievements';

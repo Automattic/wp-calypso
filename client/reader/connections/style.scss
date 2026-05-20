@@ -523,16 +523,3 @@
 	color: var( --color-text-subtle );
 }
 
-.social-empty__cta {
-	display: inline-block;
-	padding: 8px 16px;
-	background-color: var( --color-primary );
-	color: var( --color-surface );
-	border-radius: 4px;
-	text-decoration: none;
-	font-weight: 500;
-
-	&:hover {
-		background-color: var( --color-primary-dark );
-	}
-}

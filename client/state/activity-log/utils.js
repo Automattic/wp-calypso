@@ -4,6 +4,7 @@ export const filterStateToApiQuery = ( filter, addAggregate = true ) => {
 		// by default, we'll tell the api to create aggregate events
 		addAggregate && { aggregate: filter.aggregate ?? true },
 		filter.action && { action: filter.action },
+		filter.actor && { actor: filter.actor },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
 		filter.before && { before: filter.before },
@@ -22,6 +23,7 @@ export const filterStateToQuery = ( filter ) =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
+		filter.actor && { actor: filter.actor.join( ',' ) },
 		typeof filter.aggregate !== 'undefined' && { aggregate: filter.aggregate },
 		filter.backButton && { back_button: true },
 		filter.on && { on: filter.on },
@@ -40,6 +42,7 @@ export const queryToFilterState = ( query ) =>
 	Object.assign(
 		{},
 		query.action && { action: decodeURI( query.action ).split( ',' ) },
+		query.actor && { actor: decodeURI( query.actor ).split( ',' ) },
 		typeof query.aggregate !== 'undefined' && { aggregate: query.aggregate },
 		query.on && { on: query.on },
 		query.after && { after: query.after },

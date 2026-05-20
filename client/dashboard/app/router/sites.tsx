@@ -624,8 +624,8 @@ export const sitePerformanceBackendIndexRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmOverviewQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmOverviewQuery( site.ID ) );
+		const { siteApmAggregateQuery } = await import( '@automattic/api-queries' );
+		await queryClient.ensureQueryData( siteApmAggregateQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>

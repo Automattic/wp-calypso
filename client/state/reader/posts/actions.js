@@ -5,7 +5,6 @@ import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { keyForPost } from 'calypso/reader/post-key';
 import { pageViewForPost } from 'calypso/reader/stats';
-import { receiveLikes } from 'calypso/state/posts/likes/actions';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import { hasPostBeenSeen } from './selectors';
@@ -35,18 +34,6 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 	toReload.forEach( ( post ) => dispatch( reloadPost( post ) ) );
 
 	const normalizedPosts = toProcess.filter( Boolean ).map( runFastRules );
-
-	// dispatch post like additions before the posts. Cuts down on rerenders a bit.
-	forEach( normalizedPosts, ( post ) => {
-		if ( ! post.is_external ) {
-			dispatch(
-				receiveLikes( post.site_ID, post.ID, {
-					iLike: Boolean( post.i_like ),
-					found: +post.like_count,
-				} )
-			);
-		}
-	} );
 
 	// save the posts after running the fast rules
 	dispatch( {

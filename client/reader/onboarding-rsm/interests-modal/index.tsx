@@ -12,7 +12,10 @@ import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
+import {
+	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -29,6 +32,13 @@ import './style.scss';
 interface InterestsModalProps {
 	onContinue: () => void;
 	promptVerification: boolean;
+	// Whether the user has performed any subscribe action (individual tag
+	// follow or pack subscribe) during the current onboarding session. The
+	// parent owns this flag so it persists across remounts of this modal —
+	// e.g. user subscribes to a tagless pack, advances to discover, then uses
+	// Back; the relaxed Continue gate must still apply on return.
+	hasFollowed: boolean;
+	onFollowed: () => void;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
@@ -38,7 +48,12 @@ const MAX_INTEREST_TOPICS = 40;
 // provided by the parent (`ReaderOnboardingRsm`); this component is only
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`.
-const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVerification } ) => {
+const InterestsModal: React.FC< InterestsModalProps > = ( {
+	onContinue,
+	promptVerification,
+	hasFollowed,
+	onFollowed,
+} ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
@@ -125,7 +140,8 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		return followedBlogCount === pack.blogs.length;
 	};
 
-	const isContinueDisabled = followedTags.length < 3;
+	const isContinueDisabled =
+		followedTags.length < READER_ONBOARDING_MIN_FOLLOWED_TAGS && ! hasFollowed;
 
 	const handleTopicChange = async ( checked: boolean, tag: string ): Promise< boolean > => {
 		const existingOperation = inFlightTagOpsRef.current.get( tag );
@@ -134,6 +150,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		}
 
 		const operation = ( async (): Promise< boolean > => {
+			if ( checked ) {
+				onFollowed();
+			}
+
 			// Mark the tag as being processed.
 			setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
@@ -199,6 +219,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		}
 
 		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
+		onFollowed();
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
 			for ( const tag of pack.tags ) {
