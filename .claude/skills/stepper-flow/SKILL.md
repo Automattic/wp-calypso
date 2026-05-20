@@ -167,6 +167,11 @@ Use the FlowV2 pattern from AGENTS.md exactly. Rules:
 - For `STEPS.PROCESSING` submissions: check `providedDependencies?.processingResult === ProcessingResult.SUCCESS`. On success, redirect with `window.location.replace()`. On failure, `navigate('error')`.
 - Use `window.location.replace()` (not `.href`) to avoid a back-button loop after checkout or /home redirects.
 
+**If the flow uses `setPendingAction( () => createSite(...) )`** (any flow that creates a site via `STEPS.PROCESSING`):
+- Set `__experimentalUseSessions: true` on the flow object.
+- Import `useFlowState` and call `set( 'plans', providedDependencies )` in the `case 'plans'` branch of `submit` **before** calling `setPendingAction`.
+- This is non-optional: `useCreateSite()` reads `planCartItems` from `useFlowState().get('plans')` internally. Without these two changes, the site is created with no plan in the cart, and the processing step's `goToCheckout` will be `false` — silently breaking the checkout redirect.
+
 **If store-based customizations were requested** (e.g. intent, hide comparison table):
 Add the appropriate `dispatch( ONBOARD_STORE )` calls inside `initialize()` — see the
 "Store-based customizations" section of AGENTS.md for the full list.
@@ -216,8 +221,15 @@ Before browser testing, verify the generated code compiles:
 cd /path/to/wp-calypso && yarn typecheck-client 2>&1 | tail -20
 ```
 
+If `yarn typecheck-client` crashes with a V8 out-of-memory trace (long `InterpreterEntryTrampoline` stack), re-run with a larger heap and filter for actual errors:
+
+```bash
+NODE_OPTIONS="--max-old-space-size=8192" yarn typecheck-client 2>&1 | grep -E "(error TS|<flow-name>)" | head -30
+```
+
 If there are TypeScript errors in the generated files, fix them before continuing.
-Do not proceed to Phase 6 if the type check fails.
+Pre-existing errors elsewhere in the codebase (e.g. unrelated `Cannot find module` errors) are not a blocker — only fix errors that point at files you just created.
+Do not proceed to Phase 6 if the type check fails on your files.
 
 ---
 
@@ -271,8 +283,13 @@ When an issue is detected:
 1. Identify the root cause in the flow TypeScript file
    (wrong slug in a `case`, missing `navigate()`, bad `processingResult` check, etc.)
 2. Fix the file
-3. Re-run from 6c (navigate back to `/setup/<flow-name>` with a fresh test email)
-4. Repeat until the flow completes without errors or until 3 iterations have been
+3. **Log the previous test user out before retrying** — `stepsWithRequiredLogin` will skip the user step for an already-authenticated session and reuse the prior account, which defeats the "fresh test email" instruction below. Log out by navigating to:
+   ```
+   https://wordpress.com/wp-login.php?action=logout
+   ```
+   then click the "log out" confirmation link.
+4. Generate a fresh 8-hex test email and re-run from 6c (navigate back to `/setup/<flow-name>`).
+5. Repeat until the flow completes without errors or until 3 iterations have been
    attempted — if still failing after 3, document the remaining issue in the report
    and move on.
 
@@ -321,6 +338,15 @@ Use this structure:
 ```
 
 Save each screenshot alongside the report as `<step-slug>.png`.
+
+**Screenshot path constraint:** the `playwright-test` MCP server only writes screenshots inside its own output directory (`.playwright-mcp/` at the repo root). Passing an absolute path outside that directory fails. Workflow:
+
+1. When calling `browser_take_screenshot`, pass a relative filename like `ppc-test-plans.png` (no directory prefix). The file lands in `.playwright-mcp/`.
+2. After the walkthrough is done, copy the screenshots into the flow folder so the report's relative links resolve:
+   ```bash
+   cp .playwright-mcp/<flow-name>-*.png client/landing/stepper/declarative-flow/flows/<flow-name>/
+   ```
+3. Reference them from `TEST-REPORT.md` with relative paths (`./<flow-name>-plans.png`, etc.).
 
 ---
 
