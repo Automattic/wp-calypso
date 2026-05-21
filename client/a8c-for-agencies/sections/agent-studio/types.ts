@@ -69,8 +69,6 @@ export interface CreateAgentStudioOutputInput {
 	heroUrl?: string;
 }
 
-export type OnePagerContentField = 'title' | 'blurb';
-
 export interface AgentStudioService {
 	listProjects(): Promise< AgentStudioProjectSummary[] >;
 	getProject( projectId: string ): Promise< AgentStudioProject | undefined >;
@@ -83,5 +81,4 @@ export interface AgentStudioService {
 		agencyId?: number
 	): Promise< AgentStudioOutput >;
 	deleteOutput( outputId: string, agencyId?: number ): Promise< void >;
-	suggestOnePagerContent( brief: string, field: OnePagerContentField ): Promise< string >;
 }

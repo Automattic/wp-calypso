@@ -1,6 +1,6 @@
 /**
  * Real wpcom `AgentStudioService`. Falls back to the mock for project
- * CRUD and `suggestOnePagerContent` (no backend yet).
+ * CRUD (no backend yet).
  */
 import wpcom from 'calypso/lib/wp';
 import { mockAgentStudioService } from './mock-agent-studio-service';
@@ -137,9 +137,5 @@ export const wpcomAgentStudioService: AgentStudioService = {
 			apiNamespace: 'wpcom/v2',
 			path: `/agency/${ id }/a4a/runs/${ outputId }`,
 		} );
-	},
-
-	suggestOnePagerContent( brief: string, field ) {
-		return mockAgentStudioService.suggestOnePagerContent( brief, field );
 	},
 };
