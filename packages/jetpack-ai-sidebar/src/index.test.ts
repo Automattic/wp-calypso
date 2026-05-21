@@ -395,6 +395,28 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
+	it( 'does not start the selected block shimmer when a suggestion is only selected', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', 'b1' );
+		document.body.appendChild( blockEl );
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+	} );
+
 	it( 'starts the selected block shimmer when AM starts processing', () => {
 		jest.useFakeTimers();
 		installPostTypeMock( 'post' );

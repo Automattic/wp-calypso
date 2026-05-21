@@ -633,7 +633,6 @@ export function useSuggestions(): {
 		const handleSuggestionClick = ( event: Event ) => {
 			setHidden( true );
 			clearSuggestionsFn?.();
-			startBlockShimmer();
 
 			// AI Editorial Review output is too dense for the 350px sidebar.
 			// Auto-expand to 50vw on that suggestion only (matched by prompt).
