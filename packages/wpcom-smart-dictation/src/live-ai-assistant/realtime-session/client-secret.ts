@@ -16,8 +16,7 @@ interface FetchClientSecretArgs {
 
 interface DictationClientSecret {
 	value: string;
-	sessionId: string;
-	expiresAt: number;
+	remainingTimeSeconds: number;
 }
 
 export interface DictationRemainingTime {
@@ -51,27 +50,26 @@ declare global {
 
 function extractClientSecret( data: unknown ): DictationClientSecret {
 	const body = data as {
-		client_secret?: { value?: string };
-		session?: { id?: string };
-		expires_at?: number;
+		client_secret?: string | { value?: string };
+		remaining_time_seconds?: number;
 		value?: string;
 		token?: string;
 	};
-	const value = body.client_secret?.value ?? body.value ?? body.token ?? '';
-	const sessionId = body.session?.id ?? '';
-	const expiresAt = typeof body.expires_at === 'number' ? body.expires_at : 0;
+	const value =
+		typeof body.client_secret === 'string'
+			? body.client_secret
+			: body.client_secret?.value ?? body.value ?? body.token ?? '';
+	const remainingTimeSeconds =
+		typeof body.remaining_time_seconds === 'number' ? body.remaining_time_seconds : 0;
 
 	if ( ! value ) {
 		throw new Error( 'Dictation client secret endpoint returned no client secret.' );
 	}
-	if ( ! sessionId ) {
-		throw new Error( 'Dictation client secret endpoint returned no session id.' );
-	}
-	if ( ! expiresAt ) {
-		throw new Error( 'Dictation client secret endpoint returned no expiration timestamp.' );
+	if ( ! remainingTimeSeconds ) {
+		throw new Error( 'Dictation client secret endpoint returned no remaining time.' );
 	}
 
-	return { value, sessionId, expiresAt };
+	return { value, remainingTimeSeconds };
 }
 
 function extractRemainingTime( data: unknown ): DictationRemainingTime {
@@ -144,33 +142,26 @@ export async function fetchRemainingTime(): Promise< DictationRemainingTime > {
 	return extractRemainingTime( response );
 }
 
-export async function settleClientSecretSession( sessionId: string ): Promise< void > {
-	if ( ! sessionId ) {
-		return;
-	}
-
+export async function settleClientSecretSession(): Promise< void > {
 	await wpcomRequest( {
 		path: DICTATION_CLIENT_SECRET_SETTLE_PATH,
 		method: 'POST',
 		apiNamespace: 'wpcom/v2',
-		body: {
-			session_id: sessionId,
-		},
 	} );
 }
 
-export function settleClientSecretSessionOnUnload( sessionId: string ): boolean {
-	if ( ! sessionId || ! navigator.sendBeacon ) {
+export function settleClientSecretSessionOnUnload(): boolean {
+	if ( ! navigator.sendBeacon ) {
 		return false;
 	}
 
-	const body = new FormData();
-	body.append( 'session_id', sessionId );
-
 	const nonce = window.wpApiSettings?.nonce;
-	if ( nonce ) {
-		body.append( '_wpnonce', nonce );
+	if ( ! nonce ) {
+		return navigator.sendBeacon( getWpRestUrl( DICTATION_CLIENT_SECRET_SETTLE_PATH ) );
 	}
+
+	const body = new FormData();
+	body.append( '_wpnonce', nonce );
 
 	return navigator.sendBeacon( getWpRestUrl( DICTATION_CLIENT_SECRET_SETTLE_PATH ), body );
 }
