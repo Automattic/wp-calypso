@@ -465,6 +465,14 @@ export const societyBlogs: CuratedBlogsList = {
 	],
 	culture: [
 		{
+			feed_ID: 107535240,
+			site_ID: 179338616,
+			site_URL: 'https://variety.com/',
+			site_name: 'Variety',
+			feed_URL: 'http://pmc-variety.go-vip.net/feed',
+			has_icon: true,
+		},
+		{
 			feed_ID: 161137721,
 			site_ID: 235752437,
 			site_URL: 'https://popculturemondays.com',

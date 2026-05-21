@@ -3,6 +3,14 @@ import { CuratedBlogsList } from './index';
 export const creativeArtsBlogs: CuratedBlogsList = {
 	music: [
 		{
+			feed_ID: 84452094,
+			site_ID: 148354167,
+			site_URL: 'https://www.rollingstone.com/',
+			site_name: 'Rolling Stone',
+			feed_URL: 'http://www.rollingstone.com/feed',
+			has_icon: true,
+		},
+		{
 			feed_ID: 74978,
 			site_ID: 2865384,
 			site_URL: 'higherplainmusic.com',
