@@ -177,7 +177,7 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const currentInfo = fromVariantPriceData( currentVariant );
 	const upsellInfo = fromVariantPriceData( upsellVariant );
-	const currentPlanPrice = getPlanPriceForDuration( currentInfo, currentInfo.termMonths );
+	const currentPlanPrice = currentVariant.priceInteger;
 	const currentPlanPriceAtUpsellTerm = getPlanPriceForDuration(
 		currentInfo,
 		upsellInfo.termMonths
