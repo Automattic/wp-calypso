@@ -111,6 +111,52 @@ Using the step table in AGENTS.md:
 - The `case` value in `useStepNavigation` must match the step's `slug` field in `steps.tsx`, not the `STEPS.*` key name.
 - If the user's description requires a step that does not exist, name the closest available step and ask if it's acceptable. Never invent slugs.
 
+#### 3a. Inspect each chosen step's source (don't trust the catalog alone)
+
+The step table in `AGENTS.md` is a short hand-written summary. Some steps look generic in
+the table but are hardcoded to a specific use case in their component file (e.g.
+`SEGMENTATION_SURVEY` looks generic but uses `ENTREPRENEUR_TRIAL_SURVEY_KEY` and only
+asks store/commerce-related questions). The user picks from plain-English descriptions
+and will not catch this. The skill must.
+
+Before showing the Phase 3 preview, for **each** `STEPS.*` chosen, open
+`client/landing/stepper/declarative-flow/internals/steps-repository/<dir>/index.tsx`
+(the directory matches the step's `asyncComponent` import path in `steps.tsx`) and
+extract:
+
+1. **Top-level heading text** — the string passed to `FormattedHeader` `headerText`,
+   `StepContainer` `formattedHeader`, or any `<h1>`/`heading` in the JSX. This is
+   what the user will visually see at the top of the step.
+2. **Hardcoded survey/key constants** — module-level `const SOMETHING_KEY = '...'`
+   declarations, especially anything ending in `_KEY`, `_SURVEY`, `_INTENT`, or
+   `_THEME`. These often pin the step to a narrow use case.
+3. **Hardcoded `Onboard.SiteIntent.*` references** — if the component itself sets
+   intent (vs the flow setting it), surface it.
+4. **Hardcoded themes** — references like `'pub/lettre'`, `'pub/blockbase'`.
+5. **Mode/variant constants** — anything like `mode='ecommerce'`, `variant='blog'`
+   passed to the underlying component.
+
+For each step, if any of the above pin the step to a specific use case that doesn't
+match what the user described in Phase 2, **flag it in the preview** before the user
+confirms. The warning is shown directly to the user and must be plain English — no
+references to props, keys, survey constants, "Engineering PR", or any TypeScript-flavoured
+terms. Describe what the user will actually see on screen and what the limitation means.
+
+Example wording (use this style — short, concrete, jargon-free):
+
+```
+⚠️  Segmentation survey — this step looks generic, but it only asks
+    questions about selling products or migrating a store. The user
+    will see headings like "What would you like to do?" and "What are
+    you planning to sell?". If you wanted a more general survey, this
+    step won't fit — we'd need an engineer to make it flexible first.
+    Want to keep it as-is, swap it for something else, or skip the
+    survey?
+```
+
+Do **not** silently swap the step. The user picked it; flag the mismatch and let
+them confirm or change.
+
 Then present a plain-English preview to the user — no TypeScript, no slug names, just the flow:
 
 ```
@@ -248,6 +294,11 @@ If it returns a connection error, tell the user:
 > The local dev server doesn't appear to be running. Start it with `yarn start` and
 > try again, or skip browser testing and go straight to the PR.
 
+**Note:** An HTTP 200 here only proves the Node server is alive — it does **not** mean
+webpack's last build was clean. The Calypso dev server happily serves the HTML shell
+and previously-cached JS bundles even when the latest build failed. The real build-
+health check happens in 6c after the page renders.
+
 #### 6b. Generate a test email
 
 Construct a throwaway email for signup:
@@ -265,16 +316,50 @@ and no email verification is needed.
 Use the Playwright MCP tools to navigate, interact, and screenshot each step:
 
 1. Navigate to `http://calypso.localhost:3000/setup/<flow-name>`
-2. On the account creation screen, enter the test email and complete signup
-3. Walk through each step of the flow in order, making minimal valid choices
-   (pick any goal, search any domain, select the free plan, etc.)
-4. Take a screenshot after each step completes successfully
-5. If a step fails (error message, broken layout, infinite spinner, wrong redirect):
+2. **Build-health check (do this BEFORE interacting):**
+   - Look for a `Build failed` overlay element in the first `browser_snapshot`
+     (Calypso renders a small red `BUILD FAILED` badge near the bottom-right when
+     webpack's last compile errored).
+   - Call `browser_console_messages({ onlyErrors: true })` and scan for
+     `[webpack] build finished with N errors` followed by lines starting with
+     `ERROR in ./...`.
+   - If either signal is present, triage:
+     - **Does the failing module path mention `flows/<flow-name>/` or any file you
+       just wrote/edited?** If yes, this is **your** error — stop the walkthrough,
+       fix it (Phase 5 should have caught it but didn't; fix at the source), and
+       restart from step 1.
+     - **Otherwise it's a pre-existing repo-state error** (e.g. a missing
+       dependency in an unrelated module). The flow can still be tested because
+       webpack serves the previously-cached bundle. Continue, but record the
+       webpack error verbatim under "Build health" in the test report (6e). Do
+       **not** silently ignore it.
+3. On the account creation screen, enter the test email and complete signup.
+4. Walk through each step of the flow in order, making minimal valid choices
+   (pick any goal, search any domain, etc.).
+5. Take a screenshot after each step completes successfully.
+6. If a step fails (error message, broken layout, infinite spinner, wrong redirect):
    - Take a screenshot of the failure
    - Note the step slug and what went wrong
    - Stop the run and proceed to 6d
 
-If the flow completes without errors, proceed directly to 6e.
+**Multiple-pathway flows:** if the flow has more than one terminal branch (e.g.
+free plan → in-Stepper celebration vs. paid plan → external `/checkout` redirect,
+or `use-my-domain` vs. `domains` fork), you MUST walk **each** branch and
+screenshot the divergence point + each step after it. A single happy-path run is
+not enough — the branches share early steps but differ at the decision point, and
+that difference is the most likely place for regressions. Common forks to cover:
+- Free plan vs. paid plan on `STEPS.UNIFIED_PLANS` (when `isInSignup: true` and
+  free is not hidden) — paid-plan run only needs to reach the `/checkout/<siteSlug>`
+  URL; do not complete a real purchase.
+- `use-my-domain` fork on `STEPS.DOMAIN_SEARCH` when `STEPS.USE_MY_DOMAIN` is in
+  the flow.
+- Any conditional `navigate()` in the flow's `useStepNavigation` that switches on
+  a boolean in `providedDependencies`.
+
+Between branch runs, log out (see 6d step 3) and generate a fresh test email so
+`stepsWithRequiredLogin` doesn't reuse the previous account.
+
+If all branches complete without errors, proceed directly to 6e.
 
 #### 6d. Fix and retry (iteration loop)
 
@@ -310,7 +395,21 @@ Use this structure:
 **Base URL:** http://calypso.localhost:3000
 **Result:** ✅ Passed / ⚠️ Passed with fixes / ❌ Failed (see issues)
 
+## Build health
+
+State one of:
+- **Clean** — no `Build failed` overlay, no webpack errors in console.
+- **Pre-existing webpack error (unrelated)** — list the failing module path and the
+  missing import verbatim. State explicitly that it does not touch the flow's
+  generated files and confirm the cached bundle was sufficient to exercise the flow.
+- **Webpack error in the flow's own files** — should not appear in the final report
+  because 6c stops the walkthrough and routes to 6d when this is detected.
+
 ## Steps walkthrough
+
+For flows with a single linear path, use one table. For flows with multiple
+terminal branches, use one table per branch under a `### Branch: <name>` heading
+(e.g. `### Branch: free plan`, `### Branch: paid plan`).
 
 | Step | Slug | Result | Notes |
 |------|------|--------|-------|
