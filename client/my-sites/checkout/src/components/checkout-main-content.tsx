@@ -187,13 +187,21 @@ function ConditionalContactDetailsMessage( {
 	contactDetailsType: ContactDetailsType;
 } ) {
 	const translate = useTranslate();
-	return contactDetailsType === 'domain' ? (
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+	if ( contactDetailsType !== 'domain' ) {
+		return null;
+	}
+	return (
 		<ContactDetailsFormDescription>
-			{ translate(
-				'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-			) }
+			{ isMobileCheckoutStickySummary
+				? translate(
+						'Required for domain registration. Your details are protected for eligible domains.'
+				  )
+				: translate(
+						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
+				  ) }
 		</ContactDetailsFormDescription>
-	) : null;
+	);
 }
 
 function LoadingSidebarContent() {
@@ -220,8 +228,12 @@ const ContactFormTitle = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	if ( contactDetailsType === 'domain' ) {
+		if ( isMobileCheckoutStickySummary ) {
+			return <>{ String( translate( 'Contact information' ) ) }</>;
+		}
 		return (
 			<>
 				{ ! isActive && isComplete
@@ -631,7 +643,10 @@ export default function CheckoutMainContent( {
 				<WPCheckoutSidebarContent
 					isRsmBetterCheckout={ isRsmBetterCheckout }
 				></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent isRsmBetterCheckout={ isRsmBetterCheckout }>
+				<WPCheckoutMainContent
+					isRsmBetterCheckout={ isRsmBetterCheckout }
+					isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+				>
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle className="checkout__main-title">
 						{ translate( 'Checkout' ) }
@@ -798,6 +813,7 @@ export default function CheckoutMainContent( {
 			<WPCheckoutMainContent
 				className="checkout-main-content"
 				isRsmBetterCheckout={ isRsmBetterCheckout }
+				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<CheckoutOrderBanner />
 				{ isStepContainerV2 ? (
@@ -1237,21 +1253,26 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout-main-content {
 				padding-block-end: 160px;
 			}
-			/* Figma 2392:15311 — under the mobile sticky experiment the order
-			   review step renders as a plain "Order details" heading with a
-			   one-line "You're signed in as …" subtext, not the stepper-style
-			   green check + Site/Account block. */
-			.wp-checkout__review-order-step .checkout-step__stepper {
+			/* Figma 2392:15311/15425/15448 — under the mobile sticky experiment
+			   every step renders as a plain heading; the stepper circle (number
+			   / green check) is dropped on all three steps. */
+			.checkout-step__stepper {
 				display: none;
 			}
-			.wp-checkout__review-order-step .checkout-step__header h2 {
+			.checkout-step__header h2 {
 				font-size: 20px;
 				line-height: 24px;
 				letter-spacing: -0.46px;
 			}
-			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+			.checkout-step__header h2 > span {
 				font-weight: 500;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			/* Figma 2392:15428 — Contact step description. */
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 13px;
+				line-height: 20px;
+				color: ${ colorStudio.colors[ 'Gray 60' ] };
 			}
 			.checkout-review-order__signed-in {
 				font-size: 14px;
@@ -2614,7 +2635,10 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div< { isRsmBetterCheckout?: boolean } >`
+const WPCheckoutMainContent = styled.div< {
+	isRsmBetterCheckout?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
+} >`
 	grid-area: main-content;
 	margin-top: 50px;
 	${ ( props ) =>
@@ -2671,11 +2695,81 @@ const WPCheckoutMainContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 		}
 		.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
 		.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
-			gap: 10px;
+			gap: ${ props.isMobileCheckoutStickySummary ? '16px' : '10px' };
 		}
 		.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
-			margin-bottom: 10px;
+			margin-bottom: ${ props.isMobileCheckoutStickySummary ? '0' : '10px' };
 		}
+		${ props.isMobileCheckoutStickySummary &&
+		css`
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field,
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
+				margin-top: 0;
+			}
+			/* "+ Add Address Line 2" / "+ Add organization name" toggles
+			   come from .form__hidden-input. Reset its 5px margin-top so
+			   the link sits at the parent's flex-gap rhythm, and match the
+			   "Remove plan" link typography (13/20/regular/Gray 100/underline)
+			   so all destructive/secondary links read as one family. */
+			.form-fieldset.contact-details-form-fields .form__hidden-input a {
+				margin-top: 0;
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+				text-decoration: underline;
+			}
+			/* .vat-form__row carries its own 16px margin-top (plus a
+			   16px margin-block-start on stacked rows on mobile) — both
+			   redundant now that the contact-details column gaps at 16px. */
+			.checkout-contact-form-step .vat-form__row,
+			.checkout-contact-form-step .vat-form__row > div:not( :first-child ) {
+				margin-top: 0;
+				margin-block-start: 0;
+			}
+			/* Figma 2392:15431 — all form labels render in Gray 100. */
+			.form-label {
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			/* Unified 16px vertical rhythm between every row. The outer
+			   FormFieldset is already flex-column but ships without a gap,
+			   and First/Last name is rendered as its sibling — not inside
+			   __contact-details. So the gap needs to live on all of:
+			   the outer FormFieldset, __contact-details itself, and the
+			   two un-classed wrapper divs from RegionAddressFieldsets. */
+			.form-fieldset.contact-details-form-fields,
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
+			.form-fieldset.contact-details-form-fields
+				.contact-details-form-fields__contact-details
+				> div:not( [class] ),
+			.form-fieldset.contact-details-form-fields
+				.contact-details-form-fields__contact-details
+				> div:not( [class] )
+				> div:not( [class] ) {
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+			/* …except the innermost RegionAddressFieldsets wrapper, which
+			   pairs an input with its toggle link ("+ Add Address Line 2")
+			   as a "Field + Action" group — Figma 2392:15432 puts those
+			   8px apart, not 16. */
+			.form-fieldset.contact-details-form-fields
+				.contact-details-form-fields__contact-details
+				> div:not( [class] )
+				> div:not( [class] ) {
+				gap: 8px;
+			}
+			/* Same rhythm for the "Add organization name" row — it sits in
+			   its own __row but is conceptually a Field+Action paired with
+			   the Last name field above. Negative margin compensates the
+			   parent's 16px column gap down to 8px. Only fires while the
+			   HiddenInput link is showing; once toggled to an input the
+			   row drops back to full 16px spacing. */
+			.contact-details-form-fields__row:has( .form__hidden-input ) {
+				margin-top: -8px;
+			}
+		` }
 		.checkout-terms-and-checkboxes a {
 			color: ${ props.theme.colors.textColorDark };
 		}
