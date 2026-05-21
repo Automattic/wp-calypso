@@ -5,7 +5,8 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
-import { Button, Card, Spinner } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { Button, Card, ExternalLink, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -239,6 +240,11 @@ export function SocialOverviewView() {
 					<Button variant="primary" href="/reader/connections/new">
 						{ translate( 'Pick a network →' ) }
 					</Button>
+					<p className="social-empty__learn-more">
+						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+							{ translate( 'Learn more about your social accounts in the Reader' ) }
+						</ExternalLink>
+					</p>
 				</Card>
 			) }
 

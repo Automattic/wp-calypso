@@ -2,7 +2,7 @@ import { followReadTagMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
+import { usePostLikeActions } from 'calypso/reader/data/post-likes';
 import { useDispatch, useSelector } from 'calypso/state';
 import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -17,7 +17,7 @@ export const ReaderPendingActionHandler = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
 	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
-	const { likePost, unlikePost } = useReaderPostLikeActions();
+	const { likePost, unlikePost } = usePostLikeActions();
 
 	useEffect( () => {
 		if ( ! isLoggedIn || ! pendingAction ) {

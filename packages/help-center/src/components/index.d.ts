@@ -26,10 +26,6 @@ declare module 'calypso/state/data-layer/wpcom-api-middleware' {
 	export const WpcomApiMiddleware;
 }
 
-declare module 'calypso/state/reader/posts/selectors' {
-	export const getPostByKey;
-}
-
 declare module 'calypso/state/purchases/selectors' {
 	export const getUserPurchases: ( state: unknown ) => { productSlug: string }[];
 }

@@ -6,8 +6,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { ReactNode } from 'react';
-import { getReaderPostEntity, upsertReaderPostEntities } from '../reader-post-entities';
-import { useReaderPostLikeActions } from '../reader-post-likes';
+import { getCachedPost, upsertPostCache } from '../post-cache';
+import { usePostLikeActions } from '../post-likes';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -18,12 +18,12 @@ const makeWrapper = ( queryClient: QueryClient ) =>
 		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 	};
 
-describe( 'useReaderPostLikeActions', () => {
+describe( 'usePostLikeActions', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'rolls back the Reader entity optimistic update if the mutation fails after unmount', async () => {
+	it( 'rolls back the Reader post cache optimistic update if the mutation fails after unmount', async () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostEntities( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -42,12 +42,12 @@ describe( 'useReaderPostLikeActions', () => {
 			.post( '/rest/v1.1/sites/100/posts/1/likes/mine/delete', {} )
 			.reply( 500, { error: 'oops' } );
 
-		const { result, unmount } = renderHook( () => useReaderPostLikeActions(), {
+		const { result, unmount } = renderHook( () => usePostLikeActions(), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 
 		result.current.unlike( 100, 1 );
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			i_like: false,
 			like_count: 71,
 		} );
@@ -56,7 +56,7 @@ describe( 'useReaderPostLikeActions', () => {
 
 		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
 		await waitFor( () =>
-			expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 				i_like: true,
 				like_count: '72',
 			} )
@@ -65,7 +65,7 @@ describe( 'useReaderPostLikeActions', () => {
 
 	it( 'keeps a full-post like optimistic update when an older stream payload is received later', async () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostEntities( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -88,12 +88,12 @@ describe( 'useReaderPostLikeActions', () => {
 				liker: { ID: 1, login: 'alice' },
 			} );
 
-		const { result } = renderHook( () => useReaderPostLikeActions(), {
+		const { result } = renderHook( () => usePostLikeActions(), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 
 		result.current.like( 100, 1 );
-		upsertReaderPostEntities( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -103,7 +103,7 @@ describe( 'useReaderPostLikeActions', () => {
 			},
 		] );
 
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			i_like: true,
 			like_count: 73,
 		} );

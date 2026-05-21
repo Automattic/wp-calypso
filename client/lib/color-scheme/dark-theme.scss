@@ -75,13 +75,13 @@ This mixin generates alias variables for a color palette. For example, the
 	--wp-components-color-foreground: var( --dashboard__text-color );
 	--wp-components-color-foreground-inverted: #1e1e1e;
 	--wp-components-color-background: var( --dashboard-surface__background-color );
-	--wp-components-color-accent: var( --wp-admin-theme-color );
-	--wp-components-color-accent-darker-10: var( --wp-admin-theme-color-darker-10 );
-	--wp-components-color-accent-darker-20: var( --wp-admin-theme-color-darker-20 );
+	--wp-components-color-accent: var( --studio-blue-80 );
+	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
+	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
 	--wp-components-color-accent-inverted: #fff;
-	--wpds-color-fg-interactive-brand: var( --wp-admin-theme-color );
-	--wpds-color-fg-interactive-brand-active: var( --wp-admin-theme-color );
-	--wpds-color-stroke-focus-brand: var( --wp-admin-theme-color );
+	--wpds-color-fg-interactive-brand: var( --wp-components-color-accent );
+	--wpds-color-fg-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
+	--wpds-color-stroke-focus-brand: var( --wp-components-color-accent );
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;
@@ -165,6 +165,34 @@ This mixin generates alias variables for a color palette. For example, the
 	--jp-gray-90: #eaeaea;
 	--jp-gray-100: #f0f0f0;
 	--jp-gray-off: #2a2a2a;
+}
+
+@mixin color-scheme-dark-theme-primary-button {
+	.components-button.is-primary:not( .is-destructive ) {
+		--wp-components-color-accent: #{$studio-blue-50};
+		--wp-components-color-accent-darker-10: #{$studio-blue-60};
+		--wp-components-color-accent-darker-20: #{$studio-blue-70};
+		--wp-components-color-accent-disabled: color-mix(
+			in srgb,
+			var( --wp-components-color-accent ) 35%,
+			var( --dashboard-surface__background-color )
+		);
+		--wp-components-color-accent-disabled-text: color-mix(
+			in srgb,
+			var( --wp-components-color-accent ) 50%,
+			#fff
+		);
+
+		// @wordpress/components hard-codes disabled primary text to
+		// rgba( 255, 255, 255, 0.4 ), so token overrides alone cannot meet
+		// the required contrast.
+		&:disabled:not( .is-busy ),
+		&[aria-disabled='true']:not( .is-busy ) {
+			background: var( --wp-components-color-accent-disabled );
+			border-color: var( --wp-components-color-accent-disabled );
+			color: var( --wp-components-color-accent-disabled-text );
+		}
+	}
 }
 
 @mixin color-scheme-dark-theme-calypso-tokens {
@@ -715,6 +743,7 @@ This mixin generates alias variables for a color palette. For example, the
 	@include color-scheme-dark-theme-popover;
 	@include color-scheme-dark-theme-modal;
 	@include color-scheme-dark-theme-site-icon;
+	@include color-scheme-dark-theme-primary-button;
 	@include color-scheme-dark-theme-agenttic;
 }
 

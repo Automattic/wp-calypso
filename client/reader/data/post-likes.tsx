@@ -1,10 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { forwardRef } from 'react';
-import { usePostLikeActions } from 'calypso/components/data/post-likes';
-import {
-	getReaderPostEntity,
-	updateReaderPostLocalState,
-} from 'calypso/reader/data/reader-post-entities';
+import { usePostLikeActions as useBasePostLikeActions } from 'calypso/components/data/post-likes';
+import { getCachedPost, updateCachedPost } from 'calypso/reader/data/post-cache';
 import type { PostLikeMutationParams } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -14,7 +11,7 @@ type LikeOptions = {
 
 type PostLikeAction = ( siteId: number, postId: number, options?: LikeOptions ) => void;
 
-type ReaderPostLikeActionsInjectedProps = {
+type PostLikeActionsInjectedProps = {
 	like: PostLikeAction;
 	unlike: PostLikeAction;
 	likePost: PostLikeAction;
@@ -23,7 +20,7 @@ type ReaderPostLikeActionsInjectedProps = {
 	isUnlikePending: boolean;
 };
 
-type ReaderPostLikeSnapshot = {
+type PostLikeSnapshot = {
 	i_like?: unknown;
 	like_count?: unknown;
 } | null;
@@ -36,17 +33,17 @@ const currentLikeCount = ( value: unknown ) => {
 	return Number.isFinite( numericValue ) ? numericValue : 0;
 };
 
-export const useReaderPostLikeActions = (): ReaderPostLikeActionsInjectedProps => {
+export const usePostLikeActions = (): PostLikeActionsInjectedProps => {
 	const queryClient = useQueryClient();
 
-	return usePostLikeActions( {
+	return useBasePostLikeActions( {
 		onMutate: ( { siteId, postId }: PostLikeMutationParams, iLike: boolean ) => {
-			const post = getReaderPostEntity( queryClient, { blogId: siteId, postId } );
-			const snapshot: ReaderPostLikeSnapshot = post
+			const post = getCachedPost( queryClient, { blogId: siteId, postId } );
+			const snapshot: PostLikeSnapshot = post
 				? { i_like: post.i_like, like_count: post.like_count }
 				: null;
 
-			updateReaderPostLocalState( queryClient, { blogId: siteId, postId }, ( currentPost ) => {
+			updateCachedPost( queryClient, { blogId: siteId, postId }, ( currentPost ) => {
 				const wasLiked = Boolean( currentPost?.i_like );
 				const likeCount = currentLikeCount( currentPost?.like_count );
 
@@ -63,31 +60,29 @@ export const useReaderPostLikeActions = (): ReaderPostLikeActionsInjectedProps =
 			}
 
 			return () => {
-				updateReaderPostLocalState( queryClient, { blogId: siteId, postId }, () => snapshot );
+				updateCachedPost( queryClient, { blogId: siteId, postId }, () => snapshot );
 			};
 		},
 	} );
 };
 
-export const withReaderPostLikeActions = < Props extends ReaderPostLikeActionsInjectedProps >(
+export const withPostLikeActions = < Props extends PostLikeActionsInjectedProps >(
 	WrappedComponent: ComponentType< Props >
 ) => {
-	type OuterProps = Omit< Props, keyof ReaderPostLikeActionsInjectedProps >;
+	type OuterProps = Omit< Props, keyof PostLikeActionsInjectedProps >;
 
-	const WithReaderPostLikeActions = forwardRef< unknown, OuterProps >( ( props, ref ) => {
-		const readerPostLikeActions = useReaderPostLikeActions();
+	const WithPostLikeActions = forwardRef< unknown, OuterProps >( ( props, ref ) => {
+		const postLikeActions = usePostLikeActions();
 		const wrappedProps = {
 			...props,
-			...readerPostLikeActions,
+			...postLikeActions,
 			ref,
 		} as unknown as Props & { ref: typeof ref };
 
 		return <WrappedComponent { ...wrappedProps } />;
 	} );
 
-	WithReaderPostLikeActions.displayName = `withReaderPostLikeActions(${ displayName(
-		WrappedComponent
-	) })`;
+	WithPostLikeActions.displayName = `withPostLikeActions(${ displayName( WrappedComponent ) })`;
 
-	return WithReaderPostLikeActions;
+	return WithPostLikeActions;
 };

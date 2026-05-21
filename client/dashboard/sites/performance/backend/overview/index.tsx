@@ -6,7 +6,7 @@ import type { MergedAggregate } from '../aggregate';
 export default function Overview( { merged }: { merged: MergedAggregate } ) {
 	return (
 		<VStack spacing={ 6 }>
-			<ChartSlot timeseries={ merged.timeseries } />
+			<ChartSlot timeseries={ merged.timeseries } summary={ merged.summary } />
 			<SlowRequestsList routes={ merged.slowest.routes } />
 		</VStack>
 	);

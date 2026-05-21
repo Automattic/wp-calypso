@@ -367,6 +367,8 @@
 
 .social-spotlight {
 	margin-block: 24px;
+	padding-block-end: 24px;
+	border-block-end: 1px solid var( --color-border-subtle );
 }
 
 .social-spotlight__header {
@@ -521,5 +523,41 @@
 	gap: 16px;
 	font-size: 0.75rem;
 	color: var( --color-text-subtle );
+}
+
+.social-spotlight-skeleton__subtitle {
+	margin-block-start: 6px;
+}
+
+// The skeleton cards reuse the live card's border, padding, and protocol
+// border-top would imply a protocol we don't yet know — keep them neutral
+// while loading so the strip doesn't flash a colour stripe before
+// settling on the real cards.
+.social-spotlight-skeleton__card {
+	&:hover,
+	&:focus-within {
+		transform: none;
+		box-shadow: none;
+	}
+}
+
+.social-spotlight-skeleton__author {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.social-spotlight-skeleton__text {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-block-end: 8px;
+}
+
+.social-spotlight-skeleton__counts {
+	display: flex;
+	gap: 16px;
 }
 

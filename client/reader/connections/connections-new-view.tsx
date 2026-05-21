@@ -59,8 +59,8 @@ export function ConnectionsNewView() {
 	);
 
 	const fediverseDocHref = localizeUrl( 'https://wordpress.com/support/enter-the-fediverse/' );
-	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
-	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
+	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
+	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
 	const learnMoreLabel = String( translate( 'Learn more' ) );
 
 	const fediverse: ProtocolOption = ( () => {

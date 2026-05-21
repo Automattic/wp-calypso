@@ -7,9 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
-import { createReaderPostEntitiesMiddleware } from 'calypso/reader/data/reader-post-entities-middleware';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
@@ -22,12 +21,18 @@ afterEach( () => {
 } );
 
 function makeWrapper( queryClient: QueryClient ) {
+	const actions: unknown[] = [];
+	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
+		actions.push( action );
+		return next( action );
+	};
 	const store = createStore(
 		combineReducers( { reader: readerReducer } ),
 		undefined,
 		applyMiddleware(
+			actionRecorder,
 			thunkMiddleware,
-			createReaderPostEntitiesMiddleware( () => queryClient )
+			createPostCacheMiddleware( () => queryClient )
 		)
 	);
 	const Wrapper = ( { children }: { children: ReactNode } ) => (
@@ -35,7 +40,7 @@ function makeWrapper( queryClient: QueryClient ) {
 			<Provider store={ store }>{ children }</Provider>
 		</QueryClientProvider>
 	);
-	return { Wrapper, store };
+	return { Wrapper, store, actions };
 }
 
 function makeQueryClient() {
@@ -49,6 +54,7 @@ interface ApiPost {
 	URL?: string;
 	date_liked?: string;
 	xPostMetadata?: { blogId: number; postId: number };
+	railcar?: Record< string, unknown >;
 }
 
 function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
@@ -85,11 +91,33 @@ describe( 'useStreamPosts — fetching', () => {
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
 		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) );
 		expect( result.current.items[ 1 ] ).toMatchObject( postKey( 2 ) );
-		expect( getReaderPostEntity( queryClient, postKey( 1 ) ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
 			ID: 1,
 			site_ID: 100,
 		} );
 		expect( result.current.lastPage ).toBe( true );
+	} );
+
+	it( 'exposes pages for stream-level render analytics without dispatching them', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1, { railcar: { railcar: 'railcar-1' } } ) ],
+				algorithm: 'railcar-test',
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper, actions } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
+		expect( result.current.pages ).toHaveLength( 1 );
+		expect( result.current.pages[ 0 ] ).toMatchObject( { algorithm: 'railcar-test' } );
+		expect( actions ).toHaveLength( 0 );
 	} );
 
 	it( 'paginates via the `before` cursor when `date_range.after` is set', async () => {
@@ -319,7 +347,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 } );
 
 describe( 'useStreamPosts — cache replacement', () => {
-	it( 'dispatches posts when the first cached page is replaced', async () => {
+	it( 'updates cached posts when the first cached page is replaced', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -329,7 +357,7 @@ describe( 'useStreamPosts — cache replacement', () => {
 			} );
 
 		const queryClient = makeQueryClient();
-		const { Wrapper, store } = makeWrapper( queryClient );
+		const { Wrapper } = makeWrapper( queryClient );
 		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
@@ -356,7 +384,7 @@ describe( 'useStreamPosts — cache replacement', () => {
 		} );
 
 		await waitFor( () =>
-			expect( getPostByKey( store.getState(), postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
+			expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
 		);
 	} );
 } );

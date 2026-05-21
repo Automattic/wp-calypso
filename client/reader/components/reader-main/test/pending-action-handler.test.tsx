@@ -8,10 +8,7 @@ import nock from 'nock';
 import { act } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import {
-	getReaderPostEntity,
-	upsertReaderPostEntities,
-} from 'calypso/reader/data/reader-post-entities';
+import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post-cache';
 import { READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN } from 'calypso/state/reader-ui/action-types';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { ReaderPendingActionHandler } from '../pending-action-handler';
@@ -68,7 +65,7 @@ describe( 'ReaderPendingActionHandler', () => {
 		jest.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
-		upsertReaderPostEntities( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -106,7 +103,7 @@ describe( 'ReaderPendingActionHandler', () => {
 			jest.advanceTimersByTime( 2000 );
 		} );
 
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			i_like: false,
 			like_count: 71,
 		} );
@@ -120,7 +117,7 @@ describe( 'ReaderPendingActionHandler', () => {
 		jest.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
-		upsertReaderPostEntities( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -158,7 +155,7 @@ describe( 'ReaderPendingActionHandler', () => {
 			jest.advanceTimersByTime( 2000 );
 		} );
 
-		expect( getReaderPostEntity( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			i_like: true,
 			like_count: 73,
 		} );

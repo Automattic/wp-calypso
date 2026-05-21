@@ -11,11 +11,11 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
-import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
+import { withCachedPost } from 'calypso/reader/data/post-cache';
+import { withPostLikeActions } from 'calypso/reader/data/post-likes';
+import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 import './style.scss';
@@ -51,7 +51,10 @@ class ReaderLikeButton extends Component {
 	};
 
 	recordLikeToggle = ( liked ) => {
-		const post = this.props.post || this.props.postByKey;
+		const post = this.props.post;
+		if ( ! post ) {
+			return;
+		}
 
 		recordAction( liked ? 'liked_post' : 'unliked_post' );
 		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
@@ -64,7 +67,7 @@ class ReaderLikeButton extends Component {
 			}
 		);
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
-			this.props.markPostSeen( post, this.props.site );
+			markPostSeen( post, this.props.site );
 		}
 	};
 
@@ -124,19 +127,16 @@ class ReaderLikeButton extends Component {
 }
 
 export default flowRight(
-	connect(
-		( state, { siteId, postId } ) => {
-			return {
-				postByKey: getPostByKey( state, {
-					blogId: siteId,
-					postId,
-				} ),
-				isLoggedIn: isUserLoggedIn( state ),
-				previousPath: getPreviousPath( state ),
-			};
-		},
-		{ markPostSeen }
-	),
+	connect( ( state ) => {
+		return {
+			isLoggedIn: isUserLoggedIn( state ),
+			previousPath: getPreviousPath( state ),
+		};
+	} ),
 	withPostLikes,
-	withReaderPostLikeActions
+	withPostLikeActions,
+	withCachedPost( ( { siteId, postId } ) => ( {
+		blogId: siteId,
+		postId,
+	} ) )
 )( ReaderLikeButton );

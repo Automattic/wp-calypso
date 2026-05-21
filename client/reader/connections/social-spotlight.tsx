@@ -22,6 +22,7 @@ import { mapFediverseFeedItemToSocialPost } from 'calypso/reader/social/mappers/
 import { mapMastodonFeedItemToSocialPost } from 'calypso/reader/social/mappers/mastodon';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { SocialSpotlightSkeleton } from './social-spotlight-skeleton';
 import type { SocialPost } from 'calypso/reader/social/types';
 
 /**
@@ -224,11 +225,14 @@ export function SocialSpotlight( { connections }: Props ) {
 
 	const isLoading = queries.some( ( q ) => q.isPending );
 
-	// While first pages are still loading, render nothing — the Social
-	// overview's own spinner already covers the slow case, and a flash of
-	// "no posts yet" before items resolve would read as broken. Same for
-	// the steady state with no scoreable posts; the strip is opt-in noise.
-	if ( isLoading || items.length === 0 ) {
+	// While first pages load, render a layout-stable skeleton so the
+	// accounts grid below doesn't shift down when items resolve. In the
+	// steady state with no scoreable posts the strip is opt-in noise, so
+	// the section still collapses to null once loading completes.
+	if ( isLoading ) {
+		return <SocialSpotlightSkeleton />;
+	}
+	if ( items.length === 0 ) {
 		return null;
 	}
 

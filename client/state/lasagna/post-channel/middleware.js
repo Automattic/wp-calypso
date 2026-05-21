@@ -1,10 +1,11 @@
 import debugFactory from 'debug';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { receiveComments } from 'calypso/state/comments/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
 } from 'calypso/state/reader/action-types';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { lasagna } from '../middleware';
 
@@ -21,7 +22,8 @@ const getTopic = ( { scheme, post } ) => {
 
 const getJoinParams = ( store, postKey ) => {
 	const state = store.getState();
-	const post = getPostByKey( state, postKey );
+	const queryClient = getCalypsoQueryClient();
+	const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
 	if ( ! post ) {
 		return false;
