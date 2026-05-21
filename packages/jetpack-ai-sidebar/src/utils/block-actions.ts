@@ -74,8 +74,7 @@ export function findBlockElement( clientId: string ): HTMLElement | null {
 				return frameEl;
 			}
 		}
-	} catch {
-	}
+	} catch {}
 	return null;
 }
 
@@ -98,8 +97,7 @@ export function findBlockListLayout(): HTMLElement | null {
 				return frameEl;
 			}
 		}
-	} catch {
-	}
+	} catch {}
 	return null;
 }
 
@@ -219,12 +217,17 @@ function getBlockSnapshot(
 	if ( ! block ) {
 		return null;
 	}
-	return { clientId: block.clientId ?? clientId, name: block.name, content: getEditableBlockContent( block ) };
+	return {
+		clientId: block.clientId ?? clientId,
+		name: block.name,
+		content: getEditableBlockContent( block ),
+	};
 }
 
-function findBlockSnapshotByCurrentText(
-	currentText: string
-): { snapshot?: { clientId: string; name: string; content: string }; error?: string } {
+function findBlockSnapshotByCurrentText( currentText: string ): {
+	snapshot?: { clientId: string; name: string; content: string };
+	error?: string;
+} {
 	const blocks = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlocks?.() ?? [];
 	const matches: Array< { clientId: string; name: string; content: string } > = [];
 
