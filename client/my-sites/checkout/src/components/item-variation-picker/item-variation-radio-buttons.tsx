@@ -62,14 +62,14 @@ const TermOptionsItem = styled.li`
 
 	.is-mobile-sticky-summary & label::before {
 		inset-inline-start: 16px;
-		top: 50%;
+		inset-block-start: 50%;
 		transform: translateY( -50% );
 	}
 
 	.is-mobile-sticky-summary & label::after {
 		inset-inline-start: 20px;
-		top: 50%;
-		margin-top: 0;
+		inset-block-start: 50%;
+		margin-block-start: 0;
 		transform: translateY( -50% );
 	}
 `;
