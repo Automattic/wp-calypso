@@ -171,7 +171,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		setLocalStream( null );
 
 		if ( clientSecretSessionId ) {
-			const settlePromise = settleClientSecretSession( clientSecretSessionId )
+			const settlePromise = settleClientSecretSession()
 				.then( () => fetchRemainingTime() )
 				.then( ( remainingTime ) => {
 					applyRemainingTime( remainingTime );
@@ -218,7 +218,13 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	}, [ applyRemainingTime ] );
 
 	useEffect( () => {
-		if ( sessionTimeLimitMs === null ) {
+		const shouldTickSessionTime =
+			status === 'requesting-mic' ||
+			status === 'connecting' ||
+			status === 'active' ||
+			status === 'ending';
+
+		if ( sessionTimeLimitMs === null || ! shouldTickSessionTime ) {
 			return;
 		}
 
@@ -230,7 +236,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		}, 1000 );
 
 		return () => window.clearInterval( intervalId );
-	}, [ sessionTimeLimitMs ] );
+	}, [ sessionTimeLimitMs, status ] );
 
 	useEffect( () => {
 		const handleBeforeUnload = () => {
@@ -239,7 +245,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				return;
 			}
 			clientSecretSessionIdRef.current = null;
-			settleClientSecretSessionOnUnload( clientSecretSessionId );
+			settleClientSecretSessionOnUnload();
 		};
 
 		window.addEventListener( 'beforeunload', handleBeforeUnload );
@@ -479,9 +485,9 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			const clientSecret = await fetchClientSecret( {
 				instructions,
 			} );
-			clientSecretSessionIdRef.current = clientSecret.sessionId;
-			const expiresAtMs = clientSecret.expiresAt * 1000;
-			const remainingMs = Math.max( 0, expiresAtMs - Date.now() );
+			clientSecretSessionIdRef.current = 'active';
+			const remainingMs = Math.max( 0, clientSecret.remainingTimeSeconds * 1000 );
+			const expiresAtMs = Date.now() + remainingMs;
 			clientSecretExpiresAtMsRef.current = expiresAtMs;
 			setSessionTimeRemainingMs( remainingMs );
 
