@@ -548,6 +548,10 @@ export function AuthorProfilePanel( {
 							protocolLabel="Bluesky"
 							protocolHomeURL="/reader/atmosphere"
 							protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+							authRequiredCopy={ {
+								title: String( translate( "Couldn't load posts" ) ),
+								line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+							} }
 						/>
 					</VStack>
 				</RepostProvider>

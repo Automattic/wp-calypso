@@ -165,6 +165,10 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				protocolLabel="Fediverse"
 				protocolHomeURL="/reader/fediverse"
 				protocolHomeLabel={ String( translate( 'Back to Fediverse' ) ) }
+				authRequiredCopy={ {
+					title: String( translate( "Couldn't load timeline" ) ),
+					line: String( translate( 'Something went wrong with your Fediverse connection.' ) ),
+				} }
 			/>
 		</SocialAnalyticsProvider>
 	);

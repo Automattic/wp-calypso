@@ -213,6 +213,10 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 							protocolLabel="Bluesky"
 							protocolHomeURL="/reader/atmosphere"
 							protocolHomeLabel={ String( translate( 'Back to ATmosphere' ) ) }
+							authRequiredCopy={ {
+								title: String( translate( "Couldn't load posts" ) ),
+								line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+							} }
 						/>
 					</VStack>
 				</RepostProvider>

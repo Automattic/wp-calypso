@@ -52,7 +52,7 @@ describe( 'errorMessage', () => {
 		expect( message ).toMatch( /Fediverse connection/i );
 	} );
 
-	it( 'projects connection_not_found to a reconnect-shaped string', () => {
+	it( 'projects connection_not_found to a no-longer-available string', () => {
 		const translate = getTranslate();
 		const message = String( errorMessage( { kind: 'connection_not_found' }, translate ) );
 		expect( message ).toMatch( /no longer available/i );

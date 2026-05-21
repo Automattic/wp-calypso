@@ -22,7 +22,7 @@ import {
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectFediverseError } from './error-projection';
-import { followErrorMessage } from './profile-errors';
+import { errorMessage, followErrorMessage } from './profile-errors';
 import {
 	getFollowersUrl,
 	getFollowingUrl,
@@ -256,7 +256,7 @@ export function FediverseAuthorProfilePanel( {
 			return (
 				<EmptyContent
 					title={ titleByKind[ error.kind ] ?? translate( 'Couldn’t load profile' ) }
-					line={ translate( 'Try again in a moment.' ) }
+					line={ errorMessage( error, translate ) }
 					action={ showRetry ? translate( 'Retry' ) : undefined }
 					actionCallback={ showRetry ? retry : undefined }
 				/>
@@ -334,6 +334,10 @@ export function FediverseAuthorProfilePanel( {
 			protocolLabel="Fediverse"
 			protocolHomeURL="/reader/fediverse"
 			protocolHomeLabel={ translate( 'Back to Fediverse' ) }
+			authRequiredCopy={ {
+				title: String( translate( "Couldn't load posts" ) ),
+				line: String( translate( 'Something went wrong with your Fediverse connection.' ) ),
+			} }
 			className="fediverse-author-profile"
 		/>
 	);
