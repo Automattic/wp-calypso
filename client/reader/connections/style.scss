@@ -190,6 +190,23 @@
 	max-width: 960px;
 }
 
+.social-accounts {
+	margin-block-start: 24px;
+}
+
+.social-accounts__header {
+	margin-block-end: 12px;
+}
+
+.social-accounts__title {
+	margin: 0;
+	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
+}
+
 .social-grid {
 	display: grid;
 	grid-template-columns: repeat( auto-fill, minmax( 240px, 1fr ) );

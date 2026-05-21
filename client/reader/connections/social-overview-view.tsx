@@ -251,26 +251,33 @@ export function SocialOverviewView() {
 			{ showSpotlight && <SocialSpotlight connections={ spotlightConnections } /> }
 
 			{ ! isLoading && cards.length > 0 && (
-				<div className="social-grid">
-					{ cards.map( ( card ) => (
-						<SocialCardItem
-							key={ `${ card.protocol }-${ card.id }` }
-							card={ card }
-							onClick={ () => handleCardClick( card ) }
-						/>
-					) ) }
-					<a className="social-card social-card--add" href="/reader/connections/new">
-						<div className="social-card__plus" aria-hidden="true">
-							+
-						</div>
-						<div className="social-card__body">
-							<div className="social-card__name">{ translate( 'Add another' ) }</div>
-							<div className="social-card__handle">
-								{ translate( 'Bluesky, Mastodon, or your own site' ) }
+				<section className="social-accounts" aria-labelledby="social-accounts-heading">
+					<header className="social-accounts__header">
+						<h2 id="social-accounts-heading" className="social-accounts__title">
+							{ translate( 'Your accounts' ) }
+						</h2>
+					</header>
+					<div className="social-grid">
+						{ cards.map( ( card ) => (
+							<SocialCardItem
+								key={ `${ card.protocol }-${ card.id }` }
+								card={ card }
+								onClick={ () => handleCardClick( card ) }
+							/>
+						) ) }
+						<a className="social-card social-card--add" href="/reader/connections/new">
+							<div className="social-card__plus" aria-hidden="true">
+								+
 							</div>
-						</div>
-					</a>
-				</div>
+							<div className="social-card__body">
+								<div className="social-card__name">{ translate( 'Add another' ) }</div>
+								<div className="social-card__handle">
+									{ translate( 'Bluesky, Mastodon, or your own site' ) }
+								</div>
+							</div>
+						</a>
+					</div>
+				</section>
 			) }
 		</ReaderMain>
 	);
