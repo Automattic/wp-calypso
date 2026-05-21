@@ -1,5 +1,6 @@
 import { readFeedQuery } from '@automattic/api-queries';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueries } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 /**
@@ -20,6 +21,10 @@ interface RecommendedBlogsApiSite {
 interface Card {
 	type: string;
 	data: RecommendedBlogsApiSite[];
+}
+
+interface CardsResponse {
+	cards: Card[];
 }
 
 export interface DiscoverCandidate {
@@ -46,9 +51,20 @@ export interface UseTagRecommendationsResult {
 	isEnrichmentPending: boolean;
 	error: Error | null;
 	totalReturned: number;
+	/** Append the next page of candidates from the API. */
+	fetchNextPage: () => void;
+	/** True when the most recent page returned a full result (more probably available). */
+	hasNextPage: boolean;
+	/** True while a follow-up page request is in flight. */
+	isFetchingNextPage: boolean;
 }
 
 const PER_PAGE = 18;
+
+function extractRecommendedBlogs( page: CardsResponse ): RecommendedBlogsApiSite[] {
+	const card = page.cards.find( ( c ) => c.type === 'recommended_blogs' );
+	return card?.data ?? [];
+}
 
 /**
  * Fetch site recommendations for a single tag from `/read/tags/cards`, with
@@ -57,10 +73,13 @@ const PER_PAGE = 18;
  * resolved icon, and subscriber count alongside the raw card data.
  *
  * `enabled` controls whether the cards request fires at all — the discover
- * page only fetches a tag once its section has been opened.
+ * page only fetches a tag once its section has been opened. `refresh` is
+ * forwarded to the cards endpoint and (because it's part of the query key)
+ * resets paging when the operator clicks "Refresh recommendations".
  *
- * `refresh` is forwarded straight to the cards endpoint so a "Refresh
- * recommendations" button can re-roll the ES shard routing for variety.
+ * Pagination uses the endpoint's `page` arg, plumbed through `useInfiniteQuery`
+ * so the page can render a "Load more" affordance and accumulate candidates
+ * across requests instead of replacing them.
  */
 export function useTagRecommendations(
 	tag: string,
@@ -68,9 +87,9 @@ export function useTagRecommendations(
 ): UseTagRecommendationsResult {
 	const { enabled, refresh } = options;
 
-	const cardsQuery = useQuery( {
+	const cardsQuery = useInfiniteQuery< CardsResponse, Error >( {
 		queryKey: [ 'reader-curated-discover', 'cards', tag, refresh ],
-		queryFn: () =>
+		queryFn: ( { pageParam } ) =>
 			wpcom.req.get(
 				{
 					path: '/read/tags/cards',
@@ -82,22 +101,34 @@ export function useTagRecommendations(
 					tag_recs_per_card: 0,
 					bypass_user_filters: 1,
 					refresh,
+					page: pageParam,
 				}
 			),
-		select: ( data: { cards: Card[] } ): RecommendedBlogsApiSite[] => {
-			const card = data.cards.find( ( c ) => c.type === 'recommended_blogs' );
-			return card?.data ?? [];
+		initialPageParam: 1,
+		getNextPageParam: ( lastPage, allPages ) => {
+			// Stop paging when the API returned fewer than a full page; otherwise
+			// assume the next page exists and let the operator probe it.
+			const len = extractRecommendedBlogs( lastPage ).length;
+			return len < PER_PAGE ? undefined : allPages.length + 1;
 		},
-		// Dev-only tool: don't keep recommendations in localStorage. Each page
-		// load should rerun the query (especially after the operator changes
-		// the `refresh` value) rather than rehydrating a stale candidate list.
+		// Hold the cards stable across tab focus / section collapse-and-reopen.
+		// The recommendations endpoint shuffles results per-call without seeding
+		// (see `WPCOM_Global_Tag_Recommendations_Sites::get_recommendations`), so
+		// any auto-refetch would silently swap the operator's candidate list.
+		// `refresh` is the only deliberate path to a new roll — it's part of the
+		// query key, so bumping it produces a fresh fetch.
+		staleTime: Infinity,
+		refetchOnWindowFocus: false,
+		// Dev-only tool: don't keep recommendations in localStorage either.
 		meta: { persist: false },
-		staleTime: 0,
 		retry: false,
 		enabled,
 	} );
 
-	const apiSites: RecommendedBlogsApiSite[] = cardsQuery.data ?? [];
+	const apiSites: RecommendedBlogsApiSite[] = useMemo(
+		() => ( cardsQuery.data?.pages ?? [] ).flatMap( extractRecommendedBlogs ),
+		[ cardsQuery.data ]
+	);
 
 	const feedQueries = useQueries( {
 		queries: apiSites.map( ( site ) => ( {
@@ -132,9 +163,17 @@ export function useTagRecommendations(
 
 	return {
 		candidates,
-		isLoading: cardsQuery.isLoading || cardsQuery.isFetching,
+		// Only treat the very first fetch as a top-level "loading" state; once
+		// any page has resolved, follow-up pages flow through `isFetchingNextPage`
+		// instead so the existing list keeps rendering.
+		isLoading: cardsQuery.isLoading,
 		isEnrichmentPending,
 		error: ( cardsQuery.error as Error | null ) ?? null,
 		totalReturned: apiSites.length,
+		fetchNextPage: () => {
+			cardsQuery.fetchNextPage();
+		},
+		hasNextPage: Boolean( cardsQuery.hasNextPage ),
+		isFetchingNextPage: cardsQuery.isFetchingNextPage,
 	};
 }

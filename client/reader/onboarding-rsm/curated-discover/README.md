@@ -48,15 +48,26 @@ The intended operator workflow per file:
 5. **Optionally force `hasIcon: false`** on added rows whose icon
    the API returned but the operator deems junk. The override is
    persisted with the rest of the added entry.
-6. **Refresh** if you want a different roll. The cards endpoint
-   randomizes shard routing on each `refresh` value, so each click
-   surfaces a fresh slice of candidates.
-7. **Click `Copy <file>.tsx`.** The clipboard receives the entire
+6. **Load more** to keep digging the same roll. Each click pages
+   through the endpoint via the `page` arg, appending the next 18
+   candidates to the existing list (instead of replacing them).
+7. **Refresh** if you want a different roll instead. Bumping
+   `refresh` changes the React Query key, drops the accumulated
+   pages, and re-fetches page 1 with a fresh ES shard routing.
+8. **Click `Copy <file>.tsx`.** The clipboard receives the entire
    merged file: existing entries kept verbatim, new additions
    prepended at the top of each tag's array.
-8. **Paste back** into
+9. **Paste back** into
    `client/reader/onboarding-rsm/curated-blogs/<file>.tsx`,
    replacing the existing contents.
+
+The candidate list is sticky: tabbing away to another browser tab
+and back, or collapsing and re-opening a tag section, will not
+re-fetch the recommendations. The cards endpoint shuffles results
+per call (without seeding), so any silent refetch would swap the
+list out from under the operator. The only paths to a new fetch
+are clicking **Refresh recommendations** (full re-roll) or
+**Load more candidates** (next page appended).
 
 After paste-back, the typical next pass is to run the _review_ tool
 against the same file to mark obvious duds broken before merging.

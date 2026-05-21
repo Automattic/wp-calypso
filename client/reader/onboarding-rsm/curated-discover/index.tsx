@@ -40,8 +40,16 @@ const TagSection: React.FC< TagSectionProps > = ( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ refresh, setRefresh ] = useState( 0 );
 
-	const { candidates, isLoading, isEnrichmentPending, error, totalReturned } =
-		useTagRecommendations( tag, { enabled: isOpen, refresh } );
+	const {
+		candidates,
+		isLoading,
+		isEnrichmentPending,
+		error,
+		totalReturned,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useTagRecommendations( tag, { enabled: isOpen, refresh } );
 
 	// Same-tag dedup: hide candidates already curated for THIS tag in the
 	// source file. Per the operator's choice, the same site can still appear
@@ -144,6 +152,13 @@ const TagSection: React.FC< TagSectionProps > = ( {
 								} ) }
 							</div>
 						</>
+					) }
+					{ hasNextPage && (
+						<div className="curated-discover__load-more">
+							<Button variant="secondary" onClick={ fetchNextPage } disabled={ isFetchingNextPage }>
+								{ isFetchingNextPage ? 'Loading more…' : 'Load more candidates' }
+							</Button>
+						</div>
 					) }
 				</div>
 			) }

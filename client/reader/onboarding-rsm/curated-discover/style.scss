@@ -89,6 +89,12 @@
 		gap: 12px;
 	}
 
+	&__load-more {
+		display: flex;
+		justify-content: center;
+		padding-block-start: 4px;
+	}
+
 	&__empty {
 		padding-block: 12px;
 		color: var( --color-text-subtle, #555 );
