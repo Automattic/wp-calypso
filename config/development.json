@@ -69,7 +69,7 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
-		"dark-mode": false,
+		"dark-mode": true,
 		"dashboard/omnibar": true,
 		"dashboard/omnibar-radical": true,
 		"dashboard/opt-in-banners": false,
