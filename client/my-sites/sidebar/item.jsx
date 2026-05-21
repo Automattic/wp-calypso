@@ -4,6 +4,21 @@
  * Renders a sidebar menu item with no child items.
  * This could be a top level item, or a child item nested under a top level menu.
  * These two cases might be to be split up?
+ *
+ * Phase 1 task 1.5 addition: optional `signal` prop carries the redesigned
+ * admin-menu shape (`AdminMenuSignal`). When present, the item renders a
+ * `<SignalBadge>` next to the title using the public plugin's priority chain
+ * (`numeric_badge → count → badge`) plus `inline_text` / `inline_icon`
+ * decorative side-channels. Items without a `signal` keep the legacy
+ * `badge` / `count` / `inlineIcon` paths so the rollout is purely additive
+ * — nothing changes for items the redesigned endpoint hasn't reached yet.
+ *
+ * Both ungrouped (top-level) and grouped (children of `<MySitesSidebarUnifiedSidebarGroup>`)
+ * items pass through this component, so plumbing `signal` here covers both
+ * surfaces by construction.
+ *
+ * @see WordPress/wp-admin-sidebar v0.1.4 src/browse-rail/signal.js
+ * @see ./signal-badge.tsx
  */
 
 import clsx from 'clsx';
@@ -13,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
+import SignalBadge from './signal-badge';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
 
 export const MySitesSidebarUnifiedItem = ( {
@@ -32,6 +48,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	forceShowExternalIcon = false,
 	forceChevronIcon = false,
 	trackClickEvent,
+	signal,
 } ) => {
 	const reduxDispatch = useDispatch();
 
@@ -49,6 +66,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			badge={ badge }
 			count={ count }
 			label={ title }
+			labelSuffix={ <SignalBadge signal={ signal } /> }
 			tooltip={ showTooltip ? title : undefined }
 			link={ url }
 			onNavigate={ onNavigate }
@@ -83,6 +101,17 @@ MySitesSidebarUnifiedItem.propTypes = {
 	forceShowExternalIcon: PropTypes.bool,
 	forceChevronIcon: PropTypes.bool,
 	trackClickEvent: PropTypes.func,
+	// Optional `signal` from the redesigned `/wpcom/v2/admin-menu` shape.
+	// `null` / undefined = legacy item with no signal data. Type-shape lives
+	// in `client/state/admin-menu/types.ts` (`AdminMenuSignal`).
+	signal: PropTypes.shape( {
+		count: PropTypes.number,
+		numeric_badge: PropTypes.number,
+		badge: PropTypes.string,
+		inline_text: PropTypes.string,
+		inline_icon: PropTypes.string,
+		attention: PropTypes.bool,
+	} ),
 };
 
 export default memo( MySitesSidebarUnifiedItem );

@@ -1,0 +1,242 @@
+/*
+ * MySitesSidebarUnifiedSidebarGroup styles.
+ *
+ * Mirrors `WordPress/wp-admin-sidebar` v0.1.4 `src/browse-rail/styles.css`
+ * 1:1 (visible/audible/interactive output) — only the selectors are
+ * Calypso-flavoured (no `body.wp-admin-sidebar-active` prefix is needed
+ * because the redesigned components only render when the schema is
+ * available). The `wp-admin-sidebar-group__*` class names are kept in lock-
+ * step with the public plugin so any visual override sheet shipped from
+ * wpcom-admin-sidebar-integration applies cleanly here too.
+ */
+
+.wp-admin-sidebar-group,
+.sidebar-group {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	margin-top: 16px;
+
+	&__header {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 4px 4px 4px 8px;
+		min-height: 34px;
+	}
+
+	&__toggle {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+		color: var(--color-sidebar-text-alternative, #71aee2);
+		font-size: 11px;
+		font-weight: 600;
+		line-height: 20px;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		text-align: left;
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent, #3858e9);
+			outline-offset: 2px;
+		}
+	}
+
+	&__label {
+		flex: 0 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/*
+	 * 8x8 attention dot. Visible when the group is collapsed and any child
+	 * has attention; hidden when expanded (children render their own
+	 * signals — see public plugin styles.css group-signal block).
+	 */
+	&__signal {
+		flex: 0 0 auto;
+		width: 8px;
+		height: 8px;
+		padding: 0;
+		margin-left: 0;
+		border-radius: 50%;
+		background: #d63638;
+		font-size: 0;
+		color: transparent;
+		display: none;
+
+		&[data-attention="true"] {
+			display: inline-block;
+		}
+	}
+
+	&[data-expanded="true"] &__signal {
+		display: none;
+	}
+
+	/*
+	 * Chevron — span (not button) with click delegate to the toggle. Sized
+	 * so it matches the customize button's footprint when both are present.
+	 */
+	&__chevron {
+		flex: 0 0 auto;
+		margin-left: 4px;
+		width: 20px;
+		height: 20px;
+		color: var(--color-sidebar-text-alternative, #71aee2);
+		cursor: pointer;
+		opacity: 0.7;
+		transition: transform 150ms ease, opacity 150ms ease;
+
+		// Inline chevron — vendored as a CSS-only triangle so the file
+		// stays free of asset deps. The public plugin loads an SVG via
+		// CSS mask; here we use a simple rotated triangle that's
+		// indistinguishable at icon-size.
+		&::before {
+			content: "";
+			display: block;
+			width: 0;
+			height: 0;
+			margin: 7px auto;
+			border-left: 5px solid transparent;
+			border-right: 5px solid transparent;
+			border-top: 5px solid currentColor;
+		}
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	&[data-expanded="true"] &__chevron {
+		transform: rotate(-180deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&__chevron {
+			transition: none;
+		}
+	}
+
+	/*
+	 * Customize button. Tooltip via ::after pseudo (250ms show-delay,
+	 * 100ms hide), driven by `data-tooltip`.
+	 */
+	&__customize {
+		position: relative;
+		flex: 0 0 auto;
+		width: 20px;
+		height: 20px;
+		margin-left: 4px;
+		background: transparent;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		color: var(--color-sidebar-text-alternative, #71aee2);
+		opacity: 0.7;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		// Inline hamburger-style 3-bar icon for the disabled-state preview;
+		// final icon (Lucas's list-view, Figma 3505:74996) ships in Phase 2
+		// when the customize button becomes interactive.
+		&::before {
+			content: "";
+			display: block;
+			width: 14px;
+			height: 10px;
+			background: linear-gradient(
+				to bottom,
+				currentColor 2px,
+				transparent 2px,
+				transparent 4px,
+				currentColor 4px,
+				currentColor 6px,
+				transparent 6px,
+				transparent 8px,
+				currentColor 8px
+			);
+		}
+
+		&:hover:not(:disabled) {
+			opacity: 1;
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.4;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-accent, #3858e9);
+			outline-offset: 2px;
+		}
+
+		&::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			bottom: calc(100% + 6px);
+			right: 0;
+			padding: 4px 8px;
+			background: var(--color-surface-backdrop, #1d2327);
+			color: var(--color-text-inverted, #f0f0f1);
+			border: 1px solid rgba(240, 240, 241, 0.15);
+			border-radius: 3px;
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 1.4;
+			letter-spacing: normal;
+			text-transform: none;
+			white-space: nowrap;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 100ms ease;
+			z-index: 100002;
+		}
+
+		&:hover:not(:disabled)::after,
+		&:focus-visible:not(:disabled)::after {
+			opacity: 1;
+			transition: opacity 150ms ease 250ms;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			&::after,
+			&:hover:not(:disabled)::after,
+			&:focus-visible:not(:disabled)::after {
+				transition: none;
+			}
+		}
+	}
+
+	/*
+	 * Children list. Collapsed by default — `max-height: 0; overflow: hidden`
+	 * clips the rows; in expanded state we drop overflow back so any
+	 * submenu flyouts (Phase 2) are not clipped.
+	 */
+	&__children {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		max-height: 0;
+	}
+
+	&[data-expanded="true"] &__children {
+		overflow: visible;
+		max-height: none;
+	}
+}

@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { isP2Theme } from 'calypso/lib/site/utils';
+import { getAdminMenuGroups } from 'calypso/state/admin-menu/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -12,9 +14,12 @@ import {
 } from 'calypso/state/ui/selectors';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
+import MySitesSidebarUnifiedSidebarGroup from './sidebar-group';
 import useSiteMenuItems from './use-site-menu-items';
 import { isItemSelected } from './utils';
+import groupMenuItems from './utils/group-menu-items';
 import 'calypso/state/admin-menu/init';
+import 'calypso/state/admin-sidebar/expand-state/init';
 
 import './style.scss';
 
@@ -31,6 +36,7 @@ export const MySitesSidebarUnifiedBody = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const groups = useSelector( ( state ) => getAdminMenuGroups( state, siteId ) );
 	const isP2Site =
 		useSelector( ( state ) => isSiteWPForTeams( state, siteId ) ) ||
 		( site?.options?.theme_slug && isP2Theme( site?.options?.theme_slug ) );
@@ -39,53 +45,70 @@ export const MySitesSidebarUnifiedBody = ( {
 	// since WP Admin is considered a separate area from Calypso on those sites.
 	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
 
+	// Phase 1 redesign: partition the flat menu into top-level items plus group
+	// sections. Until the endpoint emits `groups[]`, all items remain ungrouped
+	// and the legacy flat shape is preserved.
+	const { ungroupedItems, groupedSections } = useMemo(
+		() => groupMenuItems( menuItems ?? [], groups ),
+		[ menuItems, groups ]
+	);
+
+	const renderItem = ( item, i ) => {
+		const isSelected = isItemSelected( item, path, site, isP2Site );
+
+		if ( 'current-site' === item?.type ) {
+			return (
+				<Site
+					key={ item.type }
+					site={ site }
+					href={ item?.url }
+					isSelected={ isSelected }
+					onSelect={ () => onMenuItemClick( item?.url ) }
+				/>
+			);
+		}
+		if ( 'separator' === item?.type ) {
+			return <SidebarSeparator key={ `sep-${ i }` } />;
+		}
+
+		if ( item?.children?.length ) {
+			return (
+				<MySitesSidebarUnifiedMenu
+					key={ item.slug }
+					path={ path }
+					link={ item.url }
+					selected={ isSelected }
+					sidebarCollapsed={ sidebarIsCollapsed }
+					shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+					isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+					{ ...item }
+				/>
+			);
+		}
+
+		return (
+			<MySitesSidebarUnifiedItem
+				key={ item.slug }
+				selected={ isSelected }
+				shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+				showTooltip={ !! isGlobalSidebarCollapsed }
+				trackClickEvent={ onMenuItemClick }
+				{ ...item }
+			/>
+		);
+	};
+
 	return (
 		<>
-			{ menuItems &&
-				menuItems.map( ( item, i ) => {
-					const isSelected = isItemSelected( item, path, site, isP2Site );
-
-					if ( 'current-site' === item?.type ) {
-						return (
-							<Site
-								key={ item.type }
-								site={ site }
-								href={ item?.url }
-								isSelected={ isSelected }
-								onSelect={ () => onMenuItemClick( item?.url ) }
-							/>
-						);
-					}
-					if ( 'separator' === item?.type ) {
-						return <SidebarSeparator key={ i } />;
-					}
-
-					if ( item?.children?.length ) {
-						return (
-							<MySitesSidebarUnifiedMenu
-								key={ item.slug }
-								path={ path }
-								link={ item.url }
-								selected={ isSelected }
-								sidebarCollapsed={ sidebarIsCollapsed }
-								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-								isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
-								{ ...item }
-							/>
-						);
-					}
-
-					return (
-						<MySitesSidebarUnifiedItem
-							key={ item.slug }
-							selected={ isSelected }
-							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-							showTooltip={ !! isGlobalSidebarCollapsed }
-							trackClickEvent={ onMenuItemClick }
-							{ ...item }
-						/>
-					);
-				} ) }
+			{ ungroupedItems.map( ( item, i ) => renderItem( item, i ) ) }
+			{ groupedSections.map( ( section ) => (
+				<MySitesSidebarUnifiedSidebarGroup
+					key={ `group-${ section.group.id }` }
+					group={ section.group }
+				>
+					{ section.items.map( ( item, i ) => renderItem( item, i ) ) }
+				</MySitesSidebarUnifiedSidebarGroup>
+			) ) }
 			{ children }
 		</>
 	);

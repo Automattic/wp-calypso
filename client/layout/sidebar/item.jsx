@@ -77,6 +77,7 @@ export default function SidebarItem( props ) {
 							? stripHTML( decodeEntities( props.label ) )
 							: props.label
 					}
+					{ props.labelSuffix }
 					{ !! count && <Count count={ count } /> }
 					{ !! badge && (
 						<Badge type="warning-clear" className="sidebar__menu-link-badge">
@@ -118,4 +119,5 @@ SidebarItem.propTypes = {
 	badge: PropTypes.string,
 	sidebarIsCollapsed: PropTypes.bool,
 	inlineIcon: PropTypes.string,
+	labelSuffix: PropTypes.node,
 };
