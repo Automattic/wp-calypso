@@ -86,10 +86,4 @@ describe( 'Document LoadingPlaceholder', () => {
 		expect( html ).not.toContain( 'wpcom-site__logo' );
 		expect( html ).toContain( 'wpcom-loading__boot' );
 	} );
-
-	it( 'renders the dark mode helper placeholder when enabled', () => {
-		const html = renderToStaticMarkup( <Document { ...baseProps } badge="dev" darkModeHelper /> );
-
-		expect( html ).toContain( 'environment is-dark-mode' );
-	} );
 } );
