@@ -99,17 +99,6 @@ export const restorePurchaseToState = ( purchase ) => ( dispatch, getState ) => 
 	} );
 };
 
-/**
- * Hydrates the user-purchases Redux slice from a pre-fetched array, without
- * triggering a refetch. Use when callers have already hit `/me/purchases`
- * directly and need Redux to reflect the new data so the next route render
- * reads it via `getByPurchaseId`.
- */
-export const setUserPurchases = ( purchases ) => ( {
-	type: PURCHASES_USER_FETCH_COMPLETED,
-	purchases,
-} );
-
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: PURCHASES_SITE_FETCH,
@@ -155,6 +144,7 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 				purchases: data,
 				userId,
 			} );
+			return data;
 		} )
 		.catch( () => {
 			dispatch( {

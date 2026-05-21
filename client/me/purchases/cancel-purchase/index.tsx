@@ -62,7 +62,6 @@ import {
 	type DisplayVariant,
 } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
-import wpcom from 'calypso/lib/wp';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { classifyPurchaseForCopy } from 'calypso/me/purchases/manage-purchase/classify-purchase-for-copy';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -70,13 +69,14 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	clearPurchases,
+	fetchUserPurchases,
 	removePurchaseFromState,
 	restorePurchaseToState,
-	setUserPurchases,
 } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
@@ -181,7 +181,7 @@ export interface CancelPurchaseActions {
 		properties: { [ key: string ]: string | boolean | number }
 	) => void;
 	clearPurchases: () => void;
-	setUserPurchases: ( purchases: unknown[] ) => void;
+	fetchUserPurchases: ( userId: number ) => Promise< Purchases.RawPurchase[] | undefined >;
 	refreshSitePlans: ( siteId: string | number ) => void;
 	removePurchaseFromState: ( purchaseId: string | number ) => Purchases.RawPurchase | null;
 	restorePurchaseToState: ( purchase: Purchases.RawPurchase ) => void;
@@ -199,6 +199,7 @@ export interface CancelPurchaseActions {
 
 export interface CancelPurchaseConnectedProps {
 	atomicTransfer: { created_at: string };
+	currentUserId: number | null;
 	hasLoadedSites: boolean;
 	hasLoadedUserPurchasesFromServer: boolean;
 	includedDomainPurchase: Purchases.Purchase;
@@ -838,34 +839,25 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				to_product_id: downgradePlan.getProductId(),
 			} );
 
-			// Fetch fresh purchases to find the new monthly purchase.
-			const freshPurchases = await wpcom.req.get( {
-				path: '/me/purchases',
-				apiVersion: '1.2',
-			} );
+			// Refetch /me/purchases through the standard thunk so the destination
+			// manage-purchase finds the new monthly via getByPurchaseId on mount
+			// (no destination bounce). The thunk also updates Redux, which
+			// transiently flips this.props.site to undefined once the cancelled
+			// yearly is gone from the store — but siteSlug below is a stable
+			// route prop set by controller.cancelPurchase from context.params.site
+			// and never depends on Redux purchase state.
+			const freshPurchases = await this.props.fetchUserPurchases( this.props.currentUserId ?? 0 );
 
 			const newPurchase = freshPurchases?.find(
-				( p: { product_id: number; blog_id: number } ) =>
-					p.product_id === downgradePlan.getProductId() && p.blog_id === purchase.siteId
+				( p ) => p.product_id === downgradePlan.getProductId() && p.blog_id === purchase.siteId
 			);
 
-			// Compute the redirect URL BEFORE hydrating Redux. setUserPurchases below
-			// replaces state.purchases.data with the fresh list; the cancelled yearly
-			// is no longer in that list, so this.props.site (derived via getSite from
-			// the looked-up purchase) flips to undefined synchronously when connect's
-			// subscriber re-runs mapStateToProps. siteSlug is a stable route prop set
-			// by controller.cancelPurchase from context.params.site and never depends
-			// on Redux purchase state, so it's safe to use here.
 			const targetUrl = newPurchase
 				? ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 						this.props.siteSlug,
 						newPurchase.ID
 				  ) + '?downgraded=true'
 				: null;
-
-			// Hydrate Redux so the destination manage-purchase finds the new monthly
-			// via getByPurchaseId and isDataValid passes on mount (no destination bounce).
-			this.props.setUserPurchases( freshPurchases );
 
 			if ( targetUrl ) {
 				page.redirect( targetUrl );
@@ -1538,6 +1530,7 @@ const ConnectedCancelPurchase = connect(
 		const site = getSite( state, purchase ? purchase.siteId : null );
 
 		return {
+			currentUserId: getCurrentUserId( state as object ),
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isJetpackPurchase,
@@ -1565,7 +1558,7 @@ const ConnectedCancelPurchase = connect(
 	{
 		recordTracksEvent,
 		clearPurchases,
-		setUserPurchases,
+		fetchUserPurchases,
 		refreshSitePlans,
 		removePurchaseFromState,
 		restorePurchaseToState,
