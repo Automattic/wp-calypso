@@ -1266,6 +1266,60 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				font-weight: 400;
 				color: var( --wp-components-color-gray-800, #2f2f2f );
 			}
+			/* Figma 2392:15317 — 32px between the "signed in as …" line and the
+			   first cart row (vs. the default 24px from WPOrderReviewList), and
+			   drop the first row's top padding so the gap is exactly the list's
+			   margin, not stacked with the line item's own padding. Subsequent
+			   rows keep their 16px+16px rhythm. */
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-block-start: 32px;
+			}
+			.wp-checkout__review-order-step
+				.order-review-line-items
+				> li:first-child
+				.checkout-line-item {
+				padding-block-start: 0;
+			}
+			/* Figma 2392:15320 — product name typography. LineItemTitle is an
+			   unclassed styled.div; target it as the first child div of each
+			   line item. */
+			.wp-checkout__review-order-step .checkout-line-item > div:first-of-type {
+				font-size: 16px;
+				line-height: 24px;
+				letter-spacing: -0.32px;
+			}
+			/* Figma 2392:15321/15325/15326 — price typography:
+			   – Outer .checkout-line-item__price carries the "/mo" text node,
+			     so it gets the 13/regular/-0.08 cadence.
+			   – Inner LineItemPriceWrapper span (the actual amount + the
+			     <s> strikethrough) inherits up to 16/24/-0.32.
+			   – Strikethrough recolors to scales/grays/gray-700. */
+			.wp-checkout__review-order-step .checkout-line-item__price {
+				/* LineItemPriceWrapper is display:flex, so without making the
+				   outer span a flex container the sibling "/mo" text node ends
+				   up offset above the price baseline. */
+				display: flex;
+				align-items: baseline;
+				font-size: 13px;
+				line-height: 20px;
+				letter-spacing: -0.08px;
+				font-weight: 400;
+			}
+			.wp-checkout__review-order-step .checkout-line-item__price > span {
+				font-size: 16px;
+				line-height: 24px;
+				letter-spacing: -0.32px;
+				/* 8px between the strikethrough and the live price (Figma
+				   3838:3618 gap-[8px]); overrides LineItemPriceWrapper's
+				   default 4px gap. */
+				gap: 8px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item__price > span > span {
+				font-weight: 500;
+			}
+			.wp-checkout__review-order-step .checkout-line-item__price > span > s {
+				color: var( --wp-components-color-gray-700, #757575 );
+			}
 		` }
 
 	${ ( props ) =>
