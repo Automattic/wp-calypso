@@ -3,15 +3,17 @@ import {
 	Card,
 	CardBody,
 	CardMedia,
+	DropdownMenu,
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, warning } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import { Icon, moreVertical, page, trash, warning } from '@wordpress/icons';
 import { useState } from 'react';
+import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
 import type { AgentStudioOutput } from '../../types';
 
@@ -37,10 +39,23 @@ export default function DeliverableCard( { output }: Props ) {
 					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
 					<Text variant="muted">{ getMetaLabel( output ) }</Text>
 				</VStack>
-				<HStack justify="flex-end">
-					<Button variant="secondary" isDestructive onClick={ () => setIsDeleteDialogOpen( true ) }>
-						{ __( 'Delete' ) }
-					</Button>
+				<HStack justify="space-between" alignment="center">
+					{ output.status === 'ready' && (
+						<Button variant="secondary" href={ getAgentStudioOutputPath( output.id ) }>
+							{ __( 'View' ) }
+						</Button>
+					) }
+					<DropdownMenu
+						icon={ moreVertical }
+						label={ __( 'Deliverable actions' ) }
+						controls={ [
+							{
+								title: __( 'Delete' ),
+								icon: trash,
+								onClick: () => setIsDeleteDialogOpen( true ),
+							},
+						] }
+					/>
 				</HStack>
 			</CardBody>
 			{ isDeleteDialogOpen && (
@@ -74,8 +89,8 @@ function DeliverablePreview( { output }: Props ) {
 	}
 
 	return (
-		<div className="a4a-agent-studio-deliverable-card__strip">
-			{ output.previewUrls?.map( ( url ) => <img key={ url } src={ url } alt="" /> ) }
+		<div className="a4a-agent-studio-deliverable-card__placeholder">
+			<Icon icon={ page } size={ 32 } />
 		</div>
 	);
 }
@@ -89,10 +104,5 @@ function getMetaLabel( output: AgentStudioOutput ) {
 		return __( 'Generation failed' );
 	}
 
-	const count = output.assetCount ?? output.previewUrls?.length ?? 0;
-	return sprintf(
-		/* translators: %d is the number of generated assets. */
-		_n( '%d asset', '%d assets', count ),
-		count
-	);
+	return output.deliverableType;
 }

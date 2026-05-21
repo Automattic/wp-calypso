@@ -150,12 +150,12 @@ describe( 'atmosphereComposerConfig', () => {
 			expect( container.textContent?.trim().length ).toBeGreaterThan( 0 );
 		} );
 
-		it( 'auth_required renders a Reconnect link to /reader/atmosphere/connect', () => {
+		it( 'auth_required renders a connection-error message with no link', () => {
 			const t = getTranslate();
 			const node = atmosphereComposerConfig.errorMessage( { kind: 'auth_required' }, t );
 			const { container } = render( <span>{ node }</span> );
-			const link = container.querySelector( 'a' );
-			expect( link?.getAttribute( 'href' ) ).toBe( '/reader/atmosphere/connect' );
+			expect( container.textContent ).toMatch( /Bluesky connection/i );
+			expect( container.querySelector( 'a' ) ).toBeNull();
 		} );
 	} );
 

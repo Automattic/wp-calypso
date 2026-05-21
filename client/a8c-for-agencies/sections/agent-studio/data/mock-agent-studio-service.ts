@@ -250,26 +250,4 @@ export const mockAgentStudioService: AgentStudioService = {
 			outputs: state.outputs.filter( ( output ) => output.id !== outputId ),
 		} );
 	},
-
-	async suggestOnePagerContent( brief, field ) {
-		// Heuristic stand-in for the AI suggestion: the first line tends to be
-		// the headline, the sentences after it frame the document. Swapped for
-		// the real model call when the wpcom endpoint lands.
-		const lines = brief
-			.split( '\n' )
-			.map( ( line ) => line.trim() )
-			.filter( Boolean );
-
-		if ( field === 'title' ) {
-			const firstLine = lines[ 0 ] ?? '';
-			return firstLine.length > 80 ? `${ firstLine.slice( 0, 79 ).trimEnd() }…` : firstLine;
-		}
-
-		const body = lines.slice( 1 ).join( ' ' ).trim();
-		const sentences = ( body.match( /[^.!?]+[.!?]+/g ) ?? ( body ? [ body ] : [] ) ).map(
-			( sentence ) => sentence.trim()
-		);
-		const blurbText = sentences.slice( 0, 2 ).join( ' ' ).trim();
-		return blurbText.length > 200 ? `${ blurbText.slice( 0, 199 ).trimEnd() }…` : blurbText;
-	},
 };

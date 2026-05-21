@@ -23,4 +23,7 @@ export const siteApmAggregateQuery = ( siteId: number, params?: ApmAggregatePara
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'apm', 'aggregate', params ],
 		queryFn: () => fetchSiteApmAggregate( siteId, params ),
+		// Data is bucketed per minute and ingestion lags ~30s; keep cached
+		// data fresh for a minute so remounts don't trigger silent refetches.
+		staleTime: 60_000,
 	} );

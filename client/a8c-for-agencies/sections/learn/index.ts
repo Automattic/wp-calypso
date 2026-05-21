@@ -16,6 +16,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	agentStudioBriefContext,
 	agentStudioContext,
+	agentStudioOutputContext,
 	agentStudioProjectContext,
 } from '../agent-studio/controller';
 import {
@@ -56,6 +57,13 @@ export default function () {
 			`${ A4A_AGENT_STUDIO_PROJECTS_LINK }/:projectId`,
 			requireAccessContext,
 			agentStudioProjectContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			`${ A4A_AGENT_STUDIO_LINK }/outputs/:outputId`,
+			requireAccessContext,
+			agentStudioOutputContext,
 			makeLayout,
 			clientRender
 		);

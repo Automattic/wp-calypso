@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
-import { AppState } from 'calypso/types';
+import { QueryClient } from '@tanstack/react-query';
+import { upsertPostCache } from 'calypso/reader/data/post-cache';
 import { FRESHLY_PRESSED_TAB } from '../discover/helper';
 import { DISCOVER_PREFIX } from '../discover/routes';
 import {
@@ -11,40 +12,62 @@ import {
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
-describe( 'reader utils', () => {
-	const dispatch = jest.fn();
-	const getState = () =>
-		( {
-			reader: {
-				posts: {
-					items: {},
-				},
-			},
-		} ) as AppState;
+let mockQueryClient: QueryClient | null = null;
 
+jest.mock( 'calypso/state/query-client', () => ( {
+	getCalypsoQueryClient: () => mockQueryClient,
+} ) );
+
+describe( 'reader utils', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
+		mockQueryClient = null;
 	} );
 
 	describe( '#showSelectedPost', () => {
 		test( 'does not do anything if postKey argument is missing', () => {
-			showSelectedPost( {} )( dispatch, getState );
+			showSelectedPost( {} )();
 			expect( page ).not.toHaveBeenCalled();
 		} );
 
 		test( 'redirects if passed a post key', () => {
-			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } )( dispatch, getState );
+			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } )();
 			expect( page ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'redirects to a #comments URL if we passed comments argument', () => {
-			showSelectedPost( { postKey: { feedId: 1, postId: 5 }, comments: true } )(
-				dispatch,
-				getState
-			);
+			showSelectedPost( { postKey: { feedId: 1, postId: 5 }, comments: true } )();
 			expect( page as ( url: string ) => void ).toHaveBeenCalledWith(
 				'/reader/feeds/1/posts/5#comments'
 			); //
+		} );
+
+		test( 'redirects cross-posts using the canonical post cache metadata', () => {
+			mockQueryClient = new QueryClient();
+			upsertPostCache( mockQueryClient, [
+				{
+					ID: 1,
+					site_ID: 100,
+					global_ID: 'global-1',
+					tags: { 'p2-xpost': {} },
+					metadata: [
+						{
+							key: 'xpost_origin',
+							value: '300:400',
+						},
+						{
+							key: '_xpost_original_permalink',
+							value: 'https://example.com/original-post/',
+						},
+					],
+				},
+			] );
+
+			showSelectedPost( { postKey: { blogId: 100, postId: 1 } } )();
+
+			expect( page as ( url: string ) => void ).toHaveBeenCalledWith(
+				'/reader/blogs/300/posts/400'
+			);
 		} );
 	} );
 

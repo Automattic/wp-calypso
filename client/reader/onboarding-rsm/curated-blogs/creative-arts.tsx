@@ -379,14 +379,6 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 145565033,
-			site_ID: 218913951,
-			site_URL: 'diyfamilytime.com',
-			site_name: 'DIY Family Time',
-			feed_URL: 'http://diyfamilytimecom.wpcomstaging.com',
-			has_icon: false,
-		},
-		{
 			feed_ID: 46560483,
 			site_ID: 53768874,
 			site_URL: 'dreamgreendiy.com',

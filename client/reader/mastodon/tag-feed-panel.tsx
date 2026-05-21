@@ -8,6 +8,7 @@ import {
 	SocialAnalyticsProvider,
 	SocialFeedList,
 	SocialPostCard,
+	SocialTagFeedHeader,
 	mapMastodonFeedItemToSocialPost,
 	socialPostFeedItemKey,
 	type SocialPost,
@@ -186,13 +187,6 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 	);
 
 	const tagInfo = feed.data?.pages[ 0 ]?.tag;
-	const countLine =
-		tagInfo?.count !== undefined
-			? translate( '%(count)d post', '%(count)d posts', {
-					count: tagInfo.count,
-					args: { count: tagInfo.count },
-			  } )
-			: null;
 
 	// Defense-in-depth on a third-party-supplied URL: only honor https URLs
 	// even though the backend should only ever emit a Mastodon home-instance
@@ -218,19 +212,16 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 							timelineUrl={ getTimelineUrl( connection.id ) }
 							onBackToTimeline={ handleBackToTimeline }
 						/>
-						<div className="mastodon-tag-feed__header">
-							<h1 className="mastodon-tag-feed__heading">{ `#${ hashtag }` }</h1>
-							{ countLine ? <p className="mastodon-tag-feed__count">{ countLine }</p> : null }
-							{ externalTagUrl ? (
-								<ExternalLink
-									className="mastodon-tag-feed__external-link"
-									href={ externalTagUrl }
-									rel="noreferrer"
-								>
-									{ translate( 'View on Mastodon' ) }
-								</ExternalLink>
-							) : null }
-						</div>
+						<SocialTagFeedHeader hashtag={ hashtag } count={ tagInfo?.count } />
+						{ externalTagUrl ? (
+							<ExternalLink
+								className="mastodon-tag-feed__external-link"
+								href={ externalTagUrl }
+								rel="noreferrer"
+							>
+								{ translate( 'View on Mastodon' ) }
+							</ExternalLink>
+						) : null }
 						<MastodonTagFeedTabs
 							connectionId={ connection.id }
 							hashtag={ hashtag }

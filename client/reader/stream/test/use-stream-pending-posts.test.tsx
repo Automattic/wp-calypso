@@ -7,6 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
+import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import initialReducer from 'calypso/state/reducer';
 import { useStreamPendingPosts } from '../use-stream-pending-posts';
 import { type PostKey } from '../use-stream-posts';
@@ -20,13 +22,22 @@ afterEach( () => {
 } );
 
 function makeWrapper( queryClient: QueryClient ) {
-	const store = createStore( initialReducer, undefined, applyMiddleware( thunkMiddleware ) );
+	const actions: unknown[] = [];
+	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
+		actions.push( action );
+		return next( action );
+	};
+	const store = createStore(
+		initialReducer,
+		undefined,
+		applyMiddleware( actionRecorder, thunkMiddleware )
+	);
 	const Wrapper = ( { children }: { children: ReactNode } ) => (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>{ children }</Provider>
 		</QueryClientProvider>
 	);
-	return { Wrapper, store };
+	return { Wrapper, store, actions };
 }
 
 function makeQueryClient() {
@@ -38,14 +49,18 @@ interface ApiPost {
 	site_ID: number;
 	URL?: string;
 	date_liked?: string;
+	content?: string;
+	railcar?: Record< string, unknown >;
 }
 
-function apiPost( id: number ): ApiPost {
+function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
 	return {
 		ID: id,
 		site_ID: 100,
 		URL: `https://example.com/post-${ id }`,
 		date_liked: `2026-04-${ String( id ).padStart( 2, '0' ) }T00:00:00Z`,
+		content: `<p>Pending post ${ id }</p>`,
+		...overrides,
 	};
 }
 
@@ -113,6 +128,50 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 		expect( result.current.hasPendingPosts ).toBe( true );
+		expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
+			ID: 1,
+			site_ID: 100,
+			content_no_html: 'Pending post 1',
+			better_excerpt_no_html: 'Pending post 1',
+		} );
+	} );
+
+	it( 'records railcar render events for polled stream posts', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1, { railcar: { railcar: 'pending-railcar-1' } } ), apiPost( 2 ) ],
+				algorithm: 'pending-railcar-test',
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper, actions } = makeWrapper( queryClient );
+		const items = [ postKey( 2 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+		expect( actions ).toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					type: ANALYTICS_EVENT_RECORD,
+					meta: expect.objectContaining( {
+						analytics: expect.arrayContaining( [
+							expect.objectContaining( {
+								payload: expect.objectContaining( {
+									name: 'calypso_traintracks_render',
+									properties: { railcar: 'pending-railcar-1' },
+								} ),
+							} ),
+						] ),
+					} ),
+				} ),
+			] )
+		);
 	} );
 
 	it( 'hasPendingPosts is false when there are no pending items', async () => {

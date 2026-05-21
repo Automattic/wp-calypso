@@ -51,6 +51,7 @@
 		"global-styles/on-personal-plan": true,
 		"google-my-business": true,
 		"help": true,
+		"help-center/logged-out-fab": true,
 		"help/gpt-response": true,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,

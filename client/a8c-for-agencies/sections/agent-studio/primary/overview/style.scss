@@ -74,3 +74,18 @@
 	min-height: 160px;
 	color: var( --color-text-inverted );
 }
+
+.a4a-agent-studio-deliverable-card__placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 160px;
+	background: var( --color-neutral-80 );
+	color: var( --color-text-inverted );
+}
+
+.a4a-agent-studio-deliverable-card__placeholder svg,
+.a4a-agent-studio-deliverable-card__placeholder svg path {
+	fill: currentColor;
+}
