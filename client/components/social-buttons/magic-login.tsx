@@ -13,9 +13,6 @@ import './style.scss';
 type MagicLoginButtonProps = {
 	loginUrl: string;
 	isJetpack?: boolean;
-	// Optional click hook. social.jsx injects this so it can fire the
-	// standardized `calypso_login_method_click` Tracks event for every
-	// method shown (badged or not).
 	onClick?: () => void;
 };
 

@@ -19,7 +19,12 @@ const LoginMethodImpression = ( { method, badgeView, children }: LoginMethodImpr
 			method,
 			badge_view: badgeView,
 		} );
-	}, [ method, badgeView ] );
+		// Intentional: snapshot badge_view at mount only. The deps are
+		// empty so a later badge change (e.g. lastUsedAuthenticationMethod
+		// clearing when the user switches method) does not re-fire this with
+		// badge_view: false and pollute the unbadged baseline.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return <>{ children }</>;
 };
