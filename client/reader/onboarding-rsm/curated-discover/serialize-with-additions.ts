@@ -11,6 +11,19 @@ export interface SerializeWithAdditionsOptions {
 	additions: AddedCandidatesByTag;
 }
 
+export interface SerializeWithAdditionsResult {
+	/** Generated TypeScript source body, ready for clipboard. */
+	source: string;
+	/**
+	 * Entries that were dropped because they lacked the required string
+	 * fields (`feed_URL`, `site_URL`, `site_name`) or a known `has_icon`. In
+	 * practice this only fires when localStorage carries a row from before the
+	 * `buildEntryForAdd` validation tightened — `console.warn`'d with the
+	 * tag + feed_ID for diagnosis.
+	 */
+	skipped: number;
+}
+
 /**
  * Build an updated curated-blogs source file by prepending the operator's
  * newly-added candidates to the existing curated entries for each tag.
@@ -29,14 +42,14 @@ export interface SerializeWithAdditionsOptions {
  *    in from the prior review pass).
  *
  * Tags not present in either source are skipped. Tags whose merged list is
- * empty are also skipped — but in practice an empty tag means it had no
- * existing entries and no additions, so the operator never sees it.
+ * empty (or whose every entry was filtered for missing fields) are also
+ * dropped from the output.
  */
 export function serializeWithAdditions( {
 	variableName,
 	tagMap,
 	additions,
-}: SerializeWithAdditionsOptions ): string {
+}: SerializeWithAdditionsOptions ): SerializeWithAdditionsResult {
 	const merged: CuratedBlogsList = {};
 
 	// Walk existing tags first so the output order matches the source file
@@ -57,14 +70,59 @@ export function serializeWithAdditions( {
 		merged[ tag ] = [ ...reversed( adds ) ];
 	}
 
-	return serializeCurated( {
+	// Track which tag the entry currently belongs to so the warn message can
+	// point the operator at it. `getMetadata` only sees the entry itself, so
+	// we precompute this lookup before delegating.
+	const tagByFeedId = new Map< number, string >();
+	for ( const [ tag, entries ] of Object.entries( merged ) ) {
+		for ( const entry of entries ) {
+			// Last-write-wins is fine here — we only use it for diagnostic logs,
+			// and a feed_ID appearing in two tags simultaneously is itself
+			// abnormal but not blocking.
+			tagByFeedId.set( entry.feed_ID, tag );
+		}
+	}
+
+	let skipped = 0;
+	const source = serializeCurated( {
 		variableName,
 		tagMap: merged,
-		getMetadata: ( entry ) => ( {
-			feedUrl: entry.feed_URL,
-			hasIcon: entry.has_icon,
-		} ),
+		getMetadata: ( entry ) => {
+			const reason = describeIncomplete( entry );
+			if ( reason ) {
+				skipped++;
+				const tag = tagByFeedId.get( entry.feed_ID ) ?? '<unknown>';
+				// eslint-disable-next-line no-console
+				console.warn(
+					`[curated-discover] Skipping incomplete entry feed_ID=${ entry.feed_ID } in tag "${ tag }": ${ reason }`,
+					entry
+				);
+				return null;
+			}
+			return {
+				feedUrl: entry.feed_URL,
+				hasIcon: entry.has_icon,
+			};
+		},
 	} );
+
+	return { source, skipped };
+}
+
+function describeIncomplete( entry: CuratedBlog ): string | null {
+	if ( typeof entry.feed_URL !== 'string' || entry.feed_URL.length === 0 ) {
+		return 'missing feed_URL';
+	}
+	if ( typeof entry.site_URL !== 'string' || entry.site_URL.length === 0 ) {
+		return 'missing site_URL';
+	}
+	if ( typeof entry.site_name !== 'string' || entry.site_name.length === 0 ) {
+		return 'missing site_name';
+	}
+	if ( typeof entry.has_icon !== 'boolean' ) {
+		return 'missing has_icon';
+	}
+	return null;
 }
 
 function reversed< T >( list: readonly T[] ): T[] {

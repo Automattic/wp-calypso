@@ -22,22 +22,23 @@ describe( 'serializeWithAdditions', () => {
 			drinks: [ entry( { feed_ID: 3 } ) ],
 		};
 
-		const out = serializeWithAdditions( {
+		const { source, skipped } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap,
 			additions: {},
 		} );
 
-		expect( feedIdOrder( out ) ).toEqual( [ 1, 2, 3 ] );
-		expect( out ).toMatch( /^import \{ CuratedBlogsList \} from '\.\/index';\n/ );
-		expect( out ).toContain( 'export const fooBlogs: CuratedBlogsList = {' );
+		expect( feedIdOrder( source ) ).toEqual( [ 1, 2, 3 ] );
+		expect( source ).toMatch( /^import \{ CuratedBlogsList \} from '\.\/index';\n/ );
+		expect( source ).toContain( 'export const fooBlogs: CuratedBlogsList = {' );
+		expect( skipped ).toBe( 0 );
 	} );
 
 	it( 'prepends additions to the matching tag with newest at top', () => {
 		// Storage order is insertion order (oldest first); the serializer
 		// reverses so the most recently added entry sits at the top of the
 		// emitted tag block.
-		const out = serializeWithAdditions( {
+		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {
 				food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ) ],
@@ -47,11 +48,11 @@ describe( 'serializeWithAdditions', () => {
 			},
 		} );
 
-		expect( feedIdOrder( out ) ).toEqual( [ 200, 100, 1, 2 ] );
+		expect( feedIdOrder( source ) ).toEqual( [ 200, 100, 1, 2 ] );
 	} );
 
 	it( 'isolates additions per tag', () => {
-		const out = serializeWithAdditions( {
+		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {
 				food: [ entry( { feed_ID: 1 } ) ],
@@ -63,11 +64,11 @@ describe( 'serializeWithAdditions', () => {
 		} );
 
 		// Order: food additions, food existing, drinks (no additions).
-		expect( feedIdOrder( out ) ).toEqual( [ 100, 1, 2 ] );
+		expect( feedIdOrder( source ) ).toEqual( [ 100, 1, 2 ] );
 	} );
 
 	it( 'preserves the source-file tag order when prepending additions', () => {
-		const out = serializeWithAdditions( {
+		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {
 				health: [ entry( { feed_ID: 1 } ) ],
@@ -79,12 +80,12 @@ describe( 'serializeWithAdditions', () => {
 			},
 		} );
 
-		const tagOrder = [ ...out.matchAll( /^\t([a-z]+): \[/gm ) ].map( ( m ) => m[ 1 ] );
+		const tagOrder = [ ...source.matchAll( /^\t([a-z]+): \[/gm ) ].map( ( m ) => m[ 1 ] );
 		expect( tagOrder ).toEqual( [ 'health', 'food', 'sports' ] );
 	} );
 
 	it( 'appends new tags that exist only in additions after the source-file tags', () => {
-		const out = serializeWithAdditions( {
+		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {
 				food: [ entry( { feed_ID: 1 } ) ],
@@ -94,13 +95,13 @@ describe( 'serializeWithAdditions', () => {
 			},
 		} );
 
-		const tagOrder = [ ...out.matchAll( /^\t([a-z]+): \[/gm ) ].map( ( m ) => m[ 1 ] );
+		const tagOrder = [ ...source.matchAll( /^\t([a-z]+): \[/gm ) ].map( ( m ) => m[ 1 ] );
 		expect( tagOrder ).toEqual( [ 'food', 'health' ] );
-		expect( feedIdOrder( out ) ).toEqual( [ 1, 100 ] );
+		expect( feedIdOrder( source ) ).toEqual( [ 1, 100 ] );
 	} );
 
 	it( 'emits hasIcon=false for added entries with has_icon overridden', () => {
-		const out = serializeWithAdditions( {
+		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {},
 			additions: {
@@ -108,12 +109,12 @@ describe( 'serializeWithAdditions', () => {
 			},
 		} );
 
-		expect( out ).toContain( 'feed_ID: 100,' );
-		expect( out ).toContain( 'hasIcon: false,' );
+		expect( source ).toContain( 'feed_ID: 100,' );
+		expect( source ).toContain( 'hasIcon: false,' );
 	} );
 
 	it( 'uses the addition entry feed_URL verbatim', () => {
-		const out = serializeWithAdditions( {
+		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {},
 			additions: {
@@ -126,6 +127,92 @@ describe( 'serializeWithAdditions', () => {
 			},
 		} );
 
-		expect( out ).toContain( "feedUrl: 'https://canonical.example.test/atom.xml'," );
+		expect( source ).toContain( "feedUrl: 'https://canonical.example.test/atom.xml'," );
+	} );
+
+	describe( 'skip-and-warn for incomplete entries', () => {
+		// Silence the diagnostic warns the serializer emits for skipped rows so
+		// the test output stays readable. The warns themselves are validated
+		// where it matters.
+		let warnSpy: jest.SpyInstance;
+		beforeEach( () => {
+			warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		} );
+		afterEach( () => {
+			warnSpy.mockRestore();
+		} );
+
+		it( 'drops entries whose feed_URL is missing instead of crashing', () => {
+			const incomplete = {
+				feed_ID: 999,
+				site_ID: 1234,
+				site_URL: 'https://example-999.test/',
+				site_name: 'Example 999',
+				// `feed_URL` is intentionally undefined to mimic a stale
+				// localStorage row from before the buildEntryForAdd validation
+				// tightened.
+			} as unknown as CuratedBlog;
+
+			const { source, skipped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: {
+					food: [ entry( { feed_ID: 1 } ) ],
+				},
+				additions: {
+					food: [ incomplete ],
+				},
+			} );
+
+			expect( skipped ).toBe( 1 );
+			expect( feedIdOrder( source ) ).toEqual( [ 1 ] );
+			expect( warnSpy ).toHaveBeenCalledWith(
+				expect.stringContaining( 'feed_ID=999' ),
+				incomplete
+			);
+		} );
+
+		it( 'drops entries whose site_URL is missing', () => {
+			const incomplete = {
+				feed_ID: 999,
+				site_ID: 1234,
+				site_name: 'Example 999',
+				feed_URL: 'https://example-999.test/feed/',
+				has_icon: true,
+			} as unknown as CuratedBlog;
+
+			const { source, skipped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: { food: [ entry( { feed_ID: 1 } ) ] },
+				additions: { food: [ incomplete ] },
+			} );
+
+			expect( skipped ).toBe( 1 );
+			expect( feedIdOrder( source ) ).toEqual( [ 1 ] );
+		} );
+
+		it( 'drops a tag entirely when every entry under it is incomplete', () => {
+			const incomplete = { feed_ID: 999, site_ID: 1234 } as unknown as CuratedBlog;
+
+			const { source, skipped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: {},
+				additions: { orphan: [ incomplete ] },
+			} );
+
+			expect( skipped ).toBe( 1 );
+			// Empty tag block must not appear in the output.
+			expect( source ).not.toContain( 'orphan:' );
+		} );
+
+		it( 'reports skipped == 0 when all entries are complete', () => {
+			const { skipped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: { food: [ entry( { feed_ID: 1 } ) ] },
+				additions: { food: [ entry( { feed_ID: 100 } ) ] },
+			} );
+
+			expect( skipped ).toBe( 0 );
+			expect( warnSpy ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

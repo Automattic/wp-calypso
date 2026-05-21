@@ -70,9 +70,19 @@ const TagSection: React.FC< TagSectionProps > = ( {
 		if ( ! c.feed_URL || c.hasIcon === null ) {
 			return null;
 		}
+		// External (non-WPCOM) feeds sometimes come back from the cards
+		// endpoint without `site_URL` / `site_name`. Those are required string
+		// fields in the curated-blogs schema (any `undefined` would crash
+		// `serializeWithAdditions` on copy), so reject incomplete candidates
+		// outright rather than persisting a row that can't be exported.
+		if ( ! c.site_URL || ! c.site_name ) {
+			return null;
+		}
 		return {
 			feed_ID: c.feed_ID,
-			site_ID: c.site_ID,
+			// Mirror the existing curated source convention: external feeds
+			// have `site_ID: 0`. Coerce any null/undefined the API returned.
+			site_ID: typeof c.site_ID === 'number' ? c.site_ID : 0,
 			site_URL: c.site_URL,
 			site_name: c.site_name,
 			feed_URL: c.feed_URL,
@@ -166,6 +176,58 @@ const TagSection: React.FC< TagSectionProps > = ( {
 	);
 };
 
+/**
+ * Best-effort clipboard write. Tries the modern async API first, then falls
+ * back to the legacy `document.execCommand( 'copy' )` path against a hidden
+ * textarea — that path predates the Clipboard API permission model and works
+ * reliably inside a click handler in every browser the dev tool needs to run
+ * on. Returns `true` if either path reported success.
+ */
+async function writeToClipboard( text: string ): Promise< boolean > {
+	if ( typeof navigator !== 'undefined' && navigator.clipboard?.writeText ) {
+		try {
+			await navigator.clipboard.writeText( text );
+			return true;
+		} catch {
+			// Fall through to the legacy path. Some environments expose
+			// `clipboard.writeText` but reject it (focus loss, permissions,
+			// non-secure-context edge cases) — the legacy path doesn't share
+			// any of those constraints.
+		}
+	}
+
+	if ( typeof document === 'undefined' ) {
+		return false;
+	}
+
+	const textarea = document.createElement( 'textarea' );
+	textarea.value = text;
+	// Hide off-screen instead of `display: none` — the latter prevents
+	// `execCommand('copy')` from reading the selection on some browsers.
+	textarea.setAttribute( 'readonly', '' );
+	textarea.style.position = 'fixed';
+	textarea.style.inset = '0';
+	textarea.style.opacity = '0';
+	textarea.style.pointerEvents = 'none';
+	document.body.appendChild( textarea );
+
+	const previousActive = document.activeElement as HTMLElement | null;
+	textarea.focus();
+	textarea.select();
+	textarea.setSelectionRange( 0, text.length );
+
+	let succeeded = false;
+	try {
+		succeeded = document.execCommand( 'copy' );
+	} catch {
+		succeeded = false;
+	}
+
+	document.body.removeChild( textarea );
+	previousActive?.focus?.();
+	return succeeded;
+}
+
 const CuratedDiscoverPage: React.FC = () => {
 	const [ selectedFileSlug, setSelectedFileSlug ] = useState< string >( DEFAULT_FILE );
 
@@ -186,20 +248,44 @@ const CuratedDiscoverPage: React.FC = () => {
 	);
 
 	const copyFile = useCallback( async () => {
-		const source = serializeWithAdditions( {
-			variableName: file.variableName,
-			tagMap: file.tagMap,
-			additions: added,
-		} );
+		let source: string;
+		let skipped: number;
 		try {
-			await navigator.clipboard.writeText( source );
+			( { source, skipped } = serializeWithAdditions( {
+				variableName: file.variableName,
+				tagMap: file.tagMap,
+				additions: added,
+			} ) );
+		} catch ( error ) {
+			alert( `Failed to build ${ file.slug }.tsx: ${ ( error as Error ).message }` );
+			return;
+		}
+
+		// Always log the source first so the operator has a fallback regardless
+		// of what happens with the clipboard API — they can grab it from
+		// devtools if both copy paths fail.
+		// eslint-disable-next-line no-console
+		console.log( `[curated-discover] ${ file.slug }.tsx (${ source.length } chars):\n${ source }` );
+
+		const skippedSuffix =
+			skipped > 0
+				? ` ${ skipped } incomplete entr${
+						skipped === 1 ? 'y was' : 'ies were'
+				  } skipped (see devtools console for details).`
+				: '';
+
+		const ok = await writeToClipboard( source );
+		if ( ok ) {
 			alert(
 				`Copied ${ file.slug }.tsx (${ totalAdded } new addition${
 					totalAdded === 1 ? '' : 's'
-				} prepended).`
+				} prepended).${ skippedSuffix }`
 			);
-		} catch ( error ) {
-			alert( `Copy failed: ${ ( error as Error ).message }` );
+		} else {
+			alert(
+				'Copy failed silently. The full source has been logged to the devtools console — ' +
+					`open it and grab the [curated-discover] entry.${ skippedSuffix }`
+			);
 		}
 	}, [ file, added, totalAdded ] );
 

@@ -163,7 +163,9 @@ export const DiscoverRow: React.FC< DiscoverRowProps > = ( {
 				<Button
 					variant={ isAdded ? 'secondary' : 'primary' }
 					onClick={ isAdded ? onRemove : onAdd }
-					disabled={ ! isAdded && ! candidate.feed_URL }
+					disabled={
+						! isAdded && ( ! candidate.feed_URL || ! candidate.site_URL || ! candidate.site_name )
+					}
 				>
 					{ isAdded ? 'Remove from added' : 'Add to curated' }
 				</Button>
