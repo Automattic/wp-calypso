@@ -1320,6 +1320,13 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.wp-checkout__review-order-step .checkout-line-item__price > span > s {
 				color: var( --wp-components-color-gray-700, #757575 );
 			}
+			/* Figma 2392:15397 — "Remove plan/domain/email" link. */
+			.wp-checkout__review-order-step .checkout-line-item__remove-product {
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
 		` }
 
 	${ ( props ) =>
