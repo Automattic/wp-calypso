@@ -63,6 +63,7 @@ import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { useRsmBetterCheckoutExperiment } from 'calypso/my-sites/checkout/src/hooks/use-rsm-better-checkout-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
@@ -101,6 +102,7 @@ import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
+import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -565,6 +567,7 @@ export default function CheckoutMainContent( {
 
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
+	const isMobileCheckoutStickySummary = useMobileCheckoutStickySummaryExperiment();
 	const originalPriceForHeader = responseCart.products.reduce(
 		( sum, product ) => sum + product.item_original_subtotal_integer,
 		0
@@ -665,7 +668,7 @@ export default function CheckoutMainContent( {
 							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
 							onError={ onSummaryError }
 						>
-							{ isCheckoutUiRedesignV1 ? (
+							{ ! isMobileCheckoutStickySummary && isCheckoutUiRedesignV1 && (
 								<CheckoutSummaryTitleLinkRedesign
 									className="checkout__summary-button"
 									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
@@ -696,7 +699,8 @@ export default function CheckoutMainContent( {
 										</CheckoutSummaryPricesWrapper>
 									</CheckoutSummaryTitleContentRedesign>
 								</CheckoutSummaryTitleLinkRedesign>
-							) : (
+							) }
+							{ ! isMobileCheckoutStickySummary && ! isCheckoutUiRedesignV1 && (
 								<CheckoutSummaryTitleLink
 									className="checkout__summary-button"
 									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
@@ -984,7 +988,8 @@ export default function CheckoutMainContent( {
 						isSubmitted={ isSubmitted }
 						isLargeViewport={ isRsmBetterCheckout && isLargeViewport }
 					/>
-					{ isRsmBetterCheckout && isLargeViewport ? (
+					{ ( isRsmBetterCheckout && isLargeViewport ) ||
+					( isStepContainerV2 && ! isLargeViewport && isMobileCheckoutStickySummary ) ? (
 						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
 					) : (
 						<CheckoutFormSubmit
@@ -1097,7 +1102,12 @@ export default function CheckoutMainContent( {
 							);
 						}
 
-						return checkoutMainContent;
+						return (
+							<>
+								{ checkoutMainContent }
+								{ isMobileCheckoutStickySummary && <MobileCheckoutStickySummary /> }
+							</>
+						);
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
