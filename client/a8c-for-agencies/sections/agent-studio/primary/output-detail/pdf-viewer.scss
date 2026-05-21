@@ -29,19 +29,35 @@
 	max-width: 100%;
 }
 
+// The wrap is the visible page card. Its aspect ratio matches the
+// natural US-Letter page (816 / 1056) so the wrap height is determined
+// from its width by CSS — no JS height calculation, no chance of the
+// wrap collapsing before the resize observer fires.
 .a4a-one-pager-viewer__iframe-wrap {
 	position: relative;
 	width: 100%;
+	aspect-ratio: 816 / 1056;
 	background-color: var(--color-surface);
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.18);
 	border-radius: 4px;
 	overflow: hidden;
 }
 
+// Iframe is absolutely positioned at its natural 816 × 1056 viewport
+// so the iframe's content sees the design viewport it expects (ela
+// `html, body { width: 816px }`), with no fight between HTML width
+// attributes and inline styles. The wrap clips and the `transform:
+// scale(...)` (set inline by JS based on the wrap's actual pixel
+// width) shrinks the iframe visually into the wrap.
 .a4a-one-pager-viewer__iframe {
-	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 816px;
+	height: 1056px;
 	border: 0;
 	background-color: var(--color-surface);
+	transform-origin: top left;
 }
 
 .a4a-one-pager-viewer__circle-button {

@@ -24,13 +24,11 @@ interface Props {
 
 // The Ela one-pager renderer produces a fixed US Letter at 96dpi
 // canvas (`html, body { width: 816px; height: 1056px }` in
-// `ela-base.css`, and `.ela-page` matches). Hard-coding these here
-// lets us scale the iframe deterministically from the slot dimensions
-// alone — no `iframe.contentDocument` access required, which keeps the
-// `sandbox=""` boundary intact (an empty sandbox treats the content
-// as opaque-origin, so the parent can't read the iframe document).
+// `ela-base.css`, and `.ela-page` matches). The natural width is
+// shared between JS (to compute the scale factor) and CSS (the
+// iframe is sized to it absolutely). The natural height only appears
+// in CSS — see `aspect-ratio: 816 / 1056` on the wrap.
 const PAGE_NATURAL_WIDTH = 816;
-const PAGE_NATURAL_HEIGHT = 1056;
 
 /**
  * Stacked single-page viewer for one-pager deliverables. Dark canvas,
@@ -97,22 +95,23 @@ function FittedIframe( { srcDoc, title }: { srcDoc: string; title: string } ) {
 	const wrapRef = useRef< HTMLDivElement >( null );
 	const [ scale, setScale ] = useState( 0 );
 
-	// `ResizeObserver` on the wrap fires once on mount (so the initial
-	// scale is computed even if `clientWidth` was 0 before layout
-	// settled) and again on every layout change. This is more reliable
-	// than depending on the iframe's `onLoad` + `window.resize`, which
-	// raced with the parent's layout-settle in the dark-canvas viewer.
+	// The wrap is fully CSS-sized: `width: 100%` and `aspect-ratio: 816
+	// / 1056` give it the natural page proportions, so its rendered
+	// height follows from its rendered width without JS. JS only has
+	// to compute the `transform: scale(...)` factor that shrinks the
+	// iframe — which is CSS-sized to the natural 816 × 1056 viewport —
+	// down to the wrap's pixel width. `ResizeObserver` handles both
+	// the initial layout and subsequent resizes.
 	useLayoutEffect( () => {
 		const wrap = wrapRef.current;
 		if ( ! wrap ) {
 			return;
 		}
 		const update = () => {
-			const slotWidth = wrap.clientWidth;
-			if ( slotWidth === 0 ) {
-				return;
+			const w = wrap.clientWidth;
+			if ( w > 0 ) {
+				setScale( w / PAGE_NATURAL_WIDTH );
 			}
-			setScale( slotWidth / PAGE_NATURAL_WIDTH );
 		};
 		update();
 		const observer = new ResizeObserver( update );
@@ -120,26 +119,13 @@ function FittedIframe( { srcDoc, title }: { srcDoc: string; title: string } ) {
 		return () => observer.disconnect();
 	}, [] );
 
-	const scaledHeight = scale > 0 ? PAGE_NATURAL_HEIGHT * scale : 0;
-
 	return (
-		<div
-			ref={ wrapRef }
-			className="a4a-one-pager-viewer__iframe-wrap"
-			style={ scaledHeight > 0 ? { height: `${ scaledHeight }px` } : undefined }
-		>
+		<div ref={ wrapRef } className="a4a-one-pager-viewer__iframe-wrap">
 			<iframe
 				title={ title }
 				className="a4a-one-pager-viewer__iframe"
 				srcDoc={ srcDoc }
-				width={ PAGE_NATURAL_WIDTH }
-				height={ PAGE_NATURAL_HEIGHT }
-				style={ {
-					width: `${ PAGE_NATURAL_WIDTH }px`,
-					height: `${ PAGE_NATURAL_HEIGHT }px`,
-					transformOrigin: 'top left',
-					transform: scale > 0 ? `scale(${ scale })` : 'scale(0)',
-				} }
+				style={ { transform: scale > 0 ? `scale(${ scale })` : 'scale(0)' } }
 				// Empty sandbox: opaque-origin iframe with no script
 				// execution. The variant HTML doesn't need scripts.
 				sandbox=""
