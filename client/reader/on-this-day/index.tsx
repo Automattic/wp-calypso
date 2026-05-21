@@ -22,6 +22,7 @@ import Skeleton from '../components/skeleton';
 import { getOnThisDayHeaderDateLabel } from './get-stream-key';
 import { OnThisDayPostField } from './on-this-day-post-field';
 import { OnThisDayPostSkeleton } from './on-this-day-post-skeleton';
+import type { ReadPostBlogKey, ReadPostFeedKey } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 const loadReaderFullPost = () =>
@@ -29,12 +30,12 @@ const loadReaderFullPost = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
 	);
 
-interface ReaderPost {
+type ReaderPost = {
 	site_name: string;
 	postId: number;
-	feedId?: number;
-	blogId?: number;
-}
+	feedId?: ReadPostFeedKey[ 'feedId' ];
+	blogId?: ReadPostBlogKey[ 'blogId' ];
+};
 
 interface PostItem {
 	title?: string;

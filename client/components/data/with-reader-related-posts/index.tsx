@@ -8,10 +8,10 @@ import {
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import type { ReadRelatedPostsResponse, ReadRelatedPostsScope } from '@automattic/api-core';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
-import type { ReaderPostCachePost } from 'calypso/reader/data/reader-post-cache';
+import type { ReaderPost } from 'calypso/reader/data/reader-post-cache';
 
 export interface UseReaderRelatedPostsResult {
-	posts: ReaderPostCachePost[] | undefined;
+	posts: ReaderPost[] | undefined;
 	isError: boolean;
 	refetch: (
 		options?: RefetchOptions

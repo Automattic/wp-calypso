@@ -28,6 +28,13 @@ jest.mock( '@automattic/support-articles', () => ( {
 	),
 } ) );
 
+jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
+	updateConversationFollowStatus: jest.fn( ( payload ) => ( {
+		type: 'UPDATE_CONVERSATION_FOLLOW_STATUS',
+		payload,
+	} ) ),
+} ) );
+
 jest.mock( 'calypso/components/data/query-reader-site', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="query-reader-site" />,

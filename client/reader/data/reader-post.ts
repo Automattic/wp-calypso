@@ -9,7 +9,7 @@ import {
 	syncReaderConversationFollowStatus,
 	syncReaderPostCache,
 } from './reader-post-cache-sync';
-import type { ReaderPostCachePost } from './reader-post-cache';
+import type { ReaderPost } from './reader-post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
 
@@ -35,8 +35,8 @@ const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 	};
 };
 
-export type ReaderPostResult = Omit< UseQueryResult< ReaderPostCachePost, Error >, 'data' > & {
-	data: ReaderPostCachePost | undefined;
+export type ReaderPostResult = Omit< UseQueryResult< ReaderPost, Error >, 'data' > & {
+	data: ReaderPost | undefined;
 };
 
 // UI-facing hook: returns the React Query result shape, with `data` resolved
@@ -69,11 +69,11 @@ export const useReaderPost = (
 	);
 
 	useEffect( () => {
-		if ( query.data ) {
+		if ( query.isSuccess && query.data ) {
 			syncReaderPostCache( queryClient, [ query.data ] );
 			syncReaderConversationFollowStatus( dispatch, [ query.data ] );
 		}
-	}, [ query.data, queryClient, dispatch ] );
+	}, [ query.isSuccess, query.data, queryClient, dispatch ] );
 
 	useEffect( () => {
 		if ( ! query.isError || ! postKey ) {

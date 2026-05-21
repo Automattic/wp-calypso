@@ -49,8 +49,8 @@ const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 
 const DialogContent = ( { postId, blogId, articleUrl } ) => {
 	const postKey = useSupportArticleAlternatePostKey( blogId ?? SUPPORT_BLOG_ID, postId );
-	const { data: post } = useReaderPost( postKey );
-	const isLoading = ! post?.content || ! postKey;
+	const { data: post, isLoading } = useReaderPost( postKey );
+	const isArticleLoading = isLoading || ! postKey;
 	const siteId = post?.site_ID;
 
 	useEffect( () => {
@@ -75,9 +75,9 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 		<>
 			{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			<article className="support-article-dialog__story">
-				<SupportArticleHeader post={ post } isLoading={ isLoading } />
+				<SupportArticleHeader post={ post } isLoading={ isArticleLoading } />
 				{
-					isLoading ? (
+					isArticleLoading ? (
 						<Placeholders />
 					) : (
 						/*eslint-disable react/no-danger */

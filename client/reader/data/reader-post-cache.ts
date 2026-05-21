@@ -1,14 +1,15 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { createElement, useMemo } from 'react';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
+import type { ReadPost as ApiReaderPost } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 
-export type ReaderPostCachePost = Record< string, unknown >;
+export type ReaderPost = Partial< ApiReaderPost > & Record< string, unknown >;
 
 interface ReaderPostCacheData {
-	base: ReaderPostCachePost;
-	overlay: ReaderPostCachePost;
+	base: ReaderPost;
+	overlay: ReaderPost;
 }
 
 interface ReaderPostCacheKey {
@@ -17,7 +18,7 @@ interface ReaderPostCacheKey {
 	postId?: number | string | null;
 }
 
-type ReaderPostCacheTarget = ReaderPostCacheKey | ReaderPostCachePost | null | undefined;
+type ReaderPostCacheTarget = ReaderPostCacheKey | ReaderPost | null | undefined;
 
 type ReaderPostCacheQueryKey = readonly [ 'read', 'post', 'cache', string ];
 const READER_POST_CACHE_QUERY_KEY_PREFIX = [ 'read', 'post', 'cache' ] as const;
@@ -37,11 +38,11 @@ const postKeyStringFromKey = ( postKey: ReaderPostCacheKey ): string | null => {
 	return keyToString( postKey );
 };
 
-const postKeyStringFromPost = ( post: ReaderPostCachePost ): string | null => {
+const postKeyStringFromPost = ( post: ReaderPost ): string | null => {
 	return keyToString( keyForPost( post ) );
 };
 
-const postKeyStringsFromPost = ( post: ReaderPostCachePost ): string[] => {
+const postKeyStringsFromPost = ( post: ReaderPost ): string[] => {
 	const keyStrings = new Set< string >();
 	const siteId = valueToString( post.site_ID );
 	const postId = valueToString( post.ID );
@@ -101,9 +102,9 @@ const readerPostCacheQueryKeyFromString = ( keyString: string ): ReaderPostCache
 };
 
 const mergeReaderPost = (
-	base: ReaderPostCachePost | null | undefined,
-	patch: ReaderPostCachePost | null | undefined
-): ReaderPostCachePost => {
+	base: ReaderPost | null | undefined,
+	patch: ReaderPost | null | undefined
+): ReaderPost => {
 	if ( ! base ) {
 		return { ...( patch ?? {} ) };
 	}
@@ -116,8 +117,8 @@ const mergeReaderPost = (
 		...( base.discussion || patch.discussion
 			? {
 					discussion: {
-						...( ( base.discussion as ReaderPostCachePost | undefined ) ?? {} ),
-						...( ( patch.discussion as ReaderPostCachePost | undefined ) ?? {} ),
+						...( ( base.discussion as ReaderPost | undefined ) ?? {} ),
+						...( ( patch.discussion as ReaderPost | undefined ) ?? {} ),
 					},
 			  }
 			: {} ),
@@ -126,7 +127,7 @@ const mergeReaderPost = (
 
 const mergeReaderPostCacheData = (
 	data: ReaderPostCacheData | null | undefined
-): ReaderPostCachePost | null => {
+): ReaderPost | null => {
 	if ( ! data ) {
 		return null;
 	}
@@ -160,7 +161,7 @@ const arraysShareMatchingValue = ( left: unknown, right: unknown ): boolean => {
 	);
 };
 
-const postMatchesKey = ( post: ReaderPostCachePost, key: ReaderPostCacheKey ): boolean => {
+const postMatchesKey = ( post: ReaderPost, key: ReaderPostCacheKey ): boolean => {
 	if ( key.blogId && key.postId ) {
 		return valuesMatch( post.site_ID, key.blogId ) && valuesMatch( post.ID, key.postId );
 	}
@@ -180,7 +181,7 @@ const postMatchesKey = ( post: ReaderPostCachePost, key: ReaderPostCacheKey ): b
 	return false;
 };
 
-const postsShareIdentity = ( left: ReaderPostCachePost, right: ReaderPostCachePost ): boolean => {
+const postsShareIdentity = ( left: ReaderPost, right: ReaderPost ): boolean => {
 	if ( valuesMatch( left.global_ID, right.global_ID ) ) {
 		return true;
 	}
@@ -200,10 +201,7 @@ const postsShareIdentity = ( left: ReaderPostCachePost, right: ReaderPostCachePo
 	return false;
 };
 
-const cacheEntryMatchesTarget = (
-	post: ReaderPostCachePost,
-	target: ReaderPostCacheTarget
-): boolean => {
+const cacheEntryMatchesTarget = ( post: ReaderPost, target: ReaderPostCacheTarget ): boolean => {
 	if ( ! target ) {
 		return false;
 	}
@@ -246,11 +244,11 @@ const getMatchingCacheKeyStrings = (
 
 export const upsertReaderPostCache = (
 	queryClient: QueryClient,
-	posts: Array< ReaderPostCachePost | null | undefined >
+	posts: Array< ReaderPost | null | undefined >
 ) => {
 	ensureReaderPostCacheQueryDefaults( queryClient );
 
-	const validPosts = posts.filter( Boolean ) as ReaderPostCachePost[];
+	const validPosts = posts.filter( Boolean ) as ReaderPost[];
 	const keyStringsByPost = new Map(
 		validPosts.map( ( post ) => [ post, new Set( postKeyStringsFromPost( post ) ) ] )
 	);
@@ -288,7 +286,7 @@ export const upsertReaderPostCache = (
 export const getCachedReaderPost = (
 	queryClient: QueryClient,
 	target: ReaderPostCacheTarget
-): ReaderPostCachePost | null => {
+): ReaderPost | null => {
 	const keyString = readerPostCacheKeyString( target );
 	if ( ! keyString ) {
 		return null;
@@ -303,7 +301,7 @@ export const getCachedReaderPost = (
 export const updateCachedReaderPost = (
 	queryClient: QueryClient,
 	target: ReaderPostCacheTarget,
-	patch: ( post: ReaderPostCachePost | null ) => ReaderPostCachePost
+	patch: ( post: ReaderPost | null ) => ReaderPost
 ) => {
 	ensureReaderPostCacheQueryDefaults( queryClient );
 
@@ -327,8 +325,8 @@ export const updateCachedReaderPost = (
 
 export const updateCachedReaderPostsMatching = (
 	queryClient: QueryClient,
-	predicate: ( post: ReaderPostCachePost ) => boolean,
-	patch: ( post: ReaderPostCachePost ) => ReaderPostCachePost
+	predicate: ( post: ReaderPost ) => boolean,
+	patch: ( post: ReaderPost ) => ReaderPost
 ) => {
 	ensureReaderPostCacheQueryDefaults( queryClient );
 
@@ -349,9 +347,7 @@ export const updateCachedReaderPostsMatching = (
 	}
 };
 
-export const useCachedReaderPost = (
-	target: ReaderPostCacheTarget
-): ReaderPostCachePost | null => {
+export const useCachedReaderPost = ( target: ReaderPostCacheTarget ): ReaderPost | null => {
 	// Cache-only read. UI that can fetch missing posts should use useReaderPost instead.
 	const query = useQuery< ReaderPostCacheData | null >( {
 		queryKey: readerPostCacheQueryKey( target ),
@@ -365,7 +361,7 @@ export const useCachedReaderPost = (
 
 export const useCachedReaderPosts = (
 	targets: ReaderPostCacheTarget[]
-): Array< ReaderPostCachePost | null > => {
+): Array< ReaderPost | null > => {
 	const queries = useQueries( {
 		queries: targets.map( ( target ) => ( {
 			queryKey: readerPostCacheQueryKey( target ),
@@ -385,7 +381,7 @@ export const useCachedReaderPosts = (
 };
 
 interface WithCachedReaderPostProps {
-	post?: ReaderPostCachePost | null;
+	post?: ReaderPost | null;
 }
 
 export const withCachedReaderPost =

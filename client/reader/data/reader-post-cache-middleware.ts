@@ -7,7 +7,7 @@ import {
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import {
-	ReaderPostCachePost,
+	ReaderPost,
 	updateCachedReaderPost,
 	updateCachedReaderPostsMatching,
 } from './reader-post-cache';
@@ -19,7 +19,7 @@ type ReaderPostCacheAction = {
 	globalIds?: string[];
 	feedIds?: Array< number | string >;
 	feedUrls?: string[];
-	posts?: Array< ReaderPostCachePost | null | undefined >;
+	posts?: Array< ReaderPost | null | undefined >;
 	payload?: {
 		siteId?: number;
 		postId?: number;
