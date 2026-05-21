@@ -39,6 +39,7 @@ class SocialLoginForm extends Component {
 		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 		oauth2Client: PropTypes.object,
 		isWoo: PropTypes.bool,
+		currentRoute: PropTypes.string,
 	};
 
 	socialLoginButtons = [
@@ -170,6 +171,7 @@ class SocialLoginForm extends Component {
 							recordTracksEvent( 'calypso_login_method_click', {
 								flow: 'login',
 								step: 'login-form',
+								path: this.props.currentRoute,
 								method: service,
 								badge_view: isBadged,
 							} );
@@ -188,7 +190,12 @@ class SocialLoginForm extends Component {
 				// impression event for every method shown, with `badge_view`
 				// distinguishing badged vs unbadged exposure.
 				return (
-					<LoginMethodImpression key={ button.key } method={ service } badgeView={ isBadged }>
+					<LoginMethodImpression
+						key={ button.key }
+						method={ service }
+						badgeView={ isBadged }
+						path={ this.props.currentRoute }
+					>
 						{ visual }
 					</LoginMethodImpression>
 				);

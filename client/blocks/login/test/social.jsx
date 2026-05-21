@@ -35,6 +35,7 @@ const defaultProps = {
 	handleLogin: jest.fn(),
 	trackLoginAndRememberRedirect: jest.fn(),
 	resetLastUsedAuthenticationMethod: jest.fn(),
+	currentRoute: '/log-in',
 };
 
 const render = ( el, options ) =>
@@ -88,24 +89,28 @@ describe( 'SocialLoginForm', () => {
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			flow: 'login',
 			step: 'login-form',
+			path: '/log-in',
 			method: 'google',
 			badge_view: true,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			flow: 'login',
 			step: 'login-form',
+			path: '/log-in',
 			method: 'apple',
 			badge_view: false,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			flow: 'login',
 			step: 'login-form',
+			path: '/log-in',
 			method: 'magic-login',
 			badge_view: false,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			flow: 'login',
 			step: 'login-form',
+			path: '/log-in',
 			method: 'qr-code',
 			badge_view: false,
 		} );
@@ -143,6 +148,7 @@ describe( 'SocialLoginForm', () => {
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_click', {
 			flow: 'login',
 			step: 'login-form',
+			path: '/log-in',
 			method: 'magic-login',
 			badge_view: false,
 		} );

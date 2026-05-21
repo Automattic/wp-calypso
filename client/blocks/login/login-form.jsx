@@ -298,6 +298,7 @@ export class LoginForm extends Component {
 		this.props.recordTracksEvent( 'calypso_login_method_impression', {
 			flow: 'login',
 			step: 'login-form',
+			path: this.props.currentRoute,
 			method: 'password',
 			badge_view: isLastUsedPassword,
 		} );
@@ -313,6 +314,7 @@ export class LoginForm extends Component {
 		this.props.recordTracksEvent( 'calypso_login_method_click', {
 			flow: 'login',
 			step: 'login-form',
+			path: this.props.currentRoute,
 			method: 'password',
 			badge_view: isLastUsedPassword,
 		} );
@@ -654,6 +656,7 @@ export class LoginForm extends Component {
 		this.props.recordTracksEvent( 'calypso_login_method_click', {
 			flow: 'login',
 			step: 'login-form',
+			path: this.props.currentRoute,
 			method: service,
 			badge_view: isLastUsedAuthenticationMethod,
 		} );
@@ -961,6 +964,7 @@ export class LoginForm extends Component {
 							allowedSocialServices={ this.props.allowedSocialServices }
 							oauth2Client={ this.props.oauth2Client }
 							isWoo={ this.props.isWoo }
+							currentRoute={ this.props.currentRoute }
 						/>
 					</Fragment>
 				) }
