@@ -117,17 +117,19 @@ function SiteAIToolsSetup() {
 							<SectionHeader level={ 3 } title={ __( 'Setup Required' ) } />
 							<VStack spacing={ 4 }>
 								<Text as="p" variant="muted">
-									{ __( 'MCP access is not enabled for this site.' ) }
+									{ __( 'External AI agent access is not enabled for this site.' ) }
 								</Text>
 								<Text as="p" variant="muted">
-									{ __( 'Enable MCP access for this site before connecting your AI agent.' ) }
+									{ __(
+										'Enable external AI agent access for this site before connecting your AI agent.'
+									) }
 								</Text>
 								<RouterLinkButton
 									to={ `/sites/${ siteSlug }/settings/ai-tools` }
 									variant="primary"
 									className="mcp-setup__action-button"
 								>
-									{ __( 'Go to Site MCP settings' ) }
+									{ __( 'Go to AI tools settings' ) }
 								</RouterLinkButton>
 							</VStack>
 						</VStack>

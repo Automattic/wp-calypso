@@ -36,6 +36,7 @@ export type McpAbilities = {
 	account?: Record< string, McpAbility >;
 	site?: Record< string, McpAbility >; // Site-scoped ability defaults
 	sites?: McpSiteOverride[]; // Array of site-specific overrides
+	site_level_enabled_default?: boolean;
 };
 
 export interface UserSettings {

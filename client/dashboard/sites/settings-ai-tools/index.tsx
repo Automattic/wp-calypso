@@ -5,7 +5,7 @@ import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
 	siteBySlugQuery,
-	userSettingsMutation,
+	siteMcpAbilitiesMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -139,21 +139,20 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
 	// state. True when account MCP is on for sites, false when disabled.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
-	const defaultToolEnabled =
-		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
+	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const defaultBadge = defaultToolEnabled
 		? { text: __( 'All enabled' ), intent: 'success' as const }
 		: { text: __( 'Disabled' ) };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const mcpMutation = useMutation( {
-		...userSettingsMutation(),
+		...siteMcpAbilitiesMutation( site.ID ),
 		meta: {
 			snackbar: {
 				success: isMcpEnabled
-					? __( 'MCP access disabled for this site.' )
-					: __( 'MCP access enabled for this site.' ),
-				error: __( 'Failed to save MCP settings.' ),
+					? __( 'External AI agent access disabled for this site.' )
+					: __( 'External AI agent access enabled for this site.' ),
+				error: __( 'Failed to save external AI agent access.' ),
 			},
 		},
 	} );
@@ -169,15 +168,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		// When disabling, send abilities: {} to clear all site-level tool access.
 		mcpMutation.mutate(
 			{
-				mcp_abilities: {
-					sites: [
-						{
-							blog_id: site.ID,
-							site_level_enabled: enabled,
-							abilities,
-						},
-					],
-				},
+				site_level_enabled: enabled,
+				abilities,
 			},
 			{
 				onSuccess: () => {
@@ -301,7 +293,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										__nextHasNoMarginBottom
 										checked={ isMcpEnabled }
 										disabled={ mcpMutation.isPending }
-										label={ __( 'Enable MCP access for this site' ) }
+										label={ __( 'Enable external AI agent access for this site' ) }
 										onChange={ handleMcpToggle }
 									/>
 								</VStack>
