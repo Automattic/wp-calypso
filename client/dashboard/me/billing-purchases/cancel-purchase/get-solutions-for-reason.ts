@@ -5,6 +5,19 @@ export type SolutionCardConfig = {
 	id: string;
 };
 
+/**
+ * Cancellation reasons where price is the driver. When the user is already on
+ * a Personal plan, we suppress the "change-plan" card for these because there
+ * is no cheaper paid plan to recommend.
+ */
+export const PRICE_MOTIVATED_REASONS: ReadonlySet< string > = new Set( [
+	'tooExpensive',
+	'lackOfCustomization',
+	'foundBetterValue',
+	'freeIsGoodEnough',
+	'budgetConstraints',
+] );
+
 const SOLUTION_IDS = {
 	CHANGE_PLAN: 'change-plan',
 	RENEW_NOW_PAY_LESS: 'renew-now-pay-less',

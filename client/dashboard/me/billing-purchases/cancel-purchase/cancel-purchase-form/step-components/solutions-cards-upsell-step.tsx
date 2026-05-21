@@ -30,7 +30,7 @@ import { ButtonStack } from '../../../../../components/button-stack';
 import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
-import { getSolutionsForReason } from '../../get-solutions-for-reason';
+import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
 import UpsellStep from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
@@ -73,14 +73,6 @@ const SUPPORT_GUIDES_URL = localizeUrl( wpcomLink( '/support/' ) );
 const SITE_SPEED_URL = localizeUrl( wpcomLink( '/support/site-speed/' ) );
 const SITE_MIGRATION_URL = localizeUrl( wpcomLink( '/support/site-migration/' ) );
 const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
-
-const PRICE_MOTIVATED_REASONS = new Set( [
-	'tooExpensive',
-	'lackOfCustomization',
-	'foundBetterValue',
-	'freeIsGoodEnough',
-	'budgetConstraints',
-] );
 
 function getCardHref(
 	cardId: string,
