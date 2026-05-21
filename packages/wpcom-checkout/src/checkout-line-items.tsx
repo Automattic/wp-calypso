@@ -697,15 +697,21 @@ export function LineItemSublabelAndPrice( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
+	isMobileStickySummary,
 }: {
 	product: ResponseCartProduct;
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
+	isMobileStickySummary?: boolean;
 } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
 	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const actualSubtotal = formatCurrency( product.item_subtotal_integer, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
@@ -902,15 +908,25 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>
-						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 12 months.', {
-									args: { price: actualMonthlyPrice },
-							  } )
-							: translate( 'Billed every year' ) }
+						{ isRenewalPricingExperiment &&
+							translate( 'Auto-renews at %(price)s/month. Billed every 12 months.', {
+								args: { price: actualMonthlyPrice },
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							isMobileStickySummary &&
+							translate( '%(price)s billed annually', {
+								args: { price: actualSubtotal },
+								comment:
+									"Annual price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a yearly plan line item in the mobile sticky checkout summary.",
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							! isMobileStickySummary &&
+							translate( 'Billed every year' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
-							{ monthlyPrice } { translate( '/month' ) }
+							{ monthlyPrice }
+							{ ! isMobileStickySummary && <> { translate( '/month' ) }</> }
 						</s>
 					) }
 				</>
@@ -1385,6 +1401,7 @@ function CheckoutLineItem( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
+	isMobileStickySummary,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1405,6 +1422,7 @@ function CheckoutLineItem( {
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
+	isMobileStickySummary?: boolean;
 } > ) {
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(
@@ -1579,8 +1597,8 @@ function CheckoutLineItem( {
 									? originalMonthlyAmountDisplay
 									: undefined
 							}
-						/>{ ' ' }
-						{ translate( '/month' ) }
+						/>
+						{ isMobileStickySummary ? translate( '/mo' ) : <> { translate( '/month' ) }</> }
 					</>
 				) : (
 					<>
@@ -1606,6 +1624,7 @@ function CheckoutLineItem( {
 								shouldShowComparison={ shouldShowComparison }
 								compareToPrice={ compareToPrice }
 								isRenewalPricingExperiment={ isRenewalPricingExperiment }
+								isMobileStickySummary={ isMobileStickySummary }
 							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout
@@ -1624,6 +1643,7 @@ function CheckoutLineItem( {
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
+						isMobileStickySummary={ isMobileStickySummary }
 					/>
 				</LineItemMeta>
 			) }
