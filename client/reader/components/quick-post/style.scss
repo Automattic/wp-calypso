@@ -96,16 +96,6 @@
 				color: var( --color-text-subtle );
 			}
 		}
-
-		.site-selector .site.is-selected {
-			.site__title {
-				color: var( --color-text );
-			}
-
-			.site__domain {
-				color: var( --color-text-subtle );
-			}
-		}
 	}
 
 	.sites-dropdown__wrapper {
