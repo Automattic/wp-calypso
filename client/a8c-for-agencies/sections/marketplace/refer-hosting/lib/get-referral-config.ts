@@ -9,7 +9,7 @@ export const getReferralConfig = (
 		premium: translate( 'Refer Premium Plan' ),
 	}[ type ],
 	formTitle: {
-		enterprise: translate( 'Submit WordPress VIP referral' ),
+		enterprise: translate( 'Refer a client for WordPress VIP hosting' ),
 		premium: translate( 'Refer your client to a Premium plan' ),
 	}[ type ],
 	successTitle: {
@@ -21,11 +21,11 @@ export const getReferralConfig = (
 		premium: translate( 'Submit Premium plan referral' ),
 	}[ type ],
 	companyTitle: {
-		enterprise: translate( 'End user company information' ),
+		enterprise: translate( "Your client's company information" ),
 		premium: translate( "Your client's company information" ),
 	}[ type ],
 	contactTitle: {
-		enterprise: translate( 'End user contact information' ),
+		enterprise: translate( "Your client's contact information" ),
 		premium: translate( "Your client's contact information" ),
 	}[ type ],
 	events: {
