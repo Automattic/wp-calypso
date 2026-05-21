@@ -349,7 +349,9 @@ This mixin generates alias variables for a color palette. For example, the
 		}
 
 		&[aria-checked='true'],
-		&[aria-pressed='true'] {
+		&[aria-pressed='true'],
+		&[aria-checked='true']:hover:not( [disabled] ):not( [aria-disabled='true'] ),
+		&[aria-pressed='true']:hover:not( [disabled] ):not( [aria-disabled='true'] ) {
 			color: var( --wp-components-color-foreground-inverted );
 		}
 	}
