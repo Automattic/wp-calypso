@@ -266,7 +266,14 @@ const ContactFormTitle = () => {
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	return <>{ String( translate( 'Your order' ) ) }</>;
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+	return (
+		<>
+			{ String(
+				isMobileCheckoutStickySummary ? translate( 'Order details' ) : translate( 'Your order' )
+			) }
+		</>
+	);
 };
 
 const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
@@ -1229,6 +1236,35 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		css`
 			.checkout-main-content {
 				padding-block-end: 160px;
+			}
+			/* Figma 2392:15311 — under the mobile sticky experiment the order
+			   review step renders as a plain "Order details" heading with a
+			   one-line "You're signed in as …" subtext, not the stepper-style
+			   green check + Site/Account block. */
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				display: none;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+				line-height: 24px;
+				letter-spacing: -0.46px;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout-review-order__signed-in {
+				font-size: 14px;
+				line-height: 20px;
+				letter-spacing: -0.15px;
+				/* WPDS scales/grays — fallback hex matches @wordpress/base-styles
+				   defaults, since Calypso doesn't declare these vars globally. */
+				color: var( --wp-components-color-gray-700, #757575 );
+				margin: 0;
+			}
+			.checkout-review-order__signed-in strong {
+				font-weight: 400;
+				color: var( --wp-components-color-gray-800, #2f2f2f );
 			}
 		` }
 
