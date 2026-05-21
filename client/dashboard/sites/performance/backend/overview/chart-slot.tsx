@@ -8,7 +8,7 @@ import { useLocale } from '../../../../app/locale';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
-import type { ApmTimePoint } from '@automattic/api-core';
+import type { ApmSummary, ApmTimePoint } from '@automattic/api-core';
 
 import '@automattic/charts/style.css';
 
@@ -30,17 +30,6 @@ function toSeriesData( timeseries: ApmTimePoint[] ): SeriesData[] {
 			value: point[ key ],
 		} ) ),
 	} ) );
-}
-
-function getAverageTotal( timeseries: ApmTimePoint[] ): number {
-	if ( ! timeseries.length ) {
-		return 0;
-	}
-	const total = timeseries.reduce(
-		( sum, point ) => sum + point.db + point.wp_core + point.plugins + point.external + point.cache,
-		0
-	);
-	return Math.round( total / timeseries.length );
 }
 
 function formatMsValue( value: number ): string {
@@ -66,10 +55,15 @@ function formatTooltipTime( date: Date, locale: string ): string {
 	} );
 }
 
-export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] } ) {
+export default function ChartSlot( {
+	timeseries,
+	summary,
+}: {
+	timeseries: ApmTimePoint[];
+	summary: ApmSummary;
+} ) {
 	const locale = useLocale();
 	const data = toSeriesData( timeseries );
-	const averageTotal = getAverageTotal( timeseries );
 
 	return (
 		<Card>
@@ -80,7 +74,7 @@ export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] 
 							{ __( 'Response time breakdown' ) }
 						</Text>
 						<Text size={ 32 } weight={ 500 } lineHeight="40px">
-							{ formatMs( averageTotal ) }
+							{ formatMs( summary.avg_response_ms ) }
 						</Text>
 						<Text variant="muted">
 							{ __(
