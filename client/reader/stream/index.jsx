@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { usePostLikes } from 'calypso/components/data/post-likes';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -31,7 +31,11 @@ import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
+import {
+	analyticsForStream,
+	PER_FETCH,
+	INITIAL_FETCH,
+} from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -44,6 +48,7 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import { normalizeStreamPage } from './stream-normalization';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts } from './use-stream-posts';
@@ -60,6 +65,37 @@ const GUESSED_POST_HEIGHT = 600;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+
+const useStreamRenderAnalytics = ( pages, streamKey ) => {
+	const dispatch = useDispatch();
+	const processedPages = React.useRef( new WeakSet() );
+	const streamType = getStreamType( streamKey ?? '' );
+
+	React.useEffect( () => {
+		processedPages.current = new WeakSet();
+	}, [ streamKey ] );
+
+	React.useEffect( () => {
+		if ( ! streamKey ) {
+			return;
+		}
+
+		for ( const page of pages ) {
+			if ( processedPages.current.has( page ) ) {
+				continue;
+			}
+			processedPages.current.add( page );
+			const { streamPosts } = normalizeStreamPage( page, streamType );
+			if ( streamPosts.length > 0 ) {
+				analyticsForStream( {
+					streamKey,
+					algorithm: page.algorithm,
+					items: streamPosts,
+				} ).forEach( ( action ) => dispatch( action ) );
+			}
+		}
+	}, [ pages, streamKey, streamType, dispatch ] );
+};
 
 class ReaderStream extends Component {
 	static propTypes = {
@@ -825,6 +861,10 @@ const withStreamPosts = ( WrappedComponent ) =>
 				enabled: ! props.forcePlaceholders && streamPostsQuery.items.length > 0,
 			},
 		} );
+
+		useStreamRenderAnalytics( streamPostsQuery.pages, props.streamKey );
+		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
+
 		const items = React.useMemo( () => {
 			const withRecommendations =
 				props.recsStreamKey && recsStreamPostsQuery.items.length > 0

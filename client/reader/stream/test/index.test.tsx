@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import Stream from '../index';
 import type { ReactNode } from 'react';
 
@@ -141,6 +142,7 @@ interface ApiPost {
 	date_liked?: string;
 	i_like?: boolean;
 	like_count?: number;
+	railcar?: Record< string, unknown >;
 }
 
 function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
@@ -182,6 +184,11 @@ function renderStream(
 	initialStateOverride = {},
 	queryClient = makeQueryClient()
 ) {
+	const actions: unknown[] = [];
+	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
+		actions.push( action );
+		return next( action );
+	};
 	const seedState = { ...baseState, ...initialStateOverride };
 	// `<Stream>` keeps post selection in the React Query cache (see
 	// `useStreamPostKeySelection`); only thunks like `likePost` need to dispatch
@@ -190,6 +197,7 @@ function renderStream(
 		( state = seedState ) => state,
 		seedState,
 		applyMiddleware(
+			actionRecorder,
 			thunkMiddleware,
 			createReaderPostCacheMiddleware( () => queryClient )
 		)
@@ -201,7 +209,7 @@ function renderStream(
 			</Provider>
 		</QueryClientProvider>
 	);
-	return { ...utils, store, queryClient };
+	return { ...utils, store, queryClient, actions };
 }
 
 function mockLikesEndpoint( posts: ApiPost[], dateAfter: string | null = null ) {
@@ -278,6 +286,39 @@ describe( 'Stream — render states', () => {
 
 		await waitFor( () => expect( screen.getByTestId( 'post-10' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'post-20' ) ).toBeVisible();
+	} );
+
+	it( 'records railcar render events from the stream container', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 10, { railcar: { railcar: 'railcar-10' } } ) ],
+				algorithm: 'railcar-test',
+				date_range: { after: null, before: null },
+			} );
+		const { actions } = renderStream();
+
+		await waitFor( () => expect( screen.getByTestId( 'post-10' ) ).toBeVisible() );
+		await waitFor( () =>
+			expect( actions ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						type: ANALYTICS_EVENT_RECORD,
+						meta: expect.objectContaining( {
+							analytics: expect.arrayContaining( [
+								expect.objectContaining( {
+									payload: expect.objectContaining( {
+										name: 'calypso_traintracks_render',
+										properties: { railcar: 'railcar-10' },
+									} ),
+								} ),
+							] ),
+						} ),
+					} ),
+				] )
+			)
+		);
 	} );
 
 	it( 'passes comment click args through to full-post navigation', async () => {

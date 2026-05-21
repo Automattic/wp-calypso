@@ -12,7 +12,7 @@ import {
 } from 'calypso/reader/data/post-cache-sync';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
-import { analyticsForStream, extractPageHandle } from 'calypso/state/reader/streams/normalize';
+import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import { normalizeStreamPage } from './stream-normalization';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
@@ -43,6 +43,7 @@ export interface PostKey {
 
 export interface UseStreamPostsResult {
 	items: PostKey[];
+	pages: ReadStreamResponse[];
 	isLoading: boolean;
 	isFetching: boolean;
 	isFetchingNextPage: boolean;
@@ -172,11 +173,6 @@ export function useStreamPosts( {
 			processedPages.current.add( page );
 			const { streamPosts } = normalizeStreamPage( page, streamType );
 			if ( streamPosts.length > 0 ) {
-				analyticsForStream( {
-					streamKey: resolvedStreamKey,
-					algorithm: page.algorithm,
-					items: streamPosts,
-				} ).forEach( ( action ) => dispatch( action ) );
 				syncReaderPostCache( queryClient, streamPosts );
 				syncReaderConversationFollowStatus( dispatch, streamPosts );
 			}
@@ -211,6 +207,7 @@ export function useStreamPosts( {
 
 	return {
 		items,
+		pages: ( query.data?.pages ?? [] ) as ReadStreamResponse[],
 		isLoading: query.isLoading,
 		isFetching: query.isFetching,
 		isFetchingNextPage: query.isFetchingNextPage,

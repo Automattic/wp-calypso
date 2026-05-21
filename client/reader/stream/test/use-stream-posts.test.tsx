@@ -9,7 +9,6 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
 import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
-import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import readerReducer from 'calypso/state/reader/reducer';
 import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
@@ -99,7 +98,7 @@ describe( 'useStreamPosts — fetching', () => {
 		expect( result.current.lastPage ).toBe( true );
 	} );
 
-	it( 'records railcar render events for fetched stream posts', async () => {
+	it( 'exposes pages for stream-level render analytics without dispatching them', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -116,23 +115,9 @@ describe( 'useStreamPosts — fetching', () => {
 		} );
 
 		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
-		expect( actions ).toEqual(
-			expect.arrayContaining( [
-				expect.objectContaining( {
-					type: ANALYTICS_EVENT_RECORD,
-					meta: expect.objectContaining( {
-						analytics: expect.arrayContaining( [
-							expect.objectContaining( {
-								payload: expect.objectContaining( {
-									name: 'calypso_traintracks_render',
-									properties: { railcar: 'railcar-1' },
-								} ),
-							} ),
-						] ),
-					} ),
-				} ),
-			] )
-		);
+		expect( result.current.pages ).toHaveLength( 1 );
+		expect( result.current.pages[ 0 ] ).toMatchObject( { algorithm: 'railcar-test' } );
+		expect( actions ).toHaveLength( 0 );
 	} );
 
 	it( 'paginates via the `before` cursor when `date_range.after` is set', async () => {
