@@ -38,13 +38,21 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 		},
 		instagram: {
 			description: translate(
-				'Import posts and images from your %(importerName)s data export archive',
-				options
+				'Imports your Instagram photo, gallery and video posts from an Instagram export file. All media files are imported into your WordPress Media Library.'
 			),
 			uploadDescription: translate(
-				'An %(importerName)s export file is a ZIP archive you can download from Instagram that contains your posts and their media. ' +
-					'{{supportLink/}}',
-				options
+				'Make sure you select the desired date range, image quality, and choose the JSON export format. {{instagramExportLink}}Learn how to export your content{{/instagramExportLink}}',
+				{
+					components: {
+						instagramExportLink: (
+							<a
+								href="https://help.instagram.com/181231772500920"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
 			),
 		},
 		medium: {
