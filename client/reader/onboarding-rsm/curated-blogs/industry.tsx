@@ -3,6 +3,30 @@ import { CuratedBlogsList } from './index';
 export const industryBlogs: CuratedBlogsList = {
 	business: [
 		{
+			feed_ID: 112355958,
+			site_ID: 180059651,
+			site_URL: 'http://technologyandbusinessnews.wordpress.com',
+			site_name: 'Technology & Business News',
+			feed_URL: 'http://technologyandbusinessnews.wordpress.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 107897208,
+			site_ID: 180997989,
+			site_URL: 'https://businessmanagementblog.com',
+			site_name: 'Business Management Blog',
+			feed_URL: 'http://businessmanagementblog41087550.wordpress.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 55005345,
+			site_ID: 116448446,
+			site_URL: 'https://www.entrepreneurbusinessblog.com',
+			site_name: 'Entrepreneur Business Blog',
+			feed_URL: 'http://www.entrepreneurbusinessblog.com/feed',
+			has_icon: true,
+		},
+		{
 			feed_ID: 83448543,
 			site_ID: 147199084,
 			site_URL: 'https://seths.blog/',
@@ -60,6 +84,30 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	startups: [
+		{
+			feed_ID: 57294374,
+			site_ID: 44421129,
+			site_URL: 'https://inspire99.com',
+			site_name: 'Inspire99',
+			feed_URL: 'http://inspire99.com/feed',
+			has_icon: true,
+		},
+		{
+			feed_ID: 23707152,
+			site_ID: 33216796,
+			site_URL: 'https://startupiceland.com',
+			site_name: 'Startup Iceland',
+			feed_URL: 'http://startupiceland.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 69531647,
+			site_ID: 133193919,
+			site_URL: 'https://sangkrit.net',
+			site_name: 'Internet Growth Engine: the startup interface',
+			feed_URL: 'http://sangkrit.net/feed',
+			has_icon: true,
+		},
 		{
 			feed_ID: 111100674,
 			site_ID: 136296444,
@@ -135,6 +183,30 @@ export const industryBlogs: CuratedBlogsList = {
 	],
 	finance: [
 		{
+			feed_ID: 162169651,
+			site_ID: 143180195,
+			site_URL: 'http://mmufande.blog',
+			site_name: 'Finance & Economics Hub',
+			feed_URL: 'http://mmufande.blog',
+			has_icon: false,
+		},
+		{
+			feed_ID: 161425747,
+			site_ID: 234156106,
+			site_URL: 'https://themoneymindedmom.com',
+			site_name: 'The Money Minded Mom | Personal Finance Blog',
+			feed_URL: 'http://themoneymindedmom.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 23676236,
+			site_ID: 73350021,
+			site_URL: 'https://blog.bankbazaar.com',
+			site_name: 'BankBazaar - The Definitive Word on Personal Finance',
+			feed_URL: 'http://blog.bankbazaar.com',
+			has_icon: true,
+		},
+		{
 			feed_ID: 65429685,
 			site_ID: 2327063,
 			site_URL: 'https://alephblog.com/',
@@ -192,6 +264,14 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	space: [
+		{
+			feed_ID: 136382237,
+			site_ID: 212796078,
+			site_URL: 'https://nasaspacenews.com',
+			site_name: 'NASA Space News',
+			feed_URL: 'http://nasaspacenews.com/feed',
+			has_icon: true,
+		},
 		{
 			feed_ID: 99248196,
 			site_ID: 66864929,
@@ -267,6 +347,54 @@ export const industryBlogs: CuratedBlogsList = {
 	],
 	leadership: [
 		{
+			feed_ID: 449369,
+			site_ID: 2846523,
+			site_URL: 'http://leadership101.wordpress.com',
+			site_name: 'Leadership 101',
+			feed_URL: 'http://leadership101.wordpress.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 99145439,
+			site_ID: 135824014,
+			site_URL: 'https://bulluckg.com',
+			site_name: 'Servant Leadership NOW: "Stepping Up Your Leadership Call"',
+			feed_URL: 'http://bulluckg.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 2608322,
+			site_ID: 36441788,
+			site_URL: 'http://pragmaticleadership.wordpress.com',
+			site_name: 'pragmatic  leadership',
+			feed_URL: 'http://pragmaticleadership.wordpress.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 130459494,
+			site_ID: 26787474,
+			site_URL: 'https://cassieroma.com',
+			site_name: 'Reshaping Modern Leadership',
+			feed_URL: 'http://cassieroma.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 161514445,
+			site_ID: 11817513,
+			site_URL: 'http://drsaraheaton.com',
+			site_name: 'Learning, Teaching and Leadership',
+			feed_URL: 'http://drsaraheaton.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 57820657,
+			site_ID: 117810150,
+			site_URL: 'https://leadershipdots.com',
+			site_name: 'leadership dots',
+			feed_URL: 'http://leadershipdots.com',
+			has_icon: true,
+		},
+		{
 			feed_ID: 25599614,
 			site_ID: 124014575,
 			site_URL: 'https://randsinrepose.com/',
@@ -316,6 +444,38 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	marketing: [
+		{
+			feed_ID: 102811293,
+			site_ID: 171550906,
+			site_URL: 'http://iconmarketingagency.wordpress.com',
+			site_name: 'Icon Marketing Agency',
+			feed_URL: 'http://iconmarketingagency.wordpress.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 167115685,
+			site_ID: 242029717,
+			site_URL: 'http://kaeraemarketingg.wordpress.com',
+			site_name: 'Kelsey Flannery (KaeRae Marketing)',
+			feed_URL: 'http://kaeraemarketingg.wordpress.com',
+			has_icon: true,
+		},
+		{
+			feed_ID: 122304840,
+			site_ID: 92541217,
+			site_URL: 'https://shannonmcc.com',
+			site_name: 'Soulful Marketing Blog',
+			feed_URL: 'http://shannonmcc.com/feed',
+			has_icon: true,
+		},
+		{
+			feed_ID: 174529008,
+			site_ID: 244874088,
+			site_URL: 'https://discreetmarketingboss.com',
+			site_name: 'Discreet Marketing Boss',
+			feed_URL: 'http://discreetmarketingboss2.wpcomstaging.com',
+			has_icon: true,
+		},
 		{
 			feed_ID: 83448543,
 			site_ID: 147199084,
@@ -390,6 +550,14 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	'remote-work': [
+		{
+			feed_ID: 51146843,
+			site_ID: 92143548,
+			site_URL: 'https://piszek.com',
+			site_name: 'Artur Piszek',
+			feed_URL: 'http://piszek.com',
+			has_icon: true,
+		},
 		{
 			feed_ID: 188407,
 			site_ID: 1047865,
