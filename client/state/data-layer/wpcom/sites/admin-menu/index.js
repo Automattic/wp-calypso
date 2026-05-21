@@ -1,6 +1,7 @@
 import { addQueryArgs } from 'calypso/lib/url';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
+import { receiveAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -64,8 +65,23 @@ const sanitizeMenuItem = ( menuItem, siteSlug, wpAdminUrl ) => {
 export const handleSuccess =
 	( { siteId }, menuData ) =>
 	( dispatch, getState ) => {
-		if ( ! Array.isArray( menuData ) ) {
-			return dispatch( receiveAdminMenu( siteId, menuData ) );
+		const hasRedesignedEnvelope =
+			menuData && ! Array.isArray( menuData ) && Array.isArray( menuData.menu );
+		const rawMenuItems = hasRedesignedEnvelope ? menuData.menu : menuData;
+		const groups = hasRedesignedEnvelope && Array.isArray( menuData.groups ) ? menuData.groups : [];
+		const layoutDelta =
+			hasRedesignedEnvelope &&
+			menuData.layoutDelta &&
+			Array.isArray( menuData.layoutDelta.overrides )
+				? menuData.layoutDelta
+				: null;
+
+		if ( layoutDelta ) {
+			dispatch( receiveAdminSidebarLayout( siteId, layoutDelta ) );
+		}
+
+		if ( ! Array.isArray( rawMenuItems ) ) {
+			return dispatch( receiveAdminMenu( siteId, rawMenuItems, groups ) );
 		}
 
 		// Sanitize menu data.
@@ -76,7 +92,8 @@ export const handleSuccess =
 		return dispatch(
 			receiveAdminMenu(
 				siteId,
-				menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) )
+				rawMenuItems.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) ),
+				groups
 			)
 		);
 	};

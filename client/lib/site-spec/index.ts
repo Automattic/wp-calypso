@@ -1,10 +1,3 @@
-export { useAiSiteBuilderPath } from './use-ai-site-builder-path';
+export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export { useSiteSpec } from './use-site-spec';
-export {
-	VEGA_EXPERIMENT_NAME,
-	VEGA_CONTROL_AGENT_ID,
-	VEGA_TREATMENT_AGENT_ID,
-	getVegaAgentId,
-	getVegaSiteSpecConfig,
-} from './vega';
-export type { VegaVariation } from './vega';
+export { VEGA_AGENT_ID, getVegaSiteSpecConfig } from './vega';
