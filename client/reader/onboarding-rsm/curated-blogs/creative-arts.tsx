@@ -4,7 +4,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	music: [
 		{
 			feed_ID: 50314996,
-			site_ID: 0,
+			site_ID: 53246333,
 			site_URL: 'http://newleasemusic.com',
 			site_name: 'New Lease Music',
 			feed_URL: 'http://newleasemusic.com',
@@ -12,7 +12,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 177216085,
-			site_ID: 0,
+			site_ID: 21987375,
 			site_URL: 'http://music-defined.com',
 			site_name: 'Music. Defined.',
 			feed_URL: 'http://music-defined.com',
@@ -20,7 +20,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 134962190,
-			site_ID: 0,
+			site_ID: 5186906,
 			site_URL: 'http://jazzimproviser.com',
 			site_name: 'Modern Music Theory Improvisation and Application',
 			feed_URL: 'http://jazzimproviser.com',
@@ -28,7 +28,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 270115,
-			site_ID: 0,
+			site_ID: 4737767,
 			site_URL: 'http://stantonssheetmusic.wordpress.com',
 			site_name: "Stanton's Sheet Music",
 			feed_URL: 'http://stantonssheetmusic.wordpress.com',
@@ -36,7 +36,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 19238823,
-			site_ID: 0,
+			site_ID: 65314297,
 			site_URL: 'http://darrensmusicblog.com',
 			site_name: "Darren's music blog",
 			feed_URL: 'http://darrensmusicblog.com',
@@ -44,7 +44,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 1105937,
-			site_ID: 0,
+			site_ID: 30124242,
 			site_URL: 'http://avantmusicnews.com',
 			site_name: 'Avant Music News',
 			feed_URL: 'http://avantmusicnews.com',
@@ -52,7 +52,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 26828508,
-			site_ID: 0,
+			site_ID: 80366652,
 			site_URL: 'https://musicjunkiepress.com',
 			site_name: 'Music Junkie Press',
 			feed_URL: 'http://musicjunkiepress.com/feed',
@@ -60,7 +60,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 56921079,
-			site_ID: 0,
+			site_ID: 105816418,
 			site_URL: 'https://musicaficionado.blog',
 			site_name: 'Music Aficionado',
 			feed_URL: 'http://musicaficionado.blog',
@@ -118,7 +118,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	movies: [
 		{
 			feed_ID: 26665509,
-			site_ID: 0,
+			site_ID: 80186886,
 			site_URL: 'http://festivalreviews.org',
 			site_name: 'Festival Reviews',
 			feed_URL: 'http://festivalreviews.org',
@@ -126,7 +126,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 101288781,
-			site_ID: 0,
+			site_ID: 168420352,
 			site_URL: 'https://moviebabble.com',
 			site_name: 'MovieBabble',
 			feed_URL: 'http://moviebabblereviews.com/feed',
@@ -134,7 +134,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 402803,
-			site_ID: 0,
+			site_ID: 23972029,
 			site_URL: 'http://dejareviewer.com',
 			site_name: 'Deja Reviewer',
 			feed_URL: 'http://dejareviewer.com',
@@ -142,7 +142,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 164758111,
-			site_ID: 0,
+			site_ID: 6358508,
 			site_URL: 'http://letsgotothemovies.com',
 			site_name: "Let's Go To The Movies",
 			feed_URL: 'http://letsgotothemovies.com',
@@ -150,7 +150,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 170581660,
-			site_ID: 0,
+			site_ID: 29512260,
 			site_URL: 'https://moviesandmania.com',
 			site_name: 'MOVIES &amp; MANIA',
 			feed_URL: 'http://moviesandmania.com',
@@ -158,7 +158,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 6897300,
-			site_ID: 0,
+			site_ID: 31913547,
 			site_URL: 'http://keithandthemovies.com',
 			site_name: 'Keith &amp; the Movies',
 			feed_URL: 'http://keithandthemovies.com',
@@ -166,7 +166,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 35855382,
-			site_ID: 0,
+			site_ID: 46598344,
 			site_URL: 'http://moviesofthesoul.com',
 			site_name: 'Movies of the Soul',
 			feed_URL: 'http://moviesofthesoul.com',
@@ -216,7 +216,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	books: [
 		{
 			feed_ID: 92472325,
-			site_ID: 0,
+			site_ID: 120979127,
 			site_URL: 'http://booksonthe747.com',
 			site_name: 'Books on the 7:47',
 			feed_URL: 'http://booksonthe747.com',
@@ -224,7 +224,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 74055258,
-			site_ID: 0,
+			site_ID: 136324088,
 			site_URL: 'https://breakevenbooks.com',
 			site_name: 'Breakeven Books',
 			feed_URL: 'http://breakevenbooks.com',
@@ -232,7 +232,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 45949836,
-			site_ID: 0,
+			site_ID: 44541989,
 			site_URL: 'http://teagansbooks.com',
 			site_name: "Teagan's Books",
 			feed_URL: 'http://teagansbooks.com',
@@ -240,7 +240,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 78068663,
-			site_ID: 0,
+			site_ID: 138878027,
 			site_URL: 'https://bookjotter.com',
 			site_name: 'Book Jotter',
 			feed_URL: 'http://bookjotter.com',
@@ -248,7 +248,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 173151023,
-			site_ID: 0,
+			site_ID: 181700717,
 			site_URL: 'http://bookswithemilyh.wordpress.com',
 			site_name: 'Books With Emily',
 			feed_URL: 'http://bookswithemilyh.wordpress.com',
@@ -306,7 +306,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	art: [
 		{
 			feed_ID: 33222275,
-			site_ID: 0,
+			site_ID: 83175719,
 			site_URL: 'http://theartteacher.net',
 			site_name: 'The Art Teacher',
 			feed_URL: 'http://theartteacher.net',
@@ -314,7 +314,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 107868904,
-			site_ID: 0,
+			site_ID: 17485148,
 			site_URL: 'https://streetartutopia.com',
 			site_name: 'STREET ART UTOPIA',
 			feed_URL: 'http://streetartutopia.com/feed',
@@ -322,7 +322,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 4716433,
-			site_ID: 0,
+			site_ID: 40605288,
 			site_URL: 'http://photographyartplus.wordpress.com',
 			site_name: 'Photography Art Plus',
 			feed_URL: 'http://photographyartplus.wordpress.com',
@@ -330,7 +330,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 16855834,
-			site_ID: 0,
+			site_ID: 60471231,
 			site_URL: 'http://artwewonderful.com',
 			site_name: 'Art We Wonderful by Marion Younan',
 			feed_URL: 'http://artwewonderful.com',
@@ -338,7 +338,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 18723169,
-			site_ID: 0,
+			site_ID: 54682377,
 			site_URL: 'http://medievalartresearch.com',
 			site_name: 'Medieval Art Research',
 			feed_URL: 'http://medievalartresearch.com',
@@ -388,7 +388,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	theatre: [
 		{
 			feed_ID: 160794634,
-			site_ID: 0,
+			site_ID: 235399975,
 			site_URL: 'http://themusicaltheatrereport.com',
 			site_name: 'The Musical Theatre Report',
 			feed_URL: 'http://themusicaltheatrereport.com',
@@ -396,7 +396,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 20414924,
-			site_ID: 0,
+			site_ID: 59301117,
 			site_URL: 'https://musicaltheatreresources.com',
 			site_name: 'Musical Theatre Resources',
 			feed_URL: 'http://musicaltheatreresources.com',
@@ -446,7 +446,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	writing: [
 		{
 			feed_ID: 106085778,
-			site_ID: 0,
+			site_ID: 95409711,
 			site_URL: 'http://writingatlarge.com',
 			site_name: 'Writing at Large',
 			feed_URL: 'http://writingatlarge.com',
@@ -454,7 +454,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 38560661,
-			site_ID: 0,
+			site_ID: 27803114,
 			site_URL: 'http://writingtofreedom.com',
 			site_name: 'writing to freedom',
 			feed_URL: 'http://writingtofreedom.com',
@@ -462,7 +462,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 50672115,
-			site_ID: 0,
+			site_ID: 68169120,
 			site_URL: 'http://tiffanyswritingdesk.wordpress.com',
 			site_name: 'Tiffany’s Writing Desk',
 			feed_URL: 'http://tiffanyswritingdesk.wordpress.com',
@@ -470,7 +470,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 54334346,
-			site_ID: 0,
+			site_ID: 118001721,
 			site_URL: 'https://www.creativewritingnews.com',
 			site_name: 'Creative Writing News',
 			feed_URL: 'http://creativewritingnews.net/feed',
@@ -478,7 +478,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 100129212,
-			site_ID: 0,
+			site_ID: 166652922,
 			site_URL: 'http://christinebialczak.com',
 			site_name: 'Stine Writing',
 			feed_URL: 'http://christinebialczak.com',
@@ -586,7 +586,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	photography: [
 		{
 			feed_ID: 145524953,
-			site_ID: 0,
+			site_ID: 4325317,
 			site_URL: 'https://keithtomlinsonphoto.com',
 			site_name: 'Keith Tomlinson Photography',
 			feed_URL: 'http://keithtomlinsonphoto.com',
@@ -594,7 +594,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 77479179,
-			site_ID: 0,
+			site_ID: 14921702,
 			site_URL: 'https://etbtravelphotography.com',
 			site_name: 'ETB Travel Photography',
 			feed_URL: 'http://etbtravelphotography.com',
@@ -602,7 +602,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 56449004,
-			site_ID: 0,
+			site_ID: 119179555,
 			site_URL: 'http://michaelstephenwills.com',
 			site_name: 'Michael Stephen Wills Photography',
 			feed_URL: 'http://michaelstephenwills.com',
@@ -610,7 +610,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 4739493,
-			site_ID: 0,
+			site_ID: 40600836,
 			site_URL: 'http://lisabonowiczphotography.wordpress.com',
 			site_name: 'Lisa Bonowicz Photography',
 			feed_URL: 'http://lisabonowiczphotography.wordpress.com',
@@ -618,7 +618,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 162341130,
-			site_ID: 0,
+			site_ID: 55314545,
 			site_URL: 'http://photographyandvision.wordpress.com',
 			site_name: 'Photography &amp; Vision',
 			feed_URL: 'http://photographyandvision.wordpress.com',
@@ -668,7 +668,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	diy: [
 		{
 			feed_ID: 107866846,
-			site_ID: 0,
+			site_ID: 178772258,
 			site_URL: 'https://countrylilydecor.com',
 			site_name: 'Country Lily Decor',
 			feed_URL: 'http://countrylilydecor.com',
@@ -676,7 +676,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 145535335,
-			site_ID: 0,
+			site_ID: 222336513,
 			site_URL: 'https://sparrowrefashion.com',
 			site_name: 'Sparrow Refashion: A Blog for Sewing Lovers and DIY Enthusiasts',
 			feed_URL: 'http://sparrowrefashion.com',
@@ -684,7 +684,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 		{
 			feed_ID: 38869890,
-			site_ID: 0,
+			site_ID: 66296708,
 			site_URL: 'https://www.grandmashousediy.com',
 			site_name: 'Grandmas House DIY',
 			feed_URL: 'http://www.grandmashousediy.com',
