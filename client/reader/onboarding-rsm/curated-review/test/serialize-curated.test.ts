@@ -48,6 +48,27 @@ describe( 'serializeCurated', () => {
 		expect( idOrder ).toEqual( [ 10, 20, 30 ] );
 	} );
 
+	it( 'overrides site_ID with metadata.siteId when provided', () => {
+		const out = serializeCurated( {
+			variableName: 'bar',
+			tagMap: { food: [ entry( { feed_ID: 1, site_ID: 0 } ) ] },
+			getMetadata: () => metadata( { siteId: 12345678 } ),
+		} );
+
+		expect( out ).toContain( 'site_ID: 12345678,' );
+		expect( out ).not.toContain( 'site_ID: 0,' );
+	} );
+
+	it( 'keeps entry.site_ID when metadata.siteId is absent', () => {
+		const out = serializeCurated( {
+			variableName: 'bar',
+			tagMap: { food: [ entry( { feed_ID: 1, site_ID: 98765 } ) ] },
+			getMetadata: () => metadata(),
+		} );
+
+		expect( out ).toContain( 'site_ID: 98765,' );
+	} );
+
 	it( 'always emits feed_URL and has_icon for every entry', () => {
 		const out = serializeCurated( {
 			variableName: 'bar',

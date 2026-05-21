@@ -17,6 +17,13 @@ export interface DetectedRow {
 	 * source because the count is volatile.
 	 */
 	subscribersCount: number | null;
+	/**
+	 * WPCOM blog ID resolved from `feed.blog_ID`. Only populated when the
+	 * source entry has `site_ID: 0` and the feed query returned a valid
+	 * positive integer — used to auto-correct the emitted `site_ID` in the
+	 * export and flagged in the row UI to make the correction visible.
+	 */
+	resolvedSiteId: number | null;
 }
 
 interface CuratedRowProps {
@@ -142,7 +149,15 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 
 				<div className="curated-review__row-fields">
 					<KeyValue label="feed_ID">{ entry.feed_ID }</KeyValue>
-					<KeyValue label="site_ID">{ entry.site_ID }</KeyValue>
+					<KeyValue label="site_ID">
+						{ entry.site_ID }
+						{ detected?.resolvedSiteId && detected.resolvedSiteId !== entry.site_ID && (
+							<span className="curated-review__hint">
+								{ ' ' }
+								→ { detected.resolvedSiteId } (auto-corrected on export)
+							</span>
+						) }
+					</KeyValue>
 					<KeyValue label="site_URL">
 						{ /*
 						   Many curated `site_URL` values are stored without a scheme

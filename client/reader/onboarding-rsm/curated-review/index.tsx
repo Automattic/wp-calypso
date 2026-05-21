@@ -108,8 +108,17 @@ const CuratedReviewPage: React.FC = () => {
 			const hasIcon = Boolean( feed.image );
 			const subscribersCount =
 				typeof feed.subscribers_count === 'number' ? feed.subscribers_count : null;
+			// Capture blog_ID so the export can auto-correct entries stored with
+			// site_ID: 0 (a past bug in the discover tool). Only set when the
+			// source entry genuinely has site_ID === 0 — we don't want to silently
+			// override values the operator explicitly set.
+			const parsedBlogId = feed.blog_ID ? parseInt( String( feed.blog_ID ), 10 ) : NaN;
+			const resolvedSiteId =
+				row.entry.site_ID === 0 && ! isNaN( parsedBlogId ) && parsedBlogId > 0
+					? parsedBlogId
+					: null;
 			return {
-				detected: { feedUrl, hasIcon, subscribersCount } as DetectedRow,
+				detected: { feedUrl, hasIcon, subscribersCount, resolvedSiteId } as DetectedRow,
 				iconUrl: hasIcon ? feed.image : null,
 				autoFlaggedBroken: false,
 			};
@@ -171,6 +180,10 @@ const CuratedReviewPage: React.FC = () => {
 			map.set( row.entry.feed_ID, {
 				feedUrl: detected.feedUrl,
 				hasIcon: detected.hasIcon && ! isHasIconForcedFalse,
+				// Auto-correct site_ID: 0 entries using the WPCOM blog ID
+				// resolved from the feed query. Only set when the entry's
+				// current site_ID is 0 and a valid positive integer was found.
+				...( detected.resolvedSiteId && { siteId: detected.resolvedSiteId } ),
 			} );
 		} );
 		return map;

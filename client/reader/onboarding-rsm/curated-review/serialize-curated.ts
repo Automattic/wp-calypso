@@ -5,6 +5,15 @@ export interface CuratedRowMetadata {
 	feedUrl: string;
 	/** `true` iff the resolved feed had a non-empty `image`. */
 	hasIcon: boolean;
+	/**
+	 * Resolved WPCOM blog ID (`feed.blog_ID` from the read-feed API). When
+	 * present this overrides `entry.site_ID` in the emitted source, which lets
+	 * the curated-review export auto-correct entries that were persisted with
+	 * `site_ID: 0` because the discover tool didn't yet read the correct field.
+	 * Only set when the entry's `site_ID` is currently `0` and a valid positive
+	 * integer was resolved from the feed query.
+	 */
+	siteId?: number;
 }
 
 export interface SerializeOptions {
@@ -71,9 +80,11 @@ function serializeTag(
 }
 
 function serializeEntry( entry: CuratedBlog, metadata: CuratedRowMetadata ): string {
+	const siteId =
+		metadata.siteId !== undefined && metadata.siteId > 0 ? metadata.siteId : entry.site_ID;
 	const lines: string[] = [
 		`\t\t\tfeed_ID: ${ entry.feed_ID },`,
-		`\t\t\tsite_ID: ${ entry.site_ID },`,
+		`\t\t\tsite_ID: ${ siteId },`,
 		`\t\t\tsite_URL: ${ formatString( entry.site_URL ) },`,
 		`\t\t\tsite_name: ${ formatString( entry.site_name ) },`,
 		`\t\t\tfeed_URL: ${ formatString( metadata.feedUrl ) },`,
