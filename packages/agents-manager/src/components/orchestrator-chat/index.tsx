@@ -340,7 +340,7 @@ export default function OrchestratorChat( {
 		pathname: window.location.pathname,
 	} );
 
-	// Listen for inline suggestion clicks dispatched by Big Sky's InlineSuggestions component.
+	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
 		const handleInlineSuggestionClick = ( event: Event ) => {
 			const { value } = ( event as CustomEvent ).detail;
@@ -365,6 +365,13 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
+	const handleSuggestionClick = useCallback( ( suggestion: Suggestion ) => {
+		const value = suggestion.prompt ?? suggestion.label;
+		window.dispatchEvent(
+			new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+		);
+	}, [] );
+
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
@@ -387,6 +394,7 @@ export default function OrchestratorChat( {
 		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
+		isProcessing,
 		setIsThinking,
 		deleteMarkedMessages: ( msgs ) => {
 			setDeletedMessageIds(
@@ -472,6 +480,7 @@ export default function OrchestratorChat( {
 			onClose={ onClose }
 			onExpand={ onExpand }
 			clearSuggestions={ clearSuggestions }
+			onSuggestionClick={ handleSuggestionClick }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }

@@ -59,6 +59,11 @@ interface Props {
 	onExpand: () => void;
 	/** Called to clear the suggestions. */
 	clearSuggestions?: () => void;
+	/** Called when a suggestion is clicked. */
+	onSuggestionClick?: (
+		selectedSuggestion: Suggestion,
+		availableSuggestions: Suggestion[]
+	) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -161,6 +166,7 @@ export default function AgentChat( {
 	onClose,
 	onExpand,
 	clearSuggestions,
+	onSuggestionClick,
 	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -220,6 +226,7 @@ export default function AgentChat( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
+			onSuggestionClick={ onSuggestionClick }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }

@@ -540,7 +540,7 @@ export default function ReviewMediation( {
 				if ( result?.success ) {
 					return {
 						success: true,
-						clientId,
+						clientId: result.clientId ?? clientId,
 						contentBefore: result.contentBefore,
 						contentAfter: result.contentAfter,
 					};

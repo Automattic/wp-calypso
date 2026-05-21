@@ -59,6 +59,7 @@ export type AbilitiesSetupHook = ( actions: {
 	clearMessages: () => void;
 	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
 	getAgentManager: typeof getAgentManager;
+	isProcessing?: boolean;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
