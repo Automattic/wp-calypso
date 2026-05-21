@@ -1,7 +1,7 @@
 import { type DomainContactDetails, type StatesListItem } from '@automattic/api-core';
 import { __experimentalInputControl as InputControl, SelectControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { type DataFormControlProps, type Field } from '@wordpress/dataviews';
+import { type DataFormControlProps, type Field, type FormField } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';
 import {
@@ -160,7 +160,7 @@ export function RegionAddressFieldsLayout( {
 						alignment: 'start' as const,
 					},
 					children: [ ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ), 'city' ],
-				} as Field< DomainContactDetails >,
+				} as FormField,
 			];
 		}
 
@@ -175,7 +175,7 @@ export function RegionAddressFieldsLayout( {
 						alignment: 'start' as const,
 					},
 					children: [ 'city', ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ) ],
-				} as Field< DomainContactDetails >,
+				} as FormField,
 			];
 		}
 	}
@@ -192,7 +192,7 @@ export function RegionAddressFieldsLayout( {
 			children: isMobileViewport
 				? [ 'city', 'state' ]
 				: [ 'city', 'state', ...( arePostalCodesSupported ? [ 'postalCode' ] : [] ) ],
-		} as Field< DomainContactDetails >,
+		} as FormField,
 		...( isMobileViewport && arePostalCodesSupported ? [ 'postalCode' ] : [] ),
 	];
 }

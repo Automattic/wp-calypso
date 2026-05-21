@@ -27,6 +27,8 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
+const NOTES_PER_PAGE = 20;
+
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
@@ -51,9 +53,10 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 		fields: [ 'info' ],
 		page: 1,
 		infiniteScrollEnabled: true,
+		startPosition: 1,
 	} );
 
-	const view = { ...initialView, perPage: visibleNotes.length };
+	const view = { ...initialView, perPage: NOTES_PER_PAGE };
 
 	const fields = getFields();
 
@@ -75,6 +78,22 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 		}
 	}, [ visibleNotes.length, isLoading, infiniteScrollHandler ] );
 
+	const handleChangeView = useCallback(
+		( nextView: View ) => {
+			setView( nextView );
+
+			// DataViews drives infinite scroll by advancing `startPosition`.
+			// Load more notes once the scroll window nears the end of those
+			// already loaded.
+			const start = nextView.startPosition ?? 1;
+			const perPage = nextView.perPage ?? NOTES_PER_PAGE;
+			if ( start + perPage > visibleNotes.length ) {
+				infiniteScrollHandler();
+			}
+		},
+		[ visibleNotes.length, infiniteScrollHandler ]
+	);
+
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
@@ -88,10 +107,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 				view={ view }
 				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
-				paginationInfo={ {
-					...paginationInfo,
-					infiniteScrollHandler,
-				} }
+				paginationInfo={ paginationInfo }
 				empty={
 					<VStack alignment="center">
 						<Text size={ 15 } weight={ 500 }>
@@ -101,7 +117,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 					</VStack>
 				}
 				getItemId={ ( item ) => item.id.toString() }
-				onChangeView={ setView }
+				onChangeView={ handleChangeView }
 				onChangeSelection={ onChangeSelection }
 			>
 				<DataViews.Layout />

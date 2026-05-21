@@ -40,7 +40,7 @@
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/plugins": "^7.23.0",
-		"@wordpress/ui": "^0.9.0",
+		"@wordpress/ui": "^0.13.0",
 		"clsx": "^2.1.1",
 		"wpcom-proxy-request": "workspace:^"
 	},
