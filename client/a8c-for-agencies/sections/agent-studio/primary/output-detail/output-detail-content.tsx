@@ -8,6 +8,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { sparkles } from '@wordpress/icons';
 import { useMemo, useState, type ReactNode } from 'react';
 import useAgentStudioCollateral, {
 	type AgentStudioCollateralVariant,
@@ -23,6 +24,7 @@ import {
 	type ServerSocialBrief,
 } from '../../social-design/create-social-assets';
 import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
+import RefineWithAiDock from './refine-with-ai-dock';
 import SocialAssetsViewer from './social-assets-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
@@ -63,6 +65,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 	const run = useAgentStudioRun( output.id );
 	const postId = extractPostId( run.data?.payload );
 	const collateral = useAgentStudioCollateral( postId );
+	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
 
 	const variants = useMemo< AgentStudioCollateralVariant[] >(
 		() => collateral.data?.variants ?? [],
@@ -157,6 +160,14 @@ function OnePagerOutputDetail( { output }: Props ) {
 	return (
 		<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__content">
 			<HStack className="a4a-agent-studio-output-detail__actions" justify="flex-end" spacing={ 2 }>
+				<Button
+					variant="secondary"
+					icon={ sparkles }
+					onClick={ () => setIsRefineOpen( ( open ) => ! open ) }
+					aria-pressed={ isRefineOpen }
+				>
+					{ __( 'Refine with AI' ) }
+				</Button>
 				{ selectedVariant?.pdf_download_url && (
 					<Button
 						variant="primary"
@@ -184,6 +195,13 @@ function OnePagerOutputDetail( { output }: Props ) {
 							  }
 							: undefined
 					}
+				/>
+			) }
+			{ isRefineOpen && postId && (
+				<RefineWithAiDock
+					collateralPostId={ postId }
+					totalPages={ pages.length }
+					onClose={ () => setIsRefineOpen( false ) }
 				/>
 			) }
 		</VStack>
