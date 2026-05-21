@@ -55,6 +55,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleAdminSidebarGroup } from 'calypso/state/admin-sidebar/expand-state/actions';
 import { getAdminSidebarGroupExpanded } from 'calypso/state/admin-sidebar/expand-state/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useCustomizeContext } from './customize';
 
 const GROUP_ID_PLUGINS = 'plugins';
 
@@ -126,6 +127,17 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 	const isCustomizable = customizable ?? group.id === GROUP_ID_PLUGINS;
 	const showAttentionDot = ! expanded && !! group.signal?.attention;
 
+	// When the customize provider is mounted (Phase 2), the customize button
+	// becomes live and clicking it enters customize mode. When no provider is
+	// present (Phase 1 callers, isolated tests, Storybook), the button stays
+	// inert per Phase 1's behaviour — preserves backwards compatibility.
+	const customizeCtx = useCustomizeContext();
+	const handleCustomizeClick = useCallback( () => {
+		if ( customizeCtx ) {
+			customizeCtx.enter();
+		}
+	}, [ customizeCtx ] );
+
 	const handleToggle = useCallback(
 		( event ) => {
 			if ( typeof onToggle === 'function' ) {
@@ -187,10 +199,12 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 						className="wp-admin-sidebar-group__customize sidebar-group__customize"
 						aria-label={ customizeLabel }
 						data-tooltip={ customizeLabel }
-						// Phase 2 task 2.1 wires the click handler. Keep disabled
-						// in Phase 1 so the affordance is visible (tooltip on
-						// hover) but inert.
-						disabled
+						// Phase 2 row 16: enters customize mode when the
+						// orchestrator is mounted. Stays disabled when no
+						// orchestrator is in scope (Phase 1 callers, tests
+						// rendering this component in isolation).
+						disabled={ ! customizeCtx }
+						onClick={ handleCustomizeClick }
 					/>
 				) }
 				<span

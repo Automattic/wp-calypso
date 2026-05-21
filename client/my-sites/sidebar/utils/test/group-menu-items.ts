@@ -97,6 +97,15 @@ describe( 'groupMenuItems()', () => {
 		] );
 	} );
 
+	it( 'can preserve empty groups for customize-mode drop targets', () => {
+		const result = groupMenuItems( fixtureMenuWithEmptyGroup, fixtureGroups, {
+			includeEmptyGroups: true,
+		} );
+		expect( result.groupedSections ).toHaveLength( 1 );
+		expect( result.groupedSections[ 0 ].group.id ).toBe( 'plugins' );
+		expect( result.groupedSections[ 0 ].items ).toEqual( [] );
+	} );
+
 	it( 'handles a group with no attention (collapsed-state dot suppressed)', () => {
 		const menu = [
 			{ slug: 'home', title: 'Home', type: 'menu-item', group_id: null },
