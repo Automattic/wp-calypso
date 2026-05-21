@@ -953,12 +953,12 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 		props.site = getSite( state, siteId );
 	}
 	if ( feedId ) {
-		props.feed = getFeed( state, feedId );
+		const feed = getFeed( state, feedId );
 
 		// Add site icon to feed object so have icon for external feeds
-		if ( props.feed ) {
+		if ( feed ) {
 			const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-			props.feed.site_icon = follow?.site_icon;
+			props.feed = { ...feed, site_icon: follow?.site_icon };
 		}
 	}
 	if ( ownProps.referral ) {
