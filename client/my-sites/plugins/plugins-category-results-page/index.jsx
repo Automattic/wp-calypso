@@ -10,7 +10,7 @@ import { WPBEGINNER_PLUGINS } from '../constants';
 import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import usePlugins from '../use-plugins';
 
-const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
+const PluginsCategoryResultsPage = ( { category, siteSlug, sites, isLoggedOut } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
 		infinite: true,
@@ -51,12 +51,16 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
-				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				variant={
+					isLoggedOut
+						? PluginsBrowserListVariant.Paginated
+						: PluginsBrowserListVariant.InfiniteScroll
+				}
 				extended
 				injectAfterIndex={ isMarketplaceRedesign ? 12 : undefined }
 				injectElement={ isMarketplaceRedesign ? <BusinessPlanBanner /> : undefined }
 			/>
-			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			{ ! isLoggedOut && <InfiniteScroll nextPageMethod={ fetchNextPage } /> }
 		</FullWidthSection>
 	);
 };
