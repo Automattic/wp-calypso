@@ -123,7 +123,8 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	variants,
 } ) => {
 	const translate = useTranslate();
-	const isMobileStickySummary = useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
+		useMobileCheckoutStickySummaryExperiment();
 	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState(
 		selectedItem.product_slug
 	);

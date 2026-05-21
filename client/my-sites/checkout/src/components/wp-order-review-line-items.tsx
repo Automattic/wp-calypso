@@ -322,7 +322,8 @@ function LineItemWrapper( {
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
-	const isMobileStickySummary = useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
+		useMobileCheckoutStickySummaryExperiment();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();

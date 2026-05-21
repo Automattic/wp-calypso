@@ -567,7 +567,8 @@ export default function CheckoutMainContent( {
 
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
-	const isMobileCheckoutStickySummary = useMobileCheckoutStickySummaryExperiment();
+	const { isLoading: isMobileCheckoutStickySummaryLoading, isMobileCheckoutStickySummary } =
+		useMobileCheckoutStickySummaryExperiment();
 	const originalPriceForHeader = responseCart.products.reduce(
 		( sum, product ) => sum + product.item_original_subtotal_integer,
 		0
@@ -668,60 +669,68 @@ export default function CheckoutMainContent( {
 							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
 							onError={ onSummaryError }
 						>
-							{ ! isMobileCheckoutStickySummary && isCheckoutUiRedesignV1 && (
-								<CheckoutSummaryTitleLinkRedesign
-									className="checkout__summary-button"
-									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
-								>
-									<CheckoutSummaryTitleContentRedesign className="checkout__summary-title">
-										<CheckoutSummaryTitle>
-											<CheckoutSummaryBagIconWrapper>
-												<MaterialIcon icon="shopping_cart" size={ 24 } />
-											</CheckoutSummaryBagIconWrapper>
-											{ translate( 'Purchase details' ) }
-										</CheckoutSummaryTitle>
-										<CheckoutSummaryPricesWrapper>
-											{ hasDiscountForHeader && (
-												<CheckoutSummaryOriginalPrice>
-													{ formatCurrency( originalPriceForHeader, responseCart.currency, {
-														isSmallestUnit: true,
-														stripZeros: true,
-													} ) }
-												</CheckoutSummaryOriginalPrice>
-											) }
-											<CheckoutSummaryCurrentPrice>
+							{ ! isMobileCheckoutStickySummary &&
+								! isMobileCheckoutStickySummaryLoading &&
+								isCheckoutUiRedesignV1 && (
+									<CheckoutSummaryTitleLinkRedesign
+										className="checkout__summary-button"
+										onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+									>
+										<CheckoutSummaryTitleContentRedesign className="checkout__summary-title">
+											<CheckoutSummaryTitle>
+												<CheckoutSummaryBagIconWrapper>
+													<MaterialIcon icon="shopping_cart" size={ 24 } />
+												</CheckoutSummaryBagIconWrapper>
+												{ translate( 'Purchase details' ) }
+											</CheckoutSummaryTitle>
+											<CheckoutSummaryPricesWrapper>
+												{ hasDiscountForHeader && (
+													<CheckoutSummaryOriginalPrice>
+														{ formatCurrency( originalPriceForHeader, responseCart.currency, {
+															isSmallestUnit: true,
+															stripZeros: true,
+														} ) }
+													</CheckoutSummaryOriginalPrice>
+												) }
+												<CheckoutSummaryCurrentPrice>
+													{ formatCurrency(
+														responseCart.total_cost_integer,
+														responseCart.currency,
+														{
+															isSmallestUnit: true,
+															stripZeros: true,
+														}
+													) }
+												</CheckoutSummaryCurrentPrice>
+												<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+											</CheckoutSummaryPricesWrapper>
+										</CheckoutSummaryTitleContentRedesign>
+									</CheckoutSummaryTitleLinkRedesign>
+								) }
+							{ ! isMobileCheckoutStickySummary &&
+								! isMobileCheckoutStickySummaryLoading &&
+								! isCheckoutUiRedesignV1 && (
+									<CheckoutSummaryTitleLink
+										className="checkout__summary-button"
+										onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+									>
+										<CheckoutSummaryTitleContent className="checkout__summary-title">
+											<CheckoutSummaryTitle>
+												{ ! isStepContainerV2 && (
+													<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+												) }
+												{ translate( 'Purchase Details' ) }
+												<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+											</CheckoutSummaryTitle>
+											<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
 												{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
 													isSmallestUnit: true,
 													stripZeros: true,
 												} ) }
-											</CheckoutSummaryCurrentPrice>
-											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-										</CheckoutSummaryPricesWrapper>
-									</CheckoutSummaryTitleContentRedesign>
-								</CheckoutSummaryTitleLinkRedesign>
-							) }
-							{ ! isMobileCheckoutStickySummary && ! isCheckoutUiRedesignV1 && (
-								<CheckoutSummaryTitleLink
-									className="checkout__summary-button"
-									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
-								>
-									<CheckoutSummaryTitleContent className="checkout__summary-title">
-										<CheckoutSummaryTitle>
-											{ ! isStepContainerV2 && (
-												<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-											) }
-											{ translate( 'Purchase Details' ) }
-											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-										</CheckoutSummaryTitle>
-										<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-											{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-												isSmallestUnit: true,
-												stripZeros: true,
-											} ) }
-										</CheckoutSummaryTitlePrice>
-									</CheckoutSummaryTitleContent>
-								</CheckoutSummaryTitleLink>
-							) }
+											</CheckoutSummaryTitlePrice>
+										</CheckoutSummaryTitleContent>
+									</CheckoutSummaryTitleLink>
+								) }
 
 							<CheckoutSummaryBody className="checkout__summary-body">
 								{ shouldShowSitePreview && (
@@ -989,7 +998,10 @@ export default function CheckoutMainContent( {
 						isLargeViewport={ isRsmBetterCheckout && isLargeViewport }
 					/>
 					{ ( isRsmBetterCheckout && isLargeViewport ) ||
-					( isStepContainerV2 && ! isLargeViewport && isMobileCheckoutStickySummary ) ? (
+					( isStepContainerV2 &&
+						! isLargeViewport &&
+						! isMobileCheckoutStickySummaryLoading &&
+						isMobileCheckoutStickySummary ) ? (
 						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
 					) : (
 						<CheckoutFormSubmit
@@ -1105,7 +1117,9 @@ export default function CheckoutMainContent( {
 						return (
 							<>
 								{ checkoutMainContent }
-								{ isMobileCheckoutStickySummary && <MobileCheckoutStickySummary /> }
+								{ ! isMobileCheckoutStickySummaryLoading && isMobileCheckoutStickySummary && (
+									<MobileCheckoutStickySummary />
+								) }
 							</>
 						);
 					} }

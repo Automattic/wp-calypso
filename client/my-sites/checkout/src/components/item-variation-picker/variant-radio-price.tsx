@@ -120,7 +120,8 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const isMobileStickySummary = useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
+		useMobileCheckoutStickySummaryExperiment();
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
 	const discountPercentage = compareToInfo

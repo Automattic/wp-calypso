@@ -45,7 +45,44 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 		} );
 	} );
 
-	it( 'returns true when the user is in the treatment variation on a mobile viewport', () => {
+	it( 'returns isLoading false and isMobileCheckoutStickySummary false on large viewports', () => {
+		mockUseViewportMatch.mockReturnValue( false );
+
+		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
+
+		expect( result.current ).toEqual( { isLoading: false, isMobileCheckoutStickySummary: false } );
+	} );
+
+	it( 'returns isLoading true and isMobileCheckoutStickySummary false while ExPlat is loading on mobile', () => {
+		mockUseViewportMatch.mockReturnValue( true );
+		mockUseExperiment.mockReturnValue( [ true, null ] );
+
+		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
+
+		expect( result.current ).toEqual( { isLoading: true, isMobileCheckoutStickySummary: false } );
+	} );
+
+	it( 'returns isMobileCheckoutStickySummary false for control assignment on mobile', () => {
+		mockUseViewportMatch.mockReturnValue( true );
+		mockUseExperiment.mockReturnValue( [
+			false,
+			{
+				experimentName: 'calypso_mobile_checkout_sticky_summary_v1',
+				variationName: 'control',
+				retrievedTimestamp: 0,
+				ttl: 0,
+			},
+		] );
+
+		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
+
+		expect( result.current ).toEqual( {
+			isLoading: false,
+			isMobileCheckoutStickySummary: false,
+		} );
+	} );
+
+	it( 'returns isMobileCheckoutStickySummary true for treatment assignment on mobile', () => {
 		mockUseViewportMatch.mockReturnValue( true );
 		mockUseExperiment.mockReturnValue( [
 			false,
@@ -59,7 +96,10 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 
 		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
 
-		expect( result.current ).toBe( true );
+		expect( result.current ).toEqual( {
+			isLoading: false,
+			isMobileCheckoutStickySummary: true,
+		} );
 	} );
 
 	it( 'ignores the QA query-param override on large viewports', () => {
@@ -68,7 +108,10 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 
 		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
 
-		expect( result.current ).toBe( false );
+		expect( result.current ).toEqual( {
+			isLoading: false,
+			isMobileCheckoutStickySummary: false,
+		} );
 	} );
 
 	it( 'honors the QA query-param override on mobile viewports', () => {
@@ -77,6 +120,9 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 
 		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
 
-		expect( result.current ).toBe( true );
+		expect( result.current ).toEqual( {
+			isLoading: false,
+			isMobileCheckoutStickySummary: true,
+		} );
 	} );
 } );
