@@ -54,6 +54,16 @@ const selectors = {
 };
 
 /**
+ * Escapes a string so it can be safely used in a regular expression.
+ *
+ * @param {string} value String to escape.
+ * @returns {string} Escaped string.
+ */
+function escapeRegExp( value: string ): string {
+	return value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+}
+
+/**
  * Page representing the Plans page under `/plans` endpoint.
  *
  * Also forms a component of the `SignupPickPlanPage` used in the
@@ -161,7 +171,46 @@ export class PlansPage {
 	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
 	 */
 	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
-		await this.page.getByText( `${ domainName } redirects to ${ siteSlug }` ).waitFor();
+		const redirectedDomain = await this.getDomainFromRedirectWarning( siteSlug );
+		if ( redirectedDomain !== domainName ) {
+			throw new Error(
+				`Expected domain redirect warning for ${ domainName }, but found ${ redirectedDomain }.`
+			);
+		}
+	}
+
+	/**
+	 * Returns the domain shown in the "Domain redirect" warning.
+	 */
+	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
+		const warningPattern = new RegExp( `^(\\S+) redirects to ${ escapeRegExp( siteSlug ) }$` );
+		const warning = this.page.getByText( warningPattern ).first();
+		await warning.waitFor();
+
+		const warningText = ( await warning.textContent() )?.trim();
+		const match = warningText?.match( warningPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( `Failed to read domain redirect warning for ${ siteSlug }.` );
+		}
+
+		return match[ 1 ];
+	}
+
+	/**
+	 * Returns the domain shown as included on the plans grid.
+	 */
+	async getIncludedDomain(): Promise< string > {
+		const includedDomainPattern = /^(\S+) is included$/;
+		const includedDomain = this.page.getByText( includedDomainPattern ).first();
+		await includedDomain.waitFor();
+
+		const includedDomainText = ( await includedDomain.textContent() )?.trim();
+		const match = includedDomainText?.match( includedDomainPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( 'Failed to read included domain from plans grid.' );
+		}
+
+		return match[ 1 ];
 	}
 
 	/**

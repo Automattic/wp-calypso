@@ -70,7 +70,8 @@ test.describe(
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
-				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
+				await componentDomainSearch.selectFirstSuggestion( false );
+				selectedDomain = await pageSignupPickPlan.getIncludedDomain();
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
@@ -261,7 +262,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
-				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
+				await componentDomainSearch.selectFirstSuggestion( false );
 			} );
 
 			await test.step( 'And I open the escape hatch in the plans step', async function () {
@@ -269,8 +270,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I see the domain redirect warning', async function () {
-				await pageSignupPickPlan.validateDomainRedirectWarning(
-					selectedDomain,
+				selectedDomain = await pageSignupPickPlan.getDomainFromRedirectWarning(
 					newSiteDetails.blog_details.site_slug
 				);
 			} );
@@ -334,7 +334,8 @@ test.describe(
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
-				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
+				await componentDomainSearch.selectFirstSuggestion( false );
+				selectedDomain = await pageSignupPickPlan.getIncludedDomain();
 			} );
 
 			await test.step( `And I select the ${ planName } plan via the escape hatch`, async function () {
