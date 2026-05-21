@@ -11,14 +11,9 @@ export const getAgentStudioVariantHtmlQueryKey = ( htmlUrl: string | undefined )
 	htmlUrl,
 ];
 
-// `rest_url()` injects `/sites/<blog_id>/` into wpcom/v2 paths on
-// public-api.wordpress.com, which 404s our route. Strip it.
-const normalizeHtmlUrl = ( url: string ): string =>
-	url.replace( /\/wpcom\/v2\/sites\/\d+\//, '/wpcom/v2/' );
-
 export const fetchAgentStudioVariantHtml = async ( htmlUrl: string ): Promise< string > => {
 	const token = oauthToken.getToken();
-	const response = await fetch( normalizeHtmlUrl( htmlUrl ), {
+	const response = await fetch( htmlUrl, {
 		headers: {
 			Accept: 'text/html',
 			...( typeof token === 'string' ? { Authorization: `Bearer ${ token }` } : {} ),
