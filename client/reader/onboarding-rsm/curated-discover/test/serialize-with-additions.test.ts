@@ -215,4 +215,135 @@ describe( 'serializeWithAdditions', () => {
 			expect( warnSpy ).not.toHaveBeenCalled();
 		} );
 	} );
+
+	describe( 'dedup against existing source', () => {
+		// Same warn-silencing pattern as the skip-and-warn block — the dedup path
+		// also `console.warn`s every dropped entry, and we validate at least one
+		// of those calls landed.
+		let warnSpy: jest.SpyInstance;
+		beforeEach( () => {
+			warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		} );
+		afterEach( () => {
+			warnSpy.mockRestore();
+		} );
+
+		it( 'drops additions whose feed_ID already exists in the same tag', () => {
+			// Mirrors the post-paste-still-has-additions case: tag already
+			// includes `feed_ID: 1` from a prior export, and the additions
+			// store still carries it. The export must not duplicate.
+			const { source, deduped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: {
+					food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ) ],
+				},
+				additions: {
+					food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 100 } ) ],
+				},
+			} );
+
+			expect( feedIdOrder( source ) ).toEqual( [ 100, 1, 2 ] );
+			expect( deduped ).toBe( 1 );
+			expect( warnSpy ).toHaveBeenCalledWith(
+				expect.stringContaining( 'already in source' ),
+				expect.objectContaining( { feed_ID: 1 } )
+			);
+		} );
+
+		it( 'allows the same feed_ID across different tags (no cross-tag dedup)', () => {
+			// Cross-tag duplication is intentional in the curated source
+			// schema — `popular.tsx` famously shares feeds with the topical
+			// files. The dedup must only kick in for the same tag.
+			const { source, deduped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: {
+					food: [ entry( { feed_ID: 1 } ) ],
+					drinks: [],
+				},
+				additions: {
+					drinks: [ entry( { feed_ID: 1 } ) ],
+				},
+			} );
+
+			expect( deduped ).toBe( 0 );
+			// `food` keeps its original entry; `drinks` gets the addition.
+			expect( feedIdOrder( source ) ).toEqual( [ 1, 1 ] );
+		} );
+
+		it( 'drops intra-additions duplicates (defense in depth)', () => {
+			// `useAddedCandidates.add` already no-ops on same-tag dupes, but
+			// a hand-edited / corrupted localStorage entry could carry the
+			// same feed twice. The serializer must collapse those too.
+			const a = entry( { feed_ID: 100 } );
+			const aDup = entry( { feed_ID: 100 } );
+			const { source, deduped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: {},
+				additions: {
+					food: [ a, aDup, entry( { feed_ID: 200 } ) ],
+				},
+			} );
+
+			expect( feedIdOrder( source ) ).toEqual( [ 200, 100 ] );
+			expect( deduped ).toBe( 1 );
+			expect( warnSpy ).toHaveBeenCalledWith(
+				expect.stringContaining( 'duplicate within additions' ),
+				expect.objectContaining( { feed_ID: 100 } )
+			);
+		} );
+
+		it( 'is idempotent across the copy → paste → re-add → copy compounding flow', () => {
+			// Reproduces the operator-reported bug: A and B are added,
+			// exported, pasted into the source file. The operator then
+			// adds C and D without clearing localStorage, so additions
+			// still contains [A, B, C, D]. The next export must not
+			// duplicate A and B.
+			const A = entry( { feed_ID: 10 } );
+			const B = entry( { feed_ID: 20 } );
+			const C = entry( { feed_ID: 30 } );
+			const D = entry( { feed_ID: 40 } );
+			const original = entry( { feed_ID: 1 } );
+
+			const round1 = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: { music: [ original ] },
+				additions: { music: [ A, B ] },
+			} );
+			expect( feedIdOrder( round1.source ) ).toEqual( [ 20, 10, 1 ] );
+			expect( round1.deduped ).toBe( 0 );
+
+			// Operator pastes round1 source into music: [B, A, original].
+			// localStorage still has [A, B], and the operator appends C, D.
+			const round2 = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: { music: [ B, A, original ] },
+				additions: { music: [ A, B, C, D ] },
+			} );
+			expect( feedIdOrder( round2.source ) ).toEqual( [ 40, 30, 20, 10, 1 ] );
+			expect( round2.deduped ).toBe( 2 );
+
+			// Same again: paste round2, append E and F, prior additions still
+			// resident in localStorage. No new duplication.
+			const E = entry( { feed_ID: 50 } );
+			const F = entry( { feed_ID: 60 } );
+			const round3 = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: { music: [ D, C, B, A, original ] },
+				additions: { music: [ A, B, C, D, E, F ] },
+			} );
+			expect( feedIdOrder( round3.source ) ).toEqual( [ 60, 50, 40, 30, 20, 10, 1 ] );
+			expect( round3.deduped ).toBe( 4 );
+		} );
+
+		it( 'reports deduped == 0 when nothing overlaps', () => {
+			const { deduped } = serializeWithAdditions( {
+				variableName: 'fooBlogs',
+				tagMap: { food: [ entry( { feed_ID: 1 } ) ] },
+				additions: { food: [ entry( { feed_ID: 100 } ) ] },
+			} );
+
+			expect( deduped ).toBe( 0 );
+			expect( warnSpy ).not.toHaveBeenCalled();
+		} );
+	} );
 } );

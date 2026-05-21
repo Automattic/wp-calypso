@@ -250,8 +250,9 @@ const CuratedDiscoverPage: React.FC = () => {
 	const copyFile = useCallback( async () => {
 		let source: string;
 		let skipped: number;
+		let deduped: number;
 		try {
-			( { source, skipped } = serializeWithAdditions( {
+			( { source, skipped, deduped } = serializeWithAdditions( {
 				variableName: file.variableName,
 				tagMap: file.tagMap,
 				additions: added,
@@ -273,18 +274,29 @@ const CuratedDiscoverPage: React.FC = () => {
 						skipped === 1 ? 'y was' : 'ies were'
 				  } skipped (see devtools console for details).`
 				: '';
+		// `deduped` covers additions whose feed_ID was already in the source
+		// for the same tag (typical: operator pasted a prior export and then
+		// hit Copy again with the same additions still in localStorage). Worth
+		// surfacing so the addition counter and the actually-emitted-new count
+		// stay reconcilable.
+		const dedupedSuffix =
+			deduped > 0
+				? ` ${ deduped } addition${
+						deduped === 1 ? ' was' : 's were'
+				  } already in source and skipped (see devtools console).`
+				: '';
 
 		const ok = await writeToClipboard( source );
 		if ( ok ) {
 			alert(
 				`Copied ${ file.slug }.tsx (${ totalAdded } new addition${
 					totalAdded === 1 ? '' : 's'
-				} prepended).${ skippedSuffix }`
+				} prepended).${ skippedSuffix }${ dedupedSuffix }`
 			);
 		} else {
 			alert(
 				'Copy failed silently. The full source has been logged to the devtools console — ' +
-					`open it and grab the [curated-discover] entry.${ skippedSuffix }`
+					`open it and grab the [curated-discover] entry.${ skippedSuffix }${ dedupedSuffix }`
 			);
 		}
 	}, [ file, added, totalAdded ] );

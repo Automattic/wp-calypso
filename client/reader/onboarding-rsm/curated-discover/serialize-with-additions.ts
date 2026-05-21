@@ -22,6 +22,15 @@ export interface SerializeWithAdditionsResult {
 	 * tag + feed_ID for diagnosis.
 	 */
 	skipped: number;
+	/**
+	 * Additions dropped because their `feed_ID` was already present in the
+	 * source `tagMap` for the same tag (or appeared more than once within the
+	 * additions list itself). Prevents the compounding-duplicate bug where the
+	 * operator copies → pastes → adds more → copies again, with the prior
+	 * additions still living in localStorage. `console.warn`'d so the operator
+	 * can see what was deduped.
+	 */
+	deduped: number;
 }
 
 /**
@@ -31,10 +40,19 @@ export interface SerializeWithAdditionsResult {
  * Internally:
  *
  * 1. Build a merged `tagMap` keyed by tag, where each tag's array is
- *    `[...reverse(additions), ...existing]`. Newer-additions-first matches
- *    the spec ("newer items at the top of each tag section"); the
- *    `use-added-candidates` store keeps additions in append order so
- *    reversing here is the right place to apply the read-time inversion.
+ *    `[...reverse(dedupedAdditions), ...existing]`. Newer-additions-first
+ *    matches the spec ("newer items at the top of each tag section"); the
+ *    `use-added-candidates` store keeps additions in append order so reversing
+ *    here is the right place to apply the read-time inversion.
+ *
+ *    Additions are deduped against `existing` (per tag) before merging so
+ *    repeated copy → paste → add-more → copy cycles can't compound the same
+ *    `feed_ID` into the output: stale localStorage rows whose feeds already
+ *    landed in the source from a prior export are silently dropped. Within
+ *    a single tag's additions array, repeated `feed_ID`s also collapse to the
+ *    newest occurrence (after reversal) — defense in depth against a
+ *    corrupted store, since `useAddedCandidates.add` already no-ops on
+ *    same-tag dupes.
  *
  * 2. Delegate to `serializeCurated` with a `getMetadata` resolver that
  *    pulls `feedUrl` and `hasIcon` straight off each `CuratedBlog` (additions
@@ -51,13 +69,16 @@ export function serializeWithAdditions( {
 	additions,
 }: SerializeWithAdditionsOptions ): SerializeWithAdditionsResult {
 	const merged: CuratedBlogsList = {};
+	let deduped = 0;
 
 	// Walk existing tags first so the output order matches the source file
 	// (the operator's mental model is "society.tsx had education, nature,
 	// …" — keeping that order preserves diff readability).
 	for ( const [ tag, existing ] of Object.entries( tagMap ) ) {
 		const adds = additions[ tag ] ?? [];
-		merged[ tag ] = [ ...reversed( adds ), ...existing ];
+		const { kept, dropped } = dedupAdditions( adds, existing, tag );
+		deduped += dropped;
+		merged[ tag ] = [ ...reversed( kept ), ...existing ];
 	}
 
 	// Pick up any new tags that exist only in the additions map (e.g. the
@@ -67,7 +88,9 @@ export function serializeWithAdditions( {
 		if ( merged[ tag ] !== undefined ) {
 			continue;
 		}
-		merged[ tag ] = [ ...reversed( adds ) ];
+		const { kept, dropped } = dedupAdditions( adds, [], tag );
+		deduped += dropped;
+		merged[ tag ] = [ ...reversed( kept ) ];
 	}
 
 	// Track which tag the entry currently belongs to so the warn message can
@@ -106,7 +129,60 @@ export function serializeWithAdditions( {
 		},
 	} );
 
-	return { source, skipped };
+	return { source, skipped, deduped };
+}
+
+interface DedupAdditionsResult {
+	/** Additions to keep, in their original (insertion) order. */
+	kept: CuratedBlog[];
+	/** Number dropped (already in `existing`, or duplicate within `adds`). */
+	dropped: number;
+}
+
+/**
+ * Drop additions whose `feed_ID` already lives in `existing`, or that repeat
+ * within the additions list itself. The latter shouldn't happen via the normal
+ * `useAddedCandidates.add` path (it no-ops on same-tag dupes) but we belt-and-
+ * brace against a hand-edited / corrupted localStorage entry.
+ *
+ * Both classes of drop are `console.warn`'d with the tag + feed_ID so the
+ * operator can see what was filtered when they hit Copy.
+ */
+function dedupAdditions(
+	adds: readonly CuratedBlog[],
+	existing: readonly CuratedBlog[],
+	tag: string
+): DedupAdditionsResult {
+	if ( adds.length === 0 ) {
+		return { kept: [], dropped: 0 };
+	}
+	const existingIds = new Set( existing.map( ( e ) => e.feed_ID ) );
+	const seenInAdds = new Set< number >();
+	const kept: CuratedBlog[] = [];
+	let dropped = 0;
+	for ( const entry of adds ) {
+		if ( existingIds.has( entry.feed_ID ) ) {
+			dropped++;
+			// eslint-disable-next-line no-console
+			console.warn(
+				`[curated-discover] Dropping addition feed_ID=${ entry.feed_ID } in tag "${ tag }": already in source.`,
+				entry
+			);
+			continue;
+		}
+		if ( seenInAdds.has( entry.feed_ID ) ) {
+			dropped++;
+			// eslint-disable-next-line no-console
+			console.warn(
+				`[curated-discover] Dropping addition feed_ID=${ entry.feed_ID } in tag "${ tag }": duplicate within additions.`,
+				entry
+			);
+			continue;
+		}
+		seenInAdds.add( entry.feed_ID );
+		kept.push( entry );
+	}
+	return { kept, dropped };
 }
 
 function describeIncomplete( entry: CuratedBlog ): string | null {
