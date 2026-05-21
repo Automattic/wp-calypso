@@ -383,17 +383,26 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
 			this.props;
 
-		// For Jetpack/Akismet products and domain registrations, call onCancellationComplete to show the dialog
+		// Jetpack/Akismet products and domain registrations render their
+		// cancellation survey inside CancelPurchaseButton as a dialog rather than
+		// the unified pre-survey screen. Under the split flag with
+		// intent=cancel/auto-renew, fire the cancel mutation here so the dialog
+		// becomes an optional post-cancellation survey — matching the behavior
+		// of non-dialog products under the same intent. Off-flag (or any other
+		// intent), open the dialog first and let the mutation fire at
+		// survey-end via onSurveyComplete (legacy behavior).
 		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
-			// Capture the intent before opening the dialog. onSurveyComplete reads
-			// state.cancelIntent when it falls through to the mutation block; without
-			// this, intent=cancel / intent=auto-renew on a refundable purchase would
-			// route through cancelAndRefund (issuing an unwanted refund) instead of
-			// the auto-renew disable path.
+			// Capture intent before either branch: fireMutationFromConfirm reads
+			// state.cancelIntent via getCancelFlowType, and the off-flag
+			// onSurveyComplete fall-through reads it too.
 			if ( intent && this.state.cancelIntent !== intent ) {
 				this.setState( { cancelIntent: intent } );
 			}
-			this.onCancellationComplete();
+			if ( this.shouldFireMutationOnConfirm() ) {
+				this.fireMutationFromConfirm();
+			} else {
+				this.onCancellationComplete();
+			}
 			return;
 		}
 
@@ -456,6 +465,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	// hasLoadedUserPurchasesFromServer and render the loading placeholder
 	// over the survey.
 	fireMutationFromConfirm = async () => {
+		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
+		const isDialogProduct = isJetpack || isAkismet || isDomainRegistrationPurchase;
+
 		this.setState( { isLoading: true } );
 		try {
 			const flowType = this.getCancelFlowType( this.props.purchase );
@@ -475,7 +487,18 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					} );
 				}
 				invokeSurvicateEvent( refundable ? 'purchaseRefunded' : 'purchaseCancelled' );
-				this.setState( { surveyShown: true, isLoading: false, fireMutationWasRefund: refundable } );
+				// Dialog products render their survey inside CancelPurchaseButton,
+				// gated on showDialog. Non-dialog products render the unified
+				// survey outside the button, gated on surveyShown. Set both:
+				// surveyShown drives the page heading ("Cancellation confirmed" /
+				// "Auto-renew disabled") for every product, and showDialog opens
+				// the in-button dialog for the dialog-product subset.
+				this.setState( {
+					surveyShown: true,
+					showDialog: isDialogProduct,
+					isLoading: false,
+					fireMutationWasRefund: refundable,
+				} );
 			} else {
 				this.props.errorNotice( result.error );
 				this.setState( { isLoading: false } );
@@ -616,20 +639,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	onSurveyComplete = async () => {
-		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
-		// Dialog products (Jetpack/Akismet/domain registrations) bypass the
-		// fire-on-confirm path: their onCancellationStart early-returns to
-		// onCancellationComplete to open a survey dialog without firing the
-		// mutation. They must fall through to the post-survey mutation block
-		// below so the cancel request actually fires when the dialog closes.
-		const isDialogProduct = isJetpack || isAkismet || isDomainRegistrationPurchase;
-
 		// Flag-on path: the mutation already fired at confirm-click via
 		// fireMutationFromConfirm. fireMutationFromConfirm intentionally
 		// skipped clearPurchases / refreshSitePlans so they wouldn't flip
 		// isDataLoading mid-survey; we run them here, immediately before
 		// the redirect, so the destination page picks up fresh server data.
-		if ( this.shouldFireMutationOnConfirm() && ! isDialogProduct ) {
+		if ( this.shouldFireMutationOnConfirm() ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
 			if ( this.state.fireMutationWasRefund ) {
