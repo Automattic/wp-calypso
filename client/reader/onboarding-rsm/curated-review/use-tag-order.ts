@@ -69,6 +69,12 @@ export interface UseTagOrderResult {
 	resetFile: ( fileSlug: string ) => void;
 	/** True when any file has at least one ordering override. */
 	hasAnyOverride: boolean;
+	/**
+	 * Replace the entire order for a specific file/tag with a pre-sorted
+	 * `feed_ID[]`. Used by auto-sort to write a computed ordering all at once
+	 * rather than swapping one pair at a time.
+	 */
+	setOrder: ( fileSlug: string, tag: string, feedIds: number[] ) => void;
 }
 
 /**
@@ -169,7 +175,14 @@ export function useTagOrder(): UseTagOrderResult {
 		} );
 	}, [] );
 
+	const setOrder = useCallback( ( fileSlug: string, tag: string, feedIds: number[] ) => {
+		setOrderMap( ( prev ) => ( {
+			...prev,
+			[ fileSlug ]: { ...( prev[ fileSlug ] ?? {} ), [ tag ]: feedIds },
+		} ) );
+	}, [] );
+
 	const hasAnyOverride = Object.keys( orderMap ).length > 0;
 
-	return { applyOrder, moveUp, moveDown, resetFile, hasAnyOverride };
+	return { applyOrder, moveUp, moveDown, resetFile, hasAnyOverride, setOrder };
 }

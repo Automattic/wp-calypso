@@ -14,6 +14,40 @@ import './style.scss';
 const STORAGE_KEY_BROKEN = 'reader/curated-review/broken-feed-ids';
 const STORAGE_KEY_HAS_ICON_FALSE = 'reader/curated-review/has-icon-false-feed-ids';
 
+/**
+ * Composite score used for auto-sorting entries within a tag.
+ *
+ * Score = log₁₀(subscribers + 1) × recency
+ *
+ * Subscriber score uses log₁₀ to compress the range so a 500K-sub site
+ * doesn't completely swamp a solid 50K-sub site:
+ *   1K → 3, 10K → 4, 100K → 5, 1M → 6
+ *
+ * Recency multiplier applies a 30-day grace period then an exponential decay
+ * with a ~1-year half-life, floored at 0.2 so even inactive sites still get
+ * credit for their subscriber count:
+ *   <30 days → 1.0,  6mo → ~0.73,  1y → ~0.52,  3y → ~0.24,  no date → 0.6
+ */
+function curationScore( detected: DetectedRow | null ): number {
+	const subs = detected?.subscribersCount ?? 0;
+	const subScore = Math.log10( subs + 1 );
+
+	let recency = 0.6; // neutral when no date is available
+	if ( detected?.lastUpdate ) {
+		try {
+			const date = new Date( detected.lastUpdate );
+			if ( ! isNaN( date.getTime() ) ) {
+				const daysOld = ( Date.now() - date.getTime() ) / 86_400_000;
+				recency = 0.2 + 0.8 * Math.exp( -Math.max( 0, daysOld - 30 ) / 365 );
+			}
+		} catch {
+			// bad date — keep neutral
+		}
+	}
+
+	return subScore * recency;
+}
+
 interface FlatRow {
 	fileSlug: string;
 	tag: string;
@@ -232,6 +266,39 @@ const CuratedReviewPage: React.FC = () => {
 		[ metadataByFeedId, broken.feedIds, tagOrder ]
 	);
 
+	// Build a score lookup keyed by feed_ID using the currently-resolved
+	// detected data. Stable across renders unless queryableRows or detectedRows
+	// actually change (same React Query dependencies as those memos).
+	const scoreByFeedId = useMemo( () => {
+		const map = new Map< number, number >();
+		queryableRows.forEach( ( row, index ) => {
+			map.set( row.entry.feed_ID, curationScore( detectedRows[ index ].detected ) );
+		} );
+		return map;
+	}, [ queryableRows, detectedRows ] );
+
+	/**
+	 * Auto-sort all tags in `file` by composite score (descending). Only
+	 * entries with resolved detected data are scored; entries whose feed query
+	 * hasn't settled yet are treated as score-0 and pushed to the bottom.
+	 */
+	const autoSortFile = useCallback(
+		( file: CuratedFile ) => {
+			for ( const [ tag, entries ] of Object.entries( file.tagMap ) ) {
+				const sorted = [ ...tagOrder.applyOrder( file.slug, tag, entries ) ].sort(
+					( a, b ) =>
+						( scoreByFeedId.get( b.feed_ID ) ?? 0 ) - ( scoreByFeedId.get( a.feed_ID ) ?? 0 )
+				);
+				tagOrder.setOrder(
+					file.slug,
+					tag,
+					sorted.map( ( e ) => e.feed_ID )
+				);
+			}
+		},
+		[ tagOrder, scoreByFeedId ]
+	);
+
 	const copyFile = useCallback(
 		async ( file: CuratedFile ) => {
 			const { source, missing } = serializeFile( file );
@@ -355,9 +422,14 @@ const CuratedReviewPage: React.FC = () => {
 
 				<div className="curated-review__copy-buttons">
 					{ copyableFiles.map( ( file ) => (
-						<Button key={ file.slug } variant="primary" onClick={ () => copyFile( file ) }>
-							Copy { file.slug }.tsx
-						</Button>
+						<React.Fragment key={ file.slug }>
+							<Button variant="primary" onClick={ () => copyFile( file ) }>
+								Copy { file.slug }.tsx
+							</Button>
+							<Button variant="secondary" onClick={ () => autoSortFile( file ) }>
+								Auto-sort { file.slug }
+							</Button>
+						</React.Fragment>
 					) ) }
 				</div>
 			</header>
@@ -377,6 +449,11 @@ const CuratedReviewPage: React.FC = () => {
 									{ file && (
 										<Button variant="secondary" onClick={ () => copyFile( file ) }>
 											Copy { file.slug }.tsx
+										</Button>
+									) }
+									{ file && (
+										<Button variant="secondary" onClick={ () => autoSortFile( file ) }>
+											Auto-sort
 										</Button>
 									) }
 								</header>
