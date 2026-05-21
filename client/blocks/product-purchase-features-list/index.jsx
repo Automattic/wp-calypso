@@ -25,6 +25,7 @@ import {
 	TYPE_WOO_HOSTED_PRO,
 	TYPE_100_YEAR,
 	TYPE_STARTER,
+	FEATURE_LEGACY_STORAGE_200GB,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -70,7 +71,14 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	// TODO: Define feature list.
 	getEcommerceFeatures() {
-		const { isMonthlyPlan, isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			hasLegacyStorage,
+			isMonthlyPlan,
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+		} = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -84,7 +92,11 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<VideoAudioPosts
+					hasLegacyStorage={ hasLegacyStorage }
+					selectedSite={ selectedSite }
+					plan={ plan }
+				/>
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
@@ -96,6 +108,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	getBusinessFeatures() {
 		const {
 			canActivateWordadsInstant,
+			hasLegacyStorage,
 			isPlaceholder,
 			isMonthlyPlan,
 			plan,
@@ -145,7 +158,11 @@ export class ProductPurchaseFeaturesList extends Component {
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<CustomCSS selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<VideoAudioPosts
+					hasLegacyStorage={ hasLegacyStorage }
+					selectedSite={ selectedSite }
+					plan={ plan }
+				/>
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
@@ -445,6 +462,7 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			hasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 			scheduleId: getConciergeScheduleId( state ),
 			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,
 		};

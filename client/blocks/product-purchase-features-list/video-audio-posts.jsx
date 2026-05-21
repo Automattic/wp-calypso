@@ -14,7 +14,7 @@ import videoImage from 'calypso/assets/images/illustrations/video-hosting.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { newPost } from 'calypso/lib/paths';
 
-function getDescription( plan, translate ) {
+function getDescription( plan, translate, hasLegacyStorage ) {
 	if ( isWpComProPlan( plan ) ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
@@ -51,6 +51,7 @@ function getDescription( plan, translate ) {
 
 	if ( isWpComBusinessPlan( plan ) || isWpComEcommercePlan( plan ) ) {
 		const newPlan = getPlan( plan );
+		const storageLimit = hasLegacyStorage ? 200 : 50;
 		// Translators: %(planName)s is the name of the plan - Creator, Entrepreneur, Business, or eCommerce. %(storageLimit)d is the storage limit in GB.
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
@@ -58,7 +59,7 @@ function getDescription( plan, translate ) {
 			{
 				args: {
 					planName: newPlan.getTitle(),
-					storageLimit: 50,
+					storageLimit,
 				},
 			}
 		);
@@ -73,13 +74,13 @@ function getDescription( plan, translate ) {
 	return '';
 }
 
-export const VideoAudioPosts = ( { selectedSite, plan, translate } ) => {
+export const VideoAudioPosts = ( { selectedSite, plan, translate, hasLegacyStorage } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src={ videoImage } /> }
 				title={ translate( 'Video and audio posts' ) }
-				description={ getDescription( plan, translate ) }
+				description={ getDescription( plan, translate, hasLegacyStorage ) }
 				buttonText={ translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }
 			/>
