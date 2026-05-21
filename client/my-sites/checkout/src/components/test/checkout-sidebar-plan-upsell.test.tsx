@@ -16,7 +16,10 @@ jest.mock( '@automattic/shopping-cart', () => ( {
 	useShoppingCart: jest.fn(),
 } ) );
 
-jest.mock( '../../../use-cart-key', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/state', () => ( { useDispatch: jest.fn( () => jest.fn() ) } ) );
 
