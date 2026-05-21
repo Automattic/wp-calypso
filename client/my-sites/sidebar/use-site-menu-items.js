@@ -22,6 +22,7 @@ import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 import { applyLayoutDelta } from './utils/apply-layout-delta';
+import { normalizeWpcomAdminSidebarHostLinks } from './utils/normalize-wpcom-admin-sidebar-host-links';
 
 const useSiteMenuItems = ( layoutDeltaOverride, transformBaseMenu ) => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
@@ -128,11 +129,12 @@ const useSiteMenuItems = ( layoutDeltaOverride, transformBaseMenu ) => {
 	const baseMenu = menuItems ?? buildFallbackResponse( fallbackDataOverrides );
 	const transformedBaseMenu =
 		typeof transformBaseMenu === 'function' ? transformBaseMenu( baseMenu ) : baseMenu;
+	const normalizedBaseMenu = normalizeWpcomAdminSidebarHostLinks( transformedBaseMenu );
 	// Apply the user's saved layout-delta (Phase 2 task 2.5). When no delta
 	// is stored, `applyLayoutDelta` returns a copy of `baseMenu` unmodified.
 	// The cost on the no-delta path is one shallow array clone per render;
 	// memoisation lives upstream where the menu is read.
-	return applyLayoutDelta( transformedBaseMenu, layoutDelta );
+	return applyLayoutDelta( normalizedBaseMenu, layoutDelta );
 };
 
 export default useSiteMenuItems;

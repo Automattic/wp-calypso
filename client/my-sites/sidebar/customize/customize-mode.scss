@@ -40,7 +40,8 @@ body.is-admin-sidebar-customize-mode {
 			cursor: grabbing;
 		}
 
-		.sidebar__menu-link {
+		> .sidebar__menu-link,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading {
 			// The grip + more-options span live INSIDE the link (matches
 			// the public plugin's "decorate inside <a>" layout). Hover/click
 			// on the link itself starts a drag (drag-drop.ts intercepts
@@ -53,6 +54,26 @@ body.is-admin-sidebar-customize-mode {
 			transition: none;
 		}
 
+		> .sidebar__menu.is-togglable > li > .sidebar__heading {
+			display: flex;
+			align-items: center;
+		}
+
+		> .sidebar__menu.is-togglable > li > .sidebar__heading .sidebar__expandable-title {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		// Reassignable expandable rows still receive Calypso's hover-intent
+		// `.hovered` class. Keep customize mode focused on drag placement,
+		// without opening the normal submenu flyout.
+		> .sidebar__menu.is-togglable.hovered {
+			.sidebar__heading::after,
+			.sidebar__expandable-content {
+				display: none !important;
+			}
+		}
+
 		// Suppress every Calypso legacy paint path. Each rule maps to a
 		// rule in `client/layout/sidebar/style.scss` that paints during
 		// hover, focus, or `.selected`:
@@ -61,11 +82,14 @@ body.is-admin-sidebar-customize-mode {
 		//   - `.sidebar__menu-link:focus` → focus paint (less common).
 		//   - `.selected .sidebar__menu-link:hover` → both at once.
 		// All four collapse to the static gray bg + idle text color.
-		.sidebar__menu-link,
-		.sidebar__menu-link:hover,
-		.sidebar__menu-link:focus,
-		&.selected .sidebar__menu-link,
-		&.selected .sidebar__menu-link:hover {
+		> .sidebar__menu-link,
+		> .sidebar__menu-link:hover,
+		> .sidebar__menu-link:focus,
+		&.selected > .sidebar__menu-link,
+		&.selected > .sidebar__menu-link:hover,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus {
 			background-color: transparent;
 			color: var(--color-sidebar-text);
 			box-shadow: none;
@@ -75,9 +99,11 @@ body.is-admin-sidebar-customize-mode {
 		// the public plugin's `color: inherit` rule for `.wp-menu-image`).
 		// Calypso's icon is `.sidebar__menu-icon`; keep its color tied to
 		// the LI text color so it doesn't paint blue on hover/selected.
-		.sidebar__menu-link:hover .sidebar__menu-icon,
-		.sidebar__menu-link:focus .sidebar__menu-icon,
-		&.selected .sidebar__menu-link .sidebar__menu-icon {
+		> .sidebar__menu-link:hover .sidebar__menu-icon,
+		> .sidebar__menu-link:focus .sidebar__menu-icon,
+		&.selected > .sidebar__menu-link .sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover .sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus .sidebar__menu-icon {
 			fill: var(--color-sidebar-text);
 			color: var(--color-sidebar-text);
 		}
@@ -132,7 +158,7 @@ body.is-admin-sidebar-customize-mode {
 	// `<MySitesSidebarUnifiedMenu>` → `<ExpandableSidebarMenu>` renders a bare
 	// `<li>` wrapping `.sidebar__menu.is-togglable`, which the inert rule above
 	// doesn't catch. Same suppression treatment + kill the hover-intent flyout.
-	.sidebar .sidebar__menu.is-togglable {
+	.sidebar > li:not([data-wp-admin-sidebar-item-id]) .sidebar__menu.is-togglable {
 		.sidebar__menu-link,
 		.sidebar__heading {
 			pointer-events: none;

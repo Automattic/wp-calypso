@@ -13,6 +13,7 @@
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/keyboard-reorder.js
  */
 import { translate } from 'i18n-calypso';
+import { layoutIndexOf, layoutRowsForContainer } from './dom-layout';
 import type { DragDropController } from './drag-drop';
 
 const REASSIGNABLE_SELECTOR = 'li[data-wp-admin-sidebar-item-id]';
@@ -40,9 +41,7 @@ export function attachKeyboardReorder( controller: DragDropController ): () => v
 		ev.preventDefault();
 
 		const direction = ev.key === 'ArrowUp' ? -1 : 1;
-		const siblings = Array.from( container.children ).filter(
-			( el ) => el.tagName === 'LI' && ! el.classList.contains( 'admin-sidebar-drop-indicator' )
-		) as HTMLElement[];
+		const siblings = layoutRowsForContainer( container ) as HTMLElement[];
 		const current = siblings.indexOf( li );
 		let target_idx = current + direction;
 		if ( target_idx < 0 || target_idx >= siblings.length ) {
@@ -68,9 +67,10 @@ export function attachKeyboardReorder( controller: DragDropController ): () => v
 
 		const enclosingGroup = container.closest( GROUP_SELECTOR );
 		const groupId = enclosingGroup ? enclosingGroup.getAttribute( 'data-group' ) : null;
+		const targetIndex = Math.max( 0, layoutIndexOf( container, siblings[ target_idx ] ) );
 		const position = groupId
-			? { kind: 'in_group' as const, group_id: groupId, index: target_idx }
-			: { kind: 'top_level' as const, index: target_idx };
+			? { kind: 'in_group' as const, group_id: groupId, index: targetIndex }
+			: { kind: 'top_level' as const, index: targetIndex };
 
 		controller.commitMove( itemId, position );
 		const total = siblings.length;

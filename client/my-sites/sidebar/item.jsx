@@ -65,11 +65,8 @@ export const MySitesSidebarUnifiedItem = ( {
 	// customize mode, AND this item carries a compound itemId marked as
 	// reassignable by the classifier. The data attribute below is what
 	// drag-drop.ts reads, so non-reassignable rows must not receive it.
-	const showCustomizeDecorations = canCustomizeSidebarItem(
-		customizeCtx?.isCustomizing,
-		itemId,
-		reassignable
-	);
+	const showCustomizeDecorations =
+		canCustomizeSidebarItem( customizeCtx?.isCustomizing, itemId, reassignable ) && ! isSubItem;
 	const isCustomizing = customizeCtx?.isCustomizing === true;
 	const gripLabel = title
 		? translate( 'Reorder %(label)s', { args: { label: title } } )

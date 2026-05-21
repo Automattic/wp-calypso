@@ -7,7 +7,9 @@
 
 import { isWooExpressPlan, PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useCallback, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -18,23 +20,28 @@ import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useCustomizeContext } from './customize';
-import MySitesSidebarUnifiedItem from './item';
+import { MoveMenu } from './customize/move-menu';
+import MySitesSidebarUnifiedItem, { canCustomizeSidebarItem } from './item';
 import { itemLinkMatches } from './utils';
 
-export const MySitesSidebarUnifiedMenu = ( {
-	count,
-	slug,
-	title,
-	icon,
-	children,
-	path,
-	link,
-	selected,
-	sidebarCollapsed,
-	shouldOpenExternalLinksInCurrentTab,
-	isUnifiedSiteSidebarVisible,
-	...props
-} ) => {
+export const MySitesSidebarUnifiedMenu = ( menuProps ) => {
+	const {
+		count,
+		slug,
+		title,
+		icon,
+		children,
+		path,
+		link,
+		selected,
+		sidebarCollapsed,
+		shouldOpenExternalLinksInCurrentTab,
+		isUnifiedSiteSidebarVisible,
+		inlineText,
+		itemId,
+		reassignable,
+		...props
+	} = menuProps;
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
@@ -48,6 +55,19 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const isMobile = ! isDesktop;
 	const customizeCtx = useCustomizeContext();
 	const isCustomizing = customizeCtx?.isCustomizing === true;
+	const showCustomizeDecorations = canCustomizeSidebarItem( isCustomizing, itemId, reassignable );
+	const gripLabel = title
+		? translate( 'Reorder %(label)s', { args: { label: title } } )
+		: translate( 'Reorder' );
+	const moreLabel = translate( 'More options' );
+	const moreRef = useRef( null );
+	const [ moveMenuOpen, setMoveMenuOpen ] = useState( false );
+	const handleMoreClick = useCallback( ( ev ) => {
+		ev.preventDefault();
+		ev.stopPropagation();
+		setMoveMenuOpen( ( open ) => ! open );
+	}, [] );
+	const handleMoveMenuClose = useCallback( () => setMoveMenuOpen( false ), [] );
 	const showAsExpanded =
 		( isMobile && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
 		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
@@ -107,19 +127,63 @@ export const MySitesSidebarUnifiedMenu = ( {
 	};
 
 	return (
-		<li>
+		<li data-wp-admin-sidebar-item-id={ showCustomizeDecorations ? itemId : undefined }>
 			<ExpandableSidebarMenu
 				onClick={ onClick }
 				expanded={ showAsExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
-				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
+				className={ selected || childIsSelected ? 'sidebar__menu--selected' : undefined }
 				count={ count }
 				hideExpandableIcon
-				inlineText={ props.inlineText }
+				inlineText={ inlineText }
 				href={ link }
 				{ ...props }
+				disableFlyout={ isCustomizing }
 				tabIndex={ isCustomizing ? -1 : undefined }
+				prependContent={
+					showCustomizeDecorations ? (
+						<span
+							className="admin-sidebar-item__grip"
+							role="button"
+							tabIndex={ 0 }
+							aria-label={ gripLabel }
+						>
+							⠿
+						</span>
+					) : undefined
+				}
+				appendContent={
+					showCustomizeDecorations ? (
+						<>
+							<span
+								ref={ moreRef }
+								className="admin-sidebar-item__more"
+								role="button"
+								tabIndex={ 0 }
+								aria-label={ moreLabel }
+								aria-haspopup="menu"
+								aria-expanded={ moveMenuOpen ? 'true' : 'false' }
+								onClick={ handleMoreClick }
+								onKeyDown={ ( ev ) => {
+									if ( ev.key === 'Enter' || ev.key === ' ' ) {
+										handleMoreClick( ev );
+									}
+								} }
+							>
+								⋯
+							</span>
+							{ moveMenuOpen && (
+								<MoveMenu
+									itemId={ itemId }
+									itemLabel={ title }
+									triggerEl={ moreRef.current }
+									onClose={ handleMoveMenuClose }
+								/>
+							) }
+						</>
+					) : undefined
+				}
 			>
 				{ children.map( ( item, index ) => {
 					if ( ! shouldShowAdvertisingOption && item?.url?.includes( '/advertising/' ) ) {
@@ -152,8 +216,13 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	icon: PropTypes.string,
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
+	selected: PropTypes.bool,
 	sidebarCollapsed: PropTypes.bool,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
+	isUnifiedSiteSidebarVisible: PropTypes.bool,
+	inlineText: PropTypes.string,
+	itemId: PropTypes.string,
+	reassignable: PropTypes.bool,
 	/*
 	Example of children shape:
 	[

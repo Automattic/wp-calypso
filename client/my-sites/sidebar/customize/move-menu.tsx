@@ -21,6 +21,7 @@
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { layoutIndexOf, layoutRowsForContainer } from './dom-layout';
 import { useCustomizeContext } from './index';
 import type { LayoutPosition } from 'calypso/state/admin-sidebar/layout/types';
 
@@ -320,7 +321,7 @@ function positionForMoveTarget(
 		}
 		return {
 			kind: 'top_level',
-			index: Array.prototype.indexOf.call( parent.children, target ),
+			index: layoutRowsForContainer( parent ).length,
 		};
 	}
 
@@ -328,10 +329,13 @@ function positionForMoveTarget(
 	if ( ! container ) {
 		return null;
 	}
-	const targetIndex = Array.prototype.indexOf.call( container.children, target );
+	const targetIndex = layoutIndexOf( container, target );
+	if ( targetIndex === -1 ) {
+		return null;
+	}
 	let slot = direction > 0 ? targetIndex + 1 : targetIndex;
 	if ( source.parentElement === container ) {
-		const sourceIndex = Array.prototype.indexOf.call( container.children, source );
+		const sourceIndex = layoutIndexOf( container, source );
 		if ( sourceIndex !== -1 && sourceIndex < slot ) {
 			slot -= 1;
 		}
@@ -366,6 +370,13 @@ function collectRows( source?: HTMLElement ): HTMLLIElement[] {
 	const walkChildren = ( parent: Element ) => {
 		for ( const child of Array.from( parent.children ) ) {
 			if ( child.tagName !== 'LI' ) {
+				continue;
+			}
+			if (
+				child.classList.contains( 'admin-sidebar-drop-indicator' ) ||
+				child.classList.contains( 'sidebar__region' ) ||
+				child.classList.contains( 'collapse-sidebar__toggle' )
+			) {
 				continue;
 			}
 			rows.push( child as HTMLLIElement );

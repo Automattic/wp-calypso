@@ -16,6 +16,7 @@ function makeItem( id: string, group: string | null = null ): ItemWithId {
 		group_id: group,
 		signal: null,
 		itemId: id,
+		reassignable: true,
 	};
 }
 
@@ -86,6 +87,37 @@ describe( 'applyLayoutDelta', () => {
 		};
 		const out = applyLayoutDelta( menu, delta );
 		expect( out ).toEqual( menu );
+	} );
+
+	it( 'silently skips overrides for non-reassignable items', () => {
+		const menu = [ { ...makeItem( 'a' ), reassignable: false }, makeItem( 'b' ) ];
+		const delta: LayoutDelta = {
+			version: 1,
+			updated_at: 0,
+			overrides: [
+				{
+					itemId: 'a',
+					position: { kind: 'in_group', group_id: 'plugins', index: 0 },
+				},
+				{
+					itemId: 'b',
+					position: { kind: 'in_group', group_id: 'plugins', index: 0 },
+				},
+			],
+		};
+
+		const out = applyLayoutDelta( menu, delta );
+
+		expect( out[ 0 ] ).toMatchObject( {
+			itemId: 'a',
+			group_id: null,
+			reassignable: false,
+		} );
+		expect( out[ 1 ] ).toMatchObject( {
+			itemId: 'b',
+			group_id: 'plugins',
+			reassignable: true,
+		} );
 	} );
 
 	it( 'clamps an out-of-range index to the bucket end rather than no-op', () => {
