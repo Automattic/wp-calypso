@@ -1,0 +1,423 @@
+// Customize-mode styles for the redesigned admin sidebar.
+//
+// Calypso-side counterpart to `WordPress/wp-admin-sidebar` v0.1.6
+// `src/customizer/customizer.css`. Scoped under `body.is-admin-sidebar-customize-mode`
+// so it only applies during the mode; the body class is toggled on enter/exit
+// by the customize orchestrator.
+//
+// Identical-behaviour anchors against the public plugin:
+// - Reassignable rows have a static `#2c3439` background so they read as
+//   visually distinct from the rest of the sidebar (plugin v0.1.6, l.32-36).
+// - All hover / focus / selected paint is suppressed on reassignable rows;
+//   the static gray bg is the only "this is a row" affordance during
+//   customize (plugin v0.1.6, l.79-91).
+// - Non-reassignable rows are inert: pointer-events blocked on the link,
+//   hover and selected paint suppressed (plugin v0.1.6, l.170-215, DES-605).
+// - Transitions are disabled on the customize overrides so there's no
+//   trailing blue "ease-out" when the cursor leaves a row.
+// - Drag-time hover suppression on every row (plugin v0.1.6, l.329-347).
+//
+// @see WordPress/wp-admin-sidebar v0.1.6 src/customizer/customizer.css
+
+body.is-admin-sidebar-customize-mode {
+	// === REASSIGNABLE ROWS ===
+	// 1. Static `#2c3439` gray bg so they read as visually distinct.
+	// 2. `cursor: grab` across the whole row; `grabbing` while dragging.
+	// 3. All hover / selected / focus / `.opensub`-equivalent paint paths
+	//    suppressed so the static gray bg is the only visual.
+	//
+	// Per 04-interaction-spec.md: "All plugin items change the background
+	// color and ... the cursor changes from the pointer to the hand when
+	// hover over the whole item." Calypso's parity: the bg is the static
+	// gray, the cursor is grab, the hover-blue paint is suppressed.
+	.sidebar li[data-wp-admin-sidebar-item-id] {
+		position: relative;
+		background: #2c3439;
+		cursor: grab;
+
+		&:active,
+		&:active .sidebar__menu-link {
+			cursor: grabbing;
+		}
+
+		.sidebar__menu-link {
+			// The grip + more-options span live INSIDE the link (matches
+			// the public plugin's "decorate inside <a>" layout). Hover/click
+			// on the link itself starts a drag (drag-drop.ts intercepts
+			// pointerdown and calls preventDefault), so click navigation
+			// doesn't fire.
+			cursor: grab;
+			// Suppress the transition so leaving a hovered row doesn't fade
+			// out from blue. Without this the user sees a "blue trail"
+			// effect on mouse-exit while the legacy hover transition runs.
+			transition: none;
+		}
+
+		// Suppress every Calypso legacy paint path. Each rule maps to a
+		// rule in `client/layout/sidebar/style.scss` that paints during
+		// hover, focus, or `.selected`:
+		//   - `.sidebar__menu-link:hover` → base hover blue.
+		//   - `.selected .sidebar__menu-link` → current-page persistent blue.
+		//   - `.sidebar__menu-link:focus` → focus paint (less common).
+		//   - `.selected .sidebar__menu-link:hover` → both at once.
+		// All four collapse to the static gray bg + idle text color.
+		.sidebar__menu-link,
+		.sidebar__menu-link:hover,
+		.sidebar__menu-link:focus,
+		&.selected .sidebar__menu-link,
+		&.selected .sidebar__menu-link:hover {
+			background-color: transparent;
+			color: var(--color-sidebar-text);
+			box-shadow: none;
+		}
+
+		// Icon color stays at idle across all interactive states (matches
+		// the public plugin's `color: inherit` rule for `.wp-menu-image`).
+		// Calypso's icon is `.sidebar__menu-icon`; keep its color tied to
+		// the LI text color so it doesn't paint blue on hover/selected.
+		.sidebar__menu-link:hover .sidebar__menu-icon,
+		.sidebar__menu-link:focus .sidebar__menu-icon,
+		&.selected .sidebar__menu-link .sidebar__menu-icon {
+			fill: var(--color-sidebar-text);
+			color: var(--color-sidebar-text);
+		}
+	}
+
+	// === NON-REASSIGNABLE ROWS (inert) ===
+	// DES-605 read literally: "no hover/selected paint". Same treatment
+	// covers the `.selected` current-page indicator so it doesn't dominate
+	// the customize mode (in Calypso, current page is otherwise painted blue
+	// across the whole row).
+	//
+	// `pointer-events: none` on the inner anchor blocks click navigation
+	// but leaves the LI itself hit-testable for drag-drop's
+	// `elementsFromPoint` lookup (so plugins can be dragged to between any
+	// sidebar rows, not just within the My Plugins group).
+	.sidebar li.sidebar__menu-item-parent:not([data-wp-admin-sidebar-item-id]):not(.wp-admin-sidebar-group) {
+		&,
+		&:hover,
+		&.selected {
+			background-color: transparent !important;
+		}
+
+		.sidebar__menu-link {
+			pointer-events: none;
+			cursor: default;
+			transition: none;
+		}
+
+		.sidebar__menu-link,
+		&:hover .sidebar__menu-link,
+		&.selected .sidebar__menu-link,
+		&.selected .sidebar__menu-link:hover,
+		.sidebar__menu-link:focus {
+			background-color: transparent !important;
+			color: var(--color-sidebar-text) !important;
+			box-shadow: none !important;
+		}
+
+		&.selected .sidebar__menu-link::after {
+			display: none !important;
+		}
+
+		// Icon stays at idle color too.
+		&:hover .sidebar__menu-link .sidebar__menu-icon,
+		&.selected .sidebar__menu-link .sidebar__menu-icon {
+			fill: var(--color-sidebar-text) !important;
+			color: var(--color-sidebar-text) !important;
+		}
+	}
+
+	// === EXPANDABLE ITEMS ===
+	// `<MySitesSidebarUnifiedMenu>` → `<ExpandableSidebarMenu>` renders a bare
+	// `<li>` wrapping `.sidebar__menu.is-togglable`, which the inert rule above
+	// doesn't catch. Same suppression treatment + kill the hover-intent flyout.
+	.sidebar .sidebar__menu.is-togglable {
+		.sidebar__menu-link,
+		.sidebar__heading {
+			pointer-events: none;
+			cursor: default;
+			transition: none;
+		}
+		&:hover .sidebar__menu-link,
+		&.hovered .sidebar__menu-link,
+		&.hovered .sidebar__heading,
+		&.sidebar__menu--selected .sidebar__heading,
+		.sidebar__heading:hover {
+			background-color: transparent !important;
+			color: var(--color-sidebar-text) !important;
+			box-shadow: none !important;
+		}
+		&.hovered .sidebar__heading::after,
+		&.sidebar__menu--selected .sidebar__heading::after {
+			display: none !important;
+		}
+		&.hovered .sidebar__expandable-content {
+			display: none !important;
+		}
+	}
+
+	// === DRAG IN PROGRESS ===
+	// Suppress every row's hover / selected / focus paint while the source
+	// is in flight; the drop indicator is the only visual signal (Phase 2
+	// row 19, DES-590). `!important` is used because Calypso paints hover
+	// across multiple class combinations and the cursor moves rapidly
+	// between rows during a drag — a single missed override leaves a
+	// blue trail. Cheaper to brute-force than to keep tracking specificity
+	// against future Calypso CSS shuffles.
+	&.is-admin-sidebar-dragging {
+		// Catch-all: every sidebar menu-link, regardless of which row it's
+		// in, paints idle while a drag is in progress.
+		.sidebar .sidebar__menu-link,
+		.sidebar .sidebar__menu-link:hover,
+		.sidebar .sidebar__menu-link:focus,
+		.sidebar .selected .sidebar__menu-link,
+		.sidebar .selected .sidebar__menu-link:hover {
+			background-color: transparent !important;
+			color: var(--color-sidebar-text) !important;
+			box-shadow: none !important;
+		}
+		// LI-level paint suppression. Some Calypso rules paint `.selected`
+		// or hover-state backgrounds on the LI itself (not just the inner
+		// link). Without this, non-reassignable LIs the cursor crosses over
+		// during a drag can still flash blue even though the link bg is
+		// transparent — the LI's own paint shows through. Reassignable LIs
+		// override this below with their static gray bg.
+		//
+		// `:not(.admin-sidebar-drop-indicator)` excludes the drop indicator
+		// from this catch-all so its own `background: var(--color-accent)`
+		// rule isn't overridden into transparent — without the exclusion,
+		// the indicator becomes invisible because this selector has higher
+		// specificity than `li.admin-sidebar-drop-indicator` even when both
+		// rules are `!important`.
+		.sidebar > li:not(.admin-sidebar-drop-indicator),
+		.sidebar > li.selected:not(.admin-sidebar-drop-indicator),
+		.sidebar > li:hover:not(.admin-sidebar-drop-indicator),
+		.sidebar .sidebar__menu-item-parent:not(.admin-sidebar-drop-indicator),
+		.sidebar .sidebar__menu-item-parent.selected:not(.admin-sidebar-drop-indicator),
+		.sidebar .sidebar__menu-item-parent:hover:not(.admin-sidebar-drop-indicator) {
+			background-color: transparent !important;
+		}
+		// Reassignable rows keep their static gray bg under the transparent
+		// link bg above. Last in the cascade so it wins over the catch-all
+		// LI suppression for reassignable items specifically.
+		.sidebar li[data-wp-admin-sidebar-item-id] {
+			background: #2c3439 !important;
+		}
+		// Expandable items: kill the hover-intent flyout. Inner link is
+		// already covered by the catch-all above.
+		.sidebar .sidebar__menu.is-togglable.hovered .sidebar__expandable-content {
+			display: none !important;
+		}
+		// The heading inside expandable items has its own hover rule in
+		// Calypso's legacy CSS — make sure we win there too.
+		.sidebar .sidebar__menu.is-togglable .sidebar__heading,
+		.sidebar .sidebar__menu.is-togglable .sidebar__heading:hover {
+			background-color: transparent !important;
+			color: var(--color-sidebar-text) !important;
+		}
+	}
+
+	// Disable Calypso's fold-sidebar control during customize.
+	.collapse-sidebar__toggle {
+		opacity: 0.4;
+		pointer-events: none;
+
+		.sidebar__menu-link {
+			cursor: not-allowed;
+		}
+	}
+}
+
+// Source row fades while the ghost follows the cursor (Phase 2 row 17 visual).
+.sidebar li[data-wp-admin-sidebar-item-id].is-admin-sidebar-source-dragging {
+	opacity: 0.3;
+}
+
+// Floating ghost — width/height set inline by createGhost() from the source
+// row's bounding rect (Phase 2 row 17).
+.admin-sidebar-drag-ghost {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100000;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	padding: 0;
+	background: #2c3439;
+	color: var(--color-sidebar-text, #f0f0f1);
+	border-radius: 4px;
+	opacity: 0.95;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+	a {
+		flex: 1 1 auto;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 12px 6px 0;
+		background: transparent;
+		color: inherit;
+		text-decoration: none;
+		pointer-events: none;
+	}
+}
+
+// Drop indicator (Phase 2 row 18). Full-width row insertion at the slot
+// under the cursor; the indicator is the only visual signal during drag.
+// `!important` on `background` because the customize-mode drag block's
+// LI-bg suppression catch-all (`.sidebar > li { background: transparent !important; }`)
+// would otherwise win and paint the indicator transparent.
+li.admin-sidebar-drop-indicator {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	height: 2px;
+	width: 100%;
+	background: var(--color-accent, #3858e9) !important;
+	pointer-events: none;
+}
+
+// Customize-mode footer (Phase 2 row 23). Docked at the bottom of the
+// sidebar surface with Save/Cancel stacked.
+.admin-sidebar-customize-footer {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 8px 12px;
+	background: var(--color-sidebar-background);
+	border-top: 1px solid rgba(240, 240, 241, 0.1);
+	box-shadow: 0 -8px 12px -8px rgba(0, 0, 0, 0.5);
+	margin-top: auto;
+
+	&__cancel,
+	&__save {
+		flex: 0 0 auto;
+		padding: 6px 12px;
+		border-radius: 3px;
+		font-size: 13px;
+		cursor: pointer;
+	}
+
+	&__cancel {
+		background: transparent;
+		border: 1px solid var(--color-accent, #3858e9);
+		color: var(--color-accent, #3858e9);
+	}
+
+	&__save {
+		background: var(--color-accent, #3858e9);
+		border: 1px solid var(--color-accent, #3858e9);
+		color: #fff;
+
+		&[disabled] {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+	}
+
+	&__error {
+		font-size: 12px;
+		color: var(--color-error, #d63638);
+	}
+}
+
+// Drag handle (grip). Rendered inside reassignable items during customize
+// mode by `<MySitesSidebarUnifiedItem>` (matches public plugin's
+// `link.insertBefore(grip, link.firstChild)` decoration).
+.admin-sidebar-item__grip {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 34px;
+	color: inherit;
+	cursor: grab;
+	font-size: 14px;
+	line-height: 1;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent, #3858e9);
+		outline-offset: -2px;
+	}
+}
+
+// More-options trigger (3-dot popover entry-point). Rendered inside
+// reassignable items during customize mode by `<MySitesSidebarUnifiedItem>`
+// (matches public plugin v0.1.6 `src/customizer/move-menu.js`
+// `injectTrigger()`). Clicking opens the `<MoveMenu>` popup with
+// Move up / Move down / Reset to default actions.
+//
+// Spacing: `margin-left: 8px` separates the trigger from any trailing
+// badge/icon inside `.sidebar__menu-link-text` (Count bubble, "PREMIUM"
+// chip, external-link glyph). `margin-right: 0` because the link's
+// 16px right padding already provides breathing room from the row's
+// right edge.
+.admin-sidebar-item__more {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 28px;
+	margin-left: 8px;
+	color: inherit;
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 1;
+	background: transparent;
+	border: 0;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent, #3858e9);
+		outline-offset: -2px;
+	}
+}
+
+// Move-to popup menu, mirrors public plugin v0.1.6 `.wp-admin-sidebar-move-menu`.
+// Positioned with inline styles by `<MoveMenu>` (flip + clamp into viewport).
+.admin-sidebar-move-menu {
+	z-index: 100001;
+	margin: 0;
+	padding: 4px 0;
+	list-style: none;
+	background: #1d2327;
+	border: 1px solid rgba(240, 240, 241, 0.15);
+	border-radius: 4px;
+	min-width: 180px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+	li {
+		margin: 0;
+		padding: 0;
+	}
+
+	&__item {
+		display: block;
+		width: 100%;
+		padding: 6px 12px;
+		border: 0;
+		background: transparent;
+		color: #f0f0f1;
+		text-align: left;
+		font-size: 14px;
+		cursor: pointer;
+
+		&:hover,
+		&:focus-visible {
+			background: #2c3439;
+			outline: none;
+		}
+	}
+}
+
+// Live region (visually hidden, screen-reader-only).
+.admin-sidebar-customize-live-region {
+	position: absolute;
+	left: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}

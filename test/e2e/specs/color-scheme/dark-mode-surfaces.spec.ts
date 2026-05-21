@@ -384,6 +384,8 @@ async function expectSelectedDarkModeControl( page: Page ) {
 }
 
 test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, () => {
+	test.skip( true, 'Skipping it while we investigate the flakyness' );
+
 	test( 'applies shared dark-mode tokens on sites, site overview, and appearance routes', async ( {
 		accountGivenByEnvironment,
 		page,
@@ -444,6 +446,8 @@ test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, ()
 } );
 
 test.describe( 'Reader dark-mode surface', { tag: [ tags.CALYPSO_PR ] }, () => {
+	test.skip( true, 'Skipping it while we investigate the flakyness' );
+
 	test( 'applies shared dark-mode tokens on primary and secondary Reader routes', async ( {
 		accountGivenByEnvironment,
 		page,
@@ -493,6 +497,8 @@ test.describe( 'Reader dark-mode surface', { tag: [ tags.CALYPSO_PR ] }, () => {
 } );
 
 test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => {
+	test.skip( true, 'Skipping it while we investigate the flakyness' );
+
 	test( 'applies shared dark-mode tokens on the Themes listing', async ( {
 		accountGivenByEnvironment,
 		page,

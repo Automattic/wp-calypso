@@ -17,10 +17,9 @@
  * the client side. The `default_weight` ordering happens server-side in
  * `Sidebar_Classifier::build_nav_model()`.
  *
- * - Groups that have zero matching items are dropped (no empty headers
- * in the rendered tree). This mirrors the public plugin's "only insert
- * the group container if at least one item moved" rule
- * (grouping.js:322-324).
+ * - Groups that have zero matching items are dropped by default (no empty
+ * headers in the rendered tree). Customize mode can opt into preserving
+ * empty groups so users can drag items back into an emptied destination.
  *
  * - Position rule: each group renders at the position of its first
  * matching item. The plan calls this "first plugin slot wins" — issue
@@ -59,10 +58,14 @@ import type {
  *  `group_id` that isn't present in `groups[]` are treated as ungrouped — a
  *  defensive choice that matches the public plugin's "drop items with no
  *  matching group" behaviour.
+ * @param options Optional behavior flags.
+ * @param options.includeEmptyGroups When true, emit group sections even when
+ *  no current items belong to them.
  */
 export function groupMenuItems(
 	menu: readonly AdminMenuItem[] | null | undefined,
-	groups: readonly AdminMenuGroup[] | null | undefined = []
+	groups: readonly AdminMenuGroup[] | null | undefined = [],
+	options: { includeEmptyGroups?: boolean } = {}
 ): GroupedMenuShape {
 	if ( ! Array.isArray( menu ) || menu.length === 0 ) {
 		return { ungroupedItems: [], groupedSections: [] };
@@ -103,10 +106,10 @@ export function groupMenuItems(
 		}
 		seenGroupIds.add( group.id );
 		const items = itemsByGroupId.get( group.id );
-		if ( ! items || items.length === 0 ) {
+		if ( ( ! items || items.length === 0 ) && ! options.includeEmptyGroups ) {
 			continue;
 		}
-		groupedSections.push( { group, items } );
+		groupedSections.push( { group, items: items ?? [] } );
 	}
 
 	return { ungroupedItems, groupedSections };
