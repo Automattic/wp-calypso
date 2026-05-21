@@ -1,18 +1,11 @@
 /**
  * Vega Site-Spec Configuration Tests
  *
- * Guards the ExPlat experiment name, agent ids, and the treatment config
- * additions (chips, placeholder) that ship to the widget. Spec-confirm
- * card copy (Goals / CTA / Mood) is rendered by the widget itself and is
- * not part of the Calypso-side payload.
+ * Guards the Vega agent id and config additions (chips, placeholder) that
+ * ship to the widget. Spec-confirm card copy (Goals / CTA / Mood) is
+ * rendered by the widget itself and is not part of the Calypso-side payload.
  */
-import {
-	VEGA_CONTROL_AGENT_ID,
-	VEGA_EXPERIMENT_NAME,
-	VEGA_TREATMENT_AGENT_ID,
-	getVegaAgentId,
-	getVegaSiteSpecConfig,
-} from '../vega';
+import { VEGA_AGENT_ID, getVegaSiteSpecConfig } from '../vega';
 
 interface MockWithIsEnabled extends jest.Mock {
 	isEnabled: jest.Mock;
@@ -45,35 +38,14 @@ describe( 'Vega site-spec', () => {
 	} );
 
 	describe( 'constants', () => {
-		it( 'uses the month-scoped ExPlat experiment name', () => {
-			expect( VEGA_EXPERIMENT_NAME ).toBe( 'wpcom_ai_website_builder_vega_site_spec_202604' );
-		} );
-
-		it( 'exposes control and treatment agent ids', () => {
-			expect( VEGA_CONTROL_AGENT_ID ).toBe( 'site-spec' );
-			expect( VEGA_TREATMENT_AGENT_ID ).toBe( 'vega-site-spec' );
-		} );
-	} );
-
-	describe( 'getVegaAgentId', () => {
-		it( 'returns the treatment agent id for the treatment variation', () => {
-			expect( getVegaAgentId( 'treatment' ) ).toBe( VEGA_TREATMENT_AGENT_ID );
-		} );
-
-		it( 'returns the control agent id for the control variation', () => {
-			expect( getVegaAgentId( 'control' ) ).toBe( VEGA_CONTROL_AGENT_ID );
-		} );
-
-		it( 'defaults to control when the assignment is unknown or missing', () => {
-			expect( getVegaAgentId( null ) ).toBe( VEGA_CONTROL_AGENT_ID );
-			expect( getVegaAgentId( undefined ) ).toBe( VEGA_CONTROL_AGENT_ID );
-			expect( getVegaAgentId( 'unexpected' ) ).toBe( VEGA_CONTROL_AGENT_ID );
+		it( 'exposes the Vega agent id', () => {
+			expect( VEGA_AGENT_ID ).toBe( 'vega-site-spec' );
 		} );
 	} );
 
 	describe( 'getVegaSiteSpecConfig', () => {
-		it( 'routes the widget to the treatment agent', () => {
-			expect( getVegaSiteSpecConfig().agentId ).toBe( VEGA_TREATMENT_AGENT_ID );
+		it( 'routes the widget to the Vega agent', () => {
+			expect( getVegaSiteSpecConfig().agentId ).toBe( VEGA_AGENT_ID );
 		} );
 
 		it( 'overrides the widget default build URL to avoid create_garden_site=1', () => {
@@ -90,11 +62,11 @@ describe( 'Vega site-spec', () => {
 			);
 		} );
 
-		it( 'sets the treatment placeholder', () => {
+		it( 'sets the Vega placeholder', () => {
 			expect( getVegaSiteSpecConfig().placeholder ).toBe( 'I want to…' );
 		} );
 
-		it( 'exposes seven starter chips for the treatment screen', () => {
+		it( 'exposes seven starter chips for the Vega screen', () => {
 			const items = getVegaSiteSpecConfig().theme?.promptSuggestions?.items ?? [];
 			expect( items ).toHaveLength( 7 );
 			expect( items.map( ( item ) => item.label ) ).toEqual( [
@@ -132,8 +104,6 @@ describe( 'Vega site-spec', () => {
 		} );
 
 		it( 'does not override the onboarding headline', () => {
-			// The spec requires the treatment headline to stay byte-identical
-			// with control, so we leave it to the widget default.
 			const { theme } = getVegaSiteSpecConfig();
 			expect( theme?.onboardingTitle ).toBeUndefined();
 			expect( theme?.onboardingSubtitle ).toBeUndefined();
