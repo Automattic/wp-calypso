@@ -90,7 +90,8 @@ const UniversalNavbarHeader = ( {
 	return (
 		<div
 			className={ clsx( className, {
-				'is-themes-dark-mode-monochrome': isLoggedIn && sectionName === 'themes',
+				'is-themes-dark-mode-monochrome':
+					isLoggedIn && ( sectionName === 'themes' || sectionName === 'theme' ),
 			} ) }
 		>
 			<div className="x-root lpc-header-nav-wrapper">

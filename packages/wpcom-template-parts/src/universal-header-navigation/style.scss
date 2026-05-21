@@ -917,7 +917,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	@include monochrome-header;
 }
 
-.is-section-themes.has-no-sidebar .is-themes-dark-mode-monochrome {
+.is-section-themes.has-no-sidebar .is-themes-dark-mode-monochrome,
+.is-section-theme .is-themes-dark-mode-monochrome {
 	@include ui-mixins.when-dark-theme {
 		--color-surface-backdrop: var( --color-primary-5 );
 
