@@ -5,7 +5,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateAgentStudioOutput from '../../data/use-create-agent-studio-output';
-import useResolveDefaultProject from '../../data/use-resolve-default-project';
 import useUploadAgentMedia from '../../data/use-upload-agent-media';
 import { getAgentStudioPath } from '../../lib/paths';
 import type { AgentStudioAgent } from '../../lib/agents';
@@ -31,18 +30,17 @@ export interface SubmitOnePagerBriefInput {
 /**
  * Orchestrates the one-pager brief submission:
  *
- *   1. Resolve the agency's default project id (find-or-create — see
- *      `useResolveDefaultProject`). Cached after the first run in the
- *      session so subsequent submissions don't re-resolve.
- *   2. Upload every selected file to `POST /a4a/media` in parallel
+ *   1. Upload every selected file to `POST /a4a/media` in parallel
  *      (logo, partner logo, body images). Each returns a public URL.
- *   3. Fire `useCreateAgentStudioOutput` with the URLs threaded into
+ *   2. Fire `useCreateAgentStudioOutput` with the URLs threaded into
  *      the recipe input (`logo_url`, `partner_logo_url`,
- *      `image_urls`, `hero_url`, `project_id`).
- *   4. The first body image is also passed as `hero_url` so the cover
- *      composer has something to render. Users who don't want the
- *      cover image repeated in the body can reorder / remove inside
- *      the brief form.
+ *      `image_urls`, `hero_url`). The first body image is also passed
+ *      as `hero_url` so the cover composer has something to render.
+ *
+ * The agency's default project is **not resolved client-side** — the
+ * `POST /a4a/runs` endpoint injects it automatically via
+ * `Project_Repository::find_or_create_default` when `project_id` is
+ * omitted from the recipe input. One fewer roundtrip per submit.
  *
  * Returns a mutation-like surface (`mutate`, `isPending`) so the brief
  * form can drive the generating overlay off `isPending`.
@@ -50,13 +48,10 @@ export interface SubmitOnePagerBriefInput {
 export default function useSubmitOnePagerBrief( agent: AgentStudioAgent ) {
 	const dispatch = useDispatch();
 	const uploadMedia = useUploadAgentMedia();
-	const resolveDefaultProject = useResolveDefaultProject();
 	const createOutput = useCreateAgentStudioOutput();
 
 	return useMutation< AgentStudioOutput, Error, SubmitOnePagerBriefInput >( {
 		mutationFn: async ( input ) => {
-			const projectId = String( await resolveDefaultProject.mutateAsync() );
-
 			const uploadOne = async ( file: File | null ): Promise< string | undefined > => {
 				if ( ! file ) {
 					return undefined;
@@ -82,7 +77,6 @@ export default function useSubmitOnePagerBrief( agent: AgentStudioAgent ) {
 				description: input.description,
 				brief: input.brief,
 				blurb: input.blurb,
-				projectId,
 				imageUrls,
 				logoUrl,
 				partnerLogoUrl,

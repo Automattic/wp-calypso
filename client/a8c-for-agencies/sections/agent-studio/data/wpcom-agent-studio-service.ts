@@ -117,6 +117,14 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		// director sees it in the source as a heading.
 		const text = title ? `${ title }\n\n${ input.brief ?? '' }` : input.brief ?? '';
 
+		// `brand` is intentionally omitted. The recipe's three abilities
+		// disagree on its type — `op-compose-page-frame` and
+		// `op-persist-as-html-post` want `[object, null]`, while
+		// `op-layout-director-ela-v2` wants `[string, null]`. Omitting
+		// lands `null` everywhere and the backend resolves to the default
+		// `automattic` brand pack via `A4A_Brand_Pack::resolve([])`. PR
+		// #8 (brand picker) will reintroduce this once the recipe's
+		// schemas align — track on the backend.
 		const recipeInput: Record< string, unknown > = {
 			title,
 			text,
@@ -124,7 +132,6 @@ export const wpcomAgentStudioService: AgentStudioService = {
 			page_count: 2,
 			seed: Math.floor( Math.random() * 1_000_000_000 ),
 			image_urls: input.imageUrls ?? [],
-			brand: 'automattic',
 		};
 
 		if ( input.logoUrl ) {
@@ -139,9 +146,12 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		if ( input.heroUrl ) {
 			recipeInput.hero_url = input.heroUrl;
 		}
-		if ( input.projectId ) {
-			recipeInput.project_id = input.projectId;
-		}
+		// `project_id` is intentionally omitted — the runs endpoint
+		// auto-injects the agency's default project when missing
+		// (`Project_Repository::find_or_create_default`, see
+		// `agency-a4a-agent-runs.php`). Sending it explicitly as a string
+		// would be rejected at the persist step (which expects integer).
+		// PR #2's project UI can opt back in by passing a real int.
 
 		const response: CreateRunResponse = await wpcom.req.post( {
 			apiNamespace: 'wpcom/v2',
