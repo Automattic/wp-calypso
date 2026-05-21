@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
 import { OnThisDay } from 'calypso/reader/on-this-day';
 import Recent from 'calypso/reader/recent';
 import type { ReactNode } from 'react';

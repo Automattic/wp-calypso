@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordTrackForPost } from 'calypso/reader/stats';
 import LikeButton from '../index';
@@ -41,7 +41,7 @@ jest.mock( 'calypso/components/data/post-likes', () => ( {
 
 jest.mock( 'calypso/reader/components/icons/like-icon', () => () => null );
 
-jest.mock( 'calypso/reader/data/reader-post-likes', () => ( {
+jest.mock( 'calypso/reader/data/post-likes', () => ( {
 	withReaderPostLikeActions: ( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
 } ) );
 

@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
 	syncReaderConversationFollowStatus,
 	syncReaderPostCache,
-} from 'calypso/reader/data/reader-post-cache-sync';
+} from 'calypso/reader/data/post-cache-sync';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { analyticsForStream, extractPageHandle } from 'calypso/state/reader/streams/normalize';

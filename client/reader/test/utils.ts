@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
 import { FRESHLY_PRESSED_TAB } from '../discover/helper';
 import { DISCOVER_PREFIX } from '../discover/routes';
 import {

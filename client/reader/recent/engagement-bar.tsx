@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { READER_SHARE_MENU_CLOSE } from 'calypso/blocks/reader-share';
-import { useReaderPost } from 'calypso/reader/data/reader-post';
+import { useReaderPost } from 'calypso/reader/data/post';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import type { TrackPostData } from 'calypso/state/reader/analytics/types';
 

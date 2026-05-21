@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
 import readerReducer from 'calypso/state/reader/reducer';
 import PostLifecycle from '../post-lifecycle';
 import type { ReactNode } from 'react';

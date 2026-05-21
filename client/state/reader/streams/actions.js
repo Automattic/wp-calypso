@@ -2,7 +2,7 @@ import { readStreamQuery } from '@automattic/api-queries';
 import {
 	syncReaderConversationFollowStatus,
 	syncReaderPostCache,
-} from 'calypso/reader/data/reader-post-cache-sync';
+} from 'calypso/reader/data/post-cache-sync';
 import { buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';

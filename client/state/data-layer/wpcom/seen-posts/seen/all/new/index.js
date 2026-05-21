@@ -1,4 +1,4 @@
-import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
+import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -40,17 +40,15 @@ export const onSuccess = ( action, response ) => ( dispatch, getState ) => {
 		const state = getState();
 		const stream = getStream( state, identifier );
 		const queryClient = getCalypsoQueryClient();
-		const posts = queryClient
-			? ( stream.items ?? [] )
-					.map( ( item ) => getCachedReaderPost( queryClient, item ) )
-					.filter( Boolean )
+		const globalIds = queryClient
+			? ( stream.items ?? [] ).reduce( ( acc, item ) => {
+					const post = getCachedReaderPost( queryClient, item );
+					if ( post?.global_ID ) {
+						acc.push( post.global_ID );
+					}
+					return acc;
+			  }, [] )
 			: [];
-
-		// get their global ids
-		const globalIds = posts.reduce( ( acc, item ) => {
-			acc.push( item.global_ID );
-			return acc;
-		}, [] );
 
 		// update to seen based on global ids
 		dispatch( receiveMarkAllAsSeen( { feedIds, feedUrls, globalIds } ) );

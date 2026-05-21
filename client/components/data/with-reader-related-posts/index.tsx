@@ -4,11 +4,11 @@ import { useEffect, useMemo } from 'react';
 import {
 	normalizeReaderPostsForCache,
 	syncReaderPostCache,
-} from 'calypso/reader/data/reader-post-cache-sync';
+} from 'calypso/reader/data/post-cache-sync';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import type { ReadRelatedPostsResponse, ReadRelatedPostsScope } from '@automattic/api-core';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
-import type { ReaderPost } from 'calypso/reader/data/reader-post-cache';
+import type { ReaderPost } from 'calypso/reader/data/post-cache';
 
 export interface UseReaderRelatedPostsResult {
 	posts: ReaderPost[] | undefined;

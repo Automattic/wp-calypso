@@ -5,7 +5,7 @@ import { EVERY_MINUTE } from 'calypso/lib/interval';
 import {
 	syncReaderConversationFollowStatus,
 	syncReaderPostCache,
-} from 'calypso/reader/data/reader-post-cache-sync';
+} from 'calypso/reader/data/post-cache-sync';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';

@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
-import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
+import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import DialogContent from '../dialog-content';
 

@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
+import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
@@ -10,7 +10,7 @@ jest.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: jest.fn(),
 } ) );
 
-describe( 'seen-posts/seen/all/new data layer', () => {
+describe( 'seen-posts mark-all-as-seen data layer', () => {
 	it( 'derives global ids from the canonical Reader post cache on success', () => {
 		const queryClient = new QueryClient();
 		upsertReaderPostCache( queryClient, [

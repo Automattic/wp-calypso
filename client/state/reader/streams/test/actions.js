@@ -3,7 +3,7 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import nock from 'nock';
-import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
+import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,

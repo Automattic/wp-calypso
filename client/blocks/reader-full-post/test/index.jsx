@@ -4,11 +4,11 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { useReaderPost } from 'calypso/reader/data/reader-post';
+import { useReaderPost } from 'calypso/reader/data/post';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { mapStateToFullPostProps, withFullPostNavigation } from '../index';
 
-jest.mock( 'calypso/reader/data/reader-post', () => ( {
+jest.mock( 'calypso/reader/data/post', () => ( {
 	useReaderPost: jest.fn(),
 } ) );
 

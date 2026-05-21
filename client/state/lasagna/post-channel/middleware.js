@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { getCachedReaderPost } from 'calypso/reader/data/reader-post-cache';
+import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
 import { receiveComments } from 'calypso/state/comments/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {

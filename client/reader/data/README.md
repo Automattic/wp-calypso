@@ -13,12 +13,12 @@ migration, the Reader has two post access layers with different contracts:
   or for small action surfaces that only need the post already supplied by the
   stream.
 
-The canonical cache lives in `reader-post-cache.ts`. Stream responses, full post
+The canonical cache lives in `post-cache.ts`. Stream responses, full post
 fetches, and optimistic updates write into this cache through
-`reader-post-cache-sync.ts`. The cache query keys are memory-only and are not
+`post-cache-sync.ts`. The cache query keys are memory-only and are not
 persisted to localStorage.
 
-`reader-post-cache-middleware.ts` only mirrors legacy Redux actions that still
+`post-cache-middleware.ts` only mirrors legacy Redux actions that still
 represent post-adjacent state, such as seen/unseen and conversation follow
 updates. It does not receive or normalize post payloads. New Reader post
 producers should call `syncReaderPostCache()` after fetching posts so cache-only

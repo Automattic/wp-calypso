@@ -7,10 +7,10 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getCachedReaderPost, upsertReaderPostCache } from 'calypso/reader/data/reader-post-cache';
-import { createReaderPostCacheMiddleware } from 'calypso/reader/data/reader-post-cache-middleware';
+import { getCachedReaderPost, upsertReaderPostCache } from 'calypso/reader/data/post-cache';
+import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
-import { useReaderPost } from '../reader-post';
+import { useReaderPost } from '../post';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 

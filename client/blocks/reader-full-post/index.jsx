@@ -29,8 +29,8 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useReaderPost } from 'calypso/reader/data/reader-post';
-import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
+import { useReaderPost } from 'calypso/reader/data/post';
+import { withReaderPostLikeActions } from 'calypso/reader/data/post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';

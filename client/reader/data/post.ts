@@ -3,13 +3,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
-import { useCachedReaderPost } from './reader-post-cache';
+import { useCachedReaderPost } from './post-cache';
 import {
 	normalizeReaderPostsForCache,
 	syncReaderConversationFollowStatus,
 	syncReaderPostCache,
-} from './reader-post-cache-sync';
-import type { ReaderPost } from './reader-post-cache';
+} from './post-cache-sync';
+import type { ReaderPost } from './post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
 

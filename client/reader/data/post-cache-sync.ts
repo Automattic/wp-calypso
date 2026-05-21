@@ -4,7 +4,7 @@ import { keyForPost } from 'calypso/reader/post-key';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { runFastRules, runSlowRules } from 'calypso/state/reader/posts/normalization-rules';
-import { ReaderPost, upsertReaderPostCache } from './reader-post-cache';
+import { ReaderPost, upsertReaderPostCache } from './post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Dispatch } from 'redux';
