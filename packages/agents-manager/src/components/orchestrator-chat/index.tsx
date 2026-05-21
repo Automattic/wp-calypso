@@ -387,6 +387,7 @@ export default function OrchestratorChat( {
 		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
+		isProcessing,
 		setIsThinking,
 		deleteMarkedMessages: ( msgs ) => {
 			setDeletedMessageIds(

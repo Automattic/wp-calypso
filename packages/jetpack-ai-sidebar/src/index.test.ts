@@ -360,6 +360,38 @@ describe( 'useSuggestions', () => {
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 	} );
+
+	it( 'starts the selected block shimmer when AM starts processing', () => {
+		jest.useFakeTimers();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'lQ0k', name: 'core/paragraph' };
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', 'lQ0k' );
+		document.body.appendChild( blockEl );
+
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: true,
+		} as any );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( true );
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
+	} );
 } );
 
 describe( 'contextProvider', () => {

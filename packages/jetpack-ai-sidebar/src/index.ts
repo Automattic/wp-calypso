@@ -30,6 +30,9 @@ import {
 	setModuleCheckpointApi,
 	getModuleCheckpointApi,
 	startBlockShimmer,
+	stopBlockShimmer,
+	getSelectedOrRememberedBlock,
+	rememberSelectedBlock,
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -48,6 +51,7 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;
+let wasAgentProcessing = false;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -270,12 +274,21 @@ function hasAbilitiesApi(): boolean {
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
 	clearSuggestions?: () => void;
+	isProcessing?: boolean;
 	[ key: string ]: unknown;
 } ): void {
 	setAddMessageFn( actions.addMessage );
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
+
+	const isProcessing = actions.isProcessing === true;
+	if ( isProcessing && ! wasAgentProcessing ) {
+		startBlockShimmer();
+	} else if ( ! isProcessing && wasAgentProcessing ) {
+		stopBlockShimmer();
+	}
+	wasAgentProcessing = isProcessing;
 }
 
 // ---------- toolProvider ----------
@@ -432,11 +445,11 @@ export const contextProvider = {
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
 				currentPageContent = blocks.map( serializeBlock );
-				selectedBlockClientId = blockEditor.getSelectedBlockClientId?.() ?? '';
-
-				if ( selectedBlockClientId ) {
-					const selectedBlock = blockEditor.getSelectedBlock?.();
-					if ( selectedBlock?.attributes?.content ) {
+				const selectedBlock = getSelectedOrRememberedBlock();
+				if ( selectedBlock?.clientId ) {
+					selectedBlockClientId = selectedBlock.clientId;
+					rememberSelectedBlock( selectedBlock );
+					if ( selectedBlock.attributes?.content ) {
 						selectedBlockContent = resolveBlockContent( selectedBlock.attributes.content );
 					}
 				}
@@ -561,7 +574,7 @@ const IMAGE_BLOCK_TYPES = [ 'core/image', 'core/media-text', 'core/cover', 'core
 /** Block-aware suggestion definitions with optional condition per block type. */
 const BLOCK_SUGGESTIONS = [
 	{
-		id: 'translate-content',
+		id: 'translate',
 		label: __( 'Translate content', 'jetpack' ),
 		prompt: __( 'Translate this block content to:', 'jetpack' ),
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
@@ -662,7 +675,12 @@ export function useSuggestions(): {
 		return { suggestions: [] };
 	}
 
-	if ( ! editorContext.selectedBlock ) {
+	const selectedBlock = editorContext.selectedBlock ?? getSelectedOrRememberedBlock();
+	if ( editorContext.selectedBlock ) {
+		rememberSelectedBlock( editorContext.selectedBlock );
+	}
+
+	if ( ! selectedBlock ) {
 		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
@@ -672,9 +690,7 @@ export function useSuggestions(): {
 		return { suggestions: aiEditorialReviewSuggestions };
 	}
 
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
-		s.condition( editorContext.selectedBlock )
-	);
+	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
 	return {
 		suggestions: [
 			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
