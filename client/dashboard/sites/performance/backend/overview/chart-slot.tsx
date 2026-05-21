@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useLocale } from '../../../../app/locale';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
@@ -50,22 +51,23 @@ function formatMsValue( value: number ): string {
 	);
 }
 
-function formatTooltipDate( date: Date ): string {
-	return date.toLocaleDateString( undefined, {
+function formatTooltipDate( date: Date, locale: string ): string {
+	return date.toLocaleDateString( locale, {
 		weekday: 'short',
 		month: 'short',
 		day: 'numeric',
 	} );
 }
 
-function formatTooltipTime( date: Date ): string {
-	return date.toLocaleTimeString( undefined, {
+function formatTooltipTime( date: Date, locale: string ): string {
+	return date.toLocaleTimeString( locale, {
 		hour: '2-digit',
 		minute: '2-digit',
 	} );
 }
 
 export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] } ) {
+	const locale = useLocale();
 	const data = toSeriesData( timeseries );
 	const averageTotal = getAverageTotal( timeseries );
 
@@ -107,18 +109,27 @@ export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] 
 							const series = Object.values( tooltipData?.datumByKey ?? {} );
 							return (
 								<VStack spacing={ 3 } style={ { padding: '4px 2px', minWidth: 240 } }>
-									<VStack spacing={ 0 }>
-										<Text weight={ 600 }>{ formatTooltipDate( date ) }</Text>
-										<Text size={ 11 } variant="muted">
-											{ formatTooltipTime( date ) }
-										</Text>
-									</VStack>
+									<HStack spacing={ 2 } expanded={ false } justify="flex-start">
+										<Text weight={ 600 }>{ formatTooltipDate( date, locale ) }</Text>
+										<span
+											aria-hidden
+											style={ {
+												flex: '0 0 auto',
+												width: 3,
+												height: 3,
+												borderRadius: '50%',
+												background: 'currentColor',
+												opacity: 0.4,
+											} }
+										/>
+										<Text variant="muted">{ formatTooltipTime( date, locale ) }</Text>
+									</HStack>
 									<VStack spacing={ 1 }>
 										{ series.map( ( entry ) => {
 											const value = ( entry.datum as { value?: number } ).value ?? 0;
 											return (
 												<HStack key={ entry.key } justify="space-between" spacing={ 3 }>
-													<HStack spacing={ 2 } justify="flex-start">
+													<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 														<span
 															aria-hidden
 															style={ {
