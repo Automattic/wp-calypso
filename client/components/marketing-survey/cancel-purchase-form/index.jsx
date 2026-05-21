@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
@@ -18,6 +17,7 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	isAgencyPartnerType,
 	isPartnerPurchase,
@@ -84,6 +84,7 @@ class CancelPurchaseForm extends Component {
 		cancellationInProgress: PropTypes.bool,
 		intent: PropTypes.string,
 		purchaseSettingsUrl: PropTypes.string,
+		isSplitCancelRemoveEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -206,8 +207,7 @@ class CancelPurchaseForm extends Component {
 				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
 		} );
 		const hasSolutionsCards =
-			config.isEnabled( 'purchases/split-cancel-remove' ) &&
-			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			this.props.isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 		const newState = {
 			...this.state,
 			questionOneText: value,
@@ -404,7 +404,7 @@ class CancelPurchaseForm extends Component {
 
 			const solutions = getSolutionsForReason( this.state.questionOneText || '' );
 			const useSolutionsCards =
-				config.isEnabled( 'purchases/split-cancel-remove' ) && solutions && solutions.length > 0;
+				this.props.isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
 
 			// When flag is on and we have solution cards for this reason, show them
 			// instead of the legacy education or single-upsell step.
@@ -930,6 +930,7 @@ const WrappedCancelPurchaseForm = ( props ) => {
 		siteId: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	return (
 		<ConnectedCancelPurchaseForm
@@ -940,6 +941,7 @@ const WrappedCancelPurchaseForm = ( props ) => {
 			downgradePlanToMonthlyPrice={
 				pricingMeta?.[ monthlyDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
 			}
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 		/>
 	);
 };

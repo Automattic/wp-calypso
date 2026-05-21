@@ -26,7 +26,6 @@ import {
 	userPreferenceQuery,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import {
 	useSuspenseQuery,
@@ -1078,8 +1077,7 @@ function CancelPurchaseInner() {
 			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
 		} );
 		const hasSolutionsCards =
-			config.isEnabled( 'purchases/split-cancel-remove' ) &&
-			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 
 		setState( ( state ) => ( {
 			...state,
@@ -1632,7 +1630,7 @@ function CancelPurchaseInner() {
 		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
 	const isSolutionsStep =
 		state.surveyStep === UPSELL_STEP &&
-		config.isEnabled( 'purchases/split-cancel-remove' ) &&
+		isSplitCancelRemoveEnabled &&
 		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy

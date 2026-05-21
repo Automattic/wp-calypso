@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,6 +10,7 @@ import {
 	type CancelIntent,
 } from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
+import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
@@ -142,6 +142,7 @@ function SurveyContent( {
 	onSwitchToMonthly,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -161,8 +162,7 @@ function SurveyContent( {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
 		const solutions = getSolutionsForReason( questionOneText ?? '' );
-		const useSolutionsCards =
-			config.isEnabled( 'purchases/split-cancel-remove' ) && solutions && solutions.length > 0;
+		const useSolutionsCards = isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
