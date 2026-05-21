@@ -1092,7 +1092,7 @@ export default function CheckoutMainContent( {
 								{ isCheckoutUiRedesignV1 && (
 									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
 								) }
-								{ checkoutSummary }
+								{ ! isMobileCheckoutStickySummary && checkoutSummary }
 							</>
 						);
 					} }
