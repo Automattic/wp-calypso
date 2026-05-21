@@ -1541,6 +1541,42 @@ function CheckoutLineItem( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
 
+	// Under the mobile sticky experiment the remove link uses a per-product
+	// label ("Remove plan/domain/email/…") instead of the generic "Remove
+	// from cart" — Figma 2392:15397. Order matters: storage is also an
+	// add-on, Akismet has its own slug pattern distinct from Jetpack, so the
+	// specific checks come before the broader ones.
+	const removeLabel = ( () => {
+		if ( ! isMobileStickySummary ) {
+			return translate( 'Remove from cart' );
+		}
+		if ( isPlan( product ) ) {
+			return translate( 'Remove plan' );
+		}
+		if ( isDomainRegistration( product ) ) {
+			return translate( 'Remove domain' );
+		}
+		if ( isEmail ) {
+			return translate( 'Remove email' );
+		}
+		if ( isTieredVolumeSpaceAddon( product ) ) {
+			return translate( 'Remove storage' );
+		}
+		if ( isDIFMProduct( product ) ) {
+			return translate( 'Remove service' );
+		}
+		if ( isAkismetProduct( product ) ) {
+			return translate( 'Remove Akismet' );
+		}
+		if ( isJetpackProductSlug( productSlug ) ) {
+			return translate( 'Remove Jetpack' );
+		}
+		if ( isAddOn( product ) ) {
+			return translate( 'Remove add-on' );
+		}
+		return translate( 'Remove from cart' );
+	} )();
+
 	const containsPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
@@ -1717,7 +1753,7 @@ function CheckoutLineItem( {
 								onRemoveProductClick?.( label );
 							} }
 						>
-							{ translate( 'Remove from cart' ) }
+							{ removeLabel }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
