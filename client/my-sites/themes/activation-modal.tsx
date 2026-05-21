@@ -7,7 +7,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSiteDomain, getSiteOption } from 'calypso/state/sites/selectors';
 import { activate as activateTheme } from 'calypso/state/themes/actions';
 import { getCanonicalTheme, isRequestingTheme } from 'calypso/state/themes/selectors';
 import IframePreviewCard from './iframe-preview-card';
@@ -19,6 +20,7 @@ import './activation-modal.scss';
 type SetupChoice = 'basic_setup' | 'full_setup';
 
 const RADIO_GROUP_NAME = 'activation-modal-setup-choice';
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 interface StyleVariation {
 	slug?: string;
@@ -37,6 +39,8 @@ interface ConnectedProps {
 	theme: Theme | null;
 	siteDomain?: string | null;
 	isLoadingTheme: boolean;
+	isSiteLaunched: boolean;
+	siteAgeInDays: number | null;
 }
 
 interface DispatchProps {
@@ -50,6 +54,8 @@ const ActivationModal = ( {
 	siteId,
 	siteDomain,
 	isLoadingTheme,
+	isSiteLaunched,
+	siteAgeInDays,
 	source = 'details',
 	styleVariation,
 	onClose,
@@ -71,6 +77,8 @@ const ActivationModal = ( {
 		recordTracksEvent( 'calypso_theme_activation_modal_view', {
 			theme: theme.id,
 			source,
+			is_site_launched: isSiteLaunched,
+			...( siteAgeInDays !== null && { site_age_in_days: siteAgeInDays } ),
 		} );
 	}, [ theme, source ] );
 
@@ -125,6 +133,8 @@ const ActivationModal = ( {
 			theme: themeId,
 			source,
 			setup_choice: setupChoice,
+			is_site_launched: isSiteLaunched,
+			...( siteAgeInDays !== null && { site_age_in_days: siteAgeInDays } ),
 		} );
 		setIsActivating( true );
 		try {
@@ -141,6 +151,8 @@ const ActivationModal = ( {
 		recordTracksEvent( 'calypso_theme_activation_modal_dismiss', {
 			theme: themeId,
 			source,
+			is_site_launched: isSiteLaunched,
+			...( siteAgeInDays !== null && { site_age_in_days: siteAgeInDays } ),
 		} );
 		onClose();
 	};
@@ -240,11 +252,19 @@ const ActivationModal = ( {
 };
 
 export default connect(
-	( state: IAppState, { themeId, siteId }: OwnProps ): ConnectedProps => ( {
-		theme: getCanonicalTheme( state, siteId, themeId ),
-		siteDomain: getSiteDomain( state, siteId ),
-		isLoadingTheme: isRequestingTheme( state, 'wpcom', themeId ),
-	} ),
+	( state: IAppState, { themeId, siteId }: OwnProps ): ConnectedProps => {
+		const createdAt = getSiteOption( state, siteId, 'created_at' ) as string | undefined;
+		const siteAgeInDays = createdAt
+			? Math.floor( ( Date.now() - new Date( createdAt ).getTime() ) / DAY_IN_MS )
+			: null;
+		return {
+			theme: getCanonicalTheme( state, siteId, themeId ),
+			siteDomain: getSiteDomain( state, siteId ),
+			isLoadingTheme: isRequestingTheme( state, 'wpcom', themeId ),
+			isSiteLaunched: ! isUnlaunchedSite( state, siteId ),
+			siteAgeInDays,
+		};
+	},
 	{
 		dispatchActivateTheme: activateTheme,
 	}
