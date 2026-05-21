@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 import './pdf-viewer.scss';
 
@@ -95,40 +95,51 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 
 function FittedIframe( { srcDoc, title }: { srcDoc: string; title: string } ) {
 	const wrapRef = useRef< HTMLDivElement >( null );
-	const iframeRef = useRef< HTMLIFrameElement >( null );
+	const [ scale, setScale ] = useState( 0 );
 
-	const fit = useCallback( () => {
-		const iframe = iframeRef.current;
+	// `ResizeObserver` on the wrap fires once on mount (so the initial
+	// scale is computed even if `clientWidth` was 0 before layout
+	// settled) and again on every layout change. This is more reliable
+	// than depending on the iframe's `onLoad` + `window.resize`, which
+	// raced with the parent's layout-settle in the dark-canvas viewer.
+	useLayoutEffect( () => {
 		const wrap = wrapRef.current;
-		if ( ! iframe || ! wrap ) {
+		if ( ! wrap ) {
 			return;
 		}
-		const slotWidth = wrap.clientWidth || window.innerWidth;
-		const scale = slotWidth / PAGE_NATURAL_WIDTH;
-
-		iframe.style.width = `${ PAGE_NATURAL_WIDTH }px`;
-		iframe.style.height = `${ PAGE_NATURAL_HEIGHT }px`;
-		iframe.style.transformOrigin = 'top left';
-		iframe.style.transform = `scale(${ scale })`;
-		wrap.style.height = `${ PAGE_NATURAL_HEIGHT * scale }px`;
+		const update = () => {
+			const slotWidth = wrap.clientWidth;
+			if ( slotWidth === 0 ) {
+				return;
+			}
+			setScale( slotWidth / PAGE_NATURAL_WIDTH );
+		};
+		update();
+		const observer = new ResizeObserver( update );
+		observer.observe( wrap );
+		return () => observer.disconnect();
 	}, [] );
 
-	// Run the fit once on mount (covers the case where iframe `onLoad`
-	// fires before this effect attaches) and again on every resize.
-	useEffect( () => {
-		fit();
-		window.addEventListener( 'resize', fit );
-		return () => window.removeEventListener( 'resize', fit );
-	}, [ fit ] );
+	const scaledHeight = scale > 0 ? PAGE_NATURAL_HEIGHT * scale : 0;
 
 	return (
-		<div ref={ wrapRef } className="a4a-one-pager-viewer__iframe-wrap">
+		<div
+			ref={ wrapRef }
+			className="a4a-one-pager-viewer__iframe-wrap"
+			style={ scaledHeight > 0 ? { height: `${ scaledHeight }px` } : undefined }
+		>
 			<iframe
-				ref={ iframeRef }
 				title={ title }
 				className="a4a-one-pager-viewer__iframe"
 				srcDoc={ srcDoc }
-				onLoad={ fit }
+				width={ PAGE_NATURAL_WIDTH }
+				height={ PAGE_NATURAL_HEIGHT }
+				style={ {
+					width: `${ PAGE_NATURAL_WIDTH }px`,
+					height: `${ PAGE_NATURAL_HEIGHT }px`,
+					transformOrigin: 'top left',
+					transform: scale > 0 ? `scale(${ scale })` : 'scale(0)',
+				} }
 				// Empty sandbox: opaque-origin iframe with no script
 				// execution. The variant HTML doesn't need scripts.
 				sandbox=""

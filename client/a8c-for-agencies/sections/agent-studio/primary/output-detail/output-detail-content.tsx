@@ -60,17 +60,45 @@ export default function OutputDetailContent( { output }: Props ) {
 	const safeIndex = variants.length > 0 ? Math.min( activeIndex, variants.length - 1 ) : 0;
 	const selectedVariant = variants[ safeIndex ];
 
-	const variantHtml = useAgentStudioVariantHtml( selectedVariant?.html_url );
+	// We fetch two variant HTMLs here:
+	//
+	//   - `selectedVariantHtml` — only the cover page (idx 0) is taken
+	//     from this. The cover repaints when the chevrons flip.
+	//   - `baseVariantHtml` — the body pages (idx 1..N) are taken from
+	//     variant 0's HTML always. Per the cover-variant-picker-v2
+	//     ADR-0001, the theme is scoped to the cover only — body pages
+	//     are visually identical across every variant. Sourcing them
+	//     from a stable variant keeps each body iframe's `srcDoc`
+	//     string identical across chevron clicks, so React skips the
+	//     iframe update and there's no white-flash reload.
+	const selectedVariantHtml = useAgentStudioVariantHtml( selectedVariant?.html_url );
+	const baseVariantHtml = useAgentStudioVariantHtml( variants[ 0 ]?.html_url );
 
-	const pages = useMemo< PdfViewerPage[] >( () => {
-		if ( ! variantHtml.data ) {
+	const coverSrcDoc = useMemo< string | undefined >( () => {
+		if ( ! selectedVariantHtml.data ) {
+			return undefined;
+		}
+		const split = splitIntoPages( selectedVariantHtml.data );
+		return split[ 0 ] ? wrapAsDocument( split[ 0 ] ) : undefined;
+	}, [ selectedVariantHtml.data ] );
+
+	const bodySrcDocs = useMemo< string[] >( () => {
+		if ( ! baseVariantHtml.data ) {
 			return [];
 		}
-		return splitIntoPages( variantHtml.data ).map( ( page, idx ) => ( {
-			srcDoc: wrapAsDocument( page ),
-			role: idx === 0 ? ( 'cover' as const ) : ( 'body' as const ),
-		} ) );
-	}, [ variantHtml.data ] );
+		const split = splitIntoPages( baseVariantHtml.data );
+		return split.slice( 1 ).map( ( page ) => wrapAsDocument( page ) );
+	}, [ baseVariantHtml.data ] );
+
+	const pages = useMemo< PdfViewerPage[] >( () => {
+		if ( ! coverSrcDoc ) {
+			return [];
+		}
+		return [
+			{ srcDoc: coverSrcDoc, role: 'cover' as const },
+			...bodySrcDocs.map( ( srcDoc ) => ( { srcDoc, role: 'body' as const } ) ),
+		];
+	}, [ coverSrcDoc, bodySrcDocs ] );
 
 	if ( output.status === 'generating' || ( ! postId && run.isLoading ) ) {
 		return (
@@ -133,7 +161,7 @@ export default function OutputDetailContent( { output }: Props ) {
 					</Button>
 				) }
 			</HStack>
-			{ variantHtml.isLoading ? (
+			{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
 				<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
 					<Spinner />
 					<Text>{ __( 'Loading preview…' ) }</Text>
