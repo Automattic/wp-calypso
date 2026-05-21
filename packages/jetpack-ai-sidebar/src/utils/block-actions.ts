@@ -35,6 +35,21 @@ export function getModuleCheckpointApi(): CheckpointApi | null {
 
 // ---------- Block element helpers ----------
 
+function getAccessibleFrameDocuments(): Document[] {
+	const docs: Document[] = [];
+	document.querySelectorAll( 'iframe' ).forEach( ( iframe ) => {
+		try {
+			const frameDocument = ( iframe as HTMLIFrameElement ).contentDocument;
+			if ( frameDocument ) {
+				docs.push( frameDocument );
+			}
+		} catch {
+			// Cross-origin frames are not relevant to the block editor.
+		}
+	} );
+	return docs;
+}
+
 /**
  * Find a block element by clientId in the main document or editor iframe.
  * Exported so peer components (e.g. ReviewMediation) can scroll a block into
@@ -43,27 +58,25 @@ export function getModuleCheckpointApi(): CheckpointApi | null {
  * @returns The block element, or null.
  */
 export function findBlockElement( clientId: string ): HTMLElement | null {
-	// Gutenberg clientIds can be short mixed-case strings, not only UUIDs.
-	if ( ! /^[A-Za-z0-9_-]+$/.test( clientId ) ) {
+	if ( ! clientId ) {
 		return null;
 	}
 
+	const selector = `[data-block="${ CSS.escape( clientId ) }"]`;
 	try {
-		const el = document.querySelector( `[data-block="${ clientId }"]` ) as HTMLElement | null;
+		const el = document.querySelector( selector ) as HTMLElement | null;
 		if ( el ) {
 			return el;
 		}
-		const iframe = document.querySelector(
-			'iframe[name="editor-canvas"]'
-		) as HTMLIFrameElement | null;
-		return (
-			( iframe?.contentDocument?.querySelector(
-				`[data-block="${ clientId }"]`
-			) as HTMLElement | null ) ?? null
-		);
+		for ( const frameDocument of getAccessibleFrameDocuments() ) {
+			const frameEl = frameDocument.querySelector( selector ) as HTMLElement | null;
+			if ( frameEl ) {
+				return frameEl;
+			}
+		}
 	} catch {
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -79,13 +92,15 @@ export function findBlockListLayout(): HTMLElement | null {
 		if ( el ) {
 			return el;
 		}
-		const iframe = document.querySelector(
-			'iframe[name="editor-canvas"]'
-		) as HTMLIFrameElement | null;
-		return ( iframe?.contentDocument?.querySelector( selector ) as HTMLElement | null ) ?? null;
+		for ( const frameDocument of getAccessibleFrameDocuments() ) {
+			const frameEl = frameDocument.querySelector( selector ) as HTMLElement | null;
+			if ( frameEl ) {
+				return frameEl;
+			}
+		}
 	} catch {
-		return null;
 	}
+	return null;
 }
 
 // ---------- Processing effect (Flow Block shimmer) ----------

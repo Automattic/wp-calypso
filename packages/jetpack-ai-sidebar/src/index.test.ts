@@ -1063,10 +1063,22 @@ describe( 'findBlockElement', () => {
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeNull();
 	} );
 
-	it( 'rejects malformed clientIds to prevent selector injection', () => {
+	it( 'escapes clientIds to prevent selector injection', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', 'client.id' );
+		document.body.appendChild( el );
+		expect( findBlockElement( 'client.id' ) ).toBe( el );
 		expect( findBlockElement( '"][onerror="alert(1)"]' ) ).toBeNull();
 		expect( findBlockElement( 'contains space' ) ).toBeNull();
-		expect( findBlockElement( 'client.id' ) ).toBeNull();
+	} );
+
+	it( 'finds blocks in accessible editor iframes', () => {
+		const iframe = document.createElement( 'iframe' );
+		document.body.appendChild( iframe );
+		const el = iframe.contentDocument?.createElement( 'div' );
+		el?.setAttribute( 'data-block', 'lQ0k' );
+		iframe.contentDocument?.body.appendChild( el as HTMLElement );
+		expect( findBlockElement( 'lQ0k' ) ).toBe( el );
 	} );
 } );
 
