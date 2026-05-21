@@ -31,6 +31,7 @@
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
+		"calypso/react-18-create-root": false,
 		"catch-js-errors": true,
 		"checkout/checkout-version": false,
 		"checkout/google-pay": true,
