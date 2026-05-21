@@ -114,6 +114,7 @@ export interface SocialAuthorProfilePanelProps<
 	protocolLabel: string;
 	protocolHomeURL: string;
 	protocolHomeLabel: TranslateResult;
+	authRequiredCopy?: { title: string; line: string };
 
 	// Wrapper-specific class on the VStack (allows protocol-scoped CSS).
 	className?: string;
@@ -157,6 +158,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	protocolLabel,
 	protocolHomeURL,
 	protocolHomeLabel,
+	authRequiredCopy,
 	className,
 	feedDimension,
 }: SocialAuthorProfilePanelProps< TProfile, TError, TFeedItem > ) {
@@ -369,6 +371,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 					protocolLabel={ protocolLabel }
 					protocolHomeURL={ protocolHomeURL }
 					protocolHomeLabel={ String( protocolHomeLabel ) }
+					authRequiredCopy={ authRequiredCopy }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>

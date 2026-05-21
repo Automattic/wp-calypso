@@ -235,6 +235,10 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 						protocolLabel="Bluesky"
 						protocolHomeURL="/reader/atmosphere"
 						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+						authRequiredCopy={ {
+							title: String( translate( "Couldn't load timeline" ) ),
+							line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+						} }
 					/>
 				</RepostProvider>
 			</LikeProvider>

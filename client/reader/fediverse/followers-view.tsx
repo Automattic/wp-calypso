@@ -259,6 +259,10 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				protocolLabel="Fediverse"
 				protocolHomeURL="/reader/fediverse"
 				protocolHomeLabel={ String( translate( 'Back to Fediverse' ) ) }
+				authRequiredCopy={ {
+					title: String( translate( "Couldn't load followers" ) ),
+					line: String( translate( 'Something went wrong with your Fediverse connection.' ) ),
+				} }
 				header={ {
 					displayName: profileQuery.data?.display_name ?? null,
 					// `acct` carries a leading `@`; the header renders `@${handle}`,
