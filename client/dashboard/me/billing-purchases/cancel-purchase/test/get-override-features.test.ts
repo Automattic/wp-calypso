@@ -76,6 +76,19 @@ describe( 'getOverrideCancellationFeatures', () => {
 			const result = getOverrideCancellationFeatures( purchase );
 			expect( result ).toHaveLength( 8 );
 			expect( result![ 0 ].title ).toBe( 'example.com as your primary domain' );
+			expect( result!.map( ( feature ) => feature.title ) ).toContain( '50 GB of storage' );
+		} );
+
+		it( 'uses advertised storage for business-bundle when provided', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'business-bundle',
+				product_name: 'WordPress.com Business',
+				advertised_total_upload_space_in_gb: 200,
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result!.map( ( feature ) => feature.title ) ).toContain( '200 GB of storage' );
+			expect( result!.map( ( feature ) => feature.title ) ).not.toContain( '50 GB of storage' );
 		} );
 
 		it( 'returns 8 features for ecommerce-bundle', () => {
@@ -87,6 +100,19 @@ describe( 'getOverrideCancellationFeatures', () => {
 			const result = getOverrideCancellationFeatures( purchase );
 			expect( result ).toHaveLength( 8 );
 			expect( result![ 0 ].title ).toBe( 'example.com as your primary domain' );
+			expect( result!.map( ( feature ) => feature.title ) ).toContain( '50 GB of storage' );
+		} );
+
+		it( 'uses advertised storage for ecommerce-bundle when provided', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'ecommerce-bundle',
+				product_name: 'WordPress.com eCommerce',
+				advertised_total_upload_space_in_gb: 200,
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result!.map( ( feature ) => feature.title ) ).toContain( '200 GB of storage' );
+			expect( result!.map( ( feature ) => feature.title ) ).not.toContain( '50 GB of storage' );
 		} );
 
 		it( 'returns 7 features for ecommerce-trial-bundle-monthly (omits support)', () => {

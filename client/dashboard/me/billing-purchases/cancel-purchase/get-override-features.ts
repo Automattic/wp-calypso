@@ -60,6 +60,16 @@ function getDomainFeature( domain: string ): string {
 	return __( 'Custom domain for your site' );
 }
 
+function getStorageFeature( purchase: PurchaseForCopy, fallbackStorageInGb: number ): string {
+	const storageInGb = purchase.advertised_total_upload_space_in_gb ?? fallbackStorageInGb;
+
+	return sprintf(
+		/* translators: %(storage)d is the amount of storage in GB. */
+		__( '%(storage)d GB of storage' ),
+		{ storage: storageInGb }
+	);
+}
+
 function getWpcomPlanFeatures( purchase: PurchaseForCopy ): CancellationFeature[] | null {
 	const slug = purchase.product_slug;
 	const isMonthly = slug.includes( '-monthly' );
@@ -96,7 +106,7 @@ function getWpcomPlanFeatures( purchase: PurchaseForCopy ): CancellationFeature[
 		return features(
 			...( [
 				domainFeature,
-				__( '50 GB of storage' ),
+				getStorageFeature( purchase, 50 ),
 				__( 'An ad-free experience for your visitors' ),
 				__( 'Plugins and themes to extend your site' ),
 				! isMonthly && __( 'Priority 24/7 support' ),
@@ -111,7 +121,7 @@ function getWpcomPlanFeatures( purchase: PurchaseForCopy ): CancellationFeature[
 			...( [
 				domainFeature,
 				__( 'Plugins and themes to extend your site' ),
-				__( '50 GB of storage' ),
+				getStorageFeature( purchase, 50 ),
 				__( 'Payments in 60+ countries' ),
 				__( 'Sell and ship products worldwide' ),
 				__( 'Integrations with shipping carriers' ),

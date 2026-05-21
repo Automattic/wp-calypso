@@ -25,6 +25,7 @@ export type PurchaseForCopy = {
 	meta?: string;
 	domain: string;
 	site_slug: string;
+	advertised_total_upload_space_in_gb?: number | null;
 };
 
 /**
