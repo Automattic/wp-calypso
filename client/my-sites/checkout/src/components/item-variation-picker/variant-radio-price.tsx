@@ -37,7 +37,7 @@ const Discount = styled.span< { isMobileStickySummary?: boolean } >`
 		border-radius: 2px;
 		padding: 0 8px;
 		font-size: 11px;
-		font-weight: 510;
+		font-weight: 500;
 		letter-spacing: -0.08px;
 	` }
 `;
@@ -49,11 +49,14 @@ const Price = styled.span< { isCheckoutUiRedesignV1?: boolean; isMobileStickySum
 		props.isMobileStickySummary &&
 		`
 		color: var( --studio-gray-100 );
-		font-size: 16px;
+		font-size: 13px;
 		font-weight: 500;
-		line-height: 24px;
-		letter-spacing: -0.32px;
+		line-height: 20px;
 	` }
+`;
+
+const PriceSuffix = styled.span`
+	font-weight: 400;
 `;
 
 const Variant = styled.div< { isMobileStickySummary?: boolean } >`
@@ -69,9 +72,8 @@ const Variant = styled.div< { isMobileStickySummary?: boolean } >`
 		props.isMobileStickySummary &&
 		`
 		color: var( --studio-gray-100 );
-		font-size: 16px;
-		line-height: 24px;
-		letter-spacing: -0.32px;
+		font-size: 13px;
+		line-height: 20px;
 	` }
 `;
 
@@ -145,7 +147,18 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	} );
 
 	const priceDisplay = ( () => {
-		if ( isCheckoutUiRedesignV1 || isMobileStickySummary ) {
+		if ( isMobileStickySummary ) {
+			// Render the suffix in its own span so the medium weight on
+			// <Price> doesn't bleed into "/mo" (Figma 2392:15326 wants
+			// regular).
+			return (
+				<>
+					{ pricePerMonthFormatted }
+					<PriceSuffix>{ translate( '/mo' ) }</PriceSuffix>
+				</>
+			);
+		}
+		if ( isCheckoutUiRedesignV1 ) {
 			return i18n.fixMe( {
 				text: '%(pricePerMonth)s/mo',
 				newCopy: translate( '%(pricePerMonth)s/mo', {
