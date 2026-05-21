@@ -394,10 +394,10 @@ export const withCachedReaderPost =
 	) =>
 	( WrappedComponent: ComponentType< Props > ) => {
 		const CachedReaderPostContainer = ( props: Props ) => {
-			const canonicalPost = useCachedReaderPost( getTarget( props ) );
+			const cachedPost = useCachedReaderPost( getTarget( props ) );
 			const nextProps = {
 				...props,
-				post: props.post ?? canonicalPost,
+				post: props.post ?? cachedPost,
 			} as Props;
 
 			return createElement( WrappedComponent, nextProps );

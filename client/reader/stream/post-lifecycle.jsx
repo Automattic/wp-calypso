@@ -146,7 +146,7 @@ class PostLifecycle extends Component {
 const ConnectedPostLifecycle = connect(
 	( _state, ownProps ) => {
 		return {
-			post: ownProps.postKey.isSynthetic ? ownProps.postKey : ownProps.canonicalPost,
+			post: ownProps.postKey.isSynthetic ? ownProps.postKey : ownProps.post,
 		};
 	},
 	{
@@ -159,7 +159,7 @@ const ConnectedPostLifecycle = connect(
 	}
 )( PostLifecycle );
 
-export default function PostLifecycleWithCanonicalPost( props ) {
-	const canonicalPost = useCachedReaderPost( props.postKey );
-	return <ConnectedPostLifecycle { ...props } canonicalPost={ canonicalPost } />;
+export default function PostLifecycleWithPost( props ) {
+	const post = useCachedReaderPost( props.postKey );
+	return <ConnectedPostLifecycle { ...props } post={ post } />;
 }

@@ -931,7 +931,7 @@ export class FullPostView extends Component {
 export const mapStateToFullPostProps = ( state, ownProps ) => {
 	const { feedId, blogId, postId } = ownProps;
 	const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-	const post = ownProps.canonicalPost || { _state: 'pending' };
+	const post = ownProps.post || { _state: 'pending' };
 	const currentPath = state.route.path.current;
 
 	const { site_ID: siteId, is_external: isExternal } = post;
@@ -962,7 +962,7 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 		}
 	}
 	if ( ownProps.referral ) {
-		props.referralPost = ownProps.canonicalReferralPost;
+		props.referralPost = ownProps.referralPost;
 	}
 
 	return props;
@@ -993,20 +993,18 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
-		const { data: canonicalPost } = useReaderPost(
+		const { data: post } = useReaderPost(
 			Object.keys( currentPostKey ).length ? currentPostKey : null
 		);
-		const { data: canonicalReferralPost } = useReaderPost( props.referral );
+		const { data: referralPost } = useReaderPost( props.referral );
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const { data: canonicalPreviousPost } = useReaderPost( previousPostKey );
-		const { data: canonicalNextPost } = useReaderPost( nextPostKey );
-		const previousPost = canonicalPreviousPost;
-		const nextPost = canonicalNextPost;
+		const { data: previousPost } = useReaderPost( previousPostKey );
+		const { data: nextPost } = useReaderPost( nextPostKey );
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1026,10 +1024,10 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				{ ...props }
 				previousPostKey={ previousPostKey }
 				nextPostKey={ nextPostKey }
-				canonicalPost={ canonicalPost }
-				canonicalReferralPost={ canonicalReferralPost }
-				previousPost={ canonicalPreviousPost }
-				nextPost={ canonicalNextPost }
+				post={ post }
+				referralPost={ referralPost }
+				previousPost={ previousPost }
+				nextPost={ nextPost }
 				previousPostUrl={ previousPostUrl }
 				nextPostUrl={ nextPostUrl }
 			/>

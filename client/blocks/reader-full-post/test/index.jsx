@@ -50,7 +50,7 @@ const fullPostState = {
 };
 
 describe( 'mapStateToFullPostProps', () => {
-	it( 'returns a pending post when no canonical post prop exists', () => {
+	it( 'returns a pending post when no post prop exists', () => {
 		const props = mapStateToFullPostProps( fullPostState, {
 			blogId: 100,
 			postId: 1,
@@ -71,7 +71,7 @@ describe( 'mapStateToFullPostProps', () => {
 			blogId: 100,
 			postId: 1,
 			referral: { blogId: 100, postId: 2 },
-			canonicalReferralPost: referralPost,
+			referralPost,
 		} );
 
 		expect( props.referralPost ).toBe( referralPost );
@@ -114,8 +114,8 @@ describe( 'withFullPostNavigation', () => {
 		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 3 } );
 		expect( WrappedComponent ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				canonicalPost: { ID: 2, site_ID: 100 },
-				canonicalReferralPost: { ID: 9, site_ID: 100 },
+				post: { ID: 2, site_ID: 100 },
+				referralPost: { ID: 9, site_ID: 100 },
 				previousPost: { ID: 1, site_ID: 100 },
 				nextPost: { ID: 3, site_ID: 100 },
 			} ),
