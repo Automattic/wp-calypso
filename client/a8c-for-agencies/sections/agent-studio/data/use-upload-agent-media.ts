@@ -1,8 +1,8 @@
 /**
  * Multipart upload to `POST /agency/<id>/profile/logo` with
- * `purpose=agent_media`. Same endpoint as the Partner Directory logo
- * uploader (the path is whitelisted upstream), but the `purpose` param
- * switches the server to a UUID filename and the richer payload below.
+ * `purpose=agent_media`. The `purpose` param switches the server to a
+ * UUID filename and the richer payload below; without it the server
+ * returns the Partner Directory logo shape (`{ logo_url }`).
  * Backend rules: jpeg/png only, 10 MB max, field name `media`.
  */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
