@@ -218,4 +218,18 @@
 		gap: 4px;
 		align-self: center;
 	}
+
+	&__row-order {
+		display: flex;
+		gap: 2px;
+		margin-block-end: 4px;
+
+		// Compact the up/down arrow buttons — they only hold a single glyph
+		// and don't need the default WP button horizontal padding.
+		.components-button {
+			min-width: 28px;
+			padding-inline: 4px;
+			font-size: 10px;
+		}
+	}
 }

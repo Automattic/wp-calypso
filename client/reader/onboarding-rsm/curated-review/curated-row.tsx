@@ -24,6 +24,11 @@ export interface DetectedRow {
 	 * export and flagged in the row UI to make the correction visible.
 	 */
 	resolvedSiteId: number | null;
+	/**
+	 * ISO-8601 timestamp of the feed's most recent item, from `feed.last_update`.
+	 * `null` when the response did not include a value. Display-only.
+	 */
+	lastUpdate: string | null;
 }
 
 interface CuratedRowProps {
@@ -40,6 +45,12 @@ interface CuratedRowProps {
 	onToggleBroken: () => void;
 	isHasIconForcedFalse: boolean;
 	onToggleHasIconFalse: () => void;
+	/** True when this entry is first within its tag (disables the move-up button). */
+	isFirst: boolean;
+	/** True when this entry is last within its tag (disables the move-down button). */
+	isLast: boolean;
+	onMoveUp: () => void;
+	onMoveDown: () => void;
 }
 
 const ICON_SIZE = 36;
@@ -53,6 +64,45 @@ const KeyValue: React.FC< { label: string; children: React.ReactNode } > = ( {
 		<span className="curated-review__kv-value">{ children }</span>
 	</div>
 );
+
+function renderLastUpdate( detected: DetectedRow | null ): React.ReactNode {
+	if ( ! detected || ! detected.lastUpdate ) {
+		return '—';
+	}
+	try {
+		const date = new Date( detected.lastUpdate );
+		if ( isNaN( date.getTime() ) ) {
+			return detected.lastUpdate;
+		}
+		const absolute = date.toLocaleDateString( undefined, {
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric',
+		} );
+		// Relative age badge (e.g. "3 days ago", "2 months ago").
+		const diffMs = Date.now() - date.getTime();
+		const diffDays = Math.floor( diffMs / 86_400_000 );
+		let relative: string;
+		if ( diffDays === 0 ) {
+			relative = 'today';
+		} else if ( diffDays === 1 ) {
+			relative = 'yesterday';
+		} else if ( diffDays < 30 ) {
+			relative = `${ diffDays }d ago`;
+		} else if ( diffDays < 365 ) {
+			relative = `${ Math.floor( diffDays / 30 ) }mo ago`;
+		} else {
+			relative = `${ Math.floor( diffDays / 365 ) }y ago`;
+		}
+		return (
+			<>
+				{ absolute } <span className="curated-review__hint">({ relative })</span>
+			</>
+		);
+	} catch {
+		return detected.lastUpdate;
+	}
+}
 
 function renderSubscribersValue( detected: DetectedRow | null ): React.ReactNode {
 	if ( ! detected || detected.subscribersCount === null ) {
@@ -110,6 +160,10 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 	onToggleBroken,
 	isHasIconForcedFalse,
 	onToggleHasIconFalse,
+	isFirst,
+	isLast,
+	onMoveUp,
+	onMoveDown,
 } ) => {
 	const effectivelyBroken = isMarkedBroken || autoFlaggedBroken;
 	// Only render the "Force hasIcon false" affordance when it would actually
@@ -191,12 +245,33 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 						) }
 					</KeyValue>
 					<KeyValue label="subscribers">{ renderSubscribersValue( detected ) }</KeyValue>
+					<KeyValue label="last post">{ renderLastUpdate( detected ) }</KeyValue>
 					<KeyValue label="hasIcon">
 						{ renderHasIconValue( detected, isHasIconForcedFalse ) }
 					</KeyValue>
 				</div>
 			</div>
 			<div className="curated-review__row-actions">
+				<div className="curated-review__row-order">
+					<Button
+						variant="tertiary"
+						onClick={ onMoveUp }
+						disabled={ isFirst }
+						aria-label="Move up"
+						title="Move up within tag"
+					>
+						▲
+					</Button>
+					<Button
+						variant="tertiary"
+						onClick={ onMoveDown }
+						disabled={ isLast }
+						aria-label="Move down"
+						title="Move down within tag"
+					>
+						▼
+					</Button>
+				</div>
 				<Button
 					variant="tertiary"
 					href={ `/reader/feeds/${ entry.feed_ID }` }

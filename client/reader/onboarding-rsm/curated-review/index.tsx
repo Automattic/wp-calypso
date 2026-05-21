@@ -6,6 +6,7 @@ import { CURATED_FILES, type CuratedFile } from '../curated-blogs/files';
 import { CuratedRow, type DetectedRow } from './curated-row';
 import { serializeCurated, type CuratedRowMetadata } from './serialize-curated';
 import { usePersistedFeedIdSet } from './use-persisted-feed-ids';
+import { useTagOrder } from './use-tag-order';
 import type { CuratedBlog } from '../curated-blogs';
 
 import './style.scss';
@@ -19,22 +20,32 @@ interface FlatRow {
 	entry: CuratedBlog;
 }
 
-function flatten( files: CuratedFile[] ): FlatRow[] {
-	const rows: FlatRow[] = [];
-	for ( const file of files ) {
-		for ( const [ tag, entries ] of Object.entries( file.tagMap ) ) {
-			for ( const entry of entries ) {
-				rows.push( { fileSlug: file.slug, tag, entry } );
-			}
-		}
-	}
-	return rows;
-}
-
 const ALL_FILES_SENTINEL = 'all';
 
 const CuratedReviewPage: React.FC = () => {
-	const flatRows = useMemo( () => flatten( CURATED_FILES ), [] );
+	const [ selectedFileSlug, setSelectedFileSlug ] = useState< string >( ALL_FILES_SENTINEL );
+	const [ showOnlyBroken, setShowOnlyBroken ] = useState( false );
+	const [ showOnlyUnmarked, setShowOnlyUnmarked ] = useState( false );
+
+	const broken = usePersistedFeedIdSet( STORAGE_KEY_BROKEN );
+	const hasIconFalse = usePersistedFeedIdSet( STORAGE_KEY_HAS_ICON_FALSE );
+	const tagOrder = useTagOrder();
+
+	// Flat list of all rows across all files, in source order by default but
+	// with any operator-defined tag reordering applied. The `tagOrder` hook
+	// returns source order unchanged when no override exists for a file/tag.
+	const flatRows = useMemo( () => {
+		const rows: FlatRow[] = [];
+		for ( const file of CURATED_FILES ) {
+			for ( const [ tag, entries ] of Object.entries( file.tagMap ) ) {
+				const ordered = tagOrder.applyOrder( file.slug, tag, entries );
+				for ( const entry of ordered ) {
+					rows.push( { fileSlug: file.slug, tag, entry } );
+				}
+			}
+		}
+		return rows;
+	}, [ tagOrder ] );
 
 	const fileRowCounts = useMemo( () => {
 		const counts = new Map< string, number >();
@@ -43,13 +54,6 @@ const CuratedReviewPage: React.FC = () => {
 		}
 		return counts;
 	}, [ flatRows ] );
-
-	const [ selectedFileSlug, setSelectedFileSlug ] = useState< string >( ALL_FILES_SENTINEL );
-	const [ showOnlyBroken, setShowOnlyBroken ] = useState( false );
-	const [ showOnlyUnmarked, setShowOnlyUnmarked ] = useState( false );
-
-	const broken = usePersistedFeedIdSet( STORAGE_KEY_BROKEN );
-	const hasIconFalse = usePersistedFeedIdSet( STORAGE_KEY_HAS_ICON_FALSE );
 
 	// Only fetch feeds for the file the operator is actively reviewing — with
 	// hundreds of curated entries spread across five files, fetching all of
@@ -117,8 +121,9 @@ const CuratedReviewPage: React.FC = () => {
 				row.entry.site_ID === 0 && ! isNaN( parsedBlogId ) && parsedBlogId > 0
 					? parsedBlogId
 					: null;
+			const lastUpdate = feed.last_update ?? null;
 			return {
-				detected: { feedUrl, hasIcon, subscribersCount, resolvedSiteId } as DetectedRow,
+				detected: { feedUrl, hasIcon, subscribersCount, resolvedSiteId, lastUpdate } as DetectedRow,
 				iconUrl: hasIcon ? feed.image : null,
 				autoFlaggedBroken: false,
 			};
@@ -191,10 +196,18 @@ const CuratedReviewPage: React.FC = () => {
 
 	const serializeFile = useCallback(
 		( file: CuratedFile ): { source: string; missing: number } => {
+			// Apply any operator-defined tag ordering so the exported source
+			// matches what the operator sees in the UI.
+			const orderedTagMap = Object.fromEntries(
+				Object.entries( file.tagMap ).map( ( [ tag, entries ] ) => [
+					tag,
+					tagOrder.applyOrder( file.slug, tag, entries ),
+				] )
+			);
 			let missing = 0;
 			const source = serializeCurated( {
 				variableName: file.variableName,
-				tagMap: file.tagMap,
+				tagMap: orderedTagMap,
 				getMetadata: ( entry ) => {
 					if ( broken.feedIds.has( entry.feed_ID ) ) {
 						// Operator-marked broken — drop from output.
@@ -216,7 +229,7 @@ const CuratedReviewPage: React.FC = () => {
 			} );
 			return { source, missing };
 		},
-		[ metadataByFeedId, broken.feedIds ]
+		[ metadataByFeedId, broken.feedIds, tagOrder ]
 	);
 
 	const copyFile = useCallback(
@@ -325,6 +338,19 @@ const CuratedReviewPage: React.FC = () => {
 					>
 						Clear all hasIcon-false
 					</Button>
+					{ tagOrder.hasAnyOverride && (
+						<Button
+							variant="link"
+							isDestructive
+							onClick={ () => {
+								if ( window.confirm( 'Reset all tag ordering back to source-file order?' ) ) {
+									CURATED_FILES.forEach( ( f ) => tagOrder.resetFile( f.slug ) );
+								}
+							} }
+						>
+							Reset tag ordering
+						</Button>
+					) }
 				</div>
 
 				<div className="curated-review__copy-buttons">
@@ -359,6 +385,13 @@ const CuratedReviewPage: React.FC = () => {
 								const row = queryableRows[ index ];
 								const meta = detectedRows[ index ];
 								const query = feedQueries[ index ];
+								// Determine position within this tag so we can disable
+								// the up/down buttons at the edges.
+								const file = CURATED_FILES.find( ( f ) => f.slug === row.fileSlug );
+								const tagEntries = file
+									? tagOrder.applyOrder( row.fileSlug, row.tag, file.tagMap[ row.tag ] ?? [] )
+									: [];
+								const posInTag = tagEntries.findIndex( ( e ) => e.feed_ID === row.entry.feed_ID );
 								return (
 									<CuratedRow
 										key={ row.entry.feed_ID }
@@ -373,6 +406,24 @@ const CuratedReviewPage: React.FC = () => {
 										onToggleBroken={ () => broken.toggle( row.entry.feed_ID ) }
 										isHasIconForcedFalse={ hasIconFalse.feedIds.has( row.entry.feed_ID ) }
 										onToggleHasIconFalse={ () => hasIconFalse.toggle( row.entry.feed_ID ) }
+										isFirst={ posInTag <= 0 }
+										isLast={ posInTag >= tagEntries.length - 1 }
+										onMoveUp={ () =>
+											tagOrder.moveUp(
+												row.fileSlug,
+												row.tag,
+												file?.tagMap ?? {},
+												row.entry.feed_ID
+											)
+										}
+										onMoveDown={ () =>
+											tagOrder.moveDown(
+												row.fileSlug,
+												row.tag,
+												file?.tagMap ?? {},
+												row.entry.feed_ID
+											)
+										}
 									/>
 								);
 							} ) }
