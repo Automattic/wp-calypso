@@ -292,5 +292,36 @@ describe( 'CheckoutSidebarPlanUpsell', () => {
 			// upsellVariant.priceInteger = 24000¢ = $240.
 			expect( screen.getByText( '$240' ) ).toBeVisible();
 		} );
+
+		it( 'displays the exact current plan priceInteger when the term price does not divide evenly by months', () => {
+			// priceInteger=10000¢, termIntervalInMonths=12: 10000/12 = 833.33¢/month.
+			// getPlanPriceForDuration would accumulate 12 × 833 = 9996¢ = $99.96 (rounded down by 4¢).
+			// The component must show the exact priceInteger = 10000¢ = $100.00 instead.
+			( useGetProductVariants as jest.Mock ).mockReturnValue( [
+				makeVariant( {
+					productBillingTermInMonths: 12,
+					termIntervalInMonths: 12,
+					productId: 1009,
+					priceInteger: 10000,
+					priceBeforeDiscounts: 24000,
+					introductoryInterval: 1,
+					introductoryTerm: 'year',
+					variantLabel: { noun: 'Year', adjective: 'Annual' },
+				} ),
+				makeVariant( {
+					productBillingTermInMonths: 24,
+					termIntervalInMonths: 24,
+					productId: 1010,
+					priceInteger: 20000,
+					priceBeforeDiscounts: 48000,
+					introductoryInterval: 2,
+					introductoryTerm: 'year',
+					variantLabel: { noun: 'Two years', adjective: 'Two-year' },
+				} ),
+			] );
+			render( <CheckoutSidebarPlanUpsell /> );
+			expect( screen.getByText( '$100' ) ).toBeVisible();
+			expect( screen.queryByText( '$99.96' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
