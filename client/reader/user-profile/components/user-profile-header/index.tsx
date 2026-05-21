@@ -8,6 +8,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -78,7 +79,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					<UserAvatar user={ user } size={ 56 } hideHovercard />
 					<div className="user-profile-header__names">
 						<h1>
-							{ user.display_name }
+							{ decodeEntities( user.display_name ) }
 							{ user.profile_URL && (
 								<a
 									className="user-profile-header__gravatar-badge"
@@ -113,7 +114,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									'is-expanded': isExpanded,
 								} ) }
 							>
-								{ user.description }
+								{ decodeEntities( user.description ) }
 							</p>
 							{ showMoreToggle && (
 								<button
