@@ -7,7 +7,7 @@ import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { getBackupUrl } from '../../utils/site-backup';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSimple } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import type { Site, SiteActivityLog } from '@automattic/api-core';
@@ -107,7 +107,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
 	}
 
-	if ( isSelfHostedJetpackConnected( site ) && site.is_multisite ) {
+	if ( site.is_multisite && ! isSimple( site ) ) {
 		return (
 			<OverviewCard
 				{ ...CARD_PROPS }
