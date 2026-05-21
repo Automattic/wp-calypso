@@ -91,7 +91,7 @@ export default function PersonalizationForm( {
 			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
 			{ value: 'digital_strategy_marketing', label: translate( 'Digital marketing' ) },
-			{ value: 'ecommerce_development', label: translate( 'eCommerce Development' ) },
+			{ value: 'ecommerce_development', label: translate( 'Ecommerce development' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
 			{ value: 'other', label: translate( 'Other' ) },
 		],
