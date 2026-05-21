@@ -23,6 +23,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectFediverseError } from './error-projection';
 import { errorMessage, followErrorMessage } from './profile-errors';
+import { FEDIVERSE_REACTIONS } from './reactions-config';
 import {
 	getFollowersUrl,
 	getFollowingUrl,
@@ -339,6 +340,7 @@ export function FediverseAuthorProfilePanel( {
 				line: String( translate( 'Something went wrong with your Fediverse connection.' ) ),
 			} }
 			className="fediverse-author-profile"
+			reactions={ FEDIVERSE_REACTIONS }
 		/>
 	);
 }

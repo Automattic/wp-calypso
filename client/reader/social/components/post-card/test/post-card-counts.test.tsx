@@ -193,6 +193,66 @@ describe( 'PostCardCounts', () => {
 	} );
 } );
 
+describe( 'PostCardCounts reactions gate (CM-771)', () => {
+	it( 'still renders Like, Repost, and replies when reactions is omitted', () => {
+		// Sanity baseline: omitting the prop preserves the historical
+		// "render all affordances" behaviour for every caller that hasn't
+		// opted into the gate (atmosphere / mastodon today).
+		render( wrap( <PostCardCounts post={ post } /> ) );
+		expect( screen.getByText( /^Replies:$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /^Reposts:$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /^Likes:$/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the Like affordance entirely when reactions.like is false', () => {
+		render( wrap( <PostCardCounts post={ post } reactions={ { like: false } } /> ) );
+		expect( screen.queryByText( /^Likes:$/ ) ).toBeNull();
+		// Reply + Repost still rendered when only `like` is gated.
+		expect( screen.getByText( /^Replies:$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /^Reposts:$/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the Repost affordance entirely when reactions.repost is false', () => {
+		render( wrap( <PostCardCounts post={ post } reactions={ { repost: false } } /> ) );
+		expect( screen.queryByText( /^Reposts:$/ ) ).toBeNull();
+		expect( screen.getByText( /^Replies:$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /^Likes:$/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the reply affordance entirely when reactions.reply is false', () => {
+		// Even when a thread URL would otherwise turn the replies node into
+		// an in-app link, the gate suppresses it.
+		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
+		render( wrap( <PostCardCounts post={ post } reactions={ { reply: false } } />, getThreadUrl ) );
+		expect( screen.queryByText( /^Replies:$/ ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: /replies/i } ) ).toBeNull();
+		expect( screen.getByText( /^Reposts:$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /^Likes:$/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides all three when every key is false (Fediverse default today)', () => {
+		render(
+			wrap(
+				<PostCardCounts post={ post } reactions={ { like: false, repost: false, reply: false } } />
+			)
+		);
+		expect( screen.queryByText( /^Replies:$/ ) ).toBeNull();
+		expect( screen.queryByText( /^Reposts:$/ ) ).toBeNull();
+		expect( screen.queryByText( /^Likes:$/ ) ).toBeNull();
+		// BlogAboutButton stays — it's not a reaction on the source post.
+		expect( screen.getByRole( 'button', { name: /Blog about this post/i } ) ).toBeVisible();
+	} );
+
+	it( 'omitted keys default to true (per-key opt-out, not opt-in)', () => {
+		// Only `reply: false` is set → Like + Repost still render via the
+		// default-true semantics.
+		render( wrap( <PostCardCounts post={ post } reactions={ { reply: false } } /> ) );
+		expect( screen.queryByText( /^Replies:$/ ) ).toBeNull();
+		expect( screen.getByText( /^Reposts:$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /^Likes:$/ ) ).toBeInTheDocument();
+	} );
+} );
+
 describe( 'PostCardCounts prominentTimestamp variant', () => {
 	it( 'hides all three count digits when prominentTimestamp is true', () => {
 		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
