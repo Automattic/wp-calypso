@@ -28,6 +28,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
+import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useSocialService } from './use-social-service';
 
 import './style.scss';
@@ -48,9 +49,15 @@ const UserStepComponent: StepType = function UserStep( {
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
-	// Users arriving from woocommerce.com's hosting-solutions CTA see the "open email + slider"
-	// account-step variant. Everyone else sees the default single-column signup.
-	const isEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
+	// Everyone else is bucketed by calypso_account_step_improvement_202605_v2 (round 2):
+	//   - control                            -> default single-column signup
+	//   - treatment_email_slider_webp        -> open email + slider, email on top
+	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
+	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
+		useAccountCreationExperiment( { flow } );
+	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -118,6 +125,7 @@ const UserStepComponent: StepType = function UserStep( {
 				backButtonInFooter={ ! isStepContainerV2 }
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
 				isEmailFirstVariant={ isEmailFirstVariant }
+				isEmailAtBottom={ isEmailAtBottom }
 				allowedSocialServices={ partnerConfig?.ssoProviders }
 				customTosElement={ signupTosElement }
 			/>

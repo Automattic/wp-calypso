@@ -19,7 +19,7 @@
 
 	@media ( min-width: $break-wide ) {
 		display: flex;
-		background: var( --studio-gray-0 );
+		background: var( --color-surface-backdrop );
 		gap: 12px;
 	}
 
@@ -57,7 +57,7 @@
 
 		.on-this-day__list-column-header {
 			padding: 16px $on-this-day-spacing;
-			border-bottom: 1px solid var( --studio-gray-0 );
+			border-bottom: 1px solid var( --color-neutral-0 );
 
 			.navigation-header__main {
 				align-items: center;
@@ -109,22 +109,22 @@
 			}
 
 			div[role='row'] {
-				border-top: 1px solid var( --studio-gray-0 );
+				border-top: 1px solid var( --color-neutral-0 );
 
 				&.is-selected + li {
-					border-top: 1px solid var( --studio-gray-0 );
+					border-top: 1px solid var( --color-neutral-0 );
 				}
 
 				&:hover {
 					cursor: pointer;
-					background-color: #f7faff;
+					background-color: var( --dashboard-item-selected__background-color, #f7faff );
 				}
 
 				&.is-selected {
-					border-top: 1px solid #3858e940;
+					border-top: 1px solid var( --dashboard-item-selected__border-color, #3858e940 );
 
 					.dataviews-view-list__item-wrapper {
-						background-color: #f7faff;
+						background-color: var( --dashboard-item-selected__background-color, #f7faff );
 					}
 				}
 

@@ -619,14 +619,22 @@ export const sitePerformanceBackendRoute = createRoute( {
 	path: 'backend',
 } );
 
+async function prefetchApmAggregate( siteSlug: string ) {
+	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+		await Promise.all( [
+			import( '@automattic/api-queries' ),
+			import( '../../sites/performance/backend/timeframe' ),
+		] );
+	await queryClient.ensureQueryData(
+		siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
+	);
+}
+
 export const sitePerformanceBackendIndexRoute = createRoute( {
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmOverviewQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmOverviewQuery( site.ID ) );
-	},
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend' )( {
@@ -645,13 +653,7 @@ export const sitePerformanceBackendTransactionsRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'transactions',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmTransactionsQuery } = await import(
-			'../../sites/performance/backend/mock-data'
-		);
-		await queryClient.ensureQueryData( siteApmTransactionsQuery( site.ID ) );
-	},
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-transactions' )( {
@@ -670,11 +672,7 @@ export const sitePerformanceBackendDatabaseRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'database',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmSlowQueriesQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmSlowQueriesQuery( site.ID ) );
-	},
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-database' )( {
@@ -693,13 +691,7 @@ export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'external-requests',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmExternalRequestsQuery } = await import(
-			'../../sites/performance/backend/mock-data'
-		);
-		await queryClient.ensureQueryData( siteApmExternalRequestsQuery( site.ID ) );
-	},
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-external-requests' )( {
@@ -720,11 +712,7 @@ export const sitePerformanceBackendWordPressRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'wordpress',
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { siteApmWordPressQuery } = await import( '../../sites/performance/backend/mock-data' );
-		await queryClient.ensureQueryData( siteApmWordPressQuery( site.ID ) );
-	},
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-wordpress' )( {

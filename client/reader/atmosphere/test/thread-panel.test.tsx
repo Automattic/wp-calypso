@@ -118,7 +118,7 @@ describe( 'ThreadPanel', () => {
 		);
 	} );
 
-	it( 'renders auth_required error with no Retry button', async () => {
+	it( 'renders auth_required error with a Retry button', async () => {
 		nock( BASE )
 			.get( PATH )
 			.query( { uri: TARGET_URI } )
@@ -128,9 +128,9 @@ describe( 'ThreadPanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () =>
-			expect( screen.getAllByText( /Reconnect needed/i ).length ).toBeGreaterThan( 0 )
+			expect( screen.getAllByText( /Couldn't load thread/i ).length ).toBeGreaterThan( 0 )
 		);
-		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders not_found error with no Retry button', async () => {
@@ -148,7 +148,7 @@ describe( 'ThreadPanel', () => {
 		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
 	} );
 
-	it( 'renders the Reconnect-needed empty state for invalid_handle / invalid_credentials / auth_failed', async () => {
+	it( 'renders a retryable empty state for invalid_handle / invalid_credentials / auth_failed', async () => {
 		nock( BASE )
 			.get( PATH )
 			.query( { uri: TARGET_URI } )
@@ -158,9 +158,9 @@ describe( 'ThreadPanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () =>
-			expect( screen.getAllByText( /Reconnect needed/i ).length ).toBeGreaterThan( 0 )
+			expect( screen.getAllByText( /Couldn't load thread/i ).length ).toBeGreaterThan( 0 )
 		);
-		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders the Connection-no-longer-exists empty state for connection_not_found', async () => {

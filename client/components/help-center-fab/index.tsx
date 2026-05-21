@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { useEffect } from 'react';
 import useShowHelpCenter from 'calypso/components/help-center/use-show-help-center';
 import { useCurrentRoute } from 'calypso/components/route';
 import HelpCenterLoader from 'calypso/layout/help-center-loader';
@@ -33,19 +34,33 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useShowHelpCenter();
 	const { currentRoute } = useCurrentRoute();
 
+	// The Help Center panel's "above the FAB" positioning keys off this body
+	// class — see `body.has-help-center-fab` in `./style.scss`.
+	useEffect( () => {
+		document.body.classList.add( 'has-help-center-fab' );
+		return () => document.body.classList.remove( 'has-help-center-fab' );
+	}, [] );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_inlinehelp_impression', {
+			location: 'fab',
+			section: sectionName,
+		} );
+	}, [ sectionName ] );
+
 	const handleClick = () => {
 		const willShow = ! isHelpCenterShown;
 		recordTracksEvent( `calypso_inlinehelp_${ willShow ? 'show' : 'close' }`, {
-			location: 'help-center-fab',
+			location: 'fab',
 			section: sectionName,
 		} );
 		setShowHelpCenter( willShow );
 	};
 
 	const label = isHelpCenterShown
-		? /* translators: Tooltip on the floating Help button when the Help Center panel is open. */
+		? /* translators: Accessible label on the floating Help button when the Help Center panel is open. */
 		  __( 'Close help' )
-		: /* translators: Tooltip on the floating Help button that opens the Help Center. */
+		: /* translators: Accessible label on the floating Help button that opens the Help Center. */
 		  __( 'Help' );
 
 	return (
@@ -63,8 +78,7 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 			<Button
 				className={ clsx( 'help-center-fab', { 'is-active': isHelpCenterShown } ) }
 				onClick={ handleClick }
-				label={ label }
-				showTooltip
+				aria-label={ label }
 				aria-haspopup="dialog"
 				aria-expanded={ isHelpCenterShown }
 			>

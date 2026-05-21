@@ -1,0 +1,730 @@
+@import '@automattic/color-studio/dist/color-variables';
+
+/*
+This mixin generates a color palette for the dark theme. Low indexes are subtle
+tinted surfaces on dark backgrounds; higher indexes stay bright enough for
+foregrounds/actions.
+
+--studio-blue-0: 98% dashboard surface + base color
+--studio-blue-5: 95% dashboard surface + base color
+...
+--studio-blue-50: var( base color );
+...
+--studio-blue-90: 38% base color + white
+--studio-blue-100: 22% base color + white
+*/
+@mixin color-scheme-dark-theme-color-palette($variable-name, $base-color) {
+	--dashboard-#{$variable-name}-base: #{$base-color};
+
+	@each $index, $surface-percentage in (0: 98%, 5: 95%, 10: 91%, 20: 85%, 30: 76%, 40: 64%) {
+		--#{$variable-name}-#{$index}: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) #{$surface-percentage},
+			var( --dashboard-#{$variable-name}-base )
+		);
+	}
+
+	--#{$variable-name}-50: var( --dashboard-#{$variable-name}-base );
+
+	@each $index, $base-percentage in (60: 85%, 70: 70%, 80: 55%, 90: 38%, 100: 22%) {
+		--#{$variable-name}-#{$index}: color-mix(
+			in srgb,
+			var( --dashboard-#{$variable-name}-base ) #{$base-percentage},
+			#fff
+		);
+	}
+
+	--#{$variable-name}: var( --#{$variable-name}-50 );
+}
+
+/*
+This mixin generates alias variables for a color palette. For example, the
+--studio-wordpress-blue palette is an alias of the --studio-blue palette.
+*/
+@mixin color-scheme-dark-theme-color-palette-alias($alias-name, $source-name) {
+	@each $index in 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 {
+		--#{$alias-name}-#{$index}: var( --#{$source-name}-#{$index} );
+	}
+
+	--#{$alias-name}: var( --#{$alias-name}-50 );
+}
+
+@mixin color-scheme-dark-theme-palettes {
+	@include color-scheme-dark-theme-color-palette( 'studio-blue', $studio-blue );
+	@include color-scheme-dark-theme-color-palette-alias( 'studio-wordpress-blue', 'studio-blue' );
+
+	@include color-scheme-dark-theme-color-palette( 'studio-gray', $studio-gray );
+	@include color-scheme-dark-theme-color-palette-alias( 'studio-neutral', 'studio-gray' );
+	@include color-scheme-dark-theme-color-palette-alias( 'color-neutral', 'studio-gray' );
+}
+
+// Indicates that this stylesheet supports dark mode, for browser-native UI such as Safari scrollbars.
+@mixin color-scheme-dark-theme-color-scheme {
+	color-scheme: dark;
+}
+
+@mixin color-scheme-dark-theme-calypso-properties {
+	--color-text: var( --dashboard__text-color );
+	--color-surface: var( --dashboard-surface__background-color );
+	--color-border-subtle: var( --dashboard-surface__border-color );
+}
+
+@mixin color-scheme-dark-theme-tokens {
+	// Overrides the default `--wp-components-*` to ensure all components that
+	// rely on it adapt to the dark theme's text color.
+	--wp-components-color-foreground: var( --dashboard__text-color );
+	--wp-components-color-foreground-inverted: #1e1e1e;
+	--wp-components-color-background: var( --dashboard-surface__background-color );
+	--wp-components-color-accent: var( --wp-admin-theme-color );
+	--wp-components-color-accent-darker-10: var( --wp-admin-theme-color-darker-10 );
+	--wp-components-color-accent-darker-20: var( --wp-admin-theme-color-darker-20 );
+	--wp-components-color-accent-inverted: #fff;
+	--wpds-color-fg-interactive-brand: var( --wp-admin-theme-color );
+	--wpds-color-fg-interactive-brand-active: var( --wp-admin-theme-color );
+	--wpds-color-stroke-focus-brand: var( --wp-admin-theme-color );
+	--wp-components-color-gray-800: #e0e0e0;
+	--wp-components-color-gray-700: #bdbdbd;
+	--wp-components-color-gray-600: #8a8a8a;
+	--wp-components-color-gray-400: #5a5a5a;
+	--wp-components-color-gray-300: #4a4a4a;
+	--wp-components-color-gray-200: #3a3a3a;
+	--wp-components-color-gray-100: #2a2a2a;
+
+	// Theme
+	--wp-admin-theme-color: #5b8ef7;
+	--wp-admin-theme-color--rgb: 91, 142, 247;
+	--wp-admin-theme-color-darker-10: #7ba5f9;
+	--wp-admin-theme-color-darker-10--rgb: 123, 165, 249;
+	--wp-admin-theme-color-darker-20: #9bbcfb;
+	--wp-admin-theme-color-darker-20--rgb: 155, 188, 251;
+
+	// Layout
+	--dashboard__background-color: #1e1e1e;
+	--dashboard-inline-code__background-color: #3a3a3a;
+	--dashboard__text-color: #e0e0e0;
+	--dashboard-header__background-color: rgba( 30, 30, 30, 0.9 );
+	--dashboard-header__color: #e0e0e0;
+	--dashboard-header__border-color: #2f2f2f;
+	--dashboard-header__divider-color: #3a3a3a;
+
+	// Shared surfaces and controls
+	--dashboard-surface__background-color: #2a2a2a;
+	--dashboard-surface__border-color: #4a4a4a;
+	--dashboard-field__border-color: #949494;
+	--dashboard__text-muted-color: #bdbdbd;
+	--dashboard-subtle__color: #bdbdbd;
+	--dashboard-item-selected__background-color: rgba( var( --wp-admin-theme-color--rgb ), 0.12 );
+	--dashboard-item-selected-hover__background-color: rgba(
+		var( --wp-admin-theme-color--rgb ),
+		0.24
+	);
+	--dashboard-item-selected__border-color: var( --wp-admin-theme-color );
+	--dashboard-warning__background-color: rgba( 212, 118, 8, 0.18 );
+	--dashboard-warning__border-color: var( --dashboard__background-color-warning );
+	--dashboard-warning__action-color: var( --dashboard__text-color );
+	--dashboard-warning__action-color-hover: #f0f0f0;
+	--dashboard-warning__action-color-active: #fff;
+	--dashboard__foreground-color-success: #75d488;
+	--dashboard__foreground-color-warning: #f5c15c;
+	--dashboard__foreground-color-error: #ff8080;
+	--dashboard-danger__color: #ff8080;
+
+	--dashboard-danger__color-hover: #ff9b9b;
+	--dashboard-danger__color-active: #ffb3b3;
+
+	// Menu
+	--dashboard-menu-item__color: #bdbdbd;
+	--dashboard-menu-item-active__color: #fff;
+
+	// Secondary menu
+	--dashboard-secondary-menu-item__color: #e0e0e0;
+
+	// Overview
+	--dashboard-overview__divider-color: #2f2f2f;
+
+	// Shared border tokens
+	--color-border: var( --dashboard-surface__border-color );
+	--color-border-subtle: var( --dashboard-surface__border-color );
+
+	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
+	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
+	// (white text on colored bg, black outlines) depend on them being literal.
+	--jp-black-80: #e0e0e0;
+	--jp-white-off: #2a2a2a;
+	--jp-gray: #3a3a3a;
+	--jp-gray-0: #2a2a2a;
+	--jp-gray-5: #3a3a3a;
+	--jp-gray-10: #4a4a4a;
+	--jp-gray-20: #5a5a5a;
+	--jp-gray-30: #757575;
+	--jp-gray-40: #8a8a8a;
+	--jp-gray-50: #a0a0a0;
+	--jp-gray-60: #b0b0b0;
+	--jp-gray-70: #bdbdbd;
+	--jp-gray-80: #e0e0e0;
+	--jp-gray-90: #eaeaea;
+	--jp-gray-100: #f0f0f0;
+	--jp-gray-off: #2a2a2a;
+}
+
+@mixin color-scheme-dark-theme-calypso-tokens {
+	@include color-scheme-dark-theme-tokens;
+	@include color-scheme-dark-theme-palettes;
+	@include color-scheme-dark-theme-color-scheme;
+	@include color-scheme-dark-theme-color-palette-alias( 'color-primary', 'studio-blue' );
+	@include color-scheme-dark-theme-color-palette-alias( 'color-accent', 'studio-wordpress-blue' );
+	@include color-scheme-dark-theme-color-palette(
+		'color-success',
+		var( --dashboard__foreground-color-success )
+	);
+	@include color-scheme-dark-theme-color-palette(
+		'color-warning',
+		var( --dashboard__foreground-color-warning )
+	);
+	@include color-scheme-dark-theme-color-palette(
+		'color-error',
+		var( --dashboard__foreground-color-error )
+	);
+
+	// Classic Calypso uses `--color-neutral-*` as a legacy compatibility scale,
+	// not a purely numeric gray ramp: older components use the same family for
+	// surfaces, borders, muted text, and primary text. Keep these aliases mapped
+	// to semantic roles and prefer local token remaps when a component needs a
+	// different meaning for one neutral token.
+	--color-neutral-10: var( --dashboard-surface__border-color );
+	--color-neutral-0: var( --dashboard-surface__background-color );
+	--color-neutral-5: var( --dashboard-surface__border-color );
+	--color-neutral-20: var( --dashboard-field__border-color );
+	--color-neutral-30: var( --dashboard-field__border-color );
+	--color-neutral-40: var( --dashboard__text-muted-color );
+	--color-neutral-50: var( --dashboard__text-muted-color );
+	--color-neutral-60: var( --dashboard__text-muted-color );
+	--color-neutral-dark: var( --color-neutral-70 );
+	--color-neutral-light: var( --dashboard__text-muted-color );
+	--color-neutral-70: var( --dashboard__text-color );
+	--color-neutral-80: var( --dashboard__text-color );
+	--color-neutral-100: var( --dashboard__text-color );
+	--studio-black: var( --dashboard__text-color );
+	--studio-gray-30: var( --dashboard__text-muted-color );
+	--studio-gray-40: var( --dashboard__text-muted-color );
+	--studio-gray-50: var( --dashboard__text-muted-color );
+	--studio-gray-60: var( --dashboard__text-muted-color );
+	--studio-gray-80: var( --dashboard__text-color );
+	--studio-gray-100: var( --dashboard__text-color );
+	--color-main-background: var( --dashboard__background-color );
+	--color-surface: var( --dashboard-surface__background-color );
+	--color-surface-1: var( --dashboard-surface__background-color );
+	--color-surface-subtle: var( --dashboard-item-selected__background-color );
+	--color-surface-backdrop: var( --dashboard__background-color );
+	--color-text: var( --dashboard__text-color );
+	--color-text-subtle: var( --dashboard__text-muted-color );
+	--color-text-inverted: var( --wp-components-color-accent-inverted );
+	--color-border: var( --dashboard-surface__border-color );
+	--color-border-subtle: var( --dashboard-surface__border-color );
+	--color-border-shadow: var( --dashboard-surface__border-color );
+	--color-border-inverted: var( --wp-components-color-accent-inverted );
+	--color-border-secondary: var( --dashboard-surface__border-color );
+	--color-link: var( --wp-admin-theme-color-darker-20 );
+	--color-link-dark: var( --wp-admin-theme-color-darker-10 );
+	--color-link-light: var( --wp-admin-theme-color );
+	--color-print: var( --dashboard-item-selected__background-color );
+}
+
+@mixin color-scheme-dark-theme-card {
+	.components-surface.components-card {
+		background-color: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
+	}
+
+	.components-card__divider {
+		color: var( --dashboard-surface__border-color );
+		border-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-card__header {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+}
+
+@mixin color-scheme-dark-theme-form-controls {
+	.components-input-control__container {
+		color: var( --dashboard__text-color );
+	}
+
+	.components-radio-control__input[type='radio'] {
+		border-color: var( --dashboard-field__border-color );
+		background-color: transparent;
+	}
+
+	.components-radio-control__input[type='radio']:checked {
+		border: 1px solid var( --dashboard-field__border-color );
+		background-color: var( --wp-admin-theme-color );
+	}
+
+	.components-input-control__container:has( .components-input-control__input:disabled ) {
+		background-color: var( --dashboard-surface__background-color );
+		opacity: 0.72;
+	}
+
+	.components-input-control__backdrop,
+	.components-textarea-control__input {
+		border-color: var( --dashboard-field__border-color );
+	}
+
+	.components-input-control__backdrop {
+		background-color: transparent;
+	}
+
+	.components-input-control__container:has( .components-input-control__input:disabled )
+		.components-input-control__backdrop {
+		border-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-input-control__input,
+	.components-textarea-control__input,
+	.components-base-control__label,
+	.components-input-control__label,
+	.components-checkbox-control__label,
+	.components-toggle-control__label:not( .is-disabled ) {
+		color: var( --dashboard__text-color );
+	}
+
+	.components-base-control__help,
+	.components-checkbox-control__help {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.components-input-control__container .components-input-control__input,
+	.components-input-control__input,
+	.components-textarea-control__input {
+		color: var( --dashboard__text-color );
+		caret-color: var( --dashboard__text-color );
+	}
+
+	.components-input-control__container .components-input-control__input:disabled,
+	.components-input-control__input:disabled {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.components-input-control__input::placeholder,
+	.components-textarea-control__input::placeholder {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.components-input-control__container .components-input-control__input::selection,
+	.components-input-control__input::selection,
+	.components-textarea-control__input::selection {
+		background-color: var( --wp-admin-theme-color );
+		color: #fff;
+		-webkit-text-fill-color: #fff;
+	}
+
+	.components-input-control__container .components-input-control__input::-moz-selection,
+	.components-input-control__input::-moz-selection,
+	.components-textarea-control__input::-moz-selection {
+		background-color: var( --wp-admin-theme-color );
+		color: #fff;
+	}
+
+	.components-form-token-field {
+		.components-form-token-field__label {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-form-token-field__input-container {
+			background: transparent;
+			border-color: var( --dashboard-field__border-color );
+			color: var( --dashboard__text-color );
+
+			&:focus,
+			&.is-active {
+				border-color: var( --wp-admin-theme-color );
+				box-shadow: 0 0 0 0.5px var( --wp-admin-theme-color );
+			}
+
+			&.is-disabled {
+				background: var( --dashboard-surface__background-color );
+				border-color: var( --dashboard-surface__border-color );
+				opacity: 0.72;
+			}
+
+			input[type='text'].components-form-token-field__input {
+				color: var( --dashboard__text-color );
+				caret-color: var( --dashboard__text-color );
+
+				&::placeholder {
+					color: var( --dashboard__text-muted-color );
+				}
+			}
+		}
+
+		.components-form-token-field__help {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.components-form-token-field__token {
+			color: var( --dashboard__text-color );
+
+			&.is-validating .components-form-token-field__token-text,
+			&.is-validating .components-form-token-field__remove-token {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			&.is-success .components-form-token-field__token-text,
+			&.is-success .components-form-token-field__remove-token {
+				background: var( --dashboard__foreground-color-success );
+				color: var( --wp-components-color-foreground-inverted );
+			}
+
+			&.is-error .components-form-token-field__token-text,
+			&.is-error .components-form-token-field__remove-token {
+				background: var( --dashboard__foreground-color-error );
+				color: var( --wp-components-color-foreground-inverted );
+			}
+		}
+
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token.components-button {
+			background: var( --wp-components-color-gray-200 );
+			color: var( --dashboard__text-color );
+		}
+
+		.components-form-token-field__remove-token.components-button:hover:not( :disabled ) {
+			background: var( --wp-components-color-gray-300 );
+			color: var( --dashboard__text-color );
+		}
+
+		.components-form-token-field__suggestions-list {
+			background: var( --dashboard-surface__background-color );
+			box-shadow: inset 0 1px 0 0 var( --dashboard-field__border-color );
+		}
+
+		.components-form-token-field__suggestion {
+			color: var( --dashboard__text-color );
+
+			&.is-selected {
+				background: var( --dashboard-item-selected__background-color );
+				color: var( --dashboard__text-color );
+			}
+
+			&[aria-disabled='true'] {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			&[aria-disabled='true'].is-selected {
+				background: color-mix(
+					in srgb,
+					var( --dashboard-surface__background-color ) 92%,
+					var( --wp-admin-theme-color )
+				);
+			}
+		}
+	}
+}
+
+@mixin color-scheme-dark-theme-summary-button {
+	.summary-button.components-button {
+		color: var( --dashboard__text-color );
+
+		.summary-button-title {
+			color: var( --dashboard__text-color );
+		}
+
+		.summary-button-navigation-icon,
+		.summary-button-decoration,
+		.summary-button-decoration svg {
+			color: var( --dashboard__text-muted-color );
+			fill: var( --dashboard__text-muted-color );
+		}
+
+		&.has-density-low {
+			background-color: var( --dashboard-surface__background-color );
+			border-color: var( --dashboard-surface__border-color );
+		}
+
+		&.has-density-medium,
+		&.has-density-medium-low {
+			border-bottom-color: var( --dashboard-surface__border-color );
+		}
+
+		&:hover:not( :disabled, [aria-disabled='true'] ) {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 82%,
+				var( --wp-admin-theme-color )
+			);
+			color: var( --dashboard__text-color );
+
+			.summary-button-title {
+				color: var( --dashboard-menu-item-active__color );
+			}
+
+			.summary-button-navigation-icon,
+			.summary-button-decoration,
+			.summary-button-decoration svg {
+				color: var( --dashboard-menu-item-active__color );
+				fill: var( --dashboard-menu-item-active__color );
+			}
+		}
+	}
+}
+
+@mixin color-scheme-dark-theme-dataviews {
+	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
+
+	.dataviews-view-table {
+		color: var( --dashboard__text-muted-color );
+
+		th {
+			color: var( --dashboard__text-color );
+		}
+
+		tr {
+			border-top-color: var( --dashboard-surface__border-color );
+		}
+
+		th.dataviews-view-table__actions-column--stuck::after,
+		td.dataviews-view-table__actions-column--stuck::after {
+			background-color: var( --dashboard-surface__border-color );
+		}
+
+		thead.dataviews-view-table__thead--stuck::after {
+			background-color: var( --dashboard-surface__background-color );
+		}
+
+		.dataviews-view-table-header-button:not( :hover ) {
+			color: var( --dashboard__text-color );
+		}
+
+		.dataviews-view-table__group-header-cell {
+			color: var( --dashboard__text-color );
+		}
+
+		tr.is-selected,
+		tr.is-selected .dataviews-view-table__actions-column--sticky,
+		&.has-bulk-actions tr.is-selected .dataviews-view-table__actions-column--sticky,
+		&.has-bulk-actions tr.is-selected:hover .dataviews-view-table__actions-column--sticky {
+			background-color: var( --dashboard-item-selected__background-color );
+		}
+
+		tr.is-selected {
+			color: var( --dashboard__text-color );
+
+			&,
+			& + tr {
+				border-top-color: var( --dashboard-item-selected__border-color );
+			}
+		}
+	}
+
+	.dataviews-title-field,
+	.dataviews-title-field a,
+	.dataviews-title-field button.components-button.is-link,
+	.dataviews-title-field--clickable {
+		color: var( --dashboard__text-color );
+
+		&:hover {
+			color: var( --wp-admin-theme-color );
+		}
+	}
+
+	.dashboard-dataviews-empty-state__heading {
+		color: var( --dashboard__text-color );
+	}
+
+	.dataviews-view-grid__media {
+		background-color: var( --dashboard-surface__background-color );
+
+		.dataviews-view-grid__media-placeholder {
+			background: var( --dashboard-surface__background-color );
+		}
+	}
+
+	.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button {
+		background-color: var( --dashboard-surface__background-color );
+	}
+
+	.dataviews-view-list div[role='row'],
+	.dataviews-view-list div[role='article'] {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-view-list div[role='row'].is-selected,
+	.dataviews-view-list div[role='article'].is-selected {
+		border-top-color: var( --dashboard-item-selected__border-color );
+
+		& + div[role='row'],
+		& + div[role='article'] {
+			border-top-color: var( --dashboard-item-selected__border-color );
+		}
+
+		.dataviews-view-list__item-wrapper {
+			background-color: var( --dashboard-item-selected__background-color );
+			color: var( --dashboard__text-color );
+
+			.dataviews-title-field,
+			.dataviews-view-list__field {
+				color: var( --dashboard__text-color );
+			}
+		}
+	}
+
+	.dataviews-view-list .dataviews-view-list__field {
+		color: var( --dashboard-subtle__color );
+	}
+
+	.dataviews-filters__summary-chip-container .dataviews-filters__summary-chip {
+		background: var( --wp-components-color-gray-200 );
+		color: var( --wp-components-color-gray-800 );
+
+		&:hover:not( &.is-not-clickable ),
+		&:focus-visible,
+		&[aria-expanded='true'] {
+			background: var( --wp-components-color-gray-300 );
+			color: var( --wp-components-color-gray-800 );
+		}
+	}
+
+	.dataviews-footer {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-bulk-actions-footer__item-count {
+		color: var( --dashboard__text-color );
+	}
+
+	a.dataviews-url-field {
+		color: var( --dashboard-subtle__color );
+
+		&:hover {
+			color: var( --wp-admin-theme-color );
+		}
+	}
+}
+
+@mixin color-scheme-dark-theme-popover {
+	.components-popover__content {
+		background: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+		box-shadow:
+			0 0 0 1px var( --dashboard-surface__border-color ),
+			0 4px 16px rgba( 0, 0, 0, 0.4 );
+	}
+
+	.components-popover__header {
+		background: var( --dashboard-surface__background-color );
+	}
+
+	.components-popover__arrow::before {
+		background-color: var( --dashboard-surface__background-color );
+	}
+
+	.components-popover__triangle-bg {
+		fill: var( --dashboard-surface__background-color );
+	}
+
+	.components-popover__triangle-border {
+		stroke: var( --dashboard-surface__border-color );
+	}
+}
+
+@mixin color-scheme-dark-theme-modal {
+	.components-modal__frame {
+		background: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+
+		h1,
+		h2,
+		h3,
+		.components-modal__header-heading {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__header .components-button {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__content.has-scrolled-content:not( .hide-header ) {
+			.components-modal__header {
+				border-bottom-color: var( --dashboard-surface__border-color );
+			}
+		}
+	}
+}
+
+@mixin color-scheme-dark-theme-site-icon {
+	// `.site-icon` hardcodes a white background so user-uploaded favicons
+	// (often dark glyphs on transparent) stay legible. Use a light neutral chip
+	// against dark Reader, Themes, and Dashboard surfaces.
+	.site-icon {
+		background: var( --wp-components-color-gray-800 );
+	}
+}
+
+@mixin color-scheme-dark-theme-agenttic {
+	// @automattic/agenttic-ui declares its own default light tokens on `.agenttic`.
+	.agenttic {
+		--color-background: var( --dashboard__background-color );
+		--color-foreground: var( --dashboard__text-color );
+		--color-popover: var( --dashboard__background-color );
+		--color-popover-muted: var( --dashboard-surface__background-color );
+		--color-primary: var( --wp-admin-theme-color );
+		--color-primary-foreground: var( --wp-components-color-accent-inverted );
+		--color-muted: var( --dashboard-surface__border-color );
+		--color-muted-foreground: var( --dashboard__text-muted-color );
+		--color-ring: var( --wp-admin-theme-color );
+		--color-link: var( --wp-admin-theme-color-darker-20 );
+	}
+}
+
+@mixin color-scheme-dark-theme-common-components {
+	@include color-scheme-dark-theme-card;
+	@include color-scheme-dark-theme-form-controls;
+	@include color-scheme-dark-theme-summary-button;
+	@include color-scheme-dark-theme-dataviews;
+	@include color-scheme-dark-theme-popover;
+	@include color-scheme-dark-theme-modal;
+	@include color-scheme-dark-theme-site-icon;
+	@include color-scheme-dark-theme-agenttic;
+}
+
+@mixin color-scheme-dark-theme-calypso-overrides {
+	@include color-scheme-dark-theme-calypso-tokens;
+	@include color-scheme-dark-theme-common-components;
+}
+
+@mixin color-scheme-dark-theme-masterbar {
+	.masterbar {
+		--color-masterbar-submenu-text: var( --dashboard__text-color );
+		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
+		--color-masterbar-unread-dot-background: var( --wp-components-color-accent-darker-20 );
+		--color-global-masterbar-submenu-background: var( --dashboard-surface__background-color );
+		--color-global-masterbar-submenu-hover-background: var(
+			--dashboard-item-selected-hover__background-color
+		);
+		--color-global-masterbar-site-info-background: var( --wp-components-color-gray-200 );
+		--color-global-masterbar-site-info-badge-background: var( --wp-components-color-gray-300 );
+		--color-global-masterbar-site-info-badge-color: var( --wp-components-color-gray-800 );
+		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
+	}
+}
+
+@mixin color-scheme-dark-theme-wpnc-panel {
+	#wpnc-panel .color-scheme.is-global {
+		@include color-scheme-dark-theme-calypso-tokens;
+
+		--color-primary: var( --wp-admin-theme-color-darker-20 );
+		--color-secondary: var( --wp-admin-theme-color-darker-20 );
+
+		.wpnc__store_order .wpnc__image {
+			filter: invert( 1 );
+		}
+	}
+}
+
+@mixin color-scheme-dark-theme-community-translator {
+	.community-translator.is-incompatible {
+		--color-neutral-20: var( --dashboard__text-muted-color );
+	}
+}

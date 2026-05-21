@@ -1,14 +1,18 @@
+import { bucketFor } from './date-bucket';
 import type {
 	AtmosphereNotification,
 	AtmosphereNotificationCanonicalType,
+	FediverseNotification,
+	FediverseNotificationCanonicalType,
 	MastodonNotification,
 	MastodonNotificationCanonicalType,
 } from '@automattic/api-core';
 
-type SocialNotification = AtmosphereNotification | MastodonNotification;
+type SocialNotification = AtmosphereNotification | MastodonNotification | FediverseNotification;
 export type SocialNotificationCanonicalType =
 	| AtmosphereNotificationCanonicalType
-	| MastodonNotificationCanonicalType;
+	| MastodonNotificationCanonicalType
+	| FediverseNotificationCanonicalType;
 
 /**
  * Canonical types that may form a stack. `keyFor` returns `null` for
@@ -32,12 +36,17 @@ export type StackedRow = {
 };
 export type GroupedRow = SingleRow | StackedRow;
 
-function keyFor( n: SocialNotification ): string | null {
+function keyFor( n: SocialNotification, now: Date ): string | null {
 	if ( n.canonical_type === 'other' ) {
 		return null;
 	}
 	if ( n.canonical_type === 'follow' ) {
-		return 'follow';
+		// Bucket follows by date so a long-tailed follower history doesn't
+		// collapse into a single mega-stack. Each of today / yesterday /
+		// this_week / earlier gets its own follow stack — same bucket
+		// vocabulary `<SocialNotificationsList>` already uses for date
+		// dividers, so stacks sit under matching headings.
+		return `follow:${ bucketFor( n.created_at ?? '', now ) }`;
 	}
 	const uri = n.target?.uri;
 	if ( ! uri ) {
@@ -46,13 +55,16 @@ function keyFor( n: SocialNotification ): string | null {
 	return `${ n.canonical_type }:${ uri }`;
 }
 
-export function groupNotifications( items: SocialNotification[] ): GroupedRow[] {
+export function groupNotifications(
+	items: SocialNotification[],
+	now: Date = new Date()
+): GroupedRow[] {
 	type Bucket = { key: string; members: SocialNotification[] };
 	const buckets: Bucket[] = [];
 	const byKey = new Map< string, Bucket >();
 
 	for ( const item of items ) {
-		const k = keyFor( item );
+		const k = keyFor( item, now );
 		if ( k === null ) {
 			// Singleton: always its own bucket, placed in input order.
 			const bucket: Bucket = { key: `__single:${ item.id }`, members: [ item ] };

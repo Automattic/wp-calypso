@@ -42,12 +42,16 @@ jest.mock( '../utils/block-actions', () => ( {
 
 const mockSelectBlock = jest.fn();
 let mockBlocks: any[] = [];
+let mockCurrentPostId: number | null | undefined = 1;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( fn: any ) =>
 		fn( ( store: string ) => {
 			if ( store === 'core/block-editor' ) {
 				return { getBlocks: () => mockBlocks };
+			}
+			if ( store === 'core/editor' ) {
+				return { getCurrentPostId: () => mockCurrentPostId };
 			}
 			return {};
 		} ),
@@ -102,6 +106,7 @@ function basePayload(
 ): React.ComponentProps< typeof ReviewMediation > {
 	return {
 		summary: 'Two reviewers disagree on the procedural framing.',
+		postId: 1,
 		conflicts: [],
 		implications: [],
 		suggested_edits: [],
@@ -119,6 +124,21 @@ beforeEach( () => {
 	mockSelectBlock.mockReset();
 	mockedRecordTracksEvent.mockClear();
 	mockBlocks = blocks;
+	mockCurrentPostId = 1;
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return { getCurrentPostId: () => mockCurrentPostId };
+				}
+				return undefined;
+			},
+		},
+	};
+} );
+
+afterEach( () => {
+	delete ( window as any ).wp;
 } );
 
 describe( 'ReviewMediation — smoke render', () => {
@@ -244,6 +264,100 @@ describe( 'ReviewMediation — smoke render', () => {
 				}
 			);
 		} );
+	} );
+
+	it( 'marks a review for another post as stale and non-actionable', () => {
+		// Review was generated for post 2 (postId prop); editor is currently on post 1 (mockCurrentPostId).
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					postId: 2,
+					conflicts: [
+						{
+							subject: 'Procedural framing',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: '',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 1,
+									current_text: 'voted last Tuesday',
+									text: 'voted on Tuesday',
+									rationale: '',
+								},
+							],
+						},
+					],
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
+		).toBeInTheDocument();
+		expect( screen.getByTitle( 'Jump to conflicts' ) ).toBeDisabled();
+		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
+		screen
+			.getAllByRole( 'button', { name: 'Dismiss' } )
+			.forEach( ( button ) => expect( button ).toBeDisabled() );
+		expect(
+			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
+		).toBeDisabled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Suggested edits' } ) );
+		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Suggested edits' } ) );
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks a review without source post context as stale', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					postId: undefined,
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
+		).toBeInTheDocument();
+		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [
@@ -377,7 +491,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'b1',
 			'voted on Tuesday',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 
 		await waitFor( () => {
@@ -564,7 +679,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 		render( <ReviewMediation { ...editsPayload } /> );
 
-		const card = screen.getByText( 'Concise.' ).closest( 'article' );
+		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-review-mediation__card' );
 		expect( card ).toBeInTheDocument();
 
 		fireEvent.click( card! );
@@ -628,7 +743,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'nested-1',
 			'Updated nested paragraph text.',
 			undefined,
-			'Nested paragraph text.'
+			'Nested paragraph text.',
+			expect.any( Function )
 		);
 	} );
 
@@ -717,7 +833,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'b1',
 			'voted softly on Tuesday',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
@@ -737,7 +854,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'b1',
 			'voted on Tuesday',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 	} );
 
@@ -1028,20 +1146,89 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'b1',
 			'AI rewrite',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith(
 			2,
 			'b2',
 			'tighter copy',
 			undefined,
-			'Funding'
+			'Funding',
+			expect.any( Function )
 		);
 
 		// Footer disappears once everything is accepted (totalPendingCount === 0).
 		await waitFor( () => {
 			expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	it( 'stops bulk applying when the editor navigates to another post mid-run', async () => {
+		let resolveFirstApply: ( value: { success: boolean } ) => void = () => {};
+		mockApplyReviewEdit.mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					resolveFirstApply = resolve;
+				} )
+		);
+
+		const payload = basePayload( {
+			conflicts: [
+				{
+					subject: 'Procedural framing',
+					positions: [],
+					guideline_anchor: null,
+					recommended_resolution: '',
+					candidate_resolutions: [
+						{
+							source: 'ai',
+							reviewer_name: null,
+							label: 'AI',
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							text: 'AI rewrite',
+							rationale: '',
+						},
+					],
+				},
+			],
+			suggested_edits: [
+				{
+					block_index: 2,
+					current_text: 'Funding',
+					suggested_text: 'tighter copy',
+					rationale: '',
+					supported_by_reviewers: [],
+				},
+			],
+		} );
+		const { rerender } = render( <ReviewMediation { ...payload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } ) );
+		} );
+
+		await waitFor( () => {
+			expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		mockCurrentPostId = 2;
+		rerender( <ReviewMediation { ...payload } /> );
+
+		await act( async () => {
+			resolveFirstApply( { success: true } );
+		} );
+
+		await waitFor( () => {
+			expect(
+				screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
+			).toBeInTheDocument();
+		} );
+		expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 );
+		expect(
+			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
+		).toBeDisabled();
 	} );
 } );
 

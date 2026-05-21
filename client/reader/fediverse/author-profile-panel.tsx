@@ -22,7 +22,7 @@ import {
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectFediverseError } from './error-projection';
-import { followErrorMessage } from './profile-errors';
+import { errorMessage, followErrorMessage } from './profile-errors';
 import {
 	getFollowersUrl,
 	getFollowingUrl,
@@ -244,21 +244,19 @@ export function FediverseAuthorProfilePanel( {
 	const renderProfileError = useCallback(
 		( error: FediverseError, retry: () => void ) => {
 			const noRetry = new Set< FediverseError[ 'kind' ] >( [
-				'auth_required',
 				'not_found',
 				'connection_not_found',
 			] );
 			const showRetry = ! noRetry.has( error.kind );
 			const titleByKind: Partial< Record< FediverseError[ 'kind' ], TranslateResult > > = {
 				not_found: translate( 'Profile not found' ),
-				auth_required: translate( 'Reconnect needed' ),
 				rate_limited: translate( 'Slow down' ),
 				upstream_unavailable: translate( 'Fediverse unreachable' ),
 			};
 			return (
 				<EmptyContent
 					title={ titleByKind[ error.kind ] ?? translate( 'Couldn’t load profile' ) }
-					line={ translate( 'Try again in a moment.' ) }
+					line={ errorMessage( error, translate ) }
 					action={ showRetry ? translate( 'Retry' ) : undefined }
 					actionCallback={ showRetry ? retry : undefined }
 				/>
@@ -336,6 +334,10 @@ export function FediverseAuthorProfilePanel( {
 			protocolLabel="Fediverse"
 			protocolHomeURL="/reader/fediverse"
 			protocolHomeLabel={ translate( 'Back to Fediverse' ) }
+			authRequiredCopy={ {
+				title: String( translate( "Couldn't load posts" ) ),
+				line: String( translate( 'Something went wrong with your Fediverse connection.' ) ),
+			} }
 			className="fediverse-author-profile"
 		/>
 	);

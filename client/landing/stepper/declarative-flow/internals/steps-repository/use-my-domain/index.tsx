@@ -22,6 +22,7 @@ import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-su
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 
@@ -63,6 +64,7 @@ const UseMyDomain: StepType< {
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
 	);
+	const stepCounter = useOnboardingStepCounter( flow, 'use-my-domain' );
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
@@ -223,7 +225,16 @@ const UseMyDomain: StepType< {
 			<>
 				<QueryProductsList />
 				<Step.CenteredColumnLayout
-					topBar={ <Step.TopBar leftElement={ getTopBarLeftElement() } /> }
+					topBar={
+						<Step.TopBar
+							leftElement={ getTopBarLeftElement() }
+							rightElement={
+								stepCounter && (
+									<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
+								)
+							}
+						/>
+					}
 					columnWidth={ columnWidth }
 					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign="center"

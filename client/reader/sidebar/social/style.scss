@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@automattic/typography/styles/variables';
 
 // Inside .is-togglable, the base sidebar rule
@@ -38,4 +40,13 @@
 	display: block;
 	font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 	color: var( --color-sidebar-text-alternative );
+}
+
+.sidebar-social__account-item,
+.sidebar-social__add-account-item {
+	@include ui-mixins.when-dark-theme {
+		.sidebar-social__account-handle {
+			color: var( --color-text-subtle );
+		}
+	}
 }

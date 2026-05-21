@@ -140,6 +140,11 @@
 		height: 48px;
 		justify-content: center;
 		width: 48px;
+
+		svg,
+		path {
+			fill: currentColor;
+		}
 	}
 
 	.achievements__locked-heading {

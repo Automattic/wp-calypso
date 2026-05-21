@@ -28,7 +28,7 @@ function errorMessageForDelete(
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return t( 'Reconnect your Bluesky account to delete this post.' ) as string;
+			return t( 'Something went wrong with your Bluesky connection. Try again.' ) as string;
 		case 'rate_limited':
 			return t( "You're deleting too quickly. Try again in a moment." ) as string;
 		case 'connection_not_found':

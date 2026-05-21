@@ -1,21 +1,17 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { siteApmSlowQueriesQuery } from '../mock-data';
 import SlowList, { type SlowListItem } from '../slow-list';
-import type { ApmSlowQuery, Site } from '@automattic/api-core';
+import type { MergedAggregate, MergedDbQuery } from '../aggregate';
 
-function toItems( queries: ApmSlowQuery[] ): SlowListItem[] {
+function toItems( queries: MergedDbQuery[] ): SlowListItem[] {
 	return queries.map( ( query ) => ( {
 		id: query.id,
-		label: query.query,
+		label: query.fingerprint,
 		avg_ms: query.avg_ms,
 		max_ms: query.max_ms,
 	} ) );
 }
 
-export default function Database( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmSlowQueriesQuery( site.ID ) );
-
+export default function Database( { merged }: { merged: MergedAggregate } ) {
 	return (
 		<SlowList
 			title={ __( 'Slowest queries' ) }
@@ -25,7 +21,7 @@ export default function Database( { site }: { site: Site } ) {
 			maxDescription={ __(
 				'Slowest single execution observed for each query in the selected period.'
 			) }
-			items={ toItems( data ) }
+			items={ toItems( merged.slowest.db_queries ) }
 		/>
 	);
 }

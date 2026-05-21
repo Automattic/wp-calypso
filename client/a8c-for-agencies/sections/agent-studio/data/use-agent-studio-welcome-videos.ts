@@ -16,13 +16,13 @@ export default function useAgentStudioWelcomeVideos(): IntroVideo[] {
 			},
 			{
 				id: 'first-project',
-				title: __( 'Turn a brief into a polished sales deck' ),
+				title: __( 'Turn a brief into a polished PDF' ),
 				durationLabel: '1:20',
 				posterImageUrl: createFirstProjectPoster,
 			},
 			{
 				id: 'generate-outputs',
-				title: __( 'Make social graphics for a client' ),
+				title: __( 'Make social graphics for a campaign' ),
 				durationLabel: '1:40',
 				posterImageUrl: generateOutputsPoster,
 			},

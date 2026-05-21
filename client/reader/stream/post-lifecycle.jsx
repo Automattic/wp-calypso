@@ -6,6 +6,7 @@ import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -55,7 +56,7 @@ const useTrackPostView = ( postObj, recordTracksEvent ) => {
 
 			observerRef.current.observe( wrapperDiv );
 		},
-		[ postObj, observerRef ]
+		[ postObj, observerRef, recordTracksEvent ]
 	);
 };
 
@@ -149,12 +150,12 @@ class PostLifecycle extends Component {
 	}
 }
 
-export default connect(
+const ConnectedPostLifecycle = connect(
 	( state, ownProps ) => {
 		return {
 			post: ownProps.postKey.isSynthetic
 				? ownProps.postKey
-				: getPostByKey( state, ownProps.postKey ),
+				: ownProps.canonicalPost ?? getPostByKey( state, ownProps.postKey ),
 		};
 	},
 	{
@@ -166,3 +167,8 @@ export default connect(
 		areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ),
 	}
 )( PostLifecycle );
+
+export default function PostLifecycleWithCanonicalPost( props ) {
+	const canonicalPost = useReaderPostEntity( props.postKey );
+	return <ConnectedPostLifecycle { ...props } canonicalPost={ canonicalPost } />;
+}

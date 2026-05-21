@@ -23,6 +23,11 @@ export { SocialFeedList } from './components/feed-list';
 export { SocialNotificationItem } from './components/notifications-list/notification-item';
 export { SocialNotificationsList } from './components/notifications-list';
 export type { ChipFilter } from './components/notifications-list/filter';
+export { SocialNotificationsPanel } from './social-notifications-panel';
+export type {
+	SocialNotificationsSource,
+	UseSocialNotificationsInfiniteQuery,
+} from './social-notifications-panel';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 
 export type {
@@ -46,6 +51,7 @@ export type {
 	SocialError,
 } from './types';
 export { AuthorProfileHeader } from './author-profile-header';
+export { SocialTagFeedHeader } from './tag-feed-header';
 export { SocialAuthorProfileTabs } from './author-profile-tabs';
 export type { TabSpec } from './author-profile-tabs';
 export { useTabSlug } from './use-tab-slug';

@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import SitePerformanceBackend from '../index';
-import type { Site } from '@automattic/api-core';
+import type { ApmAggregateResponse, Site } from '@automattic/api-core';
 
 jest.mock( '@automattic/charts', () => ( {
 	AreaChart: () => null,
@@ -60,9 +60,89 @@ function mockApmToggle( expectedActive: boolean ) {
 		.reply( 200, JSON.stringify( expectedActive ), { 'Content-Type': 'application/json' } );
 }
 
+function mockApmAggregate( response: ApmAggregateResponse = { aggregates: [] } ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ siteId }/hosting/apm/aggregate` )
+		.query( true )
+		.reply( 200, response );
+}
+
+function aggregateFixture(): ApmAggregateResponse {
+	return {
+		aggregates: [
+			{
+				feature: 'atomic_apm_trace_minute',
+				atomic_site_id: siteId,
+				blog_id: siteId,
+				extra: {
+					bucket_minute: '2026-05-19T15:30:00Z',
+					transactions: {
+						count: 10,
+						duration_ms: { sum: 5000, avg: 500, max: 1200 },
+						span_count_sum: 100,
+					},
+					breakdown_ms: {
+						db: { self_sum: 100, span_count: 50, avg: 2 },
+						wp: { self_sum: 200, span_count: 30, avg: 6.67 },
+						wp_core: { self_sum: 80, span_count: 20, avg: 4 },
+						plugins: { self_sum: 300, span_count: 25, avg: 12 },
+						cache: { self_sum: 30, span_count: 40, avg: 0.75 },
+						external: { self_sum: 50, span_count: 5, avg: 10 },
+						template: { self_sum: 10, span_count: 8, avg: 1.25 },
+						other: { self_sum: 0, span_count: 0, avg: 0 },
+					},
+					slowest: {
+						routes: [
+							{
+								method: 'GET',
+								route: '/wp-json/wp/v2/posts',
+								tx_count: 5,
+								duration_ms: { sum: 2500, avg: 500, max: 1200 },
+							},
+						],
+						plugins: [ { name: 'jetpack', self_sum_ms: 250, count: 30, max_wallclock_ms: 50 } ],
+						hooks: [ { action: 'init', total_sum_ms: 400, count: 10, max_wallclock_ms: 80 } ],
+						templates: [ { name: 'single.php', total_sum_ms: 10, count: 5, max_wallclock_ms: 3 } ],
+						db_queries: [
+							{
+								fingerprint: 'SELECT * FROM wp_woocommerce_order_items WHERE order_id = ?',
+								fingerprint_id: 'abc123',
+								op: 'select',
+								table: 'wp_woocommerce_order_items',
+								self_sum_ms: 80,
+								count: 20,
+								max_wallclock_ms: 12,
+							},
+						],
+						cache: [
+							{
+								op: 'get',
+								key_prefix: 'options',
+								self_sum_ms: 20,
+								count: 30,
+								max_wallclock_ms: 1,
+							},
+						],
+						externals: [
+							{
+								host: 'api.stripe.com',
+								method: 'POST',
+								self_sum_ms: 40,
+								count: 3,
+								max_wallclock_ms: 20,
+							},
+						],
+					},
+				},
+			},
+		],
+	};
+}
+
 describe( '<SitePerformanceBackend>', () => {
 	test( 'renders the dashboard with a Start capturing CTA when APM is disabled', async () => {
 		mockSite( businessSite( false ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -76,6 +156,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders the tabbed dashboard without the Start capturing CTA when APM is enabled', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -90,6 +171,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="wordpress" /> );
 
@@ -100,6 +182,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Slowest transactions on the Transactions tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="transactions" /> );
 
@@ -110,6 +193,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Slowest queries on the Database tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="database" /> );
 
@@ -119,6 +203,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'renders Slowest external requests on the External tab', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="external-requests" /> );
 
@@ -128,13 +213,14 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByText( /api\.stripe\.com/ ) ).toBeVisible();
 	} );
 
-	test( 'shows a status notice with the average response time', async () => {
+	test( 'shows an intent-based status notice when data is present', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		// The notice variant depends on seeded mock data, but one of these three
-		// titles must always appear and must include the formatted avg duration.
+		// With real data, the notice variant depends on the avg response time,
+		// but one of these three titles must always appear with the formatted avg.
 		expect(
 			await screen.findByText(
 				/(Healthy backend|Backend needs improvement|Backend is slow) — avg /
@@ -142,8 +228,39 @@ describe( '<SitePerformanceBackend>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'shows the Capturing notice when APM is on but no data has come in yet', async () => {
+		mockSite( businessSite( true ) );
+		mockApmAggregate();
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		expect( await screen.findByText( /Performance data is being collected/ ) ).toBeVisible();
+		expect(
+			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'omits the status notice when APM is off and no data has come in yet', async () => {
+		// The subtitle already says "Capturing is off..." so we skip the
+		// redundant notice in this state.
+		mockSite( businessSite( false ) );
+		mockApmAggregate();
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// Wait for the page to render before asserting absence.
+		await screen.findByRole( 'heading', { name: 'Response time breakdown' } );
+
+		expect( screen.queryByText( /Turn capturing on to start collecting/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Performance data is being collected/ ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
 		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -162,6 +279,7 @@ describe( '<SitePerformanceBackend>', () => {
 
 	test( 'clicking Start capturing POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
+		mockApmAggregate();
 		const scope = mockApmToggle( true );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
