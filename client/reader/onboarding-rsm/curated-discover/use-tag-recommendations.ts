@@ -146,11 +146,17 @@ export function useTagRecommendations(
 		const hasIcon = feed ? Boolean( feed.image ) : null;
 		const subscribersCount =
 			feed && typeof feed.subscribers_count === 'number' ? feed.subscribers_count : null;
+		// External (non-WPCOM) feeds frequently come back from `/read/tags/cards`
+		// without a `site_name`. Fall back to the feed query's `name` so the row
+		// has a visible title and the persisted entry carries a usable name into
+		// the curated source. The fallback only kicks in once the feed query
+		// resolves; until then the row may briefly render with no title.
+		const resolvedSiteName = site.site_name || feed?.name || '';
 		return {
 			feed_ID: site.feed_ID,
 			site_ID: site.site_ID,
 			site_URL: site.URL || site.site_URL,
-			site_name: site.site_name,
+			site_name: resolvedSiteName,
 			feed_URL: feedUrl,
 			iconUrl,
 			hasIcon,

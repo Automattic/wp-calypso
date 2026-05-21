@@ -7,6 +7,8 @@ const entry = (
 	site_ID: 1000 + overrides.feed_ID,
 	site_URL: `https://example-${ overrides.feed_ID }.test/`,
 	site_name: `Example ${ overrides.feed_ID }`,
+	feed_URL: `https://example-${ overrides.feed_ID }.test/feed/`,
+	has_icon: true,
 	...overrides,
 } );
 
@@ -46,15 +48,15 @@ describe( 'serializeCurated', () => {
 		expect( idOrder ).toEqual( [ 10, 20, 30 ] );
 	} );
 
-	it( 'always emits feedUrl and hasIcon for every entry', () => {
+	it( 'always emits feed_URL and has_icon for every entry', () => {
 		const out = serializeCurated( {
 			variableName: 'bar',
 			tagMap: { food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ) ] },
 			getMetadata: () => metadata( { feedUrl: 'https://canonical/feed/', hasIcon: false } ),
 		} );
 
-		expect( out.match( /feedUrl: 'https:\/\/canonical\/feed\/',/g ) ).toHaveLength( 2 );
-		expect( out.match( /hasIcon: false,/g ) ).toHaveLength( 2 );
+		expect( out.match( /feed_URL: 'https:\/\/canonical\/feed\/',/g ) ).toHaveLength( 2 );
+		expect( out.match( /has_icon: false,/g ) ).toHaveLength( 2 );
 	} );
 
 	it( 'omits entries when getMetadata returns null', () => {
@@ -116,13 +118,13 @@ describe( 'serializeCurated', () => {
 		// no embedded raw newline / tab in the source, and backslashes doubled.
 		expect( out ).toContain( "site_name: 'a\\\\b\\nc\\td\\u0001e'" );
 		expect( out ).toContain( "site_URL: 'https://example.test/path/with\\\\backslash/'" );
-		expect( out ).toContain( "feedUrl: 'https://example.test/feed/\\nfoo'" );
+		expect( out ).toContain( "feed_URL: 'https://example.test/feed/\\nfoo'" );
 
 		// Sanity check: round-trip via JSON.parse on the emitted single-quoted
 		// strings. We can't run TS here, but we can verify that the escape
 		// content matches what the source author intended by re-parsing each
 		// emitted literal as JSON (after swapping wrapping quotes).
-		const matches = [ ...out.matchAll( /(?:site_name|site_URL|feedUrl): '([^']*)',/g ) ];
+		const matches = [ ...out.matchAll( /(?:site_name|site_URL|feed_URL): '([^']*)',/g ) ];
 		expect( matches.length ).toBeGreaterThan( 0 );
 		for ( const [ , inner ] of matches ) {
 			expect( () => JSON.parse( `"${ inner }"` ) ).not.toThrow();

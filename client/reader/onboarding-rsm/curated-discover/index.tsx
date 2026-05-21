@@ -70,11 +70,11 @@ const TagSection: React.FC< TagSectionProps > = ( {
 		if ( ! c.feed_URL || c.hasIcon === null ) {
 			return null;
 		}
-		// External (non-WPCOM) feeds sometimes come back from the cards
-		// endpoint without `site_URL` / `site_name`. Those are required string
-		// fields in the curated-blogs schema (any `undefined` would crash
-		// `serializeWithAdditions` on copy), so reject incomplete candidates
-		// outright rather than persisting a row that can't be exported.
+		// `site_URL` / `site_name` are required string fields in the curated-blogs
+		// schema (any `undefined` would crash `serializeWithAdditions` on copy).
+		// `useTagRecommendations` already falls `site_name` back to `feed.name`,
+		// so this guard mainly covers the case where both the cards endpoint and
+		// the feed query failed to surface a name.
 		if ( ! c.site_URL || ! c.site_name ) {
 			return null;
 		}

@@ -100,7 +100,7 @@ describe( 'serializeWithAdditions', () => {
 		expect( feedIdOrder( source ) ).toEqual( [ 1, 100 ] );
 	} );
 
-	it( 'emits hasIcon=false for added entries with has_icon overridden', () => {
+	it( 'emits has_icon=false for added entries with has_icon overridden', () => {
 		const { source } = serializeWithAdditions( {
 			variableName: 'fooBlogs',
 			tagMap: {},
@@ -110,7 +110,7 @@ describe( 'serializeWithAdditions', () => {
 		} );
 
 		expect( source ).toContain( 'feed_ID: 100,' );
-		expect( source ).toContain( 'hasIcon: false,' );
+		expect( source ).toContain( 'has_icon: false,' );
 	} );
 
 	it( 'uses the addition entry feed_URL verbatim', () => {
@@ -127,7 +127,7 @@ describe( 'serializeWithAdditions', () => {
 			},
 		} );
 
-		expect( source ).toContain( "feedUrl: 'https://canonical.example.test/atom.xml'," );
+		expect( source ).toContain( "feed_URL: 'https://canonical.example.test/atom.xml'," );
 	} );
 
 	describe( 'skip-and-warn for incomplete entries', () => {

@@ -105,7 +105,11 @@ export const DiscoverRow: React.FC< DiscoverRowProps > = ( {
 			</div>
 			<div className="curated-discover__row-body">
 				<header className="curated-discover__row-header">
-					<h3 className="curated-discover__row-title">{ candidate.site_name }</h3>
+					<h3 className="curated-discover__row-title">
+						{ candidate.site_name || candidate.site_URL || (
+							<em className="curated-discover__hint">unnamed feed</em>
+						) }
+					</h3>
 					<span className="curated-discover__row-tag">{ tag }</span>
 					{ isAdded && <span className="curated-discover__row-flag is-added">added</span> }
 					{ candidate.feedQueryFailed && (

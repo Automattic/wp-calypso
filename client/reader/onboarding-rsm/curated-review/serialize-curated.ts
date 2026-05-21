@@ -76,8 +76,8 @@ function serializeEntry( entry: CuratedBlog, metadata: CuratedRowMetadata ): str
 		`\t\t\tsite_ID: ${ entry.site_ID },`,
 		`\t\t\tsite_URL: ${ formatString( entry.site_URL ) },`,
 		`\t\t\tsite_name: ${ formatString( entry.site_name ) },`,
-		`\t\t\tfeedUrl: ${ formatString( metadata.feedUrl ) },`,
-		`\t\t\thasIcon: ${ metadata.hasIcon ? 'true' : 'false' },`,
+		`\t\t\tfeed_URL: ${ formatString( metadata.feedUrl ) },`,
+		`\t\t\thas_icon: ${ metadata.hasIcon ? 'true' : 'false' },`,
 	];
 	return [ '\t\t{', ...lines, '\t\t},' ].join( '\n' );
 }
