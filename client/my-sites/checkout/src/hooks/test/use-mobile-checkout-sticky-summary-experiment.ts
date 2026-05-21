@@ -62,8 +62,17 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 		expect( result.current ).toBe( true );
 	} );
 
-	it( 'honors the QA query-param override even on large viewports', () => {
+	it( 'ignores the QA query-param override on large viewports', () => {
 		mockUseViewportMatch.mockReturnValue( false );
+		window.history.replaceState( {}, '', '/?mobile_checkout_sticky_summary=1' );
+
+		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
+
+		expect( result.current ).toBe( false );
+	} );
+
+	it( 'honors the QA query-param override on mobile viewports', () => {
+		mockUseViewportMatch.mockReturnValue( true );
 		window.history.replaceState( {}, '', '/?mobile_checkout_sticky_summary=1' );
 
 		const { result } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
