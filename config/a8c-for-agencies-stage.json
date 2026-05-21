@@ -82,5 +82,7 @@
 	"restricted_me_access": false,
 	"theme_color": "#029CD7",
 	"theme_color_admin_color_scheme_override": false,
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"amplify_worker_url": "https://amplify-api.jeff-golenski.workers.dev",
+	"amplify_api_secret": "c8ba42b00a74a6d2d6ed7fad5e2dc697dc43b4b1d9cec8e6f026341ef974cc8c"
 }
