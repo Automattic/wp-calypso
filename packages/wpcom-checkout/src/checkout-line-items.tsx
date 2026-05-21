@@ -871,9 +871,15 @@ export function LineItemSublabelAndPrice( {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
+		// Under the mobile sticky experiment the sublabel row is just
+		// "€X billed annually" — the monthly-cycle strikethrough surfaces
+		// inline next to the live price instead (see the main-column
+		// `mobileStickyMonthlyCycleCrossedOutDisplay` path below). Without
+		// this gate it would render in both places.
 		const showCrossedOutPrice =
+			! isMobileStickySummary &&
 			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
-			compareToPrice;
+				compareToPrice;
 
 		// Renewal Pricing: Calculate actual monthly renewal price
 		const actualMonthlyPrice = formatCurrency(
@@ -1500,6 +1506,21 @@ function CheckoutLineItem( {
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
 
+	// Under the mobile sticky experiment the "savings vs. monthly cycle"
+	// strikethrough is surfaced inline next to the live monthly amount in
+	// the main price column (matching Figma 3838:3619/3620), instead of
+	// being a separate column on the right side of the sublabel row.
+	const mobileStickyMonthlyCycleCrossedOutDisplay =
+		isMobileStickySummary &&
+		shouldShowComparison &&
+		compareToPrice &&
+		pricePerMonth !== compareToPrice
+			? formatCurrency( compareToPrice, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } )
+			: undefined;
+
 	// For products with stacked cost overrides (e.g. premium domains with a
 	// price-increasing intro offer + sale coupon: $80 → $1,100 → $275), show
 	// the pre-discount price ($1,100) crossed out next to the final price.
@@ -1593,9 +1614,10 @@ function CheckoutLineItem( {
 						<LineItemPrice
 							actualAmount={ monthlyAmountDisplay }
 							crossedOutAmount={
-								isDiscounted && ! isRenewalPricingExperiment
+								mobileStickyMonthlyCycleCrossedOutDisplay ??
+								( isDiscounted && ! isRenewalPricingExperiment
 									? originalMonthlyAmountDisplay
-									: undefined
+									: undefined )
 							}
 						/>
 						{ isMobileStickySummary ? translate( '/mo' ) : <> { translate( '/month' ) }</> }
