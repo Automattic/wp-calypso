@@ -1054,6 +1054,7 @@ export default function CheckoutMainContent( {
 				isLargeViewport={ isLargeViewport }
 				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 				isRsmBetterCheckout={ isRsmBetterCheckout }
+				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
@@ -1134,6 +1135,7 @@ const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
 	isCheckoutUiRedesignV1?: boolean;
 	isRsmBetterCheckout?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
@@ -1218,6 +1220,15 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				@media ( ${ props.theme.breakpoints.tabletUp } ) {
 					padding-inline: 0;
 				}
+			}
+		` }
+
+	${ ( props ) =>
+		! props.isLargeViewport &&
+		props.isMobileCheckoutStickySummary &&
+		css`
+			.checkout-main-content {
+				padding-block-end: 160px;
 			}
 		` }
 
