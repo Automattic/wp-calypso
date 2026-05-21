@@ -8,6 +8,10 @@ type LoginMethodImpressionProps = {
 	// Current login route (e.g. /log-in, /log-in/jetpack). Mirrors the `path`
 	// on calypso_page_view so the two can be joined. Omitted when unavailable.
 	path?: string;
+	// The `from` query param on the login URL, when the entry point tags itself
+	// (e.g. ?from=automattic-for-agencies-client). Lets us attribute which page
+	// sent the user to /log-in. Omitted when the entry point doesn't set it.
+	from?: string;
 	children: ReactNode;
 };
 
@@ -18,11 +22,13 @@ const LoginMethodImpression = ( {
 	method,
 	badgeView,
 	path,
+	from,
 	children,
 }: LoginMethodImpressionProps ) => {
 	useEffect( () => {
 		recordTracksEvent( 'calypso_login_method_impression', {
 			path,
+			from,
 			method,
 			badge_view: badgeView,
 		} );

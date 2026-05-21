@@ -40,6 +40,7 @@ class SocialLoginForm extends Component {
 		oauth2Client: PropTypes.object,
 		isWoo: PropTypes.bool,
 		currentRoute: PropTypes.string,
+		from: PropTypes.string,
 	};
 
 	socialLoginButtons = [
@@ -170,6 +171,7 @@ class SocialLoginForm extends Component {
 						onClick: () => {
 							recordTracksEvent( 'calypso_login_method_click', {
 								path: this.props.currentRoute,
+								from: this.props.from,
 								method: service,
 								badge_view: isBadged,
 							} );
@@ -193,6 +195,7 @@ class SocialLoginForm extends Component {
 						method={ service }
 						badgeView={ isBadged }
 						path={ this.props.currentRoute }
+						from={ this.props.from }
 					>
 						{ visual }
 					</LoginMethodImpression>

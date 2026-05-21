@@ -297,6 +297,7 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_method_impression', {
 			path: this.props.currentRoute,
+			from: this.props.currentQuery?.from,
 			method: 'password',
 			badge_view: isLastUsedPassword,
 		} );
@@ -311,6 +312,7 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_method_click', {
 			path: this.props.currentRoute,
+			from: this.props.currentQuery?.from,
 			method: 'password',
 			badge_view: isLastUsedPassword,
 		} );
@@ -651,6 +653,7 @@ export class LoginForm extends Component {
 		// Standardized click event used across every login method.
 		this.props.recordTracksEvent( 'calypso_login_method_click', {
 			path: this.props.currentRoute,
+			from: this.props.currentQuery?.from,
 			method: service,
 			badge_view: isLastUsedAuthenticationMethod,
 		} );
@@ -959,6 +962,7 @@ export class LoginForm extends Component {
 							oauth2Client={ this.props.oauth2Client }
 							isWoo={ this.props.isWoo }
 							currentRoute={ this.props.currentRoute }
+							from={ this.props.currentQuery?.from }
 						/>
 					</Fragment>
 				) }

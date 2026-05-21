@@ -36,6 +36,7 @@ const defaultProps = {
 	trackLoginAndRememberRedirect: jest.fn(),
 	resetLastUsedAuthenticationMethod: jest.fn(),
 	currentRoute: '/log-in',
+	from: 'lohp',
 };
 
 const render = ( el, options ) =>
@@ -88,21 +89,25 @@ describe( 'SocialLoginForm', () => {
 		// One impression per method, with badge_view=true for the last-used one.
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			path: '/log-in',
+			from: 'lohp',
 			method: 'google',
 			badge_view: true,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			path: '/log-in',
+			from: 'lohp',
 			method: 'apple',
 			badge_view: false,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			path: '/log-in',
+			from: 'lohp',
 			method: 'magic-login',
 			badge_view: false,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
 			path: '/log-in',
+			from: 'lohp',
 			method: 'qr-code',
 			badge_view: false,
 		} );
@@ -139,6 +144,7 @@ describe( 'SocialLoginForm', () => {
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_click', {
 			path: '/log-in',
+			from: 'lohp',
 			method: 'magic-login',
 			badge_view: false,
 		} );
