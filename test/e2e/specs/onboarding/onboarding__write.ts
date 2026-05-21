@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			// https://wordpress.com/choose for the PWYW A/B test instead of
 			// creating a site directly. No /sites/new call is made here, so we
 			// use selectPlanWithoutSiteCreation.
-			const redirectUrl = /wordpress\.com\/choose/;
+			const redirectUrl = /^https:\/\/wordpress\.com\/choose(?:[?#]|$)/;
 			await signupPickPlanPage.selectPlanWithoutSiteCreation( 'Free', redirectUrl );
 		} );
 	} );
