@@ -31,7 +31,7 @@ const Discount = styled.span< { isMobileStickySummary?: boolean } >`
 	${ ( props ) =>
 		props.isMobileStickySummary &&
 		`
-		color: #005c12;
+		color: ${ colorStudio.colors[ 'Green 80' ] };
 		background-color: rgba( 184, 230, 191, 0.68 );
 		border: 1px solid rgba( 0, 0, 0, 0.08 );
 		border-radius: 2px;
