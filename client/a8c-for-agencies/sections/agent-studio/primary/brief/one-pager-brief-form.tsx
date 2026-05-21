@@ -162,14 +162,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 			<GeneratingOverlay
 				agentName={ agent.name }
 				isOpen={ submit.isPending }
-				onCancel={ () => {
-					// PR #1: the overlay is only visible during the submit window
-					// (uploads + POST /a4a/runs). At this point we don't have a
-					// run_id yet, so there's nothing to DELETE — we just navigate
-					// away. PR #3 wires the overlay to real run polling and adds
-					// DELETE on cancel when a run_id is known.
-					submit.reset();
-				} }
+				onCancel={ () => submit.reset() }
 			/>
 		</>
 	);

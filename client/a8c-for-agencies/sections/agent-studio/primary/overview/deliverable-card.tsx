@@ -88,8 +88,6 @@ function DeliverablePreview( { output }: Props ) {
 		);
 	}
 
-	// PR #1 ships placeholder thumbnails — backend has no `png_url`
-	// projection yet. PR #5 swaps these for the real cover render.
 	return (
 		<div className="a4a-agent-studio-deliverable-card__placeholder">
 			<Icon icon={ page } size={ 32 } />

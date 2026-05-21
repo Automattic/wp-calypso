@@ -17,9 +17,9 @@ export default function useAgentStudioOutputs() {
 		queryFn: () => agentStudioService.listOutputs( agencyId ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
-		// Poll while a deliverable is generating so the card flips to ready
-		// without the agency having to reload the page.
+		// Poll while a deliverable is generating; pause while the tab is hidden.
 		refetchInterval: ( query ) =>
 			query.state.data?.some( ( output ) => output.status === 'generating' ) ? 2000 : false,
+		refetchIntervalInBackground: false,
 	} );
 }

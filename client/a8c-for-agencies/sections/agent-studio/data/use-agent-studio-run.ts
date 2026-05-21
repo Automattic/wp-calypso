@@ -1,13 +1,6 @@
 /**
- * Fetcher for a single A4A run.
- *
- * Wraps `GET /wpcom/v2/agency/<agency_id>/a4a/runs/<run_id>`. The flat
- * outputs endpoint only exposes the projected card shape; the run
- * endpoint adds `payload` (which carries `{ post_id, agency_blog_id }`
- * once the run completes), `current_step`, cost, and the input
- * snapshot. Used by the output-detail page to resolve the linked
- * collateral post id, and (in a follow-up slice) by the generating
- * overlay to show the current pipeline step.
+ * `GET /a4a/runs/<run_id>` — exposes `payload.post_id` once the run
+ * completes, plus `current_step` and the input snapshot.
  */
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';

@@ -1,12 +1,7 @@
-/**
- * Split the rendered HTML doc into one entry per page. Each entry
- * carries the original `<head>` (which holds the brand CSS) so the
- * page renders standalone in its own iframe.
- *
- * Selectors are tried in order; first match wins. Falls back to
- * splitting on `<!-- PAGE -->` markers if no selector matches, and
- * finally to a single-page render of the whole body.
- */
+// Splits the rendered HTML doc into per-page entries, each carrying
+// the shared `<head>` so the page renders standalone. Tries known
+// page selectors first, then `<!-- PAGE -->` markers, then a single
+// page as a last resort.
 
 const PAGE_SELECTORS = [ '.ela-page', '.collateral-page', '.b-page', '.page' ];
 

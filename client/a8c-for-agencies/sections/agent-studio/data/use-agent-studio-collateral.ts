@@ -1,11 +1,7 @@
 /**
- * Fetcher for a single collateral post.
- *
- * Wraps `GET /wpcom/v2/agency/<agency_id>/a4a/collateral/<post_id>`.
- * The collateral post is where the agent's HTML output lives
- * (`body_html`), along with variants, brand, coverage report, and the
- * picked frame/theme. The flat outputs endpoint doesn't include any of
- * this — it's a card-grid projection.
+ * `GET /a4a/collateral/<post_id>` — variants, brand, coverage report,
+ * picked frame/theme. The flat outputs endpoint doesn't include any
+ * of this.
  */
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';

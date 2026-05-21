@@ -7,7 +7,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import useAgentStudioCollateral, {
 	type AgentStudioCollateralVariant,
 } from '../../data/use-agent-studio-collateral';
@@ -41,6 +41,15 @@ const pickInitialVariantIndex = (
 	return idx >= 0 ? idx : 0;
 };
 
+function StateMessage( { children, spinner }: { children: ReactNode; spinner?: boolean } ) {
+	return (
+		<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+			{ spinner && <Spinner /> }
+			{ children }
+		</VStack>
+	);
+}
+
 export default function OutputDetailContent( { output }: Props ) {
 	const run = useAgentStudioRun( output.id );
 	const postId = extractPostId( run.data?.payload );
@@ -48,29 +57,20 @@ export default function OutputDetailContent( { output }: Props ) {
 
 	const variants = useMemo< AgentStudioCollateralVariant[] >(
 		() => collateral.data?.variants ?? [],
-		[ collateral.data ]
+		[ collateral.data?.variants ]
 	);
 	usePrefetchAgentStudioVariantHtml( variants.map( ( variant ) => variant.html_url ) );
 
-	// Local-only flip — PR #4 will replace this with the optimistic
-	// mutation against `POST /collateral/<post_id>/selected-variant`
-	// (the backend write endpoint is specced but not yet shipped).
-	const initialIndex = pickInitialVariantIndex( variants, collateral.data?.selected_variant_id );
-	const [ activeIndex, setActiveIndex ] = useState( initialIndex );
+	const [ activeIndex, setActiveIndex ] = useState( () =>
+		pickInitialVariantIndex( variants, collateral.data?.selected_variant_id )
+	);
 	const safeIndex = variants.length > 0 ? Math.min( activeIndex, variants.length - 1 ) : 0;
 	const selectedVariant = variants[ safeIndex ];
 
-	// We fetch two variant HTMLs here:
-	//
-	//   - `selectedVariantHtml` — only the cover page (idx 0) is taken
-	//     from this. The cover repaints when the chevrons flip.
-	//   - `baseVariantHtml` — the body pages (idx 1..N) are taken from
-	//     variant 0's HTML always. Per the cover-variant-picker-v2
-	//     ADR-0001, the theme is scoped to the cover only — body pages
-	//     are visually identical across every variant. Sourcing them
-	//     from a stable variant keeps each body iframe's `srcDoc`
-	//     string identical across chevron clicks, so React skips the
-	//     iframe update and there's no white-flash reload.
+	// Cover comes from the selected variant; body pages come from
+	// variant 0 always. Per cover-variant-picker-v2 ADR-0001 the theme
+	// is scoped to the cover only, so body srcDocs are stable across
+	// chevron flips and React skips the body shadow-root rebuild.
 	const selectedVariantHtml = useAgentStudioVariantHtml( selectedVariant?.html_url );
 	const baseVariantHtml = useAgentStudioVariantHtml( variants[ 0 ]?.html_url );
 
@@ -102,48 +102,46 @@ export default function OutputDetailContent( { output }: Props ) {
 
 	if ( output.status === 'generating' || ( ! postId && run.isLoading ) ) {
 		return (
-			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
-				<Spinner />
+			<StateMessage spinner>
 				<Text>{ __( 'Generating your deliverable…' ) }</Text>
-			</VStack>
+			</StateMessage>
 		);
 	}
 
 	if ( output.status === 'failed' ) {
 		return (
-			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+			<StateMessage>
 				<Text size={ 15 } weight={ 600 }>
 					{ __( 'Generation failed' ) }
 				</Text>
 				{ output.errorMessage && <Text variant="muted">{ output.errorMessage }</Text> }
-			</VStack>
+			</StateMessage>
 		);
 	}
 
 	if ( ! postId ) {
 		return (
-			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+			<StateMessage>
 				<Text>{ __( 'No preview is available for this deliverable yet.' ) }</Text>
-			</VStack>
+			</StateMessage>
 		);
 	}
 
 	if ( collateral.isLoading ) {
 		return (
-			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
-				<Spinner />
+			<StateMessage spinner>
 				<Text>{ __( 'Loading preview…' ) }</Text>
-			</VStack>
+			</StateMessage>
 		);
 	}
 
 	if ( collateral.isError || ! variants.length ) {
 		return (
-			<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+			<StateMessage>
 				<Notice status="warning" isDismissible={ false }>
 					{ __( 'We couldn’t load the preview for this deliverable.' ) }
 				</Notice>
-			</VStack>
+			</StateMessage>
 		);
 	}
 
@@ -162,10 +160,9 @@ export default function OutputDetailContent( { output }: Props ) {
 				) }
 			</HStack>
 			{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
-				<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
-					<Spinner />
+				<StateMessage spinner>
 					<Text>{ __( 'Loading preview…' ) }</Text>
-				</VStack>
+				</StateMessage>
 			) : (
 				<PdfViewer
 					pages={ pages }

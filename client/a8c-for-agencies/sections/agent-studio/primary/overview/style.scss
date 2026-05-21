@@ -75,9 +75,6 @@
 	color: var( --color-text-inverted );
 }
 
-// Placeholder thumbnail rendered while PR #5 ships a real `png_url`
-// projection on the collateral. A flat surface with a small icon so
-// cards still feel composed without a real preview.
 .a4a-agent-studio-deliverable-card__placeholder {
 	display: flex;
 	align-items: center;

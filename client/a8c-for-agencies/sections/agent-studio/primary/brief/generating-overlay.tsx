@@ -17,9 +17,6 @@ interface Props {
 	onCancel: () => void;
 }
 
-// Decorative rotation of thinking lines while the run kicks off. PR #3
-// replaces these with the run's real `current_step` from
-// `GET /a4a/runs/<id>`, mapped to friendlier copy.
 const THINKING_LINES = [
 	__( 'Reading the brief' ),
 	__( 'Studying the brand' ),

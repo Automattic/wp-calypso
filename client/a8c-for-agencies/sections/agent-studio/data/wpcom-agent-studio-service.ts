@@ -1,22 +1,6 @@
 /**
- * Real wpcom implementation of `AgentStudioService`, wired to the
- * A4A endpoints in `wp-content/rest-api-plugins/centralized/agency/`:
- *
- *   GET    /wpcom/v2/agency/<agency_id>/a4a/outputs          → flat list
- *   POST   /wpcom/v2/agency/<agency_id>/a4a/runs             → start a run
- *   DELETE /wpcom/v2/agency/<agency_id>/a4a/runs/<run_id>    → cancel / delete
- *
- * The one-pager flow targets the `compose-one-pager-ela-v2` recipe —
- * see ADR-0001 in `~/Projects/wpcom-specs/a4a-agent-studio-real-api/`.
- *
- * Project CRUD and `suggestOnePagerContent` are not implemented here;
- * they fall back to the mock service for now. Project wiring is a
- * separate follow-up PR; suggest content has no backend yet.
- *
- * `agencyId` is passed in from the calling hook (which reads
- * `getActiveAgencyId` via `useSelector` in the React Query queryFn
- * wrapper) rather than resolved here — the service is called from
- * React Query's `queryFn`, which has no component context for Redux.
+ * Real wpcom `AgentStudioService`. Falls back to the mock for project
+ * CRUD and `suggestOnePagerContent` (no backend yet).
  */
 import wpcom from 'calypso/lib/wp';
 import { mockAgentStudioService } from './mock-agent-studio-service';
@@ -37,12 +21,6 @@ interface CreateRunResponse {
 	status: string;
 }
 
-/**
- * The one-pager recipe Calypso fires by default. See ADR-0001 in
- * `~/Projects/wpcom-specs/a4a-agent-studio-real-api/docs/adr/` for the
- * rationale. Switching back to baseline `compose-one-pager` is a
- * one-line change here.
- */
 const DEFAULT_ONE_PAGER_RECIPE = 'compose-one-pager-ela-v2';
 
 const requireAgencyId = ( agencyId: number | undefined, method: string ): number => {
@@ -52,11 +30,8 @@ const requireAgencyId = ( agencyId: number | undefined, method: string ): number
 	return agencyId;
 };
 
-/**
- * Backend may emit `'cancelled'` (a terminal projection status) but the
- * UI only knows `ready | generating | failed`. Collapse to `failed` so
- * the card renders a stable error tile instead of getting stuck.
- */
+// Backend can emit `'cancelled'`; collapse anything outside the UI's
+// status union to `'failed'` so the card doesn't get stuck.
 const normalizeStatus = ( status: string ): AgentStudioOutput[ 'status' ] => {
 	if ( status === 'ready' || status === 'generating' || status === 'failed' ) {
 		return status;
@@ -104,27 +79,19 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		input: CreateAgentStudioOutputInput,
 		agencyId?: number
 	): Promise< AgentStudioOutput > {
-		// Only one-pager is wired to a real recipe today. Other agents
-		// stay on the mock until their recipes ship.
 		if ( input.agentId !== 'one-pager' ) {
 			return mockAgentStudioService.createOutput( input );
 		}
 
 		const id = requireAgencyId( agencyId, 'createOutput' );
 		const title = input.title ?? '';
-		// `compose-one-pager-ela-v2` reads `input.title` directly; we
-		// also include the title at the top of `text` so the layout
-		// director sees it in the source as a heading.
 		const text = title ? `${ title }\n\n${ input.brief ?? '' }` : input.brief ?? '';
 
-		// `brand` is intentionally omitted. The recipe's three abilities
-		// disagree on its type — `op-compose-page-frame` and
-		// `op-persist-as-html-post` want `[object, null]`, while
-		// `op-layout-director-ela-v2` wants `[string, null]`. Omitting
-		// lands `null` everywhere and the backend resolves to the default
-		// `automattic` brand pack via `A4A_Brand_Pack::resolve([])`. PR
-		// #8 (brand picker) will reintroduce this once the recipe's
-		// schemas align — track on the backend.
+		// `brand` and `project_id` are omitted on purpose. The recipe's
+		// abilities disagree on `brand`'s type so the only value that
+		// satisfies all three is null. `project_id` would fail the
+		// persist step's integer validation; the runs endpoint
+		// auto-injects the agency default when it's missing.
 		const recipeInput: Record< string, unknown > = {
 			title,
 			text,
@@ -132,26 +99,11 @@ export const wpcomAgentStudioService: AgentStudioService = {
 			page_count: 2,
 			seed: Math.floor( Math.random() * 1_000_000_000 ),
 			image_urls: input.imageUrls ?? [],
+			...( input.logoUrl && { logo_url: input.logoUrl } ),
+			...( input.partnerLogoUrl && { partner_logo_url: input.partnerLogoUrl } ),
+			...( input.partnerLogoOrder && { partner_logo_order: input.partnerLogoOrder } ),
+			...( input.heroUrl && { hero_url: input.heroUrl } ),
 		};
-
-		if ( input.logoUrl ) {
-			recipeInput.logo_url = input.logoUrl;
-		}
-		if ( input.partnerLogoUrl ) {
-			recipeInput.partner_logo_url = input.partnerLogoUrl;
-		}
-		if ( input.partnerLogoOrder ) {
-			recipeInput.partner_logo_order = input.partnerLogoOrder;
-		}
-		if ( input.heroUrl ) {
-			recipeInput.hero_url = input.heroUrl;
-		}
-		// `project_id` is intentionally omitted — the runs endpoint
-		// auto-injects the agency's default project when missing
-		// (`Project_Repository::find_or_create_default`, see
-		// `agency-a4a-agent-runs.php`). Sending it explicitly as a string
-		// would be rejected at the persist step (which expects integer).
-		// PR #2's project UI can opt back in by passing a real int.
 
 		const response: CreateRunResponse = await wpcom.req.post( {
 			apiNamespace: 'wpcom/v2',
@@ -162,10 +114,6 @@ export const wpcomAgentStudioService: AgentStudioService = {
 			},
 		} );
 
-		// POST returns `{ run_id, status: a4a_pending|a4a_running }`. Build
-		// a synthetic AgentStudioOutput from the form input so the card
-		// flips to "generating" immediately; the polling refetch off
-		// /a4a/outputs replaces it with the real projection.
 		const now = new Date().toISOString();
 		return {
 			id: String( response.run_id ),
@@ -182,10 +130,8 @@ export const wpcomAgentStudioService: AgentStudioService = {
 
 	async deleteOutput( outputId: string, agencyId?: number ): Promise< void > {
 		const id = requireAgencyId( agencyId, 'deleteOutput' );
-		// `wpcom.req.del` is a thin shim around `req.post` that does NOT
-		// override the HTTP method, so the request goes out as POST and
-		// the v2 DELETETABLE route 404s. Use `req.post` with an explicit
-		// `method: 'DELETE'`.
+		// `wpcom.req.del` doesn't override the HTTP method, so it goes
+		// out as POST and the v2 DELETETABLE route 404s.
 		await wpcom.req.post< DeleteRunResponse >( {
 			method: 'DELETE',
 			apiNamespace: 'wpcom/v2',

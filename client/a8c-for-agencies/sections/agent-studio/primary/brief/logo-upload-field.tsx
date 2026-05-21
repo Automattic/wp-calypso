@@ -2,7 +2,7 @@ import { FormFileUpload, __experimentalText as Text } from '@wordpress/component
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, closeSmall, upload } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 interface Props {
@@ -14,18 +14,6 @@ interface Props {
 	darkBackground?: boolean;
 }
 
-/**
- * Single-image upload styled as a dropzone card: empty state is a dashed
- * outline with an upload icon, filled state is the logo preview with a
- * tiny remove control. Clicking the card swaps the file. Pairs naturally
- * side by side for light / dark logo variants, and primary / partner
- * dual rows.
- *
- * The preview is an object URL of the selected `File`; we hold off
- * uploading until the brief form submits, so the file lives in memory
- * for the form's lifetime. The object URL is released on unmount or on
- * file change to avoid leaking blobs.
- */
 export default function LogoUploadField( {
 	label,
 	file,
@@ -33,15 +21,20 @@ export default function LogoUploadField( {
 	disabled,
 	darkBackground,
 }: Props ) {
-	const previewUrl = useMemo( () => ( file ? URL.createObjectURL( file ) : null ), [ file ] );
+	const [ previewUrl, setPreviewUrl ] = useState< string | null >( null );
 
+	// Create the preview URL in an effect so the matching revoke
+	// always fires — `useMemo` during render leaks blobs under strict
+	// mode double-renders.
 	useEffect( () => {
-		return () => {
-			if ( previewUrl ) {
-				URL.revokeObjectURL( previewUrl );
-			}
-		};
-	}, [ previewUrl ] );
+		if ( ! file ) {
+			setPreviewUrl( null );
+			return;
+		}
+		const url = URL.createObjectURL( file );
+		setPreviewUrl( url );
+		return () => URL.revokeObjectURL( url );
+	}, [ file ] );
 
 	const onSelect = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const next = event.target.files?.[ 0 ] ?? null;
