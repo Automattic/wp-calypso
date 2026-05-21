@@ -367,6 +367,8 @@
 
 .social-spotlight {
 	margin-block: 24px;
+	padding-block-end: 24px;
+	border-block-end: 1px solid var( --color-border-subtle );
 }
 
 .social-spotlight__header {
