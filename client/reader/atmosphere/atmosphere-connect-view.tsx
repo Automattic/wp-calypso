@@ -47,7 +47,7 @@ export function AtmosphereConnectView() {
 				/>
 				<p className="atmosphere-view__learn-more">
 					<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
-						{ translate( 'Learn more about social in the Reader' ) }
+						{ translate( 'Learn more about your social accounts in the Reader' ) }
 					</ExternalLink>
 				</p>
 			</VStack>

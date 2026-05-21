@@ -285,7 +285,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 				{ showEmptyHint && (
 					<li className="sidebar-connections__empty">
 						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
-							{ translate( 'Learn more about social in the Reader' ) }
+							{ translate( 'Learn more about your social accounts in the Reader' ) }
 						</ExternalLink>
 					</li>
 				) }
