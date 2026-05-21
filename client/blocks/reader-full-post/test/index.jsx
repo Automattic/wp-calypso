@@ -4,12 +4,12 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { useReaderPost } from 'calypso/reader/data/post';
+import { usePost } from 'calypso/reader/data/post';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { mapStateToFullPostProps, withFullPostNavigation } from '../index';
 
 jest.mock( 'calypso/reader/data/post', () => ( {
-	useReaderPost: jest.fn(),
+	usePost: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
@@ -80,7 +80,7 @@ describe( 'mapStateToFullPostProps', () => {
 
 describe( 'withFullPostNavigation', () => {
 	beforeEach( () => {
-		useReaderPost.mockImplementation( ( postKey ) => ( {
+		usePost.mockImplementation( ( postKey ) => ( {
 			data: postKey?.postId ? { ID: postKey.postId, site_ID: postKey.blogId } : undefined,
 		} ) );
 		useStreamPostKeySelection.mockReturnValue( {
@@ -108,10 +108,10 @@ describe( 'withFullPostNavigation', () => {
 			localeSlug: null,
 			currentPostKey: { blogId: 100, postId: 2 },
 		} );
-		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 2 } );
-		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 9 } );
-		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 1 } );
-		expect( useReaderPost ).toHaveBeenCalledWith( { blogId: 100, postId: 3 } );
+		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 2 } );
+		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 9 } );
+		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 1 } );
+		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 3 } );
 		expect( WrappedComponent ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				post: { ID: 2, site_ID: 100 },

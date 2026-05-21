@@ -6,7 +6,8 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import { ReaderPost, updateCachedPost, updateCachedPostsMatching } from './post-cache';
+import { updateCachedPost, updateCachedPostsMatching } from './post-cache';
+import type { Post } from './post-cache';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
@@ -15,7 +16,7 @@ type PostCacheAction = {
 	globalIds?: string[];
 	feedIds?: Array< number | string >;
 	feedUrls?: string[];
-	posts?: Array< ReaderPost | null | undefined >;
+	posts?: Array< Post | null | undefined >;
 	payload?: {
 		siteId?: number;
 		postId?: number;

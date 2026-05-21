@@ -29,8 +29,8 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useReaderPost } from 'calypso/reader/data/post';
-import { withReaderPostLikeActions } from 'calypso/reader/data/post-likes';
+import { usePost } from 'calypso/reader/data/post';
+import { withPostLikeActions } from 'calypso/reader/data/post-likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -979,7 +979,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	requestMarkAsUnseenBlog,
 	showSelectedPost,
 	requestPostComments,
-} )( withPostLikes( withReaderPostLikeActions( FullPostView ) ) );
+} )( withPostLikes( withPostLikeActions( FullPostView ) ) );
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -993,18 +993,16 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
-		const { data: post } = useReaderPost(
-			Object.keys( currentPostKey ).length ? currentPostKey : null
-		);
-		const { data: referralPost } = useReaderPost( props.referral );
+		const { data: post } = usePost( Object.keys( currentPostKey ).length ? currentPostKey : null );
+		const { data: referralPost } = usePost( props.referral );
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const { data: previousPost } = useReaderPost( previousPostKey );
-		const { data: nextPost } = useReaderPost( nextPostKey );
+		const { data: previousPost } = usePost( previousPostKey );
+		const { data: nextPost } = usePost( nextPostKey );
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /

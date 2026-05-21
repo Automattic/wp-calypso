@@ -7,7 +7,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { ReactNode } from 'react';
 import { getCachedPost, upsertPostCache } from '../post-cache';
-import { useReaderPostLikeActions } from '../post-likes';
+import { usePostLikeActions } from '../post-likes';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -18,7 +18,7 @@ const makeWrapper = ( queryClient: QueryClient ) =>
 		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 	};
 
-describe( 'useReaderPostLikeActions', () => {
+describe( 'usePostLikeActions', () => {
 	afterEach( () => nock.cleanAll() );
 
 	it( 'rolls back the Reader post cache optimistic update if the mutation fails after unmount', async () => {
@@ -42,7 +42,7 @@ describe( 'useReaderPostLikeActions', () => {
 			.post( '/rest/v1.1/sites/100/posts/1/likes/mine/delete', {} )
 			.reply( 500, { error: 'oops' } );
 
-		const { result, unmount } = renderHook( () => useReaderPostLikeActions(), {
+		const { result, unmount } = renderHook( () => usePostLikeActions(), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 
@@ -88,7 +88,7 @@ describe( 'useReaderPostLikeActions', () => {
 				liker: { ID: 1, login: 'alice' },
 			} );
 
-		const { result } = renderHook( () => useReaderPostLikeActions(), {
+		const { result } = renderHook( () => usePostLikeActions(), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 

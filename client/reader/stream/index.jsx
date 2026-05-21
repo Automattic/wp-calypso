@@ -20,7 +20,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCachedPost } from 'calypso/reader/data/post-cache';
-import { withReaderPostLikeActions } from 'calypso/reader/data/post-likes';
+import { withPostLikeActions } from 'calypso/reader/data/post-likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
@@ -1000,4 +1000,4 @@ export default connect(
 		showSelectedPost,
 		viewStream,
 	}
-)( localize( withDimensions( withStreamPosts( withReaderPostLikeActions( ReaderStream ) ) ) ) );
+)( localize( withDimensions( withStreamPosts( withPostLikeActions( ReaderStream ) ) ) ) );

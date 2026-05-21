@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { READER_SHARE_MENU_CLOSE } from 'calypso/blocks/reader-share';
-import { useReaderPost } from 'calypso/reader/data/post';
+import { usePost } from 'calypso/reader/data/post';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import type { TrackPostData } from 'calypso/state/reader/analytics/types';
 
@@ -46,7 +46,7 @@ const EngagementBar = ( {
 					postId: Number( postId ),
 			  }
 			: null;
-	const { data: post } = useReaderPost( postKey );
+	const { data: post } = usePost( postKey );
 
 	const [ isActionsVisible, setIsActionsVisible ] = useState( false );
 	const [ actionsElement, setActionsElement ] = useState< Element | null >( null );

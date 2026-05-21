@@ -4,7 +4,8 @@ import { keyForPost } from 'calypso/reader/post-key';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { runFastRules, runSlowRules } from 'calypso/state/reader/posts/normalization-rules';
-import { ReaderPost, upsertPostCache } from './post-cache';
+import { upsertPostCache } from './post-cache';
+import type { Post } from './post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Dispatch } from 'redux';
@@ -20,7 +21,7 @@ const numberValue = ( value: unknown ): number | null => {
 
 const seedPostLikesQueries = (
 	queryClient: QueryClient,
-	posts: Array< ReaderPost | null | undefined >
+	posts: Array< Post | null | undefined >
 ) => {
 	for ( const post of posts ) {
 		if ( ! post || post.is_external ) {
@@ -56,16 +57,16 @@ const seedPostLikesQueries = (
 	}
 };
 
-const hideRejections = ( promise: Promise< ReaderPost > ) => promise.catch( () => null );
+const hideRejections = ( promise: Promise< Post > ) => promise.catch( () => null );
 
 type SlowNormalizationQueue = {
-	postsByKey: Map< string, ReaderPost >;
+	postsByKey: Map< string, Post >;
 	scheduled: boolean;
 };
 
 const slowNormalizationQueues = new WeakMap< QueryClient, SlowNormalizationQueue >();
 
-const cacheKeyForPost = ( post: ReaderPost ): string | null => {
+const cacheKeyForPost = ( post: Post ): string | null => {
 	if ( typeof post.global_ID === 'string' && post.global_ID ) {
 		return post.global_ID;
 	}
@@ -78,21 +79,21 @@ const cacheKeyForPost = ( post: ReaderPost ): string | null => {
 	return JSON.stringify( key );
 };
 
-export const normalizePostsForCache = ( posts: Array< ReaderPost | null | undefined > ) =>
+export const normalizePostsForCache = ( posts: Array< Post | null | undefined > ) =>
 	posts
 		.filter( Boolean )
 		.filter( ( post ) => ! post?._should_reload )
-		.map( ( post ) => runFastRules( post ) as ReaderPost );
+		.map( ( post ) => runFastRules( post ) as Post );
 
 export const syncNormalizedPostCache = (
 	queryClient: QueryClient,
-	normalizedPosts: Array< ReaderPost | null | undefined >
+	normalizedPosts: Array< Post | null | undefined >
 ) => {
 	upsertPostCache( queryClient, normalizedPosts );
 	seedPostLikesQueries( queryClient, normalizedPosts );
 };
 
-const scheduleSlowNormalization = ( queryClient: QueryClient, normalizedPosts: ReaderPost[] ) => {
+const scheduleSlowNormalization = ( queryClient: QueryClient, normalizedPosts: Post[] ) => {
 	let queue = slowNormalizationQueues.get( queryClient );
 	if ( ! queue ) {
 		queue = { postsByKey: new Map(), scheduled: false };
@@ -124,7 +125,16 @@ const scheduleSlowNormalization = ( queryClient: QueryClient, normalizedPosts: R
 	} );
 };
 
-function reloadPostIntoCache( queryClient: QueryClient, post: ReaderPost ) {
+export const syncNormalizedPostsToCache = (
+	queryClient: QueryClient,
+	normalizedPosts: Array< Post | null | undefined >
+) => {
+	const validPosts = normalizedPosts.filter( Boolean ) as Post[];
+	syncNormalizedPostCache( queryClient, validPosts );
+	scheduleSlowNormalization( queryClient, validPosts );
+};
+
+function reloadPostIntoCache( queryClient: QueryClient, post: Post ) {
 	const railcar = post.railcar;
 	const postKey = keyForPost( post ) as ReadPostKey;
 
@@ -143,11 +153,8 @@ function reloadPostIntoCache( queryClient: QueryClient, post: ReaderPost ) {
 		.catch( () => null );
 }
 
-export function syncPostCache(
-	queryClient: QueryClient,
-	posts: Array< ReaderPost | null | undefined >
-) {
-	const normalizedPosts = posts.reduce< ReaderPost[] >( ( normalized, post ) => {
+export function syncPostCache( queryClient: QueryClient, posts: Array< Post | null | undefined > ) {
+	const normalizedPosts = posts.reduce< Post[] >( ( normalized, post ) => {
 		if ( ! post ) {
 			return normalized;
 		}
@@ -157,16 +164,15 @@ export function syncPostCache(
 			return normalized;
 		}
 
-		normalized.push( runFastRules( post ) as ReaderPost );
+		normalized.push( runFastRules( post ) as Post );
 		return normalized;
 	}, [] );
-	syncNormalizedPostCache( queryClient, normalizedPosts );
-	scheduleSlowNormalization( queryClient, normalizedPosts );
+	syncNormalizedPostsToCache( queryClient, normalizedPosts );
 }
 
 export const syncConversationFollowStatus = (
 	dispatch: Dispatch,
-	posts: Array< ReaderPost | null | undefined >
+	posts: Array< Post | null | undefined >
 ) => {
 	for ( const post of posts ) {
 		if ( ! post?.is_following_conversation ) {

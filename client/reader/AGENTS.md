@@ -23,10 +23,12 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
 For Reader post data specifically, see [`client/reader/data/README.md`](./data/README.md).
-The short version: use `useReaderPost()` for request-capable post reads, and use
+The short version: use `usePost()` for request-capable post reads, and use
 `useCachedPost()` / `useCachedPosts()` only when a cache-only read is
 intentional, such as stream list contexts where one full-post request per item
 would create a request waterfall.
+Queries that produce Reader posts should go through `usePostQuery()` /
+`usePostsQuery()` so normalization and canonical cache syncing stay centralized.
 
 ### Mutation factories must accept the consumer's `QueryClient`
 

@@ -4,7 +4,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { useReaderRelatedPosts } from '../index';
+import { useRelatedPosts } from '../index';
 import type { ReactNode } from 'react';
 
 const mockPosts = [
@@ -29,7 +29,7 @@ const getWrapper =
 		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 	);
 
-describe( 'useReaderRelatedPosts', () => {
+describe( 'useRelatedPosts', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
 	} );
@@ -44,7 +44,7 @@ describe( 'useReaderRelatedPosts', () => {
 			.query( true )
 			.reply( 200, { posts: mockPosts } );
 
-		const { result } = renderHook( () => useReaderRelatedPosts( 1, 2, 'same' ), {
+		const { result } = renderHook( () => useRelatedPosts( 1, 2, 'same' ), {
 			wrapper: getWrapper(),
 		} );
 
@@ -62,7 +62,7 @@ describe( 'useReaderRelatedPosts', () => {
 			.query( true )
 			.reply( 500, { message: 'Internal Server Error' } );
 
-		const { result } = renderHook( () => useReaderRelatedPosts( 1, 2, 'same' ), {
+		const { result } = renderHook( () => useRelatedPosts( 1, 2, 'same' ), {
 			wrapper: getWrapper(),
 		} );
 
@@ -77,7 +77,7 @@ describe( 'useReaderRelatedPosts', () => {
 			.query( true )
 			.reply( 200, { posts: [] } );
 
-		const { result } = renderHook( () => useReaderRelatedPosts( 1, 2, 'same' ), {
+		const { result } = renderHook( () => useRelatedPosts( 1, 2, 'same' ), {
 			wrapper: getWrapper(),
 		} );
 
@@ -91,7 +91,7 @@ describe( 'useReaderRelatedPosts', () => {
 			.reply( 200, { posts: mockPosts } );
 
 		const queryClient = getQueryClient();
-		const { result } = renderHook( () => useReaderRelatedPosts( 1, 2, 'same' ), {
+		const { result } = renderHook( () => useRelatedPosts( 1, 2, 'same' ), {
 			wrapper: getWrapper( queryClient ),
 		} );
 

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import { useReaderPost } from 'calypso/reader/data/post';
+import { usePost } from 'calypso/reader/data/post';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
@@ -98,8 +98,8 @@ export class RecommendedPosts extends PureComponent {
 
 const RecommendedPostsWithPosts = ( props ) => {
 	const { recommendations = [] } = props;
-	const { data: firstPost } = useReaderPost( recommendations[ 0 ] );
-	const { data: secondPost } = useReaderPost( recommendations[ 1 ] );
+	const { data: firstPost } = usePost( recommendations[ 0 ] );
+	const { data: secondPost } = usePost( recommendations[ 1 ] );
 	const posts = recommendations.slice( 0, 2 ).map( ( _recommendation, index ) => {
 		return index === 0 ? firstPost ?? null : secondPost ?? null;
 	} );

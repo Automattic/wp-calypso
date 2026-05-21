@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import { useReaderPost } from 'calypso/reader/data/post';
+import { usePost } from 'calypso/reader/data/post';
 import Placeholders from './placeholders';
 
 import './style.scss';
@@ -49,7 +49,7 @@ const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 
 const DialogContent = ( { postId, blogId, articleUrl } ) => {
 	const postKey = useSupportArticleAlternatePostKey( blogId ?? SUPPORT_BLOG_ID, postId );
-	const { data: post, isLoading } = useReaderPost( postKey );
+	const { data: post, isLoading } = usePost( postKey );
 	const isArticleLoading = isLoading || ! postKey;
 	const siteId = post?.site_ID;
 

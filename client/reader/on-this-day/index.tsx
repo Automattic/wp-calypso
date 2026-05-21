@@ -30,7 +30,7 @@ const loadReaderFullPost = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
 	);
 
-type ReaderPost = {
+type Post = {
 	site_name: string;
 	postId: number;
 	feedId?: ReadPostFeedKey[ 'feedId' ];
@@ -58,18 +58,18 @@ interface PaddingItem {
 	postId: string;
 }
 
-function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
+function isPaddingItem( item: Post | PaddingItem ): item is PaddingItem {
 	return 'isPadding' in item;
 }
 
-function postKeyForItem( item: ReaderPost ) {
+function postKeyForItem( item: Post ) {
 	if ( item.feedId ) {
 		return { feedId: item.feedId, postId: item.postId };
 	}
 	return { blogId: item.blogId, postId: item.postId };
 }
 
-function itemKeyString( item: ReaderPost ) {
+function itemKeyString( item: Post ) {
 	if ( item.feedId ) {
 		return `${ item.feedId }-${ item.postId }`;
 	}
@@ -84,7 +84,7 @@ interface OnThisDayProps {
 export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	const query = useSelector( getCurrentQueryArguments );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
-	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
+	const [ selectedItem, setSelectedItem ] = useState< Post | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
@@ -110,9 +110,9 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 
 	const postItems = useMemo(
 		() =>
-			( ( data?.items ?? [] ) as Array< ReaderPost | PaddingItem > ).filter(
+			( ( data?.items ?? [] ) as Array< Post | PaddingItem > ).filter(
 				( item ) => ! isPaddingItem( item )
-			) as ReaderPost[],
+			) as Post[],
 		[ data?.items ]
 	);
 	const postKeys = useMemo( () => postItems.map( postKeyForItem ), [ postItems ] );
@@ -123,7 +123,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< number, unknown >, item: ReaderPost | PaddingItem ) => {
+		return items.reduce( ( acc: Record< number, unknown >, item: Post | PaddingItem ) => {
 			if ( isPaddingItem( item ) ) {
 				return acc;
 			}
@@ -156,7 +156,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
 
 	const getPostFromItem = useCallback(
-		( item: ReaderPost ) => {
+		( item: Post ) => {
 			return posts[ itemKeyString( item ) ];
 		},
 		[ posts ]
@@ -167,7 +167,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+				render: ( { item }: { item: Post | PaddingItem } ) => {
 					if ( isPaddingItem( item ) ) {
 						return <Skeleton height="24px" width="24px" shape="circle" />;
 					}
@@ -181,11 +181,11 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
+				getValue: ( { item }: { item: Post | PaddingItem } ) =>
 					isPaddingItem( item )
 						? ''
 						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+				render: ( { item }: { item: Post | PaddingItem } ) => {
 					if ( isPaddingItem( item ) ) {
 						return (
 							<>
@@ -283,9 +283,9 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 					</NavigationHeader>
 				</div>
 				<aside className="on-this-day__list-column-content">
-					<DataViews< ReaderPost | PaddingItem >
+					<DataViews< Post | PaddingItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
-						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
+						getItemId={ ( item: Post | PaddingItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
 						view={ view }
@@ -298,7 +298,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
 							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+								( item: Post ) => item.postId?.toString() === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
 							setTimeout( () => {

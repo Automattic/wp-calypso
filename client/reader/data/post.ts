@@ -1,15 +1,12 @@
 import { readerPostQuery } from '@automattic/api-queries';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
 import { useCachedPost } from './post-cache';
-import {
-	normalizePostsForCache,
-	syncConversationFollowStatus,
-	syncPostCache,
-} from './post-cache-sync';
-import type { ReaderPost } from './post-cache';
+import { syncConversationFollowStatus, syncPostCache } from './post-cache-sync';
+import { usePostQuery } from './post-query';
+import type { Post } from './post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
 
@@ -35,15 +32,13 @@ const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 	};
 };
 
-export type ReaderPostResult = Omit< UseQueryResult< ReaderPost, Error >, 'data' > & {
-	data: ReaderPost | undefined;
+export type PostResult = Omit< UseQueryResult< Post | undefined, Error >, 'data' > & {
+	data: Post | undefined;
 };
 
 // UI-facing hook: returns the React Query result shape, with `data` resolved
 // from the Reader post cache when available and fetched when missing.
-export const useReaderPost = (
-	postKey: Partial< ReadPostKey > | null | undefined
-): ReaderPostResult => {
+export const usePost = ( postKey: Partial< ReadPostKey > | null | undefined ): PostResult => {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const cachedPost = useCachedPost( postKey );
@@ -59,21 +54,16 @@ export const useReaderPost = (
 		( ! cachedPost.is_error && ! hasRenderablePostContent );
 
 	const queryOptions = readerPostQuery( postKey, readerContentWidth() );
-	const query = useQuery( {
-		...queryOptions,
-		enabled: queryOptions.enabled !== false && shouldFetch,
-	} );
-	const normalizedQueryPost = useMemo(
-		() => ( query.data ? normalizePostsForCache( [ query.data ] )[ 0 ] : undefined ),
-		[ query.data ]
-	);
-
-	useEffect( () => {
-		if ( query.isSuccess && query.data ) {
-			syncPostCache( queryClient, [ query.data ] );
-			syncConversationFollowStatus( dispatch, [ query.data ] );
+	const query = usePostQuery(
+		{
+			...queryOptions,
+			enabled: queryOptions.enabled !== false && shouldFetch,
+		},
+		( post ) => post,
+		{
+			onPostsSynced: ( posts ) => syncConversationFollowStatus( dispatch, posts ),
 		}
-	}, [ query.isSuccess, query.data, queryClient, dispatch ] );
+	);
 
 	useEffect( () => {
 		if ( ! query.isError || ! postKey ) {
@@ -84,6 +74,6 @@ export const useReaderPost = (
 
 	return {
 		...query,
-		data: cachedPost ?? normalizedQueryPost,
+		data: cachedPost ?? query.data,
 	};
 };

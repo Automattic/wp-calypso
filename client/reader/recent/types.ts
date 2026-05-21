@@ -1,4 +1,4 @@
-export interface ReaderPost {
+export interface Post {
 	site_name: string;
 	postId: number;
 	feedId: number;

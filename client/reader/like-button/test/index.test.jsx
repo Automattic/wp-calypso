@@ -42,7 +42,7 @@ jest.mock( 'calypso/components/data/post-likes', () => ( {
 jest.mock( 'calypso/reader/components/icons/like-icon', () => () => null );
 
 jest.mock( 'calypso/reader/data/post-likes', () => ( {
-	withReaderPostLikeActions: ( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
+	withPostLikeActions: ( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
 } ) );
 
 jest.mock( 'calypso/reader/stats', () => ( {

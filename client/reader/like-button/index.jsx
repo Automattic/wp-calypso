@@ -12,7 +12,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { withCachedPost } from 'calypso/reader/data/post-cache';
-import { withReaderPostLikeActions } from 'calypso/reader/data/post-likes';
+import { withPostLikeActions } from 'calypso/reader/data/post-likes';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -134,7 +134,7 @@ export default flowRight(
 		};
 	} ),
 	withPostLikes,
-	withReaderPostLikeActions,
+	withPostLikeActions,
 	withCachedPost( ( { siteId, postId } ) => ( {
 		blogId: siteId,
 		postId,

@@ -9,8 +9,9 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post-cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { READER_CONVERSATION_UPDATE_FOLLOW_STATUS } from 'calypso/state/reader/action-types';
 import readerReducer from 'calypso/state/reader/reducer';
-import { useReaderPost } from '../post';
+import { usePost } from '../post';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -30,7 +31,7 @@ const buildQueryClient = () => {
 	return instance;
 };
 
-const renderReaderPost = (
+const renderPost = (
 	postKey: Partial< ReadPostKey > | null | undefined,
 	preloadedState?: { reader?: unknown },
 	queryClient = buildQueryClient()
@@ -43,13 +44,19 @@ const renderReaderPost = (
 	);
 
 	return {
-		...renderHook( () => useReaderPost( postKey ), { wrapper } ),
+		...renderHook( () => usePost( postKey ), { wrapper } ),
 		store,
 		queryClient,
 	};
 };
 
-describe( 'useReaderPost', () => {
+const isActionOfType = ( action: unknown, type: string ) =>
+	typeof action === 'object' &&
+	action !== null &&
+	'type' in action &&
+	( action as { type?: unknown } ).type === type;
+
+describe( 'usePost', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
 	} );
@@ -64,7 +71,7 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2' } );
 
-		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { queryClient } = renderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => {
 			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
@@ -85,7 +92,7 @@ describe( 'useReaderPost', () => {
 				content: '<p>full</p>',
 			} );
 
-		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { queryClient } = renderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => {
 			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
@@ -96,13 +103,56 @@ describe( 'useReaderPost', () => {
 		} );
 	} );
 
+	it( 'syncs post side effects only once per query update', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 200, {
+				ID: 2,
+				site_ID: 1,
+				global_ID: 'global-2',
+				content: '<p>full</p>',
+				is_following_conversation: true,
+			} );
+
+		const queryClient = buildQueryClient();
+		const store = buildStore( queryClient );
+		const dispatchSpy = jest.spyOn( store, 'dispatch' );
+		const wrapper = ( { children }: { children: ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { rerender } = renderHook( () => usePost( { blogId: 1, postId: 2 } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => {
+			expect(
+				dispatchSpy.mock.calls.filter( ( [ action ] ) =>
+					isActionOfType( action, READER_CONVERSATION_UPDATE_FOLLOW_STATUS )
+				)
+			).toHaveLength( 1 );
+		} );
+
+		rerender();
+		rerender();
+
+		expect(
+			dispatchSpy.mock.calls.filter( ( [ action ] ) =>
+				isActionOfType( action, READER_CONVERSATION_UPDATE_FOLLOW_STATUS )
+			)
+		).toHaveLength( 1 );
+	} );
+
 	it( 'fetches a feed post via the v1.2 endpoint', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/feed/3/posts/4' )
 			.query( true )
 			.reply( 200, { ID: 4, feed_ID: 3, feed_item_ID: 4, global_ID: 'global-feed-4' } );
 
-		const { queryClient } = renderReaderPost( { feedId: 3, postId: 4 } );
+		const { queryClient } = renderPost( { feedId: 3, postId: 4 } );
 
 		await waitFor( () => {
 			expect( getCachedPost( queryClient, { feedId: 3, postId: 4 } ) ).toMatchObject( {
@@ -119,7 +169,7 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 500, { message: 'Internal Server Error' } );
 
-		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { queryClient } = renderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 
@@ -147,7 +197,7 @@ describe( 'useReaderPost', () => {
 			</QueryClientProvider>
 		);
 
-		const { rerender } = renderHook( ( { postKey } ) => useReaderPost( postKey ), {
+		const { rerender } = renderHook( ( { postKey } ) => usePost( postKey ), {
 			initialProps: { postKey: { blogId: 1, postId: 2 } },
 			wrapper,
 		} );
@@ -171,7 +221,7 @@ describe( 'useReaderPost', () => {
 
 	it( 'does not fetch when postKey is incomplete', () => {
 		// nock.disableNetConnect would throw on any unexpected request.
-		const { queryClient } = renderReaderPost( { blogId: 1 } as never );
+		const { queryClient } = renderPost( { blogId: 1 } as never );
 		expect( getCachedPost( queryClient, { blogId: 1 } as never ) ).toBeNull();
 	} );
 
@@ -181,7 +231,7 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
 
-		const { result } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { result } = renderPost( { blogId: 1, postId: 2 } );
 
 		expect( result.current ).toMatchObject( {
 			isLoading: true,
@@ -210,7 +260,7 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 500, { message: 'Internal Server Error' } );
 
-		const { result } = renderReaderPost( { blogId: 1, postId: 2 } );
+		const { result } = renderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => {
 			expect( result.current ).toMatchObject( {
@@ -228,7 +278,7 @@ describe( 'useReaderPost', () => {
 		const queryClient = buildQueryClient();
 		upsertPostCache( queryClient, [ cached ] );
 
-		const { result } = renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
+		const { result } = renderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		expect( result.current.data ).toMatchObject( cached );
 	} );
@@ -239,7 +289,7 @@ describe( 'useReaderPost', () => {
 			.query( true )
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
 
-		const { queryClient } = renderReaderPost(
+		const { queryClient } = renderPost(
 			{ blogId: 1, postId: 2 },
 			{
 				reader: {
@@ -270,7 +320,7 @@ describe( 'useReaderPost', () => {
 		upsertPostCache( queryClient, [
 			{ ID: 2, site_ID: 1, global_ID: 'global-2', _state: 'minimal' },
 		] );
-		renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
+		renderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		await waitFor( () => {
 			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
@@ -289,7 +339,7 @@ describe( 'useReaderPost', () => {
 		upsertPostCache( queryClient, [
 			{ ID: 2, site_ID: 1, global_ID: 'global-2', title: 'from stream' },
 		] );
-		renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
+		renderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		await waitFor( () => {
 			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
