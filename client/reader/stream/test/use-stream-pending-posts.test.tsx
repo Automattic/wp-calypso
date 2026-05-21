@@ -7,7 +7,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import initialReducer from 'calypso/state/reducer';
 import { useStreamPendingPosts } from '../use-stream-pending-posts';
@@ -128,7 +128,7 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 		expect( result.current.hasPendingPosts ).toBe( true );
-		expect( getCachedReaderPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
 			ID: 1,
 			site_ID: 100,
 			content_no_html: 'Pending post 1',

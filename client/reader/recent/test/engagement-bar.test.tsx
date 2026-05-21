@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
-import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { upsertPostCache } from 'calypso/reader/data/post-cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import EngagementBar from '../engagement-bar';
 import type { ReactNode } from 'react';
@@ -28,7 +28,7 @@ const makeStore = ( queryClient: QueryClient ) =>
 		undefined,
 		applyMiddleware(
 			thunkMiddleware,
-			createReaderPostCacheMiddleware( () => queryClient )
+			createPostCacheMiddleware( () => queryClient )
 		)
 	);
 
@@ -47,7 +47,7 @@ describe( 'EngagementBar', () => {
 
 	it( 'renders actions from the canonical Reader post cache', () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,

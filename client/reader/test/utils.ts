@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
+import { upsertPostCache } from 'calypso/reader/data/post-cache';
 import { FRESHLY_PRESSED_TAB } from '../discover/helper';
 import { DISCOVER_PREFIX } from '../discover/routes';
 import {
@@ -44,7 +44,7 @@ describe( 'reader utils', () => {
 
 		test( 'redirects cross-posts using the canonical post cache metadata', () => {
 			mockQueryClient = new QueryClient();
-			upsertReaderPostCache( mockQueryClient, [
+			upsertPostCache( mockQueryClient, [
 				{
 					ID: 1,
 					site_ID: 100,

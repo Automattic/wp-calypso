@@ -3,7 +3,7 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import nock from 'nock';
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -117,7 +117,7 @@ describe( 'requestPage thunk', () => {
 			const pageIdx = types.indexOf( READER_STREAMS_PAGE_RECEIVE );
 			expect( requestIdx ).toBe( 0 );
 			expect( pageIdx ).toBeGreaterThan( requestIdx );
-			expect( getCachedReaderPost( mockQueryClient, { blogId: 200, postId: 10 } ) ).toMatchObject( {
+			expect( getCachedPost( mockQueryClient, { blogId: 200, postId: 10 } ) ).toMatchObject( {
 				ID: 10,
 				site_ID: 200,
 			} );

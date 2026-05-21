@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
+import { upsertPostCache } from 'calypso/reader/data/post-cache';
 import { OnThisDay } from 'calypso/reader/on-this-day';
 import Recent from 'calypso/reader/recent';
 import type { ReactNode } from 'react';
@@ -113,7 +113,7 @@ const makeWrapper = ( queryClient: QueryClient, state: Record< string, unknown >
 describe( 'Reader post cache surfaces', () => {
 	it( 'renders Recent list rows from the canonical post cache', () => {
 		const queryClient = new QueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -146,7 +146,7 @@ describe( 'Reader post cache surfaces', () => {
 
 	it( 'renders On This Day list rows from the canonical post cache', () => {
 		const queryClient = new QueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 2,
 				site_ID: 101,

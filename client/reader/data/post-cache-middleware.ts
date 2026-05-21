@@ -6,11 +6,11 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import { ReaderPost, updateCachedReaderPost, updateCachedReaderPostsMatching } from './post-cache';
+import { ReaderPost, updateCachedPost, updateCachedPostsMatching } from './post-cache';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
-type ReaderPostCacheAction = {
+type PostCacheAction = {
 	type: string;
 	globalIds?: string[];
 	feedIds?: Array< number | string >;
@@ -25,7 +25,7 @@ type ReaderPostCacheAction = {
 
 type GetQueryClient = () => QueryClient | null;
 
-const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction ) => {
+const patchSeenState = ( queryClient: QueryClient, action: PostCacheAction ) => {
 	const globalIds = new Set( action.globalIds );
 	const feedIds = new Set( ( action.feedIds ?? [] ).map( String ) );
 	const feedUrls = new Set( action.feedUrls ?? [] );
@@ -34,7 +34,7 @@ const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction
 		action.type === READER_SEEN_MARK_AS_SEEN_RECEIVE ||
 		action.type === READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE;
 
-	updateCachedReaderPostsMatching(
+	updateCachedPostsMatching(
 		queryClient,
 		( post ) => {
 			if ( typeof post.global_ID === 'string' && globalIds.has( post.global_ID ) ) {
@@ -51,24 +51,24 @@ const patchSeenState = ( queryClient: QueryClient, action: ReaderPostCacheAction
 	);
 };
 
-const patchConversationState = ( queryClient: QueryClient, action: ReaderPostCacheAction ) => {
+const patchConversationState = ( queryClient: QueryClient, action: PostCacheAction ) => {
 	const { siteId, postId, followStatus } = action.payload ?? {};
 	if ( ! siteId || ! postId ) {
 		return;
 	}
 
-	updateCachedReaderPost( queryClient, { blogId: siteId, postId }, () => ( {
+	updateCachedPost( queryClient, { blogId: siteId, postId }, () => ( {
 		is_following_conversation: followStatus === CONVERSATION_FOLLOW_STATUS.following,
 	} ) );
 };
 
-export const createReaderPostCacheMiddleware =
+export const createPostCacheMiddleware =
 	( getQueryClient: GetQueryClient = getCalypsoQueryClient ): Middleware =>
 	() =>
 	( next ) =>
 	( action: unknown ) => {
 		const result = next( action );
-		const readerAction = action as ReaderPostCacheAction;
+		const readerAction = action as PostCacheAction;
 		const queryClient = getQueryClient();
 
 		if ( ! queryClient ) {
@@ -89,4 +89,4 @@ export const createReaderPostCacheMiddleware =
 		return result;
 	};
 
-export default createReaderPostCacheMiddleware();
+export default createPostCacheMiddleware();

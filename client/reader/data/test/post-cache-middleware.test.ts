@@ -6,21 +6,21 @@ import {
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getCachedReaderPost, upsertReaderPostCache } from '../post-cache';
-import { createReaderPostCacheMiddleware } from '../post-cache-middleware';
+import { getCachedPost, upsertPostCache } from '../post-cache';
+import { createPostCacheMiddleware } from '../post-cache-middleware';
 
 describe( 'reader post cache middleware', () => {
 	let queryClient: QueryClient;
 
 	const dispatch = ( action: Record< string, unknown > ) => {
-		return createReaderPostCacheMiddleware( () => queryClient )( {} as never )(
+		return createPostCacheMiddleware( () => queryClient )( {} as never )(
 			( nextAction ) => nextAction
 		)( action );
 	};
 
 	beforeEach( () => {
 		queryClient = new QueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -38,13 +38,13 @@ describe( 'reader post cache middleware', () => {
 	it( 'patches seen state by global id', () => {
 		dispatch( { type: READER_SEEN_MARK_AS_SEEN_RECEIVE, globalIds: [ 'global-1' ] } );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_seen: true,
 		} );
 
 		dispatch( { type: READER_SEEN_MARK_AS_UNSEEN_RECEIVE, globalIds: [ 'global-1' ] } );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_seen: false,
 		} );
 	} );
@@ -52,7 +52,7 @@ describe( 'reader post cache middleware', () => {
 	it( 'patches mark-all-as-seen state by global id', () => {
 		dispatch( receiveMarkAllAsSeen( { feedIds: [], feedUrls: [], globalIds: [ 'global-1' ] } ) );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_seen: true,
 		} );
 	} );
@@ -66,13 +66,13 @@ describe( 'reader post cache middleware', () => {
 			} )
 		);
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_seen: true,
 		} );
 	} );
 
 	it( 'patches seen state across aliases with the same global id', () => {
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 2,
 				site_ID: 101,
@@ -85,10 +85,10 @@ describe( 'reader post cache middleware', () => {
 
 		dispatch( { type: READER_SEEN_MARK_AS_SEEN_RECEIVE, globalIds: [ 'global-2' ] } );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 101, postId: 2 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 101, postId: 2 } ) ).toMatchObject( {
 			is_seen: true,
 		} );
-		expect( getCachedReaderPost( queryClient, { feedId: 201, postId: 301 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { feedId: 201, postId: 301 } ) ).toMatchObject( {
 			is_seen: true,
 		} );
 	} );
@@ -103,7 +103,7 @@ describe( 'reader post cache middleware', () => {
 			},
 		} );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_following_conversation: true,
 		} );
 
@@ -116,7 +116,7 @@ describe( 'reader post cache middleware', () => {
 			},
 		} );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			is_following_conversation: false,
 		} );
 	} );

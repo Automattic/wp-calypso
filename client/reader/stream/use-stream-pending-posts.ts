@@ -2,10 +2,7 @@ import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
-import {
-	syncReaderConversationFollowStatus,
-	syncReaderPostCache,
-} from 'calypso/reader/data/post-cache-sync';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
@@ -155,8 +152,8 @@ export function useStreamPendingPosts( {
 				algorithm: pollHead.data.algorithm,
 				items: unrenderedRailcarPosts,
 			} ).forEach( ( action ) => dispatch( action ) );
-			syncReaderPostCache( queryClient, streamPosts );
-			syncReaderConversationFollowStatus( dispatch, streamPosts );
+			syncPostCache( queryClient, streamPosts );
+			syncConversationFollowStatus( dispatch, streamPosts );
 		}
 	}, [ pollHead.data, streamKey, streamType, queryClient, dispatch ] );
 

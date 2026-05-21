@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertReaderPostCache } from 'calypso/reader/data/post-cache';
+import { upsertPostCache } from 'calypso/reader/data/post-cache';
 import readerReducer from 'calypso/state/reader/reducer';
 import PostLifecycle from '../post-lifecycle';
 import type { ReactNode } from 'react';
@@ -49,7 +49,7 @@ function makeWrapper( queryClient: QueryClient ) {
 describe( 'PostLifecycle', () => {
 	it( 'renders posts from the canonical post cache', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,

@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { receiveComments } from 'calypso/state/comments/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
@@ -23,7 +23,7 @@ const getTopic = ( { scheme, post } ) => {
 const getJoinParams = ( store, postKey ) => {
 	const state = store.getState();
 	const queryClient = getCalypsoQueryClient();
-	const post = queryClient ? getCachedReaderPost( queryClient, postKey ) : null;
+	const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
 	if ( ! post ) {
 		return false;

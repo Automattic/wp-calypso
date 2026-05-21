@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { ReactNode } from 'react';
-import { getCachedReaderPost, upsertReaderPostCache } from '../post-cache';
+import { getCachedPost, upsertPostCache } from '../post-cache';
 import { useReaderPostLikeActions } from '../post-likes';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -23,7 +23,7 @@ describe( 'useReaderPostLikeActions', () => {
 
 	it( 'rolls back the Reader post cache optimistic update if the mutation fails after unmount', async () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -47,7 +47,7 @@ describe( 'useReaderPostLikeActions', () => {
 		} );
 
 		result.current.unlike( 100, 1 );
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			i_like: false,
 			like_count: 71,
 		} );
@@ -56,7 +56,7 @@ describe( 'useReaderPostLikeActions', () => {
 
 		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
 		await waitFor( () =>
-			expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 				i_like: true,
 				like_count: '72',
 			} )
@@ -65,7 +65,7 @@ describe( 'useReaderPostLikeActions', () => {
 
 	it( 'keeps a full-post like optimistic update when an older stream payload is received later', async () => {
 		const queryClient = makeQueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -93,7 +93,7 @@ describe( 'useReaderPostLikeActions', () => {
 		} );
 
 		result.current.like( 100, 1 );
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -103,7 +103,7 @@ describe( 'useReaderPostLikeActions', () => {
 			},
 		] );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			i_like: true,
 			like_count: 73,
 		} );

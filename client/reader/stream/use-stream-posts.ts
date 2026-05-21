@@ -6,10 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-	syncReaderConversationFollowStatus,
-	syncReaderPostCache,
-} from 'calypso/reader/data/post-cache-sync';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
@@ -173,8 +170,8 @@ export function useStreamPosts( {
 			processedPages.current.add( page );
 			const { streamPosts } = normalizeStreamPage( page, streamType );
 			if ( streamPosts.length > 0 ) {
-				syncReaderPostCache( queryClient, streamPosts );
-				syncReaderConversationFollowStatus( dispatch, streamPosts );
+				syncPostCache( queryClient, streamPosts );
+				syncConversationFollowStatus( dispatch, streamPosts );
 			}
 		}
 	}, [ resolvedStreamKey, streamType, query.data, queryClient, dispatch ] );

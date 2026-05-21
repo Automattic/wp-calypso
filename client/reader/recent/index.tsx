@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useCachedReaderPosts } from 'calypso/reader/data/post-cache';
+import { useCachedPosts } from 'calypso/reader/data/post-cache';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
@@ -91,7 +91,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			} ) ),
 		[ postItems ]
 	);
-	const cachedPosts = useCachedReaderPosts( postKeys );
+	const cachedPosts = useCachedPosts( postKeys );
 	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
 		const items = data?.items;
 		if ( ! items ) {

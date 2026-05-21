@@ -7,7 +7,7 @@ migration, the Reader has two post access layers with different contracts:
   React Query result shape and resolves `data` from the canonical post cache
   first, then fetches the full post when the cache is missing, minimal, or lacks
   renderable content. New post detail UIs should prefer this hook.
-- `useCachedReaderPost( postKey )` and `useCachedReaderPosts( postKeys )` are
+- `useCachedPost( postKey )` and `useCachedPosts( postKeys )` are
   cache-only reads. They never fetch. Use them for stream/list/card contexts
   where firing one full-post request per item would create a request waterfall,
   or for small action surfaces that only need the post already supplied by the
@@ -21,7 +21,7 @@ persisted to localStorage.
 `post-cache-middleware.ts` only mirrors legacy Redux actions that still
 represent post-adjacent state, such as seen/unseen and conversation follow
 updates. It does not receive or normalize post payloads. New Reader post
-producers should call `syncReaderPostCache()` after fetching posts so cache-only
+producers should call `syncPostCache()` after fetching posts so cache-only
 surfaces have the data they need before rendering.
 
 ## Migration Rules

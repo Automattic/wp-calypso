@@ -4,7 +4,7 @@ import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { truncate } from 'lodash';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 
@@ -30,7 +30,7 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 		}
 
 		const queryClient = getCalypsoQueryClient();
-		const post = queryClient ? getCachedReaderPost( queryClient, postKey ) : null;
+		const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
 		if ( post && isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );

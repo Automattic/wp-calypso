@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
-import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
@@ -32,7 +32,7 @@ function makeWrapper( queryClient: QueryClient ) {
 		applyMiddleware(
 			actionRecorder,
 			thunkMiddleware,
-			createReaderPostCacheMiddleware( () => queryClient )
+			createPostCacheMiddleware( () => queryClient )
 		)
 	);
 	const Wrapper = ( { children }: { children: ReactNode } ) => (
@@ -91,7 +91,7 @@ describe( 'useStreamPosts — fetching', () => {
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
 		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) );
 		expect( result.current.items[ 1 ] ).toMatchObject( postKey( 2 ) );
-		expect( getCachedReaderPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( {
 			ID: 1,
 			site_ID: 100,
 		} );
@@ -384,7 +384,7 @@ describe( 'useStreamPosts — cache replacement', () => {
 		} );
 
 		await waitFor( () =>
-			expect( getCachedReaderPost( queryClient, postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
+			expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
 		);
 	} );
 } );

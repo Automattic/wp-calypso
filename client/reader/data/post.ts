@@ -3,11 +3,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
-import { useCachedReaderPost } from './post-cache';
+import { useCachedPost } from './post-cache';
 import {
-	normalizeReaderPostsForCache,
-	syncReaderConversationFollowStatus,
-	syncReaderPostCache,
+	normalizePostsForCache,
+	syncConversationFollowStatus,
+	syncPostCache,
 } from './post-cache-sync';
 import type { ReaderPost } from './post-cache';
 import type { ReadPostKey } from '@automattic/api-core';
@@ -46,7 +46,7 @@ export const useReaderPost = (
 ): ReaderPostResult => {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const cachedPost = useCachedReaderPost( postKey );
+	const cachedPost = useCachedPost( postKey );
 	const hasRenderablePostContent = !! (
 		cachedPost?.content ||
 		cachedPost?.excerpt ||
@@ -64,14 +64,14 @@ export const useReaderPost = (
 		enabled: queryOptions.enabled !== false && shouldFetch,
 	} );
 	const normalizedQueryPost = useMemo(
-		() => ( query.data ? normalizeReaderPostsForCache( [ query.data ] )[ 0 ] : undefined ),
+		() => ( query.data ? normalizePostsForCache( [ query.data ] )[ 0 ] : undefined ),
 		[ query.data ]
 	);
 
 	useEffect( () => {
 		if ( query.isSuccess && query.data ) {
-			syncReaderPostCache( queryClient, [ query.data ] );
-			syncReaderConversationFollowStatus( dispatch, [ query.data ] );
+			syncPostCache( queryClient, [ query.data ] );
+			syncConversationFollowStatus( dispatch, [ query.data ] );
 		}
 	}, [ query.isSuccess, query.data, queryClient, dispatch ] );
 
@@ -79,7 +79,7 @@ export const useReaderPost = (
 		if ( ! query.isError || ! postKey ) {
 			return;
 		}
-		syncReaderPostCache( queryClient, [ buildErrorPost( postKey, query.error ) ] );
+		syncPostCache( queryClient, [ buildErrorPost( postKey, query.error ) ] );
 	}, [ query.isError, query.error, postKey, queryClient ] );
 
 	return {

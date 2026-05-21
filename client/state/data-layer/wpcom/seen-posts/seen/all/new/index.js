@@ -1,4 +1,4 @@
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -42,7 +42,7 @@ export const onSuccess = ( action, response ) => ( dispatch, getState ) => {
 		const queryClient = getCalypsoQueryClient();
 		const globalIds = queryClient
 			? ( stream.items ?? [] ).reduce( ( acc, item ) => {
-					const post = getCachedReaderPost( queryClient, item );
+					const post = getCachedPost( queryClient, item );
 					if ( post?.global_ID ) {
 						acc.push( post.global_ID );
 					}

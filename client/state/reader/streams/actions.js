@@ -1,8 +1,5 @@
 import { readStreamQuery } from '@automattic/api-queries';
-import {
-	syncReaderConversationFollowStatus,
-	syncReaderPostCache,
-} from 'calypso/reader/data/post-cache-sync';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -154,9 +151,9 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 
 	if ( streamPosts.length > 0 ) {
 		if ( queryClient ) {
-			syncReaderPostCache( queryClient, streamPosts );
+			syncPostCache( queryClient, streamPosts );
 		}
-		syncReaderConversationFollowStatus( dispatch, streamPosts );
+		syncConversationFollowStatus( dispatch, streamPosts );
 	}
 	if ( streamSites.length > 0 ) {
 		dispatch( receiveRecommendedSites( { seed: 'discover-recommendations', sites: streamSites } ) );

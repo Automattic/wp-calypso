@@ -24,7 +24,7 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 
 For Reader post data specifically, see [`client/reader/data/README.md`](./data/README.md).
 The short version: use `useReaderPost()` for request-capable post reads, and use
-`useCachedReaderPost()` / `useCachedReaderPosts()` only when a cache-only read is
+`useCachedPost()` / `useCachedPosts()` only when a cache-only read is
 intentional, such as stream list contexts where one full-post request per item
 would create a request waterfall.
 

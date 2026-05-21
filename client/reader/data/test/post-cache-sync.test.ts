@@ -6,8 +6,8 @@ import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import waitForImagesToLoad from 'calypso/lib/post-normalizer/rule-wait-for-images-to-load';
-import { getCachedReaderPost } from 'calypso/reader/data/post-cache';
-import { syncReaderPostCache } from 'calypso/reader/data/post-cache-sync';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
+import { syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
 jest.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {
@@ -20,7 +20,7 @@ jest.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {
 const makeQueryClient = () => new QueryClient();
 const mockWaitForImagesToLoad = waitForImagesToLoad as jest.Mock;
 
-describe( 'syncReaderPostCache', () => {
+describe( 'syncPostCache', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
 	} );
@@ -33,7 +33,7 @@ describe( 'syncReaderPostCache', () => {
 	it( 'normalizes posts before writing them into the canonical post cache', () => {
 		const queryClient = makeQueryClient();
 
-		syncReaderPostCache( queryClient, [
+		syncPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -42,7 +42,7 @@ describe( 'syncReaderPostCache', () => {
 			},
 		] );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			ID: 1,
 			site_ID: 100,
 			content_no_html: 'Hello Reader',
@@ -54,7 +54,7 @@ describe( 'syncReaderPostCache', () => {
 	it( 'applies slow normalization results after the fast cache write', async () => {
 		const queryClient = makeQueryClient();
 
-		syncReaderPostCache( queryClient, [
+		syncPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -63,15 +63,15 @@ describe( 'syncReaderPostCache', () => {
 			},
 		] );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 			content_no_html: 'Hello slow normalization',
 		} );
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).not.toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).not.toMatchObject( {
 			slow_cache_test_marker: true,
 		} );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 				slow_cache_test_marker: true,
 			} );
 		} );
@@ -86,11 +86,11 @@ describe( 'syncReaderPostCache', () => {
 			content: '<p>Hello duplicate slow normalization</p>',
 		};
 
-		syncReaderPostCache( queryClient, [ post ] );
-		syncReaderPostCache( queryClient, [ post ] );
+		syncPostCache( queryClient, [ post ] );
+		syncPostCache( queryClient, [ post ] );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 				slow_cache_test_marker: true,
 			} );
 		} );
@@ -110,7 +110,7 @@ describe( 'syncReaderPostCache', () => {
 				content: '<p>Reloaded post</p>',
 			} );
 
-		syncReaderPostCache( queryClient, [
+		syncPostCache( queryClient, [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -120,10 +120,10 @@ describe( 'syncReaderPostCache', () => {
 			},
 		] );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toBeNull();
+		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toBeNull();
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
 				content_no_html: 'Reloaded post',
 				better_excerpt_no_html: 'Reloaded post',
 			} );

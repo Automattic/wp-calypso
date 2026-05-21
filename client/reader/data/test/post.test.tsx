@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getCachedReaderPost, upsertReaderPostCache } from 'calypso/reader/data/post-cache';
-import { createReaderPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post-cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import { useReaderPost } from '../post';
 import type { ReadPostKey } from '@automattic/api-core';
@@ -20,7 +20,7 @@ const buildStore = ( queryClient: QueryClient, preloadedState?: { reader?: unkno
 		preloadedState as never,
 		applyMiddleware(
 			thunkMiddleware,
-			createReaderPostCacheMiddleware( () => queryClient )
+			createPostCacheMiddleware( () => queryClient )
 		)
 	);
 
@@ -67,7 +67,7 @@ describe( 'useReaderPost', () => {
 		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				ID: 2,
 				site_ID: 1,
 			} );
@@ -88,7 +88,7 @@ describe( 'useReaderPost', () => {
 		const { queryClient } = renderReaderPost( { blogId: 1, postId: 2 } );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				ID: 2,
 				site_ID: 1,
 				content: '<p>full</p>',
@@ -105,7 +105,7 @@ describe( 'useReaderPost', () => {
 		const { queryClient } = renderReaderPost( { feedId: 3, postId: 4 } );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { feedId: 3, postId: 4 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { feedId: 3, postId: 4 } ) ).toMatchObject( {
 				ID: 4,
 				feed_ID: 3,
 				feed_item_ID: 4,
@@ -124,7 +124,7 @@ describe( 'useReaderPost', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				ID: 2,
 				site_ID: 1,
 				global_ID: 'error-1-2',
@@ -153,7 +153,7 @@ describe( 'useReaderPost', () => {
 		} );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				is_error: true,
 			} );
 		} );
@@ -163,7 +163,7 @@ describe( 'useReaderPost', () => {
 		rerender( { postKey: { blogId: 1, postId: 2 } } );
 		rerender( { postKey: { blogId: 1, postId: 2 } } );
 
-		expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+		expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 			global_ID: 'error-1-2',
 			is_error: true,
 		} );
@@ -172,7 +172,7 @@ describe( 'useReaderPost', () => {
 	it( 'does not fetch when postKey is incomplete', () => {
 		// nock.disableNetConnect would throw on any unexpected request.
 		const { queryClient } = renderReaderPost( { blogId: 1 } as never );
-		expect( getCachedReaderPost( queryClient, { blogId: 1 } as never ) ).toBeNull();
+		expect( getCachedPost( queryClient, { blogId: 1 } as never ) ).toBeNull();
 	} );
 
 	it( 'exposes loading state while fetching a missing post', async () => {
@@ -226,7 +226,7 @@ describe( 'useReaderPost', () => {
 		// No nock scope: any request would throw because of disableNetConnect.
 		const cached = { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>cached</p>' };
 		const queryClient = buildQueryClient();
-		upsertReaderPostCache( queryClient, [ cached ] );
+		upsertPostCache( queryClient, [ cached ] );
 
 		const { result } = renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
@@ -254,7 +254,7 @@ describe( 'useReaderPost', () => {
 		);
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				content: '<p>full</p>',
 			} );
 		} );
@@ -267,13 +267,13 @@ describe( 'useReaderPost', () => {
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', title: 'full' } );
 
 		const queryClient = buildQueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{ ID: 2, site_ID: 1, global_ID: 'global-2', _state: 'minimal' },
 		] );
 		renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				title: 'full',
 			} );
 		} );
@@ -286,13 +286,13 @@ describe( 'useReaderPost', () => {
 			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
 
 		const queryClient = buildQueryClient();
-		upsertReaderPostCache( queryClient, [
+		upsertPostCache( queryClient, [
 			{ ID: 2, site_ID: 1, global_ID: 'global-2', title: 'from stream' },
 		] );
 		renderReaderPost( { blogId: 1, postId: 2 }, undefined, queryClient );
 
 		await waitFor( () => {
-			expect( getCachedReaderPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
+			expect( getCachedPost( queryClient, { blogId: 1, postId: 2 } ) ).toMatchObject( {
 				content: '<p>full</p>',
 			} );
 		} );

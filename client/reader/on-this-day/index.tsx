@@ -11,7 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useCachedReaderPosts } from 'calypso/reader/data/post-cache';
+import { useCachedPosts } from 'calypso/reader/data/post-cache';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
@@ -116,7 +116,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 		[ data?.items ]
 	);
 	const postKeys = useMemo( () => postItems.map( postKeyForItem ), [ postItems ] );
-	const cachedPosts = useCachedReaderPosts( postKeys );
+	const cachedPosts = useCachedPosts( postKeys );
 	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
 		const items = data?.items;
 		if ( ! items ) {

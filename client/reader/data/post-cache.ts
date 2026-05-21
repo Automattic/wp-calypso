@@ -7,20 +7,20 @@ import type { ComponentType } from 'react';
 
 export type ReaderPost = Partial< ApiReaderPost > & Record< string, unknown >;
 
-interface ReaderPostCacheData {
+interface PostCacheData {
 	base: ReaderPost;
 	overlay: ReaderPost;
 }
 
-interface ReaderPostCacheKey {
+interface PostCacheKey {
 	blogId?: number | string | null;
 	feedId?: number | string | null;
 	postId?: number | string | null;
 }
 
-type ReaderPostCacheTarget = ReaderPostCacheKey | ReaderPost | null | undefined;
+type PostCacheTarget = PostCacheKey | ReaderPost | null | undefined;
 
-type ReaderPostCacheQueryKey = readonly [ 'read', 'post', 'cache', string ];
+type PostCacheQueryKey = readonly [ 'read', 'post', 'cache', string ];
 const READER_POST_CACHE_QUERY_KEY_PREFIX = [ 'read', 'post', 'cache' ] as const;
 const READER_POST_CACHE_QUERY_OPTIONS = {
 	staleTime: Infinity,
@@ -34,7 +34,7 @@ const valueToString = ( value: unknown ): string | null => {
 	return String( value );
 };
 
-const postKeyStringFromKey = ( postKey: ReaderPostCacheKey ): string | null => {
+const postKeyStringFromKey = ( postKey: PostCacheKey ): string | null => {
 	return keyToString( postKey );
 };
 
@@ -75,7 +75,7 @@ const postKeyStringsFromPost = ( post: ReaderPost ): string[] => {
 	return [ ...keyStrings ];
 };
 
-const isReaderPostCacheKey = ( target: ReaderPostCacheTarget ): target is ReaderPostCacheKey => {
+const isPostCacheKey = ( target: PostCacheTarget ): target is PostCacheKey => {
 	return (
 		typeof target === 'object' &&
 		target !== null &&
@@ -83,21 +83,21 @@ const isReaderPostCacheKey = ( target: ReaderPostCacheTarget ): target is Reader
 	);
 };
 
-const readerPostCacheKeyString = ( target: ReaderPostCacheTarget ): string | null => {
+const postCacheKeyString = ( target: PostCacheTarget ): string | null => {
 	if ( ! target ) {
 		return null;
 	}
-	if ( isReaderPostCacheKey( target ) ) {
+	if ( isPostCacheKey( target ) ) {
 		return postKeyStringFromKey( target );
 	}
 	return postKeyStringFromPost( target );
 };
 
-const readerPostCacheQueryKey = ( target: ReaderPostCacheTarget ): ReaderPostCacheQueryKey => {
-	return [ 'read', 'post', 'cache', readerPostCacheKeyString( target ) ?? 'unknown' ] as const;
+const postCacheQueryKey = ( target: PostCacheTarget ): PostCacheQueryKey => {
+	return [ 'read', 'post', 'cache', postCacheKeyString( target ) ?? 'unknown' ] as const;
 };
 
-const readerPostCacheQueryKeyFromString = ( keyString: string ): ReaderPostCacheQueryKey => {
+const postCacheQueryKeyFromString = ( keyString: string ): PostCacheQueryKey => {
 	return [ 'read', 'post', 'cache', keyString ] as const;
 };
 
@@ -125,16 +125,14 @@ const mergeReaderPost = (
 	};
 };
 
-const mergeReaderPostCacheData = (
-	data: ReaderPostCacheData | null | undefined
-): ReaderPost | null => {
+const mergePostCacheData = ( data: PostCacheData | null | undefined ): ReaderPost | null => {
 	if ( ! data ) {
 		return null;
 	}
 	return mergeReaderPost( data.base, data.overlay );
 };
 
-const ensureReaderPostCacheQueryDefaults = ( queryClient: QueryClient ) => {
+const ensurePostCacheQueryDefaults = ( queryClient: QueryClient ) => {
 	queryClient.setQueryDefaults(
 		READER_POST_CACHE_QUERY_KEY_PREFIX,
 		READER_POST_CACHE_QUERY_OPTIONS
@@ -161,7 +159,7 @@ const arraysShareMatchingValue = ( left: unknown, right: unknown ): boolean => {
 	);
 };
 
-const postMatchesKey = ( post: ReaderPost, key: ReaderPostCacheKey ): boolean => {
+const postMatchesKey = ( post: ReaderPost, key: PostCacheKey ): boolean => {
 	if ( key.blogId && key.postId ) {
 		return valuesMatch( post.site_ID, key.blogId ) && valuesMatch( post.ID, key.postId );
 	}
@@ -201,11 +199,11 @@ const postsShareIdentity = ( left: ReaderPost, right: ReaderPost ): boolean => {
 	return false;
 };
 
-const cacheEntryMatchesTarget = ( post: ReaderPost, target: ReaderPostCacheTarget ): boolean => {
+const cacheEntryMatchesTarget = ( post: ReaderPost, target: PostCacheTarget ): boolean => {
 	if ( ! target ) {
 		return false;
 	}
-	if ( isReaderPostCacheKey( target ) ) {
+	if ( isPostCacheKey( target ) ) {
 		return postMatchesKey( post, target );
 	}
 	return postsShareIdentity( post, target );
@@ -213,27 +211,25 @@ const cacheEntryMatchesTarget = ( post: ReaderPost, target: ReaderPostCacheTarge
 
 const getMatchingCacheKeyStrings = (
 	queryClient: QueryClient,
-	target: ReaderPostCacheTarget
+	target: PostCacheTarget
 ): string[] => {
 	const matchingKeyStrings = new Set< string >();
-	const targetKeyString = readerPostCacheKeyString( target );
+	const targetKeyString = postCacheKeyString( target );
 	const targetQueryData = targetKeyString
-		? queryClient.getQueryData< ReaderPostCacheData >(
-				readerPostCacheQueryKeyFromString( targetKeyString )
-		  )
+		? queryClient.getQueryData< PostCacheData >( postCacheQueryKeyFromString( targetKeyString ) )
 		: null;
 
 	if ( targetQueryData ) {
 		matchingKeyStrings.add( targetKeyString as string );
 	}
 
-	const cacheQueries = queryClient.getQueriesData< ReaderPostCacheData >( {
+	const cacheQueries = queryClient.getQueriesData< PostCacheData >( {
 		queryKey: READER_POST_CACHE_QUERY_KEY_PREFIX,
 	} );
 
 	for ( const [ queryKey, current ] of cacheQueries ) {
-		const merged = mergeReaderPostCacheData( current );
-		const keyString = ( queryKey as ReaderPostCacheQueryKey )[ 3 ];
+		const merged = mergePostCacheData( current );
+		const keyString = ( queryKey as PostCacheQueryKey )[ 3 ];
 		if ( merged && keyString && cacheEntryMatchesTarget( merged, target ) ) {
 			matchingKeyStrings.add( keyString );
 		}
@@ -242,23 +238,23 @@ const getMatchingCacheKeyStrings = (
 	return [ ...matchingKeyStrings ];
 };
 
-export const upsertReaderPostCache = (
+export const upsertPostCache = (
 	queryClient: QueryClient,
 	posts: Array< ReaderPost | null | undefined >
 ) => {
-	ensureReaderPostCacheQueryDefaults( queryClient );
+	ensurePostCacheQueryDefaults( queryClient );
 
 	const validPosts = posts.filter( Boolean ) as ReaderPost[];
 	const keyStringsByPost = new Map(
 		validPosts.map( ( post ) => [ post, new Set( postKeyStringsFromPost( post ) ) ] )
 	);
-	const cacheQueries = queryClient.getQueriesData< ReaderPostCacheData >( {
+	const cacheQueries = queryClient.getQueriesData< PostCacheData >( {
 		queryKey: READER_POST_CACHE_QUERY_KEY_PREFIX,
 	} );
 
 	for ( const [ queryKey, current ] of cacheQueries ) {
-		const merged = mergeReaderPostCacheData( current );
-		const keyString = ( queryKey as ReaderPostCacheQueryKey )[ 3 ];
+		const merged = mergePostCacheData( current );
+		const keyString = ( queryKey as PostCacheQueryKey )[ 3 ];
 		if ( ! merged || ! keyString ) {
 			continue;
 		}
@@ -272,8 +268,8 @@ export const upsertReaderPostCache = (
 
 	validPosts.forEach( ( post ) => {
 		keyStringsByPost.get( post )?.forEach( ( keyString ) => {
-			queryClient.setQueryData< ReaderPostCacheData >(
-				readerPostCacheQueryKeyFromString( keyString ),
+			queryClient.setQueryData< PostCacheData >(
+				postCacheQueryKeyFromString( keyString ),
 				( current ) => ( {
 					base: mergeReaderPost( current?.base, post ),
 					overlay: current?.overlay ?? {},
@@ -283,33 +279,33 @@ export const upsertReaderPostCache = (
 	} );
 };
 
-export const getCachedReaderPost = (
+export const getCachedPost = (
 	queryClient: QueryClient,
-	target: ReaderPostCacheTarget
+	target: PostCacheTarget
 ): ReaderPost | null => {
-	const keyString = readerPostCacheKeyString( target );
+	const keyString = postCacheKeyString( target );
 	if ( ! keyString ) {
 		return null;
 	}
 	return (
-		mergeReaderPostCacheData(
-			queryClient.getQueryData< ReaderPostCacheData >( readerPostCacheQueryKey( target ) )
+		mergePostCacheData(
+			queryClient.getQueryData< PostCacheData >( postCacheQueryKey( target ) )
 		) ?? null
 	);
 };
 
-export const updateCachedReaderPost = (
+export const updateCachedPost = (
 	queryClient: QueryClient,
-	target: ReaderPostCacheTarget,
+	target: PostCacheTarget,
 	patch: ( post: ReaderPost | null ) => ReaderPost
 ) => {
-	ensureReaderPostCacheQueryDefaults( queryClient );
+	ensurePostCacheQueryDefaults( queryClient );
 
 	getMatchingCacheKeyStrings( queryClient, target ).forEach( ( keyString ) => {
-		queryClient.setQueryData< ReaderPostCacheData >(
-			readerPostCacheQueryKeyFromString( keyString ),
+		queryClient.setQueryData< PostCacheData >(
+			postCacheQueryKeyFromString( keyString ),
 			( current ) => {
-				const merged = mergeReaderPostCacheData( current );
+				const merged = mergePostCacheData( current );
 				if ( ! current || ! merged ) {
 					return current;
 				}
@@ -323,48 +319,46 @@ export const updateCachedReaderPost = (
 	} );
 };
 
-export const updateCachedReaderPostsMatching = (
+export const updateCachedPostsMatching = (
 	queryClient: QueryClient,
 	predicate: ( post: ReaderPost ) => boolean,
 	patch: ( post: ReaderPost ) => ReaderPost
 ) => {
-	ensureReaderPostCacheQueryDefaults( queryClient );
+	ensurePostCacheQueryDefaults( queryClient );
 
-	const cacheQueries = queryClient.getQueriesData< ReaderPostCacheData >( {
+	const cacheQueries = queryClient.getQueriesData< PostCacheData >( {
 		queryKey: READER_POST_CACHE_QUERY_KEY_PREFIX,
 	} );
 
 	for ( const [ queryKey, current ] of cacheQueries ) {
-		const merged = mergeReaderPostCacheData( current );
+		const merged = mergePostCacheData( current );
 		if ( ! merged || ! predicate( merged ) ) {
 			continue;
 		}
 
-		queryClient.setQueryData< ReaderPostCacheData >( queryKey, {
+		queryClient.setQueryData< PostCacheData >( queryKey, {
 			base: current?.base ?? {},
 			overlay: mergeReaderPost( current?.overlay, patch( merged ) ),
 		} );
 	}
 };
 
-export const useCachedReaderPost = ( target: ReaderPostCacheTarget ): ReaderPost | null => {
+export const useCachedPost = ( target: PostCacheTarget ): ReaderPost | null => {
 	// Cache-only read. UI that can fetch missing posts should use useReaderPost instead.
-	const query = useQuery< ReaderPostCacheData | null >( {
-		queryKey: readerPostCacheQueryKey( target ),
+	const query = useQuery< PostCacheData | null >( {
+		queryKey: postCacheQueryKey( target ),
 		queryFn: () => Promise.resolve( null ),
 		enabled: false,
 		...READER_POST_CACHE_QUERY_OPTIONS,
 	} );
 
-	return useMemo( () => mergeReaderPostCacheData( query.data ), [ query.data ] );
+	return useMemo( () => mergePostCacheData( query.data ), [ query.data ] );
 };
 
-export const useCachedReaderPosts = (
-	targets: ReaderPostCacheTarget[]
-): Array< ReaderPost | null > => {
+export const useCachedPosts = ( targets: PostCacheTarget[] ): Array< ReaderPost | null > => {
 	const queries = useQueries( {
 		queries: targets.map( ( target ) => ( {
-			queryKey: readerPostCacheQueryKey( target ),
+			queryKey: postCacheQueryKey( target ),
 			queryFn: () => Promise.resolve( null ),
 			enabled: false,
 			...READER_POST_CACHE_QUERY_OPTIONS,
@@ -374,23 +368,21 @@ export const useCachedReaderPosts = (
 	return useMemo(
 		() =>
 			queries.map( ( query ) =>
-				mergeReaderPostCacheData( query.data as ReaderPostCacheData | null | undefined )
+				mergePostCacheData( query.data as PostCacheData | null | undefined )
 			),
 		[ queries ]
 	);
 };
 
-interface WithCachedReaderPostProps {
+interface WithCachedPostProps {
 	post?: ReaderPost | null;
 }
 
-export const withCachedReaderPost =
-	< Props extends WithCachedReaderPostProps >(
-		getTarget: ( props: Props ) => ReaderPostCacheTarget
-	) =>
+export const withCachedPost =
+	< Props extends WithCachedPostProps >( getTarget: ( props: Props ) => PostCacheTarget ) =>
 	( WrappedComponent: ComponentType< Props > ) => {
-		const CachedReaderPostContainer = ( props: Props ) => {
-			const cachedPost = useCachedReaderPost( getTarget( props ) );
+		const CachedPostContainer = ( props: Props ) => {
+			const cachedPost = useCachedPost( getTarget( props ) );
 			const nextProps = {
 				...props,
 				post: props.post ?? cachedPost,
@@ -399,9 +391,9 @@ export const withCachedReaderPost =
 			return createElement( WrappedComponent, nextProps );
 		};
 
-		CachedReaderPostContainer.displayName = `withCachedReaderPost(${
+		CachedPostContainer.displayName = `withCachedPost(${
 			WrappedComponent.displayName || WrappedComponent.name || 'Component'
 		})`;
 
-		return CachedReaderPostContainer;
+		return CachedPostContainer;
 	};
