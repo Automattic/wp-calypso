@@ -46,3 +46,6 @@ window.configData = {
 	...window.configData,
 	...productionConfig,
 };
+
+// BLAZE_LOCAL_DEV_MARKER: inserted by the blaze-local-dev exobrain skill; remove on cleanup.
+window.configData.dsp_widget_js_src = 'http://localhost:3004/widget.js';
