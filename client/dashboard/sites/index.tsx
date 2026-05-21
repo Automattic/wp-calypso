@@ -23,6 +23,7 @@ import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
+import { AI_SITE_BUILDER_SPEC_FLOW } from './ai-site-builder-spec-flow';
 import {
 	SitesDataViews,
 	useActions,
@@ -34,7 +35,6 @@ import {
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNotices } from './notices';
-import { useAiSiteBuilderPath } from './use-ai-site-builder-path';
 import { OptInWelcomeModal } from './welcome-modal';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -181,10 +181,6 @@ export default function Sites() {
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	// Hoisted out of the modal so the ExPlat assignment is fetched on mount
-	// rather than when the popover opens.
-	const aiSiteBuilderPath = useAiSiteBuilderPath();
-
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
 		updateView( nextView );
@@ -205,7 +201,10 @@ export default function Sites() {
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" aiSiteBuilderPath={ aiSiteBuilderPath } />
+					<AddNewSite
+						context="sites-dashboard"
+						aiSiteBuilderPath={ `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` }
+					/>
 				</Modal>
 			) }
 			<PageLayout
