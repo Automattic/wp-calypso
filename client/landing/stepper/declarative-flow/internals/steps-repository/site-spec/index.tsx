@@ -98,29 +98,6 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	const handleVegaSpecConfirm = useCallback( async ( specData: unknown ) => {
-		if ( isSubmittingRef.current ) {
-			return;
-		}
-
-		isSubmittingRef.current = true;
-
-		const sessionId =
-			specData && typeof specData === 'object' && 'session_id' in specData
-				? ( specData as { session_id?: string } ).session_id
-				: undefined;
-		const specId = sessionId || '';
-
-		let url = `/setup/ai-site-builder/?spec_id=${ encodeURIComponent( specId ) }`;
-
-		const phSessionId = getPostHogSessionId();
-		if ( phSessionId ) {
-			url += `&_ph=${ encodeURIComponent( phSessionId ) }`;
-		}
-
-		window.location.href = url;
-	}, [] );
-
 	const vegaConfig = useMemo( () => getVegaSiteSpecConfig(), [] );
 
 	return (
@@ -133,7 +110,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					onSpecConfirm={ handleCiabSpecConfirm }
 				/>
 			) : (
-				<SiteSpecContainer siteSpecConfig={ vegaConfig } onSpecConfirm={ handleVegaSpecConfirm } />
+				<SiteSpecContainer siteSpecConfig={ vegaConfig } />
 			) }
 		</>
 	);
