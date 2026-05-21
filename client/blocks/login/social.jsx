@@ -169,8 +169,6 @@ class SocialLoginForm extends Component {
 					interactiveButton = cloneElement( button, {
 						onClick: () => {
 							recordTracksEvent( 'calypso_login_method_click', {
-								flow: 'login',
-								step: 'login-form',
 								path: this.props.currentRoute,
 								method: service,
 								badge_view: isBadged,

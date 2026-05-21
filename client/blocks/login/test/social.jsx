@@ -87,29 +87,21 @@ describe( 'SocialLoginForm', () => {
 
 		// One impression per method, with badge_view=true for the last-used one.
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
-			flow: 'login',
-			step: 'login-form',
 			path: '/log-in',
 			method: 'google',
 			badge_view: true,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
-			flow: 'login',
-			step: 'login-form',
 			path: '/log-in',
 			method: 'apple',
 			badge_view: false,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
-			flow: 'login',
-			step: 'login-form',
 			path: '/log-in',
 			method: 'magic-login',
 			badge_view: false,
 		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_impression', {
-			flow: 'login',
-			step: 'login-form',
 			path: '/log-in',
 			method: 'qr-code',
 			badge_view: false,
@@ -146,8 +138,6 @@ describe( 'SocialLoginForm', () => {
 		fireEvent.click( screen.getByText( /Email me a login/i ).closest( 'a' ) );
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_method_click', {
-			flow: 'login',
-			step: 'login-form',
 			path: '/log-in',
 			method: 'magic-login',
 			badge_view: false,

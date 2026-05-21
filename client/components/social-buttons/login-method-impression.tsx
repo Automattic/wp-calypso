@@ -22,8 +22,6 @@ const LoginMethodImpression = ( {
 }: LoginMethodImpressionProps ) => {
 	useEffect( () => {
 		recordTracksEvent( 'calypso_login_method_impression', {
-			flow: 'login',
-			step: 'login-form',
 			path,
 			method,
 			badge_view: badgeView,

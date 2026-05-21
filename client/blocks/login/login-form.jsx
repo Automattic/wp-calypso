@@ -296,8 +296,6 @@ export class LoginForm extends Component {
 			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
 
 		this.props.recordTracksEvent( 'calypso_login_method_impression', {
-			flow: 'login',
-			step: 'login-form',
 			path: this.props.currentRoute,
 			method: 'password',
 			badge_view: isLastUsedPassword,
@@ -312,8 +310,6 @@ export class LoginForm extends Component {
 			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
 
 		this.props.recordTracksEvent( 'calypso_login_method_click', {
-			flow: 'login',
-			step: 'login-form',
 			path: this.props.currentRoute,
 			method: 'password',
 			badge_view: isLastUsedPassword,
@@ -654,8 +650,6 @@ export class LoginForm extends Component {
 
 		// Standardized click event used across every login method.
 		this.props.recordTracksEvent( 'calypso_login_method_click', {
-			flow: 'login',
-			step: 'login-form',
 			path: this.props.currentRoute,
 			method: service,
 			badge_view: isLastUsedAuthenticationMethod,
