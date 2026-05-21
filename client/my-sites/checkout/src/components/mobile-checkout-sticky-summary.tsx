@@ -2,15 +2,12 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { Icon, chevronUp } from '@wordpress/icons';
+import { Icon, chevronUp, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useId, useState } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
 import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
-
-const LOCK_ICON =
-	"url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M7 11V8a5 5 0 0 1 10 0v3'/></svg>\")";
 
 const Wrapper = styled.div`
 	position: fixed;
@@ -97,11 +94,15 @@ const ChevronWrapper = styled.span< { isOpen: boolean } >`
 	transform: ${ ( props ) => ( props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)' ) };
 `;
 
-const SubmitSlot = styled.div`
+const SubmitRow = styled.div`
 	inline-size: 100%;
+	position: relative;
+	display: flex;
+	align-items: center;
 
 	.checkout-steps__submit-button-wrapper {
 		padding: 0;
+		inline-size: 100%;
 	}
 
 	.checkout-submit-button,
@@ -109,19 +110,22 @@ const SubmitSlot = styled.div`
 		width: 100%;
 	}
 
+	.checkout-submit-button > button {
+		padding-inline-start: 40px;
+	}
+
 	.checkout-submit-button > button svg {
 		display: none;
 	}
+`;
 
-	.checkout-submit-button > button::before {
-		content: '';
-		display: inline-block;
-		vertical-align: middle;
-		inline-size: 16px;
-		block-size: 16px;
-		margin-inline-end: 8px;
-		background: ${ LOCK_ICON } no-repeat center;
-	}
+const LockIconWrapper = styled.span`
+	position: absolute;
+	inset-inline-start: 12px;
+	display: inline-flex;
+	align-items: center;
+	pointer-events: none;
+	color: currentColor;
 `;
 
 const TosWrapper = styled.div`
@@ -175,7 +179,12 @@ export function MobileCheckoutStickySummary() {
 				</ChevronWrapper>
 			</ToggleRow>
 
-			<SubmitSlot ref={ setSlotEl } />
+			<SubmitRow>
+				<LockIconWrapper aria-hidden="true">
+					<Icon icon={ lock } size={ 16 } />
+				</LockIconWrapper>
+				<div ref={ setSlotEl } style={ { width: '100%' } } />
+			</SubmitRow>
 
 			<TosWrapper>
 				{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
