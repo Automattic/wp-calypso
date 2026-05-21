@@ -192,14 +192,6 @@ export function useStreamPosts( {
 		return combined;
 	}, [ query.data, streamType ] );
 
-	const fetchNextPage = useCallback( () => {
-		query.fetchNextPage();
-	}, [ query ] );
-
-	const refetch = useCallback( () => {
-		query.refetch();
-	}, [ query ] );
-
 	const queryKey = queryOptions.queryKey;
 	const invalidate = useCallback( () => {
 		queryClient.invalidateQueries( { queryKey, refetchType: 'none' } );
@@ -215,8 +207,8 @@ export function useStreamPosts( {
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,
-		fetchNextPage,
-		refetch,
+		fetchNextPage: query.fetchNextPage,
+		refetch: query.refetch,
 		invalidate,
 	};
 }
