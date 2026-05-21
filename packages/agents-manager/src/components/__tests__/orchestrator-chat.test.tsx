@@ -20,7 +20,7 @@ jest.mock(
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: () => undefined,
 } ) );
-jest.mock( '@wordpress/element', () => require( 'react' ) );
+jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
@@ -109,7 +109,7 @@ describe( 'OrchestratorChat', () => {
 				onExpand={ jest.fn() }
 				chatHeaderOptions={ [] }
 				markdownComponents={ {} }
-				markdownExtensions={ [] }
+				markdownExtensions={ {} }
 				isCompactMode={ false }
 				onHasMessagesChange={ jest.fn() }
 			/>
