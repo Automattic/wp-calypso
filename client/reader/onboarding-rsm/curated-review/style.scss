@@ -219,6 +219,39 @@
 		align-self: center;
 	}
 
+	&__tag-group {
+		margin-block-start: 4px;
+	}
+
+	&__tag-group-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 12px;
+		background: #f0f0f0;
+		border-inline-start: 3px solid #c3c4c7;
+		margin-block-end: 2px;
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
+	&__tag-group-name {
+		font-weight: 600;
+		font-size: 12px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: #3c434a;
+	}
+
+	&__tag-group-count {
+		font-size: 11px;
+		color: #787c82;
+		background: #dcdcde;
+		border-radius: 8px;
+		padding: 1px 7px;
+	}
+
 	&__row-order {
 		display: flex;
 		gap: 2px;

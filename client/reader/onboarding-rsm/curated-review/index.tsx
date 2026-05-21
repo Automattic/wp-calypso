@@ -458,52 +458,85 @@ const CuratedReviewPage: React.FC = () => {
 									) }
 								</header>
 							) }
-							{ group.indices.map( ( index ) => {
-								const row = queryableRows[ index ];
-								const meta = detectedRows[ index ];
-								const query = feedQueries[ index ];
-								// Determine position within this tag so we can disable
-								// the up/down buttons at the edges.
-								const file = CURATED_FILES.find( ( f ) => f.slug === row.fileSlug );
-								const tagEntries = file
-									? tagOrder.applyOrder( row.fileSlug, row.tag, file.tagMap[ row.tag ] ?? [] )
-									: [];
-								const posInTag = tagEntries.findIndex( ( e ) => e.feed_ID === row.entry.feed_ID );
-								return (
-									<CuratedRow
-										key={ row.entry.feed_ID }
-										tag={ row.tag }
-										entry={ row.entry }
-										detected={ meta.detected }
-										iconUrl={ meta.iconUrl }
-										isLoading={ query.isLoading || query.isFetching }
-										queryError={ query.error as Error | null }
-										isMarkedBroken={ broken.feedIds.has( row.entry.feed_ID ) }
-										autoFlaggedBroken={ meta.autoFlaggedBroken }
-										onToggleBroken={ () => broken.toggle( row.entry.feed_ID ) }
-										isHasIconForcedFalse={ hasIconFalse.feedIds.has( row.entry.feed_ID ) }
-										onToggleHasIconFalse={ () => hasIconFalse.toggle( row.entry.feed_ID ) }
-										isFirst={ posInTag <= 0 }
-										isLast={ posInTag >= tagEntries.length - 1 }
-										onMoveUp={ () =>
-											tagOrder.moveUp(
-												row.fileSlug,
-												row.tag,
-												file?.tagMap ?? {},
-												row.entry.feed_ID
-											)
-										}
-										onMoveDown={ () =>
-											tagOrder.moveDown(
-												row.fileSlug,
-												row.tag,
-												file?.tagMap ?? {},
-												row.entry.feed_ID
-											)
-										}
-									/>
-								);
-							} ) }
+							{ ( () => {
+								// Sub-group consecutive rows by tag so each tag gets a
+								// visible header inside the file section. This makes it
+								// clear where one tag ends and the next begins, especially
+								// after an auto-sort has reordered entries within each tag.
+								const tagBlocks: { tag: string; indices: number[] }[] = [];
+								for ( const index of group.indices ) {
+									const tag = queryableRows[ index ].tag;
+									const last = tagBlocks[ tagBlocks.length - 1 ];
+									if ( last && last.tag === tag ) {
+										last.indices.push( index );
+									} else {
+										tagBlocks.push( { tag, indices: [ index ] } );
+									}
+								}
+								return tagBlocks.map( ( block ) => (
+									<section
+										key={ `${ group.fileSlug }/${ block.tag }` }
+										className="curated-review__tag-group"
+									>
+										<header className="curated-review__tag-group-header">
+											<span className="curated-review__tag-group-name">{ block.tag }</span>
+											<span className="curated-review__tag-group-count">
+												{ block.indices.length }
+											</span>
+										</header>
+										{ block.indices.map( ( index ) => {
+											const row = queryableRows[ index ];
+											const meta = detectedRows[ index ];
+											const query = feedQueries[ index ];
+											const rowFile = CURATED_FILES.find( ( f ) => f.slug === row.fileSlug );
+											const tagEntries = rowFile
+												? tagOrder.applyOrder(
+														row.fileSlug,
+														row.tag,
+														rowFile.tagMap[ row.tag ] ?? []
+												  )
+												: [];
+											const posInTag = tagEntries.findIndex(
+												( e ) => e.feed_ID === row.entry.feed_ID
+											);
+											return (
+												<CuratedRow
+													key={ row.entry.feed_ID }
+													tag={ row.tag }
+													entry={ row.entry }
+													detected={ meta.detected }
+													iconUrl={ meta.iconUrl }
+													isLoading={ query.isLoading || query.isFetching }
+													queryError={ query.error as Error | null }
+													isMarkedBroken={ broken.feedIds.has( row.entry.feed_ID ) }
+													autoFlaggedBroken={ meta.autoFlaggedBroken }
+													onToggleBroken={ () => broken.toggle( row.entry.feed_ID ) }
+													isHasIconForcedFalse={ hasIconFalse.feedIds.has( row.entry.feed_ID ) }
+													onToggleHasIconFalse={ () => hasIconFalse.toggle( row.entry.feed_ID ) }
+													isFirst={ posInTag <= 0 }
+													isLast={ posInTag >= tagEntries.length - 1 }
+													onMoveUp={ () =>
+														tagOrder.moveUp(
+															row.fileSlug,
+															row.tag,
+															rowFile?.tagMap ?? {},
+															row.entry.feed_ID
+														)
+													}
+													onMoveDown={ () =>
+														tagOrder.moveDown(
+															row.fileSlug,
+															row.tag,
+															rowFile?.tagMap ?? {},
+															row.entry.feed_ID
+														)
+													}
+												/>
+											);
+										} ) }
+									</section>
+								) );
+							} )() }
 						</section>
 					);
 				} ) }
