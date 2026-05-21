@@ -28,8 +28,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { PRICE_MOTIVATED_REASONS } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-solutions-for-reason';
-import { getSolutionsForReason } from '../get-solutions-for-reason';
+import {
+	getSolutionsForReason,
+	PRICE_MOTIVATED_REASONS,
+} from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-solutions-for-reason';
 import { CardActionContext, RENEW_COUPON, SOLUTION_CARD_CONFIG } from './solution-cards-config';
 import UpsellStep from './upsell-step';
 import type { SiteDetails } from '@automattic/data-stores';

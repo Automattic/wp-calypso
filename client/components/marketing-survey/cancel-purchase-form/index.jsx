@@ -17,6 +17,7 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSolutionsForReason } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-solutions-for-reason';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	isAgencyPartnerType,
@@ -43,7 +44,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
-import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import nextStep from './next-step';
