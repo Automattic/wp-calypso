@@ -337,6 +337,14 @@ export default function AmplifyReportsContent( {
 		// Default to showing Active reports only. The user can switch to
 		// Archived or remove the filter for All via the DataViews filter UI.
 		filters: [ { field: 'status', operator: 'is', value: 'active' } ],
+		// Default sort newest-first. Pending and failed rows naturally surface
+		// at the top because their `startedAt` timestamp is the moment of
+		// submission, which is always >= every completed report's timestamp.
+		// ISO 8601 strings sort lexicographically the same as chronologically
+		// (canonical YYYY-MM-DDTHH:MM:SS.sssZ form), so no custom comparator
+		// needed — the timestamp field's getValue returns the raw ISO string
+		// and DataViews handles the rest.
+		sort: { field: 'timestamp', direction: 'desc' },
 		// Override the shared a4a default of 50 — the reports list grows one
 		// row per analysis, so 50/page would push pagination controls off
 		// indefinitely. 10 keeps the page scannable and surfaces pagination

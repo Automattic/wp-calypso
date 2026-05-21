@@ -86,6 +86,6 @@
 	"theme_color": "#029CD7",
 	"theme_color_admin_color_scheme_override": false,
 	"hotjar_enabled": true,
-	"amplify_worker_url": "http://localhost:8787",
-	"amplify_api_secret": "d891214eed45021b7d7be0c6c0f727c2b856387836957e94e610a12efa6b8017"
+	"amplify_worker_url": "https://amplify-api.jeff-golenski.workers.dev",
+	"amplify_api_secret": "c8ba42b00a74a6d2d6ed7fad5e2dc697dc43b4b1d9cec8e6f026341ef974cc8c"
 }

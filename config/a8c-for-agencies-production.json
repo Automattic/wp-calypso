@@ -77,6 +77,6 @@
 	"theme_color": "#029CD7",
 	"theme_color_admin_color_scheme_override": false,
 	"hotjar_enabled": true,
-	"amplify_worker_url": "https://amplify-api.automattic.workers.dev",
+	"amplify_worker_url": "",
 	"amplify_api_secret": ""
 }
