@@ -912,7 +912,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-/* Start site profiler section overrides */
+/* Start monochrome header overrides */
 .is-style-monochrome {
 	@include monochrome-header;
 }
@@ -948,4 +948,4 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-/* End site profiler section overrides */
+/* End monochrome header overrides */
