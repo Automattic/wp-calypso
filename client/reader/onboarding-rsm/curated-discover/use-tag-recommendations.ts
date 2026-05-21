@@ -4,18 +4,22 @@ import { useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 /**
- * Row shape from `/read/tags/cards` `recommended_blogs` card data.
- * Mirrors `RecommendedBlogsApiSite` from
- * `client/reader/onboarding-rsm/subscribe-modal/use-subscribe-recommendations.ts`
- * — kept local so this dev tool can evolve independently of the modal.
+ * Row shape from `/read/tags/cards` `recommended_blogs` card data, as actually
+ * emitted by the backend `prepare_recommended_site()` (see
+ * `wp-content/rest-api-plugins/endpoints/read-tags-cards.php`). The fields
+ * are `ID` / `URL` / `name` — NOT the `site_ID` / `site_URL` / `site_name`
+ * the subscribe-modal version of this type declares (that variant only works
+ * there because the modal masks the missing fields with redux-store lookups
+ * and an external-feed fallback for `site_ID === 0`). For this dev tool we
+ * read the response shape directly so the candidate ends up with real values.
  */
 interface RecommendedBlogsApiSite {
+	ID: number;
+	URL: string;
+	name: string;
 	feed_ID: number;
-	site_ID: number;
-	site_URL: string;
-	site_name: string;
 	feed_URL?: string;
-	URL?: string;
+	subscribers_count?: number;
 }
 
 interface Card {
@@ -64,6 +68,19 @@ const PER_PAGE = 18;
 function extractRecommendedBlogs( page: CardsResponse ): RecommendedBlogsApiSite[] {
 	const card = page.cards.find( ( c ) => c.type === 'recommended_blogs' );
 	return card?.data ?? [];
+}
+
+function pickSubscribers(
+	fromFeed: number | undefined,
+	fromCard: number | undefined
+): number | null {
+	if ( typeof fromFeed === 'number' ) {
+		return fromFeed;
+	}
+	if ( typeof fromCard === 'number' ) {
+		return fromCard;
+	}
+	return null;
 }
 
 /**
@@ -144,18 +161,23 @@ export function useTagRecommendations(
 		const feedUrl = feed?.feed_URL ?? site.feed_URL ?? '';
 		const iconUrl = feed?.image || null;
 		const hasIcon = feed ? Boolean( feed.image ) : null;
-		const subscribersCount =
-			feed && typeof feed.subscribers_count === 'number' ? feed.subscribers_count : null;
-		// External (non-WPCOM) feeds frequently come back from `/read/tags/cards`
-		// without a `site_name`. Fall back to the feed query's `name` so the row
-		// has a visible title and the persisted entry carries a usable name into
-		// the curated source. The fallback only kicks in once the feed query
-		// resolves; until then the row may briefly render with no title.
-		const resolvedSiteName = site.site_name || feed?.name || '';
+		// Subscribers come from both the cards endpoint (`subscribers_count`,
+		// computed via `get_subscribers_count()` for WPCOM blogs and `0`
+		// otherwise) and the feed query (`feed.subscribers_count`). Prefer the
+		// feed value when it lands — for non-WPCOM feeds the cards endpoint
+		// reports 0, while the feed query has a real follower count.
+		const subscribersCount = pickSubscribers( feed?.subscribers_count, site.subscribers_count );
+		// The cards endpoint omits `site_name` entirely for some rows (e.g.
+		// blogs whose `switch_to_blog` failed in `prepare_recommended_site`).
+		// Fall back to the feed query's `name` so the row has a visible title
+		// and the persisted entry carries a usable name into the curated
+		// source. The fallback only kicks in once the feed query resolves;
+		// until then the row may briefly render with no title.
+		const resolvedSiteName = site.name || feed?.name || '';
 		return {
 			feed_ID: site.feed_ID,
-			site_ID: site.site_ID,
-			site_URL: site.URL || site.site_URL,
+			site_ID: site.ID,
+			site_URL: site.URL,
 			site_name: resolvedSiteName,
 			feed_URL: feedUrl,
 			iconUrl,

@@ -37,11 +37,18 @@ function renderSubscribers( count: number | null ): React.ReactNode {
 	if ( count === null ) {
 		return '—';
 	}
+	const exact = count.toLocaleString();
 	const compact = formatNumberCompact( count );
+	// `formatNumberCompact` only abbreviates 4+ digit numbers (e.g. "12.3K");
+	// for smaller counts it returns the same string as `toLocaleString`, so
+	// rendering both produced visual noise like "343 (343)". Only show the
+	// parenthetical exact form when the compact label actually lossy-shortens.
+	if ( ! compact || compact === exact ) {
+		return exact;
+	}
 	return (
 		<>
-			{ compact ?? count.toLocaleString() }{ ' ' }
-			<span className="curated-discover__hint">({ count.toLocaleString() })</span>
+			{ compact } <span className="curated-discover__hint">({ exact })</span>
 		</>
 	);
 }

@@ -51,14 +51,19 @@ function renderSubscribersValue( detected: DetectedRow | null ): React.ReactNode
 	if ( ! detected || detected.subscribersCount === null ) {
 		return '—';
 	}
+	const exact = detected.subscribersCount.toLocaleString();
 	const compact = formatNumberCompact( detected.subscribersCount );
 	// Compact form alone hides large differences (e.g. 12,345 vs 12,500 both
 	// render as "12.3K"); show the exact value alongside so the operator can
-	// rank candidates precisely.
+	// rank candidates precisely. For small counts, however, `formatNumberCompact`
+	// returns the same string as `toLocaleString` ("343"), so we'd render
+	// "343 (343)" — drop the parenthetical when it would be redundant.
+	if ( ! compact || compact === exact ) {
+		return exact;
+	}
 	return (
 		<>
-			{ compact ?? detected.subscribersCount.toLocaleString() }{ ' ' }
-			<span className="curated-review__hint">({ detected.subscribersCount.toLocaleString() })</span>
+			{ compact } <span className="curated-review__hint">({ exact })</span>
 		</>
 	);
 }
