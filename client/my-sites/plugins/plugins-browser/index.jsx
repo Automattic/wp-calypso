@@ -135,6 +135,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					siteSlug={ siteSlug }
 					siteId={ siteId }
 					sites={ sites }
+					isLoggedOut={ ! shouldUseLoggedInView }
 				/>
 			);
 		}
@@ -148,7 +149,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 
 		if ( category ) {
 			return (
-				<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
+				<PluginsCategoryResultsPage
+					category={ category }
+					sites={ sites }
+					siteSlug={ siteSlug }
+					isLoggedOut={ ! shouldUseLoggedInView }
+				/>
 			);
 		}
 
