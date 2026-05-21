@@ -2,6 +2,7 @@ import { PriceTierEntry } from '@automattic/calypso-products';
 
 export interface Purchase {
 	amount: number;
+	advertisedTotalUploadSpaceInGb?: number | null;
 	attachedToPurchaseId: number;
 	billPeriodDays: number;
 	billPeriodLabel: string;

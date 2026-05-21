@@ -87,6 +87,8 @@ export interface Purchase {
 	 */
 	attached_to_purchase_id: number | null;
 
+	advertised_total_upload_space_in_gb?: number | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
