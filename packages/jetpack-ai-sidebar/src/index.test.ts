@@ -361,6 +361,40 @@ describe( 'useSuggestions', () => {
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 	} );
 
+	it( 're-shows block suggestions when a block action completes', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+
+		act( () => {
+			window.dispatchEvent( new Event( 'jetpack-ai-sidebar-block-action-complete' ) );
+		} );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+			'AI Editorial Review',
+		] );
+	} );
+
 	it( 'starts the selected block shimmer when AM starts processing', () => {
 		jest.useFakeTimers();
 		installPostTypeMock( 'post' );
@@ -624,6 +658,7 @@ function installWpDataMockWithBlockEditor(
 ) {
 	const editorState: { title: string } = { title: 'original' };
 	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
+	const selectedClientIds: string[] = [];
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -660,6 +695,15 @@ function installWpDataMockWithBlockEditor(
 					return {
 						updateBlockAttributes: ( clientId: string, attrs: Record< string, unknown > ) => {
 							blockUpdates.push( { clientId, attrs } );
+							if ( blocks[ clientId ] ) {
+								blocks[ clientId ].attributes = {
+									...blocks[ clientId ].attributes,
+									...attrs,
+								};
+							}
+						},
+						selectBlock: ( clientId: string ) => {
+							selectedClientIds.push( clientId );
 						},
 					};
 				}
@@ -667,7 +711,7 @@ function installWpDataMockWithBlockEditor(
 			},
 		},
 	};
-	return { editorState, blockUpdates, blocks };
+	return { editorState, blockUpdates, blocks, selectedClientIds };
 }
 
 describe( 'applyReviewEdit', () => {
@@ -754,7 +798,7 @@ describe( 'applyReviewEdit', () => {
 		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
 	} );
 
-	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {
+	it( 'returns the rationale as an agent message so AM can attach feedback actions', async () => {
 		installWpDataMockWithBlockEditor();
 		const addMessage = jest.fn();
 		useAbilitiesSetup( {
@@ -768,15 +812,10 @@ describe( 'applyReviewEdit', () => {
 			'Follows Copy guideline on specific dates.'
 		);
 		jest.advanceTimersByTime( 1000 );
-		await promise;
+		const result = await promise;
 
-		expect( addMessage ).toHaveBeenCalledTimes( 1 );
-		const message = addMessage.mock.calls[ 0 ][ 0 ];
-		expect( message.role ).toBe( 'assistant' );
-		expect( message.content[ 0 ] ).toEqual( {
-			type: 'text',
-			text: 'Follows Copy guideline on specific dates.',
-		} );
+		expect( addMessage ).not.toHaveBeenCalled();
+		expect( result.agentMessage ).toBe( 'Follows Copy guideline on specific dates.' );
 	} );
 
 	it( 'does not emit a chat message when summary is omitted', async () => {
@@ -792,6 +831,54 @@ describe( 'applyReviewEdit', () => {
 		await promise;
 
 		expect( addMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'supports repeated edits against the updated selected block content', async () => {
+		const { blockUpdates, selectedClientIds } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'hello world this is my firsst post' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const first = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Hello world, this is my first post.',
+			undefined,
+			'hello world this is my firsst post'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await first;
+
+		const second = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Hello world, this is my first post!',
+			undefined,
+			'Hello world, this is my first post.'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await second;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Hello world, this is my first post.',
+			contentAfter: 'Hello world, this is my first post!',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Hello world, this is my first post.' },
+			},
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Hello world, this is my first post!' },
+			},
+		] );
+		expect( selectedClientIds ).toEqual( [
+			'550e8400-e29b-41d4-a716-446655440000',
+			'550e8400-e29b-41d4-a716-446655440000',
+		] );
 	} );
 
 	// Intentionally no direct unit test for the `setCheckpoint` call inside

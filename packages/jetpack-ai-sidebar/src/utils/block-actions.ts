@@ -18,15 +18,12 @@ export interface CheckpointApi {
 
 // ---------- Module state ----------
 
-let addMessageFn: ( ( message: any ) => void ) | null = null;
 let moduleCheckpointApi: CheckpointApi | null = null;
 const processingEffectTimeouts = new WeakMap< HTMLElement, ReturnType< typeof setTimeout > >();
 const processingEffectElements = new Set< HTMLElement >();
 let rememberedSelectedBlockClientId: string | null = null;
 
-export function setAddMessageFn( fn: ( ( message: any ) => void ) | null ): void {
-	addMessageFn = fn;
-}
+export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
 
 export function setModuleCheckpointApi( api: CheckpointApi | null ): void {
 	moduleCheckpointApi = api;
@@ -53,6 +50,13 @@ export function getSelectedOrRememberedBlock(): any | null {
 	return rememberedSelectedBlockClientId
 		? blockEditor?.getBlock?.( rememberedSelectedBlockClientId )
 		: null;
+}
+
+export function notifyBlockActionComplete(): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+	window.dispatchEvent( new Event( BLOCK_ACTION_COMPLETE_EVENT ) );
 }
 
 function clearProcessingEffectTimeout( el: HTMLElement ): void {
@@ -455,6 +459,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
 				}
+				notifyBlockActionComplete();
 				resolve( { success: false, error, returnToAgent: false } );
 			};
 
@@ -509,16 +514,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				removeProcessingEffect( blockEl );
 			}
 
-			// Show summary in chat
-			if ( addMessageFn && summary ) {
-				addMessageFn( {
-					id: `block-update-${ Date.now() }`,
-					role: 'assistant',
-					content: [ { type: 'text', text: summary } ],
-					created_at: Math.floor( Date.now() / 1000 ),
-					showIcon: true,
-				} );
-			}
+			notifyBlockActionComplete();
 
 			resolve( {
 				success: true,
@@ -526,6 +522,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				contentBefore: latestSnapshot.content,
 				contentAfter: nextContent,
 				returnToAgent: false,
+				...( summary ? { agentMessage: summary } : {} ),
 			} );
 		}, 800 );
 	} );
@@ -551,6 +548,7 @@ export async function applyReviewEdit(
 	clientId?: string;
 	contentBefore?: string;
 	contentAfter?: string;
+	agentMessage?: string;
 	error?: string;
 	returnToAgent?: boolean;
 } > {

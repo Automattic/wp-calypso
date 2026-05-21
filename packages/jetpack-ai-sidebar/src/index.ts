@@ -26,13 +26,14 @@ import {
 	findBlockElement,
 	findBlockListLayout,
 	handleUpdateBlockContent,
-	setAddMessageFn,
 	setModuleCheckpointApi,
 	getModuleCheckpointApi,
 	startBlockShimmer,
 	stopBlockShimmer,
 	getSelectedOrRememberedBlock,
 	rememberSelectedBlock,
+	notifyBlockActionComplete,
+	BLOCK_ACTION_COMPLETE_EVENT,
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -277,7 +278,6 @@ export function useAbilitiesSetup( actions: {
 	isProcessing?: boolean;
 	[ key: string ]: unknown;
 } ): void {
-	setAddMessageFn( actions.addMessage );
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
@@ -287,6 +287,7 @@ export function useAbilitiesSetup( actions: {
 		startBlockShimmer();
 	} else if ( ! isProcessing && wasAgentProcessing ) {
 		stopBlockShimmer();
+		notifyBlockActionComplete();
 	}
 	wasAgentProcessing = isProcessing;
 }
@@ -654,6 +655,16 @@ export function useSuggestions(): {
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
 		return () => {
 			window.removeEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const handleBlockActionComplete = () => {
+			setHidden( false );
+		};
+		window.addEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
+		return () => {
+			window.removeEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
 		};
 	}, [] );
 
