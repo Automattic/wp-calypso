@@ -87,8 +87,13 @@ export class SignupPickPlanPage {
 
 		const responsePromise = this.captureNewSiteResponse();
 
+		// The Free-plan chain navigates plans -> create-site -> processing -> final.
+		// A single 90s budget for the whole chain is brittle: a slow /sites/new
+		// response or a slow processing step can blow the cap even when each
+		// segment is healthy. Give the entire chain a more generous budget that
+		// accommodates the slow site-creation + processing hops observed in CI.
 		await Promise.all( [
-			this.page.waitForURL( redirectUrl, { timeout: 90 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 180 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		] );
 
