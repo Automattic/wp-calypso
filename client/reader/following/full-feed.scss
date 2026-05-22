@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/variables';
 
@@ -105,7 +107,15 @@ body.is-section-reader .full-feed.main {
 	justify-content: flex-start;
 
 	.components-button.is-secondary {
+		--wp-components-color-accent: var( --color-link );
+		--wp-components-color-accent-darker-20: var( --color-link-dark );
+
 		background: var( --color-surface );
+
+		@include ui-mixins.when-dark-theme {
+			--wp-components-color-accent: var( --studio-white );
+			--wp-components-color-accent-darker-20: var( --studio-gray-0 );
+		}
 	}
 }
 
