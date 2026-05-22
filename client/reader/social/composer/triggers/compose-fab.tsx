@@ -20,6 +20,7 @@ export function ComposeFab() {
 
 	return (
 		<Button
+			variant="primary"
 			className={ clsx( 'social-compose-fab', { 'is-hidden': isHidden } ) }
 			icon={ edit }
 			text={ translate( 'Compose' ) as string }
