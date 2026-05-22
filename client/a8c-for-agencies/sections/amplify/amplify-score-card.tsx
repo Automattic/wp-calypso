@@ -50,7 +50,7 @@ const MODES: Record< Mode, ModeData > = {
 	human: {
 		score: 86,
 		body: __(
-			'Your site is set up to win business. A few targeted refinements will keep you ahead.'
+			"Your client's site is set up to win business. A few targeted refinements will keep you ahead."
 		),
 		metrics: [
 			{ label: __( 'Trust signals' ), score: 16, max: 18 },
@@ -66,7 +66,7 @@ const MODES: Record< Mode, ModeData > = {
 	ai: {
 		score: 42,
 		body: __(
-			"AI tools can't read or rank your site reliably yet. These gaps are likely costing you visibility."
+			"AI tools can't read or rank your client's site reliably yet. These gaps are likely costing you visibility."
 		),
 		metrics: [
 			{ label: __( 'Technical health' ), score: 12, max: 20 },

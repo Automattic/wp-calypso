@@ -22,35 +22,259 @@
 	line-height: 1.15;
 	letter-spacing: -0.5px;
 	color: var(--color-text-black);
-	// Matches the criteria-section title rhythm (16px gap between title and
-	// the descriptive paragraph that follows).
-	margin-block-end: 16px;
+	margin-block-end: 24px;
 }
 
 .amplify-landing-sub {
-	font-size: 15px;
+	font-size: 18px;
 	line-height: 1.65;
 	color: var(--color-text-subtle);
 	max-width: 640px;
-	margin-block-end: 28px;
+	margin-block-end: 32px;
 }
 
+// Hero site selector — a single bordered container that hosts both entry
+// methods side by side (URL input and connected-sites dropdown), separated
+// by an "or" divider, with the "Amplify it" submit affixed flush to the
+// right edge. On narrow viewports we collapse to a stacked layout so the
+// two methods remain easy to scan and tap on mobile.
+//
+// Structure (wide viewport):
+//   ┌──────────────┬────┬────────────────┬───────────┐
+//   │ ENTER A URL  │ OR │ CONNECTED      │           │
+//   │ https://…    │    │ ● Choose a site│ Amplify it│
+//   └──────────────┴────┴────────────────┴───────────┘
+//
+// The outer container is the only visual frame — we strip the inner
+// input/dropdown borders entirely on wide viewports so they read as
+// segments of the same container, with thin vertical dividers between
+// each. `overflow: hidden` crops the rounded outer corners against the
+// submit button so it can sit flush with the container's right edge.
 .amplify-landing-selector {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	align-items: stretch;
-	max-width: 560px;
+	max-width: 720px;
 
 	@include break-medium {
 		flex-direction: row;
-		align-items: flex-end;
+		align-items: stretch;
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 8px;
+		background: var(--color-surface, #fff);
+		padding: 0;
+		gap: 0;
+		overflow: hidden;
+	}
+}
+
+// The two-input row that lives inside the outer container. On wide
+// viewports this is the URL field + or-divider + dropdown sitting on one
+// line; on narrow viewports it collapses to a stacked column so each
+// method remains separately readable.
+.amplify-landing-selector-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	flex: 1;
+	min-inline-size: 0;
+
+	@include break-medium {
+		flex-direction: row;
+		align-items: stretch;
+		gap: 0;
 	}
 }
 
 .amplify-landing-selector-field {
 	flex: 1;
-	min-inline-size: 240px;
+	min-inline-size: 0;
+
+	@include break-medium {
+		// Match the reference's tighter internal padding so labels sit
+		// closer to the inputs and the segment heights line up flush with
+		// the submit button.
+		padding-block: 12px;
+		padding-inline: 16px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+}
+
+// Both input segments share a flex grow factor on wide viewports, but the
+// URL segment is capped tighter than the dropdown so the OR divider
+// shifts visually to the left of centre. The dropdown's larger cap then
+// absorbs the leftover row width on its side, keeping the "OR" reading
+// as the pivot between a compact URL entry and a roomier site picker
+// rather than a perfectly symmetric split.
+// Inner controls cascade to 100% of the URL cap so the input and any
+// descendant box stays inside it even if the content would overflow.
+@include break-medium {
+	.amplify-landing-selector-field.amplify-landing-selector-field-url,
+	.amplify-landing-selector-field.amplify-landing-selector-field-dropdown {
+		flex: 1 1 0;
+	}
+
+	.amplify-landing-selector-field.amplify-landing-selector-field-url {
+		max-inline-size: 260px;
+	}
+
+	.amplify-landing-selector-field.amplify-landing-selector-field-dropdown {
+		max-inline-size: 340px;
+	}
+
+	.amplify-landing-selector-field.amplify-landing-selector-field-url
+		.amplify-landing-selector-url-input,
+	.amplify-landing-selector-field.amplify-landing-selector-field-url
+		.components-text-control__input {
+		max-inline-size: 100%;
+		inline-size: 100%;
+		min-inline-size: 0;
+	}
+}
+
+// Vertical "or" segment. On narrow viewports it becomes a horizontal rule
+// with the OR text floating in the middle so the stacked layout still
+// reads as "either/or". On wide viewports it's just the centered text —
+// the dividers come from border-inline-start on the segment to its right
+// (and on every other segment via the > * + * selector below).
+.amplify-landing-selector-or {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+	color: var(--color-text-subtle);
+	letter-spacing: 0.04em;
+	padding-block: 4px;
+	user-select: none;
+
+	&::before,
+	&::after {
+		content: "";
+		flex: 1;
+		block-size: 1px;
+		background: var(--color-border-subtle);
+	}
+
+	&::before {
+		margin-inline-end: 12px;
+	}
+
+	&::after {
+		margin-inline-start: 12px;
+	}
+
+	@include break-medium {
+		flex: 0 0 auto;
+		padding-inline: 12px;
+		padding-block: 0;
+		// On wide viewports the vertical dividers on the neighbouring
+		// segments do the line work; the OR is just text.
+		&::before,
+		&::after {
+			content: none;
+		}
+	}
+}
+
+// Thin vertical divider between interior segments on wide viewports — only
+// rendered between the URL field and the OR text, since both the OR
+// segment itself and the dropdown segment are explicitly excluded. Net
+// effect on the current layout is no dividers at all (the URL segment is
+// the first child and never matches `* + *`), keeping the row as light
+// visually as possible. The rule is preserved structurally in case a
+// future segment needs a divider; today it's effectively dormant.
+@include break-medium {
+	.amplify-landing-selector-fields > * + * {
+		border-inline-start: 1px solid var(--color-border-subtle);
+	}
+
+	.amplify-landing-selector-fields > .amplify-landing-selector-or,
+	.amplify-landing-selector-fields > .amplify-landing-selector-field-dropdown {
+		border-inline-start: none;
+	}
+}
+
+// Strip the WordPress component default borders inside the container so
+// the segments read as parts of the single outer frame. No visible focus
+// underline by design — the visible text caret plus the dropdown's
+// open-state chevron rotation are the focus affordances. This is a
+// deliberate trade-off in favor of a lighter UI; if accessibility audit
+// surfaces it, restore an inset focus indicator scoped to :focus-visible.
+//
+// Both controls also share the same font-size / family / line-height and
+// the placeholder colour matches the dropdown's placeholder text, so the
+// empty URL input and "Choose a site" read as a matched pair instead of
+// two visually different controls happening to sit in the same row.
+@include break-medium {
+	.amplify-landing-selector .amplify-landing-selector-url-input .components-text-control__input,
+	.amplify-landing-selector .amplify-landing-site-dropdown-toggle {
+		border: none;
+		background: transparent;
+		box-shadow: none;
+		padding-inline: 0;
+		block-size: auto;
+		min-block-size: 32px;
+		font-size: 14px;
+		font-family: inherit;
+		line-height: 1.4;
+	}
+
+	.amplify-landing-selector
+		.amplify-landing-selector-url-input
+		.components-text-control__input::placeholder {
+		color: var(--color-text-subtle);
+		// Firefox dims placeholders by default (opacity ~0.5) — force full
+		// opacity so the URL placeholder reads at exactly the same weight
+		// as the dropdown's "Choose a site" placeholder.
+		opacity: 1;
+	}
+}
+
+// Submit-time validation error message. Rendered as a sibling of the
+// `.amplify-landing-selector` container (not inside it), so it sits below
+// the bordered field as a separate block-level element. We intentionally
+// don't apply any in-field red underline or border — validation runs only
+// when the user clicks "Amplify it", and the consolidated message below
+// the container is the single visual cue. Aligned to the start so it
+// reads as belonging to the URL input on the left of the row.
+.amplify-landing-selector-error {
+	margin: 8px 0 0;
+	padding-inline-start: 16px;
+	font-size: 13px;
+	color: var(--color-error, #d63638);
+}
+
+// Submit button — sits inside the outer container with breathing room on
+// all sides so it reads as a CTA tucked into the field, not a separate
+// edge-flush element. On narrow viewports the button returns to its
+// default size and stacks below the inputs.
+.amplify-landing-selector-submit {
+	align-self: stretch;
+
+	@include break-medium {
+		// !important is the cheapest way to outrank the @wordpress/components
+		// Button styles, which set padding / radius / height at higher
+		// specificity than a class selector alone can beat. The alternative
+		// is wrapping each property in a more specific compound selector,
+		// which produces unreadable CSS for the same result.
+		border-radius: 4px !important;
+		padding-inline: 24px !important;
+		block-size: auto !important;
+		min-block-size: 40px;
+		margin-block: 8px;
+		// Increased from 8px so the button sits noticeably inset from the
+		// container's right border instead of hugging it.
+		margin-inline-end: 24px;
+		margin-inline-start: 16px;
+		flex: 0 0 auto;
+		align-self: center;
+		font-weight: 500;
+	}
 }
 
 .amplify-landing-usage {
@@ -617,7 +841,6 @@
 	color: var(--color-text-black);
 	text-transform: uppercase;
 	letter-spacing: 0;
-	margin-block-end: 8px;
 }
 
 .amplify-landing-site-dropdown {
@@ -743,8 +966,28 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.04);
 	// Cap the visual width so the score card doesn't crowd the hero headline
 	// at large breakpoints. Matches the woopayments hero visual treatment.
-	max-inline-size: 520px;
+	max-inline-size: 480px;
 	inline-size: 100%;
+}
+
+// Hero-specific grid + alignment overrides.
+//
+// `PageSectionColumns.Column alignCenter` (used for the score card)
+// defaults to `justify-content: center`, which leaves a sizable gap to
+// the right of the card now that the left column has grown. Pin the
+// card to the end of its column so it hugs the hero's right edge, and
+// widen the left column to 1fr / 0.8fr so the headline + selector get
+// more breathing room than the default 1fr / 1fr split allows.
+.amplify-landing-hero {
+	.page-section-columns__content {
+		@include break-large {
+			grid-template-columns: 1fr 0.8fr;
+		}
+	}
+
+	.page-section-column.is-align-center {
+		justify-content: flex-end;
+	}
 }
 
 .amplify-landing-score-card-header {
