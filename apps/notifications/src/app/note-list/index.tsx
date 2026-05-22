@@ -70,6 +70,18 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 		fields
 	);
 
+	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
+	// so far. DataViews advances its infinite-scroll window only while
+	// `totalItems` stays ahead of the window, so reporting the loaded count
+	// alone stalls scrolling after the first page: the window catches up, no
+	// `onChangeView` fires, and `loadMore()` is never called again. Report an
+	// optimistic total while the REST client still has notes left to fetch so
+	// DataViews keeps advancing the window and driving `loadMore()`.
+	const hasMoreNotes = client?.hasMoreNotes() ?? false;
+	const effectivePaginationInfo = hasMoreNotes
+		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
+		: paginationInfo;
+
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
 			client?.loadMore();
@@ -114,7 +126,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 				view={ view }
 				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
-				paginationInfo={ paginationInfo }
+				paginationInfo={ effectivePaginationInfo }
 				empty={
 					<VStack alignment="center">
 						<Text size={ 15 } weight={ 500 }>
