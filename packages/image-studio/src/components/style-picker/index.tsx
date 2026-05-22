@@ -20,6 +20,7 @@ import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
 import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
 import videoHighlightsSoonPreview from '../../assets/video/styles/highlights-soon.webp';
+import videoHighlightsPreview from '../../assets/video/styles/highlights.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
@@ -135,8 +136,15 @@ export const STYLE_OPTIONS: StyleOption[] = [
 // The prior Informative / Promotional video styles collapse into one
 // "Cinematic" preset — they were the same Veo chain with cosmetically
 // different prompt templates, which never read as meaningfully distinct.
-// "Highlights" is shown disabled as a teaser; the browser-rendered
-// implementation lands in a follow-up.
+// "Highlights" is server-rendered via EditFrame Cloud on this branch
+// (LLM-composed HTML → EditFrame /api/v1/renders → MP4 → media library);
+// the in-browser encoding implementation lives on the older compositor
+// branches and is preserved there.
+//
+// Production default ships Cinematic-only; Highlights is disabled with a
+// "coming soon" preview. The StylePicker component swaps in the live
+// preview and enables the card when window.imageStudioData.isDevMode is
+// true (a12s testing).
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
@@ -172,7 +180,23 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 		[ targetStore ]
 	);
 
-	const options = isVideo ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
+	// Dev-mode override: unlock Highlights, swap to the live preview, and
+	// flip the label to "(a12s only)". Production default keeps the
+	// "Coming Soon" label + teaser preview + disabled state while we
+	// launch Cinematic-only.
+	const isDevMode = typeof window !== 'undefined' && window.imageStudioData?.isDevMode === true;
+	const options = isVideo
+		? VIDEO_STYLE_OPTIONS.map( ( opt ) =>
+				opt.value === 'highlights' && isDevMode
+					? {
+							...opt,
+							label: __( 'Highlights (a12s only)', __i18n_text_domain__ ),
+							preview: videoHighlightsPreview,
+							disabled: false,
+					  }
+					: opt
+		  )
+		: STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
