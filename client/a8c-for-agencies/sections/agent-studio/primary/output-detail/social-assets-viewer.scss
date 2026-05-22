@@ -78,23 +78,14 @@
 		0 40px 70px -28px rgba(0, 0, 0, 0.7);
 }
 
-.a4a-agent-studio-social-assets__image {
-	position: absolute !important;
+.a4a-agent-studio-social-assets__html {
+	position: absolute;
 	inset: 0;
-	display: block;
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
 	background: #fff;
 	pointer-events: none;
 	user-select: none;
-	-webkit-user-drag: none;
-	opacity: 0;
-	transition: opacity 420ms ease;
-}
-
-.a4a-agent-studio-social-assets__image.is-loaded {
-	opacity: 1;
 }
 
 .a4a-agent-studio-social-assets__empty-preview {

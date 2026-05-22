@@ -15,12 +15,12 @@ import {
 	type PointerEvent,
 	type RefObject,
 } from 'react';
+import { HtmlRenderPreview } from '../../social-design/components/HtmlRenderPreview';
+import { setBeaTileRenderingPaused } from '../../social-design/services/beaRenderQueue';
 import {
-	peekBeaTile,
-	renderBeaTile,
-	setBeaTileRenderingPaused,
-} from '../../social-design/services/beaRenderQueue';
-import { renderBeaHtmlToPng } from '../../social-design/services/renderBeaPng';
+	prepareBeaRenderElement,
+	renderBeaHtmlToPng,
+} from '../../social-design/services/renderBeaPng';
 import type { AgentStudioSocialAsset } from '../../types';
 
 import './social-assets-viewer.scss';
@@ -350,15 +350,10 @@ function SocialAssetTile( {
 	const [ downloading, setDownloading ] = useState( false );
 	const label = asset.groupLabel ?? `Direction ${ index + 1 }`;
 	const frameRef = useRef< HTMLDivElement >( null );
-	const [ dataUrl, setDataUrl ] = useState< string | null >( () =>
-		asset.html ? peekBeaTile( asset.html ) ?? null : null
-	);
-	const [ failed, setFailed ] = useState( false );
-	const [ loaded, setLoaded ] = useState( false );
 	const [ nearViewport, setNearViewport ] = useState( false );
 
 	useEffect( () => {
-		if ( dataUrl || ! asset.html ) {
+		if ( ! asset.html ) {
 			return;
 		}
 		const element = frameRef.current;
@@ -376,42 +371,13 @@ function SocialAssetTile( {
 		);
 		observer.observe( element );
 		return () => observer.disconnect();
-	}, [ dataUrl, asset.html, rootRef ] );
+	}, [ asset.html, rootRef ] );
 
 	useEffect( () => {
 		if ( forceRender ) {
 			setNearViewport( true );
 		}
 	}, [ forceRender ] );
-
-	// PROTOTYPE-SWAP: tiles are rasterized from HTML in the browser via
-	// `renderBeaTile`. In production, the wpcom service should pre-render and
-	// store each asset PNG; this effect would then simply use a server-
-	// provided URL on the asset and drop the queue + html-to-image entirely.
-	useEffect( () => {
-		if ( dataUrl || ! nearViewport || ! asset.html ) {
-			return;
-		}
-		let cancelled = false;
-		renderBeaTile( asset.html, {
-			label: asset.label,
-			width: asset.width,
-			height: asset.height,
-		} )
-			.then( ( url ) => {
-				if ( ! cancelled ) {
-					setDataUrl( url );
-				}
-			} )
-			.catch( () => {
-				if ( ! cancelled ) {
-					setFailed( true );
-				}
-			} );
-		return () => {
-			cancelled = true;
-		};
-	}, [ dataUrl, nearViewport, asset.html, asset.label, asset.width, asset.height ] );
 
 	const downloadAsset = async () => {
 		if ( downloading || dragRef.current.moved ) {
@@ -441,23 +407,16 @@ function SocialAssetTile( {
 				className="a4a-agent-studio-social-assets__tile-frame"
 				style={ { aspectRatio: `${ asset.width } / ${ asset.height }` } }
 			>
-				{ dataUrl ? (
-					<img
-						className={ `a4a-agent-studio-social-assets__image${ loaded ? ' is-loaded' : '' }` }
-						src={ dataUrl }
-						alt={ `${ CHANNEL_LABEL[ asset.channel ] } · ${ label }` }
-						draggable={ false }
-						onDragStart={ ( event ) => event.preventDefault() }
-						onLoad={ () => setLoaded( true ) }
+				{ nearViewport && asset.html ? (
+					<HtmlRenderPreview
+						html={ asset.html }
+						size={ { width: asset.width, height: asset.height, label: asset.label } }
+						className="a4a-agent-studio-social-assets__html"
+						ariaLabel={ `${ CHANNEL_LABEL[ asset.channel ] } · ${ label }` }
+						prepareContent={ prepareBeaRenderElement }
 					/>
-				) : null }
-				{ ! failed && ! ( dataUrl && loaded ) && (
+				) : (
 					<div className="a4a-agent-studio-social-assets__ghost" aria-hidden="true" />
-				) }
-				{ failed && (
-					<div className="a4a-agent-studio-social-assets__empty-preview">
-						{ __( 'Preview unavailable' ) }
-					</div>
 				) }
 				<button
 					type="button"

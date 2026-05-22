@@ -12,9 +12,10 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { getAgentStudioOutputPath } from '../../lib/paths';
-import { peekBeaTile, renderBeaTile } from '../../social-design/services/beaRenderQueue';
+import { HtmlRenderPreview } from '../../social-design/components/HtmlRenderPreview';
+import { prepareBeaRenderElement } from '../../social-design/services/renderBeaPng';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
 import type { AgentStudioOutput, AgentStudioSocialAsset } from '../../types';
 
@@ -158,12 +159,13 @@ function pickCollagePicks( assets: AgentStudioSocialAsset[] ): AgentStudioSocial
 	return picks;
 }
 
-// PROTOTYPE-SWAP: the prototype rasterizes each tile from HTML in the browser
-// (cached in-memory by `beaRenderQueue`). In production, the wpcom service
-// should pre-render thumbnails server-side at output-creation time and
-// surface them as URLs on `AgentStudioOutput.previewUrls` — at which point
-// this component can simply render `<img src={url} />` instead of calling
-// `renderBeaTile`. See also: `socialAssets-viewer.tsx` for the full viewer.
+// PROTOTYPE-SWAP: the prototype renders each tile as live HTML (in a sandboxed
+// iframe via `HtmlRenderPreview`), with text-fitting running per tile. No PNG
+// is generated unless the user clicks Download in the viewer. In production,
+// the wpcom service should pre-render thumbnails server-side at output-
+// creation time and surface them as URLs on `AgentStudioOutput.previewUrls`
+// — at which point this component renders `<img src={url} />` and the HTML +
+// fitter can be dropped on the client.
 function SocialAssetsCollage( { assets }: { assets: AgentStudioSocialAsset[] } ) {
 	const picks = useMemo( () => pickCollagePicks( assets ), [ assets ] );
 
@@ -177,33 +179,20 @@ function SocialAssetsCollage( { assets }: { assets: AgentStudioSocialAsset[] } )
 }
 
 function CollageTile( { asset }: { asset: AgentStudioSocialAsset } ) {
-	const [ dataUrl, setDataUrl ] = useState< string | null >( () =>
-		asset.html ? peekBeaTile( asset.html ) ?? null : null
-	);
-
-	useEffect( () => {
-		if ( dataUrl || ! asset.html ) {
-			return;
-		}
-		let cancelled = false;
-		renderBeaTile( asset.html, { width: asset.width, height: asset.height, label: asset.label } )
-			.then( ( url ) => {
-				if ( ! cancelled ) {
-					setDataUrl( url );
-				}
-			} )
-			.catch( () => {} );
-		return () => {
-			cancelled = true;
-		};
-	}, [ dataUrl, asset.html, asset.width, asset.height, asset.label ] );
-
 	return (
 		<div
 			className="a4a-agent-studio-deliverable-card__collage-tile"
 			style={ { aspectRatio: `${ asset.width } / ${ asset.height }` } }
 		>
-			{ dataUrl && <img src={ dataUrl } alt="" /> }
+			{ asset.html && (
+				<HtmlRenderPreview
+					html={ asset.html }
+					size={ { width: asset.width, height: asset.height, label: asset.label } }
+					ariaLabel={ asset.label }
+					isolated
+					prepareContent={ prepareBeaRenderElement }
+				/>
+			) }
 		</div>
 	);
 }
