@@ -46,9 +46,12 @@ const MIN_LATENCY_MS = 200;
 const MAX_LATENCY_MS = 1_500;
 const SLOW_LATENCY_MS = 20_000;
 
-// Cap the slots we send to Dolly so the prompt stays small and the response
-// stays parseable; any extra placeholders keep their original copy.
-const MAX_SLOTS = 10;
+// Cap the slots we send to Dolly so the prompt stays bounded and the response
+// stays parseable; any extra placeholders keep their original copy. Patterns
+// with repeated rows (e.g. an events list) have many short slots, so the cap
+// is generous — too low and the last row(s) render with placeholder copy while
+// the rest are personalized (the "Venue Name / Toronto" tell).
+const MAX_SLOTS = 24;
 
 type MockOverride = 'slow' | 'empty' | 'error' | null;
 
@@ -144,7 +147,7 @@ function buildPrompt( slots: TextSlot[], context: PatternPageContext ): string {
 		.filter( Boolean )
 		.join( '\n' );
 
-	return `You are rewriting the placeholder copy of a WordPress page so it fits one specific site. Replace each placeholder with concise, natural, on-brand copy for THIS site. Match the length and role of each placeholder (a heading stays a short heading; body text stays a sentence or two). Plain language, no buzzwords, no markdown.
+	return `You are rewriting the placeholder copy of a WordPress page so it fits one specific site. Replace each placeholder with concise, natural, on-brand copy for THIS site. Match the length and role of each placeholder (a heading stays a short heading; body text stays a sentence or two). Wherever a business or brand name belongs, use the site's name EXACTLY as given below — never invent a different name. Leave dates, times, prices, and addresses unchanged. Plain language, no buzzwords, no markdown.
 
 ${ facts }
 

@@ -212,9 +212,12 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 	},
 	{
 		id: 'setup-bookings',
-		title: 'Set up bookings',
-		subtitle: 'Take appointments, sessions, or class signups directly on your site.',
+		title: 'Add an events page',
+		subtitle: 'List your classes, sessions, and dates so visitors can sign up.',
 		category: 'feature-setup',
+		// Goal-tagged (same reason as setup-gallery) so a studio / promoter
+		// reliably gets the events page even when Dolly's pick omits it.
+		goals: [ 'promote', 'build' ],
 		features: [ 'bookings' ],
 		// Builds an Events page from a dotcompatterns "events" pattern with
 		// Dolly-rewritten copy — a text-rich pattern, so the personalization is
@@ -223,13 +226,17 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		// todo #10. `url` is the fallback if the page can't be created.
 		pattern: { category: 'events', pageTitle: 'Events' },
 		url: ( s ) => `/page/${ s }`,
-		cta: 'Set up bookings',
+		cta: 'Add events page',
 	},
 	{
 		id: 'setup-gallery',
 		title: 'Create your first gallery',
 		subtitle: 'Show your work in a full-bleed image gallery.',
 		category: 'feature-setup',
+		// Goal-tagged so a visual site reliably gets the gallery even when Dolly's
+		// pick omits it (see patternTaskIdsForGoal); the wizard collects no
+		// explicit features, so the `gallery` feature alone never surfaces it.
+		goals: [ 'portfolio', 'promote', 'build' ],
 		features: [ 'gallery' ],
 		// Builds a real Gallery page from a dotcompatterns gallery pattern with
 		// Dolly-rewritten copy (the images stay as the user's own to add). The

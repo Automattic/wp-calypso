@@ -23,7 +23,12 @@ import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors
 import HomeWizard from './home-wizard';
 import { draftPatternPage, type PatternPage } from './home-wizard/draft-pattern-page';
 import { buildPickThemeSubtitle } from './home-wizard/recommend-themes';
-import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
+import {
+	materializeTasks,
+	patternTaskIdsForGoal,
+	selectTasks,
+	type SelectedTask,
+} from './home-wizard/select-tasks';
 import { prewarmTailorAndDraft, tailorAndDraftFromIntent } from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
 import TaskRegistryPreview from './home-wizard/task-preview';
@@ -156,7 +161,12 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 	// site-state filters at render time so completion / hideWhen stay live.
 	let baseTailoredTasks: SelectedTask[] = [];
 	if ( tailoredIds && tailoredIds.length > 0 ) {
-		baseTailoredTasks = materializeTasks( tailoredIds, siteState );
+		// Union Dolly's picks with the goal's relevant pattern tasks so Dolly
+		// augments the list rather than gating it — a portfolio site always gets
+		// the gallery, a studio the events page, even if Dolly's pick omitted it.
+		// materializeTasks dedupes and applies the same ordering + hide filters.
+		const mergedIds = [ ...new Set( [ ...tailoredIds, ...patternTaskIdsForGoal( wizardGoal ) ] ) ];
+		baseTailoredTasks = materializeTasks( mergedIds, siteState );
 	} else if ( wizardGoal ) {
 		baseTailoredTasks = selectTasks( wizardGoal, wizardFeatures, siteState );
 	}
@@ -698,7 +708,14 @@ function useTailoredFlow() {
 					patch.taskIds = result.task_ids;
 				}
 				mergeWizardState( patch );
-				prewarmPatternPages( result.task_ids, composed, trimmedName );
+				// Pre-warm the union of Dolly's picks and the goal's guaranteed
+				// pattern tasks — the latter are merged into the rendered list, so
+				// their copy must be ready too.
+				prewarmPatternPages(
+					[ ...new Set( [ ...result.task_ids, ...patternTaskIdsForGoal( answers.goal ) ] ) ],
+					composed,
+					trimmedName
+				);
 			} )
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );

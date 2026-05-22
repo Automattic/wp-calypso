@@ -198,6 +198,25 @@ export function selectTasks(
  * wizard finishing and the dashboard rendering, so a task the AI picked
  * legitimately may have completed in the meantime.
  */
+/**
+ * Pattern-backed task ids that a goal makes relevant (e.g. `setup-gallery` for
+ * portfolio, `setup-bookings` for promote/build).
+ *
+ * Dolly's `task_ids` are the rendered list, but Dolly is non-deterministic and
+ * can drop a clearly relevant task — a portfolio site that never sees the
+ * gallery, a studio that never sees the events page. We union these ids into
+ * the materialized list (so Dolly augments rather than gates) and pre-warm
+ * them, so a goal-relevant pattern task always appears with its copy ready.
+ */
+export function patternTaskIdsForGoal( goal: GoalKey | null ): string[] {
+	if ( ! goal ) {
+		return [];
+	}
+	return TASK_REGISTRY.filter( ( t ) => t.pattern && t.goals?.includes( goal ) ).map(
+		( t ) => t.id
+	);
+}
+
 export function materializeTasks( taskIds: string[], site: SiteState ): SelectedTask[] {
 	const idSet = new Set( taskIds );
 	// Completed tasks stay in the list (rendered struck-through) rather than
