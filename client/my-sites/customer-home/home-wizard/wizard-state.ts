@@ -21,6 +21,12 @@ import type { GoalKey } from './types';
 export const HOME_WIZARD_STATE_PREF = 'home_wizard_state';
 
 export type HomeWizardState = {
+	// The site this run belongs to. This pref is a SINGLE global blob (not
+	// per-site), so without a stamp a brand-new site would inherit the previous
+	// site's run — its taskIds, firstPostDraft, inferred, patternPages. The
+	// dashboard ignores the whole blob unless this matches the selected site,
+	// and each run REPLACES the blob (stamping the new id) rather than merging.
+	siteId?: number;
 	goal?: GoalKey;
 	// Composed prompt text (goal + name + free-text) sent to Dolly. Stored
 	// verbatim so future calls (regenerate, re-tailor) reuse the same source.

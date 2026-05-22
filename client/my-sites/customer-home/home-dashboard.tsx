@@ -139,10 +139,17 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID ?? null;
-	const wizardState =
+	const storedWizardState =
 		( useSelector( ( state: AppState ) =>
 			getPreference( state, HOME_WIZARD_STATE_PREF )
 		) as HomeWizardState | null ) ?? {};
+	// The wizard-state pref is a single global blob. Ignore it unless it was
+	// stamped with the currently selected site — otherwise a new site would show
+	// the previous site's tailored tasks, first-post draft, and pattern pages.
+	const wizardState: HomeWizardState =
+		storedWizardState.siteId != null && storedWizardState.siteId === siteId
+			? storedWizardState
+			: {};
 	const wizardGoal = wizardState.goal ?? null;
 	const tailoredIds = wizardState.taskIds ?? null;
 	const wizardIntent = wizardState.intent ?? null;
@@ -660,11 +667,19 @@ function useTailoredFlow() {
 		// (this one on Finish, the result merge after Dolly), so they never
 		// overlap — the savePreference echo race the single-write design guarded
 		// against needs concurrent in-flight PUTs to the same key.
-		mergeWizardState( {
-			goal: answers.goal ?? undefined,
-			intent: composed,
-			...( trimmedName ? { siteName: trimmedName } : {} ),
-		} );
+		// REPLACE (not merge) the blob, stamped with this site's id: the pref is a
+		// single global blob, so merging would let a new site inherit the previous
+		// run's taskIds / firstPostDraft / inferred / patternPages until Dolly
+		// returns (and forever if it fails). A fresh write clears all of that; the
+		// result merge below lands on top for the same site.
+		dispatch(
+			savePreference( HOME_WIZARD_STATE_PREF, {
+				siteId: siteId ?? undefined,
+				goal: answers.goal ?? undefined,
+				intent: composed,
+				...( trimmedName ? { siteName: trimmedName } : {} ),
+			} )
+		);
 
 		// ONE result write per wizard run — merges the Dolly output on top of
 		// the floor above.
@@ -696,6 +711,9 @@ function useTailoredFlow() {
 		)
 			.then( ( result ) => {
 				const patch: Partial< HomeWizardState > = {
+					// Re-stamp the site id so the merge preserves it even if the floor
+					// write was somehow skipped — the dashboard gates on this.
+					siteId: siteId ?? undefined,
 					// answers.goal is GoalKey | null; the stored field is optional
 					// (GoalKey | undefined), so coerce null → undefined.
 					goal: answers.goal ?? undefined,
