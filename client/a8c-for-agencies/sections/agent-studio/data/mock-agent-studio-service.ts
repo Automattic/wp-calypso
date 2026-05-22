@@ -354,7 +354,10 @@ export const mockAgentStudioService: AgentStudioService = {
 			status: socialAssets ? 'ready' : 'generating',
 			kind: socialAssets ? 'social-assets' : undefined,
 			socialAssets,
-			previewUrls: socialAssets ? [ socialAssetsPreview ] : undefined,
+			// PROTOTYPE-SWAP: `previewUrls` would be populated by the wpcom
+			// service with server-rendered thumbnails. For the prototype path
+			// we leave it empty and let the deliverable card rasterize tiles
+			// from `socialAssets.assets` in the browser.
 			assetCount: socialAssets?.assets.length,
 			createdAt: now,
 			updatedAt: now,
