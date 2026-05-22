@@ -154,6 +154,20 @@ body.is-admin-sidebar-customize-mode {
 		}
 	}
 
+	// Group collapse is locked while customize mode is active. The toggle is
+	// disabled in React, and the chevron gets a matching visual cue.
+	.wp-admin-sidebar-group--reorder-locked {
+		.wp-admin-sidebar-group__toggle {
+			cursor: not-allowed;
+		}
+
+		.wp-admin-sidebar-group__chevron {
+			cursor: not-allowed;
+			opacity: 0.4;
+			pointer-events: none;
+		}
+	}
+
 	// === EXPANDABLE ITEMS ===
 	// `<MySitesSidebarUnifiedMenu>` → `<ExpandableSidebarMenu>` renders a bare
 	// `<li>` wrapping `.sidebar__menu.is-togglable`, which the inert rule above

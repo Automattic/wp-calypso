@@ -20,6 +20,9 @@
  * label + ::after pseudo-element with 250ms show-delay / 100ms hide).
  * Renders only when `customizable` is true (plugins group only today).
  * Stays disabled until Phase 2 wires the click handler.
+ * - Customize mode locks group collapse. Reassignable groups render forced
+ * expanded, with the toggle disabled and the chevron inert, so rows remain
+ * visible while users edit their order.
  * - Group-level signal: an 8×8 `#d63638` dot rendered inline next to the
  * label when the group is collapsed AND `group.signal.attention` is
  * true. Suppressed when expanded — children carry their own item-level
@@ -119,6 +122,9 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 	const storedExpanded = useSelector( ( state ) =>
 		getAdminSidebarGroupExpanded( state, siteId, group.id )
 	);
+	const customizeCtx = useCustomizeContext();
+	const isCustomizable = customizable ?? group.id === GROUP_ID_PLUGINS;
+	const isCustomizeLocked = isCustomizable && customizeCtx?.isCustomizing === true;
 
 	// Resolve initial state in priority order:
 	//   1. caller-supplied `expanded` prop (Storybook / explicit control).
@@ -126,23 +132,22 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 	//   3. `plugins` starts expanded on first encounter.
 	//   4. group metadata's `default_expanded`.
 	//   5. fall back to collapsed.
-	const expanded = resolveExpanded(
+	const resolvedExpanded = resolveExpanded(
 		group.id,
 		expandedProp,
 		storedExpanded,
 		group.default_expanded
 	);
+	const expanded = isCustomizeLocked ? true : resolvedExpanded;
 
 	const labelId = useId();
 	const childrenId = `wp-admin-sidebar-group-${ group.id }-${ labelId }`;
-	const isCustomizable = customizable ?? group.id === GROUP_ID_PLUGINS;
 	const showAttentionDot = ! expanded && !! group.signal?.attention;
 
 	// When the customize provider is mounted (Phase 2), the customize button
 	// becomes live and clicking it enters customize mode. When no provider is
 	// present (Phase 1 callers, isolated tests, Storybook), the button stays
 	// inert per Phase 1's behaviour — preserves backwards compatibility.
-	const customizeCtx = useCustomizeContext();
 	const handleCustomizeClick = useCallback( () => {
 		if ( customizeCtx ) {
 			customizeCtx.enter();
@@ -151,6 +156,9 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 
 	const handleToggle = useCallback(
 		( event ) => {
+			if ( isCustomizeLocked ) {
+				return;
+			}
 			if ( typeof onToggle === 'function' ) {
 				onToggle( event, ! expanded );
 			} else if ( siteId ) {
@@ -163,7 +171,7 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 				window.requestAnimationFrame( notifyMenuHeightChanged );
 			}
 		},
-		[ dispatch, group.id, expanded, onToggle, siteId ]
+		[ dispatch, group.id, expanded, isCustomizeLocked, onToggle, siteId ]
 	);
 
 	// Translators: aria-label for the plugins-group customize reorder button.
@@ -182,7 +190,14 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 
 	return (
 		<li
-			className={ clsx( 'wp-admin-sidebar-group', 'sidebar-group', className ) }
+			className={ clsx(
+				'wp-admin-sidebar-group',
+				'sidebar-group',
+				{
+					'wp-admin-sidebar-group--reorder-locked': isCustomizeLocked,
+				},
+				className
+			) }
 			data-group={ group.id }
 			data-expanded={ expanded ? 'true' : 'false' }
 		>
@@ -193,6 +208,7 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 					aria-expanded={ expanded ? 'true' : 'false' }
 					aria-controls={ childrenId }
 					onClick={ handleToggle }
+					disabled={ isCustomizeLocked }
 				>
 					<span className="wp-admin-sidebar-group__label sidebar-group__label">
 						{ group.label }

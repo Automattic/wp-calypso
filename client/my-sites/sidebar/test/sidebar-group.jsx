@@ -5,7 +5,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { ADMIN_SIDEBAR_GROUP_SET_EXPANDED } from 'calypso/state/action-types';
+import { useCustomizeContext } from '../customize';
 import { MySitesSidebarUnifiedSidebarGroup } from '../sidebar-group';
+
+jest.mock( '../customize', () => ( {
+	useCustomizeContext: jest.fn(),
+} ) );
+
+const mockUseCustomizeContext = useCustomizeContext;
 
 const renderInProvider = ( ui, state = {} ) => {
 	const store = configureStore()( {
@@ -33,6 +40,10 @@ const addonsGroup = {
 };
 
 describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
+	beforeEach( () => {
+		mockUseCustomizeContext.mockReturnValue( null );
+	} );
+
 	it( 'renders the group label', () => {
 		renderInProvider(
 			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
@@ -223,6 +234,35 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 			'data-expanded',
 			'false'
 		);
+	} );
+
+	it( 'locks the plugins group expanded during customize mode', () => {
+		mockUseCustomizeContext.mockReturnValue( {
+			isCustomizing: true,
+			enter: jest.fn(),
+		} );
+		const { container, store } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>,
+			{
+				adminSidebarExpandState: {
+					bySite: { 12345: { plugins: false } },
+				},
+			}
+		);
+		const group = container.querySelector( '.wp-admin-sidebar-group' );
+		const toggle = container.querySelector( '.wp-admin-sidebar-group__toggle' );
+		const chevron = container.querySelector( '.wp-admin-sidebar-group__chevron' );
+
+		expect( group ).toHaveClass( 'wp-admin-sidebar-group--reorder-locked' );
+		expect( group ).toHaveAttribute( 'data-expanded', 'true' );
+		expect( toggle ).toBeDisabled();
+
+		fireEvent.click( chevron );
+
+		expect( store.getActions() ).toEqual( [] );
+		expect( group ).toHaveAttribute( 'data-expanded', 'true' );
 	} );
 
 	it( 'reads stored expand state from Redux when no prop is supplied', () => {
