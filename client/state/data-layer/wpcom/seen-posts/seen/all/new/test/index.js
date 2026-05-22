@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { upsertPostCache } from 'calypso/reader/data/post-cache';
+import { getStreamInfiniteQueryKey } from 'calypso/reader/data/stream';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
@@ -13,7 +14,7 @@ jest.mock( 'calypso/state/query-client', () => ( {
 describe( 'seen-posts mark-all-as-seen data layer', () => {
 	it( 'derives global ids from the canonical Reader post cache on success', () => {
 		const queryClient = new QueryClient();
-		upsertPostCache( queryClient, [
+		const posts = [
 			{
 				ID: 1,
 				site_ID: 100,
@@ -28,27 +29,28 @@ describe( 'seen-posts mark-all-as-seen data layer', () => {
 				feed_item_ID: 301,
 				global_ID: 'global-2',
 			},
-		] );
+		];
+		upsertPostCache( queryClient, posts );
+		queryClient.setQueryData(
+			getStreamInfiniteQueryKey( {
+				streamKey: 'following',
+				feedId: null,
+				localeSlug: null,
+				startDate: null,
+			} ),
+			{
+				pages: [ { posts } ],
+				pageParams: [ null ],
+			}
+		);
 		getCalypsoQueryClient.mockReturnValue( queryClient );
 
 		const dispatch = jest.fn();
-		const getState = () => ( {
-			reader: {
-				streams: {
-					following: {
-						items: [
-							{ feedId: 200, postId: 300 },
-							{ feedId: 200, postId: 301 },
-						],
-					},
-				},
-			},
-		} );
 
 		onSuccess(
 			{ identifier: 'following', feedIds: [ 200 ], feedUrls: [ 'https://example.com/feed' ] },
 			{ status: true }
-		)( dispatch, getState );
+		)( dispatch );
 
 		expect( dispatch ).toHaveBeenCalledWith( requestUnseenStatus() );
 		expect( dispatch ).toHaveBeenCalledWith( requestFollows() );
