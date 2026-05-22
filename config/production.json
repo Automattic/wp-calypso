@@ -137,7 +137,7 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
-		"reader/social": false,
+		"reader/social": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,
