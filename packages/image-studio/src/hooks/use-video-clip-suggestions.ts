@@ -86,7 +86,7 @@ There are six steering axes. Each one you use MUST be concrete and specific to T
 - **Voice**: tone register ("Punchier, drop the hedges", "More contemplative").
 - **Structure**: how it's organized ("Three things to try", "Before-and-after", "What I'd do differently").
 - **Emphasis**: which beats to dwell on or cut ("Spend most of it on the payoff, skip the setup", "Quick equal hits, no deep dive").
-- **Closer**: how it lands ("End on the conservation note", "Close on a call to act").
+- **Closer**: how it lands ("End on the conservation note", "Close on a call to action").
 
 Each steer MUST:
 - Weave 2-3 of the six axes into ONE coherent direction — never only one axis, never more than three (a 20-second, 4-6-scene recap can't honor an over-stuffed steer).
