@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
@@ -62,7 +62,7 @@ function FollowingStream( { ...props } ) {
 
 	const suppressReaderOnboarding =
 		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
-	const isFullFeedEnabled = config( 'env' ) === 'development' && isEnabled( 'reader/full-feed' );
+	const isFullFeedEnabled = isEnabled( 'reader/full-feed' );
 	const followingViewToggle = (
 		<ViewToggle views={ isFullFeedEnabled ? followingViewToggleViews : defaultViewToggleViews } />
 	);

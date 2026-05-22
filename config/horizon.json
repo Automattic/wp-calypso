@@ -107,7 +107,7 @@
 		"purchases/split-cancel-remove": false,
 		"reader/social": true,
 		"reader/full-errors": false,
-		"reader/full-feed": false,
+		"reader/full-feed": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,
 		"reader/saved-posts": true,
