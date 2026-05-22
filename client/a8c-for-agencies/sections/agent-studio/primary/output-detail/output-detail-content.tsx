@@ -15,6 +15,7 @@ import useAgentStudioRun, { type AgentStudioRunPayload } from '../../data/use-ag
 import useAgentStudioVariantHtml from '../../data/use-agent-studio-variant-html';
 import usePrefetchAgentStudioVariantHtml from '../../data/use-prefetch-agent-studio-variant-html';
 import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
+import SocialAssetsViewer from './social-assets-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
 
@@ -50,7 +51,7 @@ function StateMessage( { children, spinner }: { children: ReactNode; spinner?: b
 	);
 }
 
-export default function OutputDetailContent( { output }: Props ) {
+function OnePagerOutputDetail( { output }: Props ) {
 	const run = useAgentStudioRun( output.id );
 	const postId = extractPostId( run.data?.payload );
 	const collateral = useAgentStudioCollateral( postId );
@@ -179,4 +180,14 @@ export default function OutputDetailContent( { output }: Props ) {
 			) }
 		</VStack>
 	);
+}
+
+export default function OutputDetailContent( { output }: Props ) {
+	if ( output.kind === 'social-assets' ) {
+		return (
+			<SocialAssetsViewer assets={ output.socialAssets?.assets ?? [] } title={ output.title } />
+		);
+	}
+
+	return <OnePagerOutputDetail output={ output } />;
 }

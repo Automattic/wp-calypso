@@ -23,11 +23,35 @@ export interface AgentStudioOutput {
 	/** Total number of assets the agent produced, populated once status is ready. */
 	assetCount?: number;
 	/** Tags the output to a specific agent renderer in the output-detail UI. */
-	kind?: 'one-pager';
+	kind?: 'one-pager' | 'social-assets';
+	/** Client-rendered social assets. The renderer owns text fitting and PNG export. */
+	socialAssets?: AgentStudioSocialAssets;
 	/** Surfaced on the deliverable card when generation fails. */
 	errorMessage?: string;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface AgentStudioSocialImage {
+	fileName: string;
+	dataUrl: string;
+}
+
+export interface AgentStudioSocialAsset {
+	id: string;
+	label: string;
+	sizeKey: 'cover' | 'square' | 'email' | 'story';
+	width: number;
+	height: number;
+	html: string;
+	groupLabel?: string;
+}
+
+export interface AgentStudioSocialAssets {
+	brandPackSlug: string;
+	assets: AgentStudioSocialAsset[];
+	images?: AgentStudioSocialImage[];
+	logo?: AgentStudioSocialImage;
 }
 
 export interface AgentStudioProjectSummary extends AgentStudioProject {
@@ -67,6 +91,18 @@ export interface CreateAgentStudioOutputInput {
 	partnerLogoOrder?: DualLogoOrder;
 	/** Optional one-pager: hero image URL for the cover frame. */
 	heroUrl?: string;
+	/** Optional social assets: original source or campaign notes. */
+	sourceText?: string;
+	/** Optional social assets: manually supplied headline. */
+	headline?: string;
+	/** Optional social assets: supporting stat. */
+	stat?: string;
+	/** Optional social assets: stat context or supporting line. */
+	statContext?: string;
+	/** Optional social assets: client-side image data URLs for local fitting/rendering. */
+	socialImages?: AgentStudioSocialImage[];
+	/** Optional social assets: client-side brand logo data URL. */
+	socialLogo?: AgentStudioSocialImage;
 }
 
 export interface AgentStudioService {

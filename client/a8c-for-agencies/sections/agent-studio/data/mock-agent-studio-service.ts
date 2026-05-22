@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import eventAssetsPreview from '../assets/agent-previews/event-assets.webp';
 import onePagerPreview from '../assets/agent-previews/one-pager.webp';
 import socialAssetsPreview from '../assets/agent-previews/social-assets.webp';
+import { createSocialAssets } from '../social-design/create-social-assets';
 import type {
 	AgentStudioOutput,
 	AgentStudioProject,
@@ -16,35 +17,154 @@ interface AgentStudioMockState {
 	outputs: AgentStudioOutput[];
 }
 
-const STORAGE_KEY = 'a4a-agent-studio-mock-state';
+const DB_NAME = 'a4a-agent-studio-mock';
+const DB_VERSION = 1;
+const PROJECTS_STORE = 'projects';
+const OUTPUTS_STORE = 'outputs';
 
 const emptyState: AgentStudioMockState = { projects: [], outputs: [] };
 
-const isBrowser = () => typeof window !== 'undefined' && !! window.localStorage;
+let cache: AgentStudioMockState = emptyState;
+let initialized = false;
+let initPromise: Promise< void > | null = null;
+let dbPromise: Promise< IDBDatabase > | null = null;
 
-const readState = (): AgentStudioMockState => {
+const isBrowser = () => typeof window !== 'undefined' && !! window.indexedDB;
+
+function openDb(): Promise< IDBDatabase > {
 	if ( ! isBrowser() ) {
-		return emptyState;
+		return Promise.reject( new Error( 'IndexedDB unavailable' ) );
 	}
 
-	const savedState = window.localStorage.getItem( STORAGE_KEY );
+	if ( dbPromise ) {
+		return dbPromise;
+	}
 
-	if ( ! savedState ) {
-		return emptyState;
+	dbPromise = new Promise( ( resolve, reject ) => {
+		const request = window.indexedDB.open( DB_NAME, DB_VERSION );
+
+		request.onupgradeneeded = () => {
+			const db = request.result;
+
+			if ( ! db.objectStoreNames.contains( PROJECTS_STORE ) ) {
+				db.createObjectStore( PROJECTS_STORE, { keyPath: 'id' } );
+			}
+
+			if ( ! db.objectStoreNames.contains( OUTPUTS_STORE ) ) {
+				const store = db.createObjectStore( OUTPUTS_STORE, { keyPath: 'id' } );
+				store.createIndex( 'projectId', 'projectId' );
+			}
+		};
+
+		request.onsuccess = () => resolve( request.result );
+		request.onerror = () => reject( request.error );
+	} );
+
+	return dbPromise;
+}
+
+function readAllFromStore< T >( db: IDBDatabase, storeName: string ): Promise< T[] > {
+	return new Promise( ( resolve, reject ) => {
+		const transaction = db.transaction( storeName, 'readonly' );
+		const request = transaction.objectStore( storeName ).getAll();
+
+		request.onsuccess = () => resolve( request.result as T[] );
+		request.onerror = () => reject( request.error );
+	} );
+}
+
+async function persist( storeName: string, value: unknown ): Promise< void > {
+	if ( ! isBrowser() ) {
+		return;
 	}
 
 	try {
-		return JSON.parse( savedState );
-	} catch {
-		return emptyState;
-	}
-};
+		const db = await openDb();
+		const transaction = db.transaction( storeName, 'readwrite' );
+		transaction.objectStore( storeName ).put( value );
 
-const writeState = ( state: AgentStudioMockState ) => {
-	if ( isBrowser() ) {
-		window.localStorage.setItem( STORAGE_KEY, JSON.stringify( state ) );
+		await new Promise< void >( ( resolve, reject ) => {
+			transaction.oncomplete = () => resolve();
+			transaction.onerror = () => reject( transaction.error );
+			transaction.onabort = () => reject( transaction.error );
+		} );
+	} catch ( error ) {
+		// Storage is only a local mock detail. The in-memory cache should still
+		// let the client continue when IndexedDB is unavailable or over quota.
+		// eslint-disable-next-line no-console
+		console.error( `[agent-studio mock] ${ storeName } save failed:`, error );
 	}
-};
+}
+
+async function remove( storeName: string, id: string ): Promise< void > {
+	if ( ! isBrowser() ) {
+		return;
+	}
+
+	try {
+		const db = await openDb();
+		const transaction = db.transaction( storeName, 'readwrite' );
+		transaction.objectStore( storeName ).delete( id );
+
+		await new Promise< void >( ( resolve, reject ) => {
+			transaction.oncomplete = () => resolve();
+			transaction.onerror = () => reject( transaction.error );
+			transaction.onabort = () => reject( transaction.error );
+		} );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( `[agent-studio mock] ${ storeName } delete failed:`, error );
+	}
+}
+
+async function ensureInitialized(): Promise< void > {
+	if ( initialized ) {
+		return;
+	}
+
+	if ( initPromise ) {
+		return initPromise;
+	}
+
+	initPromise = ( async () => {
+		try {
+			const db = await openDb();
+			const [ projects, outputs ] = await Promise.all( [
+				readAllFromStore< AgentStudioProject >( db, PROJECTS_STORE ),
+				readAllFromStore< AgentStudioOutput >( db, OUTPUTS_STORE ),
+			] );
+
+			cache = { projects, outputs };
+		} catch {
+			cache = emptyState;
+		} finally {
+			initialized = true;
+		}
+	} )();
+
+	return initPromise;
+}
+
+export async function __resetMockAgentStudioServiceForTests(): Promise< void > {
+	cache = emptyState;
+	initialized = false;
+	initPromise = null;
+
+	const db = dbPromise ? await dbPromise.catch( () => undefined ) : undefined;
+	db?.close();
+	dbPromise = null;
+
+	if ( ! isBrowser() ) {
+		return;
+	}
+
+	await new Promise< void >( ( resolve ) => {
+		const request = window.indexedDB.deleteDatabase( DB_NAME );
+		request.onsuccess = () => resolve();
+		request.onerror = () => resolve();
+		request.onblocked = () => resolve();
+	} );
+}
 
 const sortByUpdatedAt = < T extends { updatedAt: string } >( items: T[] ) =>
 	[ ...items ].sort(
@@ -97,14 +217,12 @@ const deriveAssetCount = ( outputId: string ): number => {
  * Flips any deliverable that has been generating past the generation window
  * into a ready state with mock previews, persisting the change. Stands in for
  * the async job that streams real results once the wpcom endpoint lands.
- * @param state - The current mock state.
- * @returns The state with elapsed deliverables resolved.
  */
-const resolveGeneratingOutputs = ( state: AgentStudioMockState ): AgentStudioMockState => {
+const resolveGeneratingOutputs = async (): Promise< void > => {
 	const now = Date.now();
-	let changed = false;
+	const changedOutputs: AgentStudioOutput[] = [];
 
-	const outputs = state.outputs.map( ( output ) => {
+	cache.outputs = cache.outputs.map( ( output ) => {
 		if (
 			output.status !== 'generating' ||
 			now - new Date( output.createdAt ).getTime() < GENERATION_DURATION_MS
@@ -112,24 +230,19 @@ const resolveGeneratingOutputs = ( state: AgentStudioMockState ): AgentStudioMoc
 			return output;
 		}
 
-		changed = true;
-		return {
+		const nextOutput = {
 			...output,
 			status: 'ready' as const,
 			previewUrls: MOCK_PREVIEW_URLS,
 			assetCount: deriveAssetCount( output.id ),
 			updatedAt: new Date( now ).toISOString(),
 		};
+
+		changedOutputs.push( nextOutput );
+		return nextOutput;
 	} );
 
-	if ( ! changed ) {
-		return state;
-	}
-
-	const nextState = { ...state, outputs };
-	writeState( nextState );
-
-	return nextState;
+	await Promise.all( changedOutputs.map( ( output ) => persist( OUTPUTS_STORE, output ) ) );
 };
 
 /**
@@ -137,16 +250,13 @@ const resolveGeneratingOutputs = ( state: AgentStudioMockState ): AgentStudioMoc
  * first use. The service owns this so the client never has to know a "Default"
  * project exists — when the wpcom endpoint replaces this mock, the server will
  * provision it the same way.
- * @param state - The current mock state.
- * @returns The default project and the (possibly updated) state.
+ * @returns The default project.
  */
-const ensureDefaultProject = (
-	state: AgentStudioMockState
-): { project: AgentStudioProject; state: AgentStudioMockState } => {
-	const existing = state.projects.find( ( project ) => project.isDefault );
+const ensureDefaultProject = async (): Promise< AgentStudioProject > => {
+	const existing = cache.projects.find( ( project ) => project.isDefault );
 
 	if ( existing ) {
-		return { project: existing, state };
+		return existing;
 	}
 
 	const now = new Date().toISOString();
@@ -157,28 +267,29 @@ const ensureDefaultProject = (
 		createdAt: now,
 		updatedAt: now,
 	};
-	const nextState = { ...state, projects: [ project, ...state.projects ] };
 
-	writeState( nextState );
+	cache = { ...cache, projects: [ project, ...cache.projects ] };
+	await persist( PROJECTS_STORE, project );
 
-	return { project, state: nextState };
+	return project;
 };
 
 export const mockAgentStudioService: AgentStudioService = {
 	async listProjects() {
-		const state = readState();
+		await ensureInitialized();
 
-		return sortByUpdatedAt( state.projects ).map( ( project ) =>
-			summarizeProject( project, state.outputs )
+		return sortByUpdatedAt( cache.projects ).map( ( project ) =>
+			summarizeProject( project, cache.outputs )
 		);
 	},
 
 	async getProject( projectId ) {
-		return readState().projects.find( ( project ) => project.id === projectId );
+		await ensureInitialized();
+		return cache.projects.find( ( project ) => project.id === projectId );
 	},
 
 	async createProject( input: CreateAgentStudioProjectInput ) {
-		const state = readState();
+		await ensureInitialized();
 		const now = new Date().toISOString();
 		const project: AgentStudioProject = {
 			id: makeProjectId(),
@@ -189,40 +300,50 @@ export const mockAgentStudioService: AgentStudioService = {
 			updatedAt: now,
 		};
 
-		writeState( {
-			...state,
-			projects: [ project, ...state.projects ],
-		} );
+		cache = { ...cache, projects: [ project, ...cache.projects ] };
+		await persist( PROJECTS_STORE, project );
 
 		return project;
 	},
 
 	async deleteProject( projectId ) {
-		const state = readState();
-		writeState( {
-			projects: state.projects.filter( ( project ) => project.id !== projectId ),
-			outputs: state.outputs.filter( ( output ) => output.projectId !== projectId ),
-		} );
+		await ensureInitialized();
+		const removedOutputIds = cache.outputs
+			.filter( ( output ) => output.projectId === projectId )
+			.map( ( output ) => output.id );
+
+		cache = {
+			projects: cache.projects.filter( ( project ) => project.id !== projectId ),
+			outputs: cache.outputs.filter( ( output ) => output.projectId !== projectId ),
+		};
+
+		await Promise.all( [
+			remove( PROJECTS_STORE, projectId ),
+			...removedOutputIds.map( ( outputId ) => remove( OUTPUTS_STORE, outputId ) ),
+		] );
 	},
 
 	async listProjectOutputs( projectId ) {
-		return sortByUpdatedAt(
-			readState().outputs.filter( ( output ) => output.projectId === projectId )
-		);
+		await ensureInitialized();
+		await resolveGeneratingOutputs();
+
+		return sortByUpdatedAt( cache.outputs.filter( ( output ) => output.projectId === projectId ) );
 	},
 
 	async listOutputs() {
-		const { project, state } = ensureDefaultProject( readState() );
-		const resolved = resolveGeneratingOutputs( state );
+		await ensureInitialized();
+		const project = await ensureDefaultProject();
+		await resolveGeneratingOutputs();
 
-		return sortByUpdatedAt(
-			resolved.outputs.filter( ( output ) => output.projectId === project.id )
-		);
+		return sortByUpdatedAt( cache.outputs.filter( ( output ) => output.projectId === project.id ) );
 	},
 
 	async createOutput( input: CreateAgentStudioOutputInput ) {
-		const { project, state } = ensureDefaultProject( readState() );
+		await ensureInitialized();
+		const project = await ensureDefaultProject();
 		const now = new Date().toISOString();
+		const socialAssets =
+			input.agentId === 'social-assets' ? await createSocialAssets( input ) : undefined;
 		const output: AgentStudioOutput = {
 			id: makeOutputId(),
 			projectId: project.id,
@@ -230,24 +351,27 @@ export const mockAgentStudioService: AgentStudioService = {
 			description: input.description,
 			agentName: input.agentName,
 			deliverableType: input.deliverableType,
-			status: 'generating',
+			status: socialAssets ? 'ready' : 'generating',
+			kind: socialAssets ? 'social-assets' : undefined,
+			socialAssets,
+			previewUrls: socialAssets ? [ socialAssetsPreview ] : undefined,
+			assetCount: socialAssets?.assets.length,
 			createdAt: now,
 			updatedAt: now,
 		};
 
-		writeState( {
-			...state,
-			outputs: [ output, ...state.outputs ],
-		} );
+		cache = { ...cache, outputs: [ output, ...cache.outputs ] };
+		await persist( OUTPUTS_STORE, output );
 
 		return output;
 	},
 
 	async deleteOutput( outputId ) {
-		const state = readState();
-		writeState( {
-			...state,
-			outputs: state.outputs.filter( ( output ) => output.id !== outputId ),
-		} );
+		await ensureInitialized();
+		cache = {
+			...cache,
+			outputs: cache.outputs.filter( ( output ) => output.id !== outputId ),
+		};
+		await remove( OUTPUTS_STORE, outputId );
 	},
 };

@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { mockAgentStudioService } from '../mock-agent-studio-service';
+import {
+	__resetMockAgentStudioServiceForTests,
+	mockAgentStudioService,
+} from '../mock-agent-studio-service';
 
 const briefInput = {
 	agentId: 'one-pager',
@@ -12,8 +15,9 @@ const briefInput = {
 };
 
 describe( 'mockAgentStudioService default project', () => {
-	beforeEach( () => {
+	beforeEach( async () => {
 		window.localStorage.clear();
+		await __resetMockAgentStudioServiceForTests();
 	} );
 
 	it( 'creates the default project when listing outputs before any exist', async () => {
@@ -42,6 +46,21 @@ describe( 'mockAgentStudioService default project', () => {
 		expect( outputs.every( ( output ) => output.projectId === defaultProjects[ 0 ].id ) ).toBe(
 			true
 		);
+	} );
+
+	it( 'creates the full social asset set without uploaded images', async () => {
+		const output = await mockAgentStudioService.createOutput( {
+			...briefInput,
+			agentId: 'social-assets',
+			agentName: 'Iris',
+		} );
+
+		expect( output.status ).toBe( 'ready' );
+		expect( output.kind ).toBe( 'social-assets' );
+		expect( new Set( output.socialAssets?.assets.map( ( asset ) => asset.sizeKey ) ) ).toEqual(
+			new Set( [ 'cover', 'square', 'email', 'story' ] )
+		);
+		expect( output.socialAssets?.assets.length ).toBeGreaterThanOrEqual( 4 );
 	} );
 
 	it( 'starts every created output in the generating state', async () => {

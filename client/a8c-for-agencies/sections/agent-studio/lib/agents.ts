@@ -59,7 +59,6 @@ export function useAgentStudioAgents(): AgentStudioAgent[] {
 				],
 				icon: image,
 				previewImage: socialAssetsPreview,
-				disabled: true,
 			},
 			{
 				id: 'event-assets',

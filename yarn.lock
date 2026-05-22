@@ -20502,6 +20502,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-to-image@npm:^1.11.13":
+  version: 1.11.13
+  resolution: "html-to-image@npm:1.11.13"
+  checksum: 03bd7192d87b99499e37ff12a8e2b41ddce4cf8e33a93dfadff18df0f213434c7f1ba8328db2158f4805da07b7aec3c90aec3152908281153217e86784218b10
+  languageName: node
+  linkType: hard
+
 "html-url-attributes@npm:^3.0.0":
   version: 3.0.0
   resolution: "html-url-attributes@npm:3.0.0"
@@ -34372,6 +34379,7 @@ __metadata:
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.2.3"
     globby: "npm:^10.0.2"
+    html-to-image: "npm:^1.11.13"
     http-proxy-middleware: "npm:^3.0.5"
     husky: "npm:^7.0.4"
     i18n-calypso: "workspace:^"

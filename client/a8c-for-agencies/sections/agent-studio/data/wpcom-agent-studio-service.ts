@@ -68,11 +68,17 @@ export const wpcomAgentStudioService: AgentStudioService = {
 
 	async listOutputs( agencyId?: number ): Promise< AgentStudioOutput[] > {
 		const id = requireAgencyId( agencyId, 'listOutputs' );
-		const response: OutputsResponse = await wpcom.req.get( {
-			apiNamespace: 'wpcom/v2',
-			path: `/agency/${ id }/a4a/outputs`,
-		} );
-		return ( response?.outputs ?? [] ).map( normalizeOutput );
+		const [ response, localOutputs ] = await Promise.all( [
+			wpcom.req.get< OutputsResponse >( {
+				apiNamespace: 'wpcom/v2',
+				path: `/agency/${ id }/a4a/outputs`,
+			} ),
+			mockAgentStudioService.listOutputs(),
+		] );
+		return [
+			...( response?.outputs ?? [] ).map( normalizeOutput ),
+			...localOutputs.filter( ( output: AgentStudioOutput ) => output.kind === 'social-assets' ),
+		];
 	},
 
 	async createOutput(
@@ -129,6 +135,11 @@ export const wpcomAgentStudioService: AgentStudioService = {
 	},
 
 	async deleteOutput( outputId: string, agencyId?: number ): Promise< void > {
+		if ( outputId.startsWith( 'output-' ) ) {
+			await mockAgentStudioService.deleteOutput( outputId );
+			return;
+		}
+
 		const id = requireAgencyId( agencyId, 'deleteOutput' );
 		// `wpcom.req.del` doesn't override the HTTP method, so it goes
 		// out as POST and the v2 DELETETABLE route 404s.

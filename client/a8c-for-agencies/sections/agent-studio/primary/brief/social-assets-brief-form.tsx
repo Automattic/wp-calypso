@@ -11,8 +11,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getBriefExcerpt } from './brief-helpers';
 import ImageUploadField from './image-upload-field';
+import LogoUploadField from './logo-upload-field';
 import useSubmitBrief from './use-submit-brief';
 import type { AgentStudioAgent } from '../../lib/agents';
+import type { AgentStudioSocialImage } from '../../types';
 import type { FormEvent } from 'react';
 
 interface Props {
@@ -39,12 +41,24 @@ function getFirstLine( text: string ): string {
 	);
 }
 
+function fileToSocialImage( file: File ): Promise< AgentStudioSocialImage > {
+	return new Promise( ( resolve, reject ) => {
+		const reader = new FileReader();
+		reader.addEventListener( 'load', () =>
+			resolve( { fileName: file.name, dataUrl: String( reader.result ?? '' ) } )
+		);
+		reader.addEventListener( 'error', () => reject( reader.error ) );
+		reader.readAsDataURL( file );
+	} );
+}
+
 export default function SocialAssetsBriefForm( { agent }: Props ) {
 	const [ mode, setMode ] = useState< BriefMode >( 'source' );
 	const [ sourceText, setSourceText ] = useState( '' );
 	const [ headline, setHeadline ] = useState( '' );
 	const [ stat, setStat ] = useState( '' );
 	const [ statContext, setStatContext ] = useState( '' );
+	const [ logoFile, setLogoFile ] = useState< File | null >( null );
 	// Captured for the brief, wired to the agent once generation is built.
 	const [ images, setImages ] = useState< File[] >( [] );
 
@@ -54,7 +68,7 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 		! mutation.isPending &&
 		( mode === 'source' ? sourceText.trim().length > SOURCE_MIN_LENGTH : !! headline.trim() );
 
-	const onSubmit = ( event: FormEvent ) => {
+	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 
 		if ( ! canSubmit ) {
@@ -71,12 +85,23 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 				: getBriefExcerpt( [ stat.trim(), statContext.trim() ].filter( Boolean ).join( ' ' ) ) ||
 				  agent.role;
 
+		const [ socialLogo, socialImages ] = await Promise.all( [
+			logoFile ? fileToSocialImage( logoFile ) : Promise.resolve( undefined ),
+			Promise.all( images.map( fileToSocialImage ) ),
+		] );
+
 		mutation.mutate( {
 			agentId: agent.id,
 			agentName: agent.name,
 			deliverableType: agent.deliverableType,
 			title,
 			description,
+			sourceText,
+			headline,
+			stat,
+			statContext,
+			socialLogo,
+			socialImages,
 		} );
 	};
 
@@ -142,6 +167,21 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 					onChange={ setImages }
 					disabled={ mutation.isPending }
 				/>
+
+				<VStack spacing={ 2 }>
+					<Text weight={ 600 }>{ __( 'Logo (optional)' ) }</Text>
+					<Text variant="muted">
+						{ __( 'Add a brand logo to place into the social layouts.' ) }
+					</Text>
+					<HStack className="a4a-agent-studio-brief__logo-row" justify="flex-start">
+						<LogoUploadField
+							label={ __( 'Brand logo' ) }
+							file={ logoFile }
+							onChange={ setLogoFile }
+							disabled={ mutation.isPending }
+						/>
+					</HStack>
+				</VStack>
 
 				<VStack spacing={ 2 }>
 					<Text weight={ 600 }>
