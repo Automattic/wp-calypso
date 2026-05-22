@@ -51,10 +51,10 @@ function bucketSec( bucket: ApmAggregateBucket ): number {
  * window slides forward instead of fragmenting the cache by timestamp.
  *
  * On first fetch the queryFn pulls the whole window. On subsequent fetches it
- * issues a delta request from the latest cached bucket onward and merges the
- * response with the cache, so polling stays cheap regardless of window size.
- * Buckets that have fallen off the back of the window are dropped during the
- * merge so the cache stays bounded.
+ * asks the API for buckets strictly after the latest cached `bucket_minute`,
+ * so the delta never re-downloads buckets we already have. The response is
+ * appended to the cached aggregates and any buckets that have fallen off the
+ * back of the window are dropped, keeping the cache bounded.
  */
 export const siteApmAggregateRollingQuery = ( siteId: number, windowSec: number ) =>
 	queryOptions( {
@@ -74,33 +74,32 @@ export const siteApmAggregateRollingQuery = ( siteId: number, windowSec: number 
 				return fetchSiteApmAggregate( siteId, { start: windowStart, end } );
 			}
 
-			// The latest cached bucket may still be accumulating data, so the
-			// delta refetches from that bucket forward (inclusive) rather than
-			// from the next minute.
+			// Start one second past the latest cached bucket so the API never
+			// resends a bucket we already have. Buckets are minute-aligned, so
+			// any non-zero offset is enough to skip the previous one.
 			const latestSec = cached.aggregates.reduce(
 				( max, b ) => Math.max( max, bucketSec( b ) ),
 				0
 			);
-			const delta = await fetchSiteApmAggregate( siteId, { start: latestSec, end } );
+			const deltaStart = latestSec + 1;
 
-			if ( delta.aggregates.length === 0 ) {
-				// No new data and no refresh of the latest bucket. Just trim
-				// buckets that have fallen off the back of the window.
+			if ( deltaStart > end ) {
+				// We're still in the minute of the latest cached bucket; no new
+				// bucket to fetch. Just trim buckets that have fallen off the
+				// back of the window.
 				return {
 					...cached,
 					aggregates: cached.aggregates.filter( ( b ) => bucketSec( b ) >= windowStart ),
 				};
 			}
 
-			// Replace any cached buckets covered by the delta (anything at or
-			// after latestSec) with the delta, and drop the ones that have
-			// fallen off the back of the window.
+			const delta = await fetchSiteApmAggregate( siteId, { start: deltaStart, end } );
+
+			// Delta buckets are strictly newer than every cached bucket, so we
+			// can concatenate without deduping. Trim cached to the window.
 			const merged = [
 				...delta.aggregates,
-				...cached.aggregates.filter( ( b ) => {
-					const sec = bucketSec( b );
-					return sec >= windowStart && sec < latestSec;
-				} ),
+				...cached.aggregates.filter( ( b ) => bucketSec( b ) >= windowStart ),
 			];
 			return { ...cached, aggregates: merged };
 		},
