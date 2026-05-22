@@ -620,8 +620,7 @@
 
 	// URL field override from our local styles.scss
 	a.dataviews-url-field {
-		color: var( --dashboard-subtle__color );
-
+		&,
 		&:visited {
 			color: var( --dashboard-subtle__color );
 		}
