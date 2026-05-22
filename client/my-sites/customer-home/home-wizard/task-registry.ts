@@ -308,15 +308,6 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 	// list at ≥5 even when a Goal/Features combo is sparse. Site-state-gated
 	// so they drop off naturally once done.
 	{
-		id: 'set-site-title-tagline',
-		title: 'Set a clear title and tagline',
-		subtitle: 'The first thing visitors and search engines read.',
-		category: 'feature-setup',
-		goals: GOALS_ALL,
-		url: ( s ) => `/settings/general/${ s }`,
-		cta: 'Open settings',
-	},
-	{
 		id: 'add-site-icon',
 		title: 'Add a site icon',
 		subtitle: 'Shows up in browser tabs and bookmarks.',

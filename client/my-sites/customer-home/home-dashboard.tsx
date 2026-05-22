@@ -701,11 +701,24 @@ export default function HomeDashboard() {
 	useBodyClass( 'is-home-wizard-open', isWizardOpen );
 
 	const handleWizardComplete = ( answers: WizardAnswers ) => {
-		// If the user changed the site name in the wizard, push it to
-		// Site Settings (blogname) so the new title persists site-wide.
+		// Push the wizard's name + description straight to Site Settings so they
+		// persist site-wide — and so the (now-removed) "set a title and tagline"
+		// task is unnecessary. The user's description IS the tagline: it lands
+		// verbatim in `blogdescription` (the WordPress Tagline field), set
+		// immediately on finish rather than asking them to write it again.
 		const trimmedName = answers.siteName?.trim() ?? '';
-		if ( selectedSiteId !== null && trimmedName !== '' && trimmedName !== currentSiteName.trim() ) {
-			dispatch( saveSiteSettings( selectedSiteId, { blogname: trimmedName } ) );
+		const trimmedDescription = answers.intent?.trim() ?? '';
+		if ( selectedSiteId !== null ) {
+			const settings: { blogname?: string; blogdescription?: string } = {};
+			if ( trimmedName !== '' && trimmedName !== currentSiteName.trim() ) {
+				settings.blogname = trimmedName;
+			}
+			if ( trimmedDescription !== '' ) {
+				settings.blogdescription = trimmedDescription;
+			}
+			if ( Object.keys( settings ).length > 0 ) {
+				dispatch( saveSiteSettings( selectedSiteId, settings ) );
+			}
 		}
 		finishWizard();
 		runFromAnswers( answers );

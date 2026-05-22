@@ -205,7 +205,7 @@ Rules for the task list:
     - memberships / paid access → "setup-memberships"
     - contact forms → "setup-forms", "discover-jetpack-forms"
 
-  STEP 3 — Round out with universal foundation tasks until you have 5: "design-homepage", "set-site-title-tagline", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo". Pick whichever fits the user's description best.
+  STEP 3 — Round out with universal foundation tasks until you have 5: "design-homepage", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo". Pick whichever fits the user's description best.
 
   STEP 4 — The 6th and final ID MUST be "launch-site".
 
@@ -460,7 +460,7 @@ function buildCombinedPromptFromIntent( intent: string ): string {
     - NEVER include "setup-store", "discover-woocommerce", or "add-first-product" UNLESS the user explicitly mentions selling, products, store, shop, or commerce.
     - NEVER include "setup-bookings" UNLESS the user mentions bookings, appointments, scheduling, or classes.
     - NEVER include "setup-memberships" or "setup-donations" UNLESS the user explicitly mentions paid access, memberships, or donations/fundraising.
-  STEP 3 — Round out with universal foundation tasks until you have 5. Always include "pick-theme" (the visual identity is the highest-leverage activation step — it determines how everything else looks). Then fill remaining slots from: "design-homepage", "set-site-title-tagline", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo".
+  STEP 3 — Round out with universal foundation tasks until you have 5. Always include "pick-theme" (the visual identity is the highest-leverage activation step — it determines how everything else looks). Then fill remaining slots from: "design-homepage", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo".
   STEP 4 — The 6th and final ID MUST be "launch-site".
 
 ============ inferred ============
