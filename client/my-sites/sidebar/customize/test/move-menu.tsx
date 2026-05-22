@@ -106,4 +106,25 @@ describe( '<MoveMenu>', () => {
 			},
 		] );
 	} );
+
+	it( 'closes on pointerdown outside the menu and trigger', () => {
+		const trigger = setupSidebar( 'plugins' );
+		const onClose = jest.fn();
+
+		renderInProvider(
+			<CustomizeProvider>
+				<ExposeContext />
+				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ onClose } />
+			</CustomizeProvider>
+		);
+
+		fireEvent.pointerDown( screen.getByRole( 'menu' ) );
+		fireEvent.pointerDown( trigger );
+
+		expect( onClose ).not.toHaveBeenCalled();
+
+		fireEvent.pointerDown( document.body );
+
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

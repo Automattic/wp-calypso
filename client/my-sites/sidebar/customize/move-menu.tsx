@@ -174,6 +174,19 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 
 	// Close on click-outside, scroll, resize, ESC.
 	useEffect( () => {
+		const handlePointerDown = ( ev: PointerEvent ) => {
+			const target = ev.target instanceof Element ? ev.target : null;
+			if ( ! target ) {
+				return;
+			}
+			if ( menuRef.current?.contains( target ) ) {
+				return;
+			}
+			if ( triggerEl?.contains( target ) ) {
+				return;
+			}
+			onClose();
+		};
 		const handleClickAway = ( ev: MouseEvent ) => {
 			const target = ev.target instanceof Element ? ev.target : null;
 			if ( ! target ) {
@@ -198,11 +211,13 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		const timer = window.setTimeout( () => {
 			document.addEventListener( 'click', handleClickAway, true );
 		}, 0 );
+		document.addEventListener( 'pointerdown', handlePointerDown, true );
 		document.addEventListener( 'keydown', handleKey );
 		window.addEventListener( 'scroll', handleScrollResize, { passive: true } );
 		window.addEventListener( 'resize', handleScrollResize, { passive: true } );
 		return () => {
 			window.clearTimeout( timer );
+			document.removeEventListener( 'pointerdown', handlePointerDown, true );
 			document.removeEventListener( 'click', handleClickAway, true );
 			document.removeEventListener( 'keydown', handleKey );
 			window.removeEventListener( 'scroll', handleScrollResize );
