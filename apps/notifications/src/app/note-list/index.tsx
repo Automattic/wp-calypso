@@ -2,6 +2,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ExternalLink,
+	Spinner,
 	useNavigator,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -44,6 +45,19 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();
+
+	// DataViews 14 binds its infinite-scroll listener in an effect that runs
+	// once and only attaches if the scroll container exists at that point.
+	// That container is rendered only after DataViews' `hasInitiallyLoaded`
+	// turns true, which is seeded from `! isLoading` on the first render. If
+	// DataViews first renders while notes are still loading, the listener is
+	// never bound and scroll-driven loading stays dead until the list
+	// remounts (e.g. on a tab switch). Defer mounting DataViews until the
+	// first load settles so it always mounts with the container present.
+	const hasRenderedDataViews = useRef( false );
+	if ( ! isLoading ) {
+		hasRenderedDataViews.current = true;
+	}
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
@@ -120,27 +134,33 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
-			<DataViews< Note >
-				data={ filteredData }
-				fields={ fields }
-				view={ view }
-				isLoading={ isLoading }
-				defaultLayouts={ DEFAULT_LAYOUTS }
-				paginationInfo={ effectivePaginationInfo }
-				empty={
-					<VStack alignment="center">
-						<Text size={ 15 } weight={ 500 }>
-							{ filter.emptyMessage }
-						</Text>
-						<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
-					</VStack>
-				}
-				getItemId={ ( item ) => item.id.toString() }
-				onChangeView={ handleChangeView }
-				onChangeSelection={ onChangeSelection }
-			>
-				<DataViews.Layout />
-			</DataViews>
+			{ hasRenderedDataViews.current ? (
+				<DataViews< Note >
+					data={ filteredData }
+					fields={ fields }
+					view={ view }
+					isLoading={ isLoading }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+					paginationInfo={ effectivePaginationInfo }
+					empty={
+						<VStack alignment="center">
+							<Text size={ 15 } weight={ 500 }>
+								{ filter.emptyMessage }
+							</Text>
+							<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+						</VStack>
+					}
+					getItemId={ ( item ) => item.id.toString() }
+					onChangeView={ handleChangeView }
+					onChangeSelection={ onChangeSelection }
+				>
+					<DataViews.Layout />
+				</DataViews>
+			) : (
+				<VStack alignment="center" style={ { padding: '40px 0' } }>
+					<Spinner />
+				</VStack>
+			) }
 		</div>
 	);
 };
