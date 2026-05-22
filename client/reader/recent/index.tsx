@@ -10,14 +10,14 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useCachedPosts } from 'calypso/reader/data/post-cache';
-import { getPostIcon } from 'calypso/reader/get-helpers';
-import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import {
 	isPaddingStreamItem,
 	usePaginatedStream,
 	type StreamItem,
 	type StreamListItem,
 } from 'calypso/reader/data/stream';
+import { getPostIcon } from 'calypso/reader/get-helpers';
+import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -136,6 +136,25 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		[ posts ]
 	);
 
+	const selectItem = useCallback( ( item: StreamItem ) => {
+		setSelectedItem( item );
+		setTimeout( () => {
+			postColumnRef.current?.focus();
+		}, 0 );
+	}, [] );
+
+	const handlePostFieldKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement >, item: StreamItem ) => {
+			if ( event.key !== 'Enter' && event.key !== ' ' ) {
+				return;
+			}
+			event.preventDefault();
+			event.stopPropagation();
+			selectItem( item );
+		},
+		[ selectItem ]
+	);
+
 	// Get comments API disabled status for the selected post
 	const commentsApiDisabled = useSelector( ( state: AppState ) => {
 		if ( ! selectedItem ) {
@@ -184,6 +203,8 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 									itemRefs.current[ postIdString( item ) ] = el;
 								} }
 								post={ getPostFromItem( item ) }
+								onClick={ () => selectItem( item ) }
+								onKeyDown={ ( event ) => handlePostFieldKeyDown( event, item ) }
 							/>
 						</div>
 					);
@@ -193,7 +214,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem, handleItemFocus ]
+		[ getPostFromItem, handleItemFocus, handlePostFieldKeyDown, selectItem ]
 	);
 
 	const fetchData = useCallback( () => {
@@ -246,14 +267,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					( item ) => item.postId?.toString() === focusedIndexRef.current
 				);
 				if ( focusedItem && ! isPaddingStreamItem( focusedItem ) ) {
-					setSelectedItem( focusedItem );
-					setTimeout( () => {
-						postColumnRef.current?.focus();
-					}, 0 );
+					selectItem( focusedItem );
 				}
 			}
 		},
-		[ shownData ]
+		[ selectItem, shownData ]
 	);
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
@@ -284,13 +302,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							const selectedPost = streamItems.find(
 								( item: StreamListItem ) => item.postId?.toString() === newSelection[ 0 ]
 							);
-							setSelectedItem(
-								selectedPost && ! isPaddingStreamItem( selectedPost ) ? selectedPost : null
-							);
-							// Focus the post column after a short delay to ensure DOM updates.
-							setTimeout( () => {
-								postColumnRef.current?.focus();
-							}, 0 );
+							if ( selectedPost && ! isPaddingStreamItem( selectedPost ) ) {
+								selectItem( selectedPost );
+							} else {
+								setSelectedItem( null );
+							}
 						} }
 					/>
 				</aside>

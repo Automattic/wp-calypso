@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { OnThisDay } from 'calypso/reader/on-this-day';
@@ -107,21 +107,24 @@ describe( 'Reader post cache surfaces', () => {
 		const queryClient = new QueryClient( {
 			defaultOptions: { queries: { refetchOnMount: false, retry: false } },
 		} );
-		queryClient.setQueryData( [ 'read', 'stream', 'recent', { page: 1, perPage: 15 } ], {
-			posts: [
-				{
-					ID: 1,
-					site_ID: 100,
-					feed_ID: 200,
-					feed_item_ID: 300,
-					global_ID: 'global-1',
-					title: 'Cached recent title',
-					site_name: 'Stream site',
-				},
-			],
-			found: 1,
-			total_pages: 1,
-		} );
+		queryClient.setQueryData(
+			[ 'read', 'stream', 'recent', { page: 1, perPage: 15, localeSlug: null } ],
+			{
+				posts: [
+					{
+						ID: 1,
+						site_ID: 100,
+						feed_ID: 200,
+						feed_item_ID: 300,
+						global_ID: 'global-1',
+						title: 'Cached recent title',
+						site_name: 'Stream site',
+					},
+				],
+				found: 1,
+				total_pages: 1,
+			}
+		);
 		render( <Recent />, {
 			wrapper: makeWrapper( queryClient, {
 				reader: {},
@@ -133,24 +136,63 @@ describe( 'Reader post cache surfaces', () => {
 		expect( screen.getByText( 'Stream site' ) ).toBeInTheDocument();
 	} );
 
+	it( 'opens the selected post in the Recent detail pane for a feed-filtered stream', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { refetchOnMount: false, retry: false } },
+		} );
+		queryClient.setQueryData(
+			[ 'read', 'stream', 'recent:112530312', { page: 1, perPage: 15, localeSlug: null } ],
+			{
+				posts: [
+					{
+						ID: 1,
+						site_ID: 100,
+						feed_ID: 112530312,
+						feed_item_ID: 300,
+						global_ID: 'global-1',
+						title: 'Filtered recent title',
+						site_name: 'Filtered stream site',
+					},
+				],
+				found: 1,
+				total_pages: 1,
+			}
+		);
+
+		render( <Recent />, {
+			wrapper: makeWrapper( queryClient, {
+				comments: { apiDisabled: {} },
+				reader: {},
+				readerUi: { sidebar: { selectedRecentSite: 112530312 } },
+			} ),
+		} );
+
+		fireEvent.click( await screen.findByText( 'Filtered recent title' ) );
+
+		expect( screen.getByTestId( 'async-load' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders On This Day list rows from the canonical post cache', async () => {
 		const queryClient = new QueryClient( {
 			defaultOptions: { queries: { refetchOnMount: false, retry: false } },
 		} );
-		queryClient.setQueryData( [ 'read', 'stream', 'on_this_day', { page: 1, perPage: 15 } ], {
-			posts: [
-				{
-					ID: 2,
-					site_ID: 101,
-					global_ID: 'global-2',
-					title: 'Cached on this day title',
-					site_name: 'Stream archive site',
-					date: '2020-05-20T00:00:00Z',
-				},
-			],
-			found: 1,
-			total_pages: 1,
-		} );
+		queryClient.setQueryData(
+			[ 'read', 'stream', 'on_this_day', { page: 1, perPage: 15, localeSlug: null } ],
+			{
+				posts: [
+					{
+						ID: 2,
+						site_ID: 101,
+						global_ID: 'global-2',
+						title: 'Cached on this day title',
+						site_name: 'Stream archive site',
+						date: '2020-05-20T00:00:00Z',
+					},
+				],
+				found: 1,
+				total_pages: 1,
+			}
+		);
 		render( <OnThisDay streamKey="on_this_day" />, {
 			wrapper: makeWrapper( queryClient, {
 				reader: {},

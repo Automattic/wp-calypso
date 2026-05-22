@@ -11,14 +11,14 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useCachedPosts } from 'calypso/reader/data/post-cache';
-import { getPostIcon } from 'calypso/reader/get-helpers';
-import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import {
 	isPaddingStreamItem,
 	usePaginatedStream,
 	type StreamItem,
 	type StreamListItem,
 } from 'calypso/reader/data/stream';
+import { getPostIcon } from 'calypso/reader/get-helpers';
+import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -156,6 +156,25 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 		[ posts ]
 	);
 
+	const selectItem = useCallback( ( item: StreamItem ) => {
+		setSelectedItem( item );
+		setTimeout( () => {
+			postColumnRef.current?.focus();
+		}, 0 );
+	}, [] );
+
+	const handlePostFieldKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement >, item: StreamItem ) => {
+			if ( event.key !== 'Enter' && event.key !== ' ' ) {
+				return;
+			}
+			event.preventDefault();
+			event.stopPropagation();
+			selectItem( item );
+		},
+		[ selectItem ]
+	);
+
 	const fields = useMemo(
 		() => [
 			{
@@ -195,6 +214,8 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 									itemRefs.current[ postIdString( item ) ] = el;
 								} }
 								post={ getPostFromItem( item ) }
+								onClick={ () => selectItem( item ) }
+								onKeyDown={ ( event ) => handlePostFieldKeyDown( event, item ) }
 							/>
 						</div>
 					);
@@ -204,7 +225,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem, handleItemFocus ]
+		[ getPostFromItem, handleItemFocus, handlePostFieldKeyDown, selectItem ]
 	);
 
 	const fetchData = useCallback( () => {
@@ -285,12 +306,11 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 							const selectedPost = streamItems.find(
 								( item: StreamListItem ) => item.postId?.toString() === newSelection[ 0 ]
 							);
-							setSelectedItem(
-								selectedPost && ! isPaddingStreamItem( selectedPost ) ? selectedPost : null
-							);
-							setTimeout( () => {
-								postColumnRef.current?.focus();
-							}, 0 );
+							if ( selectedPost && ! isPaddingStreamItem( selectedPost ) ) {
+								selectItem( selectedPost );
+							} else {
+								setSelectedItem( null );
+							}
 						} }
 					/>
 				</aside>
