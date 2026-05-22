@@ -53,7 +53,7 @@ export function useAgentStudioAgents(): AgentStudioAgent[] {
 				deliverableType: __( 'Social assets' ),
 				greeting: [
 					__(
-						'Hi, I’m Iris. Paste in a post, announcement, or campaign details and I’ll design a cover plus every social size.'
+						'Hi, I’m Iris. Drop in a headline, an optional stat, and any visuals you have, and I’ll design a cover plus every social size.'
 					),
 					__( 'Add an image if you have one.' ),
 				],

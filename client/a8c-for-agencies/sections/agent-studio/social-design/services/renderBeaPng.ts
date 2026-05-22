@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import { toPng } from 'html-to-image';
 import { pickLogo } from '../templates/pickLogo';
 import {
 	BEA_DEFAULT_GAP,
@@ -13,9 +12,6 @@ import {
 import { applySentenceCase } from './sentenceCase';
 import type { BrandPack } from '../brandPacks/types';
 import type { OutputSize } from '../types';
-
-const TRANSPARENT_1X1 =
-	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
 export type BeaRenderInput = {
 	family: BeaLayoutFamily;
@@ -826,52 +822,6 @@ export async function prepareBeaRenderElement( container: HTMLElement ): Promise
 	fitStoryHeadlines( container );
 	shrinkText( container );
 	await waitForPaint();
-}
-
-export async function renderBeaHtmlToPng(
-	html: string,
-	size: OutputSize,
-	options: { fitText?: boolean; pixelRatio?: number } = {}
-): Promise< string > {
-	const wrapper = document.createElement( 'div' );
-	wrapper.style.cssText =
-		'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;pointer-events:none;z-index:-1';
-	const container = document.createElement( 'div' );
-	container.style.cssText = `width:${ size.width }px;height:${ size.height }px;opacity:0`;
-	container.innerHTML = html;
-	wrapper.appendChild( container );
-	document.body.appendChild( wrapper );
-
-	try {
-		if ( options.fitText !== false ) {
-			await prepareBeaRenderElement( container );
-		} else {
-			await waitForPaint();
-		}
-		container.style.opacity = '1';
-		await waitForPaint();
-		return await toPng( container, {
-			width: size.width,
-			height: size.height,
-			pixelRatio: options.pixelRatio ?? 2,
-			cacheBust: false,
-			imagePlaceholder: TRANSPARENT_1X1,
-			// Skip font embedding entirely. Calypso serves through a different
-			// origin than the prototype, so html-to-image's font CSS fetcher
-			// throws "Invalid base URL" 40+ times per tile before giving up.
-			// We've already loaded fonts via document.fonts.add() — the tile
-			// uses them at render time even without embedded CSS.
-			skipFonts: true,
-			fontEmbedCSS: '',
-		} );
-	} finally {
-		wrapper.remove();
-	}
-}
-
-export async function renderBeaPng( input: BeaRenderInput ): Promise< string > {
-	const { html, size } = composeBeaHtml( input );
-	return renderBeaHtmlToPng( html, size );
 }
 
 function shrinkText( container: HTMLElement ) {

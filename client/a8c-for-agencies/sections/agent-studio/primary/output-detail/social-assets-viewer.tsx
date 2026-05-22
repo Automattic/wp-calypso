@@ -1,12 +1,6 @@
-import {
-	Spinner,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { toPng } from 'html-to-image';
 import {
-	useCallback,
 	useEffect,
 	useMemo,
 	useRef,
@@ -17,7 +11,6 @@ import {
 } from 'react';
 import useDownloadSocialPng from '../../data/use-download-social-png';
 import { HtmlRenderPreview } from '../../social-design/components/HtmlRenderPreview';
-import { setBeaTileRenderingPaused } from '../../social-design/services/beaRenderQueue';
 import { captureFittedTileHtml } from '../../social-design/services/captureFittedHtml';
 import { prepareBeaRenderElement } from '../../social-design/services/renderBeaPng';
 import type { AgentStudioSocialAsset } from '../../types';
@@ -129,8 +122,6 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 	const [ viewportWidth, setViewportWidth ] = useState( () =>
 		typeof window === 'undefined' ? 1440 : window.innerWidth
 	);
-	const [ captureAll, setCaptureAll ] = useState( false );
-	const [ capturing, setCapturing ] = useState( false );
 
 	const items = useMemo( () => interleaveAssets( assets ), [ assets ] );
 	const columnCount = useMemo( () => {
@@ -142,68 +133,11 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 		[ items, columnCount ]
 	);
 
-	const captureCanvas = useCallback( async () => {
-		if ( capturing ) {
-			return;
-		}
-		setBeaTileRenderingPaused( false );
-
-		const canvas = canvasRef.current?.querySelector< HTMLElement >(
-			'.a4a-agent-studio-social-assets__canvas'
-		);
-		if ( ! canvas ) {
-			return;
-		}
-
-		setCapturing( true );
-		setCaptureAll( true );
-		try {
-			await new Promise( ( resolve ) =>
-				requestAnimationFrame( () => requestAnimationFrame( resolve ) )
-			);
-			await waitForSocialTiles( canvas );
-			await new Promise( ( resolve ) =>
-				requestAnimationFrame( () => requestAnimationFrame( resolve ) )
-			);
-			const dataUrl = await toPng( canvas, {
-				pixelRatio: 2,
-				backgroundColor: '#050505',
-				width: canvas.scrollWidth,
-				height: canvas.scrollHeight,
-			} );
-			triggerDownload(
-				dataUrl,
-				`${ safeFileBase( title, 'canvas' ) || 'social-assets-canvas' }.png`
-			);
-		} finally {
-			setCapturing( false );
-		}
-	}, [ capturing, title ] );
-
 	useEffect( () => {
 		const handleResize = () => setViewportWidth( window.innerWidth );
 		window.addEventListener( 'resize', handleResize );
 		return () => window.removeEventListener( 'resize', handleResize );
 	}, [] );
-
-	useEffect( () => {
-		return () => setBeaTileRenderingPaused( false );
-	}, [] );
-
-	useEffect( () => {
-		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if (
-				( event.metaKey || event.ctrlKey ) &&
-				event.shiftKey &&
-				event.key.toLowerCase() === 's'
-			) {
-				event.preventDefault();
-				void captureCanvas();
-			}
-		};
-		window.addEventListener( 'keydown', handleKeyDown );
-		return () => window.removeEventListener( 'keydown', handleKeyDown );
-	}, [ captureCanvas ] );
 
 	function handleCanvasPointerDown( event: PointerEvent< HTMLDivElement > ) {
 		if ( event.button !== 0 || ( event.target as HTMLElement ).closest( 'button, a' ) ) {
@@ -251,7 +185,6 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 		if ( canvas?.hasPointerCapture( event.pointerId ) ) {
 			canvas.releasePointerCapture( event.pointerId );
 		}
-		window.setTimeout( () => setBeaTileRenderingPaused( false ), 160 );
 	}
 
 	if ( ! assets.length ) {
@@ -276,9 +209,7 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 				}
 			} }
 		>
-			<div
-				className={ `a4a-agent-studio-social-assets__canvas${ capturing ? ' is-exporting' : '' }` }
-			>
+			<div className="a4a-agent-studio-social-assets__canvas">
 				{ columns.map( ( column, columnIdx ) => (
 					<div className="a4a-agent-studio-social-assets__col" key={ `col-${ columnIdx }` }>
 						{ column.map( ( { item, index } ) => (
@@ -290,36 +221,18 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 								postId={ postId }
 								dragRef={ dragRef }
 								rootRef={ canvasRef }
-								forceRender={ captureAll }
 							/>
 						) ) }
 					</div>
 				) ) }
 			</div>
-			{ capturing && (
-				<div className="a4a-agent-studio-social-assets__capture-toast">
-					<Spinner />
-					<Text>{ __( 'Capturing canvas…' ) }</Text>
-				</div>
-			) }
 		</div>
 	);
 }
 
-function triggerDownload( dataUrl: string, fileName: string ) {
-	const link = document.createElement( 'a' );
-	link.href = dataUrl;
-	link.download = fileName;
-	document.body.appendChild( link );
-	link.click();
-	link.remove();
-}
-
-// Same as `triggerDownload` but works for cross-origin URLs by
-// telling the anchor to use the `download` attribute. The portfolio
-// blog serves the PNG with `Content-Disposition: inline` headers, so
-// the browser would open it in a new tab; the `download` attribute
-// forces a save dialog instead.
+// The portfolio blog serves the PNG with `Content-Disposition: inline`,
+// so a plain `window.open()` would just navigate the user away. Building
+// an anchor with the `download` attribute forces the browser to save.
 function triggerDownloadFromUrl( url: string, fileName: string ) {
 	const link = document.createElement( 'a' );
 	link.href = url;
@@ -331,28 +244,9 @@ function triggerDownloadFromUrl( url: string, fileName: string ) {
 	link.remove();
 }
 
-function waitForSocialTiles( inner: HTMLElement, timeoutMs = 90000 ): Promise< void > {
-	return new Promise( ( resolve, reject ) => {
-		const started = Date.now();
-		const check = () => {
-			const total = inner.querySelectorAll( '.a4a-agent-studio-social-assets__tile-frame' ).length;
-			const pending = inner.querySelectorAll( '.a4a-agent-studio-social-assets__ghost' ).length;
-			if ( total > 0 && pending === 0 ) {
-				resolve();
-			} else if ( Date.now() - started > timeoutMs ) {
-				reject( new Error( 'Timed out waiting for social tiles to render' ) );
-			} else {
-				setTimeout( check, 200 );
-			}
-		};
-		check();
-	} );
-}
-
 function SocialAssetTile( {
 	asset,
 	dragRef,
-	forceRender = false,
 	index,
 	postId,
 	rootRef,
@@ -360,7 +254,6 @@ function SocialAssetTile( {
 }: {
 	asset: SocialCanvasItem;
 	dragRef: MutableRefObject< { moved: boolean } >;
-	forceRender?: boolean;
 	index: number;
 	postId: number;
 	rootRef: RefObject< HTMLDivElement | null >;
@@ -392,12 +285,6 @@ function SocialAssetTile( {
 		observer.observe( element );
 		return () => observer.disconnect();
 	}, [ asset.html, rootRef ] );
-
-	useEffect( () => {
-		if ( forceRender ) {
-			setNearViewport( true );
-		}
-	}, [ forceRender ] );
 
 	const downloadAsset = async () => {
 		if ( downloading || dragRef.current.moved ) {
