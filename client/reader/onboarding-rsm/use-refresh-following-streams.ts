@@ -1,10 +1,10 @@
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { getOnThisDayStreamKey } from 'calypso/reader/on-this-day/get-stream-key';
 import {
 	getStreamInfiniteQueryKeyPrefix,
 	invalidatePaginatedStream,
 } from 'calypso/reader/data/stream';
+import { getOnThisDayStreamKey } from 'calypso/reader/on-this-day/get-stream-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';

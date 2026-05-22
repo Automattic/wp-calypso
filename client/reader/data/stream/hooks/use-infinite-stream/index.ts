@@ -16,8 +16,8 @@ import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
-import type { StreamItem } from '../../types';
 import { normalizeStreamPage } from '../../normalization';
+import type { StreamItem } from '../../types';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 import type { Dispatch } from 'redux';
 

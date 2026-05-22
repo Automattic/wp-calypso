@@ -11,13 +11,10 @@ import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscript
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { fetchPaginatedStream, getStreamInfiniteQueryKeyPrefix } from 'calypso/reader/data/stream';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
-import {
-	fetchPaginatedStream,
-	getStreamInfiniteQueryKeyPrefix,
-} from 'calypso/reader/data/stream';
 import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';

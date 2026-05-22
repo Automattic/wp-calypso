@@ -20,14 +20,16 @@ afterEach( () => {
 	nock.cleanAll();
 } );
 
-const makeQueryClient = () =>
-	new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 const makeWrapper = ( queryClient: QueryClient ) => {
 	const store = createStore(
 		combineReducers( { reader: readerReducer } ),
 		undefined,
-		applyMiddleware( thunkMiddleware, createPostCacheMiddleware( () => queryClient ) )
+		applyMiddleware(
+			thunkMiddleware,
+			createPostCacheMiddleware( () => queryClient )
+		)
 	);
 
 	return ( { children }: { children: ReactNode } ) => (

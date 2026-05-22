@@ -9,12 +9,12 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
-import readerReducer from 'calypso/state/reader/reducer';
 import {
 	getStreamInfiniteQueryKey,
 	removeStreamItemFromCache,
 	useInfiniteStream,
 } from 'calypso/reader/data/stream';
+import readerReducer from 'calypso/state/reader/reducer';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';

@@ -1,10 +1,10 @@
+import { removeStreamItemFromCache } from 'calypso/reader/data/stream';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 } from 'calypso/state/reader/action-types';
-import { removeStreamItemFromCache } from 'calypso/reader/data/stream';
-import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
 
 import 'calypso/state/data-layer/wpcom/read/sites/posts/follow';

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
-import { keysAreEqual } from 'calypso/reader/post-key';
 import { getCachedStreamItems, type StreamItem } from 'calypso/reader/data/stream';
+import { keysAreEqual } from 'calypso/reader/post-key';
 
 type SelectedPostQueryKey = readonly [ 'read', 'stream', 'selected', string, string | null ];
 

@@ -8,10 +8,10 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedPost } from 'calypso/reader/data/post-cache';
+import { type StreamItem } from 'calypso/reader/data/stream';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import initialReducer from 'calypso/state/reducer';
 import { useStreamPendingPosts } from '../use-stream-pending-posts';
-import { type StreamItem } from 'calypso/reader/data/stream';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';

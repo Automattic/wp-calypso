@@ -21,6 +21,7 @@ import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/util
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCachedPost } from 'calypso/reader/data/post-cache';
 import { withPostLikeActions } from 'calypso/reader/data/post-likes';
+import { normalizeStreamPage, useInfiniteStream } from 'calypso/reader/data/stream';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
@@ -48,10 +49,8 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import { normalizeStreamPage } from 'calypso/reader/data/stream';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
-import { useInfiniteStream } from 'calypso/reader/data/stream';
 import {
 	getDistanceBetweenPrompts,
 	getDistanceBetweenRecs,

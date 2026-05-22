@@ -4,11 +4,10 @@ import {
 	getStreamInfiniteQueryKey,
 	removeStreamItemFromCache,
 } from 'calypso/reader/data/stream';
-import type { PageHandle } from '@automattic/api-queries';
 import type { ReadStreamPost, ReadStreamResponse } from '@automattic/api-core';
+import type { PageHandle } from '@automattic/api-queries';
 
-const makeQueryClient = () =>
-	new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 const apiPost = ( id: number, overrides: Partial< ReadStreamPost > = {} ): ReadStreamPost => ( {
 	ID: id,
