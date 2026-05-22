@@ -132,19 +132,13 @@ const ReaderOnboardingRsm = ( {
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
 
-	// Stable blog map for the interests step — computed once per component
-	// lifetime so the random selection doesn't change when the user navigates
-	// away from the step and returns (InterestsModal unmounts/remounts on each
-	// step transition, so this must live here rather than inside that component).
+	// Stable blog map for the interests step — initialized lazily the first
+	// time the onboarding modal is actually shown, so the random blog selection
+	// (getTopicGroups/getPackBlogs) does not run for users who never open the
+	// modal. Defined here (not inside InterestsModal) so the selection persists
+	// when the user navigates away from the step and returns — InterestsModal
+	// unmounts/remounts on each step transition.
 	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
-	if ( ! packBlogsByIdRef.current ) {
-		packBlogsByIdRef.current = new Map(
-			getTopicGroups().map( ( group ) => [
-				group.id,
-				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
-			] )
-		);
-	}
 
 	// Tracks which packs the user has explicitly subscribed to this session.
 	// Owned here (not inside InterestsModal) so it persists when the user
@@ -213,6 +207,18 @@ const ReaderOnboardingRsm = ( {
 		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
+
+	// Lazy-initialize the blog map now that we know the modal will be shown.
+	// Placing this after shouldRenderOnboarding means getTopicGroups /
+	// getPackBlogs never run for the common case where onboarding is not shown.
+	if ( shouldRenderOnboarding && ! packBlogsByIdRef.current ) {
+		packBlogsByIdRef.current = new Map(
+			getTopicGroups().map( ( group ) => [
+				group.id,
+				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
+			] )
+		);
+	}
 
 	// Site follows inside the onboarding flow (discover-step `ReaderFollowButton`
 	// and interests-step pack subscriptions) go through the legacy Redux

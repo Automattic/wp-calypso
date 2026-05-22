@@ -256,7 +256,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
-												siteTitle={ selectedSite.site_name }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
 												onFollowToggle={ ( isFollowing: boolean ) =>
