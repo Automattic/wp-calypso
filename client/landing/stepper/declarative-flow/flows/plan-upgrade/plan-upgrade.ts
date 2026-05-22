@@ -229,8 +229,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 											}
 
 											// Step 4: Read the new subscription ID straight from the mutation response.
-											// The sandbox patch on `update/downgrade-return-subscription-id` (commit 880584429707)
-											// bubbles this through migrate_sub_for_downgrade → downgrade → request_cancel.
 											const newSubscriptionId = (
 												response as { new_subscription_id?: string | number }
 											 )?.new_subscription_id;
@@ -277,7 +275,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 													window.location.assign( targetUrl );
 												}
 											} else {
-												// Fallback: API didn't return new_subscription_id (sandbox patch not deployed?)
+												// Fallback: API didn't return new_subscription_id.
 												const fallbackUrl = addQueryArgs( fallbackDestination, params );
 												window.location.assign( fallbackUrl );
 											}
