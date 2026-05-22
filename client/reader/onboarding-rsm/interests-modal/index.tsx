@@ -265,7 +265,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				}
 				// Best effort only: site-specific failures are handled by existing
 				// follow data-layer notices and should not block pack completion.
-				dispatch( follow( blog.feed_URL, followData, { siteTitle: blog.site_name } ) );
+				dispatch( follow( blog.feed_URL, followData, null ) );
 				// Mirror how the rest of Reader tracks site follows so pack-blog
 				// follows show up under the standard `calypso_reader_site_followed`
 				// event with a `reader-onboarding-modal` follow source.
