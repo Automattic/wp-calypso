@@ -458,9 +458,11 @@ function useHomeWizard() {
 	const completedForSite =
 		siteId !== null && Array.isArray( completedSites ) && completedSites.includes( siteId );
 
-	// Auto-open only once prefs are known and this site genuinely hasn't done
-	// the wizard. `forced` (?wizard=force) always opens, regardless.
-	const shouldAutoOpen = forced || ( prefsLoaded && ! completedForSite );
+	// Auto-open only once prefs AND the site are known and this site genuinely
+	// hasn't done the wizard. `forced` (?wizard=force) always opens. Gating on
+	// siteId too: during a fresh load the site object can lag prefs, and a null
+	// siteId reads as "not completed" → premature open over the launchpad.
+	const shouldAutoOpen = forced || ( prefsLoaded && siteId !== null && ! completedForSite );
 
 	// Local state owns the open/close lifecycle so Skip / Finish close the
 	// wizard synchronously, even if the savePreference dispatch hasn't yet
