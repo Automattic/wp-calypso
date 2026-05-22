@@ -26,16 +26,24 @@ body.is-section-home .layout__content {
 	}
 }
 
-// Centers the dashboard content vertically + horizontally in the canvas,
-// matching the Figma's centered Main area.
+// Horizontally centered; vertically anchored to a FIXED top offset rather
+// than dynamically centered. True centering (justify-content: center) pins
+// the block's midpoint to the canvas, so when the skeleton (short) is
+// replaced by the loaded checklist (taller), the midpoint re-centers and the
+// whole block jumps upward. A fixed top offset keeps the top edge at the same
+// Y for both states — no jump — while the offset preserves the airy, composed
+// feel of the original centered design (Launchpad is the only thing on this
+// page). The offset scales gently with viewport height but is clamped so it
+// never jams under the header or eats the space tall checklists need.
 .home-dashboard__main {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	gap: 24px;
 	padding: 24px;
+	padding-top: clamp(24px, 10vh, 120px);
 	box-sizing: border-box;
 }
 
