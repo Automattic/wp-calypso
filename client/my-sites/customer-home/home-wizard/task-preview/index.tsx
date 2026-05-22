@@ -145,7 +145,18 @@ export default function TaskRegistryPreview( { siteState, onClose }: Props ) {
 											<code className="task-preview__meta">
 												{ template.id } · { audience }
 											</code>
-											<code className="task-preview__url">{ task.resolvedUrl }</code>
+											{ /* Dev-only audit affordance: open the destination in a new
+											   tab (target="_blank") so the preview modal stays put while
+											   you check where each task lands. Left/right/cmd-click all
+											   open a new tab. */ }
+											<a
+												className="task-preview__url"
+												href={ task.resolvedUrl }
+												target="_blank"
+												rel="noreferrer"
+											>
+												{ task.resolvedUrl }
+											</a>
 										</div>
 										<div className="task-preview__cta">
 											<PreviewCta task={ task } />

@@ -49,8 +49,16 @@ export type TaskTemplate = {
 		pluginInstalled: string;
 	} >;
 
-	/** Calypso URL with `:slug` placeholder. */
-	url: ( slug: string ) => string;
+	/**
+	 * In-Calypso destination for the task, built from the site `:slug`.
+	 *
+	 * The return type is a root-relative path (`/${string}`) on purpose: it's a
+	 * COMPILE-TIME guarantee that every task stays inside Calypso. An absolute
+	 * URL (`https://…`, the live site, `/wp-admin/…` on another host) is not
+	 * assignable to `/${string}`, so TypeScript rejects it here — a task can
+	 * never be wired to open the live site or leave the app. Keep it relative.
+	 */
+	url: ( slug: string ) => `/${ string }`;
 	cta: string;
 
 	/** Used to detect "done" without round-tripping the server. */
@@ -386,7 +394,9 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		subtitle: 'Mobile users stay active 25pp longer at day 28.',
 		category: 'growth',
 		goals: GOALS_ALL,
-		url: () => 'https://jetpack.com/app/',
+		// Calypso's in-app "Get Apps" page (links to the stores / shows the QR)
+		// instead of jetpack.com — keeps the task inside Calypso.
+		url: () => '/me/get-apps',
 		cta: 'Download',
 	},
 	{
