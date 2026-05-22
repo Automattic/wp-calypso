@@ -5,7 +5,12 @@ import {
 	type NewUserResponse,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, apiDeleteSite, swapBaseUrl } from '../shared';
+import {
+	apiCloseAccount,
+	apiCreateUnlaunchedFreeSiteForUser,
+	apiDeleteSite,
+	swapBaseUrl,
+} from '../shared';
 
 test.describe(
 	'Onboarding: Launch site from WP Admin',
@@ -45,13 +50,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select the WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				siteSlug = newSiteDetails.blog_details.site_slug;
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );

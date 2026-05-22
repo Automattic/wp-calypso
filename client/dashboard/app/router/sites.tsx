@@ -38,7 +38,6 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
 	queryClient,
-	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
@@ -52,7 +51,6 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
-import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
@@ -217,19 +215,12 @@ export const siteOverviewRoute = createRoute( {
 			}
 		}
 
-		const [ preferences ] = await Promise.all( [
+		await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 
 			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 		] );
-
-		if ( shouldLoadWpVersionNotice( site, preferences ) ) {
-			await Promise.all( [
-				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
-				queryClient.ensureQueryData( wpOrgCoreVersionQuery( 'beta' ) ),
-			] );
-		}
 	},
 } ).lazy( () =>
 	import( '../../sites/overview' ).then( ( d ) =>
@@ -621,14 +612,13 @@ export const sitePerformanceBackendRoute = createRoute( {
 
 async function prefetchApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
 		await Promise.all( [
 			import( '@automattic/api-queries' ),
 			import( '../../sites/performance/backend/timeframe' ),
 		] );
-	await queryClient.ensureQueryData(
-		siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
-	);
+	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
 
 export const sitePerformanceBackendIndexRoute = createRoute( {

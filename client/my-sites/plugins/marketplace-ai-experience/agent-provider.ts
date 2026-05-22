@@ -90,9 +90,9 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 						picks: {
 							type: 'array',
 							description:
-								'Ordered list of plugin recommendations. The first pick is treated as the lead/hero. Provide 1–8 picks (3–5 is the typical sweet spot).',
+								'Ordered list of plugin recommendations. The first pick is treated as the lead/hero. Provide 1–10 picks (4 is the typical sweet spot).',
 							minItems: 1,
-							maxItems: 8,
+							maxItems: 10,
 							items: {
 								type: 'object',
 								additionalProperties: false,

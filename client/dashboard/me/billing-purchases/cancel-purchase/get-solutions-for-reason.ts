@@ -5,6 +5,19 @@ export type SolutionCardConfig = {
 	id: string;
 };
 
+/**
+ * Cancellation reasons where price is the driver. When the user is already on
+ * a Personal plan, we suppress the "change-plan" card for these because there
+ * is no cheaper paid plan to recommend.
+ */
+export const PRICE_MOTIVATED_REASONS: ReadonlySet< string > = new Set( [
+	'tooExpensive',
+	'lackOfCustomization',
+	'foundBetterValue',
+	'freeIsGoodEnough',
+	'budgetConstraints',
+] );
+
 const SOLUTION_IDS = {
 	CHANGE_PLAN: 'change-plan',
 	RENEW_NOW_PAY_LESS: 'renew-now-pay-less',
@@ -38,7 +51,9 @@ const SOLUTIONS_LACK_OF_FLEXIBILITY: SolutionCardConfig[] = [
 
 /** Too expensive: Found competitor / Free plan is enough */
 const SOLUTIONS_FOUND_BETTER_OR_FREE: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS },
+	{ id: SOLUTION_IDS.SWITCH_TO_MONTHLY },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
@@ -60,31 +75,31 @@ const SOLUTIONS_HARD_TO_USE_WITH_AI: SolutionCardConfig[] = [
 /** Too hard to use: Takes too much time / Tutorials not helpful (no AI option) */
 const SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.BUILT_BY },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** Cannot install plugins */
 const SOLUTIONS_CANNOT_INSTALL_PLUGINS: SolutionCardConfig[] = [
-	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS },
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** Cannot upload themes */
 const SOLUTIONS_CANNOT_UPLOAD_THEMES: SolutionCardConfig[] = [
-	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS },
-	{ id: SOLUTION_IDS.GET_THEME_ADDON },
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** Limited customization */
 const SOLUTIONS_LIMITED_CUSTOMIZATION: SolutionCardConfig[] = [
-	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS },
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** Missing functionality */
 const SOLUTIONS_MISSING_FUNCTIONALITY: SolutionCardConfig[] = [
-	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS },
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
@@ -106,6 +121,7 @@ const SOLUTIONS_TOO_SLOW: SolutionCardConfig[] = [
 /** Bugs or glitches */
 const SOLUTIONS_BUGS_OR_GLITCHES: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
@@ -154,7 +170,9 @@ const SOLUTIONS_WRONG_SITE: SolutionCardConfig[] = [ { id: SOLUTION_IDS.SPEAK_WI
 
 /** Plan didn't match (noMatch) */
 const SOLUTIONS_NO_MATCH: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
+	{ id: SOLUTION_IDS.SWITCH_TO_MONTHLY },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
@@ -180,19 +198,28 @@ const SOLUTIONS_AI_INSUFFICIENT: SolutionCardConfig[] = [
 
 /** Project changed */
 const SOLUTIONS_PROJECT_CHANGED: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** Just exploring */
 const SOLUTIONS_JUST_EXPLORING: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** May return */
 const SOLUTIONS_MAY_RETURN: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
+];
+
+/** No longer need site / other changed needs */
+const SOLUTIONS_NO_LONGER_NEED: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
@@ -278,6 +305,11 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_JUST_EXPLORING ];
 		case 'mayReturn':
 			return [ ...SOLUTIONS_MAY_RETURN ];
+
+		// No longer need site
+		case 'noLongerNeedSite':
+		case 'otherNoLongerNeedSite':
+			return [ ...SOLUTIONS_NO_LONGER_NEED ];
 
 		default:
 			return null;

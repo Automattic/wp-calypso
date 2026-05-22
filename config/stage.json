@@ -138,7 +138,7 @@
 		"reader/social": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
-		"reader/onboarding-rsm": false,
+		"reader/onboarding-rsm": true,
 		"reader/saved-posts": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,

@@ -1,6 +1,21 @@
 @import "@wordpress/base-styles/variables";
 
 .dashboard-summary-button-list {
+	.dashboard-section-header {
+		flex-grow: 1;
+	}
+
+	.dashboard-section-header__heading-row > :not(.dashboard-section-header__decoration) {
+		flex: 1;
+		flex-wrap: nowrap;
+	}
+
+	// Overrides inline style={{ flex: '1 1 auto' }} set by SectionHeader on ButtonStack.
+	// !important is required because inline styles can only be overridden this way.
+	.dashboard-section-header__actions {
+		flex: 0 0 auto !important;
+	}
+
 	.dashboard-summary-button-list__children-list {
 		list-style: none;
 		padding: 0;

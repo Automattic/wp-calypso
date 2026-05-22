@@ -1,6 +1,12 @@
 /*rtl:ignore*/
 @import '@automattic/typography/styles/variables';
 
+// Load the WPDS design tokens so @wordpress/ui components (e.g. Badge) can
+// resolve their --wpds-* CSS variables. Without this, font-size, padding,
+// and radius rules in the Badge silently fall back to inherited/browser
+// defaults (e.g. 16px font instead of the WPDS-spec 12px).
+@import '@wordpress/theme/design-tokens.css';
+
 .social-buttons__button {
 	padding-inline: 18px;
 
@@ -24,4 +30,36 @@
 		padding: 10px;
 		max-width: 200px;
 	}
+}
+
+.social-buttons__last-used {
+	position: relative;
+	display: block;
+	width: 100%;
+	overflow: visible;
+}
+
+// Wrapping the button in a `<span>` makes it shrink to content width by
+// default — restore full-width so it matches the unwrapped social buttons.
+.social-buttons__last-used .social-buttons__button {
+	width: 100%;
+}
+
+// Float the @wordpress/ui Badge over the top-right corner of the matched
+// element. Position is the only style we own here — colors come from the
+// Badge's default `intent="informational"` styling.
+//
+// The font-size / line-height / padding / radius repeats are a Calypso-
+// cascade workaround: the Badge sets them inside `@layer wp-ui-components`,
+// which Calypso's unlayered resets always beat. Same workaround as
+// `client/my-sites/podcast/style.scss`.
+.social-buttons__last-used-pill {
+	position: absolute;
+	top: -10px;
+	right: -6px;
+	z-index: 1;
+	font-size: var( --wpds-font-size-sm );
+	line-height: var( --wpds-font-line-height-xs );
+	padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+	border-radius: var( --wpds-border-radius-lg );
 }

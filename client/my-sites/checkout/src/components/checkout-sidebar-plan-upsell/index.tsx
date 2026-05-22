@@ -177,26 +177,19 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const currentInfo = fromVariantPriceData( currentVariant );
 	const upsellInfo = fromVariantPriceData( upsellVariant );
-	const compareToPriceForVariantTerm = getPlanPriceForDuration(
+	const currentPlanPrice = currentVariant.priceInteger;
+	const currentPlanPriceAtUpsellTerm = getPlanPriceForDuration(
 		currentInfo,
 		upsellInfo.termMonths
 	);
+	const upsellPlanPrice = getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths );
 	const percentSavings =
-		calculateDiscountPercentage(
-			compareToPriceForVariantTerm,
-			getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths )
-		) ?? 0;
+		calculateDiscountPercentage( currentPlanPriceAtUpsellTerm, upsellPlanPrice ) ?? 0;
 
 	if ( percentSavings <= 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
 	}
-
-	const isComparisonWithIntroOffer =
-		upsellVariant.introductoryInterval === 2 &&
-		upsellVariant.introductoryTerm === 'year' &&
-		currentVariant.introductoryInterval === 1 &&
-		currentVariant.introductoryTerm === 'year';
 
 	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
 
@@ -214,23 +207,18 @@ export function CheckoutSidebarPlanUpsell() {
 						{ currentVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ formatCurrency(
-							currentVariant.priceInteger +
-								( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
-							currentVariant.currency,
-							{
-								stripZeros: true,
-								isSmallestUnit: true,
-							}
-						) }
+						{ formatCurrency( currentPlanPrice, currentVariant.currency, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ upsellVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ compareToPriceForVariantTerm && (
+						{ currentPlanPriceAtUpsellTerm && (
 							<del className="checkout-sidebar-plan-upsell__do-not-pay">
-								{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+								{ formatCurrency( currentPlanPriceAtUpsellTerm, currentVariant.currency, {
 									stripZeros: true,
 									isSmallestUnit: true,
 								} ) }

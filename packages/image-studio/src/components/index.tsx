@@ -75,6 +75,13 @@ function ImageStudioAgentChat( {
 
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
+	// Drives which suggestion-chip flavor the video-clip hook produces:
+	// Cinematic → cinematography prompts for the Veo render path,
+	// Highlights → editorial framing hints for the cloud-rendered recap.
+	const selectedVideoStyle = useSelect( ( select ) => {
+		return select( videoStudioStore ).getSelectedStyle();
+	}, [] );
+
 	useEffect( () => {
 		return () => {
 			// When the component unmounts, abort any ongoing requests
@@ -115,6 +122,7 @@ function ImageStudioAgentChat( {
 		messages: displayMessages,
 		inputValue,
 		disabled: ! isVideoMode,
+		style: selectedVideoStyle,
 	} );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode

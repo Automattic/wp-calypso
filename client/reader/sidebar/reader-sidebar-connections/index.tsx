@@ -4,8 +4,6 @@ import {
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
 import { Icon, people } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
@@ -282,13 +280,6 @@ function ReaderSidebarConnections( { path }: Props ) {
 					href={ NEW_CONNECTION_PATH }
 					onClick={ recordAddAccountClick }
 				/>
-				{ showEmptyHint && (
-					<li className="sidebar-connections__empty">
-						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
-							{ translate( 'Learn more about your social accounts in the Reader' ) }
-						</ExternalLink>
-					</li>
-				) }
 			</ExpandableSidebarMenu>
 		</li>
 	);

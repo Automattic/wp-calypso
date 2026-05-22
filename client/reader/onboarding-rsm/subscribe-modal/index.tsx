@@ -1,20 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useQueryClient } from '@tanstack/react-query';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
-import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { nextSelectedSite } from './selection';
@@ -64,19 +64,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		markSessionFollow,
 	} = useSubscribeRecommendations();
 
-	// Notify the hook when the user follows a feed inside the modal so a
-	// pinned card stays visible (showing "Subscribed") even after the follows
-	// slice excludes it, while pinned cards that turn out to be pre-existing
-	// follows can still be pruned in the background.
-	const handleFollowToggle = useCallback(
-		( feedId: number, isFollowing: boolean ) => {
-			if ( isFollowing ) {
-				markSessionFollow( feedId );
-			}
-		},
-		[ markSessionFollow ]
-	);
-
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const selectedFeed = useSelector( ( state: object ) =>
@@ -101,6 +88,22 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const recommendationIdsKey = recommendations.map( ( site ) => site.feed_ID ).join( ',' );
 	const recommendationsRef = useRef( recommendations );
 	recommendationsRef.current = recommendations;
+
+	// Notify the hook when the user follows a feed inside the modal so a
+	// pinned card stays visible (showing "Subscribed") even after the follows
+	// slice excludes it, while pinned cards that turn out to be pre-existing
+	// follows can still be pruned in the background.
+	const handleFollowToggle = useCallback(
+		( feedId: number, isFollowing: boolean ) => {
+			if ( isFollowing ) {
+				markSessionFollow( feedId );
+			}
+		},
+		[ markSessionFollow ]
+	);
+
+	// Tracks which feeds we've already kicked off a stream prefetch for, so growing
+	// recommendation lists don't re-prefetch the same feed as cards trickle in from validation.
 	const prefetchedFeedIdsRef = useRef< Set< number > >( new Set() );
 
 	const handleLoadMore = useCallback( () => {
@@ -194,7 +197,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					</div>
 					<div className="subscribe-modal__columns">
 						<div className="subscribe-modal__site-list-column">
-							{ ( isLoading || isValidating ) && <LoadingPlaceholder /> }
+							{ ( isLoading || isValidating ) && recommendations.length === 0 && (
+								<LoadingPlaceholder />
+							) }
 							{ hasNoRecommendations && (
 								<p>{ __( 'No recommendations available at the moment.' ) }</p>
 							) }

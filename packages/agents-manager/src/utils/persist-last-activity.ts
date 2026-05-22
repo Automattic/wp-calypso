@@ -8,7 +8,7 @@ import { persistAgentsManagerState } from './persist-agents-manager-state';
  * Merges with existing activity data for other sites.
  */
 export function persistLastActivity( siteKey: string ): void {
-	const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
+	const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
 	const existing = store.getAgentsManagerState().lastActivity || {};
 
 	persistAgentsManagerState( {

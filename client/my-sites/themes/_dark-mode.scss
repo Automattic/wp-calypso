@@ -16,6 +16,55 @@
 	--theme-submenu-background-color: var( --dashboard-surface__background-color );
 	--theme-icon-color: var( --dashboard__text-muted-color );
 	--theme-notification-color: var( --wp-admin-theme-color );
+
+	// Activation modal: the dashboard dark theme re-generates the studio-blue
+	// scale so 60+ are mixed with white — pick higher-index blues here.
+	.iframe-preview-card {
+		// Lower the default so the hover step matches light mode in magnitude.
+		border-color: var( --color-neutral-50 );
+
+		&:hover {
+			border-color: var( --color-neutral-70 );
+		}
+
+		&:focus-within {
+			border-color: var( --studio-blue-80 );
+		}
+
+		&.is-selected {
+			border-color: var( --studio-blue-60 );
+		}
+
+		.form-radio {
+			border-color: var( --color-neutral-50 );
+
+			&:hover {
+				border-color: var( --color-neutral-70 );
+			}
+
+			// The default focus halo uses --color-primary-10, which lands in
+			// the surface-blended end of the regenerated studio-blue scale —
+			// invisible against the dark card. Swap in a lighter blue.
+			&:focus {
+				box-shadow: 0 0 0 2px var( --studio-blue-70 );
+			}
+
+			&:checked::before {
+				background: var( --studio-blue-60 );
+			}
+		}
+
+		// Overlays an always-light iframe, so use the dashboard page background
+		// (a stable dark color) instead of any neutral that the dark-mode mixin
+		// has remapped toward the foreground.
+		.iframe-preview-card__enter-preview {
+			background: var( --dashboard__background-color );
+		}
+	}
+
+	.themes__activation-modal .components-button.is-tertiary {
+		color: var( --studio-blue-70 );
+	}
 }
 
 @mixin themes-dark-mode-root {
@@ -133,7 +182,7 @@
 		color: var( --wp-components-color-accent-darker-20 );
 
 		&:hover {
-			color: var( --wp-components-color-accent-darker-40 );
+			color: var( --wp-components-color-accent-darker-10 );
 		}
 	}
 

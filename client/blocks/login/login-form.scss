@@ -4,6 +4,32 @@
 
 $breakpoint-mobile: 782px; //Mobile size.
 
+// Inline "Last used" badge next to the email/username label (used when the
+// last-used method was `password`). Margin and vertical-align are the only
+// positional styles we own — colors come from the Badge's default
+// `intent="informational"` styling.
+//
+// The font-size / line-height / padding / radius repeats are a Calypso-
+// cascade workaround: the Badge sets them inside `@layer wp-ui-components`,
+// which Calypso's unlayered resets always beat. Same workaround as
+// `.social-buttons__last-used-pill` and `client/my-sites/podcast/style.scss`.
+.login__form-last-used-badge {
+	margin-inline-start: 8px;
+	vertical-align: middle;
+	font-size: var( --wpds-font-size-sm );
+	line-height: var( --wpds-font-line-height-xs );
+	padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+	border-radius: var( --wpds-border-radius-lg );
+}
+
+// Bump the label's margin-bottom from the shared 6px to 8px when the inline
+// "Last used" badge is shown — gives the badge breathing room above the input
+// without modifying the global `.form-label-core-styles` rule. Marker class
+// is only set when the badge ships, so default spacing is preserved otherwise.
+.form-label.has-last-used-badge {
+	margin-bottom: 8px;
+}
+
 form {
 	margin-left: auto;
 	margin-right: auto;

@@ -24,4 +24,8 @@ Component styles in this package live in CSS Modules (`*.module.scss`), so the l
 
 The mixin emits rules for both `:root[data-theme='dark']` and `:root[data-theme='system']` under `prefers-color-scheme: dark`, so consumers of either toggle behave the same.
 
-Prefer reading colors from `_theme-variables.scss` (which resolves to the `--wp-components-*` custom properties the dashboard overrides in dark mode) over hardcoded hex values, so most components need no dark-mode branch at all.
+Prefer reading colors from `_theme-variables.scss` (which resolves to the `--wp-components-*` custom properties overridden by the shared color-scheme layer) over hardcoded hex values, so most components need no dark-mode branch at all.
+
+Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`; add package-local dark-mode rules only when the component itself owns the exceptional styling.
+
+When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.

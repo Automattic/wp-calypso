@@ -14,6 +14,11 @@ export const DotcomPlans = {
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
+	PERSONAL: 'personal-bundle',
+	PERSONAL_MONTHLY: 'personal-bundle-monthly',
+	PERSONAL_2_YEARS: 'personal-bundle-2y',
+	PERSONAL_3_YEARS: 'personal-bundle-3y',
+	PERSONAL_TRIAL_MONTHLY: 'wp-personal-bundle-free-trial-monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
 	PREMIUM_2_YEARS: 'value_bundle-2y',
@@ -117,6 +122,14 @@ export const EcommercePlans = [
 	DotcomPlans.ECOMMERCE,
 	DotcomPlans.ECOMMERCE_2_YEARS,
 	DotcomPlans.ECOMMERCE_3_YEARS,
+];
+
+export const PersonalPlans = [
+	DotcomPlans.PERSONAL_TRIAL_MONTHLY,
+	DotcomPlans.PERSONAL_MONTHLY,
+	DotcomPlans.PERSONAL,
+	DotcomPlans.PERSONAL_2_YEARS,
+	DotcomPlans.PERSONAL_3_YEARS,
 ];
 
 export const TrialPlans = [

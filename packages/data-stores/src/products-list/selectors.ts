@@ -14,7 +14,7 @@ export const getProductBySlug = ( _state: State, slug: string ) => {
 		return undefined;
 	}
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => RawAPIProductsList | undefined }
+		select( STORE_KEY ) as unknown as { getProductsList: () => RawAPIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {
