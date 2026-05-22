@@ -10,7 +10,11 @@ import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
 import readerReducer from 'calypso/state/reader/reducer';
-import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
+import {
+	getStreamInfiniteQueryKey,
+	removeStreamItemFromCache,
+	useInfiniteStream,
+} from 'calypso/reader/data/stream';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -72,7 +76,7 @@ function postKey( id: number, siteId = 100 ) {
 	return { blogId: siteId, postId: id };
 }
 
-describe( 'useStreamPosts — fetching', () => {
+describe( 'useInfiniteStream — fetching', () => {
 	it( 'fetches the initial likes page and exposes items', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -84,7 +88,7 @@ describe( 'useStreamPosts — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -110,7 +114,7 @@ describe( 'useStreamPosts — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper, actions } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -139,7 +143,7 @@ describe( 'useStreamPosts — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -178,7 +182,7 @@ describe( 'useStreamPosts — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'conversations' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'conversations' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -199,7 +203,7 @@ describe( 'useStreamPosts — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -219,7 +223,7 @@ describe( 'useStreamPosts — fetching', () => {
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
 		const { result } = renderHook(
-			() => useStreamPosts( { streamKey: 'likes', startDate: '2026-04-01' } ),
+			() => useInfiniteStream( { streamKey: 'likes', startDate: '2026-04-01' } ),
 			{
 				wrapper: Wrapper,
 			}
@@ -234,7 +238,7 @@ describe( 'useStreamPosts — fetching', () => {
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
 		const { result } = renderHook(
-			() => useStreamPosts( { streamKey: 'likes', options: { enabled: false } } ),
+			() => useInfiniteStream( { streamKey: 'likes', options: { enabled: false } } ),
 			{
 				wrapper: Wrapper,
 			}
@@ -246,7 +250,7 @@ describe( 'useStreamPosts — fetching', () => {
 	} );
 } );
 
-describe( 'useStreamPosts — stream switch', () => {
+describe( 'useInfiniteStream — stream switch', () => {
 	it( 'clears items and flips isLoading when the streamKey changes', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -267,7 +271,7 @@ describe( 'useStreamPosts — stream switch', () => {
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
 		const { result, rerender } = renderHook(
-			( { streamKey }: { streamKey: string } ) => useStreamPosts( { streamKey } ),
+			( { streamKey }: { streamKey: string } ) => useInfiniteStream( { streamKey } ),
 			{ wrapper: Wrapper, initialProps: { streamKey: 'likes' } }
 		);
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
@@ -282,7 +286,7 @@ describe( 'useStreamPosts — stream switch', () => {
 	} );
 } );
 
-describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
+describe( 'useInfiniteStream — cache (stale-while-revalidate)', () => {
 	it( 'second mount with the same QueryClient hits cache without refetching', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -294,7 +298,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const first = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const first = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 		await waitFor( () => expect( first.result.current.items ).toHaveLength( 1 ) );
@@ -302,7 +306,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 
 		expect( nock.pendingMocks() ).toHaveLength( 0 );
 
-		const second = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const second = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -328,7 +332,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 
 		{
 			const { Wrapper } = makeWrapper( makeQueryClient() );
-			const { result, unmount } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+			const { result, unmount } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 				wrapper: Wrapper,
 			} );
 			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) ) );
@@ -336,7 +340,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 		}
 		{
 			const { Wrapper } = makeWrapper( makeQueryClient() );
-			const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+			const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 				wrapper: Wrapper,
 			} );
 			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) ) );
@@ -346,7 +350,7 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 	} );
 } );
 
-describe( 'useStreamPosts — cache replacement', () => {
+describe( 'useInfiniteStream — cache replacement', () => {
 	it( 'updates cached posts when the first cached page is replaced', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -358,7 +362,7 @@ describe( 'useStreamPosts — cache replacement', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
@@ -386,5 +390,36 @@ describe( 'useStreamPosts — cache replacement', () => {
 		await waitFor( () =>
 			expect( getCachedPost( queryClient, postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
 		);
+	} );
+} );
+
+describe( 'useInfiniteStream — local removals', () => {
+	it( 'removes a post from the rendered stream cache', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
+
+		act( () => {
+			removeStreamItemFromCache( queryClient, {
+				streamKey: 'likes',
+				item: postKey( 1 ),
+			} );
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
+		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) );
+		expect( result.current.pages[ 0 ].posts ).toHaveLength( 1 );
 	} );
 } );

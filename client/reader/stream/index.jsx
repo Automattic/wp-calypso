@@ -48,10 +48,10 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import { normalizeStreamPage } from './stream-normalization';
+import { normalizeStreamPage } from 'calypso/reader/data/stream';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
-import { useStreamPosts } from './use-stream-posts';
+import { useInfiniteStream } from 'calypso/reader/data/stream';
 import {
 	getDistanceBetweenPrompts,
 	getDistanceBetweenRecs,
@@ -178,7 +178,7 @@ class ReaderStream extends Component {
 	componentDidUpdate( { selectedPostKey, streamKey, selectedFeedId } ) {
 		// Fetch new page if selected feed or stream is changed.
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
-			// `useStreamPosts` is keyed by `feedId`, so the cache rotates
+			// `useInfiniteStream` is keyed by `feedId`, so the cache rotates
 			// automatically — no manual purge needed. Selection lives under the
 			// new `streamKey`'s entry, which starts empty.
 			this.scrollFeedListToTop();
@@ -844,7 +844,7 @@ function getStreamKey( state, streamKey ) {
 
 const withStreamPosts = ( WrappedComponent ) =>
 	function StreamPostsContainer( props ) {
-		const streamPostsQuery = useStreamPosts( {
+		const streamPostsQuery = useInfiniteStream( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
 			localeSlug: props.localeSlug,
@@ -854,7 +854,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 			},
 		} );
 
-		const recsStreamPostsQuery = useStreamPosts( {
+		const recsStreamPostsQuery = useInfiniteStream( {
 			streamKey: props.recsStreamKey,
 			localeSlug: props.localeSlug,
 			options: {

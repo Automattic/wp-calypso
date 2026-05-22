@@ -7,8 +7,8 @@ import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { analyticsForStream } from 'calypso/state/reader/streams/normalize';
-import { normalizeStreamPage } from './stream-normalization';
-import type { PostKey } from './use-stream-posts';
+import { normalizeStreamPage } from 'calypso/reader/data/stream';
+import type { StreamItem } from 'calypso/reader/data/stream';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 
 interface UseStreamPendingPostsOptions {
@@ -24,9 +24,9 @@ interface UseStreamPendingPostsOptions {
 	shouldPoll?: boolean;
 	/**
 	 * Currently rendered items, used to compute how many polled head items are
-	 * "new" (not yet visible). Coming from `useStreamPosts(...)` upstream.
+	 * "new" (not yet visible). Coming from `useInfiniteStream(...)` upstream.
 	 */
-	items: PostKey[];
+	items: StreamItem[];
 }
 
 export interface UseStreamPendingPostsResult {
@@ -52,7 +52,7 @@ type PollHeadQueryKey = readonly [
 	string | null,
 ];
 
-const postKeyId = ( postKey: PostKey | null | undefined ): string =>
+const postKeyId = ( postKey: StreamItem | null | undefined ): string =>
 	postKey ? keyToString( postKey ) ?? '' : '';
 
 const railcarId = ( railcar: unknown ): string | null => {

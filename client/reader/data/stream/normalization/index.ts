@@ -3,7 +3,7 @@ import {
 	createStreamDataFromPosts,
 	createStreamDataFromSites,
 } from 'calypso/state/reader/streams/normalize';
-import type { PostKey } from './use-stream-posts';
+import type { StreamItem } from '../types';
 import type { ReadStreamResponse } from '@automattic/api-core';
 
 /**
@@ -22,7 +22,7 @@ export function getStreamDateProperty( streamType: string ): string {
 }
 
 export interface NormalizedStreamPage {
-	streamItems: PostKey[];
+	streamItems: StreamItem[];
 	streamPosts: Array< Record< string, unknown > >;
 }
 

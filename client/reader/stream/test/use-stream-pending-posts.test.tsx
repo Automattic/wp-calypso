@@ -11,7 +11,7 @@ import { getCachedPost } from 'calypso/reader/data/post-cache';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import initialReducer from 'calypso/state/reducer';
 import { useStreamPendingPosts } from '../use-stream-pending-posts';
-import { type PostKey } from '../use-stream-posts';
+import { type StreamItem } from 'calypso/reader/data/stream';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -64,7 +64,7 @@ function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
 	};
 }
 
-function postKey( id: number, siteId = 100 ): PostKey {
+function postKey( id: number, siteId = 100 ): StreamItem {
 	return { blogId: siteId, postId: id };
 }
 
