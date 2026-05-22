@@ -38,6 +38,11 @@ describe( 'buildParagraphBlocks', () => {
 		expect( out ).toContain( '<p>5 &lt; 6 &amp; "ok"</p>' );
 	} );
 
+	it( 'escapes literal HTML tags rather than passing them through', () => {
+		const out = buildParagraphBlocks( '<br>' );
+		expect( out ).toContain( '<p>&lt;br&gt;</p>' );
+	} );
+
 	it( 'normalizes CRLF line endings', () => {
 		const out = buildParagraphBlocks( 'one\r\n\r\ntwo' );
 		const paragraphCount = ( out.match( /<!-- wp:paragraph -->/g ) ?? [] ).length;
