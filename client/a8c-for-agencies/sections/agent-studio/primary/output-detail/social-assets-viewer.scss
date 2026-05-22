@@ -134,20 +134,21 @@
 
 .a4a-agent-studio-social-assets__download {
 	position: absolute;
-	top: 10px;
-	right: 10px;
+	top: 12px;
+	right: 12px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 30px;
-	padding: 0 12px;
+	min-height: 40px;
+	min-width: 64px;
+	padding: 0 18px;
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 24px;
 	background: rgba(255, 255, 255, 0.94);
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 	color: var(--color-neutral-100);
 	cursor: pointer;
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 600;
 	line-height: 1;
 	opacity: 0;
