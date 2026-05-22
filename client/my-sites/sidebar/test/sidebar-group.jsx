@@ -104,8 +104,8 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 		);
 		const customize = container.querySelector( '.wp-admin-sidebar-group__customize' );
 		expect( customize ).toBeInTheDocument();
-		expect( customize ).toHaveAttribute( 'aria-label', 'Customize plugins' );
-		expect( customize ).toHaveAttribute( 'data-tooltip', 'Customize plugins' );
+		expect( customize ).toHaveAttribute( 'aria-label', 'Edit plugin order' );
+		expect( customize ).toHaveAttribute( 'data-tooltip', 'Edit plugin order' );
 		// Phase 1 keeps it disabled until Phase 2 wires the click handler.
 		expect( customize ).toBeDisabled();
 	} );

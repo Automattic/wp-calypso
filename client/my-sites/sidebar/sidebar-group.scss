@@ -149,22 +149,21 @@
 		align-items: center;
 		justify-content: center;
 
-		// Lucas's list-view icon (Figma 3505:74996) — public plugin's
-		// `src/browse-rail/icons/list-view.svg` vendored as an inline data-URI
-		// so this file has no asset-pipeline deps. `background: currentColor`
-		// + CSS mask keeps the icon tinted to the &__customize color above
-		// (literal #71aee2, matches the &__toggle color).
+		// Pencil icon from @wordpress/icons, matching public plugin issue #56.
+		// Vendored as an inline data-URI so this file has no asset-pipeline
+		// deps. `background: currentColor` + CSS mask keeps the icon tinted to
+		// the &__customize color above.
 		&::before {
 			content: "";
 			display: block;
-				width: 20px;
-				height: 20px;
-				background: currentColor;
-				/* stylelint-disable function-url-quotes */
-				mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 10.4167'%3E%3Cpath d='M0 0H9.16667V1.25H0V0ZM2.91667 4.58333H12.0833V5.83333H2.91667V4.58333ZM15 9.16667H5.83333V10.4167H15V9.16667Z'/%3E%3C/svg%3E") no-repeat center / contain;
-				-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 10.4167'%3E%3Cpath d='M0 0H9.16667V1.25H0V0ZM2.91667 4.58333H12.0833V5.83333H2.91667V4.58333ZM15 9.16667H5.83333V10.4167H15V9.16667Z'/%3E%3C/svg%3E") no-repeat center / contain;
-				/* stylelint-enable function-url-quotes */
-			}
+			width: 20px;
+			height: 20px;
+			background: currentColor;
+			/* stylelint-disable function-url-quotes */
+			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
+			-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
+			/* stylelint-enable function-url-quotes */
+		}
 
 		&:hover:not(:disabled) {
 			opacity: 1;
@@ -189,7 +188,8 @@
 			content: attr(data-tooltip);
 			position: absolute;
 			bottom: calc(100% + 6px);
-			right: 0;
+			left: 50%;
+			transform: translateX(-50%);
 			padding: 4px 8px;
 			background: #1d2327;
 			color: #f0f0f1;

@@ -16,7 +16,7 @@
  * - Header geometry: 34px min-height, padding `4px 4px 4px 8px`,
  * `box-sizing: border-box`. Outer group `margin-top: 16px`. Hover
  * paint is removed at the LI level (matches public plugin issue #35).
- * - Customize button: tooltip `Customize plugins` (data-tooltip + aria-
+ * - Customize button: tooltip `Edit plugin order` (data-tooltip + aria-
  * label + ::after pseudo-element with 250ms show-delay / 100ms hide).
  * Renders only when `customizable` is true (plugins group only today).
  * Stays disabled until Phase 2 wires the click handler.
@@ -166,10 +166,9 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 		[ dispatch, group.id, expanded, onToggle, siteId ]
 	);
 
-	// Translators: aria-label for the per-group customize button. Today the
-	// only group surfacing this button is `plugins`, so "Customize plugins"
-	// is accurate. If new groups gain customize buttons, parameterise this.
-	const customizeLabel = translate( 'Customize plugins' );
+	// Translators: aria-label for the plugins-group customize reorder button.
+	// The only action this mode performs is editing plugin order.
+	const customizeLabel = translate( 'Edit plugin order' );
 
 	// Translators: SR-only label announcing how many items in this group
 	// need attention when the group is collapsed.
