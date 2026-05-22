@@ -481,12 +481,11 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				newlyRejected.push( site.feed_ID );
 				continue;
 			}
-			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds like
-			// `design-milk.com`) have no associated WP.com site and never produce a
-			// `readerSiteItems` entry — pinning those on feed alone is correct.
-			// For cards with a real `site_ID`, wait until the site request lands so a
-			// late-arriving site error (e.g. 404/410) reliably excludes the card,
-			// rather than letting it stay pinned because the site hadn't loaded yet.
+			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds) have no associated
+			// WP.com site and never produce a `readerSiteItems` entry — pinning those on feed alone
+			// is correct. For cards with a real `site_ID`, wait until the site request lands so a
+			// late-arriving site error (e.g. 404/410) reliably excludes the card, rather than
+			// letting it stay pinned because the site hadn't loaded yet.
 			const requiresSite = site.site_ID > 0;
 			if ( requiresSite ) {
 				const reduxSite = readerSiteItems[ site.site_ID ];
