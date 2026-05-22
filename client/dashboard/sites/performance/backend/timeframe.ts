@@ -20,6 +20,21 @@ export const TIMEFRAME_OPTIONS: Array< { value: Timeframe; label: string } > = [
 	{ value: 'last-24-hours', label: __( 'Last 24 hours' ) },
 ];
 
+// Lower-case timeframe labels for use mid-sentence (e.g. "No data in the last hour").
+// Translated separately so locales that handle casing differently can override.
+export function getLowercaseTimeframeLabel( timeframe: Timeframe ): string {
+	switch ( timeframe ) {
+		case 'last-15-min':
+			return __( 'last 15 minutes' );
+		case 'last-hour':
+			return __( 'last hour' );
+		case 'last-6-hours':
+			return __( 'last 6 hours' );
+		case 'last-24-hours':
+			return __( 'last 24 hours' );
+	}
+}
+
 const TIMEFRAME_STORAGE_KEY = 'dashboard-apm-backend-timeframe';
 
 const VALID_TIMEFRAMES = new Set< string >( Object.keys( TIMEFRAME_SECONDS ) );
