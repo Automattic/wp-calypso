@@ -57,6 +57,32 @@
 	gap: var(--wpds-dimension-gap-lg, 16px);
 }
 
+// Confirmation banner shown after a theme activates in place. Subtle success
+// tone (informational green-ish surface) so it reads as "done", not an alert.
+.theme-picker__activated {
+	padding: var(--wpds-dimension-gap-md, 12px) var(--wpds-dimension-gap-lg, 16px);
+	border-radius: 8px;
+	background: var(--wpds-color-bg-component-emphasis-stable-subtle, #edf7ed);
+	border: 1px solid var(--wpds-color-border-stable, #b8e0b8);
+}
+
+.theme-picker__activated-text {
+	color: var(--wpds-color-fg-content-neutral-strong, #1e1e1e);
+}
+
+// Inline error banner when activation fails (e.g. premium theme on a free
+// plan). Subtle alert tone so it informs without alarming.
+.theme-picker__failed {
+	padding: var(--wpds-dimension-gap-md, 12px) var(--wpds-dimension-gap-lg, 16px);
+	border-radius: 8px;
+	background: var(--wpds-color-bg-component-emphasis-alert-subtle, #fcf0f1);
+	border: 1px solid var(--wpds-color-border-alert, #f0b8bb);
+}
+
+.theme-picker__failed-text {
+	color: var(--wpds-color-fg-content-neutral-strong, #1e1e1e);
+}
+
 // 3×2 on desktop, 2×3 on tablet, 1×6 on mobile.
 .theme-picker__grid {
 	display: grid;

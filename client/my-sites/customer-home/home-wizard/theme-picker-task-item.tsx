@@ -14,15 +14,19 @@
  */
 import page from '@automattic/calypso-router';
 import { MShotsImage } from '@automattic/onboarding';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
 import { Button, Dialog, Text } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
+import QueryTheme from 'calypso/components/data/query-theme';
 import { useDispatch, useSelector } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { activateTheme } from 'calypso/state/themes/actions';
-import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { getActiveTheme, isThemeAllowedOnSite } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recommendThemes } from './recommend-themes';
+import { THEME_ALLOWLIST } from './theme-allowlist';
 import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './wizard-state';
 import type { SelectedTask } from './select-tasks';
 import type { AppState } from 'calypso/types';
@@ -101,14 +105,49 @@ export default function ThemePickerTaskItem( { task }: Props ) {
 
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ activatingSlug, setActivatingSlug ] = useState< string | null >( null );
+	// The theme successfully activated during THIS modal session. Its card swaps
+	// its CTA to "Edit site" and a confirmation banner appears; the user can then
+	// edit or close and keep working through the Launchpad (no auto-navigate).
+	const [ activatedSlug, setActivatedSlug ] = useState< string | null >( null );
+	// The theme whose activation FAILED (e.g. needs a plan upgrade). Surfaces an
+	// inline error instead of a false "activated" banner.
+	const [ failedSlug, setFailedSlug ] = useState< string | null >( null );
 
-	// Score every render — it's cheap (12 themes × few tokens, sub-ms).
-	// useMemo was caching across re-renders that should have invalidated,
-	// rendering stale picks. Recomputing fixes the correctness issue at
-	// zero observable cost.
-	const recommendations = recommendThemes( inferred ?? {}, 6, {
+	// Score the WHOLE allowlist (cheap — 12 themes × few tokens, sub-ms), so we
+	// have spares to fall back on after filtering out themes the user's plan
+	// can't activate. Slicing to the visible 6 happens after that filter.
+	const scoredAll = recommendThemes( inferred ?? {}, THEME_ALLOWLIST.length, {
 		excludeSlugs: activeThemeSlug ? [ activeThemeSlug ] : [],
 	} );
+
+	// Only offer themes the user can actually activate on their current plan
+	// (free plan → free themes only). Needs each theme's tier loaded (QueryTheme
+	// below); until a tier loads, isThemeAllowedOnSite treats it as allowed, so
+	// the list settles to the plan-eligible set once data arrives. Returns a
+	// stable comma-joined key so useSelector doesn't re-fire on unrelated state.
+	const allowedKey = useSelector( ( state: AppState ) =>
+		THEME_ALLOWLIST.map( ( t ) => t.slug )
+			.filter( ( slug ) => isThemeAllowedOnSite( state, siteId, slug ) )
+			.join( ',' )
+	);
+	const allowedSet = useMemo(
+		() => new Set( allowedKey ? allowedKey.split( ',' ) : [] ),
+		[ allowedKey ]
+	);
+
+	// Freeze the SCORED list while the modal is open. recommendThemes() excludes
+	// the active theme, so the instant a pick activates it would drop out of the
+	// grid — leaving nowhere to show the "activated → Edit site" state. Freezing
+	// the scored order on open keeps the activated card in place; the plan
+	// filter below is applied at display time (so it can still settle as tiers
+	// load).
+	const [ frozenScored, setFrozenScored ] = useState< typeof scoredAll >( [] );
+	const baseScored = frozenScored.length ? frozenScored : scoredAll;
+	// Show the top 6 the plan allows. The just-activated theme is always kept,
+	// even if its tier check is momentarily false, so its card never vanishes.
+	const displayRecos = baseScored
+		.filter( ( r ) => allowedSet.has( r.theme.slug ) || r.theme.slug === activatedSlug )
+		.slice( 0, 6 );
 
 	// Prefetch the mshots screenshots as soon as the picker mounts (i.e.,
 	// when the user expands the pick-theme task) so they're warming in the
@@ -117,42 +156,110 @@ export default function ThemePickerTaskItem( { task }: Props ) {
 	// near-instant. Without this, every modal-open was a cold-start spinner.
 	// Stable dep on the slug list (not the recommendations array, which is
 	// a fresh reference every render).
-	const prefetchKey = recommendations.map( ( r ) => r.theme.slug ).join( ',' );
+	const prefetchKey = scoredAll
+		.slice( 0, 6 )
+		.map( ( r ) => r.theme.slug )
+		.join( ',' );
 	useEffect( () => {
-		recommendations.forEach( ( { theme } ) => {
+		scoredAll.slice( 0, 6 ).forEach( ( { theme } ) => {
 			const img = new Image();
 			img.src = buildMshotsUrl( buildPreviewUrl( theme.previewUrl ) );
 		} );
-		// recommendations intentionally excluded from deps — prefetchKey
-		// already encodes its identity, and including it would re-fire the
-		// prefetch on every render.
+		// scoredAll intentionally excluded from deps — prefetchKey already
+		// encodes its identity, and including it would re-fire every render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ prefetchKey ] );
+
+	const handleOpenChange = ( open: boolean ) => {
+		setIsModalOpen( open );
+		if ( open ) {
+			// Freeze the scored order for this session + reset any prior activation.
+			setFrozenScored( scoredAll );
+			setActivatedSlug( null );
+			setFailedSlug( null );
+		}
+	};
 
 	const onActivate = async ( slug: string ) => {
 		if ( ! siteId || activatingSlug ) {
 			return;
 		}
 		setActivatingSlug( slug );
+		setFailedSlug( null );
 		try {
-			await dispatch(
+			// activateTheme swallows failures: its .catch dispatches an error
+			// notice but RESOLVES (doesn't reject), returning the stylesheet on
+			// success and undefined on failure. So we can't rely on try/catch —
+			// we check the resolved value to tell success from failure.
+			const stylesheet = await dispatch(
+				// Suppress activateTheme's built-in "View site" notice — we show our
+				// own below with an "Edit design" action into the Site Editor.
 				activateTheme( slug, siteId, {
 					source: 'home-launchpad-ai',
-					showSuccessNotice: true,
+					showSuccessNotice: false,
 				} )
 			);
-			// Drop the user into the site editor with the new theme active —
-			// same destination as the "Design your homepage" task, so the
-			// rest of the Launchpad flow stays coherent.
-			page( `/site-editor/${ siteSlug }` );
+			if ( stylesheet ) {
+				// Activate in place — DON'T navigate away. The card swaps its CTA
+				// to "Edit site" and a confirmation banner appears, so the user
+				// can jump into the editor or close and keep working the
+				// Launchpad. The theme is already changed either way.
+				setActivatedSlug( slug );
+				// Success snackbar with an "Edit design" action → Site Editor
+				// (replaces activateTheme's default "View site").
+				const themeName =
+					baseScored.find( ( r ) => r.theme.slug === slug )?.theme.name ?? 'Your theme';
+				dispatch(
+					successNotice( `The ${ themeName } theme is activated successfully!`, {
+						button: 'Edit design',
+						href: `/site-editor/${ siteSlug }`,
+						duration: 20000,
+						showDismiss: true,
+					} )
+				);
+				// Persist the pick so the dashboard marks the pick-theme task
+				// complete. Read-modify-write the combined wizard-state pref so we
+				// don't clobber the rest of it (goal, draft, taskIds…).
+				dispatch( ( innerDispatch, getState ) => {
+					const current =
+						( getPreference( getState(), HOME_WIZARD_STATE_PREF ) as HomeWizardState | null ) ?? {};
+					innerDispatch(
+						savePreference( HOME_WIZARD_STATE_PREF, {
+							...current,
+							pickedThemeSlug: slug,
+							pickedThemeSiteId: siteId,
+						} )
+					);
+				} );
+			} else {
+				// Activation failed (e.g. needs a plan upgrade). activateTheme
+				// already showed the error notice; surface an inline hint too.
+				setFailedSlug( slug );
+			}
 		} catch ( error ) {
 			window.console?.warn?.( '[Launchpad] activateTheme failed:', error );
+			setFailedSlug( slug );
+		} finally {
 			setActivatingSlug( null );
 		}
 	};
 
+	const activatedName = activatedSlug
+		? displayRecos.find( ( r ) => r.theme.slug === activatedSlug )?.theme.name ?? null
+		: null;
+	const failedName = failedSlug
+		? displayRecos.find( ( r ) => r.theme.slug === failedSlug )?.theme.name ?? null
+		: null;
+
 	return (
-		<Dialog.Root open={ isModalOpen } onOpenChange={ setIsModalOpen }>
+		<Dialog.Root open={ isModalOpen } onOpenChange={ handleOpenChange }>
+			{ /* Load each allowlist theme's tier from the `wpcom` source (where
+			   getThemeTierForTheme reads it), so we know which the user's plan can
+			   activate (filtered in `displayRecos`). Mounted with the task so tiers
+			   are ready before the modal opens. QueryTheme renders nothing. */ }
+			{ THEME_ALLOWLIST.map( ( t ) => (
+				<QueryTheme key={ t.slug } siteId="wpcom" themeId={ t.slug } />
+			) ) }
 			<Dialog.Trigger
 				render={
 					<Button variant="solid" tone="brand">
@@ -166,9 +273,26 @@ export default function ThemePickerTaskItem( { task }: Props ) {
 					<Dialog.CloseIcon />
 				</Dialog.Header>
 				<div className="theme-picker">
+					{ activatedName && (
+						<div className="theme-picker__activated" role="status">
+							<Text className="theme-picker__activated-text">
+								<strong>{ activatedName }</strong> is now your active theme. Edit your site to
+								customize it, or close and keep setting up.
+							</Text>
+						</div>
+					) }
+					{ failedName && (
+						<div className="theme-picker__failed" role="alert">
+							<Text className="theme-picker__failed-text">
+								Couldn't activate <strong>{ failedName }</strong>. It may require a plan upgrade —
+								try another theme, or check the notification for details.
+							</Text>
+						</div>
+					) }
 					<div className="theme-picker__grid">
-						{ recommendations.map( ( { theme, why } ) => {
+						{ displayRecos.map( ( { theme, why } ) => {
 							const isActivating = activatingSlug === theme.slug;
+							const isActivated = activatedSlug === theme.slug;
 							const otherActivating = !! activatingSlug && ! isActivating;
 							return (
 								<div key={ theme.slug } className="theme-picker__card">
@@ -181,15 +305,25 @@ export default function ThemePickerTaskItem( { task }: Props ) {
 											{ why }
 										</Text>
 									</div>
-									<Button
-										variant="solid"
-										tone="brand"
-										loading={ isActivating }
-										disabled={ otherActivating }
-										onClick={ () => onActivate( theme.slug ) }
-									>
-										{ isActivating ? 'Activating…' : 'Use this theme' }
-									</Button>
+									{ isActivated ? (
+										<Button
+											variant="solid"
+											tone="brand"
+											onClick={ () => page( `/site-editor/${ siteSlug }` ) }
+										>
+											Edit site
+										</Button>
+									) : (
+										<Button
+											variant={ activatedSlug ? 'outline' : 'solid' }
+											tone="brand"
+											loading={ isActivating }
+											disabled={ otherActivating }
+											onClick={ () => onActivate( theme.slug ) }
+										>
+											{ isActivating ? 'Activating…' : 'Use this theme' }
+										</Button>
+									) }
 								</div>
 							);
 						} ) }

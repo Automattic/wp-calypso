@@ -34,4 +34,12 @@ export type HomeWizardState = {
 	// call hadn't finished or errored — the first-post row then links to a
 	// blank editor instead.
 	firstPostDraft?: FirstPostDraft;
+	// A theme the user activated via the Launchpad picker. Persisted so the
+	// dashboard can mark the "pick-theme" task complete (it has no server-side
+	// completion signal — every site always has *some* active theme). This pref
+	// is a SINGLE global blob (not per-site), so we record the siteId the pick
+	// was made on and only complete the task when it matches the current site —
+	// otherwise a new site would inherit a previous site's pick.
+	pickedThemeSlug?: string;
+	pickedThemeSiteId?: number;
 };

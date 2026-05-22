@@ -132,6 +132,7 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const site = useSelector( getSelectedSite );
+	const siteId = site?.ID ?? null;
 	const wizardState =
 		( useSelector( ( state: AppState ) =>
 			getPreference( state, HOME_WIZARD_STATE_PREF )
@@ -157,6 +158,19 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 		baseTailoredTasks = materializeTasks( tailoredIds, siteState );
 	} else if ( wizardGoal ) {
 		baseTailoredTasks = selectTasks( wizardGoal, wizardFeatures, siteState );
+	}
+
+	// pick-theme has no server-side completion signal (every site always has an
+	// active theme), so we complete it when the user activated one via the
+	// picker. The wizard-state pref is a single global blob, so only complete
+	// when the recorded pick was made on THIS site (`pickedThemeSiteId`) —
+	// otherwise a newly created site would inherit a previous site's pick.
+	const pickedThemeOnThisSite =
+		!! wizardState.pickedThemeSlug && siteId !== null && wizardState.pickedThemeSiteId === siteId;
+	if ( pickedThemeOnThisSite ) {
+		baseTailoredTasks = baseTailoredTasks.map( ( t ) =>
+			t.id === 'pick-theme' ? { ...t, completed: true } : t
+		);
 	}
 
 	// `setup-store` and `discover-woocommerce` both install Woo today — the

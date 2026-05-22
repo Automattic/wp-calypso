@@ -110,6 +110,23 @@ export default function TailoredLaunchpad( { tasks }: Props ) {
 		}
 	}, [ tasks, openTaskId, userTouched, skippedIds ] );
 
+	// When the currently-open task becomes resolved — e.g. the user activated a
+	// theme (which marks "pick-theme" complete) — advance to the first remaining
+	// unresolved task so they always have something open to act on. Runs even
+	// after `userTouched`: completing a task is an explicit "I'm ready for the
+	// next step" signal, unlike a passive tasks-array re-render.
+	useEffect( () => {
+		if ( ! openTaskId ) {
+			return;
+		}
+		const openTask = tasks.find( ( task ) => task.id === openTaskId );
+		if ( openTask && ( openTask.completed || skippedIds.has( openTask.id ) ) ) {
+			const firstUnresolved =
+				tasks.find( ( task ) => ! task.completed && ! skippedIds.has( task.id ) )?.id ?? null;
+			setOpenTaskId( firstUnresolved );
+		}
+	}, [ tasks, openTaskId, skippedIds ] );
+
 	if ( tasks.length === 0 ) {
 		return (
 			<Text variant="body-md">
