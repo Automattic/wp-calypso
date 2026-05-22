@@ -35,11 +35,12 @@
  * State strategy:
  * - Initial expanded state: stored value from the
  * `adminSidebarExpandState` slice if the user has toggled this group
- * before; otherwise the group's `default_expanded` from the response.
+ * before; otherwise the `plugins` group defaults expanded and other
+ * groups follow their `default_expanded` response value.
  * Auto-expand-on-current-URL is Phase 1.4.x polish (kept on the to-do
  * list — not in this PR scope per the task scope's "deferred" list).
- * - Toggle dispatches the `toggleAdminSidebarGroup` action so the slice
- * records the change; `withPersistence` round-trips it across reloads.
+ * - Toggle dispatches an explicit `setAdminSidebarGroupExpanded` action
+ * so collapsing the default-expanded `plugins` group stores `false`.
  * - The actual REST POST flow (server-side persistence) is deferred to
  * Phase 2 task 2.3 (alongside Save in customize mode).
  * @see WordPress/wp-admin-sidebar v0.1.4 src/browse-rail/grouping.js
@@ -52,7 +53,7 @@ import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useCallback, useId } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleAdminSidebarGroup } from 'calypso/state/admin-sidebar/expand-state/actions';
+import { setAdminSidebarGroupExpanded } from 'calypso/state/admin-sidebar/expand-state/actions';
 import { getAdminSidebarGroupExpanded } from 'calypso/state/admin-sidebar/expand-state/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useCustomizeContext } from './customize';
@@ -80,17 +81,21 @@ function notifyMenuHeightChanged() {
  * Resolve the rendered expanded state from the prop / stored / default chain.
  * Extracted to a named helper to avoid the nested-ternary lint and to make
  * the priority chain explicit.
+ * @param {string}            groupId          Group id from the endpoint.
  * @param {boolean|undefined} expandedProp     Caller-supplied prop (highest priority).
  * @param {boolean|undefined} storedExpanded   User's stored toggle.
  * @param {boolean|undefined} defaultExpanded  Group metadata default.
  * @returns {boolean}
  */
-function resolveExpanded( expandedProp, storedExpanded, defaultExpanded ) {
+function resolveExpanded( groupId, expandedProp, storedExpanded, defaultExpanded ) {
 	if ( typeof expandedProp === 'boolean' ) {
 		return expandedProp;
 	}
 	if ( typeof storedExpanded === 'boolean' ) {
 		return storedExpanded;
+	}
+	if ( groupId === GROUP_ID_PLUGINS ) {
+		return true;
 	}
 	return defaultExpanded ?? false;
 }
@@ -118,9 +123,15 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 	// Resolve initial state in priority order:
 	//   1. caller-supplied `expanded` prop (Storybook / explicit control).
 	//   2. user's stored toggle for this group.
-	//   3. group metadata's `default_expanded`.
-	//   4. fall back to collapsed (matches the public plugin's default).
-	const expanded = resolveExpanded( expandedProp, storedExpanded, group.default_expanded );
+	//   3. `plugins` starts expanded on first encounter.
+	//   4. group metadata's `default_expanded`.
+	//   5. fall back to collapsed.
+	const expanded = resolveExpanded(
+		group.id,
+		expandedProp,
+		storedExpanded,
+		group.default_expanded
+	);
 
 	const labelId = useId();
 	const childrenId = `wp-admin-sidebar-group-${ group.id }-${ labelId }`;
@@ -143,7 +154,7 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 			if ( typeof onToggle === 'function' ) {
 				onToggle( event, ! expanded );
 			} else if ( siteId ) {
-				dispatch( toggleAdminSidebarGroup( siteId, group.id ) );
+				dispatch( setAdminSidebarGroupExpanded( siteId, group.id, ! expanded ) );
 			}
 			// Fire after the React state update settles so the new height is
 			// in the DOM by the time listeners read it. requestAnimationFrame

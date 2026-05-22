@@ -4,6 +4,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { ADMIN_SIDEBAR_GROUP_SET_EXPANDED } from 'calypso/state/action-types';
 import { MySitesSidebarUnifiedSidebarGroup } from '../sidebar-group';
 
 const renderInProvider = ( ui, state = {} ) => {
@@ -171,6 +172,52 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 			<MySitesSidebarUnifiedSidebarGroup group={ addonsGroup }>
 				<li>child</li>
 			</MySitesSidebarUnifiedSidebarGroup>
+		);
+		expect( container.querySelector( '.wp-admin-sidebar-group' ) ).toHaveAttribute(
+			'data-expanded',
+			'false'
+		);
+	} );
+
+	it( 'defaults the plugins group to expanded on first encounter', () => {
+		const { container } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>
+		);
+		expect( container.querySelector( '.wp-admin-sidebar-group' ) ).toHaveAttribute(
+			'data-expanded',
+			'true'
+		);
+	} );
+
+	it( 'stores collapsed when toggling the default-expanded plugins group', () => {
+		const { store } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: /My Plugins/i } ) );
+
+		expect( store.getActions() ).toContainEqual( {
+			type: ADMIN_SIDEBAR_GROUP_SET_EXPANDED,
+			siteId: 12345,
+			groupId: 'plugins',
+			expanded: false,
+		} );
+	} );
+
+	it( 'honors stored collapsed state for the plugins group', () => {
+		const { container } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>,
+			{
+				adminSidebarExpandState: {
+					bySite: { 12345: { plugins: false } },
+				},
+			}
 		);
 		expect( container.querySelector( '.wp-admin-sidebar-group' ) ).toHaveAttribute(
 			'data-expanded',
