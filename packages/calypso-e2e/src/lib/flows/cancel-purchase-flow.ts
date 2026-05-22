@@ -50,16 +50,16 @@ export async function cancelAtomicPurchaseFlow(
 		.getByRole( 'button', { name: 'Submit' } )
 		.or( page.getByRole( 'button', { name: 'Continue' } ) );
 
-	await Promise.all( [
-		page.waitForNavigation( { timeout: 30 * 1000 } ),
-		finalButton.waitFor( { state: 'visible' } ),
-		// Wait for button to be enabled
-		page.waitForFunction(
-			() => {
-				const button = document.querySelector( 'button[class*="is-primary"]' );
-				return button && ! button.hasAttribute( 'disabled' );
-			},
-			{ timeout: 10000 }
-		),
-	] );
+	// Wait for the final button to be present and actionable before clicking.
+	// `click()` auto-waits for visibility and the enabled state, so an explicit
+	// `waitForFunction` on the disabled attribute is no longer needed.
+	await finalButton.waitFor( { state: 'visible' } );
+	await finalButton.click();
+
+	// Confirming the cancellation does not trigger a full-page navigation: the
+	// purchases view updates in place as a single-page-app state change. The
+	// previous `page.waitForNavigation()` therefore never resolved and hung
+	// until its timeout. Callers assert the resulting success notice (e.g.
+	// "Your refund has been processed and your purchase removed.") to confirm
+	// the flow completed, which is the deterministic signal to wait on.
 }
