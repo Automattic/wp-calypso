@@ -202,6 +202,8 @@ const extractSocialBrief = ( payload: unknown ): ServerSocialBrief | undefined =
 	return brief;
 };
 
+const RUN_NON_TERMINAL_STATUSES = new Set( [ 'a4a_pending', 'a4a_running' ] );
+
 function SocialOutputDetail( { output }: Props ) {
 	const run = useAgentStudioRun( output.id );
 	const brief = extractSocialBrief( run.data?.payload );
@@ -218,21 +220,37 @@ function SocialOutputDetail( { output }: Props ) {
 		refetchOnWindowFocus: false,
 	} );
 
-	if ( output.status === 'generating' || ( ! brief && run.isLoading ) ) {
-		return (
-			<StateMessage spinner>
-				<Text>{ __( 'Generating your deliverable…' ) }</Text>
-			</StateMessage>
-		);
-	}
+	const runStatus = run.data?.status;
+	const isRunFailed = output.status === 'failed' || runStatus === 'a4a_failed';
+	// The server-reported status of the run can lag the optimistic
+	// outputs-list status set right after submit, and the polling on
+	// `useAgentStudioRun` won't have settled the response yet. Treat
+	// "we don't have run.data yet" and "the server says still running"
+	// the same way — keep the spinner up until the persist ability
+	// emits a brief into payload. Without this, the page briefly
+	// renders "No preview is available" between the outputs-list
+	// refetch and the first run-payload arrival.
+	const isRunInProgress =
+		! isRunFailed &&
+		( output.status === 'generating' ||
+			( runStatus !== undefined && RUN_NON_TERMINAL_STATUSES.has( runStatus ) ) ||
+			( ! run.data && ! run.isError ) );
 
-	if ( output.status === 'failed' ) {
+	if ( isRunFailed ) {
 		return (
 			<StateMessage>
 				<Text size={ 15 } weight={ 600 }>
 					{ __( 'Generation failed' ) }
 				</Text>
 				{ output.errorMessage && <Text variant="muted">{ output.errorMessage }</Text> }
+			</StateMessage>
+		);
+	}
+
+	if ( isRunInProgress ) {
+		return (
+			<StateMessage spinner>
+				<Text>{ __( 'Generating your deliverable…' ) }</Text>
 			</StateMessage>
 		);
 	}
