@@ -34,6 +34,18 @@ export type PatternPageContext = {
 	intent?: string;
 	/** Defaults to `en`; pre-warm can pass the user's locale later. */
 	locale?: string;
+	/**
+	 * Prepend a Dolly-generated heading + lead paragraph. For copy-light patterns
+	 * (e.g. an image-only gallery) the slot-rewrite step has nothing to work with,
+	 * so this gives the page some authored, on-brand text.
+	 */
+	intro?: boolean;
+	/**
+	 * Replace the pattern's stock gallery images with Openverse photos matching
+	 * the site's niche (keywords chosen by Dolly). Openverse = openly licensed,
+	 * so the images are actually reusable.
+	 */
+	images?: boolean;
 };
 
 export type PatternPage = {
@@ -237,6 +249,269 @@ export async function fetchPatternPageRaw(
 	return { html: pattern.html, pageTitle: context.pageTitle };
 }
 
+/** One Dolly round-trip. Returns the raw response text for the caller to parse. */
+async function askDolly(
+	prompt: string,
+	siteId: number | undefined,
+	abortSignal: AbortSignal | undefined
+): Promise< string > {
+	const sessionId =
+		typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+			? crypto.randomUUID()
+			: `pattern-${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+	const config = await createAgentConfig( {
+		sessionId,
+		siteId,
+		environment: 'calypso',
+		agentId: 'dolly',
+	} );
+	const client = createClient( config );
+	const response = await client.sendMessage( {
+		message: createTextMessage( prompt ),
+		abortSignal,
+	} );
+	return response.text;
+}
+
+/** Rewrite the pattern's own text slots in place. Returns the original html
+ * untouched when there's nothing to rewrite or the response is unparseable. */
+async function rewriteSlots(
+	html: string,
+	patternName: string,
+	context: PatternPageContext,
+	siteId: number | undefined,
+	abortSignal: AbortSignal | undefined
+): Promise< string > {
+	const slots = extractSlots( html );
+	if ( slots.length === 0 ) {
+		return html;
+	}
+	const prompt = buildPrompt( slots, context );
+	const startedAt = performance.now();
+	const text = await askDolly( prompt, siteId, abortSignal );
+	const elapsedMs = Math.round( performance.now() - startedAt );
+	const parsed = extractJsonArray( text );
+	if ( ! isValidRewrites( parsed, slots.length ) ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			`[Launchpad] draft_pattern_page (${ context.category }): unparseable response in ` +
+				`${ elapsedMs }ms; keeping the pattern's own copy.\n` +
+				`expected ${ slots.length } strings · prompt ${ prompt.length } chars\n` +
+				'raw response:',
+			text
+		);
+		return html;
+	}
+	// eslint-disable-next-line no-console
+	console.log(
+		`[Launchpad] draft_pattern_page (${ context.category }): ${ elapsedMs }ms · ` +
+			`${ slots.length } slots rewritten · pattern "${ patternName }"`,
+		{ context, slots: slots.map( ( s ) => s.text ), rewrites: parsed }
+	);
+	return applyRewrites( html, slots, parsed );
+}
+
+type Enrichment = { heading?: string; intro?: string; imageKeywords?: string };
+
+function buildEnrichPrompt( context: PatternPageContext ): string {
+	const facts = [
+		context.siteName ? `Site name: ${ context.siteName }` : '',
+		context.intent ? `Site goal & description: ${ context.intent }` : '',
+	]
+		.filter( Boolean )
+		.join( '\n' );
+
+	const wants: string[] = [];
+	if ( context.intro ) {
+		wants.push(
+			`"heading": an evocative section heading for this page (max 6 words; NOT just the word "${ context.pageTitle }")`,
+			'"intro": one or two warm sentences introducing this page, in the site\'s voice'
+		);
+	}
+	if ( context.images ) {
+		wants.push(
+			'"imageKeywords": 2-4 words for a stock-photo search whose results would suit this page (e.g. "travel landscape photography")'
+		);
+	}
+
+	return `You are personalizing a "${ context.category }" page for one specific WordPress site.
+
+${ facts }
+
+Return ONLY a JSON object with these keys:
+${ wants.map( ( w ) => `- ${ w }` ).join( '\n' ) }
+Plain language, no markdown, no extra keys. The first character of your response MUST be "{".
+
+Return the JSON now.`;
+}
+
+function extractJsonObject( text: string ): Record< string, unknown > | null {
+	const tryParse = ( s: string ): Record< string, unknown > | null => {
+		try {
+			const v = JSON.parse( s );
+			return v && typeof v === 'object' && ! Array.isArray( v ) ? v : null;
+		} catch {
+			return null;
+		}
+	};
+	const direct = tryParse( text );
+	if ( direct ) {
+		return direct;
+	}
+	for ( const pattern of [ /```(?:json)?\s*([\s\S]*?)```/, /(\{[\s\S]*\})/ ] ) {
+		const match = text.match( pattern );
+		if ( match?.[ 1 ] ) {
+			const v = tryParse( match[ 1 ].trim() );
+			if ( v ) {
+				return v;
+			}
+		}
+	}
+	return null;
+}
+
+/** A centered heading + lead paragraph, prepended to a copy-light page. */
+function introBlocks( heading: string, intro: string ): string {
+	return `<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="wp-block-heading has-text-align-center">${ escapeHtml( heading ) }</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">${ escapeHtml( intro ) }</p>
+<!-- /wp:paragraph -->
+
+`;
+}
+
+type OpenverseItem = {
+	URL?: string;
+	url?: string;
+	src?: string;
+	guid?: string;
+	largeURL?: string;
+	thumbnails?: { large?: string; medium?: string; thumbnail?: string };
+};
+
+/** Search Openverse (via the wpcom external-media proxy — CORS-safe) for openly
+ * licensed photos. Returns full-size image URLs. */
+async function fetchOpenverseImages( query: string, count: number ): Promise< string[] > {
+	const res = ( await wpcom.req.get(
+		{ path: '/meta/external-media/openverse', apiVersion: '1.1' },
+		{ source: 'openverse', search: query, number: Math.max( 3, count ) }
+	) ) as { media?: OpenverseItem[]; found?: number };
+	const media = res?.media ?? [];
+	const urls = media
+		.map(
+			( m ) =>
+				m.URL ??
+				m.largeURL ??
+				m.url ??
+				m.src ??
+				m.guid ??
+				m.thumbnails?.large ??
+				m.thumbnails?.medium
+		)
+		.filter( ( u ): u is string => typeof u === 'string' && u.length > 0 );
+	// eslint-disable-next-line no-console
+	console.log(
+		`[Launchpad] openverse "${ query }": ${ media.length } results · ${ urls.length } urls`,
+		{ firstItem: media[ 0 ], urls }
+	);
+	return urls;
+}
+
+const GALLERY_RE = /<!-- wp:gallery(?:\s+(\{[\s\S]*?\}))?\s*-->[\s\S]*?<!-- \/wp:gallery -->/;
+
+function imageBlock( url: string ): string {
+	return `<!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="${ url }" alt=""/></figure>
+<!-- /wp:image -->`;
+}
+
+/** Rebuild the page's gallery block with fresh image blocks (no stale
+ * attachment ids), preserving the original column count. No-ops if the page has
+ * no gallery block. */
+function replaceGalleryImages( html: string, urls: string[] ): string {
+	const match = html.match( GALLERY_RE );
+	if ( ! match ) {
+		return html;
+	}
+	let columns = 3;
+	if ( match[ 1 ] ) {
+		try {
+			const attrs = JSON.parse( match[ 1 ] ) as { columns?: number };
+			if ( typeof attrs.columns === 'number' ) {
+				columns = attrs.columns;
+			}
+		} catch {
+			// keep default
+		}
+	}
+	const images = urls.map( imageBlock ).join( '\n\n' );
+	const rebuilt = `<!-- wp:gallery {"columns":${ columns },"linkTo":"none"} -->
+<figure class="wp-block-gallery has-nested-images columns-${ columns } is-cropped">${ images }</figure>
+<!-- /wp:gallery -->`;
+	return html.replace( GALLERY_RE, rebuilt );
+}
+
+/** Add a Dolly intro and/or swap in niche-matched Openverse photos. Each step
+ * is best-effort: a failure keeps the pattern's own copy/images. */
+async function enrichPage(
+	html: string,
+	context: PatternPageContext,
+	siteId: number | undefined,
+	abortSignal: AbortSignal | undefined
+): Promise< string > {
+	let enrichment: Enrichment = {};
+	try {
+		const startedAt = performance.now();
+		const obj = extractJsonObject(
+			await askDolly( buildEnrichPrompt( context ), siteId, abortSignal )
+		);
+		if ( obj ) {
+			enrichment = {
+				heading: typeof obj.heading === 'string' ? obj.heading : undefined,
+				intro: typeof obj.intro === 'string' ? obj.intro : undefined,
+				imageKeywords: typeof obj.imageKeywords === 'string' ? obj.imageKeywords : undefined,
+			};
+		}
+		// eslint-disable-next-line no-console
+		console.log(
+			`[Launchpad] draft_pattern_page enrich (${ context.category }): ` +
+				`${ Math.round( performance.now() - startedAt ) }ms`,
+			enrichment
+		);
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			`[Launchpad] draft_pattern_page enrich (${ context.category }) failed; keeping pattern copy/images.`,
+			error
+		);
+		return html;
+	}
+
+	let out = html;
+	if ( context.intro && enrichment.heading && enrichment.intro ) {
+		out = introBlocks( enrichment.heading, enrichment.intro ) + out;
+	}
+	if ( context.images && enrichment.imageKeywords ) {
+		try {
+			const count = ( out.match( /<img\b/gi ) ?? [] ).length || 3;
+			const urls = await fetchOpenverseImages( enrichment.imageKeywords, count );
+			if ( urls.length > 0 ) {
+				out = replaceGalleryImages( out, urls );
+			}
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				`[Launchpad] draft_pattern_page (${ context.category }): Openverse fetch failed; keeping pattern images.`,
+				error
+			);
+		}
+	}
+	return out;
+}
+
 async function draftViaDolly(
 	context: PatternPageContext,
 	siteId: number | undefined,
@@ -248,57 +523,14 @@ async function draftViaDolly(
 		throw new Error( `draftPatternPage: no usable pattern in category "${ context.category }"` );
 	}
 
-	const slots = extractSlots( pattern.html );
-	// No rewritable copy (e.g. an all-image pattern) — return the markup as-is.
-	if ( slots.length === 0 ) {
-		return { html: pattern.html, pageTitle: context.pageTitle };
+	// 1. Rewrite the pattern's own text slots (events, about, …).
+	let html = await rewriteSlots( pattern.html, pattern.name, context, siteId, abortSignal );
+
+	// 2. For copy-light / image-led patterns (e.g. a gallery), add a Dolly intro
+	//    and/or swap in niche-matched Openverse photos.
+	if ( context.intro || context.images ) {
+		html = await enrichPage( html, context, siteId, abortSignal );
 	}
-
-	const sessionId =
-		typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-			? crypto.randomUUID()
-			: `pattern-${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
-
-	const prompt = buildPrompt( slots, context );
-	const startedAt = performance.now();
-
-	const config = await createAgentConfig( {
-		sessionId,
-		siteId,
-		environment: 'calypso',
-		agentId: 'dolly',
-	} );
-	const client = createClient( config );
-
-	const response = await client.sendMessage( {
-		message: createTextMessage( prompt ),
-		abortSignal,
-	} );
-
-	const elapsedMs = Math.round( performance.now() - startedAt );
-	const parsed = extractJsonArray( response.text );
-
-	if ( ! isValidRewrites( parsed, slots.length ) ) {
-		// eslint-disable-next-line no-console
-		console.warn(
-			`[Launchpad] draft_pattern_page (${ context.category }): unparseable response in ` +
-				`${ elapsedMs }ms; falling back to the pattern's own copy.\n` +
-				`expected ${ slots.length } strings · prompt ${ prompt.length } chars\n` +
-				'raw response:',
-			response.text
-		);
-		// Resilience floor: a bad rewrite still yields a real, designed page.
-		return { html: pattern.html, pageTitle: context.pageTitle };
-	}
-
-	const html = applyRewrites( pattern.html, slots, parsed );
-
-	// eslint-disable-next-line no-console
-	console.log(
-		`[Launchpad] draft_pattern_page (${ context.category }): ${ elapsedMs }ms · ` +
-			`${ slots.length } slots rewritten · pattern "${ pattern.name }"`,
-		{ context, slots: slots.map( ( s ) => s.text ), rewrites: parsed }
-	);
 
 	return { html, pageTitle: context.pageTitle };
 }

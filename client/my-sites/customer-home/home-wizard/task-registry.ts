@@ -73,6 +73,10 @@ export type TaskTemplate = {
 		category: string;
 		/** Title for the created page. */
 		pageTitle: string;
+		/** Prepend a Dolly heading + lead paragraph (for copy-light patterns). */
+		intro?: boolean;
+		/** Swap the pattern's stock images for niche-matched Openverse photos. */
+		images?: boolean;
 	};
 
 	/** Used to detect "done" without round-tripping the server. */
@@ -238,10 +242,11 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		// explicit features, so the `gallery` feature alone never surfaces it.
 		goals: [ 'portfolio', 'promote', 'build' ],
 		features: [ 'gallery' ],
-		// Builds a real Gallery page from a dotcompatterns gallery pattern with
-		// Dolly-rewritten copy (the images stay as the user's own to add). The
-		// `url` is the fallback if the page can't be created on click.
-		pattern: { category: 'gallery', pageTitle: 'Gallery' },
+		// Builds a real Gallery page from a dotcompatterns gallery pattern. The
+		// pattern is image-only, so `intro` adds a Dolly heading + lead paragraph
+		// and `images` swaps the stock photos for niche-matched Openverse ones.
+		// The `url` is the fallback if the page can't be created on click.
+		pattern: { category: 'gallery', pageTitle: 'Gallery', intro: true, images: true },
 		url: ( s ) => `/page/${ s }`,
 		cta: 'Add gallery',
 	},

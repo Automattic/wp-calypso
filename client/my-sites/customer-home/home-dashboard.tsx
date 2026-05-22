@@ -620,9 +620,9 @@ function useTailoredFlow() {
 				continue;
 			}
 			seen.add( template.pattern.category );
-			const { category, pageTitle } = template.pattern;
+			const { category, pageTitle, intro, images } = template.pattern;
 			draftPatternPage(
-				{ category, pageTitle, intent, siteName: siteName || undefined },
+				{ category, pageTitle, intro, images, intent, siteName: siteName || undefined },
 				{ siteId: siteId ?? undefined }
 			)
 				.then( ( patternPage ) => cachePatternPage( category, patternPage ) )
@@ -737,6 +737,11 @@ function useTailoredFlow() {
 			} )
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );
+				// Tailoring failed → the dashboard renders the deterministic
+				// goal-based list, which still includes goal-tagged pattern tasks
+				// (gallery / events). Pre-warm those so their copy + images are
+				// ready even though Dolly's tailoring response was unusable.
+				prewarmPatternPages( patternTaskIdsForGoal( answers.goal ), composed, trimmedName );
 			} )
 			.finally( finalize );
 	};
