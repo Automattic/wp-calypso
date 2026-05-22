@@ -26,6 +26,7 @@ import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.util
 import { getValidUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import NicknameField from './nickname-field';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
 
 import './style.scss';
@@ -119,6 +120,8 @@ class Profile extends Component {
 								value={ this.props.getSetting( 'last_name' ) }
 							/>
 						</FormFieldset>
+
+						<NicknameField initialNickname={ this.props.user?.nickname || '' } />
 
 						<FormFieldset>
 							<FormLabel htmlFor="display_name">
