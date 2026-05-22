@@ -19,9 +19,9 @@ const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 	description: 'You wrote your first post.',
 	badge_prefix: 'p',
 	level: 1,
-	date: '2026-01-15T00:00:00Z',
+	date_unlocked: '2026-01-15T00:00:00Z',
+	date_created: '2025-01-01',
 	image: 'https://example.com/first.png',
-	is_retired: false,
 	is_secret: false,
 	...overrides,
 } );
@@ -29,7 +29,9 @@ const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 const maskedSecret = ( overrides: Record< string, unknown > = {} ) => ( {
 	achievement_id: 2,
 	is_secret: true,
-	date: '2026-02-15T00:00:00Z',
+	is_redacted: true,
+	date_unlocked: '2026-02-15T00:00:00Z',
+	date_created: '2025-02-01',
 	...overrides,
 } );
 
@@ -47,6 +49,7 @@ const locked = ( overrides: Record< string, unknown > = {} ) => ( {
 const lockedSecret = ( overrides: Record< string, unknown > = {} ) => ( {
 	achievement_id: 99,
 	is_secret: true,
+	is_redacted: true,
 	date_created: '2026-01-10T00:00:00Z',
 	...overrides,
 } );
@@ -179,6 +182,68 @@ describe( 'AchievementsGrid', () => {
 		expect( within( secretCard as HTMLElement ).getByText( /^Unlocked:/ ) ).toBeVisible();
 	} );
 
+	test( 'sorts earned + masked-secret entries by last unlock date descending', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [
+				maskedSecret( { achievement_id: 2, date_unlocked: '2026-01-01' } ),
+				earned( {
+					achievement_id: 3,
+					slug: 'm',
+					name: 'Mid',
+					date_unlocked: '2026-02-01',
+				} ),
+				earned( { achievement_id: 1, name: 'Zed', date_unlocked: '2026-03-01' } ),
+			],
+			lockedAchievements: [],
+		} );
+
+		const { container } = renderGrid( { userLogin: 'someone', isOwnProfile: false } );
+
+		const earnedSection = container.querySelector( '.achievements-grid' );
+		expect( earnedSection ).not.toBeNull();
+		const titles = within( earnedSection as HTMLElement ).getAllByRole( 'heading', {
+			level: 3,
+		} );
+		expect( titles.map( ( h ) => h.firstChild?.textContent ) ).toEqual( [
+			'Zed',
+			'Mid',
+			'Secret achievement',
+		] );
+	} );
+
+	test( 'sorts a leveled slug by its most recent unlock, not its first', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [
+				earned( {
+					achievement_id: 10,
+					slug: 'multi',
+					name: 'Multi',
+					level: 1,
+					date_unlocked: '2026-01-01',
+				} ),
+				earned( {
+					achievement_id: 11,
+					slug: 'multi',
+					name: 'Multi',
+					level: 2,
+					date_unlocked: '2026-05-01',
+				} ),
+				earned( { achievement_id: 20, slug: 'solo', name: 'Solo', date_unlocked: '2026-03-01' } ),
+			],
+			lockedAchievements: [],
+		} );
+
+		const { container } = renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		const earnedSection = container.querySelector( '.achievements-grid' );
+		const titles = within( earnedSection as HTMLElement ).getAllByRole( 'heading', {
+			level: 3,
+		} );
+		expect( titles.map( ( h ) => h.firstChild?.textContent ) ).toEqual( [ 'Multi', 'Solo' ] );
+	} );
+
 	test( 'sorts locked entries by date_created ascending', () => {
 		useAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
@@ -219,8 +284,8 @@ describe( 'AchievementsGrid', () => {
 			...baseQueryReturn,
 			achievements: [
 				earned(),
-				maskedSecret( { achievement_id: 50, date: '2026-02-01T00:00:00Z' } ),
-				maskedSecret( { achievement_id: 50, date: '2026-03-01T00:00:00Z' } ),
+				maskedSecret( { achievement_id: 50, date_unlocked: '2026-02-01T00:00:00Z' } ),
+				maskedSecret( { achievement_id: 50, date_unlocked: '2026-03-01T00:00:00Z' } ),
 			],
 			lockedAchievements: [],
 		} );
