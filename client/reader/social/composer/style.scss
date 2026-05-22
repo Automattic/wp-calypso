@@ -93,15 +93,6 @@
 	z-index: 25;
 	transition: background-color 150ms ease, box-shadow 150ms ease;
 
-	// Background, text color, and the hover/active darkening are inherited
-	// from `variant="primary"` (see Button JSX). Calypso pins
-	// `.components-button.is-primary:not(.is-destructive)` to
-	// `--color-accent` / `--color-accent-60` globally, which keeps the
-	// text `--wp-components-color-accent-inverted` (white) through every
-	// state and avoids the dark-text-on-dark-blue contrast bug that the
-	// default (no-variant) Button hover styling produced — same pattern
-	// the Reader's `.quick-post` "Post" button uses.
-
 	&.is-hidden {
 		display: none;
 	}
