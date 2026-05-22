@@ -204,6 +204,35 @@
 		fill: var( --dashboard-danger__color-hover );
 	}
 
+	.components-toggle-group-control {
+		background: var( --dashboard-surface__background-color );
+		border-color: var( --dashboard-field__border-color );
+
+		&:hover {
+			border-color: var( --wp-components-color-gray-700 );
+		}
+
+		&::before {
+			background: var( --wp-components-color-gray-800 );
+			border-color: var( --wp-components-color-gray-800 );
+		}
+	}
+
+	.components-toggle-group-control-option-base {
+		color: var( --dashboard__text-muted-color );
+
+		&:hover:not( [disabled] ):not( [aria-disabled='true'] ) {
+			color: var( --dashboard__text-color );
+		}
+
+		&[aria-checked='true'],
+		&[aria-pressed='true'],
+		&[aria-checked='true']:hover:not( [disabled] ):not( [aria-disabled='true'] ),
+		&[aria-pressed='true']:hover:not( [disabled] ):not( [aria-disabled='true'] ) {
+			color: var( --wp-components-color-foreground-inverted );
+		}
+	}
+
 	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
 		.components-input-control__backdrop,
 	.components-validated-control__wrapper-with-error-delegate:has(
