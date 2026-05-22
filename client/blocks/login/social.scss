@@ -15,6 +15,7 @@
 
 .auth-form__social.is-login {
 	margin-bottom: 0;
+	overflow: visible;
 
 	/**
 	* Social First Logins
@@ -25,12 +26,14 @@
 		.auth-form__social-buttons {
 			display: flex;
 			flex-direction: column;
+			overflow: visible;
 
 			.auth-form__social-buttons-container {
 				gap: 16px;
 				display: flex;
 				flex-direction: column;
 				width: 100%;
+				overflow: visible;
 			}
 		}
 	}

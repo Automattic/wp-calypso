@@ -40,7 +40,6 @@ import {
 	useState,
 } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
-import { setAdminSidebarGroupExpanded } from 'calypso/state/admin-sidebar/expand-state/actions';
 import { getAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
@@ -188,16 +187,8 @@ export function CustomizeProvider( {
 		// sees the freshly-persisted state.
 		dispatch( { type: 'set', state: createDraftState( savedDelta ) } );
 		setCustomizing( true );
-		// Expand all groups containing reassignable items so the user can see
-		// what they're meant to be reordering. Mirrors `expandGroupsForCustomizing`
-		// in the public plugin's `customizer.js`. (Phase 2 row 16.)
-		// We delegate to the expand-state slice, so entering customize mode
-		// persists the expanded state as the user's current preference.
-		if ( siteId ) {
-			dispatch_expandReassignableGroups( reduxDispatch, siteId );
-		}
 		announce( translate( 'Customize mode entered.' ) as string );
-	}, [ enableCustomize, savedDelta, siteId, reduxDispatch, announce ] );
+	}, [ enableCustomize, savedDelta, announce ] );
 
 	const exit = useCallback(
 		( options: { confirmIfDirty?: boolean } = {} ) => {
@@ -352,21 +343,4 @@ export function CustomizeProvider( {
 			/>
 		</CustomizeContext.Provider>
 	);
-}
-
-/**
- * Force every group containing reassignable items into the expanded state for
- * the duration of customize mode. The expand-state slice records the change;
- * exit doesn't undo it because the user's expanded preference is now this.
- *
- * Mirrors `expandGroupsForCustomizing()` in the public plugin's
- * `customizer.js`. (Phase 2 row 16.) The simplified Calypso version expands
- * the `plugins` group unconditionally — that's the only group that surfaces
- * reassignable items today.
- */
-function dispatch_expandReassignableGroups(
-	reduxDispatch: ReturnType< typeof useReduxDispatch >,
-	siteId: number | string
-): void {
-	reduxDispatch( setAdminSidebarGroupExpanded( siteId, 'plugins', true ) );
 }
