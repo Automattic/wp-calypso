@@ -178,6 +178,11 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		// home-dashboard.tsx when this row is already in the picked list.
 		subtitle: 'Stores that adopt WooCommerce early reach first sale 42 days sooner.',
 		category: 'feature-setup',
+		// Tagged for the sell GOAL as well as the store FEATURE: the wizard
+		// collects no explicit features, so the deterministic selectTasks()
+		// fallback needs the goal tag to surface the store step (theme → store
+		// → product) without depending on Dolly.
+		goals: [ 'sell' ],
 		features: [ 'store' ],
 		hideWhen: { pluginInstalled: 'woocommerce' },
 		url: ( s ) => `/woocommerce-installation/${ s }`,

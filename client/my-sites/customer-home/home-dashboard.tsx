@@ -554,7 +554,26 @@ function useTailoredFlow() {
 
 		const { controller, finalize } = startTailoring();
 
-		// ONE write per wizard run — collapsed from three (stages 1 + 2 + 3).
+		// Persist the user's literal inputs (goal + composed intent) up front,
+		// BEFORE the Dolly call. This is the deterministic floor: if the call
+		// times out, errors, or returns empty, the widget still has `goal` and
+		// renders the deterministic selectTasks() list (e.g. the sell-shaped
+		// theme → store → product sequence) instead of going blank. Previously
+		// nothing was saved until the `.then`, so any failed call left the
+		// dashboard with no tailored list at all.
+		//
+		// This re-introduces a second write per run, but the two are ~30s apart
+		// (this one on Finish, the result merge after Dolly), so they never
+		// overlap — the savePreference echo race the single-write design guarded
+		// against needs concurrent in-flight PUTs to the same key.
+		mergeWizardState( {
+			goal: answers.goal ?? undefined,
+			intent: composed,
+			...( trimmedName ? { siteName: trimmedName } : {} ),
+		} );
+
+		// ONE result write per wizard run — merges the Dolly output on top of
+		// the floor above.
 		// The savePreference race lives at the receivePreferences layer:
 		// even though we use one key (home_wizard_state), three saves to the
 		// SAME key in quick succession can echo out of order, with an early
@@ -565,9 +584,9 @@ function useTailoredFlow() {
 		// Trade-off: we lose the early-paint partial of task_ids (stage 2 in
 		// the old flow). The dashboard skeleton stays for the full Dolly
 		// duration (~30s) instead of swapping in tasks ~1-2s before the draft.
-		// Worth it for picker correctness. Recovery if user refreshes
-		// mid-wizard: their inputs are lost (no stage 1 either), but they can
-		// re-run the wizard via the FAB.
+		// Worth it for picker correctness. If the user refreshes mid-wizard
+		// their goal + intent survive (written above), so the deterministic
+		// list renders; only the Dolly draft/inferred are lost until a re-run.
 		tailorAndDraftFromIntent(
 			{ intent: composed },
 			{
