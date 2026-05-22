@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
@@ -21,6 +21,8 @@ import {
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
+import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
+import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -34,6 +36,7 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
+import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import './style.scss';
 
 // All onboarding steps share a single <Modal> frame so transitions between
@@ -128,6 +131,29 @@ const ReaderOnboardingRsm = ( {
 	const [ hasFinished, setHasFinished ] = useState( false );
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
+
+	// Stable blog map for the interests step — computed once per component
+	// lifetime so the random selection doesn't change when the user navigates
+	// away from the step and returns (InterestsModal unmounts/remounts on each
+	// step transition, so this must live here rather than inside that component).
+	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
+	if ( ! packBlogsByIdRef.current ) {
+		packBlogsByIdRef.current = new Map(
+			getTopicGroups().map( ( group ) => [
+				group.id,
+				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
+			] )
+		);
+	}
+
+	// Tracks which packs the user has explicitly subscribed to this session.
+	// Owned here (not inside InterestsModal) so it persists when the user
+	// advances to the discover step and then clicks Back.
+	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >(
+		() => new Set()
+	);
+	const handlePackSubscribed = ( packId: string ) =>
+		setRelaxedPackCriteria( ( current ) => new Set( current ).add( packId ) );
 
 	// Snapshot the user's tag/site follow counts the first time all eligibility
 	// inputs are loaded. Eligibility is then evaluated against the snapshot so it
@@ -441,6 +467,9 @@ const ReaderOnboardingRsm = ( {
 							promptVerification={ promptVerification }
 							hasFollowed={ hasFollowedInInterestsStep }
 							onFollowed={ markFollowedInInterestsStep }
+							packBlogsById={ packBlogsByIdRef.current! }
+							relaxedPackCriteria={ relaxedPackCriteria }
+							onPackSubscribed={ handlePackSubscribed }
 						/>
 					) }
 					{ currentStep === 'discover' && (
