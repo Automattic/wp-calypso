@@ -42,6 +42,27 @@ export async function cancelSubscriptionFlow( page: Page ) {
 }
 
 /**
+ * Returns a locator that matches the cancellation survey's primary step button.
+ *
+ * The button's label depends on the survey step and the active experiment
+ * variant: a non-final step renders "Continue", while the final step renders
+ * "Submit" (legacy variant) or "Complete" (the split cancel/remove experiment
+ * with an `intent=cancel` deep link). Matching all three keeps the flow robust
+ * regardless of which variant is served.
+ *
+ * @param {Page} page Page object the survey is rendered on.
+ * @returns {Locator} Locator matching the survey's primary step button.
+ */
+function surveyStepButton( page: Page ): Locator {
+	// Exact matching avoids accidentally resolving to longer labels used by
+	// other survey variants (e.g. "Continue removal", "Complete removal").
+	return page
+		.getByRole( 'button', { name: 'Submit', exact: true } )
+		.or( page.getByRole( 'button', { name: 'Continue', exact: true } ) )
+		.or( page.getByRole( 'button', { name: 'Complete', exact: true } ) );
+}
+
+/**
  * Cancels a purchased Atomic site.
  */
 export async function cancelAtomicPurchaseFlow(
@@ -59,31 +80,23 @@ export async function cancelAtomicPurchaseFlow(
 		.getByRole( 'textbox', { name: 'Can you please specify?' } )
 		.fill( feedback.customReasonText );
 
-	// Submit first step - could be "Submit" or "Continue"
-	const firstButton = page
-		.getByRole( 'button', { name: 'Submit' } )
-		.or( page.getByRole( 'button', { name: 'Continue' } ) );
-	await clickWhenEnabled( firstButton );
+	// Submit the feedback step. This is not the final step, so the button is
+	// labelled "Continue", but match the other labels too to ride out variant
+	// differences.
+	await clickWhenEnabled( surveyStepButton( page ) );
 
-	// Select dropdown value to enable the next button
+	// The next (and final) step asks where the user is headed next. Selecting an
+	// answer enables the final step button.
 	await page
 		.getByRole( 'combobox', { name: 'Where is your next adventure taking you?' } )
 		.selectOption( "I'm staying here and using the free plan." );
 
-	// Submit second step - could be "Submit" or "Continue"
-	const secondButton = page
-		.getByRole( 'button', { name: 'Submit' } )
-		.or( page.getByRole( 'button', { name: 'Continue' } ) );
-	await clickWhenEnabled( secondButton );
-
-	const finalButton = page
-		.getByRole( 'button', { name: 'Submit' } )
-		.or( page.getByRole( 'button', { name: 'Continue' } ) );
-
-	// The final button renders visible but `disabled`/`is-busy` while the
-	// cancellation request is in flight, so visibility alone is not enough to
-	// click it reliably. Wait for it to become enabled first.
-	await clickWhenEnabled( finalButton );
+	// Submit the final step. The survey for a plan cancellation only has these
+	// two steps, so there is no third button to click. The final button renders
+	// visible but `disabled`/`is-busy` while the cancellation request is in
+	// flight, so visibility alone is not enough to click it reliably — wait for
+	// it to become enabled first.
+	await clickWhenEnabled( surveyStepButton( page ) );
 
 	// Confirming the cancellation does not trigger a full-page navigation: the
 	// purchases view updates in place as a single-page-app state change. The
