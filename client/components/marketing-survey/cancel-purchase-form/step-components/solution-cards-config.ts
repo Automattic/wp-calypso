@@ -21,6 +21,7 @@ export type CardActionContext = {
 	closeDialog: () => void;
 	changePlanUrl: string;
 	renewNowUrl: string;
+	yearlyPlanUrl?: string;
 	cancellationReason: string;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onSelectSwitchToMonthly?: () => void;
@@ -77,6 +78,18 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		subtitle: 'Keep things flexible with monthly billing.',
 		onClick: ( ctx ) => {
 			ctx.onSelectSwitchToMonthly?.();
+		},
+	},
+	{
+		id: 'switch-to-yearly',
+		title: 'Switch to yearly billing',
+		subtitle: 'Pay less over time by switching to an annual plan.',
+		getHref: ( ctx ) => ctx.yearlyPlanUrl,
+		onClick: ( ctx ) => {
+			if ( ctx.yearlyPlanUrl ) {
+				page( ctx.yearlyPlanUrl );
+				ctx.closeDialog();
+			}
 		},
 	},
 	{
