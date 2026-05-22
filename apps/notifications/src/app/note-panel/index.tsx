@@ -36,7 +36,7 @@ export const getNotificationTabs = () =>
 const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const notificationTabs = getNotificationTabs();
 	const { params, goTo } = useNavigator();
-	const { filterName = 'all' } = params;
+	const { filterName = 'all' } = params as { filterName?: string };
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 
 	const handleSelect = useCallback(
