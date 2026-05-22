@@ -18,7 +18,11 @@ interface AgentStudioMockState {
 }
 
 const DB_NAME = 'a4a-agent-studio-mock';
-const DB_VERSION = 1;
+// Bumped past 2 because earlier prototype branches created a v2 DB on some
+// machines; opening at v1 then threw `VersionError` and the whole mock fell
+// back to in-memory only, so outputs vanished on reload. The upgrade handler
+// is idempotent — it only creates stores that don't already exist.
+const DB_VERSION = 3;
 const PROJECTS_STORE = 'projects';
 const OUTPUTS_STORE = 'outputs';
 
