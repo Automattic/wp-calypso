@@ -45,13 +45,13 @@ function useGoalOptions(): GoalOption[] {
 		{
 			key: 'promote',
 			title: translate( 'Promote' ),
-			description: translate( 'Advertise a service, event, or cause.' ),
+			description: translate( 'Advertise a service, event, or cause to the right audience.' ),
 			icon: megaphone,
 		},
 		{
 			key: 'portfolio',
 			title: translate( 'Portfolio' ),
-			description: translate( 'Showcase work, projects, or a body of writing.' ),
+			description: translate( 'Showcase your work, projects, or creative side.' ),
 			icon: gallery,
 		},
 	];

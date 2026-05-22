@@ -198,6 +198,9 @@ body.is-home-wizard-open {
 	font-size: 12px;
 	color: #50575e;
 	line-height: 1.4;
+	// Balance the short two-line copy so a single word never orphans onto its
+	// own last line (e.g. "expertise.", "goods."). See feedback: widows & orphans.
+	text-wrap: balance;
 }
 
 .home-wizard__chips {
