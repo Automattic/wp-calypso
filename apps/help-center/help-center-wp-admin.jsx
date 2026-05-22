@@ -12,6 +12,46 @@ import './help-center.scss';
 
 const queryClient = new QueryClient();
 
+// Tracks the current wp-admin URL (pathname + search + hash) so the Help Center
+// can surface contextual "Recommended guides" per screen. Without this the
+// wp-admin Help Center has no route context and falls back to generic
+// suggestions on many screens. See DOTSUP-460. Mirrors help-center-ciab-admin.jsx.
+function useCurrentRoute() {
+	const [ route, setRoute ] = useState(
+		() => window.location.pathname + window.location.search + window.location.hash
+	);
+
+	useEffect( () => {
+		const updateRoute = () => {
+			setRoute( window.location.pathname + window.location.search + window.location.hash );
+		};
+
+		const originalPushState = window.history.pushState;
+		const originalReplaceState = window.history.replaceState;
+
+		window.history.pushState = function ( ...args ) {
+			originalPushState.apply( this, args );
+			updateRoute();
+		};
+		window.history.replaceState = function ( ...args ) {
+			originalReplaceState.apply( this, args );
+			updateRoute();
+		};
+
+		window.addEventListener( 'popstate', updateRoute );
+		window.addEventListener( 'hashchange', updateRoute );
+
+		return () => {
+			window.history.pushState = originalPushState;
+			window.history.replaceState = originalReplaceState;
+			window.removeEventListener( 'popstate', updateRoute );
+			window.removeEventListener( 'hashchange', updateRoute );
+		};
+	}, [] );
+
+	return route;
+}
+
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDataStoreDispatch( 'automattic/help-center' );
@@ -23,6 +63,7 @@ function AdminHelpCenterContent() {
 		[]
 	);
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
+	const currentRoute = useCurrentRoute();
 
 	// Check for agents-manager-masterbar first, then fall back to help-center
 	const button =
@@ -225,6 +266,7 @@ function AdminHelpCenterContent() {
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
 			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
+			currentRoute={ currentRoute }
 			{ ...botProps }
 		/>
 	);
