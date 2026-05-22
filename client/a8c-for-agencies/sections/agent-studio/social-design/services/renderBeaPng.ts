@@ -856,6 +856,13 @@ export async function renderBeaHtmlToPng(
 			pixelRatio: options.pixelRatio ?? 2,
 			cacheBust: false,
 			imagePlaceholder: TRANSPARENT_1X1,
+			// Skip font embedding entirely. Calypso serves through a different
+			// origin than the prototype, so html-to-image's font CSS fetcher
+			// throws "Invalid base URL" 40+ times per tile before giving up.
+			// We've already loaded fonts via document.fonts.add() — the tile
+			// uses them at render time even without embedded CSS.
+			skipFonts: true,
+			fontEmbedCSS: '',
 		} );
 	} finally {
 		wrapper.remove();

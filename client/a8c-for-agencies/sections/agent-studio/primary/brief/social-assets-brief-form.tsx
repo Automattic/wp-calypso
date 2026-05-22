@@ -41,6 +41,11 @@ function getFirstLine( text: string ): string {
 	);
 }
 
+// PROTOTYPE-SWAP: each uploaded image/logo is read into a base64 data URL and
+// carried through the brief payload so the prototype can rasterize tiles
+// client-side without a server round-trip. In production, swap this for a
+// `POST /a4a/media` upload and store the returned URL on the brief — same
+// pattern the One-Pager flow uses via `imageUrls`/`logoUrl`.
 function fileToSocialImage( file: File ): Promise< AgentStudioSocialImage > {
 	return new Promise( ( resolve, reject ) => {
 		const reader = new FileReader();
@@ -53,12 +58,13 @@ function fileToSocialImage( file: File ): Promise< AgentStudioSocialImage > {
 }
 
 export default function SocialAssetsBriefForm( { agent }: Props ) {
-	const [ mode, setMode ] = useState< BriefMode >( 'source' );
+	const [ mode, setMode ] = useState< BriefMode >( 'manual' );
 	const [ sourceText, setSourceText ] = useState( '' );
 	const [ headline, setHeadline ] = useState( '' );
 	const [ stat, setStat ] = useState( '' );
 	const [ statContext, setStatContext ] = useState( '' );
 	const [ logoFile, setLogoFile ] = useState< File | null >( null );
+	const [ lightLogoFile, setLightLogoFile ] = useState< File | null >( null );
 	// Captured for the brief, wired to the agent once generation is built.
 	const [ images, setImages ] = useState< File[] >( [] );
 
@@ -85,8 +91,9 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 				: getBriefExcerpt( [ stat.trim(), statContext.trim() ].filter( Boolean ).join( ' ' ) ) ||
 				  agent.role;
 
-		const [ socialLogo, socialImages ] = await Promise.all( [
+		const [ socialLogo, socialLogoLight, socialImages ] = await Promise.all( [
 			logoFile ? fileToSocialImage( logoFile ) : Promise.resolve( undefined ),
+			lightLogoFile ? fileToSocialImage( lightLogoFile ) : Promise.resolve( undefined ),
 			Promise.all( images.map( fileToSocialImage ) ),
 		] );
 
@@ -101,6 +108,7 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 			stat,
 			statContext,
 			socialLogo,
+			socialLogoLight,
 			socialImages,
 		} );
 	};
@@ -112,8 +120,8 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 					label={ __( 'Start with' ) }
 					selected={ mode }
 					options={ [
-						{ label: __( 'Source copy' ), value: 'source' },
 						{ label: __( 'Manual fields' ), value: 'manual' },
+						{ label: __( 'Source copy' ), value: 'source' },
 					] }
 					onChange={ ( value ) => setMode( value as BriefMode ) }
 				/>
@@ -171,7 +179,7 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 				<VStack spacing={ 2 }>
 					<Text weight={ 600 }>{ __( 'Logo (optional)' ) }</Text>
 					<Text variant="muted">
-						{ __( 'Add a brand logo to place into the social layouts.' ) }
+						{ __( 'Add a brand logo and an optional light logo for dark layouts.' ) }
 					</Text>
 					<HStack className="a4a-agent-studio-brief__logo-row" justify="flex-start">
 						<LogoUploadField
@@ -179,6 +187,13 @@ export default function SocialAssetsBriefForm( { agent }: Props ) {
 							file={ logoFile }
 							onChange={ setLogoFile }
 							disabled={ mutation.isPending }
+						/>
+						<LogoUploadField
+							label={ __( 'Light logo' ) }
+							file={ lightLogoFile }
+							onChange={ setLightLogoFile }
+							disabled={ mutation.isPending }
+							darkBackground
 						/>
 					</HStack>
 				</VStack>

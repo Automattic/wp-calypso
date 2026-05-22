@@ -52,6 +52,7 @@ export interface AgentStudioSocialAssets {
 	assets: AgentStudioSocialAsset[];
 	images?: AgentStudioSocialImage[];
 	logo?: AgentStudioSocialImage;
+	logoOnDark?: AgentStudioSocialImage;
 }
 
 export interface AgentStudioProjectSummary extends AgentStudioProject {
@@ -103,6 +104,8 @@ export interface CreateAgentStudioOutputInput {
 	socialImages?: AgentStudioSocialImage[];
 	/** Optional social assets: client-side brand logo data URL. */
 	socialLogo?: AgentStudioSocialImage;
+	/** Optional social assets: client-side light logo for dark backgrounds. */
+	socialLogoLight?: AgentStudioSocialImage;
 }
 
 export interface AgentStudioService {

@@ -54,8 +54,8 @@ function getBrandPackForInput( input: CreateAgentStudioOutputInput ): BrandPack 
 		...DEFAULT_SOCIAL_BRAND_PACK,
 		logoLightUrl: input.socialLogo.dataUrl,
 		logoLightFileName: input.socialLogo.fileName,
-		logoDarkUrl: input.socialLogo.dataUrl,
-		logoDarkFileName: input.socialLogo.fileName,
+		logoDarkUrl: input.socialLogoLight?.dataUrl ?? input.socialLogo.dataUrl,
+		logoDarkFileName: input.socialLogoLight?.fileName ?? input.socialLogo.fileName,
 	};
 }
 
@@ -105,6 +105,11 @@ function createAssetsForDirection( {
 export async function createSocialAssets(
 	input: CreateAgentStudioOutputInput
 ): Promise< AgentStudioSocialAssets > {
+	// PROTOTYPE-SWAP: images and logos arrive here as inline data URLs
+	// (`{ fileName, dataUrl }`) so the prototype can rasterize tiles entirely
+	// in the browser. In production these should be uploaded once via
+	// `POST /a4a/media`, stored as URLs on the project, and re-fetched here —
+	// also tagged PROTOTYPE-SWAP in `social-assets-brief-form.tsx`.
 	const images = input.socialImages ?? [];
 	const pack = getBrandPackForInput( input );
 	const sourceText = normalizeText( input.sourceText );
@@ -125,6 +130,7 @@ export async function createSocialAssets(
 		brandPackSlug: pack.slug,
 		images,
 		logo: input.socialLogo,
+		logoOnDark: input.socialLogoLight,
 		assets: assets.length
 			? assets
 			: SIZE_KEYS.map( ( sizeKey ) => ( {

@@ -214,7 +214,8 @@ export default function SocialAssetsViewer( { assets, title }: Props ) {
 			return;
 		}
 		event.preventDefault();
-		setBeaTileRenderingPaused( true );
+		// Do not pause rendering on pan — tiles should keep filling in as the
+		// user drags around the canvas.
 		dragRef.current = {
 			active: true,
 			moved: false,
@@ -383,6 +384,10 @@ function SocialAssetTile( {
 		}
 	}, [ forceRender ] );
 
+	// PROTOTYPE-SWAP: tiles are rasterized from HTML in the browser via
+	// `renderBeaTile`. In production, the wpcom service should pre-render and
+	// store each asset PNG; this effect would then simply use a server-
+	// provided URL on the asset and drop the queue + html-to-image entirely.
 	useEffect( () => {
 		if ( dataUrl || ! nearViewport || ! asset.html ) {
 			return;

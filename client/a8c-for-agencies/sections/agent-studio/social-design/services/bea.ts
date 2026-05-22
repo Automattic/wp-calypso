@@ -174,7 +174,12 @@ function titleFromSource( sourceText: string ): string {
 		.split( '\n' )
 		.map( ( line ) => line.trim().replace( /^#+\s*/, '' ) )
 		.find( Boolean );
-	return truncate( first || 'Campaign graphics', 120 );
+	// If the source text has no line breaks (e.g. pasted as one long
+	// paragraph), the "first line" is the whole paragraph. Truncating to 120
+	// still produces a title too long for every layout family, so fall back to
+	// the first sentence — closer to what a human reader would call the title.
+	const candidate = first && first.length > 90 ? firstSentence( first ) : first;
+	return truncate( candidate || 'Campaign graphics', 90 );
 }
 
 function extractStats( sourceText: string ): CampaignBrief[ 'stats' ] {
@@ -289,11 +294,21 @@ function parseJsonObject( text: string ): unknown {
 	return JSON.parse( match[ 0 ] );
 }
 
+// PROTOTYPE-SWAP: direct browser → OpenAI call using a build-time env var.
+// This is the prototype path that the radical-speed-month demo used. For
+// production this MUST be replaced by a wpcom-proxied endpoint (e.g.
+// `/a4a/agent-studio/brief` that wraps the LLM server-side with the agency's
+// API key). When you swap this:
+//   1. Replace the body of this function with a `wpcomRequest`/`apiFetch` call.
+//   2. Remove the `'https://api.openai.com'` entry from the CSP allowlist in
+//      `client/server/pages/index.js` (also tagged PROTOTYPE-SWAP).
+//   3. Drop the `process.env.VITE_OPENAI_API_KEY` reference — the proxy holds
+//      the key, the client never sees it.
 async function callJsonModel(
 	messages: Array< { role: 'system' | 'user'; content: string } >,
 	signal?: AbortSignal
 ): Promise< { value: unknown; usage?: LlmUsage } > {
-	const apiKey = undefined;
+	const apiKey = process.env.VITE_OPENAI_API_KEY;
 	if ( ! apiKey ) {
 		throw new Error( 'VITE_OPENAI_API_KEY is not set' );
 	}
@@ -350,8 +365,16 @@ function normalizeBrief( value: unknown, fallback: CampaignBrief ): CampaignBrie
 				} )
 				.filter( ( s ) => s.value )
 		: fallback.stats;
+	// The prototype always used `fallback.sourceTitle` (deterministic first-
+	// line extraction). That breaks when the source text is pasted as one long
+	// paragraph with no newlines — every layout family then rejects the brief
+	// because the title exceeds their max headlineChars. Prefer the LLM's
+	// sourceTitle when it gave us a clean short one; fall back to the
+	// deterministic extractor only if the LLM didn't return one.
+	const llmTitle = truncate( clean( obj.sourceTitle ), 90 );
+	const sourceTitle = llmTitle || fallback.sourceTitle;
 	return {
-		sourceTitle: fallback.sourceTitle,
+		sourceTitle,
 		sourceSummary: truncate( clean( obj.sourceSummary ) || fallback.sourceSummary, 220 ),
 		primaryAngle: truncate( clean( obj.primaryAngle ) || fallback.primaryAngle, 120 ),
 		alternateAngles: normalizeStringArray( obj.alternateAngles, fallback.alternateAngles, 80 ),
@@ -1197,7 +1220,11 @@ export async function generateBeaCampaign( args: {
 	let additions = checkBeaAdditions( sourceItems, directions );
 	let repetition = checkBeaRepetition( directions );
 	let repairAttempts = 0;
-	const maxRepairAttempts = 2;
+	// Was 2 in the prototype. Each repair attempt is another full LLM round-
+	// trip (~3-5s) and the first-pass brief is usually good enough for layout
+	// generation. Drop repairs to 0 for snappy UX; re-enable later if quality
+	// regresses.
+	const maxRepairAttempts = 0;
 
 	while (
 		( ! coverage.complete || ! additions.clean || ! repetition.clean ) &&

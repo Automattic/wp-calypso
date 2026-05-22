@@ -1,7 +1,8 @@
 .a4a-agent-studio-social-assets {
 	position: relative;
 	max-width: none;
-	height: 68vh;
+	height: clamp(420px, calc(100dvh - 140px), 9999px);
+	margin-block-end: 24px;
 	overflow: auto;
 	border-radius: 4px;
 	background: #050505;
@@ -232,7 +233,8 @@
 
 @media (max-width: 960px) {
 	.a4a-agent-studio-social-assets {
-		height: 64vh;
+		height: clamp(320px, calc(100dvh - 120px), 9999px);
+		margin-block-end: 16px;
 	}
 
 	.a4a-agent-studio-social-assets__canvas {

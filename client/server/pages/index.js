@@ -765,6 +765,11 @@ function setUpCSP( req, res, next ) {
 		],
 		'connect-src': [
 			"'self'",
+			// PROTOTYPE-SWAP: A4A Agent Studio social-assets agent calls OpenAI
+			// directly from the browser. Remove once the LLM call is moved
+			// behind the wpcom proxy (see
+			// `client/a8c-for-agencies/sections/agent-studio/social-design/services/bea.ts`).
+			'https://api.openai.com',
 			'https://*.wordpress.com/',
 			'wss://*.wordpress.com', // WebSocket connections (realtime API, notifications)
 			'https://*.wp.com',
