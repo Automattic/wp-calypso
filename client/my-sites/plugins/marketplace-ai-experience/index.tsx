@@ -66,8 +66,10 @@ export default function MarketplaceAIExperience(): JSX.Element {
 		[ setLooking ]
 	);
 
-	// Run all plugin hydration queries in one batch.
-	const queryConfigs = useMemo(
+	// Primary lookup: query the named catalog when the agent provided a
+	// `source`, otherwise try wp.org. Fallback (below) only fires for
+	// source-unknown picks whose wp.org lookup came back empty.
+	const primaryConfigs = useMemo(
 		() =>
 			picks.map( ( p ) =>
 				p.source === 'commercial'
@@ -76,14 +78,39 @@ export default function MarketplaceAIExperience(): JSX.Element {
 			),
 		[ picks, locale ]
 	);
-	const queries = useQueries( { queries: queryConfigs } );
+	const primaryQueries = useQueries( { queries: primaryConfigs } );
 
-	const hydrated = picks.map( ( pick, i ) => ( {
-		pick,
-		data: queries[ i ]?.data as unknown,
-		isLoading: queries[ i ]?.isLoading ?? false,
-		isError: queries[ i ]?.isError ?? false,
-	} ) );
+	const fallbackConfigs = useMemo(
+		() =>
+			picks.map( ( p, i ) => {
+				const primary = primaryQueries[ i ];
+				const needsFallback =
+					! p.source && ! primary?.isLoading && ! hasRenderableName( primary?.data );
+				return {
+					...getWPCOMPluginQueryParams( p.slug ),
+					enabled: needsFallback,
+				};
+			} ),
+		// Re-evaluate when picks change or any primary query settles.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ picks, primaryQueries.map( ( q ) => `${ q?.isLoading }:${ !! q?.data }` ).join( ',' ) ]
+	);
+	const fallbackQueries = useQueries( { queries: fallbackConfigs } );
+
+	const hydrated = picks.map( ( pick, i ) => {
+		const primary = primaryQueries[ i ];
+		const fallback = fallbackQueries[ i ];
+		const primaryData = hasRenderableName( primary?.data ) ? primary?.data : null;
+		const fallbackData = hasRenderableName( fallback?.data ) ? fallback?.data : null;
+		const data = primaryData ?? fallbackData;
+		const isLoading = !! ( primary?.isLoading || fallback?.isLoading );
+		return {
+			pick,
+			data,
+			isLoading,
+			isError: ! isLoading && ! data,
+		};
+	} );
 
 	const validPicks = hydrated.filter(
 		( h ) => h.isLoading || ( ! h.isError && hasRenderableName( h.data ) )
