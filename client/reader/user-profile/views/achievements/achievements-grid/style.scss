@@ -27,10 +27,24 @@
 		}
 	}
 
+	.achievement-card__icon-column {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		flex-shrink: 0;
+		gap: 8px;
+	}
+
 	.achievement-card__icon {
 		flex-shrink: 0;
 		height: 48px;
 		width: 48px;
+	}
+
+	.achievement-card__labels {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.achievement-card__details {
@@ -56,16 +70,27 @@
 	}
 
 	.achievement-card__label {
-		background: var( --studio-gray-5 );
 		border-radius: 4px;
-		color: var( --studio-gray-60 );
-		display: inline-block;
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 1.2;
-		margin-inline-start: 8px;
 		padding: 2px 4px;
-		vertical-align: text-bottom;
+		text-align: center;
+
+		&.is-secret {
+			background: var( --studio-purple-10 );
+			color: var( --studio-purple-70 );
+		}
+
+		&.is-retired {
+			background: var( --studio-gray-10 );
+			color: var( --studio-gray-70 );
+		}
+
+		&.is-a8c-only {
+			background: #3499cd;
+			color: var( --studio-white );
+		}
 	}
 
 	.achievement-card__description {

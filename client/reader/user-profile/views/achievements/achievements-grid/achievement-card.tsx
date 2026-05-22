@@ -44,6 +44,7 @@ export default function AchievementCard( {
 }: AchievementCardProps ) {
 	const translate = useTranslate();
 	const showLockIcon = locked || secret;
+	const hasLabels = !! ( isSecret || isRetired || isA8cOnly );
 	const rootClass = clsx( 'achievement-card', className, {
 		'is-locked': locked,
 		'is-secret': secret,
@@ -65,18 +66,28 @@ export default function AchievementCard( {
 
 	return (
 		<div className={ rootClass }>
-			{ renderIcon() }
+			<div className="achievement-card__icon-column">
+				{ renderIcon() }
+				{ hasLabels && (
+					<div className="achievement-card__labels">
+						{ isSecret && (
+							<span className="achievement-card__label is-secret">{ translate( 'Secret' ) }</span>
+						) }
+						{ isRetired && (
+							<span className="achievement-card__label is-retired">{ translate( 'Retired' ) }</span>
+						) }
+						{ isA8cOnly && (
+							<span className="achievement-card__label is-a8c-only">
+								{ translate( 'A8C-only' ) }
+							</span>
+						) }
+					</div>
+				) }
+			</div>
 			<div className="achievement-card__details">
 				<h3 className="achievement-card__title">
 					{ title }
 					{ badge && <span className="achievement-card__badge">{ badge }</span> }
-					{ isSecret && <span className="achievement-card__label">{ translate( 'Secret' ) }</span> }
-					{ isRetired && (
-						<span className="achievement-card__label">{ translate( 'Retired' ) }</span>
-					) }
-					{ isA8cOnly && (
-						<span className="achievement-card__label">{ translate( 'A8C-only' ) }</span>
-					) }
 				</h3>
 				{ description && <p className="achievement-card__description">{ description }</p> }
 				{ caption && <p className="achievement-card__caption">{ caption }</p> }
