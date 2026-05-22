@@ -2710,6 +2710,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@wordpress/url": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
     i18n-calypso: "workspace:^"
     social-logos: "npm:^3.1.18"
     typescript: "npm:^5.8.3"
