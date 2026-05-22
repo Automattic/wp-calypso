@@ -4,7 +4,6 @@
 // so the dock survives navigation between marketplace sub-routes.
 
 import { isEnabled } from '@automattic/calypso-config';
-import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useEffect, useState } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -15,7 +14,6 @@ import {
 } from 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store';
 import { useStore } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -56,11 +54,9 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const canInstallPlugins = useSelector( ( state ) =>
-		selectedSiteId ? siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PLUGINS ) : false
-	);
 
-	const gatesPassed = !! selectedSite && canInstallPlugins;
+	// AM supports site-less mode; install actions defer to ManageSites.
+	const gatesPassed = !! user;
 
 	const [ ready, setReady ] = useState( cachedProvider !== null );
 
@@ -105,7 +101,7 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 		};
 	}, [ gatesPassed, store ] );
 
-	if ( ! gatesPassed || ! ready || ! selectedSite ) {
+	if ( ! gatesPassed || ! ready ) {
 		return null;
 	}
 
@@ -116,8 +112,8 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 			agentId={ PLUGIN_COMPASS_AGENT_ID }
 			currentUser={ user }
 			sectionName="plugins"
-			site={ selectedSite }
-			currentSiteId={ selectedSite.ID }
+			site={ selectedSite ?? null }
+			currentSiteId={ selectedSite?.ID }
 		/>
 	);
 }
