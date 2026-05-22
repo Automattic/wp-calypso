@@ -515,14 +515,6 @@ export const technologyBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 26989950,
-			site_ID: 11877131,
-			site_URL: 'https://www.southernfriedscience.com',
-			site_name: 'Southern Fried Science',
-			feed_URL: 'http://www.southernfriedscience.com/?feed=rss2',
-			has_icon: true,
-		},
-		{
 			feed_ID: 266650,
 			site_ID: 4146307,
 			site_URL: 'http://grokscience.wordpress.com',
