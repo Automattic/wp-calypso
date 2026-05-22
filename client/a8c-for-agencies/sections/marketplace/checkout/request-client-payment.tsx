@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { customLink, Icon, send, warning } from '@wordpress/icons';
+import { customLink, Icon, send, cautionFilled as warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';

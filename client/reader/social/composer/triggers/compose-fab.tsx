@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { edit } from '@wordpress/icons';
+import { pencil as edit } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useComposer } from '../composer-provider';
