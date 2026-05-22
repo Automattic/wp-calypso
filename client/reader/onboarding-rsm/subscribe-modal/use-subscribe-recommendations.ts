@@ -444,15 +444,21 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		if ( combinedRecommendations.length === 0 ) {
 			return;
 		}
-		const newlyValidated: CardData[] = [];
+		// Candidates whose feed/site metadata has loaded successfully this run.
+		// De-dup against existing `pinnedSites` is intentionally deferred to the
+		// `setPinnedSites` functional updater below. This prevents a race where
+		// multiple renders (triggered by the 18+ concurrent feed queries resolving)
+		// each compute `newlyValidated` from the same stale closure-captured
+		// `pinnedSites` and then queue duplicate appends before any single update
+		// is committed. By checking inside `prev => ...`, every queued call sees
+		// the actual latest state and correctly skips already-pinned items.
+		const candidatesToPin: CardData[] = [];
 		const newlyRejected: number[] = [];
-		// Local dedup set — seeded from pinned state and mutated as we add to
-		// `newlyValidated` so a duplicate within the same loop iteration is
-		// only pinned once. Cheap to rebuild each run (≤18 entries) and avoids
-		// the dual source of truth a parallel `useRef< Set >` would create.
-		const alreadyPinned = new Set( pinnedSites.map( ( s ) => s.feed_ID ) );
+		// Dedup within this single run to guard against any duplicates in the
+		// `combinedRecommendations` list itself.
+		const seenInThisRun = new Set< number >();
 		for ( const site of combinedRecommendations ) {
-			if ( alreadyPinned.has( site.feed_ID ) ) {
+			if ( seenInThisRun.has( site.feed_ID ) ) {
 				continue;
 			}
 			if ( rejectedFeedIds.has( site.feed_ID ) ) {
@@ -485,11 +491,15 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 					continue;
 				}
 			}
-			alreadyPinned.add( site.feed_ID );
-			newlyValidated.push( site );
+			seenInThisRun.add( site.feed_ID );
+			candidatesToPin.push( site );
 		}
-		if ( newlyValidated.length > 0 ) {
-			setPinnedSites( ( prev ) => [ ...prev, ...newlyValidated ] );
+		if ( candidatesToPin.length > 0 ) {
+			setPinnedSites( ( prev ) => {
+				const alreadyPinned = new Set( prev.map( ( s ) => s.feed_ID ) );
+				const trulyNew = candidatesToPin.filter( ( s ) => ! alreadyPinned.has( s.feed_ID ) );
+				return trulyNew.length > 0 ? [ ...prev, ...trulyNew ] : prev;
+			} );
 		}
 		if ( newlyRejected.length > 0 ) {
 			setRejectedFeedIds( ( prev ) => {
@@ -500,7 +510,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				return next;
 			} );
 		}
-	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds, pinnedSites ] );
+	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds ] );
 
 	const recommendations = pinnedSites;
 
