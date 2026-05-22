@@ -313,7 +313,7 @@ export default function SolutionsCardsUpsellStep( {
 				break;
 			case 'speak-with-support': {
 				const initialMessage =
-					'User is contacting us from pre-cancellation form. Cancellation reason they’ve given: ' +
+					"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 					cancellationReason;
 				if ( canConnectToZendeskMessaging ) {
 					setNewMessagingChat( {

@@ -99,7 +99,7 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 		expect( mockSetNewMessagingChat ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				siteUrl: 'https://example.wordpress.com',
-				siteId: 456,
+				siteId: '456',
 			} )
 		);
 		expect( mockSetNavigateToRoute ).not.toHaveBeenCalledWith( '/odie' );
@@ -131,7 +131,7 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 			expect.objectContaining( {
 				initialMessage: expect.stringContaining( 'Cancellation reason' ),
 				siteUrl: 'https://example.wordpress.com',
-				siteId: 456,
+				siteId: '456',
 			} )
 		);
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();

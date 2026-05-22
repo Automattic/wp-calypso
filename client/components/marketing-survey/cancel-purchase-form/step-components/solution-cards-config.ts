@@ -27,13 +27,13 @@ export type CardActionContext = {
 		initialMessage: string;
 		section?: string;
 		siteUrl?: string;
-		siteId?: number;
+		siteId?: string;
 	} ) => void;
 	setOpenOdieWithContext: ( config: {
 		initialMessage: string;
 		section?: string;
 		siteUrl?: string;
-		siteId?: number;
+		siteId?: string;
 	} ) => void;
 };
 
@@ -81,22 +81,22 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	{
 		id: 'speak-with-support',
 		title: 'Speak with our support team',
-		subtitle: 'We’re here to answer any of your questions.',
+		subtitle: "We're here to answer any of your questions.",
 		onClick: ( ctx ) => {
 			const initialMessage =
-				'User is contacting us from pre-cancellation form. Cancellation reason they’ve given: ' +
+				"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 				ctx.cancellationReason;
 			if ( ctx.canConnectToZendeskMessaging ) {
 				ctx.setNewMessagingChat( {
 					initialMessage,
 					siteUrl: ctx.site.URL,
-					siteId: ctx.site.ID,
+					siteId: String( ctx.site.ID ),
 				} );
 			} else {
 				ctx.setOpenOdieWithContext( {
 					initialMessage,
 					siteUrl: ctx.site.URL,
-					siteId: ctx.site.ID,
+					siteId: String( ctx.site.ID ),
 				} );
 			}
 		},
@@ -121,7 +121,7 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 					ctx.cancellationReason,
 				section: 'pre-cancellation-upsell',
 				siteUrl: ctx.site.URL,
-				siteId: ctx.site.ID,
+				siteId: String( ctx.site.ID ),
 			} );
 			ctx.closeDialog();
 		},
