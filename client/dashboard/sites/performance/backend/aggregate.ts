@@ -77,23 +77,43 @@ const EMPTY_SUMMARY: ApmSummary = {
 	plugins_avg_ms: 0,
 };
 
-function bucketsToTimePoints( buckets: ApmAggregateBucket[] ): ApmTimePoint[] {
-	// API returns newest-first; chart expects chronological order.
-	return buckets
-		.slice()
-		.reverse()
-		.map( ( bucket ) => {
-			const { bucket_minute, transactions, breakdown_ms } = bucket.extra;
-			const count = Math.max( transactions.count, 1 );
-			return {
-				timestamp: new Date( bucket_minute ).getTime(),
-				db: breakdown_ms.db.self_sum / count,
-				wp_core: breakdown_ms.wp_core.self_sum / count,
-				plugins: breakdown_ms.plugins.self_sum / count,
-				external: breakdown_ms.external.self_sum / count,
-				cache: breakdown_ms.cache.self_sum / count,
-			};
-		} );
+const ZERO_BREAKDOWN = { db: 0, wp_core: 0, plugins: 0, external: 0, cache: 0 } as const;
+
+function bucketToTimePoint( bucket: ApmAggregateBucket ): ApmTimePoint {
+	const { bucket_minute, transactions, breakdown_ms } = bucket.extra;
+	const count = Math.max( transactions.count, 1 );
+	return {
+		timestamp: new Date( bucket_minute ).getTime(),
+		db: breakdown_ms.db.self_sum / count,
+		wp_core: breakdown_ms.wp_core.self_sum / count,
+		plugins: breakdown_ms.plugins.self_sum / count,
+		external: breakdown_ms.external.self_sum / count,
+		cache: breakdown_ms.cache.self_sum / count,
+	};
+}
+
+function bucketsToTimePoints( buckets: ApmAggregateBucket[], windowSec: number ): ApmTimePoint[] {
+	// Fill the whole window with zero-valued time points, then overwrite the
+	// minutes we actually have data for. This keeps the chart from showing
+	// gaps for minutes with no traffic, which would otherwise read as
+	// "missing data" rather than "no traffic". Chart expects chronological
+	// order, so we walk from the oldest minute forward.
+	const endMinSec = Math.floor( Date.now() / 1000 );
+	const endMin = endMinSec - ( endMinSec % 60 );
+	const startMin = endMin - windowSec;
+
+	const realByMin = new Map< number, ApmTimePoint >();
+	for ( const bucket of buckets ) {
+		const point = bucketToTimePoint( bucket );
+		realByMin.set( Math.floor( point.timestamp / 1000 ), point );
+	}
+
+	const points: ApmTimePoint[] = [];
+	for ( let sec = startMin; sec <= endMin; sec += 60 ) {
+		const real = realByMin.get( sec );
+		points.push( real ?? { timestamp: sec * 1000, ...ZERO_BREAKDOWN } );
+	}
+	return points;
 }
 
 function mergeRoutes( buckets: ApmAggregateBucket[] ): MergedRoute[] {
@@ -277,10 +297,13 @@ function summarize( buckets: ApmAggregateBucket[] ): ApmSummary {
 	};
 }
 
-export function mergeAggregates( aggregates: ApmAggregateBucket[] ): MergedAggregate {
+export function mergeAggregates(
+	aggregates: ApmAggregateBucket[],
+	windowSec: number
+): MergedAggregate {
 	return {
 		summary: summarize( aggregates ),
-		timeseries: bucketsToTimePoints( aggregates ),
+		timeseries: bucketsToTimePoints( aggregates, windowSec ),
 		slowest: {
 			routes: mergeRoutes( aggregates ),
 			db_queries: mergeDbQueries( aggregates ),

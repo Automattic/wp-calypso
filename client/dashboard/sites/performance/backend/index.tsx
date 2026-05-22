@@ -73,14 +73,18 @@ function ApmDashboard( {
 	const siteSlug = site.slug;
 	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const apmEnabled = !! site.options?.apm_enabled;
+	const windowSec = TIMEFRAME_SECONDS[ timeframe ];
 	const { data } = useSuspenseQuery( {
-		...siteApmAggregateRollingQuery( site.ID, TIMEFRAME_SECONDS[ timeframe ] ),
+		...siteApmAggregateRollingQuery( site.ID, windowSec ),
 		// Only poll while capturing is on. When it's off there's no new data to
 		// fetch, so polling would just be background noise.
 		refetchInterval: apmEnabled ? APM_POLL_INTERVAL_MS : false,
 		refetchIntervalInBackground: false,
 	} );
-	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
+	const merged = useMemo(
+		() => mergeAggregates( data.aggregates, windowSec ),
+		[ data.aggregates, windowSec ]
+	);
 	const { summary } = merged;
 
 	const isRollingWindow = isRollingTimeframe( timeframe );
