@@ -4,6 +4,7 @@ import { Button } from '@wordpress/ui';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePost } from 'calypso/state/posts/actions/save-post';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './wizard-state';
 import type { SelectedTask } from './select-tasks';
@@ -46,6 +47,9 @@ export default function FirstPostTaskCta( { task }: Props ) {
 	const dispatch = useDispatch();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
+	const siteAdminUrl = useSelector( ( state: AppState ) =>
+		siteId ? getSiteAdminUrl( state, siteId ) : null
+	);
 	const draft =
 		(
 			useSelector( ( state: AppState ) =>
@@ -60,6 +64,30 @@ export default function FirstPostTaskCta( { task }: Props ) {
 		Array.isArray( draft.paragraphs ) &&
 		draft.paragraphs.length > 0;
 
+	// For the publish-first-post task, open the editor at its real wpcom URL
+	// with the `#publish-first-post` hash (+ `origin`) so the wpcom-block-editor
+	// "Well done publishing your first post!" snackbar fires after the user
+	// publishes — its "Next steps" action links back to /home (Site Setup).
+	// Calypso's /post route redirects via window.location.replace and drops the
+	// hash, so we navigate to the editor URL directly. Other creation tasks
+	// (portfolio / newsletter) keep the standard in-Calypso navigation; the
+	// editor feature self-gates on post type === 'post' anyway.
+	const navigateToEditor = ( postId?: number ) => {
+		if ( task.id === 'publish-first-post' && siteAdminUrl ) {
+			const origin = encodeURIComponent( window.location.origin );
+			const editor = postId
+				? `${ siteAdminUrl }post.php?post=${ postId }&action=edit`
+				: `${ siteAdminUrl }post-new.php?post_type=post`;
+			window.location.href = `${ editor }&origin=${ origin }#publish-first-post`;
+			return;
+		}
+		if ( postId ) {
+			page( `/post/${ siteSlug }/${ postId }` );
+			return;
+		}
+		page( task.resolvedUrl );
+	};
+
 	// No draft yet (or no site) → behave like the default CTA: a plain
 	// client-side navigation to a blank editor. Uses onClick + page() rather
 	// than `render={ <a> }` because Calypso's global anchor styles override
@@ -67,7 +95,7 @@ export default function FirstPostTaskCta( { task }: Props ) {
 	// near-invisible when rendered as an <a>.
 	if ( ! hasUsableDraft || ! siteId ) {
 		return (
-			<Button variant="solid" tone="brand" onClick={ () => page( task.resolvedUrl ) }>
+			<Button variant="solid" tone="brand" onClick={ () => navigateToEditor() }>
 				{ task.cta }
 			</Button>
 		);
@@ -90,14 +118,14 @@ export default function FirstPostTaskCta( { task }: Props ) {
 				// typings don't propagate that fully, so cast the await result.
 			) ) as unknown as { ID?: number };
 			if ( savedPost?.ID ) {
-				page( `/post/${ siteSlug }/${ savedPost.ID }` );
+				navigateToEditor( savedPost.ID );
 				return;
 			}
 			// API returned no ID — drop to a blank editor so the user isn't stranded.
-			page( task.resolvedUrl );
+			navigateToEditor();
 		} catch ( error ) {
 			window.console?.warn?.( '[Launchpad] failed to create starter draft:', error );
-			page( task.resolvedUrl );
+			navigateToEditor();
 		} finally {
 			setIsCreating( false );
 		}

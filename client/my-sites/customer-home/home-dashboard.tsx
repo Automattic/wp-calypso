@@ -15,7 +15,7 @@ import SitePreview from 'calypso/dashboard/sites/site-preview';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -444,6 +444,13 @@ function useHomeWizard() {
 	const completedSites = useSelector( ( state: AppState ) =>
 		getPreference( state, HOME_WIZARD_COMPLETED_SITES_PREF )
 	) as number[] | null;
+	// Don't decide the wizard's open state until remote preferences have
+	// actually loaded. On a fresh page load (e.g. returning to /home from the
+	// editor via the post-publish "Next steps" link) preferences are still
+	// fetching, so `completedSites` is null and the site looks "not completed"
+	// — which would flash the wizard open over the launchpad the user came
+	// back to see. Gating on this keeps the wizard closed until we KNOW.
+	const prefsLoaded = useSelector( hasReceivedRemotePreferences );
 	const forced =
 		typeof window !== 'undefined' &&
 		new URLSearchParams( window.location.search ).get( 'wizard' ) === 'force';
@@ -451,21 +458,24 @@ function useHomeWizard() {
 	const completedForSite =
 		siteId !== null && Array.isArray( completedSites ) && completedSites.includes( siteId );
 
+	// Auto-open only once prefs are known and this site genuinely hasn't done
+	// the wizard. `forced` (?wizard=force) always opens, regardless.
+	const shouldAutoOpen = forced || ( prefsLoaded && ! completedForSite );
+
 	// Local state owns the open/close lifecycle so Skip / Finish close the
 	// wizard synchronously, even if the savePreference dispatch hasn't yet
 	// round-tripped through redux.
-	const [ isOpen, setIsOpen ] = useState< boolean >( forced || ! completedForSite );
+	const [ isOpen, setIsOpen ] = useState< boolean >( shouldAutoOpen );
 	const touched = useRef( false );
 
 	// While the user hasn't interacted yet, keep the open state in sync with
-	// the latest "completed for this site" check (preferences finish loading,
-	// site selection changes, etc.).
+	// the latest check (preferences finish loading, site selection changes).
 	useEffect( () => {
 		if ( touched.current ) {
 			return;
 		}
-		setIsOpen( forced || ! completedForSite );
-	}, [ forced, completedForSite ] );
+		setIsOpen( shouldAutoOpen );
+	}, [ shouldAutoOpen ] );
 
 	const open = () => {
 		touched.current = true;
