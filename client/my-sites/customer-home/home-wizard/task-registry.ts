@@ -61,6 +61,20 @@ export type TaskTemplate = {
 	url: ( slug: string ) => `/${ string }`;
 	cta: string;
 
+	/**
+	 * Marks this as a "pattern" task: instead of navigating to `url`, the CTA
+	 * builds a real wpcom *page* from a WordPress.com block pattern (sourced
+	 * from the `category` PTK slug), with its copy rewritten by Dolly to fit
+	 * the site, and opens it in the editor. `url` stays as the fallback if the
+	 * page can't be created. See `draft-pattern-page.ts`.
+	 */
+	pattern?: {
+		/** PTK category slug to source the pattern from (e.g. `gallery`). */
+		category: string;
+		/** Title for the created page. */
+		pageTitle: string;
+	};
+
 	/** Used to detect "done" without round-tripping the server. */
 	completesOn?: ActivationSignal;
 };
@@ -202,7 +216,13 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		subtitle: 'Take appointments, sessions, or class signups directly on your site.',
 		category: 'feature-setup',
 		features: [ 'bookings' ],
-		url: ( s ) => `/woocommerce-installation/${ s }`,
+		// Builds an Events page from a dotcompatterns "events" pattern with
+		// Dolly-rewritten copy — a text-rich pattern, so the personalization is
+		// clearly visible (unlike the image-led gallery). Note: this creates an
+		// events/booking *landing page*, not real scheduling/availability — see
+		// todo #10. `url` is the fallback if the page can't be created.
+		pattern: { category: 'events', pageTitle: 'Events' },
+		url: ( s ) => `/page/${ s }`,
 		cta: 'Set up bookings',
 	},
 	{
@@ -211,7 +231,11 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		subtitle: 'Show your work in a full-bleed image gallery.',
 		category: 'feature-setup',
 		features: [ 'gallery' ],
-		url: ( s ) => `/page/${ s }?gallery=1`,
+		// Builds a real Gallery page from a dotcompatterns gallery pattern with
+		// Dolly-rewritten copy (the images stay as the user's own to add). The
+		// `url` is the fallback if the page can't be created on click.
+		pattern: { category: 'gallery', pageTitle: 'Gallery' },
+		url: ( s ) => `/page/${ s }`,
 		cta: 'Add gallery',
 	},
 	{

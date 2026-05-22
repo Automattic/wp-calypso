@@ -4,6 +4,7 @@ import { Card, CollapsibleCard, Stack, Text, Button, Icon } from '@wordpress/ui'
 import { useTranslate } from 'i18n-calypso';
 import FirstPostTaskCta from './first-post-task-item';
 import LaunchTaskCta from './launch-task-item';
+import PatternPageTaskCta from './pattern-page-task-item';
 import ThemePickerTaskItem from './theme-picker-task-item';
 import type { SelectedTask } from './select-tasks';
 
@@ -57,6 +58,9 @@ function TaskCta( { task }: { task: SelectedTask } ) {
 	}
 	if ( FIRST_CREATION_TASK_IDS.includes( task.id ) ) {
 		return <FirstPostTaskCta task={ task } />;
+	}
+	if ( task.pattern ) {
+		return <PatternPageTaskCta task={ task } />;
 	}
 	// Use onClick + page() instead of `render={ <a> }` — Calypso's global
 	// anchor styles override the @wordpress/ui Button's brand-tone background

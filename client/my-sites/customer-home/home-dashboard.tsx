@@ -21,6 +21,7 @@ import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
+import { draftPatternPage, type PatternPage } from './home-wizard/draft-pattern-page';
 import { buildPickThemeSubtitle } from './home-wizard/recommend-themes';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
 import { prewarmTailorAndDraft, tailorAndDraftFromIntent } from './home-wizard/tailor-launchpad';
@@ -574,6 +575,50 @@ function useTailoredFlow() {
 		} );
 	};
 
+	// Read-modify-write for one pattern page, keyed by category. Reads the
+	// latest patternPages at resolve time so two pre-warms (e.g. gallery +
+	// contact) each merge in without clobbering the other.
+	const cachePatternPage = ( category: string, patternPage: PatternPage ) => {
+		dispatch( ( innerDispatch, getState ) => {
+			const current =
+				( getPreference( getState(), HOME_WIZARD_STATE_PREF ) as HomeWizardState | null ) ?? {};
+			innerDispatch(
+				savePreference( HOME_WIZARD_STATE_PREF, {
+					...current,
+					patternPages: { ...( current.patternPages ?? {} ), [ category ]: patternPage },
+				} )
+			);
+		} );
+	};
+
+	// After tailoring lands, build any pattern-backed tasks Dolly picked (e.g.
+	// setup-gallery) in the background and cache the populated markup, so the
+	// task's CTA can create the page instantly on click. A miss just means the
+	// CTA fetches the raw pattern on click instead — fire-and-forget.
+	const prewarmPatternPages = ( taskIds: string[], intent: string, siteName: string ) => {
+		const seen = new Set< string >();
+		for ( const id of taskIds ) {
+			const template = TASK_REGISTRY.find( ( t ) => t.id === id );
+			if ( ! template?.pattern || seen.has( template.pattern.category ) ) {
+				continue;
+			}
+			seen.add( template.pattern.category );
+			const { category, pageTitle } = template.pattern;
+			draftPatternPage(
+				{ category, pageTitle, intent, siteName: siteName || undefined },
+				{ siteId: siteId ?? undefined }
+			)
+				.then( ( patternPage ) => cachePatternPage( category, patternPage ) )
+				.catch(
+					( error ) =>
+						window.console?.warn?.(
+							`[Launchpad] prewarm pattern page (${ category }) failed:`,
+							error
+						)
+				);
+		}
+	};
+
 	const runFromAnswers = ( answers: WizardAnswers ) => {
 		if ( ! answers.goal ) {
 			return;
@@ -653,6 +698,7 @@ function useTailoredFlow() {
 					patch.taskIds = result.task_ids;
 				}
 				mergeWizardState( patch );
+				prewarmPatternPages( result.task_ids, composed, trimmedName );
 			} )
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );

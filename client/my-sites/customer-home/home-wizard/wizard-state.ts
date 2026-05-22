@@ -1,4 +1,5 @@
 import type { FirstPostDraft } from './draft-first-post';
+import type { PatternPage } from './draft-pattern-page';
 import type { InferredContext } from './tailor-launchpad';
 import type { GoalKey } from './types';
 
@@ -42,4 +43,11 @@ export type HomeWizardState = {
 	// otherwise a new site would inherit a previous site's pick.
 	pickedThemeSlug?: string;
 	pickedThemeSiteId?: number;
+	// Pre-warmed pattern pages, keyed by PTK category (e.g. `gallery`). When the
+	// wizard finishes and Dolly picks a pattern-backed task, we build the page
+	// markup in the background (`draftPatternPage`) and cache it here, so the
+	// task's CTA can create a real page instantly on click. Absent if the
+	// pre-warm hadn't finished or errored — the CTA then fetches the pattern's
+	// own (un-rewritten) markup on click instead.
+	patternPages?: Record< string, PatternPage >;
 };
