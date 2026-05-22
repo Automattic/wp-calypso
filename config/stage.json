@@ -118,7 +118,7 @@
 		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
 		"page/export": true,
-		"performance/apm": false,
+		"performance/apm": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
