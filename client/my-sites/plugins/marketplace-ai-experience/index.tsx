@@ -67,7 +67,7 @@ export default function MarketplaceAIExperience(): JSX.Element {
 	);
 
 	// Primary lookup: query the named catalog when the agent provided a
-	// `source`, otherwise try wp.org. Fallback (below) only fires for
+	// `source`, otherwise try wp.org. Fallback below only fires for
 	// source-unknown picks whose wp.org lookup came back empty.
 	const primaryConfigs = useMemo(
 		() =>
@@ -80,21 +80,17 @@ export default function MarketplaceAIExperience(): JSX.Element {
 	);
 	const primaryQueries = useQueries( { queries: primaryConfigs } );
 
-	const fallbackConfigs = useMemo(
-		() =>
-			picks.map( ( p, i ) => {
-				const primary = primaryQueries[ i ];
-				const needsFallback =
-					! p.source && ! primary?.isLoading && ! hasRenderableName( primary?.data );
-				return {
-					...getWPCOMPluginQueryParams( p.slug ),
-					enabled: needsFallback,
-				};
-			} ),
-		// Re-evaluate when picks change or any primary query settles.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ picks, primaryQueries.map( ( q ) => `${ q?.isLoading }:${ !! q?.data }` ).join( ',' ) ]
+	// Per-pick: did the source-unknown wp.org primary come back empty?
+	// When true the fallback wpcom query enables itself; when false the
+	// fallback stays disabled and never fires.
+	const needsFallback = primaryQueries.map(
+		( q, i ) => ! picks[ i ]?.source && ! q?.isLoading && ! hasRenderableName( q?.data )
 	);
+
+	const fallbackConfigs = picks.map( ( p, i ) => ( {
+		...getWPCOMPluginQueryParams( p.slug ),
+		enabled: needsFallback[ i ],
+	} ) );
 	const fallbackQueries = useQueries( { queries: fallbackConfigs } );
 
 	const hydrated = picks.map( ( pick, i ) => {

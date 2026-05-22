@@ -252,6 +252,7 @@ PluginsBrowserList.propTypes = {
 	extended: PropTypes.bool,
 	useCarousel: PropTypes.bool,
 	carouselPageSize: PropTypes.number,
+	afterHeader: PropTypes.node,
 };
 
 export default PluginsBrowserList;

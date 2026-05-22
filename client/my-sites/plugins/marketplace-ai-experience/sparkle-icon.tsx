@@ -20,5 +20,3 @@ export const sparkleFilled = (
 		<Path d={ OUTER_SUBPATH } fill="currentColor" />
 	</SVG>
 );
-
-export default sparkle;

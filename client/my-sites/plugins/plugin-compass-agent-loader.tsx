@@ -14,11 +14,7 @@ import {
 } from 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store';
 import { useStore } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Suggestion } from '@automattic/agenttic-ui';
 
 const importAgentsManager = () =>
@@ -53,7 +49,6 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 	const store = useStore();
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	// AM supports site-less mode; install actions defer to ManageSites.
 	const gatesPassed = !! user;
@@ -66,7 +61,7 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 	// rendering under site B. Clear on every site change.
 	useEffect( () => {
 		setPicks( [] );
-	}, [ selectedSiteId ] );
+	}, [ selectedSite?.ID ] );
 
 	useEffect( () => {
 		if ( ! gatesPassed ) {
