@@ -246,6 +246,7 @@ function ReaderSubscriptionListItem( {
 					followSource={ followSource }
 					feedId={ feedId }
 					siteId={ siteId }
+					siteTitle={ siteTitle }
 					railcar={ railcar }
 					onFollowToggle={ onFollowToggle }
 				/>

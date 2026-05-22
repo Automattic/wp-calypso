@@ -23,6 +23,7 @@ interface ReaderFollowButtonProps {
 	onFollowToggle?: ( isFollowing: boolean ) => void;
 	railcar?: Railcar;
 	siteId?: number;
+	siteTitle?: string;
 	siteUrl: string;
 }
 

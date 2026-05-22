@@ -13,6 +13,7 @@ interface FollowButtonContainerProps {
 	siteUrl: string;
 	feedId?: number;
 	siteId?: number;
+	siteTitle?: string;
 	iconSize?: number;
 	tagName?: string;
 	disabled?: boolean;
@@ -69,7 +70,9 @@ function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element
 		}
 
 		if ( followingSite ) {
-			dispatch( follow( props.siteUrl, followData, null ) );
+			dispatch(
+				follow( props.siteUrl, followData, props.siteTitle ? { siteTitle: props.siteTitle } : null )
+			);
 		} else {
 			dispatch( unfollow( props.siteUrl ) );
 		}

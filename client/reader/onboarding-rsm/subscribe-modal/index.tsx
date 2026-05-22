@@ -63,19 +63,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		markSessionFollow,
 	} = useSubscribeRecommendations();
 
-	// Notify the hook when the user follows a feed inside the modal so a
-	// pinned card stays visible (showing "Subscribed") even after the follows
-	// slice excludes it, while pinned cards that turn out to be pre-existing
-	// follows can still be pruned in the background.
-	const handleFollowToggle = useCallback(
-		( feedId: number, isFollowing: boolean ) => {
-			if ( isFollowing ) {
-				markSessionFollow( feedId );
-			}
-		},
-		[ markSessionFollow ]
-	);
-
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const selectedFeed = useSelector( ( state: object ) =>
@@ -101,6 +88,19 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const recommendationIdsKey = recommendations.map( ( s ) => s.feed_ID ).join( ',' );
 	const recommendationsRef = useRef( recommendations );
 	recommendationsRef.current = recommendations;
+
+	// Notify the hook when the user follows a feed inside the modal so a
+	// pinned card stays visible (showing "Subscribed") even after the follows
+	// slice excludes it, while pinned cards that turn out to be pre-existing
+	// follows can still be pruned in the background.
+	const handleFollowToggle = useCallback(
+		( feedId: number, isFollowing: boolean ) => {
+			if ( isFollowing ) {
+				markSessionFollow( feedId );
+			}
+		},
+		[ markSessionFollow ]
+	);
 
 	// Tracks which feeds we've already kicked off a stream prefetch for. `requestPage` forces a
 	// network fetch (staleTime=0 in the thunk), so re-dispatching it for the same feed every time
@@ -256,6 +256,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
+												siteTitle={ selectedSite.site_name }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
 												onFollowToggle={ ( isFollowing: boolean ) =>
