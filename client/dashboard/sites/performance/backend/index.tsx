@@ -55,10 +55,10 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-// Poll the APM aggregate twice per minute while capturing is on. Buckets are
-// per-minute and ingestion lags ~30s, so half-minute polling gives a steady
-// stream of updates without thrashing the API.
-const APM_POLL_INTERVAL_MS = 30_000;
+// Poll the APM aggregate every 10s while capturing is on. Each poll only
+// fetches the delta from the latest cached bucket (see
+// `siteApmAggregateRollingQuery`), so polling this frequently stays cheap.
+const APM_POLL_INTERVAL_MS = 10_000;
 
 function ApmDashboard( {
 	site,
