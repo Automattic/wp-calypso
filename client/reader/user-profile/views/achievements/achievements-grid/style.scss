@@ -37,8 +37,8 @@
 
 	.achievement-card__icon {
 		flex-shrink: 0;
-		height: 48px;
-		width: 48px;
+		height: 60px;
+		width: 60px;
 	}
 
 	.achievement-card__labels {
@@ -175,9 +175,9 @@
 		border-radius: 50%;
 		color: var( --studio-gray-40 );
 		display: flex;
-		height: 48px;
+		height: 60px;
 		justify-content: center;
-		width: 48px;
+		width: 60px;
 
 		svg,
 		path {
