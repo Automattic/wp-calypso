@@ -50,7 +50,7 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 				onClose();
 			},
 			onError: ( err ) => {
-				let errorMessage = __( 'Failed to add security key. Please try again.' );
+				let errorMessage: string = __( 'Failed to add security key. Please try again.' );
 
 				// Handle WebAuthn specific errors with user-friendly messages
 				if ( err instanceof Error ) {
