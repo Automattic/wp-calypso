@@ -288,15 +288,20 @@ function renderError( {
 		case 'invalid_credentials':
 			return (
 				<EmptyContent
-					title={ translate( 'Reconnect needed' ) }
-					line={ translate( 'Your Bluesky connection needs to be reconnected. Coming soon.' ) }
+					title={ translate( "Couldn't load thread" ) }
+					line={ translate( 'Something went wrong with your Bluesky connection.' ) }
+					action={
+						<Button variant="secondary" onClick={ handleRetry }>
+							{ translate( 'Retry' ) }
+						</Button>
+					}
 				/>
 			);
 		case 'connection_not_found':
 			return (
 				<EmptyContent
 					title={ translate( 'Connection no longer exists' ) }
-					line={ translate( 'Reconnect your Bluesky account to view this thread.' ) }
+					line={ translate( 'This Bluesky connection is no longer available.' ) }
 				/>
 			);
 		case 'not_found':

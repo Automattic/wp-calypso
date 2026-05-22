@@ -3,11 +3,10 @@ import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { truncate } from 'lodash';
-import { Dispatch } from 'redux';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { AppState } from 'calypso/types';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 
 interface ShowSelectedPostArgs {
 	postKey?: {
@@ -20,7 +19,7 @@ interface ShowSelectedPostArgs {
 }
 
 export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) {
-	return ( _dispatch: Dispatch, getState: () => AppState ): Window | null | void => {
+	return (): Window | null | void => {
 		if ( ! postKey ) {
 			return;
 		}
@@ -30,9 +29,10 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 			return;
 		}
 
-		const post = getPostByKey( getState(), postKey );
+		const queryClient = getCalypsoQueryClient();
+		const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
-		if ( isXPost( post ) ) {
+		if ( post && isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );
 		}
 

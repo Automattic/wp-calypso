@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .is-reader-page {
 	.user-top-sites {
 		display: flex;
@@ -23,6 +25,11 @@
 		font-size: rem( 13px );
 		color: var( --studio-gray-90 );
 		text-decoration: none;
+
+		@include ui-mixins.when-dark-theme {
+			background-color: var( --color-neutral-5 );
+			color: var( --color-text );
+		}
 
 		p {
 			margin: 0;

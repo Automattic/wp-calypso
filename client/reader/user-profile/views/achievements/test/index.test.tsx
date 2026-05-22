@@ -23,18 +23,17 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
-jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () => ( {
-	YearsOfServiceBadge: ( { yearsOfService }: { yearsOfService: number } ) => (
-		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
-	),
+jest.mock( '../achievements-privacy-notice', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="achievements-privacy-notice" />,
 } ) );
 
-const mockStreakPillProps = jest.fn();
-jest.mock( '../activity-streak-pill', () => ( {
+const mockActivityStreakProps = jest.fn();
+jest.mock( '../activity-streak', () => ( {
 	__esModule: true,
-	ActivityStreakPill: ( props: { streak?: { current_streak: number }; isOwnProfile: boolean } ) => {
-		mockStreakPillProps( props );
-		return <div data-testid="activity-streak-pill" />;
+	ActivityStreak: ( props: { streak?: { current_streak: number }; isOwnProfile: boolean } ) => {
+		mockActivityStreakProps( props );
+		return <div data-testid="activity-streak" />;
 	},
 } ) );
 
@@ -63,9 +62,8 @@ describe( 'UserAchievements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockAchievementsGridProps.mockClear();
-		mockStreakPillProps.mockClear();
+		mockActivityStreakProps.mockClear();
 		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
 			lockedAchievements: [],
 			isLoading: false,
 		} );
@@ -133,50 +131,6 @@ describe( 'UserAchievements', () => {
 		expect( screen.queryByTestId( 'achievements-settings' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should render YearsOfServiceBadge when years_of_service > 0', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: 5, isLoading: false } );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.getByTestId( 'years-of-service-badge' ) ).toBeVisible();
-		expect( screen.getByText( '5' ) ).toBeVisible();
-	} );
-
-	test( 'should not render YearsOfServiceBadge when years_of_service is 0', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: 0, isLoading: false } );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'should not render YearsOfServiceBadge when years_of_service is undefined', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
-			lockedAchievements: [],
-			isLoading: false,
-		} );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'forwards isOwnProfile=true to AchievementsGrid on own profile', () => {
 		useAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: true,
@@ -205,14 +159,13 @@ describe( 'UserAchievements', () => {
 		);
 	} );
 
-	test( 'renders ActivityStreakPill with the engagement streak slice', () => {
+	test( 'renders ActivityStreak with the engagement streak slice', () => {
 		useAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: true,
 			isVisible: true,
 			isLoading: false,
 		} );
 		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
 			lockedAchievements: [],
 			engagementStreak: {
 				current_streak: 7,
@@ -226,8 +179,7 @@ describe( 'UserAchievements', () => {
 
 		render( <UserAchievements user={ defaultUser } /> );
 
-		expect( screen.getByTestId( 'activity-streak-pill' ) ).toBeVisible();
-		expect( mockStreakPillProps ).toHaveBeenCalledWith(
+		expect( mockActivityStreakProps ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				streak: expect.objectContaining( { current_streak: 7 } ),
 				isOwnProfile: true,
@@ -235,14 +187,13 @@ describe( 'UserAchievements', () => {
 		);
 	} );
 
-	test( 'still renders ActivityStreakPill when engagement streak is undefined (pill self-handles)', () => {
+	test( 'still mounts ActivityStreak when engagement streak is undefined (component self-handles)', () => {
 		useAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: false,
 			isVisible: true,
 			isLoading: false,
 		} );
 		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
 			lockedAchievements: [],
 			engagementStreak: undefined,
 			isLoading: false,
@@ -250,8 +201,8 @@ describe( 'UserAchievements', () => {
 
 		render( <UserAchievements user={ defaultUser } /> );
 
-		// Pill is mounted; the pill itself returns null internally when streak is undefined.
-		expect( mockStreakPillProps ).toHaveBeenCalledWith(
+		// ActivityStreak is mounted; it returns null internally when streak is undefined.
+		expect( mockActivityStreakProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { streak: undefined, isOwnProfile: false } )
 		);
 	} );

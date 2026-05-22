@@ -22,6 +22,14 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
+For Reader post data specifically, see [`client/reader/data/README.md`](./data/README.md).
+The short version: use `usePost()` for request-capable post reads, and use
+`useCachedPost()` / `useCachedPosts()` only when a cache-only read is
+intentional, such as stream list contexts where one full-post request per item
+would create a request waterfall.
+Queries that produce Reader posts should go through `usePostQuery()` /
+`usePostsQuery()` so normalization and canonical cache syncing stay centralized.
+
 ### Mutation factories must accept the consumer's `QueryClient`
 
 Calypso boots its own `QueryClient` (see `client/state/query-client.ts`, with a per-user persistence key) and injects it via `<QueryClientProvider>` in `client/controller/index.web.js`. The Dashboard, in contrast, uses the singleton exported by `@automattic/api-queries` (`packages/api-queries/src/query-client.ts`).
@@ -135,7 +143,9 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/tags`                                           | `client/reader/tags/`                                                     |
 | `/activities/likes`                               | `client/reader/liked-stream/`                                             |
 | `/reader/users/*`                                 | `client/reader/user-profile/`                                             |
-| `/reader/atmosphere`                              | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
+| `/reader/connections`                             | `client/reader/connections/social-overview-view.tsx`                      |
+| `/reader/connections/new`                         | `client/reader/connections/connections-new-view.tsx` (unified chooser)    |
+| `/reader/atmosphere`                              | redirects to `/reader/connections`                                        |
 | `/reader/atmosphere/connect`                      | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
 | `/reader/atmosphere/:id`                          | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
 | `/reader/atmosphere/:id/:tab`                     | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
@@ -143,7 +153,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/atmosphere/:id/profile/:actor`           | `client/reader/atmosphere/author-profile-view.tsx`                        |
 | `/reader/atmosphere/:id/profile/:actor/followers` | `client/reader/atmosphere/followers-view.tsx`                             |
 | `/reader/atmosphere/:id/profile/:actor/following` | `client/reader/atmosphere/following-view.tsx`                             |
-| `/reader/mastodon`                                | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
+| `/reader/mastodon`                                | redirects to `/reader/connections`                                        |
 | `/reader/mastodon/connect`                        | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
 | `/reader/mastodon/oauth-callback`                 | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
 | `/reader/mastodon/:id`                            | `client/reader/mastodon/controller.tsx` (redirect handler)                |
@@ -152,7 +162,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                          |
 | `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                               |
 | `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                               |
-| `/reader/fediverse`                               | `client/reader/fediverse/fediverse-landing-view.tsx`                      |
+| `/reader/fediverse`                               | redirects to `/reader/connections`                                        |
 | `/reader/fediverse/:id`                           | `client/reader/fediverse/controller.tsx` (redirect handler)               |
 | `/reader/fediverse/:id/:tab`                      | `client/reader/fediverse/fediverse-account-view.tsx`                      |
 | `/reader/fediverse/:id/profile/:actor`            | `client/reader/fediverse/author-profile-view.tsx`                         |

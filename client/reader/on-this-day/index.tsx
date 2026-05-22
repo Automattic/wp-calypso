@@ -11,10 +11,10 @@ import { ThunkDispatch } from 'redux-thunk';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useCachedPosts } from 'calypso/reader/data/post-cache';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -22,6 +22,7 @@ import Skeleton from '../components/skeleton';
 import { getOnThisDayHeaderDateLabel } from './get-stream-key';
 import { OnThisDayPostField } from './on-this-day-post-field';
 import { OnThisDayPostSkeleton } from './on-this-day-post-skeleton';
+import type { ReadPostBlogKey, ReadPostFeedKey } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 const loadReaderFullPost = () =>
@@ -29,24 +30,27 @@ const loadReaderFullPost = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
 	);
 
-interface ReaderPost {
+type Post = {
 	site_name: string;
 	postId: number;
-	feedId?: number;
-	blogId?: number;
-}
+	feedId?: ReadPostFeedKey[ 'feedId' ];
+	blogId?: ReadPostBlogKey[ 'blogId' ];
+};
 
 interface PostItem {
-	title: string;
-	featured_image: string;
+	title?: string;
+	excerpt?: string;
+	content?: string;
+	featured_image?: string;
 	site_icon: {
 		img: string;
 	};
 	author: {
 		avatar_URL: string;
 	};
-	site_name: string;
-	site_ID: number;
+	site_name?: string;
+	site_ID?: number;
+	date?: string;
 }
 
 interface PaddingItem {
@@ -54,18 +58,18 @@ interface PaddingItem {
 	postId: string;
 }
 
-function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
+function isPaddingItem( item: Post | PaddingItem ): item is PaddingItem {
 	return 'isPadding' in item;
 }
 
-function postKeyForItem( item: ReaderPost ) {
+function postKeyForItem( item: Post ) {
 	if ( item.feedId ) {
 		return { feedId: item.feedId, postId: item.postId };
 	}
 	return { blogId: item.blogId, postId: item.postId };
 }
 
-function itemKeyString( item: ReaderPost ) {
+function itemKeyString( item: Post ) {
 	if ( item.feedId ) {
 		return `${ item.feedId }-${ item.postId }`;
 	}
@@ -80,7 +84,7 @@ interface OnThisDayProps {
 export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	const query = useSelector( getCurrentQueryArguments );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
-	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
+	const [ selectedItem, setSelectedItem ] = useState< Post | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
@@ -103,35 +107,56 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	} );
 
 	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
-	const posts = useSelector( ( state: AppState ) => {
+
+	const postItems = useMemo(
+		() =>
+			( ( data?.items ?? [] ) as Array< Post | PaddingItem > ).filter(
+				( item ) => ! isPaddingItem( item )
+			) as Post[],
+		[ data?.items ]
+	);
+	const postKeys = useMemo( () => postItems.map( postKeyForItem ), [ postItems ] );
+	const cachedPosts = useCachedPosts( postKeys );
+	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
 		const items = data?.items;
 		if ( ! items ) {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
+		return items.reduce( ( acc: Record< number, unknown >, item: Post | PaddingItem ) => {
 			if ( isPaddingItem( item ) ) {
 				return acc;
 			}
 
-			const post = getPostByKey( state, postKeyForItem( item ) );
-			if ( ! post ) {
-				return acc;
-			}
-
-			if ( ! post.site_icon && item.feedId ) {
+			if ( item.feedId ) {
 				const feedSubscription = getReaderFollowForFeed( state, item.feedId );
-				post.site_icon = feedSubscription?.site_icon;
+				if ( feedSubscription?.site_icon ) {
+					acc[ item.feedId ] = feedSubscription.site_icon;
+				}
 			}
-
-			acc[ itemKeyString( item ) ] = post;
 
 			return acc;
 		}, {} );
 	}, shallowEqual );
 
+	const posts = useMemo( () => {
+		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {
+			const post = cachedPosts[ index ];
+			if ( ! post ) {
+				return acc;
+			}
+
+			acc[ itemKeyString( item ) ] = {
+				...post,
+				site_icon: post.site_icon ?? ( item.feedId ? siteIconsByFeedId[ item.feedId ] : undefined ),
+			} as PostItem;
+
+			return acc;
+		}, {} );
+	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
+
 	const getPostFromItem = useCallback(
-		( item: ReaderPost ) => {
+		( item: Post ) => {
 			return posts[ itemKeyString( item ) ];
 		},
 		[ posts ]
@@ -142,7 +167,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+				render: ( { item }: { item: Post | PaddingItem } ) => {
 					if ( isPaddingItem( item ) ) {
 						return <Skeleton height="24px" width="24px" shape="circle" />;
 					}
@@ -156,11 +181,11 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
+				getValue: ( { item }: { item: Post | PaddingItem } ) =>
 					isPaddingItem( item )
 						? ''
 						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+				render: ( { item }: { item: Post | PaddingItem } ) => {
 					if ( isPaddingItem( item ) ) {
 						return (
 							<>
@@ -258,9 +283,9 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 					</NavigationHeader>
 				</div>
 				<aside className="on-this-day__list-column-content">
-					<DataViews< ReaderPost | PaddingItem >
+					<DataViews< Post | PaddingItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
-						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
+						getItemId={ ( item: Post | PaddingItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
 						view={ view }
@@ -273,7 +298,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
 							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+								( item: Post ) => item.postId?.toString() === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
 							setTimeout( () => {

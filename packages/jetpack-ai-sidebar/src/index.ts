@@ -26,16 +26,24 @@ import {
 	findBlockElement,
 	findBlockListLayout,
 	handleUpdateBlockContent,
-	setAddMessageFn,
 	setModuleCheckpointApi,
 	getModuleCheckpointApi,
 	startBlockShimmer,
+	stopBlockShimmer,
+	getSelectedOrRememberedBlock,
+	rememberSelectedBlock,
+	notifyBlockActionComplete,
+	BLOCK_ACTION_COMPLETE_EVENT,
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
+import {
+	trackAiEditorialReviewSuggestionClick,
+	trackAiEditorialReviewSuggestionRendered,
+} from './utils/tracking';
 import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
@@ -44,6 +52,10 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;
+let wasAgentProcessing = false;
+
+/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
+let suggestionRenderedFiredOnce = false;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -52,18 +64,66 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
-/** Post-level suggestion to mediate multi-reviewer feedback on a draft. */
-const MEDIATE_REVIEW_SUGGESTION = {
+/**
+ * Post-level suggestion to run AI Editorial Review on a draft.
+ *
+ * The id remains stable because saved chats/tests may still refer to the
+ * original review-mediation identifier.
+ */
+const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'Mediate review notes', 'jetpack' ),
+	label: __( 'AI Editorial Review', 'jetpack' ),
 	prompt: __(
-		'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		'jetpack'
 	),
 };
 
-function isReviewMediatorEnabled(): boolean {
-	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
+type JetpackAiSidebarPreviewFeature =
+	| 'aiEditorialReview'
+	| 'blockTransformations'
+	| 'optimizeTitleSuggestion'
+	| 'chatHistory'
+	| 'supportGuides';
+
+function getAgentsManagerData() {
+	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
+}
+
+function isJetpackAiSidebarPreviewFeatureEnabled(
+	feature: JetpackAiSidebarPreviewFeature,
+	defaultValue: boolean
+): boolean {
+	const preview = getAgentsManagerData()?.jetpackAiSidebarPreview;
+	if ( ! preview ) {
+		return defaultValue;
+	}
+	if ( ! preview.enabled ) {
+		return false;
+	}
+	return preview.features?.[ feature ] === true;
+}
+
+function isAiEditorialReviewEnabled(): boolean {
+	const data = getAgentsManagerData();
+	if ( ! data ) {
+		return false;
+	}
+	if ( data.jetpackAiSidebarPreview ) {
+		return isJetpackAiSidebarPreviewFeatureEnabled(
+			'aiEditorialReview',
+			!! data.aiEditorialReviewEnabled
+		);
+	}
+	return !! data.aiEditorialReviewEnabled || !! data.reviewMediatorEnabled;
+}
+
+function isOptimizeTitleSuggestionEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'optimizeTitleSuggestion', true );
+}
+
+function isBlockTransformationsEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
 }
 
 function getCurrentEditorPostType(): string | undefined {
@@ -71,20 +131,35 @@ function getCurrentEditorPostType(): string | undefined {
 	return typeof postType === 'string' ? postType : undefined;
 }
 
-function isReviewMediatorAvailable(
+function getCurrentEditorPostId(): number | undefined {
+	const postId = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.();
+	return typeof postId === 'number' && postId > 0 ? postId : undefined;
+}
+
+function isAiEditorialReviewAvailable(
 	// Default arguments run at call time, so callers can omit this when they
 	// want the current editor state read live.
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
-	return isReviewMediatorEnabled() && currentPostType === 'post';
+	return isAiEditorialReviewEnabled() && currentPostType === 'post';
 }
 
-function getReviewMediatorSuggestions( currentPostType?: string ) {
-	return isReviewMediatorAvailable( currentPostType ) ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+function getAiEditorialReviewSuggestions( currentPostType?: string ) {
+	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
+		return [];
+	}
+	if ( ! suggestionRenderedFiredOnce ) {
+		suggestionRenderedFiredOnce = true;
+		trackAiEditorialReviewSuggestionRendered();
+	}
+	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
-	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions( currentPostType ) ];
+	return [
+		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...getAiEditorialReviewSuggestions( currentPostType ),
+	];
 }
 
 // ---------- Show-component ability ----------
@@ -136,12 +211,20 @@ function handleShowComponent( input: any ): any {
 		};
 	}
 
+	const componentProps: Record< string, unknown > = { ...( props ?? {} ) };
 	const data: Record< string, unknown > = {
 		type,
-		props: props ?? {},
+		props: componentProps,
 		isCurrent: true,
 		hideZoomAction: true,
 	};
+	if ( type === 'review-mediation' ) {
+		const currentPostId = getCurrentEditorPostId();
+		if ( currentPostId ) {
+			componentProps.postId = currentPostId;
+			data.postId = currentPostId;
+		}
+	}
 
 	if ( type === 'title-picker' ) {
 		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
@@ -192,12 +275,21 @@ function hasAbilitiesApi(): boolean {
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
 	clearSuggestions?: () => void;
+	isProcessing?: boolean;
 	[ key: string ]: unknown;
 } ): void {
-	setAddMessageFn( actions.addMessage );
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
+
+	const isProcessing = actions.isProcessing === true;
+	if ( isProcessing && ! wasAgentProcessing ) {
+		startBlockShimmer();
+	} else if ( ! isProcessing && wasAgentProcessing ) {
+		stopBlockShimmer();
+		notifyBlockActionComplete();
+	}
+	wasAgentProcessing = isProcessing;
 }
 
 // ---------- toolProvider ----------
@@ -253,17 +345,21 @@ export const toolProvider = {
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
 		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
-		abilities.unshift(
-			{
-				...UPDATE_BLOCK_CONTENT_ABILITY,
-				callback: handleUpdateBlockContent,
-			},
+		const jetpackAbilities = [
+			...( isBlockTransformationsEnabled()
+				? [
+						{
+							...UPDATE_BLOCK_CONTENT_ABILITY,
+							callback: handleUpdateBlockContent,
+						},
+				  ]
+				: [] ),
 			{
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
-			}
-		);
-
+			},
+		];
+		abilities.unshift( ...jetpackAbilities );
 		return abilities;
 	},
 
@@ -350,11 +446,11 @@ export const contextProvider = {
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
 				currentPageContent = blocks.map( serializeBlock );
-				selectedBlockClientId = blockEditor.getSelectedBlockClientId?.() ?? '';
-
-				if ( selectedBlockClientId ) {
-					const selectedBlock = blockEditor.getSelectedBlock?.();
-					if ( selectedBlock?.attributes?.content ) {
+				const selectedBlock = getSelectedOrRememberedBlock();
+				if ( selectedBlock?.clientId ) {
+					selectedBlockClientId = selectedBlock.clientId;
+					rememberSelectedBlock( selectedBlock );
+					if ( selectedBlock.attributes?.content ) {
 						selectedBlockContent = resolveBlockContent( selectedBlock.attributes.content );
 					}
 				}
@@ -479,7 +575,7 @@ const IMAGE_BLOCK_TYPES = [ 'core/image', 'core/media-text', 'core/cover', 'core
 /** Block-aware suggestion definitions with optional condition per block type. */
 const BLOCK_SUGGESTIONS = [
 	{
-		id: 'translate-content',
+		id: 'translate',
 		label: __( 'Translate content', 'jetpack' ),
 		prompt: __( 'Translate this block content to:', 'jetpack' ),
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
@@ -537,16 +633,16 @@ export function useSuggestions(): {
 		const handleSuggestionClick = ( event: Event ) => {
 			setHidden( true );
 			clearSuggestionsFn?.();
-			startBlockShimmer();
 
-			// Mediation output is too dense for the 350px sidebar. Auto-expand
-			// to 50vw on the mediation suggestion only (matched by prompt).
+			// AI Editorial Review output is too dense for the 350px sidebar.
+			// Auto-expand to 50vw on that suggestion only (matched by prompt).
 			const value = ( event as CustomEvent ).detail?.value;
 			if (
-				isReviewMediatorAvailable() &&
+				isAiEditorialReviewAvailable() &&
 				typeof value === 'string' &&
-				value === MEDIATE_REVIEW_SUGGESTION.prompt
+				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
 			) {
+				trackAiEditorialReviewSuggestionClick();
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {
@@ -558,6 +654,16 @@ export function useSuggestions(): {
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
 		return () => {
 			window.removeEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const handleBlockActionComplete = () => {
+			setHidden( false );
+		};
+		window.addEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
+		return () => {
+			window.removeEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
 		};
 	}, [] );
 
@@ -579,14 +685,26 @@ export function useSuggestions(): {
 		return { suggestions: [] };
 	}
 
-	if ( ! editorContext.selectedBlock ) {
+	const selectedBlock = editorContext.selectedBlock ?? getSelectedOrRememberedBlock();
+	if ( editorContext.selectedBlock ) {
+		rememberSelectedBlock( editorContext.selectedBlock );
+	}
+
+	if ( ! selectedBlock ) {
 		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
-		s.condition( editorContext.selectedBlock )
-	);
+	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
+
+	if ( ! isBlockTransformationsEnabled() ) {
+		return { suggestions: aiEditorialReviewSuggestions };
+	}
+
+	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
 	return {
-		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		suggestions: [
+			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+			...aiEditorialReviewSuggestions,
+		],
 	};
 }

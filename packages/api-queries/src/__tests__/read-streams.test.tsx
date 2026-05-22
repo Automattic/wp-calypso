@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { readStreamQuery } from '../read-streams';
+import { readStreamInfiniteQuery, readStreamQuery } from '../read-streams';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -148,5 +148,19 @@ describe( 'readStreamQuery', () => {
 		expect( () => opts.queryFn!( {} as never ) ).toThrow(
 			/unsupported streamType "unknown_stream"/
 		);
+	} );
+} );
+
+describe( 'readStreamInfiniteQuery', () => {
+	it( 'does not persist stream pages to localStorage', () => {
+		const opts = readStreamInfiniteQuery(
+			{ streamKey: 'following', feedId: null, localeSlug: null, startDate: null },
+			{
+				buildPageParams: () => ( { number: 4 } ),
+				getNextPageHandle: () => undefined,
+			}
+		);
+
+		expect( opts.meta ).toEqual( { persist: false } );
 	} );
 } );

@@ -2,9 +2,10 @@
 	text-align: center;
 
 	.gridicon {
+		color: var( --theme-icon-color, var( --color-neutral-10 ) );
 		display: inline-block;
+		fill: currentColor;
 		margin: -0.5em 0 -1.1em;
-		fill: #c8d7e1;
 	}
 
 	.button {
@@ -29,7 +30,7 @@
 		text-align: inherit;
 
 		.gridicon {
-			fill: var(--color-neutral-10);
+			color: var( --theme-icon-color, var( --color-neutral-10 ) );
 			position: absolute;
 			transform: translateY(-50%);
 			margin: 0.3em 0 0;

@@ -1,9 +1,8 @@
-import { forEach, omit } from 'lodash';
+import { omit } from 'lodash';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-	READER_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
@@ -44,25 +43,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			};
 
 			return newState;
-		}
-		case READER_POSTS_RECEIVE: {
-			if ( ! action.posts ) {
-				return state;
-			}
-
-			const newState = {};
-
-			forEach( action.posts, ( post ) => {
-				if ( post.is_following_conversation ) {
-					newState[ key( post.site_ID, post.ID ) ] = CONVERSATION_FOLLOW_STATUS.following;
-				}
-			} );
-
-			if ( Object.keys( newState ).length === 0 ) {
-				return state;
-			}
-
-			return { ...state, ...newState };
 		}
 	}
 

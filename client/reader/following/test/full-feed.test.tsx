@@ -3,10 +3,10 @@
  */
 import { act, screen, waitFor } from '@testing-library/react';
 import { createStore } from 'redux';
+import { useCachedPosts } from 'calypso/reader/data/post-cache';
+import { useStreamPosts } from 'calypso/reader/stream/use-stream-posts';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
-import { getStream } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -126,12 +126,12 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 	useRecordReaderTracksEvent: jest.fn( () => mockRecordReaderTracksEvent ),
 } ) );
 
-jest.mock( 'calypso/state/reader/streams/selectors', () => ( {
-	getStream: jest.fn(),
+jest.mock( 'calypso/reader/stream/use-stream-posts', () => ( {
+	useStreamPosts: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/reader/posts/selectors', () => ( {
-	getPostByKey: jest.fn( ( _state, item ) => mockPostsByPostId[ item.postId ] ?? null ),
+jest.mock( 'calypso/reader/data/post-cache', () => ( {
+	useCachedPosts: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/reader-ui/sidebar/selectors', () => ( {
@@ -145,11 +145,6 @@ jest.mock( 'calypso/state/reader/site-blocks/selectors', () => ( {
 jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => ( {
 	__esModule: true,
 	default: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/state/reader/streams/actions', () => ( {
-	clearStream: jest.fn( ( payload ) => ( { type: 'CLEAR_STREAM', payload } ) ),
-	requestPage: jest.fn( ( payload ) => ( { type: 'REQUEST_PAGE', payload } ) ),
 } ) );
 
 jest.mock( 'calypso/state/reader-ui/actions', () => ( {
@@ -176,6 +171,28 @@ const populatedStream = {
 	pageHandle: { page_handle: 'next-page' },
 };
 
+const mockUseStreamPosts = useStreamPosts as jest.MockedFunction< typeof useStreamPosts >;
+const mockUseCachedPosts = useCachedPosts as jest.MockedFunction< typeof useCachedPosts >;
+let mockFetchNextPage: jest.Mock;
+
+const createStreamPostsQuery = (
+	overrides: Partial< ReturnType< typeof useStreamPosts > > = {}
+): ReturnType< typeof useStreamPosts > => ( {
+	items: populatedStream.items,
+	pages: [],
+	isLoading: false,
+	isFetching: false,
+	isFetchingNextPage: false,
+	isRefetching: false,
+	hasNextPage: true,
+	lastPage: false,
+	error: null,
+	fetchNextPage: mockFetchNextPage,
+	refetch: jest.fn(),
+	invalidate: jest.fn(),
+	...overrides,
+} );
+
 const renderFullFeed = ( props: Partial< React.ComponentProps< typeof FullFeed > > = {} ) =>
 	renderWithProvider(
 		<FullFeed streamKey="following" viewToggle={ <button>Toggle</button> } { ...props } />
@@ -185,6 +202,7 @@ describe( 'FullFeed', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.scrollTo = jest.fn();
+		mockFetchNextPage = jest.fn();
 		mockPostsByPostId = {
 			456: mockFirstPost,
 			789: mockPostWithSeenFlag,
@@ -194,7 +212,17 @@ describe( 'FullFeed', () => {
 		( getSelectedRecentFeedId as jest.Mock ).mockReturnValue( null );
 		( getCurrentLocaleSlug as jest.Mock ).mockReturnValue( 'en' );
 		( getBlockedSites as jest.Mock ).mockReturnValue( [] );
-		( getStream as jest.Mock ).mockReturnValue( populatedStream );
+		mockUseStreamPosts.mockReturnValue( createStreamPostsQuery() );
+		mockUseCachedPosts.mockImplementation(
+			( postKeys ) =>
+				postKeys.map( ( item ) => {
+					if ( ! item || typeof item !== 'object' || ! ( 'postId' in item ) ) {
+						return null;
+					}
+
+					return mockPostsByPostId[ Number( item.postId ) ] ?? null;
+				} ) as ReturnType< typeof useCachedPosts >
+		);
 	} );
 
 	it( 'renders full-feed posts from the following stream', () => {
@@ -211,16 +239,25 @@ describe( 'FullFeed', () => {
 			is_filtered_feed: 0,
 			stream_key: 'following',
 		} );
+		expect( mockUseStreamPosts ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				feedId: null,
+				localeSlug: null,
+				startDate: null,
+				streamKey: 'following',
+			} )
+		);
 	} );
 
 	it( 'renders posts even when the API marks them seen', () => {
-		( getStream as jest.Mock ).mockReturnValue( {
-			...populatedStream,
-			items: [
-				{ feedId: 123, postId: 456 },
-				{ feedId: 123, postId: 789 },
-			],
-		} );
+		mockUseStreamPosts.mockReturnValue(
+			createStreamPostsQuery( {
+				items: [
+					{ feedId: 123, postId: 456 },
+					{ feedId: 123, postId: 789 },
+				],
+			} )
+		);
 
 		renderFullFeed();
 
@@ -233,13 +270,14 @@ describe( 'FullFeed', () => {
 
 	it( 'uses the stream lifecycle blocked and unavailable states', () => {
 		( getBlockedSites as jest.Mock ).mockReturnValue( [ 999 ] );
-		( getStream as jest.Mock ).mockReturnValue( {
-			...populatedStream,
-			items: [
-				{ feedId: 123, postId: 147 },
-				{ feedId: 123, postId: 258 },
-			],
-		} );
+		mockUseStreamPosts.mockReturnValue(
+			createStreamPostsQuery( {
+				items: [
+					{ feedId: 123, postId: 147 },
+					{ feedId: 123, postId: 258 },
+				],
+			} )
+		);
 
 		renderFullFeed();
 
@@ -247,54 +285,53 @@ describe( 'FullFeed', () => {
 		expect( screen.getByRole( 'article', { name: 'Error post unavailable' } ) ).toBeVisible();
 	} );
 
-	it( 'requests the first page when the stream is empty', () => {
-		( getStream as jest.Mock ).mockReturnValue( {
-			error: null,
-			isRequesting: false,
-			items: [],
-			lastPage: false,
-			pageHandle: undefined,
-		} );
+	it( 'shows the empty state while the stream hook has no posts', () => {
+		mockUseStreamPosts.mockReturnValue(
+			createStreamPostsQuery( {
+				error: null,
+				items: [],
+				lastPage: false,
+			} )
+		);
 
 		renderFullFeed();
 
 		expect( screen.getByText( 'No posts' ) ).toBeVisible();
-		expect( requestPage ).toHaveBeenCalledWith(
+		expect( mockUseStreamPosts ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				feedId: null,
-				pageHandle: null,
 				streamKey: 'following',
 			} )
 		);
 	} );
 
-	it( 'uses the start date as the first page cursor', () => {
-		( getStream as jest.Mock ).mockReturnValue( {
-			error: null,
-			isRequesting: false,
-			items: [],
-			lastPage: false,
-			pageHandle: undefined,
-		} );
+	it( 'passes the start date to the stream hook', () => {
+		mockUseStreamPosts.mockReturnValue(
+			createStreamPostsQuery( {
+				error: null,
+				items: [],
+				lastPage: false,
+			} )
+		);
 
 		renderFullFeed( { startDate: '2026-04-17' } );
 
-		expect( requestPage ).toHaveBeenCalledWith(
+		expect( mockUseStreamPosts ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				pageHandle: { before: '2026-04-17' },
+				startDate: '2026-04-17',
 				streamKey: 'following',
 			} )
 		);
 	} );
 
 	it( 'surfaces stream errors via the Reader notice system', async () => {
-		( getStream as jest.Mock ).mockReturnValue( {
-			error: new Error( 'network failed' ),
-			isRequesting: false,
-			items: [],
-			lastPage: false,
-			pageHandle: { page_handle: 'retry-page' },
-		} );
+		mockUseStreamPosts.mockReturnValue(
+			createStreamPostsQuery( {
+				error: new Error( 'network failed' ),
+				items: [],
+				lastPage: false,
+			} )
+		);
 
 		renderFullFeed();
 
@@ -306,7 +343,7 @@ describe( 'FullFeed', () => {
 		} );
 	} );
 
-	it( 'resets the stream and requests a fresh first page when the selected feed changes', async () => {
+	it( 'resets the scroll position and switches stream keys when the selected feed changes', async () => {
 		const store = createStore(
 			( state = { selectedFeedId: null }, action: { type: string; feedId?: number } ) => {
 				if ( action.type === 'SET_SELECTED_FEED' ) {
@@ -328,11 +365,9 @@ describe( 'FullFeed', () => {
 		} );
 
 		await waitFor( () => {
-			expect( clearStream ).toHaveBeenCalledWith( { streamKey: 'following:feed-123' } );
-			expect( requestPage ).toHaveBeenCalledWith(
+			expect( mockUseStreamPosts ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					feedId: 123,
-					pageHandle: null,
 					streamKey: 'following:feed-123',
 				} )
 			);

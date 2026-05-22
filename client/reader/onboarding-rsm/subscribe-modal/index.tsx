@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -16,7 +15,7 @@ import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
+import { requestPage } from 'calypso/state/reader/streams/actions';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
@@ -25,7 +24,7 @@ import './style.scss';
 
 interface SubscribeModalProps {
 	promptVerification: boolean;
-	onClose: () => void;
+	onFinish: () => void;
 }
 
 interface StreamProps {
@@ -53,7 +52,7 @@ const SITES_PER_PAGE = 6;
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`, which also runs the same close-side-effects
 // (data refresh, analytics) that `handleClose` previously did inline.
-const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onClose } ) => {
+const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onFinish } ) => {
 	const {
 		combinedRecommendations,
 		recommendations,
@@ -89,7 +88,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	// is best-effort, not a guarantee that the string is always an RSS endpoint.
 	const selectedFollowUrl = selectedSite?.feed_URL ?? '';
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
 
 	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
 
@@ -157,27 +155,23 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 				if ( previewContainer ) {
 					previewContainer.scrollTop = 0;
 				}
+				recordTracksEvent(
+					`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_site_previewed`,
+					{
+						feed_id: site.feed_ID,
+						site_id: site.site_ID,
+						site_name: site.site_name,
+					}
+				);
 			}
 			setSelectedSite( site );
 		},
 		[ selectedSite ]
 	);
 
-	const handleContinue = useCallback( () => {
-		queryClient.invalidateQueries( {
-			queryKey: [ 'read', 'subscriptions-count' ],
-		} );
-
-		dispatch(
-			requestPaginatedStream( {
-				streamKey: 'recent',
-				page: 1,
-				perPage: 10,
-			} )
-		);
-
-		onClose();
-	}, [ dispatch, onClose, queryClient ] );
+	const handleFinish = useCallback( () => {
+		onFinish();
+	}, [ onFinish ] );
 
 	return (
 		<>
@@ -304,7 +298,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
 						<Button
 							__next40pxDefaultSize
-							onClick={ handleContinue }
+							onClick={ handleFinish }
 							variant="secondary"
 							disabled={ promptVerification }
 							accessibleWhenDisabled

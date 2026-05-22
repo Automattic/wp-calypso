@@ -66,6 +66,10 @@ import { registerCspReportRoute } from './csp-report';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
+const WOO_MOBILE_LOGIN_FALLBACK_URL = 'https://woocommerce.com/mobilelogin/';
+const WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL = 'https://woocommerce.test/mobilelogin/';
+const WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY = 'wpcom_auth';
+const WOO_MOBILE_LOGIN_RETURN_TO_QUERY = 'return_to';
 
 let branchName;
 function getCurrentBranchName() {
@@ -106,6 +110,87 @@ function setupLoggedInContext( req, res, next ) {
 	};
 
 	next();
+}
+
+function isWooCommerceQrLoginRequest( req ) {
+	return req.path === '/me/security/qr-login' && req.query?.origin === 'woocommerce';
+}
+
+function getAllowedWooMobileLoginHosts() {
+	const hosts = [ 'woocommerce.com' ];
+
+	if ( [ 'development', 'test' ].includes( calypsoEnv ) ) {
+		hosts.push( 'woocommerce.test' );
+	}
+
+	return hosts;
+}
+
+function addWooMobileLoginAuthMissingQuery( url ) {
+	url.search = '';
+	url.searchParams.set( WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY, 'missing' );
+	return url.toString();
+}
+
+function getDefaultWooMobileLoginFallbackUrl() {
+	const fallbackUrl =
+		calypsoEnv === 'development'
+			? WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL
+			: WOO_MOBILE_LOGIN_FALLBACK_URL;
+
+	return addWooMobileLoginAuthMissingQuery( new URL( fallbackUrl ) );
+}
+
+function getWooMobileLoginFallbackUrl( req ) {
+	const returnTo = req.query?.[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
+
+	if ( typeof returnTo !== 'string' ) {
+		return getDefaultWooMobileLoginFallbackUrl();
+	}
+
+	try {
+		const url = new URL( returnTo );
+		const pathname = url.pathname.endsWith( '/' ) ? url.pathname : `${ url.pathname }/`;
+
+		if (
+			url.protocol !== 'https:' ||
+			url.port !== '' ||
+			pathname !== '/mobilelogin/' ||
+			! getAllowedWooMobileLoginHosts().includes( url.hostname )
+		) {
+			return getDefaultWooMobileLoginFallbackUrl();
+		}
+
+		url.pathname = '/mobilelogin/';
+		return addWooMobileLoginAuthMissingQuery( url );
+	} catch {
+		return getDefaultWooMobileLoginFallbackUrl();
+	}
+}
+
+function maybeRedirectWooMobileLoginFallback( req, res ) {
+	if ( ! isWooCommerceQrLoginRequest( req ) ) {
+		return false;
+	}
+
+	res.redirect( getWooMobileLoginFallbackUrl( req ) );
+	return true;
+}
+
+function maybeRedirectWooMobileLoginCleanUrl( req, res ) {
+	if (
+		! isWooCommerceQrLoginRequest( req ) ||
+		typeof req.query?.[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ] !== 'string'
+	) {
+		return false;
+	}
+
+	const cleanQuery = { ...req.query };
+	delete cleanQuery[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
+
+	const queryString = stringify( cleanQuery );
+	res.redirect( queryString ? `${ req.path }?${ queryString }` : req.path );
+	return true;
 }
 
 function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
@@ -396,6 +481,10 @@ function setUpLoggedInRoute( req, res, next ) {
 		} );
 
 		if ( ! req.context.isLoggedIn ) {
+			if ( maybeRedirectWooMobileLoginFallback( req, res ) ) {
+				return;
+			}
+
 			debug( 'User not logged in. Redirecting to %s', redirectUrl );
 			res.redirect( redirectUrl );
 			return;
@@ -462,6 +551,9 @@ function setUpLoggedInRoute( req, res, next ) {
 						httpOnly: true,
 						domain: '.wordpress.com',
 					} );
+					if ( maybeRedirectWooMobileLoginFallback( req, res ) ) {
+						throw error;
+					}
 					res.redirect( redirectUrl );
 				} else {
 					performanceMark( req.context, 'err_user_bootstrap', true );
@@ -484,6 +576,13 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	Promise.all( setupRequests )
 		.then( () => {
+			if (
+				config.isEnabled( 'wpcom-user-bootstrap' ) &&
+				maybeRedirectWooMobileLoginCleanUrl( req, res )
+			) {
+				return;
+			}
+
 			performanceMark( req.context, 'finish_logged_in_setup' );
 			next();
 		} )
@@ -727,6 +826,10 @@ function setUpRoute( req, res, next ) {
 	}
 	// Prevents function from being called twice.
 	req.context.isRouteSetup = true;
+
+	if ( ! req.context.isLoggedIn && maybeRedirectWooMobileLoginFallback( req, res ) ) {
+		return;
+	}
 
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn

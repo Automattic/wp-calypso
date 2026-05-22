@@ -3,10 +3,6 @@ import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
 
-const loadFediverseLandingView = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-fediverse-landing-view" */ 'calypso/reader/fediverse/fediverse-landing-view'
-	);
 const loadFediverseAccountView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-fediverse-account-view" */ 'calypso/reader/fediverse/fediverse-account-view'
@@ -24,24 +20,27 @@ const loadFediverseFollowingView = () =>
 		/* webpackChunkName: "async-load-calypso-reader-fediverse-following-view" */ 'calypso/reader/fediverse/following-view'
 	);
 
-function ensureFediverseEnabled(): boolean {
-	if ( ! isEnabled( 'reader/fediverse' ) ) {
+function ensureSocialEnabled(): boolean {
+	if ( ! isEnabled( 'reader/social' ) ) {
 		page.redirect( '/reader' );
 		return false;
 	}
 	return true;
 }
 
-export const fediverseLanding = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+/**
+ * See note on `atmosphereLanding` — the unified `/reader/connections`
+ * route now owns the "find a connection or send to chooser" decision.
+ */
+export const fediverseLanding = () => {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
-	context.primary = <AsyncLoad require={ loadFediverseLandingView } placeholder={ null } />;
-	next();
+	page.redirect( '/reader/connections' );
 };
 
 export const fediverseIdRedirect = ( context: Context ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -49,11 +48,11 @@ export const fediverseIdRedirect = ( context: Context ) => {
 		page.redirect( `/reader/fediverse/${ id }/${ TIMELINE_TAB }` );
 		return;
 	}
-	page.redirect( '/reader/fediverse' );
+	page.redirect( '/reader/connections' );
 };
 
 export const fediverseAccount = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -70,7 +69,7 @@ export const fediverseAccount = ( context: Context, next: () => void ) => {
 };
 
 export const fediverseAuthorProfile = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -78,7 +77,7 @@ export const fediverseAuthorProfile = ( context: Context, next: () => void ) => 
 
 	const idValid = Number.isFinite( id ) && id > 0;
 	if ( ! idValid || ! actor ) {
-		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/fediverse' );
+		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/connections' );
 		return;
 	}
 
@@ -95,7 +94,7 @@ export const fediverseAuthorProfile = ( context: Context, next: () => void ) => 
 };
 
 export const fediverseProfileFollowers = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -103,7 +102,7 @@ export const fediverseProfileFollowers = ( context: Context, next: () => void ) 
 
 	const idValid = Number.isFinite( id ) && id > 0;
 	if ( ! idValid || ! actor ) {
-		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/fediverse' );
+		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/connections' );
 		return;
 	}
 
@@ -120,7 +119,7 @@ export const fediverseProfileFollowers = ( context: Context, next: () => void ) 
 };
 
 export const fediverseProfileFollowing = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -128,7 +127,7 @@ export const fediverseProfileFollowing = ( context: Context, next: () => void ) 
 
 	const idValid = Number.isFinite( id ) && id > 0;
 	if ( ! idValid || ! actor ) {
-		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/fediverse' );
+		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/connections' );
 		return;
 	}
 

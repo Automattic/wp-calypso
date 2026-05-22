@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .domain-search--step-container {
 	--domain-search-content-max-width: 1040px;
 	--domain-search-mini-cart-inline-padding: 16px;
@@ -51,6 +53,36 @@
 
 		@include break-small {
 			display: revert;
+		}
+	}
+}
+
+// On mobile, the domain-search results page renders a persistent fixed search
+// overlay (see @automattic/domain-search). Pin the WP top bar to the viewport
+// so it sits directly above that overlay and the two surfaces read as one
+// fixed top region. Fixed (not sticky) to keep both surfaces decoupled from
+// scroll — sticky on iOS gets pulled with rubber-band overscroll while the
+// fixed overlay below it stays put, opening a visible gap on bounce-back.
+// Scoped to the results state (.domain-search--results) so the initial/empty
+// state keeps its trunk-identical scrolling top bar.
+.step-container-v2:has( .domain-search--results ) {
+	@media ( max-width: #{ $break-small - 1px } ) {
+		> .step-container-v2__top-bar-wrapper {
+			position: fixed;
+			inset-block-start: 0;
+			inset-inline: 0;
+			z-index: var( --domain-search-sticky-overlay-z-index, 1 );
+			background-color: var( --color-surface );
+		}
+
+		// Compensate for the now out-of-flow top bar so content still starts
+		// below it. Falls back to the wrapper's existing padding when the
+		// top-bar height variable isn't available.
+		> .step-container-v2__content-wrapper {
+			padding-block-start: calc(
+				var( --step-container-v2-content-block-padding ) +
+					var( --step-container-v2-top-bar-height, 0px )
+			);
 		}
 	}
 }

@@ -1,8 +1,6 @@
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { shallowEqual } from 'react-redux';
-import { UnknownAction } from 'redux';
 import ReaderFullPostContentPlaceholder from 'calypso/blocks/reader-full-post/placeholders/content';
 import ScrollTracker from 'calypso/blocks/reader-full-post/scroll-tracker';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
@@ -10,16 +8,15 @@ import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import ListEnd from 'calypso/components/list-end';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useCachedPosts } from 'calypso/reader/data/post-cache';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import PostUnavailable from 'calypso/reader/stream/post-unavailable';
+import { useStreamPosts, type PostKey } from 'calypso/reader/stream/use-stream-posts';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
-import { getStream } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -38,35 +35,7 @@ interface FullFeedProps {
 	viewToggle?: React.ReactNode;
 }
 
-interface ReaderStreamItem {
-	blogId?: number;
-	feedId?: number;
-	isGap?: boolean;
-	isPromptBlock?: boolean;
-	isRecommendationBlock?: boolean;
-	isSynthetic?: boolean;
-	postId?: number;
-}
-
-interface FullFeedStreamState {
-	error?: unknown;
-	isRequesting: boolean;
-	items: ReaderStreamItem[];
-	lastPage: boolean;
-	pageHandle?: unknown;
-}
-
-interface FullFeedPageRequest {
-	feedId?: number | null;
-	localeSlug?: string | null;
-	pageHandle?: unknown;
-	streamKey: string;
-}
-
 const pagesByKey = new Map< string, number >();
-const requestFullFeedPage = requestPage as unknown as (
-	params: FullFeedPageRequest
-) => UnknownAction;
 
 function getFollowingStreamKey( selectedFeedId: number | null, streamKey = 'following' ) {
 	if ( streamKey === 'following' && selectedFeedId ) {
@@ -76,7 +45,7 @@ function getFollowingStreamKey( selectedFeedId: number | null, streamKey = 'foll
 	return streamKey;
 }
 
-function isPostStreamItem( item: ReaderStreamItem ) {
+function isPostStreamItem( item: PostKey ) {
 	return (
 		item &&
 		! item.isGap &&
@@ -94,18 +63,6 @@ function getFullFeedPostKey( post: ReaderFullFeedPost ) {
 	}
 
 	return `${ post.feed_ID || post.site_ID }-${ post.feed_item_ID || post.ID }`;
-}
-
-function getPageHandleKey( pageHandle: unknown ) {
-	if ( ! pageHandle ) {
-		return 'first-page';
-	}
-
-	try {
-		return JSON.stringify( pageHandle );
-	} catch {
-		return String( pageHandle );
-	}
 }
 
 function findScrollableContainer( node: HTMLElement | null ): HTMLElement | null {
@@ -169,18 +126,38 @@ export function FullFeed( {
 	}
 
 	const streamKey = getFollowingStreamKey( selectedFeedId, baseStreamKey );
-	const stream = useSelector(
-		( state: AppState ) => getStream( state, streamKey ) as FullFeedStreamState
+	const streamPostsQuery = useStreamPosts( {
+		streamKey,
+		feedId: selectedFeedId,
+		localeSlug,
+		startDate,
+	} );
+	const stream = useMemo(
+		() => ( {
+			error: streamPostsQuery.error,
+			isRequesting:
+				streamPostsQuery.isLoading ||
+				streamPostsQuery.isFetchingNextPage ||
+				streamPostsQuery.isRefetching,
+			items: streamPostsQuery.items,
+			lastPage: streamPostsQuery.lastPage,
+		} ),
+		[
+			streamPostsQuery.error,
+			streamPostsQuery.isFetchingNextPage,
+			streamPostsQuery.isLoading,
+			streamPostsQuery.isRefetching,
+			streamPostsQuery.items,
+			streamPostsQuery.lastPage,
+		]
 	);
 	const blockedSites = useSelector< AppState, number[] >( getBlockedSites );
-	const posts = useSelector( ( state: AppState ) => {
-		const items = ( getStream( state, streamKey ) as FullFeedStreamState ).items ?? [];
-
-		return items
-			.filter( isPostStreamItem )
-			.map( ( item ) => getPostByKey( state, item ) )
-			.filter( Boolean ) as ReaderFullFeedPost[];
-	}, shallowEqual );
+	const postKeys = useMemo( () => stream.items.filter( isPostStreamItem ), [ stream.items ] );
+	const cachedPosts = useCachedPosts( postKeys );
+	const posts = useMemo(
+		() => cachedPosts.filter( Boolean ) as ReaderFullFeedPost[],
+		[ cachedPosts ]
+	);
 
 	const postRecords = useMemo(
 		() =>
@@ -212,7 +189,7 @@ export function FullFeed( {
 		if ( ! stream.isRequesting || stream.error ) {
 			inFlightPageRequestRef.current = null;
 		}
-	}, [ stream.error, stream.isRequesting, stream.pageHandle, streamKey ] );
+	}, [ stream.error, stream.isRequesting, streamKey ] );
 
 	const lastReportedErrorRef = useRef< unknown >( null );
 	useEffect( () => {
@@ -268,28 +245,13 @@ export function FullFeed( {
 		scrollDepthTrackerRef.current?.setContainer( scrollContainer );
 	}, [ scrollContainer ] );
 
-	const getPageHandle = useCallback(
-		( pageHandle: unknown ) => {
-			if ( pageHandle ) {
-				return pageHandle;
-			}
-
-			return startDate ? { before: startDate } : null;
-		},
-		[ startDate ]
-	);
-
 	const fetchNextPage = useCallback(
 		( options: { force?: boolean; triggeredByScroll?: boolean } = {} ) => {
 			if ( ( ! options.force && stream.isRequesting ) || stream.lastPage ) {
 				return;
 			}
 
-			const pageHandle = getPageHandle( stream.pageHandle );
-			const requestKey = `${ streamKey }:${ selectedFeedId ?? 'all' }:${ getPageHandleKey(
-				pageHandle
-			) }`;
-
+			const requestKey = `${ streamKey }:${ selectedFeedId ?? 'all' }`;
 			if ( ! options.force && inFlightPageRequestRef.current === requestKey ) {
 				return;
 			}
@@ -302,41 +264,20 @@ export function FullFeed( {
 				trackScrollPage( pageNumber );
 			}
 
-			dispatch(
-				requestFullFeedPage( {
-					feedId: selectedFeedId,
-					streamKey,
-					pageHandle,
-					localeSlug,
-				} ) as UnknownAction
-			);
+			streamPostsQuery.fetchNextPage();
 		},
 		[
-			dispatch,
-			getPageHandle,
-			localeSlug,
 			selectedFeedId,
+			streamPostsQuery,
 			stream.isRequesting,
 			stream.lastPage,
-			stream.pageHandle,
 			streamKey,
 			trackScrollPage,
 		]
 	);
 
-	const fetchFirstPage = useCallback( () => {
-		dispatch(
-			requestFullFeedPage( {
-				feedId: selectedFeedId,
-				streamKey,
-				pageHandle: getPageHandle( null ),
-				localeSlug,
-			} ) as UnknownAction
-		);
-	}, [ dispatch, getPageHandle, localeSlug, selectedFeedId, streamKey ] );
-
 	useEffect( () => {
-		dispatch( viewStream( streamKey, window.location.pathname ) as UnknownAction );
+		dispatch( viewStream( streamKey, window.location.pathname ) );
 	}, [ dispatch, streamKey ] );
 
 	useEffect( () => {
@@ -348,26 +289,8 @@ export function FullFeed( {
 			window.scrollTo( 0, 0 );
 			inFlightPageRequestRef.current = null;
 			setActiveFloatingCollapsePostKey( null );
-			dispatch( clearStream( { streamKey } ) as UnknownAction );
-			fetchFirstPage();
-			return;
 		}
-
-		if ( ! stream.items.length && ! stream.isRequesting && ! stream.lastPage && ! stream.error ) {
-			fetchNextPage();
-		}
-	}, [
-		dispatch,
-		fetchFirstPage,
-		fetchNextPage,
-		selectedFeedId,
-		scrollContainer,
-		stream.error,
-		stream.isRequesting,
-		stream.items.length,
-		stream.lastPage,
-		streamKey,
-	] );
+	}, [ selectedFeedId, scrollContainer ] );
 
 	const paginationRef = useCallback(
 		( node: HTMLDivElement | null ) => {

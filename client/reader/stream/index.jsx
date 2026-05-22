@@ -7,8 +7,9 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
+import { usePostLikes } from 'calypso/components/data/post-likes';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -18,6 +19,8 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useCachedPost } from 'calypso/reader/data/post-cache';
+import { withPostLikeActions } from 'calypso/reader/data/post-likes';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
@@ -26,12 +29,13 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
+import {
+	analyticsForStream,
+	PER_FETCH,
+	INITIAL_FETCH,
+} from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -44,6 +48,7 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import { normalizeStreamPage } from './stream-normalization';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts } from './use-stream-posts';
@@ -60,6 +65,37 @@ const GUESSED_POST_HEIGHT = 600;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+
+const useStreamRenderAnalytics = ( pages, streamKey ) => {
+	const dispatch = useDispatch();
+	const processedPages = React.useRef( new WeakSet() );
+	const streamType = getStreamType( streamKey ?? '' );
+
+	React.useEffect( () => {
+		processedPages.current = new WeakSet();
+	}, [ streamKey ] );
+
+	React.useEffect( () => {
+		if ( ! streamKey ) {
+			return;
+		}
+
+		for ( const page of pages ) {
+			if ( processedPages.current.has( page ) ) {
+				continue;
+			}
+			processedPages.current.add( page );
+			const { streamPosts } = normalizeStreamPage( page, streamType );
+			if ( streamPosts.length > 0 ) {
+				analyticsForStream( {
+					streamKey,
+					algorithm: page.algorithm,
+					items: streamPosts,
+				} ).forEach( ( action ) => dispatch( action ) );
+			}
+		}
+	}, [ pages, streamKey, streamType, dispatch ] );
+};
 
 class ReaderStream extends Component {
 	static propTypes = {
@@ -371,9 +407,13 @@ class ReaderStream extends Component {
 	};
 
 	toggleLikeAction() {
-		const { likedPost, selectedPost } = this.props;
+		const { isLikePending, isUnlikePending, likedPost, selectedPost } = this.props;
 		if ( likedPost === null ) {
 			// unknown... ignore for now
+			return;
+		}
+
+		if ( isLikePending || isUnlikePending ) {
 			return;
 		}
 
@@ -821,6 +861,10 @@ const withStreamPosts = ( WrappedComponent ) =>
 				enabled: ! props.forcePlaceholders && streamPostsQuery.items.length > 0,
 			},
 		} );
+
+		useStreamRenderAnalytics( streamPostsQuery.pages, props.streamKey );
+		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
+
 		const items = React.useMemo( () => {
 			const withRecommendations =
 				props.recsStreamKey && recsStreamPostsQuery.items.length > 0
@@ -896,15 +940,13 @@ const withStreamPosts = ( WrappedComponent ) =>
 			items: streamPostsQuery.items,
 		} );
 
-		// `<Stream>` reads the selected post body (for the keyboard `l` /
-		// like-toggle handler) and its liked status. Both still live in
-		// Redux (`state.reader.posts` / `state.posts.likes`) and are read
-		// here via `useSelector` so the slice no longer needs `getStream`
-		// to bridge selection.
-		const selectedPost = useSelector( ( state ) => getPostByKey( state, selectedPostKey ) );
-		const likedPost = useSelector( ( state ) =>
-			selectedPost ? isLikedPost( state, selectedPost.site_ID, selectedPost.ID ) : null
-		);
+		// `<Stream>` reads the selected post body for keyboard actions from the
+		// canonical Reader post cache, then uses the post likes query as the
+		// source of truth for the current liked state.
+		const canonicalSelectedPost = useCachedPost( selectedPostKey );
+		const selectedPost = canonicalSelectedPost;
+		const { postLikes } = usePostLikes( selectedPost?.site_ID, selectedPost?.ID );
+		const likedPost = selectedPost ? postLikes?.iLike ?? Boolean( selectedPost.i_like ) : null;
 
 		return (
 			<WrappedComponent
@@ -955,9 +997,7 @@ export default connect(
 	},
 	{
 		resetCardExpansions,
-		likePost,
-		unlikePost,
 		showSelectedPost,
 		viewStream,
 	}
-)( localize( withDimensions( withStreamPosts( ReaderStream ) ) ) );
+)( localize( withDimensions( withStreamPosts( withPostLikeActions( ReaderStream ) ) ) ) );

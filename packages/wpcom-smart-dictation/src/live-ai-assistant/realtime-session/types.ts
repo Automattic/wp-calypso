@@ -7,6 +7,8 @@ export type RealtimeStatus =
 	| 'ending'
 	| 'error';
 
+export type RealtimeErrorIntent = 'error' | 'warning';
+
 export interface RealtimeTranscriptEntry {
 	id: string;
 	role: 'user' | 'assistant';
@@ -37,6 +39,9 @@ export interface UseRealtimeSessionOptions {
 export interface UseRealtimeSessionResult {
 	status: RealtimeStatus;
 	error: string | null;
+	errorIntent: RealtimeErrorIntent;
+	sessionTimeLimitMs: number | null;
+	sessionTimeRemainingMs: number | null;
 	isMuted: boolean;
 	localStream: MediaStream | null;
 	transcript: RealtimeTranscriptEntry[];

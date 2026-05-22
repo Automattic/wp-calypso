@@ -7,22 +7,29 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { SocialAvatar } from '../../avatar';
 import type {
 	AtmosphereNotification,
 	AtmosphereNotificationCanonicalType,
+	FediverseNotification,
+	FediverseNotificationCanonicalType,
 	MastodonNotification,
 	MastodonNotificationCanonicalType,
 } from '@automattic/api-core';
 
 // The wpcom backend ships byte-compatible notification envelopes across
-// protocols; both per-protocol types share the same canonical_type union.
-// Aliased here so the renderer takes either without per-protocol branching.
-// Keep both arms in the union so a future per-protocol widening surfaces as
+// protocols; the per-protocol types share the same canonical_type union.
+// Aliased here so the renderer takes any of them without per-protocol branching.
+// Keep all arms in the union so a future per-protocol widening surfaces as
 // a switch-exhaustiveness error instead of being silently funneled to 'other'.
-type SocialNotification = AtmosphereNotification | MastodonNotification;
+export type SocialNotification =
+	| AtmosphereNotification
+	| MastodonNotification
+	| FediverseNotification;
 type SocialNotificationCanonicalType =
 	| AtmosphereNotificationCanonicalType
-	| MastodonNotificationCanonicalType;
+	| MastodonNotificationCanonicalType
+	| FediverseNotificationCanonicalType;
 
 interface Props {
 	notification: SocialNotification;
@@ -55,12 +62,15 @@ export function SocialNotificationItem( { notification }: Props ) {
 
 	const body = (
 		<HStack alignment="flex-start" spacing={ 3 }>
-			{ actor.avatar_url ? (
-				// Decorative: the actor identity is announced via the row aria-label.
-				<img className="social-notification-item__avatar" src={ actor.avatar_url } alt="" />
-			) : (
-				<span className="social-notification-item__avatar is-placeholder" aria-hidden />
-			) }
+			{ /* Decorative: the actor identity is announced via the row aria-label. */ }
+			<SocialAvatar
+				className="social-notification-item__avatar"
+				src={ actor.avatar_url }
+				alt=""
+				fallback={
+					<span className="social-notification-item__avatar is-placeholder" aria-hidden />
+				}
+			/>
 			<VStack spacing={ 1 } className="social-notification-item__body">
 				<span className="social-notification-item__line">
 					<span className="social-notification-item__actor">{ actorName }</span>{ ' ' }

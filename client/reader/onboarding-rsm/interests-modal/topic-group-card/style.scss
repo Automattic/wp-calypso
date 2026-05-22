@@ -29,6 +29,9 @@
 	}
 
 	&__meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		font-size: 0.75rem;
 		color: var( --color-text-subtle );
 		margin: 0;
@@ -76,7 +79,7 @@
 		border-radius: 50%;
 		overflow: hidden;
 		margin-left: -6px;
-		background-color: var( --studio-white, #fff );
+		background-color: var( --color-surface, #fff );
 		// Reverse stacking so left avatars overlap right ones.
 		&:nth-child(1) { z-index: 4; }
 		&:nth-child(2) { z-index: 3; }

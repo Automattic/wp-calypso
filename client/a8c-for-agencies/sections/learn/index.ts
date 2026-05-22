@@ -5,6 +5,7 @@ import {
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
+	A4A_AGENT_STUDIO_PROJECTS_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
@@ -12,7 +13,12 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { agentStudioContext } from '../agent-studio/controller';
+import {
+	agentStudioBriefContext,
+	agentStudioContext,
+	agentStudioOutputContext,
+	agentStudioProjectContext,
+} from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
 	aiMcpConnectContext,
@@ -40,6 +46,27 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+		page(
+			`${ A4A_AGENT_STUDIO_LINK }/agents/:agentId/new`,
+			requireAccessContext,
+			agentStudioBriefContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			`${ A4A_AGENT_STUDIO_PROJECTS_LINK }/:projectId`,
+			requireAccessContext,
+			agentStudioProjectContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			`${ A4A_AGENT_STUDIO_LINK }/outputs/:outputId`,
+			requireAccessContext,
+			agentStudioOutputContext,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	if ( isEnabled( 'a4a-benchmarks' ) ) {
@@ -64,5 +91,7 @@ export default function () {
 		);
 	}
 
-	page( A4A_RESOURCES_LINK, () => page.redirect( A4A_LEARN_LINK ) );
+	page( A4A_RESOURCES_LINK, () =>
+		page.redirect( isEnabled( 'a4a-agent-studio' ) ? A4A_AGENT_STUDIO_LINK : A4A_LEARN_LINK )
+	);
 }

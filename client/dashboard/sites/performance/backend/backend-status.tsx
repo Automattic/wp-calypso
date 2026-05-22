@@ -1,10 +1,46 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { Notice } from '../../../components/notice';
 import { BACKEND_THRESHOLDS_MS, bucketByMs, formatMs } from './utils';
+import type { ApmSummary } from '@automattic/api-core';
 
-export default function BackendStatusNotice( { avgResponseMs }: { avgResponseMs: number } ) {
-	const intent = bucketByMs( avgResponseMs, BACKEND_THRESHOLDS_MS.response );
-	const formatted = formatMs( avgResponseMs );
+export default function BackendStatusNotice( {
+	summary,
+	apmEnabled,
+	isRollingWindow,
+}: {
+	summary: ApmSummary;
+	apmEnabled: boolean;
+	isRollingWindow: boolean;
+} ) {
+	const hasData = summary.transaction_count > 0;
+
+	if ( ! hasData ) {
+		if ( ! isRollingWindow ) {
+			return (
+				<Notice variant="info" title={ __( 'No data in the selected timeframe' ) }>
+					{ __(
+						'Try a different timeframe, or check back later if you just changed the capture settings.'
+					) }
+				</Notice>
+			);
+		}
+
+		if ( ! apmEnabled ) {
+			// The subtitle already says "Capturing is off..." — skip the duplicate notice.
+			return null;
+		}
+
+		return (
+			<Notice variant="info" title={ __( 'Capturing' ) }>
+				{ __(
+					'Performance data is being collected. New requests will show up here within about 30 seconds.'
+				) }
+			</Notice>
+		);
+	}
+
+	const intent = bucketByMs( summary.avg_response_ms, BACKEND_THRESHOLDS_MS.response );
+	const formatted = formatMs( summary.avg_response_ms );
 
 	if ( intent === 'error' ) {
 		return (

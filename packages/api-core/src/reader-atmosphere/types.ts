@@ -6,6 +6,14 @@ export interface AtmosphereConnection {
 	// The list endpoint always returns null. Real avatars come from
 	// getConnection(id).
 	avatar: string | null;
+	// Hostname of the PDS this connection's token resolves to (e.g.
+	// `bsky.social`, `pds.example.com`). Optional during the rollout
+	// window: older serializer revisions (pre-CM-740) don't emit the
+	// field at all. Once CM-740 is in production the key is always
+	// present — `string` when resolvable, `null` when the fallback
+	// chain fails.
+	// TODO(post-CM-740): drop the `?` and keep `string | null`.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereConnectionsResponse {
@@ -30,6 +38,10 @@ export interface AtmosphereConnectionDetails {
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
+	// Same caveat as `AtmosphereConnection.pds_hostname` — optional during
+	// the rollout window. TODO(post-CM-740): drop the `?` alongside the
+	// one on `AtmosphereConnection`.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereAuthor {

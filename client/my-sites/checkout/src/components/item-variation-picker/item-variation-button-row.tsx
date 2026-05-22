@@ -1,5 +1,10 @@
 import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -12,7 +17,6 @@ import {
 	type FunctionComponent,
 	type KeyboardEvent,
 } from 'react';
-import { getItemVariantDiscount } from './util';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -127,7 +131,14 @@ const ButtonTile = forwardRef(
 		} );
 
 		const label = termIntervalInMonths === 1 ? translate( 'Month' ) : variantLabel.noun;
-		const discountPercentage = getItemVariantDiscount( productVariant, compareTo );
+		const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
+		const variantInfo = fromVariantPriceData( productVariant );
+		const discountPercentage = compareToInfo
+			? calculateDiscountPercentage(
+					getPlanPriceForDuration( compareToInfo, variantInfo.termMonths ),
+					getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+			  ) ?? 0
+			: 0;
 
 		return (
 			<Tile

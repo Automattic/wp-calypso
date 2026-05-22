@@ -104,7 +104,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 			title: titles.musicCulture,
 			description: __( 'Music writing that goes beyond the chart — reviews, history, interviews.' ),
 			imageUrl: img.musicCulture,
-			tags: [ 'music', 'culture' ],
+			tags: [ 'music', 'movies', 'culture' ],
 		},
 	];
 };

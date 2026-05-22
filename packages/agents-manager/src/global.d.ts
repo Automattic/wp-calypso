@@ -5,13 +5,26 @@
 /**
  * `agentsManagerData` is set as a global const via wp_add_inline_script
  * in Jetpack's Agents Manager feature.
+ *
+ * `agentProviders` entries may be URL strings (dynamically imported as ES
+ * modules) or already-loaded `LoadedProviders` objects with the same shape.
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: string[];
+			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
+			jetpackAiSidebarPreview?: {
+				enabled: boolean;
+				features?: {
+					aiEditorialReview?: boolean;
+					blockTransformations?: boolean;
+					optimizeTitleSuggestion?: boolean;
+					chatHistory?: boolean;
+					supportGuides?: boolean;
+				};
+			};
 	  }
 	| undefined;
 

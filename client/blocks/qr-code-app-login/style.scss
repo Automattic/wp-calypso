@@ -1,0 +1,131 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.qr-code-app-login {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 24px;
+}
+
+.qr-code-app-login.is-pending {
+	gap: 16px 48px;
+
+	@include break-medium {
+		flex-direction: row-reverse;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+
+		.qr-code-app-login__instructions {
+			flex: 0 1 320px;
+			min-width: 0;
+		}
+	}
+}
+
+.qr-code-app-login__token {
+	width: 300px;
+	height: 300px;
+	flex: 0 0 300px;
+	max-width: 100%;
+	max-height: calc(100vw - 48px);
+
+	svg {
+		max-width: 100%;
+		max-height: calc(100vw - 48px);
+	}
+}
+
+.qr-code-app-login__steps {
+	margin: 0;
+	padding-inline-start: 20px;
+	line-height: 1.6;
+	text-align: start;
+}
+
+.qr-code-app-login__step {
+	margin-block-end: 8px;
+}
+
+.qr-code-app-login__placeholder {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	background-color: var(--color-neutral-0);
+
+	@include placeholder( --color-neutral-0 );
+
+	:nth-child(2) {
+		inset-inline-start: auto;
+		inset-inline-end: 0;
+	}
+
+	:nth-child(3) {
+		inset-block-start: auto;
+		inset-block-end: 0;
+	}
+}
+
+.qr-code-app-login__corner-box {
+	position: absolute;
+	border: 5px solid var(--color-neutral-0);
+	outline: 5px solid #fff;
+	background-color: var(--color-neutral-0);
+	width: 16px;
+	height: 16px;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+}
+
+.qr-code-app-login__instructions {
+	text-align: center;
+	margin: 0;
+}
+
+.qr-code-app-login__status,
+.qr-code-app-login__error {
+	margin: 0;
+	text-align: center;
+}
+
+.qr-code-app-login__error {
+	color: var(--color-error);
+}
+
+.qr-code-app-login__timer {
+	width: 300px;
+	max-width: 100%;
+	height: 4px;
+	background: var(--color-neutral-5);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.qr-code-app-login__timer-fill {
+	width: 100%;
+	height: 100%;
+	background: var(--color-primary);
+	transform-origin: left;
+	transition: transform 0.25s linear;
+}
+
+.qr-code-app-login__numbers {
+	display: flex;
+	gap: 16px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	justify-content: center;
+}
+
+.qr-code-app-login__number.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 80px;
+	height: 80px;
+	font-size: 32px;
+	font-weight: 600;
+}

@@ -97,7 +97,7 @@ test.describe(
 				} );
 
 				await test.step( 'And I start a valid import file', async () => {
-					await flowStartImport.enterURL( 'https://squarespace.com' );
+					await flowStartImport.enterURL( 'https://example.squarespace.com/' );
 					await flowStartImport.validateImportPage();
 					await flowStartImport.clickButton( 'Import your content' );
 					await flowStartImport.validateImporterDragPage( 'squarespace' );
