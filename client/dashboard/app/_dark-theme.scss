@@ -622,6 +622,10 @@
 	a.dataviews-url-field {
 		color: var( --dashboard-subtle__color );
 
+		&:visited {
+			color: var( --dashboard-subtle__color );
+		}
+
 		&:hover {
 			color: var( --wp-admin-theme-color );
 		}
