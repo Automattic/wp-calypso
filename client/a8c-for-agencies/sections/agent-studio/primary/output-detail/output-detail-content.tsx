@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Notice,
@@ -14,6 +15,10 @@ import useAgentStudioCollateral, {
 import useAgentStudioRun, { type AgentStudioRunPayload } from '../../data/use-agent-studio-run';
 import useAgentStudioVariantHtml from '../../data/use-agent-studio-variant-html';
 import usePrefetchAgentStudioVariantHtml from '../../data/use-prefetch-agent-studio-variant-html';
+import {
+	composeSocialAssetsFromBrief,
+	type ServerSocialBrief,
+} from '../../social-design/create-social-assets';
 import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
 import SocialAssetsViewer from './social-assets-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
@@ -182,11 +187,80 @@ function OnePagerOutputDetail( { output }: Props ) {
 	);
 }
 
-export default function OutputDetailContent( { output }: Props ) {
-	if ( output.kind === 'social-assets' ) {
+interface SocialRunPayload extends AgentStudioRunPayload {
+	brief?: ServerSocialBrief;
+}
+
+const extractSocialBrief = ( payload: unknown ): ServerSocialBrief | undefined => {
+	if ( ! payload || typeof payload !== 'object' ) {
+		return undefined;
+	}
+	const brief = ( payload as SocialRunPayload ).brief;
+	if ( ! brief || typeof brief !== 'object' || typeof brief.headline !== 'string' ) {
+		return undefined;
+	}
+	return brief;
+};
+
+function SocialOutputDetail( { output }: Props ) {
+	const run = useAgentStudioRun( output.id );
+	const brief = extractSocialBrief( run.data?.payload );
+	const postId = extractPostId( run.data?.payload );
+
+	// Compose tiles client-side. The deterministic projector and the
+	// HTML composer live in `social-design/`; this query memoises the
+	// result so the canvas doesn't re-fit every render.
+	const composed = useQuery( {
+		queryKey: [ 'a4a-agent-studio-social-tiles', output.id, brief ],
+		queryFn: () => composeSocialAssetsFromBrief( { brief: brief as ServerSocialBrief } ),
+		enabled: !! brief,
+		staleTime: Infinity,
+		refetchOnWindowFocus: false,
+	} );
+
+	if ( output.status === 'generating' || ( ! brief && run.isLoading ) ) {
 		return (
-			<SocialAssetsViewer assets={ output.socialAssets?.assets ?? [] } title={ output.title } />
+			<StateMessage spinner>
+				<Text>{ __( 'Generating your deliverable…' ) }</Text>
+			</StateMessage>
 		);
+	}
+
+	if ( output.status === 'failed' ) {
+		return (
+			<StateMessage>
+				<Text size={ 15 } weight={ 600 }>
+					{ __( 'Generation failed' ) }
+				</Text>
+				{ output.errorMessage && <Text variant="muted">{ output.errorMessage }</Text> }
+			</StateMessage>
+		);
+	}
+
+	if ( ! brief || ! postId ) {
+		return (
+			<StateMessage>
+				<Text>{ __( 'No preview is available for this deliverable yet.' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	if ( composed.isLoading || ! composed.data ) {
+		return (
+			<StateMessage spinner>
+				<Text>{ __( 'Loading preview…' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	return (
+		<SocialAssetsViewer assets={ composed.data.assets } title={ output.title } postId={ postId } />
+	);
+}
+
+export default function OutputDetailContent( { output }: Props ) {
+	if ( output.deliverableType === 'social-assets' ) {
+		return <SocialOutputDetail output={ output } />;
 	}
 
 	return <OnePagerOutputDetail output={ output } />;

@@ -1,16 +1,4 @@
-/* eslint-disable no-console, no-nested-ternary */
-import {
-	checkBeaAdditions,
-	checkBeaCoverage,
-	checkBeaRepetition,
-	campaignInputToSourceItems,
-	formatAddedBeaItems,
-	formatMissingBeaItems,
-	formatRepeatedBeaItems,
-	type BeaAdditionsResult,
-	type BeaCoverageResult,
-	type BeaRepetitionResult,
-} from './beaCoverage';
+/* eslint-disable no-nested-ternary */
 import {
 	BEA_LAYOUT_FAMILIES,
 	type BeaLayoutFamily,
@@ -18,10 +6,11 @@ import {
 	type BeaTheme,
 } from './beaLayouts';
 import type { BrandPack } from '../brandPacks/types';
-import type { OutputCost } from '../types';
 
-const ENDPOINT = 'https://api.openai.com/v1/chat/completions';
-const MODEL = 'gpt-5.4';
+// Brief extraction has moved server-side (the wpcom
+// `a4a/bea-extract-brief` ability). This module is the deterministic
+// projector that turns an already-extracted CampaignBrief into N
+// layout directions; no LLM call from the browser anymore.
 
 export type CampaignGoal =
 	| 'drive-read'
@@ -71,16 +60,6 @@ export type BeaDirection = {
 export type BeaGenerationResult = {
 	brief: CampaignBrief;
 	directions: BeaDirection[];
-	coverage: BeaCoverageResult;
-	additions: BeaAdditionsResult;
-	repetition: BeaRepetitionResult;
-	repairAttempts: number;
-	cost?: OutputCost;
-};
-
-type LlmUsage = {
-	prompt_tokens?: number;
-	completion_tokens?: number;
 };
 
 type BeaSignals = {
@@ -127,105 +106,6 @@ function clampPhrase( value: string, max: number ): string {
 	return ( lastSpace > max * 0.5 ? cut.slice( 0, lastSpace ) : cut ).trim();
 }
 
-// Generic labels that name nothing. A stat caption must say what the number
-// measures; these get dropped so the renderer never shows a bare figure.
-const VAGUE_STAT_LABELS = new Set( [
-	'proof point',
-	'proof',
-	'key stat',
-	'key result',
-	'key metric',
-	'result',
-	'results',
-	'stat',
-	'metric',
-	'number',
-	'figure',
-	'highlight',
-	'data point',
-] );
-
-function isVagueStatLabel( label: string ): boolean {
-	const normalized = clean( label ).toLowerCase().replace( /[.]+$/g, '' ).trim();
-	return ! normalized || VAGUE_STAT_LABELS.has( normalized );
-}
-
-// Instruction block shared by the extraction and repair prompts. A stat that
-// renders as a giant figure is useless without a label that says what it
-// measures, so the LLM is told exactly how to shape the stats array.
-const STAT_GUIDANCE = [
-	'Stats guidance. Each stat is an object { value, label, context }:',
-	'- value: the figure exactly as written in the source, max 14 chars (e.g. "2.1x", "32%", "15 min", "$3M").',
-	'- label: a short, concrete phrase, max 36 chars, naming what the figure measures. Reading "value + label" together MUST form a complete, meaningful claim. Good: value "2.1x", label "faster to close new work". Good: value "32%", label "lift in average retainer value". Bad: "Proof point", "Key result", "Included in the guide", or anything that does not say what the number is.',
-	'- context: one short supporting sentence drawn from the source, max 90 chars.',
-	'Only include a stat when the source explicitly states that figure. Never invent or round numbers. List the strongest, most concrete stat first.',
-].join( '\n' );
-
-function firstSentence( text: string ): string {
-	const match = text
-		.replace( /\s+/g, ' ' )
-		.trim()
-		.match( /^(.{1,180}?[.!?])\s/ );
-	return match?.[ 1 ] ?? text.replace( /\s+/g, ' ' ).trim().slice( 0, 180 );
-}
-
-function titleFromSource( sourceText: string ): string {
-	const first = sourceText
-		.split( '\n' )
-		.map( ( line ) => line.trim().replace( /^#+\s*/, '' ) )
-		.find( Boolean );
-	// If the source text has no line breaks (e.g. pasted as one long
-	// paragraph), the "first line" is the whole paragraph. Truncating to 120
-	// still produces a title too long for every layout family, so fall back to
-	// the first sentence — closer to what a human reader would call the title.
-	const candidate = first && first.length > 90 ? firstSentence( first ) : first;
-	return truncate( candidate || 'Campaign graphics', 90 );
-}
-
-function extractStats( sourceText: string ): CampaignBrief[ 'stats' ] {
-	const normalized = sourceText.replace( /\s+/g, ' ' ).trim();
-	const sentences = normalized.match( /[^.!?]+[.!?]?/g ) ?? [ normalized ];
-	const statRe =
-		/\b(?:\d+(?:\.\d+)?\s?x|\d+(?:\.\d+)?%|\$[\d,.]+\s?[MK]?|\d+[\s-]?(?:days?|hours?|weeks?|months?|minutes?|min|steps?|clients?|sites?))\b/i;
-	const seen = new Set< string >();
-	const stats: CampaignBrief[ 'stats' ] = [];
-	for ( const sentence of sentences ) {
-		const match = sentence.match( statRe );
-		if ( ! match ) {
-			continue;
-		}
-		const value = match[ 0 ].replace( /\s+/g, ' ' ).trim();
-		const key = value.toLowerCase();
-		if ( seen.has( key ) ) {
-			continue;
-		}
-		seen.add( key );
-		// The words right after the figure usually name what it measures, so the
-		// big number reads as a complete claim instead of a bare digit.
-		const tail = sentence
-			.slice( ( match.index ?? 0 ) + match[ 0 ].length )
-			.replace( /^[\s,;:-]+/, '' )
-			.replace( /[.!?].*$/, '' )
-			.trim();
-		stats.push( {
-			value: truncate( value, 14 ),
-			label: clampPhrase( sentenceFragment( tail ), 36 ),
-			context: truncate( sentenceFragment( sentence ), 90 ),
-		} );
-		if ( stats.length >= 3 ) {
-			break;
-		}
-	}
-	return stats;
-}
-
-function extractQuotes( sourceText: string ): CampaignBrief[ 'quotes' ] {
-	const quoted = Array.from( sourceText.matchAll( /["“]([^"”]{24,160})["”]/g ) )
-		.map( ( match ) => match[ 1 ].trim() )
-		.filter( Boolean );
-	return quoted.slice( 0, 2 ).map( ( text ) => ( { text: truncate( text, 140 ) } ) );
-}
-
 export function campaignBriefFromManual( fields: ManualCampaignFields ): CampaignBrief {
 	const title = truncate( fields.title || 'Campaign graphics', 120 );
 	const eyebrow = fields.eyebrow || '';
@@ -257,149 +137,6 @@ export function campaignBriefFromManual( fields: ManualCampaignFields ): Campaig
 	};
 }
 
-function fallbackBrief(
-	sourceText: string,
-	audience?: string,
-	campaignGoal: CampaignGoal = 'drive-read'
-): CampaignBrief {
-	const title = titleFromSource( sourceText );
-	const summary = firstSentence( sourceText ) || title;
-	const stats = extractStats( sourceText );
-	const quotes = extractQuotes( sourceText );
-	return {
-		sourceTitle: title,
-		sourceSummary: truncate( summary, 220 ),
-		primaryAngle: truncate( summary || title, 120 ),
-		alternateAngles: [ truncate( summary || title, 80 ), truncate( title, 80 ) ],
-		audience,
-		campaignGoal,
-		headlines: [ title, title ],
-		eyebrowOptions: [],
-		dekOptions: [ truncate( summary, 140 ) ],
-		quotes,
-		stats,
-		ctas: [],
-	};
-}
-
-function parseJsonObject( text: string ): unknown {
-	const trimmed = text.trim();
-	if ( trimmed.startsWith( '{' ) ) {
-		return JSON.parse( trimmed );
-	}
-	const match = trimmed.match( /\{[\s\S]*\}/ );
-	if ( ! match ) {
-		throw new Error( 'No JSON object found' );
-	}
-	return JSON.parse( match[ 0 ] );
-}
-
-// PROTOTYPE-SWAP: direct browser → OpenAI call using a build-time env var.
-// This is the prototype path that the radical-speed-month demo used. For
-// production this MUST be replaced by a wpcom-proxied endpoint (e.g.
-// `/a4a/agent-studio/brief` that wraps the LLM server-side with the agency's
-// API key). When you swap this:
-//   1. Replace the body of this function with a `wpcomRequest`/`apiFetch` call.
-//   2. Remove the `'https://api.openai.com'` entry from the CSP allowlist in
-//      `client/server/pages/index.js` (also tagged PROTOTYPE-SWAP).
-//   3. Drop the `process.env.VITE_OPENAI_API_KEY` reference — the proxy holds
-//      the key, the client never sees it.
-async function callJsonModel(
-	messages: Array< { role: 'system' | 'user'; content: string } >,
-	signal?: AbortSignal
-): Promise< { value: unknown; usage?: LlmUsage } > {
-	const apiKey = process.env.VITE_OPENAI_API_KEY;
-	if ( ! apiKey ) {
-		throw new Error( 'VITE_OPENAI_API_KEY is not set' );
-	}
-	const res = await fetch( ENDPOINT, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ apiKey }` },
-		body: JSON.stringify( {
-			model: MODEL,
-			messages,
-			reasoning_effort: 'none',
-			response_format: { type: 'json_object' },
-		} ),
-		signal,
-	} );
-	if ( ! res.ok ) {
-		throw new Error( `LLM call failed (${ res.status }): ${ await res.text() }` );
-	}
-	const data = await res.json();
-	const content = data.choices?.[ 0 ]?.message?.content;
-	if ( typeof content !== 'string' ) {
-		throw new Error( 'LLM returned empty content' );
-	}
-	return { value: parseJsonObject( content ), usage: data.usage };
-}
-
-function normalizeBrief( value: unknown, fallback: CampaignBrief ): CampaignBrief {
-	const obj = typeof value === 'object' && value ? ( value as Record< string, unknown > ) : {};
-	const quotes = Array.isArray( obj.quotes )
-		? obj.quotes
-				.map( ( q ) => {
-					const item = typeof q === 'object' && q ? ( q as Record< string, unknown > ) : {};
-					return {
-						text: truncate( clean( item.text ), 140 ),
-						attribution: truncate( clean( item.attribution ), 56 ) || undefined,
-					};
-				} )
-				.filter( ( q ) => q.text )
-		: fallback.quotes;
-	const stats = Array.isArray( obj.stats )
-		? obj.stats
-				.map( ( s ) => {
-					const item = typeof s === 'object' && s ? ( s as Record< string, unknown > ) : {};
-					const rawLabel = clean( item.label );
-					// Drop vague placeholder labels ("Proof point", etc.) so a stat never
-					// renders as a giant number with a caption that explains nothing.
-					const label = isVagueStatLabel( rawLabel )
-						? clampPhrase( clean( item.context ), 40 )
-						: truncate( rawLabel, 40 );
-					return {
-						value: truncate( clean( item.value ), 14 ),
-						label,
-						context: truncate( clean( item.context ), 90 ),
-					};
-				} )
-				.filter( ( s ) => s.value )
-		: fallback.stats;
-	// The prototype always used `fallback.sourceTitle` (deterministic first-
-	// line extraction). That breaks when the source text is pasted as one long
-	// paragraph with no newlines — every layout family then rejects the brief
-	// because the title exceeds their max headlineChars. Prefer the LLM's
-	// sourceTitle when it gave us a clean short one; fall back to the
-	// deterministic extractor only if the LLM didn't return one.
-	const llmTitle = truncate( clean( obj.sourceTitle ), 90 );
-	const sourceTitle = llmTitle || fallback.sourceTitle;
-	return {
-		sourceTitle,
-		sourceSummary: truncate( clean( obj.sourceSummary ) || fallback.sourceSummary, 220 ),
-		primaryAngle: truncate( clean( obj.primaryAngle ) || fallback.primaryAngle, 120 ),
-		alternateAngles: normalizeStringArray( obj.alternateAngles, fallback.alternateAngles, 80 ),
-		audience: truncate( clean( obj.audience ) || fallback.audience || '', 80 ) || undefined,
-		campaignGoal: isGoal( clean( obj.campaignGoal ) )
-			? ( clean( obj.campaignGoal ) as CampaignGoal )
-			: fallback.campaignGoal,
-		headlines: normalizeStringArray( obj.headlines, fallback.headlines, 120 ),
-		eyebrowOptions: normalizeStringArray( obj.eyebrowOptions, fallback.eyebrowOptions, 24 ),
-		dekOptions: normalizeStringArray( obj.dekOptions, fallback.dekOptions, 140 ),
-		quotes,
-		stats,
-		ctas: normalizeStringArray( obj.ctas, fallback.ctas, 22 ),
-		imageNotes: truncate( clean( obj.imageNotes ), 140 ) || fallback.imageNotes,
-	};
-}
-
-function normalizeStringArray( value: unknown, fallback: string[], max: number ): string[] {
-	const arr = Array.isArray( value ) ? value.map( clean ).filter( Boolean ) : [];
-	const merged = arr.length ? arr : fallback;
-	return Array.from(
-		new Set( merged.map( ( item ) => truncate( item, max ) ).filter( Boolean ) )
-	).slice( 0, 6 );
-}
-
 export function titleLengthBucket( title: string ): BeaTitleLengthBucket {
 	const length = clean( title ).length;
 	if ( length <= 52 ) {
@@ -425,30 +162,6 @@ export function titleLengthBucketLabel( bucket: BeaTitleLengthBucket ): string {
 		default:
 			return 'editorial';
 	}
-}
-
-function mergeUsage( a: LlmUsage | undefined, b: LlmUsage | undefined ): LlmUsage | undefined {
-	if ( ! a ) {
-		return b;
-	}
-	if ( ! b ) {
-		return a;
-	}
-	return {
-		prompt_tokens: ( a.prompt_tokens ?? 0 ) + ( b.prompt_tokens ?? 0 ),
-		completion_tokens: ( a.completion_tokens ?? 0 ) + ( b.completion_tokens ?? 0 ),
-	};
-}
-
-function isGoal( value: string ): boolean {
-	return [
-		'drive-read',
-		'announce',
-		'promote-offer',
-		'event',
-		'case-study',
-		'sales-enable',
-	].includes( value );
 }
 
 function dedupeStrings( values: Array< string | undefined > ): string[] {
@@ -883,121 +596,6 @@ function themeLabel( theme: BeaTheme ): string {
 	}
 }
 
-export async function extractCampaignBrief( args: {
-	sourceText: string;
-	pack: BrandPack;
-	audience?: string;
-	campaignGoal?: CampaignGoal;
-	signal?: AbortSignal;
-} ): Promise< { brief: CampaignBrief; usage?: LlmUsage } > {
-	const fallback = fallbackBrief( args.sourceText, args.audience, args.campaignGoal );
-	try {
-		const brandNotes = args.pack.designMdText ? args.pack.designMdText.slice( 0, 1800 ) : '';
-		const { value, usage } = await callJsonModel(
-			[
-				{
-					role: 'system',
-					content:
-						'You are Bea, a campaign extraction agent for agency marketing. Read source material and return a compact JSON campaign brief. Use only source-grounded claims. Keep social copy short, specific, and useful. Output JSON only.',
-				},
-				{
-					role: 'user',
-					content: [
-						`Brand: ${ args.pack.name }`,
-						brandNotes ? `Brand notes:\n${ brandNotes }` : '',
-						args.audience ? `Audience: ${ args.audience }` : '',
-						`Campaign goal: ${ args.campaignGoal ?? 'drive-read' }`,
-						'Return keys: sourceTitle, sourceSummary, primaryAngle, alternateAngles, audience, campaignGoal, headlines, eyebrowOptions, dekOptions, quotes, stats, ctas, imageNotes.',
-						'Limits: sourceTitle must stay exact from the source when present. Alternate headlines 64 chars, eyebrow 24, dek 140, CTA 22, quote 140, stat value 14.',
-						STAT_GUIDANCE,
-						`Source material:\n${ args.sourceText }`,
-					]
-						.filter( Boolean )
-						.join( '\n\n' ),
-				},
-			],
-			args.signal
-		);
-		return { brief: normalizeBrief( value, fallback ), usage };
-	} catch ( err ) {
-		console.warn( '[Bea] campaign extraction fell back:', err );
-		return { brief: fallback };
-	}
-}
-
-async function repairCampaignBrief( args: {
-	brief: CampaignBrief;
-	sourceText?: string;
-	manualFields?: ManualCampaignFields;
-	pack: BrandPack;
-	coverage: BeaCoverageResult;
-	additions: BeaAdditionsResult;
-	repetition: BeaRepetitionResult;
-	signal?: AbortSignal;
-} ): Promise< { brief: CampaignBrief; usage?: LlmUsage } > {
-	const missingList = args.coverage.complete
-		? ''
-		: formatMissingBeaItems( args.coverage.missing, 20 );
-	const addedList = args.additions.clean ? '' : formatAddedBeaItems( args.additions.added, 20 );
-	const repeatedList = args.repetition.clean
-		? ''
-		: formatRepeatedBeaItems( args.repetition.repeated, 20 );
-	const sourceMaterial = args.sourceText?.trim()
-		? args.sourceText.trim()
-		: JSON.stringify( args.manualFields ?? {}, null, 2 );
-
-	const { value, usage } = await callJsonModel(
-		[
-			{
-				role: 'system',
-				content:
-					'You are Bea, a campaign extraction repair agent. Return a complete JSON campaign brief using only the original source material. Do not invent claims, proof, dates, stats, offers, or outcomes. Output JSON only.',
-			},
-			{
-				role: 'user',
-				content: [
-					`Brand: ${ args.pack.name }`,
-					'Original source material:',
-					sourceMaterial,
-					'',
-					'Current campaign brief JSON:',
-					JSON.stringify( args.brief, null, 2 ),
-					'',
-					'Return keys: sourceTitle, sourceSummary, primaryAngle, alternateAngles, audience, campaignGoal, headlines, eyebrowOptions, dekOptions, quotes, stats, ctas, imageNotes.',
-					'Limits: sourceTitle must stay exact from the source when present. Alternate headlines 64 chars, eyebrow 24, dek 140, CTA 22, quote 140, stat value 14.',
-					STAT_GUIDANCE,
-					! args.coverage.complete
-						? [
-								'COVERAGE REPAIR REQUIREMENT',
-								'The rendered Bea directions omitted the required brief items below. Regenerate the campaign brief so these items can surface in the available slots. Keep all copy source-grounded.',
-								missingList,
-						  ].join( '\n' )
-						: '',
-					! args.additions.clean
-						? [
-								'ADDED CONTENT REMOVAL REQUIREMENT',
-								'The rendered Bea directions included copy that does not trace cleanly to the brief. Regenerate using only source material and remove or replace the items below.',
-								addedList,
-						  ].join( '\n' )
-						: '',
-					! args.repetition.clean
-						? [
-								'REPETITION REPAIR REQUIREMENT',
-								'The rendered Bea directions repeated the same claim across multiple slots in the same graphic. Regenerate the brief so each slot can carry a distinct role: headline for the main promise, dek for support, quote for testimony, stat label for proof context, CTA for action.',
-								repeatedList,
-						  ].join( '\n' )
-						: '',
-				]
-					.filter( Boolean )
-					.join( '\n' ),
-			},
-		],
-		args.signal
-	);
-
-	return { brief: normalizeBrief( value, args.brief ), usage };
-}
-
 function fillSlots(
 	family: BeaLayoutFamily,
 	brief: CampaignBrief,
@@ -1189,94 +787,18 @@ function goalToLabel( goal: CampaignGoal ): string {
 	}
 }
 
-export async function generateBeaCampaign( args: {
-	sourceText?: string;
-	manualFields?: ManualCampaignFields;
+/**
+ * Project a CampaignBrief into the deterministic set of directions
+ * Iris would render. Synchronous; no LLM call. The wpcom backend
+ * already persists the brief (see the `compose-social-campaign-v1`
+ * recipe) so this function is the only step the deliverable view has
+ * to run on the client side before composing tile HTML.
+ */
+export function generateBeaCampaign( args: {
+	brief: CampaignBrief;
 	pack: BrandPack;
 	imageCount: number;
-	audience?: string;
-	campaignGoal?: CampaignGoal;
-	signal?: AbortSignal;
-} ): Promise< BeaGenerationResult > {
-	const startedAt = Date.now();
-	const briefResult = args.sourceText?.trim()
-		? await extractCampaignBrief( {
-				sourceText: args.sourceText,
-				pack: args.pack,
-				audience: args.audience,
-				campaignGoal: args.campaignGoal,
-				signal: args.signal,
-		  } )
-		: { brief: campaignBriefFromManual( args.manualFields ?? { title: 'Campaign graphics' } ) };
-	let totalUsage = briefResult.usage;
-	let brief = briefResult.brief;
-	const sourceItems = campaignInputToSourceItems( {
-		sourceText: args.sourceText,
-		manualFields: args.manualFields,
-		fallbackBrief: brief,
-	} );
-	let directions = buildFixedDirections( brief, args.imageCount, args.pack );
-	let coverage = checkBeaCoverage( sourceItems, directions );
-	let additions = checkBeaAdditions( sourceItems, directions );
-	let repetition = checkBeaRepetition( directions );
-	let repairAttempts = 0;
-	// Was 2 in the prototype. Each repair attempt is another full LLM round-
-	// trip (~3-5s) and the first-pass brief is usually good enough for layout
-	// generation. Drop repairs to 0 for snappy UX; re-enable later if quality
-	// regresses.
-	const maxRepairAttempts = 0;
-
-	while (
-		( ! coverage.complete || ! additions.clean || ! repetition.clean ) &&
-		repairAttempts < maxRepairAttempts
-	) {
-		repairAttempts += 1;
-		try {
-			const repaired = await repairCampaignBrief( {
-				brief,
-				sourceText: args.sourceText,
-				manualFields: args.manualFields,
-				pack: args.pack,
-				coverage,
-				additions,
-				repetition,
-				signal: args.signal,
-			} );
-			totalUsage = mergeUsage( totalUsage, repaired.usage );
-			brief = repaired.brief;
-			directions = buildFixedDirections( brief, args.imageCount, args.pack );
-			coverage = checkBeaCoverage( sourceItems, directions );
-			additions = checkBeaAdditions( sourceItems, directions );
-			repetition = checkBeaRepetition( directions );
-		} catch ( err ) {
-			console.warn( '[Bea] campaign repair failed:', err );
-			break;
-		}
-	}
-
-	return {
-		brief,
-		directions,
-		coverage,
-		additions,
-		repetition,
-		repairAttempts,
-		cost: costFromUsage( totalUsage, Date.now() - startedAt ),
-	};
-}
-
-function costFromUsage( usage: LlmUsage | undefined, durationMs: number ): OutputCost | undefined {
-	if ( ! usage ) {
-		return undefined;
-	}
-	const inputTokens = usage.prompt_tokens ?? 0;
-	const outputTokens = usage.completion_tokens ?? 0;
-	return {
-		model: MODEL,
-		inputTokens,
-		outputTokens,
-		usd: ( inputTokens * 3 + outputTokens * 15 ) / 1_000_000,
-		durationMs,
-		reasoning: 'none',
-	};
+} ): BeaGenerationResult {
+	const directions = buildFixedDirections( args.brief, args.imageCount, args.pack );
+	return { brief: args.brief, directions };
 }

@@ -15,12 +15,11 @@ import {
 	type PointerEvent,
 	type RefObject,
 } from 'react';
+import useDownloadSocialPng from '../../data/use-download-social-png';
 import { HtmlRenderPreview } from '../../social-design/components/HtmlRenderPreview';
 import { setBeaTileRenderingPaused } from '../../social-design/services/beaRenderQueue';
-import {
-	prepareBeaRenderElement,
-	renderBeaHtmlToPng,
-} from '../../social-design/services/renderBeaPng';
+import { captureFittedTileHtml } from '../../social-design/services/captureFittedHtml';
+import { prepareBeaRenderElement } from '../../social-design/services/renderBeaPng';
 import type { AgentStudioSocialAsset } from '../../types';
 
 import './social-assets-viewer.scss';
@@ -28,6 +27,7 @@ import './social-assets-viewer.scss';
 interface Props {
 	assets: AgentStudioSocialAsset[];
 	title: string;
+	postId: number;
 }
 
 type SocialChannelKey = AgentStudioSocialAsset[ 'sizeKey' ];
@@ -116,7 +116,7 @@ function distributeIntoColumns(
 	return columns;
 }
 
-export default function SocialAssetsViewer( { assets, title }: Props ) {
+export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 	const canvasRef = useRef< HTMLDivElement >( null );
 	const dragRef = useRef( {
 		active: false,
@@ -287,6 +287,7 @@ export default function SocialAssetsViewer( { assets, title }: Props ) {
 								asset={ item }
 								index={ index }
 								title={ title }
+								postId={ postId }
 								dragRef={ dragRef }
 								rootRef={ canvasRef }
 								forceRender={ captureAll }
@@ -309,6 +310,22 @@ function triggerDownload( dataUrl: string, fileName: string ) {
 	const link = document.createElement( 'a' );
 	link.href = dataUrl;
 	link.download = fileName;
+	document.body.appendChild( link );
+	link.click();
+	link.remove();
+}
+
+// Same as `triggerDownload` but works for cross-origin URLs by
+// telling the anchor to use the `download` attribute. The portfolio
+// blog serves the PNG with `Content-Disposition: inline` headers, so
+// the browser would open it in a new tab; the `download` attribute
+// forces a save dialog instead.
+function triggerDownloadFromUrl( url: string, fileName: string ) {
+	const link = document.createElement( 'a' );
+	link.href = url;
+	link.download = fileName;
+	link.rel = 'noopener';
+	link.target = '_blank';
 	document.body.appendChild( link );
 	link.click();
 	link.remove();
@@ -337,6 +354,7 @@ function SocialAssetTile( {
 	dragRef,
 	forceRender = false,
 	index,
+	postId,
 	rootRef,
 	title,
 }: {
@@ -344,6 +362,7 @@ function SocialAssetTile( {
 	dragRef: MutableRefObject< { moved: boolean } >;
 	forceRender?: boolean;
 	index: number;
+	postId: number;
 	rootRef: RefObject< HTMLDivElement | null >;
 	title: string;
 } ) {
@@ -351,6 +370,7 @@ function SocialAssetTile( {
 	const label = asset.groupLabel ?? `Direction ${ index + 1 }`;
 	const frameRef = useRef< HTMLDivElement >( null );
 	const [ nearViewport, setNearViewport ] = useState( false );
+	const downloadPng = useDownloadSocialPng();
 
 	useEffect( () => {
 		if ( ! asset.html ) {
@@ -386,13 +406,24 @@ function SocialAssetTile( {
 
 		setDownloading( true );
 		try {
-			const exportedDataUrl = await renderBeaHtmlToPng(
-				asset.html,
-				{ label: asset.label, width: asset.width, height: asset.height },
-				{ pixelRatio: 2 }
-			);
-			triggerDownload(
-				exportedDataUrl,
+			// Run the in-document fitting pipeline offscreen, then ship
+			// the post-fit static HTML to the wpcom render endpoint.
+			// Server proxies to Browserless, uploads, and caches the
+			// attachment URL on the collateral — first download wins.
+			const fittedHtml = await captureFittedTileHtml( asset.html, {
+				width: asset.width,
+				height: asset.height,
+			} );
+			const result = await downloadPng( {
+				postId,
+				directionId: asset.directionId,
+				size: asset.sizeKey,
+				html: fittedHtml,
+				width: asset.width,
+				height: asset.height,
+			} );
+			triggerDownloadFromUrl(
+				result.url,
 				`${ safeFileBase( title, `${ asset.label }-${ index + 1 }` ) || 'social-asset' }.png`
 			);
 		} finally {

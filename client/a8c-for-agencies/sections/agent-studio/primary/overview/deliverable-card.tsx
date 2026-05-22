@@ -12,12 +12,10 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { getAgentStudioOutputPath } from '../../lib/paths';
-import { HtmlRenderPreview } from '../../social-design/components/HtmlRenderPreview';
-import { prepareBeaRenderElement } from '../../social-design/services/renderBeaPng';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
-import type { AgentStudioOutput, AgentStudioSocialAsset } from '../../types';
+import type { AgentStudioOutput } from '../../types';
 
 import './style.scss';
 
@@ -90,17 +88,12 @@ function DeliverablePreview( { output }: Props ) {
 		);
 	}
 
-	// Production path: server-rendered preview URLs land directly on the
-	// output. We render them as <img> with no client-side work.
+	// Server-rendered preview URLs land directly on the output once the
+	// wpcom side pre-renders thumbnails. Until then social-campaign
+	// outputs show the placeholder icon — the deliverable detail page
+	// still composes the tiles live from the brief.
 	if ( output.previewUrls?.length ) {
 		return <PreviewUrlCollage urls={ output.previewUrls } />;
-	}
-
-	// PROTOTYPE-SWAP: fall back to rasterizing tiles from HTML in the browser
-	// when `previewUrls` is absent (current local generation path). Remove
-	// this branch once the wpcom service populates `previewUrls`.
-	if ( output.kind === 'social-assets' && output.socialAssets?.assets.length ) {
-		return <SocialAssetsCollage assets={ output.socialAssets.assets } />;
 	}
 
 	return (
@@ -122,77 +115,6 @@ function PreviewUrlCollage( { urls }: { urls: string[] } ) {
 					<img src={ url } alt="" />
 				</div>
 			) ) }
-		</div>
-	);
-}
-
-const COLLAGE_ORDER: AgentStudioSocialAsset[ 'sizeKey' ][] = [
-	'cover',
-	'story',
-	'square',
-	'email',
-];
-
-function pickCollagePicks( assets: AgentStudioSocialAsset[] ): AgentStudioSocialAsset[] {
-	const byKey = new Map< AgentStudioSocialAsset[ 'sizeKey' ], AgentStudioSocialAsset[] >();
-	assets.forEach( ( asset ) => {
-		const existing = byKey.get( asset.sizeKey ) ?? [];
-		existing.push( asset );
-		byKey.set( asset.sizeKey, existing );
-	} );
-
-	const picks: AgentStudioSocialAsset[] = [];
-	for ( const key of COLLAGE_ORDER ) {
-		const next = byKey.get( key )?.[ 0 ];
-		if ( next ) {
-			picks.push( next );
-		}
-		if ( picks.length >= 4 ) {
-			break;
-		}
-	}
-
-	if ( picks.length === 0 ) {
-		return assets.slice( 0, 4 );
-	}
-
-	return picks;
-}
-
-// PROTOTYPE-SWAP: the prototype renders each tile as live HTML (in a sandboxed
-// iframe via `HtmlRenderPreview`), with text-fitting running per tile. No PNG
-// is generated unless the user clicks Download in the viewer. In production,
-// the wpcom service should pre-render thumbnails server-side at output-
-// creation time and surface them as URLs on `AgentStudioOutput.previewUrls`
-// — at which point this component renders `<img src={url} />` and the HTML +
-// fitter can be dropped on the client.
-function SocialAssetsCollage( { assets }: { assets: AgentStudioSocialAsset[] } ) {
-	const picks = useMemo( () => pickCollagePicks( assets ), [ assets ] );
-
-	return (
-		<div className="a4a-agent-studio-deliverable-card__collage">
-			{ picks.map( ( asset ) => (
-				<CollageTile key={ asset.id } asset={ asset } />
-			) ) }
-		</div>
-	);
-}
-
-function CollageTile( { asset }: { asset: AgentStudioSocialAsset } ) {
-	return (
-		<div
-			className="a4a-agent-studio-deliverable-card__collage-tile"
-			style={ { aspectRatio: `${ asset.width } / ${ asset.height }` } }
-		>
-			{ asset.html && (
-				<HtmlRenderPreview
-					html={ asset.html }
-					size={ { width: asset.width, height: asset.height, label: asset.label } }
-					ariaLabel={ asset.label }
-					isolated
-					prepareContent={ prepareBeaRenderElement }
-				/>
-			) }
 		</div>
 	);
 }

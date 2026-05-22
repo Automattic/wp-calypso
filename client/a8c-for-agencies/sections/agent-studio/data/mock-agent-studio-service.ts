@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import eventAssetsPreview from '../assets/agent-previews/event-assets.webp';
 import onePagerPreview from '../assets/agent-previews/one-pager.webp';
 import socialAssetsPreview from '../assets/agent-previews/social-assets.webp';
-import { createSocialAssets } from '../social-design/create-social-assets';
 import type {
 	AgentStudioOutput,
 	AgentStudioProject,
@@ -346,8 +345,6 @@ export const mockAgentStudioService: AgentStudioService = {
 		await ensureInitialized();
 		const project = await ensureDefaultProject();
 		const now = new Date().toISOString();
-		const socialAssets =
-			input.agentId === 'social-assets' ? await createSocialAssets( input ) : undefined;
 		const output: AgentStudioOutput = {
 			id: makeOutputId(),
 			projectId: project.id,
@@ -355,14 +352,7 @@ export const mockAgentStudioService: AgentStudioService = {
 			description: input.description,
 			agentName: input.agentName,
 			deliverableType: input.deliverableType,
-			status: socialAssets ? 'ready' : 'generating',
-			kind: socialAssets ? 'social-assets' : undefined,
-			socialAssets,
-			// PROTOTYPE-SWAP: `previewUrls` would be populated by the wpcom
-			// service with server-rendered thumbnails. For the prototype path
-			// we leave it empty and let the deliverable card rasterize tiles
-			// from `socialAssets.assets` in the browser.
-			assetCount: socialAssets?.assets.length,
+			status: 'generating',
 			createdAt: now,
 			updatedAt: now,
 		};

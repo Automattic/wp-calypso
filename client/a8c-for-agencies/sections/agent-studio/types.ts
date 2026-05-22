@@ -22,19 +22,10 @@ export interface AgentStudioOutput {
 	previewUrls?: string[];
 	/** Total number of assets the agent produced, populated once status is ready. */
 	assetCount?: number;
-	/** Tags the output to a specific agent renderer in the output-detail UI. */
-	kind?: 'one-pager' | 'social-assets';
-	/** Client-rendered social assets. The renderer owns text fitting and PNG export. */
-	socialAssets?: AgentStudioSocialAssets;
 	/** Surfaced on the deliverable card when generation fails. */
 	errorMessage?: string;
 	createdAt: string;
 	updatedAt: string;
-}
-
-export interface AgentStudioSocialImage {
-	fileName: string;
-	dataUrl: string;
 }
 
 export interface AgentStudioSocialAsset {
@@ -45,14 +36,13 @@ export interface AgentStudioSocialAsset {
 	height: number;
 	html: string;
 	groupLabel?: string;
-}
-
-export interface AgentStudioSocialAssets {
-	brandPackSlug: string;
-	assets: AgentStudioSocialAsset[];
-	images?: AgentStudioSocialImage[];
-	logo?: AgentStudioSocialImage;
-	logoOnDark?: AgentStudioSocialImage;
+	/**
+	 * Slug-safe id for the layout-direction the tile belongs to (shared
+	 * across the cover/square/story/email rendering of one direction).
+	 * The PNG download endpoint uses this as its cache key together with
+	 * `sizeKey`.
+	 */
+	directionId: string;
 }
 
 export interface AgentStudioProjectSummary extends AgentStudioProject {
@@ -100,12 +90,12 @@ export interface CreateAgentStudioOutputInput {
 	stat?: string;
 	/** Optional social assets: stat context or supporting line. */
 	statContext?: string;
-	/** Optional social assets: client-side image data URLs for local fitting/rendering. */
-	socialImages?: AgentStudioSocialImage[];
-	/** Optional social assets: client-side brand logo data URL. */
-	socialLogo?: AgentStudioSocialImage;
-	/** Optional social assets: client-side light logo for dark backgrounds. */
-	socialLogoLight?: AgentStudioSocialImage;
+	/** Optional social assets: hero / body image URLs returned by `POST /a4a/media`. */
+	socialImageUrls?: string[];
+	/** Optional social assets: brand logo URL. */
+	socialLogoUrl?: string;
+	/** Optional social assets: light logo URL for dark backgrounds. */
+	socialLogoLightUrl?: string;
 }
 
 export interface AgentStudioService {

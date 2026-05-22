@@ -48,21 +48,6 @@ describe( 'mockAgentStudioService default project', () => {
 		);
 	} );
 
-	it( 'creates the full social asset set without uploaded images', async () => {
-		const output = await mockAgentStudioService.createOutput( {
-			...briefInput,
-			agentId: 'social-assets',
-			agentName: 'Iris',
-		} );
-
-		expect( output.status ).toBe( 'ready' );
-		expect( output.kind ).toBe( 'social-assets' );
-		expect( new Set( output.socialAssets?.assets.map( ( asset ) => asset.sizeKey ) ) ).toEqual(
-			new Set( [ 'cover', 'square', 'email', 'story' ] )
-		);
-		expect( output.socialAssets?.assets.length ).toBeGreaterThanOrEqual( 4 );
-	} );
-
 	it( 'starts every created output in the generating state', async () => {
 		const output = await mockAgentStudioService.createOutput( briefInput );
 		expect( output.status ).toBe( 'generating' );
