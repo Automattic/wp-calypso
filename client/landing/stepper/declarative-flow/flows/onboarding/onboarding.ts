@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -197,10 +197,18 @@ const onboarding: FlowV2< typeof initialize > = {
 						// `/choose` is a WordPress.com PHP route, not a Calypso route, so we need an
 						// absolute URL — a relative path resolves to the current Calypso host (e.g.
 						// wpcalypso.wordpress.com/choose) and 404s on pre-release. See TESTOPS-106.
-						window.location.assign(
-							addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
-						);
-						return;
+						//
+						// Skip this in local development: `/choose` only exists on production, so
+						// the redirect bounces the user out of local Calypso to wordpress.com and
+						// breaks end-to-end testing of the Launchpad-AI prototype. In dev we fall
+						// through to the normal create-site path (free site → processing → /home),
+						// which is the behaviour this prototype is built to test.
+						if ( config( 'env_id' ) !== 'development' ) {
+							window.location.assign(
+								addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
+							);
+							return;
+						}
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
