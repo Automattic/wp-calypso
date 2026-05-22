@@ -274,6 +274,13 @@ test.describe(
 			pageMyProfile,
 			pagePurchases,
 		} ) => {
+			// This test chains several genuinely slow flows end to end: creating a
+			// paid site, completing checkout, adding a domain, and finally
+			// cancelling the plan with a real refund round-trip. The default 120s
+			// per-test budget is too tight for all of that, so widen it for this
+			// test only.
+			test.setTimeout( 240 * 1000 );
+
 			const planName = 'Personal';
 			let selectedDomain: string;
 			const testUser = helperData.getNewTestUser();
@@ -365,6 +372,10 @@ test.describe(
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
+				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
+				// API request resolves, so by the time it returns the success
+				// notice is rendering. The notice still carries a 10s auto-dismiss
+				// duration, so keep a comfortable margin to observe it.
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
@@ -506,6 +517,13 @@ test.describe(
 			pageMyProfile,
 			pagePurchases,
 		} ) => {
+			// This test chains several genuinely slow flows end to end: creating a
+			// paid site, completing checkout, adding a domain, and finally
+			// cancelling the plan with a real refund round-trip. The default 120s
+			// per-test budget is too tight for all of that, so widen it for this
+			// test only.
+			test.setTimeout( 240 * 1000 );
+
 			const planName = 'Personal';
 			const testUser = helperData.getNewTestUser();
 			let selectedDomain: string;
@@ -586,6 +604,10 @@ test.describe(
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
+				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
+				// API request resolves, so by the time it returns the success
+				// notice is rendering. The notice still carries a 10s auto-dismiss
+				// duration, so keep a comfortable margin to observe it.
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',

@@ -91,6 +91,17 @@ export async function cancelAtomicPurchaseFlow(
 		.getByRole( 'combobox', { name: 'Where is your next adventure taking you?' } )
 		.selectOption( "I'm staying here and using the free plan." );
 
+	// Submitting the final step fires the cancel-and-refund request. Start
+	// listening for its response *before* clicking so the listener cannot miss
+	// a fast response. The request hits `wpcom/v2/purchases/<id>/cancel`; the
+	// API proxy URL contains `purchases/<id>/cancel`.
+	const cancelResponsePromise = page.waitForResponse(
+		( response ) => /\/purchases\/\d+\/cancel/.test( response.url() ),
+		// A refund is a real server round-trip and can be slow in the test
+		// environment, so allow a generous window.
+		{ timeout: 60 * 1000 }
+	);
+
 	// Submit the final step. The survey for a plan cancellation only has these
 	// two steps, so there is no third button to click. The final button renders
 	// visible but `disabled`/`is-busy` while the cancellation request is in
@@ -101,7 +112,16 @@ export async function cancelAtomicPurchaseFlow(
 	// Confirming the cancellation does not trigger a full-page navigation: the
 	// purchases view updates in place as a single-page-app state change. The
 	// previous `page.waitForNavigation()` therefore never resolved and hung
-	// until its timeout. Callers assert the resulting success notice (e.g.
-	// "Your refund has been processed and your purchase removed.") to confirm
-	// the flow completed, which is the deterministic signal to wait on.
+	// until its timeout.
+	//
+	// Clicking the final button only *fires* the survey's `onSurveyComplete`
+	// handler, which then `await`s the cancel-and-refund API request before
+	// rendering the success notice. Returning right after the click left the
+	// caller's `noticeShown()` assertion racing the entire refund round-trip:
+	// the success notice is created with a 10s auto-dismiss `duration`, so a
+	// slow refund could push the notice's brief visible window outside the
+	// assertion's budget. Block here until the cancel request actually
+	// resolves so the caller's notice assertion only has to cover the notice
+	// render, not the full network round-trip.
+	await cancelResponsePromise;
 }
