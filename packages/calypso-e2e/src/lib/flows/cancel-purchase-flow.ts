@@ -1,6 +1,38 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 
 type CancelReason = 'Another reason…';
+
+/**
+ * Clicks a button locator once it is both visible and actually enabled.
+ *
+ * The cancellation flow renders its primary buttons with the
+ * `@wordpress/components` "busy" state (`class="is-busy"` plus the `disabled`
+ * attribute) while an async request is in flight. Such a button is visible but
+ * not actionable, so `click()` alone can exhaust its action timeout before the
+ * button settles. Waiting for the `disabled` attribute to be removed first
+ * guarantees the subsequent click targets an enabled element. The button may
+ * also re-render between states; polling the live locator rides that out.
+ *
+ * @param {Locator} button Button locator to wait on and click.
+ * @param {number} timeout Maximum time, in milliseconds, to wait for the enabled state.
+ */
+async function clickWhenEnabled( button: Locator, timeout = 30 * 1000 ): Promise< void > {
+	const deadline = Date.now() + timeout;
+
+	await button.waitFor( { state: 'visible', timeout } );
+
+	while ( ( await button.getAttribute( 'disabled' ) ) !== null ) {
+		if ( Date.now() >= deadline ) {
+			throw new Error(
+				`Timed out after ${ timeout }ms waiting for button to become enabled before clicking.`
+			);
+		}
+		await button.page().waitForTimeout( 100 );
+		await button.waitFor( { state: 'visible', timeout: Math.max( deadline - Date.now(), 1 ) } );
+	}
+
+	await button.click();
+}
 
 /**
  * Cancels a purchased subscription.
@@ -31,8 +63,7 @@ export async function cancelAtomicPurchaseFlow(
 	const firstButton = page
 		.getByRole( 'button', { name: 'Submit' } )
 		.or( page.getByRole( 'button', { name: 'Continue' } ) );
-	await firstButton.waitFor( { state: 'visible' } );
-	await firstButton.click();
+	await clickWhenEnabled( firstButton );
 
 	// Select dropdown value to enable the next button
 	await page
@@ -43,18 +74,16 @@ export async function cancelAtomicPurchaseFlow(
 	const secondButton = page
 		.getByRole( 'button', { name: 'Submit' } )
 		.or( page.getByRole( 'button', { name: 'Continue' } ) );
-	await secondButton.waitFor( { state: 'visible' } );
-	await secondButton.click();
+	await clickWhenEnabled( secondButton );
 
 	const finalButton = page
 		.getByRole( 'button', { name: 'Submit' } )
 		.or( page.getByRole( 'button', { name: 'Continue' } ) );
 
-	// Wait for the final button to be present and actionable before clicking.
-	// `click()` auto-waits for visibility and the enabled state, so an explicit
-	// `waitForFunction` on the disabled attribute is no longer needed.
-	await finalButton.waitFor( { state: 'visible' } );
-	await finalButton.click();
+	// The final button renders visible but `disabled`/`is-busy` while the
+	// cancellation request is in flight, so visibility alone is not enough to
+	// click it reliably. Wait for it to become enabled first.
+	await clickWhenEnabled( finalButton );
 
 	// Confirming the cancellation does not trigger a full-page navigation: the
 	// purchases view updates in place as a single-page-app state change. The
