@@ -271,7 +271,9 @@ describe( 'getSuggestionsFetchHeaders', () => {
 			Authorization: 'Bearer test-token-247750866',
 		} );
 
-		expect( createCalypsoAuthProvider ).toHaveBeenCalledWith( 247750866 );
+		expect( createCalypsoAuthProvider ).toHaveBeenCalledWith( 247750866, {
+			logWpcomJwtFailure: false,
+		} );
 	} );
 } );
 

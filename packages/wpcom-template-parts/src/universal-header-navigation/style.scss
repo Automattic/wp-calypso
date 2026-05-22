@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/color-studio/dist/color-variables-rgb";
 @import "@automattic/typography/styles/variables";
@@ -878,13 +880,12 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 
 /* End subscriptions section overrides */
 
-/* Start site profiler section overrides */
-.is-style-monochrome {
+@mixin monochrome-header( $background: #000 ) {
 	.x-root {
 		.masterbar-menu {
 			.masterbar {
 				border-bottom: none;
-				background: #000;
+				background-color: $background;
 				height: 56px;
 				position: relative;
 				.x-nav {
@@ -911,4 +912,40 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-/* End site profiler section overrides */
+/* Start monochrome header overrides */
+.is-style-monochrome {
+	@include monochrome-header;
+}
+
+.is-section-themes.has-no-sidebar .is-themes-dark-mode-monochrome,
+.is-section-theme .is-themes-dark-mode-monochrome {
+	@include ui-mixins.when-dark-theme {
+		--color-surface-backdrop: var( --color-primary-5 );
+
+		@include monochrome-header( var( --color-surface-backdrop ) );
+
+		.x-root .masterbar-menu .masterbar {
+			background: var( --color-surface-backdrop ) !important;
+			transition: none;
+		}
+
+		.x-icon__logo path {
+			fill: #fff;
+		}
+
+		.x-dropdown-link.x-dropdown-link {
+			&:hover,
+			&:focus {
+				background: $studio-wordpress-blue-5;
+				color: $studio-wordpress-blue-60;
+			}
+
+			&:active {
+				background: $studio-wordpress-blue-10;
+				color: $studio-wordpress-blue-80;
+			}
+		}
+	}
+}
+
+/* End monochrome header overrides */

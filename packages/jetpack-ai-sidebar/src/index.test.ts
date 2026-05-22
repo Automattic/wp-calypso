@@ -127,6 +127,23 @@ function installPostTypeMock( postType?: string ) {
 	};
 }
 
+function installAiEditorialReviewData( features: Record< string, boolean > = {} ) {
+	( globalThis as any ).agentsManagerData = {
+		aiEditorialReviewEnabled: true,
+		jetpackAiSidebarPreview: {
+			enabled: true,
+			features: {
+				aiEditorialReview: true,
+				blockTransformations: true,
+				optimizeTitleSuggestion: false,
+				chatHistory: false,
+				supportGuides: false,
+				...features,
+			},
+		},
+	};
+}
+
 function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
 	const { suggestions } = useSuggestions();
 	React.useEffect( () => {
@@ -168,10 +185,10 @@ describe( 'getEmptyViewSuggestions', () => {
 	} );
 
 	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_editorial_review_suggestion_rendered',
@@ -179,24 +196,60 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 	} );
 
-	it( 'hides AI Editorial Review on page editors', () => {
+	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides AI Editorial Review on page editors', () => {
+		installAiEditorialReviewData();
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
 	it( 'hides AI Editorial Review until the post type is known', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Optimize Title when the preview feature disables it', () => {
+		installAiEditorialReviewData( { aiEditorialReview: false, optimizeTitleSuggestion: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'treats missing preview features as disabled', () => {
+		( globalThis as any ).agentsManagerData = {
+			aiEditorialReviewEnabled: true,
+			jetpackAiSidebarPreview: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		};
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'AI Editorial Review' );
 	} );
 } );
 
@@ -214,8 +267,8 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not append AI Editorial Review to block-specific suggestions', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+	it( 'appends AI Editorial Review to block-specific suggestions', () => {
+		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
 
@@ -223,13 +276,51 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
-			'AI Editorial Review'
-		);
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'keeps AI Editorial Review when the preview feature disables block transformations', () => {
+		installAiEditorialReviewData( { blockTransformations: false } );
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'keeps AI Editorial Review when the block transformations preview feature is missing', () => {
+		( globalThis as any ).agentsManagerData = {
+			aiEditorialReviewEnabled: true,
+			jetpackAiSidebarPreview: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		};
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
 	} );
 
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
 			( suggestion ) => suggestion.id === 'mediate-review-notes'
@@ -253,7 +344,7 @@ describe( 'useSuggestions', () => {
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installAiEditorialReviewData();
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
 
@@ -268,6 +359,94 @@ describe( 'useSuggestions', () => {
 		} );
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
+	} );
+
+	it( 're-shows block suggestions when a block action completes', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
+
+		act( () => {
+			window.dispatchEvent( new Event( 'jetpack-ai-sidebar-block-action-complete' ) );
+		} );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'does not start the selected block shimmer when a suggestion is only selected', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', 'b1' );
+		document.body.appendChild( blockEl );
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+	} );
+
+	it( 'starts the selected block shimmer when AM starts processing', () => {
+		jest.useFakeTimers();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'lQ0k', name: 'core/paragraph' };
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', 'lQ0k' );
+		document.body.appendChild( blockEl );
+
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: true,
+		} as any );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( true );
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
 	} );
 } );
 
@@ -293,6 +472,11 @@ describe( 'toolProvider', () => {
 		( window as any ).wp = {};
 	} );
 
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+	} );
+
 	describe( 'getAbilities', () => {
 		it( 'includes update-block-content and big_sky__show_component', async () => {
 			const abilities = await toolProvider.getAbilities();
@@ -309,6 +493,16 @@ describe( 'toolProvider', () => {
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'omits update-block-content when block transformations are disabled', async () => {
+			installAiEditorialReviewData( { blockTransformations: false } );
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).not.toContain( 'wpcom/update-block-content' );
+			expect( names ).toContain( 'big_sky__show_component' );
 		} );
 	} );
 
@@ -474,7 +668,10 @@ describe( 'useCheckpoint', () => {
 // core/block-editor (for updateBlockAttributes / getBlock). Tracks calls so
 // tests can assert exact dispatches.
 function installWpDataMockWithBlockEditor(
-	blocks: Record< string, { name: string; attributes: { content?: string } } > = {
+	blocks: Record<
+		string,
+		{ name: string; attributes: { content?: string }; innerBlocks?: any[] }
+	> = {
 		'550e8400-e29b-41d4-a716-446655440000': {
 			name: 'core/paragraph',
 			attributes: { content: 'original block content' },
@@ -483,6 +680,7 @@ function installWpDataMockWithBlockEditor(
 ) {
 	const editorState: { title: string } = { title: 'original' };
 	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
+	const selectedClientIds: string[] = [];
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -494,7 +692,13 @@ function installWpDataMockWithBlockEditor(
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
-						getBlock: ( clientId: string ) => blocks[ clientId ] ?? null,
+						getBlock: ( clientId: string ) =>
+							blocks[ clientId ] ? { clientId, ...blocks[ clientId ] } : null,
+						getBlocks: () =>
+							Object.entries( blocks ).map( ( [ clientId, block ] ) => ( {
+								clientId,
+								...block,
+							} ) ),
 					};
 				}
 				return undefined;
@@ -513,6 +717,15 @@ function installWpDataMockWithBlockEditor(
 					return {
 						updateBlockAttributes: ( clientId: string, attrs: Record< string, unknown > ) => {
 							blockUpdates.push( { clientId, attrs } );
+							if ( blocks[ clientId ] ) {
+								blocks[ clientId ].attributes = {
+									...blocks[ clientId ].attributes,
+									...attrs,
+								};
+							}
+						},
+						selectBlock: ( clientId: string ) => {
+							selectedClientIds.push( clientId );
 						},
 					};
 				}
@@ -520,7 +733,7 @@ function installWpDataMockWithBlockEditor(
 			},
 		},
 	};
-	return { editorState, blockUpdates, blocks };
+	return { editorState, blockUpdates, blocks, selectedClientIds };
 }
 
 describe( 'applyReviewEdit', () => {
@@ -607,7 +820,7 @@ describe( 'applyReviewEdit', () => {
 		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
 	} );
 
-	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {
+	it( 'returns the rationale as an agent message so AM can attach feedback actions', async () => {
 		installWpDataMockWithBlockEditor();
 		const addMessage = jest.fn();
 		useAbilitiesSetup( {
@@ -621,15 +834,10 @@ describe( 'applyReviewEdit', () => {
 			'Follows Copy guideline on specific dates.'
 		);
 		jest.advanceTimersByTime( 1000 );
-		await promise;
+		const result = await promise;
 
-		expect( addMessage ).toHaveBeenCalledTimes( 1 );
-		const message = addMessage.mock.calls[ 0 ][ 0 ];
-		expect( message.role ).toBe( 'assistant' );
-		expect( message.content[ 0 ] ).toEqual( {
-			type: 'text',
-			text: 'Follows Copy guideline on specific dates.',
-		} );
+		expect( addMessage ).not.toHaveBeenCalled();
+		expect( result.agentMessage ).toBe( 'Follows Copy guideline on specific dates.' );
 	} );
 
 	it( 'does not emit a chat message when summary is omitted', async () => {
@@ -645,6 +853,54 @@ describe( 'applyReviewEdit', () => {
 		await promise;
 
 		expect( addMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'supports repeated edits against the updated selected block content', async () => {
+		const { blockUpdates, selectedClientIds } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'hello world this is my firsst post' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const first = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Hello world, this is my first post.',
+			undefined,
+			'hello world this is my firsst post'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await first;
+
+		const second = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Hello world, this is my first post!',
+			undefined,
+			'Hello world, this is my first post.'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await second;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Hello world, this is my first post.',
+			contentAfter: 'Hello world, this is my first post!',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Hello world, this is my first post.' },
+			},
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Hello world, this is my first post!' },
+			},
+		] );
+		expect( selectedClientIds ).toEqual( [
+			'550e8400-e29b-41d4-a716-446655440000',
+			'550e8400-e29b-41d4-a716-446655440000',
+		] );
 	} );
 
 	// Intentionally no direct unit test for the `setCheckpoint` call inside
@@ -683,6 +939,40 @@ describe( 'applyReviewEdit', () => {
 				attrs: { content: 'The board voted on Tuesday on the proposal.' },
 			},
 		] );
+	} );
+
+	it( 'falls back to a unique currentText match when the clientId is stale', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'live-client-id': {
+				name: 'core/paragraph',
+				attributes: { content: 'hello world this is my firsst post' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'stale-client-id',
+			'Hello world, this is my first post.',
+			undefined,
+			'hello world this is my firsst post'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			clientId: 'live-client-id',
+			contentBefore: 'hello world this is my firsst post',
+			contentAfter: 'Hello world, this is my first post.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'live-client-id',
+				attrs: { content: 'Hello world, this is my first post.' },
+			},
+		] );
+		warn.mockRestore();
 	} );
 
 	it( 'revalidates currentText against the latest block content before writing', async () => {
@@ -901,17 +1191,35 @@ describe( 'findBlockElement', () => {
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440000' ) ).toBe( el );
 	} );
 
+	it( 'supports short mixed-case Gutenberg clientIds', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', 'lQ0k' );
+		document.body.appendChild( el );
+		expect( findBlockElement( 'lQ0k' ) ).toBe( el );
+	} );
+
 	it( 'returns null when the clientId is not in the DOM', () => {
 		// Returns null from the regex guard, the main-doc querySelector miss,
 		// or the optional editor-canvas iframe lookup chain (coerced via ?? null).
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeNull();
 	} );
 
-	it( 'rejects malformed clientIds to prevent selector injection', () => {
+	it( 'escapes clientIds to prevent selector injection', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', 'client.id' );
+		document.body.appendChild( el );
+		expect( findBlockElement( 'client.id' ) ).toBe( el );
 		expect( findBlockElement( '"][onerror="alert(1)"]' ) ).toBeNull();
 		expect( findBlockElement( 'contains space' ) ).toBeNull();
-		// Non-hex characters fail the regex guard.
-		expect( findBlockElement( 'not-a-real-clientid-g' ) ).toBeNull();
+	} );
+
+	it( 'finds blocks in accessible editor iframes', () => {
+		const iframe = document.createElement( 'iframe' );
+		document.body.appendChild( iframe );
+		const el = iframe.contentDocument?.createElement( 'div' );
+		el?.setAttribute( 'data-block', 'lQ0k' );
+		iframe.contentDocument?.body.appendChild( el as HTMLElement );
+		expect( findBlockElement( 'lQ0k' ) ).toBe( el );
 	} );
 } );
 

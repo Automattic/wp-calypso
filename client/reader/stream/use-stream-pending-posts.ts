@@ -1,11 +1,12 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
+import { analyticsForStream } from 'calypso/state/reader/streams/normalize';
 import { normalizeStreamPage } from './stream-normalization';
 import type { PostKey } from './use-stream-posts';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
@@ -54,14 +55,22 @@ type PollHeadQueryKey = readonly [
 const postKeyId = ( postKey: PostKey | null | undefined ): string =>
 	postKey ? keyToString( postKey ) ?? '' : '';
 
+const railcarId = ( railcar: unknown ): string | null => {
+	if ( ! railcar || typeof railcar !== 'object' ) {
+		return null;
+	}
+	const id = ( railcar as { railcar?: unknown } ).railcar;
+	return typeof id === 'string' ? id : JSON.stringify( railcar );
+};
+
 /**
  * Drives the "X new posts" pill. A separate `useQuery` polls the head of the
  * stream every minute (`refetchInterval`); the diff between the polled head
  * and the currently visible items is exposed as `pendingCount`. The polled
  * payload carries full post bodies (see `getQueryStringForPoll`), and is
- * dispatched into `state.reader.posts` on every tick so `<PostLifecycle>`
- * resolves rich cards immediately when the consumer triggers a refetch of the
- * infinite query.
+ * written into the canonical Reader post cache on every tick so
+ * `<PostLifecycle>` resolves rich cards immediately when the consumer triggers
+ * a refetch of the infinite query.
  *
  * The hook is purely informational. Reacting to a non-zero `hasPendingPosts`
  * (passive invalidate, imperative refetch on click) is the consumer's job —
@@ -78,6 +87,7 @@ export function useStreamPendingPosts( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const streamType = getStreamType( streamKey );
+	const renderedRailcars = useRef< Set< string > >( new Set() );
 
 	const pollQueryKey = useMemo< PollHeadQueryKey >(
 		() => [ 'read', 'stream', 'poll-head', streamKey, feedId, localeSlug, startDate ] as const,
@@ -117,19 +127,35 @@ export function useStreamPendingPosts( {
 		meta: { persist: false },
 	} );
 
-	// Hydrate Redux on every poll tick so the post bodies are ready before the
-	// user clicks "X new posts". Idempotent — `READER_POSTS_RECEIVE` overwrites
-	// by `global_ID`, and the rich poll shape matches what regular fetches
-	// return.
+	useEffect( () => {
+		renderedRailcars.current.clear();
+	}, [ pollQueryKey ] );
+
+	// Hydrate the canonical cache on every poll tick so post bodies are ready
+	// before the user clicks "X new posts".
 	useEffect( () => {
 		if ( ! pollHead.data ) {
 			return;
 		}
 		const { streamPosts } = normalizeStreamPage( pollHead.data, streamType );
 		if ( streamPosts.length > 0 ) {
-			dispatch( receivePosts( streamPosts ) as never );
+			const unrenderedRailcarPosts = streamPosts.filter( ( post ) => {
+				const id = railcarId( post.railcar );
+				if ( ! id || renderedRailcars.current.has( id ) ) {
+					return false;
+				}
+				renderedRailcars.current.add( id );
+				return true;
+			} );
+			analyticsForStream( {
+				streamKey,
+				algorithm: pollHead.data.algorithm,
+				items: unrenderedRailcarPosts,
+			} ).forEach( ( action ) => dispatch( action ) );
+			syncPostCache( queryClient, streamPosts );
+			syncConversationFollowStatus( dispatch, streamPosts );
 		}
-	}, [ pollHead.data, streamType, dispatch ] );
+	}, [ pollHead.data, streamKey, streamType, queryClient, dispatch ] );
 
 	const pendingCount = useMemo( () => {
 		const streamItems = pollHead.data

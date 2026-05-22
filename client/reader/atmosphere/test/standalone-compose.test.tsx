@@ -279,7 +279,7 @@ describe( 'Standalone compose end-to-end', () => {
 		expect( composeErrorCalls ).toHaveLength( 1 );
 	} );
 
-	it( 'auth error 401: renders a Reconnect link to /reader/atmosphere/connect that opens in a new tab, preserves the draft, and keeps the modal open', async () => {
+	it( 'auth error 401: shows a connection-error message, preserves the draft, and keeps the modal open', async () => {
 		mockConnections();
 		mockTimelineEmpty();
 
@@ -294,11 +294,9 @@ describe( 'Standalone compose end-to-end', () => {
 		await user.type( screen.getByRole( 'textbox' ), 'auth fail' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
-		const reconnect = await screen.findByRole( 'link', { name: /reconnect/i } );
-		expect( reconnect ).toHaveAttribute( 'href', '/reader/atmosphere/connect' );
-		expect( reconnect ).toHaveAttribute( 'target', '_blank' );
-		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );
-		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noreferrer' ) );
+		// The error toast surfaces a connection-error message with no link.
+		expect( await screen.findByText( /Bluesky connection/i ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /reconnect/i } ) ).toBeNull();
 
 		// Modal stays open with the typed draft preserved.
 		expect( screen.getByRole( 'dialog' ) ).toBeVisible();

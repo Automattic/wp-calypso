@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
@@ -7,7 +6,7 @@ import {
 	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { Button as GutenbergButton } from '@wordpress/components';
+import { Button as GutenbergButton, Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -18,6 +17,8 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSolutionsForReason } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-solutions-for-reason';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	isAgencyPartnerType,
 	isPartnerPurchase,
@@ -43,7 +44,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
-import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import nextStep from './next-step';
@@ -83,6 +83,8 @@ class CancelPurchaseForm extends Component {
 		skipRemovePlanSurvey: PropTypes.bool,
 		cancellationInProgress: PropTypes.bool,
 		intent: PropTypes.string,
+		purchaseSettingsUrl: PropTypes.string,
+		isSplitCancelRemoveEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -205,8 +207,7 @@ class CancelPurchaseForm extends Component {
 				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
 		} );
 		const hasSolutionsCards =
-			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
-			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			this.props.isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 		const newState = {
 			...this.state,
 			questionOneText: value,
@@ -403,9 +404,7 @@ class CancelPurchaseForm extends Component {
 
 			const solutions = getSolutionsForReason( this.state.questionOneText || '' );
 			const useSolutionsCards =
-				config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
-				solutions &&
-				solutions.length > 0;
+				this.props.isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
 
 			// When flag is on and we have solution cards for this reason, show them
 			// instead of the legacy education or single-upsell step.
@@ -413,13 +412,17 @@ class CancelPurchaseForm extends Component {
 				return (
 					<SolutionsCardsUpsellStep
 						cancellationReason={ this.state.questionOneText }
+						cancellationInProgress={ this.props.cancellationInProgress }
 						cancelBundledDomain={ this.props.cancelBundledDomain }
 						closeDialog={ this.closeDialog }
 						downgradePlanPrice={ this.props.downgradePlanToMonthlyPrice }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
+						intent={ intent }
 						onClickDowngrade={ this.downgradeClick }
 						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
+						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 						purchase={ purchase }
+						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
 						refundAmount={ this.getRefundAmount() }
 						site={ site }
 					/>
@@ -877,6 +880,9 @@ class CancelPurchaseForm extends Component {
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
+						{ this.props.cancellationInProgress && (
+							<Spinner className="cancel-purchase-form__header-spinner" />
+						) }
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
@@ -924,6 +930,7 @@ const WrappedCancelPurchaseForm = ( props ) => {
 		siteId: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	return (
 		<ConnectedCancelPurchaseForm
@@ -934,6 +941,7 @@ const WrappedCancelPurchaseForm = ( props ) => {
 			downgradePlanToMonthlyPrice={
 				pricingMeta?.[ monthlyDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
 			}
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 		/>
 	);
 };

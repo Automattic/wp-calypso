@@ -17,6 +17,7 @@ import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-age
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -108,6 +109,10 @@ export default function AgentDock( {
 	// don't apply and avoid persisting open/close state through the logged-in
 	// Agents Manager REST state endpoint.
 	const isReaderChat = isReaderChatAgent( agentId );
+	const showChatHistory =
+		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
+	const showSupportGuides =
+		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
 		[ isReaderChat, setIsOpen ]
@@ -257,8 +262,7 @@ export default function AgentDock( {
 					navigate( '/zendesk' );
 				},
 			},
-			// TODO: For testing. Remove before release.
-			! isReaderChat && {
+			showSupportGuides && {
 				icon: help,
 				title: __( 'Support guides', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/support-guides',
@@ -378,10 +382,10 @@ export default function AgentDock( {
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
 				<Route path="/chat" element={ OrchestratorChatRoute } />
-				{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
+				{ showSupportGuides && <Route path="/post" element={ SupportGuideRoute } /> }
 				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
-				{ ! isReaderChat && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
-				{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
+				{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+				{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
 		)

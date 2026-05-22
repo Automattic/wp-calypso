@@ -26,7 +26,6 @@ import {
 	userPreferenceQuery,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import {
 	useSuspenseQuery,
@@ -117,6 +116,7 @@ type TopNoticeArgs = {
 	displayVariant: DisplayVariant;
 	purchase: Purchase;
 	intent: CancelIntent | null;
+	isSplitCancelRemoveEnabled: boolean;
 };
 
 /**
@@ -126,15 +126,32 @@ type TopNoticeArgs = {
 const CACHE_GUARD_DURATION_MS = 15_000;
 
 function renderTopNotice( args: TopNoticeArgs ) {
-	const { surveyShown, showDomainOptionsStep, displayVariant, purchase, intent } = args;
+	const {
+		surveyShown,
+		showDomainOptionsStep,
+		displayVariant,
+		purchase,
+		intent,
+		isSplitCancelRemoveEnabled,
+	} = args;
 
 	if ( surveyShown || showDomainOptionsStep ) {
 		return null;
 	}
 
+	// Intent-cancel with a refund (flag-on) → promo notice with inline link to
+	// switch the user into the remove flow.
+	if (
+		isSplitCancelRemoveEnabled &&
+		displayVariant === 'cancel' &&
+		hasAmountAvailableToRefund( purchase )
+	) {
+		return <RefundEligibilityNotice mode="refund-eligibility" purchase={ purchase } />;
+	}
+
 	// Intent-remove with a refund → confirmed refund-amount notice (no CTA).
 	if ( displayVariant === 'remove' && hasAmountAvailableToRefund( purchase ) ) {
-		return <RefundEligibilityNotice purchase={ purchase } />;
+		return <RefundEligibilityNotice mode="confirmed" purchase={ purchase } />;
 	}
 
 	// Everything else → time-remaining notice (itself suppressed on
@@ -753,6 +770,55 @@ function CancelPurchaseInner() {
 		}
 	};
 
+	const onSwitchToMonthly = async () => {
+		if ( state.isSubmitting ) {
+			return;
+		}
+
+		const monthlyPlan = getDowngradePlanForPurchase( plans, purchase, 'downgrade-monthly' );
+		if ( ! monthlyPlan ) {
+			createErrorNotice( __( 'Failed to switch to monthly billing.' ), { type: 'snackbar' } );
+			return;
+		}
+
+		setState( ( state ) => ( { ...state, isLoading: true, isSubmitting: true } ) );
+		recordEvent( 'calypso_purchases_downgrade_form_submit' );
+
+		try {
+			await cancelAndRefundMutation.mutateAsync( {
+				purchaseId: purchase.ID,
+				options: {
+					type: 'downgrade',
+					to_product_id: monthlyPlan.product_id,
+				},
+			} );
+
+			// Fetch the refreshed purchases list to find the new monthly purchase.
+			const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
+			const newPurchase = freshPurchases?.find( ( p: Purchase ) => {
+				return p.product_id === monthlyPlan.product_id && p.blog_id === purchase.blog_id;
+			} );
+
+			if ( newPurchase ) {
+				navigate( {
+					to: purchaseSettingsRoute.fullPath,
+					params: { purchaseId: newPurchase.ID },
+					search: { downgraded: true },
+				} );
+			} else {
+				// Fallback: new purchase not found (eventual consistency edge case).
+				createSuccessNotice( __( 'Your plan has been switched to monthly billing.' ), {
+					type: 'snackbar',
+				} );
+				navigate( { to: purchasesRoute.to } );
+			}
+		} catch ( error ) {
+			createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+		} finally {
+			setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
+		}
+	};
+
 	const freeMonthOfferClick = async () => {
 		if ( ! state.isSubmitting ) {
 			setState( ( state ) => ( { ...state, isLoading: true } ) );
@@ -1011,8 +1077,7 @@ function CancelPurchaseInner() {
 			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
 		} );
 		const hasSolutionsCards =
-			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
-			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 
 		setState( ( state ) => ( {
 			...state,
@@ -1565,7 +1630,7 @@ function CancelPurchaseInner() {
 		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
 	const isSolutionsStep =
 		state.surveyStep === UPSELL_STEP &&
-		config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+		isSplitCancelRemoveEnabled &&
 		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
@@ -1591,6 +1656,7 @@ function CancelPurchaseInner() {
 			downgradePlan={ downgradePlan }
 			flowType={ flowType }
 			freeMonthOfferClick={ freeMonthOfferClick }
+			onSwitchToMonthly={ onSwitchToMonthly }
 			hasBackupsFeature={ hasBackupsFeature }
 			importQuestionRadio={ state.importQuestionRadio }
 			includedDomainPurchase={ includedDomainPurchase }
@@ -1652,6 +1718,7 @@ function CancelPurchaseInner() {
 				displayVariant,
 				purchase,
 				intent,
+				isSplitCancelRemoveEnabled,
 			} ) }
 		>
 			{ isSolutionsStep ? (

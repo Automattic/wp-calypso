@@ -5,7 +5,8 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
-import { Button, Card, Spinner } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { Button, Card, ExternalLink, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -239,32 +240,44 @@ export function SocialOverviewView() {
 					<Button variant="primary" href="/reader/connections/new">
 						{ translate( 'Pick a network →' ) }
 					</Button>
+					<p className="social-empty__learn-more">
+						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+							{ translate( 'Learn more about your social accounts in the Reader' ) }
+						</ExternalLink>
+					</p>
 				</Card>
 			) }
 
 			{ showSpotlight && <SocialSpotlight connections={ spotlightConnections } /> }
 
 			{ ! isLoading && cards.length > 0 && (
-				<div className="social-grid">
-					{ cards.map( ( card ) => (
-						<SocialCardItem
-							key={ `${ card.protocol }-${ card.id }` }
-							card={ card }
-							onClick={ () => handleCardClick( card ) }
-						/>
-					) ) }
-					<a className="social-card social-card--add" href="/reader/connections/new">
-						<div className="social-card__plus" aria-hidden="true">
-							+
-						</div>
-						<div className="social-card__body">
-							<div className="social-card__name">{ translate( 'Add another' ) }</div>
-							<div className="social-card__handle">
-								{ translate( 'Bluesky, Mastodon, or your own site' ) }
+				<section className="social-accounts" aria-labelledby="social-accounts-heading">
+					<header className="social-accounts__header">
+						<h2 id="social-accounts-heading" className="social-accounts__title">
+							{ translate( 'Your accounts' ) }
+						</h2>
+					</header>
+					<div className="social-grid">
+						{ cards.map( ( card ) => (
+							<SocialCardItem
+								key={ `${ card.protocol }-${ card.id }` }
+								card={ card }
+								onClick={ () => handleCardClick( card ) }
+							/>
+						) ) }
+						<a className="social-card social-card--add" href="/reader/connections/new">
+							<div className="social-card__plus" aria-hidden="true">
+								+
 							</div>
-						</div>
-					</a>
-				</div>
+							<div className="social-card__body">
+								<div className="social-card__name">{ translate( 'Add another' ) }</div>
+								<div className="social-card__handle">
+									{ translate( 'Bluesky, Mastodon, or your own site' ) }
+								</div>
+							</div>
+						</a>
+					</div>
+				</section>
 			) }
 		</ReaderMain>
 	);

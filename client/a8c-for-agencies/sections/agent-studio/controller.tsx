@@ -2,6 +2,7 @@ import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import LearnSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/learn';
 import AgentStudioBrief from './primary/brief';
+import AgentStudioOutputDetail from './primary/output-detail';
 import AgentStudioOverview from './primary/overview';
 import AgentStudioProjectDetail from './primary/project-detail';
 
@@ -35,6 +36,20 @@ export const agentStudioProjectContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Resources and tools > Agent studio > Project" path={ context.path } />
 			<AgentStudioProjectDetail projectId={ context.params.projectId } />
+		</>
+	);
+	context.secondary = <LearnSidebar path={ context.path } />;
+	next();
+};
+
+export const agentStudioOutputContext: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker
+				title="Resources and tools > Agent studio > Deliverable"
+				path={ context.path }
+			/>
+			<AgentStudioOutputDetail outputId={ context.params.outputId } />
 		</>
 	);
 	context.secondary = <LearnSidebar path={ context.path } />;

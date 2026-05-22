@@ -466,8 +466,10 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isLogin = currentRoute.startsWith( '/log-in' );
+			const isWooCommerceQrLogin =
+				currentRoute === '/me/security/qr-login' && currentQuery?.origin === 'woocommerce';
 
-			const noMasterbarForRoute = isLogin || isInvitationURL;
+			const noMasterbarForRoute = isLogin || isInvitationURL || isWooCommerceQrLogin;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&

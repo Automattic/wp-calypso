@@ -86,3 +86,118 @@
 	width: 14px;
 	height: 14px;
 }
+
+.a4a-agent-studio-logo-upload {
+	position: relative;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.a4a-agent-studio-logo-upload__well {
+	position: relative;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 160px;
+	height: 88px;
+	padding: 12px;
+	margin: 0;
+	overflow: hidden;
+	border: 1px dashed var(--color-neutral-10);
+	border-radius: 8px;
+	background-color: var(--color-surface);
+	cursor: pointer;
+	appearance: none;
+	transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.a4a-agent-studio-logo-upload__well:hover:not(:disabled) {
+	border-color: var(--color-primary);
+}
+
+.a4a-agent-studio-logo-upload__well:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+.a4a-agent-studio-logo-upload__well:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+.a4a-agent-studio-logo-upload__well.is-filled {
+	border-style: solid;
+}
+
+.a4a-agent-studio-logo-upload__well.is-dark {
+	background-color: var(--color-neutral-90);
+	border-color: var(--color-neutral-80);
+}
+
+.a4a-agent-studio-logo-upload__well.is-dark:hover:not(:disabled) {
+	border-color: var(--color-primary);
+}
+
+.a4a-agent-studio-logo-upload__prompt {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	color: var(--color-text-subtle);
+}
+
+.a4a-agent-studio-logo-upload__well.is-dark .a4a-agent-studio-logo-upload__prompt {
+	color: var(--color-neutral-20);
+}
+
+.a4a-agent-studio-logo-upload__image {
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	pointer-events: none;
+}
+
+.a4a-agent-studio-logo-upload__remove {
+	position: absolute;
+	inset-block-start: 4px;
+	inset-inline-end: 4px;
+	display: inline-grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	margin: 0;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 50%;
+	background-color: var(--color-surface);
+	color: var(--color-text);
+	cursor: pointer;
+	appearance: none;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.a4a-agent-studio-logo-upload__remove svg,
+.a4a-agent-studio-logo-upload__remove svg path {
+	fill: currentColor;
+}
+
+.a4a-agent-studio-logo-upload__remove:hover {
+	background-color: var(--color-neutral-0);
+}
+
+.a4a-agent-studio-logo-upload__label.components-text {
+	font-size: 12px;
+}
+
+.a4a-agent-studio-brief__logo-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: flex-start;
+}

@@ -1,0 +1,75 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.themes__activation-modal {
+	width: calc(100% - 32px);
+	max-width: 1280px;
+	// @wordpress/components Modal caps height at 70% of viewport on tall
+	// screens (≥960px) and `calc(100% - 128px)` on shorter ones. With wide
+	// 4:3 preview cards inside, that's tight enough to trigger a scrollbar.
+	// Allow the modal to use most of the viewport with just 32px breathing
+	// room top and bottom.
+	max-height: calc(100vh - 64px);
+	// Below 600px, @wordpress/components Modal switches its default margin from
+	// `auto` to `40px 0 0 0` (a top-anchored full-bleed style). Since we keep
+	// the modal narrower than the viewport, force horizontal auto so it stays
+	// centered at every breakpoint.
+	margin-inline: auto;
+
+	// Mobile: drop our desktop overrides and let @wordpress/components Modal's
+	// default treatment take over — top-anchored, full-width, natural content
+	// height. That's the most common Calypso pattern (used by ConfirmModal,
+	// the various theme/import dialogs, etc.).
+	@media (max-width: $break-small) {
+		width: 100%;
+		max-width: none;
+		max-height: none;
+		margin: 40px 0 0 0;
+	}
+
+	.themes__activation-modal-previews {
+		display: flex;
+		gap: 24px;
+		margin-block-end: 24px;
+
+		> * {
+			flex: 1 1 0;
+		}
+
+		// On narrow viewports stack the options vertically so each one gets
+		// the full modal width.
+		@media (max-width: $break-small) {
+			flex-direction: column;
+
+			// In column mode, `flex: 1 1 0` distributes height equally — which
+			// constrains each card's height below what its 4:3 wrapper wants
+			// (silently overriding the wrapper's aspect-ratio and clipping the
+			// iframe's bottom). Disable the grow/shrink here so cards size to
+			// their natural content height.
+			> * {
+				flex: 0 0 auto;
+			}
+		}
+	}
+
+	.themes__activation-modal-loading {
+		flex: 1 1 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 200px;
+	}
+
+	// While the theme is activating, dim the modal's close (X) button and
+	// block pointer events so it visually reads as disabled. We can't disable
+	// it via a Modal prop — the X is rendered internally by @wordpress/components.
+	&.is-activating .components-modal__header .components-button {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	.themes__activation-modal-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+}

@@ -22,7 +22,7 @@ async function main() {
 	setStore( store, getStateFromCache( currentUser?.ID ) );
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
-	setupLocale( currentUser, store );
+	await setupLocale( currentUser, store );
 	// Plain client (no persistence): /log-in is logged-out-only, so the user-keyed
 	// cache from createQueryClient would never hit. Skips the async hydrate too.
 	// If this boot ever needs to support logged-in users, switch to createQueryClient().

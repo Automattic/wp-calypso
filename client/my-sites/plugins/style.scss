@@ -74,6 +74,18 @@ body.is-section-plugins {
 		}
 	}
 
+	// When the agents-manager (AI) sidebar is open, AM applies
+	// `#content { overflow: auto !important }` on plugins routes,
+	// which causes these ::before pseudo-elements to end up overflowing
+	// the container and causing unnecessary scrollbars.
+	&.agents-manager-sidebar-container--sidebar-open {
+		.plugins-browser :has(> .section-header-container)::before,
+		.is-plugin-details :has(> .section-header-container)::before {
+			width: auto;
+			height: auto;
+		}
+	}
+
 	.is-logged-in main:not( .hosting-dashboard-layout ):not( .hosting-dashboard-layout-column ) {
 		&:not( .plugins-browser ),
 		&.plugins-browser .plugins-browser__content-wrapper {

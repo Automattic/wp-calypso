@@ -15,6 +15,16 @@ declare const agentsManagerData:
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
+			jetpackAiSidebarPreview?: {
+				enabled: boolean;
+				features?: {
+					aiEditorialReview?: boolean;
+					blockTransformations?: boolean;
+					optimizeTitleSuggestion?: boolean;
+					chatHistory?: boolean;
+					supportGuides?: boolean;
+				};
+			};
 	  }
 	| undefined;
 

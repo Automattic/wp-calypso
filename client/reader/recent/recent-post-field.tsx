@@ -5,11 +5,11 @@ import { getPostTitleFallback } from 'calypso/reader/utils';
 
 interface RecentPostFieldProps {
 	post: {
-		title: string;
-		excerpt: string;
-		content: string;
-		featured_image: string;
-		site_name: string;
+		title?: string;
+		excerpt?: string;
+		content?: string;
+		featured_image?: string;
+		site_name?: string;
 	};
 }
 
@@ -23,7 +23,12 @@ const RecentPostField = forwardRef< HTMLDivElement, RecentPostFieldProps >( ( { 
 			<AutoDirection>
 				<div className="recent-post-field__title">
 					<div className="recent-post-field__title-text">
-						{ post?.title || getPostTitleFallback( post ) }
+						{ post?.title ||
+							getPostTitleFallback( {
+								title: post?.title ?? '',
+								excerpt: post?.excerpt ?? '',
+								content: post?.content ?? '',
+							} ) }
 					</div>
 					<div className="recent-post-field__site-name">{ post?.site_name }</div>
 				</div>

@@ -75,34 +75,3 @@ describe( 'mockAgentStudioService default project', () => {
 		expect( await mockAgentStudioService.listOutputs() ).toEqual( [] );
 	} );
 } );
-
-describe( 'mockAgentStudioService.suggestOnePagerContent', () => {
-	const content =
-		'A faster path from first sale to repeat customer\n' +
-		'We help agencies cut launch time. Clients see results in weeks. Extra detail here.';
-
-	it( 'suggests a title from the first line of content', async () => {
-		expect( await mockAgentStudioService.suggestOnePagerContent( content, 'title' ) ).toBe(
-			'A faster path from first sale to repeat customer'
-		);
-	} );
-
-	it( 'suggests a blurb from the sentences after the first line', async () => {
-		expect( await mockAgentStudioService.suggestOnePagerContent( content, 'blurb' ) ).toBe(
-			'We help agencies cut launch time. Clients see results in weeks.'
-		);
-	} );
-
-	it( 'truncates an overly long title', async () => {
-		const longLine = 'word '.repeat( 30 ).trim();
-		const title = await mockAgentStudioService.suggestOnePagerContent( longLine, 'title' );
-
-		expect( title.endsWith( '…' ) ).toBe( true );
-		expect( title.length ).toBeLessThanOrEqual( 80 );
-	} );
-
-	it( 'returns an empty string for empty content', async () => {
-		expect( await mockAgentStudioService.suggestOnePagerContent( '   ', 'title' ) ).toBe( '' );
-		expect( await mockAgentStudioService.suggestOnePagerContent( '   ', 'blurb' ) ).toBe( '' );
-	} );
-} );

@@ -14,13 +14,9 @@ export function errorMessage(
 	switch ( error.kind ) {
 		case 'auth_failed':
 		case 'auth_required':
-			return translate(
-				'Your Bluesky connection needs to be re-authorized. Disconnect and reconnect.'
-			);
+			return translate( 'Something went wrong with your Bluesky connection.' );
 		case 'connection_not_found':
-			return translate(
-				'Your Bluesky connection is no longer available. Disconnect and reconnect.'
-			);
+			return translate( 'This Bluesky connection is no longer available.' );
 		case 'rate_limited':
 			return translate( "Bluesky's asking us to slow down. Try again in a minute." );
 		case 'upstream_unavailable':

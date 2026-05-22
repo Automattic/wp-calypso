@@ -1,0 +1,103 @@
+.a4a-one-pager-viewer {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	padding-block: 32px;
+	padding-inline: 16px;
+	background-color: var(--color-neutral-90);
+	border-radius: 8px;
+	scrollbar-gutter: stable;
+}
+
+.a4a-one-pager-viewer:focus {
+	outline: none;
+}
+
+.a4a-one-pager-viewer__page {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.a4a-one-pager-viewer__frame {
+	position: relative;
+	width: clamp(360px, 56%, 560px);
+	max-width: 100%;
+}
+
+.a4a-one-pager-viewer__iframe-wrap {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 816 / 1056;
+	background-color: var(--color-surface);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.18);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.a4a-one-pager-viewer__iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 816px;
+	height: 1056px;
+	border: 0;
+	background-color: var(--color-surface);
+	transform-origin: top left;
+}
+
+.a4a-one-pager-viewer__circle-button {
+	display: inline-grid;
+	place-items: center;
+	width: 42px;
+	height: 42px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 50%;
+	background-color: rgba(18, 18, 18, 0.88);
+	color: rgba(255, 255, 255, 0.95);
+	box-sizing: border-box;
+	cursor: pointer;
+	line-height: 0;
+	appearance: none;
+	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.26);
+	backdrop-filter: blur(10px);
+}
+
+.a4a-one-pager-viewer__circle-button svg,
+.a4a-one-pager-viewer__circle-button svg path {
+	fill: currentColor;
+}
+
+.a4a-one-pager-viewer__circle-button:hover {
+	background-color: rgba(34, 34, 34, 0.94);
+}
+
+.a4a-one-pager-viewer__circle-button:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.72);
+	outline-offset: 2px;
+}
+
+.a4a-one-pager-viewer__cover-nav {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-inline: 12px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 120ms ease;
+}
+
+.a4a-one-pager-viewer__frame:hover .a4a-one-pager-viewer__cover-nav,
+.a4a-one-pager-viewer__frame:focus-within .a4a-one-pager-viewer__cover-nav {
+	opacity: 1;
+	pointer-events: auto;
+}
