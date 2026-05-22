@@ -27,7 +27,11 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
-const NOTES_PER_PAGE = 20;
+// Matches `increment_limit` in the notifications REST client: DataViews
+// advances its infinite-scroll window by `perPage` items at a time, so each
+// `client.loadMore()` must fetch at least that many or `startPosition`
+// overshoots the loaded notes and scrolling stalls.
+const NOTES_PER_PAGE = 10;
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();

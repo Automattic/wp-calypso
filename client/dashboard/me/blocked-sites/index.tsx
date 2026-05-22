@@ -72,6 +72,14 @@ export default function BlockedSites() {
 	const sites = ( data?.pages || [] ).flat();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
+	// `filterSortAndPaginate` reports `totalItems` as the number of rows loaded
+	// so far. DataViews only advances the infinite-scroll window while
+	// `totalItems` stays ahead of it, so reporting the loaded count alone
+	// stalls scrolling. Report an optimistic total while more pages remain.
+	const effectivePaginationInfo = hasNextPage
+		? { ...paginationInfo, totalItems: paginationInfo.totalItems + DEFAULT_PER_PAGE }
+		: paginationInfo;
+
 	const handleChangeView = useCallback(
 		( nextView: View ) => {
 			setView( nextView );
@@ -211,7 +219,7 @@ export default function BlockedSites() {
 						] }
 						getItemId={ ( item ) => item.ID.toString() }
 						defaultLayouts={ { table: {} } }
-						paginationInfo={ paginationInfo }
+						paginationInfo={ effectivePaginationInfo }
 						isLoading={ isLoading }
 						onChangeView={ handleChangeView }
 					>
