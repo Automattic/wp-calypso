@@ -250,8 +250,16 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	// Candidate list before enriching `feed_URL` from `readFeedQuery` results
 	// (the `/read/tags/cards` payload sometimes omits `feed_URL` on API rows).
+	// We gate only on `tagsLoading` here (not the full `isLoading`): curated
+	// blogs for the user's followed tags are static bundle data and can be
+	// surfaced immediately once we know those slugs, without waiting for the
+	// `/read/tags/cards` API response. API results flow in when ready and are
+	// merged by the same memo recomputing (because `apiRecommendedSites` is a
+	// dep). `isLoading` still governs the exported flag and guards
+	// `hasNoRecommendations` from firing prematurely for non-English users or
+	// users whose tags have no curated data.
 	const baseCombinedRecommendations = useMemo( () => {
-		if ( isLoading ) {
+		if ( tagsLoading ) {
 			return [];
 		}
 
@@ -299,7 +307,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		);
 
 		return unsubscribedRecommendations.slice( 0, 18 );
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, followedSubscriptions ] );
+	}, [ followedTagSlugs, apiRecommendedSites, tagsLoading, currentLocale, followedSubscriptions ] );
 
 	// Fetch feed metadata via React Query and bridge into Redux (replaces deprecated QueryReaderFeed).
 	const feedQueries = useQueries( {

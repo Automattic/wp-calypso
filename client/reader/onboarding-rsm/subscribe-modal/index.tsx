@@ -199,7 +199,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					</div>
 					<div className="subscribe-modal__columns">
 						<div className="subscribe-modal__site-list-column">
-							{ ( isLoading || isValidating ) && <LoadingPlaceholder /> }
+							{ ( isLoading || isValidating ) && recommendations.length === 0 && (
+								<LoadingPlaceholder />
+							) }
 							{ hasNoRecommendations && (
 								<p>{ __( 'No recommendations available at the moment.' ) }</p>
 							) }
