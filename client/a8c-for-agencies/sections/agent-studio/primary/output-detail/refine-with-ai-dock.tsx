@@ -27,6 +27,7 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
 import useAgentStudioRun from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
 import useRefineCollateralPage, {
@@ -137,14 +138,21 @@ export default function RefineWithAiDock( { collateralPostId, totalPages, onClos
 					)
 				),
 			] );
-			// Refresh the rendered preview. The variant-html cache is
-			// keyed on the html_url; invalidate-by-prefix nukes every
-			// variant's entry so all surfaces refetch. Browser HTTP
-			// caching may still serve stale HTML; if that becomes a
-			// problem we add a cache-bust query param to the url at
-			// the renderer side.
+			// Refresh the rendered preview. Two caches sit between us
+			// and the new HTML:
+			//   1. The variant-html query (keyed on html_url). Invalidate
+			//      by prefix so every variant's entry refetches; the
+			//      fetch itself uses `cache: 'no-cache'` to bypass the
+			//      browser's HTTP cache for the same URL.
+			//   2. The collateral query (keyed on agencyId + postId).
+			//      Refine may bump variant.html_url to a new versioned
+			//      path; without invalidating the collateral we'd keep
+			//      rendering the pre-refine URL.
 			void queryClient.invalidateQueries( {
 				queryKey: getAgentStudioVariantHtmlQueryKey( undefined ).slice( 0, 1 ),
+			} );
+			void queryClient.invalidateQueries( {
+				queryKey: getAgentStudioCollateralQueryKey( undefined, undefined ).slice( 0, 1 ),
 			} );
 		} else {
 			setMessages( ( current ) => [

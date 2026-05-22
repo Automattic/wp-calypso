@@ -13,7 +13,15 @@ export const getAgentStudioVariantHtmlQueryKey = ( htmlUrl: string | undefined )
 
 export const fetchAgentStudioVariantHtml = async ( htmlUrl: string ): Promise< string > => {
 	const token = oauthToken.getToken();
+	// `cache: 'no-cache'` forces a conditional request against the origin
+	// on every fetch. Refine writes new HTML to the same html_url, so
+	// without revalidation the browser's HTTP cache can serve the pre-
+	// refine body even after React Query has invalidated its in-memory
+	// entry — the symptom is "I refined page 5 but the iframe still
+	// shows the old layout." A 304 round-trip is cheap; a stale render
+	// is not.
 	const response = await fetch( htmlUrl, {
+		cache: 'no-cache',
 		headers: {
 			Accept: 'text/html',
 			...( typeof token === 'string' ? { Authorization: `Bearer ${ token }` } : {} ),
