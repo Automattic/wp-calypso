@@ -162,15 +162,9 @@ function errorMessageFor( err: FediverseError, t: Translate ): ReactNode {
 		case 'bad_request':
 			return t( 'We couldn’t publish this. Try shortening your post or changing visibility.' );
 		case 'auth_required':
-			return t( 'Your Fediverse connection needs to be reconnected. {{a}}Reconnect{{/a}}', {
-				components: {
-					a: <a href="/reader/fediverse" target="_blank" rel="noopener noreferrer" />,
-				},
-				comment:
-					'Composer error shown when the user’s Fediverse session expired; {{a}}…{{/a}} wraps a link to the Fediverse pane.',
-			} );
+			return t( 'Something went wrong with your Fediverse connection.' );
 		case 'connection_not_found':
-			return t( 'Your Fediverse connection is no longer available. Disconnect and reconnect.' );
+			return t( 'This Fediverse connection is no longer available.' );
 		case 'rate_limited':
 			return t( 'The Fediverse is asking us to slow down. Try again in a moment.' );
 		case 'upstream_unavailable':

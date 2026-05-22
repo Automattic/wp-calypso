@@ -8,7 +8,6 @@ const EDITOR_TIMEOUT = 60 * 1000;
 export class EditorComponent {
 	private page: Page;
 	private parentLocator: Locator | null;
-	private canvasLocator: Locator | null;
 
 	/**
 	 * Constructs an instance of the component.
@@ -18,7 +17,6 @@ export class EditorComponent {
 	constructor( page: Page ) {
 		this.page = page;
 		this.parentLocator = null;
-		this.canvasLocator = null;
 	}
 
 	/**
@@ -45,22 +43,18 @@ export class EditorComponent {
 	/**
 	 * Returns the Editor canvas locator. It will automatically resolve to the
 	 * proper locator, regardless if the canvas is iframed or not.
+	 *
+	 * Note: unlike the Editor parent, the canvas can switch between iframed and
+	 * non-iframed within a single session — e.g. inserting a block that doesn't
+	 * support the iframed canvas (such as Layout Grid or Blog Posts) de-iframes
+	 * it. The result is therefore re-detected on every call and never cached.
 	 */
 	async canvas(): Promise< Locator > {
-		if ( this.canvasLocator ) {
-			return this.canvasLocator;
-		}
-
 		try {
-			this.canvasLocator = await Promise.any( [
-				this.waitForFramedCanvas(),
-				this.waitForUnframedCanvas(),
-			] );
+			return await Promise.any( [ this.waitForFramedCanvas(), this.waitForUnframedCanvas() ] );
 		} catch ( _error ) {
 			throw new Error( 'Timed out waiting for the Editor canvas' );
 		}
-
-		return this.canvasLocator;
 	}
 
 	/**

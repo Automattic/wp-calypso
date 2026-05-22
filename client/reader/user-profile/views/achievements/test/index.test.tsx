@@ -23,6 +23,11 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
+jest.mock( '../achievements-privacy-notice', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="achievements-privacy-notice" />,
+} ) );
+
 const mockActivityStreakProps = jest.fn();
 jest.mock( '../activity-streak', () => ( {
 	__esModule: true,

@@ -6,11 +6,11 @@
 
 ### Dark mode in CSS Modules
 
-Component styles in this package live in CSS Modules (`*.module.scss`), so the leaf class is scope-hashed and `:root[data-theme='dark'] .foo` cannot reach it. Use the `when-dark-theme` mixin from `src/utils/_mixins.scss`:
+Component styles in this package live in CSS Modules (`*.module.scss`), so the leaf class is scope-hashed and `:root[data-theme='dark'] .foo` cannot reach it. Use the shared Calypso `when-dark-theme` mixin:
 
 ```scss
 @use '@wordpress/base-styles/colors';
-@use '../utils/mixins' as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
 .badge {

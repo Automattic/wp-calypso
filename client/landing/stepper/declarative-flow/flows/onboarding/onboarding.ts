@@ -34,6 +34,7 @@ import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {
@@ -69,9 +70,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
+		const { planCartItem, blueprint } = useSelect(
 			( select ) => ( {
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
@@ -193,15 +193,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					setPlanCartItem( pickedPlan );
 
 					if ( ! pickedPlan ) {
-						// Since we're removing the paid domain, it means that the user chose to continue
-						// with a free domain. Because signupDomainOrigin should reflect the last domain
-						// selection status before they land on the checkout page, this value can be
-						// 'free' or 'choose-later'
-						if ( signupDomainOrigin === 'choose-later' ) {
-							setSignupDomainOrigin( signupDomainOrigin );
-						} else {
-							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
-						}
+						// Redirect free plan selections to the choose page for the PWYW A/B test.
+						// `/choose` is a WordPress.com PHP route, not a Calypso route, so we need an
+						// absolute URL — a relative path resolves to the current Calypso host (e.g.
+						// wpcalypso.wordpress.com/choose) and 404s on pre-release. See TESTOPS-106.
+						window.location.assign(
+							addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
+						);
+						return;
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
@@ -301,6 +300,8 @@ const onboarding: FlowV2< typeof initialize > = {
 											}
 									  );
 
+							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
@@ -308,6 +309,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									signup: 1,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 									coupon,
+									steps_current: checkoutStepperPosition.current,
+									steps_total: checkoutStepperPosition.total,
 								} )
 							);
 						} else if (

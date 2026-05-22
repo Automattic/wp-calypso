@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {
 	.button.is-borderless {
@@ -15,6 +17,18 @@
 
 	.ellipsis-menu__toggle {
 		padding: 0;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.ellipsis-menu__toggle.button {
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-link );
+			}
+		}
 	}
 
 	&.is-menu-visible .button.is-borderless {

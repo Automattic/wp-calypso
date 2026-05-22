@@ -50,6 +50,7 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -267,6 +268,7 @@ function UnifiedPlansStep( {
 		[]
 	);
 	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -693,9 +695,17 @@ function UnifiedPlansStep( {
 							}
 							rightElement={
 								isOnboardingFlow( flowName ) ? (
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ translate( 'Need help?' ) }
-									</Step.LinkButton>
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										<Step.LinkButton onClick={ toggleHelpCenter }>
+											{ translate( 'Need help?' ) }
+										</Step.LinkButton>
+									</>
 								) : undefined
 							}
 						/>

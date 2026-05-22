@@ -144,6 +144,7 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 				purchases: data,
 				userId,
 			} );
+			return data;
 		} )
 		.catch( () => {
 			dispatch( {

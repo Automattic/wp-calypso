@@ -1,7 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { JSDOM } from 'jsdom';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
-import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { setEnglishCanonicalUrl } from 'calypso/controller/localized-links';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { overrideSanitizeSectionRoot } from 'calypso/lib/plugins/sanitize-section-content';
 import { browsePlugins, browsePluginsOrPlugin } from './controller';
@@ -24,8 +24,7 @@ export default function ( router ) {
 		ssrSetupLocale,
 		setupPreferences,
 		fetchPlugins,
-		setHrefLangLinks,
-		setLocalizedCanonicalUrl,
+		setEnglishCanonicalUrl,
 		browsePlugins,
 		makeLayout
 	);
@@ -36,8 +35,7 @@ export default function ( router ) {
 		ssrSetupLocale,
 		setupPreferences,
 		fetchCategoryPlugins,
-		setHrefLangLinks,
-		setLocalizedCanonicalUrl,
+		setEnglishCanonicalUrl,
 		browsePlugins,
 		makeLayout
 	);
@@ -49,8 +47,7 @@ export default function ( router ) {
 		ssrSetupLocale,
 		setupPreferences,
 		fetchPlugin,
-		setHrefLangLinks,
-		setLocalizedCanonicalUrl,
+		setEnglishCanonicalUrl,
 		browsePluginsOrPlugin,
 		makeLayout
 	);

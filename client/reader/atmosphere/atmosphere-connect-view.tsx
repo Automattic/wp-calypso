@@ -1,6 +1,7 @@
 import { useCreateConnectionMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -34,7 +35,9 @@ export function AtmosphereConnectView() {
 			<DocumentHead title={ translate( 'Connect account ‹ ATmosphere ‹ Reader' ) } />
 			<NavigationHeader
 				title={ title }
-				subtitle={ translate( 'Bring your Bluesky account into the Reader.' ) }
+				subtitle={ translate(
+					'Bring your Bluesky account into the Reader, from bsky.social or any other ATproto server.'
+				) }
 			/>
 			<VStack spacing={ 4 } className="atmosphere-view__body">
 				<ConnectForm
@@ -42,6 +45,11 @@ export function AtmosphereConnectView() {
 					error={ create.error ?? null }
 					onSubmit={ handleSubmit }
 				/>
+				<p className="atmosphere-view__learn-more">
+					<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+						{ translate( 'Learn more about your social accounts in the Reader' ) }
+					</ExternalLink>
+				</p>
 			</VStack>
 		</ReaderMain>
 	);

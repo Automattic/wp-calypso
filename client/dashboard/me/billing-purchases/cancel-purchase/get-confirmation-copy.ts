@@ -1,7 +1,7 @@
 import { AkismetPlans, TitanMailSlugs } from '@automattic/api-core';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { intervalToDuration } from 'date-fns';
-import { isGSuiteOrGoogleWorkspaceProductSlug, CancelIntent } from '../../../utils/purchase';
+import { isGSuiteOrGoogleWorkspaceProductSlug, DisplayVariant } from '../../../utils/purchase';
 
 /**
  * Minimal purchase shape the confirmation copy depends on. Both surfaces
@@ -157,7 +157,7 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 
 type ConfirmationCopyArgs = {
 	purchase: PurchaseForCopy;
-	intent: CancelIntent;
+	intent: DisplayVariant;
 };
 
 /**
@@ -167,6 +167,9 @@ type ConfirmationCopyArgs = {
  *   "Remove {productName}" for individual products).
  */
 export function getCancellationHeading( { purchase, intent }: ConfirmationCopyArgs ): string {
+	if ( intent === 'auto-renew' ) {
+		return __( 'Turn off auto-renew' );
+	}
 	if ( intent === 'cancel' ) {
 		return __( 'Cancel subscription' );
 	}
@@ -202,7 +205,7 @@ export function getCancellationHeading( { purchase, intent }: ConfirmationCopyAr
  * managed or already-expired purchases).
  */
 export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): string | null {
-	if ( intent !== 'cancel' ) {
+	if ( intent !== 'cancel' && intent !== 'auto-renew' ) {
 		return null;
 	}
 	if ( ! purchase.expiry_date ) {
@@ -497,6 +500,12 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 			default:
 				return { primary, secondary: __( 'Keep subscription' ) };
 		}
+	}
+	if ( intent === 'auto-renew' ) {
+		return {
+			primary: __( 'Turn off auto-renew' ),
+			secondary: __( 'Keep auto-renew on' ),
+		};
 	}
 	// Cancel intent: always "Cancel subscription" / "Keep subscription" to match
 	// the heading and Purchase Settings button.

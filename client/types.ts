@@ -63,6 +63,7 @@ export interface Theme {
 	};
 	trending_rank: number;
 	version: string;
+	supports_theme_switch_headstart?: boolean;
 }
 
 interface MarketplaceThemeProductDetails {

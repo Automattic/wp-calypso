@@ -16,8 +16,3 @@ export interface PageInstance {
 export function newInstanceId(): string {
 	return crypto.randomUUID();
 }
-
-/** Build PageInstance[] from a list of page types (e.g. API selected_page_titles fallback). */
-export function synthesizeInstancesFromTitles( titles: PageId[] ): PageInstance[] {
-	return titles.map( ( type ) => ( { id: newInstanceId(), type } ) );
-}

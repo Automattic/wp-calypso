@@ -5,9 +5,9 @@ import {
 	type ReadStreamInfiniteQueryHelpers,
 } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { useDispatch } from 'calypso/state';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
@@ -40,6 +40,7 @@ export interface PostKey {
 
 export interface UseStreamPostsResult {
 	items: PostKey[];
+	pages: ReadStreamResponse[];
 	isLoading: boolean;
 	isFetching: boolean;
 	isFetchingNextPage: boolean;
@@ -75,9 +76,8 @@ interface UseStreamPostsOptions {
 /**
  * Cursor-paginated reader stream hook backed by `useInfiniteQuery`. Owns
  * `removedIds` locally; the legacy Redux slice (`state.reader.streams`) is
- * not touched. `state.reader.posts` is still populated via `receivePosts`
- * because `<PostLifecycle>` and the full-post navigation read post bodies from
- * there.
+ * not touched. Stream post bodies are written into the canonical Reader post
+ * cache so card/detail consumers can read them without Redux post storage.
  */
 export function useStreamPosts( {
 	streamKey,
@@ -155,6 +155,7 @@ export function useStreamPosts( {
 	);
 
 	const query = useInfiniteQuery( queryOptions );
+	const processedPages = useRef< WeakSet< ReadStreamResponse > >( new WeakSet() );
 
 	useEffect( () => {
 		const pages = query.data?.pages;
@@ -162,12 +163,18 @@ export function useStreamPosts( {
 			return;
 		}
 		for ( let i = 0; i < pages.length; i++ ) {
-			const { streamPosts } = normalizeStreamPage( pages[ i ] as ReadStreamResponse, streamType );
+			const page = pages[ i ] as ReadStreamResponse;
+			if ( processedPages.current.has( page ) ) {
+				continue;
+			}
+			processedPages.current.add( page );
+			const { streamPosts } = normalizeStreamPage( page, streamType );
 			if ( streamPosts.length > 0 ) {
-				dispatch( receivePosts( streamPosts ) );
+				syncPostCache( queryClient, streamPosts );
+				syncConversationFollowStatus( dispatch, streamPosts );
 			}
 		}
-	}, [ resolvedStreamKey, streamType, query.data, dispatch ] );
+	}, [ resolvedStreamKey, streamType, query.data, queryClient, dispatch ] );
 
 	const items: PostKey[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];
@@ -182,14 +189,6 @@ export function useStreamPosts( {
 		return combined;
 	}, [ query.data, streamType ] );
 
-	const fetchNextPage = useCallback( () => {
-		query.fetchNextPage();
-	}, [ query ] );
-
-	const refetch = useCallback( () => {
-		query.refetch();
-	}, [ query ] );
-
 	const queryKey = queryOptions.queryKey;
 	const invalidate = useCallback( () => {
 		queryClient.invalidateQueries( { queryKey, refetchType: 'none' } );
@@ -197,6 +196,7 @@ export function useStreamPosts( {
 
 	return {
 		items,
+		pages: ( query.data?.pages ?? [] ) as ReadStreamResponse[],
 		isLoading: query.isLoading,
 		isFetching: query.isFetching,
 		isFetchingNextPage: query.isFetchingNextPage,
@@ -204,8 +204,8 @@ export function useStreamPosts( {
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,
-		fetchNextPage,
-		refetch,
+		fetchNextPage: query.fetchNextPage,
+		refetch: query.refetch,
 		invalidate,
 	};
 }

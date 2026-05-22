@@ -1,11 +1,13 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .social-compose-pill {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 	width: 100%;
 	padding: 10px 16px;
-	background: var(--studio-white, #fff);
-	border: 1px solid var(--studio-gray-5, #dcdcde);
+	background: var( --color-surface, var( --studio-white, #fff ) );
+	border: 1px solid var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 	// 6px matches the Reader's existing compose entry (`.quick-post`)
 	// and the search / stream input radii. The fully-rounded `999px`
 	// idiom (Bluesky / X) is unique in `client/reader/` and reads as
@@ -18,12 +20,22 @@
 	color: inherit;
 
 	&:hover {
-		border-color: var(--studio-gray-20, #a7aaad);
+		border-color: var( --color-border, var( --studio-gray-20, #a7aaad ) );
 	}
 
 	&:focus-visible {
 		outline: 2px solid var(--studio-blue-50, #3858e9);
 		outline-offset: 2px;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		background: var( --color-surface );
+		border-color: var( --dashboard-field__border-color );
+		color: var( --color-text );
+
+		&:hover {
+			border-color: var( --color-link );
+		}
 	}
 }
 
@@ -33,18 +45,22 @@
 	border-radius: 50%;
 	flex: 0 0 32px;
 	object-fit: cover;
-	background: var(--studio-gray-5, #dcdcde);
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
 }
 
 .social-compose-pill__placeholder {
 	flex: 1;
-	color: var(--studio-gray-50, #646970);
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 	font-size: 15px;
 }
 
 .social-compose-pill__icon {
-	color: var(--studio-gray-30, #8c8f94);
+	color: var( --color-neutral-light, var( --studio-gray-30, #8c8f94 ) );
 	flex: 0 0 auto;
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+	}
 }
 
 .social-compose-fab {
@@ -69,7 +85,7 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
 	background: var(--studio-blue-50, #3858e9);
-	color: var(--studio-white, #fff);
+	color: var( --color-text-inverted, var( --studio-white, #fff ) );
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 	// `.main` sits at z-index 20 in Calypso's global stacking scheme
 	// (see `_z-index.scss`), and the FAB is rendered as its sibling.
@@ -81,7 +97,7 @@
 
 	&:hover {
 		background: var(--studio-blue-60, #1d35b4);
-		color: var(--studio-white, #fff);
+		color: var( --color-text-inverted, var( --studio-white, #fff ) );
 	}
 
 	&:focus-visible {
@@ -101,7 +117,7 @@
 .social-composer {
 	.social-composer__pinned-context {
 		padding: 8px 12px;
-		background: var(--studio-gray-0, #f6f7f7);
+		background: var( --studio-gray-0, #f6f7f7 );
 		border-radius: 4px;
 		margin-block-end: 8px;
 		// Long unbreakable strings (URLs, gibberish) in the snippet, display
@@ -115,7 +131,7 @@
 	}
 
 	.social-composer__pinned-handle {
-		color: var(--studio-gray-50, #646970);
+		color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 		margin-inline-start: 6px;
 		font-weight: 400;
 	}
@@ -153,7 +169,7 @@
 		// 4px matches the radius the focus-visible outline rounds to,
 		// so the hover background and focus ring share the same shape.
 		border-radius: 4px;
-		color: var(--studio-gray-50, #646970);
+		color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 		transition: color 120ms ease, background-color 120ms ease;
 		display: inline-flex;
 		align-items: center;
@@ -169,7 +185,7 @@
 
 		&:hover {
 			color: var(--studio-blue-50, #3858e9);
-			background-color: var(--studio-blue-0, #f0f6fc);
+			background-color: var( --studio-blue-0, #f0f6fc );
 		}
 
 		&:focus-visible {
@@ -184,17 +200,17 @@
 		// affordance so the button visually reads as inert.
 		&[aria-disabled='true'] {
 			cursor: not-allowed;
-			color: var(--studio-gray-20, #a7aaad);
+			color: var( --color-border, var( --studio-gray-20, #a7aaad ) );
 
 			&:hover {
-				color: var(--studio-gray-20, #a7aaad);
+				color: var( --color-border, var( --studio-gray-20, #a7aaad ) );
 				background-color: transparent;
 			}
 		}
 	}
 
 	.social-composer__count {
-		color: var(--studio-gray-50, #646970);
+		color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
 		font-variant-numeric: tabular-nums;
 
 		&.is-warn {

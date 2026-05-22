@@ -357,15 +357,5 @@ describe( 'useBackupState', () => {
 				expect( result.current.status ).toBe( 'idle' );
 			} );
 		} );
-
-		it( 'should provide setEnqueued function in returned state', async () => {
-			const { result } = renderHook( () => useBackupState( mockSiteId ), {
-				wrapper: TestWrapper,
-			} );
-
-			await waitFor( () => {
-				expect( typeof result.current.setEnqueued ).toBe( 'function' );
-			} );
-		} );
 	} );
 } );

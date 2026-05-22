@@ -6,7 +6,7 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, apiDeleteSite } from '../shared';
+import { apiCloseAccount, apiCreateUnlaunchedFreeSiteForUser, apiDeleteSite } from '../shared';
 
 test.describe(
 	'Launch Site Flows',
@@ -20,7 +20,7 @@ test.describe(
 			newSiteDetails?: NewSiteResponse;
 		}[] = [];
 
-		test( 'As a new user, I can create a free site then use launch-site flow to purchase domain and plan', async ( {
+		test( 'As a new user with a free site, I can use launch-site flow to purchase domain and plan', async ( {
 			page,
 			componentDomainSearch,
 			helperData,
@@ -48,13 +48,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -71,7 +70,8 @@ test.describe(
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
-				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
+				await componentDomainSearch.selectFirstSuggestion( false );
+				selectedDomain = await pageSignupPickPlan.getIncludedDomain();
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
@@ -87,7 +87,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site then use launch-site flow to purchase a plan only', async ( {
+		test( 'As a new user with a free site, I can use launch-site flow to purchase a plan only', async ( {
 			page,
 			componentDomainSearch,
 			helperData,
@@ -113,13 +113,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -148,7 +147,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site and launch it without purchasing a domain or a plan', async ( {
+		test( 'As a new user with a free site, I can launch it without purchasing a domain or a plan', async ( {
 			page,
 			componentDomainSearch,
 			componentLaunchCelebration,
@@ -174,13 +173,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -215,7 +213,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site then use launch-site flow to purchase a domain only', async ( {
+		test( 'As a new user with a free site, I can use launch-site flow to purchase a domain only', async ( {
 			page,
 			componentDomainSearch,
 			helperData,
@@ -242,13 +240,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -265,7 +262,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
-				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
+				await componentDomainSearch.selectFirstSuggestion( false );
 			} );
 
 			await test.step( 'And I open the escape hatch in the plans step', async function () {
@@ -273,8 +270,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I see the domain redirect warning', async function () {
-				await pageSignupPickPlan.validateDomainRedirectWarning(
-					selectedDomain,
+				selectedDomain = await pageSignupPickPlan.getDomainFromRedirectWarning(
 					newSiteDetails.blog_details.site_slug
 				);
 			} );
@@ -288,7 +284,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site then use the launch-site flow to pick a domain, and continue to checkout by picking the plan within the escape hatch', async ( {
+		test( 'As a new user with a free site, I can use the launch-site flow to pick a domain, and continue to checkout by picking the plan within the escape hatch', async ( {
 			page,
 			componentDomainSearch,
 			helperData,
@@ -316,13 +312,12 @@ test.describe(
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
-			await test.step( 'And I select a .wordpress.com domain name', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( 'And I select WordPress.com Free plan', async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( 'Free', new RegExp( '.*/home/.*' ) );
+			await test.step( 'Given I have an unlaunched free site', async function () {
+				newSiteDetails = await apiCreateUnlaunchedFreeSiteForUser(
+					testUser,
+					newUserDetails,
+					helperData.getBlogName()
+				);
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -339,7 +334,8 @@ test.describe(
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
-				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
+				await componentDomainSearch.selectFirstSuggestion( false );
+				selectedDomain = await pageSignupPickPlan.getIncludedDomain();
 			} );
 
 			await test.step( `And I select the ${ planName } plan via the escape hatch`, async function () {

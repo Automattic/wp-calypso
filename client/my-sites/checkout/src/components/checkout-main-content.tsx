@@ -432,6 +432,21 @@ export default function CheckoutMainContent( {
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	// The flow that redirected to checkout may pass a step indicator via the
+	// `steps_current` / `steps_total` query params. Checkout has no per-flow
+	// knowledge — any flow can opt in by including the params. Mobile-only.
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
+	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
+	const stepCounter =
+		isMobileViewport &&
+		Number.isInteger( stepsCurrent ) &&
+		stepsCurrent > 0 &&
+		Number.isInteger( stepsTotal ) &&
+		stepsTotal > 0 &&
+		stepsCurrent <= stepsTotal
+			? { current: stepsCurrent, total: stepsTotal }
+			: null;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
@@ -1031,12 +1046,20 @@ export default function CheckoutMainContent( {
 							<Step.TopBar
 								leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
 								rightElement={
-									<span className="checkout-skip-button">
-										{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
-										<Step.LinkButton onClick={ toggleHelpCenter }>
-											{ helpCenterButtonLink }
-										</Step.LinkButton>
-									</span>
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										<span className="checkout-skip-button">
+											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ helpCenterButtonLink }
+											</Step.LinkButton>
+										</span>
+									</>
 								}
 							/>
 						);

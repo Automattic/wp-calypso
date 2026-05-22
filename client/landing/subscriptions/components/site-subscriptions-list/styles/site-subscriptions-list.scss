@@ -10,7 +10,7 @@
 	margin: 0 0 32px 0;
 
 	.row {
-		border-block-end: 1px solid $studio-gray-5;
+		border-block-end: 1px solid var( --color-border-subtle );
 		display: flex;
 		align-items: center;
 		@extend %site-subscriptions-list-default-text;
@@ -99,6 +99,12 @@
 				.site-subscriptions-list__recommend-tooltip-icon {
 					cursor: pointer;
 					flex: 0.5;
+					color: var( --studio-gray-50 );
+					fill: currentColor;
+
+					* {
+						fill: currentColor;
+					}
 
 					@media (max-width: $break-huge) {
 						display: none;
@@ -122,7 +128,7 @@
 			margin: 0 5px;
 
 			.gridicon {
-				fill: $studio-gray-50;
+				fill: var( --studio-gray-50 );
 			}
 		}
 	}

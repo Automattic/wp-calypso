@@ -49,6 +49,7 @@ interface SignupFormSocialFirst {
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
 	isEmailFirstVariant?: boolean;
+	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
@@ -92,6 +93,7 @@ const SignupFormSocialFirst = ( {
 	backButtonInFooter = true,
 	emailLabelText,
 	isEmailFirstVariant,
+	isEmailAtBottom,
 	isMobileCompactVariant,
 	allowedSocialServices,
 	customTosElement,
@@ -163,8 +165,8 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	// Shared by both the email-first (Woo) and mobile-compact branches so the
-	// conversion-critical existing-account redirect lives in one place.
+	// Shared by the email-first (Woo or experiment) branch and the mobile-compact
+	// branch so the conversion-critical existing-account redirect lives in one place.
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
@@ -194,17 +196,11 @@ const SignupFormSocialFirst = ( {
 		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
 	};
 
-	let emailLoginComponent = null;
-	if ( isEmailFirstVariant ) {
-		emailLoginComponent = (
-			<>
-				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm { ...passwordlessFormProps } />
-				</div>
-				<FormDivider isHorizontal />
-			</>
-		);
-	}
+	const emailLoginBlock = isEmailFirstVariant ? (
+		<div className="signup-form-social-first-email">
+			<PasswordlessSignupForm { ...passwordlessFormProps } />
+		</div>
+	) : null;
 
 	const loginLinkParagraph = (
 		<p className="signup-form-social-first__login-link">
@@ -245,7 +241,12 @@ const SignupFormSocialFirst = ( {
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
-				{ emailLoginComponent }
+				{ emailLoginBlock && ! isEmailAtBottom && (
+					<>
+						{ emailLoginBlock }
+						<FormDivider isHorizontal />
+					</>
+				) }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -257,6 +258,12 @@ const SignupFormSocialFirst = ( {
 					shouldShowEmailButton={ ! isEmailFirstVariant }
 					allowedSocialServices={ allowedSocialServices }
 				/>
+				{ emailLoginBlock && isEmailAtBottom && (
+					<>
+						<FormDivider isHorizontal />
+						{ emailLoginBlock }
+					</>
+				) }
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>

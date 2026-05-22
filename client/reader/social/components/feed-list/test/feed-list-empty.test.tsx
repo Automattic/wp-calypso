@@ -64,7 +64,7 @@ describe( 'FeedListEmpty', () => {
 		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
-	it( 'renders the auth-required error WITHOUT a Retry button', () => {
+	it( 'renders the auth-required error WITHOUT a Retry button by default', () => {
 		render(
 			<FeedListEmpty
 				error={ { kind: 'auth_required' } as SocialError }
@@ -76,6 +76,28 @@ describe( 'FeedListEmpty', () => {
 		);
 		expect( screen.getAllByText( /reconnect/i ).length ).toBeGreaterThan( 0 );
 		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+	} );
+
+	it( 'renders the auth-required error with override copy + Retry when authRequiredCopy is set', () => {
+		const onRetry = jest.fn();
+		render(
+			<FeedListEmpty
+				error={ { kind: 'auth_required' } as SocialError }
+				onRetry={ onRetry }
+				emptyTitle=""
+				emptyLine=""
+				{ ...protocolProps }
+				authRequiredCopy={ {
+					title: "Couldn't load timeline",
+					line: 'Something went wrong with your Bluesky connection.',
+				} }
+			/>
+		);
+		expect( screen.queryByText( /reconnect needed/i ) ).toBeNull();
+		expect(
+			screen.getByText( /Something went wrong with your Bluesky connection/i )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders the not-found error with a back-to-ATmosphere link', () => {

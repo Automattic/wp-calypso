@@ -30,8 +30,8 @@ export const getQueryString = ( extras: Record< string, unknown > = {} ) => ( {
 } );
 
 // Polling shape mirrors `getQueryString` (full post payload) so consumers can
-// dispatch the head straight into `state.reader.posts` and render rich cards
-// without a per-card `<QueryReaderPost>` waterfall on consumePending. The
+// hydrate the canonical Reader post cache and render rich cards without a
+// per-card full-post request waterfall on consumePending. The
 // first argument is kept for call-site compatibility with the legacy
 // stream-type-specific extras (`date_liked`, `last_comment_date_gmt`, etc.) —
 // the API now returns those fields by default since we no longer restrict the

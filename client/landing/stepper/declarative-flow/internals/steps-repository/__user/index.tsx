@@ -30,6 +30,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
+import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
@@ -59,9 +60,15 @@ const UserStepComponent: StepType = function UserStep( {
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
-	// Users arriving from woocommerce.com's hosting-solutions CTA see the "open email + slider"
-	// account-step variant. Everyone else sees the default single-column signup.
-	const isWooEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
+	// Everyone else is bucketed by calypso_account_step_improvement_202605_v2 (round 2):
+	//   - control                            -> default single-column signup
+	//   - treatment_email_slider_webp        -> open email + slider, email on top
+	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
+	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
+		useAccountCreationExperiment( { flow } );
+	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -115,8 +122,7 @@ const UserStepComponent: StepType = function UserStep( {
 	// both the heading and the form — otherwise the brief flash of control-shape
 	// UI before treatment paints would self-bias the social-conversion metric the
 	// experiment is measuring.
-	const isMobileLayoutExperimentEligible =
-		isStepContainerV2 && isMobileViewport && ! isWooEmailFirstVariant;
+	const isMobileLayoutExperimentEligible = isStepContainerV2 && isMobileViewport && ! isWooReferrer;
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		MOBILE_LAYOUT_EXPERIMENT_NAME,
 		{ isEligible: isMobileLayoutExperimentEligible }
@@ -152,7 +158,8 @@ const UserStepComponent: StepType = function UserStep( {
 					onCreateAccountSuccess={ handleCreateAccountSuccess }
 					backButtonInFooter={ ! isStepContainerV2 }
 					emailLabelText={ emailLabelText }
-					isEmailFirstVariant={ isWooEmailFirstVariant }
+					isEmailFirstVariant={ isEmailFirstVariant }
+					isEmailAtBottom={ isEmailAtBottom }
 					isMobileCompactVariant={ isMobileTreatment }
 					allowedSocialServices={ allowedSocialServices }
 					customTosElement={ signupTosElement }
@@ -189,7 +196,7 @@ const UserStepComponent: StepType = function UserStep( {
 				<Step.Heading
 					text={ headingText }
 					subText={ headingSubText }
-					align={ isWooEmailFirstVariant ? 'left' : undefined }
+					align={ isEmailFirstVariant ? 'left' : undefined }
 				/>
 			</>
 		);
@@ -201,14 +208,14 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					isWooEmailFirstVariant ? null : (
+					isEmailFirstVariant ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}
 			/>
 		);
 
-		if ( isLargeViewport && isWooEmailFirstVariant ) {
+		if ( isLargeViewport && isEmailFirstVariant ) {
 			return (
 				<Step.TwoColumnLayout
 					className="step-container-v2--user"

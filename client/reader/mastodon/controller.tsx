@@ -4,10 +4,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
 import { isValidActor, isValidHashtag, STATUS_ID_RE } from './route';
 
-const loadMastodonLandingView = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-mastodon-landing-view" */ 'calypso/reader/mastodon/mastodon-landing-view'
-	);
 const loadMastodonConnectView = () => import( 'calypso/reader/mastodon/mastodon-connect-view' );
 const loadMastodonOauthCallbackView = () =>
 	import( 'calypso/reader/mastodon/mastodon-oauth-callback-view' );
@@ -44,12 +40,15 @@ function ensureMastodonEnabled(): boolean {
 	return true;
 }
 
-export const mastodonLanding = ( context: Context, next: () => void ) => {
+/**
+ * See note on `atmosphereLanding` — the unified `/reader/connections`
+ * route now owns the "find a connection or send to chooser" decision.
+ */
+export const mastodonLanding = () => {
 	if ( ! ensureMastodonEnabled() ) {
 		return;
 	}
-	context.primary = <AsyncLoad require={ loadMastodonLandingView } placeholder={ null } />;
-	next();
+	page.redirect( '/reader/connections' );
 };
 
 export const mastodonConnect = ( context: Context, next: () => void ) => {
@@ -85,7 +84,7 @@ export const mastodonIdRedirect = ( context: Context ) => {
 		page.redirect( `/reader/mastodon/${ id }/${ TIMELINE_TAB }` );
 		return;
 	}
-	page.redirect( '/reader/mastodon' );
+	page.redirect( '/reader/connections' );
 };
 
 export const mastodonAccount = ( context: Context, next: () => void ) => {
@@ -117,7 +116,7 @@ export const mastodonThread = ( context: Context, next: () => void ) => {
 	const inputsValid = idValid && STATUS_ID_RE.test( statusId );
 
 	if ( ! inputsValid ) {
-		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/connections' );
 		return;
 	}
 
@@ -148,7 +147,7 @@ export const mastodonProfile = ( context: Context, next: () => void ) => {
 	const inputsValid = idValid && isValidActor( actor );
 
 	if ( ! inputsValid ) {
-		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/connections' );
 		return;
 	}
 
@@ -176,7 +175,7 @@ export const mastodonProfileFollowers = ( context: Context, next: () => void ) =
 	const inputsValid = idValid && isValidActor( actor );
 
 	if ( ! inputsValid ) {
-		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/connections' );
 		return;
 	}
 
@@ -204,7 +203,7 @@ export const mastodonProfileFollowing = ( context: Context, next: () => void ) =
 	const inputsValid = idValid && isValidActor( actor );
 
 	if ( ! inputsValid ) {
-		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/connections' );
 		return;
 	}
 
@@ -235,7 +234,7 @@ export const mastodonTagFeed = ( context: Context, next: () => void ) => {
 	const inputsValid = idValid && isValidHashtag( hashtag );
 
 	if ( ! inputsValid ) {
-		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/connections' );
 		return;
 	}
 

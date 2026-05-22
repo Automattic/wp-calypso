@@ -44,6 +44,7 @@ import {
 	getDisplayVariant,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
+	type CancelIntent,
 } from '../../utils/purchase';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -278,14 +279,26 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true; upgraded?: true; cancelled?: true } => {
+	validateSearch: (
+		search
+	): {
+		refunded?: true;
+		upgraded?: true;
+		cancelled?: true;
+		downgraded?: true;
+		intent?: 'auto-renew';
+	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
 		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
+		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
 			...( isUpgraded ? { upgraded: true } : {} ),
 			...( isCancelled ? { cancelled: true } : {} ),
+			...( isDowngraded ? { downgraded: true } : {} ),
+			...( intent ? { intent } : {} ),
 		};
 	},
 } );
@@ -400,7 +413,10 @@ export const cancelPurchaseRoute = createRoute( {
 	head: ( {
 		loaderData,
 	}: {
-		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
+		loaderData?: {
+			purchase?: Purchase;
+			intent?: CancelIntent;
+		};
 	} ) => {
 		// URL intent is authoritative; when absent, fall back to the flow-type
 		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
@@ -417,8 +433,10 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
-		return search.intent === 'cancel' || search.intent === 'remove'
+	validateSearch: ( search ): { intent?: CancelIntent } => {
+		return search.intent === 'cancel' ||
+			search.intent === 'remove' ||
+			search.intent === 'auto-renew'
 			? { intent: search.intent }
 			: {};
 	},
