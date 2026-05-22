@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
@@ -19,6 +21,10 @@
 		.wpnc__excerpt {
 			color: var(--color-text-subtle);
 			padding-top: 2px;
+
+			@include ui-mixins.when-dark-theme {
+				color: var(--dashboard__text-muted-color, var(--color-text-subtle));
+			}
 		}
 	}
 
