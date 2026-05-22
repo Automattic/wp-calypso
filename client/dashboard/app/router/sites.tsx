@@ -612,14 +612,13 @@ export const sitePerformanceBackendRoute = createRoute( {
 
 async function prefetchApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	const [ { siteApmAggregateQuery }, { getStoredOrDefaultTimeframe, timeframeToParams } ] =
+	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
 		await Promise.all( [
 			import( '@automattic/api-queries' ),
 			import( '../../sites/performance/backend/timeframe' ),
 		] );
-	await queryClient.ensureQueryData(
-		siteApmAggregateQuery( site.ID, timeframeToParams( getStoredOrDefaultTimeframe() ) )
-	);
+	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
 
 export const sitePerformanceBackendIndexRoute = createRoute( {

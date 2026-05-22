@@ -1,5 +1,5 @@
 import { type Site } from '@automattic/api-core';
-import { siteApmAggregateQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { siteApmAggregateRollingQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -30,7 +30,7 @@ import StartCapturingButton from './start-capturing-button';
 import BackendSubtitle from './subtitle';
 import {
 	isRollingTimeframe,
-	timeframeToParams,
+	TIMEFRAME_SECONDS,
 	usePersistedTimeframe,
 	type Timeframe,
 } from './timeframe';
@@ -55,6 +55,11 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
+// Poll the APM aggregate twice per minute while capturing is on. Buckets are
+// per-minute and ingestion lags ~30s, so half-minute polling gives a steady
+// stream of updates without thrashing the API.
+const APM_POLL_INTERVAL_MS = 30_000;
+
 function ApmDashboard( {
 	site,
 	tab,
@@ -67,12 +72,17 @@ function ApmDashboard( {
 	const router = useRouter();
 	const siteSlug = site.slug;
 	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
-	const params = useMemo( () => timeframeToParams( timeframe ), [ timeframe ] );
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID, params ) );
+	const apmEnabled = !! site.options?.apm_enabled;
+	const { data } = useSuspenseQuery( {
+		...siteApmAggregateRollingQuery( site.ID, TIMEFRAME_SECONDS[ timeframe ] ),
+		// Only poll while capturing is on. When it's off there's no new data to
+		// fetch, so polling would just be background noise.
+		refetchInterval: apmEnabled ? APM_POLL_INTERVAL_MS : false,
+		refetchIntervalInBackground: false,
+	} );
 	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
 	const { summary } = merged;
 
-	const apmEnabled = !! site.options?.apm_enabled;
 	const isRollingWindow = isRollingTimeframe( timeframe );
 	const hasData = summary.transaction_count > 0;
 
