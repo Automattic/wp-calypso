@@ -44,6 +44,17 @@
 		height: 100%;
 		object-fit: cover;
 		border-radius: inherit;
+
+		// Fullscreen makes the box 16:9; switch to contain so the 9:16 clip
+		// letterboxes instead of cropping. Separate blocks, not a group: an
+		// unknown pseudo would invalidate the whole selector list.
+		&:fullscreen {
+			object-fit: contain;
+		}
+
+		&:-webkit-full-screen {
+			object-fit: contain;
+		}
 	}
 
 	&__share-cta {

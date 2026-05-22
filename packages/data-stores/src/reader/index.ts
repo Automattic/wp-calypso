@@ -17,6 +17,7 @@ import {
 } from './mutations';
 import {
 	siteSubscriptionsQueryKeyPrefix,
+	subscriptionsCountQueryKeyPrefix,
 	usePendingPostSubscriptionsQuery,
 	usePendingSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
@@ -29,6 +30,7 @@ import {
 export const SubscriptionManager = {
 	SiteSubscriptionsQueryPropsProvider,
 	siteSubscriptionsQueryKeyPrefix,
+	subscriptionsCountQueryKeyPrefix,
 	useCacheKey,
 	useIsLoggedIn,
 	usePendingPostConfirmMutation,

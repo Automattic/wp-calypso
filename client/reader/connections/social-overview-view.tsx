@@ -5,8 +5,8 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
-import { Card, Spinner } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { Button, Card, ExternalLink, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -156,23 +156,20 @@ export function SocialOverviewView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 	const atmosphere = useConnectionsQuery();
 	const mastodon = useMastodonConnectionsQuery();
-	const fediverse = useFediverseConnectionsQuery( { enabled: fediverseEnabled } );
+	const fediverse = useFediverseConnectionsQuery();
 
-	const isLoading =
-		atmosphere.isPending || mastodon.isPending || ( fediverseEnabled && fediverse.isPending );
-	const hasAllErrored =
-		atmosphere.isError && mastodon.isError && ( ! fediverseEnabled || fediverse.isError );
+	const isLoading = atmosphere.isPending || mastodon.isPending || fediverse.isPending;
+	const hasAllErrored = atmosphere.isError && mastodon.isError && fediverse.isError;
 
 	const cards: SocialCard[] = useMemo(
 		() => [
 			...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
 			...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
-			...( fediverseEnabled ? ( fediverse.data?.connections ?? [] ).map( mapFediverse ) : [] ),
+			...( fediverse.data?.connections ?? [] ).map( mapFediverse ),
 		],
-		[ atmosphere.data, mastodon.data, fediverse.data, fediverseEnabled ]
+		[ atmosphere.data, mastodon.data, fediverse.data ]
 	);
 
 	// Flat protocol+id (+instance/host) list for the Spotlight strip.
@@ -240,35 +237,47 @@ export function SocialOverviewView() {
 							'You haven’t connected any social accounts yet. Start with the network you already know best, or let your WordPress site do the work for you.'
 						) }
 					</p>
-					<a className="social-empty__cta" href="/reader/connections/new">
+					<Button variant="primary" href="/reader/connections/new">
 						{ translate( 'Pick a network →' ) }
-					</a>
+					</Button>
+					<p className="social-empty__learn-more">
+						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+							{ translate( 'Learn more about your social accounts in the Reader' ) }
+						</ExternalLink>
+					</p>
 				</Card>
 			) }
 
 			{ showSpotlight && <SocialSpotlight connections={ spotlightConnections } /> }
 
 			{ ! isLoading && cards.length > 0 && (
-				<div className="social-grid">
-					{ cards.map( ( card ) => (
-						<SocialCardItem
-							key={ `${ card.protocol }-${ card.id }` }
-							card={ card }
-							onClick={ () => handleCardClick( card ) }
-						/>
-					) ) }
-					<a className="social-card social-card--add" href="/reader/connections/new">
-						<div className="social-card__plus" aria-hidden="true">
-							+
-						</div>
-						<div className="social-card__body">
-							<div className="social-card__name">{ translate( 'Add another' ) }</div>
-							<div className="social-card__handle">
-								{ translate( 'Bluesky, Mastodon, or your own site' ) }
+				<section className="social-accounts" aria-labelledby="social-accounts-heading">
+					<header className="social-accounts__header">
+						<h2 id="social-accounts-heading" className="social-accounts__title">
+							{ translate( 'Your accounts' ) }
+						</h2>
+					</header>
+					<div className="social-grid">
+						{ cards.map( ( card ) => (
+							<SocialCardItem
+								key={ `${ card.protocol }-${ card.id }` }
+								card={ card }
+								onClick={ () => handleCardClick( card ) }
+							/>
+						) ) }
+						<a className="social-card social-card--add" href="/reader/connections/new">
+							<div className="social-card__plus" aria-hidden="true">
+								+
 							</div>
-						</div>
-					</a>
-				</div>
+							<div className="social-card__body">
+								<div className="social-card__name">{ translate( 'Add another' ) }</div>
+								<div className="social-card__handle">
+									{ translate( 'Bluesky, Mastodon, or your own site' ) }
+								</div>
+							</div>
+						</a>
+					</div>
+				</section>
 			) }
 		</ReaderMain>
 	);

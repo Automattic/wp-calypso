@@ -33,7 +33,7 @@ export function getProtocolIcon( protocol: ConnectionProtocol ): JSX.Element {
 export function getProtocolLabel( protocol: ConnectionProtocol ): string {
 	switch ( protocol ) {
 		case 'atmosphere':
-			return 'Bluesky';
+			return 'ATmosphere';
 		case 'mastodon':
 			return 'Mastodon';
 		case 'fediverse':

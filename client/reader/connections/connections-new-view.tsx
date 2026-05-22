@@ -1,5 +1,4 @@
 import { useFediverseConnectionsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -25,7 +24,6 @@ interface ProtocolOption {
 	docHref: string;
 	docLabel: string;
 	icon: JSX.Element;
-	available: boolean;
 }
 
 /**
@@ -53,20 +51,16 @@ export function ConnectionsNewView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const socialEnabled = isEnabled( 'reader/social' );
-	const fediverseEnabled = isEnabled( 'reader/fediverse' );
-
-	const fediverseConnectionsQuery = useFediverseConnectionsQuery( { enabled: fediverseEnabled } );
-	const fediverseConnectionCount = fediverseConnectionsQuery.data?.connections?.length ?? 0;
-	const hasFediverseConnection = fediverseEnabled && fediverseConnectionCount > 0;
+	const fediverseConnectionsQuery = useFediverseConnectionsQuery();
+	const hasFediverseConnection = ( fediverseConnectionsQuery.data?.connections?.length ?? 0 ) > 0;
 
 	const adminSites = useSelector( ( state ) =>
 		getSites( state ).filter( ( site ) => !! site?.capabilities?.manage_options )
 	);
 
 	const fediverseDocHref = localizeUrl( 'https://wordpress.com/support/enter-the-fediverse/' );
-	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
-	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
+	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
+	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
 	const learnMoreLabel = String( translate( 'Learn more' ) );
 
 	const fediverse: ProtocolOption = ( () => {
@@ -74,7 +68,6 @@ export function ConnectionsNewView() {
 			key: 'fediverse' as const,
 			label: 'Fediverse',
 			icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
-			available: fediverseEnabled,
 			docHref: fediverseDocHref,
 			docLabel: learnMoreLabel,
 		};
@@ -100,7 +93,7 @@ export function ConnectionsNewView() {
 				tagline: String( translate( 'Your WordPress site is already social.' ) ),
 				body: String(
 					translate(
-						'Flip the ActivityPub switch on your blog and it shows up here. No new account — your site already does the talking.'
+						'Flip the ActivityPub switch in your site’s settings, and your blog slots in next to everything else you read here.'
 					)
 				),
 				href: adminUrl ? `${ adminUrl }options-general.php?page=activitypub` : null,
@@ -139,12 +132,11 @@ export function ConnectionsNewView() {
 		tagline: String( translate( 'Already on Bluesky? Bring it over.' ) ),
 		body: String(
 			translate(
-				'Plug your bsky.social handle in and your Bluesky timeline shows up here, ready to scroll and reply to without leaving the Reader.'
+				'Plug your Bluesky handle in and your timeline shows up here, ready to scroll and reply to without leaving the Reader. Works with bsky.social or any other ATproto server.'
 			)
 		),
 		href: '/reader/atmosphere/connect',
 		icon: <ReaderBlueskyIcon filled viewBox="2 3 20 18" />,
-		available: socialEnabled,
 		docHref: blueskyDocHref,
 		docLabel: learnMoreLabel,
 	};
@@ -160,14 +152,11 @@ export function ConnectionsNewView() {
 		),
 		href: '/reader/mastodon/connect',
 		icon: <ReaderMastodonIcon viewBox="0 0 74 78" />,
-		available: socialEnabled,
 		docHref: mastodonDocHref,
 		docLabel: learnMoreLabel,
 	};
 
-	const options: ProtocolOption[] = [ fediverse, atmosphere, mastodon ].filter(
-		( option ) => option.available
-	);
+	const options: ProtocolOption[] = [ fediverse, atmosphere, mastodon ];
 
 	const handlePrimaryClick = ( option: ProtocolOption ) => {
 		dispatch(

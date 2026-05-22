@@ -1,4 +1,4 @@
-import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected, isSimple } from './site-types';
 import type { Site } from '@automattic/api-core';
 
 export type SiteTypeFeatureSupports = {
@@ -67,7 +67,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		};
 	}
 
-	if ( site.is_multisite ) {
+	if ( site.is_multisite && ! isSimple( site ) ) {
 		return {
 			deployments: true,
 			performance: true,

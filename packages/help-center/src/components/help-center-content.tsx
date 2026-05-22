@@ -6,7 +6,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useRef, lazy, Suspense } from '@wordpress/element';
+import { useEffect, useRef, lazy, Suspense, Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
@@ -34,6 +35,29 @@ const HelpCenterA4AContactForm = lazy( () =>
 		default: module.HelpCenterA4AContactForm,
 	} ) )
 );
+
+class RoutesErrorBoundary extends Component<
+	React.PropsWithChildren< object >,
+	{ hasError: boolean }
+> {
+	state = { hasError: false };
+	static getDerivedStateFromError() {
+		return { hasError: true };
+	}
+	render() {
+		if ( this.state.hasError ) {
+			return (
+				<p className="help-center-article__error">
+					{ __(
+						'Something went wrong. Please close and reopen the Help Center.',
+						__i18n_text_domain__
+					) }
+				</p>
+			);
+		}
+		return this.props.children;
+	}
+}
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -144,47 +168,49 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
-				<Routes>
-					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
-					<Route
-						path="/post"
-						element={
-							<HelpCenterArticle
-								sectionName={ sectionName }
-								currentSiteDomain={ currentSiteDomain }
-								isEligibleForChat={ isUserEligibleForPaidSupport }
-								forceEmailSupport={ !! forceEmailSupport || ! featureConfig.chat.enabled }
-							/>
-						}
-					/>
-					<Route
-						path="/contact-form"
-						element={
-							featureConfig.contactForm.variant === 'a4a' ? (
-								<Suspense fallback={ null }>
-									<HelpCenterA4AContactForm />
-								</Suspense>
-							) : (
-								<HelpCenterContactForm />
-							)
-						}
-					/>
-					<Route path="/success" element={ <SuccessScreen /> } />
-					<Route
-						path="/support-guides"
-						element={ <HelpCenterSupportGuides currentRoute={ currentRoute } /> }
-					/>
-					<Route
-						path="/odie"
-						element={
-							<HelpCenterChat
-								isLoadingStatus={ isLoadingSupportStatus }
-								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
-							/>
-						}
-					/>
-					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
-				</Routes>
+				<RoutesErrorBoundary>
+					<Routes>
+						<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
+						<Route
+							path="/post"
+							element={
+								<HelpCenterArticle
+									sectionName={ sectionName }
+									currentSiteDomain={ currentSiteDomain }
+									isEligibleForChat={ isUserEligibleForPaidSupport }
+									forceEmailSupport={ !! forceEmailSupport || ! featureConfig.chat.enabled }
+								/>
+							}
+						/>
+						<Route
+							path="/contact-form"
+							element={
+								featureConfig.contactForm.variant === 'a4a' ? (
+									<Suspense fallback={ null }>
+										<HelpCenterA4AContactForm />
+									</Suspense>
+								) : (
+									<HelpCenterContactForm />
+								)
+							}
+						/>
+						<Route path="/success" element={ <SuccessScreen /> } />
+						<Route
+							path="/support-guides"
+							element={ <HelpCenterSupportGuides currentRoute={ currentRoute } /> }
+						/>
+						<Route
+							path="/odie"
+							element={
+								<HelpCenterChat
+									isLoadingStatus={ isLoadingSupportStatus }
+									isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								/>
+							}
+						/>
+						<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
+					</Routes>
+				</RoutesErrorBoundary>
 			</Wrapper>
 		</CardBody>
 	);

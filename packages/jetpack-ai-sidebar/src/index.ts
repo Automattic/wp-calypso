@@ -26,10 +26,14 @@ import {
 	findBlockElement,
 	findBlockListLayout,
 	handleUpdateBlockContent,
-	setAddMessageFn,
 	setModuleCheckpointApi,
 	getModuleCheckpointApi,
 	startBlockShimmer,
+	stopBlockShimmer,
+	getSelectedOrRememberedBlock,
+	rememberSelectedBlock,
+	notifyBlockActionComplete,
+	BLOCK_ACTION_COMPLETE_EVENT,
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -48,6 +52,7 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;
+let wasAgentProcessing = false;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -74,8 +79,51 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	),
 };
 
+type JetpackAiSidebarPreviewFeature =
+	| 'aiEditorialReview'
+	| 'blockTransformations'
+	| 'optimizeTitleSuggestion'
+	| 'chatHistory'
+	| 'supportGuides';
+
+function getAgentsManagerData() {
+	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
+}
+
+function isJetpackAiSidebarPreviewFeatureEnabled(
+	feature: JetpackAiSidebarPreviewFeature,
+	defaultValue: boolean
+): boolean {
+	const preview = getAgentsManagerData()?.jetpackAiSidebarPreview;
+	if ( ! preview ) {
+		return defaultValue;
+	}
+	if ( ! preview.enabled ) {
+		return false;
+	}
+	return preview.features?.[ feature ] === true;
+}
+
 function isAiEditorialReviewEnabled(): boolean {
-	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
+	const data = getAgentsManagerData();
+	if ( ! data ) {
+		return false;
+	}
+	if ( data.jetpackAiSidebarPreview ) {
+		return isJetpackAiSidebarPreviewFeatureEnabled(
+			'aiEditorialReview',
+			!! data.aiEditorialReviewEnabled
+		);
+	}
+	return !! data.aiEditorialReviewEnabled || !! data.reviewMediatorEnabled;
+}
+
+function isOptimizeTitleSuggestionEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'optimizeTitleSuggestion', true );
+}
+
+function isBlockTransformationsEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
 }
 
 function getCurrentEditorPostType(): string | undefined {
@@ -108,7 +156,10 @@ function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
-	return [ OPTIMIZE_TITLE_SUGGESTION, ...getAiEditorialReviewSuggestions( currentPostType ) ];
+	return [
+		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
+		...getAiEditorialReviewSuggestions( currentPostType ),
+	];
 }
 
 // ---------- Show-component ability ----------
@@ -224,12 +275,21 @@ function hasAbilitiesApi(): boolean {
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
 	clearSuggestions?: () => void;
+	isProcessing?: boolean;
 	[ key: string ]: unknown;
 } ): void {
-	setAddMessageFn( actions.addMessage );
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
+
+	const isProcessing = actions.isProcessing === true;
+	if ( isProcessing && ! wasAgentProcessing ) {
+		startBlockShimmer();
+	} else if ( ! isProcessing && wasAgentProcessing ) {
+		stopBlockShimmer();
+		notifyBlockActionComplete();
+	}
+	wasAgentProcessing = isProcessing;
 }
 
 // ---------- toolProvider ----------
@@ -285,17 +345,21 @@ export const toolProvider = {
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
 		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
-		abilities.unshift(
-			{
-				...UPDATE_BLOCK_CONTENT_ABILITY,
-				callback: handleUpdateBlockContent,
-			},
+		const jetpackAbilities = [
+			...( isBlockTransformationsEnabled()
+				? [
+						{
+							...UPDATE_BLOCK_CONTENT_ABILITY,
+							callback: handleUpdateBlockContent,
+						},
+				  ]
+				: [] ),
 			{
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
-			}
-		);
-
+			},
+		];
+		abilities.unshift( ...jetpackAbilities );
 		return abilities;
 	},
 
@@ -382,11 +446,11 @@ export const contextProvider = {
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
 				currentPageContent = blocks.map( serializeBlock );
-				selectedBlockClientId = blockEditor.getSelectedBlockClientId?.() ?? '';
-
-				if ( selectedBlockClientId ) {
-					const selectedBlock = blockEditor.getSelectedBlock?.();
-					if ( selectedBlock?.attributes?.content ) {
+				const selectedBlock = getSelectedOrRememberedBlock();
+				if ( selectedBlock?.clientId ) {
+					selectedBlockClientId = selectedBlock.clientId;
+					rememberSelectedBlock( selectedBlock );
+					if ( selectedBlock.attributes?.content ) {
 						selectedBlockContent = resolveBlockContent( selectedBlock.attributes.content );
 					}
 				}
@@ -511,7 +575,7 @@ const IMAGE_BLOCK_TYPES = [ 'core/image', 'core/media-text', 'core/cover', 'core
 /** Block-aware suggestion definitions with optional condition per block type. */
 const BLOCK_SUGGESTIONS = [
 	{
-		id: 'translate-content',
+		id: 'translate',
 		label: __( 'Translate content', 'jetpack' ),
 		prompt: __( 'Translate this block content to:', 'jetpack' ),
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
@@ -569,7 +633,6 @@ export function useSuggestions(): {
 		const handleSuggestionClick = ( event: Event ) => {
 			setHidden( true );
 			clearSuggestionsFn?.();
-			startBlockShimmer();
 
 			// AI Editorial Review output is too dense for the 350px sidebar.
 			// Auto-expand to 50vw on that suggestion only (matched by prompt).
@@ -594,6 +657,16 @@ export function useSuggestions(): {
 		};
 	}, [] );
 
+	useEffect( () => {
+		const handleBlockActionComplete = () => {
+			setHidden( false );
+		};
+		window.addEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
+		return () => {
+			window.removeEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
+		};
+	}, [] );
+
 	const editorContext = useSelect( ( select ) => {
 		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock: () => any };
 		const editor = select( 'core/editor' ) as { getCurrentPostType?: () => string | undefined };
@@ -612,14 +685,26 @@ export function useSuggestions(): {
 		return { suggestions: [] };
 	}
 
-	if ( ! editorContext.selectedBlock ) {
+	const selectedBlock = editorContext.selectedBlock ?? getSelectedOrRememberedBlock();
+	if ( editorContext.selectedBlock ) {
+		rememberSelectedBlock( editorContext.selectedBlock );
+	}
+
+	if ( ! selectedBlock ) {
 		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
-		s.condition( editorContext.selectedBlock )
-	);
+	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
+
+	if ( ! isBlockTransformationsEnabled() ) {
+		return { suggestions: aiEditorialReviewSuggestions };
+	}
+
+	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
 	return {
-		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		suggestions: [
+			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+			...aiEditorialReviewSuggestions,
+		],
 	};
 }

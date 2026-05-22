@@ -1,4 +1,5 @@
 import { readStreamQuery } from '@automattic/api-queries';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -10,7 +11,6 @@ import {
 	READER_STREAMS_REMOVE_ITEM,
 	READER_STREAMS_ERROR,
 } from 'calypso/state/reader/action-types';
-import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import { buildStreamQueryParams } from './build-query-params';
 import {
@@ -73,6 +73,7 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 		perPage,
 	} = params;
 	const streamType = getStreamType( streamKey );
+	const queryClient = getCalypsoQueryClient();
 	const queryParams = buildStreamQueryParams( {
 		streamKey,
 		feedId,
@@ -86,7 +87,6 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 
 	let data;
 	try {
-		const queryClient = getCalypsoQueryClient();
 		// `readStreamQuery`'s third arg is the per-request cache-key discriminator.
 		// Cursor-paginated streams pass `pageHandle`; numbered-page streams (e.g.
 		// `recent`) carry no `pageHandle`, so we key on `{ page, perPage }`
@@ -140,8 +140,8 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	}
 	const newPageHandle = extractPageHandle( streamType, { payload: { pageHandle } }, data );
 
-	// Dispatch in the same order as the legacy `handlePage`:
-	// analytics → receivePosts → receiveRecommendedSites → receivePage.
+	// Dispatch in the same order as the legacy `handlePage`, but hydrate post
+	// data into the canonical React Query cache.
 	const analyticsActions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,
@@ -150,7 +150,10 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	analyticsActions.forEach( ( a ) => dispatch( a ) );
 
 	if ( streamPosts.length > 0 ) {
-		dispatch( receivePosts( streamPosts ) );
+		if ( queryClient ) {
+			syncPostCache( queryClient, streamPosts );
+		}
+		syncConversationFollowStatus( dispatch, streamPosts );
 	}
 	if ( streamSites.length > 0 ) {
 		dispatch( receiveRecommendedSites( { seed: 'discover-recommendations', sites: streamSites } ) );

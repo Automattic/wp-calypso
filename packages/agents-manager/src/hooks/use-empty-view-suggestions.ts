@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentsManagerContext } from '../contexts';
+import { isPluginCompassHost } from '../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
@@ -32,28 +33,45 @@ const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
  */
 /**
  * Direct override path: a host that renders AgentsManager (e.g. reader-chat
- * on a blog frontend) can set `window.agentsManagerData.readerSuggestions`
- * to a Suggestion[] and this hook will return it verbatim, bypassing the
- * provider flow. Reassigning the global and forcing a re-render causes
- * the empty view to update with fresh suggestions.
+ * on a blog frontend, Plugin Compass on the plugins marketplace) can set
+ * `window.agentsManagerData.readerSuggestions` / `.compassSuggestions` to a
+ * Suggestion[] and this hook will return it verbatim, bypassing the provider
+ * flow (and the Big Sky theme-readiness gate further below). Reassigning the
+ * global and forcing a re-render causes the empty view to update with fresh
+ * suggestions.
  */
 function readOverrideSuggestions(): Suggestion[] | null {
-	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
+	if ( typeof window === 'undefined' ) {
 		return null;
 	}
-	const data = ( window as unknown as { agentsManagerData?: { readerSuggestions?: unknown } } )
-		.agentsManagerData;
-	const override = data?.readerSuggestions;
+
+	const data = (
+		window as unknown as {
+			agentsManagerData?: { readerSuggestions?: unknown; compassSuggestions?: unknown };
+		}
+	 ).agentsManagerData;
+
+	let override: unknown;
+	if ( isReaderChatHost() ) {
+		override = data?.readerSuggestions;
+	} else if ( isPluginCompassHost() ) {
+		override = data?.compassSuggestions;
+	} else {
+		return null;
+	}
+
 	// Key absent entirely — no host override, fall through to defaults.
 	if ( ! Array.isArray( override ) ) {
 		return null;
 	}
+
 	// Empty array is an explicit "no chips yet" signal (host is fetching
 	// AI suggestions and wants the empty view to show nothing until they
 	// arrive). Return it verbatim rather than falling through to defaults.
 	if ( override.length === 0 ) {
 		return [];
 	}
+
 	const valid = override.filter(
 		( s ): s is Suggestion =>
 			!! s &&
@@ -65,6 +83,7 @@ function readOverrideSuggestions(): Suggestion[] | null {
 			typeof s.label === 'string' &&
 			typeof s.prompt === 'string'
 	);
+
 	return valid.length > 0 ? valid : null;
 }
 

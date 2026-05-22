@@ -1,0 +1,159 @@
+@import '@automattic/typography/styles/variables';
+
+.iframe-preview-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	// Generous gap between the iframe wrapper and the radio/caption row so
+	// the choice control reads as distinct from the preview above it.
+	gap: 16px;
+	padding: 8px;
+	min-width: 0;
+	border: 4px solid var(--color-neutral-10);
+	border-radius: 4px;
+	background: var(--color-surface);
+	cursor: pointer;
+	transition: border-color 0.15s;
+
+	&:hover {
+		border-color: var(--color-neutral-30);
+	}
+
+	&:focus-within {
+		border-color: var(--studio-blue-30);
+	}
+
+	&.is-selected {
+		border-color: var(--studio-blue-50);
+	}
+
+	&.is-disabled {
+		cursor: default;
+		opacity: 0.5;
+	}
+
+	// Once a card is selected, its iframe becomes interactive (scrollable).
+	// Until then, pointer events fall through to the wrapping <label> so a click
+	// anywhere on the card — including the iframe — selects it.
+	&.is-selected .iframe-preview-card__iframe {
+		pointer-events: auto;
+	}
+}
+
+.iframe-preview-card__caption-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 8px;
+}
+
+.iframe-preview-card__radio {
+	// Override .form-radio's default margins; small top margin keeps the radio
+	// vertically aligned with the first line of caption text, even when the
+	// caption wraps to a second line.
+	flex-shrink: 0;
+	margin: 4px 0 0;
+}
+
+.iframe-preview-card__frame-wrapper {
+	// Element is a <span> (so the markup stays valid inside <label>, which only
+	// accepts phrasing content). Force block-level layout for the wrapper.
+	display: block;
+	position: relative;
+	width: 100%;
+	// 4:3 matches the iframe's intrinsic 1200x900 so the scaled iframe fills
+	// the wrapper exactly with no bottom crop.
+	aspect-ratio: 4 / 3;
+	// Block flex-shrink from compressing the wrapper's aspect-ratio-derived
+	// height. The card is a flex column container; without this, when the
+	// modal's max-height makes the parent flex chain attempt to shrink the
+	// card, the wrapper gets squeezed below its 4:3 height and the iframe's
+	// bottom is clipped.
+	flex-shrink: 0;
+	overflow: hidden;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	background: var(--color-neutral-0);
+	// Establishes a containment context so the iframe inside can size itself
+	// against the wrapper's width via container query units (cqw).
+	container-type: inline-size;
+}
+
+.iframe-preview-card__loading {
+	// Centered spinner overlay shown while the iframe is loading. Sits above
+	// the (transparent) iframe and is removed once `onLoad` fires.
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	// Click-through so a click on the still-loading area selects the card via
+	// the wrapping <label> instead of being absorbed by the spinner div.
+	pointer-events: none;
+}
+
+.iframe-preview-card__iframe {
+	// Smooth fade-in once the iframe has finished loading.
+	transition: opacity 0.2s;
+	// Render at a fixed 1200x900 desktop viewport so the previewed site loads
+	// its desktop styles, then scale to fit the wrapper using container query units.
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1200px;
+	height: 900px;
+	// Calypso's global stylesheet (_main.scss) sets `iframe { max-width: 100% }`,
+	// which would clamp the intrinsic 1200px to the wrapper's actual width.
+	// Override it so the iframe truly renders at 1200px before being scaled down.
+	max-width: none;
+	border: 0;
+	// `tan(atan2(y, x))` mathematically equals `y / x` and is a widely-compatible
+	// way to convert length-over-length into a unitless number. The simpler
+	// `calc(100cqw / 1200px)` form would require CSS Values 4 support, which
+	// is below our browser floor. The expression is wrapped in `#{"..."}` so
+	// Sass passes it through verbatim instead of trying to evaluate at build time.
+	transform: #{"scale(tan(atan2(100cqw, 1200px)))"};
+	transform-origin: top left;
+	pointer-events: none;
+}
+
+.iframe-preview-card__enter-preview {
+	// Visually hidden until the button is keyboard-focused — same pattern
+	// as the masterbar's "Skip to main content" link
+	// (client/jetpack-cloud/sections/pricing/jpcom-masterbar/style.scss).
+	// Mouse users never see it; keyboard users land on it after the radio
+	// in tab order and can press Enter to push focus into the iframe content.
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	width: 1px;
+	height: 1px;
+	padding: 8px 16px;
+	overflow: hidden;
+	color: var(--studio-white);
+	background: var(--color-neutral-100);
+	border: 0;
+	border-radius: 4px;
+	font-size: $font-body-small;
+	font-weight: 500;
+	cursor: pointer;
+	transform: translateX(-1000px);
+	transition: transform 0.1s ease-in-out;
+	z-index: 2;
+
+	&:focus {
+		width: auto;
+		height: auto;
+		transform: translateX(0);
+		outline: 2px solid var(--studio-blue-50);
+		outline-offset: 2px;
+	}
+}
+
+.iframe-preview-card__caption {
+	// Matches the ThemeCard title pattern (label-below-thumbnail).
+	font-size: $font-body;
+	font-weight: 500;
+	line-height: 24px;
+	color: var(--color-neutral-80);
+}

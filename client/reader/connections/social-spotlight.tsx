@@ -22,6 +22,7 @@ import { mapFediverseFeedItemToSocialPost } from 'calypso/reader/social/mappers/
 import { mapMastodonFeedItemToSocialPost } from 'calypso/reader/social/mappers/mastodon';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { SocialSpotlightSkeleton } from './social-spotlight-skeleton';
 import type { SocialPost } from 'calypso/reader/social/types';
 
 /**
@@ -53,7 +54,6 @@ interface SpotlightItem {
 }
 
 const SPOTLIGHT_LIMIT = 4;
-const STALE_TIME_MS = 60_000;
 const MAX_SNIPPET_CHARS = 140;
 
 function scoreFor( post: SocialPost ): number {
@@ -98,6 +98,15 @@ export function SocialSpotlight( { connections }: Props ) {
 	// is small enough that re-fetching here is fine; a future iteration
 	// could share by reading the infinite cache directly through
 	// `queryClient.getQueryData`.
+	//
+	// Fetch once per visit and don't refresh in the background. A late
+	// refetch on window focus would reshuffle the keyed `<li>` list (the
+	// sort is score-derived from like/repost counts) and reconcile through
+	// `insertBefore`, which fails with a `DOMException` when something
+	// outside React — translation extensions, password managers, dark-mode
+	// injectors — has wrapped any of the post text nodes. The strip is a
+	// discovery hook, not a live feed, so freezing it sidesteps the entire
+	// class of mid-life reorder failures.
 	const queries = useQueries( {
 		queries: connections.map( ( connection ) => ( {
 			queryKey: [ 'reader', 'social-spotlight', connection.protocol, connection.id ],
@@ -110,7 +119,9 @@ export function SocialSpotlight( { connections }: Props ) {
 				}
 				return getFediverseTimeline( { connectionId: connection.id } );
 			},
-			staleTime: STALE_TIME_MS,
+			staleTime: Infinity,
+			refetchOnWindowFocus: false,
+			refetchOnReconnect: false,
 			retry: false,
 			// Don't block the rest of the overview if one upstream is angry.
 		} ) ),
@@ -224,11 +235,14 @@ export function SocialSpotlight( { connections }: Props ) {
 
 	const isLoading = queries.some( ( q ) => q.isPending );
 
-	// While first pages are still loading, render nothing — the Social
-	// overview's own spinner already covers the slow case, and a flash of
-	// "no posts yet" before items resolve would read as broken. Same for
-	// the steady state with no scoreable posts; the strip is opt-in noise.
-	if ( isLoading || items.length === 0 ) {
+	// While first pages load, render a layout-stable skeleton so the
+	// accounts grid below doesn't shift down when items resolve. In the
+	// steady state with no scoreable posts the strip is opt-in noise, so
+	// the section still collapses to null once loading completes.
+	if ( isLoading ) {
+		return <SocialSpotlightSkeleton />;
+	}
+	if ( items.length === 0 ) {
 		return null;
 	}
 

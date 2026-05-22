@@ -51,7 +51,7 @@
 		"@automattic/design-types": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.1.0",
+		"@automattic/number-formatters": "^1.1.9",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
