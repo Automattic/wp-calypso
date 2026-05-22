@@ -1,22 +1,16 @@
 import { type Site } from '@automattic/api-core';
-import {
-	siteApmAggregateQuery,
-	siteApmEnabledMutation,
-	siteBySlugQuery,
-} from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { siteApmAggregateQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 	privateApis,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useEffect, useMemo } from 'react';
-import { useAnalytics } from '../../../app/analytics';
+import { useMemo } from 'react';
 import { Card } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -26,11 +20,13 @@ import { getBackendCalloutProps } from '../backend-callout';
 import { VIEWPORT_BREAKPOINTS } from '../constants';
 import PerformanceTabs from '../performance-tabs';
 import { mergeAggregates } from './aggregate';
+import BackendEmptyState from './backend-empty-state';
 import BackendStatusNotice from './backend-status';
 import BackendTabs from './backend-tabs';
 import Database from './database';
 import ExternalRequests from './external-requests';
 import Overview from './overview';
+import StartCapturingButton from './start-capturing-button';
 import BackendSubtitle from './subtitle';
 import {
 	isRollingTimeframe,
@@ -59,35 +55,6 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-function StartCapturingButton( { site }: { site: Site } ) {
-	const { recordTracksEvent } = useAnalytics();
-
-	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_site_apm_enable_impression' );
-	}, [ recordTracksEvent ] );
-
-	const { mutate, isPending } = useMutation( {
-		...siteApmEnabledMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'APM enabled.' ),
-				error: __( 'Failed to enable APM.' ),
-			},
-		},
-	} );
-
-	const handleClick = () => {
-		recordTracksEvent( 'calypso_dashboard_site_apm_enable_click' );
-		mutate( true );
-	};
-
-	return (
-		<Button variant="primary" isBusy={ isPending } disabled={ isPending } onClick={ handleClick }>
-			{ __( 'Start capturing' ) }
-		</Button>
-	);
-}
-
 function ApmDashboard( {
 	site,
 	tab,
@@ -107,6 +74,14 @@ function ApmDashboard( {
 
 	const apmEnabled = !! site.options?.apm_enabled;
 	const isRollingWindow = isRollingTimeframe( timeframe );
+	const hasData = summary.transaction_count > 0;
+
+	// Only show the prominent empty state when APM is off — that's the case
+	// where the user needs to take action. When APM is on but no data has come
+	// in yet, the regular dashboard with the "Capturing" notice is enough.
+	if ( ! hasData && ! apmEnabled ) {
+		return <BackendEmptyState site={ site } timeframe={ timeframe } />;
+	}
 
 	const handleTabChange = ( name: string ) => {
 		const next = name as ApmTab;

@@ -15,6 +15,13 @@ yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
 
 ## Architecture decisions
 
+### Dark mode
+
+- Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Prefer adding or reusing values there when the style belongs to shared components outside Reader or affects multiple areas.
+- When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
+- Keep Reader-only dark-mode exceptions close to the Reader stylesheet that owns the surface, and prefer overriding existing CSS custom properties over hardcoded colors.
+- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme`; see `packages/ui/AGENTS.md`.
+
 ### Data fetching migration
 
 The Reader is migrating from **Redux + data-layer** to **React Query** using the `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
