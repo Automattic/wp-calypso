@@ -38,12 +38,19 @@
 		padding: 0;
 		margin: 0;
 		cursor: pointer;
-		// Literal #71aee2 (wp-admin dashicons-alternative blue). Calypso's
-		// `--color-sidebar-text-alternative` is overridden to a gray in
-		// client/my-sites/sidebar/style.scss, which would win over the var
-		// fallback. Anchor to the literal so the group header reads as
-		// "MY PLUGINS" in blue, matching the public plugin 1:1.
-		color: #71aee2;
+		color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
+		font-family: var(
+			--wp-admin-sidebar-font,
+			-apple-system,
+			BlinkMacSystemFont,
+			"Segoe UI",
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			"Helvetica Neue",
+			sans-serif
+		);
 		font-size: 11px;
 		font-weight: 600;
 		line-height: 20px;
@@ -52,7 +59,7 @@
 		text-align: left;
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent, #3858e9);
+			outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
 			outline-offset: 2px;
 		}
 	}
@@ -97,14 +104,14 @@
 	 * Uses the public plugin's outline-chevron SVG (icons/chevron-down.svg)
 	 * vendored inline as a data-URI so this file has no asset-pipeline deps.
 	 * `background: currentColor` + CSS mask keeps the icon tinted to the
-	 * label color (literal #71aee2, see &__toggle above).
+	 * label color.
 	 */
 	&__chevron {
 		flex: 0 0 auto;
 		margin-left: 4px;
 		width: 20px;
 			height: 20px;
-			color: #71aee2;
+			color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
 			background: currentColor;
 			/* stylelint-disable function-url-quotes */
 			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.5 11.6004L12 16.0004L6.5 11.6004L7.4 10.4004L12 14.0004L16.5 10.4004L17.5 11.6004Z'/%3E%3C/svg%3E") no-repeat center / 150%;
@@ -143,7 +150,7 @@
 		border: 0;
 		padding: 0;
 		cursor: pointer;
-		color: #71aee2;
+		color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
 		opacity: 0.7;
 		display: inline-flex;
 		align-items: center;
@@ -175,7 +182,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent, #3858e9);
+			outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
 			outline-offset: 2px;
 		}
 
