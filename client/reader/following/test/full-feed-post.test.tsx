@@ -176,13 +176,13 @@ describe( 'FullFeedPost', () => {
 		const readMoreButton = await screen.findByRole( 'button', {
 			name: 'Read more: Example post',
 		} );
-		expect( readMoreButton ).toHaveClass( 'is-secondary' );
+		expect( readMoreButton ).toHaveClass( 'is-primary' );
 
 		await user.click( readMoreButton );
 
-		expect(
-			screen.getAllByRole( 'button', { name: 'Collapse: Example post' } )[ 0 ]
-		).toBeVisible();
+		const collapseButton = screen.getAllByRole( 'button', { name: 'Collapse: Example post' } )[ 0 ];
+		expect( collapseButton ).toBeVisible();
+		expect( collapseButton ).toHaveClass( 'is-secondary' );
 		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_full_feed_post_expanded',
 			expect.objectContaining( {

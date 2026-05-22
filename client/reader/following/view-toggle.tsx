@@ -26,7 +26,7 @@ export default function ViewToggle( { views = DEFAULT_VISIBLE_VIEWS }: ViewToggl
 		{
 			view: 'full-feed',
 			icon: postContent,
-			label: translate( 'Full feed' ),
+			label: translate( 'Full Scrolling Feed (Experimental)' ),
 		},
 		{
 			view: 'stream',

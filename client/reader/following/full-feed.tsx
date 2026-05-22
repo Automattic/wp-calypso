@@ -1,4 +1,5 @@
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { Notice } from '@wordpress/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReaderFullPostContentPlaceholder from 'calypso/blocks/reader-full-post/placeholders/content';
@@ -391,6 +392,11 @@ export function FullFeed( {
 			</NavigationHeader>
 
 			<div className="full-feed__content reader__content">
+				<Notice className="full-feed__notice" status="info" isDismissible={ false }>
+					{ translate(
+						'This experimental view lets you read posts from your subscriptions in one continuous feed.'
+					) }
+				</Notice>
 				{ postRecords.map( renderPost ) }
 				{ stream.isRequesting && (
 					<div

@@ -28,6 +28,15 @@ body.is-section-reader .full-feed.main {
 	width: 100%;
 }
 
+.full-feed__notice.components-notice {
+	margin: 0 0 16px;
+
+	.components-notice__content {
+		font-size: $font-body-small;
+		margin: 8px 12px;
+	}
+}
+
 // Reuse `.reader-post-card.card` chrome (background, padding, box-shadow,
 // border-radius) from the scrolling feed, and stack post-internal blocks with
 // the same spacing the card uses on its mobile / desktop padding tiers.
@@ -105,6 +114,12 @@ body.is-section-reader .full-feed.main {
 .full-feed-post__expand-actions {
 	display: flex;
 	justify-content: flex-start;
+
+	.full-feed-post__read-more-button.components-button.is-primary {
+		border-radius: 4px;
+		height: auto;
+		padding: 10px 20px;
+	}
 
 	.components-button.is-secondary {
 		--wp-components-color-accent: var( --color-link );

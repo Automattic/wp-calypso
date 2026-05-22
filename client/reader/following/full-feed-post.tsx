@@ -561,6 +561,7 @@ export function FullFeedPost( {
 					>
 						{ isExpanded ? (
 							<Button
+								className="full-feed-post__collapse-button"
 								variant="secondary"
 								onClick={ collapsePost }
 								aria-controls={ contentId }
@@ -572,7 +573,8 @@ export function FullFeedPost( {
 							</Button>
 						) : (
 							<Button
-								variant="secondary"
+								className="full-feed-post__read-more-button"
+								variant="primary"
 								onClick={ expandPost }
 								aria-controls={ contentId }
 								aria-expanded={ false }

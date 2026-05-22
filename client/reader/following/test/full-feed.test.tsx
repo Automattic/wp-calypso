@@ -230,6 +230,13 @@ describe( 'FullFeed', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Full feed' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Toggle' } ) ).toBeVisible();
+		const noticeText =
+			'This experimental view lets you read posts from your subscriptions in one continuous feed.';
+		expect(
+			screen
+				.getAllByText( noticeText )
+				.find( ( element ) => element.classList.contains( 'components-notice__content' ) )
+		).toBeVisible();
 		expect( screen.getByRole( 'article', { name: 'First post' } ) ).toBeVisible();
 		expect( screen.getByTestId( 'reader-performance-stop' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'No posts' ) ).not.toBeInTheDocument();
