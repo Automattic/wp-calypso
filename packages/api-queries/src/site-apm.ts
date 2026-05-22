@@ -59,16 +59,10 @@ function bucketSec( bucket: ApmAggregateBucket ): number {
 export const siteApmAggregateRollingQuery = ( siteId: number, windowSec: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'apm', 'aggregate-rolling', windowSec ],
-		queryFn: async () => {
+		queryFn: async ( { queryKey } ) => {
 			const end = snapToMinute( Math.floor( Date.now() / 1000 ) );
 			const windowStart = end - windowSec;
-			const cached = queryClient.getQueryData< ApmAggregateResponse >( [
-				'site',
-				siteId,
-				'apm',
-				'aggregate-rolling',
-				windowSec,
-			] );
+			const cached = queryClient.getQueryData< ApmAggregateResponse >( queryKey );
 
 			if ( ! cached || cached.aggregates.length === 0 ) {
 				return fetchSiteApmAggregate( siteId, { start: windowStart, end } );
