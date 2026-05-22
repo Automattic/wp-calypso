@@ -11,7 +11,10 @@ const settings = {
 	max_refresh_ms: 180000,
 	refresh_ms: 30000,
 	initial_limit: 10,
-	increment_limit: 10,
+	// Matches NOTES_PER_PAGE in the DataViews note list: DataViews advances its
+	// infinite-scroll window by `perPage` rows per scroll, so each loadMore()
+	// must fetch at least that many or the window outruns the loaded notes.
+	increment_limit: 20,
 	max_limit: 100,
 };
 

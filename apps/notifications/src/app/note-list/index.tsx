@@ -27,11 +27,11 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
-// Matches `increment_limit` in the notifications REST client: DataViews
-// advances its infinite-scroll window by `perPage` items at a time, so each
-// `client.loadMore()` must fetch at least that many or `startPosition`
-// overshoots the loaded notes and scrolling stalls.
-const NOTES_PER_PAGE = 10;
+// DataViews 14 only loads more in response to scroll events, so the rendered
+// window (`perPage` rows) must be tall enough to overflow the panel and
+// produce a scrollbar. It must also match the REST client's `increment_limit`
+// so the window never advances past the notes already fetched.
+const NOTES_PER_PAGE = 20;
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
@@ -76,8 +76,11 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 		}
 	}, [ client, isLoading ] );
 
+	// Bootstrap: keep loading until enough notes exist to fill a window and
+	// overflow the panel. Without this the initial batch can be too short to
+	// produce a scrollbar, and scroll-driven loading would never start.
 	useEffect( () => {
-		if ( visibleNotes.length <= 10 && ! isLoading ) {
+		if ( visibleNotes.length <= NOTES_PER_PAGE && ! isLoading ) {
 			infiniteScrollHandler();
 		}
 	}, [ visibleNotes.length, isLoading, infiniteScrollHandler ] );
