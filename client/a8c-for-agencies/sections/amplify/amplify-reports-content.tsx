@@ -27,8 +27,10 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import AmplifySiteSelect from './amplify-site-select';
 import AmplifyInfoPopover from './components/amplify-info-popover';
@@ -52,6 +54,20 @@ type Report = {
 	score?: number;
 	pdfUrl?: string;
 	reportUrl?: string;
+	/**
+	 * wpcom user ID of the report's owner. Written into the R2 index by the
+	 * Trigger.dev task (see trigger/amplify-analysis.ts). Optional only so we
+	 * can model legacy entries that predate per-user scoping — at render time
+	 * those are filtered out below and never shown to anyone.
+	 */
+	userId?: number;
+	/**
+	 * A4A agency the report was created under. Same scoping rules as userId:
+	 * a row is only visible when both `userId === currentUserId` and
+	 * `agencyId === activeAgencyId`. Legacy entries without this field are
+	 * filtered out from every (user, agency) pair.
+	 */
+	agencyId?: number;
 	/** True for jobs submitted this session that haven't yet appeared in R2. */
 	pending?: boolean;
 	/**
@@ -242,6 +258,22 @@ export default function AmplifyReportsContent( {
 	onPendingJobsResolved?: ( jobIds: string[] ) => void;
 } ) {
 	const dispatch = useDispatch();
+	// The R2 reports/index.json is a global manifest — every Trigger.dev run
+	// from every user (and every agency) lands in the same file because the
+	// underlying bucket is public and the interim Worker has no real
+	// per-identity auth. We scope the list client-side by the current
+	// (user, agency) pair. This is the user-facing privacy boundary today;
+	// the bucket itself remains technically readable to anyone with the
+	// public URL (see workers/amplify-api/index.ts and the SECURITY
+	// LIMITATION block in amplify-analysis-modal.tsx for the broader
+	// caveat). Real enforcement lands with the wpcom endpoint replacement.
+	//
+	// Convention note: every other A4A list view scopes server-side via
+	// wpcom.req to /agency/${ agencyId }/... — server filters, client just
+	// renders. This client-side filter is a deliberate departure permitted
+	// only by the interim Worker bridge. Don't copy this pattern.
+	const currentUserId = useSelector( getCurrentUserId );
+	const activeAgencyId = useSelector( getActiveAgencyId );
 	// Poll the R2 index while at least one *non-stale* pending job is in
 	// flight so the table can flip the row to "Download PDF" without a
 	// manual page refresh. Stale pendings (past STALE_PENDING_THRESHOLD_MS)
@@ -254,7 +286,23 @@ export default function AmplifyReportsContent( {
 	const hasNonStalePending = pendingJobs.some(
 		( job ) => new Date( job.startedAt ).getTime() >= cutoff
 	);
-	const { reports: fetchedReports, isLoading, error } = useAmplifyReports( hasNonStalePending );
+	const { reports: allFetchedReports, isLoading, error } = useAmplifyReports( hasNonStalePending );
+
+	// Hard filter the global R2 index down to reports owned by the current
+	// (user, agency) pair. Legacy entries with no userId or no agencyId are
+	// excluded from every identity — "no owner" never matches an actual
+	// user/agency pair, so they stay invisible. This is intentional:
+	// silently showing unscoped rows to everyone would reintroduce the
+	// cross-identity leak this whole change exists to close. If a legacy
+	// entry needs to be restored, edit it in R2 directly.
+	const fetchedReports = useMemo( () => {
+		if ( ! currentUserId || ! activeAgencyId ) {
+			return [];
+		}
+		return allFetchedReports.filter(
+			( r ) => r.userId === currentUserId && r.agencyId === activeAgencyId
+		);
+	}, [ allFetchedReports, currentUserId, activeAgencyId ] );
 
 	// Archive state is held client-side (localStorage). See the header of
 	// hooks/use-archived-reports.ts for the migration plan to a wpcom endpoint.
@@ -757,7 +805,13 @@ export default function AmplifyReportsContent( {
 		return filterSortAndPaginate( reports, dataViewsState, fields );
 	}, [ reports, dataViewsState, fields ] );
 
-	if ( isLoading ) {
+	// Keep showing the loading state while either identity selector is still
+	// hydrating. The amplify route is gated by requireAccessContext so this
+	// should resolve effectively immediately, but if we render the empty
+	// state before the (user, agency) pair is available we'd flash
+	// "You haven't run any Amplify analyses yet" even for identities that
+	// do have reports.
+	if ( isLoading || ! currentUserId || ! activeAgencyId ) {
 		return <div className="amplify-reports-loading">{ __( 'Loading reports…' ) }</div>;
 	}
 

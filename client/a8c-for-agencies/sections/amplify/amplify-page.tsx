@@ -27,7 +27,7 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -36,6 +36,9 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AmplifyAddSiteModal from './amplify-add-site-modal';
 import AmplifyAnalysisModal from './amplify-analysis-modal';
 import AmplifyOverviewContent from './amplify-overview-content';
@@ -49,7 +52,16 @@ type Props = {
 	selectedTab: AmplifyTab;
 };
 
-const PENDING_JOBS_KEY = 'amplify_pending_jobs';
+// Pending jobs are persisted to sessionStorage under a key scoped to the
+// (userId, agencyId) pair. Without per-identity scoping, a logout-then-
+// login-as-different-user (or an agency switch) in the same tab would inherit
+// the previous identity's in-flight site URLs and analysis types as ghost
+// "in progress" rows in the new identity's reports table. Each pair gets its
+// own bucket so a user switching back to a prior identity also recovers the
+// pending jobs they had under that identity.
+function buildPendingJobsKey( userId: number, agencyId: number ): string {
+	return `amplify_pending_jobs_${ userId }_${ agencyId }`;
+}
 
 function isValidPendingJob( job: unknown ): job is PendingJob {
 	if ( ! job || typeof job !== 'object' ) {
@@ -64,14 +76,14 @@ function isValidPendingJob( job: unknown ): job is PendingJob {
 	);
 }
 
-function loadPendingJobs(): PendingJob[] {
+function loadPendingJobs( userId: number, agencyId: number ): PendingJob[] {
 	// Guard against SSR where window/sessionStorage do not exist. A4A is
 	// client-rendered today but this keeps the helper safe if that changes.
 	if ( typeof window === 'undefined' ) {
 		return [];
 	}
 	try {
-		const stored = sessionStorage.getItem( PENDING_JOBS_KEY );
+		const stored = sessionStorage.getItem( buildPendingJobsKey( userId, agencyId ) );
 		if ( ! stored ) {
 			return [];
 		}
@@ -82,12 +94,12 @@ function loadPendingJobs(): PendingJob[] {
 	}
 }
 
-function savePendingJobs( jobs: PendingJob[] ): void {
+function savePendingJobs( jobs: PendingJob[], userId: number, agencyId: number ): void {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
 	try {
-		sessionStorage.setItem( PENDING_JOBS_KEY, JSON.stringify( jobs ) );
+		sessionStorage.setItem( buildPendingJobsKey( userId, agencyId ), JSON.stringify( jobs ) );
 	} catch {
 		// sessionStorage unavailable — fail silently.
 	}
@@ -96,38 +108,76 @@ function savePendingJobs( jobs: PendingJob[] ): void {
 export default function AmplifyPage( { selectedTab }: Props ) {
 	const [ isSiteSelectOpen, setIsSiteSelectOpen ] = useState( false );
 	const [ analysisFlowSite, setAnalysisFlowSite ] = useState< string | null >( null );
-	const [ pendingJobs, setPendingJobs ] = useState< PendingJob[] >( loadPendingJobs );
+	// Pending jobs are loaded from a per-identity sessionStorage bucket — see
+	// buildPendingJobsKey above. Initialize empty and let the effect below
+	// rehydrate once the (userId, agencyId) pair is available.
+	const [ pendingJobs, setPendingJobs ] = useState< PendingJob[] >( [] );
+
+	// These come from Redux and are also used by the submit modal and reports
+	// list to scope what gets sent and what gets shown. Reading them here lets
+	// us scope the pending-jobs sessionStorage bucket the same way without
+	// prop-drilling identity through the modal flow.
+	const currentUserId = useSelector( getCurrentUserId );
+	const activeAgencyId = useSelector( getActiveAgencyId );
+
+	// Rehydrate the in-memory pending list whenever the active identity
+	// changes. This swaps to the new (userId, agencyId) bucket on a user or
+	// agency switch and clears to [] on logout (or before Redux state
+	// hydrates), preventing the previous identity's in-flight rows from
+	// leaking into the new identity's reports table.
+	useEffect( () => {
+		if ( ! currentUserId || ! activeAgencyId ) {
+			setPendingJobs( [] );
+			return;
+		}
+		setPendingJobs( loadPendingJobs( currentUserId, activeAgencyId ) );
+	}, [ currentUserId, activeAgencyId ] );
 
 	const handleSiteSelected = useCallback( ( url: string ) => {
 		setIsSiteSelectOpen( false );
 		setAnalysisFlowSite( url );
 	}, [] );
 
-	const handleAnalysisStarted = useCallback( ( job: PendingJob ) => {
-		// Add the new job to the front of the pending list so it appears at the
-		// top of the reports table immediately, and persist across page refreshes.
-		setPendingJobs( ( prev ) => {
-			const updated = [ job, ...prev ];
-			savePendingJobs( updated );
-			return updated;
-		} );
-	}, [] );
-
-	const handlePendingJobsResolved = useCallback( ( jobIds: string[] ) => {
-		// AmplifyReportsContent calls this once it sees pending jobs that now have
-		// a matching completed report in the R2 index. We drop those entries from
-		// both state and sessionStorage so the pending list doesn't accumulate.
-		// The reference-equality short-circuit avoids a wasteful re-render when
-		// the callback fires with jobIds that have already been pruned.
-		setPendingJobs( ( prev ) => {
-			const remaining = prev.filter( ( job ) => ! jobIds.includes( job.jobId ) );
-			if ( remaining.length === prev.length ) {
-				return prev;
+	const handleAnalysisStarted = useCallback(
+		( job: PendingJob ) => {
+			// No-op if identity isn't ready yet. The submit modal applies the
+			// same guard before calling startAmplifyAnalysis, so in practice
+			// this is only reachable in a race we don't expect to hit.
+			if ( ! currentUserId || ! activeAgencyId ) {
+				return;
 			}
-			savePendingJobs( remaining );
-			return remaining;
-		} );
-	}, [] );
+			// Add the new job to the front of the pending list so it appears at the
+			// top of the reports table immediately, and persist across page refreshes.
+			setPendingJobs( ( prev ) => {
+				const updated = [ job, ...prev ];
+				savePendingJobs( updated, currentUserId, activeAgencyId );
+				return updated;
+			} );
+		},
+		[ currentUserId, activeAgencyId ]
+	);
+
+	const handlePendingJobsResolved = useCallback(
+		( jobIds: string[] ) => {
+			if ( ! currentUserId || ! activeAgencyId ) {
+				return;
+			}
+			// AmplifyReportsContent calls this once it sees pending jobs that now have
+			// a matching completed report in the R2 index. We drop those entries from
+			// both state and sessionStorage so the pending list doesn't accumulate.
+			// The reference-equality short-circuit avoids a wasteful re-render when
+			// the callback fires with jobIds that have already been pruned.
+			setPendingJobs( ( prev ) => {
+				const remaining = prev.filter( ( job ) => ! jobIds.includes( job.jobId ) );
+				if ( remaining.length === prev.length ) {
+					return prev;
+				}
+				savePendingJobs( remaining, currentUserId, activeAgencyId );
+				return remaining;
+			} );
+		},
+		[ currentUserId, activeAgencyId ]
+	);
 
 	let title: string;
 	let content: ReactNode;

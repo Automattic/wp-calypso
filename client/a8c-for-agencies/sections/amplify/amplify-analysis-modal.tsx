@@ -20,8 +20,10 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { A4A_AMPLIFY_REPORTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { ReactNode } from 'react';
 
 export type AnalysisType = 'human' | 'ai' | 'full';
@@ -59,17 +61,41 @@ export type AnalysisType = 'human' | 'ai' | 'full';
  *   6. Delete workers/amplify-api/ and the related scripts from package.json
  *      in the a4a-amplify repo (full checklist is in that Worker's index.ts).
  */
-async function startAmplifyAnalysis( url: string, mode: AnalysisType ): Promise< string > {
+async function startAmplifyAnalysis(
+	url: string,
+	mode: AnalysisType,
+	userId: number,
+	agencyId: number
+): Promise< string > {
 	const workerUrl = config< string >( 'amplify_worker_url' );
 	const apiSecret = config< string >( 'amplify_api_secret' );
 
+	// userId + agencyId scope the report so the list can be filtered per
+	// (current user, active agency). A user who belongs to multiple agencies
+	// must not see reports from one agency while operating in the context of
+	// another, so both fields are required and both gate the reports table
+	// on the read side.
+	//
+	// **The Worker forwards these values verbatim and does not (and cannot)
+	// verify them** — a determined client with the API_SECRET could submit
+	// any pair they like. This is acceptable while Amplify is internal-only:
+	// the secret is shared, the cohort is small, and the goal is to keep
+	// coworkers (and cross-agency identities of the same user) from
+	// accidentally seeing each other's reports, not to enforce a hard
+	// authorization boundary. Real per-(user, agency) enforcement lands with
+	// the wpcom endpoint (see the SECURITY LIMITATION block below).
+	//
+	// Convention note: every other A4A list view scopes server-side via
+	// wpcom.req to /agency/${ agencyId }/... and lets the server filter. This
+	// client-side filter is a deliberate departure permitted only by the
+	// interim Worker bridge — do not copy this pattern.
 	const response = await window.fetch( `${ workerUrl }/analyze`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${ apiSecret }`,
 		},
-		body: JSON.stringify( { url, mode } ),
+		body: JSON.stringify( { url, mode, userId, agencyId } ),
 	} );
 
 	if ( ! response.ok ) {
@@ -261,6 +287,13 @@ function ProgressContent( { site, type }: { site: string; type: AnalysisType } )
 
 export default function AmplifyAnalysisModal( { site, onClose, onAnalysisStarted }: Props ) {
 	const dispatch = useDispatch();
+	// Used to tag the submitted job so the reports list can scope to the current
+	// (user, agency) pair. The amplify route is gated by requireAccessContext
+	// so both values are loaded by the time this modal renders; the null guard
+	// in handleSelectType is belt-and-suspenders for the (theoretical) case
+	// where the Redux state hasn't hydrated yet.
+	const currentUserId = useSelector( getCurrentUserId );
+	const activeAgencyId = useSelector( getActiveAgencyId );
 	const [ stage, setStage ] = useState< 'choose' | 'progress' | 'error' >( 'choose' );
 	const [ selectedType, setSelectedType ] = useState< AnalysisType | null >( null );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -288,8 +321,28 @@ export default function AmplifyAnalysisModal( { site, onClose, onAnalysisStarted
 		setSelectedType( type );
 		setIsSubmitting( true );
 
+		// Bail out before hitting the Worker if we somehow don't have an
+		// identity yet — submitting without it would write an entry to R2
+		// that the reports list (which filters by current user AND active
+		// agency) could never show. Surface the error stage and emit a
+		// dedicated tracks event so the path is visible in analytics if it
+		// ever happens in production.
+		if ( ! currentUserId || ! activeAgencyId ) {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_analysis_missing_identity_error', {
+					analysis_type: type,
+					site_url: site,
+					missing_user: ! currentUserId,
+					missing_agency: ! activeAgencyId,
+				} )
+			);
+			setStage( 'error' );
+			setIsSubmitting( false );
+			return;
+		}
+
 		try {
-			const jobId = await startAmplifyAnalysis( site, type );
+			const jobId = await startAmplifyAnalysis( site, type, currentUserId, activeAgencyId );
 			// Notify the parent so it can add an in-progress row to the reports
 			// table immediately, before the R2 index has a chance to update.
 			onAnalysisStarted( {
