@@ -178,6 +178,28 @@ export class FullSiteEditorPage {
 	 */
 	async openTemplateEditor( text: string ): Promise< void > {
 		await this.fullSiteEditorDataViewsComponent.clickPrimaryFieldByExactText( text );
+		await this.confirmTemplateDuplicationIfRequired();
+	}
+
+	/**
+	 * Bundled templates may require duplicating before they can be edited.
+	 */
+	private async confirmTemplateDuplicationIfRequired(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const duplicateDialog = editorParent.getByRole( 'dialog', { name: 'Duplicate' } );
+		const duplicateButton = duplicateDialog.getByRole( 'button', {
+			name: 'Duplicate',
+			exact: true,
+		} );
+		const editDuplicatedTemplateButton = editorParent
+			.locator( '.components-snackbar' )
+			.getByRole( 'button', { name: 'Edit', exact: true } );
+
+		if ( await duplicateButton.isVisible( { timeout: 5000 } ).catch( () => false ) ) {
+			await duplicateButton.click();
+			await duplicateDialog.waitFor( { state: 'hidden' } );
+			await editDuplicatedTemplateButton.click();
+		}
 	}
 
 	/**
