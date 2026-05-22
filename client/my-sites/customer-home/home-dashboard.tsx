@@ -369,8 +369,17 @@ function ThemePreviewCard() {
 	);
 
 	const isPublic = site?.launch_status === 'launched' && ! site?.is_coming_soon;
-	const previewTarget =
-		isPublic && siteUrl ? siteUrl : ( theme?.demo_uri as string | undefined ) ?? '';
+	const liveSiteUrl = isPublic && siteUrl ? siteUrl : null;
+	const previewTarget = liveSiteUrl ?? ( theme?.demo_uri as string | undefined ) ?? '';
+
+	// Theme-demo URLs render a "Get this theme on WordPress.com" promo bar that
+	// hide_banners=true doesn't suppress, so we shift the iframe up to crop it.
+	// A LIVE site has no such banner — shifting there would crop real header
+	// content AND leave a white strip at the bottom (the iframe was only as
+	// tall as the card, not the card + offset). So crop only for demos, and
+	// grow the iframe by the same offset so it always fills to the bottom.
+	const BANNER_CROP_PX = 34;
+	const bannerCrop = liveSiteUrl ? 0 : BANNER_CROP_PX;
 
 	// Same pattern as the /sites grid + overview SitePreviewCard: render the
 	// target page in a sandboxed iframe at a 1200px virtual width, then scale
@@ -394,8 +403,12 @@ function ThemePreviewCard() {
 					<UICard.FullBleed className="site-setup__theme-bleed">
 						{ resizeListener }
 						{ previewTarget && width && height && (
-							<div className="site-setup__theme-iframe">
-								<SitePreview url={ previewTarget } scale={ scale } height={ height / scale } />
+							<div className="site-setup__theme-iframe" style={ { top: `${ -bannerCrop }px` } }>
+								<SitePreview
+									url={ previewTarget }
+									scale={ scale }
+									height={ ( height + bannerCrop ) / scale }
+								/>
 							</div>
 						) }
 						{ /* Reveal a "Edit site" CTA on hover/focus so the preview doubles

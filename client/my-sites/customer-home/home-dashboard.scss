@@ -200,12 +200,12 @@ body.is-section-home .layout__content {
 
 // Absolutely-positioned wrapper around the iframe — same pattern as the
 // /sites grid's SitePreviewCard. Takes the 1200px-wide iframe out of normal
-// flow so it can't grow the parent. Shifts up by ~34px to crop the
-// "Get this theme on WordPress.com" promo banner (and its hairline bottom
-// border) that hide_banners=true doesn't suppress for theme demo URLs.
+// flow so it can't grow the parent. The `top` offset (which crops the
+// "Get this theme on WordPress.com" promo banner on theme-demo URLs) is set
+// inline in home-dashboard.tsx — 0 for a live site (no banner), -34px for a
+// demo — and the iframe height is grown to match so it always fills to bottom.
 .site-setup__theme-iframe {
 	position: absolute;
-	top: -34px;
 	left: 0;
 	right: 0;
 	bottom: 0;
