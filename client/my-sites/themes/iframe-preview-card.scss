@@ -119,7 +119,10 @@
 	// Chrome 116+, Firefox 121+, Safari 17.4+. Wins by cascade order at equal
 	// specificity, fully overriding the fallback above.
 	@supports ( transform: scale( calc( 1px / 1px ) ) ) {
-		transform: #{"scale(calc(100cqw / 1200px))"};
+		// Routed through a CSS variable so postcss-calc (v8) doesn't try to
+		// evaluate the length-over-length division at build time.
+		--iframe-target-width: 1200px;
+		transform: #{"scale(calc(100cqw / var(--iframe-target-width)))"};
 	}
 	transform-origin: top left;
 	pointer-events: none;
