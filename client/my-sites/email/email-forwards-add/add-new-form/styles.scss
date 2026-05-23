@@ -10,7 +10,9 @@
 }
 
 .email-forwarding__mailbox-input-wrapper {
-	position: relative;
+	display: flex;
+	align-items: flex-end;
+	gap: 8px;
 
 	// These margins mess our suffix.
 	div.components-base-control__field {
@@ -19,28 +21,17 @@
 
 	& div.components-base-control.email-forwarding__mailbox-input {
 		margin-right: 0 !important;
+		width: 50%;
+		flex: 0 0 50%;
 	}
-
-	& input {
-		// Make sure the suffix doesn't cross the input border.
-		background: transparent;
-		z-index: 2;
-		position: relative;
-	}
-
 
 	.email-forwarding__mailbox-suffix {
 		margin: 0;
-		position: absolute;
-		right: 1px;
-		bottom: 1px;
-		padding: 5px 10px;
-		background: var(--studio-gray-0);
-		border-top: 1px solid var(--studio-gray-0);
-		border-left: 1px solid var(--studio-gray-10);
+		padding: 5px 0;
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
-		z-index: 1;
+		white-space: nowrap;
+		line-height: 1.5;
 
 		&.animate {
 			animation: blink 3s forwards;
