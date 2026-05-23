@@ -107,12 +107,20 @@
 	// Override it so the iframe truly renders at 1200px before being scaled down.
 	max-width: none;
 	border: 0;
-	// `tan(atan2(y, x))` mathematically equals `y / x` and is a widely-compatible
-	// way to convert length-over-length into a unitless number. The simpler
-	// `calc(100cqw / 1200px)` form would require CSS Values 4 support, which
-	// is below our browser floor. The expression is wrapped in `#{"..."}` so
-	// Sass passes it through verbatim instead of trying to evaluate at build time.
+	// Fallback for older browsers (notably iOS Safari 16.x) without CSS
+	// Values 4 length/length-to-unitless `calc()`. Safari handles
+	// `tan(atan2(<length>, <length>))` correctly; Firefox 108–120 had a bug
+	// here but those versions are long out of the support window.
+	// Expression wrapped in `#{"..."}` so Sass passes it through verbatim
+	// instead of evaluating at build time.
 	transform: #{"scale(tan(atan2(100cqw, 1200px)))"};
+
+	// Preferred for browsers that support length/length-to-unitless calc:
+	// Chrome 116+, Firefox 121+, Safari 17.4+. Wins by cascade order at equal
+	// specificity, fully overriding the fallback above.
+	@supports ( transform: scale( calc( 1px / 1px ) ) ) {
+		transform: #{"scale(calc(100cqw / 1200px))"};
+	}
 	transform-origin: top left;
 	pointer-events: none;
 }
