@@ -230,18 +230,21 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 	);
 }
 
-// The portfolio blog serves the PNG with `Content-Disposition: inline`,
-// so a plain `window.open()` would just navigate the user away. Building
-// an anchor with the `download` attribute forces the browser to save.
-function triggerDownloadFromUrl( url: string, fileName: string ) {
-	const link = document.createElement( 'a' );
-	link.href = url;
-	link.download = fileName;
-	link.rel = 'noopener';
-	link.target = '_blank';
-	document.body.appendChild( link );
-	link.click();
-	link.remove();
+function triggerBlobDownload( blob: Blob, fileName: string ) {
+	const objectUrl = URL.createObjectURL( blob );
+	try {
+		const link = document.createElement( 'a' );
+		link.href = objectUrl;
+		link.download = fileName;
+		link.rel = 'noopener';
+		document.body.appendChild( link );
+		link.click();
+		link.remove();
+	} finally {
+		// Revoking immediately after click() is safe; the browser has
+		// already kicked off the save by the time we return.
+		URL.revokeObjectURL( objectUrl );
+	}
 }
 
 function SocialAssetTile( {
@@ -295,13 +298,14 @@ function SocialAssetTile( {
 		try {
 			// Run the in-document fitting pipeline offscreen, then ship
 			// the post-fit static HTML to the wpcom render endpoint.
-			// Server proxies to Browserless, uploads, and caches the
-			// attachment URL on the collateral — first download wins.
+			// The server proxies to Browserless and streams the PNG
+			// bytes back inline — nothing is persisted, the user saves
+			// the returned Blob directly.
 			const fittedHtml = await captureFittedTileHtml( asset.html, {
 				width: asset.width,
 				height: asset.height,
 			} );
-			const result = await downloadPng( {
+			const blob = await downloadPng( {
 				postId,
 				directionId: asset.directionId,
 				size: asset.sizeKey,
@@ -309,8 +313,8 @@ function SocialAssetTile( {
 				width: asset.width,
 				height: asset.height,
 			} );
-			triggerDownloadFromUrl(
-				result.url,
+			triggerBlobDownload(
+				blob,
 				`${ safeFileBase( title, `${ asset.label }-${ index + 1 }` ) || 'social-asset' }.png`
 			);
 		} finally {
