@@ -74,9 +74,6 @@
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
 	background: var(--color-neutral-0);
-	// Establishes a containment context so the iframe inside can size itself
-	// against the wrapper's width via container query units (cqw).
-	container-type: inline-size;
 }
 
 .iframe-preview-card__loading {
@@ -107,23 +104,10 @@
 	// Override it so the iframe truly renders at 1200px before being scaled down.
 	max-width: none;
 	border: 0;
-	// Fallback for older browsers (notably iOS Safari 16.x) without CSS
-	// Values 4 length/length-to-unitless `calc()`. Safari handles
-	// `tan(atan2(<length>, <length>))` correctly; Firefox 108–120 had a bug
-	// here but those versions are long out of the support window.
-	// Expression wrapped in `#{"..."}` so Sass passes it through verbatim
-	// instead of evaluating at build time.
-	transform: #{"scale(tan(atan2(100cqw, 1200px)))"};
-
-	// Preferred for browsers that support length/length-to-unitless calc:
-	// Chrome 116+, Firefox 121+, Safari 17.4+. Wins by cascade order at equal
-	// specificity, fully overriding the fallback above.
-	@supports ( transform: scale( calc( 1px / 1px ) ) ) {
-		// Routed through a CSS variable so postcss-calc (v8) doesn't try to
-		// evaluate the length-over-length division at build time.
-		--iframe-target-width: 1200px;
-		transform: #{"scale(calc(100cqw / var(--iframe-target-width)))"};
-	}
+	// `--iframe-scale` is set on the wrapper by a ResizeObserver in the
+	// component. Defaults to 0 so the iframe is invisible until the observer
+	// fires (avoids a flash of unscaled 1200px content on first paint).
+	transform: scale(var(--iframe-scale, 0));
 	transform-origin: top left;
 	pointer-events: none;
 }
