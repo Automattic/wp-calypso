@@ -7,40 +7,39 @@
 	div.components-base-control__field {
 		margin-bottom: 0;
 	}
+
+	.email-forwarding__mailbox-input-wrapper,
+	.email-forwarding__forward-to {
+		max-inline-size: 500px;
+	}
+}
+
+.email-forwarding__forward-to {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	.email-forwarding__forward-to-description {
+		margin: 0;
+		font-size: $font-body-extra-small;
+		color: var(--studio-gray-50);
+	}
 }
 
 .email-forwarding__mailbox-input-wrapper {
-	position: relative;
-
-	// These margins mess our suffix.
-	div.components-base-control__field {
-		margin-bottom: 0;
-	}
-
-	& div.components-base-control.email-forwarding__mailbox-input {
-		margin-right: 0 !important;
-	}
-
-	& input {
-		// Make sure the suffix doesn't cross the input border.
-		background: transparent;
-		z-index: 2;
-		position: relative;
-	}
-
+	max-inline-size: 500px;
 
 	.email-forwarding__mailbox-suffix {
-		margin: 0;
-		position: absolute;
-		right: 1px;
-		bottom: 1px;
-		padding: 5px 10px;
+		display: flex;
+		align-items: center;
+		align-self: stretch;
+		flex: 0 0 auto;
+		white-space: nowrap;
+		padding-inline: 12px;
 		background: var(--studio-gray-0);
-		border-top: 1px solid var(--studio-gray-0);
-		border-left: 1px solid var(--studio-gray-10);
+		border-inline-start: 1px solid var(--studio-gray-10);
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
-		z-index: 1;
 
 		&.animate {
 			animation: blink 3s forwards;
@@ -69,8 +68,8 @@
 
 
 /* If the user didn't add any tokens, show a shimmer effect, because they may not know to press Enter. */
-.components-form-token-field:not(:has(.components-form-token-field__token)):focus-within {
-	.components-form-token-field__help {
+.email-forwarding__forward-to:has(.components-form-token-field:not(:has(.components-form-token-field__token)):focus-within) {
+	.email-forwarding__forward-to-description {
 		animation: shimmer 15s infinite;
 		background-size: 110%;
 		color: transparent;

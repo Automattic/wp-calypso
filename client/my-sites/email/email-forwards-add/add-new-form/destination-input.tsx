@@ -34,11 +34,12 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 	}
 
 	return (
-		<>
+		<div className="email-forwarding__forward-to">
 			<FormTokenField
 				disabled={ disabled }
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
+				help=""
 				label={ translate( 'Forward to' ) }
 				onChange={ handleChange }
 				value={ values.slice( 0, limit ) }
@@ -59,10 +60,12 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 					}
 					return error;
 				} }
-				placeholder={ translate(
-					'These are the target email addresses where your emails will be forwarded.'
-				) }
+				placeholder={ translate( 'your.email@example.com' ) }
 			/>
+			<p className="email-forwarding__forward-to-description">
+				{ translate( 'These are the target email addresses where your emails will be forwarded.' ) }{ ' ' }
+				{ translate( 'Separate with commas or the Enter key.' ) }
+			</p>
 			{ values.map( ( value ) => (
 				<input key={ value } type="hidden" name="destinations" value={ value } />
 			) ) }
@@ -71,6 +74,6 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 					{ error.message }
 				</Notice>
 			) }
-		</>
+		</div>
 	);
 }

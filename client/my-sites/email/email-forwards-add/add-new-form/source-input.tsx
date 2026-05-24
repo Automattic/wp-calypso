@@ -1,4 +1,4 @@
-import { TextControl } from '@wordpress/components';
+import { __experimentalInputControl as InputControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -6,32 +6,38 @@ import type { SourceInputProps } from './types';
 import './styles.scss';
 
 export function SourceInput( props: SourceInputProps ) {
-	const { onChange, suffix, ...rest } = props;
+	const { onChange, suffix, value, disabled } = props;
 	const translate = useTranslate();
 	const [ highlightSuffix, setHighlightSuffix ] = React.useState( 0 );
 
 	return (
 		<div className="email-forwarding__mailbox-input-wrapper">
-			<TextControl
+			<InputControl
+				__next40pxDefaultSize
 				label={ translate( 'Forward from' ) }
 				className="email-forwarding__mailbox-input"
 				name="mailbox"
 				maxLength={ 64 }
-				onChange={ ( value ) => onChange( value.replace( /@.*/gi, '' ) ) }
+				value={ value }
+				disabled={ disabled }
+				onChange={ ( next ) => onChange( ( next ?? '' ).replace( /@.*/gi, '' ) ) }
 				onKeyUp={ ( event ) => {
 					if ( event.key === '@' ) {
 						setHighlightSuffix( ( s ) => s + 1 );
 					}
 				} }
-				{ ...rest }
+				suffix={
+					/* Blink the suffix when the user enters @ */
+					<span
+						key={ highlightSuffix }
+						className={ clsx( 'email-forwarding__mailbox-suffix', {
+							animate: highlightSuffix,
+						} ) }
+					>
+						{ suffix }
+					</span>
+				}
 			/>
-			{ /* Blink the suffix when the user enters @ */ }
-			<p
-				key={ highlightSuffix }
-				className={ clsx( 'email-forwarding__mailbox-suffix', { animate: highlightSuffix } ) }
-			>
-				{ suffix }
-			</p>
 		</div>
 	);
 }
