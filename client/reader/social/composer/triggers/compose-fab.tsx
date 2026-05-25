@@ -4,6 +4,15 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useComposer } from '../composer-provider';
 
+interface Props {
+	/**
+	 * Optional starter text seeded into the standalone composer on open.
+	 * Used by profile pages to prepend the profile's `@handle` so the
+	 * compose surface kicks off a mention.
+	 */
+	initialText?: string;
+}
+
 /**
  * Floating Action Button that opens the composer in standalone mode.
  *
@@ -13,7 +22,7 @@ import { useComposer } from '../composer-provider';
  * referenced by `<ComposerProvider>`'s `triggerRef`, which silently breaks
  * focus restoration after the modal closes.
  */
-export function ComposeFab() {
+export function ComposeFab( { initialText }: Props = {} ) {
 	const translate = useTranslate();
 	const { mode, openComposer } = useComposer();
 	const isHidden = mode != null;
@@ -26,7 +35,7 @@ export function ComposeFab() {
 			text={ translate( 'Compose' ) as string }
 			aria-hidden={ isHidden || undefined }
 			tabIndex={ isHidden ? -1 : undefined }
-			onClick={ () => openComposer( { kind: 'standalone', entry_point: 'fab' } ) }
+			onClick={ () => openComposer( { kind: 'standalone', entry_point: 'fab', initialText } ) }
 		/>
 	);
 }

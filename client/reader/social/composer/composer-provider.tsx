@@ -105,7 +105,7 @@ export type ComposerMode =
 			previewPost: PreviewPost;
 			replyTo?: { root: ComposerParentRef; parent: ComposerParentRef };
 	  }
-	| { kind: 'standalone'; entry_point: ComposerEntryPoint };
+	| { kind: 'standalone'; entry_point: ComposerEntryPoint; initialText?: string };
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 

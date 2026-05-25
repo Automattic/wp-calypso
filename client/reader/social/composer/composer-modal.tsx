@@ -53,6 +53,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
+		} else if ( mode.kind === 'standalone' && mode.initialText ) {
+			setText( mode.initialText );
 		}
 		// mutation.reset is stable across renders; intentionally not in deps.
 		// eslint-disable-next-line react-hooks/exhaustive-deps

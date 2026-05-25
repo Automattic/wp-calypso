@@ -1,4 +1,4 @@
-import { useConnectionsQuery } from '@automattic/api-queries';
+import { useAtmosphereScopedProfileQuery, useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -90,10 +90,30 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 					subtabBasePath={ subtabBasePath }
 				/>
 			</ReaderMain>
-			<ComposeFab />
+			<AuthorProfileComposeFab connectionId={ connection.id } actor={ actor } />
 			<ComposerModal />
 		</ComposerProvider>
 	);
+}
+
+/**
+ * Reads the canonical handle from the scoped-profile cache so the FAB
+ * seeds the composer with `@<handle> ` even when the URL keys the
+ * profile by DID. Falls back to the URL actor while the query is in
+ * flight or errors — gives a plausible mention starter immediately
+ * rather than a no-op compose. The query is shared with
+ * `AuthorProfilePanel`, so this hook does not add a network hit.
+ */
+function AuthorProfileComposeFab( {
+	connectionId,
+	actor,
+}: {
+	connectionId: number;
+	actor: string;
+} ) {
+	const profile = useAtmosphereScopedProfileQuery( { connectionId, actor } );
+	const handle = profile.data?.handle ?? actor;
+	return <ComposeFab initialText={ `@${ handle } ` } />;
 }
 
 export default AuthorProfileView;

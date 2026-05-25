@@ -157,6 +157,20 @@ describe( '<ComposerModal>', () => {
 		expect( screen.getByRole( 'button', { name: /post/i } ) ).toBeDisabled();
 	} );
 
+	it( 'seeds the textarea with mode.initialText when opening in standalone mode', () => {
+		renderModal( testComposerConfig );
+		act(
+			() =>
+				openFn?.( {
+					kind: 'standalone',
+					entry_point: 'fab',
+					initialText: '@alice.bsky.social ',
+				} )
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social ' );
+	} );
+
 	it( 'disables the Post button when grapheme count exceeds config.limit', async () => {
 		const user = userEvent.setup();
 		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
