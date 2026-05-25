@@ -54,19 +54,19 @@
 
 			.dataviews-view-table tr td:first-child:not(.dataviews-view-table__checkbox-column),
 			.dataviews-view-table tr th:first-child:not(.dataviews-view-table__checkbox-column) {
-				padding-left: 16px;
+				padding-inline-start: 16px;
 
 				@media (min-width: $break-small) {
-					padding-left: 64px;
+					padding-inline-start: 64px;
 				}
 			}
 
 			.dataviews-view-table tr td:last-child,
 			.dataviews-view-table tr th:last-child {
-				padding-right: 16px;
+				padding-inline-end: 16px;
 
 				@media (min-width: $break-small) {
-					padding-right: 64px;
+					padding-inline-end: 64px;
 				}
 			}
 		}
