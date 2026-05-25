@@ -7,14 +7,21 @@ import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@autom
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
+// AT-Proto's hard cap for `app.bsky.feed.post.text` is 300 graphemes;
+// the protocol doesn't vary by connection, so the hook just returns a
+// constant. Wrapping in `useLimit` matches the shared composer
+// contract — see `ComposerConfig.useLimit` in
+// `client/reader/social/composer/composer-config.tsx`.
 const LIMIT = 300;
+const useAtmosphereComposerLimit = (): number => LIMIT;
 
 export const atmosphereComposerConfig: ComposerConfig<
 	AtmosphereError,
 	CreatePostParams,
 	CreatePostResult
 > = {
-	limit: LIMIT,
+	useLimit: useAtmosphereComposerLimit,
+	protocolLabel: 'Bluesky',
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: createPostMutation,
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),
@@ -114,6 +121,16 @@ export const atmosphereComposerConfig: ComposerConfig<
 			};
 		},
 	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_atmosphere_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_atmosphere_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+		} ),
+	},
 	copy: {
 		title: ( mode, translate ) => titleForMode( mode, translate ),
 		placeholder: ( mode, translate, handle ) => placeholderForMode( mode, translate, handle ),
@@ -204,13 +221,7 @@ function errorMessageFor( err: AtmosphereError, t: Translate ): ReactNode {
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return t( 'Your Bluesky connection needs to be reconnected. {{a}}Reconnect{{/a}}', {
-				components: {
-					a: <a href="/reader/atmosphere/connect" target="_blank" rel="noopener noreferrer" />,
-				},
-				comment:
-					'Composer error shown when the user’s Bluesky session expired; {{a}}…{{/a}} wraps a link to reconnect.',
-			} );
+			return t( 'Something went wrong with your Bluesky connection.' );
 		case 'reply_disabled':
 			return t( 'The author has restricted who can reply to this post.' );
 		case 'quote_disabled':

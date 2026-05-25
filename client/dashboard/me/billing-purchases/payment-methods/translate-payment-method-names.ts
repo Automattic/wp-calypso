@@ -44,8 +44,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'web-pay';
 		case 'WPCOM_Billing_MoneyPress_Stored':
 			return 'existingCard';
-		case 'WPCOM_Billing_Razorpay':
-			return 'razorpay';
 		case 'WPCOM_Billing_Stripe_Upi':
 			return 'stripe-upi';
 		default:
@@ -100,8 +98,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Web_Payment';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
-		case 'razorpay':
-			return 'WPCOM_Billing_Razorpay';
 		case 'stripe-upi':
 			return 'WPCOM_Billing_Stripe_Upi';
 	}
@@ -126,7 +122,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_P24':
 		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 		case 'WPCOM_Billing_Web_Payment':
-		case 'WPCOM_Billing_Razorpay':
 		case 'WPCOM_Billing_Stripe_Upi':
 			return slug;
 	}
@@ -162,7 +157,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'wechat':
 		case 'web-pay':
 		case 'free-purchase':
-		case 'razorpay':
 		case 'stripe-upi':
 			return slug;
 		case 'apple-pay':

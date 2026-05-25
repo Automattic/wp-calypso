@@ -8,7 +8,7 @@
 	grid-template-columns: 48px 1fr;
 
 	.gridicon {
-		color: var(--color-neutral-10);
+		color: var( --theme-icon-color, var( --color-neutral-10 ) );
 	}
 
 	.theme__sheet-card-support-details {

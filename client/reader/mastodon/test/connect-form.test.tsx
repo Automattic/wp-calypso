@@ -6,6 +6,19 @@ import userEvent from '@testing-library/user-event';
 import { ConnectForm } from '../connect-form';
 
 describe( 'ConnectForm', () => {
+	it( 'renders the prose intro describing what the user gets', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		expect(
+			screen.getByText( /your Mastodon timeline appears alongside your blog feeds/i )
+		).toBeVisible();
+	} );
+
+	it( 'renders the instance helper text describing the OAuth handoff', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		expect( screen.getByText( /hand you off to sign in there/i ) ).toBeVisible();
+		expect( screen.getByText( /never see your password/i ) ).toBeVisible();
+	} );
+
 	it( 'disables submit while instance is empty', () => {
 		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
 		expect( screen.getByRole( 'button', { name: /continue/i } ) ).toBeDisabled();
@@ -18,6 +31,21 @@ describe( 'ConnectForm', () => {
 		await user.type( screen.getByLabelText( /instance/i ), '  mastodon.social  ' );
 		await user.click( screen.getByRole( 'button', { name: /continue/i } ) );
 		expect( onSubmit ).toHaveBeenCalledWith( { instance: 'mastodon.social' } );
+	} );
+
+	it.each( [
+		[ 'https://mastodon.social', 'mastodon.social' ],
+		[ 'https://mastodon.social/', 'mastodon.social' ],
+		[ 'https://mastodon.social/@user', 'mastodon.social' ],
+		[ '@user@mastodon.social', 'mastodon.social' ],
+		[ 'Mastodon.Social', 'mastodon.social' ],
+	] )( 'normalizes %s to %s before submitting', async ( typed, expected ) => {
+		const user = userEvent.setup();
+		const onSubmit = jest.fn();
+		render( <ConnectForm onSubmit={ onSubmit } isSubmitting={ false } error={ null } /> );
+		await user.type( screen.getByLabelText( /instance/i ), typed );
+		await user.click( screen.getByRole( 'button', { name: /continue/i } ) );
+		expect( onSubmit ).toHaveBeenCalledWith( { instance: expected } );
 	} );
 
 	it( 'disables submit and shows busy state while submitting', () => {

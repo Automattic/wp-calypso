@@ -1,5 +1,5 @@
+import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import * as stats from 'calypso/reader/stats';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import DISPLAY_TYPES from 'calypso/state/reader/posts/display-types';
 import {
 	READER_EXPAND_CARD,
@@ -18,7 +18,7 @@ export const expandCard = ( { postKey, post, site } ) => {
 		stats.recordTrackForPost( 'calypso_reader_article_opened', post );
 
 		// Record page view
-		dispatch( markPostSeen( post, site ) );
+		markPostSeen( post, site );
 		dispatch( {
 			type: READER_EXPAND_CARD,
 			payload: { postKey },

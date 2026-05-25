@@ -5,6 +5,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { chevronRight } from '@wordpress/icons';
+import { useDomainSuggestionContainer } from '../../hooks/use-domain-suggestion-container';
 import { DomainSearchSkipSuggestionPlaceholder } from './index.placeholder';
 import { DomainSearchSkipSuggestionSkeleton } from './index.skeleton';
 
@@ -29,10 +31,14 @@ const DomainSearchSkipSuggestion = ( {
 	disabled,
 	isBusy,
 }: Props ) => {
+	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+	const isSmall = activeQuery === 'small';
+
 	let title;
 	let subtitle;
 	let buttonText = __( 'Skip purchase' );
 	let showButton = true;
+	let chevronOnMobile = false;
 
 	if ( existingSiteUrl ) {
 		const [ domain, ...tld ] = existingSiteUrl.split( '.' );
@@ -77,6 +83,7 @@ const DomainSearchSkipSuggestion = ( {
 		);
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
 		buttonText = __( 'Start Free' );
+		chevronOnMobile = true;
 	}
 
 	if ( ! title ) {
@@ -84,33 +91,73 @@ const DomainSearchSkipSuggestion = ( {
 	}
 
 	const domain = existingSiteUrl ?? freeSuggestion;
+	const showChevron = chevronOnMobile && isSmall;
+	const skipLabel = sprintf(
+		// translators: %(domain)s is the domain name
+		__( 'Skip purchase and continue with %(domain)s' ),
+		{ domain }
+	);
+
+	const renderRight = () => {
+		if ( ! showButton ) {
+			return undefined;
+		}
+
+		if ( showChevron ) {
+			return (
+				<Button
+					className="domain-search-skip-suggestion__chevron"
+					variant="tertiary"
+					label={ skipLabel }
+					onClick={ onSkip }
+					icon={ chevronRight }
+					disabled={ disabled }
+					isBusy={ isBusy && ! disabled }
+				/>
+			);
+		}
+
+		return (
+			<Button
+				className="domain-search-skip-suggestion__btn"
+				variant="secondary"
+				label={ skipLabel }
+				onClick={ onSkip }
+				disabled={ disabled }
+				isBusy={ isBusy && ! disabled }
+				__next40pxDefaultSize
+			>
+				{ buttonText }
+			</Button>
+		);
+	};
 
 	return (
 		<DomainSearchSkipSuggestionSkeleton
+			ref={ containerRef }
+			activeQuery={ activeQuery }
 			title={
-				<Heading level="4" weight="normal">
-					{ title }
-				</Heading>
+				isSmall ? (
+					<Heading level="4" size="body" weight={ 500 }>
+						{ title }
+					</Heading>
+				) : (
+					<Heading level="4" weight="normal">
+						{ title }
+					</Heading>
+				)
 			}
-			subtitle={ subtitle && <Text>{ subtitle }</Text> }
-			right={
-				showButton ? (
-					<Button
-						className="domain-search-skip-suggestion__btn"
-						variant="secondary"
-						// translators: %(domain)s is the domain name
-						label={ sprintf( __( 'Skip purchase and continue with %(domain)s' ), {
-							domain,
-						} ) }
-						onClick={ onSkip }
-						disabled={ disabled }
-						isBusy={ isBusy && ! disabled }
-						__next40pxDefaultSize
-					>
-						{ buttonText }
-					</Button>
-				) : undefined
+			subtitle={
+				subtitle &&
+				( isSmall ? (
+					<Text size="subheadline" variant="muted">
+						{ subtitle }
+					</Text>
+				) : (
+					<Text>{ subtitle }</Text>
+				) )
 			}
+			right={ renderRight() }
 		/>
 	);
 };

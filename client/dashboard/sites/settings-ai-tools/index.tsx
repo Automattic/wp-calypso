@@ -240,6 +240,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					site={ site }
 					feature={ HostingFeatures.BIG_SKY }
 					upsellId="ai-tools"
+					upsellPlanRequirement="any"
 					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
 					upsellDescription={ __(
 						'Get AI-powered assistance to help you build, edit, and redesign your site with ease.'

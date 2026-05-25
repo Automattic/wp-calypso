@@ -26,6 +26,7 @@ import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
@@ -291,6 +292,11 @@ async function main() {
 									sectionName={ flowName }
 									loadAgentsManager
 								/>
+								{ /* The stepper has no masterbar or help button, so logged-out visitors
+								   have no way to summon the Help Center otherwise. */ }
+								{ ! user && config.isEnabled( 'help-center/logged-out-fab' ) && (
+									<AsyncHelpCenterFab sectionName="stepper" />
+								) }
 							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (

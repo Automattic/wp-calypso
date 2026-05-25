@@ -1,6 +1,7 @@
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -34,10 +35,21 @@ export function getRenewalPricingText( {
 		return null;
 	}
 
+	if ( ! showBillingDescriptionForIncreasedRenewalPrice ) {
+		return null;
+	}
+
 	const formattedMonthlyPrice = formatCurrency( monthlyPrice, currencyCode, {
 		stripZeros: true,
 		isSmallestUnit: true,
 	} );
+
+	if ( billingPeriod === PLAN_MONTHLY_PERIOD ) {
+		return translate( 'Auto-renews at %(price)s per month. Billed every month.', {
+			args: { price: formattedMonthlyPrice },
+			comment: '%(price)s is a formatted price like $10',
+		} );
+	}
 
 	// Determine the billing period in months
 	let billingMonths = 12; // default to annual
@@ -50,17 +62,12 @@ export function getRenewalPricingText( {
 		billingMonths = 12;
 	}
 
-	// Renewal pricing experiment: crossed-price copy for all active variants
-	if ( showBillingDescriptionForIncreasedRenewalPrice ) {
-		return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
-			args: {
-				price: formattedMonthlyPrice,
-				months: billingMonths,
-			},
-			comment:
-				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
-		} );
-	}
-
-	return null;
+	return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
+		args: {
+			price: formattedMonthlyPrice,
+			months: billingMonths,
+		},
+		comment:
+			'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
+	} );
 }

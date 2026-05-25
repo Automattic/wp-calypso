@@ -133,7 +133,7 @@ export default function ReportsList( {
 					actions,
 					setDataViewsState,
 					dataViewsState,
-					defaultLayouts: { table: {} },
+					defaultLayouts: { table: {}, list: {} },
 				} }
 			/>
 		</div>

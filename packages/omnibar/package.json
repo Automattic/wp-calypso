@@ -39,7 +39,7 @@
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/private-apis": "^1.39.0",
-		"@wordpress/ui": "^0.9.0"
+		"@wordpress/ui": "^0.13.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.23.0",

@@ -15,6 +15,26 @@ describe( 'readerAtmosphereKeys', () => {
 			42,
 		] );
 	} );
+
+	it( 'notifications(connectionId, "all") shapes the All-chip key', () => {
+		expect( readerAtmosphereKeys.notifications( 42, 'all' ) ).toEqual( [
+			'reader',
+			'atmosphere',
+			'notifications',
+			42,
+			'all',
+		] );
+	} );
+
+	it( 'notifications(connectionId, filter) includes filter in key', () => {
+		expect( readerAtmosphereKeys.notifications( 42, 'likes' ) ).toEqual( [
+			'reader',
+			'atmosphere',
+			'notifications',
+			42,
+			'likes',
+		] );
+	} );
 } );
 
 describe( 'readerAtmosphereKeys.profile', () => {

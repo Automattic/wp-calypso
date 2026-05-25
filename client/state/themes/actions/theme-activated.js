@@ -25,6 +25,7 @@ import 'calypso/state/themes/init';
  * @param  {string}   source             The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased          Whether the theme has been purchased prior to activation
  * @param  {string}   styleVariationSlug The theme style slug
+ * @param  {'basic'|'full'} [setupChoice] The user's setup choice from the activation modal. Surfaces on the Tracks event as `setup_choice`. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
  * @returns {Function}                   Action thunk
  */
 export function themeActivated(
@@ -32,7 +33,8 @@ export function themeActivated(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	styleVariationSlug
+	styleVariationSlug,
+	setupChoice
 ) {
 	const action = {
 		type: THEME_ACTIVATE_SUCCESS,
@@ -62,6 +64,11 @@ export function themeActivated(
 			style_variation_slug: styleVariationSlug || '',
 			theme_type: getThemeType( getState(), themeId ),
 			theme_tier: getThemeTierForTheme( getState(), themeId )?.slug,
+			// Only include the modal-driven `setup_choice` when the activation
+			// was initiated with an explicit choice. Direct activate paths
+			// (e.g., when the modal isn't shown) pass undefined and the prop
+			// is omitted from the payload.
+			...( setupChoice !== undefined && { setup_choice: setupChoice } ),
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 

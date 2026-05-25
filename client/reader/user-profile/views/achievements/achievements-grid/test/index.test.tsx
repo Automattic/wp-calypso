@@ -19,9 +19,9 @@ const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 	description: 'You wrote your first post.',
 	badge_prefix: 'p',
 	level: 1,
-	date: '2026-01-15T00:00:00Z',
+	date_unlocked: '2026-01-15T00:00:00Z',
+	date_created: '2025-01-01',
 	image: 'https://example.com/first.png',
-	retired: false,
 	is_secret: false,
 	...overrides,
 } );
@@ -29,7 +29,9 @@ const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 const maskedSecret = ( overrides: Record< string, unknown > = {} ) => ( {
 	achievement_id: 2,
 	is_secret: true,
-	date: '2026-02-15T00:00:00Z',
+	is_redacted: true,
+	date_unlocked: '2026-02-15T00:00:00Z',
+	date_created: '2025-02-01',
 	...overrides,
 } );
 
@@ -47,6 +49,7 @@ const locked = ( overrides: Record< string, unknown > = {} ) => ( {
 const lockedSecret = ( overrides: Record< string, unknown > = {} ) => ( {
 	achievement_id: 99,
 	is_secret: true,
+	is_redacted: true,
 	date_created: '2026-01-10T00:00:00Z',
 	...overrides,
 } );
@@ -153,7 +156,7 @@ describe( 'AchievementsGrid', () => {
 		expect( screen.queryByText( /You.*unlocked them all/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders locked secret with the secret title and mystery description', () => {
+	test( 'renders locked secret with the secret title', () => {
 		useAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
@@ -163,9 +166,6 @@ describe( 'AchievementsGrid', () => {
 		renderGrid( { userLogin: 'me', isOwnProfile: true } );
 
 		expect( screen.getByText( 'Secret achievement' ) ).toBeVisible();
-		expect(
-			screen.getByText( /This one.*s a mystery\. Earn it to reveal the details\./ )
-		).toBeVisible();
 	} );
 
 	test( 'renders masked secret in earned list with caption Unlocked: <time>', () => {
@@ -180,6 +180,68 @@ describe( 'AchievementsGrid', () => {
 		const secretCard = screen.getByText( 'Secret achievement' ).closest( '.achievement-card' );
 		expect( secretCard ).not.toBeNull();
 		expect( within( secretCard as HTMLElement ).getByText( /^Unlocked:/ ) ).toBeVisible();
+	} );
+
+	test( 'sorts earned + masked-secret entries by last unlock date descending', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [
+				maskedSecret( { achievement_id: 2, date_unlocked: '2026-01-01' } ),
+				earned( {
+					achievement_id: 3,
+					slug: 'm',
+					name: 'Mid',
+					date_unlocked: '2026-02-01',
+				} ),
+				earned( { achievement_id: 1, name: 'Zed', date_unlocked: '2026-03-01' } ),
+			],
+			lockedAchievements: [],
+		} );
+
+		const { container } = renderGrid( { userLogin: 'someone', isOwnProfile: false } );
+
+		const earnedSection = container.querySelector( '.achievements-grid' );
+		expect( earnedSection ).not.toBeNull();
+		const titles = within( earnedSection as HTMLElement ).getAllByRole( 'heading', {
+			level: 3,
+		} );
+		expect( titles.map( ( h ) => h.firstChild?.textContent ) ).toEqual( [
+			'Zed',
+			'Mid',
+			'Secret achievement',
+		] );
+	} );
+
+	test( 'sorts a leveled slug by its most recent unlock, not its first', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [
+				earned( {
+					achievement_id: 10,
+					slug: 'multi',
+					name: 'Multi',
+					level: 1,
+					date_unlocked: '2026-01-01',
+				} ),
+				earned( {
+					achievement_id: 11,
+					slug: 'multi',
+					name: 'Multi',
+					level: 2,
+					date_unlocked: '2026-05-01',
+				} ),
+				earned( { achievement_id: 20, slug: 'solo', name: 'Solo', date_unlocked: '2026-03-01' } ),
+			],
+			lockedAchievements: [],
+		} );
+
+		const { container } = renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		const earnedSection = container.querySelector( '.achievements-grid' );
+		const titles = within( earnedSection as HTMLElement ).getAllByRole( 'heading', {
+			level: 3,
+		} );
+		expect( titles.map( ( h ) => h.firstChild?.textContent ) ).toEqual( [ 'Multi', 'Solo' ] );
 	} );
 
 	test( 'sorts locked entries by date_created ascending', () => {
@@ -222,8 +284,8 @@ describe( 'AchievementsGrid', () => {
 			...baseQueryReturn,
 			achievements: [
 				earned(),
-				maskedSecret( { achievement_id: 50, date: '2026-02-01T00:00:00Z' } ),
-				maskedSecret( { achievement_id: 50, date: '2026-03-01T00:00:00Z' } ),
+				maskedSecret( { achievement_id: 50, date_unlocked: '2026-02-01T00:00:00Z' } ),
+				maskedSecret( { achievement_id: 50, date_unlocked: '2026-03-01T00:00:00Z' } ),
 			],
 			lockedAchievements: [],
 		} );
@@ -259,6 +321,88 @@ describe( 'AchievementsGrid', () => {
 		renderGrid( { userLogin: 'me', isOwnProfile: true } );
 
 		expect( screen.getByText( 'First Post' ) ).toBeVisible();
+		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders a self-read earned secret (is_secret: true with full payload) as a regular card', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [
+				earned( {
+					achievement_id: 30,
+					slug: 'hidden_gem',
+					name: 'Hidden Gem',
+					description: 'You found the easter egg.',
+					is_secret: true,
+				} ),
+			],
+			lockedAchievements: [],
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'Hidden Gem' ) ).toBeVisible();
+		expect( screen.getByText( 'You found the easter egg.' ) ).toBeVisible();
+		expect( screen.queryByText( 'Secret achievement' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'prepends a Years of Service card when yearsOfService > 0', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 5,
+		} );
+
+		const { container } = renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'Years of Service' ) ).toBeVisible();
+		expect( screen.getByText( '5 years on WordPress.com.' ) ).toBeVisible();
+
+		const titles = within( container.querySelector( '.achievements-grid' ) as HTMLElement )
+			.getAllByRole( 'heading', { level: 3 } )
+			.map( ( h ) => h.textContent );
+		expect( titles[ 0 ] ).toBe( 'Years of Service' );
+
+		expect(
+			container.querySelector( '.achievement-card.is-years-of-service' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'pluralizes the Years of Service description for 1 year', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 1,
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( '1 year on WordPress.com.' ) ).toBeVisible();
+	} );
+
+	test( 'omits the Years of Service card when yearsOfService is 0 or undefined', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 0,
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.queryByText( 'Years of Service' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'still surfaces the Years of Service card when there are no other achievements', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [],
+			lockedAchievements: [],
+			yearsOfService: 3,
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'Years of Service' ) ).toBeVisible();
 		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
 	} );
 

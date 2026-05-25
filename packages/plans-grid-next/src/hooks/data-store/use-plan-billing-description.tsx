@@ -13,6 +13,7 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
+import { calculateDiscountPercentage } from '../../lib/plan-pricing-utils';
 import { getRenewalPricingText } from './get-renewal-pricing-text';
 import type { GridPlan } from '../../types';
 
@@ -90,17 +91,13 @@ export default function usePlanBillingDescription( {
 				: yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null;
 		}
 
-		if (
-			yearlyVariantMaybeDiscountedPrice &&
-			yearlyVariantMaybeDiscountedPrice < originalPrice.monthly
-		) {
+		const discountRate =
+			yearlyVariantMaybeDiscountedPrice != null
+				? calculateDiscountPercentage( originalPrice.monthly, yearlyVariantMaybeDiscountedPrice )
+				: undefined;
+		if ( discountRate !== undefined ) {
 			return translate( 'Save %(discountRate)s%% by paying annually', {
-				args: {
-					discountRate: Math.floor(
-						( 100 * ( originalPrice.monthly - yearlyVariantMaybeDiscountedPrice ) ) /
-							originalPrice.monthly
-					),
-				},
+				args: { discountRate },
 			} );
 		}
 

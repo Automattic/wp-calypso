@@ -14,6 +14,7 @@ import clsx from 'clsx';
 import { useRef } from 'react';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import { DarkModeAnnouncement } from '../../components/dark-mode-announcement';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
@@ -40,7 +41,6 @@ import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
-import { WpVersionNotice, useShouldShowWpVersionNotice } from './wp-version-notice';
 import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
@@ -195,19 +195,18 @@ function SiteOverview( {
 
 	const wpAdminButtonRef = useRef( null );
 	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
-	const shouldShowWpVersionNotice = useShouldShowWpVersionNotice( site );
 
 	const renderNotices = () => {
 		if ( site.__inaccessible_jetpack_error ) {
 			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
 		}
 
-		if ( shouldShowWpVersionNotice ) {
-			return <WpVersionNotice site={ site } />;
-		}
-
 		if ( ! isDashboardBackport() && shouldShowOptInSurvey ) {
 			return <OptInSurvey />;
+		}
+
+		if ( ! isDashboardBackport() ) {
+			return <DarkModeAnnouncement tracksContext="site-overview" />;
 		}
 
 		return null;

@@ -2,6 +2,7 @@ import { PENDING_REPOST_URI } from '@automattic/api-core';
 import { useCreateRepostMutation, useDeleteRepostMutation } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
@@ -24,7 +25,7 @@ function errorMessageForRepost(
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return translate( 'Reconnect your Bluesky account to repost.' );
+			return translate( 'Something went wrong with your Bluesky connection. Try again.' );
 		case 'rate_limited':
 			return translate( "You're reposting too quickly. Try again in a moment." );
 		case 'connection_not_found':
@@ -200,18 +201,42 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
 			const formatted = formatNumber( count );
-			return reposted
-				? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
+			if ( reposted ) {
+				return count > 0
+					? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
+							count,
+							args: { count: formatted },
+							textOnly: true,
+					  } )
+					: translate( 'Undo repost', {
+							textOnly: true,
+							comment:
+								'Accessible label and tooltip for the repost button on a Bluesky/ATmosphere post card when the viewer has already reposted the post and the count is zero. Verb phrase that undoes a repost.',
+					  } );
+			}
+			return count > 0
+				? translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
 						count,
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
-						count,
-						args: { count: formatted },
+				: translate( 'Repost', {
 						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the repost button on a Bluesky/ATmosphere post card when the post has no reposts yet. Verb meaning to share the post.',
 				  } );
 		};
+
+		const statRowText = ( count: number ) =>
+			translate(
+				'{{strong}}%(count)s{{/strong}} repost',
+				'{{strong}}%(count)s{{/strong}} reposts',
+				{
+					count,
+					args: { count: formatNumber( count ) },
+					components: { strong: createElement( 'strong' ) },
+				}
+			);
 
 		return {
 			supported: true,
@@ -220,6 +245,7 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 			label: {
 				action: translate( 'Repost' ),
 				accessibleLabel,
+				statRowText,
 			},
 			canQuote,
 			repost,

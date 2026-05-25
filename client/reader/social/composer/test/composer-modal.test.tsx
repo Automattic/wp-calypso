@@ -4,6 +4,7 @@
 import { QueryClient, mutationOptions } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -16,6 +17,7 @@ import {
 } from '../composer-provider';
 import { testComposerConfig } from '../test-config';
 import type { ComposerConfig } from '../composer-config';
+import type { Site } from '@automattic/api-core';
 
 interface TestError {
 	kind: string;
@@ -159,7 +161,7 @@ describe( '<ComposerModal>', () => {
 		const user = userEvent.setup();
 		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
 			...testComposerConfig,
-			limit: 5,
+			useLimit: () => 5,
 		};
 		renderModal( tinyLimitConfig );
 
@@ -279,6 +281,109 @@ describe( '<ComposerModal>', () => {
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
 	} );
 
+	it( 'awaits a Promise returned by extendBuildParams before calling mutate', async () => {
+		const user = userEvent.setup();
+		let resolveExtend: ( v: unknown ) => void = () => {};
+		const extendPromise = new Promise( ( resolve ) => {
+			resolveExtend = resolve;
+		} );
+		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+			void params;
+			return { uri: 'at://posted' };
+		} );
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () => mutationOptions< TestResult, TestError, TestParams >( { mutationFn } ),
+			useMedia: () => ( {
+				hasAny: false,
+				hasUploaded: true,
+				isAllUploaded: true,
+				isAnyPending: false,
+				renderGrid: () => null,
+				renderFooterTrigger: () => null,
+				extendBuildParams: () => extendPromise,
+				onPublishSuccess: () => undefined,
+				clear: () => undefined,
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		// The mutation is gated on the extendBuildParams Promise resolving.
+		expect( mutationFn ).not.toHaveBeenCalled();
+
+		await act( async () => {
+			resolveExtend( { connectionId: 7, text: 'hello', media_ids: [ 'a' ] } );
+			await extendPromise;
+		} );
+
+		await waitFor( () => expect( mutationFn ).toHaveBeenCalledTimes( 1 ) );
+		expect( mutationFn.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+			media_ids: [ 'a' ],
+		} );
+	} );
+
+	it( 'surfaces an extendBuildParams rejection as a composer error: errorMessage shown, tracks.errorShown fired, mutation.mutate not called', async () => {
+		const user = userEvent.setup();
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const errorMessageSpy = jest.fn( ( error: TestError ) => `error: ${ error.kind }` );
+
+		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+			void params;
+			return { uri: 'at://posted' };
+		} );
+		const rejection: TestError = { kind: 'media_too_large' };
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () => mutationOptions< TestResult, TestError, TestParams >( { mutationFn } ),
+			errorMessage: errorMessageSpy,
+			useMedia: () => ( {
+				hasAny: true,
+				hasUploaded: true,
+				isAllUploaded: true,
+				isAnyPending: false,
+				renderGrid: () => null,
+				renderFooterTrigger: () => null,
+				extendBuildParams: () => Promise.reject( rejection ),
+				onPublishSuccess: () => undefined,
+				clear: () => undefined,
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		// User-facing error notice rendered with the rejection.
+		await screen.findByText( 'error: media_too_large' );
+
+		// errorMessage callback received the same rejection object.
+		expect( errorMessageSpy ).toHaveBeenCalledWith( rejection, expect.anything() );
+
+		// errorShown analytics fired with the rejection's kind.
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'test_composer_error_standalone',
+				expect.objectContaining( { connection_id: 7, error_kind: 'media_too_large' } )
+			)
+		);
+
+		// Crucially, the mutation was never run — the rejection short-circuits
+		// the post-mutation path.
+		expect( mutationFn ).not.toHaveBeenCalled();
+
+		// Modal stays open after the error.
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+	} );
+
 	it( 'fires config.logBadRequest when an error of kind bad_request arrives', async () => {
 		const user = userEvent.setup();
 		const logBadRequest = jest.fn();
@@ -304,5 +409,148 @@ describe( '<ComposerModal>', () => {
 			expect.objectContaining( { kind: 'standalone', connectionId: 7 } ),
 			error
 		);
+	} );
+} );
+
+describe( '<ComposerModal> — markOverLimit', () => {
+	beforeEach( () => {
+		openFn = null;
+		closeFn = null;
+
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		jest.spyOn( noticeActions, 'successNotice' );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'sets hasBeenOverLimit on the context once the user types past the limit', async () => {
+		const user = userEvent.setup();
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+
+		const probe: { current: ReturnType< typeof useComposer > | null } = { current: null };
+		function Probe() {
+			probe.current = useComposer();
+			return null;
+		}
+
+		const queryClient = makeQueryClient();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 7 } config={ tinyLimitConfig }>
+				<Probe />
+				<Capture />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		act( () => openFn?.( standaloneMode ) );
+		expect( probe.current?.hasBeenOverLimit ).toBe( false );
+
+		await user.type( screen.getByRole( 'textbox' ), 'this is over the limit' );
+
+		expect( probe.current?.hasBeenOverLimit ).toBe( true );
+	} );
+} );
+
+const ORIGIN = 'https://public-api.wordpress.com';
+
+afterEach( () => nock.cleanAll() );
+
+describe( '<ComposerModal> — overflow handoff visibility', () => {
+	beforeEach( () => {
+		// Re-establish spies for the new describe block (Jest doesn't share `beforeEach` across siblings).
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		jest.spyOn( noticeActions, 'successNotice' );
+		openFn = null;
+		closeFn = null;
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'shows the overflow section after typing past the limit and keeps it visible after trimming back under', async () => {
+		const user = userEvent.setup();
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/sites/ )
+			.reply( 200, {
+				sites: [
+					{
+						ID: 100,
+						name: 'My Blog',
+						slug: 'myblog.wordpress.com',
+						URL: 'https://myblog.wordpress.com',
+						site_migration: { in_progress: false, is_complete: false },
+						options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+					} as Partial< Site >,
+				],
+			} );
+
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+		renderModal( tinyLimitConfig );
+
+		act( () => openFn?.( standaloneMode ) );
+
+		const textarea = screen.getByRole( 'textbox' );
+		await user.type( textarea, 'this is way past the test fixture five-character limit' );
+
+		expect(
+			await screen.findByRole( 'region', { name: /Publish on your own site/i } )
+		).toBeVisible();
+
+		await user.clear( textarea );
+		await user.type( textarea, 'ok' );
+
+		expect( screen.getByRole( 'region', { name: /Publish on your own site/i } ) ).toBeVisible();
+	} );
+
+	it( 'hides the overflow section after the modal closes and reopens (flag resets)', async () => {
+		const user = userEvent.setup();
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/sites/ )
+			.reply( 200, { sites: [] } );
+
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+
+		const probe: { current: ReturnType< typeof useComposer > | null } = { current: null };
+		function Probe() {
+			probe.current = useComposer();
+			return null;
+		}
+
+		const queryClient = makeQueryClient();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 7 } config={ tinyLimitConfig }>
+				<Probe />
+				<Capture />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		act( () => openFn?.( standaloneMode ) );
+		const textarea = screen.getByRole( 'textbox' );
+		await user.type( textarea, 'overflow xyz xyz' );
+		expect( probe.current!.hasBeenOverLimit ).toBe( true );
+
+		act( () => closeFn?.() );
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( probe.current!.hasBeenOverLimit ).toBe( false );
 	} );
 } );

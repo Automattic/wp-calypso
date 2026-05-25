@@ -1,9 +1,11 @@
 import { useAuthorizeMastodonConnectionMutation } from '@automattic/api-queries';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -19,14 +21,16 @@ function isSafeAuthorizeUrl( url: string ): boolean {
 	}
 }
 
+type StartError = 'unsafe_url' | 'state_persist_failed';
+
 export function MastodonConnectView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const authorize = useAuthorizeMastodonConnectionMutation();
-	const [ unsafeUrl, setUnsafeUrl ] = useState( false );
+	const [ startError, setStartError ] = useState< StartError | null >( null );
 
 	const handleSubmit = ( { instance }: { instance: string } ) => {
-		setUnsafeUrl( false );
+		setStartError( null );
 		authorize.mutate(
 			{ instance },
 			{
@@ -36,7 +40,7 @@ export function MastodonConnectView() {
 						// ever return `https:`; anything else is a bug or tampering.
 						// Surface a user-visible error so the form doesn't appear
 						// to hang silently after Continue.
-						setUnsafeUrl( true );
+						setStartError( 'unsafe_url' );
 						dispatch(
 							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
 								reason: 'unsafe_url',
@@ -44,7 +48,19 @@ export function MastodonConnectView() {
 						);
 						return;
 					}
-					saveOauthState( { state, instance } );
+					if ( ! saveOauthState( { state, instance } ) ) {
+						// sessionStorage was unavailable. Without persisted state
+						// the callback view can't validate `state` on return, so
+						// the redirect would always end at "expired link" after
+						// the user signed in on the IdP — surface the failure now.
+						setStartError( 'state_persist_failed' );
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
+								reason: 'state_persist_failed',
+							} )
+						);
+						return;
+					}
 					window.location.assign( authorize_url );
 				},
 				onError: ( error ) => {
@@ -63,10 +79,15 @@ export function MastodonConnectView() {
 		<ReaderMain className="mastodon-view">
 			<DocumentHead title={ translate( 'Connect account ‹ Mastodon ‹ Reader' ) } />
 			<NavigationHeader
-				title={ translate( 'Connect a Mastodon account' ) }
-				subtitle={ translate(
-					'Enter your server’s address — we’ll hand you off to sign in there.'
-				) }
+				title={
+					<span className="mastodon-view__section-title">
+						<span data-testid="mastodon-section-logo" aria-hidden="true">
+							<ReaderMastodonIcon />
+						</span>
+						<span>{ translate( 'Connect a Mastodon account' ) }</span>
+					</span>
+				}
+				subtitle={ translate( 'Bring your Mastodon account into the Reader.' ) }
 			/>
 			<VStack spacing={ 4 } className="mastodon-view__body">
 				<ConnectForm
@@ -74,13 +95,25 @@ export function MastodonConnectView() {
 					error={ authorize.error ?? null }
 					onSubmit={ handleSubmit }
 				/>
-				{ unsafeUrl ? (
+				{ startError === 'unsafe_url' ? (
 					<p className="mastodon-error" role="alert">
 						{ translate(
 							'We couldn’t start the authorization safely. Please try again, or choose a different instance.'
 						) }
 					</p>
 				) : null }
+				{ startError === 'state_persist_failed' ? (
+					<p className="mastodon-error" role="alert">
+						{ translate(
+							'We couldn’t save the sign-in details in your browser. Make sure cookies and site storage are enabled, then try again.'
+						) }
+					</p>
+				) : null }
+				<p className="mastodon-view__learn-more">
+					<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+						{ translate( 'Learn more about your social accounts in the Reader' ) }
+					</ExternalLink>
+				</p>
 			</VStack>
 		</ReaderMain>
 	);

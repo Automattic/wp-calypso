@@ -58,6 +58,7 @@ class Document extends Component {
 			manifests,
 			params,
 			preferencesHelper,
+			path,
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
@@ -202,6 +203,9 @@ class Document extends Component {
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
+										isWooCommerceQrLoginAuthCheck={
+											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
+										}
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 									/>
 								</div>
@@ -264,17 +268,6 @@ class Document extends Component {
 						/>
 					) }
 
-					{ sectionName === 'login' &&
-						config.isEnabled( 'blackbox-login' ) &&
-						config( 'blackbox_api_key' ) && (
-							<script
-								nonce={ inlineScriptNonce }
-								defer
-								src={ config( 'blackbox_url' ) }
-								data-apikey={ config( 'blackbox_api_key' ) }
-							/>
-						) }
-
 					{ entrypoint?.language?.manifest && (
 						<script nonce={ inlineScriptNonce } src={ entrypoint.language.manifest } />
 					) }
@@ -336,13 +329,15 @@ function LoadingPlaceholder( {
 	sectionName,
 	isWCCOM,
 	isOneTapAuth,
+	isWooCommerceQrLoginAuthCheck,
 	showStepContainerV2Loader,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
 		sectionName === 'stepper' ||
 		sectionName === 'signup' ||
-		isOneTapAuth;
+		isOneTapAuth ||
+		isWooCommerceQrLoginAuthCheck;
 
 	const stepContainerV2Context = useMemo(
 		() => ( {

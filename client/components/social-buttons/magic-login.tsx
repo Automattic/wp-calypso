@@ -13,9 +13,10 @@ import './style.scss';
 type MagicLoginButtonProps = {
 	loginUrl: string;
 	isJetpack?: boolean;
+	onClick?: () => void;
 };
 
-export const MagicLoginButton = ( { loginUrl, isJetpack }: MagicLoginButtonProps ) => {
+export const MagicLoginButton = ( { loginUrl, isJetpack, onClick }: MagicLoginButtonProps ) => {
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
 	const dispatch = useDispatch();
@@ -26,6 +27,7 @@ export const MagicLoginButton = ( { loginUrl, isJetpack }: MagicLoginButtonProps
 			origin: 'login-links',
 		} );
 
+		onClick?.();
 		dispatch( resetMagicLoginRequestForm() );
 	};
 

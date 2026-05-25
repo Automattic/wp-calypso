@@ -3,13 +3,13 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import nock from 'nock';
+import { getCachedPost } from 'calypso/reader/data/post-cache';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
-	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_ERROR,
-	READER_POSTS_RECEIVE,
 	READER_RECOMMENDED_SITES_RECEIVE,
+	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 } from 'calypso/state/reader/action-types';
 import { requestPage, requestPaginatedStream } from '../actions';
 
@@ -21,7 +21,6 @@ jest.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: () => mockQueryClient,
 } ) );
 
-// Hide railcar/analytics noise in receivePosts.
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
@@ -33,7 +32,6 @@ function newClient() {
 
 function runThunk( params ) {
 	const dispatch = jest.fn( ( action ) => {
-		// Pass thunks through (e.g. receivePosts is itself a thunk that dispatches READER_POSTS_RECEIVE).
 		if ( typeof action === 'function' ) {
 			return action( dispatch, () => ( {} ) );
 		}
@@ -102,7 +100,7 @@ describe( 'requestPage thunk', () => {
 			found: 1,
 		};
 
-		it( 'fetches and dispatches PAGE_REQUEST, receivePosts, then receivePage in order', async () => {
+		it( 'fetches, caches posts, and dispatches PAGE_REQUEST then receivePage in order', async () => {
 			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
 
 			const { dispatch, result } = runThunk( { streamKey: 'following' } );
@@ -115,13 +113,14 @@ describe( 'requestPage thunk', () => {
 
 			// PAGE_REQUEST must be dispatched first so the reducer's
 			// `isRequesting`/`error` transitions still fire for migrated streams.
-			// receivePosts dispatches READER_POSTS_RECEIVE; receivePage dispatches READER_STREAMS_PAGE_RECEIVE.
 			const requestIdx = types.indexOf( READER_STREAMS_PAGE_REQUEST );
-			const postsIdx = types.indexOf( READER_POSTS_RECEIVE );
 			const pageIdx = types.indexOf( READER_STREAMS_PAGE_RECEIVE );
 			expect( requestIdx ).toBe( 0 );
-			expect( postsIdx ).toBeGreaterThan( requestIdx );
-			expect( pageIdx ).toBeGreaterThan( postsIdx );
+			expect( pageIdx ).toBeGreaterThan( requestIdx );
+			expect( getCachedPost( mockQueryClient, { blogId: 200, postId: 10 } ) ).toMatchObject( {
+				ID: 10,
+				site_ID: 200,
+			} );
 		} );
 
 		it( 'extracts the page handle from date_range.after', async () => {
@@ -135,20 +134,6 @@ describe( 'requestPage thunk', () => {
 				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
 			expect( receivePageAction.payload.pageHandle ).toEqual( { before: '2026-01-01' } );
 			expect( receivePageAction.payload.streamItems ).toHaveLength( 1 );
-		} );
-
-		it( 'dispatches only receiveUpdates when isPoll is true', async () => {
-			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
-
-			const { dispatch, result } = runThunk( { streamKey: 'following', isPoll: true } );
-			await result;
-
-			const types = dispatch.mock.calls
-				.map( ( c ) => c[ 0 ] )
-				.filter( ( a ) => a && typeof a === 'object' && a.type )
-				.map( ( a ) => a.type );
-			expect( types ).toContain( READER_STREAMS_UPDATES_RECEIVE );
-			expect( types ).not.toContain( READER_STREAMS_PAGE_RECEIVE );
 		} );
 
 		it( 'dispatches receiveStreamError on a failed fetch', async () => {
@@ -170,7 +155,13 @@ describe( 'requestPage thunk', () => {
 
 		it( 'falls back to a direct fetch when the QueryClient is null', async () => {
 			mockQueryClient = null;
-			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
+			nock( BASE )
+				.get( '/rest/v1.2/read/following' )
+				.query( true )
+				.reply( 200, {
+					...followingResponse,
+					posts: [ { ...followingResponse.posts[ 0 ], is_following_conversation: true } ],
+				} );
 
 			const { dispatch, result } = runThunk( { streamKey: 'following' } );
 			await result;
@@ -180,6 +171,7 @@ describe( 'requestPage thunk', () => {
 				.filter( ( a ) => a && typeof a === 'object' && a.type )
 				.map( ( a ) => a.type );
 			expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+			expect( types ).toContain( READER_CONVERSATION_UPDATE_FOLLOW_STATUS );
 		} );
 	} );
 
@@ -902,7 +894,7 @@ describe( 'requestPage thunk', () => {
 			expect( dates ).toEqual( [ '2026-04-10', '2026-02-20' ] );
 		} );
 
-		it( 'sends `date_liked` in the poll fields query param', async () => {
+		it( 'requests the rich poll payload (no `fields` restriction)', async () => {
 			let captured;
 			nock( BASE )
 				.get( '/rest/v1.2/read/liked' )
@@ -915,8 +907,12 @@ describe( 'requestPage thunk', () => {
 			const { result } = runThunk( { streamKey: 'likes', isPoll: true } );
 			await result;
 
-			expect( captured.fields ).toBeDefined();
-			expect( captured.fields.split( ',' ) ).toContain( 'date_liked' );
+			// `getQueryStringForPoll` no longer restricts fields — the API
+			// returns `date_liked` (and other stream extras) by default. The
+			// response shape mirrors a regular page fetch so consumers can
+			// hydrate the canonical Reader post cache directly.
+			expect( captured.fields ).toBeUndefined();
+			expect( captured.meta ).toBe( 'post,discover_original_post' );
 		} );
 
 		it( 'does not send the selected Recent feed id in the poll query', async () => {

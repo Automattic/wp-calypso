@@ -1,4 +1,6 @@
 
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .add-tags-form {
 	display: flex;
 	align-items: center;
@@ -10,5 +12,20 @@
 		@extend %form-field !optional;
 		transition: all 0.15s ease-in-out;
 		font-size: 14px;
+
+		@include ui-mixins.when-dark-theme {
+			background: var( --color-surface );
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text );
+
+			&::placeholder {
+				color: var( --color-text-subtle );
+			}
+
+			&:focus {
+				border-color: var( --color-link );
+				box-shadow: 0 0 0 1px var( --color-link );
+			}
+		}
 	}
 }

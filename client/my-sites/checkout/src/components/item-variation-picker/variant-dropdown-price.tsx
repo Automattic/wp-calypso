@@ -3,6 +3,11 @@ import {
 	isMultiYearDomainProduct,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -17,7 +22,6 @@ import {
 	PriceTextContainer,
 	Variant,
 } from './styles';
-import { getItemVariantDiscount, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -40,8 +44,18 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	product: ResponseCartProduct;
 } > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
-	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
+	const variantInfo = fromVariantPriceData( variant );
+	const compareToPriceForVariantTerm = compareToInfo
+		? getPlanPriceForDuration( compareToInfo, variantInfo.termMonths )
+		: undefined;
+	const discountPercentage =
+		( compareToPriceForVariantTerm &&
+			calculateDiscountPercentage(
+				compareToPriceForVariantTerm,
+				getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+			) ) ??
+		0;
 
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
 		stripZeros: true,

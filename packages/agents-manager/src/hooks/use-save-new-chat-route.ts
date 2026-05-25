@@ -11,7 +11,7 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  * Saves the chat route so the conversation can be restored later.
  */
 function saveNewChatRoute( sessionId: string, siteKey: string ): void {
-	const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
+	const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
 	const current = store.getRouterHistory( siteKey );
 
 	const entry = {

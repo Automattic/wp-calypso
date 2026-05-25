@@ -17,7 +17,6 @@ export * from './payment-methods/sofort';
 export * from './payment-methods/p24';
 export * from './payment-methods/eps';
 export * from './payment-methods/alipay';
-export * from './payment-methods/razorpay';
 export * from './payment-methods/stripe-upi';
 export * from './payment-methods/web-pay-utils';
 export * from './payment-methods/google-pay';

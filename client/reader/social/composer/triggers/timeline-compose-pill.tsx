@@ -1,6 +1,7 @@
 import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { SocialAvatar } from '../../avatar';
 import { useComposer, type ComposerEntryPoint } from '../composer-provider';
 
 interface Props {
@@ -30,14 +31,18 @@ export function TimelineComposePill( { avatar, placeholder, entryPoint, classNam
 			aria-label={ placeholderText }
 			onClick={ () => openComposer( { kind: 'standalone', entry_point: entryPoint } ) }
 		>
-			{ avatar ? (
-				<img className="social-compose-pill__avatar" src={ avatar } alt="" aria-hidden="true" />
-			) : (
-				<span
-					className="social-compose-pill__avatar social-compose-pill__avatar--placeholder"
-					aria-hidden="true"
-				/>
-			) }
+			<SocialAvatar
+				src={ avatar }
+				alt=""
+				className="social-compose-pill__avatar"
+				aria-hidden="true"
+				fallback={
+					<span
+						className="social-compose-pill__avatar social-compose-pill__avatar--placeholder"
+						aria-hidden="true"
+					/>
+				}
+			/>
 			<span className="social-compose-pill__placeholder">{ placeholderText }</span>
 			<Icon className="social-compose-pill__icon" icon={ plus } size={ 18 } />
 		</button>

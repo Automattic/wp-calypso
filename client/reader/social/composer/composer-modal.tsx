@@ -12,28 +12,45 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useComposerConfig } from './composer-config';
 import { ComposerFooter } from './composer-footer';
+import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
-import { countGraphemes } from './grapheme-count';
+import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
 
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
-	const { mode, closeComposer, mediaSlot } = useComposer();
+	const { mode, closeComposer, mediaSlot, protocolExtrasSlot, markOverLimit } = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( config.mutationFactory( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 
 	const [ text, setText ] = useState( '' );
 	const [ confirmDiscard, setConfirmDiscard ] = useState( false );
+	// Holds rejections from `mediaSlot.extendBuildParams`. These are
+	// pre-mutation failures (e.g. a media upload rejecting) that need to
+	// surface through the same `errorMessage` + `tracks.errorShown` path as
+	// post-mutation failures. The slot's contract is that an async rejection
+	// is already a classified protocol error (MastodonError / AtmosphereError
+	// shape — same shape mutationFn rejects with), so we reuse `TError` here.
+	const [ extendError, setExtendError ] = useState< TError | null >( null );
+	// True while `mediaSlot.extendBuildParams` is awaiting (e.g. Mastodon
+	// uploading staged media). `mutation.isPending` is still false during
+	// that window, so without this flag a second click could fire a parallel
+	// upload + duplicate `mutation.mutate`. We OR it into `canSubmit` /
+	// the early-return guard so the Post button stays disabled until the
+	// extend resolves.
+	const [ isExtending, setIsExtending ] = useState( false );
 	const lastErrorSignatureRef = useRef< string | null >( null );
 
 	useEffect( () => {
 		if ( ! mode ) {
 			setText( '' );
 			setConfirmDiscard( false );
+			setExtendError( null );
+			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
 		}
@@ -49,29 +66,44 @@ export function ComposerModal< TError, TParams, TResult >() {
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
 
+	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
+	// both paths render through `config.errorMessage` and fire `errorShown`.
+	// `extendError` takes precedence on the (rare) chance both are non-null
+	// — a stale mutation error from a previous submit shouldn't mask a fresh
+	// extend rejection. Either way the dedup signature changes and the new
+	// event fires.
+	const displayError: TError | null = extendError ?? mutation.error ?? null;
+
 	useEffect( () => {
 		if ( ! mode ) {
 			return;
 		}
-		if ( mutation.isError && mutation.error ) {
+		if ( displayError ) {
 			// Dedup on a JSON signature so distinct kinds-with-payload
 			// (e.g. rate_limited/30 vs rate_limited/60) refire the event.
-			const signature = JSON.stringify( mutation.error );
+			const signature = JSON.stringify( displayError );
 			if ( signature !== lastErrorSignatureRef.current ) {
 				lastErrorSignatureRef.current = signature;
-				config.logBadRequest?.( mode, mutation.error );
-				const { event, props } = config.tracks.errorShown( mode, mutation.error );
+				config.logBadRequest?.( mode, displayError );
+				const { event, props } = config.tracks.errorShown( mode, displayError );
 				dispatch( recordReaderTracksEvent( event, props ) );
 			}
-		} else if ( ! mutation.isError ) {
+		} else {
 			lastErrorSignatureRef.current = null;
 		}
-	}, [ mutation.isError, mutation.error, mode, dispatch, config ] );
+	}, [ displayError, mode, dispatch, config ] );
 
-	const graphemeCount = useMemo( () => countGraphemes( text ), [ text ] );
+	// Per-protocol counter unit: most protocols count graphemes against a
+	// hard wire cap; Fediverse counts words against a soft "blog-post" cap
+	// that surfaces the overflow handoff for longer text.
+	const counterUnit = config.counter ?? 'graphemes';
+	const graphemeCount = useMemo(
+		() => ( counterUnit === 'words' ? countWords( text ) : countGraphemes( text ) ),
+		[ text, counterUnit ]
+	);
 
 	const handleClose = useCallback( () => {
-		if ( mutation.isPending ) {
+		if ( mutation.isPending || isExtending ) {
 			return;
 		}
 		if ( text.trim().length > 0 || mediaSlot.hasAny ) {
@@ -79,29 +111,77 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		closeComposer();
-	}, [ mutation.isPending, text, mediaSlot.hasAny, closeComposer ] );
+	}, [ mutation.isPending, isExtending, text, mediaSlot.hasAny, closeComposer ] );
 
-	const tooLong = graphemeCount > config.limit;
+	// Per-protocol useLimit hook — Mastodon reads instance config and may
+	// vary per connection; ATmosphere returns a static 300. The hook is
+	// always called (rules of hooks). When `mode` is null the modal isn't
+	// rendering interactive content anyway, so the value is unused.
+	const limit = config.useLimit( mode?.connectionId ?? null );
+	const tooLong = graphemeCount > limit;
+	useEffect( () => {
+		if ( tooLong ) {
+			markOverLimit();
+		}
+	}, [ tooLong, markOverLimit ] );
 	const empty = graphemeCount === 0;
+	// `softLimit: true` (Fediverse) means the threshold is a UX cue, not a
+	// wire-level cap — submission stays enabled past the limit and the
+	// overflow handoff acts as a suggestion. Atmosphere / Mastodon keep
+	// the hard-cap gate (default).
+	const overLimitBlocksSubmit = tooLong && ! config.softLimit;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
-	// image still compressing/uploading) blocks regardless.
+	// image still compressing/uploading) blocks regardless. `isExtending` covers
+	// the publish-time upload window for protocols that defer media uploads
+	// (Mastodon), keeping the Post button disabled while a click is in flight.
 	const canSubmit =
 		! mutation.isPending &&
-		! tooLong &&
+		! isExtending &&
+		! overLimitBlocksSubmit &&
 		! mediaSlot.isAnyPending &&
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
 
-	const handleSubmit = useCallback( () => {
-		if ( ! mode || mutation.isPending ) {
+	const handleSubmit = useCallback( async () => {
+		if ( ! mode || mutation.isPending || isExtending ) {
 			return;
 		}
 		if ( ! canSubmit ) {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
-		const params = mediaSlot.extendBuildParams( baseParams ) as TParams;
+		// Run protocol-extras then media-extras through the same try/catch.
+		// `protocolExtrasSlot.extendBuildParams` is typed as
+		// `( params: unknown ) => unknown` — sync today, but the contract
+		// doesn't forbid throws (or a future async widening for handle
+		// validation, derived params, etc.). Without the guard a throw here
+		// would skip the mutation, leave `mutation.isPending` false, and
+		// leave the Post button enabled with no error UI. Awaiting handles
+		// both sync and Promise returns uniformly.
+		// A rejection in either step (e.g. a Mastodon media upload failing
+		// with a classified `MastodonError`) must surface through the same
+		// path as a post-mutation error: `config.errorMessage` rendered in
+		// the visible error region + `tracks.errorShown` fired. We funnel
+		// the rejection into local `extendError` state which `displayError`
+		// ORs into the rendered error and the analytics-watching effect, so
+		// the UX is indistinguishable from a `mutation.error`.
+		let params: TParams;
+		setIsExtending( true );
+		try {
+			const baseParamsWithExtras = ( await protocolExtrasSlot.extendBuildParams(
+				baseParams
+			) ) as TParams;
+			params = ( await mediaSlot.extendBuildParams( baseParamsWithExtras ) ) as TParams;
+		} catch ( error ) {
+			setExtendError( error as TError );
+			return;
+		} finally {
+			setIsExtending( false );
+		}
+		// A previous extend rejection shouldn't linger across a successful
+		// retry — clear it before invoking the mutation.
+		setExtendError( null );
 		mutation.mutate( params, {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
@@ -118,6 +198,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	}, [
 		mode,
 		mutation,
+		isExtending,
 		text,
 		canSubmit,
 		closeComposer,
@@ -125,6 +206,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		translate,
 		config,
 		mediaSlot,
+		protocolExtrasSlot,
 		queryClient,
 	] );
 
@@ -137,8 +219,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 
 	const title = config.copy.title( mode, translate );
 	const placeholder = config.copy.placeholder( mode, translate, handle );
-	const errorMessage =
-		mutation.isError && mutation.error ? config.errorMessage( mutation.error, translate ) : null;
+	const errorMessage = displayError ? config.errorMessage( displayError, translate ) : null;
 
 	return (
 		<>
@@ -163,6 +244,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
 				{ mediaSlot.renderGrid() }
+				{ protocolExtrasSlot.renderControls() }
 				{ errorMessage && (
 					<div id="social-composer-error" className="social-composer__error" role="alert">
 						{ errorMessage }
@@ -172,10 +254,13 @@ export function ComposerModal< TError, TParams, TResult >() {
 					graphemeCount={ graphemeCount }
 					onSubmit={ handleSubmit }
 					isPending={ mutation.isPending }
-					limit={ config.limit }
+					limit={ limit }
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
+					counterUnit={ counterUnit }
+					softLimit={ config.softLimit }
 				/>
+				<ComposerOverflowHandoff text={ text } />
 			</Modal>
 			{ confirmDiscard && (
 				<DiscardConfirm

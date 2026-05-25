@@ -41,17 +41,17 @@ export default ( WrappedComponent ) =>
 			}
 		}
 
-		UNSAFE_componentWillUpdate( nextProps, nextState ) {
+		componentDidUpdate( prevProps, prevState ) {
 			// Update position of popover if going from invisible to visible state.
-			if ( ! this.state.showPopover && nextState.showPopover ) {
-				this.updatePosition( nextState );
+			if ( ! prevState.showPopover && this.state.showPopover ) {
+				this.updatePosition( this.state );
 				return;
 			}
 
 			// Update position of popover if cursor has moved to a new line.
-			if ( nextState.showPopover ) {
-				const currentTop = this.state.popoverPosition && this.state.popoverPosition.top;
-				const currentLeft = this.state.popoverPosition && this.state.popoverPosition.left;
+			if ( this.state.showPopover ) {
+				const currentTop = prevState.popoverPosition && prevState.popoverPosition.top;
+				const currentLeft = prevState.popoverPosition && prevState.popoverPosition.left;
 
 				if ( currentTop && currentLeft ) {
 					const { top, left } = this.getPosition();
@@ -59,7 +59,7 @@ export default ( WrappedComponent ) =>
 					const isLineAfter = currentTop < top && currentLeft > left;
 
 					if ( isLineBefore || isLineAfter ) {
-						this.updatePosition( nextState, { top, left } );
+						this.updatePosition( this.state, { top, left } );
 					}
 				}
 			}

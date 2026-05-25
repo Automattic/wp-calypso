@@ -75,6 +75,13 @@ function ImageStudioAgentChat( {
 
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
+	// Drives which suggestion-chip flavor the video-clip hook produces:
+	// Cinematic → cinematography prompts for the Veo render path,
+	// Highlights → editorial framing hints for the cloud-rendered recap.
+	const selectedVideoStyle = useSelect( ( select ) => {
+		return select( videoStudioStore ).getSelectedStyle();
+	}, [] );
+
 	useEffect( () => {
 		return () => {
 			// When the component unmounts, abort any ongoing requests
@@ -115,6 +122,7 @@ function ImageStudioAgentChat( {
 		messages: displayMessages,
 		inputValue,
 		disabled: ! isVideoMode,
+		style: selectedVideoStyle,
 	} );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
@@ -229,13 +237,9 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'Outputs from this experimental feature may need editing before publishing.',
+							'Clips are saved to your Media Library as 9:16 vertical MP4 files.',
 							__i18n_text_domain__
 						) }
-					</em>
-					<br />
-					<em>
-						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
 					</em>
 				</p>
 			) }
@@ -348,7 +352,7 @@ const ImageStudioContent = withInstanceId(
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
-			displayImageUrl,
+			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
 			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 		} );
 
@@ -587,6 +591,8 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessing={ isAiProcessing }
 								isPromptSent={ isPromptSent }
 								videoUrl={ isVideoMode ? currentVideoUrl : null }
+								onFeedback={ handleFeedback }
+								onSubmitFeedbackText={ handleSubmitFeedbackText }
 							/>
 						) }
 

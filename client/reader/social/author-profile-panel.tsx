@@ -7,6 +7,8 @@ import { SocialFeedList } from './components/feed-list';
 import { SocialPostCard } from './components/post-card';
 import { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 import { SocialProfileHeaderSkeleton } from './profile-header-skeleton';
+import { socialPostFeedItemKey } from './utils/social-post-feed-item-key';
+import type { PostCardReactionsConfig } from './components/post-card/post-card-counts';
 import type { SocialError, SocialPost } from './types';
 import type { AppState } from 'calypso/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -113,6 +115,7 @@ export interface SocialAuthorProfilePanelProps<
 	protocolLabel: string;
 	protocolHomeURL: string;
 	protocolHomeLabel: TranslateResult;
+	authRequiredCopy?: { title: string; line: string };
 
 	// Wrapper-specific class on the VStack (allows protocol-scoped CSS).
 	className?: string;
@@ -122,6 +125,12 @@ export interface SocialAuthorProfilePanelProps<
 	// so each dimension's first error fires its own analytics event even
 	// when the kind matches the prior dimension.
 	feedDimension?: string;
+
+	// Per-action gate for the engagement row on each rendered post card.
+	// Omit for the default "render all affordances" behaviour. Used by the
+	// Fediverse wrapper (CM-771) to hide Like / Repost / Reply while the
+	// matching write endpoints are still in flight.
+	reactions?: PostCardReactionsConfig;
 }
 
 // Shared author-profile surface used by every protocol shell. Owns the
@@ -156,8 +165,10 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	protocolLabel,
 	protocolHomeURL,
 	protocolHomeLabel,
+	authRequiredCopy,
 	className,
 	feedDimension,
+	reactions,
 }: SocialAuthorProfilePanelProps< TProfile, TError, TFeedItem > ) {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const lastErrorKind = useRef< { header: string | null; feed: string | null } >( {
@@ -301,10 +312,12 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	);
 
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } variant="default" reactions={ reactions } />
+		),
+		[ reactions ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {
@@ -368,6 +381,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 					protocolLabel={ protocolLabel }
 					protocolHomeURL={ protocolHomeURL }
 					protocolHomeLabel={ String( protocolHomeLabel ) }
+					authRequiredCopy={ authRequiredCopy }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>

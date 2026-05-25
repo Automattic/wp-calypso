@@ -21,7 +21,6 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
 		"calypso/ai-site-builder-flow": true,
-		"cancel-flow/solutions-cards-upsell": false,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,
 		"dark-mode": true,
