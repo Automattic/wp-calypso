@@ -99,10 +99,10 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 /**
  * Reads the canonical handle from the scoped-profile cache so the FAB
  * seeds the composer with `@<handle> ` even when the URL keys the
- * profile by DID. Falls back to the URL actor while the query is in
- * flight or errors — gives a plausible mention starter immediately
- * rather than a no-op compose. The query is shared with
- * `AuthorProfilePanel`, so this hook does not add a network hit.
+ * profile by DID. Falls back to the URL actor only when it's a usable
+ * handle — DID-keyed URLs open with an empty composer while the query
+ * is in flight rather than flashing `@did:plc:…`. The query is shared
+ * with `AuthorProfilePanel`, so this hook does not add a network hit.
  */
 function AuthorProfileComposeFab( {
 	connectionId,
@@ -112,8 +112,10 @@ function AuthorProfileComposeFab( {
 	actor: string;
 } ) {
 	const profile = useAtmosphereScopedProfileQuery( { connectionId, actor } );
-	const handle = profile.data?.handle ?? actor;
-	return <ComposeFab initialText={ `@${ handle } ` } />;
+	// `||` (not `??`) so an empty-string `handle` from a malformed
+	// response also falls through to the actor branch.
+	const handle = profile.data?.handle || ( actor.startsWith( 'did:' ) ? null : actor );
+	return <ComposeFab initialText={ handle ? `@${ handle } ` : undefined } />;
 }
 
 export default AuthorProfileView;

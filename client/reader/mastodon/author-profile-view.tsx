@@ -105,7 +105,9 @@ function MastodonAuthorProfileComposeFab( {
 	actor: string;
 } ) {
 	const { data } = useMastodonAuthorProfileQuery( connectionId, actor );
-	const handle = data?.acct ?? actor;
+	// `||` (not `??`) so an empty-string `acct` from a malformed response
+	// also falls through to the URL actor.
+	const handle = data?.acct || actor;
 	return <ComposeFab initialText={ `@${ handle } ` } />;
 }
 
