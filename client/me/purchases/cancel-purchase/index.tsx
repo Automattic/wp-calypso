@@ -1041,6 +1041,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
 			displayVariant: this.props.intent ?? undefined,
+			showMarketplaceDialog: ! isSplitCancelRemoveEnabled,
 			cancelIntentOverride:
 				urlIntentOverride ??
 				( this.shouldUseAutoRenewFlow() ? ( 'autorenew' as const ) : undefined ),
