@@ -24,13 +24,7 @@ test.describe(
 			} );
 
 			await test.step( 'And domain upsell card has a suggested domain', async function () {
-				// The domain-suggestion API can be slow on CI; lean on Playwright's
-				// auto-retrying assertion against the locator the component populates
-				// as soon as the suggestion arrives, rather than the legacy SVG-text
-				// wait which timed out before the API resolved on slow runs.
-				const suggestedDomainLocator = page.getByTestId( 'domain-upsell-domain-name' );
-				await expect( suggestedDomainLocator ).toContainText( /\S/, { timeout: 60_000 } );
-				suggestedDomain = ( await suggestedDomainLocator.innerText() ).trim();
+				suggestedDomain = await pageMyHome.getSuggestedUpsellDomain();
 				expect( suggestedDomain ).not.toBe( '' );
 			} );
 

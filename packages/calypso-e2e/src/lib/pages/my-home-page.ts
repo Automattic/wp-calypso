@@ -79,20 +79,20 @@ export class MyHomePage {
 	/**
 	 * Get the suggested domain in the upsell card.
 	 *
-	 * @returns {string} Suggested domain. Empty string if not found.
+	 * The component renders the suggested domain into a `<strong>` with this test ID
+	 * as soon as the suggestion query resolves. An earlier implementation waited on
+	 * the SVG illustration in the card hero (gated on extra layout) with a 20s
+	 * ceiling that wasn't enough for slow CI runs of the suggestion API; the strong
+	 * has zero bounding box until the data arrives, so waiting for it to become
+	 * visible gives us the same readiness signal at the earliest point in the render.
+	 *
+	 * @returns {string} Suggested domain. Empty string if not found within the timeout.
 	 */
 	async getSuggestedUpsellDomain(): Promise< string > {
-		// It's important to wait for an actual svg element to be present.
-		// The handling here is a little funky. We take a blank palceholder img, then we
-		// draw an SVG with just the text on top of it.
-		// There's a race condition where the placeholder img can render before the the text svg does.
-		const svgLocator = this.anchor.locator( '.domain-upsell-illustration svg' );
-
-		// But, innerText doesn't work on SVG nodes, so we need this locator to actually fetch the text.
-		const parentDivLocator = this.anchor.locator( '.domain-upsell-illustration' );
+		const domainNameLocator = this.anchor.getByTestId( 'domain-upsell-domain-name' );
 		try {
-			await svgLocator.waitFor( { timeout: 20_000 } );
-			return await parentDivLocator.innerText();
+			await domainNameLocator.waitFor( { state: 'visible', timeout: 60_000 } );
+			return ( await domainNameLocator.innerText() ).trim();
 		} catch {
 			return '';
 		}
