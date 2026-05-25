@@ -40,6 +40,7 @@
 	],
 	"types": "dist",
 	"dependencies": {
+		"@ariakit/react": "^0.4.23",
 		"@wordpress/base-styles": "5.23.0",
 		"@wordpress/compose": "7.23.0",
 		"@wordpress/element": "^6.23.0",

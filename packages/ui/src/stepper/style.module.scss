@@ -1,0 +1,273 @@
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+@use '../utils/_theme-variables' as theme;
+
+// ─── Design tokens ────────────────────────────────────────────────────────────
+
+$stepper-indicator-size: 24px;
+$stepper-indicator-border-width: 1.5px;
+$stepper-connector-thickness: 1px;
+$stepper-connector-gap: variables.$grid-unit-10;
+$stepper-step-gap: variables.$grid-unit-20;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
+.root {
+	display: flex;
+
+	&.is-vertical {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	&.is-horizontal {
+		flex-direction: column;
+	}
+}
+
+// ─── List (horizontal tablist wrapper) ───────────────────────────────────────
+
+.list {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+// ─── Step ─────────────────────────────────────────────────────────────────────
+
+.step {
+	position: relative;
+	display: flex;
+
+	.is-vertical & {
+		flex-direction: column;
+	}
+
+	.is-horizontal .list & {
+		flex: 1;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+// Connector line after each step (except last).
+.step:not( :last-child ) {
+	.is-vertical & {
+		&::after {
+			content: '';
+			position: absolute;
+			inset-inline-start: calc( #{ $stepper-indicator-size } / 2 - #{ $stepper-connector-thickness } / 2 );
+			top: $stepper-indicator-size;
+			bottom: 0;
+			width: $stepper-connector-thickness;
+			background: theme.$components-color-border;
+			pointer-events: none;
+		}
+
+		&[ data-status='completed' ]::after {
+			background: colors.$alert-green;
+		}
+
+		&[ data-status='error' ]::after {
+			background: colors.$alert-red;
+		}
+	}
+
+	.is-horizontal .list & {
+		&::after {
+			content: '';
+			position: absolute;
+			top: calc( #{ $stepper-indicator-size } / 2 - #{ $stepper-connector-thickness } / 2 );
+			// Span from this step's indicator edge to the next step's indicator edge.
+			inset-inline-start: calc( 50% + #{ $stepper-indicator-size } / 2 + #{ $stepper-connector-gap } );
+			inset-inline-end: calc( -50% + #{ $stepper-indicator-size } / 2 + #{ $stepper-connector-gap } );
+			height: $stepper-connector-thickness;
+			background: theme.$components-color-border;
+			pointer-events: none;
+		}
+
+		&[ data-status='completed' ]::after {
+			background: colors.$alert-green;
+		}
+	}
+}
+
+// ─── Trigger heading wrapper (vertical only) ──────────────────────────────────
+
+.trigger-heading {
+	margin: 0;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+}
+
+// ─── Trigger button ───────────────────────────────────────────────────────────
+
+.trigger {
+	@include mixins.reset;
+
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: variables.$grid-unit-10;
+	cursor: pointer;
+	text-align: start;
+	width: 100%;
+	padding: variables.$grid-unit-10 0;
+	color: theme.$components-color-foreground;
+	font-size: variables.$default-font-size;
+	font-weight: 400;
+	line-height: variables.$font-line-height-body;
+	transition: color 0.15s ease;
+
+	.is-horizontal .list & {
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: variables.$grid-unit-05;
+		padding: variables.$grid-unit-10 variables.$grid-unit-20;
+	}
+
+	&[ aria-disabled='true' ] {
+		cursor: default;
+		color: theme.$components-color-disabled;
+	}
+
+	// Hide labels on small screens (horizontal only).
+	@media ( max-width: 600px ) {
+		.is-horizontal .list & {
+			.title,
+			.description {
+				display: none;
+			}
+		}
+	}
+}
+
+// ─── Panel ────────────────────────────────────────────────────────────────────
+
+.panel {
+	&--vertical {
+		// Collapse animation via grid-template-rows trick.
+		display: grid;
+		grid-template-rows: 0fr;
+		overflow: hidden;
+		transition: grid-template-rows 0.2s ease;
+
+		// Ariakit adds data-open when disclosure is open.
+		&[ data-open ] {
+			grid-template-rows: 1fr;
+		}
+
+		> * {
+			overflow: hidden;
+			padding-inline-start: calc( #{ $stepper-indicator-size } + #{ variables.$grid-unit-10 } );
+			padding-block-end: variables.$grid-unit-20;
+		}
+
+		@media ( prefers-reduced-motion: reduce ) {
+			transition: none;
+		}
+	}
+
+	&--horizontal {
+		margin-block-start: variables.$grid-unit-20;
+	}
+}
+
+// ─── Indicator ────────────────────────────────────────────────────────────────
+
+.indicator {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: $stepper-indicator-size;
+	height: $stepper-indicator-size;
+	border-radius: 50%;
+	border: $stepper-indicator-border-width solid theme.$components-color-border;
+	background: transparent;
+	color: theme.$components-color-foreground;
+	font-size: variables.$font-size-small;
+	font-weight: 500;
+	line-height: 1;
+
+	&--current {
+		background: theme.$components-color-foreground;
+		border-color: theme.$components-color-foreground;
+		color: theme.$components-color-background;
+	}
+
+	&--completed {
+		border-color: colors.$alert-green;
+		color: colors.$alert-green;
+	}
+
+	&--error {
+		border-color: colors.$alert-red;
+		color: colors.$alert-red;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		border-color: theme.$components-color-gray-600;
+		color: theme.$components-color-foreground;
+
+		&--current {
+			background: theme.$components-color-foreground;
+			border-color: theme.$components-color-foreground;
+			color: theme.$components-color-background;
+		}
+	}
+}
+
+.indicator__sr-label {
+	@include mixins.visually-hidden;
+}
+
+.indicator__visual {
+	display: contents;
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+
+.title {
+	font-size: variables.$default-font-size;
+	font-weight: 400;
+	line-height: variables.$font-line-height-body;
+	color: theme.$components-color-foreground;
+
+	[ data-current ] & {
+		font-weight: 600;
+	}
+
+	[ data-disabled ] & {
+		color: theme.$components-color-disabled;
+	}
+}
+
+// ─── Description ─────────────────────────────────────────────────────────────
+
+.description {
+	display: block;
+	font-size: variables.$font-size-small;
+	color: theme.$components-color-gray-600;
+	line-height: variables.$font-line-height-small;
+
+	[ data-disabled ] & {
+		color: theme.$components-color-gray-600;
+	}
+
+	// Hide on small screens in horizontal mode.
+	@media ( max-width: 600px ) {
+		.is-horizontal .list & {
+			display: none;
+		}
+	}
+}

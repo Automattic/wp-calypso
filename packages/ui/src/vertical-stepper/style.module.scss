@@ -1,0 +1,12 @@
+@use '@wordpress/base-styles/variables';
+
+.root {
+	// Tier 1 vertical root — inherits shared stepper styles.
+}
+
+// Step text container (title + optional description stacked).
+.step-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
