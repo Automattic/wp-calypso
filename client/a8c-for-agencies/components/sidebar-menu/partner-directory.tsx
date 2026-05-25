@@ -19,7 +19,7 @@ export default function PartnerDirectory( { path }: Props ) {
 	return (
 		<Sidebar
 			path={ A4A_PARTNER_DIRECTORY_LINK }
-			title={ translate( 'Partner Directories' ) }
+			title={ translate( 'Partner directories' ) }
 			description={ translate( "Boost your agency's visibility across Automattic platforms." ) }
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),

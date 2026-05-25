@@ -84,7 +84,7 @@ export default function useOnboardingTourSections() {
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'Check out the Overview page' ),
+							label: translate( 'Check out the overview page' ),
 							variant: 'secondary',
 							href: A4A_OVERVIEW_LINK,
 							onClick: () => onExplore( 'overview', onClose ),
@@ -218,7 +218,7 @@ export default function useOnboardingTourSections() {
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'View Referrals Dashboard' ),
+							label: translate( 'View referrals dashboard' ),
 							variant: 'secondary',
 							href: A4A_REFERRALS_DASHBOARD,
 							onClick: () => onExplore( 'referrals', onClose ),
@@ -326,7 +326,7 @@ export default function useOnboardingTourSections() {
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'Check out Client Reports' ),
+							label: translate( 'Check out client reports' ),
 							variant: 'secondary',
 							href: A4A_REPORTS_OVERVIEW_LINK,
 							onClick: () => onExplore( 'reports', onClose ),
@@ -341,7 +341,7 @@ export default function useOnboardingTourSections() {
 			},
 			{
 				id: 'partner-directory',
-				title: translate( 'Partner Directories' ),
+				title: translate( 'Partner directories' ),
 				bannerImage: OnboardingTourBannerPartnerDirectory,
 				isDarkBanner: true,
 				content: {
@@ -358,7 +358,7 @@ export default function useOnboardingTourSections() {
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'Check out Partner Directories' ),
+							label: translate( 'Check out partner directories' ),
 							variant: 'secondary',
 							href: A4A_PARTNER_DIRECTORY_LINK,
 							onClick: () => onExplore( 'partner-directory', onClose ),
@@ -373,20 +373,20 @@ export default function useOnboardingTourSections() {
 			},
 			{
 				id: 'agency-tiers',
-				title: translate( 'Agency Tiers' ),
+				title: translate( 'Agency tiers' ),
 				bannerImage: OnboardingTourBannerAgencyTiers,
 				content: {
 					title: translate( 'Resources and rewards tailored for your growth' ),
 					descriptions: [
 						translate(
-							'Our Agency Tiers program unlocks exclusive perks—like co-marketing, directory placement, pre-qualified leads, and dedicated partner managers. More tools, more visibility, more ways to earn.'
+							'Our agency tiers program unlocks exclusive perks—like co-marketing, directory placement, pre-qualified leads, and dedicated partner managers. More tools, more visibility, more ways to earn.'
 						),
 					],
 				},
 				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
 					return [
 						{
-							label: translate( 'Check out Agency Tiers' ),
+							label: translate( 'Check out agency tiers' ),
 							variant: 'secondary',
 							href: A4A_AGENCY_TIER_LINK,
 							onClick: () => onExplore( 'agency-tiers', onClose ),

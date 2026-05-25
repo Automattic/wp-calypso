@@ -87,7 +87,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionsPaid',
-				label: translate( 'Commissions Paid' ).toUpperCase(),
+				label: translate( 'Commissions paid' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -101,7 +101,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'timeframeCommissions',
-				label: translate( 'Timeframe Commissions' ).toUpperCase(),
+				label: translate( 'Timeframe commissions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -115,7 +115,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'woopaymentsStatus',
-				label: translate( 'WooPayments Status' ).toUpperCase(),
+				label: translate( 'WooPayments status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
@@ -125,7 +125,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionEligibility',
-				label: translate( 'Commission Eligibility' ).toUpperCase(),
+				label: translate( 'Commission eligibility' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<CommissionEligibilityColumn

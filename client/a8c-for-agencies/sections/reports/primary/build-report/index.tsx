@@ -117,7 +117,7 @@ const BuildReport = () => {
 		}
 	}, [ reportId ] );
 
-	const title = isDuplicating ? translate( 'Duplicate Report' ) : translate( 'Build Report' );
+	const title = isDuplicating ? translate( 'Duplicate report' ) : translate( 'Build report' );
 
 	const [ showValidationErrors, setShowValidationErrors ] = useState( false );
 
@@ -176,7 +176,7 @@ const BuildReport = () => {
 						hideOnMobile
 						items={ [
 							{
-								label: translate( 'Client Reports' ),
+								label: translate( 'Client reports' ),
 								href: A4A_REPORTS_LINK,
 							},
 							{

@@ -17,7 +17,7 @@ const getTierPermissionData = (
 		}
 	> = {
 		'a8c-for-agencies-partner-directory': {
-			title: translate( 'Partner Directories' ),
+			title: translate( 'Partner directories' ),
 			content: {
 				heading: preventWidows(
 					translate( 'Access this benefit when you become an Agency Partner.' )

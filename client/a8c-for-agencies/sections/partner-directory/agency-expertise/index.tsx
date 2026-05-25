@@ -160,7 +160,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			autocomplete="off"
 			description={ translate( "Pick your agency's specialties and choose your directories." ) }
 		>
-			<FormSection title={ translate( 'Product and Service' ) }>
+			<FormSection title={ translate( 'Product and service' ) }>
 				<FormField
 					label={ translate( 'What services do you offer?' ) }
 					description={ translate(

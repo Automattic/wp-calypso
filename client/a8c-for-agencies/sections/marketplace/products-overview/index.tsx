@@ -135,7 +135,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 	return (
 		<Layout
 			className={ clsx( 'products-overview', { 'is-compact': isCompact } ) }
-			title={ isNarrowView ? '' : translate( 'Products Marketplace' ) }
+			title={ isNarrowView ? '' : translate( 'Products marketplace' ) }
 			onScroll={ onScroll }
 			wide
 		>

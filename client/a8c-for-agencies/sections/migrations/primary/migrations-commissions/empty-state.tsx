@@ -29,7 +29,7 @@ export default function MigrationsCommissionsEmptyState( {
 	return (
 		<StepSection heading={ translate( 'View your migrated websites and commisions right here.' ) }>
 			<StepSectionItem
-				heading={ translate( 'Concierge Migrations' ) }
+				heading={ translate( 'Concierge migrations' ) }
 				description={ preventWidows(
 					translate(
 						"If you picked the concierge service, we'll move your sites for you. Once we're done, you'll see them here and they'll be available for tagging."

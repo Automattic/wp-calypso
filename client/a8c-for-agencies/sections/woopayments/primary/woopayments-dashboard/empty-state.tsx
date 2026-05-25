@@ -48,7 +48,7 @@ const WooPaymentsDashboardEmptyState = () => {
 						);
 					} }
 				>
-					{ translate( 'Check out the full details in the Knowledge Base' ) }
+					{ translate( 'Check out the full details in the knowledge base' ) }
 				</Button>
 			</StepSection>
 		</div>

@@ -79,7 +79,7 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'View Knowledge Base ↗' ) }
+					{ translate( 'View knowledge base ↗' ) }
 				</Button>
 			</li>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">

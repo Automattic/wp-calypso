@@ -60,7 +60,7 @@ export default function OverviewSidebarQuickLinks() {
 			icon: info,
 			link: EXTERNAL_A4A_KNOWLEDGE_BASE,
 			slug: 'view_knowledge_base',
-			title: translate( 'View Knowledge Base' ),
+			title: translate( 'View knowledge base' ),
 			trackEventName: 'calypso_a4a_overview_quick_links_knowledge_base_click',
 			isExternalLink: true,
 		},

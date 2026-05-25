@@ -104,7 +104,7 @@ export default function SubscriptionsList() {
 			},
 			{
 				id: 'subscription-status',
-				label: translate( 'Subscription Status' ).toUpperCase(),
+				label: translate( 'Subscription status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					return <SubscriptionStatus status={ item.status } translate={ translate } />;

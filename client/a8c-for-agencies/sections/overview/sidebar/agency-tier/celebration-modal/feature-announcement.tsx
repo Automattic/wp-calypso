@@ -41,10 +41,10 @@ const AgencyTierFeatureAnnouncement = () => {
 	return (
 		<AgencyTierCelebrationModalContent
 			celebrationModal={ {
-				title: translate( 'Take a look at Agency Tiers!' ),
+				title: translate( 'Take a look at agency tiers!' ),
 				description: preventWidows(
 					translate(
-						'Agency Tiers reward your engagement with Automattic—offering directory listings, co-marketing opportunities, growth resources, client leads, and other exciting tools to help you grow your agency depending on Agency Partner level.'
+						'Agency tiers reward your engagement with Automattic—offering directory listings, co-marketing opportunities, growth resources, client leads, and other exciting tools to help you grow your agency depending on Agency Partner level.'
 					)
 				),
 				video:

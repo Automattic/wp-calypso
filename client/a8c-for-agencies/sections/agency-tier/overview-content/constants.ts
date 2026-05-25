@@ -38,7 +38,7 @@ export const ALL_TIERS: TierItem[] = [
 		benefits: [
 			{
 				icon: tool,
-				title: __( 'Tools & Platforms' ),
+				title: __( 'Tools & platforms' ),
 				description: __(
 					'Intuitive agency dashboard for streamlined client billing, and client and product management.'
 				),
@@ -62,7 +62,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: currencyDollar,
-				title: __( 'Earning Opportunities' ),
+				title: __( 'Earning opportunities' ),
 				description: __(
 					"All partners get access to referral and reseller earning opportunities across all of Automattic's suite of products. Premier partners receive the highest earning opportunities."
 				),
@@ -95,7 +95,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: pages,
-				title: __( 'Training & Resources' ),
+				title: __( 'Training & resources' ),
 				description: __(
 					'Foundational product training, education and best practices on growing your agency, marketing materials, and advanced sales training. Pro partners eligible to receive advanced sales training and strategic consulting upon request.'
 				),
@@ -103,7 +103,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: people,
-				title: __( 'Networking & Community' ),
+				title: __( 'Networking & community' ),
 				description: __(
 					"Access Automattic's community platforms and network with like-minded agencies."
 				),
@@ -129,7 +129,7 @@ export const ALL_TIERS: TierItem[] = [
 		benefits: [
 			{
 				icon: commentAuthorAvatar,
-				title: __( 'Directory Visibility & Badging' ),
+				title: __( 'Directory visibility & badging' ),
 				description: __(
 					"Eligible for inclusion in Automattic's agency directories and increased exposure to potential clients."
 				),
@@ -147,7 +147,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: store,
-				title: __( 'Early Access' ),
+				title: __( 'Early access' ),
 				description: __(
 					'Early access to new Automattic products and features (as available), and opportunities to contribute to the product roadmap.'
 				),
@@ -172,7 +172,7 @@ export const ALL_TIERS: TierItem[] = [
 		benefits: [
 			{
 				icon: starHalf,
-				title: __( 'Co-Marketing' ),
+				title: __( 'Co-marketing' ),
 				description: __(
 					'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise.'
 				),
@@ -224,7 +224,7 @@ export const ALL_TIERS: TierItem[] = [
 			},
 			{
 				icon: payment,
-				title: __( 'Annual Credit for WooCommerce and Jetpack Extensions' ),
+				title: __( 'Annual credit for WooCommerce and Jetpack extensions' ),
 				description: __(
 					'WordPress VIP Pro partners receive annual credits toward WooCommerce and Jetpack premium extensions for agency and client sites.'
 				),

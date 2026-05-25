@@ -24,7 +24,7 @@ import './style.scss';
 export default function ReportsOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const title = translate( 'Client Reports' );
+	const title = translate( 'Client reports' );
 	const [ showExampleModal, setShowExampleModal ] = useState( false );
 
 	const benefitsList1 = useMemo(

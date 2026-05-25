@@ -1,7 +1,7 @@
 const AgencyProfile = () => {
 	return (
 		<div>
-			<h2>Agency Profile Form</h2>
+			<h2>Agency profile form</h2>
 		</div>
 	);
 };
