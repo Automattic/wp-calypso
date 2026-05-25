@@ -1,12 +1,13 @@
 import { siteApmDetailQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	SelectControl,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Breadcrumbs from '../../../../app/breadcrumbs';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { PageHeader } from '../../../../components/page-header';
@@ -32,14 +33,17 @@ export default function RequestDetail( {
 	siteSlug,
 	method,
 	route,
+	bucket,
 }: {
 	siteSlug: string;
 	method: string;
 	route: string;
+	bucket?: string;
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	const { data } = useSuspenseQuery( siteApmDetailQuery( site.ID, { method, route, windowSec } ) );
+	const navigate = useNavigate();
 
 	const sortedDetails = useMemo(
 		() =>
@@ -49,9 +53,12 @@ export default function RequestDetail( {
 		[ data.details ]
 	);
 
-	const [ selectedBucket, setSelectedBucket ] = useState< string | undefined >( undefined );
+	// Bucket lives in the URL so it's shareable and survives navigation. Fall
+	// back to the newest available bucket when the URL doesn't pin one or the
+	// pinned bucket has fallen out of the window.
 	const selected =
-		sortedDetails.find( ( d ) => d.extra.bucket_minute === selectedBucket ) ?? sortedDetails[ 0 ];
+		( bucket && sortedDetails.find( ( d ) => d.extra.bucket_minute === bucket ) ) ||
+		sortedDetails[ 0 ];
 
 	const title = `${ method } ${ route }`;
 
@@ -98,7 +105,15 @@ export default function RequestDetail( {
 									label={ __( 'Minute' ) }
 									value={ selected.extra.bucket_minute }
 									options={ bucketOptions }
-									onChange={ setSelectedBucket }
+									onChange={ ( value ) =>
+										navigate( {
+											to: '.',
+											search: ( prev: Record< string, unknown > ) => ( {
+												...prev,
+												bucket: value,
+											} ),
+										} )
+									}
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 								/>

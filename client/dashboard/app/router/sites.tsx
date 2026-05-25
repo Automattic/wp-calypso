@@ -721,9 +721,10 @@ export const sitePerformanceBackendRequestDetailRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceBackendRoute,
 	path: 'requests',
-	validateSearch: ( search ): { method: string; route: string } => ( {
+	validateSearch: ( search ): { method: string; route: string; bucket?: string } => ( {
 		method: typeof search.method === 'string' ? search.method : '',
 		route: typeof search.route === 'string' ? search.route : '',
+		bucket: typeof search.bucket === 'string' ? search.bucket : undefined,
 	} ),
 	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
 	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
@@ -743,8 +744,10 @@ export const sitePerformanceBackendRequestDetailRoute = createRoute( {
 		createLazyRoute( 'site-performance-backend-request-detail' )( {
 			component: () => {
 				const { siteSlug } = siteRoute.useParams();
-				const { method, route } = sitePerformanceBackendRequestDetailRoute.useSearch();
-				return <d.default siteSlug={ siteSlug } method={ method } route={ route } />;
+				const { method, route, bucket } = sitePerformanceBackendRequestDetailRoute.useSearch();
+				return (
+					<d.default siteSlug={ siteSlug } method={ method } route={ route } bucket={ bucket } />
+				);
 			},
 		} )
 	)

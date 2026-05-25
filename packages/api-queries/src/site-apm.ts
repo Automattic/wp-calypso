@@ -100,12 +100,8 @@ export const siteApmAggregateRollingQuery = ( siteId: number, windowSec: number 
 		staleTime: 60_000,
 	} );
 
-/**
- * Per-route APM detail (one document per minute the route appeared "slow
- * enough" to ship). Keyed by `windowSec` rather than absolute timestamps so
- * the cache entry survives the window sliding forward, mirroring
- * `siteApmAggregateRollingQuery`.
- */
+// Per-route APM detail (one document per minute the route shipped a detail
+// doc). Keyed by windowSec so the entry survives the window sliding forward.
 export const siteApmDetailQuery = (
 	siteId: number,
 	params: { method: string; route: string; windowSec: number }
@@ -114,11 +110,10 @@ export const siteApmDetailQuery = (
 		queryKey: [ 'site', siteId, 'apm', 'detail', params.method, params.route, params.windowSec ],
 		queryFn: () => {
 			const end = snapToMinute( Math.floor( Date.now() / 1000 ) );
-			const start = end - params.windowSec;
 			return fetchSiteApmDetail( siteId, {
 				method: params.method,
 				route: params.route,
-				start,
+				start: end - params.windowSec,
 				end,
 			} );
 		},

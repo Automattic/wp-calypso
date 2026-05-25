@@ -1,17 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import SlowList, { type SlowListItem } from '../slow-list';
-import { buildRequestDetailHref } from '../utils';
-import type { MergedAggregate, MergedRoute } from '../aggregate';
-
-function toItems( routes: MergedRoute[], siteSlug: string ): SlowListItem[] {
-	return routes.map( ( route ) => ( {
-		id: route.id,
-		label: `${ route.method } ${ route.route }`,
-		avg_ms: route.duration_ms.avg,
-		max_ms: route.duration_ms.max,
-		href: buildRequestDetailHref( siteSlug, route.method, route.route ),
-	} ) );
-}
+import SlowList from '../slow-list';
+import { routesToSlowListItems } from '../utils';
+import type { MergedAggregate } from '../aggregate';
 
 export default function Transactions( {
 	merged,
@@ -29,7 +19,7 @@ export default function Transactions( {
 			maxDescription={ __(
 				'Slowest single transaction observed on each route in the selected period.'
 			) }
-			items={ toItems( merged.slowest.routes, siteSlug ) }
+			items={ routesToSlowListItems( merged.slowest.routes, siteSlug ) }
 		/>
 	);
 }

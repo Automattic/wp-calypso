@@ -17,8 +17,6 @@ export interface ApmSlowRequest {
 	timestamp: number;
 }
 
-export type ApmRequestDetail = ApmSlowRequest;
-
 export interface ApmSummary {
 	avg_response_ms: number;
 	transaction_count: number;
