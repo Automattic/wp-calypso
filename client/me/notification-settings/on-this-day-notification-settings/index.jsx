@@ -10,6 +10,8 @@ import {
 	isFetchingNotificationsSettings,
 } from 'calypso/state/notification-settings/selectors';
 
+import './style.scss';
+
 const ON_THIS_DAY_SETTING = 'on_this_day';
 
 class OnThisDayNotificationSettings extends Component {
