@@ -70,7 +70,7 @@ export function StepperStep( {
 		return (
 			<DisclosureProvider
 				open={ isCurrent }
-				setOpen={ ( open ) => {
+				setOpen={ ( open: boolean ) => {
 					if ( open && ! isDisabled ) {
 						onValueChange( value );
 					}

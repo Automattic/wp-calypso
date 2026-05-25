@@ -88,7 +88,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 			{ orientation === 'horizontal' ? (
 				<TabProvider
 					selectedId={ activeTriggerId }
-					setSelectedId={ ( id ) => {
+					setSelectedId={ ( id: string | null | undefined ) => {
 						if ( ! id ) {
 							return;
 						}

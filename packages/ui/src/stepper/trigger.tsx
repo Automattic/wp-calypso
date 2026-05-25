@@ -6,6 +6,7 @@ import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import { stepPanelId, stepTriggerId } from './types';
 import type { StepperTriggerProps } from './types';
+import type { ComponentPropsWithRef } from 'react';
 
 export function StepperTrigger( { children, className, ...props }: StepperTriggerProps ) {
 	const { orientation, headingLevel, rootId } = useStepperContext();
@@ -30,7 +31,7 @@ export function StepperTrigger( { children, className, ...props }: StepperTrigge
 				{ ...sharedAttrs }
 				{ ...props }
 				aria-controls={ panelId }
-				render={ ( p ) => (
+				render={ ( p: ComponentPropsWithRef< 'button' > ) => (
 					<button
 						{ ...p }
 						aria-disabled={ isDisabled ? true : undefined }
@@ -50,7 +51,7 @@ export function StepperTrigger( { children, className, ...props }: StepperTrigge
 			{ ...props }
 			id={ triggerId }
 			aria-controls={ panelId }
-			render={ ( p ) => (
+			render={ ( p: ComponentPropsWithRef< 'button' > ) => (
 				<button
 					{ ...p }
 					aria-disabled={ isDisabled ? true : undefined }
