@@ -40,6 +40,7 @@
 	],
 	"types": "dist",
 	"dependencies": {
+		"@base-ui/react": "^1.5.0",
 		"@wordpress/base-styles": "9.1.0",
 		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
 		"@wordpress/element": "^8.0.0",

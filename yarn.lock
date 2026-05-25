@@ -2329,6 +2329,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@base-ui/react": "npm:^1.5.0"
     "@microsoft/api-extractor": "npm:^7.58.7"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
@@ -4360,7 +4361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.4.1":
+"@base-ui/react@npm:^1.4.1, @base-ui/react@npm:^1.5.0":
   version: 1.5.0
   resolution: "@base-ui/react@npm:1.5.0"
   dependencies:
