@@ -1,0 +1,66 @@
+// packages/ui/src/vertical-stepper/style.module.scss
+@use '@wordpress/base-styles/variables';
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+@use '../utils/_theme-variables' as theme;
+
+.root {
+	display: flex;
+	flex-direction: column;
+}
+
+.step {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+
+	// Vertical connector between steps
+	&:not(:last-child)::after {
+		content: '';
+		position: absolute;
+		// Align with indicator center (indicator is 24px wide)
+		inset-inline-start: 11px;
+		top: var(--stepper-trigger-height, 40px);
+		bottom: 0;
+		width: 1px;
+		background: theme.$components-color-gray-200;
+
+		@include ui-mixins.when-dark-theme {
+			background: theme.$components-color-gray-700;
+		}
+	}
+
+	&[data-status='completed']:not(:last-child)::after {
+		background: #00a32a;
+	}
+
+	&[data-status='error']:not(:last-child)::after {
+		background: #d63638;
+	}
+}
+
+.trigger {
+	display: flex;
+	align-items: flex-start;
+	gap: variables.$grid-unit-10;
+	padding-block: variables.$grid-unit-10;
+	background: none;
+	border: none;
+	cursor: pointer;
+	text-align: start;
+	width: 100%;
+}
+
+.trigger-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.panel {
+	padding-inline-start: calc(24px + #{variables.$grid-unit-10});
+	padding-block-end: variables.$grid-unit-20;
+
+	@media (prefers-reduced-motion: no-preference) {
+		transition: grid-template-rows 200ms ease;
+	}
+}
