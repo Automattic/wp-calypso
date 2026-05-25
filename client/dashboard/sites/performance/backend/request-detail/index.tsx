@@ -95,7 +95,7 @@ export default function RequestDetail( {
 								<Text variant="muted" size={ 12 }>
 									{ sprintf(
 										/* translators: %d is a number of transactions. */
-										__( '%d transactions in this minute' ),
+										__( '%d transactions in this minute.' ),
 										selected.extra.transactions_in_bucket
 									) }
 								</Text>
