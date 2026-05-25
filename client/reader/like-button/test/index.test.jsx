@@ -11,9 +11,16 @@ import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { recordTrackForPost } from 'calypso/reader/stats';
 import LikeButton from '../index';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => true,
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => 'en';
+	config.isEnabled = () => true;
+
+	return {
+		__esModule: true,
+		default: config,
+		isEnabled: config.isEnabled,
+	};
+} );
 
 jest.mock( '@automattic/viewport', () => ( {
 	isMobile: () => true,
