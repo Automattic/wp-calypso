@@ -119,6 +119,28 @@ describe( 'useMastodonComposerExtras — extendBuildParams visibility + CW merge
 		expect( 'spoiler_text' in merged ).toBe( false );
 	} );
 
+	it( 'leaves params untouched for non-standalone modes so replies inherit the parent visibility', () => {
+		// Even when localStorage carries a non-default visibility from a
+		// prior standalone session, replies must not stamp it onto the wire
+		// (the UI is hidden for replies, so the user has no affordance to
+		// change it — the upstream API inherits the parent visibility when
+		// `visibility` is omitted).
+		window.localStorage.setItem( 'calypso_reader_mastodon_composer_visibility_v1:7', 'private' );
+		const replyMode = {
+			kind: 'reply',
+			connectionId: 7,
+			root: { uri: 'tag:mastodon/1' },
+			parent: { uri: 'tag:mastodon/1' },
+		} as unknown as ActiveMode;
+		const { slotRef } = renderHarness( replyMode );
+
+		const base: MastodonCreatePostMutationParams = { connectionId: 7, status: 'hi' };
+		const merged = slotRef.current!.extendBuildParams( base ) as MastodonCreatePostMutationParams;
+		expect( merged ).toEqual( base );
+		expect( 'visibility' in merged ).toBe( false );
+		expect( 'spoiler_text' in merged ).toBe( false );
+	} );
+
 	it( 'persists the user’s visibility pick to localStorage', async () => {
 		const user = userEvent.setup();
 		renderHarness();

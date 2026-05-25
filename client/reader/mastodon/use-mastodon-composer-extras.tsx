@@ -116,6 +116,12 @@ export function useMastodonComposerExtras( ctx: {
 	const extendBuildParams = useCallback(
 		( params: unknown ): unknown => {
 			const base = params as MastodonCreatePostMutationParams;
+			// Replies/quotes inherit the parent's visibility upstream; only
+			// stamp our locally-tracked visibility + CW on standalone posts so
+			// a stale localStorage pick doesn't leak into a reply payload.
+			if ( mode?.kind !== 'standalone' ) {
+				return base;
+			}
 			const next: MastodonCreatePostMutationParams = {
 				...base,
 				visibility,
@@ -125,7 +131,7 @@ export function useMastodonComposerExtras( ctx: {
 			}
 			return next;
 		},
-		[ visibility, cwEnabled, summary ]
+		[ mode, visibility, cwEnabled, summary ]
 	);
 
 	return { renderControls: () => null, renderTrigger, extendBuildParams, clear };
