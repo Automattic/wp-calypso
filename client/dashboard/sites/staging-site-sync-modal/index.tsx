@@ -592,7 +592,7 @@ function StagingSiteSyncModalInner( {
 									a: (
 										<InlineSupportLink
 											onClick={ handleClose }
-											supportContext="hosting-staging-site"
+											supportContext="hosting-staging-site-sync"
 										/>
 									),
 								} ) }
