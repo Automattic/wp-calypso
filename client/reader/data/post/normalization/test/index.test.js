@@ -2,8 +2,8 @@
 
 import { forEach } from 'lodash';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import DISPLAY_TYPES from '../display-types';
-import { classifyPost } from '../normalization-rules';
+import { classifyPost } from '..';
+import DISPLAY_TYPES from '../../display-types';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );

@@ -28,7 +28,7 @@ import safeImageProperties from 'calypso/lib/post-normalizer/rule-safe-image-pro
 import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
 import waitForImagesToLoad from 'calypso/lib/post-normalizer/rule-wait-for-images-to-load';
 import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
-import DISPLAY_TYPES from './display-types';
+import DISPLAY_TYPES from '../display-types';
 import {
 	READER_CONTENT_WIDTH,
 	PHOTO_ONLY_MIN_WIDTH,
@@ -38,7 +38,7 @@ import {
 	GALLERY_MIN_IMAGE_WIDTH,
 	MIN_IMAGE_WIDTH,
 	MIN_IMAGE_HEIGHT,
-} from './sizes';
+} from '../sizes';
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.content_no_html ) {

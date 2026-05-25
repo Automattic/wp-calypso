@@ -12,11 +12,11 @@ import playIconImage from 'calypso/assets/images/reader/play-icon.webp';
 import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
-import EmbedHelper from 'calypso/reader/embed-helper';
 import {
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
-} from 'calypso/state/reader/posts/sizes';
+} from 'calypso/reader/data/post/sizes';
+import EmbedHelper from 'calypso/reader/embed-helper';
 import './style.scss';
 
 const noop = () => {};

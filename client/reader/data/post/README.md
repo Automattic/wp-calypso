@@ -20,6 +20,9 @@ produce Reader posts should use `usePostQuery()` or `usePostsQuery()` from
 synced from one place. The cache query keys are memory-only and are not
 persisted to localStorage.
 
+Post display constants, Reader image sizing constants, and normalization rules
+also live in this module. They are Reader UI/data concerns, not Redux state.
+
 `post/middleware` only mirrors legacy Redux actions that still represent
 post-adjacent state, such as seen/unseen and conversation follow updates. It
 does not receive or normalize post payloads. New Reader post producers that

@@ -1,11 +1,11 @@
 import { postLikesQuery, readerPostQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { createElement, useMemo } from 'react';
+import { runFastRules, runSlowRules } from 'calypso/reader/data/post/normalization';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import { runFastRules, runSlowRules } from 'calypso/state/reader/posts/normalization-rules';
 import type { ReadPost as ApiPost, ReadPostKey } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
