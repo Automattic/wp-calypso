@@ -1,5 +1,13 @@
 // packages/ui/src/stepper/style.module.scss
-// Minimal styles to unblock tests — full visual styles added in Task 11.
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+@use '../utils/_theme-variables' as theme;
+
+// ---------------------------------------------------------------------------
+// Utilities
+// ---------------------------------------------------------------------------
 
 .visually-hidden {
 	position: absolute;
@@ -13,16 +21,158 @@
 	border: 0;
 }
 
-/* stylelint-disable block-no-empty */
-.indicator {}
-.is-current {}
-.is-completed {}
-.is-error {}
-.is-disabled {}
-.title {}
-.description {}
-.trigger-heading {}
-.trigger {}
-.panel {}
-.list {}
-/* stylelint-enable block-no-empty */
+// ---------------------------------------------------------------------------
+// Indicator
+// ---------------------------------------------------------------------------
+
+$indicator-size: 24px;
+$indicator-radius: calc( #{$indicator-size} / 2 );
+
+.indicator {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: $indicator-size;
+	height: $indicator-size;
+	border-radius: $indicator-radius;
+	border: 1px solid theme.$components-color-gray-400;
+	flex-shrink: 0;
+	font-size: variables.$font-size-small;
+	font-weight: 400;
+	color: theme.$components-color-gray-600;
+	background: theme.$components-color-background;
+
+	@include ui-mixins.when-dark-theme {
+		border-color: theme.$components-color-gray-600;
+		color: theme.$components-color-gray-300;
+	}
+}
+
+// Current step
+.indicator.is-current {
+	border-color: theme.$components-color-foreground;
+	background: theme.$components-color-foreground;
+	color: theme.$components-color-background;
+	font-weight: 600;
+
+	@include ui-mixins.when-dark-theme {
+		border-color: theme.$components-color-foreground;
+		background: theme.$components-color-foreground;
+	}
+}
+
+// Completed step
+.indicator.is-completed {
+	border-color: colors.$alert-green;
+	background: transparent;
+	color: colors.$alert-green;
+
+	@include ui-mixins.when-dark-theme {
+		border-color: colors.$alert-green;
+		color: colors.$alert-green;
+	}
+}
+
+// Error step
+.indicator.is-error {
+	border-color: colors.$alert-red;
+	background: transparent;
+	color: colors.$alert-red;
+
+	@include ui-mixins.when-dark-theme {
+		border-color: colors.$alert-red;
+		color: colors.$alert-red;
+	}
+}
+
+// Disabled step
+.indicator.is-disabled {
+	opacity: 0.5;
+}
+
+// ---------------------------------------------------------------------------
+// Trigger
+// ---------------------------------------------------------------------------
+
+.trigger-heading {
+	margin: 0;
+	padding: 0;
+}
+
+.trigger {
+	display: flex;
+	align-items: center;
+	gap: variables.$grid-unit-10;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	font-size: variables.$font-size-medium;
+	color: theme.$components-color-foreground;
+	text-align: start;
+	width: 100%;
+
+	&[aria-disabled="true"] {
+		cursor: default;
+		opacity: 0.6;
+	}
+
+	&[aria-expanded="true"],
+	&[aria-selected="true"] {
+		font-weight: 600;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Panel
+// ---------------------------------------------------------------------------
+
+.panel {
+	overflow: hidden;
+
+	// Vertical: animate expand/collapse via grid-template-rows
+	&[hidden] {
+		display: block;
+		grid-template-rows: 0fr;
+	}
+
+	&:not([hidden]) {
+		grid-template-rows: 1fr;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		transition: grid-template-rows 200ms ease;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// List (horizontal tablist container)
+// ---------------------------------------------------------------------------
+
+.list {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Title and Description
+// ---------------------------------------------------------------------------
+
+.title {
+	font-size: variables.$font-size-medium;
+	font-weight: inherit;
+	color: theme.$components-color-foreground;
+}
+
+.description {
+	font-size: variables.$font-size-small;
+	color: theme.$components-color-gray-600;
+
+	@include ui-mixins.when-dark-theme {
+		color: theme.$components-color-gray-300;
+	}
+}
