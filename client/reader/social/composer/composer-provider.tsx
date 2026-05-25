@@ -48,6 +48,7 @@ const NOOP_EXTRAS_SLOT: ComposerProtocolExtrasSlot = {
 	renderControls: () => null,
 	renderTrigger: () => null,
 	extendBuildParams: ( params ) => params,
+	clear: () => undefined,
 	getTracksProps: () => ( {} ),
 };
 
