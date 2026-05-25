@@ -1,0 +1,24 @@
+// packages/ui/src/stepper/style.module.scss
+// Minimal styles to unblock tests — full visual styles added in Task 11.
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* stylelint-disable block-no-empty */
+.indicator {}
+.is-current {}
+.is-completed {}
+.is-error {}
+.is-disabled {}
+.title {}
+.description {}
+/* stylelint-enable block-no-empty */

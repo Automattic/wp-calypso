@@ -155,3 +155,40 @@ describe( 'Stepper.Step', () => {
 		expect( screen.getByTestId( 'content' ).parentElement?.tagName ).toBe( 'DIV' );
 	} );
 } );
+
+describe( 'Stepper.Indicator', () => {
+	function renderIndicator( props = {} ) {
+		return render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Indicator { ...props } />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+	}
+
+	it( 'renders visually-hidden label for current step', () => {
+		renderIndicator();
+		expect( screen.getByText( 'Step 1 of 1' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders visually-hidden label with status suffix', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="b" aria-label="Test">
+				<Stepper.Step value="a" status="completed">
+					<Stepper.Indicator />
+				</Stepper.Step>
+				<Stepper.Step value="b">
+					<Stepper.Indicator />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByText( 'Step 1 of 2, completed' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders custom indicator children with aria-hidden', () => {
+		renderIndicator( { children: <span data-testid="custom-icon" /> } );
+		const icon = screen.getByTestId( 'custom-icon' );
+		expect( icon.parentElement ).toHaveAttribute( 'aria-hidden', 'true' );
+	} );
+} );
