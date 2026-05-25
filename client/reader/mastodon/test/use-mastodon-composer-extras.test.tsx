@@ -214,6 +214,21 @@ describe( 'useMastodonComposerExtras — footer pill rendering', () => {
 		} );
 	} );
 
+	it( 'pill label appends the content-warning state when CW is enabled', async () => {
+		const user = userEvent.setup();
+		renderHarness();
+
+		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click( screen.getByRole( 'checkbox', { name: 'Add content warning' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		await waitFor( () => {
+			expect(
+				screen.getByRole( 'button', { name: 'Post interaction settings' } )
+			).toHaveTextContent( 'Public, content warning' );
+		} );
+	} );
+
 	it( 'Save button closes the popover', async () => {
 		const user = userEvent.setup();
 		renderHarness();

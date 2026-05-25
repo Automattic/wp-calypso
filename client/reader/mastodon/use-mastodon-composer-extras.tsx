@@ -37,6 +37,24 @@ function visibilityLabel(
 	return String( translate( 'Public' ) );
 }
 
+function pillLabel(
+	visibility: MastodonVisibility,
+	cwEnabled: boolean,
+	translate: ReturnType< typeof useTranslate >
+): string {
+	const base = visibilityLabel( visibility, translate );
+	if ( ! cwEnabled ) {
+		return base;
+	}
+	return String(
+		translate( '%(visibility)s, content warning', {
+			args: { visibility: base },
+			comment:
+				'Composer footer pill label when a Mastodon content warning is enabled. %(visibility)s is the visibility scope, e.g. "Public" or "Followers only".',
+		} )
+	);
+}
+
 /**
  * Per-Mastodon-connection composer-extras hook. Wires the shared
  * `useVisibilityCwState` + `<MastodonComposerControls>` into the
@@ -91,7 +109,7 @@ export function useMastodonComposerExtras( ctx: {
 		return (
 			<ComposerExtrasPill
 				icon={ visibilityIcon( visibility ) }
-				label={ visibilityLabel( visibility, translate ) }
+				label={ pillLabel( visibility, cwEnabled, translate ) }
 				ariaLabel={ String( translate( 'Post interaction settings' ) ) }
 				popoverContent={ ( { onClose } ) => (
 					<MastodonComposerControls
