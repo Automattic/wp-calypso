@@ -43,9 +43,7 @@ export default function useProductsById( products: ReferralProduct[] | [], isEna
 					} );
 
 					if ( product && matchedProductId !== undefined ) {
-						// The client-products endpoint returns prices as monthly_price / yearly_price.
-						// Populate amount / price_per_unit_display for the matched term so downstream
-						// pricing code (which reads those legacy field names) can render a price.
+						// Mirror the matched term's price onto the legacy field names that downstream pricing code reads.
 						const matchedPriceString =
 							matchedPrice !== undefined ? String( matchedPrice ) : product.amount;
 
@@ -54,7 +52,7 @@ export default function useProductsById( products: ReferralProduct[] | [], isEna
 							product_id: matchedProductId,
 							alternative_product_id: matchedAlternativeProductId,
 							amount: matchedPriceString,
-							price_per_unit_display: product.price_per_unit_display ?? matchedPriceString,
+							price_per_unit_display: matchedPriceString,
 							quantity: 1,
 						};
 					}
