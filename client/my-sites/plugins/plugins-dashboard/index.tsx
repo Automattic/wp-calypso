@@ -333,7 +333,7 @@ const PluginsDashboard = ( {
 					{ isA8CForAgencies() && ! pluginSlug && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
 						<Title>{ translate( 'Manage plugins' ) }</Title>
-						{ ! pluginSlug && (
+						{ ! pluginSlug && ! isJetpackCloudOrA8CForAgencies && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }
 						{ ! pluginSlug && ! isJetpackCloudOrA8CForAgencies && (

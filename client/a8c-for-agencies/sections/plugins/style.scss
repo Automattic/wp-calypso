@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .is-section-a8c-for-agencies-plugins {
 	.wpcom-site {
 		.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
@@ -6,6 +9,64 @@
 
 				.hosting-dashboard-layout__top-wrapper {
 					display: block;
+				}
+			}
+		}
+
+		// Multi-list view: restore the standard A4A header L/R padding (64px,
+		// constrained to 1500px and centered). The Dotcom Sites Dashboard
+		// stylesheet (dotcom-style.scss) overrides this to 24px / revert for
+		// any with-columns container, and gets pulled in transitively via
+		// plugins-scheduled-updates-multisite — which shifts the Plugins
+		// header inward versus Overview / Tiers / Exclusive Offers.
+		.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
+			.hosting-dashboard-layout-with-columns__container .hosting-dashboard-layout__top-wrapper > * {
+				@include breakpoint-deprecated('>660px') {
+					padding-inline: 64px;
+					max-width: 1500px;
+				}
+			}
+
+			// Align the DataViews action bar (search + filters) and the table's
+			// first/last columns with the header inset above, matching the A4A
+			// Sites Dashboard pattern.
+			.dataviews__view-actions,
+			.dataviews-filters__container {
+				padding: 16px;
+
+				@media (min-width: $break-small) {
+					padding: 16px 64px;
+				}
+			}
+
+			// Size the bulk-select checkbox column so its right edge lands at 64px
+			// from the card edge. The checkbox keeps DataViews' default 24px L
+			// padding (so it sits within the "outside" zone), and the first data
+			// column starts at 64px — aligned with the search box above. For
+			// tables without a checkbox column, fall back to padding the first
+			// column directly.
+			.dataviews-view-table .dataviews-view-table__checkbox-column {
+				@media (min-width: $break-small) {
+					width: 64px;
+					box-sizing: border-box;
+				}
+			}
+
+			.dataviews-view-table tr td:first-child:not(.dataviews-view-table__checkbox-column),
+			.dataviews-view-table tr th:first-child:not(.dataviews-view-table__checkbox-column) {
+				padding-left: 16px;
+
+				@media (min-width: $break-small) {
+					padding-left: 64px;
+				}
+			}
+
+			.dataviews-view-table tr td:last-child,
+			.dataviews-view-table tr th:last-child {
+				padding-right: 16px;
+
+				@media (min-width: $break-small) {
+					padding-right: 64px;
 				}
 			}
 		}
