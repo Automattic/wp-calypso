@@ -1,4 +1,5 @@
 // packages/ui/src/stepper/indicator.tsx
+import { type ReactNode } from '@wordpress/element';
 import { check, error as errorIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Icon } from '../icon';
@@ -6,7 +7,7 @@ import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 
 type StepperIndicatorProps = {
-	children?: React.ReactNode;
+	children?: ReactNode;
 	className?: string;
 };
 
@@ -17,15 +18,12 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 	const stepNumber = index + 1;
 	const accessibleLabel = formatStepLabel( stepNumber, totalSteps, status );
 
-	const defaultContent = () => {
-		if ( status === 'completed' ) {
-			return <Icon icon={ check } size={ 16 } fill="currentColor" />;
-		}
-		if ( status === 'error' ) {
-			return <Icon icon={ errorIcon } size={ 16 } fill="currentColor" />;
-		}
-		return <span aria-hidden="true">{ stepNumber }</span>;
-	};
+	let indicator = <span aria-hidden="true">{ stepNumber }</span>;
+	if ( status === 'completed' ) {
+		indicator = <Icon icon={ check } size={ 16 } fill="currentColor" />;
+	} else if ( status === 'error' ) {
+		indicator = <Icon icon={ errorIcon } size={ 16 } fill="currentColor" />;
+	}
 
 	return (
 		<span
@@ -40,7 +38,7 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 			<span className={ styles[ 'visually-hidden' ] }>{ accessibleLabel }</span>
 
 			{ /* Visual content */ }
-			{ children ? <span aria-hidden="true">{ children }</span> : defaultContent() }
+			{ children ? <span aria-hidden="true">{ children }</span> : indicator }
 		</span>
 	);
 }
