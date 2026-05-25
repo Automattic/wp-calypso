@@ -18,31 +18,43 @@ export default function useProductsById( products: ReferralProduct[] | [], isEna
 					let matchedProduct: ShoppingCartItem | undefined;
 					let matchedProductId: number | undefined;
 					let matchedAlternativeProductId: number | undefined;
+					let matchedPrice: number | undefined;
 
 					const product = data.find( ( product ) => {
 						if ( product.monthly_product_id === p.product_id ) {
 							matchedProductId = product.monthly_product_id;
 							matchedAlternativeProductId = product.monthly_alternative_product_id;
+							matchedPrice = product.monthly_price;
 							return true;
 						}
 						if ( product.yearly_product_id === p.product_id ) {
 							matchedProductId = product.yearly_product_id;
 							matchedAlternativeProductId = product.yearly_alternative_product_id;
+							matchedPrice = product.yearly_price;
 							return true;
 						}
 						if ( product.product_id === p.product_id ) {
 							matchedProductId = product.product_id;
 							matchedAlternativeProductId = product.alternative_product_id;
+							matchedPrice = product.yearly_price ?? product.monthly_price;
 							return true;
 						}
 						return false;
 					} );
 
 					if ( product && matchedProductId !== undefined ) {
+						// The client-products endpoint returns prices as monthly_price / yearly_price.
+						// Populate amount / price_per_unit_display for the matched term so downstream
+						// pricing code (which reads those legacy field names) can render a price.
+						const matchedPriceString =
+							matchedPrice !== undefined ? String( matchedPrice ) : product.amount;
+
 						matchedProduct = {
 							...product,
 							product_id: matchedProductId,
 							alternative_product_id: matchedAlternativeProductId,
+							amount: matchedPriceString,
+							price_per_unit_display: product.price_per_unit_display ?? matchedPriceString,
 							quantity: 1,
 						};
 					}
