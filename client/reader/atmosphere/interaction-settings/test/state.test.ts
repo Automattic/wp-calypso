@@ -6,22 +6,12 @@ describe( 'interaction-settings state transitions', () => {
 	} );
 
 	it( 'switching to Anyone clears any combo flags', () => {
-		const next = applyReplyAllowRadio( 'anyone', {
-			kind: 'combo',
-			follower: true,
-			following: true,
-			mention: false,
-		} );
+		const next = applyReplyAllowRadio( 'anyone' );
 		expect( next ).toEqual( { kind: 'anyone' } );
 	} );
 
 	it( 'switching to Nobody clears any combo flags', () => {
-		const next = applyReplyAllowRadio( 'nobody', {
-			kind: 'combo',
-			follower: true,
-			following: false,
-			mention: true,
-		} );
+		const next = applyReplyAllowRadio( 'nobody' );
 		expect( next ).toEqual( { kind: 'nobody' } );
 	} );
 

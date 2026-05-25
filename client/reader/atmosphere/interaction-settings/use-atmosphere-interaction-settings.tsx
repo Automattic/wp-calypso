@@ -13,18 +13,13 @@ import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
-const IS_TEST = process.env.NODE_ENV === 'test';
-
-interface InternalSlot extends ComposerProtocolExtrasSlot {
-	__test__setReplyAllow?: ( next: ReplyAllow ) => void;
-	__test__setAllowQuotes?: ( next: boolean ) => void;
-}
-
 function labelForKey(
 	key: ReturnType< typeof pillSummary >[ 'labelKey' ],
 	translate: ReturnType< typeof useTranslate >
 ): string {
 	switch ( key ) {
+		case 'anyone':
+			return String( translate( 'Anyone can reply' ) );
 		case 'nobody':
 			return String( translate( 'Nobody can reply' ) );
 		case 'follower':
@@ -35,8 +30,8 @@ function labelForKey(
 			return String( translate( 'People you mention' ) );
 		case 'some':
 			return String( translate( 'Some people can reply' ) );
-		case 'anyone':
 		default:
+			key satisfies never;
 			return String( translate( 'Anyone can reply' ) );
 	}
 }
@@ -55,7 +50,7 @@ function labelForKey(
 export function useAtmosphereInteractionSettings( ctx: {
 	mode: ActiveMode | null;
 	connectionId: number;
-} ): InternalSlot {
+} ): ComposerProtocolExtrasSlot {
 	const translate = useTranslate();
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ replyAllow, setReplyAllow ] = useState< ReplyAllow >( DEFAULT_REPLY_ALLOW );
@@ -127,16 +122,11 @@ export function useAtmosphereInteractionSettings( ctx: {
 		return summarizeForTracks( replyAllow, allowQuotes );
 	}, [ ctx.mode, replyAllow, allowQuotes ] );
 
-	const slot: InternalSlot = {
+	return {
 		renderControls: () => null,
 		renderTrigger,
 		extendBuildParams,
 		clear,
 		getTracksProps,
 	};
-	if ( IS_TEST ) {
-		slot.__test__setReplyAllow = setReplyAllow;
-		slot.__test__setAllowQuotes = setAllowQuotes;
-	}
-	return slot;
 }

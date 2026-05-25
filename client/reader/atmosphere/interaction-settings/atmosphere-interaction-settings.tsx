@@ -35,7 +35,14 @@ export function AtmosphereInteractionSettings( {
 		setReplyAllow( ( current ) => toggleComboFlag( current, flag, checked ) );
 	};
 
-	const radioValue: 'anyone' | 'nobody' = isNobody ? 'nobody' : 'anyone';
+	// Leave the radio unselected while combo flags are active so the popover
+	// doesn't claim "Anyone" is the answer when restrictions are also on.
+	let radioValue: 'anyone' | 'nobody' | undefined;
+	if ( isNobody ) {
+		radioValue = 'nobody';
+	} else if ( ! isCombo ) {
+		radioValue = 'anyone';
+	}
 
 	return (
 		<VStack spacing={ 4 } className="atmosphere-interaction-settings">
@@ -51,9 +58,7 @@ export function AtmosphereInteractionSettings( {
 					{ label: String( translate( 'Nobody' ) ), value: 'nobody' },
 				] }
 				onChange={ ( next ) => {
-					setReplyAllow( ( current ) =>
-						applyReplyAllowRadio( next as 'anyone' | 'nobody', current )
-					);
+					setReplyAllow( applyReplyAllowRadio( next as 'anyone' | 'nobody' ) );
 				} }
 			/>
 

@@ -20,11 +20,7 @@ const EMPTY_COMBO = {
 	mention: false,
 };
 
-export function applyReplyAllowRadio(
-	choice: 'anyone' | 'nobody',
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	_current: ReplyAllow
-): ReplyAllow {
+export function applyReplyAllowRadio( choice: 'anyone' | 'nobody' ): ReplyAllow {
 	return choice === 'anyone' ? { kind: 'anyone' } : { kind: 'nobody' };
 }
 
