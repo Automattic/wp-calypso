@@ -78,4 +78,80 @@ describe( 'Stepper.Step', () => {
 
 		expect( capturedContext?.isDisabled ).toBe( true );
 	} );
+
+	it( 'sets data-current attribute on the current step', () => {
+		const { container } = render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<div />
+				</Stepper.Step>
+				<Stepper.Step value="b">
+					<div />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		// Find step elements by looking at children of the accordion root
+		// The Accordion.Item renders a div with data-current when active
+		const items = container.querySelectorAll( '[data-current]' );
+		expect( items ).toHaveLength( 1 );
+	} );
+
+	it( 'sets data-status attribute when status is provided', () => {
+		const { container } = render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a" status="completed">
+					<div />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		const item = container.querySelector( '[data-status="completed"]' );
+		expect( item ).not.toBeNull();
+	} );
+
+	it( 'sets data-disabled attribute when disabled', () => {
+		const { container } = render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<div />
+				</Stepper.Step>
+				<Stepper.Step value="b" disabled>
+					<div />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		const item = container.querySelector( '[data-disabled]' );
+		expect( item ).not.toBeNull();
+	} );
+
+	it( 'marks step as disabled when explicitly disabled even if completed', () => {
+		let capturedContext: StepContextValue | null = null;
+
+		function Inspector() {
+			capturedContext = useStepContext();
+			return null;
+		}
+
+		render(
+			<Stepper.Root orientation="vertical" value="a" linear aria-label="Test">
+				<Stepper.Step value="a" status="completed" disabled>
+					<Inspector />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+
+		// Completed + explicit disabled = still disabled
+		expect( capturedContext?.isDisabled ).toBe( true );
+	} );
+
+	it( 'renders as a div in horizontal mode', () => {
+		render(
+			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<div data-testid="content" />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		// In horizontal mode the step renders a plain <div> (not Accordion.Item)
+		expect( screen.getByTestId( 'content' ).parentElement?.tagName ).toBe( 'DIV' );
+	} );
 } );
