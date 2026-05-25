@@ -13,7 +13,7 @@ importing the implementation files directly.
 - Expose shared stream item types for UI surfaces that render stream-backed lists.
 
 Post body data does not live in the stream cache long term. Stream queries own ordering,
-pagination, and item identity. Post bodies should be read from `calypso/reader/data/post-cache`
+pagination, and item identity. Post bodies should be read from `calypso/reader/data/post/cache`
 after stream responses are synced through this module.
 
 ## Public API

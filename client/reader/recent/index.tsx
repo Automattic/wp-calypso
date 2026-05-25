@@ -9,7 +9,7 @@ import { UnknownAction } from 'redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useCachedPosts } from 'calypso/reader/data/post-cache';
+import { useCachedPosts } from 'calypso/reader/data/post/cache';
 import {
 	isPaddingStreamItem,
 	usePaginatedStream,

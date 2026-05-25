@@ -7,11 +7,11 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post-cache';
-import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post/cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { READER_CONVERSATION_UPDATE_FOLLOW_STATUS } from 'calypso/state/reader/action-types';
 import readerReducer from 'calypso/state/reader/reducer';
-import { usePost } from '../post';
+import { usePost } from '..';
 import type { ReadPostKey } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 

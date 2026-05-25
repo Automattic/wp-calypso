@@ -7,7 +7,7 @@ import { createRef } from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { upsertPostCache } from 'calypso/reader/data/post-cache';
+import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import readerReducer from 'calypso/state/reader/reducer';
 import PostLifecycle from '../post-lifecycle';
 import type { ForwardRefExoticComponent, ReactNode, RefAttributes } from 'react';

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
-import { normalizePostsForCache, syncNormalizedPostsToCache } from './post-cache-sync';
-import type { Post } from './post-cache';
+import { normalizePostsForCache, syncNormalizedPostsToCache } from '../cache-sync';
+import type { Post } from '../cache';
 import type { QueryKey, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 
 type PostProducingQueryOptions< TQueryData, TError, TQueryKey extends QueryKey > = Omit<

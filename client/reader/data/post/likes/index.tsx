@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { forwardRef } from 'react';
 import { usePostLikeActions as useBasePostLikeActions } from 'calypso/components/data/post-likes';
-import { getCachedPost, updateCachedPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost, updateCachedPost } from 'calypso/reader/data/post/cache';
 import type { PostLikeMutationParams } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 

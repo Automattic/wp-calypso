@@ -6,8 +6,8 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import { updateCachedPost, updateCachedPostsMatching } from './post-cache';
-import type { Post } from './post-cache';
+import { updateCachedPost, updateCachedPostsMatching } from '../cache';
+import type { Post } from '../cache';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 

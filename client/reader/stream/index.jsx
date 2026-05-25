@@ -19,8 +19,8 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useCachedPost } from 'calypso/reader/data/post-cache';
-import { withPostLikeActions } from 'calypso/reader/data/post-likes';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
+import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import {
 	analyticsForStream,
 	INITIAL_FETCH,

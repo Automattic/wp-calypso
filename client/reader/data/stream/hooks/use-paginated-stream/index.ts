@@ -1,7 +1,7 @@
 import { getStreamType, readStreamQuery } from '@automattic/api-queries';
 import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef } from 'react';
-import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache-sync';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from '../../build-query-params';
 import { normalizeStreamPage, PER_FETCH } from '../../normalization';

@@ -6,8 +6,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { ReactNode } from 'react';
-import { getCachedPost, upsertPostCache } from '../post-cache';
-import { usePostLikeActions } from '../post-likes';
+import { getCachedPost, upsertPostCache } from '../../cache';
+import { usePostLikeActions } from '..';
 
 const BASE = 'https://public-api.wordpress.com';
 

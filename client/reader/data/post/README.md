@@ -13,18 +13,18 @@ migration, the Reader has two post access layers with different contracts:
   or for small action surfaces that only need the post already supplied by the
   stream.
 
-The canonical cache lives in `post-cache.ts`. Stream responses, full post
-fetches, and optimistic updates write into this cache through
-`post-cache-sync.ts`. Queries that produce Reader posts should use
-`usePostQuery()` or `usePostsQuery()` from `post-query.ts` so the UI receives
-normalized posts and the canonical cache is synced from one place. The cache
-query keys are memory-only and are not persisted to localStorage.
+The canonical cache lives in `post/cache`. Stream responses, full post fetches,
+and optimistic updates write into this cache through `post/cache-sync`. Queries
+that produce Reader posts should use `usePostQuery()` or `usePostsQuery()` from
+`post/query` so the UI receives normalized posts and the canonical cache is
+synced from one place. The cache query keys are memory-only and are not
+persisted to localStorage.
 
-`post-cache-middleware.ts` only mirrors legacy Redux actions that still
-represent post-adjacent state, such as seen/unseen and conversation follow
-updates. It does not receive or normalize post payloads. New Reader post
-producers that cannot use `post-query.ts` should call `syncPostCache()` after
-fetching posts so cache-only surfaces have the data they need before rendering.
+`post/middleware` only mirrors legacy Redux actions that still represent
+post-adjacent state, such as seen/unseen and conversation follow updates. It
+does not receive or normalize post payloads. New Reader post producers that
+cannot use `post/query` should call `syncPostCache()` after fetching posts so
+cache-only surfaces have the data they need before rendering.
 
 ## Migration Rules
 

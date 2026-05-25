@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { upsertPostCache } from 'calypso/reader/data/post-cache';
+import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { getStreamInfiniteQueryKey } from 'calypso/reader/data/stream';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestFollows } from 'calypso/state/reader/follows/actions';

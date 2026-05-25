@@ -9,7 +9,7 @@ import {
 	upsertPostCache,
 	useCachedPost,
 	useCachedPosts,
-} from '../post-cache';
+} from '..';
 import type { ReactNode } from 'react';
 
 function makeQueryClient() {

@@ -1,4 +1,4 @@
-import { getCachedPost } from 'calypso/reader/data/post-cache';
+import { getCachedPost } from 'calypso/reader/data/post/cache';
 import { getCachedStreamItems } from 'calypso/reader/data/stream';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';

@@ -7,8 +7,8 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { getCachedPost } from 'calypso/reader/data/post-cache';
-import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { getCachedPost } from 'calypso/reader/data/post/cache';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import {
 	getStreamInfiniteQueryKey,
 	removeStreamItemFromCache,
