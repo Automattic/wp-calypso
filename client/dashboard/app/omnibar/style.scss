@@ -4,9 +4,3 @@
 	inset-inline: 0;
 	z-index: 99999;
 }
-
-body:has( #wpcom-omnibar ) #wpcom {
-	padding-block-start: var(--omnibar-height);
-	height: auto;
-	min-height: calc( 100vh - var(--omnibar-height) );
-}
