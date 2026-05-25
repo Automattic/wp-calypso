@@ -6,8 +6,8 @@ import {
 } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getCachedPost, upsertPostCache } from '../../cache';
 import { createPostCacheMiddleware } from '..';
+import { getCachedPost, upsertPostCache } from '../../cache';
 
 describe( 'reader post cache middleware', () => {
 	let queryClient: QueryClient;
