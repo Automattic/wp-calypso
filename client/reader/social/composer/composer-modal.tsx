@@ -186,7 +186,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
-				dispatch( recordReaderTracksEvent( event, props ) );
+				const extraProps = protocolExtrasSlot.getTracksProps?.() ?? {};
+				dispatch( recordReaderTracksEvent( event, { ...props, ...extraProps } ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
@@ -256,7 +257,12 @@ export function ComposerModal< TError, TParams, TResult >() {
 					isPending={ mutation.isPending }
 					limit={ limit }
 					disabled={ ! canSubmit }
-					footerStart={ mediaSlot.renderFooterTrigger() }
+					footerStart={
+						<>
+							{ mediaSlot.renderFooterTrigger() }
+							{ protocolExtrasSlot.renderTrigger?.() ?? null }
+						</>
+					}
 					counterUnit={ counterUnit }
 					softLimit={ config.softLimit }
 				/>
