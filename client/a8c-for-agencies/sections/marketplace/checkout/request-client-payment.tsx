@@ -393,7 +393,9 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						__nextHasNoMarginBottom
 						label={ translate( 'Custom message' ) }
 						name="message"
-						placeholder="Send a message to your client about this request for payment."
+						placeholder={ translate(
+							'Send a message to your client about this request for payment.'
+						) }
 						value={ message }
 						onChange={ onMessageChange }
 						onClick={ () =>
