@@ -41,8 +41,11 @@ import {
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
 import {
+	type BlockTransformationSuggestionType,
 	trackAiEditorialReviewSuggestionClick,
 	trackAiEditorialReviewSuggestionRendered,
+	trackBlockTransformationSuggestionClick,
+	trackBlockTransformationSuggestionRendered,
 } from './utils/tracking';
 import type { ComponentType } from 'react';
 
@@ -56,6 +59,9 @@ let wasAgentProcessing = false;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
+
+/** Block transformation suggestions whose rendered event has fired this page life. */
+const blockTransformationSuggestionRenderedKeys = new Set< string >();
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -572,39 +578,101 @@ const TEXT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ];
 /** Block types that support image-related suggestions. */
 const IMAGE_BLOCK_TYPES = [ 'core/image', 'core/media-text', 'core/cover', 'core/gallery' ];
 
+type BlockSuggestion = {
+	id: string;
+	label: string;
+	prompt: string;
+	type: BlockTransformationSuggestionType;
+	condition: ( block: any ) => boolean;
+};
+
 /** Block-aware suggestion definitions with optional condition per block type. */
-const BLOCK_SUGGESTIONS = [
+const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	{
 		id: 'translate',
 		label: __( 'Translate content', 'jetpack' ),
 		prompt: __( 'Translate this block content to:', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'change-tone',
 		label: __( 'Change tone', 'jetpack' ),
 		prompt: __( 'Change the tone of this text to be more:', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'check-grammar',
 		label: __( 'Check grammar', 'jetpack' ),
 		prompt: __( 'Check the grammar and spelling of this text', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'simplify-text',
 		label: __( 'Simplify text', 'jetpack' ),
 		prompt: __( 'Simplify this text to make it easier to read', 'jetpack' ),
+		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'generate-alt-text',
 		label: __( 'Generate alt text', 'jetpack' ),
 		prompt: __( 'Generate descriptive alt text for this image', 'jetpack' ),
+		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
 ];
+
+function getBlockTransformationSuggestionForPrompt(
+	value: string,
+	block: any
+): BlockSuggestion | undefined {
+	return BLOCK_SUGGESTIONS.find(
+		( suggestion ) => suggestion.prompt === value && suggestion.condition( block )
+	);
+}
+
+function trackRenderedBlockTransformationSuggestions(
+	suggestions: BlockSuggestion[],
+	block: any
+): void {
+	if ( typeof block?.name !== 'string' ) {
+		return;
+	}
+
+	suggestions.forEach( ( suggestion ) => {
+		const renderedKey = `${ suggestion.id }:${ block.name }`;
+		if ( blockTransformationSuggestionRenderedKeys.has( renderedKey ) ) {
+			return;
+		}
+		blockTransformationSuggestionRenderedKeys.add( renderedKey );
+		trackBlockTransformationSuggestionRendered( {
+			suggestionId: suggestion.id,
+			suggestionType: suggestion.type,
+			blockType: block.name,
+		} );
+	} );
+}
+
+function trackBlockTransformationSuggestionClickForValue( value: string ): void {
+	if ( ! isBlockTransformationsEnabled() ) {
+		return;
+	}
+
+	const selectedBlock = getSelectedOrRememberedBlock();
+	const suggestion = getBlockTransformationSuggestionForPrompt( value, selectedBlock );
+	if ( ! suggestion || typeof selectedBlock?.name !== 'string' ) {
+		return;
+	}
+
+	trackBlockTransformationSuggestionClick( {
+		suggestionId: suggestion.id,
+		suggestionType: suggestion.type,
+		blockType: selectedBlock.name,
+	} );
+}
 
 // ---------- capabilities ----------
 
@@ -637,6 +705,9 @@ export function useSuggestions(): {
 			// AI Editorial Review output is too dense for the 350px sidebar.
 			// Auto-expand to 50vw on that suggestion only (matched by prompt).
 			const value = ( event as CustomEvent ).detail?.value;
+			if ( typeof value === 'string' ) {
+				trackBlockTransformationSuggestionClickForValue( value );
+			}
 			if (
 				isAiEditorialReviewAvailable() &&
 				typeof value === 'string' &&
@@ -701,6 +772,7 @@ export function useSuggestions(): {
 	}
 
 	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
+	trackRenderedBlockTransformationSuggestions( applicable, selectedBlock );
 	return {
 		suggestions: [
 			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),

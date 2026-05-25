@@ -152,6 +152,10 @@ function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: an
 	return null;
 }
 
+function getTracksCalls( eventName: string ) {
+	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
+}
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
@@ -283,6 +287,70 @@ describe( 'useSuggestions', () => {
 			'Simplify text',
 			'AI Editorial Review',
 		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'simplify-text',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'tracks rendered image block transformation suggestions', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b2', name: 'core/image' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate alt text',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'generate-alt-text',
+					suggestion_type: 'image',
+					block_type: 'core/image',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
 	} );
 
 	it( 'keeps AI Editorial Review when the preview feature disables block transformations', () => {
@@ -341,6 +409,53 @@ describe( 'useSuggestions', () => {
 			'jetpack_ai_editorial_review_suggestion_click',
 			{}
 		);
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
+	} );
+
+	it( 'tracks block transformation suggestion clicks', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b3', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Simplify this text to make it easier to read' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'simplify-text',
+				suggestion_type: 'text',
+				block_type: 'core/heading',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'does not track block transformation clicks for unknown prompt values', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b4', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Write an unrelated prompt' },
+				} )
+			);
+		} );
+
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
