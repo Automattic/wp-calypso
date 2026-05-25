@@ -237,6 +237,29 @@ describe( 'Stepper.Trigger', () => {
 		);
 		expect( screen.getByRole( 'tab', { name: /step a/i } ) ).toBeInTheDocument();
 	} );
+
+	it( 'uses aria-disabled (not HTML disabled) on a disabled trigger', () => {
+		render(
+			<Stepper.Root orientation="horizontal" linear value="a" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+					<Stepper.Step value="b">
+						<Stepper.Trigger>Step B</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Content A</Stepper.Panel>
+				<Stepper.Panel value="b">Content B</Stepper.Panel>
+			</Stepper.Root>
+		);
+		// Step B is disabled by linear flow (not current, not completed)
+		const stepBTab = screen.getByRole( 'tab', { name: /step b/i } );
+		// Must NOT have HTML disabled (would remove from tab order)
+		expect( stepBTab ).not.toHaveAttribute( 'disabled' );
+		// MUST have aria-disabled (keeps focusable, communicates state to AT)
+		expect( stepBTab ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
 } );
 
 describe( 'Stepper.Panel', () => {
