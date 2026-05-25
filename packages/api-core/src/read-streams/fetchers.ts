@@ -279,7 +279,7 @@ export const fetchReadConversations = (
  * streams — both hit `/read/recommendations/posts`. The differentiator is in
  * the query params (algorithm vs. alg_prefix, plus `seed`), which Calypso
  * builds per stream type and passes through. Pagination is offset-based (see
- * `extractPageHandle` in `client/state/reader/streams/normalize.ts`).
+ * `extractPageHandle` in `client/reader/data/stream/normalization/helpers.ts`).
  */
 export const fetchReadRecommendationsPosts = (
 	params: ReadStreamQueryParams = {}

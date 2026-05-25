@@ -10,18 +10,6 @@ export const PER_GAP = 40;
 
 export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
 
-export const SITE_LIMITER_FIELDS = [
-	'ID',
-	'site_ID',
-	'date',
-	'feed_ID',
-	'feed_item_ID',
-	'global_ID',
-	'metadata',
-	'site_URL',
-	'URL',
-];
-
 export const getQueryString = ( extras: Record< string, unknown > = {} ) => ( {
 	orderBy: 'date',
 	meta: QUERY_META,

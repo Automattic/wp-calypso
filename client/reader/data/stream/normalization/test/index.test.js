@@ -15,7 +15,7 @@ import {
 	getAlgorithmForStream,
 	getQueryString,
 	getQueryStringForPoll,
-} from '../normalize';
+} from '..';
 
 describe( 'getQueryString', () => {
 	it( 'sets default orderBy/meta/content_width', () => {

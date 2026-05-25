@@ -2,9 +2,11 @@ import {
 	createStreamDataFromCards,
 	createStreamDataFromPosts,
 	createStreamDataFromSites,
-} from 'calypso/state/reader/streams/normalize';
+} from './helpers';
 import type { StreamItem } from '../types';
 import type { ReadStreamResponse } from '@automattic/api-core';
+
+export * from './helpers';
 
 /**
  * Picks the field on each item that should be used as the stream's

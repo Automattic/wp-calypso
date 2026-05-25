@@ -3,11 +3,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
-import { normalizeStreamPage } from 'calypso/reader/data/stream';
+import { buildStreamQueryParams, normalizeStreamPage } from 'calypso/reader/data/stream';
+import { analyticsForStream } from 'calypso/reader/data/stream/normalization';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
-import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
-import { analyticsForStream } from 'calypso/state/reader/streams/normalize';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 import type { StreamItem } from 'calypso/reader/data/stream';
 

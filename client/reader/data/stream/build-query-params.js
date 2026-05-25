@@ -9,7 +9,7 @@ import {
 	getAlgorithmForStream,
 	getQueryString,
 	getQueryStringForPoll,
-} from './normalize';
+} from './normalization';
 
 // Stable seed for the recommendation streams (`recommendations_posts`,
 // `custom_recs_posts_with_images`). Mirrors the legacy data-layer behavior:

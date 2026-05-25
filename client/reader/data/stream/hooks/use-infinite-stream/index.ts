@@ -13,10 +13,9 @@ import {
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post-cache-sync';
 import { useDispatch } from 'calypso/state';
-import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
-import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
-import { combineXPosts } from 'calypso/state/reader/streams/utils';
-import { normalizeStreamPage } from '../../normalization';
+import { buildStreamQueryParams } from '../../build-query-params';
+import { extractPageHandle, normalizeStreamPage } from '../../normalization';
+import { combineXPosts } from '../../utils';
 import type { StreamItem } from '../../types';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 import type { Dispatch } from 'redux';

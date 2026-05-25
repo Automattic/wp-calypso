@@ -7,8 +7,8 @@ import {
 } from '@automattic/api-queries';
 import { type InfiniteData, type QueryClient } from '@tanstack/react-query';
 import { keysAreEqual } from 'calypso/reader/post-key';
-import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import { normalizeStreamPage } from '../normalization';
+import { combineXPosts } from '../utils';
 import type { StreamItem } from '../types';
 import type { ReadStreamResponse } from '@automattic/api-core';
 

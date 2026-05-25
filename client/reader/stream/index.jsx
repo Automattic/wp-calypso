@@ -21,7 +21,13 @@ import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/util
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCachedPost } from 'calypso/reader/data/post-cache';
 import { withPostLikeActions } from 'calypso/reader/data/post-likes';
-import { normalizeStreamPage, useInfiniteStream } from 'calypso/reader/data/stream';
+import {
+	analyticsForStream,
+	INITIAL_FETCH,
+	normalizeStreamPage,
+	PER_FETCH,
+	useInfiniteStream,
+} from 'calypso/reader/data/stream';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
@@ -32,11 +38,6 @@ import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import {
-	analyticsForStream,
-	PER_FETCH,
-	INITIAL_FETCH,
-} from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';

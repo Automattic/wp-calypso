@@ -11,11 +11,8 @@ export type {
 } from '@automattic/api-queries';
 
 export { getCachedStreamItems, removeStreamItemFromCache } from './cache';
-export {
-	getStreamDateProperty,
-	normalizeStreamPage,
-	type NormalizedStreamPage,
-} from './normalization';
+export { buildStreamQueryParams } from './build-query-params';
+export * from './normalization';
 export {
 	prefetchInfiniteStream,
 	useInfiniteStream,
