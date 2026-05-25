@@ -1,14 +1,21 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, ReactNode, useState } from 'react';
+import { useCallback, useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
-import CommissionListActions from './commission-list-actions';
 import MigrationsCommissionsListMobileView from './mobile-view';
+import UntagSiteDialog from './untag-site-dialog';
+import useCommissionListActions from './use-commission-list-actions';
 import type { TaggedSite } from '../types';
 import type { Field } from '@wordpress/dataviews';
+
+type ActiveModal =
+	| { kind: 'untag'; site: TaggedSite }
+	| { kind: 'request-review'; site: TaggedSite }
+	| null;
 
 export default function MigrationsCommissionsList( {
 	items,
@@ -27,15 +34,38 @@ export default function MigrationsCommissionsList( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'site', 'migratedOn', 'reviewStatus', 'remove' ],
+		fields: [ 'site', 'migratedOn', 'reviewStatus' ],
+		layout: {
+			styles: {
+				site: { width: '40%' },
+				migratedOn: { width: '25%' },
+				reviewStatus: { width: '25%' },
+			},
+		},
 	} );
+
+	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
+
+	const closeModal = useCallback( () => setActiveModal( null ), [] );
+
+	const onUntagSite = useCallback(
+		( site: TaggedSite ) => setActiveModal( { kind: 'untag', site } ),
+		[]
+	);
+
+	const onRequestReview = useCallback(
+		( site: TaggedSite ) => setActiveModal( { kind: 'request-review', site } ),
+		[]
+	);
+
+	const actions = useCommissionListActions( { onUntagSite, onRequestReview } );
 
 	const pagination = {
 		totalItems: items.length,
 		totalPages: 1,
 	};
 
-	const fields: Field< any >[] = useMemo(
+	const fields: Field< TaggedSite >[] = useMemo(
 		() => [
 			{
 				id: 'site',
@@ -71,47 +101,52 @@ export default function MigrationsCommissionsList( {
 				enableHiding: false,
 				enableSorting: false,
 			},
-			{
-				id: 'remove',
-				label: translate( 'Actions' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: TaggedSite } ) => (
-					<CommissionListActions
-						fetchMigratedSites={ fetchMigratedSites }
-						site={ item }
-						migrationTags={ migrationTags }
-					/>
-				),
-				enableSorting: false,
-			},
 		],
-		[ translate, fetchMigratedSites, migrationTags, canTagSitesForCommission ]
+		[ translate, canTagSitesForCommission ]
 	);
 
-	if ( ! isDesktop ) {
-		return (
-			<MigrationsCommissionsListMobileView
-				commissions={ items }
-				canTagSitesForCommission={ canTagSitesForCommission }
-			/>
-		);
-	}
-
 	return (
-		<div className="redesigned-a8c-table full-width">
-			<ItemsDataViews
-				data={ {
-					items,
-					getItemId: ( item ) => `${ item.id }`,
-					pagination,
-					enableSearch: false,
-					fields,
-					actions: [],
-					setDataViewsState,
-					dataViewsState,
-					defaultLayouts: { table: {} },
-				} }
-			/>
-		</div>
+		<>
+			{ isDesktop ? (
+				<div className="redesigned-a8c-table full-width">
+					<ItemsDataViews
+						data={ {
+							items,
+							getItemId: ( item ) => `${ item.id }`,
+							pagination,
+							enableSearch: false,
+							fields,
+							actions,
+							setDataViewsState,
+							dataViewsState,
+							defaultLayouts: { table: {} },
+						} }
+					/>
+				</div>
+			) : (
+				<MigrationsCommissionsListMobileView
+					commissions={ items }
+					actions={ actions }
+					canTagSitesForCommission={ canTagSitesForCommission }
+				/>
+			) }
+
+			{ activeModal?.kind === 'untag' && (
+				<UntagSiteDialog
+					site={ activeModal.site }
+					migrationTags={ migrationTags }
+					fetchMigratedSites={ fetchMigratedSites }
+					onClose={ closeModal }
+				/>
+			) }
+
+			{ activeModal?.kind === 'request-review' && (
+				<RequestReviewModal
+					site={ activeModal.site }
+					fetchMigratedSites={ fetchMigratedSites }
+					onClose={ closeModal }
+				/>
+			) }
+		</>
 	);
 }
