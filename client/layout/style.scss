@@ -44,7 +44,11 @@ body.is-focus-sites {
 	@include clear-fix;
 	position: relative;
 	margin: 0;
-	padding: 79px 32px 32px calc( var( --sidebar-width-max ) + 32px + 1px );
+
+	--_layout__content-top-spacing: 79px;
+
+	padding: var( --_layout__content-top-spacing ) 32px 32px
+		calc( var( --sidebar-width-max ) + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -58,6 +62,9 @@ body.is-focus-sites {
 	.is-section-checkout.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
+		// Allow descendant `position: sticky` (order summary sidebar) to pin
+		// against the viewport. Global `overflow: hidden` above breaks sticky.
+		overflow: visible;
 	}
 	// Note that we have to use a 0,0,3,1 specificity selector to override the
 	// one in `client/my-sites/sidebar/style.scss` which has 0,0,3,0 in case it
@@ -101,7 +108,10 @@ body.is-focus-sites {
 
 	// Tablets
 	@include breakpoint-deprecated( '<960px' ) {
-		padding: 71px 24px 24px calc( var( --sidebar-width-min ) + 24px + 1px );
+		--_layout__content-top-spacing: 71px;
+
+		padding: var( --_layout__content-top-spacing ) 24px 24px
+			calc( var( --sidebar-width-min ) + 24px + 1px );
 
 		.has-no-sidebar & {
 			padding-left: 24px;
@@ -126,7 +136,8 @@ body.is-focus-sites {
 	@include breakpoint-deprecated( '<660px' ) {
 		margin-left: 0;
 		padding: 0;
-		padding-top: calc( var( --masterbar-height ) + 1px );
+		--_layout__content-top-spacing: calc( var( --masterbar-height ) + 1px );
+		padding-top: var( --_layout__content-top-spacing );
 
 		.has-no-sidebar & {
 			padding-left: 0;
@@ -134,6 +145,22 @@ body.is-focus-sites {
 
 		.is-section-plugins.has-no-sidebar.is-logged-in & {
 			padding: calc( var( --masterbar-height ) + 1px ) 0 0;
+		}
+	}
+
+	.is-section-checkout-thank-you:has( .step-container-v2--domain-only ) & {
+		padding-inline-start: 8px;
+		padding-inline-end: 12px;
+
+		@include break-small {
+			--_layout__content-top-spacing: 0;
+			padding: 0;
+		}
+	}
+
+	.is-section-checkout & {
+		.wpcom-loading__boot {
+			margin-top: calc( 32vh + var( --_layout__content-top-spacing ) );
 		}
 	}
 }
@@ -268,7 +295,7 @@ body.is-mobile-app-view {
 		}
 	}
 
-	.all-sites .count {
+	.all-sites .a8c-count {
 		color: var( --color-sidebar-text );
 		border-color: var( --color-sidebar-text );
 	}

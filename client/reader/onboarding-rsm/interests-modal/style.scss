@@ -1,0 +1,166 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.interests-modal {
+	// Frame sizing, the WP modal flex layout, the VStack scroll region, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
+
+	.email-verification-banner {
+		margin: 12px 16px 0;
+	}
+
+	&.is-disabled {
+		.interests-modal__content {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
+	&__content {
+		padding: 4px 32px 12px;
+	}
+
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.75rem;
+		font-weight: 400;
+		text-align: center;
+
+		@media ( max-width: $break-medium ) {
+			font-size: 1.5rem;
+		}
+	}
+
+	&__subtitle {
+		text-align: center;
+		margin: 0;
+	}
+
+	&__subtitle-break {
+		// Keep subtitle sentences on separate lines when there is reasonable room for them.
+		// On smaller viewports, they should be one text block for wrapping.
+		@media ( max-width: $break-medium ) {
+			display: none;
+		}
+	}
+
+	&__packs {
+		display: flex;
+		gap: 16px;
+		overflow-x: auto;
+		padding: 16px 4px 12px;
+		// Allow card shadows and stacked-card pseudo-elements to show without being clipped.
+		margin: 0 -4px;
+		scroll-snap-type: x mandatory;
+		scroll-padding-left: 4px;
+
+		// Subtle scrollbar styling.
+		scrollbar-width: thin;
+
+		&::-webkit-scrollbar {
+			height: 8px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var( --color-neutral-10, #dcdcde );
+			border-radius: 4px;
+		}
+	}
+
+	&__pack-item {
+		display: flex;
+		flex: 0 0 auto;
+		position: relative;
+
+		// Create two "stacked cards" behind the main card using pseudo-elements.
+		// Only the bottom strips of the stacked cards are visible below the main card.
+		// Front card border: --color-border-subtle (#E0E0E0). Back cards: #F0F0F0 (designer spec).
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			background: var( --color-surface );
+			border-radius: 8px;
+			border: 1px solid var( --color-border-subtle, #f0f0f0 );
+		}
+
+		// Middle stacked card: 10px inset on each side, peeks 6px above.
+		&::before {
+			inset-inline: 10px;
+			top: -6px;
+			bottom: 6px;
+			z-index: 0;
+		}
+
+		// Back stacked card: 20px inset on each side, peeks 12px above.
+		&::after {
+			inset-inline: 20px;
+			top: -12px;
+			bottom: 12px;
+			z-index: -1;
+		}
+	}
+
+	&__topics-toggle-row {
+		display: flex;
+		justify-content: center;
+	}
+
+	&__topics-toggle.components-button {
+		font-weight: 500;
+	}
+
+	&__topics-pills {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 12px;
+		padding-inline: 60px;
+		margin-block-start: 4px;
+		padding-block-end: 32px;
+
+		@media ( max-width: $break-medium ) {
+			padding-inline: 12px;
+		}
+	}
+
+	&__topic-pill {
+		display: inline-flex;
+		align-items: center;
+		height: 32px;
+		padding: 0 16px;
+		border: 1px solid var( --color-border-subtle, #dcdcde );
+		// Half of the 32px pill height yields a fully-rounded shape.
+		border-radius: 16px;
+		background-color: var( --studio-gray-0, #f6f7f7 );
+		color: var( --color-text );
+		font-size: 0.875rem;
+		line-height: 1;
+		cursor: pointer;
+		transition:
+			background-color 120ms ease,
+			color 120ms ease,
+			border-color 120ms ease;
+
+		&:hover:not( :disabled ) {
+			border-color: var( --color-neutral-30, #a7aaad );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --color-accent, #3858e9 );
+			outline-offset: 2px;
+		}
+
+		&.is-selected {
+			background-color: var( --studio-gray-90, #1e1e1e );
+			border-color: var( --studio-gray-90, #1e1e1e );
+			color: var( --studio-white, #fff );
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: progress;
+		}
+	}
+}

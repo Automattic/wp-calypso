@@ -1,5 +1,5 @@
 import { Modal, __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { sprintf, _n, __ } from '@wordpress/i18n';
+import { sprintf, _n, __, _x } from '@wordpress/i18n';
 import * as React from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import type { Purchase } from '@automattic/api-core';
@@ -67,7 +67,7 @@ const MarketPlaceSubscriptionsWarning = ( {
 							onClick={ closeDialog }
 							disabled={ false /*updateDnsMutation.isPending*/ }
 						>
-							{ __( 'Cancel' ) }
+							{ _x( 'Cancel', 'Deny this change and return to the previous screen' ) }
 						</Button>
 						<Button
 							__next40pxDefaultSize

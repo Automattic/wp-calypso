@@ -5,16 +5,20 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
+import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useMemo, useEffect } from 'react';
+import { withColorScheme } from 'calypso/lib/color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { AppProvider } from './context';
+import { dashboardChartTheme } from './chart-theme';
+import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
+import { useSurvicate } from './survicate';
 import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
@@ -25,6 +29,7 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
+	const { posthog } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
@@ -32,10 +37,18 @@ function AnalyticsProviderWithClient( {
 		}
 	}, [ user, router ] );
 
+	useEffect( () => {
+		if ( posthog ) {
+			import( '@automattic/posthog' ).then( ( { init } ) =>
+				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
+			);
+		}
+	}, [ user, posthog ] );
+
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
-				const path = getNormalizedPath( router );
+				const path = getNormalizedPath( router.state.matches, router.basepath );
 				recordTracksEvent( eventName, {
 					path,
 					...properties,
@@ -54,6 +67,8 @@ function AnalyticsProviderWithClient( {
 		[ router ]
 	);
 
+	useSurvicate();
+
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }
 
@@ -66,7 +81,11 @@ function Layout( { config }: { config: AppConfig } ) {
 				<AuthProvider>
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
-							<RouterProvider router={ router } context={ { config } } />
+							<GlobalChartsProvider theme={ dashboardChartTheme }>
+								{ withColorScheme( <RouterProvider router={ router } context={ { config } } />, {
+									enabled: config.supports.colorScheme,
+								} ) }
+							</GlobalChartsProvider>
 						</AnalyticsProviderWithClient>
 					</I18nProvider>
 				</AuthProvider>

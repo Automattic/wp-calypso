@@ -1,5 +1,6 @@
 import { OpenInlineInserter } from '../../pages';
 import {
+	disableFormEmailNotifications,
 	labelFormFieldBlock,
 	makeSelectorFromBlockName,
 	validatePublishedFormFields,
@@ -36,6 +37,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
+
 		// Determine if we are working with the refactored form fields (released June 2025)
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const initailBlock = editorCanvas.locator( makeSelectorFromBlockName( 'Text input field' ) );
@@ -52,7 +55,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 
 		// Add remaining field blocks, labeling as we go.
 		const remainingBlocksToAdd = [
-			[ 'Name field', 'Add label…' ],
+			[ 'Name', 'Add label…', 'Name field' ],
 			[ 'Email field', 'Add label…' ],
 			[ 'Website field', 'Add label…' ],
 			[ 'Date picker', 'Add label…' ],
@@ -64,12 +67,18 @@ export class AllFormFieldsFlow implements BlockFlow {
 			[ 'Dropdown field', 'Add label' ],
 			[ 'Terms consent', 'Add implicit consent message…' ],
 		];
-		for ( const [ blockName, accessibleLabelName ] of remainingBlocksToAdd ) {
-			await this.addFieldBlockToForm( context, blockName, lastBlockName, isRefactor );
+		for ( const [ blockName, accessibleLabelName, inserterBlockName ] of remainingBlocksToAdd ) {
+			await this.addFieldBlockToForm(
+				context,
+				inserterBlockName ?? blockName,
+				blockName,
+				lastBlockName,
+				isRefactor
+			);
 			await labelFormFieldBlock( context.addedBlockLocator, {
 				blockName,
 				accessibleLabelName,
-				labelText: this.addLabelPrefix( blockName ),
+				labelText: this.addLabelPrefix( inserterBlockName ?? blockName ),
 				isRefactor,
 			} );
 			lastBlockName = blockName;
@@ -148,13 +157,15 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * Adds a field block to the form using the inline inserter.
 	 *
 	 * @param {EditorContext} context The editor context object.
-	 * @param {string} blockName Name of the block.
+	 * @param {string} inserterBlockName Name of the block in the inserter.
+	 * @param {string} selectorBlockName Name of the block for the selector.
 	 * @param {string} lastBlockName The name of the previously inserted block.
 	 * @param {boolean} isRefactor Whether the block is part of the refactored form fields.
 	 */
 	private async addFieldBlockToForm(
 		context: EditorContext,
-		blockName: string,
+		inserterBlockName: string,
+		selectorBlockName: string,
 		lastBlockName: string,
 		isRefactor: boolean
 	) {
@@ -169,8 +180,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 			await editorCanvas.getByRole( 'button', { name: 'Add block' } ).first().click();
 		};
 		await context.editorPage.addBlockInline(
-			blockName,
-			makeSelectorFromBlockName( blockName ),
+			inserterBlockName,
+			makeSelectorFromBlockName( selectorBlockName ),
 			openInlineInserter
 		);
 	}

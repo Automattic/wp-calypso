@@ -1,6 +1,7 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
+@import '../themes/dark-mode';
 
 $theme-sheet-content-max-width: 1462px;
 $theme-sheet-content-padding-x: 20px;
@@ -553,6 +554,7 @@ $button-border: 4px;
 
 .theme__sheet-content {
 	&.card {
+		background-color: transparent;
 		box-shadow: none;
 		font-size: 1rem;
 		min-height: auto;
@@ -721,6 +723,7 @@ $button-border: 4px;
 	margin-bottom: 24px;
 
 	.card {
+		background-color: transparent;
 		box-shadow: none;
 		padding: 0;
 	}
@@ -811,5 +814,44 @@ $button-border: 4px;
 .theme__sheet-reviews-summary {
 	@include breakpoint-deprecated( '<960px' ) {
 		padding-left: 1.5rem;
+	}
+}
+
+.is-theme-showcase-modern {
+	.theme__sheet {
+		margin: 0 24px;
+	}
+
+	&.is-section-theme .theme__sheet .navigation-header,
+	&.is-section-theme .theme__sheet .theme__sheet-retired-notice,
+	.theme__sheet-columns {
+		max-width: 1220px;
+		padding: 24px 0;
+	}
+
+	@include breakpoint-deprecated( '<960px' ) {
+		.theme__sheet-column-header .theme__sheet-main,
+		.theme__sheet-reviews-summary,
+		.theme__sheet-column-left,
+		.theme__sheet-style-variations {
+			padding: 0;
+		}
+		.theme__sheet-reviews-summary {
+			padding-top: 16px;
+		}
+		.theme__sheet-features .card.is-compact {
+			padding: 16px 0;
+		}
+	}
+}
+
+body.color-scheme.is-themes-dark-mode.is-classic-dark,
+:root[data-theme='dark'] body.color-scheme.is-themes-dark-mode {
+	@include themes-dark-mode-root;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-themes-dark-mode {
+		@include themes-dark-mode-root;
 	}
 }

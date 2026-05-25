@@ -37,6 +37,7 @@ export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 export const PLAN_ECOMMERCE_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly';
 export const PLAN_MIGRATION_TRIAL_MONTHLY = 'wp_bundle_migration_trial_monthly';
+export const PLAN_PERSONAL_TRIAL_MONTHLY = 'wp-personal-bundle-free-trial-monthly';
 
 export const annualSlugs = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] as const;
 
@@ -47,6 +48,7 @@ export const monthlySlugs = [
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
 ] as const;
 
 export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, ...monthlySlugs ] as const;

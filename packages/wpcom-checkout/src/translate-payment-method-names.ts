@@ -14,6 +14,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
 			return 'pix';
+		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico':
+			return 'pix_automatico';
 		case 'WPCOM_Billing_Ebanx':
 			return 'ebanx';
 		case 'WPCOM_Billing_PayPal_Direct':
@@ -31,6 +33,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'alipay';
 		case 'WPCOM_Billing_Stripe_Bancontact':
 			return 'bancontact';
+		case 'WPCOM_Billing_Stripe_Eps':
+			return 'eps';
 		case 'WPCOM_Billing_Stripe_Ideal':
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_P24':
@@ -43,8 +47,10 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'web-pay';
 		case 'WPCOM_Billing_MoneyPress_Stored':
 			return 'existingCard';
-		case 'WPCOM_Billing_Razorpay':
-			return 'razorpay';
+		case 'WPCOM_Billing_Stripe_Upi':
+			return 'stripe-upi';
+		case 'WPCOM_Billing_Stripe_Blik':
+			return 'stripe-blik';
 		default:
 			throw new Error( `Unknown payment method '${ paymentMethod }'` );
 	}
@@ -67,6 +73,8 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_MoneyPress_Stored';
 		case 'pix':
 			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix';
+		case 'pix_automatico':
+			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico';
 		case 'ebanx':
 			return 'WPCOM_Billing_Ebanx';
 		case 'netbanking':
@@ -84,6 +92,8 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Stripe_Alipay';
 		case 'bancontact':
 			return 'WPCOM_Billing_Stripe_Bancontact';
+		case 'eps':
+			return 'WPCOM_Billing_Stripe_Eps';
 		case 'ideal':
 			return 'WPCOM_Billing_Stripe_Ideal';
 		case 'p24':
@@ -95,8 +105,10 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Web_Payment';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
-		case 'razorpay':
-			return 'WPCOM_Billing_Razorpay';
+		case 'stripe-upi':
+			return 'WPCOM_Billing_Stripe_Upi';
+		case 'stripe-blik':
+			return 'WPCOM_Billing_Stripe_Blik';
 	}
 	return null;
 }
@@ -107,6 +119,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_MoneyPress_Stored':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
+		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
@@ -114,11 +127,13 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Payment_Method':
 		case 'WPCOM_Billing_Stripe_Alipay':
 		case 'WPCOM_Billing_Stripe_Bancontact':
+		case 'WPCOM_Billing_Stripe_Eps':
 		case 'WPCOM_Billing_Stripe_Ideal':
 		case 'WPCOM_Billing_Stripe_P24':
 		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 		case 'WPCOM_Billing_Web_Payment':
-		case 'WPCOM_Billing_Razorpay':
+		case 'WPCOM_Billing_Stripe_Upi':
+		case 'WPCOM_Billing_Stripe_Blik':
 			return slug;
 	}
 	return null;
@@ -137,6 +152,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 	switch ( slug ) {
 		case 'ebanx':
 		case 'pix':
+		case 'pix_automatico':
 		case 'netbanking':
 		case 'paypal-direct':
 		case 'paypal-express':
@@ -147,12 +163,14 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'existingPayPalPPCP':
 		case 'alipay':
 		case 'bancontact':
+		case 'eps':
 		case 'ideal':
 		case 'p24':
 		case 'wechat':
 		case 'web-pay':
 		case 'free-purchase':
-		case 'razorpay':
+		case 'stripe-upi':
+		case 'stripe-blik':
 			return slug;
 		case 'apple-pay':
 		case 'google-pay':
@@ -187,11 +205,14 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 	const redirectPaymentMethods = [
 		'alipay',
 		'bancontact',
+		'eps',
 		'ideal',
 		'netbanking',
 		'paypal-express',
 		'paypal-js',
 		'p24',
+		'stripe-blik',
+		'stripe-upi',
 		'wechat',
 	];
 	return redirectPaymentMethods.includes( slug );

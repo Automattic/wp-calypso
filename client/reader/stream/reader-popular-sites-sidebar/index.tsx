@@ -1,9 +1,16 @@
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import { useInfiniteStream } from 'calypso/reader/data/stream';
 import '../style.scss';
 
 interface PopularSitesSidebarProps {
 	followSource: string;
 	items: PopularSiteItemProp[];
+	title?: string;
+}
+
+interface PopularSitesSidebarContainerProps {
+	streamKey: string;
+	followSource: string;
 	title?: string;
 }
 
@@ -60,9 +67,9 @@ const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 		.map( ( item ): ReaderPopularSite | null => getPopularSiteFromItem( item ) )
 		.filter( ( site ): site is ReaderPopularSite => site !== null );
 
-	const popularSitesLinks: JSX.Element[] = sites.map( ( site ) => (
+	const popularSitesLinks: JSX.Element[] = sites.map( ( site, index ) => (
 		<ConnectedReaderSubscriptionListItem
-			key={ site.feed_ID }
+			key={ site.feed_ID ?? `popular-site-${ index }` }
 			feedId={ site.feed_ID }
 			siteId={ site.blog_ID }
 			site={ site }
@@ -87,3 +94,25 @@ const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 };
 
 export default ReaderPopularSitesSidebar;
+
+/**
+ * Container that fetches the stream items via `useInfiniteStream` (React Query)
+ * and renders the presentational sidebar. Shares the cache key with `<Stream>`
+ * when both are mounted with the same `streamKey`, so a single network
+ * request feeds both consumers.
+ */
+export const ReaderPopularSitesSidebarContainer = ( {
+	streamKey,
+	followSource,
+	title,
+}: PopularSitesSidebarContainerProps ) => {
+	const { items } = useInfiniteStream( { streamKey } );
+
+	return (
+		<ReaderPopularSitesSidebar
+			items={ items as unknown as PopularSiteItemProp[] }
+			followSource={ followSource }
+			title={ title }
+		/>
+	);
+};

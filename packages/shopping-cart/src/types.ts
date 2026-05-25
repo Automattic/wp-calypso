@@ -347,6 +347,14 @@ export type RequestCartTaxData = null | {
  * exist at all (although there will likely be a message if the item failed to
  * be added).
  *
+ * Most cart items require either a `product_slug` or `product_id` to identify
+ * the product. The one exception is a renewal requested by subscription ID
+ * only: in that case `product_slug` may be omitted and the server will look up
+ * the product from the subscription record. To request such a renewal, use
+ * `RequestCartProductRenewalBySubscriptionId` (a member of this union) and set
+ * `extra.purchaseId` to the subscription ID with `extra.purchaseType` set to
+ * `'renewal'`.
+ *
  * See `createRequestCartProduct()` and `createRequestCartProducts()` in this
  * package for a convenient way to create a `RequestCartProduct`.
  *
@@ -867,6 +875,7 @@ export interface ResponseCartProductExtra {
 	legal_agreements?: never[] | DomainLegalAgreements;
 	is_gravatar_domain?: boolean;
 	is_hundred_year_domain?: boolean;
+	is_art_promo?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -916,6 +925,15 @@ export interface ResponseCartGiftDetails {
 	receiver_blog_url?: string;
 }
 
+export type SitelessCheckoutType =
+	| 'domainonly'
+	| 'jetpack'
+	| 'akismet'
+	| 'marketplace'
+	| 'a4a'
+	| 'unified'
+	| undefined;
+
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
  * `RequestCart` (in `RequestCartProduct`).
@@ -931,6 +949,18 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * and we might find the wrong one.
 	 */
 	purchaseId?: string;
+
+	sitelessCheckoutType?: SitelessCheckoutType;
+
+	/**
+	 * Marks a product as having been added by the siteless domain-only flow.
+	 */
+	isDomainOnlySitelessCheckout?: boolean;
+
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/unified` route.
+	 */
+	isUnifiedSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
@@ -952,6 +982,16 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	privacy_available?: boolean;
 	privacy?: boolean;
 	selected_page_titles?: string[];
+	/**
+	 * Ordered list of DIFM-selected page instances captured in page picker.
+	 * Each array item represents one selected page tile:
+	 * - id: unique instance identifier for this selection (for example CUSTOM_PAGE, CUSTOM_PAGE_2)
+	 * - type: canonical page type used by downstream logic (for example CUSTOM_PAGE, SERVICES_PAGE)
+	 *
+	 * The array order matches user selection/display order and is used to initialize
+	 * website-content sections without collisions when multiple pages share the same type.
+	 */
+	selected_page_instances?: Array< { id: string; type: string } >;
 	site_title?: string;
 	signup_flow?: string;
 	import_dns_records?: boolean;
@@ -979,8 +1019,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	hosting_intent?: string;
 
 	/**
-	 * Indicates the user was in a treatment variation of the pricing
-	 * differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 * Indicates the user was in the rolled-out pricing differentiation cohort.
 	 * Used to add the `gating-business-q1` blog sticker on purchase.
 	 */
 	is_gating_business_q1?: boolean;

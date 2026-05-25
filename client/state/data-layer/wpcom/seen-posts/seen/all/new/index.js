@@ -1,11 +1,12 @@
+import { getCachedPost } from 'calypso/reader/data/post/cache';
+import { getCachedStreamItems } from 'calypso/reader/data/stream';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_SEEN_MARK_ALL_AS_SEEN_REQUEST } from 'calypso/state/reader/action-types';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getStream } from 'calypso/state/reader/streams/selectors';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 
 const toApi = ( action ) => {
@@ -28,7 +29,7 @@ export function fetch( action ) {
 }
 
 // need to dispatch multiple times so use a redux-thunk
-export const onSuccess = ( action, response ) => ( dispatch, getState ) => {
+export const onSuccess = ( action, response ) => ( dispatch ) => {
 	if ( response.status ) {
 		const { identifier, feedIds, feedUrls } = action;
 		// re-request unseen status and followed feeds
@@ -36,19 +37,16 @@ export const onSuccess = ( action, response ) => ( dispatch, getState ) => {
 		dispatch( requestFollows() );
 
 		// get stream post identifier
-		const state = getState();
-		const stream = getStream( state, identifier );
-
-		if ( ! stream.items ) {
-			return;
-		}
-		const posts = getPostsByKeys( state, stream.items );
-
-		// get their global ids
-		const globalIds = posts.reduce( ( acc, item ) => {
-			acc.push( item.global_ID );
-			return acc;
-		}, [] );
+		const queryClient = getCalypsoQueryClient();
+		const globalIds = queryClient
+			? getCachedStreamItems( queryClient, { streamKey: identifier } ).reduce( ( acc, item ) => {
+					const post = getCachedPost( queryClient, item );
+					if ( post?.global_ID ) {
+						acc.push( post.global_ID );
+					}
+					return acc;
+			  }, [] )
+			: [];
 
 		// update to seen based on global ids
 		dispatch( receiveMarkAllAsSeen( { feedIds, feedUrls, globalIds } ) );

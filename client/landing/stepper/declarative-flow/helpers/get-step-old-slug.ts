@@ -4,7 +4,6 @@
 export const getStepOldSlug = ( stepSlug: string ): string | undefined => {
 	const stepSlugMap: Record< string, string > = {
 		'create-site': 'site-creation-step',
-		'design-setup': 'designSetup',
 	};
 
 	return stepSlugMap[ stepSlug ];

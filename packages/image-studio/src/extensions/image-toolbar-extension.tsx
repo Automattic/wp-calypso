@@ -1,0 +1,148 @@
+import { BlockControls } from '@wordpress/block-editor';
+import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { store as coreStore } from '@wordpress/core-data';
+import { dispatch, useSelect } from '@wordpress/data';
+import { Component, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
+import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
+import { type ImageData } from '../utils/get-image-data';
+import { trackImageStudioOpened } from '../utils/tracking';
+
+/**
+ * Add Image Studio button to image blocks toolbar
+ */
+export const withImageStudioToolbarButton = createHigherOrderComponent(
+	( BlockEdit: React.ComponentType< BlockEditProps > ) => {
+		const ImageStudioToolbarButtonInner = ( props: BlockEditProps ) => {
+			const { openImageStudio } = dispatch( imageStudioStore );
+			const { attributes, setAttributes } = props;
+
+			// Get supported MIME types
+			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
+
+			// Fetch the attachment from the media store
+			const { media, hasResolved } = useSelect(
+				( select ) => {
+					if ( ! attributes?.id ) {
+						return { media: null, hasResolved: true };
+					}
+					return {
+						media: select( coreStore ).getEntityRecord(
+							'postType',
+							'attachment',
+							attributes.id as number
+						),
+						hasResolved: ( select( coreStore ) as any ).hasFinishedResolution( 'getEntityRecord', [
+							'postType',
+							'attachment',
+							attributes.id as number,
+						] ),
+					};
+				},
+				[ attributes?.id ]
+			);
+
+			const handleClose = useCallback(
+				( image: ImageData | null ) => {
+					if ( image === null ) {
+						setAttributes( {
+							url: undefined,
+							id: undefined,
+							alt: '',
+							title: '',
+							caption: '',
+						} );
+						return;
+					}
+					if ( image?.id ) {
+						setAttributes( {
+							url: image.url,
+							id: image.id,
+							alt: image.alt,
+							description: image.description,
+							title: image.title,
+						} );
+					}
+				},
+				[ setAttributes ]
+			);
+
+			const attachmentId = attributes.id as number | undefined;
+
+			const handleEditClick = useCallback( () => {
+				trackImageStudioOpened( {
+					mode: ImageStudioMode.Edit,
+					attachmentId,
+					entryPoint: ImageStudioEntryPoint.EditorBlock,
+				} );
+				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
+			}, [ attachmentId, handleClose, openImageStudio, props.name ] );
+
+			if ( props.name !== 'core/image' || ! attributes?.id ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			const attachment = media as {
+				source_url?: string;
+				mime_type?: string;
+				media_details?: { sizes?: Record< string, { source_url?: string } > };
+			} | null;
+
+			// Check if image MIME type is supported
+			if ( attachment?.mime_type && ! supportedMimeTypes.includes( attachment.mime_type ) ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			// Don't show button if the attachment doesn't match the displayed image
+			// (e.g., image block pasted from another site with a stale ID).
+			// Collect all known URLs for this attachment (full size + all
+			// intermediate sizes) and check if the block URL matches any of them.
+			const stripParams = ( url: string ) => url.split( '?' )[ 0 ];
+			const knownUrls = new Set< string >();
+			if ( attachment?.source_url ) {
+				knownUrls.add( stripParams( attachment.source_url ) );
+			}
+			if ( attachment?.media_details?.sizes ) {
+				for ( const size of Object.values( attachment.media_details.sizes ) ) {
+					if ( size.source_url ) {
+						knownUrls.add( stripParams( size.source_url ) );
+					}
+				}
+			}
+			const attributeUrl = attributes?.url ? stripParams( attributes.url as string ) : null;
+			if ( hasResolved && attributeUrl && ( ! attachment || ! knownUrls.has( attributeUrl ) ) ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			return (
+				<>
+					<BlockEdit { ...props } />
+					<BlockControls group="default">
+						<ToolbarGroup>
+							<ToolbarButton
+								label={ __( 'Edit image with AI', __i18n_text_domain__ ) }
+								onClick={ handleEditClick }
+							>
+								{ __( 'Edit with AI', __i18n_text_domain__ ) }
+							</ToolbarButton>
+						</ToolbarGroup>
+					</BlockControls>
+				</>
+			);
+		};
+
+		// Class wrapper ensures compatibility with plugins that use
+		// `class extends` on editor filter results (e.g. AMP plugin).
+		// Arrow functions have no [[Construct]], so `class extends arrowFn` throws.
+		class ImageStudioToolbarButton extends Component< BlockEditProps > {
+			render() {
+				return <ImageStudioToolbarButtonInner { ...this.props } />;
+			}
+		}
+
+		return ImageStudioToolbarButton;
+	},
+	'withImageStudioToolbarButton'
+);

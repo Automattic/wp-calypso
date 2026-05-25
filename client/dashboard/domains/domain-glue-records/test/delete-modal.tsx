@@ -42,8 +42,6 @@ const mockDeleteDomainGlueRecordApiRequest = ( {
 		.reply( responseCode );
 };
 
-afterEach( () => nock.cleanAll() );
-
 test( 'renders delete modal with correct title and buttons', async () => {
 	renderDeleteModal();
 

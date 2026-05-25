@@ -3,7 +3,9 @@ export interface CancelPurchaseState {
 	atomicRevertCheckTwo?: boolean;
 	atomicRevertConfirmed?: boolean;
 	cancelBundledDomain?: boolean;
+	cancelIntent?: 'refund' | null;
 	confirmCancelBundledDomain?: boolean;
+	confirmationPassed?: boolean;
 	customerConfirmedUnderstanding?: boolean;
 	domainConfirmationConfirmed?: boolean;
 	importQuestionRadio?: string;

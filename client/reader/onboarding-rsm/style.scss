@@ -1,0 +1,151 @@
+.reader-onboarding {
+	background-color: var( --color-surface-1 );
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	box-shadow: rgba( 0, 0, 0, 0.05 ) 0 0 0 1px inset;
+	margin-bottom: 24px;
+	padding: 20px 20px 5px 20px;
+
+	h2 {
+		font-weight: 600;
+		clear: initial;
+	}
+
+	.circular__progress-bar {
+		float: right;
+		margin: 5px 5px 5px 10px;
+	}
+}
+
+$actions-height: 64px;
+
+// Back button appears in the WP Modal header via the `headerActions` prop.
+// `order: -1` moves it before the (empty) title container, placing it on the
+// left side while the close button stays on the right.
+.reader-onboarding-rsm-modal .reader-onboarding-modal__back-button {
+	order: -1;
+}
+
+// User-agent buttons default to `cursor: default`, which makes the modal's
+// header (Back / Close), footer (Do it later / Pick your topics / Continue /
+// Finish), and inline action buttons (See more topics, Load more
+// recommendations, per-row Subscribe) feel non-interactive on hover. Restore
+// the pointer cursor for any enabled control inside the modal.
+.reader-onboarding-rsm-modal {
+	button:not( :disabled ):not( [aria-disabled='true'] ),
+	a {
+		cursor: pointer;
+	}
+}
+
+// Match Calypso keyboard-mode focus (`accessible-focus` on `<html>` from
+// `@automattic/accessible-focus`): hide focus rings on pointer use, show a
+// consistent outline when the user is navigating by keyboard.
+html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
+	button:focus,
+	a:focus,
+	[tabindex]:focus {
+		box-shadow: none;
+		outline: none;
+	}
+}
+
+.accessible-focus .reader-onboarding-rsm-modal {
+	button:focus,
+	a:focus,
+	[tabindex]:focus-visible {
+		outline: 2px solid var( --color-accent, #3858e9 );
+		outline-offset: 2px;
+		border-radius: 4px;
+		box-shadow: none;
+	}
+}
+
+// Shared layout for all reader-onboarding-rsm modals (welcome, interests,
+// subscribe). All three share the same overall size, the same flex-column
+// scroll/footer architecture, and the same footer styling. Per-modal
+// stylesheets only handle modal-specific content, padding, and visuals.
+.reader-welcome-modal,
+.interests-modal,
+.subscribe-modal {
+	// Frame size: 980 × 740 max, clamped to the viewport in either axis when
+	// smaller, so the modal itself never forces page-level scrolling.
+	// `margin: auto` keeps WP's default centering working for both axes.
+	&.components-modal__frame,
+	.components-modal__frame {
+		width: min( 980px, 100vw );
+		max-width: min( 980px, 100vw );
+		height: min( 740px, 100vh );
+		max-height: min( 740px, 100vh );
+		margin: auto;
+	}
+
+	// Make the WP modal content + its children-container a flex column with no
+	// scroll on itself, so the inner scrollable region and footer can stack as
+	// siblings. This keeps the scrollbar's track entirely above the footer (no
+	// overlap, no peek-through), regardless of OS scrollbar width.
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		padding-inline: 0;
+		padding-block-end: 0;
+	}
+
+	.components-modal__children-container {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	// Footer is a normal flex item below the scroll region (not an absolute
+	// overlay), so the scrollbar's track stays entirely above it.
+	.reader-onboarding-modal__footer {
+		height: $actions-height;
+		flex: 0 0 auto;
+		background-color: var( --color-surface );
+		padding-inline: 32px;
+
+		.reader-onboarding-modal__footer-actions {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.reader-onboarding-modal__footer-buttons {
+			width: auto;
+			flex: 0 0 auto;
+			justify-content: flex-end;
+		}
+	}
+}
+
+// VStack-based modals (welcome, interests) make the inner content the scroll
+// region. Padding differs per-modal and stays in the per-modal stylesheets.
+.reader-welcome-modal,
+.interests-modal {
+	&__content {
+		flex: 1 1 auto;
+		min-height: 0; // critical for flex item to shrink and trigger overflow
+		overflow-y: auto;
+
+		// VStack applies `min-height: 0` to its direct children, which
+		// otherwise lets them collapse rather than overflow. Restore natural
+		// sizing so the scroll container can detect overflow and scroll.
+		> * {
+			flex-shrink: 0;
+		}
+	}
+}
+
+// VStack defaults `justify-content: center`, which centers overflowing
+// children vertically — pushing the top portion (title/description) above
+// the scroll viewport where it can't be reached. Force start alignment so
+// content scrolls from the top. The doubled selector raises specificity
+// above WP's emotion-injected single-class rule.
+.reader-welcome-modal__content.reader-welcome-modal__content,
+.interests-modal__content.interests-modal__content {
+	justify-content: flex-start;
+}

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
 
 .layout.has-header-section.is-section-reader .layout__header-section-content {
 	box-sizing: border-box;
@@ -47,20 +48,6 @@
 	}
 }
 
-// to match other reader pages.
-.is-section-reader .layout:not(.has-no-sidebar) .tags__main {
-	padding: 30px 20px;
-	max-width: 600px;
-	margin: 0 auto;
-	@media (min-width: 660px) {
-		padding: 30px 0;
-	}
-	@media (min-width: 782px) {
-		padding: 24px 0;
-		max-width: 1140px;
-	}
-}
-
 .is-section-reader .layout.is-global-sidebar-visible {
 	@media (max-width: $break-small) {
 		.sticky-panel {
@@ -76,15 +63,6 @@
 	}
 
 	.tags__main {
-		box-sizing: border-box;
-		max-width: 968px; // Max width of dual column reader stream.
-		padding: 24px 0;
-
-		.navigation-header {
-			// Align the header text with the text in tags page content below.
-			padding-inline: 35px;
-		}
-
 		.tags__header h4 {
 			margin: -4px 0 19px;
 		}
@@ -133,10 +111,10 @@
 }
 
 .tags__header {
-	border-bottom: 1px solid var(--studio-gray-5);
-	padding: 0 35px;
+	border-bottom: 1px solid var(--color-border-subtle);
+
 	h4 {
-		color: var(--studio-gray-50);
+		color: var(--color-text-subtle);
 		margin-bottom: 15px;
 	}
 }
@@ -154,14 +132,14 @@
 		// we need to set the border on the column for mobile and the row for desktop
 		//border-top: 1px solid var(--studio-gray-5);
 		&:not(:last-child) {
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--color-border-subtle);
 		}
 	}
 	.trending-tags__column {
 		width: 100%;
 		// we need to set the border on the column for mobile and the row for desktop
-		border-top: 1px solid var(--studio-gray-5);
-		padding: 10px 35px;
+		border-top: 1px solid var(--color-border-subtle);
+		padding: 10px 0;
 		box-sizing: border-box;
 		@include break-small {
 			width: 50%;
@@ -188,11 +166,11 @@
 		}
 		.trending-tags__count {
 			font-size: 16px;
-			color: var(--studio-gray-50);
+			color: var(--color-text-subtle);
 		}
 	}
 	&:last-child .trending-tags__column:last-child {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--color-border-subtle);
 		@include break-small {
 			border-bottom: none;
 		}
@@ -200,10 +178,12 @@
 }
 
 .alphabetic-tags__header {
-	background-color: var(--studio-white);
-	border-bottom: 1px solid var(--studio-gray-5);
+	position: sticky;
+	top: 0;
+	background-color: var(--color-surface);
+	border-bottom: 1px solid var(--color-border-subtle);
 	margin-bottom: 26px;
-	padding: 20px 35px 10px 35px;
+	padding: 20px 0;
 
 	@include break-large {
 		display: flex;
@@ -212,7 +192,7 @@
 
 	h2 {
 		font-size: 16px;
-		color: var(--studio-gray-50);
+		color: var(--color-text-subtle);
 		font-weight: 500;
 		width: 100%;
 		margin-bottom: 20px;
@@ -231,7 +211,7 @@
 		}
 		button {
 			font-size: 16px;
-			color: var(--studio-gray-50);
+			color: var(--color-text-subtle);
 			text-decoration: none;
 			font-weight: 500;
 			flex-grow: 1;
@@ -281,10 +261,9 @@
 .alphabetic-tags__table {
 	padding-bottom: 26px;
 	&:not(:last-child) {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--color-border-subtle);
 	}
 	margin-bottom: 26px;
-	padding-left: 35px;
 
 	.alphabetic-tags__letter-title {
 		font-size: 32px;
@@ -313,13 +292,13 @@
 			}
 
 			a {
-				color: var(--studio-gray-80);
+				color: var(--color-text);
 				font-weight: 400;
 				display: inline-block;
 				border-bottom: 1px solid transparent;
 
 				&:hover {
-					border-bottom: 1px solid var(--studio-gray-80);
+					border-bottom: 1px solid var(--color-text);
 				}
 				&:focus {
 					outline: none;

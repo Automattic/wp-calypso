@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
@@ -63,8 +62,6 @@ export default function AddNewSiteButton( {
 	};
 
 	const popoverMenuContext = useRef( null );
-
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	const menuItem = ( {
 		icon,
@@ -203,58 +200,56 @@ export default function AddNewSiteButton( {
 					},
 				} ) }
 			</div>
-			{ devSitesEnabled && (
-				<div className="site-selector-and-importer__popover-column">
-					{ menuItem( {
-						icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
-						heading: translate( 'Start Building for Free' ),
-						description: translate(
-							'Develop up to 5 WordPress.com sites at{{nbsp/}}once with free development licenses.{{br/}}Only pay when you launch!',
-							{
-								components: { br: <br />, nbsp: <>&nbsp;</> },
-								comment: 'br is a line break, nbsp is a non-breaking space character',
+			<div className="site-selector-and-importer__popover-column">
+				{ menuItem( {
+					icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
+					heading: translate( 'Start Building for Free' ),
+					description: translate(
+						'Develop up to 5 WordPress.com sites at{{nbsp/}}once with free development licenses.{{br/}}Only pay when you launch!',
+						{
+							components: { br: <br />, nbsp: <>&nbsp;</> },
+							comment: 'br is a line break, nbsp is a non-breaking space character',
+						}
+					),
+					disabled: ! hasAvailableDevSites,
+					isBanner: true,
+					buttonProps: {
+						onClick: () => {
+							if ( ! hasAvailableDevSites ) {
+								return;
 							}
-						),
-						disabled: ! hasAvailableDevSites,
-						isBanner: true,
-						buttonProps: {
-							onClick: () => {
-								if ( ! hasAvailableDevSites ) {
-									return;
-								}
 
-								if ( paymentMethodRequired ) {
-									page(
-										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
-									);
-								} else {
-									toggleDevSiteConfigurationsModal?.();
-								}
-								setMenuVisible( false );
-							},
+							if ( paymentMethodRequired ) {
+								page(
+									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
+								);
+							} else {
+								toggleDevSiteConfigurationsModal?.();
+							}
+							setMenuVisible( false );
 						},
-						extraContent: (
-							<div>
-								<div className="site-selector-and-importer__popover-site-count">
-									{ translate( '%(pendingSites)d of 5 free licenses available', {
-										args: {
-											pendingSites: availableDevSites,
-										},
-										comment: '%(pendingSites)s is the number of free licenses available.',
-									} ) }
-								</div>
-								<div
-									className={ clsx( 'site-selector-and-importer__popover-development-site-cta', {
-										disabled: ! hasAvailableDevSites,
-									} ) }
-								>
-									{ translate( 'Create a site now →' ) }
-								</div>
+					},
+					extraContent: (
+						<div>
+							<div className="site-selector-and-importer__popover-site-count">
+								{ translate( '%(pendingSites)d of 5 free licenses available', {
+									args: {
+										pendingSites: availableDevSites,
+									},
+									comment: '%(pendingSites)s is the number of free licenses available.',
+								} ) }
 							</div>
-						),
-					} ) }
-				</div>
-			) }
+							<div
+								className={ clsx( 'site-selector-and-importer__popover-development-site-cta', {
+									disabled: ! hasAvailableDevSites,
+								} ) }
+							>
+								{ translate( 'Create a site now →' ) }
+							</div>
+						</div>
+					),
+				} ) }
+			</div>
 		</div>
 	);
 
@@ -275,9 +270,7 @@ export default function AddNewSiteButton( {
 				/>
 			</Button>
 			<Popover
-				className={ clsx( 'site-selector-and-importer__popover', {
-					'dev-sites-enabled': devSitesEnabled,
-				} ) }
+				className="site-selector-and-importer__popover dev-sites-enabled"
 				context={ popoverMenuContext?.current }
 				isVisible={ isMenuVisible }
 				closeOnEsc

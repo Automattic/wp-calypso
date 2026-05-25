@@ -4,13 +4,12 @@ import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
-import { Component } from 'react';
+import { useMemo, Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
-	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
@@ -20,6 +19,9 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
+import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -40,8 +42,6 @@ class Document extends Component {
 			clientData,
 			commitChecksum,
 			commitSha,
-			devDocs,
-			devDocsURL,
 			entrypoint,
 			env,
 			featuresHelper,
@@ -58,12 +58,13 @@ class Document extends Component {
 			manifests,
 			params,
 			preferencesHelper,
+			path,
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
+			dashboard,
 			sectionGroup,
 			sectionName,
-			hideWooHostedLogo,
 			storeSandboxHelper,
 			target,
 			user,
@@ -162,6 +163,22 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
+					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
+						<div id="wpcom-omnibar">
+							<InitialOmnibar user={ user } />
+						</div>
+					) }
+					{ dashboard &&
+						config.isEnabled( 'dashboard/omnibar' ) &&
+						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+							<div id="wpcom-omnibar">
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</div>
+						) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
@@ -182,11 +199,14 @@ class Document extends Component {
 								<div className="layout__content">
 									<LoadingPlaceholder
 										app={ app }
+										dashboard={ dashboard }
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
+										isWooCommerceQrLoginAuthCheck={
+											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
+										}
 										showStepContainerV2Loader={ showStepContainerV2Loader }
-										hideWooHostedLogo={ hideWooHostedLogo }
 									/>
 								</div>
 							</div>
@@ -203,7 +223,6 @@ class Document extends Component {
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
 
@@ -226,8 +245,9 @@ class Document extends Component {
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
-						manifests.map( ( manifest ) => (
+						manifests.map( ( manifest, index ) => (
 							<script
+								key={ `manifest-${ index }` }
 								nonce={ inlineScriptNonce }
 								dangerouslySetInnerHTML={ {
 									__html: manifest,
@@ -305,24 +325,45 @@ class Document extends Component {
 }
 function LoadingPlaceholder( {
 	app,
+	dashboard,
 	sectionName,
 	isWCCOM,
 	isOneTapAuth,
+	isWooCommerceQrLoginAuthCheck,
 	showStepContainerV2Loader,
-	hideWooHostedLogo,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
 		sectionName === 'stepper' ||
 		sectionName === 'signup' ||
-		isOneTapAuth;
+		isOneTapAuth ||
+		isWooCommerceQrLoginAuthCheck;
+
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent: () => {},
+			logo: getDashboardStepperLogo( dashboard ),
+		} ),
+		[ dashboard ]
+	);
 
 	if ( shouldNotShowLoadingLogo ) {
 		return showStepContainerV2Loader || isOneTapAuth ? (
-			<Step.Loading hideLogo={ hideWooHostedLogo } />
+			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+				<Step.Loading />
+			</Step.StepContainerV2Provider>
 		) : (
 			<Loading className="wpcom-loading__boot" />
 		);
+	}
+
+	// Dashboard apps render their own loading logo in the dashboard Root after
+	// hydration. Skipping the SSR logo avoids a double-render with positional
+	// jitter between the SSR and Root containers.
+	if ( dashboard ) {
+		return null;
 	}
 
 	const LoadingLogo = chooseLoadingLogo( {

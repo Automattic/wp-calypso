@@ -57,18 +57,31 @@ export class JetpackDashboardPage {
 			.click();
 		await this.page.waitForURL( new RegExp( `page=jetpack#/${ param.view }`, 'i' ) );
 
-		// Click on the tab.
-		await this.page
-			.getByRole( 'main' )
-			.getByRole( 'menuitem', { name: param.tab, exact: true } )
-			.click();
+		if ( param.view === 'Settings' ) {
+			// Settings tabs use @wordpress/ui.
+			const nav = this.page
+				.getByRole( 'main' )
+				.getByRole( 'tablist', { name: 'Jetpack settings sections' } );
 
-		// Filter the nav tabs to elements that have `.is-selected` (should be only one),
-		// and verify the resulting element is the tab that was clicked on earlier.
-		await this.page
-			.getByRole( 'main' )
-			.filter( { has: this.page.locator( '.is-selected' ) } )
-			.filter( { hasText: param.tab } )
-			.waitFor();
+			await nav.getByRole( 'tab', { name: param.tab, exact: true } ).click();
+
+			// Verify the clicked tab is now active.
+			await nav
+				.getByRole( 'tab', { name: param.tab, exact: true } )
+				.and( this.page.locator( '[aria-selected="true"]' ) )
+				.waitFor();
+		} else {
+			// Dashboard tabs use NavItem components (role="menuitem" + .is-selected).
+			await this.page
+				.getByRole( 'main' )
+				.getByRole( 'menuitem', { name: param.tab, exact: true } )
+				.click();
+
+			await this.page
+				.getByRole( 'main' )
+				.filter( { has: this.page.locator( '.is-selected' ) } )
+				.filter( { hasText: param.tab } )
+				.waitFor();
+		}
 	}
 }

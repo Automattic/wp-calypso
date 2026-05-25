@@ -1,0 +1,31 @@
+name: A4A PR Review
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+
+  pull_request:
+    types: [opened, ready_for_review]
+    paths:
+      - 'client/a8c-for-agencies/**'
+
+concurrency:
+  group: a4a-pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
+    with:
+      area: a4a
+    secrets:
+      anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

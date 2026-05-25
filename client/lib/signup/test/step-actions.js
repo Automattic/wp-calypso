@@ -140,7 +140,7 @@ describe( 'isDomainFulfilled', () => {
 		isDomainFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, domainItem: undefined },
+			{ stepName, domainItem: undefined, wasSkipped: true },
 			{ domainItem: undefined }
 		);
 	} );

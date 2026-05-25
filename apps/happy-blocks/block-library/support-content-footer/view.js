@@ -12,6 +12,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	helpCenterLinks.forEach( ( link ) =>
 		link.addEventListener( 'click', function ( e ) {
 			if ( window.helpCenter?.loadHelpCenter ) {
+				// Logged-out: load Help Center widget, then open it.
 				e.preventDefault();
 
 				window.helpCenter.loadHelpCenter().then( () => {
@@ -21,6 +22,13 @@ document.addEventListener( 'DOMContentLoaded', function () {
 						helpCenterDispatch.setShowHelpCenter( true );
 					}
 				} );
+			} else if ( window.wp?.data?.dispatch ) {
+				// Logged-in: Help Center is already loaded via Calypso layout.
+				e.preventDefault();
+
+				const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+				helpCenterDispatch.setNavigateToRoute( '/odie' );
+				helpCenterDispatch.setShowHelpCenter( true );
 			}
 		} )
 	);

@@ -19,6 +19,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 	signupUrl?: string;
 	gravatarFrom?: string;
 	gravatarFlow?: boolean;
+	plugins?: string;
  }} args The arguments
  * @returns {string}
  */
@@ -44,6 +45,7 @@ export function login( {
 	gravatarFrom = undefined,
 	gravatarFlow = undefined,
 	pluginName = undefined,
+	plugins = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -91,6 +93,21 @@ export function login( {
 		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
 	}
 
+	// When `from` is not explicitly provided, try to extract it from the `redirectTo` URL.
+	// This handles Woo flows (Core Profiler, Payments, etc.) where `from` is embedded
+	// in the redirect_to URL rather than being a top-level query parameter.
+	// See: isWooCommerceCoreProfilerFlow, isWooDnaFlow selectors for the same pattern.
+	if ( ! from && redirectTo ) {
+		try {
+			const redirectFromValue = new URLSearchParams( redirectTo.split( '?' )[ 1 ] ).get( 'from' );
+			if ( redirectFromValue ) {
+				from = redirectFromValue;
+			}
+		} catch {
+			// ignore parsing errors
+		}
+	}
+
 	if ( from ) {
 		url = addQueryArgs( { from }, url );
 	}
@@ -119,8 +136,43 @@ export function login( {
 		url = addQueryArgs( { gravatar_flow: '1' }, url );
 	}
 
+	// Same fallback pattern as `from` above — extract plugin_name from redirectTo
+	// when not explicitly provided. Needed for WooCommerce Payments flow detection.
+	if ( ! pluginName && redirectTo ) {
+		try {
+			const redirectPluginName = new URLSearchParams( redirectTo.split( '?' )[ 1 ] ).get(
+				'plugin_name'
+			);
+			if ( redirectPluginName ) {
+				pluginName = redirectPluginName;
+			}
+		} catch {
+			// ignore parsing errors
+		}
+	}
+
 	if ( pluginName ) {
 		url = addQueryArgs( { plugin_name: pluginName }, url );
+	}
+
+	// Same fallback pattern as `from` / `pluginName` above. The unified
+	// connection flow ships `plugins=...` on the authorize URL; promoting
+	// it to a top-level login query arg here keeps connector branding
+	// surviving any `redirect_to` rewrite (e.g. via 2FA flows that re-emit
+	// the login URL without the original redirect query string intact).
+	if ( ! plugins && redirectTo ) {
+		try {
+			const redirectPlugins = new URLSearchParams( redirectTo.split( '?' )[ 1 ] ).get( 'plugins' );
+			if ( redirectPlugins ) {
+				plugins = redirectPlugins;
+			}
+		} catch {
+			// ignore parsing errors
+		}
+	}
+
+	if ( plugins ) {
+		url = addQueryArgs( { plugins }, url );
 	}
 
 	return url;

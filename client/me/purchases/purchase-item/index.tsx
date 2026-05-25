@@ -1,5 +1,6 @@
 import {
 	isDomainTransfer,
+	isDomainRegistration,
 	isConciergeSession,
 	isAkismetFreeProduct,
 	PLAN_MONTHLY_PERIOD,
@@ -15,7 +16,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
-import { Icon, warning as warningIcon } from '@wordpress/icons';
+import { Icon, cautionFilled as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -54,11 +55,11 @@ import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
-	isTemporarySitePurchase,
-	isJetpackTemporarySitePurchase,
-	isAkismetTemporarySitePurchase,
-	isMarketplaceTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isJetpackHoldingSitePurchase,
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	isA4AHoldingSitePurchase,
+	isA4ABillingDragonPurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
@@ -116,14 +117,14 @@ export function PurchaseItemSiteIcon( {
 } ) {
 	let content = <SiteIcon site={ site ?? undefined } size={ 36 } />;
 
-	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+	if ( isAkismetHoldingSitePurchase( purchase ) ) {
 		content = (
 			<div className="purchase-item__static-icon">
 				<img src={ akismetIcon } alt="Akismet icon" />
 			</div>
 		);
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		if ( purchase.productSlug.startsWith( 'passport' ) ) {
 			content = (
 				<div className="purchase-item__static-icon">
@@ -148,7 +149,7 @@ export function PurchaseItemSiteIcon( {
 	if ( ! iconUrl && isJetpackPurchase ) {
 		content = (
 			<div className="purchase-item__static-icon">
-				<img src={ jetpackIcon } alt="Jetpack icon" />;
+				<img src={ jetpackIcon } alt="Jetpack icon" />
 			</div>
 		);
 	}
@@ -171,11 +172,11 @@ export function PurchaseItemProduct( {
 	showSite?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.isAttachedToHoldingSite ) {
 		return null;
 	}
 
-	const productType = purchaseType( purchase );
+	const productType = isDomainRegistration( purchase ) ? null : purchaseType( purchase );
 
 	if ( showSite && site ) {
 		if ( productType && site.name && slug ) {
@@ -354,11 +355,12 @@ export function PurchaseItemStatus( {
 
 	if (
 		isDisconnectedSite &&
-		! isAkismetTemporarySitePurchase( purchase ) &&
-		! isMarketplaceTemporarySitePurchase( purchase ) &&
-		! isA4ATemporarySitePurchase( purchase )
+		! isAkismetHoldingSitePurchase( purchase ) &&
+		! isMarketplaceHoldingSitePurchase( purchase ) &&
+		! isA4AHoldingSitePurchase( purchase ) &&
+		! isA4ABillingDragonPurchase( purchase )
 	) {
-		if ( isJetpackTemporarySitePurchase( purchase ) ) {
+		if ( isJetpackHoldingSitePurchase( purchase ) ) {
 			return (
 				<>
 					<span className="purchase-item__is-error">
@@ -882,7 +884,8 @@ class PurchaseItem extends Component<
 			if (
 				! isDisconnectedSite ||
 				purchase.isJetpackPlanOrProduct ||
-				isTemporarySitePurchase( purchase )
+				purchase.isAttachedToHoldingSite ||
+				isA4ABillingDragonPurchase( purchase )
 			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );

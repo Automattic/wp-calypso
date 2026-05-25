@@ -1,6 +1,5 @@
-@import "@automattic/typography/styles/variables";
-@import "mixins";
 @import "variables";
+@import "mixins";
 
 // Search results section
 .help-center-search-results {
@@ -13,7 +12,7 @@
 		padding-left: 19px;
 		text-transform: uppercase;
 		font-weight: 500;
-		font-size: 0.75rem;
+		font-size: $font-body-extra-small;
 	}
 
 	.help-center-search-results__title {
@@ -25,12 +24,15 @@
 	}
 
 	.help-center-search-results__empty-results {
-		padding: 8px 16px 0;
-		margin: 1em 0;
+		margin: 8px 0;
 		font-size: $font-body-small;
 		color: var(--color-text-subtle);
 		font-style: italic;
 		text-align: left;
+
+		p {
+			margin-bottom: 16px;
+		}
 
 		@media screen and (min-width: 661px) {
 			font-size: $font-body;

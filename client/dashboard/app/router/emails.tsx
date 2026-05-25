@@ -1,7 +1,6 @@
 import { EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
-	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
@@ -9,10 +8,11 @@ import {
 	siteByIdQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { createLazyRoute, createRoute, redirect, Outlet } from '@tanstack/react-router';
+import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider } from '../../emails/types';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {
@@ -36,10 +36,10 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -65,7 +65,7 @@ const redirectIfInvalidDomain = async ( domainName: string ) => {
 				( [ code, errorType ] ) => error.statusCode === code && error.error === errorType
 			)
 		) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: emailsRoute.fullPath,
 				search: {
 					domainName,
@@ -85,8 +85,8 @@ export const chooseDomainRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'choose-domain',
-	loader: async () => {
-		queryClient.prefetchQuery( domainsQuery() );
+	loader: async ( { context } ) => {
+		queryClient.prefetchQuery( context.config.queries.domainsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>
@@ -147,7 +147,7 @@ export const addMailboxRoute = createRoute( {
 			// @ts-expect-error The interval param can be anything.
 			! Object.values( IntervalLength ).includes( interval )
 		) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: chooseEmailSolutionRoute.to,
 				params: { domain: domainName },
 			} );
@@ -200,7 +200,7 @@ export const setUpMailboxRoute = createRoute( {
 		const hasUnusedMailbox = !! unusedMailboxesCount;
 
 		if ( ! hasUnusedMailbox ) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: emailsRoute.fullPath,
 				search: {
 					domainName,

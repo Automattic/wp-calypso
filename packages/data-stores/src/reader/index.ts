@@ -17,6 +17,7 @@ import {
 } from './mutations';
 import {
 	siteSubscriptionsQueryKeyPrefix,
+	subscriptionsCountQueryKeyPrefix,
 	usePendingPostSubscriptionsQuery,
 	usePendingSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
@@ -29,6 +30,7 @@ import {
 export const SubscriptionManager = {
 	SiteSubscriptionsQueryPropsProvider,
 	siteSubscriptionsQueryKeyPrefix,
+	subscriptionsCountQueryKeyPrefix,
 	useCacheKey,
 	useIsLoggedIn,
 	usePendingPostConfirmMutation,
@@ -63,8 +65,4 @@ export {
 	SiteSubscriptionsSortBy,
 } from './constants';
 export { callApi, isErrorResponse, isSiteSubscriptionDetails, isValidId } from './helpers';
-export { UnsubscribedFeedsSearchProvider, useUnsubscribedFeedsSearch } from './contexts';
-export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
-
 export * from './types';
-export type { FeedItem } from './queries';

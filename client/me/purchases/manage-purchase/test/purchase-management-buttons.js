@@ -147,7 +147,7 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a cancel button with remove language when auto-renew is OFF', async () => {
+	it( 'renders a Remove button with remove language when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -165,11 +165,12 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /and be removed/ ) ).toBeInTheDocument();
-		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove plan/ ) ).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a cancel button with remove language when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
+	it( 'renders a Remove button with product-name language for an Akismet purchase attached to an akismet siteless holding site when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -179,6 +180,7 @@ describe( 'Purchase Management Buttons', () => {
 			domain: 'siteless.akismet.com',
 			product_id: 2311, // Akismet Plus Plan
 			product_slug: 'ak_plus_yearly_1',
+			product_name: 'Akismet Plus',
 			is_auto_renew_enabled: false,
 		} );
 
@@ -196,7 +198,8 @@ describe( 'Purchase Management Buttons', () => {
 
 		// Multiple elements may contain "remove" text (button + notice), so use findAllByText
 		expect( ( await screen.findAllByText( /remove/i ) ).length ).toBeGreaterThan( 0 );
-		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Akismet Plus will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove Akismet Plus/ ) ).toBeVisible();
 	} );
 
 	it( "does't render renew buttons for domain with pending registration at registry", async () => {
@@ -295,4 +298,162 @@ describe( 'Purchase Management Buttons', () => {
 			expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
 		}
 	);
+
+	it( 'renders payment method nav item for A4A billingdragon purchase on a real site', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /(?:Add|Change) payment method/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders payment method nav item for A4A billingdragon purchase on a siteless holding site', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const a4aPurchase = {
+			...purchase,
+			meta: 'is-a4a',
+			domain: 'siteless.agencies.automattic.com',
+		};
+
+		// Don't include a site in the store to simulate siteless purchase
+		const store = createReduxStore(
+			{
+				currentUser: { id: Number( a4aPurchase.user_id ) },
+				plans: { items: [] },
+				purchases: {
+					data: [ a4aPurchase ],
+					hasLoadedUserPurchasesFromServer: true,
+					hasLoadedSitePurchasesFromServer: true,
+				},
+				productsList: { items: {} },
+				sites: {
+					items: {},
+					plans: {},
+					requesting: {},
+					domains: { requesting: {}, items: {} },
+				},
+				plugins: {
+					premium: { plugins: {} },
+				},
+				ui: { selectSiteId: a4aPurchase.blog_id },
+			},
+			( state ) => state
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( a4aPurchase.ID ) }
+						isSiteLevel
+						siteSlug="siteless.agencies.automattic.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /(?:Add|Change) payment method/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders renew button for A4A billingdragon purchase', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+			is_renewable: true,
+			can_explicit_renew: true,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Renew now/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders renewal nav item for A4A billingdragon purchase', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+			is_renewable: true,
+			can_explicit_renew: true,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// business-bundle is an annual WP.com plan, so the nav item shows "Renew annually" instead of "Renew now"
+		expect( await screen.findByText( /Renew annually/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render an upgrade button for A4A billingdragon purchase', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		await screen.findByText( /(?:Add|Change) payment method/ );
+		expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
+	} );
 } );

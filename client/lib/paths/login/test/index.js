@@ -57,4 +57,67 @@ describe( 'login', () => {
 		const url = login( { isJetpack: true, useMagicLink: true } );
 		expect( url ).toBe( '/log-in/jetpack' );
 	} );
+
+	test( 'should extract "from" from redirectTo when not explicitly provided', () => {
+		const url = login( {
+			isJetpack: true,
+			redirectTo:
+				'https://site.com/wp-admin/admin.php?page=wc-admin&from=woocommerce-core-profiler',
+		} );
+		expect( url ).toContain( 'from=woocommerce-core-profiler' );
+	} );
+
+	test( 'should not override explicit "from" with value from redirectTo', () => {
+		const url = login( {
+			isJetpack: true,
+			from: 'explicit-value',
+			redirectTo:
+				'https://site.com/wp-admin/admin.php?page=wc-admin&from=woocommerce-core-profiler',
+		} );
+		expect( url ).toContain( 'from=explicit-value' );
+		expect( url ).not.toContain( 'from=woocommerce-core-profiler' );
+	} );
+
+	test( 'should extract "plugin_name" from redirectTo when not explicitly provided', () => {
+		const url = login( {
+			isJetpack: true,
+			redirectTo:
+				'https://site.com/wp-admin/admin.php?page=wc-admin&plugin_name=woocommerce-payments',
+		} );
+		expect( url ).toContain( 'plugin_name=woocommerce-payments' );
+	} );
+
+	test( 'should not override explicit "pluginName" with value from redirectTo', () => {
+		const url = login( {
+			isJetpack: true,
+			pluginName: 'explicit-plugin',
+			redirectTo:
+				'https://site.com/wp-admin/admin.php?page=wc-admin&plugin_name=woocommerce-payments',
+		} );
+		expect( url ).toContain( 'plugin_name=explicit-plugin' );
+		expect( url ).not.toContain( 'plugin_name=woocommerce-payments' );
+	} );
+
+	test( 'should return the login url with explicit "plugins" parameter', () => {
+		const url = login( { isJetpack: true, plugins: 'jetpack,woocommerce' } );
+		expect( url ).toBe( '/log-in/jetpack?plugins=jetpack%2Cwoocommerce' );
+	} );
+
+	test( 'should extract "plugins" from redirectTo when not explicitly provided', () => {
+		const url = login( {
+			isJetpack: true,
+			redirectTo: 'https://site.com/wp-admin/admin.php?page=jetpack&plugins=jetpack%2Cwoocommerce',
+		} );
+		expect( url ).toContain( 'plugins=jetpack%2Cwoocommerce' );
+	} );
+
+	test( 'should not override explicit "plugins" with value from redirectTo', () => {
+		const url = login( {
+			isJetpack: true,
+			plugins: 'jetpack',
+			redirectTo: 'https://site.com/wp-admin/admin.php?page=jetpack&plugins=jetpack%2Cwoocommerce',
+		} );
+		expect( url ).toContain( 'plugins=jetpack' );
+		expect( url ).not.toContain( 'plugins=jetpack%2Cwoocommerce' );
+	} );
 } );

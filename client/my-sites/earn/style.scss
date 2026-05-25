@@ -1,9 +1,27 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 
-#earn-navigation {
-	margin-bottom: 30px;
+// The same `calypso/my-sites/earn` module is registered under two section
+// names: `earn` on Calypso (route `/earn`) and `jetpack-monetize` on Jetpack
+// Cloud (route `/monetize`) — see `client/sections.js`. The body class
+// follows the section name, so the layout mixin must be applied to both
+// to cover every environment that renders this page.
+body.is-section-earn,
+body.is-section-jetpack-monetize {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-sticky-footer;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+}
+
+.earn-navigation {
+	.section-nav {
+		background: none;
+		box-shadow: none;
+		padding: 0 var(--wpds-dimension-padding-2xl, 24px);
+		border-bottom: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
+	}
 }
 
 // Small override for card component headers
@@ -230,12 +248,5 @@ body:not(.theme-jetpack-cloud) {
 	max-width: 98%;
 	h1 {
 		margin-bottom: 1em;
-	}
-}
-
-/* Media Queries */
-@media (max-width: $break-large) {
-	.earn.main {
-		padding: 20px;
 	}
 }

@@ -7,8 +7,9 @@ import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected, isSimple } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
+import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import type { SiteScan, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -93,10 +94,24 @@ function ScanCardContent( { site }: { site: Site } ) {
 }
 
 export default function ScanCard( { site }: { site: Site } ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
+	if ( site.is_multisite && ! isSimple( site ) ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'Not supported on multisite' ) }
+				description={ __( 'Scan is not available for multisite installations.' ) }
+			/>
+		);
+	}
+
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }
-			feature={ HostingFeatures.SCAN }
+			feature={ HostingFeatures.SCAN_SELF_SERVE }
 			featureIcon={ CARD_PROPS.icon }
 			upsellId={ CARD_PROPS.tracksId }
 			upsellFeatureId="site-scan"

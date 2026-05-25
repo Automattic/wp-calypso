@@ -32,6 +32,7 @@ export default function CreditCardElementField( {
 						'credit-card-fields__stripe-element--has-error': cardError,
 					} ) }
 				>
+					{ /* Legacy unified CardElement: lacks Stripe's in-Element co-brand picker — migrate to split CardNumberElement with `showIcon: true` for EU compliance. */ }
 					<CardElement
 						options={ {
 							disabled: isDisabled,

@@ -1,4 +1,4 @@
-import { SubscriptionBillPeriod } from '../constants';
+import type { SubscriptionBillPeriodValue } from '../constants';
 
 export interface RefundOptions {
 	to_product_id: number;
@@ -8,6 +8,7 @@ export interface RefundOptions {
 
 export interface RawPurchaseIntroductoryOffer {
 	cost_per_interval: number;
+	cost_per_interval_integer: number;
 	end_date: string;
 	interval_count: number;
 	interval_unit: string;
@@ -96,20 +97,7 @@ export interface Purchase {
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
 	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days:
-		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	bill_period_days: SubscriptionBillPeriodValue;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -134,6 +122,13 @@ export interface Purchase {
 	 * If there is nothing that would be withheld, this will be null.
 	 */
 	cost_to_unbundle_display: undefined | string;
+
+	/**
+	 * True if this subscription is within the refund window of its initial
+	 * purchase (i.e. not a renewal). Used to determine whether a bundled domain
+	 * can be cancelled together with its plan for a full refund.
+	 */
+	is_within_initial_refund_window: boolean;
 
 	price_text: string;
 	price_tier_list: Array< PriceTierEntry >;
@@ -170,6 +165,13 @@ export interface Purchase {
 	 * even if it cannot be cancelled.
 	 */
 	is_cancelable: boolean;
+
+	/**
+	 * True if the site associated with this subscription is a holding site.
+	 * That is, a site created only to hold the subscription for the user
+	 * rather than a regular wpcom site that a user can view and manage.
+	 */
+	is_attached_to_holding_site: boolean;
 
 	/**
 	 * True if the subscription can be removed by the user (directly removed,
@@ -391,6 +393,20 @@ export interface Purchase {
 	 * deletion flow should require the user to cancel these purchases first.
 	 */
 	blocks_site_deletion: boolean;
+
+	/**
+	 * True if the multisite dashboard should show a notice at the top of the
+	 * purchase management page thanking the user for their purchase and letting
+	 * them know that they will be billed at the regular price next renewal.
+	 */
+	should_show_cancellation_offer_notice: boolean;
+
+	/**
+	 * The percentage (0 - 100%) that this purchase was discounted by when the
+	 * customer accepted the cancellation offer, rounded the nearest whole
+	 * number.
+	 */
+	cancellation_offer_notice_discount_percentage: number | null;
 }
 
 export type RawPurchase = Purchase & {
@@ -432,6 +448,12 @@ export interface PurchaseCancelOptions {
 	 * will also be cancelled.
 	 */
 	cancel_bundled_domain: boolean;
+
+	/**
+	 * The experiment variation name for the refund email A/B test.
+	 * When 'treatment', the backend sends the wpcom-2022 themed email.
+	 */
+	email_variant?: 'treatment' | 'control';
 }
 
 /**

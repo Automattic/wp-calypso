@@ -1,0 +1,19 @@
+.feed-preview__loader {
+	display: flex;
+	justify-content: center;
+}
+
+.feed-preview__site {
+	margin-inline: 0;
+}
+
+ul ul.feed-preview__site {
+	margin-bottom: 1.5em; // Fix styles overriden by some global styles.
+}
+
+.feed-preview__stream {
+	// Do not display ellipsis menu on post cards inside feed preview.
+	.reader-post-card__post-options {
+		visibility: hidden;
+	}
+}

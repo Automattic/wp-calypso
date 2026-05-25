@@ -1,3 +1,20 @@
+@import "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
+
+.is-site-stream.is-two-columns {
+	.reader-feed-header__site {
+		align-items: center;
+		margin-bottom: 36px;
+	}
+
+	.reader-feed-header__follow-count {
+		display: none;
+	}
+
+	.reader-feed-header .reader-feed-header__follow {
+		display: none;
+	}
+}
+
 .reader-feed-header .reader-feed-header__site {
 	display: flex;
 	margin-bottom: 16px;
@@ -28,10 +45,6 @@
 	}
 }
 
-.reader-feed-header.is-wide-display .reader-feed-header__site {
-	align-items: center;
-	margin-bottom: 36px;
-}
 
 .reader-feed-header__seen-button {
 	align-items: center;
@@ -54,11 +67,6 @@
 
 .reader-feed-header__site-icon {
 	margin-right: 24px;
-
-	img,
-	.site-icon.is-blank {
-		border-radius: 100%;
-	}
 }
 
 .reader-feed-header__follow-button-and-settings {
@@ -88,12 +96,6 @@
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
 		color: var(--color-neutral-100);
-	}
-
-	&::after {
-		@include long-content-fade( $size: 15% );
-		height: 16px * 1.7;
-		top: auto;
 	}
 }
 

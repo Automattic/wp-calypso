@@ -1,5 +1,5 @@
 .mailboxes-ready__item-group {
-	background-color: #fff;
+	background-color: var( --dashboard-surface__background-color, #fff );
 	border-radius: 8px;
 
 	.components-item {

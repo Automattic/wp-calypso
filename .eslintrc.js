@@ -26,6 +26,20 @@ module.exports = {
 			files: [ '**/*.jsx' ],
 		},
 		{
+			// Code blocks inside markdown are illustrative snippets, not real
+			// components. Rules that depend on lexical context (hook call sites,
+			// unused vars, undefined globals, etc.) produce noise without value.
+			// eslint-plugin-md emits virtual files named `<dir>/<name>.md.<lang>`.
+			files: [ '**/*.md.{js,jsx,ts,tsx}' ],
+			rules: {
+				'react-hooks/rules-of-hooks': 'off',
+				'react-hooks/exhaustive-deps': 'off',
+				'no-unused-vars': 'off',
+				'no-undef': 'off',
+				'@typescript-eslint/no-unused-vars': 'off',
+			},
+		},
+		{
 			files: [ '*.md' ],
 			parser: 'markdown-eslint-parser',
 			rules: {
@@ -309,8 +323,6 @@ module.exports = {
 		globalThis: true,
 		window: true,
 		document: true,
-		// this is our custom function that's transformed by babel into either a dynamic import or a normal require
-		asyncRequire: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
 		COMMIT_SHA: true,
 		// this is when Webpack last built the bundle
@@ -376,6 +388,13 @@ module.exports = {
 		'no-restricted-imports': [
 			2,
 			{
+				patterns: [
+					{
+						group: [ '**/*.png', '**/*.jpg', '**/*.jpeg' ],
+						message:
+							"Please use 'webp' files instead. You can convert using `brew install webp && cwebp -q 90 -alpha_q 85 -m 6 <input>.png -o <output>.webp`",
+					},
+				],
 				paths: [
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
@@ -586,7 +605,5 @@ module.exports = {
 		// @TODO remove these lines once we fixed the warnings so
 		// they'll become errors for new code added to the codebase
 		'@tanstack/query/exhaustive-deps': 'warn',
-		'@wordpress/i18n-no-flanking-whitespace': 'warn',
-		'@wordpress/i18n-hyphenated-range': 'warn',
 	},
 };

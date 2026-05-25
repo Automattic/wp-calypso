@@ -1,6 +1,7 @@
 export default function ReaderRedditIcon( { iconSize } ) {
 	return (
 		<svg
+			aria-label="Reddit Icon"
 			fill="#ff4500"
 			viewBox="0 0 256 256"
 			width={ iconSize }

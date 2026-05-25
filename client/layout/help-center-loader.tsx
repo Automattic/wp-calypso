@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -16,21 +15,18 @@ import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-u
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+const importHelpCenter = () =>
+	import( /* webpackChunkName: "async-load-automattic-help-center" */ '@automattic/help-center' );
+
 const HELP_CENTER_STORE = HelpCenter.register();
 
 type Props = {
 	sectionName: string;
 	loadHelpCenter: boolean;
 	currentRoute: string;
-	source: string;
 };
 
-export default function HelpCenterLoader( {
-	sectionName,
-	loadHelpCenter,
-	currentRoute,
-	source,
-}: Props ) {
+export default function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute }: Props ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
@@ -44,7 +40,6 @@ export default function HelpCenterLoader( {
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-	const haveSurvicateEnabled = isEnabled( 'survicate_enabled_at_help_center' );
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -59,14 +54,13 @@ export default function HelpCenterLoader( {
 							pressableId: agency?.third_party?.pressable?.pressable_id,
 					  }
 					: null,
-				disableChatSupport: true,
-				hideMoreResources: true,
+				product: 'a4a' as const,
 		  }
 		: {};
 
 	return (
 		<AsyncLoad
-			require="@automattic/help-center"
+			require={ importHelpCenter }
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }
@@ -75,12 +69,10 @@ export default function HelpCenterLoader( {
 			site={ selectedSite || primarySite }
 			currentUser={ user }
 			hasPurchases={ hasPurchases }
-			haveSurvicateEnabled={ haveSurvicateEnabled }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
-			source={ source }
 			{ ...additionalHelpCenterProps }
 		/>
 	);

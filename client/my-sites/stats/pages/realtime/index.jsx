@@ -1,11 +1,10 @@
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleCountries from 'calypso/my-sites/stats/features/modules/stats-countries';
@@ -21,6 +20,11 @@ import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
 
 import './style.scss';
+
+const loadChart = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime-chart" */ 'calypso/my-sites/stats/pages/realtime/chart'
+	);
 
 // TODO: Update header per design review.
 // Each page has slightly different headers so staying simple
@@ -111,18 +115,16 @@ function StatsRealtime( { context } ) {
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			pageSubTitle={ translate( 'Simple, powerful analytics to grow your site.' ) }
+			pageTabs={ <StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } /> }
+		>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/realtime/:site" title="Stats > Realtime" />
 			<div className="stats">
-				<PageHeader />
-				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<StatsRealtimeHeader />
-				<AsyncLoad
-					require="calypso/my-sites/stats/pages/realtime/chart"
-					siteId={ siteId }
-					placeholder={ PageLoading }
-				/>
+				<AsyncLoad require={ loadChart } siteId={ siteId } placeholder={ PageLoading } />
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
@@ -149,7 +151,6 @@ function StatsRealtime( { context } ) {
 						isRealTime
 					/>
 				</StatsModuleListing>
-				<JetpackColophon />
 			</div>
 		</Main>
 	);

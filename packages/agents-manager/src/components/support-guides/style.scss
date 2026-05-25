@@ -1,114 +1,92 @@
-@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
+@import '../../styles/mixins';
 
 .agent-manager-support-guides-wrapper {
-	.agent-manager-support-guides-no-results {
+	height: calc( 100% - 32px );
+	padding: 16px;
+
+	.agent-manager-support-guides__status {
 		text-align: center;
 		font-size: $font-size-small;
-		color: #f2f2f2;
+		color: var( --color-muted-foreground );
 		padding: 16px;
-	}
 
-	height: calc( 100% - 50px );
-	padding: 16px;
+		.agent-manager-support-guides__retry {
+			font-size: inherit;
+		}
+	}
 
 	.components-search-control {
 		.components-input-control__container {
-			background-color: #f2f2f2;
+			background-color: var( --color-muted );
+
+			.components-input-control__prefix {
+				color: var( --color-muted-foreground );
+			}
+
+			.components-input-control__input {
+				color: var( --color-foreground );
+
+				&::placeholder {
+					color: var( --color-muted-foreground );
+				}
+			}
+
+			.components-input-control__suffix .components-button {
+				color: var( --color-muted-foreground );
+			}
 		}
+
 		.components-input-base {
 			border-radius: 16px;
-			color: var( --color-text );
 		}
-		.components-input-control__input {
-			color: var( --color-text );
-		}
+
 		.components-input-control__backdrop {
 			opacity: 0;
 		}
-		&:focus-within {
-			.components-input-control__backdrop {
-				opacity: 1;
-			}
+
+		&:focus-within .components-input-control__backdrop {
+			opacity: 1;
 		}
 	}
 
 	.components-item-group {
 		border-radius: 16px;
+		border-color: var( --color-muted );
+		max-height: 85%;
+		overflow-y: auto;
 
 		div[role='listitem'] {
 			box-sizing: border-box;
 			font-size: $font-size-small;
+
 			.components-item {
 				transition: var( --transition-colors );
 				padding: 0;
+
 				&:hover {
-					background: #f2f2f2;
+					background: var( --color-muted );
 				}
 
 				a {
-					color: var( --color-text );
+					color: var( --color-foreground );
 					text-decoration: none;
 					padding: 14px;
 					display: block;
 				}
 			}
-
-			&:first-child .components-item {
-				border-top-left-radius: 16px;
-				border-top-right-radius: 16px;
-			}
-
-			&:last-child .components-item {
-				border-bottom-left-radius: 16px;
-				border-bottom-right-radius: 16px;
-			}
 		}
 	}
 }
 
-.agents-manager-chat--docked {
-	.agent-manager-support-guides-no-results {
-		color: #2f2f2f;
+// Docked chat overrides
+@include docked-chat-without-modal {
+	.agent-manager-support-guides-wrapper {
+		padding-left: 0;
+		padding-right: 0;
 	}
 
-	.agent-manager-support-guides-wrapper {
-		padding: 0;
-
-		.components-search-control {
-			.components-input-control__container {
-				background-color: #2f2f2f;
-
-				.components-input-control__prefix {
-					color: #f2f2f2;
-				}
-				.components-input-control__input {
-					color: #fff;
-
-					&::placeholder {
-						color: #f2f2f2;
-					}
-				}
-			}
-		}
-
-		.components-item-group {
-			border-color: #545454;
-			div[role='listitem'] {
-				.components-item {
-					&:hover {
-						background: #2f2f2f;
-					}
-
-					a {
-						color: #fff;
-					}
-				}
-			}
-
-			div[role='listitem'] + div[role='listitem'] {
-				border-top: 1px solid #545454;
-			}
-		}
+	.components-item-group div[role='listitem'] + div[role='listitem'] {
+		border-top: 1px solid var( --color-muted );
 	}
 }

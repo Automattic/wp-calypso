@@ -178,6 +178,13 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Bl
 		} as BlueprintV1Declaration;
 	}
 
+	// If no blueprint URL or ID is provided, use default
+	const blueprintId = getBlueprintID( url.searchParams );
+	const blueprintUrl = url.searchParams.get( 'blueprint-url' );
+	if ( ! blueprintId && ! blueprintUrl ) {
+		return getDefaultBlueprint( recommendedPhpVersion );
+	}
+
 	const resolvedBlueprint = await resolveBlueprintFromURL( url );
 
 	// ZIP bundles pass through unchanged

@@ -9,26 +9,24 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getSitePost } from 'calypso/state/posts/selectors';
-import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import {
 	isJetpackSite,
@@ -211,7 +209,7 @@ class StatsPostDetail extends Component {
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
 			isSimple,
-			lastScreen,
+			breadcrumbTrail,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -240,17 +238,6 @@ class StatsPostDetail extends Component {
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
-		const backLinkProps = {
-			text: lastScreen.text,
-			url: lastScreen.url,
-		};
-
-		const titleProps = {
-			title: navigationItems[ 1 ].label,
-			// Remove the default logo for Odyssey stats.
-			titleLogo: null,
-		};
-
 		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
 		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 		const isEmailTabsAvailable =
@@ -263,29 +250,14 @@ class StatsPostDetail extends Component {
 			supportsEmailStats;
 
 		return (
-			<Main fullWidthLayout>
-				<PageViewTracker
-					path={ `/stats/${ postType }/:post_id/:site` }
-					title={ `Stats > Single ${ titlecase( postType ) }` }
-				/>
-				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-
-				<div className={ postDetailPageClasses }>
-					<PageHeader
-						backLinkProps={ backLinkProps }
-						titleProps={ titleProps }
-						rightSection={
-							showViewLink && (
-								<CoreButton onClick={ this.openPreview } variant="primary">
-									<span>{ actionLabel }</span>
-								</CoreButton>
-							)
-						}
-					/>
-
-					{ isEmailTabsAvailable && (
+			<Main
+				fullWidthLayout
+				breadcrumbs={ [
+					...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+					{ label: navigationItems[ 1 ].label },
+				] }
+				pageTabs={
+					isEmailTabsAvailable ? (
 						<div
 							className={ clsx(
 								'stats-navigation',
@@ -295,8 +267,25 @@ class StatsPostDetail extends Component {
 						>
 							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 						</div>
-					) }
+					) : undefined
+				}
+				pageActions={
+					showViewLink && (
+						<CoreButton onClick={ this.openPreview } variant="primary" size="compact">
+							<span>{ actionLabel }</span>
+						</CoreButton>
+					)
+				}
+			>
+				<PageViewTracker
+					path={ `/stats/${ postType }/:post_id/:site` }
+					title={ `Stats > Single ${ titlecase( postType ) }` }
+				/>
+				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
+				<div className={ postDetailPageClasses }>
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
@@ -323,8 +312,6 @@ class StatsPostDetail extends Component {
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
-
-					<JetpackColophon />
 				</div>
 
 				<WebPreview
@@ -341,8 +328,10 @@ class StatsPostDetail extends Component {
 	}
 }
 
+const StatsPostDetailWithLikes = withPostLikes( StatsPostDetail );
+
 const StatsPostDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
 
 	const supportLink = localizeUrl(
 		'https://wordpress.com/support/getting-more-views-and-traffic/'
@@ -366,14 +355,20 @@ const StatsPostDetailWrapper = ( props ) => {
 		}
 	};
 
-	return <StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openDoc } />;
+	return (
+		<StatsPostDetailWithLikes
+			{ ...props }
+			siteId={ siteId }
+			breadcrumbTrail={ breadcrumbTrail }
+			openSupportDoc={ openDoc }
+		/>
+	);
 };
 
 const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
-	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 	const isSimple = isSimpleSite( state, siteId );
 	const previewUrl = getMappedPreviewUrl( state, siteId, postId );
@@ -387,7 +382,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 
 	return {
 		post: getSitePost( state, siteId, postId ),
-		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isPostHomepage,

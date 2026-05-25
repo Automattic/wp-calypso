@@ -1,9 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -18,13 +20,13 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
@@ -32,9 +34,10 @@ import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-async function initialize() {
+function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
@@ -45,9 +48,7 @@ async function initialize() {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
-
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -69,14 +70,16 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem } = useSelect(
+		const { planCartItem, blueprint } = useSelect(
 			( select ) => ( {
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
+		const refParameter = useQuery().get( 'ref' );
+		const siteSlugParam = useQuery().get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -93,24 +96,38 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId ) {
+			if ( playgroundId || blueprint ) {
 				// Check if the user selected the free plan
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree ) {
+				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null ];
 				}
 
+				const params: Record< string, string | number > = {
+					siteSlug: providedDependencies.siteSlug as string,
+					siteId: providedDependencies.siteId as number,
+				};
+
+				if ( blueprint ) {
+					params.blueprint = blueprint;
+				} else if ( playgroundId ) {
+					params.playground = playgroundId;
+				}
+
 				return [
-					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-						siteSlug: providedDependencies.siteSlug,
-						siteId: providedDependencies.siteId,
-						playground: playgroundId,
-					} ),
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
 				];
+			}
+
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -176,15 +193,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					setPlanCartItem( pickedPlan );
 
 					if ( ! pickedPlan ) {
-						// Since we're removing the paid domain, it means that the user chose to continue
-						// with a free domain. Because signupDomainOrigin should reflect the last domain
-						// selection status before they land on the checkout page, this value can be
-						// 'free' or 'choose-later'
-						if ( signupDomainOrigin === 'choose-later' ) {
-							setSignupDomainOrigin( signupDomainOrigin );
-						} else {
-							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
-						}
+						// Redirect free plan selections to the choose page for the PWYW A/B test.
+						// `/choose` is a WordPress.com PHP route, not a Calypso route, so we need an
+						// absolute URL — a relative path resolves to the current Calypso host (e.g.
+						// wpcalypso.wordpress.com/choose) and 404s on pre-release. See TESTOPS-106.
+						window.location.assign(
+							addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
+						);
+						return;
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
@@ -203,25 +219,54 @@ const onboarding: FlowV2< typeof initialize > = {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
+					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
-									siteId,
+									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+									// the site object hydrates, and "0" in the URL poisons the
+									// next page's site lookup.
+									...( siteId && siteId !== '0' ? { siteId } : {} ),
 									fromPostCheckoutSetupSite: '1',
+									...( refParameter ? { ref: refParameter } : {} ),
+									...( prompt ? { prompt } : {} ),
 								} )
 							);
 							return;
 						case 'blank-site':
-							window.location.assign( `/sites/${ siteSlug }` );
+							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+							} else {
+								window.location.assign( `/sites/${ siteSlug }` );
+							}
 							return;
 						default:
 							return;
 					}
 				}
 				case 'processing': {
+					if (
+						providedDependencies.processingResult === ProcessingResult.NO_ACTION &&
+						siteSlugParam
+					) {
+						// No pending action — the user landed on this page directly without
+						// completing the prior step (e.g. a direct URL load or page refresh).
+						// Redirect back to post-checkout-onboarding so it can set up the
+						// pending action and advance the flow normally.
+						window.location.replace(
+							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
+								siteSlug: siteSlugParam,
+								...( refParameter ? { ref: refParameter } : {} ),
+							} )
+						);
+						return;
+					}
+
 					const [ destination, backDestination ] = await getPostCheckoutDestination(
 						providedDependencies,
 						planCartItem
@@ -251,8 +296,11 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												...( refParameter ? { ref: refParameter } : {} ),
 											}
 									  );
+
+							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
@@ -261,8 +309,15 @@ const onboarding: FlowV2< typeof initialize > = {
 									signup: 1,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 									coupon,
+									steps_current: checkoutStepperPosition.current,
+									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if (
+							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
+							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
+						) {
+							return navigate( 'setup-your-site-ai' );
 						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
@@ -270,23 +325,38 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						// TODO: Handle errors
-						// navigate( 'error' );
+						return navigate( 'error' as typeof currentStepSlug );
 					}
 					return;
 				}
 				case 'playground':
-					return navigate( 'domains' );
+				case 'blueprint': {
+					const backTo = window.location.pathname + window.location.search;
+					return navigate(
+						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
 				default:
 					return;
 			}
 		};
-		return { submit };
+
+		const goBack = () => {
+			switch ( currentStepSlug ) {
+				case 'plans':
+					return navigate( 'domains' );
+				default:
+					return window.history.back();
+			}
+		};
+
+		return { submit, goBack };
 	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const isLoggedIn = useSelector( isUserLoggedIn );
+		const user = useSelector( getCurrentUser );
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -314,10 +384,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * - Analytics tracking works correctly throughout the onboarding flow
 		 */
 		useEffect( () => {
-			if ( isLoggedIn ) {
-				addSurvicate();
+			if ( isLoggedIn && user?.email && user?.date ) {
+				addSurvicate( { email: user.email, registrationDate: user.date } );
 			}
-		}, [ isLoggedIn, currentStepSlug ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

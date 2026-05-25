@@ -1,7 +1,8 @@
 .connect-screen-user-card.card {
 	display: flex;
 	width: 100%;
-	margin-bottom: 1rem;
+	margin-bottom: 0;
+	border-radius: 8px;
 
 	.gravatar {
 		border-radius: 50%;
@@ -57,7 +58,7 @@
 	margin-bottom: 0.125rem;
 }
 
-.connect-screen-user-card__email {
+.connect-screen-user-card__details {
 	font-size: 0.875rem;
 	color: var( --color-text-subtle );
 }

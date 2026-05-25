@@ -15,6 +15,7 @@ import SecurityCheckupAccountEmail from './account-email';
 import SecurityCheckupAccountRecoveryEmail from './account-recovery-email';
 import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
 import SecurityCheckupConnectedApplications from './connected-applications';
+import SecurityCheckupDolly from './dolly';
 import SecurityCheckupPassword from './password';
 import SecurityCheckupSocialLogins from './social-logins';
 import { SecurityCheckupSSHKey } from './ssh-key';
@@ -59,6 +60,7 @@ class SecurityCheckupComponent extends Component {
 				<SectionHeader label={ translate( 'Connections' ) } className="security-checkup__info" />
 				<VerticalNav className="security-checkup__info-nav">
 					<SecurityCheckupConnectedApplications />
+					<SecurityCheckupDolly />
 					<SecurityCheckupSocialLogins />
 				</VerticalNav>
 			</Main>

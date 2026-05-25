@@ -12,13 +12,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
-import {
-	getName,
-	hasAmountAvailableToRefund,
-	isOneTimePurchase,
-	isSubscription,
-} from 'calypso/lib/purchases';
+import { getButtonLabels } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { getName } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -26,7 +23,9 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { willShowDomainOptionsRadioButtons } from './domain-options';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 import type { LocalizeProps } from 'i18n-calypso';
 
 interface MomentProps {
@@ -45,8 +44,13 @@ export interface CancelPurchaseButtonProps {
 	cancelBundledDomain: boolean;
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
+	textVariant?: string;
+	displayVariant?: DisplayVariant;
+	isLinkStyle?: boolean;
+	isInline?: boolean;
+	cancelIntentOverride?: 'refund' | 'autorenew';
 	activeSubscriptions: Array< { id: number; productName: string } >;
-	onCancellationStart: null | ( () => void );
+	onCancellationStart: null | ( ( intent?: 'refund' | 'autorenew' ) => void );
 	onCancellationComplete: () => void;
 	onSurveyComplete: () => void;
 	// Props from parent component
@@ -57,6 +61,7 @@ export interface CancelPurchaseButtonProps {
 	// Methods from parent component
 	downgradeClick: ( upsell: string ) => void;
 	freeMonthOfferClick: () => void;
+	onSwitchToMonthly?: () => void;
 	// Control marketplace dialog visibility
 	showMarketplaceDialog?: boolean;
 }
@@ -94,17 +99,7 @@ class CancelPurchaseButton extends Component<
 			// We're in the domain options step, show survey directly
 			this.props.onCancellationComplete();
 		} else {
-			const needsDomainOptionsStep =
-				this.props.includedDomainPurchase &&
-				willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
-
-			if ( needsDomainOptionsStep ) {
-				// Step 1: Show domain options step
-				this.props.onCancellationStart();
-			} else {
-				// Step 2: Show survey directly (API call will happen in survey)
-				this.props.onCancellationStart();
-			}
+			this.props.onCancellationStart( this.props.cancelIntentOverride );
 		}
 	};
 
@@ -154,37 +149,24 @@ class CancelPurchaseButton extends Component<
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 
-		const onClick = ( () => {
-			return this.handleCancelPurchaseClick;
-		} )();
+		const onClick = this.handleCancelPurchaseClick;
 
 		const needsDomainOptionsStep =
 			this.props.includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
 		const text = ( () => {
+			if ( this.props.textVariant === 'remove-plan-and-claim-refund' ) {
+				return translate( 'Remove plan and claim refund.' );
+			}
+
 			if ( includedDomainPurchase && needsDomainOptionsStep ) {
 				return translate( 'Continue with cancellation' );
 			}
 
-			if ( hasAmountAvailableToRefund( purchase ) ) {
-				if ( isDomainRegistration( purchase ) ) {
-					return translate( 'Cancel domain and refund' );
-				}
-				if ( isSubscription( purchase ) ) {
-					return translate( 'Cancel subscription' );
-				}
-				if ( isOneTimePurchase( purchase ) ) {
-					return translate( 'Cancel and refund' );
-				}
-			}
-
-			if ( isDomainRegistration( purchase ) ) {
-				return translate( 'Cancel domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				return translate( 'Cancel subscription' );
-			}
+			return getButtonLabels( {
+				purchase: toPurchaseForCopy( purchase ),
+				intent: this.props.displayVariant ?? 'cancel',
+			} ).primary;
 		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
@@ -192,18 +174,32 @@ class CancelPurchaseButton extends Component<
 			this.props;
 
 		const planName = getName( purchase );
+		let flowType = getPurchaseCancellationFlowType( purchase );
+		if ( this.props.cancelIntentOverride === 'refund' ) {
+			flowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		} else if ( this.props.cancelIntentOverride === 'autorenew' ) {
+			flowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		const wrapperClassName = this.props.isInline
+			? 'cancel-purchase__button-wrapper cancel-purchase__button-wrapper--inline'
+			: 'cancel-purchase__button-wrapper';
+		const buttonClassName = this.props.isLinkStyle
+			? 'cancel-purchase__button cancel-purchase__button--link'
+			: 'cancel-purchase__button';
 
 		return (
-			<div className="cancel-purchase__button-wrapper">
+			<div className={ wrapperClassName }>
 				<Button
-					className="cancel-purchase__button"
+					className={ buttonClassName }
 					disabled={ disableButtons }
 					busy={ isLoading }
-					scary
+					scary={ ! this.props.isLinkStyle }
 					onClick={
 						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
 					}
-					primary
+					primary={ ! this.props.isLinkStyle }
+					borderless={ this.props.isLinkStyle }
 				>
 					{ text }
 				</Button>
@@ -217,7 +213,8 @@ class CancelPurchaseButton extends Component<
 						onSurveyComplete={ this.handleSurveyComplete }
 						downgradeClick={ this.props.downgradeClick }
 						freeMonthOfferClick={ this.props.freeMonthOfferClick }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						onSwitchToMonthly={ this.props.onSwitchToMonthly }
+						flowType={ flowType }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
 						cancellationInProgress={ isLoading }
@@ -232,7 +229,7 @@ class CancelPurchaseButton extends Component<
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						flowType={ flowType }
 						isAkismet={ isAkismet }
 						cancellationInProgress={ isLoading }
 					/>
@@ -247,6 +244,7 @@ class CancelPurchaseButton extends Component<
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
 						cancellationInProgress={ isLoading }
+						intent={ this.props.displayVariant === 'remove' ? 'remove' : 'cancel' }
 					/>
 				) }
 

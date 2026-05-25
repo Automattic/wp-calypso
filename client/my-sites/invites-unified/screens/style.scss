@@ -1,0 +1,28 @@
+@import '@wordpress/base-styles/variables';
+
+// Remove layout padding for the unified invite accept screen
+body.is-section-accept-invite-unified {
+	.layout__content {
+		padding: 0 !important;
+	}
+}
+
+// CIAB partner branding: override heading font to system font
+body.is-section-accept-invite-unified.is-ciab-font-system {
+	.wp-brand-font {
+		font-family: $default-font;
+	}
+}
+
+.accept-invite-consent-wrapper {
+	// `UserCard` no longer carries its own bottom margin (the rounded
+	// connect-account variant relies on the surrounding flow to provide
+	// vertical rhythm), so the consent text restores the 1.5rem gap that
+	// previously came from the card itself.
+	margin-block: 1.5rem;
+}
+
+.invite-screen-switch-account {
+	margin-top: 1.5rem;
+	text-align: center;
+}

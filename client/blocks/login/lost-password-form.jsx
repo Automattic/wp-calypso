@@ -195,14 +195,6 @@ const LostPasswordForm = ( {
 					ref={ inputRef }
 				/>
 				{ showError && <FormInputValidation isError text={ error } /> }
-				<ExternalLink
-					href={ localizeUrl(
-						'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
-						locale
-					) }
-				>
-					{ translate( 'Need more help?' ) }
-				</ExternalLink>
 			</div>
 			<div className="login__form-action">
 				<Button
@@ -214,6 +206,16 @@ const LostPasswordForm = ( {
 				>
 					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
 				</Button>
+			</div>
+			<div className="login__form-help">
+				<ExternalLink
+					href={ localizeUrl(
+						'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
+						locale
+					) }
+				>
+					{ translate( 'Need more help?' ) }
+				</ExternalLink>
 			</div>
 		</form>
 	);

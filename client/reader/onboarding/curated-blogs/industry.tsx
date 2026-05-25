@@ -129,7 +129,7 @@ export const industryBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 32743323,
 			site_ID: 0,
-			site_URL: 'ttps://awealthofcommonsense.com/',
+			site_URL: 'https://awealthofcommonsense.com/',
 			site_name: 'A Wealth of Common Sense',
 		},
 		{

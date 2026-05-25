@@ -1,45 +1,73 @@
 import page from '@automattic/calypso-router';
-import { AppState } from 'calypso/types';
+import { QueryClient } from '@tanstack/react-query';
+import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { FRESHLY_PRESSED_TAB } from '../discover/helper';
 import { DISCOVER_PREFIX } from '../discover/routes';
-import { getSafeImageUrlForReader, showSelectedPost, getCurrentTabFromURL } from '../utils';
+import {
+	getSafeImageUrlForReader,
+	showSelectedPost,
+	getCurrentTabFromURL,
+	getPostTitleFallback,
+} from '../utils';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
-describe( 'reader utils', () => {
-	const dispatch = jest.fn();
-	const getState = () =>
-		( {
-			reader: {
-				posts: {
-					items: {},
-				},
-			},
-		} ) as AppState;
+let mockQueryClient: QueryClient | null = null;
 
+jest.mock( 'calypso/state/query-client', () => ( {
+	getCalypsoQueryClient: () => mockQueryClient,
+} ) );
+
+describe( 'reader utils', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
+		mockQueryClient = null;
 	} );
 
 	describe( '#showSelectedPost', () => {
 		test( 'does not do anything if postKey argument is missing', () => {
-			showSelectedPost( {} )( dispatch, getState );
+			showSelectedPost( {} )();
 			expect( page ).not.toHaveBeenCalled();
 		} );
 
 		test( 'redirects if passed a post key', () => {
-			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } )( dispatch, getState );
+			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } )();
 			expect( page ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'redirects to a #comments URL if we passed comments argument', () => {
-			showSelectedPost( { postKey: { feedId: 1, postId: 5 }, comments: true } )(
-				dispatch,
-				getState
-			);
+			showSelectedPost( { postKey: { feedId: 1, postId: 5 }, comments: true } )();
 			expect( page as ( url: string ) => void ).toHaveBeenCalledWith(
 				'/reader/feeds/1/posts/5#comments'
 			); //
+		} );
+
+		test( 'redirects cross-posts using the canonical post cache metadata', () => {
+			mockQueryClient = new QueryClient();
+			upsertPostCache( mockQueryClient, [
+				{
+					ID: 1,
+					site_ID: 100,
+					global_ID: 'global-1',
+					tags: { 'p2-xpost': {} },
+					metadata: [
+						{
+							key: 'xpost_origin',
+							value: '300:400',
+						},
+						{
+							key: '_xpost_original_permalink',
+							value: 'https://example.com/original-post/',
+						},
+					],
+				},
+			] );
+
+			showSelectedPost( { postKey: { blogId: 100, postId: 1 } } )();
+
+			expect( page as ( url: string ) => void ).toHaveBeenCalledWith(
+				'/reader/blogs/300/posts/400'
+			);
 		} );
 	} );
 
@@ -58,26 +86,83 @@ describe( 'reader utils', () => {
 	describe( 'getCurrentTabFromURL', () => {
 		it( 'returns the current tab', () => {
 			expect(
-				getCurrentTabFromURL( '/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
-			).toEqual( 'firstposts' );
+				getCurrentTabFromURL( '/discover/recommended', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'recommended' );
 		} );
 
 		it( 'ignores the locale', () => {
 			expect(
-				getCurrentTabFromURL( '/en/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
-			).toEqual( 'firstposts' );
+				getCurrentTabFromURL( '/en/discover/recommended', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'recommended' );
 		} );
 
 		it( 'ignores the query params', () => {
 			expect(
-				getCurrentTabFromURL( '/discover/firstposts?foo=bar', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
-			).toEqual( 'firstposts' );
+				getCurrentTabFromURL(
+					'/discover/recommended?foo=bar',
+					DISCOVER_PREFIX,
+					FRESHLY_PRESSED_TAB
+				)
+			).toEqual( 'recommended' );
 		} );
 
 		it( 'returns the default tab when there is no tab', () => {
 			expect( getCurrentTabFromURL( '/discover', DISCOVER_PREFIX, 'my-default-tab' ) ).toEqual(
 				'my-default-tab'
 			);
+		} );
+	} );
+
+	describe( 'getPostTitleFallback', () => {
+		it( 'returns the post title when it exists', () => {
+			const post = { title: 'My Post Title', excerpt: 'Some excerpt', content: 'Some content' };
+			expect( getPostTitleFallback( post ) ).toEqual( 'My Post Title' );
+		} );
+
+		it( 'returns truncated excerpt when title is empty', () => {
+			const post = {
+				title: '',
+				excerpt:
+					'This is a very long excerpt that should be truncated because it exceeds the maximum length allowed',
+				content: 'Some content',
+			};
+
+			const result = getPostTitleFallback( post );
+			expect( result.length ).toBeLessThanOrEqual( 60 );
+		} );
+
+		it( 'returns truncated content when title and excerpt are empty', () => {
+			const post = {
+				title: '',
+				excerpt: '',
+				content:
+					'This is a very long content that should be truncated because it exceeds the maximum length allowed',
+			};
+			const result = getPostTitleFallback( post );
+			expect( result.length ).toBeLessThanOrEqual( 60 );
+		} );
+
+		it( 'strips HTML tags from excerpt', () => {
+			const post = {
+				title: '',
+				excerpt: '<p>This is <strong>formatted</strong> text</p>',
+				content: '',
+			};
+			expect( getPostTitleFallback( post ) ).toEqual( 'This is formatted text' );
+		} );
+
+		it( 'strips HTML tags from content', () => {
+			const post = {
+				title: '',
+				excerpt: '',
+				content: '<div><img src="photo.jpg" /><p>Content after image</p></div>',
+			};
+			expect( getPostTitleFallback( post ) ).toEqual( 'Content after image' );
+		} );
+
+		it( 'returns fallback value when title, excerpt, and content are empty', () => {
+			const post = { title: '', excerpt: '', content: '' };
+			expect( getPostTitleFallback( post, 'Untitled Post' ) ).toEqual( 'Untitled Post' );
 		} );
 	} );
 } );

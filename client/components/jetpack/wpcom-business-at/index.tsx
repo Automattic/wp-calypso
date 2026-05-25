@@ -1,23 +1,25 @@
-import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_BACKUPS_SELF_SERVE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
-	hasBlockingHold as hasBlockingHoldFunc,
+	default as HoldList,
 	getBlockingMessages,
 	HardBlockingNotice,
-	default as HoldList,
+	hasBlockingHold as hasBlockingHoldFunc,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -31,10 +33,10 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
-	getAutomatedTransferStatus,
-	isEligibleForAutomatedTransfer,
-	getEligibility,
 	EligibilityData,
+	getAutomatedTransferStatus,
+	getEligibility,
+	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
 import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -72,6 +74,7 @@ interface TransferFailureNoticeProps {
 export interface AtomicContentSwitch {
 	documentHeadTitle: string;
 	header: string;
+	subTitle?: string;
 	primaryPromo: {
 		image: { path: string };
 		promoCTA: { loadingText: string; text: string };
@@ -85,7 +88,8 @@ export interface AtomicContentSwitch {
 
 const vaultpressContent: AtomicContentSwitch = {
 	documentHeadTitle: translate( 'Activate Jetpack VaultPress Backup now' ) as string,
-	header: translate( 'Jetpack VaultPress Backup' ) as string,
+	header: translate( 'Backup' ) as string,
+	subTitle: translate( 'Save changes and restore quickly with one-click recovery.' ) as string,
 	primaryPromo: {
 		title: translate( 'Get time travel for your site with Jetpack VaultPress Backup' ),
 		image: { path: JetpackBackupSVG },
@@ -212,9 +216,9 @@ export default function WPCOMBusinessAT( {
 			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
 	);
 
-	// Check if the site has the backup feature
+	// Check if the site has the backup restore feature
 	const hasBackupFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
 	);
 
 	useEffect( () => {
@@ -280,19 +284,20 @@ export default function WPCOMBusinessAT( {
 	// If features are not loaded yet, show loading state
 	if ( featuresNotLoaded ) {
 		return (
-			<Main className="wpcom-business-at">
+			<Main fullWidthLayout className="wpcom-business-at">
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<DocumentHead title={ content.documentHeadTitle } />
-				<FormattedHeader
-					id="wpcom-business-at-header"
-					className="wpcom-business-at__header"
-					headerText={ content.header }
-					align="left"
-					brandFont
-				/>
-				<div className="wpcom-business-at__loading">
-					<p>{ translate( 'Loading…' ) }</p>
-				</div>
+				<Page
+					hasPadding
+					showSidebarToggle={ false }
+					title={ <JetpackTitle title={ content.header } /> }
+					subTitle={ content.subTitle }
+				>
+					<div className="wpcom-business-at__loading">
+						<p>{ translate( 'Loading…' ) }</p>
+					</div>
+				</Page>
+				{ ! isJetpackCloud() && <JetpackFooter /> }
 			</Main>
 		);
 	}
@@ -303,59 +308,60 @@ export default function WPCOMBusinessAT( {
 	}
 
 	return (
-		<Main className="wpcom-business-at">
+		<Main fullWidthLayout className="wpcom-business-at">
 			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
 			<PageViewTracker path="/backup/:site" title="Business Plan Automated Transfer" />
 
-			<FormattedHeader
-				id="wpcom-business-at-header"
-				className="wpcom-business-at__header"
-				headerText={ content.header }
-				align="left"
-				brandFont
-			/>
-			<BlockingHoldNotice
-				siteId={ siteId }
-				productName={ content.header }
-				suppressInstallNotice={ rewindAtomicDeactivated }
-			/>
-			<TransferFailureNotice
-				transferStatus={ automatedTransferStatus as TransferStatus }
-				productName={ content.header }
-			/>
-			<PromoCard
-				title={ content.primaryPromo.title }
-				image={ content.primaryPromo.image }
-				isPrimary
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={ <JetpackTitle title={ content.header } /> }
+				subTitle={ content.subTitle }
 			>
-				<p>{ content.primaryPromo.content }</p>
-				<div className="wpcom-business-at__cta">
-					<SpinnerButton
-						text={ content.primaryPromo.promoCTA.text }
-						loadingText={ content.primaryPromo.promoCTA.loadingText }
-						loading={
-							automatedTransferStatus === START ||
-							( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
-							isRewindActivating
-						}
-						onClick={ () => {
-							if ( rewindAtomicDeactivated ) {
-								setIsRewindActivating( true );
-								dispatch( autoConfigCredentials( siteId ) );
-								page( content.getProductUrl( siteSlug ) );
-								return;
+				<BlockingHoldNotice
+					siteId={ siteId }
+					productName={ content.header }
+					suppressInstallNotice={ rewindAtomicDeactivated }
+				/>
+				<TransferFailureNotice
+					transferStatus={ automatedTransferStatus as TransferStatus }
+					productName={ content.header }
+				/>
+				<PromoCard
+					title={ content.primaryPromo.title }
+					image={ content.primaryPromo.image }
+					isPrimary
+				>
+					<p>{ content.primaryPromo.content }</p>
+					<div className="wpcom-business-at__cta">
+						<SpinnerButton
+							text={ content.primaryPromo.promoCTA.text }
+							loadingText={ content.primaryPromo.promoCTA.loadingText }
+							loading={
+								automatedTransferStatus === START ||
+								( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
+								isRewindActivating
 							}
-							initiateATOrShowWarnings();
-						} }
-						disabled={
-							( cannotInitiateTransfer && ! rewindAtomicDeactivated ) || isRewindActivating
-						}
-					/>
-				</div>
-			</PromoCard>
+							onClick={ () => {
+								if ( rewindAtomicDeactivated ) {
+									setIsRewindActivating( true );
+									dispatch( autoConfigCredentials( siteId ) );
+									page( content.getProductUrl( siteSlug ) );
+									return;
+								}
+								initiateATOrShowWarnings();
+							} }
+							disabled={
+								( cannotInitiateTransfer && ! rewindAtomicDeactivated ) || isRewindActivating
+							}
+						/>
+					</div>
+				</PromoCard>
 
-			{ ! isJetpackCloud() && <WhatIsJetpack className="wpcom-business-at__footer" /> }
+				{ ! isJetpackCloud() && <WhatIsJetpack className="wpcom-business-at__footer" /> }
+			</Page>
+			{ ! isJetpackCloud() && <JetpackFooter /> }
 
 			<Dialog
 				isVisible={ showDialog }

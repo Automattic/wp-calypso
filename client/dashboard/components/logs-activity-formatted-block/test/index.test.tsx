@@ -45,7 +45,6 @@ describe( 'FormattedBlock renderer', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test( 'renders string content as-is', () => {
@@ -103,7 +102,6 @@ describe( 'Link blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test.each( [
@@ -138,7 +136,7 @@ describe( 'Link blocks', () => {
 			const link = screen.getByRole( 'link' );
 			expect( link ).toHaveAttribute( 'href', 'https://example.com/path' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
-			expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
+			expect( link ).toHaveAttribute( 'rel', 'external noopener' );
 		}
 	);
 } );
@@ -147,7 +145,6 @@ describe( 'Post blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test( 'links to the trash page when post is trashed', () => {
@@ -200,7 +197,6 @@ describe( 'Comment blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test( 'links to the comment anchor on Calypso', () => {
@@ -240,7 +236,6 @@ describe( 'Person blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test( 'links to the people editor on Calypso', () => {
@@ -281,7 +276,6 @@ describe( 'Plugin blocks', () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
 		mockedIsDashboardBackport.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test( 'renders an external link when not in the backport', () => {
@@ -295,7 +289,7 @@ describe( 'Plugin blocks', () => {
 		const link = screen.getByRole( 'link' );
 		expect( link.getAttribute( 'href' ) ).toMatch( /\/plugins\/plugin-slug\/site-slug$/ );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
-		expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
+		expect( link ).toHaveAttribute( 'rel', 'external noopener' );
 	} );
 
 	test( 'renders a regular link when in the backport', () => {
@@ -348,7 +342,6 @@ describe( 'Theme blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	test( 'renders relative link for wordpress.com themes', () => {

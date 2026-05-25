@@ -8,6 +8,7 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -35,10 +36,12 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
+		useConnectScreenActions: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		locale: 'en',
+		useConnectScreenActions: false,
 	};
 
 	state = {
@@ -152,7 +155,18 @@ class PasswordlessSignupForm extends Component {
 				this.setState( {
 					errorMessages: [
 						this.props.translate(
-							'Sorry, something went wrong when trying to create your account. Please try again.'
+							'We couldn’t create your account with this email. Please try a different email, or {{a}}contact support{{/a}} if the problem persists.',
+							{
+								components: {
+									a: (
+										<a
+											href="https://wordpress.com/help/contact"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						),
 					],
 				} );
@@ -307,16 +321,30 @@ class PasswordlessSignupForm extends Component {
 
 	formFooter() {
 		const { isSubmitting } = this.state;
+		const isPrimaryDisabled =
+			isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton;
 		const submitButtonText = isSubmitting
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
 
+		if ( this.props.useConnectScreenActions ) {
+			return (
+				<>
+					<ActionButtons
+						className="signup-form__action-buttons"
+						primaryLabel={ submitButtonText }
+						primaryType="submit"
+						primaryLoading={ isSubmitting }
+						primaryDisabled={ isPrimaryDisabled }
+					/>
+					{ this.props.secondaryFooterButton }
+				</>
+			);
+		}
+
 		return (
 			<LoggedOutFormFooter>
-				<SignupSubmitButton
-					isBusy={ isSubmitting }
-					isDisabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
-				>
+				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }

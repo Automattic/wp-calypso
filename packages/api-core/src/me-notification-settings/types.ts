@@ -22,6 +22,7 @@ export interface WpcomNotificationSettings {
 	akismet_marketing: boolean;
 	woopay_marketing: boolean;
 	gravatar_onboarding: boolean;
+	ai_tips: boolean;
 }
 
 export interface NotificationSettings {
@@ -38,6 +39,7 @@ export interface NotificationSettings {
 	recommended_blog: boolean;
 	comment_reply: boolean;
 	form_response: boolean;
+	on_this_day?: boolean;
 }
 
 export interface DeviceNotificationSettings extends NotificationSettings {
@@ -49,7 +51,7 @@ export type OtherDeviceNotificationSettings = Pick<
 	'device_id' | 'comment_like' | 'comment_reply'
 >;
 export interface OtherNotificationSettings {
-	timeline: Pick< NotificationSettings, 'comment_like' | 'comment_reply' >;
+	timeline: Pick< NotificationSettings, 'comment_like' | 'comment_reply' | 'on_this_day' >;
 	email: Pick< NotificationSettings, 'comment_like' | 'comment_reply' >;
 	devices: OtherDeviceNotificationSettings[];
 }

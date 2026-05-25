@@ -82,7 +82,7 @@ module.exports = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ __dirname ],
+				includePaths: [ process.cwd(), __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
@@ -113,7 +113,7 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 	},

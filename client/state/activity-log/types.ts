@@ -23,5 +23,7 @@ export type Activity = {
 	actorName?: string;
 	actorRole?: string;
 	actorType?: string;
+	actorIsMcpAgent?: boolean;
+	actorMcpClient?: string;
 	rewindId?: string;
 };

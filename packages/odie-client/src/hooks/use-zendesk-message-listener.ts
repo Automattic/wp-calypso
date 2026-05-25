@@ -54,7 +54,6 @@ export const useZendeskMessageListener = () => {
 		Smooch.on( 'message:received', messageListener );
 
 		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', messageListener );
 		};
 	}, [ isChatLoaded, messageListener ] );

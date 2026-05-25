@@ -84,7 +84,7 @@ const addWarningComments = ( fileContent ) =>
 
 module.exports = ( dir, output, linesFilter ) => {
 	const potGlob = path.resolve( dir, '*.pot' );
-	const potFiles = glob.sync( potGlob, { nodir: true, absolute: true } );
+	const potFiles = glob.sync( potGlob, { nodir: true, absolute: true } ).sort();
 
 	const concatPOT = potFiles.reduce( ( acc, filePath ) => {
 		return mergeDeep( acc, po.parse( fs.readFileSync( filePath, 'utf8' ) ) );

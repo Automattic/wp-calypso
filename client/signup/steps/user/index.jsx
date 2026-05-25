@@ -546,7 +546,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWoo, from } = this.props;
+		const { oauth2Client, isWoo } = this.props;
 		const isPasswordless = true;
 		let socialService;
 		let socialServiceResponse;
@@ -561,7 +561,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		const allowedSocialServices = getPartnerAllowedSocialServices( from );
+		const allowedSocialServices = getPartnerAllowedSocialServices( this.props.oauth2Client );
 
 		return (
 			<>

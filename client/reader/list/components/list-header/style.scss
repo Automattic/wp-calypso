@@ -1,0 +1,101 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+.list-stream__header-title-privacy {
+	margin-inline-start: 2px;
+	margin-top: 1px;
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-text-subtle );
+
+		svg {
+			fill: currentColor;
+		}
+	}
+}
+
+.list-stream__header-follow {
+	align-items: stretch;
+	display: flex;
+	margin-inline-start: auto;
+	z-index: z-index("root", ".list-stream__header-follow");
+
+	.follow-button {
+		padding: 0;
+		z-index: z-index(".list-stream__header-follow", ".follow-button");
+
+		.gridicon {
+			fill: var(--color-link);
+		}
+
+		.follow-button__label {
+			color: var(--color-link);
+		}
+
+		&.is-following {
+			.gridicon {
+				fill: var(--color-success);
+			}
+
+			.follow-button__label {
+				color: var(--color-success);
+			}
+		}
+	}
+}
+
+.list-stream__header.is-placeholder {
+	pointer-events: none;
+	user-select: none;
+
+	.follow-button,
+	.follow-button__label {
+		color: transparent;
+		background-color: var(--color-neutral-0);
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+
+.list-stream__header-edit {
+	margin-inline-start: auto;
+
+	.list-stream__header-action-icon .gridicon {
+		fill: var(--color-neutral-dark);
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.button {
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text-subtle );
+		}
+
+		.button:hover,
+		.button:focus {
+			border-color: var( --color-link );
+			color: var( --color-link );
+		}
+
+		.list-stream__header-action-icon .gridicon {
+			fill: currentColor;
+		}
+	}
+}
+
+.is-reader-page {
+	.formatted-header__title {
+		a {
+			text-decoration-color: transparent;
+			color: var(--color-text);
+			transition: 0.25s;
+
+			&:hover {
+				text-decoration-color: initial;
+			}
+		}
+	}
+
+	.list-stream__nav {
+		.section-nav-tab__link {
+			padding-top: 0; // Removing padding from top of tabs to make the view more compact.
+		}
+	}
+}

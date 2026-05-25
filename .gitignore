@@ -1,6 +1,7 @@
 .webpack-cache
 .sass-cache
 .babel-cache
+.superpowers/
 .vagrant
 .unison
 .env
@@ -60,8 +61,6 @@ checkstyle.xml
 /chunks-map.*.json
 cover.html
 .test.log
-
-cached-requests.json
 
 # Monorepo output
 /apps/*/dist/
@@ -127,8 +126,6 @@ packages/plans-grid-next/static/mockServiceWorker.js
 .phpunit.result.cache
 .phpunit.cache
 
-.docusaurus
-
 # Playwright
 playwright-report/
 .playwright-mcp/
@@ -139,4 +136,9 @@ output/
 # Allow user-contributed files, but keep Claude.md and main settings under version control
 **/.claude.md
 **/.claude/settings.local.json
+.claude/test-pr/
+.claude/worktrees/
+
+# husky's auto-generated init directory (not the committed pre-commit/pre-push scripts)
+.husky/_
 CLAUDE.local.md

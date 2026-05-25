@@ -91,7 +91,7 @@ export function useFields( {
 									</Text>
 								</ExternalLink>
 								<BranchDisplay branchName={ item.branch_name } />
-								<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto' } }>
+								<HStack spacing={ 1.5 } alignment="left" expanded={ false }>
 									<img
 										src={ author.avatar_url }
 										alt={ author.name }
@@ -99,9 +99,7 @@ export function useFields( {
 										height={ 16 }
 										style={ { borderRadius: '50%' } }
 									/>
-									<Text size="small" style={ { color: '#3b3b3b' } }>
-										{ author.name }
-									</Text>
+									<Text size="small">{ author.name }</Text>
 								</HStack>
 								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
@@ -167,9 +165,7 @@ export function useFields( {
 								item.status
 							) }
 						>
-							<span>
-								<TimeSince timestamp={ item.created_on } hideTitle />
-							</span>
+							<TimeSince timestamp={ item.created_on } hideTitle />
 						</Tooltip>
 					</div>
 				),
@@ -191,6 +187,6 @@ export function useFields( {
 				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[ repositoryOptions, userNameOptions, locale, siteSlug ]
+		[ repositoryOptions, userNameOptions, locale, siteSlug, repositoryFilter ]
 	);
 }

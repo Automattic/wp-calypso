@@ -1,15 +1,15 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
+import { getImagesFromPostToDisplay } from 'calypso/reader/data/post/normalization';
 import {
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
-} from 'calypso/state/reader/posts/sizes';
+} from 'calypso/reader/data/post/sizes';
 
 const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost, hasExcerpt } ) => {
 	const numImages = isCompactPost ? 1 : 4;
-	const imagesToDisplay = getImagesFromPostToDisplay( post, numImages );
+	const imagesToDisplay = post.featured_image ? [] : getImagesFromPostToDisplay( post, numImages );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
 			<ReaderFeaturedImage

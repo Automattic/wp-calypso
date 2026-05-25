@@ -1,0 +1,40 @@
+.atmosphere-view {
+	max-width: 720px;
+	padding: 16px;
+}
+
+.atmosphere-avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.atmosphere-error {
+	color: var( --color-error );
+}
+
+.atmosphere-view .atmosphere-navigation {
+	.section-nav-tabs__list {
+		overflow-x: auto;
+	}
+
+	.section-nav-tab__link {
+		padding-top: 5px;
+	}
+}
+
+.atmosphere-view__section-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.atmosphere-view__section-title svg {
+	display: block;
+	flex-shrink: 0;
+	// The icon component bakes in the `.sidebar__menu-icon` class so the
+	// sidebar can spec its own spacing. In the header we lay things out
+	// with `gap`, so reset the inherited margin to keep the gap honest.
+	margin: 0;
+}

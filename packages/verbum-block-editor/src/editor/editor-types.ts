@@ -2,6 +2,7 @@ import { type BlockInstance } from '@wordpress/blocks';
 
 export interface EditorProps {
 	initialContent: string;
+	focusOnMount?: boolean;
 	onChange: ( content: string ) => void;
 	isRTL: boolean;
 	isDarkMode: boolean;

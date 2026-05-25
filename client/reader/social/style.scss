@@ -1,0 +1,212 @@
+.social-profile-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.social-profile-card__banner {
+	display: block;
+	inline-size: 100%;
+	block-size: clamp( 80px, 28vw, 200px );
+	object-fit: cover;
+	border-radius: 4px;
+	// Visible behind the `<img>` while it loads, and serves as the
+	// placeholder colour when `<SocialAvatar>` swaps the failed image
+	// out for the same-class placeholder `<div>`.
+	background: var( --studio-gray-5 );
+}
+
+.social-profile-card__header-row {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-inline: 0.5rem;
+}
+
+// Pull the avatar up to overlap the banner only when a banner is rendered.
+// Without this guard, the negative margin would yank the avatar above the
+// card's top edge for accounts with no cover image.
+.social-profile-card__banner + .social-profile-card__header-row {
+	margin-block-start: -2.5rem;
+
+	@media ( max-width: 600px ) {
+		margin-block-start: -1.75rem;
+	}
+}
+
+.social-profile-card__avatar {
+	display: block;
+	inline-size: 5rem;
+	block-size: 5rem;
+	border-radius: 50%;
+	border: 3px solid var( --color-surface, var( --studio-white, #fff ) );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	object-fit: cover;
+}
+
+.social-profile-card__header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-block-end: 0.25rem;
+
+	@media ( max-width: 600px ) {
+		order: 1;
+		margin-block-start: 0.5rem;
+		margin-block-end: 0;
+	}
+}
+
+.social-profile-card__display-name {
+	margin: 0;
+	font-size: 1.25rem;
+	line-height: 1.2;
+}
+
+// Wrapper anchor when a third-party profile URL is available; matches the
+// hover-reveal arrow used by the prominent post timestamp link.
+.social-profile-card__display-name-link {
+	color: inherit;
+	text-decoration: none;
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
+	&::after {
+		content: "↗";
+		display: inline-block;
+		color: var( --studio-gray-30 );
+		font-size: 0.85em;
+		margin-inline-start: 6px;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		opacity: 1;
+	}
+}
+
+.social-profile-card__handle {
+	margin: 0;
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+	font-size: 0.875rem;
+}
+
+.social-profile-card__bio {
+	margin: 0;
+	line-height: 1.5;
+
+	a {
+		color: var( --color-link, #0073aa );
+	}
+}
+
+.social-profile-card__stats {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 1.25rem;
+	flex-wrap: wrap;
+}
+
+.social-profile-card__stat {
+	display: inline-flex;
+	gap: 0.25rem;
+}
+
+.social-profile-card__stat-link {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover .social-profile-card__stat-count {
+		text-decoration: underline;
+	}
+}
+
+.social-profile-card__stat-count {
+	font-weight: 600;
+}
+
+.social-profile-card__stat-label {
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+}
+
+// Layout-stable skeleton mirrored on SocialProfileCard. Uses the same sizing
+// so the page doesn't shift when profile data resolves. Block colour matches
+// the post-list skeleton row so the loading state reads as one surface.
+@keyframes social-profile-card-skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.social-profile-card-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	animation: social-profile-card-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.social-profile-card-skeleton__banner {
+	inline-size: 100%;
+	block-size: clamp( 80px, 28vw, 200px );
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	border-radius: 4px;
+}
+
+.social-profile-card-skeleton__header-row {
+	display: flex;
+	align-items: flex-end;
+	gap: 1rem;
+	padding-inline: 0.5rem;
+	margin-block-start: -2.5rem;
+
+	@media ( max-width: 600px ) {
+		margin-block-start: -1.75rem;
+	}
+}
+
+.social-profile-card-skeleton__avatar {
+	inline-size: 5rem;
+	block-size: 5rem;
+	border-radius: 50%;
+	border: 3px solid var( --color-surface, var( --studio-white, #fff ) );
+	background: var( --color-neutral-10, var( --studio-gray-10, #c3c4c7 ) );
+}
+
+.social-profile-card-skeleton__name {
+	block-size: 1.5rem;
+	inline-size: 40%;
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	border-radius: 4px;
+}
+
+.social-profile-card-skeleton__handle {
+	block-size: 1rem;
+	inline-size: 28%;
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	border-radius: 4px;
+}
+
+.social-profile-card-skeleton__stats {
+	display: flex;
+	gap: 1.25rem;
+}
+
+.social-profile-card-skeleton__stat {
+	block-size: 1rem;
+	inline-size: 4rem;
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	border-radius: 4px;
+}

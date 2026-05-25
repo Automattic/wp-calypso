@@ -3,6 +3,7 @@ import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
@@ -74,22 +75,25 @@ const UniversalNavbarHeader = ( {
 	}, [] );
 
 	if ( ! startUrl ) {
+		const startPaths: Record< string, string > = {
+			plugins: '//wordpress.com/start/business',
+			reader: '//wordpress.com/start/reader',
+		};
+		const startPath = ( sectionName && startPaths[ sectionName ] ) ?? '//wordpress.com/start';
+
 		startUrl = addQueryArgs(
-			// url
-			sectionName === 'plugins'
-				? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
-				: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
-			// query
-			sectionName
-				? {
-						ref: sectionName + '-lp',
-				  }
-				: {}
+			localizeUrl( startPath, locale, isLoggedIn ),
+			sectionName ? { ref: sectionName + '-lp' } : {}
 		);
 	}
 
 	return (
-		<div className={ className }>
+		<div
+			className={ clsx( className, {
+				'is-themes-dark-mode-monochrome':
+					isLoggedIn && ( sectionName === 'themes' || sectionName === 'theme' ),
+			} ) }
+		>
 			<div className="x-root lpc-header-nav-wrapper">
 				<div className="lpc-header-nav-container">
 					{ /*<!-- Nav bar starts here. -->*/ }

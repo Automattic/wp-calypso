@@ -10,23 +10,22 @@
 	margin: 0 0 32px 0;
 
 	.row {
-		border-block-end: 1px solid $studio-gray-5;
+		border-block-end: 1px solid var( --color-border-subtle );
 		display: flex;
 		align-items: center;
-		height: 81px !important; // Override the height from the virtualized list
 		@extend %site-subscriptions-list-default-text;
+
+		&:not(.header) {
+			height: 81px !important; // Override the height from the virtualized list
+		}
 
 		* {
 			flex: 1;
 		}
 
 		&.header {
-			padding-bottom: $font-code;
+			padding-bottom: 12px;
 			padding-top: 0;
-
-			@media (max-width: $break-small) {
-				display: none;
-			}
 		}
 
 		.title-cell {
@@ -64,8 +63,8 @@
 				@extend %rss-label;
 			}
 
-			.gift-label {
-				@extend %gift-label;
+			.comp-label {
+				@extend %comp-label;
 			}
 		}
 
@@ -100,6 +99,12 @@
 				.site-subscriptions-list__recommend-tooltip-icon {
 					cursor: pointer;
 					flex: 0.5;
+					color: var( --studio-gray-50 );
+					fill: currentColor;
+
+					* {
+						fill: currentColor;
+					}
 
 					@media (max-width: $break-huge) {
 						display: none;
@@ -112,13 +117,18 @@
 			}
 		}
 
+		.unsubscribe-action-cell {
+			flex: initial;
+			flex-basis: 45px;
+		}
+
 		.actions-cell {
 			flex-basis: 36px;
 			flex-grow: initial;
 			margin: 0 5px;
 
 			.gridicon {
-				fill: $studio-gray-50;
+				fill: var( --studio-gray-50 );
 			}
 		}
 	}

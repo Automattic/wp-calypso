@@ -1,3 +1,4 @@
+import { ReadFeedSearchSort } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import {
@@ -19,20 +20,14 @@ import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
-import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import {
-	SORT_BY_RELEVANCE,
-	SORT_BY_LAST_UPDATED,
-} from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
-import ReaderPopularSitesSidebar from '../stream/reader-popular-sites-sidebar';
+import { ReaderPopularSitesSidebarContainer } from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import SiteResults from './site-results';
+import SiteResultsContainer from './site-results-container';
 import Suggestion from './suggestion';
 import SuggestionProvider from './suggestion-provider';
 import './style.scss';
@@ -42,7 +37,8 @@ const WIDE_DISPLAY_CUTOFF = 660;
 const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = ( sort ) =>
+	sort === 'date' ? ReadFeedSearchSort.LastUpdated : ReadFeedSearchSort.Relevance;
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -126,11 +122,6 @@ class SearchStream extends React.Component {
 		const toggleGroupControlClasses = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		// Hide posts and sites if the only result has no feed ID. This can happen when searching
-		// for a specific site to add a rss to your feed. Originally added in
-		// https://github.com/Automattic/wp-calypso/pull/78555.
-		const hidePostsAndSites =
-			this.state.feeds && this.state.feeds?.length === 1 && ! this.state.feeds[ 0 ].feed_ID;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -190,7 +181,6 @@ class SearchStream extends React.Component {
 							value={ query || '' }
 						/>
 					</CompactCard>
-					<SearchFollowButton query={ query } feeds={ this.state.feeds } />
 					{ query && (
 						<div className={ toggleGroupControlClasses }>
 							<ToggleGroupControl
@@ -213,52 +203,49 @@ class SearchStream extends React.Component {
 							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
 						/>
 					) }
-					{ ! hidePostsAndSites && (
-						<SearchStreamHeader
-							selected={ searchType }
-							onSelection={ this.handleSearchTypeSelection }
-							wideDisplay={ wideDisplay }
-							isLoggedIn={ isLoggedIn }
-						/>
-					) }
+					<SearchStreamHeader
+						selected={ searchType }
+						onSelection={ this.handleSearchTypeSelection }
+						wideDisplay={ wideDisplay }
+						isLoggedIn={ isLoggedIn }
+					/>
 				</div>
-				{ /* { isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> } */ }
-				{ ! hidePostsAndSites && wideDisplay && (
+				{ wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 						</div>
 						<div className="search-stream__site-results">
 							{ query && (
-								<SiteResults
+								<SiteResultsContainer
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							) }
 							{ ! query && (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
+								<ReaderPopularSitesSidebarContainer
+									streamKey={ this.props.streamKey }
 									followSource={ READER_SEARCH_POPULAR_SITES }
 								/>
 							) }
 						</div>
 					</div>
 				) }
-				{ ! hidePostsAndSites && ! wideDisplay && (
+				{ ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
 						{ ( searchType === SEARCH_TYPES.POSTS && (
 							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 						) ) ||
 							( query && (
-								<SiteResults
+								<SiteResultsContainer
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							) ) || (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
+								<ReaderPopularSitesSidebarContainer
+									streamKey={ this.props.streamKey }
 									followSource={ READER_SEARCH_POPULAR_SITES }
 								/>
 							) }
@@ -284,10 +271,6 @@ export default connect(
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
 		isLoggedIn: isUserLoggedIn( state ),
-		items: getTransformedStreamItems( state, {
-			streamKey: ownProps.streamKey,
-			recsStreamKey: ownProps.recsStreamKey,
-		} ),
 	} ),
 	{
 		recordReaderTracksEvent,

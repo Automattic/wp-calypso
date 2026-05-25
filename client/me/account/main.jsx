@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -35,6 +36,7 @@ import AccountEmailField from 'calypso/me/account/account-email-field';
 import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
 import { EmailVerificationBannerV2 } from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isCurrentUserEmailVerified,
@@ -49,7 +51,6 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -1041,8 +1042,9 @@ export default compose(
 	withGeoLocation,
 	protectForm,
 	withDefaultInterface,
+	withReaderTeams,
 	connect(
-		( state ) => ( {
+		( state, ownProps ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
@@ -1053,7 +1055,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isAutomattician: isA8cTeamMember( state ),
+			isAutomattician: isAutomatticTeamMember( ownProps.teams ),
 			isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
 		} ),
 		{

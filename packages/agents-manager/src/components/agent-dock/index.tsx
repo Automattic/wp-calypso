@@ -1,48 +1,44 @@
-import {
-	getAgentManager,
-	useAgentChat,
-	type UseAgentChatConfig,
-} from '@automattic/agenttic-client';
+import { getAgentManager } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useMemo, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
+import { columns, comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
-import useConversation from '../../hooks/use-conversation';
 import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
-import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
-import AgentChat from '../agent-chat';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
+import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
-import { ZendeskChat } from '../zendesk-chat';
-import type { BigSkyMessage } from '../../types';
+import ZendeskChat from '../zendesk-chat';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	ImageUploadHook,
+	UseCheckpointHook,
+	ProviderCapabilities,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+import './style.scss';
 
-interface AgentDockProps {
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
+interface Props {
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
 	/** Custom components for rendering markdown. */
@@ -57,11 +53,17 @@ interface AgentDockProps {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
+	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	/** Hook for handling image uploads within the agent chat. */
+	useImageUpload?: ImageUploadHook;
+	/** Hook for saving and restoring editor state so that AI actions can be undone. */
+	useCheckpoint?: UseCheckpointHook;
+	/** Optional capability flags declared by one or more loaded providers. */
+	capabilities?: ProviderCapabilities;
 }
 
 export default function AgentDock( {
-	agentConfig,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -70,158 +72,125 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
-}: AgentDockProps ) {
-	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
-	const [ isThinking, setIsThinking ] = useState( false );
-	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
-	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
-	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
-	const [ inputValue, setInputValue ] = useState( '' );
-	const [ isCompactMode, setIsCompactMode ] = useState( false );
-	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
-	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
+	useImageUpload,
+	useCheckpoint,
+	capabilities,
+}: Props ) {
+	const { siteKey, sectionName, agentConfig } = useAgentsManagerContext();
+
+	const [ isCompactMode, setIsCompactMode ] = useState(
+		window.__agentsManagerActions?.isCompactMode ?? false
+	);
+	const [ shouldRenderChat, setShouldRenderChat ] = useState(
+		window.__agentsManagerActions?.isChatEnabled ?? true
+	);
+	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
+		window.__agentsManagerActions?.desktopMediaQuery
+	);
+	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
+	const [ isZendeskChatEmpty, setIsZendeskChatEmpty ] = useState( true );
+	const { setIsOpen, setIsDocked, setIsSplitScreen } = useDispatch( AGENTS_MANAGER_STORE );
 	const {
-		hasLoaded: isStoreReady,
 		isOpen: isPersistedOpen = false,
 		isDocked: isPersistedDocked = false,
+		isSplitScreen = false,
 	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
-	const sessionId = agentConfig.sessionId;
-	const agentId = agentConfig.agentId;
+	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
+	const agentId = agentConfig!.agentId;
+	// Reader-chat runs on public blog frontends where there's no wp-admin
+	// sidebar to dock into. Detect that context so we can hide options that
+	// don't apply and avoid persisting open/close state through the logged-in
+	// Agents Manager REST state endpoint.
+	const isReaderChat = isReaderChatAgent( agentId );
+	const showChatHistory =
+		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
+	const showSupportGuides =
+		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
+	const setOpenState = useCallback(
+		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
+		[ isReaderChat, setIsOpen ]
+	);
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
-			isReady: isStoreReady,
-			defaultDocked: isPersistedDocked,
+			defaultDocked: isReaderChat ? false : isPersistedDocked,
 			defaultOpen: isPersistedOpen,
-			onOpenSidebar: () => {
-				setIsOpen( true );
-				if ( pathname === '/history' ) {
-					navigate( '/' );
-				}
-			},
-			onCloseSidebar: () => setIsOpen( false ),
+			desktopMediaQuery,
+			onOpenSidebar: () => setOpenState( true ),
+			onCloseSidebar: () => setOpenState( false ),
+			isSplitScreen,
 		} );
-
-	const {
-		addMessage,
-		messages,
-		suggestions,
-		isProcessing,
-		error,
-		loadMessages,
-		onSubmit,
-		abortCurrentRequest,
-		clearSuggestions,
-		registerSuggestions,
-	} = useAgentChat( agentConfig );
-
-	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const dynamicSuggestions = useSuggestions?.();
-
-	// Register dynamic suggestions whenever they change
-	useEffect( () => {
-		const suggestions = dynamicSuggestions?.suggestions;
-
-		if ( suggestions && suggestions.length > 0 ) {
-			registerSuggestions?.( suggestions );
-		} else {
-			// Clear suggestions when there are none
-			clearSuggestions?.();
-		}
-	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
-
-	const { isLoading: isLoadingConversation } = useConversation( {
-		agentId,
-		sessionId,
-		authProvider: agentConfig.authProvider,
-		onSuccess: ( messages, serverSessionId ) => {
-			// Update the UI with the loaded messages
-			loadMessages( messages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
-
-			// Sync local session ID with the server's
-			if ( sessionId !== serverSessionId ) {
-				setSessionId( serverSessionId, agentId );
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
-			}
-		},
-	} );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
-		isProcessing,
-		onSubmit,
-		sessionId,
-		agentId,
-	} );
 
 	// Handle WordPress admin bar integration
 	useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
-		setIsOpen,
+		maybeOpenChat: () => {
+			if ( ! isPersistedOpen ) {
+				isDocked ? openSidebar() : setOpenState( true );
+			}
+		},
 		navigate,
 	} );
 
-	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
-	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
-	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
-	useAbilitiesSetup?.( {
-		addMessage: ( message: BigSkyMessage ) => {
-			// Transform Big Sky message format to UIMessage format and add to chat
-			addMessage( {
-				// Keep BigSky message properties without explicit mapping to keep linter happy
-				// BigSky messages sometimes have a 'context' field used by the
-				// site build to show the progress indicator
-				...message,
-				id: message.id,
-				role: message.role === 'assistant' ? 'agent' : 'user',
-				content: message.content,
-				timestamp: message.created_at ? message.created_at * 1000 : Date.now(),
-				archived: message.archived ?? false,
-				showIcon: message.showIcon ?? true,
-			} );
-		},
-		clearMessages: () => loadMessages( [] ),
-		clearSuggestions,
-		getAgentManager,
-		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
-			);
-		},
-		// This ensures the same session ID is used between Big Sky and Calypso agents,
-		// so that messages will be stored in the same conversation.
-		getSessionId: () => sessionId || getStoredSessionId( agentId ),
-		setIsBuildingSite,
-		setThinkingMessage,
-	} );
-
 	useSetupCustomActions( {
+		canDock,
 		dock,
 		undock,
 		openSidebar,
 		closeSidebar,
 		setIsCompactMode,
 		setShouldRenderChat,
+		setDesktopMediaQuery,
 	} );
 
-	const handleNewChat = () => {
-		navigate( '/' );
-	};
+	// Reflect split-screen state on the sidebar container element. The
+	// container class is added by `useAgentLayoutManager` when docked; we
+	// only toggle the extra `is-split-screen` modifier on it so the CSS
+	// override in `agent-dock/style.scss` (`--am-sidebar-width: 50vw`)
+	// wins at runtime. No-op if the sidebar isn't mounted (floating or
+	// closed), and auto-clears on unmount to avoid leaking the class.
+	useEffect( () => {
+		const container = document.querySelector( '.agents-manager-sidebar-container' );
+		if ( ! container ) {
+			return;
+		}
+		container.classList.toggle( 'is-split-screen', !! isSplitScreen );
+		return () => {
+			container.classList.remove( 'is-split-screen' );
+		};
+	}, [ isSplitScreen, isDocked, isPersistedOpen ] );
+
+	const handleAbort = useCallback( () => {
+		const agentManager = getAgentManager();
+
+		if ( agentManager.hasAgent( agentId ) ) {
+			agentManager.abortCurrentRequest( agentId );
+		}
+	}, [ agentId ] );
+
+	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat;
+
+	const handleChatHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
+		[]
+	);
+	const handleZendeskHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsZendeskChatEmpty( ! hasMessages ),
+		[]
+	);
+
+	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
 
 	const handleExpand = () => {
-		setIsOpen( true );
+		setOpenState( true );
 		if ( pathname === '/history' ) {
 			navigate( '/' );
 		}
@@ -229,128 +198,136 @@ export default function AgentDock( {
 
 	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
 		if ( conversation.is_zendesk ) {
+			if ( isReaderChat ) {
+				return;
+			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
 			const sessionId = conversation.session_id || '';
 
-			abortCurrentRequest();
-			setSessionId( sessionId, agentId );
+			persistLastActivity( siteKey );
+			handleAbort();
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
 
+	// Persist reader-chat open/closed state across page navigations via
+	// localStorage — the AGENTS_MANAGER_STORE is in-memory only, so a fresh
+	// page load resets isOpen to false by default. Read the stored flag on
+	// mount and restore; write it on every toggle.
+	const OPEN_STORAGE_KEY = `jetpack-reader-chat-open-${ agentId }`;
+	useEffect( () => {
+		if ( ! isReaderChat ) {
+			return;
+		}
+		try {
+			if ( localStorage.getItem( OPEN_STORAGE_KEY ) === '1' && ! isPersistedOpen ) {
+				setOpenState( true );
+			}
+		} catch {
+			// ignore
+		}
+		// Only restore on first mount.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	useEffect( () => {
+		if ( ! isReaderChat ) {
+			return;
+		}
+		try {
+			if ( isPersistedOpen ) {
+				localStorage.setItem( OPEN_STORAGE_KEY, '1' );
+			} else {
+				localStorage.removeItem( OPEN_STORAGE_KEY );
+			}
+		} catch {
+			// ignore
+		}
+	}, [ isPersistedOpen, isReaderChat, OPEN_STORAGE_KEY ] );
+
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		const newChatMenuItem = {
-			icon: comment,
-			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname === '/chat' && ! messages.length,
-			onClick: handleNewChat,
-		};
-		const newZDChatMenuItem = {
-			icon: lifesaver,
-			title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-			isDisabled: pathname === '/zendesk' && ! messages.length,
-			onClick: () => navigate( '/zendesk' ),
-		};
-		const undockMenuItem = {
-			icon: login,
-			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
-			onClick: () => {
-				undock();
-				setIsDocked( false );
+		return [
+			{
+				icon: comment,
+				title: __( 'New chat', '__i18n_text_domain__' ),
+				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
+				onClick: () => navigate( '/' ),
 			},
-		};
-		const dockMenuItem = {
-			icon: drawerRight,
-			title: __( 'Move to sidebar', '__i18n_text_domain__' ),
-			onClick: () => {
-				dock();
-				setIsDocked( true );
+			shouldShowUnifiedSupport && {
+				icon: lifesaver,
+				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
+				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
+				onClick: () => {
+					handleAbort();
+					navigate( '/zendesk' );
+				},
 			},
-		};
-
-		const options: ChatHeaderOptions = [ newChatMenuItem ];
-
-		if ( shouldUseAgentsManager ) {
-			options.push( newZDChatMenuItem );
-		}
-
-		if ( isDocked ) {
-			options.push( undockMenuItem );
-		} else if ( canDock ) {
-			options.push( dockMenuItem );
-		}
-
-		return options;
+			showSupportGuides && {
+				icon: help,
+				title: __( 'Support guides', '__i18n_text_domain__' ),
+				isDisabled: pathname === '/support-guides',
+				onClick: () => navigate( '/support-guides' ),
+			},
+			// Sidebar docking only makes sense in wp-admin where a block-editor
+			// sidebar slot exists. On public reader-chat frontends there's no
+			// sidebar to dock into — the click does nothing, so hide the option.
+			! isReaderChat &&
+				isDocked && {
+					icon: login,
+					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					onClick: () => {
+						undock();
+						setIsDocked( false );
+						// Split screen only makes sense while docked; clear the
+						// flag so the option returns cleanly when re-docked.
+						setIsSplitScreen( false );
+					},
+				},
+			! isReaderChat &&
+				! isDocked &&
+				canDock && {
+					icon: drawerRight,
+					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+					onClick: () => {
+						dock();
+						setIsDocked( true );
+					},
+				},
+			// Split-screen toggle — gated to providers that opt in via
+			// `capabilities.supportsSplitScreen`. Only visible while the
+			// sidebar is docked (at 50vw the floating modal would be redundant).
+			isDocked &&
+				capabilities?.supportsSplitScreen && {
+					icon: columns,
+					title: isSplitScreen
+						? __( 'Exit split screen', '__i18n_text_domain__' )
+						: __( 'Split screen sidebar', '__i18n_text_domain__' ),
+					onClick: () => setIsSplitScreen( ! isSplitScreen ),
+				},
+		].filter( Boolean ) as ChatHeaderOptions;
 	};
 
-	const visibleMessages = useMemo( () => {
-		let currentMessages = messages;
+	const chatHeaderOptions = getChatHeaderOptions();
 
-		currentMessages = currentMessages.filter(
-			( message ) =>
-				! deletedMessageIds.has( message.id ) &&
-				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
-		);
-
-		// Group site-build messages only when needed
-		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
-
-		// Show progress card during styling phase (after structure, dock is visible)
-		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
-			// Show spinner during post-layout workflow (colors, fonts, images)
-			currentMessages = siteBuildUtils.groupSiteBuildMessages(
-				currentMessages,
-				isBuildingSite ? thinkingMessage : null
-			);
-		}
-
-		currentMessages = convertToolMessagesToComponents( {
-			messages: currentMessages,
-			getChatComponent,
-		} );
-
-		return currentMessages;
-	}, [
-		deletedMessageIds,
-		getChatComponent,
-		isBuildingSite,
-		messages,
-		siteBuildUtils,
-		thinkingMessage,
-	] );
-
-	// Determine which suggestions to show following Big Sky's logic:
-	// - When there are dynamic suggestions (from block selection, etc.), show those
-	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
-	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( suggestions.length > 0 ) {
-		displayedEmptyViewSuggestions = suggestions;
-	} else if ( visibleMessages.length === 0 && inputValue.length === 0 ) {
-		displayedEmptyViewSuggestions = emptyViewSuggestions;
-	}
-
-	const Chat = (
-		<AgentChat
-			messages={ visibleMessages }
-			suggestions={ suggestions }
-			emptyViewSuggestions={ displayedEmptyViewSuggestions }
-			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
-			error={ error }
-			onSubmit={ onSubmit }
-			onAbort={ abortCurrentRequest }
-			isLoadingConversation={ isLoadingConversation }
+	const OrchestratorChatRoute = (
+		<OrchestratorChat
+			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onClose={ handleClose }
 			onExpand={ handleExpand }
-			clearSuggestions={ clearSuggestions }
-			chatHeaderOptions={ getChatHeaderOptions() }
+			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			inputValue={ inputValue }
-			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
+			useNavigationContinuation={ useNavigationContinuation }
+			useAbilitiesSetup={ useAbilitiesSetup }
+			useSuggestions={ useSuggestions }
+			getChatComponent={ getChatComponent }
+			siteBuildUtils={ siteBuildUtils }
+			useImageUpload={ useImageUpload }
+			useCheckpoint={ useCheckpoint }
+			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
 
@@ -358,50 +335,44 @@ export default function AgentDock( {
 		<ZendeskChat
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
-			chatHeaderOptions={ getChatHeaderOptions() }
+			onClose={ handleClose }
+			onExpand={ handleExpand }
+			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			onHasMessagesChange={ handleZendeskHasMessagesChange }
 		/>
 	);
 
-	const History = (
+	const HistoryRoute = (
 		<AgentHistory
-			agentId={ agentId }
-			authProvider={ agentConfig.authProvider }
-			chatHeaderOptions={ getChatHeaderOptions() }
+			chatHeaderOptions={ chatHeaderOptions }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			onSubmit={ onSubmit }
-			onAbort={ abortCurrentRequest }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onAbort={ handleAbort }
+			onClose={ handleClose }
 			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
-			onNewChat={ handleNewChat }
 		/>
 	);
 
 	const SupportGuideRoute = (
 		<SupportGuide
-			isEligibleForChat={ isEligibleForChat }
-			onAbort={ abortCurrentRequest }
+			onAbort={ handleAbort }
 			onClose={ closeSidebar }
+			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			sectionName={ sectionName }
-			currentSiteDomain={ site?.domain }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			isChatDocked={ isDocked }
+			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
 
 	const SupportGuidesRoute = (
 		<SupportGuides
-			onAbort={ abortCurrentRequest }
+			onAbort={ handleAbort }
 			onClose={ closeSidebar }
+			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			isChatDocked={ isDocked }
+			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
 
@@ -410,11 +381,11 @@ export default function AgentDock( {
 		createAgentPortal(
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
-				<Route path="/chat" element={ Chat } />
-				<Route path="/post" element={ SupportGuideRoute } />
-				<Route path="/zendesk" element={ ZendeskChatRoute } />
-				<Route path="/support-guides" element={ SupportGuidesRoute } />
-				<Route path="/history" element={ History } />
+				<Route path="/chat" element={ OrchestratorChatRoute } />
+				{ showSupportGuides && <Route path="/post" element={ SupportGuideRoute } /> }
+				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+				{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+				{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
 		)

@@ -7,6 +7,7 @@ import {
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -42,6 +43,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
 		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
 
+	const dashboard = getDashboardFromQuery();
+
 	return addQueryArgs(
 		{
 			signup: 1,
@@ -52,6 +55,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			checkoutBackUrl: finalCheckoutBackUrl,
 			// Pass the final destination as redirect_to so checkout knows where to go after completion
 			...( destination && { redirect_to: destination } ),
+			...( dashboard && { dashboard } ),
 		},
 		checkoutURL
 	);
@@ -100,11 +104,31 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
+	// If a back_to parameter is provided, use it as the destination
+	if ( dependencies.back_to ) {
+		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.back_to );
+	}
+
+	const ref = dependencies.refParameter?.trim() ?? '';
+	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
+
+	if ( isWpAdminPath ) {
+		return addQueryArgs(
+			{ 'celebrate-launch': 'true' },
+			`https://${ dependencies.siteSlug }/${ ref }`
+		);
+	}
+
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
 	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
+
+	// For Gravatar domain purchases, redirect back to Gravatar
+	if ( isDomainForGravatarFlow( flowName ) ) {
+		return 'https://gravatar.com/profile/?modal=account-settings&path=profile-url';
+	}
 
 	// This designType represents a new site.
 	if ( designType === 'page' ) {
@@ -112,7 +136,7 @@ function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
 
-		return addQueryArgs( { siteId }, '/start/setup-site' );
+		return `/home/${ siteSlug }`;
 	} else if ( designType === 'existing-site' ) {
 		if ( dashboardType ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -120,10 +144,6 @@ function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 
 		// Redirection URL handled by the checkout controller
 		return '';
-	}
-
-	if ( dashboardType ) {
-		return dashboardLink( '/domains' );
 	}
 
 	// Redirection URL handled by the checkout controller
@@ -135,10 +155,6 @@ function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
 		{ siteId },
 		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
 	);
-}
-
-function getChecklistThemeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
 }
 
 function getWithThemeDestination( {
@@ -182,30 +198,6 @@ function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
 
-function getDestinationFromIntent( dependencies ) {
-	const { intent, storeType, startingPoint, siteSlug } = dependencies;
-	// If the user skips starting point, redirect them to My Home
-	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
-		if ( startingPoint !== 'write' ) {
-			window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
-		}
-
-		return `/post/${ siteSlug }`;
-	}
-
-	if ( intent === 'sell' && storeType === 'power' ) {
-		return addQueryArgs(
-			{
-				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
-				siteSlug: siteSlug,
-			},
-			`/start/woocommerce-install`
-		);
-	}
-
-	return getChecklistThemeDestination( dependencies );
-}
-
 function getDIFMSignupDestination( { siteId } ) {
 	return addQueryArgs( { siteId }, '/start/site-content-collection' );
 }
@@ -227,7 +219,6 @@ const flows = generateFlows( {
 	getWithThemeDestination,
 	getWithPluginDestination,
 	getEditorDestination,
-	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,

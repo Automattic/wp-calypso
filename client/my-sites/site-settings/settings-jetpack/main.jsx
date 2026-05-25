@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
@@ -106,7 +106,7 @@ export default connect( ( state ) => {
 		showCredentials:
 			isSiteFailedMigrationSource( state, siteId ) ||
 			isRewindActive( state, siteId ) ||
-			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ),
+			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE ),
 		host,
 		action,
 		retention,

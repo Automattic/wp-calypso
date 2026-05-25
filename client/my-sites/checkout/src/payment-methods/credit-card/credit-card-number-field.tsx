@@ -71,6 +71,7 @@ export default function CreditCardNumberField( {
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
+						// Required for EU co-brand network-choice compliance: enables Stripe's in-Element picker for co-branded cards.
 						showIcon: true,
 					} }
 					onReady={ () => {

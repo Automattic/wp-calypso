@@ -84,7 +84,7 @@ module.exports = {
 		'webpack.config',
 	],
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {

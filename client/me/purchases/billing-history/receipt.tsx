@@ -1,3 +1,4 @@
+import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -22,6 +23,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
@@ -296,7 +298,15 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 					{
 						components: {
 							noPrint: <span className="receipt__no-print" />,
-							vatDetailsLink: <a href={ vatDetailsPath } />,
+							vatDetailsLink: (
+								<a
+									href={
+										isJetpackCloud()
+											? 'https://wordpress.com/me/purchases/vat-details'
+											: vatDetailsPath
+									}
+								/>
+							),
 							emailReceiptLink: (
 								<Button
 									plain
@@ -569,7 +579,11 @@ function ReceiptLineItem( {
 		<>
 			<tr>
 				<td className="billing-history__receipt-item-name">
-					<span>{ item.variation }</span>
+					<span>
+						{ isAkismetPro500( { product_slug: item.wpcom_product_slug } )
+							? getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity )
+							: item.variation }
+					</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }
 					{ item.domain && <em>{ item.domain }</em> }

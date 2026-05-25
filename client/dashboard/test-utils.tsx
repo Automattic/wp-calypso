@@ -37,15 +37,18 @@ type RenderResult = ReturnType< typeof testingLibraryRender > &
 
 interface RenderOptions {
 	user?: User;
+	queryClient?: QueryClient;
 }
 
 export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
-	const { user = defaultUser } = options;
-	const queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	} );
+	const { user = defaultUser, queryClient: providedClient } = options;
+	const queryClient =
+		providedClient ??
+		new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	const router = createTestRouter( ui );
 
 	const recordTracksEvent = jest.fn();

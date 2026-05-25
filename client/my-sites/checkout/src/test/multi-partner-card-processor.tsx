@@ -1,6 +1,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { createEbanxTokenVgs } from '../lib/create-ebanx-token-vgs';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import {
 	mockTransactionsEndpoint,
@@ -27,8 +27,8 @@ import type {
 	PaymentMethod,
 } from '@stripe/stripe-js';
 
-jest.mock( 'calypso/lib/store-transactions', () => ( {
-	createEbanxToken: jest.fn(),
+jest.mock( '../lib/create-ebanx-token-vgs', () => ( {
+	createEbanxTokenVgs: jest.fn(),
 } ) );
 
 async function createMockStripeToken( {
@@ -77,7 +77,14 @@ async function createMockStripeToken( {
 	};
 }
 
-async function createMockEbanxToken( requestType: string, cardDetails: Record< string, string > ) {
+async function createMockEbanxTokenVgs(
+	requestType: string,
+	cardDetails: {
+		country: string;
+		name: string;
+		vgsTokens: { card_number: string; card_exp: string; card_cvc: string };
+	}
+) {
 	if ( requestType !== 'new_purchase' ) {
 		throw new Error( 'ebanx error: invalid requestType' );
 	}
@@ -87,17 +94,8 @@ async function createMockEbanxToken( requestType: string, cardDetails: Record< s
 	if ( ! cardDetails.name ) {
 		throw new Error( 'ebanx error: missing name' );
 	}
-	if ( ! cardDetails.number ) {
-		throw new Error( 'ebanx error: missing number' );
-	}
-	if ( ! cardDetails.cvv ) {
-		throw new Error( 'ebanx error: missing cvv' );
-	}
-	if ( ! cardDetails[ 'expiration-date' ] ) {
-		throw new Error( 'ebanx error: missing expiration-date' );
-	}
 	return {
-		deviceId: 'mock-ebanx-device',
+		deviceId: undefined, // VGS flow doesn't provide deviceId
 		token: 'ebanx-token',
 	};
 }
@@ -159,7 +157,7 @@ describe( 'multiPartnerCardProcessor', () => {
 			city: 'New York',
 			country: 'US',
 			country_code: 'US',
-			device_id: 'mock-ebanx-device',
+			device_id: undefined, // VGS flow doesn't provide deviceId
 			document: 'ebanx-document-code',
 			email: undefined,
 			gstin: undefined,
@@ -555,12 +553,15 @@ describe( 'multiPartnerCardProcessor', () => {
 	} );
 
 	describe( 'for a ebanx paymentPartner', () => {
+		const vgsTokens = {
+			card_number: 'tok_vgs_card_number',
+			card_exp: 'tok_vgs_card_exp',
+			card_cvc: 'tok_vgs_card_cvc',
+		};
 		const ebanxCardTransactionRequest = {
 			name: 'test name',
 			countryCode: 'US',
-			number: '4242424242424242',
-			cvv: '222',
-			'expiration-date': '02/22',
+			vgsTokens,
 			state: 'NY',
 			city: 'New York',
 			postalCode: '10001',
@@ -569,7 +570,19 @@ describe( 'multiPartnerCardProcessor', () => {
 			phoneNumber: '1111111111',
 			document: 'ebanx-document-code',
 		};
-		createEbanxToken.mockImplementation( createMockEbanxToken );
+		( createEbanxTokenVgs as jest.Mock ).mockImplementation( createMockEbanxTokenVgs );
+
+		it( 'throws an error if there is no vgsTokens in the submitted data', async () => {
+			const submitData = {
+				paymentPartner: 'ebanx',
+				...ebanxCardTransactionRequest,
+				vgsTokens: undefined,
+			};
+			const expected = { payload: 'VGS tokens are required for VGS checkout', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
+			);
+		} );
 
 		it( 'throws an error if there is no countryCode in the submitted data', async () => {
 			const submitData = {
@@ -590,42 +603,6 @@ describe( 'multiPartnerCardProcessor', () => {
 				name: undefined,
 			};
 			const expected = { payload: 'ebanx error: missing name', type: 'ERROR' };
-			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
-				expected
-			);
-		} );
-
-		it( 'throws an error if there is no number in the submitted data', async () => {
-			const submitData = {
-				paymentPartner: 'ebanx',
-				...ebanxCardTransactionRequest,
-				number: undefined,
-			};
-			const expected = { payload: 'ebanx error: missing number', type: 'ERROR' };
-			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
-				expected
-			);
-		} );
-
-		it( 'throws an error if there is no cvv in the submitted data', async () => {
-			const submitData = {
-				paymentPartner: 'ebanx',
-				...ebanxCardTransactionRequest,
-				cvv: undefined,
-			};
-			const expected = { payload: 'ebanx error: missing cvv', type: 'ERROR' };
-			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
-				expected
-			);
-		} );
-
-		it( 'throws an error if there is no expiration-date in the submitted data', async () => {
-			const submitData = {
-				paymentPartner: 'ebanx',
-				...ebanxCardTransactionRequest,
-				'expiration-date': undefined,
-			};
-			const expected = { payload: 'ebanx error: missing expiration-date', type: 'ERROR' };
 			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
 				expected
 			);

@@ -1,12 +1,14 @@
 import {
 	getPlanTermLabel,
 	isDIFMProduct,
+	isAkismetPro500,
 	isGoogleWorkspace,
 	isTitanMail,
 	isTieredVolumeSpaceAddon,
 	isJetpackSearch,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
@@ -230,6 +232,24 @@ function renderJetpackSearchQuantitySummary(
 	} );
 }
 
+function renderJetpackStatsQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)s views per month', {
+			args: { quantity: formatNumber( licensed_quantity ) },
+			comment: '%(quantity)s is the number of views per month for Jetpack Stats',
+		} );
+	}
+
+	return translate( 'Purchase for %(quantity)s views per month', {
+		args: { quantity: formatNumber( licensed_quantity ) },
+		comment: '%(quantity)s is the number of views per month for Jetpack Stats',
+	} );
+}
+
 function renderSpaceAddOnquantitySummary(
 	licensed_quantity: number,
 	isRenewal: boolean,
@@ -293,6 +313,32 @@ export function DomainTransactionVolumeSummary( { item }: { item: BillingTransac
 	);
 }
 
+function renderAkismetTransactionQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate(
+			'Renewal for %(quantity)d 500 API call license',
+			'Renewal for %(quantity)d 500 API call licenses',
+			{
+				args: { quantity: licensed_quantity },
+				count: licensed_quantity,
+			}
+		);
+	}
+
+	return translate(
+		'Purchase of %(quantity)d 500 API call license',
+		'Purchase of %(quantity)d 500 API call licenses',
+		{
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+		}
+	);
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
@@ -311,6 +357,10 @@ export function renderTransactionQuantitySummary(
 		return renderJetpackSearchQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
+	if ( isJetpackStatsPaidProductSlug( wpcom_product_slug ) ) {
+		return renderJetpackStatsQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
 	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
 		return renderTransactionQuantitySummaryForMailboxes(
 			licensed_quantity,
@@ -327,6 +377,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isTieredVolumeSpaceAddon( product ) ) {
 		return renderSpaceAddOnquantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	if ( isAkismetPro500( product ) ) {
+		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
 	if ( isRenewal ) {

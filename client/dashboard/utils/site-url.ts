@@ -1,6 +1,12 @@
+import { ProductUpgradeMap, AkismetUpgradesProductMap } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
+import { getCurrentDashboard } from '../app/routing';
+import { isSitePlanTrial, isSitePlanWooHosted } from '../sites/plans';
+import { isDashboardBackport } from './is-dashboard-backport';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
+import { isAkismetProduct, isJetpackT1SecurityPlan } from './purchase';
 import { isSelfHostedJetpackConnected } from './site-types';
-import type { Site } from '@automattic/api-core';
+import type { Purchase, Site } from '@automattic/api-core';
 
 /**
  * Returns a user-friendly version of the site's URL.
@@ -10,21 +16,7 @@ import type { Site } from '@automattic/api-core';
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
-	if ( site.is_garden || site.options?.is_redirect ) {
-		return site.slug;
-	}
-
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
-}
-
-/**
- * Returns the actual formatted URL for the site considering site redirects
- */
-export function getSiteFormattedUrl( site: Site ) {
-	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
-		return site.options.unmapped_url;
-	}
-	return site.URL;
 }
 
 /**
@@ -59,4 +51,122 @@ export function getSiteVisibilityURL( site: Site, queryArgs?: { back_to: 'site-o
 	}
 
 	return addQueryArgs( `/sites/${ site.slug }/settings/site-visibility`, queryArgs );
+}
+
+/**
+ * Given a site and its current plan's purchase (if any), this function does the following:
+ *
+ * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.
+ * - Otherwise, returns the most appropriate URL to manage the site's current plan.
+ */
+export function getSitePlanUrl( site: Site, purchase?: Purchase ) {
+	if ( site.is_wpcom_staging_site ) {
+		return undefined;
+	}
+
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return `https://cloud.jetpack.com/purchases/subscriptions/${ site.slug }`;
+	}
+
+	if ( site.is_a4a_dev_site ) {
+		return `https://agencies.automattic.com/sites/overview/${ site.slug }`;
+	}
+
+	if ( ! purchase ) {
+		return getSitePlanUpgradeUrl( site );
+	}
+
+	return isDashboardBackport()
+		? wpcomLink( `/purchases/subscriptions/${ site.slug }/${ purchase.ID }` )
+		: `/me/billing/purchases/${ purchase.ID }`;
+}
+
+export function getSitePlanUpgradeUrl( site: Site ) {
+	return buildSitePlanUpgradeUrl( {
+		siteSlug: site.slug,
+		isTrial: isSitePlanTrial( site ),
+		isWooHosted: isSitePlanWooHosted( site ),
+		redirectTo: redirectToDashboardLink(),
+	} );
+}
+
+/**
+ * `redirect_to` URL for plan upgrades that should land on the Dashboard
+ * purchase-settings page for the newly-provisioned plan. The `:purchaseId`
+ * placeholder is substituted by the checkout pending page once the new
+ * subscription appears in the user's purchases (or it falls back to the site
+ * overview after a timeout — see `pending-page.ts`).
+ */
+export function getUpgradedPurchaseRedirectUrl(): string {
+	return dashboardLink( '/me/billing/purchases/:purchaseId?upgraded=true' );
+}
+
+export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
+	if ( isAkismetProduct( purchase ) ) {
+		// For the first Iteration of Calypso Akismet checkout we are only suggesting
+		// for immediate upgrades to the next plan. We will change this in the future
+		// with appropriate page.
+		const url = AkismetUpgradesProductMap[ purchase.product_slug ];
+		if ( ! url ) {
+			return undefined;
+		}
+		const isAbsolute =
+			url.startsWith( 'http://' ) || url.startsWith( 'https://' ) || url.startsWith( '//' );
+		if ( ! isAbsolute ) {
+			return wpcomLink( url );
+		}
+		return url;
+	}
+
+	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
+	if ( upgradeProductSlug ) {
+		const backUrl = redirectToDashboardLink();
+		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
+			redirect_to: backUrl,
+			cancel_to: backUrl,
+		} );
+	}
+
+	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
+	}
+
+	if ( purchase.is_jetpack_plan_or_product ) {
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
+	}
+
+	return buildSitePlanUpgradeUrl( {
+		siteSlug: purchase.site_slug,
+		isTrial: purchase.is_trial_plan,
+		isWooHosted: purchase.is_woo_hosted_product,
+		redirectTo: redirectTo ?? redirectToDashboardLink(),
+	} );
+}
+
+function buildSitePlanUpgradeUrl( {
+	siteSlug,
+	isTrial,
+	isWooHosted,
+	redirectTo,
+}: {
+	siteSlug: string;
+	isTrial: boolean;
+	isWooHosted: boolean;
+	redirectTo: string;
+} ) {
+	if ( isTrial && ! isWooHosted ) {
+		return wpcomLink( `/plans/${ siteSlug }` );
+	}
+
+	const backUrl = redirectToDashboardLink();
+	const link = isWooHosted
+		? wpcomLink( '/setup/woo-hosted-plans' )
+		: wpcomLink( '/setup/plan-upgrade' );
+
+	return addQueryArgs( link, {
+		siteSlug: siteSlug,
+		cancel_to: backUrl,
+		dashboard: getCurrentDashboard(),
+		redirect_to: redirectTo,
+	} );
 }

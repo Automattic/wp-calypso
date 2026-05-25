@@ -153,4 +153,47 @@ describe( 'RestAPIClient: createSite', function () {
 		expect( response ).not.toHaveProperty( 'error' );
 		expect( response.success ).toBe( true );
 	} );
+
+	test( 'Optional site creation settings are sent on request', async function () {
+		let requestBody: unknown;
+		const testResponse = {
+			success: true,
+			blog_details: {
+				url: 'https://fakeblog.blog.com',
+				blogid: '420',
+				blogname: 'fake_blog_name',
+				site_slug: 'fakeblog.blog.com',
+			},
+		};
+
+		const scope = nock( requestURL.origin )
+			.post( requestURL.pathname, ( body ) => {
+				requestBody = body;
+				return true;
+			} )
+			.reply( 200, testResponse );
+
+		await restAPIClient.createSite( {
+			name: 'fake_blog_name',
+			title: 'fake_blog_title',
+			public: 0,
+			find_available_url: true,
+			options: {
+				site_creation_flow: 'onboarding',
+				wpcom_public_coming_soon: 1,
+			},
+		} );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( requestBody ).toMatchObject( {
+			blog_name: 'fake_blog_name',
+			blog_title: 'fake_blog_title',
+			public: 0,
+			find_available_url: true,
+			options: {
+				site_creation_flow: 'onboarding',
+				wpcom_public_coming_soon: 1,
+			},
+		} );
+	} );
 } );

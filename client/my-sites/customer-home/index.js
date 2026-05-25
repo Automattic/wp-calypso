@@ -12,7 +12,7 @@ export default function () {
 	page( '/home', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/home/:siteId',
+		'/home/:site',
 		siteSelection,
 		maybeRedirect,
 		navigation,

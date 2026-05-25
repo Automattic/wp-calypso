@@ -15,7 +15,7 @@ import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
@@ -98,13 +98,25 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		};
 	}, [] );
 
-	const allowChat = canConnectToZendesk && enableAuth && ( isEligibleForChat || hasPremiumSupport );
+	const featureConfig = useFeatureConfig();
+	const allowChat =
+		canConnectToZendesk &&
+		enableAuth &&
+		( isEligibleForChat || hasPremiumSupport || featureConfig.chat.hasPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 	const authJwt = authData?.jwt;
 	const authExternalId = authData?.externalId;
 	const authIsLoggedIn = authData?.isLoggedIn;
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
+
+	// Keep a ref to the latest JWT so the init effect can always read a fresh value
+	// without listing the JWT string itself as a dependency. JWT rotation is handled
+	// by Smooch's onInvalidAuth delegate — we only need to (re-)initialize when a JWT
+	// transitions from absent → present, not on every value change.
+	const authJwtRef = useRef< string | undefined >( authJwt );
+	authJwtRef.current = authJwt;
+	const hasAuthJwt = !! authJwt;
 	const {
 		setIsChatLoaded,
 		setZendeskClientId,
@@ -165,7 +177,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			if ( message?.source?.type === 'web' && message.source?.id ) {
 				setZendeskClientId( message.source?.id );
 				// Unregister the listener after setting the client ID
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch?.off?.( 'message:sent', clientIdListener );
 			}
 		},
@@ -174,7 +185,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! authJwt || ! authExternalId ) {
+		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! hasAuthJwt || ! authExternalId ) {
 			return;
 		}
 
@@ -183,14 +194,24 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 		const initialize = async () => {
 			setIsChatLoaded( false );
-			await Smooch?.destroy?.();
+			try {
+				await Smooch?.destroy?.();
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: ( error as Error ).message,
+					context: 'initialize',
+				} );
+			}
 
 			if ( isCancelled ) {
 				return;
 			}
 
 			try {
-				await initSmooch( authJwt, authExternalId, queryClient );
+				// Read the JWT from the ref so we always use the freshest token without
+				// this effect needing to re-run (and destroy + reinit Smooch) on every
+				// JWT rotation. Rotations are handled by Smooch's onInvalidAuth delegate.
+				await initSmooch( authJwtRef.current!, authExternalId, queryClient );
 
 				if ( isCancelled ) {
 					return;
@@ -224,12 +245,17 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		return () => {
 			isCancelled = true;
 			clearTimeout( retryTimeout );
-			Smooch?.destroy?.();
+			Smooch?.destroy?.()?.catch?.( ( error: Error ) => {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: error.message,
+					context: 'cleanup',
+				} );
+			} );
 		};
 	}, [
 		isMessagingScriptLoaded,
 		authIsLoggedIn,
-		authJwt,
+		hasAuthJwt,
 		authExternalId,
 		setIsChatLoaded,
 		queryClient,
@@ -250,19 +276,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		}
 
 		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', getUnreadListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:sent', clientIdListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'disconnected', disconnectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'reconnecting', reconnectingListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'connected', connectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'typing:stop', typingStopListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
 	}, [

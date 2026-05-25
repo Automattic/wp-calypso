@@ -4,7 +4,7 @@ import {
 	getTracksAnonymousUserId,
 	getTracksLoadPromise,
 } from '@automattic/calypso-analytics';
-import { logError } from './log-error';
+import { logError, logInfo } from './log-error';
 
 // SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check
 declare const window: undefined | ( Window & typeof globalThis );
@@ -42,7 +42,7 @@ const anonIdPollingIntervalMaxAttempts = 100; // 50 * 100 = 5000 = 5 seconds
  */
 export const initializeAnonId = async (): Promise< string | null > => {
 	if ( typeof window === 'undefined' ) {
-		logError( { message: 'Trying to initialize anonId outside of a browser context.' } );
+		logInfo( { message: 'Skipping anonId initialization outside of a browser context.' } );
 		return null;
 	}
 
@@ -85,7 +85,7 @@ export const initializeAnonId = async (): Promise< string | null > => {
  */
 export const getAnonId = async (): Promise< string | null > => {
 	if ( typeof window === 'undefined' ) {
-		logError( { message: 'Trying to getAnonId in non browser context.' } );
+		logInfo( { message: 'Skipping getAnonId in non-browser context.' } );
 		return null;
 	}
 

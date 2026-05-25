@@ -24,6 +24,7 @@ export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
 	titleProps?: {
 		title?: string;
 		titleLogo?: ReactNode;
+		subtitle?: string;
 	};
 }
 
@@ -76,16 +77,21 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	...rest
 } ) => {
 	const defaultTitleElement = (
-		<h1 className="calypso-navigation-header__title">
-			{ titleProps?.titleLogo && (
-				<span className="calypso-navigation-header__title-logo" aria-hidden="true">
-					{ titleProps.titleLogo }
-				</span>
+		<div className="calypso-navigation-header__title-group">
+			<h1 className="calypso-navigation-header__title">
+				{ titleProps?.titleLogo && (
+					<span className="calypso-navigation-header__title-logo" aria-hidden="true">
+						{ titleProps.titleLogo }
+					</span>
+				) }
+				{ titleProps?.title && (
+					<span className="calypso-navigation-header__title-text">{ titleProps?.title }</span>
+				) }
+			</h1>
+			{ titleProps?.subtitle && (
+				<p className="calypso-navigation-header__subtitle">{ titleProps.subtitle }</p>
 			) }
-			{ titleProps?.title && (
-				<span className="calypso-navigation-header__title-text">{ titleProps?.title }</span>
-			) }
-		</h1>
+		</div>
 	);
 
 	const finalTitleElement = titleElement ?? defaultTitleElement;

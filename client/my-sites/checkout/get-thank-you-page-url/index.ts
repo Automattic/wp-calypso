@@ -25,6 +25,7 @@ import {
 } from '@automattic/calypso-url';
 import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
 import {
 	getGoogleApps,
@@ -73,12 +74,32 @@ type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 const allowedExternalSites = [
 	'my.wordpress.com',
 	'my.localhost',
+	'my.woo.ai',
+	'my.woo.localhost',
 	'cloud.jetpack.com',
 	'jetpack.cloud.localhost',
 	'jetpack.com',
 	'akismet.com',
+	'gravatar.com',
 	'difmrequest.com',
 ];
+
+/**
+ * Returns the full set of external hostnames that checkout may redirect to.
+ *
+ * The base list lives in `allowedExternalSites` (cross-environment defaults).
+ * The `checkout_additional_allowed_redirect_hosts` config key supplies
+ * per-environment additions (e.g., partner hostnames in production,
+ * `*.localhost` entries in development).
+ *
+ * Any value added here is trusted by the redirect logic — treat changes
+ * with the same care as changes to `allowedExternalSites`.
+ */
+export function getAllowedExternalRedirectHosts(): readonly string[] {
+	const extras = config< unknown >( 'checkout_additional_allowed_redirect_hosts' );
+	const safeExtras = Array.isArray( extras ) ? ( extras as string[] ) : [];
+	return [ ...allowedExternalSites, ...safeExtras ];
+}
 
 export interface PostCheckoutUrlArguments {
 	siteSlug?: string;
@@ -187,7 +208,7 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( allowedExternalSites.includes( hostname ) ) {
+		if ( getAllowedExternalRedirectHosts().includes( hostname ) ) {
 			debug( 'returning Jetpack.com, Jetpack Cloud, or Akismet redirectTo', redirectTo );
 			return redirectTo;
 		}
@@ -315,10 +336,13 @@ export default function getThankYouPageUrl( {
 
 	// Unified affiliate + paid media siteless checkout - handles post-checkout site creation flow
 	if ( sitelessCheckoutType === 'unified' ) {
-		// If there is an ecommerce plan in cart, redirect to checkout thank you page
+		// If there is an ecommerce plan in cart, redirect to checkout thank you page.
+		// Use ':siteId' as a placeholder when siteId is not yet known (redirect payment methods
+		// like PayPal generate this URL before the new site is created). The pending page will
+		// replace ':siteId' with the actual blogId from the receipt.
 		if ( cart && hasEcommercePlan( cart ) ) {
 			debug( 'redirecting to Commerce thank you' );
-			return `/checkout/thank-you/${ siteId }/${ receiptIdOrPlaceholder }`;
+			return `/checkout/thank-you/${ siteId ?? ':siteId' }/${ receiptIdOrPlaceholder }`;
 		}
 
 		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
@@ -329,8 +353,21 @@ export default function getThankYouPageUrl( {
 			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
 		) {
 			debug( 'redirecting to the saved post-checkout destination' );
-			return addQueryArgs( { siteId }, urlFromCookie );
+			if ( siteId ) {
+				return addQueryArgs( { siteId }, urlFromCookie );
+			}
+			// siteId is not yet known (redirect payment methods like PayPal generate this URL
+			// before the new site is created). Append ':siteId' as a literal placeholder
+			// rather than using addQueryArgs, which would percent-encode the colon and prevent
+			// the pending page from detecting and replacing it.
+			const separator = urlFromCookie.includes( '?' ) ? '&' : '?';
+			return `${ urlFromCookie }${ separator }siteId=:siteId`;
 		}
+
+		// Fallback for unified checkout - let the pending page construct the URL
+		// using the blogId from the receipt, and preserve the checkout_type param
+		debug( 'unified checkout fallback, letting pending page construct URL' );
+		return addQueryArgs( { checkout_type: 'unified' }, '/' );
 	}
 
 	// If there is no purchase, then send the user to a generic page (not
@@ -393,8 +430,7 @@ export default function getThankYouPageUrl( {
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
 		urlFromCookie &&
-		receiptIdOrPlaceholder &&
-		! urlFromCookie.includes( '/start/setup-site' )
+		receiptIdOrPlaceholder
 	) {
 		clearSignupCompleteFlowName();
 		let newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
@@ -459,7 +495,16 @@ export default function getThankYouPageUrl( {
 		debug( 'adding Gravatar domain query param to fallback URL', fallbackUrl );
 	}
 
-	return getUrlWithQueryParam( fallbackUrl );
+	const queryParams: Record< string, string > = {};
+
+	const dashboard = getDashboardFromQuery();
+
+	if ( dashboard ) {
+		queryParams.dashboard = dashboard;
+		debug( 'adding dashboard query param to fallback URL', dashboard );
+	}
+
+	return getUrlWithQueryParam( fallbackUrl, queryParams );
 }
 
 function updateUrlInCookie( {

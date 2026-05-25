@@ -1,13 +1,17 @@
 /**
  * Agent Configuration Utilities
  *
- * Shared utilities for creating agent configurations used by both
- * the full Agents Manager UI and headless mode.
+ * Shared utilities for creating agent configurations and reading
+ * agent overrides from URL parameters. Used by both the full
+ * Agents Manager UI and headless mode.
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
+import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { getExternalContextEntries } from './external-context';
+import { isReaderChatAgent } from './is-reader-chat-agent';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -75,26 +79,60 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 	};
 }
 
+async function canAccessZendeskForAgent( agentId?: string ): Promise< boolean > {
+	if ( isReaderChatAgent( agentId ) ) {
+		return false;
+	}
+
+	return canConnectToZendesk();
+}
+
+function normalizeSiteId( siteId: unknown ): number | undefined {
+	const numericSiteId = Number( siteId );
+	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
-function createWrappedContextProvider(
+async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
+	siteId?: number,
+	agentId?: string,
 	version?: string
-): UseAgentChatConfig[ 'contextProvider' ] {
+): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
+			const resolvedSiteId = normalizeSiteId( siteId );
 			const pluginContext = contextProvider.getClientContext();
 
-			const resolvedContext = pluginContext.contextEntries?.length
+			let resolvedContext = pluginContext.contextEntries?.length
 				? {
 						...pluginContext,
 						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
 				  }
 				: pluginContext;
 
+			const externalEntries = getExternalContextEntries();
+			if ( externalEntries.length ) {
+				resolvedContext = {
+					...resolvedContext,
+					contextEntries: [
+						...( resolvedContext.contextEntries || [] ),
+						...resolveContextEntries( externalEntries ),
+					],
+				};
+			}
+
 			return {
 				...resolvedContext,
+				can_access_zendesk: canAccessZendesk,
+				currentScreen: resolvedContext.currentScreen || {
+					url: window.location.href,
+				},
+				...( resolvedSiteId &&
+					! resolvedContext.selectedSiteId && { selectedSiteId: resolvedSiteId } ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
@@ -107,20 +145,49 @@ function createWrappedContextProvider(
 /**
  * Create a default context provider for environments without a plugin context.
  */
-function createDefaultContextProvider(
+async function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
+	siteId?: number,
+	agentId?: string,
 	version?: string
-): UseAgentChatConfig[ 'contextProvider' ] {
+): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
-		getClientContext: () => ( {
-			url: window.location.href,
-			pathname: currentRoute || window.location.pathname,
-			search: window.location.search,
-			environment,
-			// TODO: Remove once agenttic-client supports top-level constructorArguments
-			...( version && { constructorArguments: { version } } ),
-		} ),
+		getClientContext: () => {
+			// Hosts that don't have a plugin context (e.g. reader-chat on a
+			// blog frontend) can still surface page metadata by assigning it
+			// to `window.agentsManagerData`. Pick up `currentPost`, `siteName`,
+			// and `siteUrl` here so the orchestrator knows which post the
+			// reader is viewing without every host wiring its own provider.
+			const hostData = isReaderChatAgent( agentId )
+				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {}
+				: {};
+			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
+
+			const externalEntries = getExternalContextEntries();
+			const contextEntries = externalEntries.length
+				? resolveContextEntries( externalEntries )
+				: undefined;
+
+			return {
+				url: window.location.href,
+				pathname: currentRoute || window.location.pathname,
+				search: window.location.search,
+				can_access_zendesk: canAccessZendesk,
+				environment,
+				// Match Odie's context shape so the server can read current_screen.url
+				currentScreen: { url: window.location.href },
+				...( resolvedSiteId && { selectedSiteId: resolvedSiteId } ),
+				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
+				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
+				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
+				...( contextEntries ? { contextEntries } : {} ),
+				// TODO: Remove once agenttic-client supports top-level constructorArguments
+				...( version && { constructorArguments: { version } } ),
+			};
+		},
 	};
 }
 
@@ -130,7 +197,9 @@ function createDefaultContextProvider(
  * Used by both the full Agents Manager UI and headless mode to ensure
  * consistent configuration.
  */
-export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgentChatConfig {
+export async function createAgentConfig(
+	options: CreateAgentConfigOptions
+): Promise< UseAgentChatConfig > {
 	const {
 		sessionId,
 		siteId,
@@ -147,7 +216,9 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		sessionIdStorageKey: getSessionStorageKey( agentId ),
-		authProvider: createCalypsoAuthProvider( siteId ),
+		authProvider: createCalypsoAuthProvider( siteId, {
+			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
+		} ),
 		enableStreaming: true,
 	};
 
@@ -156,9 +227,20 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = createWrappedContextProvider( contextProvider, version );
+		config.contextProvider = await createWrappedContextProvider(
+			contextProvider,
+			siteId,
+			agentId,
+			version
+		);
 	} else {
-		config.contextProvider = createDefaultContextProvider( currentRoute, environment, version );
+		config.contextProvider = await createDefaultContextProvider(
+			currentRoute,
+			environment,
+			siteId,
+			agentId,
+			version
+		);
 	}
 
 	return config;

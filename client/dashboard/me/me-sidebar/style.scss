@@ -1,0 +1,27 @@
+.me-sidebar__avatar-wrapper {
+	margin-inline-start: $grid-unit-15;
+}
+
+.me-sidebar__avatar {
+	position: relative;
+	width: 52px;
+	height: 52px;
+	flex-shrink: 0;
+
+	img {
+		width: 52px;
+		height: 52px;
+		border-radius: 50%;
+		object-fit: cover;
+		display: block;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1.393px rgba( 0, 0, 0, 0.15 );
+		pointer-events: none;
+	}
+}

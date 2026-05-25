@@ -1,5 +1,6 @@
 import {
 	AkismetPlans,
+	DomainProductSlugs,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
@@ -7,6 +8,7 @@ import {
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
@@ -29,18 +31,18 @@ export const CANCEL_FLOW_TYPE = {
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
-export function isTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { domain } = purchase;
-	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
-	// site(s) to work. This function may need to be updated in the future as additional products types
-	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless\.(jetpack|akismet|marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
-		domain
-	);
-}
-
 export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
+}
+
+/**
+ * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
+ */
+export function isFailedAutoRenewal( purchase: Purchase ): boolean {
+	return (
+		isInExpirationGracePeriod( purchase ) &&
+		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
+	);
 }
 
 export function isExpiring( purchase: Purchase ) {
@@ -198,12 +200,16 @@ export function isTransferredOwnership(
 	);
 }
 
-export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
 }
 
-export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet';
+export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && isA4ABillingDragonPurchase( purchase );
+}
+
+export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'akismet';
 }
 
 export function isMarketplacePlugin( purchase: Purchase ): boolean {
@@ -212,12 +218,12 @@ export function isMarketplacePlugin( purchase: Purchase ): boolean {
 	);
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
+export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin';
 }
 
-export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
+export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
 /**
@@ -323,6 +329,18 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	return purchase.product_name;
 }
 
+export function getTitleForListDisplay( purchase: Purchase ): string {
+	if ( purchase.is_domain_registration && purchase.meta ) {
+		if ( purchase.is_hundred_year_domain ) {
+			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
+			return sprintf( __( '100-Year Domain Registration: %s' ), purchase.meta );
+		}
+		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
+		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
+	}
+	return getTitleForDisplay( purchase );
+}
+
 /**
  * Return a short description of a purchase, usually used as a subtitle for that
  * purchase's product name (as defined by `getTitleForDisplay`).
@@ -359,15 +377,15 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 		return purchase.product_name;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet' ) {
+	if ( purchase.is_attached_to_holding_site && purchase.product_type === 'akismet' ) {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin' ) {
+	if ( purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin' ) {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && isA4ATemporarySitePurchase( purchase ) ) {
+	if ( purchase.is_attached_to_holding_site && isA4AHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
@@ -427,8 +445,12 @@ export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ):
 	);
 }
 
+export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'offsite_redirect';
+	return purchase.product_slug === OFFSITE_REDIRECT;
 }
 
 export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
@@ -449,12 +471,42 @@ export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): bool
 	return product.product_slug === PRODUCT_1GB_SPACE;
 }
 
+const SPACE_UPGRADE_SLUGS = [
+	'1gb_space_upgrade',
+	'5gb_space_upgrade',
+	'10gb_space_upgrade',
+	'50gb_space_upgrade',
+	'100gb_space_upgrade',
+];
+
+export function isStorageUpgrade( purchase: Purchase ): boolean {
+	return (
+		SPACE_UPGRADE_SLUGS.includes( purchase.product_slug ) || isTieredVolumeSpaceAddon( purchase )
+	);
+}
+
 /**
  * Checks if a product is a Jetpack Search product.
  */
 export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
 	return product.product_slug
 		? Object.keys( JetpackSearchProducts ).includes( product.product_slug )
+		: false;
+}
+
+const JETPACK_STATS_PAID_PRODUCT_SLUGS = [
+	'jetpack_stats_bi_yearly',
+	'jetpack_stats_yearly',
+	'jetpack_stats_monthly',
+	'jetpack_stats_pwyw_yearly',
+] as const;
+
+/**
+ * Checks if a product slug is a paid Jetpack Stats product.
+ */
+export function isJetpackStatsPaidProductSlug( productSlug: string | undefined ): boolean {
+	return productSlug
+		? ( JETPACK_STATS_PAID_PRODUCT_SLUGS as readonly string[] ).includes( productSlug )
 		: false;
 }
 
@@ -475,7 +527,7 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	if ( isAkismetProduct( purchase ) ) {
 		return 'akismet/';
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return 'marketplace/';
 	}
 	return '';
@@ -634,6 +686,11 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
+	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
@@ -650,8 +707,77 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 }
 
 /**
+ * Cancel intent sourced from the entry point the user came from.
+ * `cancel`      = clicked "Cancel subscription" on Purchase Settings.
+ * `remove`      = clicked "Remove subscription / Remove {product}" on Purchase Settings.
+ * `auto-renew`  = toggled off auto-renew on Purchase Settings.
+ * Absent means flag-off, old deep link, or flow-type heuristic fallback.
+ */
+export type CancelIntent = 'cancel' | 'remove' | 'auto-renew';
+
+export function getCancelIntentFromSearch( search: { intent?: unknown } ): CancelIntent | null {
+	return search.intent === 'cancel' || search.intent === 'remove' || search.intent === 'auto-renew'
+		? search.intent
+		: null;
+}
+
+/**
+ * The set of UI variants the cancel/confirmation screens can render. Currently
+ * 1:1 with CancelIntent — kept as a separate alias because callers often
+ * compute a display variant from intent plus a flow-type fallback.
+ */
+export type DisplayVariant = 'cancel' | 'remove' | 'auto-renew';
+
+/**
+ * Derives which screen variant to show from intent, with a flow-type fallback when intent is absent.
+ */
+export function getDisplayVariant(
+	intent: CancelIntent | null,
+	flowType: CancelFlowType
+): DisplayVariant {
+	if ( intent ) {
+		return intent;
+	}
+	return flowType === CANCEL_FLOW_TYPE.REMOVE ? 'remove' : 'cancel';
+}
+
+/**
+ * Derives which backend mutation to run from intent + purchase state.
+ * Falls back to getPurchaseCancellationFlowType when intent is absent or the intent/state combo is invalid.
+ */
+export function getMutationFlowType(
+	intent: CancelIntent | null,
+	purchase: Purchase
+): CancelFlowType {
+	if ( ! intent ) {
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	// 'cancel' and 'auto-renew' both map to the disable-auto-renew flow when
+	// auto-renew is on; both fall back to flow-type otherwise.
+	if ( intent === 'cancel' || intent === 'auto-renew' ) {
+		if ( purchase.is_auto_renew_enabled ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	}
+	return CANCEL_FLOW_TYPE.REMOVE;
+}
+
+/**
  * Returns true if a list of products includes a product with a matching product or store product slug.
  */
+export function isCentennialPurchase( purchase: Purchase ): boolean {
+	return (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
+		purchase.is_hundred_year_domain
+	);
+}
+
 export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: string ): boolean =>
 	// storeProductSlug is from the legacy store_products system, billing_product_slug is from
 	// the non-legacy billing system and for marketplace plugins will match the slug of the plugin

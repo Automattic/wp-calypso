@@ -61,6 +61,7 @@ class PreviewToolbar extends Component {
 		isLivePreviewSupported: PropTypes.bool,
 		siteEditorUrl: PropTypes.string,
 		themeInstallId: PropTypes.string,
+		dispatchLivePreview: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -87,7 +88,10 @@ class PreviewToolbar extends Component {
 
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
-		const { isAtomic, selectedSiteId, siteEditorUrl, themeInstallId } = this.props;
+		const { isAtomic, dispatchLivePreview, selectedSiteId, siteEditorUrl, themeInstallId } =
+			this.props;
+
+		dispatchLivePreview?.();
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.

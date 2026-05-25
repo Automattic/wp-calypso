@@ -123,13 +123,6 @@ export async function retarget( urlPath ) {
 			debug( 'retarget: [Yahoo Gemini] [rate limited]', params );
 			new window.Image().src = params;
 		}
-
-		// Quora
-		if ( mayWeTrackByTracker( 'quora' ) ) {
-			const params = [ 'track', 'ViewContent' ];
-			debug( 'retarget: [Quora] [rate limited]', params );
-			window.qp( ...params );
-		}
 	}
 
 	// uses JSON.stringify for consistency with recordOrder()

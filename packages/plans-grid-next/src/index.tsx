@@ -13,8 +13,14 @@ import usePlanBillingPeriod from './hooks/data-store/use-plan-billing-period';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import usePlansFromTypes from './hooks/data-store/use-plans-from-types';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
-import { useSummerSpecialStatus } from './hooks/data-store/use-summer-special-status';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
+import {
+	getPlanPriceForDuration,
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	fromVariantPriceData,
+} from './lib/plan-pricing-utils';
+import type { PlanPriceInfo, VariantPriceData } from './lib/plan-pricing-utils';
 
 /**
  * Types
@@ -41,10 +47,20 @@ export {
 	usePlansFromTypes,
 	usePlanTypesWithIntent,
 	useRestructuredPlanFeaturesForComparisonGrid,
-	useSummerSpecialStatus,
 };
 
 /**
  * Constants
  */
 export { EFFECTIVE_TERMS_LIST };
+
+/**
+ * Plan pricing utilities
+ */
+export type { PlanPriceInfo, VariantPriceData };
+export {
+	getPlanPriceForDuration,
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	fromVariantPriceData,
+};

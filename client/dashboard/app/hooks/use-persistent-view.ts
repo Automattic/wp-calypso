@@ -4,9 +4,10 @@ import { useNavigate, useMatches } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTransientQueryParamsAtPathname } from '../transient-query-params';
+import type { AnyRouteMatch } from '@tanstack/react-router';
 import type { Filter, View } from '@wordpress/dataviews';
 
-interface UseViewOptions {
+export interface UseViewOptions {
 	/**
 	 * Unique slug to identify the view.
 	 * Used as the suffix for the Calypso preference name.
@@ -41,13 +42,36 @@ interface UseViewOptions {
  * Transient properties (`page` and `search`) are synced to the URL query params,
  * while the rest of the properties is persisted to Calypso preferences.
  */
-export function usePersistentView( {
+export function usePersistentView( options: UseViewOptions ) {
+	const navigate = useNavigate();
+	const matches = useMatches();
+
+	return useBasePersistentView( {
+		...options,
+		navigate,
+		matches,
+	} );
+}
+
+export function useBasePersistentView( {
 	slug,
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
+	matches,
 	sanitizeFields,
-}: UseViewOptions ): {
+	navigate,
+}: UseViewOptions & {
+	matches?: AnyRouteMatch[];
+	navigate: ( {
+		search,
+		replace,
+	}: {
+		search: any;
+		replace?: boolean;
+		resetScroll?: boolean;
+	} ) => void;
+} ): {
 	view: View;
 	updateView: ( newView: View ) => void;
 	resetView?: () => void;
@@ -56,9 +80,6 @@ export function usePersistentView( {
 
 	const { data: persistedView } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
-
-	const navigate = useNavigate();
-	const matches = useMatches();
 
 	const baseView = persistedView ?? defaultView;
 
@@ -90,7 +111,7 @@ export function usePersistentView( {
 	}, [ JSON.stringify( transientFilterFields ) ] );
 
 	useEffect( () => {
-		if ( matches.length === 0 ) {
+		if ( ! matches || matches.length === 0 ) {
 			return;
 		}
 

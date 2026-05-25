@@ -14,6 +14,11 @@ export const DotcomPlans = {
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
+	PERSONAL: 'personal-bundle',
+	PERSONAL_MONTHLY: 'personal-bundle-monthly',
+	PERSONAL_2_YEARS: 'personal-bundle-2y',
+	PERSONAL_3_YEARS: 'personal-bundle-3y',
+	PERSONAL_TRIAL_MONTHLY: 'wp-personal-bundle-free-trial-monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
 	PREMIUM_2_YEARS: 'value_bundle-2y',
@@ -119,6 +124,14 @@ export const EcommercePlans = [
 	DotcomPlans.ECOMMERCE_3_YEARS,
 ];
 
+export const PersonalPlans = [
+	DotcomPlans.PERSONAL_TRIAL_MONTHLY,
+	DotcomPlans.PERSONAL_MONTHLY,
+	DotcomPlans.PERSONAL,
+	DotcomPlans.PERSONAL_2_YEARS,
+	DotcomPlans.PERSONAL_3_YEARS,
+];
+
 export const TrialPlans = [
 	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
 	DotcomPlans.HOSTING_TRIAL_MONTHLY,
@@ -127,8 +140,10 @@ export const TrialPlans = [
 ];
 
 export const DotcomFeatures = {
+	APM: 'apm',
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
+	BACKUPS_SELF_SERVE: 'backups-self-serve',
 	BIG_SKY: 'big-sky',
 	DOMAIN_MAPPING: 'domain-mapping',
 	INSTALL_PLUGINS: 'install-plugins',
@@ -142,6 +157,7 @@ export const DotcomFeatures = {
 	MONITORING: 'monitoring',
 	PERFORMANCE: 'performance',
 	SCAN: 'scan',
+	SCAN_SELF_SERVE: 'scan-self-serve',
 	SECURITY_SETTINGS: 'security-settings',
 	SET_PRIMARY_CUSTOM_DOMAIN: 'set-primary-custom-domain',
 	SFTP: 'sftp',
@@ -181,7 +197,9 @@ export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackM
 // Features that needs Atomic or self-hosted infrastructure,
 // mapped to the required WordPress.com plan feature.
 export const HostingFeatures = {
+	APM: DotcomFeatures.APM,
 	BACKUPS: DotcomFeatures.BACKUPS,
+	BACKUPS_SELF_SERVE: DotcomFeatures.BACKUPS_SELF_SERVE,
 	BIG_SKY: DotcomFeatures.BIG_SKY,
 	CACHING: DotcomFeatures.ATOMIC,
 	DATABASE: DotcomFeatures.SFTP,
@@ -194,6 +212,7 @@ export const HostingFeatures = {
 	PHP: DotcomFeatures.SFTP,
 	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
 	SCAN: DotcomFeatures.SCAN,
+	SCAN_SELF_SERVE: DotcomFeatures.SCAN_SELF_SERVE,
 	SECURITY_SETTINGS: DotcomFeatures.SECURITY_SETTINGS,
 	SFTP: DotcomFeatures.SFTP,
 	SSH: DotcomFeatures.SSH,
@@ -218,6 +237,8 @@ export const SubscriptionBillPeriod = {
 	PLAN_DECENNIAL_PERIOD: 3650,
 	PLAN_CENTENNIAL_PERIOD: 36500,
 } as const;
+export type SubscriptionBillPeriodValue =
+	( typeof SubscriptionBillPeriod )[ keyof typeof SubscriptionBillPeriod ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 

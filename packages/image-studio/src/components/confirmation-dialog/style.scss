@@ -1,0 +1,33 @@
+/**
+ * ConfirmationDialog styles
+ *
+ * This component uses WordPress's layout components (VStack, Flex, Text)
+ * so custom styling is limited. WordPress components handle spacing,
+ * alignment, and responsive behavior.
+ *
+ * Reset WordPress theme colors to ensure colors for primary buttons,
+ * since Image Studio modal overrides these variables globally.
+ * @todo: we should not override these vars globally, but rather on a per-component basis.
+ */
+
+// Ensure the confirmation dialog inherits the WordPress admin theme colors
+// This resets any overrides from parent modals (like .image-studio-modal)
+// by unsetting them so they inherit from the root WordPress admin theme
+.components-modal__frame:has(.image-studio-confirmation-dialog-content) {
+	// Unset overridden theme colors to inherit from WordPress admin
+	// This respects whatever admin color scheme is active (default, modern, classic, etc.)
+	// Using 'revert' to go back to WordPress's root theme values
+	--wp-admin-theme-color: revert;
+	--wp-admin-theme-color-darker-10: revert;
+	--wp-admin-theme-color-darker-20: revert;
+
+	// Unset overridden component colors to inherit from WordPress
+	--wp-components-color-accent: revert;
+	--wp-components-color-accent-darker-10: revert;
+	--wp-components-color-accent-darker-20: revert;
+
+	// Also unset any background/foreground overrides that affect button styling
+	--wp-components-color-background: revert;
+	--wp-components-color-foreground: revert;
+}
+

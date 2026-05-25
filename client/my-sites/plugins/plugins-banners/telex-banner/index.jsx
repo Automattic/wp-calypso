@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import ditheredIllustrationMobile from 'calypso/assets/images/plugins/dithered-illustration-m.webp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -35,11 +36,11 @@ const TelexBanner = () => {
 				target="_blank"
 				onClick={ trackClick }
 			>
-				{ __( 'Experiment with Tele' ) }
+				{ __( 'Experiment with Telex' ) }
 			</Button>
 			<img
 				className="telex-banner__mobile-illustration"
-				src="/calypso/images/plugins/dithered-illustration-m.webp"
+				src={ ditheredIllustrationMobile }
 				alt=""
 				aria-hidden="true"
 			/>

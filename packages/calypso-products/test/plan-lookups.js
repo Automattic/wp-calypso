@@ -61,6 +61,10 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_WPCOM_CHOOSE_LOW_YEARLY,
+	PLAN_WPCOM_CHOOSE_MID_YEARLY,
+	PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
@@ -95,6 +99,7 @@ import {
 } from '../src/constants';
 import {
 	getPlan,
+	getPlanByPathSlug,
 	getPlans,
 	getPlanClass,
 	isProPlan,
@@ -816,6 +821,31 @@ describe( 'getPlan', () => {
 	test( 'should return undefined for invalid plan - by value', () => {
 		expect( getPlan( {} ) ).toEqual( undefined );
 	} );
+
+	test( 'should return the expected product id for Choose yearly plans', () => {
+		expect( getPlan( PLAN_WPCOM_CHOOSE_LOW_YEARLY )?.getProductId() ).toEqual( 1078 );
+		expect( getPlan( PLAN_WPCOM_CHOOSE_MID_YEARLY )?.getProductId() ).toEqual( 1079 );
+		expect( getPlan( PLAN_WPCOM_CHOOSE_HIGH_YEARLY )?.getProductId() ).toEqual( 1080 );
+	} );
+} );
+
+describe( 'getPlanByPathSlug', () => {
+	test( 'should resolve known path slugs to their plan', () => {
+		expect( getPlanByPathSlug( 'personal' )?.getStoreSlug() ).toEqual( PLAN_PERSONAL );
+		expect( getPlanByPathSlug( 'choose-12-yearly' )?.getStoreSlug() ).toEqual(
+			PLAN_WPCOM_CHOOSE_LOW_YEARLY
+		);
+		expect( getPlanByPathSlug( 'choose-24-yearly' )?.getStoreSlug() ).toEqual(
+			PLAN_WPCOM_CHOOSE_MID_YEARLY
+		);
+		expect( getPlanByPathSlug( 'choose-36-yearly' )?.getStoreSlug() ).toEqual(
+			PLAN_WPCOM_CHOOSE_HIGH_YEARLY
+		);
+	} );
+
+	test( 'should return undefined for unknown path slugs', () => {
+		expect( getPlanByPathSlug( 'not-a-plan' ) ).toBeUndefined();
+	} );
 } );
 
 describe( 'findSimilarPlansKeys', () => {
@@ -1120,6 +1150,9 @@ describe( 'findPlansKeys', () => {
 				PLAN_WOOEXPRESS_MEDIUM,
 				PLAN_WOOEXPRESS_PLUS,
 				PLAN_WOOEXPRESS_SMALL,
+				PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
+				PLAN_WPCOM_CHOOSE_LOW_YEARLY,
+				PLAN_WPCOM_CHOOSE_MID_YEARLY,
 				PLAN_WPCOM_FLEXIBLE,
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_STARTER,
@@ -1145,6 +1178,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_P2_PLUS,
 			PLAN_PERSONAL_MONTHLY,
+			PLAN_PERSONAL_TRIAL_MONTHLY,
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_WOO_HOSTED_BASIC_MONTHLY,
 			PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
@@ -1174,6 +1208,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_3_YEARS,
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_PERSONAL_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,
@@ -1222,6 +1257,7 @@ describe( 'findPlansKeys', () => {
 				PLAN_PERSONAL_2_YEARS,
 				PLAN_PERSONAL_3_YEARS,
 				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_PREMIUM_3_YEARS,
@@ -1237,6 +1273,9 @@ describe( 'findPlansKeys', () => {
 				PLAN_WOOEXPRESS_PLUS,
 				PLAN_WOOEXPRESS_SMALL,
 				PLAN_WOOEXPRESS_SMALL_MONTHLY,
+				PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
+				PLAN_WPCOM_CHOOSE_LOW_YEARLY,
+				PLAN_WPCOM_CHOOSE_MID_YEARLY,
 				PLAN_WPCOM_FLEXIBLE,
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
@@ -1283,6 +1322,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PERSONAL_3_YEARS,
+			PLAN_PERSONAL_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,

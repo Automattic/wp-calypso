@@ -6,19 +6,20 @@ import {
 	DomainUpdateStatus,
 	fetchAvailableTlds,
 	fetchBulkDomainUpdateStatus,
+	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
+	type FetchDomainsOptions,
 	type JobStatus,
 	type DomainSuggestionQuery,
 } from '@automattic/api-core';
-import { fetchDomains } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
-export const domainsQuery = () =>
+export const domainsQuery = ( options?: FetchDomainsOptions ) =>
 	queryOptions( {
-		queryKey: [ 'domains' ],
-		queryFn: fetchDomains,
+		queryKey: [ 'domains', options ],
+		queryFn: () => fetchDomains( options ),
 	} );
 
 export const domainSuggestionsQuery = (

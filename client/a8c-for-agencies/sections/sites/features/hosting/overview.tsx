@@ -1,6 +1,7 @@
 import { WordPressLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import { Site } from '../../types';
@@ -70,7 +71,7 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 									<Button
 										target="_blank"
 										rel="norefferer nooppener"
-										href="https://my.pressable.com/agency/auth"
+										href={ EXTERNAL_PRESSABLE_AUTH_URL }
 										variant="link"
 									>
 										{ translate( 'Manage all Pressable sites ↗' ) }

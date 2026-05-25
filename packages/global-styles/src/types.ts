@@ -1,23 +1,5 @@
-export interface Color {
-	color: string;
-	name: string;
-	slug: string;
-	default?: string;
-}
-
-export interface FontFamily {
-	fontFamily: string;
-	name: string;
-	slug: string;
-}
-
-export interface Typography {
-	fontFamily?: string;
-	fontSize?: string;
-	fontStyle?: string;
-	fontWeight?: string;
-	lineHeight?: string;
-}
+import type { GlobalStylesObject } from '@automattic/design-types';
+export type { Color, FontFamily, GlobalStylesObject, Typography } from '@automattic/design-types';
 
 export type SetConfigCallback = ( config: GlobalStylesObject ) => GlobalStylesObject;
 
@@ -29,31 +11,6 @@ export interface GlobalStylesContextObject {
 	merged?: GlobalStylesObject;
 	setUserConfig?: SetConfig;
 	isReady?: boolean;
-}
-
-export interface GlobalStylesObject {
-	id?: number;
-	slug?: string;
-	title?: string;
-	inline_css?: string;
-	settings: {
-		color?: {
-			palette: {
-				default: Color[];
-				theme: Color[];
-			};
-		};
-	};
-	styles: {
-		color?: Color;
-		elements?: {
-			heading: {
-				typography: Typography;
-			};
-		};
-		typography?: Typography;
-		blocks?: Record< string, { variations?: object } >;
-	};
 }
 
 export enum GlobalStylesVariationType {

@@ -13,6 +13,7 @@ import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { DataViews } from '../../../components/dataviews';
 import { LogsDownloader } from '../downloader';
 import {
@@ -72,6 +73,7 @@ function SiteLogsDataViews( {
 		slug: `site-logs-${ logType }`,
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
+		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
 	} );
 
 	// We want to parse 'from' and 'to' from the URL.
@@ -124,9 +126,14 @@ function SiteLogsDataViews( {
 		pageSize: DEFAULT_PER_PAGE,
 	};
 
-	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery(
-		siteLogsInfiniteQuery( site.ID, params )
-	);
+	const {
+		data,
+		isFetching,
+		isFetchingNextPage,
+		fetchNextPage,
+		hasNextPage,
+		isLoading: isLoadingLogQuery,
+	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -149,7 +156,11 @@ function SiteLogsDataViews( {
 	}, [] );
 
 	useEffect( () => {
+		if ( ! view.page || view.page === 1 ) {
+			return;
+		}
 		updateView( { ...view, page: 1 } );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
 	}, [ dateRangeVersion ] );
 
 	useLayoutEffect( () => {
@@ -355,6 +366,7 @@ function SiteLogsDataViews( {
 					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
 				/>
 			) }
+			{ ! isLoadingLogQuery && <PerformanceTrackerStop /> }
 		</>
 	);
 }

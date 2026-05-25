@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
+import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -35,6 +36,7 @@ type Props = {
 	areSignaturePlans?: boolean;
 	selectedTab: string;
 	setSelectedTab: ( tab: string ) => void;
+	isReferralMode: boolean;
 };
 
 export default function PlanSelectionFilter( {
@@ -46,17 +48,25 @@ export default function PlanSelectionFilter( {
 	areSignaturePlans: areSignaturePlans = false,
 	selectedTab,
 	setSelectedTab,
+	isReferralMode,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
+	const [ filterType, setFilterType ] = useSliderPersistence< FilterType >( {
+		key: 'pressable-filter-type',
+		defaultValue: FILTER_TYPE_INSTALL,
+	} );
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
 	const isMobile = useMobileBreakpoint();
 	const isDesktop = useDesktopBreakpoint();
 
 	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
+
+	// Currently, we only want the premium plans for referral mode
+	const hasNewPremiumPlans =
+		isReferralMode && plans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
 	const lowPlanOptions = useMemo(
 		() =>
@@ -90,6 +100,23 @@ export default function PlanSelectionFilter( {
 		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
 	);
 
+	const premiumPlanOptions = useMemo(
+		() => [
+			...getSliderOptions(
+				filterType,
+				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
+				PLAN_CATEGORY_PREMIUM,
+				isMobile
+			),
+			{
+				label: translate( 'More' ),
+				value: null,
+				category: null,
+			},
+		],
+		[ filterType, isMobile, plans, translate ]
+	);
+
 	const onSelectOption = useCallback(
 		( option: Option ) => {
 			const plan = plans.find( ( plan ) => plan.slug === option.value ) ?? null;
@@ -103,11 +130,28 @@ export default function PlanSelectionFilter( {
 		[ dispatch, onSelectPlan, plans ]
 	);
 
-	const selectedOptionIndex = (
-		PLAN_CATEGORY_STANDARD === selectedTab || PLAN_CATEGORY_SIGNATURE === selectedTab
-			? lowPlanOptions
-			: highPlanOptions
-	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
+	const selectedOptionIndex = useMemo( () => {
+		let options = [];
+		switch ( selectedTab ) {
+			case PLAN_CATEGORY_STANDARD:
+			case PLAN_CATEGORY_SIGNATURE:
+				options = lowPlanOptions;
+				break;
+			case PLAN_CATEGORY_ENTERPRISE:
+			case PLAN_CATEGORY_SIGNATURE_HIGH:
+				options = highPlanOptions;
+				break;
+			case PLAN_CATEGORY_PREMIUM:
+				options = premiumPlanOptions;
+				break;
+			default:
+				return 0;
+		}
+
+		return options.findIndex(
+			( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null )
+		);
+	}, [ selectedTab, lowPlanOptions, highPlanOptions, premiumPlanOptions, selectedPlan ] );
 
 	const onSelectFilterType = useCallback(
 		( value: FilterType ) => {
@@ -116,7 +160,22 @@ export default function PlanSelectionFilter( {
 				recordTracksEvent( `calypso_a4a_marketplace_hosting_pressable_filter_by_${ value }_click` )
 			);
 		},
-		[ dispatch ]
+		[ dispatch, setFilterType ]
+	);
+
+	const onSelectTab = useCallback(
+		( tab: string ) => {
+			setSelectedTab( tab );
+
+			if (
+				hasNewPremiumPlans &&
+				tab === PLAN_CATEGORY_PREMIUM &&
+				filterType === FILTER_TYPE_INSTALL
+			) {
+				setFilterType( FILTER_TYPE_VISITS );
+			}
+		},
+		[ filterType, hasNewPremiumPlans, setSelectedTab, setFilterType ]
 	);
 
 	const additionalWrapperClass =
@@ -142,11 +201,21 @@ export default function PlanSelectionFilter( {
 			const isPlanEnterpriseCategory =
 				PLAN_CATEGORY_ENTERPRISE === pressablePlan?.category ||
 				PLAN_CATEGORY_SIGNATURE_HIGH === pressablePlan?.category;
+			const isPlanPremiumCategory = PLAN_CATEGORY_PREMIUM === pressablePlan?.category;
 
 			if ( isStandardCategory && ! isPlanStandardCategory ) {
 				return categoryOptions.length - 1;
 			} else if ( isEnterpriseCategory && ! isPlanEnterpriseCategory ) {
 				return 0;
+			}
+
+			if ( isPlanPremiumCategory ) {
+				for ( let i = 0; i < categoryOptions.length; i++ ) {
+					const plan = getPressablePlan( categoryOptions[ i ].value as string );
+					if ( pressablePlan?.storage < plan?.storage ) {
+						return i;
+					}
+				}
 			}
 
 			for ( let i = 0; i < categoryOptions.length; i++ ) {
@@ -210,12 +279,17 @@ export default function PlanSelectionFilter( {
 							title: isDesktop ? translate( 'Enterprise Plans' ) : translate( 'Enterprise' ),
 						},
 				  ] ),
-			{
-				name: PLAN_CATEGORY_PREMIUM,
-				title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
-			},
+			hasNewPremiumPlans
+				? {
+						name: PLAN_CATEGORY_PREMIUM,
+						title: isDesktop ? translate( 'Premium Plans 1-11' ) : translate( 'Premium 1-11' ),
+				  }
+				: {
+						name: PLAN_CATEGORY_PREMIUM,
+						title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
+				  },
 		],
-		[ areSignaturePlans, disableStandardTab, translate, isDesktop ]
+		[ areSignaturePlans, isDesktop, translate, disableStandardTab, hasNewPremiumPlans ]
 	);
 
 	if ( isLoading ) {
@@ -227,7 +301,7 @@ export default function PlanSelectionFilter( {
 		);
 	}
 
-	const FilterByPicker = () => (
+	const FilterByPicker = ( { hideInstallOption }: { hideInstallOption?: boolean } ) => (
 		<div className="pressable-overview-plan-selection__filter-type">
 			<p className="pressable-overview-plan-selection__filter-label">
 				{ translate( 'Display plans by total' ) }
@@ -237,7 +311,9 @@ export default function PlanSelectionFilter( {
 				className="pressable-overview-plan-selection__filter-radio-control"
 				selected={ filterType }
 				options={ [
-					{ label: translate( 'WordPress installs' ), value: FILTER_TYPE_INSTALL },
+					...( hideInstallOption
+						? []
+						: [ { label: translate( 'WordPress installs' ), value: FILTER_TYPE_INSTALL } ] ),
 					{ label: translate( 'Traffic' ), value: FILTER_TYPE_VISITS },
 					{
 						label: isMobile ? translate( 'Storage (GB)' ) : translate( 'Storage' ),
@@ -255,7 +331,7 @@ export default function PlanSelectionFilter( {
 				key={ selectedTab } // Force re-render when selectedTab changes
 				className="pressable-overview-plan-selection__plan-category-tabpanel"
 				activeClass="pressable-overview-plan-selection__plan-category-tab-is-active"
-				onSelect={ setSelectedTab }
+				onSelect={ onSelectTab }
 				initialTabName={ selectedTab }
 				tabs={ tabs }
 			>
@@ -303,6 +379,18 @@ export default function PlanSelectionFilter( {
 									/>
 								</>
 							);
+						case PLAN_CATEGORY_PREMIUM:
+							return hasNewPremiumPlans ? (
+								<>
+									<FilterByPicker hideInstallOption />
+									<A4ASlider
+										value={ PLAN_CATEGORY_PREMIUM === selectedTab ? selectedOptionIndex : 0 }
+										onChange={ onSelectOption }
+										options={ premiumPlanOptions }
+										minimum={ getSliderMinimum( PLAN_CATEGORY_PREMIUM, premiumPlanOptions ) }
+									/>
+								</>
+							) : null;
 						default:
 							return null;
 					}

@@ -1,17 +1,23 @@
+import { followReadTagMutation } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { useDispatch, useSelector } from 'calypso/state';
 import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { like } from 'calypso/state/posts/likes/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
-import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getPersistedLastActionPriorToLogin } from 'calypso/state/reader-ui/selectors';
 
 export const ReaderPendingActionHandler = () => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
+	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
+	const { likePost, unlikePost } = usePostLikeActions();
 
 	useEffect( () => {
 		if ( ! isLoggedIn || ! pendingAction ) {
@@ -26,7 +32,10 @@ export const ReaderPendingActionHandler = () => {
 		setTimeout( () => {
 			switch ( pendingAction.type ) {
 				case 'like':
-					dispatch( like( pendingAction.siteId, pendingAction.postId ) );
+					likePost( pendingAction.siteId, pendingAction.postId );
+					break;
+				case 'unlike':
+					unlikePost( pendingAction.siteId, pendingAction.postId );
 					break;
 				case 'comment-like':
 					dispatch(
@@ -37,13 +46,21 @@ export const ReaderPendingActionHandler = () => {
 					dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
 					break;
 				case 'follow-tag':
-					dispatch( requestFollowTag( pendingAction.tag ) );
+					followTag( pendingAction.tag, {
+						onError: () => {
+							dispatch(
+								errorNotice(
+									translate( 'Could not follow tag: %(tag)s', { args: { tag: pendingAction.tag } } )
+								)
+							);
+						},
+					} );
 					break;
 			}
 		}, 2000 );
 
 		dispatch( clearLastActionRequiresLogin() );
-	}, [ isLoggedIn, pendingAction, dispatch ] );
+	}, [ isLoggedIn, pendingAction, dispatch, followTag, likePost, unlikePost ] );
 
 	return null;
 };

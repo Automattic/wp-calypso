@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
@@ -21,7 +21,15 @@ const site = {
 		product_name_short: 'Business',
 		is_free: false,
 		features: {
-			active: [ 'atomic', 'backups', 'scan', 'performance', 'full-activity-log' ],
+			active: [
+				'atomic',
+				'backups',
+				'backups-self-serve',
+				'scan',
+				'scan-self-serve',
+				'performance',
+				'full-activity-log',
+			],
 		},
 	},
 	options: {
@@ -37,8 +45,26 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-function getCard( text: string ) {
-	return screen.getAllByRole( 'article' ).find( ( el ) => el.textContent?.includes( text ) );
+async function getCard( text: string ) {
+	return waitFor( () => {
+		const card = screen
+			.getAllByRole( 'article' )
+			.find( ( el ) => el.textContent?.includes( text ) );
+		// waitFor only retries when the callback throws; find() returns undefined
+		// silently, so without this throw the helper wouldn't wait for late cards.
+		if ( ! card ) {
+			throw new Error( `Card with text "${ text }" was not rendered` );
+		}
+		return card;
+	} );
+}
+
+// HostingFeatureGate re-evaluates when the plan query resolves, which remounts
+// feature-gated cards (Performance, Last scan, …) and detaches nodes getCard()
+// has already returned. Call this before asserting on those cards so the gate
+// has settled first.
+async function waitForFeatureGatedCards( planName: string ) {
+	await screen.findByText( planName );
 }
 
 describe( '<SiteOverview>', () => {
@@ -85,20 +111,22 @@ describe( '<SiteOverview>', () => {
 			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.3/sites/${ site.ID }/plans` )
+			.get( `/rest/v1.4/sites/${ site.ID }/plans` )
 			.query( true )
 			.reply( 200, {
-				1: {
-					product_id: 1,
-					product_slug: 'business-bundle',
-					product_name_short: 'Business',
-					current_plan: true,
-					original_price: { amount: 0 },
-					raw_price: 0,
-					raw_price_integer: 0,
-					raw_discount: 0,
-					raw_discount_integer: 0,
-					cost_overrides: [],
+				plans: {
+					1: {
+						product_id: 1,
+						product_slug: 'business-bundle',
+						product_name_short: 'Business',
+						current_plan: true,
+						original_price: { amount: 0 },
+						raw_price: 0,
+						raw_price_integer: 0,
+						raw_discount: 0,
+						raw_discount_integer: 0,
+						cost_overrides: [],
+					},
 				},
 			} );
 
@@ -131,17 +159,17 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Free' );
+		await waitForFeatureGatedCards( 'Free' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Visibility' ) ).toBeVisible();
-		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Upgrade to unlock' );
-		expect( getCard( 'Migrate' ) ).toBeVisible();
-		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Upgrade to unlock' );
-		expect( getCard( 'Plan' ) ).toBeVisible();
-		expect( getCard( 'Latest activity' ) ).toBeVisible();
-		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect( await getCard( 'Visibility' ) ).toBeVisible();
+		expect( await getCard( 'Back up your site' ) ).toHaveTextContent( 'Upgrade to unlock' );
+		expect( await getCard( 'Migrate' ) ).toBeVisible();
+		expect( await getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Upgrade to unlock' );
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( await getCard( 'Latest activity' ) ).toBeVisible();
+		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a site with a paid plan on Atomic', async () => {
@@ -149,17 +177,17 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Visibility' ) ).toBeVisible();
-		expect( getCard( 'Last backup' ) ).toBeVisible();
-		expect( getCard( 'Performance' ) ).toBeVisible();
-		expect( getCard( 'Last scan' ) ).toBeVisible();
-		expect( getCard( 'Plan' ) ).toBeVisible();
-		expect( getCard( 'Latest activity' ) ).toBeVisible();
-		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect( await getCard( 'Visibility' ) ).toBeVisible();
+		expect( await getCard( 'Last backup' ) ).toBeVisible();
+		expect( await getCard( 'Performance' ) ).toBeVisible();
+		expect( await getCard( 'Last scan' ) ).toBeVisible();
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( await getCard( 'Latest activity' ) ).toBeVisible();
+		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a site with a paid plan pending Atomic activation', async () => {
@@ -167,17 +195,19 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Visibility' ) ).toBeVisible();
-		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Activate to unlock' );
-		expect( getCard( 'Test site performance' ) ).toHaveTextContent( 'Activate to unlock' );
-		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Activate to unlock' );
-		expect( getCard( 'Plan' ) ).toBeVisible();
-		expect( getCard( 'Latest activity' ) ).toBeVisible();
-		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect( await getCard( 'Visibility' ) ).toBeVisible();
+		expect( await getCard( 'Back up your site' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( await getCard( 'Test site performance' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( await getCard( 'Scan for security threats' ) ).toHaveTextContent(
+			'Activate to unlock'
+		);
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( await getCard( 'Latest activity' ) ).toBeVisible();
+		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of an unlaunched site', async () => {
@@ -185,13 +215,13 @@ describe( '<SiteOverview>', () => {
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Finish setting up your site' ) ).toBeVisible();
-		expect( getCard( 'We’ll bring your vision to life' ) ).toBeVisible();
-		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect( await getCard( 'Finish setting up your site' ) ).toBeVisible();
+		expect( await getCard( 'We’ll bring your vision to life' ) ).toBeVisible();
+		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a commerce garden site', async () => {
@@ -203,16 +233,23 @@ describe( '<SiteOverview>', () => {
 		expect( screen.getByRole( 'link', { name: 'Manage store' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /WP Admin/ } ) ).not.toBeInTheDocument();
 
-		expect( getCard( 'Plan' ) ).toBeVisible();
-		expect( getCard( 'Visibility' ) ).toBeVisible();
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( await getCard( 'Visibility' ) ).toBeVisible();
 	} );
 
-	test( 'renders the overview of a self-hosted Jetpack connected site', async () => {
+	test( 'renders the overview of a self-hosted free Jetpack connected site', async () => {
 		mockSite( {
 			...site,
 			jetpack: true,
 			jetpack_connection: true,
 			is_wpcom_atomic: false,
+			plan: {
+				...site.plan,
+				product_slug: 'jetpack_free',
+				product_name_short: 'Jetpack Free',
+				is_free: true,
+				features: { active: [] },
+			},
 		} as Site );
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
@@ -220,12 +257,12 @@ describe( '<SiteOverview>', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Visibility' ) ).toBeVisible();
-		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Activate to unlock' );
-		expect( getCard( 'Subscribers' ) ).toBeVisible();
-		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Activate to unlock' );
-		expect( getCard( 'Subscriptions' ) ).toBeVisible();
-		expect( getCard( 'Latest activity' ) ).toBeVisible();
+		expect( await getCard( 'Visibility' ) ).toBeVisible();
+		expect( await getCard( 'Back up your site' ) ).toHaveTextContent( 'Upgrade to unlock' );
+		expect( await getCard( 'Subscribers' ) ).toBeVisible();
+		expect( await getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Upgrade to unlock' );
+		expect( await getCard( 'Subscriptions' ) ).toBeVisible();
+		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of an A4A dev site', async () => {
@@ -233,17 +270,17 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Visibility' ) ).toBeVisible();
-		expect( getCard( 'Last backup' ) ).toBeVisible();
-		expect( getCard( 'Share' ) ).toBeVisible();
-		expect( getCard( 'Last scan' ) ).toBeVisible();
-		expect( getCard( 'Development license' ) ).toBeVisible();
-		expect( getCard( 'Latest activity' ) ).toBeVisible();
-		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect( await getCard( 'Visibility' ) ).toBeVisible();
+		expect( await getCard( 'Last backup' ) ).toBeVisible();
+		expect( await getCard( 'Share' ) ).toBeVisible();
+		expect( await getCard( 'Last scan' ) ).toBeVisible();
+		expect( await getCard( 'Development license' ) ).toBeVisible();
+		expect( await getCard( 'Latest activity' ) ).toBeVisible();
+		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a site with Flex plan', async () => {
@@ -251,16 +288,36 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		expect( getCard( 'Last backup' ) ).toBeVisible();
-		expect( getCard( 'Performance' ) ).toBeVisible();
-		expect( getCard( 'Last scan' ) ).toBeVisible();
-		expect( getCard( 'Plan' ) ).toBeVisible();
-		expect( getCard( 'Latest activity' ) ).toBeVisible();
-		expect( getCard( 'Month-to-date site usage' ) ).toBeVisible();
-		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect( await getCard( 'Last backup' ) ).toBeVisible();
+		expect( await getCard( 'Performance' ) ).toBeVisible();
+		expect( await getCard( 'Last scan' ) ).toBeVisible();
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( await getCard( 'Latest activity' ) ).toBeVisible();
+		expect( await getCard( 'Month-to-date site usage' ) ).toBeVisible();
+		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'renders the overview of an inaccessible Jetpack site', async () => {
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+
+		mockSite( {
+			...site,
+			is_wpcom_atomic: true,
+			__inaccessible_jetpack_error: new Error( 'Connection failed' ),
+		} as Site );
+
+		render( <SiteOverview siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+
+		expect( await getCard( 'Last backup' ) ).toHaveTextContent( 'Connection issue' );
+		expect( await getCard( 'Last scan' ) ).toHaveTextContent( 'Connection issue' );
+		expect( await getCard( 'Performance' ) ).toHaveTextContent( 'Connection issue' );
+		expect( await getCard( 'Visibility' ) ).toHaveTextContent( 'Connection issue' );
+		expect( await getCard( 'Plan' ) ).toBeVisible();
+		expect( screen.queryByText( 'Latest activity' ) ).not.toBeInTheDocument();
 	} );
 } );

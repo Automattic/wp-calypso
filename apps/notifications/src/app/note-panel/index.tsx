@@ -27,14 +27,16 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-export const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
-	name,
-	title: label,
-} ) );
+export const getNotificationTabs = () =>
+	Object.values( getFilters() ).map( ( { name, label } ) => ( {
+		name,
+		title: label,
+	} ) );
 
 const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
+	const notificationTabs = getNotificationTabs();
 	const { params, goTo } = useNavigator();
-	const { filterName = 'all' } = params;
+	const { filterName = 'all' } = params as { filterName?: string };
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 
 	const handleSelect = useCallback(
@@ -105,7 +107,7 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 								maxWidth: '100%',
 							} }
 						>
-							{ NOTIFICATION_TABS.map( ( { name, title } ) => (
+							{ notificationTabs.map( ( { name, title } ) => (
 								<Tabs.Tab
 									key={ name }
 									tabId={ name }
@@ -121,7 +123,11 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 					</Tabs>
 				</VStack>
 			</CardHeader>
-			<NoteList filterName={ filterName as FilterName } />
+			{ /* Key by `filterName` so switching tabs remounts the list. The tab
+			   filter is applied outside the DataViews `view`, so DataViews'
+			   infinite-scroll row accumulation would otherwise carry stale
+			   notes from the previously selected tab. */ }
+			<NoteList key={ filterName } filterName={ filterName as FilterName } />
 		</>
 	);
 };

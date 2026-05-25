@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
+import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { AgentsManagerAction } from './actions';
-import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
@@ -19,13 +19,24 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 	return state;
 };
 
-const routerHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
-	AgentsManagerAction
-> = ( state, action ) => {
+const routerHistory: Reducer< PerSiteRouterHistory | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_ROUTER_HISTORY':
 			return action.history;
+	}
+	return state;
+};
+
+const lastActivity: Reducer< PerSiteLastActivity | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_LAST_ACTIVITY':
+			return action.lastActivity;
 	}
 	return state;
 };
@@ -57,13 +68,28 @@ const floatingPosition: Reducer< 'left' | 'right', AgentsManagerAction > = (
 	return state;
 };
 
+export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_SPLIT_SCREEN':
+			return action.isSplitScreen;
+		// Split-screen only makes sense while docked. Reset on undock so an
+		// out-of-band `setIsDocked(false)` (e.g. from `window.__agentsManagerActions`)
+		// can't leave a stale `true` that re-applies on the next dock.
+		case 'AGENTS_MANAGER_SET_DOCKED':
+			return action.isDocked ? state : false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
 	routerHistory,
+	lastActivity,
 	isLoading,
 	hasLoaded,
 	floatingPosition,
+	isSplitScreen,
 } );
 
 export type State = ReturnType< typeof reducer >;

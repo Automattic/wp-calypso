@@ -13,5 +13,9 @@ module.exports = {
 	globals: {
 		__i18n_text_domain__: 'default',
 	},
+	modulePathIgnorePatterns: [ '<rootDir>/dist' ],
+	transformIgnorePatterns: [
+		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
+	],
 	setupFilesAfterEnv: [ '<rootDir>../../test/packages/setup.js' ],
 };

@@ -17,6 +17,7 @@ import {
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
+	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -118,6 +119,16 @@ export default function () {
 		'/checkout/jetpack/thank-you/:site/:product',
 		loggedInSiteSelection,
 		jetpackCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/100-year/thank-you/no-site/:receiptId',
+		refreshUserSession, // Load user session into state in userless checkout
+		redirectLoggedOut,
+		noSite,
+		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);
@@ -347,6 +358,19 @@ export default function () {
 		clientRender
 	);
 
+	// A renewal using only a subscription ID. The backend derives the product
+	// and site info from the subscription record. Must be registered before the
+	// generic two-segment /checkout/:product/:domainOrProduct route so "renew"
+	// is not treated as a product slug.
+	page(
+		'/checkout/renew/:subscriptionId',
+		redirectLoggedOut,
+		noSite,
+		checkoutRenewalBySubscriptionId,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		`/checkout/:domainOrProduct`,
 		setLocaleMiddleware(),
@@ -371,8 +395,6 @@ export default function () {
 		clientRender
 	);
 
-	// A renewal link without a site is not allowed, but we send the user to
-	// checkout anyway so they can see a helpful error message.
 	page(
 		'/checkout/:product/renew/:purchaseId',
 		redirectLoggedOut,

@@ -6,6 +6,7 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 // Mock the analytics module
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -94,7 +95,7 @@ describe( 'SignupFormSocialFirst', () => {
 
 	describe( 'allowedSocialServices', () => {
 		test( 'passes allowedSocialServices to SocialSignupForm', () => {
-			const allowedServices = [ 'google', 'paypal' ];
+			const allowedServices: SignupAllowedService[] = [ 'google', 'paypal' ];
 
 			render(
 				<SignupFormSocialFirst { ...defaultProps } allowedSocialServices={ allowedServices } />
@@ -103,6 +104,24 @@ describe( 'SignupFormSocialFirst', () => {
 			// Verify filtered buttons are rendered
 			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'isEmailAtBottom', () => {
+		test( 'renders the email block after the social buttons when isEmailAtBottom is true', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant isEmailAtBottom />
+			);
+
+			const emailBlock = container.querySelector( '.signup-form-social-first-email' );
+			const googleButton = screen.getByText( /Continue with Google/i );
+
+			expect( emailBlock ).not.toBeNull();
+			// DOCUMENT_POSITION_FOLLOWING (4) → emailBlock follows googleButton in DOM order.
+			expect(
+				googleButton.compareDocumentPosition( emailBlock as Node ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
 		} );
 	} );
 } );

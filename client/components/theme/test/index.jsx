@@ -21,6 +21,7 @@ describe( 'Theme', () => {
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},
 		onScreenshotClick: () => {},
+		recordTracksEvent: jest.fn(),
 	};
 
 	describe( 'rendering', () => {
@@ -74,6 +75,48 @@ describe( 'Theme', () => {
 			const { container } = render( <Theme { ...props } theme={ theme } isPlaceholder /> );
 
 			expect( container.firstChild ).toHaveClass( 'is-placeholder' );
+		} );
+	} );
+
+	describe( 'modern overlay', () => {
+		const modernButtonContents = {
+			preview: {
+				label: 'Demo site',
+				action: jest.fn(),
+			},
+			signup: {
+				label: 'Get started',
+				getUrl: jest.fn( () => '/start/with-theme?theme=twentyseventeen' ),
+			},
+		};
+
+		test( 'should render overlay buttons when isThemeShowcaseModern is true', () => {
+			render(
+				<Theme { ...props } isThemeShowcaseModern buttonContents={ modernButtonContents } />
+			);
+
+			expect( screen.getByText( 'Preview demo' ) ).toBeVisible();
+			expect( screen.getByText( 'Get started' ) ).toBeVisible();
+		} );
+
+		test( 'should not render overlay buttons when isThemeShowcaseModern is false', () => {
+			render( <Theme { ...props } buttonContents={ modernButtonContents } /> );
+
+			expect( screen.queryByText( 'Preview demo' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Get started' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'should call preview action when Preview demo button is clicked', async () => {
+			const previewAction = jest.fn();
+			const buttonContents = {
+				...modernButtonContents,
+				preview: { ...modernButtonContents.preview, action: previewAction },
+			};
+
+			render( <Theme { ...props } isThemeShowcaseModern buttonContents={ buttonContents } /> );
+
+			await userEvent.click( screen.getByText( 'Preview demo' ) );
+			expect( previewAction ).toHaveBeenCalledWith( props.theme.id );
 		} );
 	} );
 

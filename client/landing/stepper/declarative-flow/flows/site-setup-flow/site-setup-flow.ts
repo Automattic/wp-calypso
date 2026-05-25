@@ -1,13 +1,13 @@
 import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -228,10 +228,9 @@ const siteSetupFlow: Flow = {
 					}
 
 					pendingActions.push(
-						wpcomRequest( {
+						wpcom.req.post( {
 							path: `/sites/${ siteId }/onboarding-customization`,
 							apiNamespace: 'wpcom/v2',
-							method: 'POST',
 							formData,
 						} )
 					);

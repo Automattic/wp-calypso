@@ -4,6 +4,7 @@ import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 
 import './style.scss';
 
@@ -22,6 +23,7 @@ export type GuideModalProps = {
 const GuideModal = ( { onClose, steps, dismissable }: GuideModalProps ) => {
 	const [ step, setStep ] = useState( 0 );
 	const translate = useTranslate();
+	useMinimizeHelpCenterOnMount();
 
 	if ( ! steps || ! steps.length ) {
 		return null;

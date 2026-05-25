@@ -1,17 +1,14 @@
-import {
-	loadAllMessagesFromServer,
-	createOdieBotId,
-	type Message,
-} from '@automattic/agenttic-client';
+import { loadAllMessagesFromServer, type Message } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
+import { getConversationBotId } from '../utils/conversation-bot-id';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
 interface Config {
-	agentId: string;
-	sessionId: string;
-	authProvider?: () => Promise< Record< string, string > >;
 	maxPages?: number;
+	enabled?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
@@ -21,14 +18,18 @@ interface Result {
 	isError: boolean;
 }
 
+/**
+ * Fetches a conversation from the server when a `sessionId` is available.
+ */
 export default function useConversation( {
-	agentId,
-	sessionId,
-	authProvider,
 	maxPages = 10,
+	enabled = true,
 	onSuccess = () => {},
 }: Config ): Result {
-	// Keep refs to the latest callbacks
+	const { agentConfig } = useAgentsManagerContext();
+	const { agentId, sessionId, authProvider } = agentConfig!;
+
+	// Keep a ref to the latest callback to avoid re-triggering effects when it changes.
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
@@ -38,7 +39,7 @@ export default function useConversation( {
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
-			const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+			const botId = getConversationBotId( agentId, hasAgentParam );
 
 			return await loadAllMessagesFromServer(
 				sessionId,
@@ -51,7 +52,11 @@ export default function useConversation( {
 				true
 			);
 		},
-		enabled: !! sessionId,
+		// Public Reader Chat does not expose conversation history, and the
+		// server-side history endpoint requires permissions public readers
+		// usually do not have.
+		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
+		refetchOnWindowFocus: false,
 	} );
 
 	useEffect(

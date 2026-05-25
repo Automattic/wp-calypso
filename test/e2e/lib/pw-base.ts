@@ -51,6 +51,7 @@ import {
 	IncognitoPage,
 	InvitePeoplePage,
 	JetpackTrafficPage,
+	LaunchCelebrationComponent,
 	LoginPage,
 	LOHPThemeSignupFlow,
 	MarketingPage,
@@ -169,6 +170,10 @@ export const test = base.extend<
 		 * Component for selecting items in various flows.
 		 */
 		componentSelectItems: SelectItemsComponent;
+		/**
+		 * Component for asserting the site launch celebration modal.
+		 */
+		componentLaunchCelebration: LaunchCelebrationComponent;
 		/**
 		 * Environment variables for the tests.
 		 */
@@ -419,6 +424,10 @@ export const test = base.extend<
 		const selectItemsComponent = new SelectItemsComponent( page );
 		await use( selectItemsComponent );
 	},
+	componentLaunchCelebration: async ( { page }, use ) => {
+		const launchCelebrationComponent = new LaunchCelebrationComponent( page );
+		await use( launchCelebrationComponent );
+	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );
 		await use( sidebarComponent );
@@ -596,7 +605,7 @@ export const test = base.extend<
 		await use( secrets );
 	},
 	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
-		const testUser = helperData.getNewTestUser();
+		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
 		await pageLogin.clickCreateNewAccount();
@@ -637,7 +646,6 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
-	DASHBOARD_RELEASE: '@dashboard-release',
 	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',

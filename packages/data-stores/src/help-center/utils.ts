@@ -1,7 +1,7 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { isE2ETest } from '../utils';
+import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
 import { PREFERENCES_KEY, STORE_KEY } from './constants';
 import type { HelpCenterSelect, Preferences } from './types';
 import type { APIFetchOptions } from '../shared-types';
@@ -73,7 +73,7 @@ function getCalypsoPreferences(): Promise< Preferences[ 'calypso_preferences' ] 
 export async function getPersistedPreference<
 	T extends keyof Preferences[ 'calypso_preferences' ],
 >( key: T ): Promise< Preferences[ 'calypso_preferences' ][ T ] | undefined > {
-	const isLoggedIn = ( select( STORE_KEY ) as HelpCenterSelect ).getIsLoggedIn();
+	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
 	if ( isLoggedIn ) {
 		const preferences = await getCalypsoPreferences();
@@ -98,7 +98,7 @@ export function persistPreference< T extends keyof Preferences[ 'calypso_prefere
 
 	const newPreferences = { [ preference ]: value };
 
-	const isLoggedIn = ( select( STORE_KEY ) as HelpCenterSelect ).getIsLoggedIn();
+	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
 	if ( ! isLoggedIn ) {
 		// Retrieve the logged out help center preferences from localStorage to coalesce the state.

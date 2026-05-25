@@ -6,14 +6,13 @@ import {
 import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
@@ -23,13 +22,13 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
-import StatsLoader from '../../stats-page-loader/stats-loader';
 import PageViewTracker from '../../stats-page-view-tracker';
 import { StatsPurchaseNoticePage } from '../../stats-purchase/stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
 	StatsSingleItemPersonalPurchasePage,
 } from '../../stats-purchase/stats-purchase-single-item';
+import PageLoading from '../shared/page-loading';
 import './style.scss';
 
 const StatsPurchasePage = ( {
@@ -152,8 +151,26 @@ const StatsPurchasePage = ( {
 		isForceProductRedirect,
 	] );
 
+	const showNavigation = ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' );
+
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			pageSubTitle={
+				showNavigation ? translate( 'Simple, powerful analytics to grow your site.' ) : undefined
+			}
+			pageTabs={
+				showNavigation ? (
+					<StatsNavigation
+						selectedItem="traffic"
+						interval="day"
+						siteId={ siteId }
+						slug={ siteSlug }
+						showLock
+					/>
+				) : undefined
+			}
+		>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			{ ! isLoading && (
 				<PageViewTracker
@@ -170,28 +187,10 @@ const StatsPurchasePage = ( {
 					'stats-purchase-page--is-wpcom': isWPCOMSite,
 				} ) }
 			>
-				{ /** Only show the navigation header on force redirections and site has no plans */ }
-				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
-					<>
-						<PageHeader />
-						<StatsNavigation
-							selectedItem="traffic"
-							interval="day"
-							siteId={ siteId }
-							slug={ siteSlug }
-							showLock
-						/>
-					</>
-				) }
-
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
-				{ isLoading && (
-					<div className="stats-purchase-page__loader">
-						<StatsLoader />
-					</div>
-				) }
+				{ isLoading && <div className="stats-purchase-page__loader">{ PageLoading }</div> }
 				{
 					// a plan is owned or not forced to purchase - show a notice page
 					! isLoading && ! showPurchasePage && (
@@ -245,7 +244,6 @@ const StatsPurchasePage = ( {
 						</>
 					)
 				}
-				<JetpackColophon />
 			</div>
 		</Main>
 	);

@@ -64,7 +64,7 @@ export const useWPCOMDomainSearchCart = ( {
 	onContinue,
 	beforeAddDomainToCart = ( domain ) => domain,
 }: UseWPCOMDomainSearchCartOptions ) => {
-	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
+	const { responseCart, replaceProductsInCart, removeProductFromCart } = useShoppingCart( cartKey );
 
 	return useMemo( () => {
 		const domainItems = flowAllowsMultipleDomainsInCart
@@ -118,7 +118,7 @@ export const useWPCOMDomainSearchCart = ( {
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
-				const cartItems = await addProductsToCart( [
+				const cartItems = await replaceProductsInCart( [
 					beforeAddDomainToCart( {
 						product_slug,
 						meta: domain_name,
@@ -130,6 +130,7 @@ export const useWPCOMDomainSearchCart = ( {
 							...( flowName && { flow_name: flowName } ),
 						},
 					} ),
+					...responseCart.products,
 				] );
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
@@ -151,7 +152,7 @@ export const useWPCOMDomainSearchCart = ( {
 	}, [
 		responseCart,
 		removeProductFromCart,
-		addProductsToCart,
+		replaceProductsInCart,
 		flowName,
 		isFirstDomainFreeForFirstYear,
 		flowAllowsMultipleDomainsInCart,

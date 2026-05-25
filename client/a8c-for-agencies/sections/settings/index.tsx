@@ -6,7 +6,6 @@ import { SETTINGS_AGENCY_PROFILE_TAB } from './constants';
 import { settingsContext } from './controller';
 
 export default function () {
-	// todo: we have only one tab, this redirect /settings to /settings/agency-profile
 	page( A4A_SETTINGS_LINK, () => {
 		page.redirect( `${ A4A_SETTINGS_LINK }/${ SETTINGS_AGENCY_PROFILE_TAB }` );
 	} );

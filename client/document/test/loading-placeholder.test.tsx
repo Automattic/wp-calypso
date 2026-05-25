@@ -23,8 +23,6 @@ const baseProps: DocumentProps = {
 	clientData: null,
 	commitChecksum: '',
 	commitSha: '',
-	devDocs: false,
-	devDocsURL: '',
 	entrypoint: {
 		js: [],
 		'css.ltr': [],
@@ -51,7 +49,7 @@ const baseProps: DocumentProps = {
 	renderedLayout: null,
 	sectionGroup: '',
 	sectionName: 'stepper',
-	hideWooHostedLogo: false,
+	path: '/',
 	storeSandboxHelper: false,
 	target: 'evergreen',
 	user: null,
@@ -60,35 +58,32 @@ const baseProps: DocumentProps = {
 };
 
 describe( 'Document LoadingPlaceholder', () => {
-	it( 'hides the WordPress logo for Woo Hosted plans setup SSR', () => {
+	it( 'hides the WordPress logo on CIAB dashboard', () => {
 		const html = renderToStaticMarkup(
-			<Document { ...baseProps } hideWooHostedLogo sectionName="stepper" />
+			<Document { ...baseProps } dashboard="ciab" sectionName="stepper" />
 		);
 
 		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
-	it( 'hides the WordPress logo for Woo Hosted checkout SSR', () => {
-		const html = renderToStaticMarkup(
-			<Document { ...baseProps } hideWooHostedLogo sectionName="checkout" />
-		);
+	it( 'shows the WordPress logo on non-CIAB dashboard', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="stepper" /> );
 
-		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
+		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
-	it( 'shows the WordPress logo when hideWooHostedLogo is false', () => {
+	it( 'hides the WordPress boot logo on the WooCommerce QR login auth-check route', () => {
 		const html = renderToStaticMarkup(
 			<Document
 				{ ...baseProps }
-				query={ {
-					siteSlug: 'unabashedly-instant-starlight.commerce-garden.com',
-					dashboard: 'ciab',
-					sessionId: 'Z0',
-				} }
-				sectionName="stepper"
+				path="/me/security/qr-login"
+				query={ { origin: 'woocommerce' } }
+				sectionName="me"
+				showStepContainerV2Loader={ false }
 			/>
 		);
 
-		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
+		expect( html ).not.toContain( 'wpcom-site__logo' );
+		expect( html ).toContain( 'wpcom-loading__boot' );
 	} );
 } );

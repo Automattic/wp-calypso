@@ -1,11 +1,7 @@
-/**
- * ConversationHistoryView Component
- * Displays the list of past conversations with a "new chat" action
- */
-
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import useConversationList from '../../hooks/use-conversation-list';
 import { LocalConversationListItem } from '../../types';
 import ConversationListItem from '../conversation-list-item';
@@ -13,26 +9,17 @@ import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface Props {
-	agentId: string;
-	authProvider?: () => Promise< Record< string, string > >;
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
-	onNewChat: () => void;
 }
 
-export default function ConversationHistoryView( {
-	agentId,
-	authProvider,
-	onSelectConversation,
-	onNewChat,
-}: Props ) {
+export default function ConversationHistoryView( { onSelectConversation }: Props ) {
+	const navigate = useNavigate();
+
 	// To use the latest onSelectConversation in the callback
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, isError } = useConversationList( {
-		agentId,
-		authProvider,
-	} );
+	const { conversations, isLoading, isError } = useConversationList();
 
 	return (
 		<div className="agents-manager-conversation-history-view">
@@ -75,7 +62,7 @@ export default function ConversationHistoryView( {
 			<div className="agents-manager-conversation-history-view__footer">
 				<Button
 					variant="primary"
-					onClick={ onNewChat }
+					onClick={ () => navigate( '/' ) }
 					className="agents-manager-conversation-history-view__new-chat-btn"
 				>
 					{ __( 'Start a new chat', '__i18n_text_domain__' ) }

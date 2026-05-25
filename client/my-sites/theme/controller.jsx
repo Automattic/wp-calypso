@@ -98,6 +98,7 @@ export function details( context, next ) {
 	context.primary = (
 		<ThemeSheetComponent
 			id={ slug }
+			isSiteRoute={ !! context.params.site_id }
 			section={ section }
 			pathName={ context.pathname }
 			syncActiveTheme={ context.query?.[ 'sync-active-theme' ] === 'true' }

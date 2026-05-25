@@ -2,6 +2,7 @@ import { domainQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -36,6 +37,7 @@ export default function DomainSecurity() {
 					<DnsSec domainName={ domainName } domain={ domain } />
 				</>
 			) }
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

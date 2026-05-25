@@ -18,10 +18,11 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info, warning } from '@wordpress/icons';
+import { info, cautionFilled as warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { addPaymentMethodRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
@@ -191,6 +192,7 @@ export default function PaymentMethods() {
 		>
 			<div ref={ ref }>
 				<DataViewsCard>
+					{ ! isLoadingPaymentMethods && <PerformanceTrackerStop /> }
 					<DataViews
 						isLoading={ isLoadingPaymentMethods }
 						data={ filteredPaymentMethods ?? [] }

@@ -1,12 +1,12 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { Dispatch } from 'redux';
+import { truncate } from 'lodash';
+import { stripHTML } from 'calypso/lib/formatting/strip-html';
+import { getCachedPost } from 'calypso/reader/data/post/cache';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { AppState } from 'calypso/types';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 
 interface ShowSelectedPostArgs {
 	postKey?: {
@@ -19,7 +19,7 @@ interface ShowSelectedPostArgs {
 }
 
 export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) {
-	return ( _dispatch: Dispatch, getState: () => AppState ): Window | null | void => {
+	return (): Window | null | void => {
 		if ( ! postKey ) {
 			return;
 		}
@@ -29,9 +29,10 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 			return;
 		}
 
-		const post = getPostByKey( getState(), postKey );
+		const queryClient = getCalypsoQueryClient();
+		const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
-		if ( isXPost( post ) ) {
+		if ( post && isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );
 		}
 
@@ -159,10 +160,6 @@ export function setUrlQuery( key: string, value: string, pathname: string = '' )
 	}
 }
 
-export function isDiscoverV3Enabled(): boolean {
-	return isEnabled( 'reader/discover-v3' );
-}
-
 /**
  * Extracts the current tab from a URL path by removing locale and prefix information.
  */
@@ -183,4 +180,22 @@ export function getCurrentTabFromURL(
 	}
 
 	return path.replace( /^\//, '' );
+}
+
+export function getPostTitleFallback(
+	post: {
+		title: string;
+		excerpt: string;
+		content: string;
+	},
+	fallbackValue: string = ''
+): string {
+	if ( post.title ) {
+		return post.title;
+	}
+
+	const plainContent = stripHTML( post.excerpt || post.content ); // Get plain text without HTML tags.
+	const derivedTitle = truncate( plainContent, { length: 60, separator: /,? +/ } ).trim();
+
+	return derivedTitle || fallbackValue;
 }

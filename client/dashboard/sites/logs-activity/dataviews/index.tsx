@@ -8,8 +8,10 @@ import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { siteLogsActivityRoute } from '../../../app/router/sites';
 import { DataViews } from '../../../components/dataviews';
+import { getActivityLogHiddenGroups } from '../../../utils/site-features';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
 import { transformActivityLogEntry } from '../activity-transformer';
@@ -61,12 +63,15 @@ function SiteActivityLogsDataViews( {
 
 	const searchTerm = view.search?.trim() ?? '';
 
+	const notGroup = getActivityLogHiddenGroups( site );
+
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
 		number: view.perPage || ACTIVITY_LOGS_DEFAULT_PAGE_SIZE,
 		page: view.page,
 		after: afterIso,
 		before: beforeIso,
+		...( notGroup?.length && { not_group: notGroup } ),
 	};
 
 	if ( searchTerm ) {
@@ -76,7 +81,11 @@ function SiteActivityLogsDataViews( {
 		activityLogQueryParams.group = activityLogTypeValues;
 	}
 
-	const { data: activityLogData, isFetching: isFetchingData } = useQuery( {
+	const {
+		data: activityLogData,
+		isFetching: isFetchingData,
+		isLoading: isLoadingActivityLogQuery,
+	} = useQuery( {
 		...siteActivityLogQuery( site.ID, activityLogQueryParams ),
 		select: ( data ) => {
 			// use the transformer to ensure the data is always in the expected format
@@ -97,6 +106,7 @@ function SiteActivityLogsDataViews( {
 			after: afterIso,
 			before: beforeIso,
 			number: 1000,
+			...( notGroup?.length && { not_group: notGroup } ),
 		} )
 	);
 	const isFetching = isFetchingData || isFetchingFilters;
@@ -172,11 +182,13 @@ function SiteActivityLogsDataViews( {
 	// Reset pagination when the date range changes
 	useEffect( () => {
 		updateView( { ...view, page: 1 } );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
 	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];
 	return (
 		<>
+			{ ! isLoadingActivityLogQuery && <PerformanceTrackerStop /> }
 			<DataViews< Activity >
 				data={ logData }
 				isLoading={ isFetching }

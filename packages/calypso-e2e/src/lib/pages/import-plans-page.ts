@@ -20,6 +20,6 @@ export class ImportPlansPage {
 	 * @returns The heading element for the Import Plans page.
 	 */
 	get heading() {
-		return this.page.getByRole( 'heading', { name: 'There is a plan for you' } );
+		return this.page.getByRole( 'heading', { name: 'Pick a plan to start your migration' } );
 	}
 }

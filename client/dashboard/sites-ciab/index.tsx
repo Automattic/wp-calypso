@@ -1,12 +1,9 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { type View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import deepmerge from 'deepmerge';
-import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useHelpCenter } from '../app/help-center';
@@ -15,7 +12,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useSiteListQuery } from '../sites';
+import { useSiteListQuery, filterSortAndPaginateSites } from '../sites';
 import {
 	SitesDataViews,
 	useActions,
@@ -27,12 +24,11 @@ import {
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
 import { wpcomLink } from '../utils/link';
-import type { Site } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
 
 export default function CIABSites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
@@ -41,7 +37,7 @@ export default function CIABSites() {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 
 	const defaultView = getDefaultView( {
-		user,
+		siteCount: user.garden_site_count,
 		isAutomattician,
 		isRestoringAccount,
 	} );
@@ -53,7 +49,7 @@ export default function CIABSites() {
 		sanitizeFields,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData } = useSiteListQuery( view, {
+	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery( view, {
 		isRestoringAccount,
 		isAutomattician,
 	} );
@@ -69,12 +65,7 @@ export default function CIABSites() {
 	};
 
 	const handleViewChange = ( nextView: View ) => {
-		if ( nextView.type === 'list' ) {
-			return;
-		}
-
 		recordViewChanges( view, nextView, recordTracksEvent );
-
 		updateView( nextView );
 	};
 
@@ -95,22 +86,16 @@ export default function CIABSites() {
 		emptyDescription = __( 'Your search did not match any stores.' );
 	}
 
-	useEffect( () => {
-		if ( sites ) {
-			sites.forEach( ( site ) => {
-				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
-				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
-				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
-			} );
-		}
-	}, [ sites, queryClient ] );
-
 	const addNewStoreUrl = addQueryArgs( wpcomLink( '/setup/ai-site-builder-spec' ), {
 		source: 'ciab-sites-dashboard',
 		ref: 'new-site-popover',
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
+		sites ?? [],
+		view,
+		totalItems ?? 0
+	);
 
 	const emptyState = (
 		<DataViewsEmptyState

@@ -562,6 +562,49 @@ describe( 'ResultsPage', () => {
 		expect( screen.getByText( 'Before Results' ) ).toBeInTheDocument();
 	} );
 
+	describe( 'compact banner', () => {
+		it( 'toggles the expanded subtitle when clicked', async () => {
+			const user = userEvent.setup();
+
+			render(
+				<TestDomainSearch slots={ { BeforeResults: () => <div>Before Results</div> } }>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const banner = screen.getByRole( 'button', {
+				name: /Claim your free domain name with a paid plan/,
+			} );
+
+			expect( banner ).toHaveAttribute( 'aria-expanded', 'false' );
+			expect( screen.queryByText( /Choose a domain name/ ) ).not.toBeInTheDocument();
+
+			await user.click( banner );
+
+			expect( banner ).toHaveAttribute( 'aria-expanded', 'true' );
+			expect( screen.getByText( /Choose a domain name/ ) ).toBeInTheDocument();
+
+			await user.click( banner );
+
+			expect( banner ).toHaveAttribute( 'aria-expanded', 'false' );
+			expect( screen.queryByText( /Choose a domain name/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'is not rendered when no BeforeResults slot is passed', () => {
+			render(
+				<TestDomainSearch>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect(
+				screen.queryByRole( 'button', {
+					name: /Claim your free domain name with a paid plan/,
+				} )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 'renders the placeholders while loading', () => {
 		render(
 			<TestDomainSearch>
@@ -715,6 +758,110 @@ describe( 'ResultsPage', () => {
 			expect(
 				screen.queryByLabelText( 'Skip purchase and continue with testcom.wordpress.com' )
 			).not.toBeInTheDocument();
+		} );
+
+		it( 'renders the skip suggestion when searching for an available WordPress.com subdomain', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'mysite.wordpress.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'mysite.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'mysite' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'mysite.wordpress.com' } ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { skippable: true } } query="mysite.wordpress.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect(
+				await screen.findByText( 'Start free with mysite.wordpress.com' )
+			).toBeInTheDocument();
+			expect(
+				screen.getByLabelText( 'Skip purchase and continue with mysite.wordpress.com' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'renders unavailable notice when the searched WordPress.com subdomain is taken', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'taken.wordpress.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'taken.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'taken' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'taken123.wordpress.com' } ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { skippable: true } } query="taken.wordpress.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect(
+				await screen.findByText( 'taken.wordpress.com is not available' )
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', { name: 'taken123.wordpress.com' } )
+			).toBeInTheDocument();
+			expect( screen.queryByLabelText( /Skip purchase/ ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'free .blog subdomain suggestion', () => {
+		it( 'renders the skip suggestion when searching for an available .blog subdomain', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'mysite.tech.blog' },
+				suggestions: [ buildSuggestion( { domain_name: 'mysite.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'mysite.tech.blog', include_dotblogsubdomain: true },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'mysite.tech.blog' } ),
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { skippable: true, includeDotBlogSubdomain: true } }
+					query="mysite.tech.blog"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Start free with mysite.tech.blog' ) ).toBeInTheDocument();
+			expect(
+				screen.getByLabelText( 'Skip purchase and continue with mysite.tech.blog' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'renders unavailable notice when the searched .blog subdomain is taken', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'taken.photo.blog' },
+				suggestions: [ buildSuggestion( { domain_name: 'taken.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'taken.photo.blog', include_dotblogsubdomain: true },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'taken123.photo.blog' } ),
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { skippable: true, includeDotBlogSubdomain: true } }
+					query="taken.photo.blog"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'taken.photo.blog is not available' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'taken123.photo.blog' } ) ).toBeInTheDocument();
+			expect( screen.queryByLabelText( /Skip purchase/ ) ).not.toBeInTheDocument();
 		} );
 	} );
 

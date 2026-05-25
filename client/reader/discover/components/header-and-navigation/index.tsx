@@ -2,20 +2,12 @@ import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate, fixMe } from 'i18n-calypso';
-import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
-import {
-	FIRST_POSTS_TAB,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
-	RECOMMENDED_TAB,
-	FRESHLY_PRESSED_TAB,
-	TAGS_TAB,
-	LATEST_TAB,
-} from '../../helper';
+import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
+import { RECOMMENDED_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../../helper';
 
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
@@ -37,23 +29,12 @@ export default function DiscoverHeaderAndNavigation(
 
 	let subHeaderText;
 	switch ( selectedTab ) {
-		case FIRST_POSTS_TAB:
-			subHeaderText = translate(
-				'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
-			);
-			break;
 		case TAGS_TAB:
 			subHeaderText = fixMe( {
 				text: 'Browse posts by popular tags.',
 				newCopy: translate( 'Browse posts by popular tags.' ),
 				oldCopy: '', // No previous translation available.
 			} );
-			break;
-		case ADD_NEW_TAB:
-			subHeaderText = translate( 'Subscribe to new blogs, newsletters, and RSS feeds.' );
-			break;
-		case REDDIT_TAB:
-			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
 			break;
 		case RECOMMENDED_TAB:
 			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
@@ -67,7 +48,7 @@ export default function DiscoverHeaderAndNavigation(
 			break;
 
 		case FRESHLY_PRESSED_TAB:
-			subHeaderText = translate( "Our team's favorite blog posts." );
+			subHeaderText = translate( "Freshly Pressed highlights our team's favorite blog posts." );
 			break;
 	}
 
@@ -78,7 +59,7 @@ export default function DiscoverHeaderAndNavigation(
 				subtitle={ subHeaderText }
 				className={ clsx( 'discover-stream-header' ) }
 			/>
-			<AsyncLoad require="calypso/reader/onboarding" />
+			<ReaderOnboardingGate />
 			<DiscoverNavigation selectedTab={ selectedTab } />
 
 			{ selectedTab === 'tags' && (
