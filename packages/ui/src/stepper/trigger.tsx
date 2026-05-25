@@ -5,7 +5,7 @@ import { createElement, forwardRef, useCallback } from '@wordpress/element';
 import clsx from 'clsx';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
-import type { ComponentProps, MutableRefObject, ReactNode } from 'react';
+import type { ComponentProps, MutableRefObject, ReactNode, Ref } from 'react';
 
 type StepperTriggerProps = ComponentProps< 'button' > & {
 	children: ReactNode;
@@ -37,9 +37,9 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 					className={ clsx( styles[ 'trigger-heading' ], className ) }
 				>
 					<Accordion.Trigger
-						ref={ callbackRef as React.Ref< HTMLButtonElement > }
+						ref={ callbackRef as Ref< HTMLButtonElement > }
 						aria-current={ isCurrent ? 'step' : undefined }
-						className={ clsx( styles[ 'trigger' ] ) }
+						className={ clsx( styles[ 'trigger' ], className ) }
 						{ ...props }
 					>
 						{ children }
@@ -51,7 +51,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 		// Horizontal: Tabs.Tab
 		return (
 			<Tabs.Tab
-				ref={ callbackRef as React.Ref< HTMLButtonElement > }
+				ref={ callbackRef as Ref< HTMLButtonElement > }
 				value={ value }
 				disabled={ isDisabled }
 				aria-current={ isCurrent ? 'step' : undefined }

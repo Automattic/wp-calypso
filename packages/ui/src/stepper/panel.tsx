@@ -28,6 +28,10 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 	const stepCtx = useContext( StepContext );
 	const resolvedValue = valueProp ?? stepCtx?.value;
 
+	// In vertical mode, Accordion.Panel associates with the trigger via DOM nesting
+	// inside Accordion.Item (rendered by Stepper.Step). resolvedValue is only
+	// needed for the horizontal Tabs.Panel path.
+
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( orientation === 'horizontal' && ! resolvedValue ) {
 			// eslint-disable-next-line no-console
