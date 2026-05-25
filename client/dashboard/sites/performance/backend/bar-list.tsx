@@ -1,3 +1,5 @@
+import './bar-list.scss';
+
 import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -22,6 +24,7 @@ export default function BarList( {
 				const fillPercent = ( row.value / max ) * 100;
 				const bar = (
 					<div
+						className="dashboard-apm-bar-list__bar"
 						style={ {
 							position: 'relative',
 							flex: 1,
@@ -29,19 +32,16 @@ export default function BarList( {
 							height: 32,
 							borderRadius: 4,
 							overflow: 'hidden',
-							background:
-								'color-mix(in srgb, var(--wp-admin-theme-color, #3858e9) 8%, transparent)',
 						} }
 					>
 						<div
+							className="dashboard-apm-bar-list__bar-fill"
 							style={ {
 								position: 'absolute',
 								insetInlineStart: 0,
 								insetBlockStart: 0,
 								insetBlockEnd: 0,
 								width: `${ fillPercent }%`,
-								background:
-									'color-mix(in srgb, var(--wp-admin-theme-color, #3858e9) 32%, transparent)',
 							} }
 						/>
 						<div
@@ -70,16 +70,7 @@ export default function BarList( {
 					</div>
 				);
 				const linkedBar = row.href ? (
-					<Link
-						to={ row.href }
-						style={ {
-							flex: 1,
-							minWidth: 0,
-							display: 'flex',
-							textDecoration: 'none',
-							color: 'inherit',
-						} }
-					>
+					<Link to={ row.href } className="dashboard-apm-bar-list__link">
 						{ bar }
 					</Link>
 				) : (

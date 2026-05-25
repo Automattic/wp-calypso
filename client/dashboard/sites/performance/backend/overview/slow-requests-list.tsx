@@ -1,11 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import SlowList, { type SlowListItem } from '../slow-list';
+import { buildRequestDetailHref } from '../utils';
 import type { MergedRoute } from '../aggregate';
-
-function buildHref( siteSlug: string, method: string, route: string ): string {
-	const params = new URLSearchParams( { method, route } );
-	return `/sites/${ siteSlug }/performance/backend/requests?${ params.toString() }`;
-}
 
 function toItems( routes: MergedRoute[], siteSlug: string ): SlowListItem[] {
 	return routes.map( ( route ) => ( {
@@ -13,7 +9,7 @@ function toItems( routes: MergedRoute[], siteSlug: string ): SlowListItem[] {
 		label: `${ route.method } ${ route.route }`,
 		avg_ms: route.duration_ms.avg,
 		max_ms: route.duration_ms.max,
-		href: buildHref( siteSlug, route.method, route.route ),
+		href: buildRequestDetailHref( siteSlug, route.method, route.route ),
 	} ) );
 }
 

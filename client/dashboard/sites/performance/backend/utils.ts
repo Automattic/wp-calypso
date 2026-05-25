@@ -27,6 +27,11 @@ export function bucketByMs( ms: number, { good, warn }: ThresholdMs ): Intent {
 	return 'error';
 }
 
+export function buildRequestDetailHref( siteSlug: string, method: string, route: string ): string {
+	const params = new URLSearchParams( { method, route } );
+	return `/sites/${ siteSlug }/performance/backend/requests?${ params.toString() }`;
+}
+
 export function formatMs( ms: number ): string {
 	if ( ms >= 1000 ) {
 		return sprintf(
