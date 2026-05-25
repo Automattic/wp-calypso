@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { VerticalStepper } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta< typeof VerticalStepper > = {
+const meta: Meta = {
 	component: VerticalStepper,
 	title: 'Automattic UI/VerticalStepper',
 };

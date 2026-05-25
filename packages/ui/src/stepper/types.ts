@@ -1,5 +1,5 @@
 // packages/ui/src/stepper/types.ts
-import type { ReactNode, Ref } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 
 // ---------------------------------------------------------------------------
 // Utility types
@@ -95,6 +95,7 @@ type StepperBaseProps = {
 	formatStepLabel?: ( step: number, total: number, status?: StepStatus ) => string;
 	children: ReactNode;
 	className?: string;
+	style?: CSSProperties;
 	ref?: Ref< StepperRef >;
 };
 

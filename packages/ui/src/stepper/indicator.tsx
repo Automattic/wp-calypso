@@ -1,10 +1,10 @@
 // packages/ui/src/stepper/indicator.tsx
-import { type ReactNode } from '@wordpress/element';
 import { check, error as errorIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Icon } from '../icon';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
+import type { ReactNode } from 'react';
 
 type StepperIndicatorProps = {
 	children?: ReactNode;

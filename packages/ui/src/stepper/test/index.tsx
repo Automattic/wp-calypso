@@ -25,7 +25,6 @@ describe( 'Stepper.Root', () => {
 	it( 'warns in dev when neither aria-label nor aria-labelledby is provided', () => {
 		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
-			// @ts-expect-error — intentionally omitting required a11y prop
 			<Stepper.Root orientation="vertical">
 				<div />
 			</Stepper.Root>
@@ -52,9 +51,9 @@ describe( 'Stepper.Step', () => {
 			</Stepper.Root>
 		);
 
-		expect( capturedContext?.isCurrent ).toBe( true );
-		expect( capturedContext?.status ).toBe( 'completed' );
-		expect( capturedContext?.index ).toBe( 0 );
+		expect( capturedContext!.isCurrent ).toBe( true );
+		expect( capturedContext!.status ).toBe( 'completed' );
+		expect( capturedContext!.index ).toBe( 0 );
 	} );
 
 	it( 'marks step as disabled when linear and not completed', () => {
@@ -76,7 +75,7 @@ describe( 'Stepper.Step', () => {
 			</Stepper.Root>
 		);
 
-		expect( capturedContext?.isDisabled ).toBe( true );
+		expect( capturedContext!.isDisabled ).toBe( true );
 	} );
 
 	it( 'sets data-current attribute on the current step', () => {
@@ -140,7 +139,7 @@ describe( 'Stepper.Step', () => {
 		);
 
 		// Completed + explicit disabled = still disabled
-		expect( capturedContext?.isDisabled ).toBe( true );
+		expect( capturedContext!.isDisabled ).toBe( true );
 	} );
 
 	it( 'renders as a div in horizontal mode', () => {

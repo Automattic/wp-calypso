@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { StepperContext, defaultFormatStepLabel } from './context';
 import { useStepRegistration } from './use-step-registration';
 import type { StepperContextValue, StepperRef } from './types';
+import type { CSSProperties, ReactNode } from 'react';
 
 type StepperRootProps = {
 	orientation: 'vertical' | 'horizontal';
@@ -16,8 +17,9 @@ type StepperRootProps = {
 	headingLevel?: 2 | 3 | 4 | 5 | 6;
 	activationMode?: 'auto' | 'manual';
 	formatStepLabel?: ( step: number, total: number, status?: 'completed' | 'error' ) => string;
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
+	style?: CSSProperties;
 	'aria-label'?: string;
 	'aria-labelledby'?: string;
 };
@@ -34,6 +36,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 		formatStepLabel = defaultFormatStepLabel,
 		children,
 		className,
+		style,
 		'aria-label': ariaLabel,
 		'aria-labelledby': ariaLabelledBy,
 	},
@@ -133,6 +136,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 						}
 					} }
 					className={ clsx( className ) }
+					style={ style }
 					aria-label={ ariaLabel }
 					aria-labelledby={ ariaLabelledBy }
 				>
@@ -147,6 +151,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 						}
 					} }
 					className={ clsx( className ) }
+					style={ style }
 					aria-label={ ariaLabel }
 					aria-labelledby={ ariaLabelledBy }
 				>

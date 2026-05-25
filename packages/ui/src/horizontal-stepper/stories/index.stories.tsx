@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { HorizontalStepper } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta< typeof HorizontalStepper > = {
+const meta: Meta = {
 	component: HorizontalStepper,
 	title: 'Automattic UI/HorizontalStepper',
 };
