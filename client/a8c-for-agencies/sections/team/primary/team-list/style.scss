@@ -11,10 +11,6 @@
 		}
 	}
 
-	.dataviews__view-actions {
-		display: none;
-	}
-
 	.hosting-dashboard-layout__navigation-wrapper {
 		margin-block-end: 16px;
 		max-width: 100%;
@@ -23,11 +19,15 @@
 			margin-block-end: 0;
 		}
 	}
+}
 
-	.dataviews-view-table__row td:last-child {
-		text-align: right;
-		padding: 16px 48px;
-
+// Inset the table wrapper so the table's content lands at the same offset
+// from the page edge as on the Migrations: Commissions page. DataViews adds
+// 30px of internal padding on its toolbar and first/last cells; the wrapper
+// padding here brings the total inset to 64px on >660px screens.
+.team-list__table-wrapper {
+	@include breakpoint-deprecated( ">660px" ) {
+		padding-inline: 34px;
 	}
 }
 
@@ -74,17 +74,4 @@
 		color: var(--color-error-50);
 		background-color: var(--color-error-0);
 	}
-}
-
-.team-list__actions-column {
-	display: flex;
-	align-items: flex-end;
-}
-
-.team-list__action-menu-item.is-danger {
-	color: var(--color-error);
-}
-
-.team-list__action-button {
-	padding: 0;
 }
