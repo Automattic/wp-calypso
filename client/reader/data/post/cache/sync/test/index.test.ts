@@ -6,8 +6,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import waitForImagesToLoad from 'calypso/lib/post-normalizer/rule-wait-for-images-to-load';
-import { getCachedPost } from 'calypso/reader/data/post/cache';
-import { syncPostCache } from 'calypso/reader/data/post/cache-sync';
+import { getCachedPost, syncPostCache } from 'calypso/reader/data/post/cache';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
 jest.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {

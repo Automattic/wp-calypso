@@ -14,8 +14,8 @@ migration, the Reader has two post access layers with different contracts:
   stream.
 
 The canonical cache lives in `post/cache`. Stream responses, full post fetches,
-and optimistic updates write into this cache through `post/cache-sync`. Queries
-that produce Reader posts should use `usePostQuery()` or `usePostsQuery()` from
+normalization, and optimistic updates write through this module. Queries that
+produce Reader posts should use `usePostQuery()` or `usePostsQuery()` from
 `post/query` so the UI receives normalized posts and the canonical cache is
 synced from one place. The cache query keys are memory-only and are not
 persisted to localStorage.

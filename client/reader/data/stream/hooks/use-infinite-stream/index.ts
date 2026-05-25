@@ -11,7 +11,7 @@ import {
 	type QueryClient,
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache-sync';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from '../../build-query-params';
 import { extractPageHandle, normalizeStreamPage } from '../../normalization';

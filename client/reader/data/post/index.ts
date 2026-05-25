@@ -3,8 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
-import { useCachedPost } from './cache';
-import { syncConversationFollowStatus, syncPostCache } from './cache-sync';
+import { syncConversationFollowStatus, syncPostCache, useCachedPost } from './cache';
 import { usePostQuery } from './query';
 import type { Post } from './cache';
 import type { ReadPostKey } from '@automattic/api-core';
@@ -79,7 +78,6 @@ export const usePost = ( postKey: Partial< ReadPostKey > | null | undefined ): P
 };
 
 export * from './cache';
-export * from './cache-sync';
 export * from './likes';
 export * from './middleware';
 export * from './query';

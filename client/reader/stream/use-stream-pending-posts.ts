@@ -2,7 +2,7 @@ import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
-import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache-sync';
+import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
 import { buildStreamQueryParams, normalizeStreamPage } from 'calypso/reader/data/stream';
 import { analyticsForStream } from 'calypso/reader/data/stream/normalization';
 import { keyToString } from 'calypso/reader/post-key';
