@@ -53,13 +53,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/core@npm:0.4.20":
-  version: 0.4.20
-  resolution: "@ariakit/core@npm:0.4.20"
-  checksum: c9f90af371858a0251a58e6ed68263be25ef175e0710c867a2c30f04894c2cd81716ca450c60414004eb3ce962e76bfe039b381867bc92c1cef2c27c7eb13784
-  languageName: node
-  linkType: hard
-
 "@ariakit/react-components@npm:0.1.1":
   version: 0.1.1
   resolution: "@ariakit/react-components@npm:0.1.1"
@@ -74,20 +67,6 @@ __metadata:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: f923775e17f57ef7be74cbcd8e455a1b58588f918bff061658005f943ab2588e7dbaebd06474b9abd6d0f83d6321204ceba840be0b6d2f386ce424870a59d3cc
-  languageName: node
-  linkType: hard
-
-"@ariakit/react-core@npm:0.4.26":
-  version: 0.4.26
-  resolution: "@ariakit/react-core@npm:0.4.26"
-  dependencies:
-    "@ariakit/core": "npm:0.4.20"
-    "@floating-ui/dom": "npm:^1.0.0"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: fa81563035779a5722ee36968de2ee4ae6fdbeae98cdeb0fd75ea4ba8c002fdc3b1a1929bf9bc8c8362a0c4be49a674257bf554eee5bbfea22007eeceb7f7903
   languageName: node
   linkType: hard
 
@@ -117,19 +96,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.4.15, @ariakit/react@npm:^0.4.21, @ariakit/react@npm:^0.4.22":
-  version: 0.4.26
-  resolution: "@ariakit/react@npm:0.4.26"
-  dependencies:
-    "@ariakit/react-core": "npm:0.4.26"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: fc88b5f755acd787bc55d2c6d6b8406dd06cbf2aeb20d3b86f67d3ed492d0460952a1e5b7eced151f79305c8735f84124327d3b3deaa883e7f6fdd0c808dcfc5
-  languageName: node
-  linkType: hard
-
-"@ariakit/react@npm:^0.4.23":
+"@ariakit/react@npm:^0.4.15, @ariakit/react@npm:^0.4.21, @ariakit/react@npm:^0.4.22, @ariakit/react@npm:^0.4.23":
   version: 0.4.28
   resolution: "@ariakit/react@npm:0.4.28"
   dependencies:
