@@ -149,6 +149,33 @@
 		margin-block-start: 8px;
 	}
 
+	// Keep the media-trigger and any per-protocol extras pill on the
+	// same row as inline siblings; without explicit flex the second
+	// child wraps under the first and crashes into the count cell on
+	// the right. The `flex: 1 1 auto` claims the left cell's share of
+	// the row so a long pill label has room before wrapping — the
+	// surrounding `<HStack>` otherwise stretches the right cell to fill.
+	.social-composer__footer-left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	// The right cell only needs to hug its content (count + Post
+	// button). `<HStack>` emits `width: 100%` via its own emotion
+	// class, which would otherwise stretch the cell to the full row
+	// and crush the pill on the left. The gap matches the modal's
+	// content-edge padding so the count sits as far from the button as
+	// the button sits from the modal's right edge.
+	.social-composer__footer-right {
+		flex: 0 0 auto;
+		width: auto;
+		gap: 24px;
+	}
+
 	.social-composer__media {
 		background: transparent;
 		border: none;
