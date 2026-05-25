@@ -8,6 +8,8 @@ import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import { Stat } from 'calypso/a8c-for-agencies/components/stat';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import type { AgencyTierType } from './types';
 
@@ -18,11 +20,22 @@ const LEARN_MORE_URL =
 
 function InfluencedRevenueStrapline() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
 	const title = translate( 'Influenced revenue' );
 	const [ iconNode, setIconNode ] = useState< HTMLSpanElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
 	const isMobile = useMobileBreakpoint();
+
+	const openInfo = () => {
+		setShowPopover( true );
+		dispatch( recordTracksEvent( 'calypso_a4a_agency_tier_influenced_revenue_info_open' ) );
+	};
+
+	const onLearnMoreClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_agency_tier_influenced_revenue_learn_more_click' ) );
+		showSupportGuide( LEARN_MORE_URL );
+	};
 
 	const content = (
 		<div className="influenced-revenue__popover-content">
@@ -34,7 +47,7 @@ function InfluencedRevenueStrapline() {
 					'{{a}}Learn more{{/a}}',
 				{
 					components: {
-						a: <Button variant="link" onClick={ () => showSupportGuide( LEARN_MORE_URL ) } />,
+						a: <Button variant="link" onClick={ onLearnMoreClick } />,
 						br: <br />,
 					},
 				}
@@ -48,12 +61,12 @@ function InfluencedRevenueStrapline() {
 			<span
 				className="influenced-revenue__info-icon"
 				ref={ setIconNode }
-				onClick={ () => setShowPopover( true ) }
+				onClick={ openInfo }
 				role="button"
 				tabIndex={ 0 }
 				onKeyDown={ ( event ) => {
 					if ( event.key === 'Enter' ) {
-						setShowPopover( true );
+						openInfo();
 					}
 				} }
 			>
