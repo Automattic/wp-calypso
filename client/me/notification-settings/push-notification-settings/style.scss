@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .notification-settings-push-notification-settings__instruction {
 	margin: 24px 0 0;
@@ -13,6 +13,11 @@
 }
 
 .card.notification-settings-push-notification-settings__settings {
+	position: relative;
+	margin-top: 1em;
+}
+
+.card.notification-settings-on-this-day-notification-settings__settings {
 	position: relative;
 	margin-top: 1em;
 }
