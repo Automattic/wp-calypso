@@ -13,6 +13,7 @@ export type HorizontalStepRecord = {
 	indicator?: ReactNode;
 	forceMount?: boolean;
 	children: ReactNode;
+	className?: string;
 };
 
 type HorizontalStepRegistration = {
@@ -59,6 +60,7 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 		props.optional,
 		props.disabled,
 		props.forceMount,
+		props.className,
 	] );
 
 	return null;

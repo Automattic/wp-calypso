@@ -62,7 +62,7 @@ function HorizontalStepperInner(
 							status={ step.status }
 							optional={ step.optional }
 							disabled={ step.disabled }
-							className={ styles[ 'step' ] }
+							className={ step.className ?? styles[ 'step' ] }
 						>
 							<Stepper.Trigger className={ styles[ 'trigger' ] }>
 								<Stepper.Indicator>{ step.indicator }</Stepper.Indicator>
