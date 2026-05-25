@@ -47,6 +47,7 @@ export type StepperContextValue = {
 	steps: StepMeta[];
 	totalSteps: number;
 	registerStep: ( meta: StepMeta ) => () => void;
+	updateStep: ( meta: StepMeta ) => void;
 	registerTriggerRef: ( value: string, el: HTMLElement | null ) => void;
 	formatStepLabel: ( step: number, total: number, status?: StepStatus ) => string;
 };

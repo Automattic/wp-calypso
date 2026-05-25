@@ -65,7 +65,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 	);
 
 	// Step registration
-	const { steps, registerStep } = useStepRegistration();
+	const { steps, registerStep, updateStep } = useStepRegistration();
 	const totalSteps = steps.length;
 
 	// Trigger refs for imperative focusStep
@@ -115,6 +115,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 		steps,
 		totalSteps,
 		registerStep,
+		updateStep,
 		registerTriggerRef,
 		formatStepLabel,
 	};

@@ -1,7 +1,6 @@
 // packages/ui/src/stepper/step.tsx
 import { Accordion } from '@base-ui/react/accordion';
 import { forwardRef, useContext, useEffect } from '@wordpress/element';
-import clsx from 'clsx';
 import { StepContext, StepperContext } from './context';
 import type { StepContextValue, StepStatus } from './types';
 
@@ -23,7 +22,15 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 		throw new Error( 'Stepper.Step must be used inside <Stepper.Root>.' );
 	}
 
-	const { value: activeValue, linear, steps, totalSteps, registerStep, orientation } = rootCtx;
+	const {
+		value: activeValue,
+		linear,
+		steps,
+		totalSteps,
+		registerStep,
+		updateStep,
+		orientation,
+	} = rootCtx;
 
 	// Compute derived state
 	const isCurrent = value === activeValue;
@@ -43,8 +50,8 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 
 	// Keep registration metadata in sync without remounting
 	useEffect( () => {
-		registerStep( { value, status, disabled: isDisabled } );
-	}, [ value, status, isDisabled, registerStep ] );
+		updateStep( { value, status, disabled: isDisabled } );
+	}, [ value, status, isDisabled, updateStep ] );
 
 	const stepCtx: StepContextValue = {
 		value,
@@ -63,7 +70,7 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 					ref={ ref }
 					value={ value }
 					disabled={ isDisabled }
-					className={ clsx( className ) }
+					className={ className }
 					data-status={ status }
 					data-current={ isCurrent ? '' : undefined }
 					data-disabled={ isDisabled ? '' : undefined }
@@ -79,7 +86,7 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 		<StepContext.Provider value={ stepCtx }>
 			<div
 				ref={ ref }
-				className={ clsx( className ) }
+				className={ className }
 				data-status={ status }
 				data-current={ isCurrent ? '' : undefined }
 				data-disabled={ isDisabled ? '' : undefined }

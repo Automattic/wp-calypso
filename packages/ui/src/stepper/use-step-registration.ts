@@ -13,7 +13,7 @@ export function useStepRegistration() {
 		setSteps( ( prev ) => {
 			// Avoid duplicate registration (React StrictMode double-invocation)
 			if ( prev.some( ( s ) => s.value === meta.value ) ) {
-				return prev.map( ( s ) => ( s.value === meta.value ? meta : s ) );
+				return prev;
 			}
 			return [ ...prev, meta ];
 		} );
@@ -23,5 +23,9 @@ export function useStepRegistration() {
 		};
 	}, [] );
 
-	return { steps, registerStep };
+	const updateStep = useCallback( ( meta: StepMeta ) => {
+		setSteps( ( prev ) => prev.map( ( s ) => ( s.value === meta.value ? meta : s ) ) );
+	}, [] );
+
+	return { steps, registerStep, updateStep };
 }
