@@ -4,7 +4,6 @@ import {
 	__experimentalHeading as Heading,
 	CardHeader,
 	Icon,
-	useNavigator,
 	privateApis,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
@@ -14,11 +13,10 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useEffect, useCallback, useRef } from 'react';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { getFilters } from '../../panel/templates/filters';
+import { useNotificationsRoute } from '../hooks';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
 import NotePanelActions from './actions';
-
-type FilterName = keyof ReturnType< typeof getFilters >;
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -35,8 +33,7 @@ export const getNotificationTabs = () =>
 
 const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const notificationTabs = getNotificationTabs();
-	const { params, goTo } = useNavigator();
-	const { filterName = 'all' } = params as { filterName?: string };
+	const { filterName, goTo } = useNotificationsRoute();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 
 	const handleSelect = useCallback(
@@ -127,7 +124,7 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			   filter is applied outside the DataViews `view`, so DataViews'
 			   infinite-scroll row accumulation would otherwise carry stale
 			   notes from the previously selected tab. */ }
-			<NoteList key={ filterName } filterName={ filterName as FilterName } />
+			<NoteList key={ filterName } />
 		</>
 	);
 };

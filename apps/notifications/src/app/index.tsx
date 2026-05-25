@@ -149,19 +149,21 @@ const NotificationApp = ( {
 	return (
 		<Provider store={ store }>
 			<AppProvider client={ client } locale={ locale }>
-				<Navigator initialPath="/all" style={ { maxHeight: 'inherit', height: '100%' } }>
-					<Navigator.Screen
-						path="/:filterName"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
-						<NotePanel isDismissible={ isDismissible } />
-					</Navigator.Screen>
-					<Navigator.Screen
-						path="/:filterName/notes/:noteId"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
+				<Navigator
+					initialPath="/all"
+					className="wpnc-app__navigator"
+					style={ {
+						display: 'flex',
+						maxHeight: 'inherit',
+						height: '100%',
+					} }
+				>
+					<Navigator.Screen path="/:filterName/notes/:noteId" className="wpnc-app__detail-pane">
 						<Note isDismissible={ isDismissible } />
 					</Navigator.Screen>
+					<div className="wpnc-app__list-pane">
+						<NotePanel isDismissible={ isDismissible } />
+					</div>
 				</Navigator>
 			</AppProvider>
 		</Provider>

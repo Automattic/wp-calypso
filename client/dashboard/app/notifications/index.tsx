@@ -149,15 +149,7 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<div
-					style={ {
-						width: '100vw',
-						height: '100vh',
-						maxWidth: ! isMobileViewport ? '448px' : undefined,
-						maxHeight: 'inherit',
-						margin: '-8px',
-					} }
-				>
+				<div className="dashboard-notifications__content">
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp
 							locale={ locale }

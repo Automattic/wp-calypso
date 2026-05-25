@@ -3,12 +3,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	Button,
 	CardHeader,
 	CardBody,
-	Navigator,
-	useNavigator,
 } from '@wordpress/components';
-import { isRTL } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
@@ -20,6 +19,7 @@ import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { getFilters } from '../../panel/templates/filters';
+import { useNotificationsRoute } from '../hooks';
 import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
@@ -72,15 +72,14 @@ const getClasses = ( {
 
 const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const dispatch = useDispatch();
-	const { params, goBack } = useNavigator();
-	const { filterName, noteId } = params;
-
+	const { filterName, activeNoteId: noteId, goTo } = useNotificationsRoute();
+	const goBack = () => goTo( `/${ filterName }`, { isBack: true } );
 	const filter = getFilters()[ filterName as keyof ReturnType< typeof getFilters > ];
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const visibleNotes = notes.filter(
-		( note ) => filter.filter( note ) && hiddenNoteIds[ note.id ] !== true
+		( note ) => filter?.filter( note ) && hiddenNoteIds[ note.id ] !== true
 	);
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
@@ -111,7 +110,13 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			>
 				<HStack>
 					<HStack justify="flex-start">
-						<Navigator.BackButton size="small" icon={ isRTL() ? chevronRight : chevronLeft } />
+						<Button
+							className="wpnc-app__detail-back"
+							size="small"
+							icon={ isRTL() ? chevronRight : chevronLeft }
+							label={ __( 'Back' ) }
+							onClick={ goBack }
+						/>
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>

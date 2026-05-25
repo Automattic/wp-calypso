@@ -1,10 +1,10 @@
-import { useNavigator } from '@wordpress/components';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { useAppContext } from '../context';
+import { useNotificationsRoute } from '../hooks';
 import type { Note } from '../types';
 
 export function useNoteNavigationViaKeyboardShortcuts( {
@@ -14,8 +14,7 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 	visibleNotes: Note[];
 	note?: Note;
 } ) {
-	const { params, goTo } = useNavigator();
-	const { filterName } = params;
+	const { filterName, goTo } = useNotificationsRoute();
 
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
 

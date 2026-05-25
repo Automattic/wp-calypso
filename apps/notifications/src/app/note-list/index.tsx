@@ -3,7 +3,6 @@ import {
 	__experimentalText as Text,
 	ExternalLink,
 	Spinner,
-	useNavigator,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -13,6 +12,7 @@ import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
+import { useNotificationsRoute } from '../hooks';
 import { getFields } from './dataviews';
 import {
 	useNoteListFocusToLastSelectedNote,
@@ -34,8 +34,8 @@ const DEFAULT_LAYOUTS = {
 // so the window never advances past the notes already fetched.
 const NOTES_PER_PAGE = 20;
 
-const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
-	const { goTo } = useNavigator();
+const NoteList = () => {
+	const { filterName, selectedNoteId, goTo } = useNotificationsRoute();
 	const filter = getFilters()[ filterName ];
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	const notes = allNotes.filter( ( note ) => filter.filter( note ) );
@@ -61,6 +61,13 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
+
+		// Unselecting notification.
+		if ( selectedNoteId && noteId === selectedNoteId ) {
+			goTo( `/${ filterName }`, { isBack: true } );
+			return;
+		}
+
 		goTo( `/${ filterName }/notes/${ noteId }` );
 	};
 
@@ -151,6 +158,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 						</VStack>
 					}
 					getItemId={ ( item ) => item.id.toString() }
+					selection={ selectedNoteId ? [ selectedNoteId ] : [] }
 					onChangeView={ handleChangeView }
 					onChangeSelection={ onChangeSelection }
 				>
