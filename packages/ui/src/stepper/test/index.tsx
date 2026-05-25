@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Stepper } from '..';
 import { useStepContext } from '../context';
 import type { StepContextValue } from '../types';
@@ -236,5 +236,59 @@ describe( 'Stepper.Trigger', () => {
 			</Stepper.Root>
 		);
 		expect( screen.getByRole( 'tab', { name: /step a/i } ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'Stepper.Panel', () => {
+	it( 'shows active panel content in vertical mode', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>A</Stepper.Trigger>
+					<Stepper.Panel>Panel A content</Stepper.Panel>
+				</Stepper.Step>
+				<Stepper.Step value="b">
+					<Stepper.Trigger>B</Stepper.Trigger>
+					<Stepper.Panel>Panel B content</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByText( 'Panel A content' ) ).toBeVisible();
+	} );
+
+	it( 'applies role="region" when totalSteps <= 5 in vertical mode', async () => {
+		const { container } = render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>A</Stepper.Trigger>
+					<Stepper.Panel>Content</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		// After effects fire totalSteps becomes 1; panel should have role="region"
+		await waitFor( () => {
+			const regions = container.querySelectorAll( '[role="region"]:not([aria-label])' );
+			expect( regions.length ).toBeGreaterThan( 0 );
+		} );
+	} );
+
+	it( 'omits role="region" when totalSteps > 5 in vertical mode', async () => {
+		const steps = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
+		const { container } = render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				{ steps.map( ( v ) => (
+					<Stepper.Step key={ v } value={ v }>
+						<Stepper.Trigger>{ v }</Stepper.Trigger>
+						<Stepper.Panel>Content { v }</Stepper.Panel>
+					</Stepper.Step>
+				) ) }
+			</Stepper.Root>
+		);
+		// After effects fire totalSteps becomes 6; panels must not have role="region"
+		await screen.findByText( 'Content a' );
+		await waitFor( () => {
+			const unlabelledRegions = container.querySelectorAll( '[role="region"]:not([aria-label])' );
+			expect( unlabelledRegions.length ).toBe( 0 );
+		} );
 	} );
 } );

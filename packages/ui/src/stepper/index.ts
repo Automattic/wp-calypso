@@ -1,6 +1,7 @@
 // packages/ui/src/stepper/index.ts
 import { StepperDescription } from './description';
 import { StepperIndicator } from './indicator';
+import { StepperPanel } from './panel';
 import { StepperRoot } from './root';
 import { StepperStep } from './step';
 import { StepperTitle } from './title';
@@ -13,4 +14,5 @@ export const Stepper = {
 	Title: StepperTitle,
 	Description: StepperDescription,
 	Trigger: StepperTrigger,
+	Panel: StepperPanel,
 };
