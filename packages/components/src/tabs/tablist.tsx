@@ -117,7 +117,7 @@ export const TabList = forwardRef<
 		<Ariakit.TabList
 			ref={ refs }
 			store={ store }
-			render={ ( props ) => (
+			render={ ( props: React.ComponentPropsWithRef< 'div' > ) => (
 				<div
 					{ ...props }
 					// Fallback to -1 to prevent browsers from making the tablist
