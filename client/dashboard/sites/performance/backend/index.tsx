@@ -113,7 +113,7 @@ function ApmDashboard( {
 	const renderTab = () => {
 		switch ( tab ) {
 			case 'overview':
-				return <Overview merged={ merged } />;
+				return <Overview merged={ merged } siteSlug={ siteSlug } />;
 			case 'transactions':
 				return <Transactions merged={ merged } />;
 			case 'wordpress':
