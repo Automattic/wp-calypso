@@ -292,3 +292,35 @@ describe( 'Stepper.Panel', () => {
 		} );
 	} );
 } );
+
+describe( 'Stepper.List', () => {
+	it( 'renders a tablist in horizontal mode', () => {
+		render(
+			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Content</Stepper.Panel>
+			</Stepper.Root>
+		);
+		expect( screen.getByRole( 'tablist' ) ).toBeInTheDocument();
+	} );
+
+	it( 'warns and renders nothing in vertical mode', () => {
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+						<Stepper.Panel>Content</Stepper.Panel>
+					</Stepper.Step>
+				</Stepper.List>
+			</Stepper.Root>
+		);
+		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'horizontal mode' ) );
+		warn.mockRestore();
+	} );
+} );
