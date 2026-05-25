@@ -28,6 +28,13 @@
 }
 
 .step-container-v2:has( .step-container-v2--plans ) {
+	&:has( .step-container-v2--plans.is-plans-loading ) {
+		visibility: hidden;
+		position: absolute;
+		clip-path: inset( 50% );
+		pointer-events: none;
+	}
+
 	.plans-wrapper {
 		margin: 0;
 		padding: 0;
