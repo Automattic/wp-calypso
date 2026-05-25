@@ -2,6 +2,15 @@
 @import "@wordpress/base-styles/mixins";
 @import '@wordpress/base-styles/colors';
 
+// @wordpress/dataviews v13 shipped a rule that neutralized the surrounding CardBody padding
+// when it wrapped a dataviews wrapper. v14 dropped that rule, so the default CardBody padding
+// leaks through. Restore the previous behavior here.
+.components-card__body:has( > .dataviews-wrapper ),
+.components-card__body:has( > .dataviews-picker-wrapper ) {
+	padding: $grid-unit-10 0 0;
+	overflow: hidden;
+}
+
 // We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
 .components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
 	padding-top: 0;
