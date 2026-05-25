@@ -192,3 +192,49 @@ describe( 'Stepper.Indicator', () => {
 		expect( icon.parentElement ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );
+
+describe( 'Stepper.Trigger', () => {
+	it( 'renders as a button inside a heading in vertical mode', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel>Content</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		const button = screen.getByRole( 'button', { name: /step a/i } );
+		expect( button ).toBeInTheDocument();
+		// Button must be inside a heading
+		expect( button.closest( 'h3' ) ).not.toBeNull();
+	} );
+
+	it( 'applies aria-current="step" to the active trigger', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel>Content</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByRole( 'button', { name: /step a/i } ) ).toHaveAttribute(
+			'aria-current',
+			'step'
+		);
+	} );
+
+	it( 'renders as a tab in horizontal mode', () => {
+		render(
+			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Content</Stepper.Panel>
+			</Stepper.Root>
+		);
+		expect( screen.getByRole( 'tab', { name: /step a/i } ) ).toBeInTheDocument();
+	} );
+} );

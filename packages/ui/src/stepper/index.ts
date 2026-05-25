@@ -4,6 +4,7 @@ import { StepperIndicator } from './indicator';
 import { StepperRoot } from './root';
 import { StepperStep } from './step';
 import { StepperTitle } from './title';
+import { StepperTrigger } from './trigger';
 
 export const Stepper = {
 	Root: StepperRoot,
@@ -11,4 +12,5 @@ export const Stepper = {
 	Indicator: StepperIndicator,
 	Title: StepperTitle,
 	Description: StepperDescription,
+	Trigger: StepperTrigger,
 };
