@@ -124,7 +124,7 @@ $stepper-step-gap: variables.$grid-unit-20;
 	color: theme.$components-color-foreground;
 	font-size: variables.$default-font-size;
 	font-weight: 400;
-	line-height: variables.$font-line-height-body;
+	line-height: variables.$font-line-height-medium;
 	transition: color 0.15s ease;
 
 	.is-horizontal .list & {
@@ -240,7 +240,7 @@ $stepper-step-gap: variables.$grid-unit-20;
 .title {
 	font-size: variables.$default-font-size;
 	font-weight: 400;
-	line-height: variables.$font-line-height-body;
+	line-height: variables.$font-line-height-medium;
 	color: theme.$components-color-foreground;
 
 	[ data-current ] & {
