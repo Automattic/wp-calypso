@@ -18,7 +18,7 @@ export const SeoSettingsHelpCard = ( {
 	translate,
 } ) => {
 	const seoHelpLink = siteIsJetpack
-		? localizeUrl( 'https://jetpack.com/support/seo-tools/' )
+		? localizeUrl( 'https://wordpress.com/support/seo-tools/' )
 		: 'https://wpbizseo.wordpress.com/';
 
 	return (
