@@ -139,7 +139,7 @@ import Thing from '../';
 
 describe( 'Thing', () => {
 	test( 'renders correctly', () => {
-		const store = createReduxStore();
+		const store = createReduxStore( {} );
 		// Instantiate and test component
 	} );
 } );
@@ -149,13 +149,14 @@ Setting the store globally should be enough to solve these issues:
 
 ```js
 import { createReduxStore } from 'calypso/state';
+import { getStateFromCache } from 'calypso/state/initial-state';
 import { setStore } from 'calypso/state/redux-store';
 import Thing from '../';
 
 describe( 'Thing', () => {
 	test( 'renders correctly', () => {
-		const store = createReduxStore();
-		setStore( store, currentUserId );
+		const store = createReduxStore( {} );
+		setStore( store, getStateFromCache( currentUserId ) );
 		// Instantiate and test component
 	} );
 } );
