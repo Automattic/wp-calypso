@@ -24,6 +24,7 @@ interface Props {
 	anchor?: HTMLElement | null;
 	title: string;
 	className?: string;
+	focusOnMount?: React.ComponentProps< typeof Popover >[ 'focusOnMount' ];
 	onFocusOutside: ( event: React.SyntheticEvent ) => void;
 	children: React.ReactNode;
 }
@@ -35,6 +36,7 @@ export default function A4APopover( {
 	anchor,
 	title,
 	className,
+	focusOnMount,
 	onFocusOutside,
 	children,
 }: Props ) {
@@ -46,6 +48,7 @@ export default function A4APopover( {
 			className={ clsx( 'a4a-popover', className ) }
 			anchor={ anchor ?? undefined }
 			position={ position }
+			focusOnMount={ focusOnMount }
 			onFocusOutside={ onFocusOutside }
 		>
 			<div className="a4a-popover__content">

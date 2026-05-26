@@ -36,6 +36,7 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 					{ ! isMobile && (
 						<A4APopoverTrigger
 							className="consolidated-stats-card__info-icon"
+							aria-label={ translate( 'More info' ) }
 							onActivate={ () => setShowPopover( true ) }
 						>
 							<Gridicon icon="info-outline" size={ 16 } />
@@ -65,6 +66,7 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 						title=""
 						offset={ 12 }
 						wrapperRef={ wrapperRef }
+						focusOnMount={ false }
 						onFocusOutside={ () => setShowPopover( false ) }
 					>
 						{ children }

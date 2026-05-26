@@ -61,6 +61,7 @@ function InfluencedRevenueStrapline() {
 			{ title }
 			<A4APopoverTrigger
 				className="influenced-revenue__info-icon"
+				aria-label={ translate( 'More information about influenced revenue' ) }
 				ref={ setIconNode }
 				onActivate={ openInfo }
 			>
@@ -76,6 +77,7 @@ function InfluencedRevenueStrapline() {
 						title=""
 						offset={ 12 }
 						anchor={ iconNode }
+						focusOnMount={ false }
 						onFocusOutside={ () => setShowPopover( false ) }
 					>
 						{ content }

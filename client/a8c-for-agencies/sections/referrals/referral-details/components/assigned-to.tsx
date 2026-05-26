@@ -155,6 +155,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 			{ cancellationInfo && (
 				<A4APopoverTrigger
 					className="status-card__info-icon"
+					aria-label={ translate( 'More information about cancellation' ) }
 					ref={ wrapperRef }
 					onActivate={ () => setShowPopover( ( prev ) => ! prev ) }
 				>

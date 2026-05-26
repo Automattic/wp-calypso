@@ -213,6 +213,7 @@ export const CommissionEligibilityColumn = ( {
 				<>
 					<A4APopoverTrigger
 						className="woopayments-status-column__info-icon"
+						aria-label={ translate( 'More information about commission eligibility' ) }
 						onActivate={ () => setShowPopover( true ) }
 					>
 						<Gridicon icon="info-outline" size={ 16 } />
@@ -222,6 +223,7 @@ export const CommissionEligibilityColumn = ( {
 							title=""
 							offset={ 12 }
 							wrapperRef={ wrapperRef }
+							focusOnMount={ false }
 							onFocusOutside={ () => setShowPopover( false ) }
 						>
 							{ popoverContent }
