@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState, useContext, useRef } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
+import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 	A4A_FEEDBACK_LINK,
@@ -211,17 +212,10 @@ export default function LicensePreview( {
 		const wrapperRef = useRef< HTMLSpanElement | null >( null );
 
 		return (
-			<span
+			<A4APopoverTrigger
 				className="license-preview__migration-wrapper"
-				onClick={ () => setShowPopover( true ) }
-				role="button"
-				tabIndex={ 0 }
 				ref={ wrapperRef }
-				onKeyDown={ ( event ) => {
-					if ( event.key === 'Enter' ) {
-						setShowPopover( true );
-					}
-				} }
+				onActivate={ () => setShowPopover( true ) }
 			>
 				<Badge className="license-preview__migration-badge" type="info-green">
 					{ translate( 'Transferred' ) }
@@ -260,7 +254,7 @@ export default function LicensePreview( {
 						</div>
 					</A4APopover>
 				) }
-			</span>
+			</A4APopoverTrigger>
 		);
 	};
 

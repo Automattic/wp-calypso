@@ -93,21 +93,13 @@
 	position: relative;
 
 	.woopayments-status-column__info-icon {
-		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		cursor: pointer;
 		color: var(--color-neutral-60);
 		transition: color 0.2s ease;
 
 		&:hover {
 			color: var(--color-neutral-80);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-primary);
-			outline-offset: 2px;
-			border-radius: 2px;
 		}
 	}
 }

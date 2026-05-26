@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
+import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { Stat } from 'calypso/a8c-for-agencies/components/stat';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { useDispatch } from 'calypso/state';
@@ -58,20 +59,13 @@ function InfluencedRevenueStrapline() {
 	return (
 		<span className="influenced-revenue__strapline">
 			{ title }
-			<span
+			<A4APopoverTrigger
 				className="influenced-revenue__info-icon"
 				ref={ setIconNode }
-				onClick={ openInfo }
-				role="button"
-				tabIndex={ 0 }
-				onKeyDown={ ( event ) => {
-					if ( event.key === 'Enter' ) {
-						openInfo();
-					}
-				} }
+				onActivate={ openInfo }
 			>
 				<Gridicon icon="info-outline" size={ 16 } />
-			</span>
+			</A4APopoverTrigger>
 			{ showPopover &&
 				( isMobile ? (
 					<InfoModal title={ title as string } onClose={ () => setShowPopover( false ) }>
