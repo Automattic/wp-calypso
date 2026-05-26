@@ -1,6 +1,9 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 .referral-details__subtitle {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	margin-block-start: 16px;
 }
 
@@ -8,16 +11,22 @@
 	padding: 0;
 	position: relative;
 	top: -1px;
-	left: 8px;
+	inset-inline-start: 8px;
 	text-decoration: underline;
 }
 
 .hosting-dashboard-item-view.referral-details-items {
+	.hosting-dashboard-item-view__header-content,
+	.hosting-dashboard-item-view__content {
+		padding-inline: 24px;
+	}
+
 	.hosting-dashboard-item-view__content {
 		display: block;
-		@media (max-width: $break-mobile) {
+
+		@media ( max-width: $break-mobile ) {
 			height: 75vh;
-			padding: 18px;
+			padding-block: 18px;
 		}
 
 		.consolidated-view {
@@ -30,13 +39,13 @@
 	}
 }
 
-.a4a-popover__content p{
+.a4a-popover__content p {
 	color: var( --color-neutral-50 );
 	@include body-small;
 	margin-bottom: 0;
 }
 
-.badge-assigned-to .status-card__info-icon{
+.badge-assigned-to .status-card__info-icon {
 	vertical-align: bottom;
-	margin-left: 4px;
+	margin-inline-start: 4px;
 }
