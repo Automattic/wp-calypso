@@ -37,6 +37,11 @@
 	.section-nav-tabs__list {
 		width: auto;
 	}
+
+	.redesigned-a8c-table .dataviews-view-table tr th:first-child,
+	.redesigned-a8c-table .dataviews-view-table tr td:first-child {
+		padding-inline-start: 24px;
+	}
 }
 
 .a4a-popover__content p {
