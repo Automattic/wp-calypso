@@ -29,7 +29,7 @@ All theme variables are prefixed with `--color-`. Their values change depending 
 
 The colors above can be suffixed with `-light` or `-dark` to quickly get a variation of the color. They are helper aliases to make picking shades easier (e.g. `--color-primary-light` or `--color-primary-dark`). In the default color scheme, these suffixes correspond to the 30 and 70 value of that color. For example, `--color-primary` points to **Blue 50**, `--color-primary-light` to **Blue 30**, and `--color-primary-dark` to **Blue 70**.
 
-The properties listed above can also be suffixed with the corresponding index number to [Color Studio](https://color-studio.blog) values. If you need a specific value that is not covered by the `light` or `dark` helper aliases, then you can append the specific value number to the end of the variable. For example, you can use `--color-accent-10` or `color-neutral-90` to get a specific shade.
+The properties listed above can also be suffixed with the corresponding index number to [Color Studio](https://color-studio.blog) values. If you need a specific value that is not covered by the `light` or `dark` helper aliases, then you can append the specific value number to the end of the variable. For example, you can use `--color-accent-10` or `--color-neutral-90` to get a specific shade.
 
 ### Additional Properties
 
