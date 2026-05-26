@@ -1,4 +1,5 @@
 import {
+	getYearlyPlanByMonthly,
 	isPersonalPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
@@ -6,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { SummaryButton } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import {
@@ -42,6 +44,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const CARD_ICONS: Record< string, React.ReactElement > = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
+	'switch-to-yearly': calendar,
 	'speak-with-support': comment,
 	'renew-now-pay-less': percent,
 	'built-by': people,
@@ -83,6 +86,8 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 			return translate( 'Renew now and pay less' );
 		case 'switch-to-monthly':
 			return translate( 'Switch to monthly payments' );
+		case 'switch-to-yearly':
+			return translate( 'Switch to yearly billing' );
 		case 'speak-with-support':
 			return translate( 'Speak with our support team' );
 		case 'built-by':
@@ -121,6 +126,8 @@ function getTranslatedSubtitle(
 			return translate( 'Get an exclusive 25% discount automatically applied at checkout.' );
 		case 'switch-to-monthly':
 			return translate( 'Keep things flexible with monthly billing.' );
+		case 'switch-to-yearly':
+			return translate( 'Pay less over time by switching to an annual plan.' );
 		case 'speak-with-support':
 			return translate( "We're here to answer any of your questions." );
 		case 'built-by':
@@ -183,15 +190,23 @@ export default function SolutionsCardsUpsellStep( {
 	const [ busyButton, setBusyButton ] = useState( '' );
 	const [ showDowngradeStep, setShowDowngradeStep ] = useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
-	const { setNewMessagingChat, setOpenOdieWithContext } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setNewMessagingChat, setNavigateToRoute, setShowHelpCenter, setOpenOdieWithContext } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.productSlug );
+	const showSwitchToYearly =
+		! isAnnualOrLongerPlan( purchase.productSlug ) &&
+		!! getYearlyPlanByMonthly( purchase.productSlug );
 
 	const hideChangePlan =
 		isPersonalPlan( purchase.productSlug ) && PRICE_MOTIVATED_REASONS.has( cancellationReason );
 
 	const filteredSolutions = solutions?.filter( ( card ) => {
 		if ( card.id === 'switch-to-monthly' && ! showSwitchToMonthly ) {
+			return false;
+		}
+		if ( card.id === 'switch-to-yearly' && ! showSwitchToYearly ) {
 			return false;
 		}
 		if ( card.id === 'change-plan' && hideChangePlan ) {
@@ -212,6 +227,13 @@ export default function SolutionsCardsUpsellStep( {
 				cancel_to: purchaseSettingsUrl,
 		  } )
 		: baseRenewUrl;
+	const yearlySlug = getYearlyPlanByMonthly( purchase.productSlug );
+	const yearlyPlanUrl = yearlySlug
+		? addQueryArgs( `/checkout/${ site.slug }/${ yearlySlug }`, {
+				redirect_to: `/purchases/subscriptions/${ site.slug }`,
+				cancel_to: purchaseSettingsUrl,
+		  } )
+		: undefined;
 
 	const context: CardActionContext = {
 		site,
@@ -219,6 +241,7 @@ export default function SolutionsCardsUpsellStep( {
 		closeDialog,
 		changePlanUrl,
 		renewNowUrl,
+		yearlyPlanUrl,
 		cancellationReason,
 		onClickDowngrade,
 		onSelectSwitchToMonthly: () => {
@@ -229,6 +252,9 @@ export default function SolutionsCardsUpsellStep( {
 				setShowDowngradeStep( true );
 			}
 		},
+		canConnectToZendeskMessaging: !! canConnectToZendeskMessaging,
+		setNavigateToRoute,
+		setShowHelpCenter,
 		setNewMessagingChat,
 		setOpenOdieWithContext,
 	};

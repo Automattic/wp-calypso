@@ -19,8 +19,15 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useCachedPost } from 'calypso/reader/data/post-cache';
-import { withPostLikeActions } from 'calypso/reader/data/post-likes';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
+import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import {
+	analyticsForStream,
+	INITIAL_FETCH,
+	normalizeStreamPage,
+	PER_FETCH,
+	useInfiniteStream,
+} from 'calypso/reader/data/stream';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
@@ -31,11 +38,6 @@ import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import {
-	analyticsForStream,
-	PER_FETCH,
-	INITIAL_FETCH,
-} from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -48,10 +50,8 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import { normalizeStreamPage } from './stream-normalization';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
-import { useStreamPosts } from './use-stream-posts';
 import {
 	getDistanceBetweenPrompts,
 	getDistanceBetweenRecs,
@@ -178,7 +178,7 @@ class ReaderStream extends Component {
 	componentDidUpdate( { selectedPostKey, streamKey, selectedFeedId } ) {
 		// Fetch new page if selected feed or stream is changed.
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
-			// `useStreamPosts` is keyed by `feedId`, so the cache rotates
+			// `useInfiniteStream` is keyed by `feedId`, so the cache rotates
 			// automatically — no manual purge needed. Selection lives under the
 			// new `streamKey`'s entry, which starts empty.
 			this.scrollFeedListToTop();
@@ -844,7 +844,7 @@ function getStreamKey( state, streamKey ) {
 
 const withStreamPosts = ( WrappedComponent ) =>
 	function StreamPostsContainer( props ) {
-		const streamPostsQuery = useStreamPosts( {
+		const streamPostsQuery = useInfiniteStream( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
 			localeSlug: props.localeSlug,
@@ -854,7 +854,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 			},
 		} );
 
-		const recsStreamPostsQuery = useStreamPosts( {
+		const recsStreamPostsQuery = useInfiniteStream( {
 			streamKey: props.recsStreamKey,
 			localeSlug: props.localeSlug,
 			options: {

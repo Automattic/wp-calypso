@@ -467,14 +467,6 @@ export const lifestyleBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 20190109,
-			site_ID: 18883718,
-			site_URL: 'http://elizabatz.com',
-			site_name: 'Albatz Travel Adventures',
-			feed_URL: 'http://elizabatz.com',
-			has_icon: true,
-		},
-		{
 			feed_ID: 35349681,
 			site_ID: 52798793,
 			site_URL: 'http://travelcocktail.me',

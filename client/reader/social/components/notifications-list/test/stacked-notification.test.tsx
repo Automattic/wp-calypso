@@ -1,12 +1,16 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { StackedNotification } from '../stacked-notification';
 import type { StackedRow } from '../group-notifications';
 import type { AtmosphereNotification } from '@automattic/api-core';
+
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
+const pageMock = jest.mocked( page );
 
 function makeMember(
 	id: string,
@@ -69,6 +73,10 @@ function makeFollowStack( count: number ): StackedRow {
 }
 
 describe( 'StackedNotification', () => {
+	beforeEach( () => {
+		pageMock.mockReset();
+	} );
+
 	it( 'renders a like stack of 2 with both names and no "others"', () => {
 		renderWithProvider( <StackedNotification stack={ makeLikeStack( 2 ) } /> );
 		expect( screen.getByText( /M0 and M1 liked your post/i ) ).toBeVisible();
@@ -99,6 +107,35 @@ describe( 'StackedNotification', () => {
 		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/me/post/p1' );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
 		expect( link ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );
+	} );
+
+	it( 'routes a non-follow stack in-app when getInAppUrl returns a path', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<StackedNotification
+				stack={ makeLikeStack( 3 ) }
+				getInAppUrl={ () => '/reader/atmosphere/42/thread/did:plc:abc/post1' }
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: /liked your post/i } );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/42/thread/did:plc:abc/post1' );
+		expect( link ).not.toHaveAttribute( 'target' );
+		await user.click( link );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/42/thread/did:plc:abc/post1' );
+	} );
+
+	it( 'defers to the browser on modifier-click of a stacked in-app link', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<StackedNotification
+				stack={ makeLikeStack( 3 ) }
+				getInAppUrl={ () => '/reader/atmosphere/42/thread/did:plc:abc/post1' }
+			/>
+		);
+		await user.keyboard( '[ControlLeft>]' );
+		await user.click( screen.getByRole( 'link', { name: /liked your post/i } ) );
+		await user.keyboard( '[/ControlLeft]' );
+		expect( pageMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'a follow stack is a button (not a link) with aria-expanded=false initially', () => {

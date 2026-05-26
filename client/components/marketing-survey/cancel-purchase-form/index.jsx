@@ -632,7 +632,7 @@ class CancelPurchaseForm extends Component {
 					>
 						{ intent === 'remove' ? translate( 'Continue removal' ) : translate( 'Continue' ) }
 					</GutenbergButton>
-					{ intent === 'cancel' && (
+					{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
 						<GutenbergButton
 							isTertiary
 							isBusy={ isCancelling }
@@ -708,9 +708,11 @@ class CancelPurchaseForm extends Component {
 					disabled={ ! this.canGoNext() }
 					onClick={ this.onSubmit }
 				>
-					{ intent === 'cancel' ? translate( 'Complete' ) : translate( 'Submit' ) }
+					{ intent === 'cancel' || intent === 'auto-renew'
+						? translate( 'Complete' )
+						: translate( 'Submit' ) }
 				</GutenbergButton>
-				{ intent === 'cancel' && (
+				{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
 					<GutenbergButton
 						isTertiary
 						isBusy={ isCancelling }

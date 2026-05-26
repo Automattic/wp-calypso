@@ -74,9 +74,6 @@
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
 	background: var(--color-neutral-0);
-	// Establishes a containment context so the iframe inside can size itself
-	// against the wrapper's width via container query units (cqw).
-	container-type: inline-size;
 }
 
 .iframe-preview-card__loading {
@@ -107,12 +104,10 @@
 	// Override it so the iframe truly renders at 1200px before being scaled down.
 	max-width: none;
 	border: 0;
-	// `tan(atan2(y, x))` mathematically equals `y / x` and is a widely-compatible
-	// way to convert length-over-length into a unitless number. The simpler
-	// `calc(100cqw / 1200px)` form would require CSS Values 4 support, which
-	// is below our browser floor. The expression is wrapped in `#{"..."}` so
-	// Sass passes it through verbatim instead of trying to evaluate at build time.
-	transform: #{"scale(tan(atan2(100cqw, 1200px)))"};
+	// `--iframe-scale` is set on the wrapper by a ResizeObserver in the
+	// component. Defaults to 0 so the iframe is invisible until the observer
+	// fires (avoids a flash of unscaled 1200px content on first paint).
+	transform: scale(var(--iframe-scale, 0));
 	transform-origin: top left;
 	pointer-events: none;
 }

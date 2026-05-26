@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
-import { Icon, moreVertical, page, trash, warning } from '@wordpress/icons';
+import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
 import { useState } from 'react';
 import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';

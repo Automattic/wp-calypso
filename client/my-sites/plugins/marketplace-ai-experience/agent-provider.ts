@@ -16,8 +16,10 @@ type PickSource = 'wporg' | 'commercial';
 
 export interface Pick {
 	slug: string;
-	source: PickSource;
 	why: string;
+	// Optional — the hydrator queries the named catalog directly when set,
+	// or tries wp.org first with a commercial fallback when omitted.
+	source?: PickSource;
 }
 
 const VALID_SOURCES: PickSource[] = [ 'wporg', 'commercial' ];
@@ -25,8 +27,8 @@ const VALID_SOURCES: PickSource[] = [ 'wporg', 'commercial' ];
 interface AbilityInput {
 	picks?: Array< {
 		slug?: string;
-		source?: string;
 		why?: string;
+		source?: string;
 	} >;
 }
 
@@ -38,15 +40,14 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 	const out: Pick[] = [];
 	const seen = new Set< string >();
 	for ( const p of raw ) {
-		if ( ! p || typeof p.slug !== 'string' || typeof p.source !== 'string' ) {
+		if ( ! p || typeof p.slug !== 'string' ) {
 			continue;
 		}
 
 		const slug = p.slug.trim().toLowerCase();
-		const source = p.source.trim().toLowerCase() as PickSource;
 		const why = typeof p.why === 'string' ? p.why.trim() : '';
 
-		if ( ! slug || ! VALID_SOURCES.includes( source ) || ! why ) {
+		if ( ! slug || ! why ) {
 			continue;
 		}
 
@@ -54,8 +55,13 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 			continue;
 		}
 
+		const rawSource = typeof p.source === 'string' ? p.source.trim().toLowerCase() : '';
+		const source = VALID_SOURCES.includes( rawSource as PickSource )
+			? ( rawSource as PickSource )
+			: undefined;
+
 		seen.add( slug );
-		out.push( { slug, source, why } );
+		out.push( source ? { slug, why, source } : { slug, why } );
 	}
 
 	return out;
@@ -81,7 +87,7 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 				label: 'Render Plugin Recommendations',
 				category: CATEGORY_SLUG,
 				description:
-					'Render plugin recommendation cards on the marketplace landing page. Pass ONLY the slug, source ("wporg" | "commercial"), and a short personalized "why" for each pick. Each slug must be one you saw in an earlier `plugin-marketplace-search` or `get-curated-plugins` call — invented slugs are dropped silently when they fail to hydrate.',
+					'Render plugin recommendation cards on the marketplace landing page. Pass the slug and a short personalized "why" for each pick; optionally include `source` ("wporg" or "commercial") when you know which catalog it came from to skip the wp.org-first lookup. Each slug must be one you saw in an earlier `plugin-marketplace-search` or `get-curated-plugins` call — invented slugs are dropped silently when they fail to hydrate.',
 				input_schema: {
 					type: 'object',
 					additionalProperties: false,
@@ -96,24 +102,24 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 							items: {
 								type: 'object',
 								additionalProperties: false,
-								required: [ 'slug', 'source', 'why' ],
+								required: [ 'slug', 'why' ],
 								properties: {
 									slug: {
 										type: 'string',
 										description:
 											'Plugin slug as it appears in the wp.org or WPcom commercial catalog (e.g. "wordpress-seo", "woocommerce").',
 									},
-									source: {
-										type: 'string',
-										enum: VALID_SOURCES,
-										description:
-											'Which catalog the slug came from — "wporg" for wp.org plugins, "commercial" for WPcom commercial marketplace.',
-									},
 									why: {
 										type: 'string',
 										maxLength: 400,
 										description:
 											"Short personalized rationale (1–2 sentences) tying the pick to the user's expressed goal. Plain text; no markdown links. Do not paste the plugin's description here — write your own editorial framing.",
+									},
+									source: {
+										type: 'string',
+										enum: VALID_SOURCES,
+										description:
+											'Optional. Which catalog the slug came from — "wporg" for wp.org plugins, "commercial" for the WPcom commercial marketplace. Omit if unknown; the hydrator will look up wp.org first and fall back to commercial.',
 									},
 								},
 							},

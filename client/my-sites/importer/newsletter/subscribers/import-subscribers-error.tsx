@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { Icon, warning } from '@wordpress/icons';
+import { Icon, cautionFilled as warning } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 
 type Props = {

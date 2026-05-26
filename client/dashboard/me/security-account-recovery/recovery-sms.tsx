@@ -224,7 +224,10 @@ export default function RecoverySMS() {
 								<DataForm< SecuritySMSFormData >
 									data={ formData }
 									fields={ fields }
-									form={ { layout: { type: 'regular' as const }, fields } }
+									form={ {
+										layout: { type: 'regular' as const },
+										fields: fields.map( ( field ) => field.id ),
+									} }
 									onChange={ ( edits: Partial< SecuritySMSFormData > ) => {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }

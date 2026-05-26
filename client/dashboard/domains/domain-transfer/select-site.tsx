@@ -33,17 +33,15 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		perPage,
-		page: 1,
 		search: '',
 		fields: [ 'URL' ],
 		titleField: 'name',
 		mediaField: 'icon',
 		infiniteScrollEnabled: true,
+		startPosition: 1,
 	} );
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
-	const totalPages = Math.ceil( sites.length / perPage );
-	const currentPage = view.page || 1;
 
 	// Handle selection changes
 	const handleSelectionChange = useCallback(
@@ -77,40 +75,31 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 		},
 	];
 
-	const infiniteScrollHandler = useCallback( () => {
-		if ( currentPage >= totalPages ) {
-			return;
+	// Apply the search filter. All sites are already loaded client-side, so
+	// infinite scroll just reveals more of this in-memory list.
+	const filteredSites = useMemo( () => {
+		if ( ! view.search ) {
+			return sites;
 		}
+		const searchTerm = view.search.toLowerCase();
+		return sites.filter(
+			( site ) =>
+				site.name?.toLowerCase().includes( searchTerm ) ||
+				getSiteDisplayUrl( site ).toLowerCase().includes( searchTerm )
+		);
+	}, [ sites, view.search ] );
 
-		setView( {
-			...view,
-			page: currentPage + 1,
-		} );
-	}, [ currentPage, totalPages, view ] );
-
-	// Filter and slice data based on search and pagination
-	const displayedData = useMemo( () => {
-		let filteredSites = sites;
-
-		// Apply search filter
-		if ( view.search ) {
-			const searchTerm = view.search.toLowerCase();
-			filteredSites = sites.filter(
-				( site ) =>
-					site.name?.toLowerCase().includes( searchTerm ) ||
-					getSiteDisplayUrl( site ).toLowerCase().includes( searchTerm )
-			);
-		}
-
-		// Apply pagination (infinite scroll)
-		const endIndex = currentPage * perPage;
-		return filteredSites.slice( 0, endIndex );
-	}, [ sites, currentPage, perPage, view.search ] );
+	// DataViews drives infinite scroll by advancing `view.startPosition`; hand
+	// it the matching window. `useData` stitches the windows back together.
+	const startPosition = view.startPosition ?? 1;
+	const displayedData = useMemo(
+		() => filteredSites.slice( startPosition - 1, startPosition - 1 + perPage ),
+		[ filteredSites, startPosition, perPage ]
+	);
 
 	const paginationInfo = {
-		totalItems: displayedData.length,
-		totalPages: Math.ceil( displayedData.length / perPage ),
-		infiniteScrollHandler: infiniteScrollHandler,
+		totalItems: filteredSites.length,
+		totalPages: Math.ceil( filteredSites.length / perPage ) || 1,
 	};
 
 	const getEmptyStateMessage = () => {
@@ -133,7 +122,8 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 						size="compact"
 						value={ view.search }
 						onChange={ ( search ) => {
-							setView( { ...view, search } );
+							// Reset the scroll window to the top for the new result set.
+							setView( { ...view, search, startPosition: 1 } );
 							setSelection( [] );
 							// Keep focus on search input after filtering
 							setTimeout( () => searchInputRef.current?.focus(), 0 );

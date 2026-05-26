@@ -33,7 +33,7 @@
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"onboarding/interval-dropdown": true,
-		"performance/apm": false,
+		"performance/apm": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

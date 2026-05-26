@@ -149,14 +149,15 @@ class MemoryHistory {
  * Read the full router history map from the store (synchronous, outside React).
  */
 function getFullRouterHistory(): PerSiteRouterHistory | undefined {
-	return ( storeSelect( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState()
-		.routerHistory;
+	return (
+		storeSelect( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect
+	 ).getAgentsManagerState().routerHistory;
 }
 
 export const usePersistedHistory = ( siteKey: string ) => {
 	const { persistedHistory, lastActive } = useSelect(
 		( select ) => {
-			const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
+			const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
 			return {
 				persistedHistory: store.getRouterHistory( siteKey ),
 				lastActive: store.getLastActivity( siteKey ),

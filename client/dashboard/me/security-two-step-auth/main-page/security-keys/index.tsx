@@ -137,7 +137,7 @@ export default function SecurityKeys() {
 				{ credential_id: selectedKeyToRemove.id },
 				{
 					onError: ( error ) => {
-						let errorMessage = __( 'Failed to delete security key.' );
+						let errorMessage: string = __( 'Failed to delete security key.' );
 						if ( error instanceof Error ) {
 							errorMessage = error.message;
 						}
