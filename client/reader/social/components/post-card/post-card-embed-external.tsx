@@ -43,8 +43,7 @@ function publicationLabel( longForm: SocialLongForm ): string {
 	return (
 		longForm.publication.display_name ||
 		longForm.publication.name ||
-		safeHost( longForm.publication.url ) ||
-		''
+		safeHost( longForm.publication.url )
 	);
 }
 
@@ -140,7 +139,7 @@ export function PostCardEmbedExternal( {
 	const expandLabel = publication
 		? translate( 'Read article on %(publication)s', {
 				args: { publication },
-				comment: 'Button to expand a long-form article from a Bluesky link inline in the Reader.',
+				comment: 'Button to expand a long-form article shared inline in the Reader.',
 		  } )
 		: translate( 'Read article' );
 
