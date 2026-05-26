@@ -64,12 +64,48 @@ export interface SocialEmbedAudio {
 	duration_seconds: number | null;
 }
 
+/**
+ * Long-form document metadata attached to an external embed when the
+ * underlying network's long-form-record extension (today: ATProto
+ * `standard.site`) verifies. Optional fields default to empty strings /
+ * arrays server-side, so consumers can render without null-checking
+ * individual values.
+ */
+export interface SocialLongFormDocument {
+	title: string;
+	description: string;
+	text_content: string;
+	path: string;
+	tags: string[];
+	published_at: string;
+}
+
+export interface SocialLongFormPublication {
+	name: string;
+	display_name: string;
+	description: string;
+	url: string;
+}
+
+export interface SocialLongForm {
+	document: SocialLongFormDocument;
+	publication: SocialLongFormPublication;
+}
+
 export interface SocialEmbedExternal {
 	type: 'external';
 	uri: string;
 	title: string;
 	description: string;
 	thumb: string | null;
+	/**
+	 * Verified long-form payload when the post is sharing a long-form
+	 * article whose underlying records (today: `standard.site` document
+	 * + publication) resolve and verify against this link. Absent when
+	 * the post is sharing a plain link, when the refs are missing, or
+	 * when verification fails. See backend CM-789.
+	 */
+	long_form?: SocialLongForm;
 }
 
 // Sources differ on what metadata travels with a tombstone — atmosphere's
