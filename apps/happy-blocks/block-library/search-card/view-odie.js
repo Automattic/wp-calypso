@@ -40,6 +40,30 @@ document.addEventListener( 'DOMContentLoaded', function () {
 		links.forEach( ( link ) => link.removeAttribute( 'disabled' ) );
 	};
 
+	const enableFormWhenChatAppears = () => {
+		if ( document.querySelector( '.help-center__container' ) ) {
+			enableForm();
+			return;
+		}
+
+		let resolved = false;
+		const observer = new MutationObserver( () => {
+			if ( document.querySelector( '.help-center__container' ) ) {
+				resolved = true;
+				enableForm();
+				observer.disconnect();
+			}
+		} );
+		observer.observe( document.body, { childList: true, subtree: true } );
+
+		setTimeout( () => {
+			if ( ! resolved ) {
+				observer.disconnect();
+				enableForm();
+			}
+		}, 10000 );
+	};
+
 	if ( ! helpCenterReady ) {
 		helpCenterReadyToLoadPromise.then( () => {
 			helpCenterReady = true;
@@ -97,15 +121,16 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				if ( isLoggedOut ) {
 					if ( ! helpCenterReady ) {
 						disableForm();
+						await Promise.race( [
+							helpCenterReadyToLoadPromise,
+							new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
+						] );
+						if ( ! helpCenterReady ) {
+							enableForm();
+							return;
+						}
 					}
-					await Promise.race( [
-						helpCenterReadyToLoadPromise,
-						new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
-					] );
-					enableForm();
-					if ( ! helpCenterReady ) {
-						return;
-					}
+					enableFormWhenChatAppears();
 					window.helpCenter?.loadHelpCenter().then( () => {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
@@ -119,7 +144,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					} );
 				} else if ( window.wp?.data?.dispatch ) {
 					// Logged in variant is already loaded.
-					enableForm();
+					enableFormWhenChatAppears();
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 					helpCenterDispatch.setNavigateToRoute(
 						'/odie?query=' + encodeURIComponent( searchQuery ),
