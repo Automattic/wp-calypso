@@ -42,14 +42,11 @@ function mockWpOrgCoreVersions( {
 	nock( 'https://api.wordpress.org' )
 		.persist()
 		.get( '/core/version-check/1.7/' )
-		.query( ( q ) => q.channel === 'latest' )
-		.reply( 200, { offers: [ { version: latest } ] } );
-
-	nock( 'https://api.wordpress.org' )
-		.persist()
-		.get( '/core/version-check/1.7/' )
-		.query( ( q ) => q.channel === 'beta' )
-		.reply( 200, { offers: [ { version: beta } ] } );
+		.query( true )
+		.reply( 200, ( uri ) => {
+			const channel = new URL( `https://api.wordpress.org${ uri }` ).searchParams.get( 'channel' );
+			return { offers: [ { version: channel === 'beta' ? beta : latest } ] };
+		} );
 }
 
 function mockApi( versionTag: string = 'latest', mockedSite: Site = site ) {
