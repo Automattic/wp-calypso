@@ -23,8 +23,11 @@ const LaunchRocketIcon = () => (
  * `useSiteLaunch` hook so the omnibar and the dashboard's `SiteLaunchButton`
  * branch the same way on click. The site object is passed in by the parent
  * (which already loads it via the dashboard's singleton QueryClient), so no
- * additional site fetch is needed and the button is never rendered in a
- * loading-but-clickable state.
+ * additional site fetch is needed.
+ *
+ * Unlike the dashboard's `SiteLaunchButton`, this one stays mounted while
+ * domains are loading and uses `disabled` instead, so it shows up in sync with
+ * the rest of the omnibar instead of popping in a moment later.
  */
 export function OmnibarLaunchButton( { site }: { site: Site } ) {
 	const { isLoading, isHidden, isDisabled, isBusy, href, onClick, modal } = useSiteLaunch( site, {
@@ -33,7 +36,7 @@ export function OmnibarLaunchButton( { site }: { site: Site } ) {
 		recordTracksEvent,
 	} );
 
-	if ( isLoading || isHidden ) {
+	if ( isHidden ) {
 		return null;
 	}
 
@@ -55,7 +58,7 @@ export function OmnibarLaunchButton( { site }: { site: Site } ) {
 					variant: 'primary',
 					isBusy,
 				} }
-				disabled={ isDisabled || isBusy }
+				disabled={ isLoading || isDisabled || isBusy }
 				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
 				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 				icon={ <LaunchRocketIcon /> }
