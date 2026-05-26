@@ -38,11 +38,8 @@ interface RecentProps {
 	viewToggle?: React.ReactNode;
 }
 
-// Unique row key for a stream item. `postId` alone is not unique across
-// feeds/blogs (numeric IDs collide), so we prefix with the source identifier
-// — `blogId` for WP.com / Jetpack-connected sites, `feedId` for external
-// feeds — to keep `getItemId`, the `selection` prop, the `posts` lookup and
-// `itemRefs` consistent. See READ-476.
+// `postId` is not unique across feeds/blogs; prefix with `b{blogId}` for
+// WP.com/Jetpack sites or `f{feedId}` for external feeds so row keys stay unique.
 export const getStreamItemKey = ( item: StreamListItem ): string => {
 	if ( isPaddingStreamItem( item ) ) {
 		return item.postId;

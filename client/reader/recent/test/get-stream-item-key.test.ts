@@ -6,10 +6,9 @@ const externalPost = ( feedId: number, postId: number ): StreamItem => ( { feedI
 
 describe( 'getStreamItemKey', () => {
 	it( 'returns distinct keys for two WP.com/Jetpack posts that share a postId across blogs', () => {
-		// Regression for READ-476: Dawn's repro had two Jetpack-on-custom-domain
-		// blogs (Skeptic's Kaddish, Iris Carden) whose posts shared a `postId`.
-		// Keyed on `postId` alone, `DataViews.onChangeSelection` returned the
-		// already-selected post and the reading pane never updated.
+		// Two Jetpack blogs whose posts share a `postId`: keyed on `postId`
+		// alone, `DataViews.onChangeSelection` returned the already-selected
+		// post and the reading pane never updated.
 		const a = getStreamItemKey( wpcomPost( 200, 7 ) );
 		const b = getStreamItemKey( wpcomPost( 300, 7 ) );
 		expect( a ).not.toEqual( b );
