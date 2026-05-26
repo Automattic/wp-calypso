@@ -544,7 +544,7 @@ function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } 
 		return null;
 	}
 
-	const baseTaxLabel = taxName ?? translate( 'Tax' );
+	const baseTaxLabel = taxName ?? String( translate( 'Tax' ) );
 	const taxLabel =
 		transaction.tax_is_for_business && transaction.tax_state
 			? `${ baseTaxLabel } (${ String(
