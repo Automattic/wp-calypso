@@ -477,26 +477,24 @@ export const cancelPurchaseRoute = createRoute( {
 );
 
 export const siteActionsRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { action?: SiteAction } } ) => {
-		return {
-			meta: [
-				{
-					title: SITE_ACTION_TITLES[ loaderData?.action as SiteAction ] ?? __( 'Site actions' ),
-				},
-			],
-		};
-	},
+	head: ( { params } ) => ( {
+		meta: [ { title: SITE_ACTION_TITLES[ params.action ] } ],
+	} ),
 	getParentRoute: () => purchaseSettingsRoute,
-	path: 'site-actions',
-	validateSearch: ( search ): { action?: SiteAction } => {
-		return {
-			...( SITE_ACTIONS.includes( search.action as SiteAction )
-				? { action: search.action as SiteAction }
-				: {} ),
-		};
+	path: 'site-actions/$action',
+	parseParams: ( { action } ): { action: SiteAction } => ( {
+		action: action as SiteAction,
+	} ),
+	stringifyParams: ( { action } ) => ( { action } ),
+	beforeLoad: ( { params } ) => {
+		if ( ! SITE_ACTIONS.includes( params.action ) ) {
+			throw dashboardRedirect( {
+				to: purchaseSettingsRoute.fullPath,
+				params: { purchaseId: params.purchaseId },
+			} );
+		}
 	},
-	loaderDeps: ( { search } ) => ( { action: search.action } ),
-	loader: async ( { parentMatchPromise, deps: { action } } ) => {
+	loader: async ( { parentMatchPromise, params: { action } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( purchase ) {

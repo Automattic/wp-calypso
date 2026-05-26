@@ -11,7 +11,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import {
@@ -19,7 +19,7 @@ import {
 	purchaseSettingsRoute,
 	siteActionsRoute,
 } from '../../../app/router/me';
-import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { Card, CardBody, CardHeader } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
@@ -29,11 +29,7 @@ import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-c
 import { SITE_ACTION_TITLES, type SiteAction } from './constants';
 import type { Purchase } from '@automattic/api-core';
 
-function getDescription(
-	action: SiteAction | undefined,
-	siteName: string,
-	productName: string
-): string {
+function getDescription( action: SiteAction, siteName: string, productName: string ): string {
 	switch ( action ) {
 		case 'renew':
 			return sprintf(
@@ -71,12 +67,10 @@ function getDescription(
 				siteName,
 				productName
 			);
-		default:
-			return '';
 	}
 }
 
-function getSectionTitle( action?: SiteAction ): string {
+function getSectionTitle( action: SiteAction ): string {
 	if ( action === 'remove' ) {
 		return __( 'Upgrades' );
 	}
@@ -89,7 +83,7 @@ function getSectionTitle( action?: SiteAction ): string {
 // so the distinction is recovered from purchase state — no separate intent
 // value is needed. The stacked wiring branch additionally threads
 // `source=auto-renew-toggle` for analytics/copy disambiguation.
-function getCancelIntent( action?: SiteAction ): 'cancel' | 'remove' {
+function getCancelIntent( action: SiteAction ): 'cancel' | 'remove' {
 	if ( action === 'remove' ) {
 		return 'remove';
 	}
@@ -99,7 +93,7 @@ function getCancelIntent( action?: SiteAction ): 'cancel' | 'remove' {
 function getEligiblePurchases(
 	purchases: Purchase[],
 	primaryPurchase: Purchase,
-	action?: SiteAction
+	action: SiteAction
 ): Purchase[] {
 	const sitePurchases = purchases.filter( ( p ) => p.blog_id === primaryPurchase.blog_id );
 
@@ -111,11 +105,7 @@ function getEligiblePurchases(
 	return sitePurchases;
 }
 
-function getRenewalDescription(
-	item: Purchase,
-	action: SiteAction | undefined,
-	locale: string
-): string {
+function getRenewalDescription( item: Purchase, action: SiteAction, locale: string ): string {
 	if ( action === 'remove' ) {
 		if ( ! item.expiry_date ) {
 			return '';
@@ -149,7 +139,7 @@ export default function SiteLevelActions() {
 	const navigate = useNavigate();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { purchaseId } = purchaseSettingsRoute.useParams();
-	const { action }: { action?: SiteAction } = siteActionsRoute.useSearch();
+	const { action } = siteActionsRoute.useParams();
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId, 10 ) ) );
 	const { data: allPurchases } = useSuspenseQuery( userPurchasesQuery() );
 
@@ -199,7 +189,7 @@ export default function SiteLevelActions() {
 				header={
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 4 } /> }
-						title={ action ? SITE_ACTION_TITLES[ action ] : __( 'Site actions' ) }
+						title={ SITE_ACTION_TITLES[ action ] }
 					/>
 				}
 			>
@@ -259,8 +249,6 @@ export default function SiteLevelActions() {
 						{ __( 'Turn off auto-renew' ) }
 					</Button>
 				);
-			default:
-				return null;
 		}
 	} )();
 
@@ -271,7 +259,7 @@ export default function SiteLevelActions() {
 				<VStack>
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 4 } /> }
-						title={ action ? SITE_ACTION_TITLES[ action ] : __( 'Site actions' ) }
+						title={ SITE_ACTION_TITLES[ action ] }
 						description={ <Text>{ getDescription( action, siteName, productName ) }</Text> }
 					/>
 				</VStack>
@@ -281,15 +269,15 @@ export default function SiteLevelActions() {
 				<CardHeader>
 					<SectionHeader title={ getSectionTitle( action ) } level={ 3 } />
 				</CardHeader>
-				{ eligiblePurchases.map( ( item, index ) => {
-					const id = String( item.ID );
-					const isPrimary = item.ID === purchase.ID;
-					const isChecked = selection.includes( id );
-					return (
-						<Fragment key={ id }>
-							{ index > 0 && <CardDivider /> }
-							<CardBody>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						{ eligiblePurchases.map( ( item ) => {
+							const id = String( item.ID );
+							const isPrimary = item.ID === purchase.ID;
+							const isChecked = selection.includes( id );
+							return (
 								<CheckboxControl
+									key={ id }
 									__nextHasNoMarginBottom
 									label={ getTitleForListDisplay( item ) }
 									help={ getRenewalDescription( item, action, locale ) }
@@ -301,12 +289,10 @@ export default function SiteLevelActions() {
 										);
 									} }
 								/>
-							</CardBody>
-						</Fragment>
-					);
-				} ) }
-				<CardBody>
-					<HStack justify="flex-start">{ continueButton }</HStack>
+							);
+						} ) }
+						<HStack justify="flex-start">{ continueButton }</HStack>
+					</VStack>
 				</CardBody>
 			</Card>
 		</PageLayout>
