@@ -32,7 +32,7 @@ For a detailed list of requirements, you can go to [the WCAG 2.0 customized quic
 
 ## Automated Testing/Checking
 
-Our ESLint rules include some basic accessibility checks using the [jsx-a11y plugin](https://github.com/evcohen/eslint-plugin-jsx-a11y).
+Our ESLint rules include some basic accessibility checks using the [jsx-a11y plugin](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y).
 
 ## Resources
 
@@ -62,8 +62,8 @@ Find tools that will help you bring accessibility into your workflow.
 
 - [Accessibility for Designers](http://webaim.org/resources/designers/): An infographic about how designers can help create good, accessible websites.
 - [The Complete Beginner's Guide to Universal Design](http://www.uxbooth.com/articles/the-complete-beginners-guide-to-universal-design/): A blog post that describes universal design, a set of considerations made to ensure that a product, service, and/or environment is usable by everyone, to the greatest extent possible, without the need for adaptation or specialized design.
-- [Colllor](http://colllor.com/) and [0to255](http://0to255.com/): Both are tools that will generate different shades, tints and tones of colors, helpful when creating an accessible color palette.
-- [Color Palette Evaluator by NC State](http://accessibility.oit.ncsu.edu/tools/color-contrast/index.php): Evaluate the contrast of different color palettes with the Color Palette Evaluator by NC State.
+- [ColorHexa](https://www.colorhexa.com/) and [0to255](http://0to255.com/): Both are tools that will generate different shades, tints and tones of colors, helpful when creating an accessible color palette.
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/): Evaluate the contrast of different color palettes with the WebAIM Contrast Checker.
 - [Tanaguru Contrast-Finder](http://contrast-finder.tanaguru.com/form.html): Find high contrast colors when you need them.
 
 ### Web Developers
@@ -76,5 +76,5 @@ Find tools that will help you bring accessibility into your workflow.
 - [VoiceOver for iOS](http://www.apple.com/accessibility/iphone/vision.html): Built-in screenreader for iOS.
 - [Chrome Vox](http://www.chromevox.com/): A screenreader for ChromeOS.
 - [WCAG 2.0 Cheat Sheet](http://www.w3.org/2009/cheatsheet/#wcag2) A simplified look at WCAG 2.0.
-- [An Alt Text Decision Tree](http://dev.w3.org/html5/alt-techniques/developer.html#tree): A decision tree for deciding when and how to implement alt text in your work on the web. This is a work in progress by the editors of the HTML5 spec, but it's extremely useful in its current form.
+- [An Alt Text Decision Tree](https://www.w3.org/WAI/tutorials/images/decision-tree/): A decision tree from the W3C Web Accessibility Initiative for deciding when and how to implement alt text in your work on the web.
 
