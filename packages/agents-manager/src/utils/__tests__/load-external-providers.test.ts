@@ -130,4 +130,16 @@ describe( 'mergeUseSuggestionsHooks', () => {
 			],
 		} );
 	} );
+
+	it( 'forwards suggestion visibility options to provider hooks', () => {
+		const firstHook = jest.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
+		const secondHook = jest.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
+		const merged = mergeUseSuggestionsHooks( [ firstHook, secondHook ] );
+		const options = { suggestionsVisible: false };
+
+		merged?.( undefined, options );
+
+		expect( firstHook ).toHaveBeenCalledWith( undefined, options );
+		expect( secondHook ).toHaveBeenCalledWith( undefined, options );
+	} );
 } );

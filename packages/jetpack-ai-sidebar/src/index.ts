@@ -63,6 +63,11 @@ let suggestionRenderedFiredOnce = false;
 /** Block transformation suggestions whose rendered event has fired this page life. */
 const blockTransformationSuggestionRenderedKeys = new Set< string >();
 
+let lastBlockTransformationSuggestionContext: {
+	blockType: string;
+	suggestions: BlockSuggestion[];
+} | null = null;
+
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
@@ -629,12 +634,19 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	},
 ];
 
-function getBlockTransformationSuggestionForPrompt(
+function matchesBlockTransformationSuggestion(
+	suggestion: BlockSuggestion,
+	value: string
+): boolean {
+	return [ suggestion.id, suggestion.label, suggestion.prompt ].includes( value );
+}
+
+function getBlockTransformationSuggestionForValue(
 	value: string,
-	block: any
+	suggestions: BlockSuggestion[]
 ): BlockSuggestion | undefined {
-	return BLOCK_SUGGESTIONS.find(
-		( suggestion ) => suggestion.prompt === value && suggestion.condition( block )
+	return suggestions.find( ( suggestion ) =>
+		matchesBlockTransformationSuggestion( suggestion, value )
 	);
 }
 
@@ -645,6 +657,11 @@ function trackRenderedBlockTransformationSuggestions(
 	if ( typeof block?.name !== 'string' ) {
 		return;
 	}
+
+	lastBlockTransformationSuggestionContext = {
+		blockType: block.name,
+		suggestions,
+	};
 
 	suggestions.forEach( ( suggestion ) => {
 		const renderedKey = `${ suggestion.id }:${ block.name }`;
@@ -666,15 +683,33 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
 	}
 
 	const selectedBlock = getSelectedOrRememberedBlock();
-	const suggestion = getBlockTransformationSuggestionForPrompt( value, selectedBlock );
-	if ( ! suggestion || typeof selectedBlock?.name !== 'string' ) {
+	if ( typeof selectedBlock?.name === 'string' ) {
+		const selectedBlockSuggestion = getBlockTransformationSuggestionForValue(
+			value,
+			BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
+		);
+		if ( selectedBlockSuggestion ) {
+			trackBlockTransformationSuggestionClick( {
+				suggestionId: selectedBlockSuggestion.id,
+				suggestionType: selectedBlockSuggestion.type,
+				blockType: selectedBlock.name,
+			} );
+			return;
+		}
+	}
+
+	const lastRenderedContext = lastBlockTransformationSuggestionContext;
+	const lastRenderedSuggestion = lastRenderedContext
+		? getBlockTransformationSuggestionForValue( value, lastRenderedContext.suggestions )
+		: undefined;
+	if ( ! lastRenderedContext || ! lastRenderedSuggestion ) {
 		return;
 	}
 
 	trackBlockTransformationSuggestionClick( {
-		suggestionId: suggestion.id,
-		suggestionType: suggestion.type,
-		blockType: selectedBlock.name,
+		suggestionId: lastRenderedSuggestion.id,
+		suggestionType: lastRenderedSuggestion.type,
+		blockType: lastRenderedContext.blockType,
 	} );
 }
 
@@ -696,7 +731,10 @@ export const capabilities = {
  * Hides permanently once the conversation becomes active.
  * @returns {Object} Object containing a suggestions array.
  */
-export function useSuggestions(): {
+export function useSuggestions(
+	_maxSuggestions?: number,
+	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
+): {
 	suggestions: Array< { id: string; label: string; prompt?: string } >;
 } {
 	const [ hidden, setHidden ] = useState( false );
@@ -775,14 +813,14 @@ export function useSuggestions(): {
 	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
 
 	useEffect( () => {
-		if ( hidden || aiEditorialReviewSuggestions.length === 0 ) {
+		if ( ! suggestionsVisible || hidden || aiEditorialReviewSuggestions.length === 0 ) {
 			return;
 		}
 		trackAiEditorialReviewSuggestionRenderedOnce();
-	}, [ hidden, aiEditorialReviewSuggestions.length ] );
+	}, [ hidden, aiEditorialReviewSuggestions.length, suggestionsVisible ] );
 
 	useEffect( () => {
-		if ( hidden || ! selectedBlock || ! blockTransformationsEnabled ) {
+		if ( ! suggestionsVisible || hidden || ! selectedBlock || ! blockTransformationsEnabled ) {
 			return;
 		}
 		trackRenderedBlockTransformationSuggestions( applicable, selectedBlock );
@@ -793,6 +831,7 @@ export function useSuggestions(): {
 		hidden,
 		selectedBlock,
 		selectedBlock?.name,
+		suggestionsVisible,
 	] );
 
 	if ( hidden ) {
