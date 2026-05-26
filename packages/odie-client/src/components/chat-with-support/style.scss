@@ -1,3 +1,4 @@
+@use '@wordpress/base-styles/colors' as colors;
 @use '@wordpress/base-styles/variables' as base;
 
 .odie-support-transition {
@@ -10,7 +11,7 @@
 
 	.chat-with-support__message {
 		border-radius: 4px;
-		color: base.$gray-700;
+		color: colors.$gray-700;
 		font-size: base.$font-size-x-small;
 		text-transform: uppercase;
 		padding: 4px 0;
