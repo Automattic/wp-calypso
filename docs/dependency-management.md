@@ -1,6 +1,6 @@
 # Dependency management
 
-This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
+This project uses [yarn v4](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
 
 ## Working with sub-packages
 
@@ -36,10 +36,10 @@ yarn add <dependency>
 # yarn add lodash
 ```
 
-You should add dependencies to the root project _only_ when it will be used to test and/or build other packages. To do this, run:
+You should add dependencies to the root project _only_ when it will be used to test and/or build other packages. To do this, run `yarn add` from the repo root:
 
 ```
-yarn add -w <dependency>
+yarn add <dependency>
 ```
 
 #### Unpublished package as a dependency
@@ -66,10 +66,10 @@ yarn remove <dependency>
 # yarn remove lodash
 ```
 
-To delete a dependency of the root project, run:
+To delete a dependency of the root project, run the following from the repo root:
 
 ```
-yarn remove -w lodash
+yarn remove lodash
 ```
 
 ### Update a dependency
@@ -104,10 +104,10 @@ As before, it will update `react-query` and all its dependencies. But in this ca
 Run
 
 ```
-yarn outdated
+yarn upgrade-interactive
 ```
 
-Note that the output includes which sub-package has the dependency. It is possible that the same dependency is present in many sub-packages (or even in the root project).
+Note that the output includes which sub-package has the dependency. It is possible that the same dependency is present in many sub-packages (or even in the root project). The `yarn outdated` command was removed in yarn v4; `yarn upgrade-interactive` is its replacement.
 
 ### List duplicated dependencies
 
