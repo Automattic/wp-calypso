@@ -25,14 +25,18 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 } ) );
 
 type QueryOptions = { enabled?: boolean };
-type QueryResult = { data?: unknown; isLoading?: boolean };
+type QueryResult = { data?: unknown; isLoading?: boolean; isError?: boolean };
 
 function setupUseQuery( response: QueryResult = {} ) {
 	mockUseQuery.mockImplementation( ( options: QueryOptions ) => {
 		if ( options.enabled === false ) {
-			return { data: undefined, isLoading: false };
+			return { data: undefined, isLoading: false, isError: false };
 		}
-		return { data: response.data, isLoading: response.isLoading ?? false };
+		return {
+			data: response.data,
+			isLoading: response.isLoading ?? false,
+			isError: response.isError ?? false,
+		};
 	} );
 }
 
@@ -119,5 +123,14 @@ describe( 'useProfileTabVisibility', () => {
 		const { result } = renderHook( () => useProfileTabVisibility( undefined ) );
 
 		expect( result.current.isLoading ).toBe( false );
+	} );
+
+	test( 'hides both tabs when the visibility query errors', () => {
+		setupUseQuery( { isError: true } );
+
+		const { result } = renderHook( () => useProfileTabVisibility( 'someone' ) );
+
+		expect( result.current.showPosts ).toBe( false );
+		expect( result.current.showSites ).toBe( false );
 	} );
 } );

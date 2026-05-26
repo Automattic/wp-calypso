@@ -1,6 +1,7 @@
 import './style.scss';
 
 import {
+	rawUserPreferencesQuery,
 	readProfileSettingsQuery,
 	userPreferenceOptimisticMutation,
 } from '@automattic/api-queries';
@@ -10,7 +11,7 @@ import { moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { ReadProfileSettingsResponse } from '@automattic/api-core';
+import type { ReadProfileSettingsResponse, UserPreferences } from '@automattic/api-core';
 
 type Visibility = 'public' | 'hidden';
 type VisibilityKey = 'reader-profile-posts-visibility' | 'reader-profile-sites-visibility';
@@ -49,6 +50,16 @@ export default function ProfileOptionsMenu( {
 		const previous: Visibility = currentlyVisible ? 'public' : 'hidden';
 		patchCache( key, next );
 		mutate( next, {
+			onSuccess() {
+				// userPreferenceOptimisticMutation patches the singleton QueryClient in
+				// @automattic/api-queries, not the Calypso one this surface reads from.
+				// Mirror the write here so any direct userPreferenceQuery consumer sees
+				// the new value. Matches useSetAchievementsVisibility.
+				queryClient.setQueryData< UserPreferences >(
+					rawUserPreferencesQuery().queryKey,
+					( prev ) => ( { ...prev, [ key ]: next } )
+				);
+			},
 			onError() {
 				patchCache( key, previous );
 				dispatch(
