@@ -17,6 +17,7 @@ import {
 	useIsStepComplete,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
+	CheckoutPaymentMethods,
 	PaymentMethodStep,
 	FormStatus,
 	usePaymentMethod,
@@ -993,6 +994,28 @@ export default function CheckoutMainContent( {
 						validatingButtonAriaLabel={ validatingButtonText }
 						onPageLoadError={ onPageLoadError }
 						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
+						{ ...( isMobileCheckoutStickySummary && {
+							/* Figma 3971:13237 — the active heading reads "Payment method"
+							   under the experiment (vs. composite-checkout's default
+							   "Pick a payment method"). */
+							titleContent: <>{ translate( 'Payment method' ) }</>,
+							/* Figma 3971:13239 — secure-encryption notice sits as a
+							   13/regular/Gray 60 paragraph between the step heading
+							   and the methods card. We rebuild the default
+							   activeStepContent here so the notice ships alongside it. */
+							activeStepContent: (
+								<>
+									<p className="checkout-payment-method__secure-notice">
+										{ translate( 'All transactions are secure and encrypted.' ) }
+									</p>
+									<CheckoutPaymentMethods
+										onPageLoadError={ onPageLoadError }
+										isComplete={ false }
+										waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
+									/>
+								</>
+							),
+						} ) }
 						isCompleteCallback={ () => {
 							// We want to consider this step complete only if there is a
 							// payment method selected and it does not have required fields.
@@ -1782,6 +1805,306 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		css`
 			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
 				padding-block-start: 24px;
+			}
+		` }
+	${ ( props ) =>
+		! props.isLargeViewport &&
+		props.isMobileCheckoutStickySummary &&
+		css`
+			/* Payment method card group — Figma 3971:13242. Container and
+			   divider borders track WPDS gray-200; the V1 baseline ships
+			   #e0e0e0 / #f0f0f0 — here both land on #e0e0e0 so the field
+			   reads as a single chrome instead of two tones. */
+			.checkout-payment-methods {
+				border-color: var( --wp-components-color-gray-200, #e0e0e0 );
+			}
+			.checkout-payment-methods .has-highlight {
+				border-bottom-color: var( --wp-components-color-gray-200, #e0e0e0 );
+			}
+			/* Selected row — Figma 3971:13243 — picks up a 4% Studio Blue
+			   tint on the background and an 8% Studio Blue inset border
+			   (drawn as a box-shadow so toggling selection doesn't shift
+			   the row by 1px). Drops V1's diagonal "selected" gradient. */
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: rgba( 56, 88, 233, 0.04 );
+				box-shadow: inset 0 0 0 1px rgba( 56, 88, 233, 0.08 );
+			}
+			/* The composite-checkout primitive lays the Label out as a flex
+			   column with font-size 14px and min-height 72px below the
+			   400px smallPhoneUp breakpoint. The experiment runs on phones
+			   (small viewports) so lock to row + 13/52px (Figma 3971:13286
+			   row height) so each row matches Figma with logos sitting
+			   beside the title even on the narrowest devices. Font size
+			   lives here (not only in the V1 block) so mobile-sticky users
+			   on the non-V1 baseline still get 13px. */
+			.checkout-payment-methods .has-highlight > label {
+				min-height: 52px;
+				padding: 16px 16px 16px 48px;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
+				gap: 16px;
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .has-highlight > label::before {
+				left: 16px;
+			}
+			.checkout-payment-methods .has-highlight > label::after {
+				left: 20px;
+			}
+			.rtl .checkout-payment-methods .has-highlight > label {
+				padding: 16px 48px 16px 16px;
+			}
+			.rtl .checkout-payment-methods .has-highlight > label::before {
+				right: 16px;
+				left: auto;
+			}
+			.rtl .checkout-payment-methods .has-highlight > label::after {
+				right: 20px;
+				left: auto;
+			}
+			/* Brand logos render as 32x22 chips with a 4px radius and a
+			   1px gray-200 border (Figma 3971:13251 etc.). The brand SVG
+			   inside scales to fit the padded inner area while preserving
+			   its intrinsic aspect ratio (preserveAspectRatio defaults to
+			   xMidYMid meet, centering the path). PaymentMethodLogos spans
+			   render with either .credit-card__logos (credit card) or
+			   .payment-logos (PayPal, Bancontact, Apple Pay, etc.) — cover
+			   both. */
+			.checkout-payment-methods .credit-card__logos,
+			.checkout-payment-methods .payment-logos {
+				flex: 0 0 auto;
+				flex-wrap: nowrap;
+				gap: 4px;
+			}
+			.checkout-payment-methods .credit-card__logos svg,
+			.checkout-payment-methods .payment-logos svg {
+				background: ${ colorStudio.colors[ 'White' ] };
+				border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
+				border-radius: 4px;
+				padding: 4px 6px;
+				box-sizing: border-box;
+				height: 22px;
+				width: 32px;
+			}
+			/* "+N" overflow pill — Figma 3971:13264. Same 32x22 chip
+			   silhouette as the brand logos, but the inner content is a
+			   centered 11px medium label instead of an SVG. */
+			.checkout-payment-methods .credit-card__logos-overflow {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-width: 22px;
+				height: 22px;
+				padding: 0 6px;
+				background: ${ colorStudio.colors[ 'White' ] };
+				border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
+				border-radius: 4px;
+				box-sizing: border-box;
+				font-size: 11px;
+				font-weight: 500;
+				line-height: 20px;
+				color: var( --wp-components-color-gray-900, #1e1e1e );
+				flex: 0 0 auto;
+			}
+			/* Lock icon at the end of the Card number input — Figma
+			   3971:13273. The StripeFieldWrapper.number is the chrome
+			   around Stripe's iframe; flatten it to a flex container,
+			   lift the visible border / padding / bg / height onto the
+			   wrapper itself, and zero out the inner StripeElement so
+			   only one chrome renders and the lock sits inside it. */
+			.credit-card-fields-inner-wrapper .number {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				height: 40px;
+				padding: 0 16px;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 2px;
+				background: ${ colorStudio.colors[ 'White' ] };
+				box-sizing: border-box;
+			}
+			.credit-card-fields-inner-wrapper .number .StripeElement {
+				flex: 1 1 auto;
+				border: none;
+				padding: 0;
+				background: transparent;
+				height: auto;
+			}
+			.credit-card-fields-inner-wrapper .credit-card-number-field__lock-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				flex: 0 0 auto;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.credit-card-fields-inner-wrapper .credit-card-number-field__brand-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				flex: 0 0 auto;
+				width: 25px;
+				height: 16px;
+			}
+			.credit-card-fields-inner-wrapper .credit-card-number-field__brand-icon img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
+			/* Expiry + CVC + CVC card-back hint share one flex row under
+			   the experiment (Figma 3971:13274). Expiry and CVC each take
+			   1fr; the hint is a fixed 38px column with the card-back
+			   placeholder image rendered at 40px tall. */
+			.credit-card-fields-inner-wrapper .credit-card-fields__expiry-cvc-row {
+				display: flex;
+				gap: 8px;
+				align-items: flex-end;
+			}
+			.credit-card-fields-inner-wrapper .credit-card-fields__expiry-cvc-row > label {
+				flex: 1 1 0;
+				min-width: 0;
+			}
+			.credit-card-fields-inner-wrapper .credit-card-fields__cvc-hint {
+				display: flex;
+				flex: 0 0 38px;
+				width: 38px;
+				height: 40px;
+				align-items: center;
+				justify-content: center;
+			}
+			.credit-card-fields-inner-wrapper .credit-card-fields__cvc-hint svg,
+			.credit-card-fields-inner-wrapper .credit-card-fields__cvc-hint img {
+				width: 100%;
+				height: auto;
+				object-fit: contain;
+			}
+			/* "Use this payment method…" checkbox renders via WPDS
+			   CheckboxControl. The default --checkbox-input-size is 24px;
+			   Figma 3971:13283 specs it at 16×16. The token drives the
+			   input box, the check icon, and all hover/active outlines
+			   so a single override scales every part of the control
+			   without breaking states. */
+			.credit-card-fields-inner-wrapper
+				.assign-to-all-payment-methods-checkbox.components-checkbox-control {
+				--checkbox-input-size: 16px;
+			}
+			/* Expanded credit-card form sits 24px below the radio row
+			   (Figma 3971:13243 gap-[24px]). V1's wrapper rule already
+			   adds 16px padding on three sides; lift the top to 8px so
+			   the label's own 16px bottom padding sums to the 24px gap. */
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 8px 16px 16px 16px;
+			}
+			/* Field rhythm matches the contact-information step — switch
+			   from CreditCardField / FieldRow's 16px margin-top to a flex
+			   column with a unified 16px gap so every field-to-field
+			   cadence lands on the same grid as the contact form. */
+			.credit-card-fields-inner-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+			.credit-card-fields-inner-wrapper > * {
+				margin-top: 0;
+			}
+			/* Field typography inside the credit-card form (Figma
+			   3971:13267–13276): labels 13/medium/Gray 100 with 6px below,
+			   inputs 40px tall with a 2px radius and Gray 10 border,
+			   descriptions 13/regular (not italic) with Gray 700 — Field
+			   from @automattic/wpcom-checkout renders its own emotion
+			   <label>/<input>/<p>, so we target by element rather than
+			   by class.
+
+			   Two label structures exist:
+			   - Field (Cardholder name): <label>text</label> as a sibling
+			     of the input.
+			   - Stripe (Card number / Expiry / CVC): <label><span>text</span>
+			     <wrapper>…</wrapper></label> — the span (LabelText) carries
+			     its own font + color from the styled-component, so we have
+			     to override on the span too. */
+			.credit-card-fields-inner-wrapper label,
+			.credit-card-fields-inner-wrapper label > span {
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			/* Gap between label text and its input — applies to both shapes
+			   (the span as the first child of a Stripe-label, the bare
+			   label as a sibling of the input for Field). */
+			.credit-card-fields-inner-wrapper label > span {
+				display: block;
+				margin-bottom: 6px;
+			}
+			.credit-card-fields-inner-wrapper > div > label[for] {
+				display: block;
+				margin-bottom: 6px;
+			}
+			/* Text-style inputs only — :not() excludes the "Use for all
+			   subscriptions" checkbox (and any stray radios), which would
+			   otherwise inherit the 40px height + 10/16 padding and render
+			   as a tall rectangle. White background re-establishes the
+			   field surface on top of the selected card's 4% blue tint. */
+			.credit-card-fields-inner-wrapper input:not( [type='checkbox'] ):not( [type='radio'] ) {
+				height: 40px;
+				font-size: 13px;
+				padding: 10px 16px;
+				border-radius: 2px;
+				border-color: ${ colorStudio.colors[ 'Gray 10' ] };
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			/* Stripe Elements render in an iframe wrapped by a styled span;
+			   the wrapper's baseline is 12/14 padding + 16px font on a
+			   non-fixed height. Re-pin to match the Cardholder name input
+			   (40px tall, 10/16 padding, 2px radius, Gray 10 border, white
+			   bg) so card-number / expiry / CVC share the same rhythm. */
+			.credit-card-fields-inner-wrapper .StripeElement,
+			.credit-card-fields-inner-wrapper .stripe-element {
+				background: ${ colorStudio.colors[ 'White' ] };
+				height: 40px;
+				padding: 10px 16px;
+				border-radius: 2px;
+				border-color: ${ colorStudio.colors[ 'Gray 10' ] };
+				box-sizing: border-box;
+			}
+			/* Secure-encryption notice — Figma 3971:13239 — sits below the
+			   "Payment method" heading at 13/regular/Gray 60 with a 16px
+			   gap to the card group. The <p> is injected via
+			   activeStepContent above. */
+			.checkout__payment-method-step .checkout-payment-method__secure-notice {
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 60' ] };
+				margin: 0 0 16px;
+			}
+			.credit-card-fields-inner-wrapper p {
+				font-style: normal;
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 50' ] };
+				margin: 8px 0 0;
+			}
+			/* "Use this payment method for all subscriptions…" — the
+			   AssignToAllPaymentMethods checkbox uses WPDS' CheckboxControl
+			   whose label is informational text, not a field label. The
+			   broader label rule above paints field labels 13/medium/Gray
+			   100; restyle the checkbox label to 13/regular/Gray 50 so it
+			   reads as helper copy (Figma 3971:13285). Also reset the
+			   wrapper's margin-top to 0 — the inner-wrapper's flex+gap
+			   already supplies the 16px cadence. */
+			.credit-card-fields-inner-wrapper .components-checkbox-control label {
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 50' ] };
+				margin-bottom: 0;
+			}
+			.credit-card-fields-inner-wrapper .components-checkbox-control label a {
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+				text-decoration: underline;
 			}
 		` }
 `;

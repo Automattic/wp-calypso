@@ -1,8 +1,10 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
+import { Icon, lock, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 import type { WpcomCreditCardSelectors } from './store';
 import type { StripeFieldChangeInput } from './types';
@@ -28,6 +30,7 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	const { cardNumber: cardNumberError } = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
@@ -67,12 +70,24 @@ export default function CreditCardNumberField( {
 				hasError={ !! cardNumberError }
 				isDisabled={ isDisabled }
 			>
+				{ isMobileCheckoutStickySummary && (
+					/* Figma 3971:13271 — Core credit-card glyph on the left of
+					   the input. Stripe's built-in `showIcon` would render a
+					   brand-specific icon instead; under the experiment we
+					   disable it (see options below) and render the @wordpress/
+					   icons `payment` glyph ourselves so the visual matches
+					   Figma. */
+					<span className="credit-card-number-field__brand-icon" aria-hidden="true">
+						<Icon icon={ payment } size={ 24 } />
+					</span>
+				) }
 				<CardNumberElement
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
 						// Required for EU co-brand network-choice compliance: enables Stripe's in-Element picker for co-branded cards.
-						showIcon: true,
+						// Disabled under the mobile sticky experiment so we can render the Figma-spec placeholder icon ourselves.
+						showIcon: ! isMobileCheckoutStickySummary,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
@@ -81,6 +96,12 @@ export default function CreditCardNumberField( {
 						handleStripeFieldChange( input );
 					} }
 				/>
+
+				{ isMobileCheckoutStickySummary && (
+					<span className="credit-card-number-field__lock-icon" aria-hidden="true">
+						<Icon icon={ lock } size={ 20 } />
+					</span>
+				) }
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>

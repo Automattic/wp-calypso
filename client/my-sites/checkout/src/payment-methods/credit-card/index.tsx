@@ -14,6 +14,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { WpcomCreditCardSelectors } from './store';
@@ -62,6 +63,27 @@ const CreditCardLabel: React.FC< {
 };
 
 function CreditCardLogos( { currency }: { currency: string | null } ) {
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+
+	// Under the mobile sticky experiment (Figma 3971:13250) the brand strip
+	// renders as a fixed three-chip set — VISA / MasterCard / AMEX — with
+	// a "+N" pill summarising the remaining card brands the platform
+	// accepts. The N below mirrors what `PaymentLogo` knows how to draw
+	// (cartes_bancaires, jcb, diners, discover, unionpay, plus any
+	// currency-specific extras the default branch already conditionally
+	// renders) so the count reads accurately regardless of currency.
+	if ( isMobileCheckoutStickySummary ) {
+		const overflowCount = currency === 'EUR' || currency === 'JPY' ? 3 : 2;
+		return (
+			<PaymentMethodLogos className="credit-card__logos">
+				<VisaLogo />
+				<MastercardLogo />
+				<AmexLogo />
+				<span className="credit-card__logos-overflow">{ `+${ overflowCount }` }</span>
+			</PaymentMethodLogos>
+		);
+	}
+
 	return (
 		<PaymentMethodLogos className="credit-card__logos">
 			{ currency === 'EUR' && <CBLogo className="has-background" /> }
