@@ -57,8 +57,7 @@ export interface VersionSwitchState {
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
 	// When the public latest and beta releases point to the same version, switching
-	// between them is a no-op — skip the backup flow. Suspend so the comparison is
-	// resolved before the user can submit.
+	// between them is a no-op — skip the backup flow. Primed by the route loader.
 	const { data: latestVersion } = useSuspenseQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useSuspenseQuery( wpOrgCoreVersionQuery( 'beta' ) );
 	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
