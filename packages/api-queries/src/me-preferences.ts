@@ -20,6 +20,8 @@ const defaultValues: Required< UserPreferences > = {
 	},
 	'achievements-visibility': 'private',
 	'achievements-global-notifications': 'enabled',
+	'reader-profile-posts-visibility': 'public',
+	'reader-profile-sites-visibility': 'public',
 };
 
 // Returns all user preferences, without applying any defaults.

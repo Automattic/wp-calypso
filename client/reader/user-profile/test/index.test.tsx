@@ -19,6 +19,17 @@ jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => (
 	<div data-testid="user-profile-header">User Profile Header</div>
 ) );
 
+const mockUseProfileTabVisibility = jest.fn( () => ( {
+	isOwnProfile: false,
+	showPosts: true,
+	showSites: true,
+	isLoading: false,
+} ) );
+jest.mock( 'calypso/reader/user-profile/components/use-profile-tab-visibility', () => ( {
+	__esModule: true,
+	default: () => mockUseProfileTabVisibility(),
+} ) );
+
 jest.mock( 'calypso/reader/user-profile/views/posts', () => () => (
 	<div data-testid="user-posts">User Posts</div>
 ) );
@@ -152,6 +163,56 @@ describe( 'UserProfile', () => {
 
 		await waitFor( () => {
 			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
+		} );
+	} );
+
+	test( 'should redirect from a hidden Posts view to Sites when only Posts is hidden', async () => {
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: false,
+			showSites: true,
+			isLoading: false,
+		} );
+		nockGetUser( 'testuser', defaultUserResponse );
+
+		renderWithClient( <UserProfile { ...defaultProps } view="posts" /> );
+
+		await waitFor( () => {
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser/sites' );
+		} );
+	} );
+
+	test( 'should redirect from a hidden Sites view to Lists', async () => {
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: true,
+			showSites: false,
+			isLoading: false,
+		} );
+		nockGetUser( 'testuser', defaultUserResponse );
+
+		renderWithClient(
+			<UserProfile { ...defaultProps } view="sites" path="/reader/users/testuser/sites" />
+		);
+
+		await waitFor( () => {
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser/lists' );
+		} );
+	} );
+
+	test( 'should redirect from Posts to Lists when both Posts and Sites are hidden', async () => {
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: false,
+			showSites: false,
+			isLoading: false,
+		} );
+		nockGetUser( 'testuser', defaultUserResponse );
+
+		renderWithClient( <UserProfile { ...defaultProps } view="posts" /> );
+
+		await waitFor( () => {
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser/lists' );
 		} );
 	} );
 } );

@@ -30,6 +30,11 @@
 		}
 	}
 
+	.user-profile-header__options-menu {
+		margin-inline-start: auto;
+		align-self: flex-start;
+	}
+
 	.user-profile-header__gravatar-badge {
 		display: flex;
 		flex-shrink: 0;

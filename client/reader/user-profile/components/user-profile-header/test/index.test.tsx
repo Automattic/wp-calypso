@@ -37,6 +37,17 @@ jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility',
 	default: () => mockUseAchievementsVisibility(),
 } ) );
 
+const mockUseProfileTabVisibility = jest.fn();
+jest.mock( '../../use-profile-tab-visibility', () => ( {
+	__esModule: true,
+	default: () => mockUseProfileTabVisibility(),
+} ) );
+
+jest.mock( '../../profile-options-menu', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="profile-options-menu" />,
+} ) );
+
 describe( 'UserProfileHeader', () => {
 	const defaultUser: ReaderUser = {
 		ID: 123,
@@ -57,6 +68,12 @@ describe( 'UserProfileHeader', () => {
 		mockUseAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: true,
 			isVisible: true,
+			isLoading: false,
+		} );
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			showPosts: true,
+			showSites: true,
 			isLoading: false,
 		} );
 		nock.disableNetConnect();
@@ -210,6 +227,84 @@ describe( 'UserProfileHeader', () => {
 		renderWithClient( <UserProfileHeader user={ userWithoutGravatarProfile } view="posts" /> );
 
 		expect( screen.queryByRole( 'link', { name: /gravatar/i } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should hide the Posts tab when showPosts is false', () => {
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			showPosts: false,
+			showSites: true,
+			isLoading: false,
+		} );
+
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="lists" /> );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Posts' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Sites' } ) ).toBeVisible();
+	} );
+
+	test( 'should hide the Sites tab and UserTopSites when showSites is false', async () => {
+		const sitesScope = nockGetUserSites( defaultUser.ID, {
+			sites: [
+				{
+					ID: 1,
+					name: 'Hidden Site',
+					description: '',
+					feed_ID: 101,
+					URL: 'https://hidden.com',
+					icon: { img: 'https://hidden.com/icon.png' },
+					is_following: false,
+					last_published: '2024-01-01',
+					posts_count: 1,
+					subscribers_count: 1,
+				},
+			],
+			total: 1,
+			primary_site_id: 1,
+		} );
+
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			showPosts: true,
+			showSites: false,
+			isLoading: false,
+		} );
+
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Hidden Site' ) ).not.toBeInTheDocument();
+		// UserTopSites should not have been mounted, so the sites request should never fire.
+		expect( sitesScope.isDone() ).toBe( false );
+		nock.cleanAll();
+	} );
+
+	test( 'should render the options menu only when viewing own profile', () => {
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			showPosts: true,
+			showSites: true,
+			isLoading: false,
+		} );
+		const { rerender } = renderWithClient(
+			<UserProfileHeader user={ defaultUser } view="posts" />
+		);
+
+		expect( screen.getByTestId( 'profile-options-menu' ) ).toBeVisible();
+
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: true,
+			showSites: true,
+			isLoading: false,
+		} );
+		rerender(
+			<QueryClientProvider client={ queryClient }>
+				<UserProfileHeader user={ defaultUser } view="posts" />
+			</QueryClientProvider>
+		);
+
+		expect( screen.queryByTestId( 'profile-options-menu' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should show "Show more" button for long bio and expand on click', async () => {

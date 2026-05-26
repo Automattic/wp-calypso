@@ -7,7 +7,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
+import useProfileTabVisibility from 'calypso/reader/user-profile/components/use-profile-tab-visibility';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserAchievements from 'calypso/reader/user-profile/views/achievements';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
@@ -26,12 +28,29 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
 	const { isLoading, data: user } = useQuery( userQuery( userLogin, userId ) );
+	const {
+		showPosts,
+		showSites,
+		isLoading: isVisibilityLoading,
+	} = useProfileTabVisibility( user?.user_login );
 
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {
 			page.replace( `/reader/users/${ user.user_login }` );
 		}
 	}, [ path, user ] );
+
+	const isHiddenView = ( view === 'posts' && ! showPosts ) || ( view === 'sites' && ! showSites );
+
+	useEffect( () => {
+		if ( ! user || isVisibilityLoading || ! isHiddenView ) {
+			return;
+		}
+		const profileUrl = getUserProfileUrl( user.user_login ?? String( user.ID ) );
+		const fallbackPath =
+			view === 'posts' && showSites ? `${ profileUrl }/sites` : `${ profileUrl }/lists`;
+		page.replace( fallbackPath );
+	}, [ user, view, showSites, isHiddenView, isVisibilityLoading ] );
 
 	if ( isLoading ) {
 		return (
@@ -55,6 +74,13 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	}
 
 	const renderSelectedTabContent = (): React.ReactNode => {
+		if ( isVisibilityLoading || isHiddenView ) {
+			return (
+				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
+					<Spinner />
+				</div>
+			);
+		}
 		switch ( view ) {
 			case 'posts':
 				return <UserPosts user={ user } />;

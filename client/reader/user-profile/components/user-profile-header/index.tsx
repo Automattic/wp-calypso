@@ -11,7 +11,9 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import ProfileOptionsMenu from '../profile-options-menu';
 import UserTopSites from '../top-sites';
+import useProfileTabVisibility from '../use-profile-tab-visibility';
 import type { ReaderUser } from '@automattic/api-core';
 
 interface UserProfileHeaderProps {
@@ -22,6 +24,7 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
+	const { isOwnProfile, showPosts, showSites } = useProfileTabVisibility( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -40,16 +43,24 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 
 	const userProfileUrl = getUserProfileUrl( user.user_login ?? String( user.ID ) );
 	const navigationItems = [
-		{
-			label: translate( 'Posts' ),
-			path: userProfileUrl,
-			selected: view === 'posts',
-		},
-		{
-			label: translate( 'Sites' ),
-			path: `${ userProfileUrl }/sites`,
-			selected: view === 'sites',
-		},
+		...( showPosts
+			? [
+					{
+						label: translate( 'Posts' ),
+						path: userProfileUrl,
+						selected: view === 'posts',
+					},
+			  ]
+			: [] ),
+		...( showSites
+			? [
+					{
+						label: translate( 'Sites' ),
+						path: `${ userProfileUrl }/sites`,
+						selected: view === 'sites',
+					},
+			  ]
+			: [] ),
 		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrl }/lists`,
@@ -101,6 +112,13 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 							<span dir="ltr">@{ user.user_login }</span>
 						</p>
 					</div>
+					{ isOwnProfile && (
+						<ProfileOptionsMenu
+							userLogin={ user.user_login }
+							showPosts={ showPosts }
+							showSites={ showSites }
+						/>
+					) }
 				</div>
 
 				{ user.description && (
@@ -128,7 +146,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</AutoDirection>
 				) }
 
-				{ user.ID && user.user_login && (
+				{ showSites && user.ID && user.user_login && (
 					<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
 				) }
 			</header>
