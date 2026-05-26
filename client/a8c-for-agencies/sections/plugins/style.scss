@@ -11,14 +11,12 @@
 		}
 	}
 
-	.dataviews-view-table .dataviews-column-primary__media {
-		max-width: 35px;
-		min-width: 35px;
-		min-height: 35px;
-
-		&::after {
-			box-shadow: none;
-		}
+	.plugin-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		float: none;
+		margin-inline-end: 0;
 	}
 
 	.plugin-manage-sites-pane {
