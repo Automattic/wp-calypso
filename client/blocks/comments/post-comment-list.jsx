@@ -7,16 +7,17 @@ import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/reader/comments/constants';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import {
+	expandComments,
 	requestPostComments,
 	requestComment,
 	setActiveReply,
 	toggleInlineCommentsExpanded,
 } from 'calypso/state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
 	getActiveReplyCommentId,
@@ -284,6 +285,7 @@ class PostCommentList extends Component {
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
 				isInlineComment={ this.props.expandableView }
+				expandComments={ this.props.expandComments }
 			/>
 		);
 	};
@@ -806,6 +808,7 @@ export default connect(
 		requestComment,
 		requestPostComments,
 		recordReaderTracksEvent,
+		expandComments,
 		setActiveReply,
 		toggleInlineCommentsExpanded,
 	}

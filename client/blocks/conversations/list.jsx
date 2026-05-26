@@ -5,13 +5,14 @@ import { connect } from 'react-redux';
 import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
 import PostComment from 'calypso/blocks/comments/post-comment';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
+	expandComments,
 	requestPostComments,
 	requestComment,
 	setActiveReply,
 } from 'calypso/state/comments/actions';
-import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
 	getActiveReplyCommentId,
@@ -257,6 +258,7 @@ export class ConversationCommentList extends Component {
 								commentText={ this.state.commentText }
 								showReadMoreInActions
 								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+								expandComments={ this.props.expandComments }
 							/>
 						);
 					} ) }
@@ -294,7 +296,7 @@ const ConnectedConversationCommentList = connect(
 			commentErrors: getCommentErrors( state ),
 		};
 	},
-	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply }
+	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply, expandComments }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;

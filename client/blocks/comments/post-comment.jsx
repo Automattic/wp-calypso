@@ -17,11 +17,10 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-import { expandComments } from 'calypso/state/comments/actions';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -67,6 +66,7 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: PropTypes.bool,
 		hidePingbacksAndTrackbacks: PropTypes.bool,
 		isInlineComment: PropTypes.bool,
+		expandComments: PropTypes.func,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -98,6 +98,7 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
+		expandComments: noop,
 	};
 
 	state = {
@@ -273,6 +274,7 @@ class PostComment extends PureComponent {
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
 								isInlineComment={ this.props.isInlineComment }
+								expandComments={ this.props.expandComments }
 							/>
 						) ) }
 					</ol>
@@ -534,7 +536,7 @@ const ConnectedPostComment = connect(
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent, registerLastActionRequiresLogin }
+	{ recordReaderTracksEvent, registerLastActionRequiresLogin }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

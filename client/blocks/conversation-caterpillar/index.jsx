@@ -5,9 +5,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isAncestor } from 'calypso/blocks/comments/utils';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { expandComments } from 'calypso/state/comments/actions';
-import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getPostCommentsTree, getDateSortedPostComments } from 'calypso/state/comments/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
