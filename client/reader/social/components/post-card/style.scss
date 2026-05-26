@@ -530,12 +530,7 @@ button.social-post-card-embed-video--thumbnail {
 	color: var( --studio-gray-50 );
 }
 
-// Long-form `standard.site` reading view — sits below the external card
-// when the embed carries a verified `long_form` payload. The toggle is
-// rendered as a tertiary button to read as an affordance rather than a
-// primary CTA; clicking expands the article body inline. Wrapped in a
-// VStack-ish margin column so the spacing matches the existing card
-// rhythm without introducing a new layout primitive.
+// Long-form reading view — sits below the external card.
 .social-post-card-embed-external__long-form {
 	margin-block-start: 8px;
 	display: flex;
@@ -558,10 +553,7 @@ button.social-post-card-embed-video--thumbnail {
 	line-height: 1.55;
 
 	p {
-		// Preserve single newlines inside paragraphs as soft breaks —
-		// the backend hands us plain text with author-typed line
-		// breaks, and collapsing them would change the original
-		// rhythm of the post.
+		// Preserve author-typed line breaks from the plain-text body.
 		white-space: pre-line;
 		margin-block: 0 0.75em;
 
@@ -589,9 +581,6 @@ button.social-post-card-embed-video--thumbnail {
 	}
 
 	&::after {
-		// Trailing arrow: a Unicode glyph rather than an icon component
-		// keeps the link semantic + selectable + a single inline text
-		// node, matching how the rest of the card composes copy.
 		content: ' \2192';
 	}
 }

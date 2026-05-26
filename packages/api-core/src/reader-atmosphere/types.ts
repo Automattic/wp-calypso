@@ -95,25 +95,17 @@ export interface AtmosphereEmbedVideo {
 	aspect_ratio: { width: number; height: number } | null;
 }
 
-/**
- * Long-form document record (`site.standard.document`) projected by the
- * `standard.site` resolver on the backend. Optional fields default to
- * empty strings / arrays server-side, so consumers can render without
- * null checks on individual values.
- */
 export interface AtmosphereLongFormDocument {
 	title: string;
 	description: string;
 	text_content: string;
+	/** Site-relative path; expected to start with `/`. */
 	path: string;
 	tags: string[];
+	/** ISO-8601 timestamp, or empty string when unknown. */
 	published_at: string;
 }
 
-/**
- * Publication record (`site.standard.publication`) — the "blog identity"
- * the document belongs to.
- */
 export interface AtmosphereLongFormPublication {
 	name: string;
 	display_name: string;
@@ -121,12 +113,6 @@ export interface AtmosphereLongFormPublication {
 	url: string;
 }
 
-/**
- * Verified `standard.site` pair attached to an external embed when the
- * post's `associatedRefs` resolved cleanly. Absent when the post doesn't
- * link to a long-form article, when the refs are missing or malformed,
- * or when host/site/path verification fails. See backend CM-789.
- */
 export interface AtmosphereLongForm {
 	document: AtmosphereLongFormDocument;
 	publication: AtmosphereLongFormPublication;

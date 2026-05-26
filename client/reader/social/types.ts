@@ -64,19 +64,14 @@ export interface SocialEmbedAudio {
 	duration_seconds: number | null;
 }
 
-/**
- * Long-form document metadata attached to an external embed when the
- * underlying network's long-form-record extension (today: ATProto
- * `standard.site`) verifies. Optional fields default to empty strings /
- * arrays server-side, so consumers can render without null-checking
- * individual values.
- */
 export interface SocialLongFormDocument {
 	title: string;
 	description: string;
 	text_content: string;
+	/** Site-relative path; expected to start with `/`. */
 	path: string;
 	tags: string[];
+	/** ISO-8601 timestamp, or empty string when unknown. */
 	published_at: string;
 }
 
@@ -98,13 +93,7 @@ export interface SocialEmbedExternal {
 	title: string;
 	description: string;
 	thumb: string | null;
-	/**
-	 * Verified long-form payload when the post is sharing a long-form
-	 * article whose underlying records (today: `standard.site` document
-	 * + publication) resolve and verify against this link. Absent when
-	 * the post is sharing a plain link, when the refs are missing, or
-	 * when verification fails. See backend CM-789.
-	 */
+	/** Present when the link resolves to a verified long-form record. */
 	long_form?: SocialLongForm;
 }
 

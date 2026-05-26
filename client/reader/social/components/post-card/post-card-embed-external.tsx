@@ -29,21 +29,22 @@ function paragraphsFromText( text: string ): string[] {
 		.filter( Boolean );
 }
 
-/**
- * Build the canonical "view on the publication" URL from the verified
- * `standard.site` records. The backend strips trailing slashes from
- * `publication.url` already, but a defensive `replace` keeps the
- * concatenation safe if a future schema change relaxes that.
- */
-function originalUrl( longForm: SocialLongForm ): string {
-	return longForm.publication.url.replace( /\/+$/, '' ) + longForm.document.path;
+function originalUrl( longForm: SocialLongForm, fallback: string ): string {
+	const { path } = longForm.document;
+	if ( ! path ) {
+		return fallback;
+	}
+	const base = longForm.publication.url.replace( /\/+$/, '' );
+	const suffix = path.startsWith( '/' ) ? path : `/${ path }`;
+	return base + suffix;
 }
 
 function publicationLabel( longForm: SocialLongForm ): string {
 	return (
 		longForm.publication.display_name ||
 		longForm.publication.name ||
-		safeHost( longForm.publication.url )
+		safeHost( longForm.publication.url ) ||
+		''
 	);
 }
 
@@ -127,10 +128,7 @@ export function PostCardEmbedExternal( {
 		</a>
 	);
 
-	// Long-form decoration is suppressed in compact (quote-embed)
-	// rendering — the reading view would compete with the outer card's
-	// own click target, and inline-reading a quoted long-form post is
-	// more nesting than the v1 contract supports.
+	// Skip long-form UI inside quote embeds — competes with the outer card's click target.
 	if ( ! embed.long_form || compact ) {
 		return card;
 	}
@@ -138,6 +136,20 @@ export function PostCardEmbedExternal( {
 	const longForm = embed.long_form;
 	const paragraphs = paragraphsFromText( longForm.document.text_content );
 	const publication = publicationLabel( longForm );
+
+	const expandLabel = publication
+		? translate( 'Read article on %(publication)s', {
+				args: { publication },
+				comment: 'Button to expand a long-form article from a Bluesky link inline in the Reader.',
+		  } )
+		: translate( 'Read article' );
+
+	const originalLabel = publication
+		? translate( 'View original on %(publication)s', {
+				args: { publication },
+				comment: 'Link to open a long-form article on the original publication site.',
+		  } )
+		: translate( 'View original article' );
 
 	return (
 		<>
@@ -150,13 +162,7 @@ export function PostCardEmbedExternal( {
 					aria-expanded={ expanded }
 					aria-controls={ panelId }
 				>
-					{ expanded
-						? translate( 'Hide article' )
-						: translate( 'Read article on %(publication)s', {
-								args: { publication },
-								comment:
-									'Button to expand a long-form article from a Bluesky link inline in the Reader.',
-						  } ) }
+					{ expanded ? translate( 'Hide article' ) : expandLabel }
 				</Button>
 				{ expanded && (
 					<article id={ panelId } className="social-post-card-embed-external__long-form-body">
@@ -166,21 +172,18 @@ export function PostCardEmbedExternal( {
 							</p>
 						) : (
 							paragraphs.map( ( paragraph, index ) => (
-								// eslint-disable-next-line react/no-array-index-key -- paragraphs are derived from a stable text body within a single render; index is a fine key here.
+								// eslint-disable-next-line react/no-array-index-key -- paragraphs derived from a stable single-render text body.
 								<p key={ index }>{ paragraph }</p>
 							) )
 						) }
 						<a
 							className="social-post-card-embed-external__long-form-original"
-							href={ originalUrl( longForm ) }
+							href={ originalUrl( longForm, embed.uri ) }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ handleViewOriginal }
 						>
-							{ translate( 'View original on %(publication)s', {
-								args: { publication },
-								comment: 'Link to open a long-form article on the original publication site.',
-							} ) }
+							{ originalLabel }
 						</a>
 					</article>
 				) }

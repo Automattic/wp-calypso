@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SocialAnalyticsProvider, type SocialAnalyticsContextValue } from '../analytics-context';
 import { PostCardEmbedExternal } from '../post-card-embed-external';
 import type { SocialEmbedExternal, SocialLongForm } from '../../../types';
 
@@ -78,9 +79,6 @@ describe( 'PostCardEmbedExternal', () => {
 		} );
 
 		it( 'wires aria-controls on the toggle to the article panel id', async () => {
-			// WAI-ARIA disclosure pattern: the toggle owns the panel via
-			// `aria-controls`, so assistive tech can announce the controlled
-			// region by id and follow the relationship.
 			const user = userEvent.setup();
 			render(
 				<PostCardEmbedExternal
@@ -212,6 +210,183 @@ describe( 'PostCardEmbedExternal', () => {
 			await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
 			const original = screen.getByRole( 'link', { name: /View original on Herve Family/i } );
 			expect( original ).toHaveAttribute( 'href', 'https://herve.bzh/signing-homework/' );
+		} );
+
+		it( 'inserts a leading slash if document.path is missing one', async () => {
+			const user = userEvent.setup();
+			const slashlessLongForm: SocialLongForm = {
+				...longForm,
+				document: { ...longForm.document, path: 'signing-homework/' },
+			};
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: slashlessLongForm } }
+					parentPostUri="at://post"
+				/>
+			);
+			await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+			const original = screen.getByRole( 'link', { name: /View original on Herve Family/i } );
+			expect( original ).toHaveAttribute( 'href', 'https://herve.bzh/signing-homework/' );
+		} );
+
+		it( 'falls back to embed.uri when document.path is empty', async () => {
+			const user = userEvent.setup();
+			const pathlessLongForm: SocialLongForm = {
+				...longForm,
+				document: { ...longForm.document, path: '' },
+			};
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: pathlessLongForm } }
+					parentPostUri="at://post"
+				/>
+			);
+			await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+			const original = screen.getByRole( 'link', { name: /View original on Herve Family/i } );
+			expect( original ).toHaveAttribute( 'href', embed.uri );
+		} );
+
+		it( 'falls back to the publication host when both display_name and name are empty', () => {
+			const hostFallbackLongForm: SocialLongForm = {
+				...longForm,
+				publication: { ...longForm.publication, display_name: '', name: '' },
+			};
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: hostFallbackLongForm } }
+					parentPostUri="at://post"
+				/>
+			);
+			expect( screen.getByRole( 'button', { name: /Read article on herve\.bzh/i } ) ).toBeVisible();
+		} );
+
+		it( 'drops the publication suffix when display_name, name, and host are all empty', () => {
+			const namelessLongForm: SocialLongForm = {
+				...longForm,
+				publication: { display_name: '', name: '', description: '', url: '' },
+			};
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: namelessLongForm } }
+					parentPostUri="at://post"
+				/>
+			);
+			const toggle = screen.getByRole( 'button', { name: 'Read article' } );
+			expect( toggle ).toBeVisible();
+		} );
+
+		it( 'renders a single paragraph when text_content has no blank lines', async () => {
+			const user = userEvent.setup();
+			const onePara: SocialLongForm = {
+				...longForm,
+				document: { ...longForm.document, text_content: 'Single paragraph, no break.' },
+			};
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: onePara } }
+					parentPostUri="at://post"
+				/>
+			);
+			await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+			expect( screen.getByText( 'Single paragraph, no break.' ) ).toBeVisible();
+		} );
+
+		it( 'collapses multiple blank lines and whitespace-only paragraphs without emitting empty <p>', async () => {
+			const user = userEvent.setup();
+			const messyText: SocialLongForm = {
+				...longForm,
+				document: {
+					...longForm.document,
+					text_content: 'First paragraph.\n\n\n   \n\nSecond paragraph.',
+				},
+			};
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: messyText } }
+					parentPostUri="at://post"
+				/>
+			);
+			await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+			const article = screen.getByRole( 'article' );
+			const paragraphs = article.querySelectorAll( 'p' );
+			// Two real paragraphs + the trailing "View original" link is an <a>, not a <p>.
+			expect( paragraphs ).toHaveLength( 2 );
+			expect( paragraphs[ 0 ] ).toHaveTextContent( 'First paragraph.' );
+			expect( paragraphs[ 1 ] ).toHaveTextContent( 'Second paragraph.' );
+		} );
+
+		describe( 'analytics', () => {
+			function renderWithAnalytics( overrides?: Partial< SocialAnalyticsContextValue > ) {
+				const onClick = jest.fn();
+				const value: SocialAnalyticsContextValue = {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick,
+					...overrides,
+				};
+				render(
+					<SocialAnalyticsProvider value={ value }>
+						<PostCardEmbedExternal
+							embed={ { ...embed, long_form: longForm } }
+							parentPostUri="at://post/1"
+						/>
+					</SocialAnalyticsProvider>
+				);
+				return { onClick };
+			}
+
+			it( 'fires long_form_expanded on first toggle click', async () => {
+				const user = userEvent.setup();
+				const { onClick } = renderWithAnalytics();
+				await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+				expect( onClick ).toHaveBeenCalledWith( 'calypso_reader_atmosphere_long_form_expanded', {
+					connection_id: 42,
+					post_uri: 'at://post/1',
+					external_uri: embed.uri,
+				} );
+			} );
+
+			it( 'fires long_form_collapsed on second toggle click', async () => {
+				const user = userEvent.setup();
+				const { onClick } = renderWithAnalytics();
+				await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+				await user.click( screen.getByRole( 'button', { name: /Hide article/i } ) );
+				expect( onClick ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_long_form_collapsed',
+					expect.objectContaining( {
+						connection_id: 42,
+						post_uri: 'at://post/1',
+						external_uri: embed.uri,
+					} )
+				);
+			} );
+
+			it( 'fires long_form_original_clicked when the original link is clicked', async () => {
+				const user = userEvent.setup();
+				const { onClick } = renderWithAnalytics();
+				await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+				await user.click( screen.getByRole( 'link', { name: /View original on Herve Family/i } ) );
+				expect( onClick ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_long_form_original_clicked',
+					{
+						connection_id: 42,
+						post_uri: 'at://post/1',
+						external_uri: embed.uri,
+					}
+				);
+			} );
+
+			it( 'does not throw when no analytics provider is mounted', async () => {
+				const user = userEvent.setup();
+				render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: longForm } }
+						parentPostUri="at://post"
+					/>
+				);
+				await user.click( screen.getByRole( 'button', { name: /Read article on Herve Family/i } ) );
+				expect( screen.getByRole( 'button', { name: /Hide article/i } ) ).toBeVisible();
+			} );
 		} );
 	} );
 } );
