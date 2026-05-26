@@ -178,11 +178,12 @@ export default function QuickPost(): JSX.Element | null {
 	function isPostContentEmpty(): boolean {
 		const parsedContent = parse( postContent );
 
-		return (
-			parsedContent.length === 1 &&
-			parsedContent[ 0 ].name === 'core/paragraph' &&
-			parsedContent[ 0 ].attributes.content.trim().length === 0
-		);
+		if ( parsedContent.length !== 1 || parsedContent[ 0 ].name !== 'core/paragraph' ) {
+			return false;
+		}
+
+		const content = ( parsedContent[ 0 ].attributes as { content?: string } ).content;
+		return typeof content === 'string' && content.trim().length === 0;
 	}
 
 	const handleSiteSelect = ( siteId: number ) => {

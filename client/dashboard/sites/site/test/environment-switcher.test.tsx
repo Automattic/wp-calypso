@@ -223,7 +223,6 @@ describe( 'EnvironmentSwitcher', () => {
 					actions: [
 						{
 							label: 'Contact support',
-							url: null,
 							onClick: expect.any( Function ),
 						},
 					],
