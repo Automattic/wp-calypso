@@ -1,6 +1,7 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import ConfirmModal from '../../../components/confirm-modal';
+import type { ReactElement } from 'react';
 
 interface UsernameUpdateConfirmationModalProps {
 	isOpen: boolean;
@@ -39,16 +40,14 @@ export default function UsernameUpdateConfirmationModal( {
 					/* translators: currentUsername is the current username that will be changed.
 					newUsername is the new username */
 					__(
-						'You are about to change your username, <strong>%(currentUsername)s</strong>, to <strong>%(newUsername)s</strong>. <break />' +
-							'Once changed, you will not be able to revert it. <break />' +
-							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
+						'You are about to change your username, <strong>%(currentUsername)s</strong>, to <strong>%(newUsername)s</strong>. <break />Once changed, you will not be able to revert it. <break />Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
 					),
 					{ currentUsername, newUsername }
 				),
 				{
 					strong: <strong />,
 					break: <br />,
-				}
+				} as Record< string, ReactElement >
 			) }
 		</ConfirmModal>
 	);
