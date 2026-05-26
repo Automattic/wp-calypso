@@ -167,8 +167,6 @@ Because we're passing the list as an argument, we can pass mock `validValuesList
 
 `expect( isValueValid( 'hulk', [ 'batman', 'superman' ] ) ).toBe( false );`
 
-`expect( isValueValid( 'hulk', null ) ).toBe( false );`
-
 `expect( isValueValid( 'hulk', [] ) ).toBe( false );`
 
 `expect( isValueValid( 'hulk', [ 'iron man', 'hulk' ] ) ).toBe( true );`
@@ -192,7 +190,7 @@ To test the behaviour under each condition, we stub the config object and use a 
 import { isEnabled } from '@automattic/calypso-config';
 import { isBilboVisible } from '../bilbo';
 
-jest.mock( 'config', () => ( {
+jest.mock( '@automattic/calypso-config', () => ( {
 	// bilbo is visible by default
 	isEnabled: jest.fn( () => false ),
 } ) );
