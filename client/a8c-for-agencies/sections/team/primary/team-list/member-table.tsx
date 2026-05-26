@@ -111,19 +111,21 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 
 	return (
 		<>
-			<ItemsDataViews
-				data={ {
-					items,
-					getItemId: ( user ) => `${ user.id }`,
-					pagination: paginationInfo,
-					enableSearch: false,
-					fields,
-					actions,
-					setDataViewsState: setDataViewsState,
-					dataViewsState: dataViewsState,
-					defaultLayouts: { table: {} },
-				} }
-			/>
+			<div className="redesigned-a8c-table full-width">
+				<ItemsDataViews
+					data={ {
+						items,
+						getItemId: ( user ) => `${ user.id }`,
+						pagination: paginationInfo,
+						enableSearch: false,
+						fields,
+						actions,
+						setDataViewsState: setDataViewsState,
+						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
+					} }
+				/>
+			</div>
 
 			{ activeRequest && (
 				<TeamActionDialog

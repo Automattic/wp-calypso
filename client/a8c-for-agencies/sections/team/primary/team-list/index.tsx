@@ -118,9 +118,7 @@ export default function TeamList( { currentTab }: Props ) {
 					/>
 				</LayoutNavigation>
 			</LayoutTop>
-			<LayoutBody>
-				<div className="team-list__table-wrapper">{ tabs.selected.content }</div>
-			</LayoutBody>
+			<LayoutBody>{ tabs.selected.content }</LayoutBody>
 		</Layout>
 	);
 }

@@ -21,17 +21,6 @@
 	}
 }
 
-// Inset the table wrapper so the table's content lands at the same offset
-// from the page edge as on the Migrations: Commissions page. DataViews adds
-// 30px of internal padding on its toolbar and first/last cells; the wrapper
-// padding here brings the total inset to 64px on >660px screens.
-.team-list__table-wrapper {
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-inline: 34px;
-	}
-}
-
-
 .team-list__member-column {
 	display: flex;
 	flex-direction: row;
