@@ -21,17 +21,4 @@
 	@include break-mobile {
 		min-inline-size: 300px;
 	}
-
-	a,
-	a:visited,
-	.components-button.is-link {
-		color: var(--color-neutral-100);
-		text-decoration: underline;
-	}
-
-	a:focus,
-	.components-button.is-link:focus {
-		outline: none;
-		box-shadow: none;
-	}
 }
