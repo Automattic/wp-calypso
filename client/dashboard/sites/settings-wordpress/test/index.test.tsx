@@ -35,8 +35,23 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
+function mockWpOrgCoreVersions( { latest = '6.8.1', beta = '7.0-RC2' }: { latest?: string; beta?: string } = {} ) {
+	nock( 'https://api.wordpress.org' )
+		.persist()
+		.get( '/core/version-check/1.7/' )
+		.query( ( q ) => q.channel === 'latest' )
+		.reply( 200, { offers: [ { version: latest } ] } );
+
+	nock( 'https://api.wordpress.org' )
+		.persist()
+		.get( '/core/version-check/1.7/' )
+		.query( ( q ) => q.channel === 'beta' )
+		.reply( 200, { offers: [ { version: beta } ] } );
+}
+
 function mockApi( versionTag: string = 'latest', mockedSite: Site = site ) {
 	mockSite( mockedSite );
+	mockWpOrgCoreVersions();
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version` )
@@ -85,7 +100,7 @@ describe( '<WordPressSettings>', () => {
 		const versionSelect = await screen.findByRole( 'combobox', { name: 'WordPress version' } );
 		expect( versionSelect ).toHaveDisplayValue( 'Stable (6.8.1)' );
 
-		await user.selectOptions( versionSelect, 'Beta (6.8.1)' );
+		await user.selectOptions( versionSelect, 'Beta (7.0-RC2)' );
 		const scope = mockWordPressVersionSaved( 'beta' );
 
 		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
