@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 
@@ -46,6 +47,17 @@ export function InterimOmnibar( {
 	const siteId = user.primary_blog ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
+
+	// Only surface the launch button when the user is on a per-site route:
+	// /sites/{slug} or any nested route under it. Outside this scope the
+	// "current site" is ambiguous, so we don't show it.
+	const isOnSiteRoute =
+		!! siteSlug &&
+		( currentRoute === `/sites/${ siteSlug }` ||
+			currentRoute.startsWith( `/sites/${ siteSlug }/` ) );
+	const isUnlaunchedSite =
+		isOnSiteRoute && !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
+
 	const store = useMemo(
 		() => createOmnibarStore( onToggleNotifications ),
 		[ onToggleNotifications ]
@@ -99,7 +111,8 @@ export function InterimOmnibar( {
 					isSimpleSite={ false }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
-					isUnlaunchedSite={ false }
+					isUnlaunchedSite={ isUnlaunchedSite }
+					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }
 					isSiteP2={ !! site?.options?.is_wpforteams_site }
 					isP2Hub={ !! site?.options?.p2_hub_blog_id && site.options.p2_hub_blog_id === site.ID }
