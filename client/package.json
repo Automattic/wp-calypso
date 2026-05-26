@@ -107,7 +107,7 @@
 		"@wordpress/blocks": "^15.19.0",
 		"@wordpress/commands": "^1.46.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "^7.46.0",
+		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/dataviews": "^14.3.0",
 		"@wordpress/date": "^5.46.0",

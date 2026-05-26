@@ -31,7 +31,7 @@
 		"@automattic/content-research": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "^7.46.0",
+		"@wordpress/compose": "^7.23.0",
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/element": "^6.46.0",
 		"@wordpress/hooks": "^4.46.0",

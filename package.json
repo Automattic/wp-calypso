@@ -362,7 +362,7 @@
 		"@wordpress/blocks": "^15.19.0",
 		"@wordpress/browserslist-config": "6.46.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "7.46.0",
+		"@wordpress/compose": "7.23.0",
 		"@wordpress/core-data": "7.46.0",
 		"@wordpress/create-block-tutorial-template": "4.46.0",
 		"@wordpress/create-block": "4.89.0",
