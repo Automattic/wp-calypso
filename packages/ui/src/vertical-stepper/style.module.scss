@@ -14,12 +14,12 @@
 	flex-direction: column;
 
 	// Vertical connector between steps
-	&:not(:last-child)::after {
+	&:not( :last-child )::after {
 		content: '';
 		position: absolute;
 		// Align with indicator center (indicator is 24px wide)
 		inset-inline-start: 11px;
-		top: var(--stepper-trigger-height, 40px);
+		top: var( --stepper-trigger-height, 40px );
 		bottom: 0;
 		width: 1px;
 		background: theme.$components-color-gray-200;
@@ -29,11 +29,11 @@
 		}
 	}
 
-	&[data-status='completed']:not(:last-child)::after {
+	&[data-status='completed']:not( :last-child )::after {
 		background: #00a32a;
 	}
 
-	&[data-status='error']:not(:last-child)::after {
+	&[data-status='error']:not( :last-child )::after {
 		background: #d63638;
 	}
 }
@@ -57,10 +57,10 @@
 }
 
 .panel {
-	padding-inline-start: calc(24px + #{variables.$grid-unit-10});
+	padding-inline-start: calc( 24px + #{variables.$grid-unit-10} );
 	padding-block-end: variables.$grid-unit-20;
 
-	@media (prefers-reduced-motion: no-preference) {
+	@media ( prefers-reduced-motion: no-preference ) {
 		transition: grid-template-rows 200ms ease;
 	}
 }

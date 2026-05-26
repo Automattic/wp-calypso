@@ -16,7 +16,7 @@
 	padding: 0;
 	margin: -1px;
 	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
+	clip: rect( 0, 0, 0, 0 );
 	white-space: nowrap;
 	border: 0;
 }
@@ -112,13 +112,13 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 	text-align: start;
 	width: 100%;
 
-	&[aria-disabled="true"] {
+	&[aria-disabled='true'] {
 		cursor: default;
 		opacity: 0.6;
 	}
 
-	&[aria-expanded="true"],
-	&[aria-selected="true"] {
+	&[aria-expanded='true'],
+	&[aria-selected='true'] {
 		font-weight: 600;
 	}
 }
@@ -136,11 +136,11 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 		grid-template-rows: 0fr;
 	}
 
-	&:not([hidden]) {
+	&:not( [hidden] ) {
 		grid-template-rows: 1fr;
 	}
 
-	@media (prefers-reduced-motion: no-preference) {
+	@media ( prefers-reduced-motion: no-preference ) {
 		transition: grid-template-rows 200ms ease;
 	}
 }

@@ -21,12 +21,12 @@
 	justify-content: center;
 
 	// Horizontal connector: spans from this step's indicator to the next
-	&:not(:last-child)::after {
+	&:not( :last-child )::after {
 		content: '';
 		position: absolute;
 		top: 11px;
-		inset-inline-start: calc(50% + 12px + #{variables.$grid-unit-05});
-		inset-inline-end: calc(-50% + 12px + #{variables.$grid-unit-05});
+		inset-inline-start: calc( 50% + 12px + #{variables.$grid-unit-05} );
+		inset-inline-end: calc( -50% + 12px + #{variables.$grid-unit-05} );
 		height: 1px;
 		background: theme.$components-color-gray-200;
 
@@ -35,7 +35,7 @@
 		}
 	}
 
-	&[data-status='completed']:not(:last-child)::after {
+	&[data-status='completed']:not( :last-child )::after {
 		background: #00a32a;
 	}
 }
