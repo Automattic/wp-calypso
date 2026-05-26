@@ -740,7 +740,7 @@ There are [integrations](http://eslint.org/docs/user-guide/integrations) for man
 
 In cases where ESLint incorrectly identifies code as not following our standards, you can [disable rules using inline comments](http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments). Before disabling a rule, be certain and vocal that you understand the reason for it needing to be disabled. Our ESLint configuration is very well-tuned, and disabling a rule is not appropriate as an escape valve for poorly written code. If you don't understand or disagree with the existence of a rule, open an issue to start a discussion.
 
-### [Automatically Run ESLint Against Your Changesets](#setting-up-githooks)
+### [Automatically Run ESLint Against Your Changesets](#automatically-run-eslint-against-your-changesets)
 
 If you would like to have your changes automatically run through ESLint - there is a git pre-commit hook in `bin/pre-commit-hook.js` that will perform the task. It will be run everytime you do a `git commit`.
 
