@@ -10,7 +10,7 @@ Directories with packages are:
 
 - `/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso. See "Publishing" below.
 - `/apps` — WPCOM plugins
-- `/desktop` - WP Desktop app. Currently this is not part of the monorepo in the sense that it has its own dependency tree (its own `yarn.lock`). The reason is we want a lean `node_modules` because it will be bundled with the WP Desktop app.
+- `/desktop` - WP Desktop app. A full workspace member of the monorepo.
 - `/client` - Calypso app.
 - `/test/e2e` - Package to run e2e tests
 
@@ -114,8 +114,8 @@ failing to do so, will make your package work correctly in the dev build but tre
 	"files": [ "dist", "src" ],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"prepublishOnly": "yarn run clean",
+		"build": "transpile"
 	}
 }
 ```
@@ -173,10 +173,8 @@ yarn workspace @automattic/your-package run your-script
 
 When developing packages in Calypso repository that external consumers (like Jetpack repository) depend on, you might want to test them without going through the publishing flow first.
 
-1. Enter the package you're testing
-1. Run [`yarn link`](https://classic.yarnpkg.com/en/docs/cli/link/) — the package will be installed on global scope and symlinked to the folder in Calypso
 1. Enter the consumer's folder (such as Jetpack)
-1. Type `yarn link @automattic/package-name` — the package will be symlinked between Calypso and Jetpack and any modifications you make in Calypso, will show up in Jetpack.
+1. Run [`yarn link /absolute/path/to/wp-calypso/packages/your-package`](https://yarnpkg.com/cli/link) — the package will be symlinked between Calypso and the consumer, and any modifications you make in Calypso will show up in the consumer.
 1. Remember to build your changes between modifications in Calypso.
 
 Note that if you're building with Webpack, you may need to turn off [`resolve.symlinks`](https://webpack.js.org/configuration/resolve/#resolvesymlinks) for it to work as expected.
