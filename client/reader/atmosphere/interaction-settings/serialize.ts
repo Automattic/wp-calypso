@@ -8,6 +8,12 @@ function buildReply( replyAllow: ReplyAllow ) {
 	if ( replyAllow.kind === 'nobody' ) {
 		return { kind: 'nobody' } as const;
 	}
+	// A combo with no truthy flags is semantically "anyone" — emit nothing on
+	// the wire instead of a `{ kind: 'combo' }` payload the backend would read
+	// as "no rule applied".
+	if ( ! replyAllow.follower && ! replyAllow.following && ! replyAllow.mention ) {
+		return null;
+	}
 	return {
 		kind: 'combo' as const,
 		...( replyAllow.follower ? { follower: true } : {} ),

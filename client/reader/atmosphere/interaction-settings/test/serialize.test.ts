@@ -31,6 +31,15 @@ describe( 'serializeInteractionSettings', () => {
 		} );
 	} );
 
+	it( 'collapses a combo with no truthy flags to anyone (returns null when quotes also on)', () => {
+		expect(
+			serializeInteractionSettings(
+				{ kind: 'combo', follower: false, following: false, mention: false },
+				true
+			)
+		).toBeNull();
+	} );
+
 	it( 'serializes allow_quotes: false alongside replyAllow defaults', () => {
 		expect( serializeInteractionSettings( { kind: 'anyone' }, false ) ).toEqual( {
 			allow_quotes: false,
