@@ -36,7 +36,7 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 							__(
 								'You are about to reduce the number of days your backups are being saved. Backups older than %(retentionDays)s days will be lost.'
 							),
-							{ retentionDays: retentionSelected }
+							{ retentionDays: String( retentionSelected ) }
 						) }
 					</p>
 					<ButtonStack justify="flex-start">

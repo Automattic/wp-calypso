@@ -31,7 +31,7 @@ export function CancellationOfferNotice( {
 							'Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
 						),
 						{
-							percentDiscount: purchase.cancellation_offer_notice_discount_percentage,
+							percentDiscount: purchase.cancellation_offer_notice_discount_percentage ?? 0,
 							productName: purchase.product_name,
 						}
 					)

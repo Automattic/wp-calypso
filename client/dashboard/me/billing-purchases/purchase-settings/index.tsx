@@ -1008,7 +1008,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
 							),
 							{
-								numberOfIncludedPages: tier0.maximum_units,
+								numberOfIncludedPages: String( tier0.maximum_units ),
 							}
 					  ) }{ ' ' }
 				{ extraPageCount > 0 &&
@@ -1280,7 +1280,7 @@ function PurchaseSecondSubtitle( {
 						),
 						{
 							numberOfMailboxes: purchase.renewal_price_tier_usage_quantity,
-							domain: purchase.meta,
+							domain: purchase.meta ?? '',
 						}
 					) }
 				</Text>

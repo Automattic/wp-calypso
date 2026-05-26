@@ -66,7 +66,7 @@ export function PurchasePaymentMethod( {
 		const maskedCardNumber = sprintf(
 			/** Translators: %s is last four digits of card number */
 			_x( '**** **** **** %s', 'Long-form masked credit card number.' ),
-			purchase.payment_details
+			purchase.payment_details ?? ''
 		);
 
 		return (

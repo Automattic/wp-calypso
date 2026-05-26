@@ -176,7 +176,7 @@ export default function CancellationMainContent( {
 							__(
 								'All services connected to %(domain)s will become unreachable, including email and website.'
 							),
-							{ domain: purchase.meta }
+							{ domain: purchase.meta ?? '' }
 						),
 				},
 				{
@@ -185,7 +185,7 @@ export default function CancellationMainContent( {
 						sprintf(
 							/* translators: %(domain)s is the domain name being deleted */
 							__( '%(domain)s will become available for someone else to register.' ),
-							{ domain: purchase.meta }
+							{ domain: purchase.meta ?? '' }
 						),
 				}
 			);

@@ -100,7 +100,6 @@ const baseFields: Field< SettingsData >[] = [
 			// translators: %s is the timezone E.g. America/New_York
 			__( 'Timezone: %(timezone)s' ),
 			{
-				context: 'Timezone description',
 				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			}
 		),

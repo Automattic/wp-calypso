@@ -4,7 +4,7 @@ import { __experimentalHStack as HStack, Icon, Popover, Button } from '@wordpres
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, cloud, code, envelope, globe, info, plugins } from '@wordpress/icons';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, ReactNode, ComponentProps, ReactElement } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
@@ -27,7 +27,6 @@ import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
-import type { ReactNode, ComponentProps, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -196,7 +195,7 @@ function OwnerInfo( {
 				{
 					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
 					link: <a href={ JETPACK_CONTACT_SUPPORT } target="_blank" rel="noopener noreferrer" />,
-				}
+				} as Record< string, ReactElement >
 			) }
 		</span>
 	) : (

@@ -11,6 +11,7 @@ import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import type { Purchase } from '@automattic/api-core';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -85,7 +86,7 @@ export default function DomainRemovalWarningStep( {
 											params={ { domainName } }
 										/>
 									),
-								}
+								} as Record< string, ReactElement >
 						  )
 						: createInterpolateElement(
 								/* translators: <domainName /> is the domain name */
@@ -101,7 +102,7 @@ export default function DomainRemovalWarningStep( {
 											params={ { domainName } }
 										/>
 									),
-								}
+								} as Record< string, ReactElement >
 						  ) }
 				</Text>
 

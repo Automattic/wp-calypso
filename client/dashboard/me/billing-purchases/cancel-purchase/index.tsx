@@ -925,7 +925,7 @@ function CancelPurchaseInner() {
 								__(
 									'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
 								),
-								{ purchaseName }
+								{ purchaseName: purchaseName ?? '' }
 							),
 							{ type: 'snackbar' }
 						);
@@ -1242,7 +1242,7 @@ function CancelPurchaseInner() {
 							__(
 								'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
 							),
-							{ purchaseName }
+							{ purchaseName: purchaseName ?? '' }
 						),
 						{ type: 'snackbar' }
 					);
@@ -1366,7 +1366,7 @@ function CancelPurchaseInner() {
 							__(
 								'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
 							),
-							{ purchaseName }
+							{ purchaseName: purchaseName ?? '' }
 						),
 						{ type: 'snackbar' }
 					);
@@ -1808,7 +1808,9 @@ function CancelPurchaseInner() {
 									primaryButtonText={ __( 'Continue' ) }
 									removePlan={ handleMarketplaceDialogContinue }
 									/* Translators: %(plan)s is the name of the plan being cancelled */
-									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
+									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {
+										plan: planName ?? '',
+									} ) }
 								/>
 							) }
 						</VStack>

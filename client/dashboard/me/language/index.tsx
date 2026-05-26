@@ -175,8 +175,8 @@ export default function Language() {
 			description:
 				/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
 				sprintf( __( '(%(languageName)s is only %(percentTranslated)d%% translated)' ), {
-					languageName: selectedLanguage?.name,
-					percentTranslated: selectedLanguage?.calypsoPercentTranslated,
+					languageName: selectedLanguage?.name ?? '',
+					percentTranslated: selectedLanguage?.calypsoPercentTranslated ?? 0,
 				} ),
 			type: 'boolean',
 			Edit: 'checkbox',
