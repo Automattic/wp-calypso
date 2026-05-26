@@ -186,10 +186,13 @@ A reducer for a state subtree can have a `storageKey` property that is added usi
 const readerReducer = withStorageKey(
 	'reader',
 	combineReducers( {
+		conversations,
 		feeds,
 		follows,
-		streams,
-		teams,
+		recommendedSites,
+		saved,
+		siteBlocks,
+		sites,
 	} )
 );
 ```
