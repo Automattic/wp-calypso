@@ -1,6 +1,6 @@
 import { purchaseQuery, userPurchasesQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
@@ -26,24 +26,8 @@ import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
 import { getRenewUrlForPurchases, getTitleForListDisplay } from '../../../utils/purchase';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
+import { SITE_ACTION_TITLES, type SiteAction } from './constants';
 import type { Purchase } from '@automattic/api-core';
-
-type SiteAction = 'renew' | 'cancel' | 'remove' | 'auto-renew';
-
-function getTitle( action?: SiteAction ): string {
-	switch ( action ) {
-		case 'renew':
-			return __( 'Renew subscriptions' );
-		case 'cancel':
-			return __( 'Cancel subscriptions' );
-		case 'remove':
-			return __( 'Remove upgrades' );
-		case 'auto-renew':
-			return __( 'Turn off auto-renew' );
-		default:
-			return __( 'Site actions' );
-	}
-}
 
 function getDescription(
 	action: SiteAction | undefined,
@@ -99,6 +83,12 @@ function getSectionTitle( action?: SiteAction ): string {
 	return __( 'Subscriptions' );
 }
 
+// `auto-renew` and `cancel` both map to the `cancel` intent on the cancel
+// route. The cancel route's `getMutationFlowType( 'cancel', purchase )`
+// returns CANCEL_AUTORENEW when the purchase still has auto-renew enabled,
+// so the distinction is recovered from purchase state — no separate intent
+// value is needed. The stacked wiring branch additionally threads
+// `source=auto-renew-toggle` for analytics/copy disambiguation.
 function getCancelIntent( action?: SiteAction ): 'cancel' | 'remove' {
 	if ( action === 'remove' ) {
 		return 'remove';
@@ -159,25 +149,30 @@ export default function SiteLevelActions() {
 	const navigate = useNavigate();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { purchaseId } = purchaseSettingsRoute.useParams();
-	const { action } = siteActionsRoute.useSearch();
-	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
-	const { data: allPurchases, isLoading } = useQuery( userPurchasesQuery() );
+	const { action }: { action?: SiteAction } = siteActionsRoute.useSearch();
+	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId, 10 ) ) );
+	const { data: allPurchases } = useSuspenseQuery( userPurchasesQuery() );
 
-	const eligiblePurchases = allPurchases
-		? getEligiblePurchases( allPurchases, purchase, action ).sort( ( a, b ) => {
-				if ( a.ID === purchase.ID ) {
-					return -1;
-				}
-				if ( b.ID === purchase.ID ) {
-					return 1;
-				}
-				return 0;
-		  } )
-		: [];
+	const eligiblePurchases = getEligiblePurchases( allPurchases, purchase, action ).sort(
+		( a, b ) => {
+			if ( a.ID === purchase.ID ) {
+				return -1;
+			}
+			if ( b.ID === purchase.ID ) {
+				return 1;
+			}
+			return 0;
+		}
+	);
 
 	const [ selection, setSelection ] = useState< string[] >( [ String( purchase.ID ) ] );
 
-	const shouldBypass = ! isSplitEnabled || ( ! isLoading && eligiblePurchases.length <= 1 );
+	useEffect( () => {
+		setSelection( [ String( purchase.ID ) ] );
+	}, [ purchase.ID ] );
+
+	const shouldBypass =
+		! isSplitEnabled || purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1;
 
 	useEffect( () => {
 		if ( ! shouldBypass ) {
@@ -197,12 +192,15 @@ export default function SiteLevelActions() {
 		} );
 	}, [ shouldBypass, action, purchase, navigate, purchaseId ] );
 
-	if ( shouldBypass || isLoading ) {
+	if ( shouldBypass ) {
 		return (
 			<PageLayout
 				size="small"
 				header={
-					<PageHeader prefix={ <Breadcrumbs length={ 4 } /> } title={ getTitle( action ) } />
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 4 } /> }
+						title={ action ? SITE_ACTION_TITLES[ action ] : __( 'Site actions' ) }
+					/>
 				}
 			>
 				<VStack alignment="center" spacing={ 6 }>
@@ -273,7 +271,7 @@ export default function SiteLevelActions() {
 				<VStack>
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 4 } /> }
-						title={ getTitle( action ) }
+						title={ action ? SITE_ACTION_TITLES[ action ] : __( 'Site actions' ) }
 						description={ <Text>{ getDescription( action, siteName, productName ) }</Text> }
 					/>
 				</VStack>

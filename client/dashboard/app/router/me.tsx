@@ -36,6 +36,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import {
+	SITE_ACTIONS,
+	SITE_ACTION_TITLES,
+	type SiteAction,
+} from '../../me/billing-purchases/site-level-actions/constants';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
@@ -472,29 +477,30 @@ export const cancelPurchaseRoute = createRoute( {
 );
 
 export const siteActionsRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { action?: string } } ) => {
-		const titles: Record< string, string > = {
-			renew: __( 'Renew subscriptions' ),
-			cancel: __( 'Cancel subscriptions' ),
-			remove: __( 'Remove upgrades' ),
-			'auto-renew': __( 'Turn off auto-renew' ),
+	head: ( { loaderData }: { loaderData?: { action?: SiteAction } } ) => {
+		return {
+			meta: [
+				{
+					title: SITE_ACTION_TITLES[ loaderData?.action as SiteAction ] ?? __( 'Site actions' ),
+				},
+			],
 		};
-		return { meta: [ { title: titles[ loaderData?.action ?? '' ] ?? __( 'Site actions' ) } ] };
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'site-actions',
-	validateSearch: ( search ): { action?: 'renew' | 'cancel' | 'remove' | 'auto-renew' } => {
-		const valid = [ 'renew', 'cancel', 'remove', 'auto-renew' ];
-		return valid.includes( search.action as string )
-			? { action: search.action as 'renew' | 'cancel' | 'remove' | 'auto-renew' }
-			: {};
+	validateSearch: ( search ): { action?: SiteAction } => {
+		return {
+			...( SITE_ACTIONS.includes( search.action as SiteAction )
+				? { action: search.action as SiteAction }
+				: {} ),
+		};
 	},
 	loaderDeps: ( { search } ) => ( { action: search.action } ),
 	loader: async ( { parentMatchPromise, deps: { action } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( purchase ) {
-			queryClient.prefetchQuery( userPurchasesQuery() );
+			await queryClient.ensureQueryData( userPurchasesQuery() );
 		}
 		return { action };
 	},
