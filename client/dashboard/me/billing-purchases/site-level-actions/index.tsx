@@ -77,15 +77,12 @@ function getSectionTitle( action: SiteAction ): string {
 	return __( 'Subscriptions' );
 }
 
-// `auto-renew` and `cancel` both map to the `cancel` intent on the cancel
-// route. The cancel route's `getMutationFlowType( 'cancel', purchase )`
-// returns CANCEL_AUTORENEW when the purchase still has auto-renew enabled,
-// so the distinction is recovered from purchase state — no separate intent
-// value is needed. The stacked wiring branch additionally threads
-// `source=auto-renew-toggle` for analytics/copy disambiguation.
-function getCancelIntent( action: SiteAction ): 'cancel' | 'remove' {
+function getCancelIntent( action: SiteAction ): 'cancel' | 'remove' | 'auto-renew' {
 	if ( action === 'remove' ) {
 		return 'remove';
+	}
+	if ( action === 'auto-renew' ) {
+		return 'auto-renew';
 	}
 	return 'cancel';
 }
@@ -246,7 +243,7 @@ export default function SiteLevelActions() {
 			case 'auto-renew':
 				return (
 					<Button variant="primary" isDestructive onClick={ handleContinue }>
-						{ __( 'Turn off auto-renew' ) }
+						{ __( 'Continue' ) }
 					</Button>
 				);
 		}
