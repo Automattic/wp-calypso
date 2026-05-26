@@ -6,20 +6,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Suggestion } from '@automattic/agenttic-ui';
+import type { ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => {
-		const React = require( 'react' );
+		const React = jest.requireActual< typeof import('react') >( 'react' );
 
 		function MockContainer( {
 			children,
 			emptyView,
 		}: {
-			children: React.ReactNode;
-			emptyView: React.ReactNode;
+			children: ReactNode;
+			emptyView: ReactNode;
 		} ) {
 			return (
 				<div>
@@ -30,13 +31,13 @@ jest.mock(
 		}
 
 		const MockConversationView = React.forwardRef(
-			( { children }: { children: React.ReactNode }, ref: React.Ref< HTMLDivElement > ) => (
+			( { children }: { children: ReactNode }, ref: Ref< HTMLDivElement > ) => (
 				<div ref={ ref }>{ children }</div>
 			)
 		);
 		MockConversationView.displayName = 'MockConversationView';
 
-		function MockFooter( { children }: { children: React.ReactNode } ) {
+		function MockFooter( { children }: { children: ReactNode } ) {
 			return <div>{ children }</div>;
 		}
 
@@ -64,7 +65,7 @@ jest.mock(
 			);
 		}
 
-		function MockMessageRenderer( { children }: { children: React.ReactNode } ) {
+		function MockMessageRenderer( { children }: { children: ReactNode } ) {
 			return <>{ children }</>;
 		}
 
