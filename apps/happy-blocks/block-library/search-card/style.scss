@@ -303,6 +303,11 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			align-items: center;
 			justify-content: center;
 
+			&:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
+
 			svg {
 				fill: #2c3338;
 			}
@@ -353,6 +358,11 @@ $breakpoint-desktop: 1440px; //Desktop size.
 					font-size: 12px;
 					font-weight: 400;
 					line-height: 20px;
+
+					&:disabled {
+						opacity: 0.5;
+						cursor: not-allowed;
+					}
 
 					&:not(:disabled):hover {
 						background: #3858e9;

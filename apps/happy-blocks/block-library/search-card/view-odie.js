@@ -16,6 +16,20 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	const form = document.getElementById( 'support-search-form' );
 	const input = document.getElementById( 'support-search-input' );
 
+	const enableForm = () => {
+		if ( submitButton ) {
+			submitButton.removeAttribute( 'disabled' );
+		}
+		links.forEach( ( link ) => link.removeAttribute( 'disabled' ) );
+	};
+
+	const isLoggedIn = typeof helpCenterData !== 'undefined' && helpCenterData?.currentUser?.ID;
+	if ( isLoggedIn ) {
+		enableForm();
+	} else {
+		helpCenterReadyToLoadPromise.then( enableForm );
+	}
+
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
 			const query = this.dataset.searchQuery;
