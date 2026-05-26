@@ -4,13 +4,13 @@ Calypso has a lot of React UI components. (Try for example running `find . -name
 
 ## [Getting started](#getting-started)
 
-To run all current client side tests, run `yarn run test-client` from within the Calypso source. You can also run individual tests, see [Testing overview](testing-overview.md#how-to-run-a-smaller-subset-of-test-files) for more details.
+To run all current client side tests, run `yarn run test-client` from within the Calypso source. You can also run individual tests, see [Testing overview](testing-overview.md) for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
 
-It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use, [Jest](https://facebook.github.io/jest), uses the browser-like environment [jsdom](https://github.com/tmpvar/jsdom). We default to a node-like environment to make tests faster. If some tests require another environment, you can add `/** @jest-environment jsdom */` docblock. Check [this Jest doc](https://facebook.github.io/jest/docs/en/configuration.html#testenvironment-string) to learn more.
+It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use, [Jest](https://facebook.github.io/jest), uses the browser-like environment [jsdom](https://github.com/jsdom/jsdom). We default to a node-like environment to make tests faster. If some tests require another environment, you can add `/** @jest-environment jsdom */` docblock. Check [this Jest doc](https://facebook.github.io/jest/docs/en/configuration.html#testenvironment-string) to learn more.
 
 ### [What to test?](#what-to-test)
 
@@ -76,16 +76,9 @@ test( 'should remove tokens when X icon clicked', async () => {
 
 Like their name suggests, unit tests should be targeting only one clear unit at a time. Try to minimize the amount of code you're calling outside the targeted code. This other code could be for example subcomponents, mixins, or just other functions than the one you're testing.
 
-### [Shallow rendering](#shallow-rendering)
+### [Mocking child components](#mocking-child-components)
 
-Shallow rendering helps with inspecting whether our component renders correctly, without having to render subcomponents. Lets hear it from Facebook themselves:
-
-> When writing unit tests for React, shallow rendering can be helpful. Shallow rendering lets you
-> render a component “one level deep” and assert facts about what its render method returns,
-> without worrying about the behavior of child components, which are not instantiated or rendered.
-> This does not require a DOM.
->
-> <https://reactjs.org/docs/shallow-renderer.html#overview>
+Sometimes it's useful to inspect whether our component renders correctly without exercising the behavior of its subcomponents. With `@testing-library/react` there is no equivalent of Enzyme's `shallow` renderer; the recommended technique is to stub child components with `jest.mock` so only the component under test runs its real code.
 
 For a complete example of usage, see `client/components/themes-list/test/index.jsx`.
 
@@ -109,10 +102,14 @@ class ThemesList extends React.Component {
 So we test it like this:
 
 ```javascript
-import { render, screen } from '@testing-library/react';
-import EmptyContent from 'calypso/components/empty-content';
-import Theme from 'calypso/components/theme';
+import { screen } from '@testing-library/react';
+import deepFreeze from 'deep-freeze';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThemesList } from '../';
+
+jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
+	<div data-testid={ `theme-${ theme.id }` } />
+) );
 
 const defaultProps = deepFreeze( {
 	themes: [
@@ -123,24 +120,22 @@ const defaultProps = deepFreeze( {
 } );
 
 test( 'should render a div with a className of "themes-list"', () => {
-	const { container } = render( <ThemesList { ...defaultProps } /> );
-	expect( container ).toMatchSnapshot();
+	const { container } = renderWithProvider( <ThemesList { ...defaultProps } /> );
 	expect( container.firstChild ).toHaveClass( 'themes-list' );
-	expect( container.querySelectorAll( '.theme' ) ).toHaveLength( defaultProps.themes.length );
 } );
 
 test( 'should render a <Theme /> child for each provided theme', () => {
-	const { container } = render( <ThemesList { ...defaultProps } /> );
-	expect( container.querySelectorAll( '.theme' ) ).toHaveLength( defaultProps.themes.length );
+	renderWithProvider( <ThemesList { ...defaultProps } /> );
+	expect( screen.getAllByTestId( /theme-/ ) ).toHaveLength( defaultProps.themes.length );
 } );
 
-test( 'should display the EmptyContent component when no themes are provided', () => {
-	const { container } = render( <ThemesList { ...defaultProps } themes={ [] } /> );
-	expect( container ).toBeEmptyDOMElement();
+test( 'should display a message when no themes are found', () => {
+	renderWithProvider( <ThemesList { ...defaultProps } themes={ [] } /> );
+	expect( screen.getByText( /No themes match your search/i ) ).toBeInTheDocument();
 } );
 ```
 
-By using `shallow`, we avoid rendering the `Theme` components when testing `ThemesList`.
+By mocking `calypso/components/theme` with `jest.mock`, we avoid rendering the real `Theme` components when testing `ThemesList`.
 
 ## Troubleshooting
 
@@ -171,7 +166,7 @@ See [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examp
 
 ## Enzyme support
 
-Historically, we used to support [`enzyme`](https://github.com/enzymejs/enzyme), but support was dropped in favor of `@testing-library/react`, the primary reason being the fact that it was incompatible with React 18, and we are aiming at unblocking the upgrade to React 18. There were additional motivations, like being able to write more accessible tests and being able to test closer to what the user actually experiences.
+Historically, we used to support [`enzyme`](https://github.com/enzymejs/enzyme), but support was dropped in favor of `@testing-library/react`, the primary reason being the fact that it was incompatible with React 18, which Calypso now uses. There were additional motivations, like being able to write more accessible tests and being able to test closer to what the user actually experiences.
 
 Previously, `enzyme` was provided by the `@automattic/calypso-jest` package as part of the testing infrastructure. Nowadays, in the Calypso monorepo, it's recommended to use `@testing-library/react` for component tests.
 
