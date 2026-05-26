@@ -51,9 +51,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				// Use the submitted value, not the input.value since it's already cleared.
 				const searchQuery = new FormData( form ).get( 'odie-query' );
 
-				// Clear the input field after capturing the value.
-				input.value = '';
-
 				const website = form.getAttribute( 'data-website' ) || '';
 				recordTracksEvent(
 					website === 'forums'
@@ -72,6 +69,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 
+							input.value = '';
 							helpCenterDispatch.setNavigateToRoute(
 								'/odie?query=' + encodeURIComponent( searchQuery ),
 								true
@@ -82,6 +80,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				} else if ( window.wp?.data?.dispatch ) {
 					// Logged in variant is already loaded.
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+					input.value = '';
 					helpCenterDispatch.setNavigateToRoute(
 						'/odie?query=' + encodeURIComponent( searchQuery ),
 						true
