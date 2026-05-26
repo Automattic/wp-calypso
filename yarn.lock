@@ -1813,18 +1813,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.1.2, @automattic/number-formatters@npm:^1.1.9":
-  version: 1.1.9
-  resolution: "@automattic/number-formatters@npm:1.1.9"
-  dependencies:
-    "@wordpress/date": "npm:^5.19.0"
-    debug: "npm:^4.4.0"
-    tslib: "npm:^2.5.0"
-  checksum: e43626d41a8c3fbb217cfbc990e3303793888fa880999a5cf42f29d471a8a9e3eec8e3607f139f19d58c87bf960d4b0b7e044fdf8a29d18adaae3dc98c9af3d3
-  languageName: node
-  linkType: hard
-
-"@automattic/number-formatters@npm:^1.2.0":
+"@automattic/number-formatters@npm:^1.1.2, @automattic/number-formatters@npm:^1.1.9, @automattic/number-formatters@npm:^1.2.0":
   version: 1.2.0
   resolution: "@automattic/number-formatters@npm:1.2.0"
   dependencies:
