@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 
+import './style.scss';
+
 interface Props extends Omit< React.HTMLAttributes< HTMLSpanElement >, 'role' | 'tabIndex' > {
 	onActivate: () => void;
 	className?: string;
