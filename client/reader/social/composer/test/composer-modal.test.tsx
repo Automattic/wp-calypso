@@ -157,6 +157,53 @@ describe( '<ComposerModal>', () => {
 		expect( screen.getByRole( 'button', { name: /post/i } ) ).toBeDisabled();
 	} );
 
+	it( 'seeds the textarea with mode.initialText when opening in standalone mode', () => {
+		renderModal( testComposerConfig );
+		act(
+			() =>
+				openFn?.( {
+					kind: 'standalone',
+					entry_point: 'fab',
+					initialText: '@alice.bsky.social ',
+				} )
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social ' );
+	} );
+
+	it( 'does not reseed initialText when mode changes while the composer stays open', async () => {
+		// Regression test for the `prevModeRef` guard: re-firing the seed
+		// branch on a mode-reference change while non-null would wipe the
+		// user's in-flight typing.
+		const user = userEvent.setup();
+		renderModal( testComposerConfig );
+
+		act(
+			() =>
+				openFn?.( {
+					kind: 'standalone',
+					entry_point: 'fab',
+					initialText: '@alice.bsky.social ',
+				} )
+		);
+		await user.type( screen.getByRole( 'textbox' ), 'hello' );
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social hello' );
+
+		// Re-open with a fresh mode object (different ref, same kind +
+		// initialText). The guard should suppress the seed so the user's
+		// typing survives.
+		act(
+			() =>
+				openFn?.( {
+					kind: 'standalone',
+					entry_point: 'fab',
+					initialText: '@bob.bsky.social ',
+				} )
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social hello' );
+	} );
+
 	it( 'disables the Post button when grapheme count exceeds config.limit', async () => {
 		const user = userEvent.setup();
 		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {

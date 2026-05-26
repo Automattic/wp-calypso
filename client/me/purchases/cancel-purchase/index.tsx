@@ -749,6 +749,21 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
+	handleSurveyClose = () => {
+		if ( this.shouldFireMutationOnConfirm() ) {
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
+			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+				this.props.siteSlug,
+				this.props.purchaseId
+			);
+			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+			page.redirect( managePurchaseUrl ?? backupRedirect );
+			return;
+		}
+		this.setState( { surveyShown: false } );
+	};
+
 	onDialogClose = () => {
 		this.setState( {
 			showDialog: false,
@@ -1427,7 +1442,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						disableButtons={ this.state.isLoading }
 						purchase={ purchase }
 						isVisible={ this.state.surveyShown }
-						onClose={ () => this.setState( { surveyShown: false } ) }
+						onClose={ this.handleSurveyClose }
 						onSurveyComplete={ this.onSurveyComplete }
 						flowType={ this.getCancelFlowType( purchase ) }
 						cancelBundledDomain={ this.state.cancelBundledDomain }

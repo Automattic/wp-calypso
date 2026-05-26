@@ -1,13 +1,17 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { useSelector } from 'calypso/state';
 import useHandleMemberAction from '../../hooks/use-handle-member-action';
 import { TeamMember } from '../../types';
-import { ActionColumn, MemberColumn, RoleStatusColumn } from './columns';
+import { MemberColumn, RoleStatusColumn } from './columns';
+import TeamActionDialog, { type TeamActionRequest } from './team-action-dialog';
+import useTeamActions from './use-team-actions';
 
 type Props = {
 	members: TeamMember[];
@@ -21,17 +25,40 @@ export function TeamInviteTable( { members, onRefresh }: Props ) {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'user', 'status', 'actions' ],
+		fields: isDesktop ? [ 'user', 'status' ] : [ 'user' ],
 		layout: {
-			styles: {
-				actions: {
-					width: isDesktop ? '10%' : undefined,
-				},
-			},
+			styles: isDesktop
+				? {
+						user: { width: '60%' },
+						status: { width: '30%' },
+				  }
+				: {},
 		},
 	} );
 
-	const handleAction = useHandleMemberAction( { onRefetchList: onRefresh } );
+	const handleResendAction = useHandleMemberAction( { onRefetchList: onRefresh } );
+
+	const currentUser = useSelector( getCurrentUser );
+
+	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
+
+	const closeRequest = useCallback( () => setActiveRequest( null ), [] );
+
+	const onResendInvite = useCallback(
+		( member: TeamMember ) => {
+			handleResendAction( 'resend-user-invite', member );
+		},
+		[ handleResendAction ]
+	);
+
+	const actions = useTeamActions( {
+		// Invited members can be cancelled regardless of remove capability —
+		// transfer-ownership / delete-user only apply to active members.
+		canRemove: false,
+		currentUserEmail: currentUser?.email,
+		onResendInvite,
+		onConfirmAction: setActiveRequest,
+	} );
 
 	const fields = useMemo(
 		() => [
@@ -59,23 +86,8 @@ export function TeamInviteTable( { members, onRefresh }: Props ) {
 						},
 				  ]
 				: [] ),
-			{
-				id: 'actions',
-				getValue: () => '',
-				label: '',
-				render: ( { item }: { item: TeamMember } ): ReactNode => {
-					return (
-						<ActionColumn
-							member={ item }
-							onMenuSelected={ ( action, callback ) => handleAction( action, item, callback ) }
-						/>
-					);
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
 		],
-		[ handleAction, isDesktop, translate ]
+		[ isDesktop, translate ]
 	);
 
 	const { data: items, paginationInfo } = useMemo( () => {
@@ -83,18 +95,30 @@ export function TeamInviteTable( { members, onRefresh }: Props ) {
 	}, [ members, dataViewsState, fields ] );
 
 	return (
-		<ItemsDataViews
-			data={ {
-				items,
-				getItemId: ( user ) => `${ user.id }`,
-				pagination: paginationInfo,
-				enableSearch: false,
-				fields,
-				actions: [],
-				setDataViewsState: setDataViewsState,
-				dataViewsState: dataViewsState,
-				defaultLayouts: { table: {} },
-			} }
-		/>
+		<>
+			<div className="redesigned-a8c-table full-width">
+				<ItemsDataViews
+					data={ {
+						items,
+						getItemId: ( user ) => `${ user.id }`,
+						pagination: paginationInfo,
+						enableSearch: false,
+						fields,
+						actions,
+						setDataViewsState: setDataViewsState,
+						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
+					} }
+				/>
+			</div>
+
+			{ activeRequest && (
+				<TeamActionDialog
+					request={ activeRequest }
+					onClose={ closeRequest }
+					onRefresh={ onRefresh }
+				/>
+			) }
+		</>
 	);
 }

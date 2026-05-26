@@ -2,7 +2,7 @@ import { followReadTagMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { usePostLikeActions } from 'calypso/reader/data/post-likes';
+import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { useDispatch, useSelector } from 'calypso/state';
 import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

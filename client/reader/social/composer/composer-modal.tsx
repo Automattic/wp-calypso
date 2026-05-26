@@ -14,7 +14,7 @@ import { useComposerConfig } from './composer-config';
 import { ComposerFooter } from './composer-footer';
 import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
-import { useComposer } from './composer-provider';
+import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
@@ -44,8 +44,16 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// extend resolves.
 	const [ isExtending, setIsExtending ] = useState( false );
 	const lastErrorSignatureRef = useRef< string | null >( null );
+	// Tracks the previous `mode` so `initialText` seeds only on the
+	// null→non-null transition. Without the guard, a future change that
+	// updates a field on the active `mode` (e.g. a `replyTo` mutation, or
+	// a parent passing a new object ref) would re-fire the seed branch
+	// and wipe the user's in-flight typing.
+	const prevModeRef = useRef< ActiveMode | null >( null );
 
 	useEffect( () => {
+		const prevMode = prevModeRef.current;
+		prevModeRef.current = mode;
 		if ( ! mode ) {
 			setText( '' );
 			setConfirmDiscard( false );
@@ -53,6 +61,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
+		} else if ( ! prevMode && mode.kind === 'standalone' && mode.initialText ) {
+			setText( mode.initialText );
 		}
 		// mutation.reset is stable across renders; intentionally not in deps.
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -8,7 +8,7 @@ import nock from 'nock';
 import { act } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post-cache';
+import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post/cache';
 import { READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN } from 'calypso/state/reader-ui/action-types';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { ReaderPendingActionHandler } from '../pending-action-handler';
