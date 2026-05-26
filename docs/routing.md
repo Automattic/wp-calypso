@@ -42,7 +42,7 @@ The last middleware before `makeLayout` is usually section-specific; and most of
 Middleware specific to the my-sites group:
 
 - `navigation` generates the section group's sidebar in `context.secondary`
-- `siteSelection` parses the current route, looking out for something that looks like a URL or numeric site ID, and sets the currently selected site based on this information. You can then find it by using the `getSelectedSiteId` selector found in `state/sites/selectors`.
+- `siteSelection` parses the current route, looking out for something that looks like a URL or numeric site ID, and sets the currently selected site based on this information. You can then find it by using the `getSelectedSiteId` selector found in `state/ui/selectors`.
 - `sites` renders a site selector menu for the user to select a site, and will then append that site's slug to current route.
 
 Content-rendering middleware:
