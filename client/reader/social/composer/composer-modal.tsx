@@ -76,6 +76,35 @@ export function ComposerModal< TError, TParams, TResult >() {
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
 
+	// Mobile keyboard handling. The WordPress Modal overlay is anchored to the
+	// layout viewport, but browsers shrink the *visual* viewport when the
+	// on-screen keyboard appears — so the bottom of the bottom-sheet (Post
+	// button + media controls) ends up hidden behind the keyboard. Mirror
+	// `window.visualViewport.height` into a CSS variable that the overlay
+	// reads on narrow widths. See style.scss.
+	const isOpen = mode != null;
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+		const vv = window.visualViewport;
+		if ( ! vv ) {
+			return;
+		}
+		const root = document.documentElement;
+		const update = () => {
+			root.style.setProperty( '--composer-modal-viewport-height', `${ vv.height }px` );
+		};
+		update();
+		vv.addEventListener( 'resize', update );
+		vv.addEventListener( 'scroll', update );
+		return () => {
+			vv.removeEventListener( 'resize', update );
+			vv.removeEventListener( 'scroll', update );
+			root.style.removeProperty( '--composer-modal-viewport-height' );
+		};
+	}, [ isOpen ] );
+
 	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
 	// both paths render through `config.errorMessage` and fire `errorShown`.
 	// `extendError` takes precedence on the (rare) chance both are non-null
