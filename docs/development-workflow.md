@@ -103,7 +103,7 @@ One such tool is [AnyBar](https://github.com/tonsky/AnyBar) (_macOS only_), a ve
 
 ### Set-up
 
-- Install [AnyBar](https://github.com/tonsky/AnyBar): `brew cask install anybar`
+- Install [AnyBar](https://github.com/tonsky/AnyBar): `brew install --cask anybar`
 - Run it at the default port: `open -a AnyBar`
 - Obtain this [handler shell script](https://gist.github.com/mcsf/56911ae03c6d87ec61429cefc7707cb7/)
 - Optionally, place the script somewhere memorable and make it executable: `chmod +x ~/bin/anybar-calypso`
