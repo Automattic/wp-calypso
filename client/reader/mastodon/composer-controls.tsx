@@ -12,6 +12,7 @@ interface Props {
 	summary: string;
 	onSummaryChange: ( value: string ) => void;
 	onSave: () => void;
+	headingId?: string;
 }
 
 /**
@@ -35,6 +36,7 @@ export function MastodonComposerControls( {
 	summary,
 	onSummaryChange,
 	onSave,
+	headingId,
 }: Props ) {
 	const translate = useTranslate();
 	const summaryRef = useRef< HTMLInputElement | null >( null );
@@ -49,6 +51,9 @@ export function MastodonComposerControls( {
 
 	return (
 		<VStack spacing={ 4 } className="mastodon-composer-controls">
+			<h2 id={ headingId } className="mastodon-composer-controls__heading">
+				{ translate( 'Post visibility and content warning' ) }
+			</h2>
 			<VisibilityCwControls< MastodonVisibility >
 				className="mastodon-composer-controls__cw"
 				visibility={ visibility }

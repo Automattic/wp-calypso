@@ -88,7 +88,9 @@ describe( 'useMastodonComposerExtras — extendBuildParams visibility + CW merge
 		const user = userEvent.setup();
 		const { slotRef } = renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		await user.click( screen.getByRole( 'checkbox', { name: 'Add content warning' } ) );
 		await user.type(
 			screen.getByRole( 'textbox', { name: 'Content warning summary' } ),
@@ -107,7 +109,9 @@ describe( 'useMastodonComposerExtras — extendBuildParams visibility + CW merge
 		const user = userEvent.setup();
 		const { slotRef } = renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		await user.click( screen.getByRole( 'checkbox', { name: 'Add content warning' } ) );
 		await user.type( screen.getByRole( 'textbox', { name: 'Content warning summary' } ), '   ' );
 
@@ -145,7 +149,9 @@ describe( 'useMastodonComposerExtras — extendBuildParams visibility + CW merge
 		const user = userEvent.setup();
 		renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		await user.click( screen.getByRole( 'radio', { name: 'Followers only' } ) );
 
 		expect(
@@ -170,23 +176,25 @@ describe( 'useMastodonComposerExtras — footer pill rendering', () => {
 
 	it( 'pill label reflects current visibility (public default)', () => {
 		renderHarness();
-		expect( screen.getByRole( 'button', { name: 'Post interaction settings' } ) ).toHaveTextContent(
-			'Public'
-		);
+		expect(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		).toHaveTextContent( 'Public' );
 	} );
 
 	it( 'pill label reflects current visibility (private after pick)', async () => {
 		const user = userEvent.setup();
 		renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		await user.click( screen.getByRole( 'radio', { name: 'Followers only' } ) );
 		// Close the popover to assert the label updates on the trigger.
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => {
 			expect(
-				screen.getByRole( 'button', { name: 'Post interaction settings' } )
+				screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
 			).toHaveTextContent( 'Followers only' );
 		} );
 	} );
@@ -195,7 +203,9 @@ describe( 'useMastodonComposerExtras — footer pill rendering', () => {
 		const user = userEvent.setup();
 		renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 
 		expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
 		expect( screen.getByRole( 'radio', { name: 'Quiet public' } ) ).not.toBeChecked();
@@ -206,7 +216,9 @@ describe( 'useMastodonComposerExtras — footer pill rendering', () => {
 		const user = userEvent.setup();
 		renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		await user.click( screen.getByRole( 'checkbox', { name: 'Add content warning' } ) );
 
 		await waitFor( () => {
@@ -218,13 +230,15 @@ describe( 'useMastodonComposerExtras — footer pill rendering', () => {
 		const user = userEvent.setup();
 		renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		await user.click( screen.getByRole( 'checkbox', { name: 'Add content warning' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => {
 			expect(
-				screen.getByRole( 'button', { name: 'Post interaction settings' } )
+				screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
 			).toHaveTextContent( 'Public, content warning' );
 		} );
 	} );
@@ -233,7 +247,9 @@ describe( 'useMastodonComposerExtras — footer pill rendering', () => {
 		const user = userEvent.setup();
 		renderHarness();
 
-		await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: /^Post visibility and content warning/ } )
+		);
 		expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
 
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );

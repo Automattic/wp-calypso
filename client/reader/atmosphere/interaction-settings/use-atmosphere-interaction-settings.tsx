@@ -79,8 +79,9 @@ export function useAtmosphereInteractionSettings( ctx: {
 						} )
 					);
 				} }
-				popoverContent={ ( { onClose } ) => (
+				popoverContent={ ( { onClose, headingId } ) => (
 					<AtmosphereInteractionSettings
+						headingId={ headingId }
 						initialReplyAllow={ replyAllow }
 						initialAllowQuotes={ allowQuotes }
 						onSave={ ( nextReplyAllow, nextAllowQuotes ) => {

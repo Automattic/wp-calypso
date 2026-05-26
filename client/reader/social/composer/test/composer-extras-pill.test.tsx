@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { ComposerExtrasPill } from '../composer-extras-pill';
 
 describe( 'ComposerExtrasPill', () => {
-	it( 'renders the icon, label, and aria-label on the trigger', () => {
+	it( 'composes aria-label from purpose and current state so SR users hear both', () => {
 		render(
 			<ComposerExtrasPill
 				icon={ <span data-testid="test-icon" /> }
@@ -15,7 +15,9 @@ describe( 'ComposerExtrasPill', () => {
 				popoverContent={ () => <p>Popover body</p> }
 			/>
 		);
-		const button = screen.getByRole( 'button', { name: 'Post interaction settings' } );
+		const button = screen.getByRole( 'button', {
+			name: 'Post interaction settings, Anyone can reply',
+		} );
 		expect( button ).toBeVisible();
 		expect( screen.getByTestId( 'test-icon' ) ).toBeVisible();
 		expect( button ).toHaveTextContent( 'Anyone can reply' );
@@ -33,7 +35,7 @@ describe( 'ComposerExtrasPill', () => {
 			/>
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Trigger button' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Trigger button, Trigger' } ) );
 		expect( screen.getByRole( 'button', { name: 'Close me' } ) ).toBeInTheDocument();
 
 		await user.click( screen.getByRole( 'button', { name: 'Close me' } ) );
@@ -53,7 +55,7 @@ describe( 'ComposerExtrasPill', () => {
 			/>
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Trigger button' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Trigger button, Trigger' } ) );
 		expect( onOpen ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -73,7 +75,7 @@ describe( 'ComposerExtrasPill', () => {
 			/>
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Trigger button' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Trigger button, Trigger' } ) );
 		expect( screen.getByRole( 'button', { name: 'Simulated ESC' } ) ).toBeInTheDocument();
 
 		await user.click( screen.getByRole( 'button', { name: 'Simulated ESC' } ) );

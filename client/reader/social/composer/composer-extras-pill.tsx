@@ -1,10 +1,12 @@
 import { Button, Dropdown } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useCallback, useRef, type ReactNode } from 'react';
+import { useCallback, useId, useRef, type ReactNode } from 'react';
 
 interface PopoverContentContext {
 	onClose: () => void;
+	/** id to set on the popover's heading so the dialog has an accessible name. */
+	headingId: string;
 }
 
 interface Props {
@@ -42,6 +44,8 @@ export function ComposerExtrasPill( {
 		[ onOpen ]
 	);
 
+	const headingId = useId();
+
 	return (
 		<Dropdown
 			className={ clsx( 'composer-extras-pill', className ) }
@@ -52,9 +56,9 @@ export function ComposerExtrasPill( {
 					variant="tertiary"
 					size="compact"
 					className="composer-extras-pill__trigger"
-					aria-haspopup="true"
+					aria-haspopup="dialog"
 					aria-expanded={ isOpen }
-					aria-label={ ariaLabel }
+					aria-label={ `${ ariaLabel }, ${ label }` }
 					onClick={ onToggle }
 				>
 					{ icon && <span className="composer-extras-pill__icon">{ icon }</span> }
@@ -63,7 +67,9 @@ export function ComposerExtrasPill( {
 				</Button>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<div className="composer-extras-pill__content">{ popoverContent( { onClose } ) }</div>
+				<div className="composer-extras-pill__content" role="dialog" aria-labelledby={ headingId }>
+					{ popoverContent( { onClose, headingId } ) }
+				</div>
 			) }
 		/>
 	);

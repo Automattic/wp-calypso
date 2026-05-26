@@ -54,7 +54,7 @@ function renderHarness( mode: ActiveMode | null = STANDALONE_MODE ) {
 }
 
 async function openPopover( user: ReturnType< typeof userEvent.setup > ) {
-	await user.click( screen.getByRole( 'button', { name: 'Post interaction settings' } ) );
+	await user.click( screen.getByRole( 'button', { name: /^Post interaction settings/ } ) );
 }
 
 describe( 'useAtmosphereInteractionSettings', () => {

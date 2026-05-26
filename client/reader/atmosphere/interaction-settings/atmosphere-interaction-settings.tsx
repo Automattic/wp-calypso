@@ -15,12 +15,14 @@ interface Props {
 	initialReplyAllow: ReplyAllow;
 	initialAllowQuotes: boolean;
 	onSave: ( replyAllow: ReplyAllow, allowQuotes: boolean ) => void;
+	headingId?: string;
 }
 
 export function AtmosphereInteractionSettings( {
 	initialReplyAllow,
 	initialAllowQuotes,
 	onSave,
+	headingId,
 }: Props ) {
 	const translate = useTranslate();
 	const [ replyAllow, setReplyAllow ] = useState< ReplyAllow >( initialReplyAllow );
@@ -46,7 +48,7 @@ export function AtmosphereInteractionSettings( {
 
 	return (
 		<VStack spacing={ 4 } className="atmosphere-interaction-settings">
-			<h2 className="atmosphere-interaction-settings__heading">
+			<h2 id={ headingId } className="atmosphere-interaction-settings__heading">
 				{ translate( 'Post interaction settings' ) }
 			</h2>
 

@@ -110,9 +110,10 @@ export function useMastodonComposerExtras( ctx: {
 			<ComposerExtrasPill
 				icon={ visibilityIcon( visibility ) }
 				label={ pillLabel( visibility, cwEnabled, translate ) }
-				ariaLabel={ String( translate( 'Post interaction settings' ) ) }
-				popoverContent={ ( { onClose } ) => (
+				ariaLabel={ String( translate( 'Post visibility and content warning' ) ) }
+				popoverContent={ ( { onClose, headingId } ) => (
 					<MastodonComposerControls
+						headingId={ headingId }
 						visibility={ visibility }
 						onVisibilityChange={ setVisibility }
 						cwEnabled={ cwEnabled }
