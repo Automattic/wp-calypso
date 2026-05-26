@@ -139,7 +139,7 @@ Calypso already provides helpers for many common solutions. Please, use them! We
 
 Currently, all component based Sass files are imported into the respective JavaScript sources (using `import './style.scss'` statements). They are compiled by webpack as part of the bundling process into CSS chunks that are then loaded into the browser at runtime. Remember that all styles, even when loaded at different times, eventually end up on one page as part of a single HTML document. Make sure you namespace your styles for the page you are working on.
 
-Under the hood, we are using webpack and its `sass-loader`, for compiling the styles with `node-sass` (a C++ implementation of the Sass compiler which is working on parity with the reference Ruby implementation) and `mini-css-extract-plugin`, for creating the CSS chunks to be loaded as `<style>` tags into the browser.
+Under the hood, we are using webpack and its `sass-loader`, for compiling the styles with `sass` (Dart Sass, the reference implementation) and `mini-css-extract-plugin`, for creating the CSS chunks to be loaded as `<style>` tags into the browser.
 
 ## Media Queries
 
@@ -222,7 +222,7 @@ Add as much comments as needed to your Sass file, especially around clever code.
 
 ## Right-To-Left (RTL)
 
-We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `yarn run build-css`.
+We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) (via [`@automattic/webpack-rtl-plugin`](https://www.npmjs.com/package/@automattic/webpack-rtl-plugin)) to generate RTL stylesheets. This happens automatically as part of the webpack build, producing paired `.css`/`.rtl.css` files for each CSS chunk.
 
 - If your css code refers to a filename with ‘left’ or ‘right’ in it, for example background: `url(arrow-left.png)`: the RTL version will reference a different file, e.g. `background: url(arrow-right.png)`. Please make sure that file exists.
 - Same goes for ‘ltr’ and ‘rtl’ in it, for example background: url(icons-ltr.png): the RTL version will link to the other direction, e.g `background: url(icons-ltr.png)`. Please make sure that file exists.
@@ -299,7 +299,7 @@ selector {
 
 When adding z-indexes use our scss z-index function. This means you'll need to
 add another entry to the `$z-layers` variable in
-`assets/stylesheets/shared/functions/_z-index.scss`.
+`client/assets/stylesheets/shared/functions/_z-index.scss`.
 
 Because browsers support a hierarchy of stacking contexts rather than a single
 global one, we use a tree with two levels of keys. The first is the name of the
