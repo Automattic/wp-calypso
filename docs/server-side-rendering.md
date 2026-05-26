@@ -6,14 +6,14 @@ tl;dr: Don't depend on the DOM/BOM; make sure your initial render is synchronous
 
 ## React Components
 
-React components used on the server will be rendered to HTML by being passed to a [renderToString()](https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring) call, which calls `componentWillMount()` and `render()` _once_. This means that any components used by a server-side rendered section need to satisfy the following constraints:
+React components used on the server will be rendered to HTML by being passed to a [renderToString()](https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring) call, which calls `UNSAFE_componentWillMount()` (the renamed/deprecated `componentWillMount()`) and `render()` _once_. This means that any components used by a server-side rendered section need to satisfy the following constraints:
 
 - Must not rely on event handling for the initial render.
-- Must not hook up any change listeners, or do anything asynchronous, inside `componentWillMount()`.
+- Must not hook up any change listeners, or do anything asynchronous, inside `UNSAFE_componentWillMount()`.
 - All data must be available before the initial render.
 - Mutating class-level variables should be avoided, as they will be persisted until a server restart.
-- Must not change component ID during `componentWillMount`.
-- Must not assume that the DOM/BOM exists in `render()` and `componentWillMount()`.
+- Must not change component ID during `UNSAFE_componentWillMount`.
+- Must not assume that the DOM/BOM exists in `render()` and `UNSAFE_componentWillMount()`.
 
 ## Libraries
 
@@ -26,22 +26,20 @@ Because it is necessary to serve the redux state along with a server-rendered pa
 
 ### Data Cache
 
-At render time, the Redux state is [serialized and cached](../server/render/index.js), using the current path as the cache key, unless there is a query string, in which case we don't cache.
+At render time, the Redux state is [serialized and cached](../client/server/render/index.js), using the current path as the cache key, unless there is a query string, in which case we don't cache.
 
 This means that all data that was fetched to render a given page is available the next time the corresponding route is hit. A section controller thus only needs to check if the required data is available (using selectors), and dispatch the corresponding fetching action if it isn't; see the [themes controller](../client/my-sites/themes/controller.jsx) for an example.
 
 ### Render Cache
 
-There is a [shared cache](../server/render/index.js) for rendered layouts. There are some requirements for using this cache:
+There is a [shared cache](../client/server/render/index.js) for rendered layouts. There are some requirements for using this cache:
 
 1. Cache entries need a way to expire
 2. Multiple paths resulting in the same rendered content should ideally map to one cache entry
 
-These requirements are met by allowing controllers to set a key for a request in `context.renderCacheKey`. For item (1) the timestamp from the data cache is added to the request path, so a path such as `/theme/mood/overview` results in a key of `/theme/mood/overview1485514728996`. When the associated data cache entry gets a new timestamp, the server cache entry will no longer get any hits and drop out of the cache.
+These requirements are met by deriving the cache key from the request via `getCacheKey(req)` in [`client/server/isomorphic-routing/index.js`](../client/server/isomorphic-routing/index.js). The key is built from the request's normalized path (path plus sorted query string) combined with the GDPR banner flag, e.g. `/theme/mood/overview:gdpr=false`.
 
-Item (2) is solved by using an error string for the render cache key. For example, any invalid path such as `/theme/invalid` or `/theme/invalid/support` results in setting `context.renderCacheKey` to `theme not found`, meaning that the 404 page is always ready to serve and takes up only one cache slot.
-
-If `context.renderCacheKey` is not set, stringified `context.layout` is used as the key.
+For item (2), when the request has an error (e.g. an invalid path like `/theme/invalid`), the error message is used as the render cache key in place of the path-based key, so the 404 page is always ready to serve and takes up only one cache slot.
 
 When working with the SSR cache, turning on the [debug](#debugging) is very useful.
 
@@ -64,7 +62,7 @@ Here's how your module's `package.json` should look, if you really want to do th
 
 ### Stubbing a module on the server side
 
-If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/HEAD/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/HEAD/webpack.shared.js).
+If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/HEAD/client/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/HEAD/webpack.shared.js).
 
 ## Debugging
 
