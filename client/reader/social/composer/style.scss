@@ -1,4 +1,24 @@
+@use "@wordpress/base-styles/breakpoints" as bp;
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+// Below `$break-small` the WordPress Modal renders as a bottom sheet —
+// the overlay covers the layout viewport (`top: 0; bottom: 0`) and the
+// modal frame is `align-self: flex-end`. When the on-screen keyboard
+// opens, mobile browsers shrink the *visual* viewport but leave the
+// *layout* viewport unchanged, so the bottom of the overlay (and the
+// sheet's footer + Post button) ends up behind the keyboard.
+//
+// `composer-modal.tsx` writes `window.visualViewport.height` into
+// `--composer-modal-viewport-height` while the modal is open. Releasing
+// `bottom` and setting `height` to that variable lets the overlay shrink
+// with the keyboard. `:has(.social-composer)` scopes the override to
+// this modal instead of monkey-patching every WordPress Modal in Calypso.
+@media (max-width: bp.$break-small) {
+	.components-modal__screen-overlay:has(.social-composer) {
+		bottom: auto;
+		height: var(--composer-modal-viewport-height, 100dvh);
+	}
+}
 
 .social-compose-pill {
 	display: flex;
