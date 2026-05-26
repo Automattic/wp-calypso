@@ -10,6 +10,8 @@ on:
     secrets:
       anthropic_api_key:
         required: true
+      ai_review_telemetry_token:
+        required: false
 
 jobs:
   guard:
@@ -119,6 +121,7 @@ jobs:
           persist-credentials: false
 
       - name: Run review (dashboard)
+        id: review_dashboard
         if: inputs.area == 'dashboard' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
@@ -188,6 +191,7 @@ jobs:
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
       - name: Run review (a4a)
+        id: review_a4a
         if: inputs.area == 'a4a' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
@@ -255,6 +259,7 @@ jobs:
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
       - name: Run review (general)
+        id: review_general
         if: inputs.area == 'general' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
@@ -351,3 +356,79 @@ jobs:
             --model claude-opus-4-6
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
+
+      - name: Send telemetry to wpcom
+        if: |
+          always() && (
+            steps.review_dashboard.outputs.execution_file != '' ||
+            steps.review_a4a.outputs.execution_file != '' ||
+            steps.review_general.outputs.execution_file != ''
+          )
+        env:
+          TELEMETRY_TOKEN: ${{ secrets.ai_review_telemetry_token }}
+          EXECUTION_FILE: ${{ steps.review_dashboard.outputs.execution_file || steps.review_a4a.outputs.execution_file || steps.review_general.outputs.execution_file }}
+          T_REPO: ${{ github.repository }}
+          T_PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          T_PR_AUTHOR: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
+          T_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          T_MODEL: claude-opus-4-6
+          T_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          T_EVENT_NAME: ${{ github.event_name }}
+          T_AREA: ${{ inputs.area }}
+        shell: bash
+        run: |
+          RESULT=$(jq 'map(select(.type == "result")) | last' "$EXECUTION_FILE")
+
+          SUBTYPE=$(echo "$RESULT" | jq -r '.subtype')
+          case "$SUBTYPE" in
+            success)              OUTCOME="success" ;;
+            error_max_turns)      OUTCOME="error_max_turns" ;;
+            *)                    OUTCOME="is_error" ;;
+          esac
+
+          case "$T_EVENT_NAME" in
+            issue_comment|pull_request_review|pull_request_review_comment) IS_FOLLOWUP="true" ;;
+            *) IS_FOLLOWUP="false" ;;
+          esac
+
+          PAYLOAD=$(echo "$RESULT" | jq -n --slurpfile r /dev/stdin \
+            --arg source          "wp-calypso" \
+            --arg outcome         "$OUTCOME" \
+            --arg repo            "$T_REPO" \
+            --arg pr              "$T_PR" \
+            --arg pr_author       "$T_PR_AUTHOR" \
+            --arg pr_head_sha     "$T_PR_HEAD_SHA" \
+            --arg model           "$T_MODEL" \
+            --arg build_url       "$T_BUILD_URL" \
+            --arg ci_provider     "github_actions" \
+            --arg area            "$T_AREA" \
+            --arg is_followup     "$IS_FOLLOWUP" \
+            '{
+              source:          $source,
+              outcome:         $outcome,
+              repo:            $repo,
+              pr:              $pr,
+              pr_author:       $pr_author,
+              pr_head_sha:     $pr_head_sha,
+              model:           $model,
+              build_url:       $build_url,
+              ci_provider:     $ci_provider,
+              area:            $area,
+              is_followup:     ($is_followup == "true"),
+              cost_usd:        ($r[0].total_cost_usd // 0),
+              duration:        (($r[0].duration_ms // 0) / 1000),
+              api_duration_ms: ($r[0].duration_api_ms // 0),
+              num_turns:       ($r[0].num_turns // 0),
+              tokens_in:       ($r[0].usage.input_tokens // 0),
+              tokens_out:      ($r[0].usage.output_tokens // 0),
+              cache_read:      ($r[0].usage.cache_read_input_tokens // 0),
+              cache_creation:  ($r[0].usage.cache_creation_input_tokens // 0),
+              session_id:      ($r[0].session_id // ""),
+              ttft_ms:         ($r[0].ttft_ms // 0)
+            }')
+
+          curl -s -f -X POST \
+            "https://public-api.wordpress.com/wpcom/v2/ai-review/telemetry" \
+            -H "Content-Type: application/json" \
+            -H "X-AI-Review-Token: ${TELEMETRY_TOKEN}" \
+            -d "$PAYLOAD"
