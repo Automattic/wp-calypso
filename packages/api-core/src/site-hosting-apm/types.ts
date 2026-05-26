@@ -239,6 +239,12 @@ export interface ApmDetailSpanPrunedChildren {
 	total_sum_ms: number;
 }
 
+export interface ApmDetailSpanPluginInfo {
+	plugin?: string;
+	action?: string;
+	callback_source?: string;
+}
+
 export interface ApmDetailSpan {
 	id: string;
 	parent_id: string | null;
@@ -247,8 +253,9 @@ export interface ApmDetailSpan {
 	method?: string;
 	route?: string;
 	action?: string;
-	plugin?: string;
-	callback_source?: string;
+	// Category-specific payload. The API nests context under a key that
+	// matches the span category (e.g. `plugins` for category="plugins").
+	plugins?: ApmDetailSpanPluginInfo;
 	pruned_children?: ApmDetailSpanPrunedChildren;
 	count: number;
 	tx_count: number;
