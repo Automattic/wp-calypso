@@ -23,6 +23,7 @@
 
 	.hosting-dashboard-item-view__content {
 		display: block;
+		padding-block-start: 24px;
 
 		@media ( max-width: $break-mobile ) {
 			height: 75vh;
@@ -41,6 +42,20 @@
 	.redesigned-a8c-table .dataviews-view-table tr th:first-child,
 	.redesigned-a8c-table .dataviews-view-table tr td:first-child {
 		padding-inline-start: 24px;
+	}
+
+	.redesigned-a8c-table .dataviews-view-table tr .dataviews-view-table__actions-column {
+		padding-inline: 12px;
+		text-align: center;
+
+		.dataviews-item-actions {
+			inline-size: fit-content;
+			margin-inline: auto;
+		}
+
+		.dataviews-all-actions-button {
+			margin-inline: auto;
+		}
 	}
 }
 
