@@ -35,7 +35,10 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-function mockWpOrgCoreVersions( { latest = '6.8.1', beta = '7.0-RC2' }: { latest?: string; beta?: string } = {} ) {
+function mockWpOrgCoreVersions( {
+	latest = '6.8.1',
+	beta = '7.0-RC2',
+}: { latest?: string; beta?: string } = {} ) {
 	nock( 'https://api.wordpress.org' )
 		.persist()
 		.get( '/core/version-check/1.7/' )
