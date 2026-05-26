@@ -56,14 +56,23 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 	if ( ! responseCart.tax.display_taxes ) {
 		return null;
 	}
+	// translators: The label of the taxes line item in checkout
+	const baseTaxLabel = String(
+		translate( 'Tax', {
+			context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+		} )
+	);
+	const isForBusiness = responseCart.tax.location?.is_for_business;
+	const stateCode = responseCart.tax.location?.subdivision_code;
+	const label =
+		isForBusiness && stateCode
+			? `${ baseTaxLabel } (${ String(
+					translate( '%(state)s business tax use', { args: { state: stateCode } } )
+			  ) })`
+			: baseTaxLabel;
 	return {
 		id: 'tax-line-item',
-		// translators: The label of the taxes line item in checkout
-		label: String(
-			translate( 'Tax', {
-				context: "Shortened form of 'Sales Tax', not a country-specific tax name",
-			} )
-		),
+		label,
 		type: 'tax',
 		formattedAmount: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 			isSmallestUnit: true,
@@ -83,16 +92,24 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 		const lineItem = getTaxLineItemFromCart( responseCart );
 		return lineItem ? [ lineItem ] : [];
 	}
+	const isForBusiness = responseCart.tax.location?.is_for_business;
+	const stateCode = responseCart.tax.location?.subdivision_code;
+	const businessTaxSuffix =
+		isForBusiness && stateCode
+			? ` (${ String(
+					translate( '%(state)s business tax use', { args: { state: stateCode } } )
+			  ) })`
+			: '';
 	return responseCart.total_tax_breakdown.map(
 		( taxBreakdownItem: TaxBreakdownItem ): LineItemType => {
 			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
 			const label = taxBreakdownItem.label
-				? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })`
+				? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })${ businessTaxSuffix }`
 				: String(
 						translate( 'Tax', {
 							context: "Shortened form of 'Sales Tax', not a country-specific tax name",
 						} )
-				  );
+				  ) + businessTaxSuffix;
 			return {
 				id,
 				label,

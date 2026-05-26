@@ -18,6 +18,8 @@ export interface BillingTransaction {
 
 	tax_country_code: string;
 	tax_external_id?: string;
+	tax_is_for_business?: boolean;
+	tax_state?: string;
 	cc_email: string;
 	cc_name: string;
 	cc_num: string;
