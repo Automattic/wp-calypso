@@ -58,7 +58,7 @@ export interface VisibilityCwControlsProps< V extends string > {
 	 * use this to move focus to the summary when CW first toggles on (e.g.
 	 * inside a popover where the toggle and summary live together).
 	 */
-	summaryTextareaRef?: React.Ref< HTMLInputElement >;
+	summaryInputRef?: React.Ref< HTMLInputElement >;
 }
 
 /**
@@ -90,7 +90,7 @@ export function VisibilityCwControls< V extends string >( {
 	summaryPlaceholder,
 	summaryMaxLength = DEFAULT_SUMMARY_MAX_LENGTH,
 	className,
-	summaryTextareaRef,
+	summaryInputRef,
 }: VisibilityCwControlsProps< V > ) {
 	const translate = useTranslate();
 	const summaryId = useId();
@@ -153,7 +153,7 @@ export function VisibilityCwControls< V extends string >( {
 
 			{ cwEnabled && (
 				<TextControl
-					ref={ summaryTextareaRef }
+					ref={ summaryInputRef }
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 					id={ summaryId }

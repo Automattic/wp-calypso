@@ -67,7 +67,7 @@ export function MastodonComposerControls( {
 				onCwToggle={ onCwToggle }
 				summary={ summary }
 				onSummaryChange={ onSummaryChange }
-				summaryTextareaRef={ summaryRef }
+				summaryInputRef={ summaryRef }
 			/>
 			<Button variant="primary" onClick={ onSave }>
 				{ translate( 'Save' ) }
