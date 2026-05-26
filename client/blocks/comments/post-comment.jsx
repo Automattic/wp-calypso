@@ -67,6 +67,7 @@ class PostComment extends PureComponent {
 		hidePingbacksAndTrackbacks: PropTypes.bool,
 		isInlineComment: PropTypes.bool,
 		expandComments: PropTypes.func,
+		comments: PropTypes.array,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -99,6 +100,7 @@ class PostComment extends PureComponent {
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
 		expandComments: noop,
+		comments: [],
 	};
 
 	state = {
@@ -275,6 +277,7 @@ class PostComment extends PureComponent {
 								shouldHighlightNew={ this.props.shouldHighlightNew }
 								isInlineComment={ this.props.isInlineComment }
 								expandComments={ this.props.expandComments }
+								comments={ this.props.comments }
 							/>
 						) ) }
 					</ol>
@@ -522,7 +525,11 @@ class PostComment extends PureComponent {
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
+						comments={ this.props.comments }
+						commentsTree={ commentsTree }
 						commentsToShow={ commentsToShow }
+						expandComments={ this.props.expandComments }
+						recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 					/>
 				) }
 				{ this.renderRepliesList() }

@@ -1,4 +1,4 @@
-import { map, size, filter, get, partition } from 'lodash';
+import { map, size, filter, get, partition, pickBy, keyBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +8,6 @@ import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
-	expandComments,
 	requestPostComments,
 	requestComment,
 	setActiveReply,
@@ -18,8 +17,6 @@ import {
 	getActiveReplyCommentId,
 	getCommentErrors,
 	getDateSortedPostComments,
-	getExpansionsForPost,
-	getHiddenCommentsForPost,
 	getPostCommentsTree,
 } from 'calypso/state/comments/selectors';
 import { getErrorKey } from 'calypso/state/comments/utils';
@@ -49,6 +46,19 @@ import './list.scss';
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
 const noop = () => {};
+const expansionValue = ( type ) => {
+	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
+	switch ( type ) {
+		case full:
+			return 3;
+		case excerpt:
+			return 2;
+		case singleLine:
+			return 1;
+		default:
+			return 0;
+	}
+};
 
 export class ConversationCommentList extends Component {
 	static propTypes = {
@@ -67,6 +77,7 @@ export class ConversationCommentList extends Component {
 
 	state = {
 		commentText: '',
+		expansions: {},
 	};
 
 	onUpdateCommentText = ( commentText ) => this.setState( { commentText } );
@@ -119,7 +130,9 @@ export class ConversationCommentList extends Component {
 	}
 
 	componentDidUpdate() {
-		const { hiddenComments, commentsTree, siteId, commentErrors } = this.props;
+		const { commentsTree, siteId, commentErrors } = this.props;
+		const commentsToShow = this.getCommentsToShow();
+		const hiddenComments = this.getHiddenComments( commentsToShow );
 
 		// if we are running low on comments to expand then fetch more
 		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
@@ -131,7 +144,7 @@ export class ConversationCommentList extends Component {
 		// load a subtree
 		const inaccessible = this.getInaccessibleParentsIds(
 			commentsTree,
-			Object.keys( this.getCommentsToShow() )
+			Object.keys( commentsToShow )
 		);
 		inaccessible
 			.filter( ( commentId ) => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
@@ -166,7 +179,8 @@ export class ConversationCommentList extends Component {
 
 	// @todo: move all expanded comment set per commentId logic to memoized selectors
 	getCommentsToShow = () => {
-		const { commentIds, expansions, commentsTree, sortedComments, filterParents } = this.props;
+		const { commentIds, commentsTree, sortedComments, filterParents } = this.props;
+		const { expansions } = this.state;
 
 		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
@@ -186,6 +200,35 @@ export class ConversationCommentList extends Component {
 		);
 
 		return { ...startingExpanded, ...expansions };
+	};
+
+	getHiddenComments = ( commentsToShow ) => {
+		const commentsById = keyBy( this.props.sortedComments, 'ID' );
+
+		return pickBy( commentsById, ( comment ) => ! commentsToShow[ comment.ID ] );
+	};
+
+	expandComments = ( { commentIds, displayType } ) => {
+		this.setState( ( current ) => {
+			const newExpansions = Object.fromEntries(
+				commentIds.map( ( id ) => {
+					if (
+						! current.expansions[ id ] ||
+						expansionValue( displayType ) > expansionValue( current.expansions[ id ] )
+					) {
+						return [ id, displayType ];
+					}
+					return [ id, current.expansions[ id ] ];
+				} )
+			);
+
+			return {
+				expansions: {
+					...current.expansions,
+					...newExpansions,
+				},
+			};
+		} );
 	};
 
 	setActiveReplyComment = ( commentId ) => {
@@ -208,7 +251,7 @@ export class ConversationCommentList extends Component {
 	};
 
 	render() {
-		const { commentsTree, post, enableCaterpillar } = this.props;
+		const { commentsTree, post, enableCaterpillar, sortedComments } = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -235,7 +278,11 @@ export class ConversationCommentList extends Component {
 							blogId={ post.site_ID }
 							postId={ post.ID }
 							commentCount={ commentCount }
+							comments={ sortedComments }
+							commentsTree={ commentsTree }
 							commentsToShow={ commentsToShow }
+							expandComments={ this.expandComments }
+							recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 						/>
 					) }
 					{ map( commentsTree.children, ( commentId ) => {
@@ -258,7 +305,8 @@ export class ConversationCommentList extends Component {
 								commentText={ this.state.commentText }
 								showReadMoreInActions
 								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
-								expandComments={ this.props.expandComments }
+								expandComments={ this.expandComments }
+								comments={ sortedComments }
 							/>
 						);
 					} ) }
@@ -286,8 +334,6 @@ const ConnectedConversationCommentList = connect(
 			commentsTree: getPostCommentsTree( state, siteId, postId, 'all', authorId ),
 			commentsFetchingStatus:
 				commentsFetchingStatus( state, siteId, postId, discussion.comment_count ) || {},
-			expansions: getExpansionsForPost( state, siteId, postId ),
-			hiddenComments: getHiddenCommentsForPost( state, siteId, postId ),
 			activeReplyCommentId: getActiveReplyCommentId( {
 				state,
 				siteId,
@@ -296,7 +342,7 @@ const ConnectedConversationCommentList = connect(
 			commentErrors: getCommentErrors( state ),
 		};
 	},
-	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply, expandComments }
+	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;

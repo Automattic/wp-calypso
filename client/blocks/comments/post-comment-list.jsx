@@ -22,6 +22,7 @@ import {
 	commentsFetchingStatus,
 	getActiveReplyCommentId,
 	getCommentById,
+	getDateSortedPostComments,
 	getPostCommentsTree,
 	getInlineCommentsExpandedState,
 } from 'calypso/state/comments/selectors';
@@ -286,6 +287,7 @@ class PostCommentList extends Component {
 				shouldHighlightNew={ this.props.shouldHighlightNew }
 				isInlineComment={ this.props.expandableView }
 				expandComments={ this.props.expandComments }
+				comments={ this.props.comments }
 			/>
 		);
 	};
@@ -778,6 +780,7 @@ export default connect(
 			postId,
 			currentUserId: authorId,
 			canUserModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
+			comments: getDateSortedPostComments( state, siteId, postId ),
 			commentsTree: getPostCommentsTree(
 				state,
 				siteId,
