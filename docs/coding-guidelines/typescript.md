@@ -45,7 +45,7 @@ start working in TypeScript so that we can form together our customs and norms a
 
 ### Primitive types
 
-Avoid primitive types when possible. These are `string`, `int`, `null`, `boolean`, etc…
+Avoid primitive types when possible. These are `string`, `number`, `null`, `boolean`, etc…
 Usually we can find more meaningful types or type aliases that better communicate our expectations.
 
 #### Avoid
@@ -239,7 +239,7 @@ const handleUpdate = ( { items }: { items: { name: string, count: number }[] } )
 #### Prefer
 
 ```ts
-const handleUpdate = ( { items }: { items: Parameters< typeof doSomethingUnknown >[] } ) => {
+const handleUpdate = ( { items }: { items: Parameters< typeof doSomethingUnknown >[ 0 ][] } ) => {
 	items.forEach( doSomethingUnknown );
 };
 ```
