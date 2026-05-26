@@ -26,8 +26,7 @@ const mockUseProfileTabVisibility = jest.fn( () => ( {
 	isLoading: false,
 } ) );
 jest.mock( 'calypso/reader/user-profile/components/use-profile-tab-visibility', () => ( {
-	__esModule: true,
-	default: () => mockUseProfileTabVisibility(),
+	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
 } ) );
 
 jest.mock( 'calypso/reader/user-profile/views/posts', () => () => (

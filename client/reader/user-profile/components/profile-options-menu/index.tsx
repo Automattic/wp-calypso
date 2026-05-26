@@ -22,7 +22,7 @@ interface ProfileOptionsMenuProps {
 	showSites: boolean;
 }
 
-export default function ProfileOptionsMenu( {
+export function ProfileOptionsMenu( {
 	userLogin,
 	showPosts,
 	showSites,
@@ -48,6 +48,10 @@ export default function ProfileOptionsMenu( {
 	const toggle = ( key: VisibilityKey, currentlyVisible: boolean, mutate: typeof mutatePosts ) => {
 		const next: Visibility = currentlyVisible ? 'hidden' : 'public';
 		const previous: Visibility = currentlyVisible ? 'public' : 'hidden';
+		const errorMessage =
+			key === 'reader-profile-posts-visibility'
+				? translate( "Couldn't update your Posts visibility. Please try again." )
+				: translate( "Couldn't update your Sites visibility. Please try again." );
 		patchCache( key, next );
 		mutate( next, {
 			onSuccess() {
@@ -62,9 +66,7 @@ export default function ProfileOptionsMenu( {
 			},
 			onError() {
 				patchCache( key, previous );
-				dispatch(
-					errorNotice( translate( 'Failed to update profile visibility.' ), { duration: 4000 } )
-				);
+				dispatch( errorNotice( errorMessage, { duration: 4000 } ) );
 			},
 			onSettled() {
 				queryClient.invalidateQueries( { queryKey: profileSettingsKey } );
@@ -80,18 +82,14 @@ export default function ProfileOptionsMenu( {
 				className: 'user-profile-header__options-popover',
 			} }
 			icon={ moreHorizontal }
-			label={ translate( 'Profile options' ) as string }
+			label={ String( translate( 'Profile options' ) ) }
 			controls={ [
 				{
-					title: ( showPosts
-						? translate( 'Hide my posts' )
-						: translate( 'Show my posts' ) ) as string,
+					title: String( showPosts ? translate( 'Hide my posts' ) : translate( 'Show my posts' ) ),
 					onClick: () => toggle( 'reader-profile-posts-visibility', showPosts, mutatePosts ),
 				},
 				{
-					title: ( showSites
-						? translate( 'Hide my sites' )
-						: translate( 'Show my sites' ) ) as string,
+					title: String( showSites ? translate( 'Hide my sites' ) : translate( 'Show my sites' ) ),
 					onClick: () => toggle( 'reader-profile-sites-visibility', showSites, mutateSites ),
 				},
 			] }

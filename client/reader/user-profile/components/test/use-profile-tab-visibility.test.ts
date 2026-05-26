@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import useProfileTabVisibility from '../use-profile-tab-visibility';
+import { useProfileTabVisibility } from '../use-profile-tab-visibility';
 
 const mockUseQuery = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {

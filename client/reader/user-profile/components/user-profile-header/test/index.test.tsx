@@ -39,13 +39,11 @@ jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility',
 
 const mockUseProfileTabVisibility = jest.fn();
 jest.mock( '../../use-profile-tab-visibility', () => ( {
-	__esModule: true,
-	default: () => mockUseProfileTabVisibility(),
+	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
 } ) );
 
 jest.mock( '../../profile-options-menu', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="profile-options-menu" />,
+	ProfileOptionsMenu: () => <div data-testid="profile-options-menu" />,
 } ) );
 
 describe( 'UserProfileHeader', () => {

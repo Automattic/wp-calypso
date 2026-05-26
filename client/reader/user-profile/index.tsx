@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
-import useProfileTabVisibility from 'calypso/reader/user-profile/components/use-profile-tab-visibility';
+import { useProfileTabVisibility } from 'calypso/reader/user-profile/components/use-profile-tab-visibility';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserAchievements from 'calypso/reader/user-profile/views/achievements';

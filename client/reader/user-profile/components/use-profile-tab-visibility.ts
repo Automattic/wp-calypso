@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-export default function useProfileTabVisibility( profileUserLogin?: string ) {
+export function useProfileTabVisibility( profileUserLogin?: string ) {
 	const currentUser = useSelector( getCurrentUser );
 	const { data, isLoading, isError } = useQuery( readProfileSettingsQuery( profileUserLogin ) );
 
