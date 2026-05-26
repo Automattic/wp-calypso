@@ -10,7 +10,7 @@
  * WordPress dependencies
  */
 import { dispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -150,13 +150,17 @@ function isAiEditorialReviewAvailable(
 	return isAiEditorialReviewEnabled() && currentPostType === 'post';
 }
 
+function trackAiEditorialReviewSuggestionRenderedOnce(): void {
+	if ( suggestionRenderedFiredOnce ) {
+		return;
+	}
+	suggestionRenderedFiredOnce = true;
+	trackAiEditorialReviewSuggestionRendered();
+}
+
 function getAiEditorialReviewSuggestions( currentPostType?: string ) {
 	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
 		return [];
-	}
-	if ( ! suggestionRenderedFiredOnce ) {
-		suggestionRenderedFiredOnce = true;
-		trackAiEditorialReviewSuggestionRendered();
 	}
 	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
 }
@@ -752,27 +756,57 @@ export function useSuggestions(): {
 		setHidden( false );
 	}, [ editorContext.selectedBlock?.clientId ] );
 
+	const selectedBlock = editorContext.selectedBlock ?? getSelectedOrRememberedBlock();
+	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
+	const blockTransformationsEnabled = isBlockTransformationsEnabled();
+	const applicable = useMemo(
+		() =>
+			selectedBlock && blockTransformationsEnabled
+				? BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
+				: [],
+		[ blockTransformationsEnabled, selectedBlock ]
+	);
+	const applicableSuggestionsKey = applicable.map( ( suggestion ) => suggestion.id ).join( '|' );
+
+	useEffect( () => {
+		if ( editorContext.selectedBlock ) {
+			rememberSelectedBlock( editorContext.selectedBlock );
+		}
+	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
+
+	useEffect( () => {
+		if ( hidden || aiEditorialReviewSuggestions.length === 0 ) {
+			return;
+		}
+		trackAiEditorialReviewSuggestionRenderedOnce();
+	}, [ hidden, aiEditorialReviewSuggestions.length ] );
+
+	useEffect( () => {
+		if ( hidden || ! selectedBlock || ! blockTransformationsEnabled ) {
+			return;
+		}
+		trackRenderedBlockTransformationSuggestions( applicable, selectedBlock );
+	}, [
+		applicable,
+		applicableSuggestionsKey,
+		blockTransformationsEnabled,
+		hidden,
+		selectedBlock,
+		selectedBlock?.name,
+	] );
+
 	if ( hidden ) {
 		return { suggestions: [] };
-	}
-
-	const selectedBlock = editorContext.selectedBlock ?? getSelectedOrRememberedBlock();
-	if ( editorContext.selectedBlock ) {
-		rememberSelectedBlock( editorContext.selectedBlock );
 	}
 
 	if ( ! selectedBlock ) {
 		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
-	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
-
-	if ( ! isBlockTransformationsEnabled() ) {
+	if ( ! blockTransformationsEnabled ) {
 		return { suggestions: aiEditorialReviewSuggestions };
 	}
 
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
-	trackRenderedBlockTransformationSuggestions( applicable, selectedBlock );
 	return {
 		suggestions: [
 			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),

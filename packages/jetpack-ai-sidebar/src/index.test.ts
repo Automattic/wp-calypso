@@ -194,10 +194,6 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
 	} );
 
 	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
@@ -287,6 +283,10 @@ describe( 'useSuggestions', () => {
 			'Simplify text',
 			'AI Editorial Review',
 		] );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_rendered',
+			{}
+		);
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',

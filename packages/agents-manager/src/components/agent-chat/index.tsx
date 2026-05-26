@@ -252,6 +252,7 @@ export default function AgentChat( {
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						onSuggestionClick={ onSuggestionClick }
 						icon={ <AI size={ 32 } /> }
 					/>
 				)
