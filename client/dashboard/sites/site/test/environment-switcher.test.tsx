@@ -25,6 +25,7 @@ jest.mock( '@wordpress/data', () => ( {
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
 	createSelector: jest.fn(),
+	keyedReducer: () => () => ( {} ),
 } ) );
 
 // Test data
