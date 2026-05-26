@@ -51,7 +51,7 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
-		"typescript": "^5.8.3",
+		"typescript": "^5.9.3",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {

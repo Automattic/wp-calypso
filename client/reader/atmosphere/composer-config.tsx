@@ -1,6 +1,7 @@
 import { createPostMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { useAtmosphereInteractionSettings } from './interaction-settings';
 import { getThreadUrl } from './route';
 import { useAtmosphereComposerMedia } from './use-atmosphere-composer-media';
 import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
@@ -154,6 +155,7 @@ export const atmosphereComposerConfig: ComposerConfig<
 		} );
 	},
 	useMedia: useAtmosphereComposerMedia,
+	useProtocolExtras: useAtmosphereInteractionSettings,
 };
 
 function titleForMode( mode: ActiveMode, t: Translate ): string {
