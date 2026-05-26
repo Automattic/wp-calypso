@@ -102,7 +102,7 @@ When you open <http://calypso.localhost:3000> in your browser and you encounter 
 
 ### It runs, but I'm not seeing any of my changes
 
-Webpack may be having issues with watching - [see their documentation on troubleshooting watching](https://webpack.github.io/docs/troubleshooting.html#watching).
+Webpack may be having issues with watching - [see their documentation on troubleshooting watching](https://webpack.js.org/configuration/watch/).
 
 #### Domain other than calypso.localhost
 
