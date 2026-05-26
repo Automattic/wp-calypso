@@ -1,6 +1,6 @@
 # Component Documentation Template
 
-_Use this as a README.md template when documenting components. If you are creating a new component, you can copy and paste this entire document as a starting point. See the [Button documentation](../design/buttons) for a good example._
+_Use this as a README.md template when documenting components. If you are creating a new component, you can copy and paste this entire document as a starting point. See the [Button documentation](../packages/components/src/button/README.md) for a good example._
 
 Write a short, high-level explanation of the component with a focus on what problem it solves in the interface. Do not include any technical information in this description.
 Example:
@@ -12,8 +12,7 @@ Example:
 First, display a `jsx` code block to show an example of usage, including import statements and a React component.
 
 ```jsx
-import { Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicons';
+import { Button, Gridicon } from '@automattic/components';
 
 export default function RockOnButton() {
 	return (
