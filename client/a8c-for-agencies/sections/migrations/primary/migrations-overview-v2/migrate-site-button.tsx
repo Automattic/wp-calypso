@@ -106,7 +106,11 @@ const MigrateSiteButton = () => {
 				onClick={ toggleMenu }
 			>
 				{ translate( 'Migrate your sites' ) }
-				<Gridicon className={ clsx( { reverse: isMenuVisible } ) } icon="chevron-down" />
+				<Gridicon
+					className={ clsx( { reverse: isMenuVisible } ) }
+					icon="chevron-down"
+					size={ 18 }
+				/>
 			</Button>
 			<Popover
 				noArrow={ false }

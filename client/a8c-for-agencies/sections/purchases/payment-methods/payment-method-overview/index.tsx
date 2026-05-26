@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -134,7 +134,7 @@ export default function PaymentMethodOverview() {
 						<MobileSidebarNavigation />
 
 						{ hasStoredCards && (
-							<Button href={ addCardURL } onClick={ onAddNewCardClick } primary>
+							<Button href={ addCardURL } onClick={ onAddNewCardClick } variant="primary">
 								{ translate( 'Add new card' ) }
 							</Button>
 						) }

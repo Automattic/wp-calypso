@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -255,7 +256,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 					<Actions>
 						<div className="assign-license__controls">
 							<Button
-								borderless
+								variant="tertiary"
 								onClick={ onClickAssignLater }
 								disabled={ isPending }
 								className="assign-license-form__assign-later"
@@ -264,10 +265,10 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 							</Button>
 
 							<Button
-								primary
+								variant="primary"
 								className="assign-license__assign-now"
 								disabled={ selectedSite?.ID === 0 }
-								busy={ isPending }
+								isBusy={ isPending }
 								onClick={ onClickAssignLicenses }
 							>
 								{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {

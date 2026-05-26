@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -63,7 +63,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button
-				primary
+				variant="primary"
 				href={ A4A_MARKETPLACE_PRODUCTS_LINK }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_a4a_sites_add_products_click' ) );

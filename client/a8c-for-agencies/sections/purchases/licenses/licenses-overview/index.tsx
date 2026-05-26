@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -73,7 +73,11 @@ export default function LicensesOverview( {
 						<Title>{ title } </Title>
 						<Actions className="a4a-licenses__header-actions">
 							<MobileSidebarNavigation />
-							<Button href={ A4A_MARKETPLACE_LINK } onClick={ onIssueNewLicenseClick } primary>
+							<Button
+								href={ A4A_MARKETPLACE_LINK }
+								onClick={ onIssueNewLicenseClick }
+								variant="primary"
+							>
 								{ translate( 'Issue new license' ) }
 							</Button>
 						</Actions>
