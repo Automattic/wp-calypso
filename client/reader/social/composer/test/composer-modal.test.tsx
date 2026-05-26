@@ -503,6 +503,39 @@ describe( '<ComposerModal>', () => {
 		);
 	} );
 
+	it( 'canonical tracks props win when getTracksProps() returns a colliding key', async () => {
+		const user = userEvent.setup();
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () =>
+				mutationOptions< TestResult, TestError, TestParams >( {
+					mutationFn: async () => ( { uri: 'at://posted' } ),
+				} ),
+			useProtocolExtras: () => ( {
+				renderControls: () => null,
+				renderTrigger: () => null,
+				extendBuildParams: ( params ) => params,
+				// Try to clobber a canonical prop — the modal must not let this through.
+				getTracksProps: () => ( { connection_id: 999, my_extra: 'kept' } ),
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'Hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'test_composer_published_standalone',
+				expect.objectContaining( { connection_id: 7, my_extra: 'kept' } )
+			)
+		);
+	} );
+
 	it( 'fires config.logBadRequest when an error of kind bad_request arrives', async () => {
 		const user = userEvent.setup();
 		const logBadRequest = jest.fn();

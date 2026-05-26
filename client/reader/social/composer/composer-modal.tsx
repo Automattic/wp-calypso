@@ -197,7 +197,9 @@ export function ComposerModal< TError, TParams, TResult >() {
 				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
 				const extraProps = protocolExtrasSlot.getTracksProps?.() ?? {};
-				dispatch( recordReaderTracksEvent( event, { ...props, ...extraProps } ) );
+				// Extras merged first so canonical props (connection_id, mode_kind, …)
+				// always win when a protocol's extras key collides.
+				dispatch( recordReaderTracksEvent( event, { ...extraProps, ...props } ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
