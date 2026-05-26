@@ -1,9 +1,11 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViews } from 'calypso/components/dataviews';
 import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import MigrationsCommissionsListMobileView from './mobile-view';
@@ -121,7 +123,17 @@ export default function MigrationsCommissionsList( {
 							dataViewsState,
 							defaultLayouts: { table: {} },
 						} }
-					/>
+					>
+						<HStack
+							className="dataviews__view-actions"
+							justify="end"
+							style={ { paddingInline: '64px' } }
+						>
+							<DataViews.ViewConfig />
+						</HStack>
+						<DataViews.Layout />
+						<DataViews.Footer />
+					</ItemsDataViews>
 				</div>
 			) : (
 				<MigrationsCommissionsListMobileView
