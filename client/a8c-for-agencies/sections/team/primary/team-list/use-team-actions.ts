@@ -37,6 +37,7 @@ export default function useTeamActions( {
 			{
 				id: 'cancel-user-invite',
 				label: translate( 'Cancel invite' ),
+				isDestructive: true,
 				isEligible( item: TeamMember ) {
 					return isNotOwner( item ) && isInvited( item );
 				},
@@ -57,6 +58,7 @@ export default function useTeamActions( {
 			{
 				id: 'leave-agency',
 				label: translate( 'Leave agency' ),
+				isDestructive: true,
 				isEligible( item: TeamMember ) {
 					return isNotOwner( item ) && item.status === 'active' && isSelf( item );
 				},
@@ -67,6 +69,7 @@ export default function useTeamActions( {
 			{
 				id: 'remove-team-member',
 				label: translate( 'Remove team member' ),
+				isDestructive: true,
 				isEligible( item: TeamMember ) {
 					return isNotOwner( item ) && item.status === 'active' && ! isSelf( item ) && canRemove;
 				},
