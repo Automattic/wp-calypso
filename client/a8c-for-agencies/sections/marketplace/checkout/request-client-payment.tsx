@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Tooltip } from '@automattic/components';
+import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Button,
@@ -369,9 +369,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		<>
 			<div className="checkout__client-referral-form">
 				<FormFieldset>
+					<FormLabel htmlFor="referral-email">{ translate( 'Client’s email address' ) }</FormLabel>
 					<TextControl
 						__nextHasNoMarginBottom
-						label={ translate( 'Client’s email address' ) }
+						id="referral-email"
 						name="email"
 						value={ email }
 						onChange={ onEmailChange }
@@ -389,9 +390,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
+					<FormLabel htmlFor="referral-message">{ translate( 'Custom message' ) }</FormLabel>
 					<TextareaControl
 						__nextHasNoMarginBottom
-						label={ translate( 'Custom message' ) }
+						id="referral-message"
 						name="message"
 						placeholder={ translate(
 							'Send a message to your client about this request for payment.'
