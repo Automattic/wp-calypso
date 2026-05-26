@@ -14,7 +14,7 @@ You can install Calypso directly on your machine by following the next steps, or
 
 To be able to clone the repository and run the application you need:
 
-- Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the `"engines"` section of [package.json](https://github.com/Automattic/wp-calypso/blob/HEAD/package.json) **(this bit about versions is important, that's why I'm using bold)**. On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist).
+- Install the [Node.js](http://nodejs.org/) and matching [Yarn](https://yarnpkg.com/) [versions](https://nodejs.org/en/download/releases/) listed in the `"engines"` section of [package.json](https://github.com/Automattic/wp-calypso/blob/HEAD/package.json) **(this bit about versions is important, that's why I'm using bold)**. On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist).
 - Please note that in Debian/Ubuntu versions of Linux, `node` command is renamed to `nodejs`. This will cause Calypso to fail during installation. Follow the instructions [here](https://stackoverflow.com/a/18130296) to create a symlink to `node`.
 - [Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 
@@ -54,7 +54,7 @@ To find all available sections in the main entry point, you can refer to the [se
 Additionally, in Calypso, we use multiple [Webpack entry points](https://webpack.js.org/concepts/entry-points/) for separating concerns and serving smaller bundles to the user at any given time.
 Building a limited number of entry points speeds up the build process, and to allow that, the `ENTRY_LIMIT` environment variable is available to allow building and running only a specific entry point.
 
-For example: `ENTRY_LIMIT=entry-login,entry-main npm start` would start Calypso and only build the login and the main entry points.
+For example: `ENTRY_LIMIT=entry-login,entry-main yarn start` would start Calypso and only build the login and the main entry points.
 
 To find all available entry points, you can refer to the `entry` option in Calypso's primary `webpack.config.js` file.
 
