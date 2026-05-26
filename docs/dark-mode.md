@@ -20,11 +20,15 @@ Dashboard apps opt in to color-scheme support through the app config, while clas
 Dashboard dark styles are activated from `client/dashboard/app/style.scss`:
 
 ```scss
-:root[data-theme='dark'] {
-	@include dashboard-dark-theme;
+// Keep dashboard dark mode out of browser print/PDF output. Printed pages should
+// fall back to the default light theme variables even when the screen is dark.
+@media screen {
+	:root[data-theme='dark'] {
+		@include dashboard-dark-theme;
+	}
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
 	:root[data-theme='system'] {
 		@include dashboard-dark-theme;
 	}
@@ -88,10 +92,10 @@ Common cases that may need an override include third-party components, embedded 
 
 For broad overrides to shared or third-party components, prefer adding a focused mixin in `client/dashboard/app/_dark-theme.scss`. Keep those overrides narrow and grouped by the component or surface they target.
 
-When an override truly has to live in component-specific Sass, use the `when-dark-theme` mixin from `packages/ui/src/utils/_mixins.scss`. It covers both explicit dark mode and system mode when the OS prefers dark:
+When an override truly has to live in component-specific Sass, use the `when-dark-theme` mixin from `client/assets/stylesheets/shared/mixins/_dark-theme.scss`. It covers both explicit dark mode and system mode when the OS prefers dark:
 
 ```scss
-@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
 .dashboard-example {
 	background: #fff;
@@ -101,8 +105,6 @@ When an override truly has to live in component-specific Sass, use the `when-dar
 	}
 }
 ```
-
-Adjust the relative import path to match the stylesheet location.
 
 ## Package Components
 
