@@ -46,8 +46,8 @@ class Post extends React.Component {
 
 		return (
 			<div id={ 'post-' + post.ID } className="post">
-				<h1 class="post-title">{ post.title }</h1>
-				<div class="post-content">{ post.content }</div>
+				<h1 className="post-title">{ post.title }</h1>
+				<div className="post-content">{ post.content }</div>
 			</div>
 		);
 	}
