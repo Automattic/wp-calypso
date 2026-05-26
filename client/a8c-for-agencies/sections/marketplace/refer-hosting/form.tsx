@@ -1,7 +1,7 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
@@ -121,7 +121,7 @@ export default function ReferHostingForm( {
 	const { formTitle, successTitle, ctaText, companyTitle, contactTitle, events, fields, api } =
 		config;
 
-	const { countryOptions } = useCountriesAndStates();
+	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 
 	const {
 		formData,
@@ -142,6 +142,13 @@ export default function ReferHostingForm( {
 		updateFormData( name, value );
 		updateValidationError( { [ name ]: '' } );
 	};
+
+	const stateOptions = stateOptionsMap[ formData.country ];
+
+	useEffect( () => {
+		handleInputChange( 'state', '' );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ formData.country ] );
 
 	const handleSubmit = useCallback( () => {
 		const error = validate( formData );
@@ -236,13 +243,17 @@ export default function ReferHostingForm( {
 					options={ countryOptions }
 				/>
 
-				<TextField
-					label={ translate( 'State/Province (optional)' ) }
-					name="state"
-					error={ validationError.state }
-					value={ formData.state }
-					onChange={ ( value: string ) => handleInputChange( 'state', value ) }
-				/>
+				{ stateOptions && (
+					<SearchableDropdownField
+						label={ translate( 'State' ) }
+						name="state"
+						error={ validationError.state }
+						value={ formData.state }
+						onChange={ ( value: string ) => handleInputChange( 'state', value ) }
+						placeholder={ translate( 'Select state' ) }
+						options={ stateOptions }
+					/>
+				) }
 
 				<TextField
 					label={ translate( 'City' ) }
