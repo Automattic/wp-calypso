@@ -95,6 +95,7 @@ The following variables adhere to the type scale and save you from having to cal
 | `$font-title-large`      | 32     | 2     |
 | `$font-title-medium`     | 24     | 1.5   |
 | `$font-title-small`      | 20     | 1.25  |
+| `$font-body-large`       | 18     | 1.125 |
 | `$font-body`             | 16     | 1     |
 | `$font-body-small`       | 14     | 0.875 |
 | `$font-body-extra-small` | 12     | 0.75  |
