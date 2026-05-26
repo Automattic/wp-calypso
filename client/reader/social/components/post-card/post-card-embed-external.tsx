@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useSocialAnalytics } from './analytics-context';
 import type { SocialEmbedExternal, SocialLongForm } from '../../types';
 
@@ -55,6 +55,7 @@ export function PostCardEmbedExternal( {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const [ expanded, setExpanded ] = useState( false );
+	const panelId = useId();
 
 	const handleClick = () => {
 		if ( ! analytics ) {
@@ -147,6 +148,7 @@ export function PostCardEmbedExternal( {
 					variant="tertiary"
 					onClick={ handleToggleExpanded }
 					aria-expanded={ expanded }
+					aria-controls={ panelId }
 				>
 					{ expanded
 						? translate( 'Hide article' )
@@ -157,7 +159,7 @@ export function PostCardEmbedExternal( {
 						  } ) }
 				</Button>
 				{ expanded && (
-					<article className="social-post-card-embed-external__long-form-body">
+					<article id={ panelId } className="social-post-card-embed-external__long-form-body">
 						{ paragraphs.length === 0 ? (
 							<p className="social-post-card-embed-external__long-form-empty">
 								{ translate( 'No preview text is available for this article.' ) }

@@ -77,6 +77,27 @@ describe( 'PostCardEmbedExternal', () => {
 			expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
 		} );
 
+		it( 'wires aria-controls on the toggle to the article panel id', async () => {
+			// WAI-ARIA disclosure pattern: the toggle owns the panel via
+			// `aria-controls`, so assistive tech can announce the controlled
+			// region by id and follow the relationship.
+			const user = userEvent.setup();
+			render(
+				<PostCardEmbedExternal
+					embed={ { ...embed, long_form: longForm } }
+					parentPostUri="at://post"
+				/>
+			);
+			const toggle = screen.getByRole( 'button', { name: /Read article on Herve Family/i } );
+			const panelId = toggle.getAttribute( 'aria-controls' );
+			expect( panelId ).toBeTruthy();
+
+			await user.click( toggle );
+			const panel = document.getElementById( panelId as string );
+			expect( panel ).not.toBeNull();
+			expect( panel?.tagName ).toBe( 'ARTICLE' );
+		} );
+
 		it( 'expands to show the article body and a "View original" link when the toggle is clicked', async () => {
 			const user = userEvent.setup();
 			render(
