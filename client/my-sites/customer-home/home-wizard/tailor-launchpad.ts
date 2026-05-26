@@ -46,6 +46,7 @@ export type InferredContext = {
 	niche?: string;
 	vibe?: string;
 	audience?: string;
+	tagline?: string;
 };
 
 export type TailorLaunchpadFromIntentInput = {
@@ -171,7 +172,7 @@ function coerceInferred( raw: Record< string, unknown > | undefined ): InferredC
 		return {};
 	}
 	const out: InferredContext = {};
-	for ( const key of [ 'goal', 'brand_name', 'niche', 'vibe', 'audience' ] as const ) {
+	for ( const key of [ 'goal', 'brand_name', 'niche', 'vibe', 'audience', 'tagline' ] as const ) {
 		const value = raw[ key ];
 		if ( typeof value === 'string' && value.trim().length > 0 ) {
 			out[ key ] = value.trim();
@@ -352,7 +353,12 @@ async function tailorFromIntentViaMock(
 	} );
 	return {
 		task_ids: tasks.map( ( t ) => t.id ),
-		inferred: { goal: 'personal blog', niche: 'general', vibe: 'minimal' },
+		inferred: {
+			goal: 'personal blog',
+			niche: 'general',
+			vibe: 'minimal',
+			tagline: 'Notes from a personal blog',
+		},
 	};
 }
 
@@ -470,6 +476,7 @@ Extract these fields from the user's description. Used downstream by on-demand c
 - "niche": subject area (e.g. "photography", "indie games", "vegan baking"). Required if topic is implied.
 - "vibe": aesthetic hint if mentioned or strongly implied (e.g. "minimal Japan-inspired", "warm and editorial", "bold and modern"). Omit if neutral.
 - "audience": who the site is for, if implied (e.g. "fellow photographers", "small-batch buyers").
+- "tagline": a polished site tagline drafted from the user's description. Max 80 characters. Third-person or noun phrase — NOT first-person ("I", "my", "we"). NOT a sentence about the user's intent ("I want to…"). Examples: "Photography from the road", "Handmade silver jewelry, made in Lisbon", "A reading life, one book at a time". Required.
 
 ============ first_post_draft ============
 Write a friendly starter blog post the user can edit and publish:
@@ -497,7 +504,7 @@ Return ONE valid JSON object. No prose, no markdown fences. First character MUST
 
 Schema: {
   "task_ids": [...],
-  "inferred": {"goal": "...", "brand_name": "...", "niche": "...", "vibe": "...", "audience": "..."},
+  "inferred": {"goal": "...", "brand_name": "...", "niche": "...", "vibe": "...", "audience": "...", "tagline": "..."},
   "first_post_draft": {"title": "...", "subtitle": "...", "paragraphs": ["...", "..."]}
 }
 
@@ -569,7 +576,12 @@ async function tailorAndDraftViaMock(
 	} );
 	return {
 		task_ids: tasks.map( ( t ) => t.id ),
-		inferred: { goal: 'personal blog', niche: 'general', vibe: 'minimal' },
+		inferred: {
+			goal: 'personal blog',
+			niche: 'general',
+			vibe: 'minimal',
+			tagline: 'Notes from a personal blog',
+		},
 		first_post_draft: {
 			title: 'Why I started this',
 			subtitle: 'Introduce yourself and your project',

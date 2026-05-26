@@ -726,6 +726,16 @@ function useTailoredFlow() {
 					patch.taskIds = result.task_ids;
 				}
 				mergeWizardState( patch );
+				// Tagline: Dolly drafts a polished short version from the raw
+				// description (≤80 chars, third-person). Fall back to the raw
+				// description if it's missing or empty. Cap client-side as a
+				// safety net in case Dolly ignores the length hint.
+				if ( siteId !== null ) {
+					const tagline = result.inferred?.tagline?.trim() || trimmedIntent;
+					if ( tagline !== '' ) {
+						dispatch( saveSiteSettings( siteId, { blogdescription: tagline.slice( 0, 100 ) } ) );
+					}
+				}
 				// Pre-warm the union of Dolly's picks and the goal's guaranteed
 				// pattern tasks — the latter are merged into the rendered list, so
 				// their copy must be ready too.
@@ -737,6 +747,14 @@ function useTailoredFlow() {
 			} )
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );
+				// Dolly failed → fall back to the raw description as tagline so
+				// the site still gets one. Not ideal (could be long/awkward) but
+				// better than an empty tagline.
+				if ( siteId !== null && trimmedIntent !== '' ) {
+					dispatch(
+						saveSiteSettings( siteId, { blogdescription: trimmedIntent.slice( 0, 100 ) } )
+					);
+				}
 				// Tailoring failed → the dashboard renders the deterministic
 				// goal-based list, which still includes goal-tagged pattern tasks
 				// (gallery / events). Pre-warm those so their copy + images are
@@ -801,24 +819,14 @@ export default function HomeDashboard() {
 	useBodyClass( 'is-home-wizard-open', isWizardOpen );
 
 	const handleWizardComplete = ( answers: WizardAnswers ) => {
-		// Push the wizard's name + description straight to Site Settings so they
-		// persist site-wide — and so the (now-removed) "set a title and tagline"
-		// task is unnecessary. The user's description IS the tagline: it lands
-		// verbatim in `blogdescription` (the WordPress Tagline field), set
-		// immediately on finish rather than asking them to write it again.
+		// Push the wizard's site name to Site Settings immediately so it persists
+		// site-wide. The tagline (blogdescription) is written later by the Dolly
+		// path inside useTailoredFlow — Dolly drafts a polished short version
+		// from the user's raw description, with the raw text as a fallback if
+		// Dolly returns no tagline or fails.
 		const trimmedName = answers.siteName?.trim() ?? '';
-		const trimmedDescription = answers.intent?.trim() ?? '';
-		if ( selectedSiteId !== null ) {
-			const settings: { blogname?: string; blogdescription?: string } = {};
-			if ( trimmedName !== '' && trimmedName !== currentSiteName.trim() ) {
-				settings.blogname = trimmedName;
-			}
-			if ( trimmedDescription !== '' ) {
-				settings.blogdescription = trimmedDescription;
-			}
-			if ( Object.keys( settings ).length > 0 ) {
-				dispatch( saveSiteSettings( selectedSiteId, settings ) );
-			}
+		if ( selectedSiteId !== null && trimmedName !== '' && trimmedName !== currentSiteName.trim() ) {
+			dispatch( saveSiteSettings( selectedSiteId, { blogname: trimmedName } ) );
 		}
 		finishWizard();
 		runFromAnswers( answers );
