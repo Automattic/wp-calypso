@@ -32,7 +32,7 @@ Build script downloads all language translations from <https://widgets.wp.com/la
 
 ### Build Script
 
-Build script can be run with `yarn run build-languages` and it will basically execute `bin/build-languages.js`, but it would only work if both `public/calypso-strings.pot` or `public/chunks-map.json` exist.
+Build script can be run with `yarn run build-languages`; it runs `yarn run translate` (generating `public/calypso-strings.pot`) and then executes `bin/build-languages.js`, but it requires `public/chunks-map.json` to already exist.
 
 To ensure you have the required files, you need to build or run a development environment with either `BUILD_TRANSLATION_CHUNKS=true yarn run build` / `ENABLE_FEATURES=use-translation-chunks yarn run build` or `BUILD_TRANSLATION_CHUNKS=true yarn run start` / `ENABLE_FEATURES=use-translation-chunks yarn run start` respectively.
 
@@ -55,13 +55,13 @@ When conditions are met, the server will load the JS format of the initially req
 
 #### Language manifest
 
-Language manifest file is resolved by either having `window.i18nLanguageManifest` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `public/languages/{localeSlug}-language-manifest.json`.
+Language manifest file is resolved by either having `window.i18nLanguageManifest` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `/calypso/languages/{localeSlug}-language-manifest.json`.
 
 It contains the locale data and an array of translated chunks filenames. It is used to set the locale of Calypso with the initially required locale data.
 
 #### Translation chunk files
 
-Translation chunk file is resolved by either having `window.i18nTranslationChunks[chunk]` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `public/languages/{localeSlug}-{chunk}.json`.
+Translation chunk file is resolved by either having `window.i18nTranslationChunks[chunk]` when it's loaded by using a script tag and the `.js` format, or by fetching the `.json` file from `/calypso/languages/{localeSlug}-{chunk}.json`.
 
 It contains the translation strings that specific chunk includes and is used with `i18n.addTranslations` from `i18n-calypso` to extend translations in runtime.
 
