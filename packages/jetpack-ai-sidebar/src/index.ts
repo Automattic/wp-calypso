@@ -32,8 +32,10 @@ import {
 	stopBlockShimmer,
 	getSelectedOrRememberedBlock,
 	rememberSelectedBlock,
+	clearRememberedSelectedBlock,
 	notifyBlockActionComplete,
 	BLOCK_ACTION_COMPLETE_EVENT,
+	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -89,6 +91,14 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 		'jetpack'
 	),
 };
+
+const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
+	'translate',
+	'check-grammar',
+	'change-tone',
+	'simplify-text',
+	'generate-alt-text',
+];
 
 type JetpackAiSidebarPreviewFeature =
 	| 'aiEditorialReview'
@@ -175,6 +185,43 @@ function getPostLevelSuggestions( currentPostType?: string ) {
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
 		...getAiEditorialReviewSuggestions( currentPostType ),
 	];
+}
+
+function applySuggestionLimit< T extends { id: string } >(
+	suggestions: T[],
+	maxSuggestions?: number
+): T[] {
+	if (
+		typeof maxSuggestions !== 'number' ||
+		! Number.isFinite( maxSuggestions ) ||
+		suggestions.length <= maxSuggestions
+	) {
+		return suggestions;
+	}
+
+	const limit = Math.floor( maxSuggestions );
+	if ( limit <= 0 ) {
+		return [];
+	}
+
+	const aiEditorialReviewSuggestion = suggestions.find(
+		( suggestion ) => suggestion.id === AI_EDITORIAL_REVIEW_SUGGESTION.id
+	);
+	if ( ! aiEditorialReviewSuggestion ) {
+		return suggestions.slice( 0, limit );
+	}
+
+	const nonAiSuggestions = suggestions
+		.filter( ( suggestion ) => suggestion.id !== AI_EDITORIAL_REVIEW_SUGGESTION.id )
+		.sort( ( a, b ) => {
+			const aPriority = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( a.id );
+			const bPriority = LIMITED_BLOCK_SUGGESTION_PRIORITY.indexOf( b.id );
+			const normalizedAPriority = aPriority === -1 ? Number.MAX_SAFE_INTEGER : aPriority;
+			const normalizedBPriority = bPriority === -1 ? Number.MAX_SAFE_INTEGER : bPriority;
+			return normalizedAPriority - normalizedBPriority;
+		} );
+
+	return [ ...nonAiSuggestions.slice( 0, limit - 1 ), aiEditorialReviewSuggestion ];
 }
 
 // ---------- Show-component ability ----------
@@ -732,7 +779,7 @@ export const capabilities = {
  * @returns {Object} Object containing a suggestions array.
  */
 export function useSuggestions(
-	_maxSuggestions?: number,
+	maxSuggestions?: number,
 	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
 ): {
 	suggestions: Array< { id: string; label: string; prompt?: string } >;
@@ -780,6 +827,17 @@ export function useSuggestions(
 		};
 	}, [] );
 
+	useEffect( () => {
+		const handleSelectedBlockClear = () => {
+			clearRememberedSelectedBlock();
+			setHidden( false );
+		};
+		window.addEventListener( SELECTED_BLOCK_CLEAR_EVENT, handleSelectedBlockClear );
+		return () => {
+			window.removeEventListener( SELECTED_BLOCK_CLEAR_EVENT, handleSelectedBlockClear );
+		};
+	}, [] );
+
 	const editorContext = useSelect( ( select ) => {
 		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock: () => any };
 		const editor = select( 'core/editor' ) as { getCurrentPostType?: () => string | undefined };
@@ -794,7 +852,7 @@ export function useSuggestions(
 		setHidden( false );
 	}, [ editorContext.selectedBlock?.clientId ] );
 
-	const selectedBlock = editorContext.selectedBlock ?? getSelectedOrRememberedBlock();
+	const selectedBlock = editorContext.selectedBlock;
 	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
 	const blockTransformationsEnabled = isBlockTransformationsEnabled();
 	const applicable = useMemo(
@@ -839,17 +897,25 @@ export function useSuggestions(
 	}
 
 	if ( ! selectedBlock ) {
-		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
+		return {
+			suggestions: applySuggestionLimit(
+				getPostLevelSuggestions( editorContext.postType ),
+				maxSuggestions
+			),
+		};
 	}
 
 	if ( ! blockTransformationsEnabled ) {
-		return { suggestions: aiEditorialReviewSuggestions };
+		return { suggestions: applySuggestionLimit( aiEditorialReviewSuggestions, maxSuggestions ) };
 	}
 
 	return {
-		suggestions: [
-			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
-			...aiEditorialReviewSuggestions,
-		],
+		suggestions: applySuggestionLimit(
+			[
+				...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+				...aiEditorialReviewSuggestions,
+			],
+			maxSuggestions
+		),
 	};
 }

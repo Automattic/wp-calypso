@@ -36,6 +36,7 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 >;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
+let mockBlocksByClientId: Record< string, any > = {};
 
 jest.mock( '@wordpress/components', () => {
 	const React = require( 'react' );
@@ -61,6 +62,7 @@ jest.mock( '@wordpress/data', () => ( {
 			if ( store === 'core/block-editor' ) {
 				return {
 					getSelectedBlock: () => mockSelectedBlock,
+					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 					getBlocks: () => [],
 				};
 			}
@@ -118,6 +120,7 @@ function installPostTypeMock( postType?: string ) {
 				if ( store === 'core/block-editor' ) {
 					return {
 						getSelectedBlock: () => mockSelectedBlock,
+						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
 					};
 				}
@@ -146,12 +149,14 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 
 function SuggestionsProbe( {
 	onSuggestions,
+	maxSuggestions,
 	suggestionsVisible = true,
 }: {
 	onSuggestions: ( suggestions: any[] ) => void;
+	maxSuggestions?: number;
 	suggestionsVisible?: boolean;
 } ) {
-	const { suggestions } = useSuggestions( undefined, { suggestionsVisible } );
+	const { suggestions } = useSuggestions( maxSuggestions, { suggestionsVisible } );
 	React.useEffect( () => {
 		onSuggestions( suggestions );
 	}, [ onSuggestions, suggestions ] );
@@ -262,6 +267,7 @@ describe( 'getEmptyViewSuggestions', () => {
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
 		mockSelectedBlock = null;
+		mockBlocksByClientId = {};
 		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
 		mockedRecordTracksEvent.mockClear();
@@ -350,6 +356,55 @@ describe( 'useSuggestions', () => {
 					surface: 'jetpack_ai_sidebar',
 				},
 			],
+		] );
+	} );
+
+	it( 'keeps AI Editorial Review visible when block suggestions are limited', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-limited', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render(
+			React.createElement( SuggestionsProbe, {
+				onSuggestions,
+				maxSuggestions: 3,
+			} )
+		);
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Check grammar',
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'shows post-level suggestions after the selected-block chip is cleared', () => {
+		installAiEditorialReviewData();
+		const block = { clientId: 'b-clear', name: 'core/paragraph' };
+		mockSelectedBlock = block;
+		mockBlocksByClientId[ block.clientId ] = block;
+		const onSuggestions = jest.fn();
+
+		const { rerender } = render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toContain(
+			'Translate content'
+		);
+
+		mockSelectedBlock = null;
+		act( () => {
+			window.dispatchEvent( new Event( 'agents-manager-selected-block-cleared' ) );
+		} );
+		rerender( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
 		] );
 	} );
 

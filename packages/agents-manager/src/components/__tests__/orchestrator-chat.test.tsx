@@ -162,4 +162,48 @@ describe( 'OrchestratorChat', () => {
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
+
+	it( 'passes the floating suggestion limit to external providers', () => {
+		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( useSuggestions ).toHaveBeenCalledWith( 3, { suggestionsVisible: true } );
+	} );
+
+	it( 'does not limit external provider suggestions while docked', () => {
+		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
+	} );
 } );

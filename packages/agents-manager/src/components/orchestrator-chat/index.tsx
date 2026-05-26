@@ -154,7 +154,8 @@ export default function OrchestratorChat( {
 	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const dynamicSuggestions = useSuggestions?.( undefined, {
+	const maxDynamicSuggestions = isDocked ? undefined : 3;
+	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
 		suggestionsVisible: isOpen || isCompactMode,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
