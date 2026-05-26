@@ -60,7 +60,9 @@ export function AtmosphereInteractionSettings( {
 					{ label: String( translate( 'Nobody' ) ), value: 'nobody' },
 				] }
 				onChange={ ( next ) => {
-					setReplyAllow( applyReplyAllowRadio( next as 'anyone' | 'nobody' ) );
+					if ( next === 'anyone' || next === 'nobody' ) {
+						setReplyAllow( applyReplyAllowRadio( next ) );
+					}
 				} }
 			/>
 

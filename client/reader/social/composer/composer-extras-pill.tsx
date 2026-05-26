@@ -36,10 +36,11 @@ export function ComposerExtrasPill( {
 	const wasOpenRef = useRef( false );
 	const handleToggle = useCallback(
 		( isOpen: boolean ) => {
-			if ( isOpen && ! wasOpenRef.current ) {
+			const shouldFire = isOpen && ! wasOpenRef.current;
+			wasOpenRef.current = isOpen;
+			if ( shouldFire ) {
 				onOpen?.();
 			}
-			wasOpenRef.current = isOpen;
 		},
 		[ onOpen ]
 	);
