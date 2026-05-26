@@ -11,6 +11,16 @@
 		}
 	}
 
+	.dataviews-view-table .dataviews-column-primary__media {
+		max-width: 35px;
+		min-width: 35px;
+		min-height: 35px;
+
+		&::after {
+			box-shadow: none;
+		}
+	}
+
 	.plugin-manage-sites-pane {
 		.hosting-dashboard-layout-column__container {
 			.hosting-dashboard-layout__top-wrapper {
