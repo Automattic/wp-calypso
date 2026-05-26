@@ -2,6 +2,7 @@ import { isFreePlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import EmailNoDomainUpsell from 'calypso/my-sites/email/email-management/home/email-no-domain-upsell';
 import { recordEmailUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { useSelector } from 'calypso/state';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
@@ -22,10 +23,6 @@ const EmailNoDomain = ( {
 	);
 
 	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? '' );
-
-	const trackEventForPlan = () => {
-		recordEmailUpsellTracksEvent( source, 'plan' );
-	};
 
 	const trackEventForDomain = () => {
 		recordEmailUpsellTracksEvent( source, 'domain' );
@@ -53,22 +50,7 @@ const EmailNoDomain = ( {
 	};
 
 	if ( isFreePlanProduct ) {
-		return (
-			<EmptyContent
-				action={ translate( 'Upgrade to a plan' ) }
-				actionCallback={ trackEventForPlan }
-				actionURL={ `/plans/${ selectedSite.slug }` }
-				secondaryAction={ translate( 'Just search for a domain' ) }
-				secondaryActionCallback={ trackEventForDomain }
-				secondaryActionURL={ `/domains/add/${ selectedSite.slug }` }
-				line={ translate(
-					'Upgrade to a plan now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
-				) }
-				title={ translate( 'Get your own domain for a custom email address' ) }
-			>
-				{ trackImpression( 'plan' ) }
-			</EmptyContent>
-		);
+		return <EmailNoDomainUpsell selectedSite={ selectedSite } source={ source } />;
 	}
 
 	if ( hasAvailableDomainCredit ) {
