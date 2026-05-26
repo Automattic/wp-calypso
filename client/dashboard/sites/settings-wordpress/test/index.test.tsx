@@ -83,9 +83,9 @@ describe( '<WordPressSettings>', () => {
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		const versionSelect = await screen.findByRole( 'combobox', { name: 'WordPress version' } );
-		expect( versionSelect ).toHaveDisplayValue( '6.8.1 (Latest)' );
+		expect( versionSelect ).toHaveDisplayValue( 'Stable (6.8.1)' );
 
-		await user.selectOptions( versionSelect, '6.8.1 (Beta)' );
+		await user.selectOptions( versionSelect, 'Beta (6.8.1)' );
 		const scope = mockWordPressVersionSaved( 'beta' );
 
 		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
