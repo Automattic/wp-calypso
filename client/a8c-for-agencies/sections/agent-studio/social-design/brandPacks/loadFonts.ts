@@ -7,8 +7,7 @@ import type { BrandPack, BrandPackFont } from './types';
 // The Promise is stored synchronously before any await, so concurrent callers
 // for the same file (a pack that lists one font file under several roles)
 // share one registration instead of each fetching the binary and appending a
-// duplicate data-URL @font-face to <head> — duplicates that html-to-image then
-// re-embeds on every rasterization.
+// duplicate data-URL @font-face to <head>.
 const localRegistered = new Map< string, Promise< string > >();
 
 async function urlToDataUrl( url: string ): Promise< string > {
@@ -45,13 +44,6 @@ async function registerLocalPackFontUncached(
 	url: string
 ): Promise< string > {
 	const family = `pack-${ font.family.toLowerCase().replace( /\W+/g, '-' ) }-${ font.role }`;
-	// Inline the font binary as a data URL. Two reasons:
-	//  1. html-to-image's SVG snapshot loads in a fresh document context that
-	//     can't read document.fonts. The @font-face we ship into the snapshot
-	//     (see renderElaPng.injectFontFacesIntoSnapshot) needs a src the SVG
-	//     can resolve without network — data URLs always work.
-	//  2. Same-origin <style> with a data URL avoids any CORS surprise when
-	//     html-to-image clones styles.
 	let src = url;
 	try {
 		src = await urlToDataUrl( url );

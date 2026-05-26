@@ -1,4 +1,24 @@
-import type { BrandTokens, BrandTypography, FontCase, FontRole } from '../types';
+export type BrandTokens = {
+	brandPrimary: string;
+	brandSecondary: string;
+	textPrimary: string;
+	textSecondary: string;
+	textOnBrand: string;
+	surfacePrimary: string;
+	surfaceSecondary: string;
+	surfaceBrand: string;
+};
+
+export type FontRole = 'display' | 'h1' | 'h2' | 'h3' | 'eyebrow' | 'body' | 'mono';
+
+export type FontCase = 'as-typed' | 'uppercase' | 'lowercase' | 'title-case' | 'sentence-case';
+
+export type BrandTypography = {
+	headlineWeight: number;
+	headlineCase: 'uppercase' | 'asis' | 'titlecase';
+	headlineTracking: string;
+	headlineLineHeight: number;
+};
 
 export type BrandPackFont = {
 	role: FontRole;

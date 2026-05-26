@@ -11,12 +11,10 @@ interface CaptureSize {
  * post-fit subtree to a static HTML document Browserless can paint
  * without running any JS.
  *
- * Stays parallel to `renderBeaHtmlToPng` (same offscreen-render +
- * `prepareBeaRenderElement` shape) but stops one step earlier — the
- * `<canvas>` toPng step moves server-side to the new `social/.../png`
- * endpoint, which lets the agency cache a stable attachment URL on
- * the collateral post and bypass the host-side `html-to-image`
- * dependency.
+ * The rasterisation step lives server-side now (the wpcom
+ * `social/.../png` endpoint hands the captured HTML to Browserless and
+ * caches the resulting attachment URL on the collateral post). The
+ * client only has to produce a deterministic, post-fit HTML snapshot.
  */
 export async function captureFittedTileHtml( html: string, size: CaptureSize ): Promise< string > {
 	const wrapper = document.createElement( 'div' );

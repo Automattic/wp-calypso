@@ -33,11 +33,12 @@ export async function loadGoogleFont( family: string ): Promise< void > {
 		return;
 	}
 
-	// Same-origin inlining via <style> with data-URL @font-face rules.
-	// This makes the font available to BOTH the live UI and html-to-image's
-	// SVG snapshot pipeline (cross-origin <link> stylesheets are blocked
-	// from getCSSRules access, so the snapshot would otherwise fall back to
-	// system fonts). See services/inlineGoogleFont.ts for details.
+	// Same-origin inlining via <style> with data-URL @font-face rules. The
+	// live preview's canvas-based text fitting reads metrics off the inlined
+	// face, and the inline path is also what some Chromium foreignObject
+	// rasterization contexts need (see services/inlineGoogleFont.ts). If
+	// inlining fails, fall back to a plain <link> so the live UI still shows
+	// the right family.
 	try {
 		const { inlineGoogleFont } = await import( './inlineGoogleFont' );
 		await inlineGoogleFont( family );

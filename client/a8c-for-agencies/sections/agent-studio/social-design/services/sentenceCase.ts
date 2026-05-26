@@ -2,10 +2,10 @@
 //
 // Both renderers (Ela documents, Bea social) need to honor a brand's
 // sentence-case headline rule. CSS text-transform cannot produce sentence
-// case, and html-to-image's foreignObject snapshot does not honor
-// ::first-letter overrides anyway, so the transform is baked into the source
-// text in JS. Keep this the single source of truth so the two renderers
-// never drift apart.
+// case (no `sentence-case` keyword; `::first-letter` doesn't cover the
+// "rest of the word stays lowercase" part), so the transform is baked into
+// the source text in JS. Keep this the single source of truth so the two
+// renderers never drift apart.
 
 // Brand proper nouns that must keep their canonical casing through a
 // sentence-case transform. DESIGN.md is explicit: sentence-case headings

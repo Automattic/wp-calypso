@@ -224,7 +224,6 @@
 		"d3-time-format": "^4.1.0",
 		"debug": "^4.4.1",
 		"enhanced-resolve": "5.9.3",
-		"html-to-image": "^1.11.13",
 		"http-proxy-middleware": "^3.0.5",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",

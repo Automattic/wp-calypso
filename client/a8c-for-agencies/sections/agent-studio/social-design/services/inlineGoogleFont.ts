@@ -1,18 +1,15 @@
 /* eslint-disable no-console */
 // Inlines a Google Font as a same-origin <style> tag containing @font-face
-// rules with data-URL src values. This is a workaround for two problems:
+// rules with data-URL src values. We fetch the Google Fonts CSS, parse out the
+// woff2 URLs, fetch each file, base64-encode, and rewrite the CSS to use
+// data: URIs. Then inject as a same-origin <style> in document head.
 //
-//   1. html-to-image walks every stylesheet on the page during its
-//      embedWebFonts step. Cross-origin sheets (fonts.googleapis.com) throw
-//      SecurityError on cssRules access, so the @font-face rules never make
-//      it into the rendered SVG. The output PNG falls back to system fonts.
-//   2. Some Chromium foreignObject contexts don't reliably honor fonts
-//      registered via <link rel="stylesheet"> when rasterizing to canvas.
-//      Inlined data-URL @font-face rules always work.
-//
-// We fetch the Google Fonts CSS, parse out the woff2 URLs, fetch each file,
-// base64-encode, and rewrite the CSS to use data: URIs. Then inject as a
-// same-origin <style> in document head.
+// Same-origin inlining keeps the live preview's canvas-based text fitting
+// honest: `canvas.measureText` (and the binary-search font sizing it feeds)
+// resolves the same family the on-screen DOM does. Some Chromium
+// foreignObject rasterization contexts also fail to honor fonts registered
+// via cross-origin <link rel="stylesheet">, and the inline path sidesteps
+// that.
 
 import { GOOGLE_FONTS } from './googleFonts';
 
