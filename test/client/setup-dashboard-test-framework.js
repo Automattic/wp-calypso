@@ -15,17 +15,6 @@ afterEach( () => {
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// jsdom doesn't expose fetch on its global, so tests that go through native
-// fetch() (e.g. wp.org REST endpoints) need a polyfill. node-fetch is the
-// closest fit because nock can intercept it.
-if ( typeof global.fetch === 'undefined' ) {
-	const nodeFetch = require( 'node-fetch' );
-	global.fetch = nodeFetch.default;
-	global.Headers = nodeFetch.Headers;
-	global.Request = nodeFetch.Request;
-	global.Response = nodeFetch.Response;
-}
-
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
 // jsdom doesn't implement IntersectionObserver, which is used by

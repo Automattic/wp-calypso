@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { wpOrgCoreVersionQuery } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -35,23 +37,19 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-function mockWpOrgCoreVersions( {
-	latest = '6.8.1',
-	beta = '7.0-RC2',
-}: { latest?: string; beta?: string } = {} ) {
-	nock( 'https://api.wordpress.org' )
-		.persist()
-		.get( '/core/version-check/1.7/' )
-		.query( true )
-		.reply( 200, ( uri ) => {
-			const channel = new URL( `https://api.wordpress.org${ uri }` ).searchParams.get( 'channel' );
-			return { offers: [ { version: channel === 'beta' ? beta : latest } ] };
-		} );
+// Seed the wp.org core version queries — production primes these via the route
+// loader's ensureQueryData, so doing the same in tests mirrors the real flow
+// rather than going through native fetch (which jsdom doesn't expose).
+function seedWpOrgCoreVersions(
+	queryClient: QueryClient,
+	{ latest = '6.8.1', beta = '7.0-RC2' }: { latest?: string; beta?: string } = {}
+) {
+	queryClient.setQueryData( wpOrgCoreVersionQuery().queryKey, latest );
+	queryClient.setQueryData( wpOrgCoreVersionQuery( 'beta' ).queryKey, beta );
 }
 
 function mockApi( versionTag: string = 'latest', mockedSite: Site = site ) {
 	mockSite( mockedSite );
-	mockWpOrgCoreVersions();
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version` )
@@ -93,8 +91,10 @@ describe( '<WordPressSettings>', () => {
 		const user = userEvent.setup();
 
 		mockApi();
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		seedWpOrgCoreVersions( queryClient );
 
-		render( <WordPressSettings siteSlug={ site.slug } /> );
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		const versionSelect = await screen.findByRole( 'combobox', { name: 'WordPress version' } );
@@ -160,8 +160,10 @@ describe( '<WordPressSettings>', () => {
 		} as unknown as Site;
 
 		mockApi( 'beta', autoEnrolledSite );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		seedWpOrgCoreVersions( queryClient );
 
-		render( <WordPressSettings siteSlug={ site.slug } /> );
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		expect(
@@ -217,8 +219,10 @@ describe( '<WordPressSettings>', () => {
 
 		test( 'renders the form for a staging site', async () => {
 			mockApi();
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			seedWpOrgCoreVersions( queryClient );
 
-			render( <WordPressSettings siteSlug={ site.slug } /> );
+			render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 			await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 			expect( await screen.findByRole( 'combobox', { name: 'WordPress version' } ) ).toBeVisible();
