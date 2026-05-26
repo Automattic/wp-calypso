@@ -1,13 +1,13 @@
+import { likeSiteCommentMutation, unlikeSiteCommentMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { get, pick } from 'lodash';
+import { flowRight, get, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useCallback } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
-import { getCommentLike } from 'calypso/state/comments/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -31,6 +31,10 @@ class CommentLikeButtonContainer extends Component {
 	}
 
 	recordLikeToggle = ( liked ) => {
+		if ( this.props.isLikePending || this.props.isUnlikePending ) {
+			return;
+		}
+
 		this.props.onLikeToggle( liked );
 
 		if ( liked ) {
@@ -55,8 +59,8 @@ class CommentLikeButtonContainer extends Component {
 
 	render() {
 		const props = pick( this.props, [ 'showZeroCount', 'tagName' ] );
-		const likeCount = get( this.props.commentLike, 'like_count' );
-		const iLike = get( this.props.commentLike, 'i_like' );
+		const likeCount = get( this.props.comment, 'like_count' );
+		const iLike = get( this.props.comment, 'i_like' );
 		const likedLabel = translate( 'Liked' );
 
 		const likeIcon = ReaderLikeIcon( {
@@ -83,21 +87,63 @@ CommentLikeButtonContainer.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	postId: PropTypes.number.isRequired,
 	commentId: PropTypes.number.isRequired,
+	comment: PropTypes.object.isRequired,
 	showZeroCount: PropTypes.bool,
 	tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	railcar: PropTypes.object,
 
 	// connected props:
-	commentLike: PropTypes.object,
 	likeComment: PropTypes.func.isRequired,
 	unlikeComment: PropTypes.func.isRequired,
 	onLikeToggle: PropTypes.func.isRequired,
+	isLikePending: PropTypes.bool,
+	isUnlikePending: PropTypes.bool,
 };
 
-export default connect(
-	( state, props ) => ( {
-		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
-		isLoggedIn: isUserLoggedIn( state ),
-	} ),
-	{ likeComment, recordReaderTracksEvent, unlikeComment, registerLastActionRequiresLogin }
+const withCommentLikeMutations = ( WrappedComponent ) => {
+	const WithCommentLikeMutations = ( { siteId, postId, commentId, ...props } ) => {
+		const { mutate: likeComment, isPending: isLikePending } = useMutation(
+			likeSiteCommentMutation()
+		);
+		const { mutate: unlikeComment, isPending: isUnlikePending } = useMutation(
+			unlikeSiteCommentMutation()
+		);
+		const handleLikeComment = useCallback(
+			() => likeComment( { siteId, postId, commentId } ),
+			[ commentId, likeComment, postId, siteId ]
+		);
+		const handleUnlikeComment = useCallback(
+			() => unlikeComment( { siteId, postId, commentId } ),
+			[ commentId, postId, siteId, unlikeComment ]
+		);
+
+		return (
+			<WrappedComponent
+				{ ...props }
+				siteId={ siteId }
+				postId={ postId }
+				commentId={ commentId }
+				likeComment={ handleLikeComment }
+				unlikeComment={ handleUnlikeComment }
+				isLikePending={ isLikePending }
+				isUnlikePending={ isUnlikePending }
+			/>
+		);
+	};
+
+	WithCommentLikeMutations.displayName = `withCommentLikeMutations(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithCommentLikeMutations;
+};
+
+export default flowRight(
+	connect(
+		( state ) => ( {
+			isLoggedIn: isUserLoggedIn( state ),
+		} ),
+		{ recordReaderTracksEvent, registerLastActionRequiresLogin }
+	),
+	withCommentLikeMutations
 )( CommentLikeButtonContainer );

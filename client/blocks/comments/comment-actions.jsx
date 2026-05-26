@@ -73,6 +73,7 @@ const CommentActions = ( {
 				postId={ post.ID }
 				railcar={ post.railcar }
 				commentId={ commentId }
+				comment={ comment }
 				onLikeToggle={ onLikeToggle }
 			/>
 		</div>
