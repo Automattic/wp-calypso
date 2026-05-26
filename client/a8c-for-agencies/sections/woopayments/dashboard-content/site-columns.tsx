@@ -223,7 +223,7 @@ export const CommissionEligibilityColumn = ( {
 							title=""
 							offset={ 12 }
 							wrapperRef={ wrapperRef }
-							focusOnMount={ false }
+							focusOnMount="container"
 							onFocusOutside={ () => setShowPopover( false ) }
 						>
 							{ popoverContent }
