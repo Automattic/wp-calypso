@@ -19,7 +19,7 @@ import {
 	purchaseSettingsRoute,
 	siteActionsRoute,
 } from '../../../app/router/me';
-import { Card, CardBody, CardHeader } from '../../../components/card';
+import { Card, CardBody, CardFooter, CardHeader } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
@@ -291,9 +291,11 @@ export default function SiteLevelActions() {
 								/>
 							);
 						} ) }
-						<HStack justify="flex-start">{ continueButton }</HStack>
 					</VStack>
 				</CardBody>
+				<CardFooter isBorderless>
+					<HStack justify="flex-start">{ continueButton }</HStack>
+				</CardFooter>
 			</Card>
 		</PageLayout>
 	);
