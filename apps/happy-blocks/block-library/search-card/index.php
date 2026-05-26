@@ -134,7 +134,7 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 				<input type="hidden" name="group_id" value="blog_id:<?php echo esc_attr( get_current_blog_id() ); ?>"/>
 				<div class="input-wrapper" dir="auto">
 					<input id="support-search-input" type="search" name="odie-query"<?php echo $input_class ? ' class="' . esc_attr( $input_class ) . '"' : ''; ?> placeholder="<?php echo esc_attr( $placeholder ); ?>"/>
-					<button type="submit" class="search-submit-button button-primary" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>" disabled>
+					<button type="submit" class="search-submit-button button-primary" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 							<path d="M12.2197 5C12.4186 5 12.6094 5.07902 12.75 5.21967L17 9.46967C17.2929 9.76256 17.2929 10.2374 17 10.5303C16.7071 10.8232 16.2322 10.8232 15.9393 10.5303L12.9697 7.56067V18.25C12.9697 18.6642 12.6339 19 12.2197 19C11.8055 19 11.4697 18.6642 11.4697 18.25V7.56065L8.5 10.5303C8.2071 10.8232 7.73223 10.8232 7.43934 10.5303C7.14644 10.2374 7.14645 9.76256 7.43934 9.46967L11.6894 5.21967C11.83 5.07902 12.0208 5 12.2197 5Z" fill="currentColor"/>
 						</svg>
@@ -144,13 +144,42 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 
 			<?php if ( $show_search_suggestions ) : ?>
 				<ul class="search-terms">
-					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" disabled><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" disabled><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" disabled><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" disabled><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
 				</ul>
 			<?php endif; ?>
 		</fieldset>
+		<script>
+		( function () {
+			var fieldset = document.querySelector( '.support-search-form-container' );
+			var form = document.getElementById( 'support-search-form' );
+			if ( ! fieldset || ! form ) return;
+
+			function disableAll() {
+				var els = fieldset.querySelectorAll( 'input, button' );
+				for ( var i = 0; i < els.length; i++ ) els[ i ].disabled = true;
+			}
+
+			form.addEventListener( 'submit', function ( e ) {
+				if ( ! window.__hcFormReady ) {
+					e.preventDefault();
+					window.__hcPendingQuery = new FormData( form ).get( 'odie-query' );
+					disableAll();
+				}
+			} );
+
+			fieldset.addEventListener( 'click', function ( e ) {
+				var btn = e.target.closest( 'button[data-search-query]' );
+				if ( btn && ! window.__hcFormReady ) {
+					e.preventDefault();
+					window.__hcPendingQuery = btn.getAttribute( 'data-search-query' );
+					disableAll();
+				}
+			} );
+		} )();
+		</script>
 	</div>
 	<?php endif; ?>
 </div>

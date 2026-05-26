@@ -288,6 +288,11 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				appearance: none;
 				display: none;
 			}
+
+			&:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
 		}
 
 		.input-wrapper button {

@@ -16,18 +16,34 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	const form = document.getElementById( 'support-search-form' );
 	const input = document.getElementById( 'support-search-input' );
 
+	// Track whether Help Center scripts are ready.
+	const isLoggedIn = typeof helpCenterData !== 'undefined' && helpCenterData?.currentUser?.ID;
+	let helpCenterReady = Boolean( isLoggedIn );
+
+	const disableForm = () => {
+		if ( input ) {
+			input.setAttribute( 'disabled', '' );
+		}
+		if ( submitButton ) {
+			submitButton.setAttribute( 'disabled', '' );
+		}
+		links.forEach( ( link ) => link.setAttribute( 'disabled', '' ) );
+	};
+
 	const enableForm = () => {
+		if ( input ) {
+			input.removeAttribute( 'disabled' );
+		}
 		if ( submitButton ) {
 			submitButton.removeAttribute( 'disabled' );
 		}
 		links.forEach( ( link ) => link.removeAttribute( 'disabled' ) );
 	};
 
-	const isLoggedIn = typeof helpCenterData !== 'undefined' && helpCenterData?.currentUser?.ID;
-	if ( isLoggedIn ) {
-		enableForm();
-	} else {
-		helpCenterReadyToLoadPromise.then( enableForm );
+	if ( ! helpCenterReady ) {
+		helpCenterReadyToLoadPromise.then( () => {
+			helpCenterReady = true;
+		} );
 	}
 
 	links.forEach( ( link ) => {
@@ -64,6 +80,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 				// Use the submitted value, not the input.value since it's already cleared.
 				const searchQuery = new FormData( form ).get( 'odie-query' );
+				input.value = '';
 
 				const website = form.getAttribute( 'data-website' ) || '';
 				recordTracksEvent(
@@ -78,12 +95,21 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
 
 				if ( isLoggedOut ) {
-					await helpCenterReadyToLoadPromise;
+					if ( ! helpCenterReady ) {
+						disableForm();
+					}
+					await Promise.race( [
+						helpCenterReadyToLoadPromise,
+						new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
+					] );
+					enableForm();
+					if ( ! helpCenterReady ) {
+						return;
+					}
 					window.helpCenter?.loadHelpCenter().then( () => {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 
-							input.value = '';
 							helpCenterDispatch.setNavigateToRoute(
 								'/odie?query=' + encodeURIComponent( searchQuery ),
 								true
@@ -93,17 +119,36 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					} );
 				} else if ( window.wp?.data?.dispatch ) {
 					// Logged in variant is already loaded.
+					enableForm();
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
-					input.value = '';
 					helpCenterDispatch.setNavigateToRoute(
 						'/odie?query=' + encodeURIComponent( searchQuery ),
 						true
 					);
 					helpCenterDispatch.setShowHelpCenter( true );
+				} else {
+					enableForm();
 				}
 			},
 			true
 		);
+	}
+
+	// Signal that our submit handler is attached, so the inline fallback
+	// stops blocking native form submission.
+	window.__hcFormReady = true;
+
+	// Process any query that was submitted before JS loaded.
+	if ( window.__hcPendingQuery ) {
+		const pendingQuery = window.__hcPendingQuery;
+		delete window.__hcPendingQuery;
+		input.value = pendingQuery;
+		enableForm();
+		submitButton.click();
+	} else {
+		// Only re-enable here if there's no pending query — the submit
+		// handler manages form state when processing a query.
+		enableForm();
 	}
 
 	// Mobile dropdown functionality
