@@ -212,3 +212,92 @@ export interface FreeDomainSuggestion {
 	domain_name: string;
 	is_free: true;
 }
+
+export interface BundleSuggestionDomain {
+	/**
+	 * The fully-qualified domain name
+	 * @example "example.com"
+	 */
+	domain: string;
+
+	/**
+	 * Rendered formatted cost for this domain
+	 * @example "$22.00"
+	 */
+	cost: string;
+
+	/**
+	 * Raw numeric price for this domain
+	 * @example 22
+	 */
+	raw_price: number;
+
+	/**
+	 * The product slug
+	 * @example "domain_reg"
+	 */
+	product_slug: string;
+
+	/**
+	 * Whether this domain is premium
+	 */
+	is_premium?: boolean;
+
+	/**
+	 * Whether this domain supports privacy
+	 */
+	supports_privacy?: boolean;
+}
+
+export interface BundleSuggestion {
+	/**
+	 * The second-level domain shared by the bundle
+	 * @example "example"
+	 */
+	sld: string;
+
+	/**
+	 * The companion domains in the bundle. VARIABLE LENGTH (2, 3, or 4).
+	 */
+	domains: BundleSuggestionDomain[];
+
+	/**
+	 * Total bundle price (raw numeric)
+	 * @example 60
+	 */
+	bundle_price: number;
+
+	/**
+	 * Combined original price before bundle discount (raw numeric)
+	 * @example 75
+	 */
+	original_price: number;
+
+	/**
+	 * Bundle discount as a whole-number percent
+	 * @example 20
+	 */
+	discount_percent: number;
+
+	/**
+	 * Bundle category slug
+	 * @example "business"
+	 */
+	category: string;
+
+	/**
+	 * Stable identifier for this specific bundle suggestion
+	 */
+	bundle_id: string;
+
+	/**
+	 * Identifier for the group/experiment the bundle belongs to
+	 */
+	bundle_group_id: string;
+
+	/**
+	 * Catalogue version the bundle was generated against.
+	 * (Added in the amended DOMAINS-2166 contract.)
+	 */
+	catalogue_version: string;
+}

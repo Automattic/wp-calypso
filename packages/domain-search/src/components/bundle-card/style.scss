@@ -1,0 +1,40 @@
+.bundle-card {
+	box-sizing: border-box;
+	padding: 24px;
+	border-radius: 4px;
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 );
+}
+
+.bundle-card__sld {
+	word-break: break-all;
+}
+
+.bundle-card__domains {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.bundle-card__domain {
+	padding-block: 8px;
+
+	& + & {
+		border-top: 1px solid rgba( 0, 0, 0, 0.05 );
+	}
+}
+
+.bundle-card__domain-name {
+	word-break: break-all;
+}
+
+.bundle-card__domain-cost {
+	white-space: nowrap;
+}
+
+.bundle-card__original-price s {
+	opacity: 0.7;
+}
+
+.bundle-card__cta {
+	justify-content: center;
+}
