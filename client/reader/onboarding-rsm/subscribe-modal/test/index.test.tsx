@@ -91,12 +91,6 @@ jest.mock( '../verificationNudge', () => ( {
 	default: () => <div data-testid="subscribe-verification-nudge" />,
 } ) );
 
-// ── Redux / state ────────────────────────────────────────────────────────────
-
-jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
-	getFeed: jest.fn().mockReturnValue( null ),
-} ) );
-
 // ── Analytics ────────────────────────────────────────────────────────────────
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
