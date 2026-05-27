@@ -2,7 +2,7 @@
 
 An infinite scroll component to power list views.
 
-There is an alternative implementation called [InfiniteList](../infinite-list), which doesn't render invisible items. However, it is more complex to implement, so use it only if your list contains lot of images or other media and you expect that users will scroll a lot.
+There is an alternative implementation called [InfiniteList](../infinite-list), which doesn't render invisible items. However, it is more complex to implement, so use it only if your list contains a lot of images or other media and you expect that users will scroll a lot.
 
 ## How to use
 
