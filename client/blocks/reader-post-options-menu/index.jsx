@@ -82,7 +82,6 @@ class ReaderPostOptionsMenu extends Component {
 
 export default compose(
 	withReaderTeams,
-	withReaderSite,
 	connect(
 		( state, { post: { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = {} } ) =>
 			Object.assign(
@@ -91,5 +90,6 @@ export default compose(
 				! isExternal && siteId > 0 && { siteId: +siteId }
 			)
 	),
+	withReaderSite,
 	localize
 )( ReaderPostOptionsMenu );

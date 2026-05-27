@@ -59,6 +59,17 @@ describe( 'reducer', () => {
 			expect( state[ 123 ] ).toBeUndefined();
 		} );
 
+		test( 'should keep an existing block when a site cache stub omits is_blocked', () => {
+			const original = deepFreeze( { 123: true } );
+
+			const state = items( original, {
+				type: READER_SITE_RECEIVE,
+				payload: { ID: 123, name: 'Example', URL: 'http://example.com' },
+			} );
+
+			expect( state ).toEqual( original );
+		} );
+
 		test( 'should make no changes from a successful site request with is_blocked false', () => {
 			const original = deepFreeze( {} );
 

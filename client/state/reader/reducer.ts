@@ -6,7 +6,6 @@ import follows from './follows/reducer';
 import recommendedSites from './recommended-sites/reducer';
 import saved from './saved/reducer';
 import siteBlocks from './site-blocks/reducer';
-import streams from './streams/reducer';
 
 const combinedReducer = combineReducers( {
 	conversations,
@@ -15,7 +14,6 @@ const combinedReducer = combineReducers( {
 	recommendedSites,
 	saved,
 	siteBlocks,
-	streams,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
 export default readerReducer;

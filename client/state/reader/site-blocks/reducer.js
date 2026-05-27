@@ -20,12 +20,15 @@ export const items = ( state = {}, action ) => {
 			return omit( state, action.payload.siteId );
 		}
 		case READER_SITE_RECEIVE: {
-			if ( ! action.payload.is_blocked ) {
+			if ( action.payload.is_blocked === false ) {
 				if ( ! state[ action.payload.ID ] ) {
 					return state;
 				}
 
 				return omit( state, action.payload.ID );
+			}
+			if ( action.payload.is_blocked !== true ) {
+				return state;
 			}
 
 			return {
