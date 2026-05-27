@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof HorizontalStepper > = {
 	component: HorizontalStepper,
-	title: 'Automattic UI/HorizontalStepper',
+	title: 'UI/HorizontalStepper',
 	parameters: {
 		docs: {
 			description: {
@@ -28,7 +28,7 @@ values, titles, and content.
 
 If you need an accordion layout instead, use \`VerticalStepper\`.
 If you need a completely custom layout or DOM structure, use the headless
-\`Stepper\` primitives (see **Stepper (Tier 2)** in the sidebar).
+\`Stepper\` primitives (see **UI/Stepper (Tier 2)** in the sidebar).
 				`,
 			},
 		},
