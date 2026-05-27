@@ -7,6 +7,10 @@ on:
         description: 'Review area: dashboard | a4a | general'
         required: true
         type: string
+      model:
+        description: 'Claude model identifier; defaults to claude-opus-4-6'
+        required: false
+        type: string
     secrets:
       anthropic_api_key:
         required: true
@@ -186,7 +190,7 @@ jobs:
 
             Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
           claude_args: |
-            --model claude-opus-4-6
+            --model ${{ inputs.model || 'claude-opus-4-6' }}
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
@@ -254,7 +258,7 @@ jobs:
 
             Remember: A4A builds on Calypso client patterns. Prioritize performance, accessibility, and maintainability while following the A4A code style, layout, and typography guidance described in the referenced docs. We also use modern React patterns.
           claude_args: |
-            --model claude-opus-4-6
+            --model ${{ inputs.model || 'claude-opus-4-6' }}
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
@@ -353,7 +357,7 @@ jobs:
 
             Remember: Calypso is large and shared. Prioritize correctness, security, and cross-client blast radius over style. Flag intent, not taste.
           claude_args: |
-            --model claude-opus-4-6
+            --model ${{ inputs.model || 'claude-opus-4-6' }}
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
@@ -373,7 +377,7 @@ jobs:
           T_PR: ${{ github.event.pull_request.number || github.event.issue.number }}
           T_PR_AUTHOR: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
           T_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          T_MODEL: claude-opus-4-6
+          T_MODEL: ${{ inputs.model || 'claude-opus-4-6' }}
           T_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           T_EVENT_NAME: ${{ github.event_name }}
           T_AREA: ${{ inputs.area }}
