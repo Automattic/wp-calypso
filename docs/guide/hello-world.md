@@ -16,7 +16,7 @@ Sections are usually bigger areas of the application that have their own chunk o
 
 Creating a new section is composed of five steps:
 
-1. Add your feature `config/development.json`.
+1. Add your feature to `config/development.json`.
 2. Setup your section folder `client/my-sites/my-section`.
 3. Create a controller `client/my-sites/my-section/controller.js`.
 4. Setup the entry routes in `client/my-sites/my-section/index.js`.
@@ -234,7 +234,7 @@ export const helloWorld = ( context, next ) => {
 };
 ```
 
-In the `Main` constant we are getting our main jsx file for our section. We then place `HelloWorld` element in `context.primary` property, which will be eventually get placed in DOM inside `#primary` div element in `Layout` element.
+In the `Main` constant we are getting our main jsx file for our section. We then place `HelloWorld` element in `context.primary` property, which will eventually be placed in DOM inside `#primary` div element in `Layout` element.
 
 (If you want to see where `context.primary` is used open `client/layout/index.jsx`.)
 
