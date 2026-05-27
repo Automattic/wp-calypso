@@ -21,7 +21,7 @@ function render() {
 - `width`: an optional number used for mShot and image style
 - `height`: an optional number used for mShot and image style
 - `dimensionsSrcset`: an optional Array of {width, height} to append to `srcSet`
-- `sizesAttr`: an optional string for image size attribute for resopnsive
+- `sizesAttr`: an optional string for image size attribute for responsive
 - `children`: an optional node to render inside if mshot fails or is empty
 - `bgColorImgUrl`: an optional string for creating a blur background
 - `viewport`: an optional number for mShot window size
