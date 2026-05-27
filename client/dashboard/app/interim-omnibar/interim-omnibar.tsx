@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { localize } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
@@ -11,8 +10,6 @@ import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
-
-const LocalizedMasterbarLoggedIn = localize( MasterbarLoggedIn );
 
 const noop = () => {};
 
@@ -76,7 +73,7 @@ export function InterimOmnibar( {
 	return (
 		<QueryClientProvider client={ omnibarQueryClient }>
 			<ReduxProvider store={ store }>
-				<LocalizedMasterbarLoggedIn
+				<MasterbarLoggedIn
 					// User
 					user={ user }
 					hasNoSites={ user.site_count === 0 }
