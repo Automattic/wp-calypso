@@ -4,14 +4,14 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
-	CheckboxControl,
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import {
@@ -28,6 +28,7 @@ import { getRenewUrlForPurchases, getTitleForListDisplay } from '../../../utils/
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { SITE_ACTION_TITLES, type SiteAction } from './constants';
 import type { Purchase } from '@automattic/api-core';
+import type { Field, Form } from '@wordpress/dataviews';
 
 function getDescription( action: SiteAction, siteName: string, productName: string ): string {
 	switch ( action ) {
@@ -140,23 +141,59 @@ export default function SiteLevelActions() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId, 10 ) ) );
 	const { data: allPurchases } = useSuspenseQuery( userPurchasesQuery() );
 
-	const eligiblePurchases = getEligiblePurchases( allPurchases, purchase, action ).sort(
-		( a, b ) => {
-			if ( a.ID === purchase.ID ) {
-				return -1;
-			}
-			if ( b.ID === purchase.ID ) {
-				return 1;
-			}
-			return 0;
-		}
+	const eligiblePurchases = useMemo(
+		() =>
+			getEligiblePurchases( allPurchases, purchase, action ).sort( ( a, b ) => {
+				if ( a.ID === purchase.ID ) {
+					return -1;
+				}
+				if ( b.ID === purchase.ID ) {
+					return 1;
+				}
+				return 0;
+			} ),
+		[ allPurchases, purchase, action ]
 	);
 
-	const [ selection, setSelection ] = useState< string[] >( [ String( purchase.ID ) ] );
+	type SiteActionsFormData = Record< string, boolean >;
+
+	const initialFormData = useMemo< SiteActionsFormData >( () => {
+		const out: SiteActionsFormData = {};
+		eligiblePurchases.forEach( ( p ) => {
+			out[ String( p.ID ) ] = p.ID === purchase.ID;
+		} );
+		return out;
+	}, [ eligiblePurchases, purchase.ID ] );
+
+	const [ formData, setFormData ] = useState< SiteActionsFormData >( initialFormData );
 
 	useEffect( () => {
-		setSelection( [ String( purchase.ID ) ] );
-	}, [ purchase.ID ] );
+		setFormData( initialFormData );
+	}, [ initialFormData ] );
+
+	const fields: Field< SiteActionsFormData >[] = useMemo(
+		() =>
+			eligiblePurchases.map( ( item ) => {
+				const id = String( item.ID );
+				const isPrimary = item.ID === purchase.ID;
+				return {
+					id,
+					type: 'boolean' as const,
+					label: getTitleForListDisplay( item ),
+					description: getRenewalDescription( item, action, locale ),
+					isDisabled: () => isPrimary,
+				};
+			} ),
+		[ eligiblePurchases, purchase.ID, action, locale ]
+	);
+
+	const form: Form = useMemo(
+		() => ( {
+			layout: { type: 'regular' as const },
+			fields: eligiblePurchases.map( ( p ) => String( p.ID ) ),
+		} ),
+		[ eligiblePurchases ]
+	);
 
 	const shouldBypass =
 		! isSplitEnabled || purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1;
@@ -198,15 +235,19 @@ export default function SiteLevelActions() {
 	}
 
 	const handleContinue = () => {
+		const selectedIds = Object.entries( formData )
+			.filter( ( [ , checked ] ) => checked )
+			.map( ( [ id ] ) => id );
+
 		if ( action === 'renew' ) {
 			const selectedPurchases = eligiblePurchases.filter( ( p ) =>
-				selection.includes( String( p.ID ) )
+				selectedIds.includes( String( p.ID ) )
 			);
 			window.location.href = getRenewUrlForPurchases( selectedPurchases );
 			return;
 		}
 
-		const additionalIds = selection.filter( ( id ) => id !== String( purchase.ID ) );
+		const additionalIds = selectedIds.filter( ( id ) => id !== String( purchase.ID ) );
 		navigate( {
 			to: cancelPurchaseRoute.fullPath,
 			params: { purchaseId: purchase.ID },
@@ -267,28 +308,14 @@ export default function SiteLevelActions() {
 					<SectionHeader title={ getSectionTitle( action ) } level={ 3 } />
 				</CardHeader>
 				<CardBody>
-					<VStack spacing={ 4 }>
-						{ eligiblePurchases.map( ( item ) => {
-							const id = String( item.ID );
-							const isPrimary = item.ID === purchase.ID;
-							const isChecked = selection.includes( id );
-							return (
-								<CheckboxControl
-									key={ id }
-									__nextHasNoMarginBottom
-									label={ getTitleForListDisplay( item ) }
-									help={ getRenewalDescription( item, action, locale ) }
-									checked={ isChecked }
-									disabled={ isPrimary }
-									onChange={ ( checked ) => {
-										setSelection( ( prev ) =>
-											checked ? [ ...prev, id ] : prev.filter( ( s ) => s !== id )
-										);
-									} }
-								/>
-							);
-						} ) }
-					</VStack>
+					<DataForm< SiteActionsFormData >
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits: SiteActionsFormData ) => {
+							setFormData( ( prev ) => ( { ...prev, ...edits } ) );
+						} }
+					/>
 				</CardBody>
 				<CardFooter isBorderless>
 					<HStack justify="flex-start">{ continueButton }</HStack>
