@@ -100,14 +100,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 // Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
 const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
 
-// Within the `signup` section the FAB is scoped to the account-creation step
-// (`user-social` or `user`) so it appears on `/start/account/user-social` but
-// not on flow-specific steps like `/start/domain/domain-only`. The `<flow>`
-// segment is optional because the default signup flow omits it, producing
-// URLs like `/start/user` and `/start/user/<stepSection>/<lang>`. Matches up
-// to two trailing segments (`:stepSectionName` and/or `:lang`).
-const SIGNUP_ACCOUNT_STEP_PATH = /^\/start\/(?:[^/]+\/)?(?:user|user-social)(?:\/[^/]+){0,2}\/?$/;
-
 // /log-in briefly carries social-handoff tokens before the login controller strips
 // them (?access_token / ?id_token in query, #id_token / #client_id in hash).
 // Suppress the FAB during that window so window.location.href doesn't reach Zendesk.
@@ -218,10 +210,11 @@ const LayoutLoggedOut = ( {
 		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
 
 	// OAuth client signups (Woo, BlazePro, Gravatar, WPJobManager, etc.) run under
-	// their own brand. For plain WPCOM signup we only show the FAB on the
-	// account-creation step, not on flow-specific steps like `domain-only`.
-	const isWpcomSignup =
-		sectionName === 'signup' && ! useOAuth2Layout && SIGNUP_ACCOUNT_STEP_PATH.test( currentRoute );
+	// their own brand and support paths; for all other WPCOM signup routes the
+	// FAB is the only help affordance, so we render it across the whole section.
+	// The `--bottom-bar-height` layout var prevents collision with bottom bars
+	// (e.g. the domains mini-cart on `/start/domain/domain-only`).
+	const isWpcomSignup = sectionName === 'signup' && ! useOAuth2Layout;
 
 	const isEligibleSection =
 		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
