@@ -8,7 +8,6 @@ import {
 import { styled } from '@automattic/wpcom-checkout';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -28,9 +27,9 @@ const Discount = styled.span`
 	}
 `;
 
-const Price = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
+const Price = styled.span`
 	color: ${ colorStudio.colors[ 'Black' ] };
-	${ ( props ) => props.isCheckoutUiRedesignV1 && 'padding-right: 6px;' }
+	padding-right: 6px;
 `;
 
 const Variant = styled.div`
@@ -43,27 +42,23 @@ const Variant = styled.div`
 	width: 100%;
 `;
 
-const VariantTermLabel = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
+const VariantTermLabel = styled.span`
 	display: flex;
 	flex-direction: column;
-	${ ( props ) => props.isCheckoutUiRedesignV1 && 'align-items: flex-start;' }
+	align-items: flex-start;
 	gap: 2px;
 `;
 
-const PriceArea = styled.span< { inlineDiscount?: boolean; isCheckoutUiRedesignV1?: boolean } >`
+const PriceArea = styled.span< { inlineDiscount?: boolean } >`
 	text-align: right;
 	display: flex;
 	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'column' ) };
 	gap: ${ ( props ) => ( props.inlineDiscount ? '8px' : '2px' ) };
 	align-items: ${ ( props ) => ( props.inlineDiscount ? 'center' : 'flex-end' ) };
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		`
-		> span:last-child {
-			min-width: 80px;
-			text-align: right;
-		}
-	` }
+	> span:last-child {
+		min-width: 80px;
+		text-align: right;
+	}
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -84,7 +79,6 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
 	const discountPercentage = compareToInfo
@@ -107,46 +101,27 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 		isSmallestUnit: true,
 	} );
 
-	const priceDisplay = ( () => {
-		if ( isCheckoutUiRedesignV1 ) {
-			return i18n.fixMe( {
-				text: '%(pricePerMonth)s/mo',
-				newCopy: translate( '%(pricePerMonth)s/mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
-				oldCopy: translate( '%(pricePerMonth)s /mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
-			} );
-		}
-		return translate( '%(pricePerMonth)s /mo', {
+	const priceDisplay = i18n.fixMe( {
+		text: '%(pricePerMonth)s/mo',
+		newCopy: translate( '%(pricePerMonth)s/mo', {
 			args: {
 				pricePerMonth: pricePerMonthFormatted,
 			},
-		} );
-	} )();
+		} ),
+		oldCopy: translate( '%(pricePerMonth)s /mo', {
+			args: {
+				pricePerMonth: pricePerMonthFormatted,
+			},
+		} ),
+	} );
 	const label =
 		variant.termIntervalInMonths === 1 ? translate( 'Month' ) : variant.variantLabel.noun;
 	return (
 		<Variant>
-			<VariantTermLabel isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>
-				{ label }
-			</VariantTermLabel>
-			<PriceArea
-				inlineDiscount={ isCheckoutUiRedesignV1 && discountPercentage > 0 }
-				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-			>
-				{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				<Price isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>{ priceDisplay }</Price>
-				{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
+			<VariantTermLabel>{ label }</VariantTermLabel>
+			<PriceArea inlineDiscount={ discountPercentage > 0 }>
+				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
+				<Price>{ priceDisplay }</Price>
 			</PriceArea>
 		</Variant>
 	);

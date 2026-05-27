@@ -13,7 +13,6 @@ import { Fragment } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	prepareDomainContactDetails,
@@ -57,7 +56,6 @@ export default function ContactDetailsContainer( {
 	isLoggedOutCart: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const domainNames: string[] = responseCart.products
@@ -170,7 +168,7 @@ export default function ContactDetailsContainer( {
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
 						allowVat
-						fullWidthCountryField={ isCheckoutUiRedesignV1 }
+						fullWidthCountryField
 					/>
 					{ /* For Jetpack and Akismet - we want to inform users that by continuing checkout process they create WordPress.com account */ }
 					{ ( isJetpackCheckout() || isAkismetCheckout() ) && isLoggedOutCart && (

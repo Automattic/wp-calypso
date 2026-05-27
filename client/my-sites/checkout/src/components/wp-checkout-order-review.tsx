@@ -23,7 +23,6 @@ import {
 	getIsOnboardingUnifiedFlow,
 } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -145,7 +144,6 @@ export default function WPCheckoutOrderReview( {
 	);
 
 	const selectedSiteData = useSelector( getSelectedSite );
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -170,14 +168,12 @@ export default function WPCheckoutOrderReview( {
 			>
 				{ domainUrl && (
 					<SiteSummary className="checkout-review-order__site">
-						{ isCheckoutUiRedesignV1 ? domainUrl : translate( 'Site: %s', { args: domainUrl } ) }
+						{ domainUrl }
 					</SiteSummary>
 				) }
 				{ currentUserEmail && ! isGiftPurchase && (
 					<EmailSummary className="checkout-review-order__email">
-						{ isCheckoutUiRedesignV1
-							? currentUserEmail
-							: translate( 'Account: %s', { args: currentUserEmail } ) }
+						{ currentUserEmail }
 					</EmailSummary>
 				) }
 				{ planIsP2Plus && selectedSiteData?.name && (
