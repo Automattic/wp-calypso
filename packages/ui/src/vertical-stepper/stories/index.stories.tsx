@@ -7,6 +7,31 @@ import type { Meta, StoryObj } from '@storybook/react';
 const meta: Meta< typeof VerticalStepper > = {
 	component: VerticalStepper,
 	title: 'Automattic UI/VerticalStepper',
+	parameters: {
+		docs: {
+			description: {
+				component: `
+**Tier 1 — use this in product UI.**
+
+\`VerticalStepper\` is the ready-to-use, styled stepper for accordion-style flows
+where each step expands in place. It handles layout, indicators, and accessibility
+automatically. You only need to supply step values, titles, and content.
+
+\`\`\`tsx
+<VerticalStepper value={step} onValueChange={setStep} aria-label="Checkout">
+  <VerticalStepper.Step value="shipping" title="Shipping" status="completed">
+    ...
+  </VerticalStepper.Step>
+</VerticalStepper>
+\`\`\`
+
+If you need a tab-strip layout instead, use \`HorizontalStepper\`.
+If you need a completely custom layout or DOM structure, use the headless
+\`Stepper\` primitives (see **Stepper (Tier 2)** in the sidebar).
+				`,
+			},
+		},
+	},
 	argTypes: {
 		headingLevel: {
 			control: { type: 'select' },

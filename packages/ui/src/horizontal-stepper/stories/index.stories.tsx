@@ -7,6 +7,32 @@ import type { Meta, StoryObj } from '@storybook/react';
 const meta: Meta< typeof HorizontalStepper > = {
 	component: HorizontalStepper,
 	title: 'Automattic UI/HorizontalStepper',
+	parameters: {
+		docs: {
+			description: {
+				component: `
+**Tier 1 — use this in product UI.**
+
+\`HorizontalStepper\` is the ready-to-use, styled stepper for tab-strip flows
+where the step list sits at the top and panels render below. It handles layout,
+indicators, and accessibility automatically. You only need to supply step
+values, titles, and content.
+
+\`\`\`tsx
+<HorizontalStepper value={step} onValueChange={setStep} aria-label="Checkout">
+  <HorizontalStepper.Step value="shipping" title="Shipping" status="completed">
+    ...
+  </HorizontalStepper.Step>
+</HorizontalStepper>
+\`\`\`
+
+If you need an accordion layout instead, use \`VerticalStepper\`.
+If you need a completely custom layout or DOM structure, use the headless
+\`Stepper\` primitives (see **Stepper (Tier 2)** in the sidebar).
+				`,
+			},
+		},
+	},
 	argTypes: {
 		activationMode: {
 			control: { type: 'radio' },

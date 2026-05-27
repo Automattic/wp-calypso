@@ -5,6 +5,29 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {
 	title: 'Automattic UI/Stepper (Tier 2)',
+	parameters: {
+		docs: {
+			description: {
+				component: `
+**Tier 2 — headless primitives. Use only when Tier 1 components don\\'t fit.**
+
+\`Stepper\` exposes the raw, unstyled building blocks that \`VerticalStepper\` and
+\`HorizontalStepper\` are composed from. You assemble the layout yourself using
+\`Stepper.Root\`, \`Stepper.Step\`, \`Stepper.Trigger\`, \`Stepper.Indicator\`,
+\`Stepper.Title\`, \`Stepper.Description\`, \`Stepper.Panel\`, and \`Stepper.List\`.
+
+**When to reach for Tier 2:**
+- Your design requires a DOM structure the Tier 1 wrappers cannot produce.
+- You need to mix stepper primitives with other custom elements in unusual ways.
+- You are building a new Tier 1 wrapper for a different orientation or style.
+
+**Otherwise, prefer Tier 1:**
+- \`VerticalStepper\` — accordion layout, steps expand in place.
+- \`HorizontalStepper\` — tab-strip layout, panels render below the list.
+				`,
+			},
+		},
+	},
 };
 
 export default meta;
