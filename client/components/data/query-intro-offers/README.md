@@ -1,6 +1,6 @@
 # Query Intro Offers
 
-`<QueryIntroOffers />` is a React component used in managing network requests product introductory offers.
+`<QueryIntroOffers />` is a React component used in managing network requests for product introductory offers.
 
 ## Usage
 
