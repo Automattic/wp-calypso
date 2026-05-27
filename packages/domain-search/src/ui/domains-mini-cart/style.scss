@@ -6,11 +6,6 @@
 	height: var( --domain-search-mini-cart-height );
 }
 
-// Global layout signal for fixed-bottom UI — parallels `--masterbar-height`.
-:root:has( .domains-mini-cart__container.is-open ) {
-	--bottom-bar-height: 80px;
-}
-
 .domains-mini-cart__container {
 	position: fixed !important;
 	left: 0;
