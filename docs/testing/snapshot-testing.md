@@ -87,7 +87,7 @@ describe( 'MyComponent', () => {
 } );
 ```
 
-Reducer tests are also be a great fit for snapshots. The firsts snapshots introduced in Calypso were
+Reducer tests are also a great fit for snapshots. The firsts snapshots introduced in Calypso were
 actually [reducer tests](https://github.com/Automattic/wp-calypso/blob/e34d15f44c261fd7daa2212017e995883866d603/client/state/comments/test/selectors.js#L133-L142).
 Reducers can be large, complex data structures that we don't want to change unexpectedly, exactly
 what snapshots excel at!
