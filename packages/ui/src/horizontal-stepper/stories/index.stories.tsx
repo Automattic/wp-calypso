@@ -9,6 +9,7 @@ const meta: Meta< typeof HorizontalStepper > = {
 	title: 'UI/Stepper/Horizontal',
 	parameters: {
 		docs: {
+			source: { type: 'dynamic' },
 			description: {
 				component: `
 **Tier 1 — use this in product UI.**
@@ -90,25 +91,6 @@ export const Default: Story = {
 		linear: false,
 		activationMode: 'manual',
 	},
-	parameters: {
-		docs: {
-			source: {
-				code: `
-<HorizontalStepper value={step} onValueChange={setStep} aria-label="Checkout">
-  <HorizontalStepper.Step value="shipping" title="Shipping" description="123 Main St" status="completed">
-    <p>Shipping form.</p>
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="payment" title="Payment">
-    <p>Payment form.</p>
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="review" title="Review" optional>
-    <p>Review form.</p>
-  </HorizontalStepper.Step>
-</HorizontalStepper>
-				`,
-			},
-		},
-	},
 	render: DefaultDemo,
 };
 
@@ -134,25 +116,6 @@ export const LinearFlow: Story = {
 		'aria-label': 'Linear checkout',
 		linear: true,
 		activationMode: 'manual',
-	},
-	parameters: {
-		docs: {
-			source: {
-				code: `
-<HorizontalStepper value={step} onValueChange={setStep} aria-label="Linear checkout" linear>
-  <HorizontalStepper.Step value="shipping" title="Shipping" status="completed">
-    <p>Done.</p>
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="payment" title="Payment">
-    <p>Fill this out.</p>
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="review" title="Review">
-    <p>Not reachable yet.</p>
-  </HorizontalStepper.Step>
-</HorizontalStepper>
-				`,
-			},
-		},
 	},
 	render: LinearFlowDemo,
 };
@@ -189,21 +152,6 @@ export const FiveSteps: Story = {
 		'aria-label': '5-step flow',
 		linear: false,
 		activationMode: 'manual',
-	},
-	parameters: {
-		docs: {
-			source: {
-				code: `
-<HorizontalStepper value={step} onValueChange={setStep} aria-label="5-step flow">
-  <HorizontalStepper.Step value="a" title="Purchase info" status="completed">...</HorizontalStepper.Step>
-  <HorizontalStepper.Step value="b" title="Shipping details">...</HorizontalStepper.Step>
-  <HorizontalStepper.Step value="c" title="Review">...</HorizontalStepper.Step>
-  <HorizontalStepper.Step value="d" title="Review again">...</HorizontalStepper.Step>
-  <HorizontalStepper.Step value="e" title="Review once again">...</HorizontalStepper.Step>
-</HorizontalStepper>
-				`,
-			},
-		},
 	},
 	render: FiveStepsDemo,
 };
@@ -271,30 +219,6 @@ function StepVariantsDemo() {
 export const StepVariants: Story = {
 	parameters: {
 		docs: {
-			source: {
-				code: `
-<HorizontalStepper value={step} onValueChange={setStep} aria-label="Step variants">
-  <HorizontalStepper.Step value="completed" title="Completed" status="completed" description="Payment received">
-    ...
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="active" title="Active (current)">
-    ...
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="error" title="Error" status="error" description="Invalid card number">
-    ...
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="optional" title="Optional" optional>
-    ...
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="upcoming" title="Upcoming">
-    ...
-  </HorizontalStepper.Step>
-  <HorizontalStepper.Step value="disabled" title="Disabled" disabled>
-    ...
-  </HorizontalStepper.Step>
-</HorizontalStepper>
-				`,
-			},
 			description: {
 				story: `
 All states a single step can be in. Click each trigger to switch to it as the active step.

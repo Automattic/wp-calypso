@@ -9,6 +9,7 @@ const meta: Meta< typeof VerticalStepper > = {
 	title: 'UI/Stepper/Vertical',
 	parameters: {
 		docs: {
+			source: { type: 'dynamic' },
 			description: {
 				component: `
 **Tier 1 — use this in product UI.**
@@ -88,25 +89,6 @@ export const Default: Story = {
 		linear: false,
 		headingLevel: 3,
 	},
-	parameters: {
-		docs: {
-			source: {
-				code: `
-<VerticalStepper value={step} onValueChange={setStep} aria-label="Checkout">
-  <VerticalStepper.Step value="shipping" title="Shipping address" status="completed" description="123 Main St, Springfield">
-    <p>Shipping form.</p>
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="payment" title="Payment method">
-    <p>Payment form.</p>
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="review" title="Review order" optional>
-    <p>Review form.</p>
-  </VerticalStepper.Step>
-</VerticalStepper>
-				`,
-			},
-		},
-	},
 	render: DefaultDemo,
 };
 
@@ -137,25 +119,6 @@ export const LinearFlow: Story = {
 		'aria-label': 'Linear checkout',
 		linear: true,
 		headingLevel: 3,
-	},
-	parameters: {
-		docs: {
-			source: {
-				code: `
-<VerticalStepper value={step} onValueChange={setStep} aria-label="Linear checkout" linear>
-  <VerticalStepper.Step value="shipping" title="Shipping" status="completed">
-    <p>Done.</p>
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="payment" title="Payment (current)">
-    <p>Fill this out.</p>
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="review" title="Review (locked)">
-    <p>Not reachable yet.</p>
-  </VerticalStepper.Step>
-</VerticalStepper>
-				`,
-			},
-		},
 	},
 	render: LinearFlowDemo,
 };
@@ -238,30 +201,6 @@ function BackNavigationDemo() {
 export const BackNavigation: Story = {
 	parameters: {
 		docs: {
-			source: {
-				code: `
-<VerticalStepper
-  value={currentStep}
-  onValueChange={(clickedStep) => {
-    // linear={true} guarantees this is always a previous step
-    navigateTo(clickedStep);
-  }}
-  linear
-  aria-label="Onboarding"
->
-  {steps.map((s, i) => (
-    <VerticalStepper.Step
-      key={s.value}
-      value={s.value}
-      title={s.title}
-      status={i < currentIndex ? 'completed' : undefined}
-    >
-      ...
-    </VerticalStepper.Step>
-  ))}
-</VerticalStepper>
-				`,
-			},
 			description: {
 				story: `
 Demonstrates how to integrate the stepper with an existing navigation flow where
@@ -334,22 +273,6 @@ export const WithError: Story = {
 		'aria-label': 'Checkout with error',
 		linear: false,
 		headingLevel: 3,
-	},
-	parameters: {
-		docs: {
-			source: {
-				code: `
-<VerticalStepper value={step} onValueChange={setStep} aria-label="Checkout with error">
-  <VerticalStepper.Step value="shipping" title="Shipping" status="error" description="Invalid address">
-    <p>Fix the address.</p>
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="payment" title="Payment">
-    <p>Payment form.</p>
-  </VerticalStepper.Step>
-</VerticalStepper>
-				`,
-			},
-		},
 	},
 	render: WithErrorDemo,
 };
@@ -425,30 +348,6 @@ function StepVariantsDemo() {
 export const StepVariants: Story = {
 	parameters: {
 		docs: {
-			source: {
-				code: `
-<VerticalStepper value={step} onValueChange={setStep} aria-label="Step variants">
-  <VerticalStepper.Step value="completed" title="Completed" status="completed" description="Payment received">
-    ...
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="active" title="Active (current)">
-    ...
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="error" title="Error" status="error" description="Invalid card number">
-    ...
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="optional" title="Optional" optional>
-    ...
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="upcoming" title="Upcoming (default)">
-    ...
-  </VerticalStepper.Step>
-  <VerticalStepper.Step value="disabled" title="Disabled" disabled>
-    ...
-  </VerticalStepper.Step>
-</VerticalStepper>
-				`,
-			},
 			description: {
 				story: `
 All states a single step can be in. Click each trigger to open it as the active step.
@@ -523,27 +422,6 @@ function SixStepDemo() {
 export const LandmarkThreshold: Story = {
 	parameters: {
 		docs: {
-			source: {
-				code: `
-{/* 5 steps — panels get role="region" */}
-<VerticalStepper value={step} onValueChange={setStep} aria-label="5-step flow">
-  {['a', 'b', 'c', 'd', 'e'].map((s) => (
-    <VerticalStepper.Step key={s} value={s} title={\`Step \${s.toUpperCase()}\`}>
-      ...
-    </VerticalStepper.Step>
-  ))}
-</VerticalStepper>
-
-{/* 6 steps — role="region" is omitted to avoid landmark noise */}
-<VerticalStepper value={step} onValueChange={setStep} aria-label="6-step flow">
-  {['a', 'b', 'c', 'd', 'e', 'f'].map((s) => (
-    <VerticalStepper.Step key={s} value={s} title={\`Step \${s.toUpperCase()}\`}>
-      ...
-    </VerticalStepper.Step>
-  ))}
-</VerticalStepper>
-				`,
-			},
 			description: {
 				story: `
 **Accessibility behaviour: \`role="region"\` is omitted when there are more than 5 steps.**

@@ -7,6 +7,7 @@ const meta: Meta = {
 	title: 'UI/Stepper/Headless (Tier 2)',
 	parameters: {
 		docs: {
+			source: { type: 'dynamic' },
 			description: {
 				component: `
 **Tier 2 — headless primitives. Use only when Tier 1 components don\\'t fit.**
@@ -107,47 +108,6 @@ is a \`div\` wrapping \`Stepper.Title\` and \`Stepper.Description\`, but you can
 put anything there.
 				`,
 			},
-			source: {
-				code: `
-<Stepper.Root orientation="vertical" value={step} onValueChange={setStep} aria-label="Checkout">
-  <Stepper.Step value="shipping" status="completed">
-    <Stepper.Trigger>
-      <Stepper.Indicator />
-      <div>
-        <Stepper.Title>Shipping address</Stepper.Title>
-        <Stepper.Description>123 Main St, Springfield</Stepper.Description>
-      </div>
-    </Stepper.Trigger>
-    <Stepper.Panel>
-      <p>Shipping form goes here.</p>
-    </Stepper.Panel>
-  </Stepper.Step>
-
-  <Stepper.Step value="payment">
-    <Stepper.Trigger>
-      <Stepper.Indicator />
-      <Stepper.Title>Payment method</Stepper.Title>
-    </Stepper.Trigger>
-    <Stepper.Panel>
-      <p>Payment form goes here.</p>
-    </Stepper.Panel>
-  </Stepper.Step>
-
-  <Stepper.Step value="review" optional>
-    <Stepper.Trigger>
-      <Stepper.Indicator />
-      <div>
-        <Stepper.Title>Review order</Stepper.Title>
-        <Stepper.Description>Optional</Stepper.Description>
-      </div>
-    </Stepper.Trigger>
-    <Stepper.Panel>
-      <p>Review form goes here.</p>
-    </Stepper.Panel>
-  </Stepper.Step>
-</Stepper.Root>
-				`,
-			},
 		},
 	},
 	render: VerticalAnatomyDemo,
@@ -216,46 +176,6 @@ constrained to the accordion nesting pattern.
 
 \`Stepper.List\` is required in horizontal mode. It renders as \`role="tablist"\`
 and is what \`Stepper.Trigger\` anchors its tab ARIA to.
-				`,
-			},
-			source: {
-				code: `
-<Stepper.Root orientation="horizontal" value={step} onValueChange={setStep} aria-label="Checkout">
-  {/* Stepper.List wraps all triggers — required in horizontal mode */}
-  <Stepper.List>
-    <Stepper.Step value="shipping" status="completed">
-      <Stepper.Trigger>
-        <Stepper.Indicator />
-        <Stepper.Title>Shipping</Stepper.Title>
-      </Stepper.Trigger>
-    </Stepper.Step>
-
-    <Stepper.Step value="payment">
-      <Stepper.Trigger>
-        <Stepper.Indicator />
-        <Stepper.Title>Payment</Stepper.Title>
-      </Stepper.Trigger>
-    </Stepper.Step>
-
-    <Stepper.Step value="review" optional>
-      <Stepper.Trigger>
-        <Stepper.Indicator />
-        <Stepper.Title>Review</Stepper.Title>
-      </Stepper.Trigger>
-    </Stepper.Step>
-  </Stepper.List>
-
-  {/* Panels live outside the list — associated to steps by value */}
-  <Stepper.Panel value="shipping">
-    <p>Shipping form.</p>
-  </Stepper.Panel>
-  <Stepper.Panel value="payment">
-    <p>Payment form.</p>
-  </Stepper.Panel>
-  <Stepper.Panel value="review">
-    <p>Review form.</p>
-  </Stepper.Panel>
-</Stepper.Root>
 				`,
 			},
 		},
@@ -344,41 +264,6 @@ and applying \`justify-content: space-between\`.
 Because Tier 2 gives you direct control over what goes inside \`Stepper.Trigger\`,
 you can put the indicator anywhere, replace it entirely, or add extra elements
 alongside it — things like a status badge, a timestamp, or a secondary action.
-				`,
-			},
-			source: {
-				code: `
-<Stepper.Root orientation="vertical" value={step} onValueChange={setStep} aria-label="Custom layout">
-  <Stepper.Step value="shipping" status="completed">
-    <Stepper.Trigger style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-      <Stepper.Title>Shipping address</Stepper.Title>
-      <Stepper.Indicator /> {/* ← indicator on the right */}
-    </Stepper.Trigger>
-    <Stepper.Panel>
-      <p>Shipping form goes here.</p>
-    </Stepper.Panel>
-  </Stepper.Step>
-
-  <Stepper.Step value="payment">
-    <Stepper.Trigger style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-      <Stepper.Title>Payment method</Stepper.Title>
-      <Stepper.Indicator />
-    </Stepper.Trigger>
-    <Stepper.Panel>
-      <p>Payment form goes here.</p>
-    </Stepper.Panel>
-  </Stepper.Step>
-
-  <Stepper.Step value="review">
-    <Stepper.Trigger style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-      <Stepper.Title>Review order</Stepper.Title>
-      <Stepper.Indicator />
-    </Stepper.Trigger>
-    <Stepper.Panel>
-      <p>Review form goes here.</p>
-    </Stepper.Panel>
-  </Stepper.Step>
-</Stepper.Root>
 				`,
 			},
 		},
