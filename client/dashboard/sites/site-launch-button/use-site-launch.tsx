@@ -27,27 +27,13 @@ export interface UseSiteLaunchOptions {
 	backTo?: string;
 	a4aLaunchUrl?: string;
 	a4aLaunchModal?: A4aLaunchModalComponent;
-	// When true, any direct launch (immediate or ungated-experiment) also adds
-	// `celebrateLaunch=true` to the URL so `SiteLaunchCelebrationModal` opens.
-	// Defaults to false to preserve existing dashboard behavior where only the
-	// ungated experiment variant triggers celebration.
 	celebrateOnLaunch?: boolean;
-	// Override the domains query (e.g. ciab passes `domainsQuery({ garden: 'commerce' })`).
-	// Defaults to the bare `domainsQuery()`.
 	domainsOptions?: ReturnType< typeof domainsQuery >;
-	// Tracks recorder. Dashboard surfaces pass `useAnalytics().recordTracksEvent`;
-	// the omnibar passes a standalone wrapper since it lives outside the dashboard's
-	// AnalyticsProvider tree.
 	recordTracksEvent: RecordTracksEvent;
 }
 
 export interface UseSiteLaunchResult {
 	isLoading: boolean;
-	// True while ExPlat is resolving the launch-gating variant. The A4A path
-	// doesn't depend on the variant, so consumers there can ignore this.
-	// Consumers on the experiment paths (e.g. omnibar) should disable the
-	// button on this so the user can't slip through the default branch before
-	// the assignment lands.
 	isExperimentLoading: boolean;
 	isHidden: boolean;
 	isDisabled: boolean;
