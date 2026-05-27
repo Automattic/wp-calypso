@@ -55,11 +55,22 @@ export interface ConnectorFeatureCards {
  * the `plugins` query parameter — picks up to three cards (per the
  * family-priority rules in `getFeatureSelection`) and resolves each one's
  * logo, title, and bullet copy.
+ *
+ * When A4A is among the selected cards, every supporting card collapses
+ * to just its first bullet. Users connecting via A4A are agencies or
+ * freelancers, not end-users of the site — surfacing the full
+ * end-user-focused bullet list (e.g. "Run your store on the go with the
+ * Woo mobile app") would drown out the agency context. The first bullet
+ * of every non-A4A card is intentionally written to be audience-neutral
+ * and to read sensibly in isolation, so it doubles as the condensed
+ * summary in the A4A scenario and as the lead bullet when A4A is absent
+ * (see the bullet[0] invariant on `getFeatureCardData`).
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
 ): ConnectorFeatureCards {
 	const { cardKeys } = getFeatureSelection( pluginSlugs );
+	const hasA4A = cardKeys.includes( 'a4a' );
 
 	// `logoAlt` is intentionally omitted: every Jetpack-family card and A4A
 	// pass a React-element logo whose `alt` is rendered by the SVG's own
@@ -70,11 +81,12 @@ export function getConnectorFeatureCards(
 	// override would have supplied.
 	const cards: FeatureCard[] = cardKeys.map( ( key ) => {
 		const data = getFeatureCardData( key );
+		const bullets = hasA4A && key !== 'a4a' ? data.bullets.slice( 0, 1 ) : data.bullets;
 		return {
 			id: key,
 			logo: getLogoForCardKey( key ),
 			title: data.title,
-			bullets: data.bullets,
+			bullets,
 		};
 	} );
 

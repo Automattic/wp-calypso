@@ -96,26 +96,30 @@ case 'your-plugin-slug':
     return {
         title: __( 'Your Plugin Name' ),
         bullets: [
-            __( 'First key benefit of your plugin.' ),
+            __( 'First key benefit, written so it reads in isolation and in audience-neutral voice.' ),
             __( 'Second key benefit.' ),
             __( 'Third key benefit.' ),
         ],
     };
 ```
 
+**`bullets[0]` invariant:** the first bullet must be audience-neutral (no second-person `your`, prefer `the site` / `the store`) and must read sensibly on its own. When A4A is among the active plugins, `getConnectorFeatureCards()` in [`../feature-cards.tsx`](../feature-cards.tsx) slices every supporting card down to just `bullets[0]` so the agency context isn't drowned out by end-user-focused benefits. Bullets 1 and 2 only render when A4A is absent, so they can keep a warmer personal voice if that suits the direct-owner audience.
+
 #### c. Add secondary-connection card data (`family-features.ts`)
 
-Add a `case` to `getSecondaryFeatureCardData()`. Secondary bullets should describe what an additional admin user gets (narrower than the owner connection):
+Add a `case` to `getSecondaryFeatureCardData()`. Secondary bullets describe what an additional admin user gets (narrower than the owner connection):
 
 ```typescript
 case 'your-plugin-slug':
     return {
         title: __( 'Your Plugin Name' ),
         bullets: [
-            __( 'What a secondary admin can do with this plugin.' ),
+            __( 'What a secondary admin can do with this plugin, in audience-neutral voice.' ),
         ],
     };
 ```
+
+**Exactly one bullet, audience-neutral voice, no SSO.** The secondary card row scans uniformly because every card is a single management-voice line — `getSecondaryFeatureCardData` returning more or fewer bullets fails the invariant test in [`test/family-features.test.ts`](./test/family-features.test.ts). Phrasing should read for an agency teammate (`the client's site`) and a site co-owner (`my site`) alike — prefer `this site` / `this store`. Do not list SSO: it is bundled with the full Jetpack plugin only — A4A, Woo, and the individual jetpack-* plugins do not ship it — so mentioning it on any other card would be incorrect, and singling out the generic Jetpack card with an SSO bullet would break the uniform shape.
 
 #### d. Register the card key in the selector (`selectors.ts`)
 

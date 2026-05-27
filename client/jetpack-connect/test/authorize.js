@@ -217,9 +217,12 @@ describe( 'JetpackAuthorize', () => {
 				/>
 			);
 
-			// Secondary admin card with SSO bullet is rendered.
+			// Secondary admin card renders with its single management-voice bullet.
+			// The "/track every change/" substring is unique to the card bullet —
+			// the secondary subtitle also mentions "activity log", so a looser
+			// regex would match two elements.
 			expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
-			expect( screen.getByText( /SSO/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /track every change/ ) ).toBeInTheDocument();
 
 			// The blocking "already connected by other user" notice is NOT shown.
 			expect(
