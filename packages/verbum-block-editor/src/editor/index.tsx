@@ -7,7 +7,7 @@ import {
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
-import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
+import { createBlock, serialize, type Block } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
 import React, { useState, useCallback } from '@wordpress/element';
@@ -58,7 +58,7 @@ export const Editor: FC< EditorProps > = ( {
 	);
 
 	const handleContentUpdate = useCallback(
-		( content: BlockInstance[] ) => {
+		( content: Block[] ) => {
 			setValue( content );
 			onChange( serialize( content ) );
 		},

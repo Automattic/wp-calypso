@@ -91,7 +91,7 @@ body.is-admin-sidebar-customize-mode {
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover,
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus {
 			background-color: transparent;
-			color: var(--color-sidebar-text);
+			color: var( --color-sidebar-text );
 			box-shadow: none;
 		}
 
@@ -104,8 +104,8 @@ body.is-admin-sidebar-customize-mode {
 		&.selected > .sidebar__menu-link .sidebar__menu-icon,
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover .sidebar__menu-icon,
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus .sidebar__menu-icon {
-			fill: var(--color-sidebar-text);
-			color: var(--color-sidebar-text);
+			fill: var( --color-sidebar-text );
+			color: var( --color-sidebar-text );
 		}
 	}
 
@@ -119,7 +119,10 @@ body.is-admin-sidebar-customize-mode {
 	// but leaves the LI itself hit-testable for drag-drop's
 	// `elementsFromPoint` lookup (so plugins can be dragged to between any
 	// sidebar rows, not just within the My Plugins group).
-	.sidebar li.sidebar__menu-item-parent:not([data-wp-admin-sidebar-item-id]):not(.wp-admin-sidebar-group) {
+	.sidebar
+		li.sidebar__menu-item-parent:not( [data-wp-admin-sidebar-item-id] ):not(
+			.wp-admin-sidebar-group
+		) {
 		&,
 		&:hover,
 		&.selected {
@@ -138,7 +141,7 @@ body.is-admin-sidebar-customize-mode {
 		&.selected .sidebar__menu-link:hover,
 		.sidebar__menu-link:focus {
 			background-color: transparent !important;
-			color: var(--color-sidebar-text) !important;
+			color: var( --color-sidebar-text ) !important;
 			box-shadow: none !important;
 		}
 
@@ -149,8 +152,8 @@ body.is-admin-sidebar-customize-mode {
 		// Icon stays at idle color too.
 		&:hover .sidebar__menu-link .sidebar__menu-icon,
 		&.selected .sidebar__menu-link .sidebar__menu-icon {
-			fill: var(--color-sidebar-text) !important;
-			color: var(--color-sidebar-text) !important;
+			fill: var( --color-sidebar-text ) !important;
+			color: var( --color-sidebar-text ) !important;
 		}
 	}
 
@@ -172,7 +175,7 @@ body.is-admin-sidebar-customize-mode {
 	// `<MySitesSidebarUnifiedMenu>` → `<ExpandableSidebarMenu>` renders a bare
 	// `<li>` wrapping `.sidebar__menu.is-togglable`, which the inert rule above
 	// doesn't catch. Same suppression treatment + kill the hover-intent flyout.
-	.sidebar > li:not([data-wp-admin-sidebar-item-id]) .sidebar__menu.is-togglable {
+	.sidebar > li:not( [data-wp-admin-sidebar-item-id] ) .sidebar__menu.is-togglable {
 		.sidebar__menu-link,
 		.sidebar__heading {
 			pointer-events: none;
@@ -185,7 +188,7 @@ body.is-admin-sidebar-customize-mode {
 		&.sidebar__menu--selected .sidebar__heading,
 		.sidebar__heading:hover {
 			background-color: transparent !important;
-			color: var(--color-sidebar-text) !important;
+			color: var( --color-sidebar-text ) !important;
 			box-shadow: none !important;
 		}
 		&.hovered .sidebar__heading::after,
@@ -214,7 +217,7 @@ body.is-admin-sidebar-customize-mode {
 		.sidebar .selected .sidebar__menu-link,
 		.sidebar .selected .sidebar__menu-link:hover {
 			background-color: transparent !important;
-			color: var(--color-sidebar-text) !important;
+			color: var( --color-sidebar-text ) !important;
 			box-shadow: none !important;
 		}
 		// LI-level paint suppression. Some Calypso rules paint `.selected`
@@ -230,12 +233,12 @@ body.is-admin-sidebar-customize-mode {
 		// the indicator becomes invisible because this selector has higher
 		// specificity than `li.admin-sidebar-drop-indicator` even when both
 		// rules are `!important`.
-		.sidebar > li:not(.admin-sidebar-drop-indicator),
-		.sidebar > li.selected:not(.admin-sidebar-drop-indicator),
-		.sidebar > li:hover:not(.admin-sidebar-drop-indicator),
-		.sidebar .sidebar__menu-item-parent:not(.admin-sidebar-drop-indicator),
-		.sidebar .sidebar__menu-item-parent.selected:not(.admin-sidebar-drop-indicator),
-		.sidebar .sidebar__menu-item-parent:hover:not(.admin-sidebar-drop-indicator) {
+		.sidebar > li:not( .admin-sidebar-drop-indicator ),
+		.sidebar > li.selected:not( .admin-sidebar-drop-indicator ),
+		.sidebar > li:hover:not( .admin-sidebar-drop-indicator ),
+		.sidebar .sidebar__menu-item-parent:not( .admin-sidebar-drop-indicator ),
+		.sidebar .sidebar__menu-item-parent.selected:not( .admin-sidebar-drop-indicator ),
+		.sidebar .sidebar__menu-item-parent:hover:not( .admin-sidebar-drop-indicator ) {
 			background-color: transparent !important;
 		}
 		// Reassignable rows keep their static gray bg under the transparent
@@ -254,7 +257,7 @@ body.is-admin-sidebar-customize-mode {
 		.sidebar .sidebar__menu.is-togglable .sidebar__heading,
 		.sidebar .sidebar__menu.is-togglable .sidebar__heading:hover {
 			background-color: transparent !important;
-			color: var(--color-sidebar-text) !important;
+			color: var( --color-sidebar-text ) !important;
 		}
 	}
 
@@ -286,10 +289,10 @@ body.is-admin-sidebar-customize-mode {
 	align-items: center;
 	padding: 0;
 	background: #2c3439;
-	color: var(--color-sidebar-text, #f0f0f1);
+	color: var( --color-sidebar-text, #f0f0f1 );
 	border-radius: 4px;
 	opacity: 0.95;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.4 );
 
 	a {
 		flex: 1 1 auto;
@@ -315,24 +318,31 @@ li.admin-sidebar-drop-indicator {
 	padding: 0;
 	height: 2px;
 	width: 100%;
-	background: var(--wp-admin-sidebar-customizer-theme, #2271b1) !important;
+	background: var( --wp-admin-sidebar-customizer-theme, #2271b1 ) !important;
 	pointer-events: none;
 }
 
-// Customize-mode footer (Phase 2 row 23). Docked at the bottom of the
-// sidebar surface with Save/Cancel stacked.
+// Customize-mode footer. Docked at the bottom of the sidebar surface with
+// auto-save status plus compact controls.
 .admin-sidebar-customize-footer {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
 	padding: 8px 12px;
-	background: var(--color-sidebar-background);
-	border-top: 1px solid rgba(240, 240, 241, 0.1);
-	box-shadow: 0 -8px 12px -8px rgba(0, 0, 0, 0.5);
+	background: var( --color-sidebar-background );
+	border-top: 1px solid rgba( 240, 240, 241, 0.1 );
+	box-shadow: 0 -8px 12px -8px rgba( 0, 0, 0, 0.5 );
 	margin-top: auto;
 
-	&__cancel,
-	&__save {
+	&__status {
+		color: rgba( 240, 240, 241, 0.75 );
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	&__undo,
+	&__retry,
+	&__done {
 		flex: 0 0 auto;
 		padding: 6px 12px;
 		border-radius: 3px;
@@ -340,26 +350,24 @@ li.admin-sidebar-drop-indicator {
 		cursor: pointer;
 	}
 
-	&__cancel {
+	&__undo,
+	&__retry {
 		background: transparent;
-		border: 1px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
-		color: var(--wp-admin-sidebar-customizer-theme, #2271b1);
+		border: 1px solid var( --wp-admin-sidebar-customizer-theme, #2271b1 );
+		color: var( --wp-admin-sidebar-customizer-theme, #2271b1 );
 	}
 
-	&__save {
-		background: var(--wp-admin-sidebar-customizer-theme, #2271b1);
-		border: 1px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
+	&__done {
+		background: var( --wp-admin-sidebar-customizer-theme, #2271b1 );
+		border: 1px solid var( --wp-admin-sidebar-customizer-theme, #2271b1 );
 		color: #fff;
-
-		&[disabled] {
-			opacity: 0.55;
-			cursor: not-allowed;
-		}
 	}
 
-	&__error {
-		font-size: 12px;
-		color: var(--color-error, #d63638);
+	&__undo[disabled],
+	&__retry[disabled],
+	&__done[disabled] {
+		opacity: 0.55;
+		cursor: not-allowed;
 	}
 }
 
@@ -379,7 +387,7 @@ li.admin-sidebar-drop-indicator {
 	line-height: 1;
 
 	&:focus-visible {
-		outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
+		outline: 2px solid var( --wp-admin-sidebar-customizer-theme, #2271b1 );
 		outline-offset: -2px;
 	}
 }
@@ -411,7 +419,7 @@ li.admin-sidebar-drop-indicator {
 	border: 0;
 
 	&:focus-visible {
-		outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
+		outline: 2px solid var( --wp-admin-sidebar-customizer-theme, #2271b1 );
 		outline-offset: -2px;
 	}
 }
@@ -424,10 +432,10 @@ li.admin-sidebar-drop-indicator {
 	padding: 4px 0;
 	list-style: none;
 	background: #1d2327;
-	border: 1px solid rgba(240, 240, 241, 0.15);
+	border: 1px solid rgba( 240, 240, 241, 0.15 );
 	border-radius: 4px;
 	min-width: 180px;
-	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 6px 20px rgba( 0, 0, 0, 0.4 );
 
 	li {
 		margin: 0;

@@ -15,14 +15,16 @@
 	// centered at every breakpoint.
 	margin-inline: auto;
 
-	// Mobile: drop our desktop overrides and let @wordpress/components Modal's
-	// default treatment take over — top-anchored, full-width, natural content
-	// height. That's the most common Calypso pattern (used by ConfirmModal,
-	// the various theme/import dialogs, etc.).
+	// Mobile: top-anchored, full-width. Bound max-height to the dynamic
+	// viewport so the modal's inner overflow:auto can scroll — without an
+	// explicit max-height the flex stretch in WP's screen-overlay isn't
+	// authoritative once content exceeds the viewport, and the top gets
+	// clipped with no way to scroll back up. `dvh` accounts for iOS Safari's
+	// dynamic address bar.
 	@media (max-width: $break-small) {
 		width: 100%;
 		max-width: none;
-		max-height: none;
+		max-height: calc(100dvh - 40px);
 		margin: 40px 0 0 0;
 	}
 

@@ -7,7 +7,6 @@ import {
 	StartSiteFlow,
 	RestAPIClient,
 	SignupPickPlanPage,
-	NewSiteResponse,
 	NewUserResponse,
 	LoginPage,
 	UserSignupPage,
@@ -15,7 +14,7 @@ import {
 	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount, apiCreateFreeSiteForUser, apiDeleteSite, fixme_retry } from '../shared';
+import { apiCloseAccount, fixme_retry } from '../shared';
 
 declare const browser: Browser;
 
@@ -26,8 +25,8 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 	} );
 
 	let newUserDetails: NewUserResponse;
-	let newSiteDetails: NewSiteResponse;
 	let page: Page;
+	let selectedFreeDomain: string;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
@@ -53,45 +52,29 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		it( 'Select a .wordpress.com domain name', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
-			await domainSearchComponent.skipPurchase();
+			selectedFreeDomain = await domainSearchComponent.skipPurchase();
 		} );
 
 		it( 'Select WordPress.com Free plan', async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
-			// After this PR, picking Free on /setup/onboarding/plans redirects to
-			// https://wordpress.com/choose for the PWYW A/B test instead of
-			// creating a site directly. No /sites/new call is made here, so we
-			// use selectPlanWithoutSiteCreation.
-			const redirectUrl = /^https:\/\/wordpress\.com\/choose(?:[?#]|$)/;
-			await signupPickPlanPage.selectPlanWithoutSiteCreation( 'Free', redirectUrl );
+			const redirectUrl = new RegExp( 'home/.+\\?ref=onboarding' );
+			await signupPickPlanPage.selectPlan( 'Free', redirectUrl );
 		} );
 	} );
 
-	// Picking Free now redirects to https://wordpress.com/choose for the PWYW
-	// A/B test instead of creating a site, so the original UI path into the
-	// onboarding/write/launchpad flow is no longer reachable. To preserve
-	// downstream coverage, this block API-creates a free site and navigates
-	// directly into /home with the onboarding ref before continuing.
 	describe( 'Onboarding', function () {
 		const themeName = 'Retrospect';
 		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {
 			startSiteFlow = new StartSiteFlow( page );
-
-			newSiteDetails = await apiCreateFreeSiteForUser( testUser, newUserDetails, blogName );
-			await page.goto(
-				DataHelper.getCalypsoURL(
-					`/home/${ newSiteDetails.blog_details.site_slug }?ref=onboarding`
-				)
-			);
 		} );
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await page.waitForURL( /home\/.*ref=onboarding/, { timeout: 60 * 1000 } );
 
-			// Assert we're on the home view for the API-created site.
-			expect( page.url() ).toContain( newSiteDetails.blog_details.site_slug );
+			// Additional assertions for the URL.
+			expect( page.url() ).toContain( selectedFreeDomain );
 		} );
 
 		it( 'Select "Publish a blog" goal', async function () {
@@ -206,14 +189,6 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			{ username: testUser.username, password: testUser.password },
 			newUserDetails.body.bearer_token
 		);
-
-		if ( newSiteDetails ) {
-			await apiDeleteSite( restAPIClient, {
-				url: newSiteDetails.blog_details.url,
-				id: newSiteDetails.blog_details.blogid,
-				name: newSiteDetails.blog_details.blogname,
-			} );
-		}
 
 		await apiCloseAccount( restAPIClient, {
 			userID: newUserDetails.body.user_id,

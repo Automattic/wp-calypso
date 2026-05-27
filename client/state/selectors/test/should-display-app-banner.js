@@ -214,6 +214,71 @@ describe( 'shouldDisplayAppBanner()', () => {
 		expect( output ).toBe( false );
 	} );
 
+	describe.each( [
+		'/reader/atmosphere',
+		'/reader/atmosphere/',
+		'/reader/atmosphere/connect',
+		'/reader/mastodon/123',
+		'/reader/fediverse/456/profile/someone',
+		'/reader/connections',
+		'/reader/connections/',
+	] )( 'when current route is the social reader (%s)', ( path ) => {
+		test( 'should return false even if the section is allowed', () => {
+			const state = {
+				ui: {
+					appBannerVisibility: true,
+					layoutFocus: {
+						current: 'not-sidebar',
+					},
+					section: {
+						name: 'reader',
+					},
+				},
+				preferences: {
+					remoteValues: [ 'something' ],
+				},
+				route: {
+					path: {
+						current: path,
+					},
+				},
+			};
+			const output = shouldDisplayAppBanner( state );
+			expect( output ).toBe( false );
+		} );
+	} );
+
+	describe.each( [
+		'/reader/atmospheres',
+		'/reader/connectionsfoo',
+		'/reader/discover',
+		'/reader',
+	] )( 'when current route looks similar but is not the social reader (%s)', ( path ) => {
+		test( 'should not be short-circuited by the social reader guard', () => {
+			const state = {
+				ui: {
+					appBannerVisibility: true,
+					layoutFocus: {
+						current: 'not-sidebar',
+					},
+					section: {
+						name: 'reader',
+					},
+				},
+				preferences: {
+					remoteValues: [ 'something' ],
+				},
+				route: {
+					path: {
+						current: path,
+					},
+				},
+			};
+			const output = shouldDisplayAppBanner( state );
+			expect( output ).toBe( true );
+		} );
+	} );
+
 	describe( 'when current section is HOME', () => {
 		test( 'should return false if launchpad_screen is "full"', () => {
 			const state = {

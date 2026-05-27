@@ -1,10 +1,15 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialNotificationItem } from '../notification-item';
 import type { AtmosphereNotification } from '@automattic/api-core';
+
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
+const pageMock = jest.mocked( page );
 
 function makeItem( overrides: Partial< AtmosphereNotification > = {} ): AtmosphereNotification {
 	return {
@@ -26,6 +31,10 @@ function makeItem( overrides: Partial< AtmosphereNotification > = {} ): Atmosphe
 }
 
 describe( 'SocialNotificationItem', () => {
+	beforeEach( () => {
+		pageMock.mockReset();
+	} );
+
 	it( 'renders a like notification with actor + excerpt', () => {
 		renderWithProvider( <SocialNotificationItem notification={ makeItem() } /> );
 		expect( screen.getByText( /jane/i ) ).toBeVisible();
@@ -124,6 +133,44 @@ describe( 'SocialNotificationItem', () => {
 	it( 'omits the unread prefix from the aria-label when is_read is true', () => {
 		renderWithProvider( <SocialNotificationItem notification={ makeItem( { is_read: true } ) } /> );
 		expect( screen.getByRole( 'link' ) ).toHaveAccessibleName( /^jane liked your post/i );
+	} );
+
+	it( 'links to the in-app URL with SPA navigation when getInAppUrl returns a path', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<SocialNotificationItem
+				notification={ makeItem( { canonical_type: 'mention', protocol_type: 'mention' } ) }
+				getInAppUrl={ () => '/reader/atmosphere/42/thread/did:plc:abc/post1' }
+			/>
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/42/thread/did:plc:abc/post1' );
+		expect( link ).not.toHaveAttribute( 'target' );
+		await user.click( link );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/42/thread/did:plc:abc/post1' );
+	} );
+
+	it( 'falls back to the external target_url when getInAppUrl returns null', () => {
+		renderWithProvider(
+			<SocialNotificationItem notification={ makeItem() } getInAppUrl={ () => null } />
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/me/post/3k' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	it( 'defers to the browser on modifier-click so users can open in a new tab', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<SocialNotificationItem
+				notification={ makeItem() }
+				getInAppUrl={ () => '/reader/atmosphere/42/thread/did:plc:abc/post1' }
+			/>
+		);
+		await user.keyboard( '[ControlLeft>]' );
+		await user.click( screen.getByRole( 'link' ) );
+		await user.keyboard( '[/ControlLeft]' );
+		expect( pageMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'falls back to the actor handle when display_name is null', () => {

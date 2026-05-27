@@ -69,6 +69,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 
+							input.value = '';
 							helpCenterDispatch.setNavigateToRoute(
 								'/odie?query=' + encodeURIComponent( searchQuery ),
 								true
@@ -79,6 +80,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				} else if ( window.wp?.data?.dispatch ) {
 					// Logged in variant is already loaded.
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+					input.value = '';
 					helpCenterDispatch.setNavigateToRoute(
 						'/odie?query=' + encodeURIComponent( searchQuery ),
 						true

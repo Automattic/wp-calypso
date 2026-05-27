@@ -25,6 +25,7 @@ jest.mock( '@wordpress/data', () => ( {
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
 	createSelector: jest.fn(),
+	keyedReducer: () => () => ( {} ),
 } ) );
 
 // Test data
@@ -222,7 +223,6 @@ describe( 'EnvironmentSwitcher', () => {
 					actions: [
 						{
 							label: 'Contact support',
-							url: null,
 							onClick: expect.any( Function ),
 						},
 					],
