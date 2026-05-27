@@ -25,9 +25,6 @@ const DEFAULT_STATUS = 'approved';
 const DEFAULT_NUMBER = 50;
 const DEFAULT_ORDER = 'DESC';
 
-export type SiteCommentsQueryParams = SitePostRepliesQueryParams;
-export type SiteCommentsResponse = SitePostRepliesResponse;
-
 export interface CreateSiteCommentReplyParams extends CoreCreateSiteCommentReplyParams {
 	postId: number;
 }
@@ -35,6 +32,11 @@ export interface CreateSiteCommentReplyParams extends CoreCreateSiteCommentReply
 export interface SiteCommentLikeMutationParams extends CoreSiteCommentLikeMutationParams {
 	postId: number;
 }
+
+type SiteCommentsInfiniteQueryParams = Pick<
+	SitePostRepliesQueryParams,
+	'siteId' | 'postId' | 'status' | 'order' | 'number'
+>;
 
 export type SiteCommentsPageParam =
 	| {
@@ -44,17 +46,6 @@ export type SiteCommentsPageParam =
 			offset?: number;
 	  }
 	| undefined;
-
-export const siteCommentsQueryKey = (
-	siteId: number,
-	postId: number,
-	status: string = DEFAULT_STATUS,
-	number: number = DEFAULT_NUMBER,
-	order: 'ASC' | 'DESC' = DEFAULT_ORDER
-) => [ 'site', 'comments', siteId, postId, status, { number, order } ] as const;
-
-export const siteCommentsQueryPrefix = ( siteId: number, postId: number ) =>
-	[ 'site', 'comments', siteId, postId ] as const;
 
 export const siteCommentsInfiniteQueryKey = (
 	siteId: number,
@@ -66,20 +57,6 @@ export const siteCommentsInfiniteQueryKey = (
 
 export const siteCommentsInfiniteQueryPrefix = ( siteId: number, postId: number ) =>
 	[ 'site', 'comments', 'infinite', siteId, postId ] as const;
-
-export const siteCommentsQuery = ( params: SiteCommentsQueryParams ) =>
-	queryOptions< SitePostRepliesResponse >( {
-		queryKey: siteCommentsQueryKey(
-			params.siteId,
-			params.postId,
-			params.status,
-			params.number,
-			params.order
-		),
-		queryFn: () => fetchSitePostReplies( params ),
-		enabled: Boolean( params.siteId && params.postId ),
-		meta: { persist: false },
-	} );
 
 const validDates = ( comments: SiteComment[] = [] ) =>
 	comments
@@ -117,7 +94,13 @@ const commentCountAtDate = ( comments: SiteComment[] = [], date?: Date ): number
 const uniqueCommentsCount = ( pages: SitePostRepliesResponse[] ) =>
 	new Set( pages.flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) ) ).size;
 
-export const siteCommentsInfiniteQuery = ( params: SitePostRepliesQueryParams ) =>
+export const siteCommentsInfiniteQuery = ( {
+	siteId,
+	postId,
+	status,
+	order,
+	number,
+}: SiteCommentsInfiniteQueryParams ) =>
 	infiniteQueryOptions<
 		SitePostRepliesResponse,
 		Error,
@@ -125,16 +108,13 @@ export const siteCommentsInfiniteQuery = ( params: SitePostRepliesQueryParams ) 
 		ReturnType< typeof siteCommentsInfiniteQueryKey >,
 		SiteCommentsPageParam
 	>( {
-		queryKey: siteCommentsInfiniteQueryKey(
-			params.siteId,
-			params.postId,
-			params.status,
-			params.number,
-			params.order
-		),
+		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number, order ),
 		queryFn: ( { pageParam } ) =>
 			fetchSitePostReplies( {
-				...params,
+				siteId,
+				postId,
+				status,
+				number,
 				order: pageParam?.direction === 'after' ? 'ASC' : 'DESC',
 				before: pageParam?.before,
 				after: pageParam?.after,
@@ -142,9 +122,9 @@ export const siteCommentsInfiniteQuery = ( params: SitePostRepliesQueryParams ) 
 			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage, allPages ) => {
-			const number = params.number ?? DEFAULT_NUMBER;
+			const pageSize = number ?? DEFAULT_NUMBER;
 			if (
-				lastPage.comments.length < number ||
+				lastPage.comments.length < pageSize ||
 				( lastPage.found && uniqueCommentsCount( allPages ) >= lastPage.found )
 			) {
 				return undefined;
@@ -171,18 +151,18 @@ export const siteCommentsInfiniteQuery = ( params: SitePostRepliesQueryParams ) 
 				  }
 				: undefined;
 		},
-		enabled: Boolean( params.siteId && params.postId ),
+		enabled: Boolean( siteId && postId ),
 		meta: { persist: false },
 	} );
 
 export const siteCommentQueryKey = ( siteId: number, commentId: number | string ) =>
 	[ 'site', 'comment', siteId, commentId ] as const;
 
-export const siteCommentQuery = ( params: SiteCommentQueryParams ) =>
+export const siteCommentQuery = ( { siteId, commentId }: SiteCommentQueryParams ) =>
 	queryOptions< SiteComment >( {
-		queryKey: siteCommentQueryKey( params.siteId, params.commentId ),
-		queryFn: () => fetchSiteComment( params ),
-		enabled: Boolean( params.siteId && params.commentId ),
+		queryKey: siteCommentQueryKey( siteId, commentId ),
+		queryFn: () => fetchSiteComment( { siteId, commentId } ),
+		enabled: Boolean( siteId && commentId ),
 		meta: { persist: false },
 	} );
 

@@ -1,8 +1,4 @@
-export {
-	commentsApiDisabledQueryKey,
-	isCommentsApiDisabledError,
-	useCommentsApiDisabled,
-} from './api-disabled';
+export { isCommentsApiDisabledError, useCommentsApiDisabled } from './api-disabled';
 export { useComment, useCommentsById } from './use-comment';
 export { useComments } from './use-comments';
 export { usePostCommentActions } from './use-post-comment-actions';

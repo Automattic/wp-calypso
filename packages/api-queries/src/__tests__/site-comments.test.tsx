@@ -2,24 +2,9 @@ import {
 	createSitePostCommentMutation,
 	likeSiteCommentMutation,
 	siteCommentsInfiniteQuery,
-	siteCommentsQuery,
 } from '../site-comments';
 
 describe( 'site comments queries', () => {
-	it( 'uses a memory-only per-post status query key', () => {
-		const query = siteCommentsQuery( { siteId: 123, postId: 456, status: 'approved' } );
-
-		expect( query.queryKey ).toEqual( [
-			'site',
-			'comments',
-			123,
-			456,
-			'approved',
-			{ number: 50, order: 'DESC' },
-		] );
-		expect( query.meta ).toEqual( { persist: false } );
-	} );
-
 	it( 'uses a separate memory-only key for infinite comments', () => {
 		const query = siteCommentsInfiniteQuery( { siteId: 123, postId: 456, status: 'approved' } );
 

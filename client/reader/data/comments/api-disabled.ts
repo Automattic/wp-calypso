@@ -3,7 +3,7 @@ import type { QueryClient } from '@tanstack/react-query';
 
 const COMMENTS_API_DISABLED_ERROR_MESSAGE = 'API calls to this blog have been disabled.';
 
-export const commentsApiDisabledQueryKey = ( siteId: number ) =>
+const commentsApiDisabledQueryKey = ( siteId: number ) =>
 	[ 'site', 'comments', 'api-disabled', siteId ] as const;
 
 const getErrorStatus = ( error: unknown ) =>
