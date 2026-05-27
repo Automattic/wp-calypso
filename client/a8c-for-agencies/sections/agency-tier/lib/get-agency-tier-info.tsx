@@ -207,7 +207,7 @@ const getAgencyTierInfo = (
 							'Invitation-only access to executive leadership sessions and strategic advisory boards.'
 						),
 						translate(
-							'Largest revenue share, marketing development funds, and co-branded campaign opportunities.'
+							'Largest Revenue Share, marketing development funds, and co-branded campaign opportunities.'
 						),
 						translate( 'Priority distribution of enterprise sales leads and referrals.' ),
 						translate(

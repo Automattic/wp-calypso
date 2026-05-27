@@ -35,7 +35,7 @@ export default function ReportsDashboard() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isDesktop = useDesktopBreakpoint();
-	const title = translate( 'Reports dashboard' );
+	const title = translate( 'Reports Dashboard' );
 
 	const { data: reports, isLoading } = useFetchReports();
 

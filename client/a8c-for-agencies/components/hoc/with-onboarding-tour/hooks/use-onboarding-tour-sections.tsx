@@ -319,7 +319,7 @@ export default function useOnboardingTourSections() {
 							"Prove your agency's impact with polished, easy-to-read reports that highlight key traffic stats from your clients' sites."
 						),
 						translate(
-							'Our streamlined report builder makes it easy to create professional client reports in minutes.'
+							'Our streamlined report builder makes it easy to create professional Client Reports in minutes.'
 						),
 					],
 				},

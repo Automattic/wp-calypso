@@ -109,7 +109,7 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 	{
 		title: translate( 'Co-Marketing' ),
 		description: translate(
-			'Pro Agency Partners are eligible to participate in co-marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise. Premier partners can access marketing development funds upon successful application.'
+			'Pro Agency Partners are eligible to participate in Co-Marketing activities with Automattic and our suite of brands, including case studies, co-branded campaigns, and other marketing opportunities as they arise. Premier partners can access marketing development funds upon successful application.'
 		),
 		features: [],
 		isComingSoon: false,

@@ -332,7 +332,7 @@ const WooPaymentsOverview = () => {
 
 				<PageSectionColumns
 					className="woopayments-overview__revenue-share-section"
-					heading={ translate( 'How revenue share works' ) }
+					heading={ translate( 'How Revenue Share works' ) }
 				>
 					<PageSectionColumns.Column>
 						<div className="woopayments-overview__description woopayments-overview__revenue-share-container">
