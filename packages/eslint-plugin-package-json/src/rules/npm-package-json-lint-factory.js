@@ -21,7 +21,8 @@ const buildRules = () => {
 			create: ( context ) => ( {
 				Program: ( programNode ) => {
 					const options = context.options?.[ 0 ] ?? {};
-					const json = context.parserServices.getJSON();
+					const parserServices = context.sourceCode?.parserServices ?? context.parserServices;
+					const json = parserServices.getJSON();
 					const rule = npmPackageJsonLint.rules.get( ruleName );
 
 					// I think the second argument is just used for the report, so we can ignore it
