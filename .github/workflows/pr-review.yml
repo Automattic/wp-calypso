@@ -391,7 +391,7 @@ jobs:
             *) IS_FOLLOWUP="false" ;;
           esac
 
-          PAYLOAD=$(echo "$RESULT" | jq -n --slurpfile r /dev/stdin \
+          PAYLOAD=$(echo "$RESULT" | jq \
             --arg source          "wp-calypso-$T_AREA" \
             --arg outcome         "$OUTCOME" \
             --arg repo            "$T_REPO" \
@@ -413,16 +413,16 @@ jobs:
               build_url:       $build_url,
               ci_provider:     $ci_provider,
               is_followup:     ($is_followup == "true"),
-              cost_usd:        ($r[0].total_cost_usd // 0),
-              duration:        (($r[0].duration_ms // 0) / 1000),
-              api_duration_ms: ($r[0].duration_api_ms // 0),
-              num_turns:       ($r[0].num_turns // 0),
-              tokens_in:       ($r[0].usage.input_tokens // 0),
-              tokens_out:      ($r[0].usage.output_tokens // 0),
-              cache_read:      ($r[0].usage.cache_read_input_tokens // 0),
-              cache_creation:  ($r[0].usage.cache_creation_input_tokens // 0),
-              session_id:      ($r[0].session_id // ""),
-              ttft_ms:         ($r[0].ttft_ms // 0)
+              cost_usd:        (.total_cost_usd // 0),
+              duration:        ((.duration_ms // 0) / 1000),
+              api_duration_ms: (.duration_api_ms // 0),
+              num_turns:       (.num_turns // 0),
+              tokens_in:       (.usage.input_tokens // 0),
+              tokens_out:      (.usage.output_tokens // 0),
+              cache_read:      (.usage.cache_read_input_tokens // 0),
+              cache_creation:  (.usage.cache_creation_input_tokens // 0),
+              session_id:      (.session_id // ""),
+              ttft_ms:         (.ttft_ms // 0)
             }')
 
           curl -s -f -X POST \
