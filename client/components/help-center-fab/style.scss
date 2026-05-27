@@ -2,10 +2,6 @@
 $help-center-fab-size: 44px;
 $help-center-fab-offset: 24px;
 $help-center-fab-gap: 8px;
-// Per design: each state is a solid Blueberry-over-surface mix.
-//   default: rgba(235, 238, 253, 1) ≈ 10% Blueberry
-//   hover:   rgba(222, 228, 251, 1) ≈ 16% Blueberry
-//   active:  rgba(200, 209, 247, 1) ≈ 28% Blueberry
 $help-center-fab-bg-default: color-mix(
 	in srgb,
 	var( --studio-blue-50 ) 10%,
@@ -21,8 +17,6 @@ $help-center-fab-bg-active: color-mix(
 	var( --studio-blue-50 ) 28%,
 	var( --color-surface )
 );
-// Shared drop-shadow stack — also re-applied on focus to override the
-// WordPress Button's accent-coloured focus-ring box-shadow.
 $help-center-fab-shadow:
 	0 4px 4px color-mix( in srgb, var( --color-neutral-100 ) 1%, transparent ),
 	0 3px 3px color-mix( in srgb, var( --color-neutral-100 ) 2%, transparent ),
@@ -48,7 +42,6 @@ $help-center-fab-shadow:
 	inline-size: $help-center-fab-size;
 	block-size: $help-center-fab-size;
 	padding: 0;
-	// 10% black border per design.
 	border: 1px solid color-mix( in srgb, var( --color-neutral-100 ) 10%, transparent );
 	border-radius: 50%;
 	background: $help-center-fab-bg-default;
@@ -58,22 +51,18 @@ $help-center-fab-shadow:
 
 	&:hover {
 		background: $help-center-fab-bg-hover;
-		// 14% black border on hover per design.
 		border-color: color-mix( in srgb, var( --color-neutral-100 ) 14%, transparent );
-		// Keep the question-mark icon dark; @wordpress/components Button would
-		// otherwise tint it with the WP admin theme colour on hover.
+		// Override @wordpress/components Button's hover tint so the icon stays dark.
 		color: var( --color-neutral-100 );
 	}
 
 	&.is-active {
 		background: $help-center-fab-bg-active;
-		// 16% black border on active per design.
 		border-color: color-mix( in srgb, var( --color-neutral-100 ) 16%, transparent );
 		color: var( --color-neutral-100 );
 	}
 
-	// Replace the @wordpress/components Button accent focus-ring box-shadow
-	// with our regular drop shadow; outline (below) handles keyboard focus.
+	// Override the @wordpress/components Button accent focus-ring box-shadow.
 	&:focus:not( :disabled ) {
 		box-shadow: $help-center-fab-shadow;
 	}
