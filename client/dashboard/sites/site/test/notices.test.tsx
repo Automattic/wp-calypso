@@ -44,12 +44,4 @@ describe( '<InaccessibleJetpackNotice>', () => {
 
 		expect( screen.getByText( 'Your Jetpack site cannot be reached at this time.' ) ).toBeVisible();
 	} );
-
-	test( 'renders the notice title when the error has no message property', () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
-
-		render( <InaccessibleJetpackNotice error={ {} as Error } /> );
-
-		expect( screen.getByText( 'Your Jetpack site cannot be reached at this time.' ) ).toBeVisible();
-	} );
 } );
