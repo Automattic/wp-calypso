@@ -158,9 +158,10 @@ describe( 'readSiteQuery', () => {
 		expect( readSiteQuery( 123 ).queryKey ).toEqual( [ 'read', 'sites', 123 ] );
 	} );
 
-	it( 'sets a 24h staleTime and disables retries', () => {
+	it( 'sets a 24h staleTime and disables retries after handled site errors', () => {
 		const options = readSiteQuery( 1 );
 		expect( options.staleTime ).toBe( 24 * 60 * 60 * 1000 );
 		expect( options.retry ).toBe( false );
+		expect( options.retryOnMount ).toBe( false );
 	} );
 } );

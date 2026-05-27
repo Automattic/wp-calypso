@@ -11,6 +11,7 @@ export const readSiteQuery = ( siteId?: number | string ) => {
 		select: adaptReadSite,
 		staleTime: ONE_DAY_MS,
 		retry: false,
+		retryOnMount: false,
 		enabled: typeof id === 'number' && id > 0,
 	} );
 };
