@@ -230,6 +230,11 @@ export const StepVariants: Story = {
 				story: `
 All states a single step can be in. Click each trigger to open it as the active step.
 
+> **Accessibility note:** This story has 6 steps, so \`role="region"\` is omitted from
+> all panels (see the **LandmarkThreshold** story for a full explanation). Open DevTools
+> and inspect a panel element to verify — you will see a plain \`<div>\`, not
+> \`<div role="region">\`.
+
 | Prop | Effect |
 |---|---|
 | _(none)_ | Default appearance — upcoming or active |
@@ -242,4 +247,98 @@ All states a single step can be in. Click each trigger to open it as the active 
 		},
 	},
 	render: StepVariantsDemo,
+};
+
+// ---------------------------------------------------------------------------
+// Landmark threshold — role="region" behaviour at 5 vs 6+ steps
+// ---------------------------------------------------------------------------
+
+function FiveStepDemo() {
+	const [ step, setStep ] = useState( 'a' );
+	const steps = [ 'a', 'b', 'c', 'd', 'e' ];
+	return (
+		<VerticalStepper
+			value={ step }
+			onValueChange={ setStep }
+			aria-label="5-step flow"
+			style={ { maxWidth: 400 } }
+		>
+			{ steps.map( ( s ) => (
+				<VerticalStepper.Step key={ s } value={ s } title={ `Step ${ s.toUpperCase() }` }>
+					<p>
+						Panel for step { s.toUpperCase() }. Open DevTools → inspect this element → it should
+						have <code>role=&quot;region&quot;</code>.
+					</p>
+				</VerticalStepper.Step>
+			) ) }
+		</VerticalStepper>
+	);
+}
+
+function SixStepDemo() {
+	const [ step, setStep ] = useState( 'a' );
+	const steps = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
+	return (
+		<VerticalStepper
+			value={ step }
+			onValueChange={ setStep }
+			aria-label="6-step flow"
+			style={ { maxWidth: 400 } }
+		>
+			{ steps.map( ( s ) => (
+				<VerticalStepper.Step key={ s } value={ s } title={ `Step ${ s.toUpperCase() }` }>
+					<p>
+						Panel for step { s.toUpperCase() }. Open DevTools → inspect this element → it should be
+						a plain <code>&lt;div&gt;</code> with no <code>role</code>.
+					</p>
+				</VerticalStepper.Step>
+			) ) }
+		</VerticalStepper>
+	);
+}
+
+export const LandmarkThreshold: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story: `
+**Accessibility behaviour: \`role="region"\` is omitted when there are more than 5 steps.**
+
+Each open panel in a vertical stepper is a content region. When there are 5 or fewer
+steps, each panel gets \`role="region"\` with an accessible label so screen reader users
+can jump between panels using landmark navigation (e.g. \`F6\` in NVDA, \`Ctrl+F7\` in
+JAWS).
+
+When there are 6 or more steps, \`role="region"\` is omitted from all panels. Too many
+landmarks create noise — screen readers read out every landmark when the user requests
+a list, making navigation harder rather than easier. The panels are still fully
+reachable via Tab and arrow keys; they just don't appear as named landmarks.
+
+**How to verify with DevTools:**
+1. Open the story, expand a step.
+2. In DevTools Elements panel, find the open panel \`<div>\`.
+3. **5 steps** → \`role="region"\` is present.
+4. **6 steps** → no \`role\` attribute.
+				`,
+			},
+		},
+	},
+	render() {
+		return (
+			<div style={ { display: 'flex', gap: 40 } }>
+				<div style={ { flex: 1 } }>
+					<p>
+						<strong>5 steps</strong> — panels have <code>role=&quot;region&quot;</code>
+					</p>
+					<FiveStepDemo />
+				</div>
+				<div style={ { flex: 1 } }>
+					<p>
+						<strong>6 steps</strong> — panels are plain <code>&lt;div&gt;</code>
+					</p>
+					<SixStepDemo />
+				</div>
+			</div>
+		);
+	},
 };
