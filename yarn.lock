@@ -17781,6 +17781,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-formatter-checkstyle@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "eslint-formatter-checkstyle@npm:9.0.1"
+  checksum: a09e124cae6660aa82e362ff778b5671e8bd5ea3bf3f71bea60d4c96664c7d89334fb0142a12631b431868b08f3923a034e48835c62a37a92846bce9ee08ee93
+  languageName: node
+  linkType: hard
+
 "eslint-import-context@npm:^0.1.8":
   version: 0.1.9
   resolution: "eslint-import-context@npm:0.1.9"
@@ -34331,6 +34338,7 @@ __metadata:
     enhanced-resolve: "npm:5.9.3"
     eslint: "npm:^9.0.0"
     eslint-config-prettier: "npm:^9.1.0"
+    eslint-formatter-checkstyle: "npm:^9.0.1"
     eslint-plugin-import: "npm:^2.31.0"
     eslint-plugin-inclusive-language: "npm:^2.2.1"
     eslint-plugin-jest: "npm:^28.0.0"

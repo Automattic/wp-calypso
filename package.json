@@ -281,6 +281,7 @@
 		"dotenv-webpack": "^8.1.0",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
+		"eslint-formatter-checkstyle": "^9.0.1",
 		"eslint-plugin-import": "^2.31.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jest": "^28.0.0",
