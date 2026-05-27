@@ -13,12 +13,14 @@ type StepperIndicatorProps = {
 
 export function StepperIndicator( { children, className }: StepperIndicatorProps ) {
 	const { index, totalSteps, isCurrent, status, isDisabled } = useStepContext();
-	const { formatStepLabel } = useStepperContext();
+	const { formatStepLabel, indicatorVariant } = useStepperContext();
 
 	const stepNumber = index + 1;
 	const accessibleLabel = formatStepLabel( stepNumber, totalSteps, status );
 
-	let indicator = <span aria-hidden="true">{ stepNumber }</span>;
+	let indicator: ReactNode = indicatorVariant === 'number'
+		? <span aria-hidden="true">{ stepNumber }</span>
+		: null;
 	if ( status === 'completed' ) {
 		indicator = <Icon icon={ check } size={ 16 } />;
 	} else if ( status === 'error' ) {
@@ -27,6 +29,7 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 
 	return (
 		<span
+			data-indicator-variant={ indicatorVariant }
 			className={ clsx( styles.indicator, className, {
 				[ styles[ 'is-current' ] ]: isCurrent,
 				[ styles[ 'is-completed' ] ]: status === 'completed',

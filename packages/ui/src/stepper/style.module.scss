@@ -61,6 +61,11 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 	}
 }
 
+// Bullet variant: current step uses a dashed border ring instead of solid
+.indicator.is-current[data-indicator-variant='bullet'] {
+	border-style: dashed;
+}
+
 // Completed step
 .indicator.is-completed {
 	border-color: colors.$alert-green;

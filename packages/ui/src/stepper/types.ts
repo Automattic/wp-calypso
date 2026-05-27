@@ -19,6 +19,8 @@ type AriaLabelXOR = WithAriaLabel | WithAriaLabelledBy;
 
 export type StepStatus = 'completed' | 'error';
 
+export type IndicatorVariant = 'bullet' | 'number';
+
 // ---------------------------------------------------------------------------
 // Registration record (populated by useStepRegistration)
 // ---------------------------------------------------------------------------
@@ -49,6 +51,7 @@ export type StepperContextValue = {
 	updateStep: ( meta: StepMeta ) => void;
 	registerTriggerRef: ( value: string, el: HTMLElement | null ) => void;
 	formatStepLabel: ( step: number, total: number, status?: StepStatus ) => string;
+	indicatorVariant: IndicatorVariant;
 };
 
 export type StepContextValue = {
@@ -92,6 +95,11 @@ type StepperBaseProps = {
 	 */
 	activationMode?: 'auto' | 'manual';
 	formatStepLabel?: ( step: number, total: number, status?: StepStatus ) => string;
+	/**
+	 * Controls whether steps show a numeric label or a plain bullet circle.
+	 * @default 'bullet'
+	 */
+	indicatorVariant?: IndicatorVariant;
 	children: ReactNode;
 	className?: string;
 	style?: CSSProperties;

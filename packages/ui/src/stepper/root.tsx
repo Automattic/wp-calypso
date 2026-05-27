@@ -24,6 +24,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 		headingLevel = 3,
 		activationMode = 'manual',
 		formatStepLabel = defaultFormatStepLabel,
+		indicatorVariant = 'bullet',
 		children,
 		className,
 		style,
@@ -114,6 +115,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 		updateStep,
 		registerTriggerRef,
 		formatStepLabel,
+		indicatorVariant,
 	};
 
 	return (
