@@ -255,18 +255,12 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 
 					<Actions>
 						<div className="assign-license__controls">
-							<Button
-								variant="tertiary"
-								onClick={ onClickAssignLater }
-								disabled={ isPending }
-								className="assign-license-form__assign-later"
-							>
+							<Button variant="tertiary" onClick={ onClickAssignLater } disabled={ isPending }>
 								{ translate( 'Assign later' ) }
 							</Button>
 
 							<Button
 								variant="primary"
-								className="assign-license__assign-now"
 								disabled={ selectedSite?.ID === 0 }
 								isBusy={ isPending }
 								onClick={ onClickAssignLicenses }
