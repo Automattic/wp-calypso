@@ -26,6 +26,7 @@ describe( 'Stepper.Root', () => {
 	it( 'warns in dev when neither aria-label nor aria-labelledby is provided', () => {
 		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
+			// @ts-expect-error -- intentionally omitting both aria-label and aria-labelledby to test the runtime warning
 			<Stepper.Root orientation="vertical">
 				<div />
 			</Stepper.Root>
