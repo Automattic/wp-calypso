@@ -1,4 +1,5 @@
 // packages/ui/src/vertical-stepper/style.module.scss
+@use '@wordpress/base-styles/colors';
 @use '@wordpress/base-styles/variables';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
@@ -30,11 +31,11 @@
 	}
 
 	&[data-status='completed']:not( :last-child )::after {
-		background: #00a32a;
+		background: colors.$alert-green;
 	}
 
 	&[data-status='error']:not( :last-child )::after {
-		background: #d63638;
+		background: colors.$alert-red;
 	}
 }
 

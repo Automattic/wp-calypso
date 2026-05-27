@@ -45,10 +45,9 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.value ] );
 
-	// Keep primitive metadata in sync. children/indicator are ReactNodes and
-	// intentionally omitted from the dep list to avoid infinite re-render loops;
-	// they are updated whenever any primitive dep changes.
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// Keep all metadata in sync (including ReactNode props).
+	// updateStep is defined in HorizontalStepper (stable identity), so adding
+	// children/indicator here does not cause an infinite re-render loop.
 	useEffect( () => {
 		updateStep( props );
 	}, [
@@ -61,6 +60,8 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 		props.disabled,
 		props.forceMount,
 		props.className,
+		props.children,
+		props.indicator,
 	] );
 
 	return null;

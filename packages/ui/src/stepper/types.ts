@@ -6,13 +6,12 @@ import type { CSSProperties, ReactNode, Ref } from 'react';
 // ---------------------------------------------------------------------------
 
 /**
- * Requires exactly one of the listed keys to be present.
- * Used to enforce `aria-label` XOR `aria-labelledby`.
+ * Requires exactly one of `aria-label` or `aria-labelledby` — not both.
+ * Passing both is a type error; passing neither is also a type error.
  */
-export type RequireOneOf< T, Keys extends keyof T > = Omit< T, Keys > &
-	{
-		[ K in Keys ]-?: Required< Pick< T, K > > & Partial< Record< Exclude< Keys, K >, never > >;
-	}[ Keys ];
+type WithAriaLabel = { 'aria-label': string; 'aria-labelledby'?: never };
+type WithAriaLabelledBy = { 'aria-label'?: never; 'aria-labelledby': string };
+type AriaLabelXOR = WithAriaLabel | WithAriaLabelledBy;
 
 // ---------------------------------------------------------------------------
 // Step status
@@ -99,13 +98,16 @@ type StepperBaseProps = {
 	ref?: Ref< StepperRef >;
 };
 
-export type StepperProps = RequireOneOf<
-	StepperBaseProps & {
-		'aria-label'?: string;
-		'aria-labelledby'?: string;
-	},
-	'aria-label' | 'aria-labelledby'
->;
+export type StepperProps = StepperBaseProps & AriaLabelXOR;
+
+// ---------------------------------------------------------------------------
+// Tier 2 root prop type (used directly by Stepper.Root)
+// ---------------------------------------------------------------------------
+
+export type StepperRootProps = Omit< StepperBaseProps, 'ref' > &
+	AriaLabelXOR & {
+		orientation: 'vertical' | 'horizontal';
+	};
 
 export type StepProps = {
 	value: string;

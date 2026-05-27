@@ -41,14 +41,14 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 	const isLinearDisabled = linear && ! isCurrent && status !== 'completed';
 	const isDisabled = disabledProp || isLinearDisabled;
 
-	// Register this step with Root on mount (placeholder metadata)
+	// Register on mount with real metadata; deregister on unmount.
+	// Keep metadata in sync when derived state changes.
 	useEffect( () => {
-		// Register with neutral defaults; updateStep sets real metadata after mount
-		return registerStep( { value, status: undefined, disabled: false } );
+		const deregister = registerStep( { value, status, disabled: isDisabled } );
+		return deregister;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ value ] );
 
-	// Keep registration metadata in sync without remounting
 	useEffect( () => {
 		updateStep( { value, status, disabled: isDisabled } );
 	}, [ value, status, isDisabled, updateStep ] );

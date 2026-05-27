@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { createRef } from '@wordpress/element';
 import { Stepper } from '..';
 import { useStepContext } from '../context';
-import type { StepContextValue } from '../types';
+import type { StepContextValue, StepperRef } from '../types';
 
 describe( 'Stepper.Root', () => {
 	it( 'renders children in vertical orientation', () => {
@@ -344,5 +345,104 @@ describe( 'Stepper.List', () => {
 		);
 		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'horizontal mode' ) );
 		warn.mockRestore();
+	} );
+} );
+
+describe( 'Stepper uncontrolled mode', () => {
+	it( 'opens the defaultValue step on mount and calls onValueChange on navigation', () => {
+		const onValueChange = jest.fn();
+		render(
+			<Stepper.Root
+				orientation="vertical"
+				defaultValue="a"
+				onValueChange={ onValueChange }
+				aria-label="Test"
+			>
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel>Panel A</Stepper.Panel>
+				</Stepper.Step>
+				<Stepper.Step value="b">
+					<Stepper.Trigger>Step B</Stepper.Trigger>
+					<Stepper.Panel>Panel B</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByText( 'Panel A' ) ).toBeVisible();
+		fireEvent.click( screen.getByRole( 'button', { name: /step b/i } ) );
+		expect( onValueChange ).toHaveBeenCalledWith( 'b' );
+	} );
+} );
+
+describe( 'Stepper.Root focusStep', () => {
+	it( 'moves focus to the named trigger via the imperative handle', () => {
+		const ref = createRef< StepperRef >();
+		render(
+			<Stepper.Root orientation="vertical" value="a" ref={ ref } aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel>Panel A</Stepper.Panel>
+				</Stepper.Step>
+				<Stepper.Step value="b">
+					<Stepper.Trigger>Step B</Stepper.Trigger>
+					<Stepper.Panel>Panel B</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		ref.current!.focusStep( 'b' );
+		expect( screen.getByRole( 'button', { name: /step b/i } ) ).toHaveFocus();
+	} );
+} );
+
+describe( 'Stepper.Trigger className', () => {
+	it( 'applies className to the button only — not to the heading wrapper — in vertical mode', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger className="custom-class">Step A</Stepper.Trigger>
+					<Stepper.Panel>Panel A</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		const button = screen.getByRole( 'button', { name: /step a/i } );
+		expect( button ).toHaveClass( 'custom-class' );
+		expect( button.closest( 'h3' ) ).not.toHaveClass( 'custom-class' );
+	} );
+} );
+
+describe( 'Stepper.Panel forceMount', () => {
+	it( 'keeps panel content in the DOM when the step is not current', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="b" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel forceMount>
+						<div data-testid="force-mounted-content" />
+					</Stepper.Panel>
+				</Stepper.Step>
+				<Stepper.Step value="b">
+					<Stepper.Trigger>Step B</Stepper.Trigger>
+					<Stepper.Panel>
+						<div data-testid="active-content" />
+					</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		// Step A is inactive; forceMount keeps its content in the DOM.
+		expect( screen.getByTestId( 'force-mounted-content' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'Stepper.Indicator formatStepLabel', () => {
+	it( 'uses the custom formatStepLabel from Root to generate the visually-hidden label', () => {
+		const format = jest.fn( ( step: number, total: number ) => `Item ${ step } of ${ total }` );
+		render(
+			<Stepper.Root orientation="vertical" value="a" formatStepLabel={ format } aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Indicator />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByText( 'Item 1 of 1' ) ).toBeInTheDocument();
 	} );
 } );

@@ -15,6 +15,7 @@ export function VerticalStepperStep( {
 	optional = false,
 	disabled = false,
 	indicator,
+	forceMount,
 	children,
 	className,
 }: StepProps ) {
@@ -34,7 +35,9 @@ export function VerticalStepperStep( {
 					{ optional && ! description && <Stepper.Description>Optional</Stepper.Description> }
 				</div>
 			</Stepper.Trigger>
-			<Stepper.Panel className={ styles[ 'panel' ] }>{ children }</Stepper.Panel>
+			<Stepper.Panel className={ styles[ 'panel' ] } forceMount={ forceMount }>
+				{ children }
+			</Stepper.Panel>
 		</Stepper.Step>
 	);
 }

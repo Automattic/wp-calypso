@@ -24,7 +24,13 @@ export function useStepRegistration() {
 	}, [] );
 
 	const updateStep = useCallback( ( meta: StepMeta ) => {
-		setSteps( ( prev ) => prev.map( ( s ) => ( s.value === meta.value ? meta : s ) ) );
+		setSteps( ( prev ) => {
+			const idx = prev.findIndex( ( s ) => s.value === meta.value );
+			if ( idx === -1 || prev[ idx ] === meta ) {
+				return prev;
+			}
+			return prev.map( ( s ) => ( s.value === meta.value ? meta : s ) );
+		} );
 	}, [] );
 
 	return { steps, registerStep, updateStep };
