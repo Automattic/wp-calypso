@@ -131,6 +131,7 @@ export function useSiteLaunch(
 	};
 
 	const launchForModal = () => {
+		track();
 		launchMutation.mutate( undefined, {
 			onSettled: () => setIsModalOpen( false ),
 		} );
@@ -157,10 +158,7 @@ export function useSiteLaunch(
 			return {
 				...baseResult,
 				isHidden: false,
-				onClick: () => {
-					track();
-					setIsModalOpen( true );
-				},
+				onClick: () => setIsModalOpen( true ),
 				modal: isModalOpen ? (
 					<A4aLaunchModal
 						isLaunching={ launchMutation.isPending }
