@@ -1,5 +1,6 @@
 import './style.scss';
 
+import page from '@automattic/calypso-router';
 import { TimeSince } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
@@ -7,6 +8,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { type MouseEvent } from 'react';
 import { SocialAvatar } from '../../avatar';
 import type {
 	AtmosphereNotification,
@@ -31,8 +33,18 @@ type SocialNotificationCanonicalType =
 	| MastodonNotificationCanonicalType
 	| FediverseNotificationCanonicalType;
 
+/**
+ * Resolves an in-app URL for a notification's target. Returns `null` to fall
+ * back to the external `target_url`. Per-protocol notifications panels supply
+ * the resolver so a mention / reply / quote opens its thread inside the Reader
+ * instead of bouncing the user to the upstream client (bsky.app, the home
+ * Mastodon instance, etc.).
+ */
+export type NotificationInAppUrlResolver = ( notification: SocialNotification ) => string | null;
+
 interface Props {
 	notification: SocialNotification;
+	getInAppUrl?: NotificationInAppUrlResolver;
 }
 
 function isSafeUrl( url: string ): boolean {
@@ -44,7 +56,7 @@ function isSafeUrl( url: string ): boolean {
 	}
 }
 
-export function SocialNotificationItem( { notification }: Props ) {
+export function SocialNotificationItem( { notification, getInAppUrl }: Props ) {
 	const translate = useTranslate();
 	const { actor, target, target_url, canonical_type, is_read, created_at } = notification;
 	const actorName = actor.display_name || actor.handle;
@@ -57,6 +69,7 @@ export function SocialNotificationItem( { notification }: Props ) {
 		? actionLabel
 		: ( translate( 'Unread. %(label)s', { args: { label: actionLabel } } ) as string );
 
+	const inAppUrl = getInAppUrl?.( notification ) ?? null;
 	const safe = isSafeUrl( target_url );
 	const className = clsx( 'social-notification-item', { 'is-unread': ! is_read } );
 
@@ -86,6 +99,30 @@ export function SocialNotificationItem( { notification }: Props ) {
 			{ ! is_read && <span className="social-notification-item__unread-dot" aria-hidden /> }
 		</HStack>
 	);
+
+	if ( inAppUrl ) {
+		const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
+			// Defer to the browser for modifier-clicks (new tab / new window /
+			// download) so users can still pop a notification into a side tab.
+			if (
+				event.defaultPrevented ||
+				event.button !== 0 ||
+				event.metaKey ||
+				event.ctrlKey ||
+				event.shiftKey ||
+				event.altKey
+			) {
+				return;
+			}
+			event.preventDefault();
+			page( inAppUrl );
+		};
+		return (
+			<a className={ className } href={ inAppUrl } aria-label={ ariaLabel } onClick={ onClick }>
+				{ body }
+			</a>
+		);
+	}
 
 	if ( safe ) {
 		return (

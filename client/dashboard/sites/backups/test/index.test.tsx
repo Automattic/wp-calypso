@@ -30,6 +30,7 @@ jest.mock( '@wordpress/data', () => ( {
 	store: jest.fn(),
 	select: jest.fn(),
 	dispatch: jest.fn(),
+	keyedReducer: () => () => ( {} ),
 } ) );
 
 // Mock scrollIntoView for JSDOM compatibility

@@ -100,7 +100,7 @@ export const useInstallGithub = () => {
 						recordTracksEvent( 'calypso_hosting_github_app_install_failed' );
 
 						createErrorNotice( __( 'Failed to authorize GitHub. Please try again.' ), {
-							duration: 5000,
+							type: 'snackbar',
 						} );
 					}
 				}
@@ -121,7 +121,7 @@ export const useInstallGithub = () => {
 							),
 							{
 								id: NOTICE_ID,
-								showDismiss: true,
+								isDismissible: true,
 							}
 						);
 						return;
@@ -136,7 +136,7 @@ export const useInstallGithub = () => {
 			recordTracksEvent( 'calypso_hosting_github_app_install_failed' );
 
 			createErrorNotice( __( 'Failed to authorize GitHub. Please try again.' ), {
-				duration: 5000,
+				type: 'snackbar',
 			} );
 		}
 	};

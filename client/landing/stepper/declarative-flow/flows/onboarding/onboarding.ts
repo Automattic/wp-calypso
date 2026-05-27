@@ -70,8 +70,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { planCartItem, blueprint } = useSelect(
+		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
 			( select ) => ( {
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
@@ -193,14 +194,15 @@ const onboarding: FlowV2< typeof initialize > = {
 					setPlanCartItem( pickedPlan );
 
 					if ( ! pickedPlan ) {
-						// Redirect free plan selections to the choose page for the PWYW A/B test.
-						// `/choose` is a WordPress.com PHP route, not a Calypso route, so we need an
-						// absolute URL — a relative path resolves to the current Calypso host (e.g.
-						// wpcalypso.wordpress.com/choose) and 404s on pre-release. See TESTOPS-106.
-						window.location.assign(
-							addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
-						);
-						return;
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.

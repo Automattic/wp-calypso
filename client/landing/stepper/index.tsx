@@ -34,12 +34,13 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore, useSelector } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
@@ -122,6 +123,21 @@ function LazyHelpCenter( { currentUser }: { currentUser: UserStore.CurrentUser }
 	}
 
 	return <AsyncHelpCenterApp currentUser={ currentUser } sectionName="stepper" />;
+}
+
+// Matches the stepper user (account-creation) step, including the optional
+// locale segment from FlowRenderer's route (e.g. `/setup/onboarding/user/es`).
+// useSyncRoute keeps the Redux `currentRoute` in sync with react-router
+// navigation, so the FAB can live outside <BrowserRouter> (mounting it inside
+// would nest the Help Center panel's own <Router> and crash).
+const USER_STEP_PATH = /^\/setup\/[^/]+\/user(?:\/[^/]+)?\/?$/;
+
+function StepperUserStepFab() {
+	const currentRoute = useSelector( getCurrentRoute );
+	if ( ! USER_STEP_PATH.test( currentRoute ) ) {
+		return null;
+	}
+	return <AsyncHelpCenterFab sectionName="stepper" />;
 }
 
 async function main() {
@@ -293,9 +309,12 @@ async function main() {
 									loadAgentsManager
 								/>
 								{ /* The stepper has no masterbar or help button, so logged-out visitors
-								   have no way to summon the Help Center otherwise. */ }
+								   on the account-creation step need this FAB to summon the Help Center.
+								   It reads its route gate from Redux (kept in sync by useSyncRoute) so
+								   it can live outside <BrowserRouter> — mounting it inside would nest
+								   the Help Center panel's own <Router> and crash. */ }
 								{ ! user && config.isEnabled( 'help-center/logged-out-fab' ) && (
-									<AsyncHelpCenterFab sectionName="stepper" />
+									<StepperUserStepFab />
 								) }
 							</>
 						) ) }

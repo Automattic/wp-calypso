@@ -2,6 +2,7 @@ import { defaultI18n, type I18n, type LocaleData } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 import { useAuth } from './auth';
+import { getUserLanguage } from './shared-locale-loader';
 
 async function fetchLocaleData(
 	language: string,
@@ -145,12 +146,7 @@ async function switchWebpackCSS( isRTL: boolean ) {
 // slug in the route path.
 function useLocaleSlug() {
 	const { user } = useAuth();
-	type ComputedAttributes = {
-		localeSlug?: string;
-		localeVariant?: string;
-	};
-	const u = user as typeof user & ComputedAttributes;
-	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
+	return getUserLanguage( user );
 }
 
 export function I18nProvider( { children }: PropsWithChildren ) {

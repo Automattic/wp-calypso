@@ -118,7 +118,7 @@ export default function DefaultSitesDataViews( {
 			paginationInfo={ paginationInfo }
 			config={ DEFAULT_CONFIG }
 			defaultLayouts={ { list: {} } }
-			onResetView={ resetView }
+			onReset={ resetView }
 			selection={ [ selectedSiteId.toString() ] }
 			onChangeSelection={ onSelectionChange }
 		/>

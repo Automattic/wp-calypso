@@ -114,7 +114,7 @@ function SiteDomains() {
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ updateView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					view={ view }
 					actions={ hasEligibleActions ? actions : [] }
 					search

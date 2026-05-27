@@ -11,40 +11,51 @@ interface RecentPostFieldProps {
 		featured_image?: string;
 		site_name?: string;
 	};
+	onClick?: () => void;
+	onKeyDown?: ( event: React.KeyboardEvent< HTMLDivElement > ) => void;
 }
 
-const RecentPostField = forwardRef< HTMLDivElement, RecentPostFieldProps >( ( { post }, ref ) => {
-	if ( ! post ) {
-		return null;
-	}
+const RecentPostField = forwardRef< HTMLDivElement, RecentPostFieldProps >(
+	( { post, onClick, onKeyDown }, ref ) => {
+		if ( ! post ) {
+			return null;
+		}
 
-	return (
-		<div className="recent-post-field" ref={ ref } role="button" tabIndex={ 0 }>
-			<AutoDirection>
-				<div className="recent-post-field__title">
-					<div className="recent-post-field__title-text">
-						{ post?.title ||
-							getPostTitleFallback( {
-								title: post?.title ?? '',
-								excerpt: post?.excerpt ?? '',
-								content: post?.content ?? '',
-							} ) }
+		return (
+			<div
+				className="recent-post-field"
+				ref={ ref }
+				role="button"
+				tabIndex={ 0 }
+				onClick={ onClick }
+				onKeyDown={ onKeyDown }
+			>
+				<AutoDirection>
+					<div className="recent-post-field__title">
+						<div className="recent-post-field__title-text">
+							{ post?.title ||
+								getPostTitleFallback( {
+									title: post?.title ?? '',
+									excerpt: post?.excerpt ?? '',
+									content: post?.content ?? '',
+								} ) }
+						</div>
+						<div className="recent-post-field__site-name">{ post?.site_name }</div>
 					</div>
-					<div className="recent-post-field__site-name">{ post?.site_name }</div>
-				</div>
-			</AutoDirection>
+				</AutoDirection>
 
-			<div className="recent-post-field__featured-image">
-				<ReaderFeaturedImage
-					imageUrl={ post?.featured_image }
-					imageWidth={ 38 }
-					imageHeight={ 38 }
-					isCompactPost
-				/>
+				<div className="recent-post-field__featured-image">
+					<ReaderFeaturedImage
+						imageUrl={ post?.featured_image }
+						imageWidth={ 38 }
+						imageHeight={ 38 }
+						isCompactPost
+					/>
+				</div>
 			</div>
-		</div>
-	);
-} );
+		);
+	}
+);
 
 RecentPostField.displayName = 'RecentPostField';
 
