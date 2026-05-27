@@ -33,4 +33,4 @@ The section name for which JITM data should be queried. When this is set, JITMs 
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The messagePath of the JITMs you want to retreive.
+The messagePath of the JITMs you want to retrieve.
