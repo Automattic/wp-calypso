@@ -1,10 +1,17 @@
 // packages/ui/src/vertical-stepper/stories/index.stories.tsx
 import { useState } from '@wordpress/element';
 import { VerticalStepper } from '..';
-import type { StepperProps } from '..';
+import type { IndicatorVariant } from '../../stepper/types';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta< typeof VerticalStepper > = {
+type StoryArgs = {
+	'aria-label'?: string;
+	linear?: boolean;
+	headingLevel?: 2 | 3 | 4 | 5 | 6;
+	indicatorVariant?: IndicatorVariant;
+};
+
+const meta: Meta< StoryArgs > = {
 	component: VerticalStepper,
 	title: 'UI/Stepper/Vertical',
 	parameters: {
@@ -38,17 +45,6 @@ If you need a completely custom layout or DOM structure, use the headless
 			control: { type: 'select' },
 			options: [ 2, 3, 4, 5, 6 ],
 		},
-		// Managed internally by the story's useState — hide from controls.
-		value: { table: { disable: true } },
-		defaultValue: { table: { disable: true } },
-		onValueChange: { table: { disable: true } },
-		// Complex / render-only props — not useful as controls.
-		children: { table: { disable: true } },
-		className: { table: { disable: true } },
-		style: { table: { disable: true } },
-		ref: { table: { disable: true } },
-		formatStepLabel: { table: { disable: true } },
-		'aria-labelledby': { table: { disable: true } },
 	},
 };
 
@@ -56,11 +52,14 @@ export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-function DefaultDemo( args: StepperProps ) {
+function DefaultDemo( { 'aria-label': ariaLabel = 'Checkout', linear, headingLevel, indicatorVariant }: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
-			{ ...args }
+			aria-label={ ariaLabel }
+			linear={ linear }
+			headingLevel={ headingLevel }
+			indicatorVariant={ indicatorVariant }
 			value={ step }
 			onValueChange={ setStep }
 			style={ { maxWidth: 400 } }
@@ -92,11 +91,14 @@ export const Default: Story = {
 	render: DefaultDemo,
 };
 
-function LinearFlowDemo( args: StepperProps ) {
+function LinearFlowDemo( { 'aria-label': ariaLabel = 'Linear checkout', linear, headingLevel, indicatorVariant }: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
-			{ ...args }
+			aria-label={ ariaLabel }
+			linear={ linear }
+			headingLevel={ headingLevel }
+			indicatorVariant={ indicatorVariant }
 			value={ step }
 			onValueChange={ setStep }
 			style={ { maxWidth: 400 } }
@@ -244,11 +246,14 @@ advance. The log on the right shows what the \`onValueChange\` handler received.
 	render: BackNavigationDemo,
 };
 
-function WithErrorDemo( args: StepperProps ) {
+function WithErrorDemo( { 'aria-label': ariaLabel = 'Checkout with error', linear, headingLevel, indicatorVariant }: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
-			{ ...args }
+			aria-label={ ariaLabel }
+			linear={ linear }
+			headingLevel={ headingLevel }
+			indicatorVariant={ indicatorVariant }
 			value={ step }
 			onValueChange={ setStep }
 			style={ { maxWidth: 400 } }

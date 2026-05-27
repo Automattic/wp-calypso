@@ -1,10 +1,17 @@
 // packages/ui/src/horizontal-stepper/stories/index.stories.tsx
 import { useState } from '@wordpress/element';
 import { HorizontalStepper } from '..';
-import type { StepperProps } from '..';
+import type { IndicatorVariant } from '../../stepper/types';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta< typeof HorizontalStepper > = {
+type StoryArgs = {
+	'aria-label'?: string;
+	linear?: boolean;
+	activationMode?: 'auto' | 'manual';
+	indicatorVariant?: IndicatorVariant;
+};
+
+const meta: Meta< StoryArgs > = {
 	component: HorizontalStepper,
 	title: 'UI/Stepper/Horizontal',
 	parameters: {
@@ -39,18 +46,6 @@ If you need a completely custom layout or DOM structure, use the headless
 			control: { type: 'radio' },
 			options: [ 'manual', 'auto' ],
 		},
-		// Managed internally by the story's useState — hide from controls.
-		value: { table: { disable: true } },
-		defaultValue: { table: { disable: true } },
-		onValueChange: { table: { disable: true } },
-		// Complex / render-only props — not useful as controls.
-		children: { table: { disable: true } },
-		className: { table: { disable: true } },
-		style: { table: { disable: true } },
-		ref: { table: { disable: true } },
-		formatStepLabel: { table: { disable: true } },
-		headingLevel: { table: { disable: true } },
-		'aria-labelledby': { table: { disable: true } },
 	},
 };
 
@@ -64,11 +59,11 @@ const checkoutSteps = [
 	{ value: 'review', title: 'Review', optional: true },
 ];
 
-function DefaultDemo( args: StepperProps ) {
+function DefaultDemo( { 'aria-label': ariaLabel = 'Checkout', linear, activationMode, indicatorVariant }: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	const currentIndex = checkoutSteps.findIndex( ( s ) => s.value === step );
 	return (
-		<HorizontalStepper { ...args } value={ step } onValueChange={ setStep }>
+		<HorizontalStepper aria-label={ ariaLabel } linear={ linear } activationMode={ activationMode } indicatorVariant={ indicatorVariant } value={ step } onValueChange={ setStep }>
 			{ checkoutSteps.map( ( s, i ) => (
 				<HorizontalStepper.Step
 					key={ s.value }
@@ -94,10 +89,10 @@ export const Default: Story = {
 	render: DefaultDemo,
 };
 
-function LinearFlowDemo( args: StepperProps ) {
+function LinearFlowDemo( { 'aria-label': ariaLabel = 'Linear checkout', linear, activationMode, indicatorVariant }: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
-		<HorizontalStepper { ...args } value={ step } onValueChange={ setStep }>
+		<HorizontalStepper aria-label={ ariaLabel } linear={ linear } activationMode={ activationMode } indicatorVariant={ indicatorVariant } value={ step } onValueChange={ setStep }>
 			<HorizontalStepper.Step value="shipping" title="Shipping" status="completed">
 				<p>Done.</p>
 			</HorizontalStepper.Step>
@@ -128,11 +123,11 @@ const fiveSteps = [
 	{ value: 'e', title: 'Review once again' },
 ];
 
-function FiveStepsDemo( args: StepperProps ) {
+function FiveStepsDemo( { 'aria-label': ariaLabel = '5-step flow', linear, activationMode, indicatorVariant }: StoryArgs ) {
 	const [ step, setStep ] = useState( 'b' );
 	const currentIndex = fiveSteps.findIndex( ( s ) => s.value === step );
 	return (
-		<HorizontalStepper { ...args } value={ step } onValueChange={ setStep }>
+		<HorizontalStepper aria-label={ ariaLabel } linear={ linear } activationMode={ activationMode } indicatorVariant={ indicatorVariant } value={ step } onValueChange={ setStep }>
 			{ fiveSteps.map( ( s, i ) => (
 				<HorizontalStepper.Step
 					key={ s.value }
