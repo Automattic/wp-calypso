@@ -50,7 +50,7 @@ function handleLikeToggle( newState ) {
 
 - `likeCount`: the number of likes.
 - `showZeroCount`: (default: false) show the number of likes even if it's zero.
-- `liked`: (default: false ) a boolean indicating if the current user has liked whatever is being liked.
+- `liked`: (default: false) a boolean indicating if the current user has liked whatever is being liked.
 - `tagName`: (default: 'li' ) string. The container tag to use for the button.
 - `onLikeToggle`: a callback that is invoked when the like button toggles. It is called with the new state.
 - `isMini`: show a smaller version of the button. Used on comment likes.
