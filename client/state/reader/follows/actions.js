@@ -1,3 +1,4 @@
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_FOLLOW,
 	READER_FOLLOW_ERROR,
@@ -30,6 +31,24 @@ import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/new
 
 import 'calypso/state/reader/init';
 
+function updateCachedReadSiteFollowStatus( feedUrl, isFollowing ) {
+	const queryClient = getCalypsoQueryClient();
+	if ( ! queryClient || ! feedUrl ) {
+		return;
+	}
+
+	for ( const [ queryKey, site ] of queryClient.getQueriesData( {
+		queryKey: [ 'read', 'sites' ],
+	} ) ) {
+		if ( site?.feed_URL === feedUrl ) {
+			queryClient.setQueryData( queryKey, {
+				...site,
+				is_following: isFollowing,
+			} );
+		}
+	}
+}
+
 /**
  * @typedef {Object} RecommendedSiteInfo
  * @property {number} seed - Random number for the recommendation logic
@@ -45,6 +64,8 @@ import 'calypso/state/reader/init';
  * @returns {Object} The action.
  */
 export function follow( feedUrl, followInfo, recommendedSiteInfo ) {
+	updateCachedReadSiteFollowStatus( feedUrl, true );
+
 	const action = {
 		type: READER_FOLLOW,
 		payload: {
@@ -65,6 +86,8 @@ export function requestFollowCompleted( feedUrl ) {
 }
 
 export function unfollow( feedUrl ) {
+	updateCachedReadSiteFollowStatus( feedUrl, false );
+
 	return {
 		type: READER_UNFOLLOW,
 		payload: { feedUrl },
