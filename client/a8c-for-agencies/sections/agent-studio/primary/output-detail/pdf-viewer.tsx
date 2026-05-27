@@ -3,14 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { loadFitScript } from '../../lib/load-fit-script';
 
 import './pdf-viewer.scss';
-
-declare global {
-	interface Window {
-		applyA4aFit?: ( root: Document | ShadowRoot ) => Promise< void >;
-	}
-}
 
 export interface PdfViewerPage {
 	srcDoc: string;
@@ -128,16 +123,26 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 			.join( '' );
 		// Drop body scripts before injecting markup — innerHTML cannot
 		// execute them anyway, and leaving them in clutters the DOM.
-		// `window.applyA4aFit` is registered by OutputDetailContent
-		// against the full deck HTML before this component mounts.
 		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
 		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
-		if ( window.applyA4aFit ) {
+		// loadFitScript is a singleton — fetches the wpcom fit-script
+		// endpoint once per session and resolves when applyA4aFit is
+		// available on `window`. Each shadow root awaits the load before
+		// running the fitter, so there's no race between mount order and
+		// script readiness.
+		let cancelled = false;
+		loadFitScript().then( ( ok ) => {
+			if ( cancelled || ! ok || ! window.applyA4aFit ) {
+				return;
+			}
 			window.applyA4aFit( shadow ).catch( ( e ) => {
 				// eslint-disable-next-line no-console
 				console.warn( '[a4a-preview] applyA4aFit error', e );
 			} );
-		}
+		} );
+		return () => {
+			cancelled = true;
+		};
 	}, [ srcDoc, title ] );
 
 	return (

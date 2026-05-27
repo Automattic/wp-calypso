@@ -1,19 +1,14 @@
 /**
- * Extract the inlined `applyA4aFit` script from a wpcom-rendered deck
- * HTML and execute it in the OUTER document. Idempotent: if a previous
- * call already loaded the script (or another tab session has), short-
- * circuits.
+ * Load the wpcom fit.js into the outer document so
+ * `window.applyA4aFit(shadowRoot)` is callable from the agent-studio
+ * preview. Backed by the dedicated `/wpcom/v2/a4a/fit-script` endpoint
+ * — separate from the deck render path, so a single cache key controls
+ * freshness and a stale deck can't pin the fitter to an old version.
  *
- * The collateral shell (`Marketing_Collateral_Shell::wrap_html`) appends
- * `fit.js` inside `<script>…</script>` before `</body>` so Browserless
- * runs the fitter before snapshotting the PDF. In the in-app preview,
- * we want the same fitter to run inside each shadow root we build.
- * `shadow.innerHTML = …` does not execute injected script tags, so
- * the script body has to be re-attached via `createElement('script')`
- * in the outer document — that path executes and exposes
- * `window.applyA4aFit`, which `ShadowPage` then calls per shadow root.
- *
- * Returns `true` if the global is available after the call.
+ * Singleton: returns the same Promise across all callers in one tab so
+ * the script is fetched/evaluated exactly once per session. The Promise
+ * resolves when `window.applyA4aFit` becomes available (the script's
+ * IIFE registers it).
  */
 declare global {
 	interface Window {
@@ -21,23 +16,32 @@ declare global {
 	}
 }
 
-export function loadFitScriptFromDeck( deckHtml: string ): boolean {
+const FIT_SCRIPT_URL = 'https://public-api.wordpress.com/wpcom/v2/a4a/fit-script';
+
+let loadPromise: Promise< boolean > | null = null;
+
+export function loadFitScript(): Promise< boolean > {
 	if ( typeof window === 'undefined' ) {
-		return false;
+		return Promise.resolve( false );
 	}
 	if ( window.applyA4aFit ) {
-		return true;
+		return Promise.resolve( true );
 	}
-	const parsed = new DOMParser().parseFromString( deckHtml, 'text/html' );
-	const inline = Array.from( parsed.body.querySelectorAll( 'script' ) ).find(
-		( s ) => ! s.src && /applyA4aFit/.test( s.textContent ?? '' )
-	);
-	if ( ! inline?.textContent ) {
-		return false;
+	if ( loadPromise ) {
+		return loadPromise;
 	}
-	const exec = document.createElement( 'script' );
-	exec.setAttribute( 'data-a4a-fit', '1' );
-	exec.textContent = inline.textContent;
-	document.head.appendChild( exec );
-	return !! window.applyA4aFit;
+	loadPromise = new Promise< boolean >( ( resolve ) => {
+		const url = `${ FIT_SCRIPT_URL }?_t=${ Date.now() }`;
+		const s = document.createElement( 'script' );
+		s.src = url;
+		s.async = true;
+		s.dataset.a4aFit = '1';
+		s.onload = () => resolve( !! window.applyA4aFit );
+		s.onerror = () => {
+			loadPromise = null; // allow retries on transient failure
+			resolve( false );
+		};
+		document.head.appendChild( s );
+	} );
+	return loadPromise;
 }

@@ -14,7 +14,7 @@ import useAgentStudioCollateral, {
 import useAgentStudioRun, { type AgentStudioRunPayload } from '../../data/use-agent-studio-run';
 import useAgentStudioVariantHtml from '../../data/use-agent-studio-variant-html';
 import usePrefetchAgentStudioVariantHtml from '../../data/use-prefetch-agent-studio-variant-html';
-import { loadFitScriptFromDeck } from '../../lib/load-fit-script';
+import { loadFitScript } from '../../lib/load-fit-script';
 import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
@@ -75,14 +75,13 @@ export default function OutputDetailContent( { output }: Props ) {
 	const selectedVariantHtml = useAgentStudioVariantHtml( selectedVariant?.html_url );
 	const baseVariantHtml = useAgentStudioVariantHtml( variants[ 0 ]?.html_url );
 
-	// Extract and register `window.applyA4aFit` once per session from the
-	// full deck HTML — runs before splitIntoPages so we never depend on
-	// per-page propagation to keep the script attached. Idempotent.
+	// Pull the fitter from its dedicated wpcom endpoint and register
+	// `window.applyA4aFit` once per session. Independent of deck content
+	// + splitIntoPages so a stale deck cache can't pin the preview to
+	// an old fitter.
 	useEffect( () => {
-		if ( baseVariantHtml.data ) {
-			loadFitScriptFromDeck( baseVariantHtml.data );
-		}
-	}, [ baseVariantHtml.data ] );
+		loadFitScript();
+	}, [] );
 
 	const coverSrcDoc = useMemo< string | undefined >( () => {
 		if ( ! selectedVariantHtml.data ) {
