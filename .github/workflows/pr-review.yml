@@ -392,7 +392,7 @@ jobs:
           esac
 
           PAYLOAD=$(echo "$RESULT" | jq -n --slurpfile r /dev/stdin \
-            --arg source          "wp-calypso" \
+            --arg source          "wp-calypso-$T_AREA" \
             --arg outcome         "$OUTCOME" \
             --arg repo            "$T_REPO" \
             --arg pr              "$T_PR" \
@@ -401,7 +401,6 @@ jobs:
             --arg model           "$T_MODEL" \
             --arg build_url       "$T_BUILD_URL" \
             --arg ci_provider     "github_actions" \
-            --arg area            "$T_AREA" \
             --arg is_followup     "$IS_FOLLOWUP" \
             '{
               source:          $source,
@@ -413,7 +412,6 @@ jobs:
               model:           $model,
               build_url:       $build_url,
               ci_provider:     $ci_provider,
-              area:            $area,
               is_followup:     ($is_followup == "true"),
               cost_usd:        ($r[0].total_cost_usd // 0),
               duration:        (($r[0].duration_ms // 0) / 1000),
