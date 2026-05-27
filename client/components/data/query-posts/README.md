@@ -42,7 +42,7 @@ The site ID for which posts should be queried.
 	<tr><th>Default</th><td><code>null</code></td></tr>
 </table>
 
-The post ID to query for. If provided a single post query will be performed
+The post ID to query for. If provided a single post query will be performed.
 
 ### `query`
 
