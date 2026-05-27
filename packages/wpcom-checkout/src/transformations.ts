@@ -52,6 +52,23 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	};
 }
 
+function getBusinessTaxSuffix( responseCart: ResponseCart ): string {
+	const { is_for_business, subdivision_code } = responseCart.tax.location;
+	if ( is_for_business && subdivision_code ) {
+		return (
+			' ' +
+			String(
+				translate( '(%(state)s business tax use)', {
+					args: { state: subdivision_code },
+					comment:
+						'Label indicating a state-level business use tax. %(state)s is a US state code like "CA".',
+				} )
+			)
+		);
+	}
+	return '';
+}
+
 export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
 	if ( ! responseCart.tax.display_taxes ) {
 		return null;
@@ -59,11 +76,12 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 	return {
 		id: 'tax-line-item',
 		// translators: The label of the taxes line item in checkout
-		label: String(
-			translate( 'Tax', {
-				context: "Shortened form of 'Sales Tax', not a country-specific tax name",
-			} )
-		),
+		label:
+			String(
+				translate( 'Tax', {
+					context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+				} )
+			) + getBusinessTaxSuffix( responseCart ),
 		type: 'tax',
 		formattedAmount: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 			isSmallestUnit: true,
@@ -83,6 +101,7 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 		const lineItem = getTaxLineItemFromCart( responseCart );
 		return lineItem ? [ lineItem ] : [];
 	}
+	const businessTaxSuffix = getBusinessTaxSuffix( responseCart );
 	return responseCart.total_tax_breakdown.map(
 		( taxBreakdownItem: TaxBreakdownItem ): LineItemType => {
 			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
@@ -95,7 +114,7 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 				  );
 			return {
 				id,
-				label,
+				label: label + businessTaxSuffix,
 				type: 'tax',
 				formattedAmount: formatCurrency(
 					taxBreakdownItem.tax_collected_integer,

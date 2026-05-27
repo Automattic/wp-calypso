@@ -544,9 +544,22 @@ function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } 
 		return null;
 	}
 
+	const baseTaxLabel = taxName ?? String( translate( 'Tax' ) );
+	const businessTaxSuffix =
+		transaction.tax_is_for_business && transaction.tax_state
+			? ' ' +
+			  String(
+					translate( '(%(state)s business tax use)', {
+						args: { state: transaction.tax_state },
+						comment:
+							'Label indicating a state-level business use tax. %(state)s is a US state code like "CA".',
+					} )
+			  )
+			: '';
+
 	return (
 		<div className="billing-history__transaction-tax-amount">
-			<span>{ taxName ?? translate( 'Tax' ) }</span>
+			<span>{ baseTaxLabel + businessTaxSuffix }</span>
 			<span>
 				{ formatCurrency( transaction.tax_integer, transaction.currency, {
 					isSmallestUnit: true,
