@@ -68,16 +68,16 @@ $data-view-border-color: #f1f1f1;
 	@media (min-width: $break-large) {
 		background: inherit;
 
-		.dataviews-wrapper tr.dataviews-view-table__row th {
+		.referrals-list__table .dataviews-wrapper tr.dataviews-view-table__row th {
 			text-wrap: nowrap;
 		}
 
-		.dataviews-view-table tr th:first-child,
-		.dataviews-view-table tr td:first-child {
+		.referrals-list__table .dataviews-view-table tr th:first-child,
+		.referrals-list__table .dataviews-view-table tr td:first-child {
 			padding-inline-start: 64px;
 		}
 
-		.dataviews-view-table__row .a4a-text-placeholder {
+		.referrals-list__table .dataviews-view-table__row .a4a-text-placeholder {
 			width: 50px;
 		}
 	}
