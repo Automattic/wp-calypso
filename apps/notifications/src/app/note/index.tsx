@@ -3,12 +3,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	Button,
 	CardHeader,
 	CardBody,
-	Navigator,
-	useNavigator,
 } from '@wordpress/components';
-import { isRTL } from '@wordpress/i18n';
+import { usePrevious, useViewportMatch } from '@wordpress/compose';
+import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
@@ -26,7 +26,7 @@ import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
 import { useNoteNavigationViaKeyboardShortcuts } from './hooks';
 import './style.scss';
-import type { Note as NoteObject, Block } from '../types';
+import type { FilterName, Note as NoteObject, Block } from '../types';
 
 const hasBadge = ( body: NoteObject[ 'body' ] ) =>
 	body.some(
@@ -70,12 +70,23 @@ const getClasses = ( {
 	} );
 };
 
-const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
-	const dispatch = useDispatch();
-	const { params, goBack } = useNavigator();
-	const { filterName, noteId } = params;
+type NoteProps = {
+	isDismissible?: boolean;
+	filterName: FilterName;
+	selectedNoteId: string | undefined;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
+};
 
-	const filter = getFilters()[ filterName as keyof ReturnType< typeof getFilters > ];
+const Note = ( { isDismissible, filterName, selectedNoteId, setSelectedNoteId }: NoteProps ) => {
+	const dispatch = useDispatch();
+	const isLargeScreen = useViewportMatch( 'xlarge' );
+	const goBack = () => setSelectedNoteId( undefined );
+	// Keep showing the previous note while the detail pane slides out
+	// (selectedNoteId is undefined during the exit animation).
+	const previousNoteId = usePrevious( selectedNoteId );
+	const noteId = selectedNoteId ?? previousNoteId;
+
+	const filter = getFilters()[ filterName ];
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
@@ -86,7 +97,7 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
 
-	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note } );
+	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note, setSelectedNoteId } );
 
 	useEffect( () => {
 		if ( note?.id ) {
@@ -111,7 +122,14 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			>
 				<HStack>
 					<HStack justify="flex-start">
-						<Navigator.BackButton size="small" icon={ isRTL() ? chevronRight : chevronLeft } />
+						{ ! isLargeScreen && (
+							<Button
+								size="small"
+								icon={ isRTL() ? chevronRight : chevronLeft }
+								label={ __( 'Back' ) }
+								onClick={ goBack }
+							/>
+						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>

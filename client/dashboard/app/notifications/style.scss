@@ -1,4 +1,21 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-notifications__content {
+	width: 100vw;
+	height: 100vh;
+	max-height: inherit;
+	margin: -8px;
+
+	@include break-small {
+		max-width: 448px;
+	}
+
+	@include break-xlarge {
+		max-width: 896px;
+	}
+}
 
 // The Dropdown component doesn't support to hide the header if the `expandOnMobile` is enabled.
 .dashboard-notifications.components-popover.is-expanded {

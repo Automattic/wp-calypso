@@ -1,4 +1,3 @@
-import { useNavigator } from '@wordpress/components';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
@@ -10,13 +9,12 @@ import type { Note } from '../types';
 export function useNoteNavigationViaKeyboardShortcuts( {
 	visibleNotes,
 	note,
+	setSelectedNoteId,
 }: {
 	visibleNotes: Note[];
 	note?: Note;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ) {
-	const { params, goTo } = useNavigator();
-	const { filterName } = params;
-
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
@@ -33,9 +31,7 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 	}, [ isLoading, visibleNotes, note, client ] );
 
 	const goToNoteById = ( noteId: number ) => {
-		goTo( `/${ filterName }/notes/${ noteId }`, {
-			replace: true,
-		} );
+		setSelectedNoteId( String( noteId ) );
 	};
 
 	const goToNoteByDirection = ( direction: number ) => {

@@ -1,0 +1,36 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.wpnc-app {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.wpnc-app__list-pane {
+	flex: 1;
+	min-width: 0;
+}
+
+.wpnc-app__detail-pane {
+	position: absolute;
+	inset: 0;
+	background: var(--color-surface);
+	transform: translateX(100%);
+	transition: transform 300ms ease;
+
+	&.is-open {
+		transform: translateX(0);
+	}
+}
+
+@include break-xlarge {
+	.wpnc-app__detail-pane {
+		position: static;
+		flex: 1;
+		min-width: 0;
+		transform: none;
+		transition: none;
+	}
+}

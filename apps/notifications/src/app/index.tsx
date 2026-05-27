@@ -1,4 +1,5 @@
-import { Navigator } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
@@ -14,6 +15,9 @@ import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-s
 import { AppProvider } from './context';
 import Note from './note';
 import NotePanel from './note-panel';
+import type { FilterName } from './types';
+
+import './style.scss';
 
 let client: any;
 
@@ -62,6 +66,8 @@ const NotificationApp = ( {
 	wpcom: any;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! client );
+	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
+	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 
 	useEffect( () => {
 		store.dispatch( { type: 'APP_IS_READY' } );
@@ -146,23 +152,33 @@ const NotificationApp = ( {
 		return null;
 	}
 
+	const isDetailOpen = selectedNoteId !== undefined;
+
 	return (
 		<Provider store={ store }>
 			<AppProvider client={ client } locale={ locale }>
-				<Navigator initialPath="/all" style={ { maxHeight: 'inherit', height: '100%' } }>
-					<Navigator.Screen
-						path="/:filterName"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
+				<HStack className="wpnc-app" spacing={ 0 } alignment="stretch">
+					<div
+						className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
+						aria-hidden={ ! isDetailOpen }
 					>
-						<NotePanel isDismissible={ isDismissible } />
-					</Navigator.Screen>
-					<Navigator.Screen
-						path="/:filterName/notes/:noteId"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
-						<Note isDismissible={ isDismissible } />
-					</Navigator.Screen>
-				</Navigator>
+						<Note
+							isDismissible={ isDismissible }
+							filterName={ filterName }
+							selectedNoteId={ selectedNoteId }
+							setSelectedNoteId={ setSelectedNoteId }
+						/>
+					</div>
+					<div className="wpnc-app__list-pane">
+						<NotePanel
+							isDismissible={ isDismissible }
+							filterName={ filterName }
+							setFilterName={ setFilterName }
+							selectedNoteId={ selectedNoteId }
+							setSelectedNoteId={ setSelectedNoteId }
+						/>
+					</div>
+				</HStack>
 			</AppProvider>
 		</Provider>
 	);
