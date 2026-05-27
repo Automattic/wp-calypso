@@ -315,6 +315,14 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			...readFeedQuery( site.feed_ID ),
 		} ) ),
 	} );
+	const feedQueriesStateKey = feedQueries
+		.map(
+			( q ) =>
+				`${ q.status }:${ q.fetchStatus }:${ q.dataUpdatedAt }:${ q.isError }:${
+					q.data?.feed_URL ?? ''
+				}`
+		)
+		.join( '|' );
 
 	const combinedRecommendations = useMemo( () => {
 		const enriched = baseCombinedRecommendations.map( ( site, index ) => {
@@ -331,15 +339,10 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		// Re-check after `readFeedQuery` enriches `feed_URL` so API rows that omitted
 		// the URL in `/read/tags/cards` still match follows keyed by URL when `feed_ID` differs.
 		return enriched.filter( ( site ) => ! isFollowedSubscription( site, followedSubscriptions ) );
-	}, [ baseCombinedRecommendations, feedQueries, followedSubscriptions ] );
-
-	const feedQueriesStateKey = useMemo(
-		() =>
-			feedQueries
-				.map( ( q ) => `${ q.status }:${ q.fetchStatus }:${ q.dataUpdatedAt }:${ q.isError }` )
-				.join( '|' ),
-		[ feedQueries ]
-	);
+		// feedQueries is read from the latest render; feedQueriesStateKey bumps when feed query
+		// status or URL data changes without depending on the unstable useQueries array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ baseCombinedRecommendations, feedQueriesStateKey, followedSubscriptions ] );
 
 	const bridgedFeedIdsRef = useRef< Set< number > >( new Set() );
 	const failedFeedIdsRef = useRef< Set< number > >( new Set() );
@@ -386,6 +389,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	const siteQueries = useQueries( {
 		queries: siteIdsForValidation.map( ( siteId ) => ( { ...readSiteQuery( siteId ) } ) ),
 	} );
+	const siteQueriesStateKey = siteQueries.map( ( q ) => `${ q.status }` ).join( '|' );
 	const siteValidationBySiteId = useMemo( () => {
 		const map: Record< number, 'pending' | 'success' | 'error' > = {};
 		siteIdsForValidation.forEach( ( siteId, idx ) => {
@@ -405,7 +409,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		// `siteQueries` is rebuilt each render but its statuses drive validation;
 		// stringify status keys to keep the memo stable when nothing changed.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteIdsForValidation, siteQueries.map( ( q ) => `${ q.status }` ).join( '|' ) ] );
+	}, [ siteIdsForValidation, siteQueriesStateKey ] );
 
 	/**
 	 * Cards captured (in encounter order) once their feed/site metadata has loaded successfully.
