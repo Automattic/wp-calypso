@@ -93,6 +93,7 @@
 		"docker-jetpack-cloud": "docker run -it --env CALYPSO_ENV=jetpack-cloud-production --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"docker-a8c-for-agencies": "docker run -it --env CALYPSO_ENV=a8c-for-agencies-production --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"docker-dashboard": "docker run -it --env CALYPSO_ENV=dashboard-production --name wp-calypso --rm -p 80:3000 wp-calypso",
+		"eslint": "ESLINT_USE_FLAT_CONFIG=false ./node_modules/.bin/eslint",
 		"eslint-branch": "node bin/eslint-branch.js",
 		"feature-search": "node bin/feature-search.js",
 		"generate": "generate-calypso-package",
