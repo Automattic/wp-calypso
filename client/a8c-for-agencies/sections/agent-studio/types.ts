@@ -1,18 +1,7 @@
 export type AgentStudioOutputStatus = 'ready' | 'generating' | 'failed';
 
-export interface AgentStudioProject {
-	id: string;
-	name: string;
-	clientName?: string;
-	brief?: string;
-	isDefault?: boolean;
-	createdAt: string;
-	updatedAt: string;
-}
-
 export interface AgentStudioOutput {
 	id: string;
-	projectId: string;
 	title: string;
 	description: string;
 	agentName: string;
@@ -45,17 +34,6 @@ export interface AgentStudioSocialAsset {
 	directionId: string;
 }
 
-export interface AgentStudioProjectSummary extends AgentStudioProject {
-	outputCount: number;
-	latestOutput?: AgentStudioOutput;
-}
-
-export interface CreateAgentStudioProjectInput {
-	name: string;
-	clientName?: string;
-	brief?: string;
-}
-
 export type DualLogoOrder = 'leading' | 'trailing';
 
 export interface CreateAgentStudioOutputInput {
@@ -70,8 +48,6 @@ export interface CreateAgentStudioOutputInput {
 	brief?: string;
 	/** Short subheading rendered on the cover. */
 	blurb?: string;
-	/** Resolved project id (passed as string for transport compatibility with the mock). */
-	projectId?: string;
 	/** Optional one-pager: body image URLs returned by `POST /a4a/media`. */
 	imageUrls?: string[];
 	/** Optional one-pager: primary logo URL. */
@@ -99,11 +75,6 @@ export interface CreateAgentStudioOutputInput {
 }
 
 export interface AgentStudioService {
-	listProjects(): Promise< AgentStudioProjectSummary[] >;
-	getProject( projectId: string ): Promise< AgentStudioProject | undefined >;
-	createProject( input: CreateAgentStudioProjectInput ): Promise< AgentStudioProject >;
-	deleteProject( projectId: string ): Promise< void >;
-	listProjectOutputs( projectId: string ): Promise< AgentStudioOutput[] >;
 	listOutputs( agencyId?: number ): Promise< AgentStudioOutput[] >;
 	createOutput(
 		input: CreateAgentStudioOutputInput,

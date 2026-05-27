@@ -1,9 +1,4 @@
-/**
- * Real wpcom `AgentStudioService`. Falls back to the mock for project
- * CRUD (no backend yet).
- */
 import wpcom from 'calypso/lib/wp';
-import { mockAgentStudioService } from './mock-agent-studio-service';
 import type { AgentStudioOutput, AgentStudioService, CreateAgentStudioOutputInput } from '../types';
 
 interface OutputsResponse {
@@ -59,27 +54,6 @@ const normalizeOutput = ( output: AgentStudioOutput ): AgentStudioOutput => ( {
 } );
 
 export const wpcomAgentStudioService: AgentStudioService = {
-	listProjects() {
-		return mockAgentStudioService.listProjects();
-	},
-
-	getProject( projectId: string ) {
-		return mockAgentStudioService.getProject( projectId );
-	},
-
-	createProject( input ) {
-		return mockAgentStudioService.createProject( input );
-	},
-
-	deleteProject( projectId: string ) {
-		return mockAgentStudioService.deleteProject( projectId );
-	},
-
-	async listProjectOutputs( projectId: string ) {
-		const outputs = await this.listOutputs();
-		return outputs.filter( ( output ) => output.projectId === projectId );
-	},
-
 	async listOutputs( agencyId?: number ): Promise< AgentStudioOutput[] > {
 		const id = requireAgencyId( agencyId, 'listOutputs' );
 		const response = await wpcom.req.get< OutputsResponse >( {
@@ -93,10 +67,6 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		input: CreateAgentStudioOutputInput,
 		agencyId?: number
 	): Promise< AgentStudioOutput > {
-		if ( input.agentId !== 'one-pager' && input.agentId !== 'social-assets' ) {
-			return mockAgentStudioService.createOutput( input );
-		}
-
 		const id = requireAgencyId( agencyId, 'createOutput' );
 
 		let recipe: string;
@@ -148,7 +118,6 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		const now = new Date().toISOString();
 		return {
 			id: String( response.run_id ),
-			projectId: input.projectId ?? '',
 			title: input.title,
 			description: input.description,
 			agentName: input.agentName,
@@ -160,11 +129,6 @@ export const wpcomAgentStudioService: AgentStudioService = {
 	},
 
 	async deleteOutput( outputId: string, agencyId?: number ): Promise< void > {
-		if ( outputId.startsWith( 'output-' ) ) {
-			await mockAgentStudioService.deleteOutput( outputId );
-			return;
-		}
-
 		const id = requireAgencyId( agencyId, 'deleteOutput' );
 		// `wpcom.req.del` doesn't override the HTTP method, so it goes
 		// out as POST and the v2 DELETETABLE route 404s.
