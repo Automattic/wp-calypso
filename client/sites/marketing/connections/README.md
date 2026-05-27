@@ -10,7 +10,7 @@ The entry point for sharing connections. Renders help text and a list of `Sharin
 
 ### SharingService
 
-Renders connection status for a single service, including description, examples, tips, a list of connected accuonts, and possible user actions.
+Renders connection status for a single service, including description, examples, tips, a list of connected accounts, and possible user actions.
 
 ### SharingServiceAction
 
