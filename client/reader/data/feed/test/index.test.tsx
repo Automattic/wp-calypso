@@ -2,13 +2,20 @@
  * @jest-environment jsdom
  */
 import { ReadFeedSearchSort } from '@automattic/api-core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+	readFeedQueryKey,
+	readFeedSearchInfiniteQueryKey,
+	readFeedSearchQueryKey,
+} from '@automattic/api-queries';
+import { QueryClient, QueryClientProvider, type InfiniteData } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	findCachedFeedByFeedUrl,
 	getCachedFeed,
 	normalizeFeed,
+	patchFeedUnseenCounts,
+	restoreFeedCache,
 	useFeedQuery,
 	useFeedSearchInfiniteQuery,
 	useFeedSearchQuery,
@@ -137,5 +144,87 @@ describe( 'feed data layer', () => {
 
 		expect( getCachedFeed( client, 7 ) ).toMatchObject( { feed_ID: 7, name: 'First page' } );
 		expect( getCachedFeed( client, 9 ) ).toMatchObject( { feed_ID: 9, name: 'Second page' } );
+	} );
+
+	it( 'optimistically patches unseen counts in individual and search caches', () => {
+		const client = newClient();
+		const searchKey = readFeedSearchQueryKey( { query: 'wordpress' } );
+		const infiniteKey = readFeedSearchInfiniteQueryKey( { query: 'wordpress' } );
+		client.setQueryData( readFeedQueryKey( 7 ), {
+			feed_ID: 7,
+			blog_ID: 8,
+			feed_URL: 'https://example.com/feed',
+			unseen_count: 3,
+		} );
+		client.setQueryData( searchKey, {
+			feeds: [
+				{
+					feed_ID: 7,
+					blog_ID: 8,
+					feed_URL: 'https://example.com/feed',
+					unseen_count: 3,
+				},
+			],
+			total: 1,
+		} );
+		client.setQueryData< InfiniteData< unknown > >( infiniteKey, {
+			pages: [
+				{
+					feeds: [
+						{
+							feed_ID: 7,
+							blog_ID: 8,
+							feed_URL: 'https://example.com/feed',
+							unseen_count: 3,
+						},
+					],
+					total: 1,
+				},
+			],
+			pageParams: [ 0 ],
+		} );
+
+		const snapshot = patchFeedUnseenCounts( client, {
+			feedIds: [ 7 ],
+			feedUrls: [ 'https://example.com/feed' ],
+			delta: -5,
+		} );
+
+		expect( getCachedFeed( client, 7 )?.unseen_count ).toBe( 0 );
+		expect(
+			client.getQueryData< { feeds: { unseen_count: number }[] } >( searchKey )?.feeds[ 0 ]
+		).toMatchObject( { unseen_count: 0 } );
+		expect(
+			client.getQueryData< InfiniteData< { feeds: { unseen_count: number }[] } > >( infiniteKey )
+				?.pages[ 0 ].feeds[ 0 ]
+		).toMatchObject( { unseen_count: 0 } );
+
+		restoreFeedCache( client, snapshot );
+
+		expect( getCachedFeed( client, 7 )?.unseen_count ).toBe( 3 );
+		expect(
+			client.getQueryData< { feeds: { unseen_count: number }[] } >( searchKey )?.feeds[ 0 ]
+		).toMatchObject( { unseen_count: 3 } );
+		expect(
+			client.getQueryData< InfiniteData< { feeds: { unseen_count: number }[] } > >( infiniteKey )
+				?.pages[ 0 ].feeds[ 0 ]
+		).toMatchObject( { unseen_count: 3 } );
+	} );
+
+	it( 'optimistically resets unseen counts by feed URL', () => {
+		const client = newClient();
+		client.setQueryData( readFeedQueryKey( 7 ), {
+			feed_ID: 7,
+			blog_ID: 8,
+			feed_URL: 'https://example.com/feed',
+			unseen_count: 3,
+		} );
+
+		patchFeedUnseenCounts( client, {
+			feedUrls: [ 'https://example.com/feed' ],
+			reset: true,
+		} );
+
+		expect( getCachedFeed( client, 7 )?.unseen_count ).toBe( 0 );
 	} );
 } );

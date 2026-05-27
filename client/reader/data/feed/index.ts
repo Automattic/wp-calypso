@@ -7,6 +7,7 @@ import {
 import {
 	type InfiniteData,
 	type QueryClient,
+	type QueryKey,
 	useInfiniteQuery,
 	useQueries,
 	useQuery,
@@ -43,6 +44,15 @@ export interface Feed {
 
 export type FeedSearchResponse = Omit< ReadFeedSearchResponse, 'feeds' > & {
 	feeds: Feed[];
+};
+
+export type FeedCacheSnapshot = Array< [ QueryKey, unknown ] >;
+
+type PatchFeedUnseenCountsOptions = {
+	feedIds?: Array< number | string | null | undefined >;
+	feedUrls?: Array< string | null | undefined >;
+	delta?: number;
+	reset?: boolean;
 };
 
 export const normalizeFeed = ( feed: FeedInput ): Feed => ( {
@@ -134,6 +144,103 @@ const seedFeedCache = ( queryClient: QueryClient, feeds: Feed[] = [] ) => {
 			...feed,
 		} ) );
 	} );
+};
+
+const makeFeedMatcher = ( { feedIds = [], feedUrls = [] }: PatchFeedUnseenCountsOptions ) => {
+	const feedIdSet = new Set(
+		feedIds
+			.filter( ( feedId ): feedId is number | string => feedId != null )
+			.map( ( feedId ) => String( feedId ) )
+	);
+	const feedUrlSet = new Set(
+		feedUrls.filter( ( feedUrl ): feedUrl is string => typeof feedUrl === 'string' )
+	);
+
+	return ( feed: FeedInput ) =>
+		( feed.feed_ID != null && feedIdSet.has( String( feed.feed_ID ) ) ) ||
+		( typeof feed.feed_URL === 'string' && feedUrlSet.has( feed.feed_URL ) );
+};
+
+const patchFeed = ( feed: FeedInput, options: PatchFeedUnseenCountsOptions ): Feed => {
+	const normalized = normalizeFeed( feed );
+	const current = Number.isFinite( normalized.unseen_count ) ? normalized.unseen_count ?? 0 : 0;
+	return {
+		...normalized,
+		unseen_count: options.reset ? 0 : Math.max( current + ( options.delta ?? 0 ), 0 ),
+	};
+};
+
+const patchSearchResponse = < T extends { feeds?: FeedInput[] } >(
+	response: T,
+	options: PatchFeedUnseenCountsOptions
+): T => {
+	const matches = makeFeedMatcher( options );
+	return {
+		...response,
+		feeds: response.feeds?.map( ( feed ) =>
+			matches( feed ) ? patchFeed( feed, options ) : normalizeFeed( feed )
+		),
+	};
+};
+
+const snapshotQuery = (
+	queryClient: QueryClient,
+	snapshot: FeedCacheSnapshot,
+	queryKey: QueryKey,
+	data: unknown
+) => {
+	snapshot.push( [ queryKey, data ] );
+};
+
+export const restoreFeedCache = ( queryClient: QueryClient, snapshot: FeedCacheSnapshot ) => {
+	snapshot.forEach( ( [ queryKey, data ] ) => {
+		queryClient.setQueryData( queryKey, data );
+	} );
+};
+
+export const patchFeedUnseenCounts = (
+	queryClient: QueryClient,
+	options: PatchFeedUnseenCountsOptions
+): FeedCacheSnapshot => {
+	const snapshot: FeedCacheSnapshot = [];
+	const matches = makeFeedMatcher( options );
+
+	for ( const [ queryKey, data ] of queryClient.getQueriesData< FeedInput >( {
+		queryKey: [ 'read', 'feed' ],
+	} ) ) {
+		if ( ! data || ! matches( data ) ) {
+			continue;
+		}
+		snapshotQuery( queryClient, snapshot, queryKey, data );
+		queryClient.setQueryData( queryKey, patchFeed( data, options ) );
+	}
+
+	for ( const [ queryKey, data ] of queryClient.getQueriesData< ReadFeedSearchResponse >( {
+		queryKey: [ 'read', 'feeds', 'search' ],
+	} ) ) {
+		if ( ! data || queryKey[ 3 ] === 'infinite' || ! data.feeds?.some( matches ) ) {
+			continue;
+		}
+		snapshotQuery( queryClient, snapshot, queryKey, data );
+		queryClient.setQueryData( queryKey, patchSearchResponse( data, options ) );
+	}
+
+	for ( const [ queryKey, data ] of queryClient.getQueriesData<
+		InfiniteData< ReadFeedSearchResponse >
+	>( {
+		queryKey: [ 'read', 'feeds', 'search', 'infinite' ],
+	} ) ) {
+		if ( ! data || ! data.pages.some( ( page ) => page.feeds?.some( matches ) ) ) {
+			continue;
+		}
+		snapshotQuery( queryClient, snapshot, queryKey, data );
+		queryClient.setQueryData( queryKey, {
+			...data,
+			pages: data.pages.map( ( page ) => patchSearchResponse( page, options ) ),
+		} );
+	}
+
+	return snapshot;
 };
 
 export const useFeedQuery = ( feedId?: number | string | null ) => {
