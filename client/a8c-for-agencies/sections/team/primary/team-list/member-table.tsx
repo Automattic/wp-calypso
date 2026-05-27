@@ -114,7 +114,7 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 
 	return (
 		<>
-			<div className="redesigned-a8c-table full-width">
+			<div className="redesigned-a8c-table redesigned-a8c-table--full-width full-width">
 				<ItemsDataViews
 					data={ {
 						items,
