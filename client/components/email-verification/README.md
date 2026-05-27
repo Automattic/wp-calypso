@@ -1,6 +1,6 @@
 # Email Verification
 
-This module exports several utilities for handling new user's email verification flow.
+This module exports several utilities for handling new users' email verification flow.
 
 ## `page.js` handler
 
