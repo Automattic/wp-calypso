@@ -150,7 +150,7 @@ Returns stats [comment followers](https://developer.wordpress.com/docs/api/1.1/g
 
 ```js
 site.statsComments( function ( err, data ) {
-	// data comment-follwers response
+	// data comment-followers response
 } );
 ```
 
@@ -264,7 +264,7 @@ site.statsTags( function ( err, data ) {
 } );
 ```
 
-### Site#statsTopAutors([query, ]fn)
+### Site#statsTopAuthors([query, ]fn)
 
 Returns [top authors](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/top-authors/) data.
 
