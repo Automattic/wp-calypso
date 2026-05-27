@@ -4,15 +4,14 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:i18n:currency-overrides' );
 
-let pendingLoad = null;
+let pendingLoad: Promise< void > | null = null;
 
 /**
  * Fetches the currency overrides from the wpcom endpoint and propagates them
  * to `@automattic/number-formatters`. The fetch is memoized so repeated calls
  * (e.g. from each locale switch) only hit the network once per page load.
- * @returns {Promise<void>}
  */
-export function loadAndSetCurrencyOverrides() {
+export function loadAndSetCurrencyOverrides(): Promise< void > {
 	if ( typeof window === 'undefined' ) {
 		return Promise.resolve();
 	}
