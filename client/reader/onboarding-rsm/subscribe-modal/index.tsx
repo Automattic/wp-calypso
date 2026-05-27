@@ -8,8 +8,8 @@ import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { useReaderSite } from 'calypso/reader/data/site';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl } from 'calypso/reader/get-helpers';

@@ -10,7 +10,7 @@ import ReactDom from 'react-dom';
 import { connect, useSelector } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
+import { useReaderSite } from 'calypso/reader/data/site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -153,7 +153,7 @@ class CrossPost extends PureComponent {
 	render() {
 		const { post, postKey, translate, currentRoute, hasOrganization, isWPForTeamsItem } =
 			this.props;
-		const { blogId: siteId, feedId } = postKey;
+		const { feedId } = postKey;
 
 		let isSeen = false;
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {

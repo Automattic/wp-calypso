@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
+import { useReaderSite } from 'calypso/reader/data/site';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 /**
@@ -15,7 +15,8 @@ import { getFeed } from 'calypso/state/reader/feeds/selectors';
  */
 const connectSite = ( Component ) => {
 	function ConnectSiteFetcher( ownProps ) {
-		let { feedId, siteId } = ownProps;
+		const { feedId } = ownProps;
+		let { siteId } = ownProps;
 		const feedFromProps = useSelector( ( state ) =>
 			feedId ? getFeed( state, feedId ) : undefined
 		);

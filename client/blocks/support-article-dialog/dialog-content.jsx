@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { usePost } from 'calypso/reader/data/post';
+import { useReaderSite } from 'calypso/reader/data/site';
 import Placeholders from './placeholders';
 
 import './style.scss';

@@ -20,7 +20,7 @@ jest.mock( 'calypso/components/data/with-reader-teams', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/data/query-reader-site/with-reader-site', () => ( {
+jest.mock( 'calypso/reader/data/site', () => ( {
 	withReaderSite: ( WrappedComponent ) => ( props ) => (
 		<WrappedComponent
 			{ ...props }

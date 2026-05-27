@@ -2,7 +2,7 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { withReaderSite } from 'calypso/components/data/query-reader-site/with-reader-site';
+import { withReaderSite } from 'calypso/reader/data/site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 

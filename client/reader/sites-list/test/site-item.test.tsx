@@ -3,14 +3,14 @@
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
+import { useReaderSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSite, ReaderSiteItem } from '../site-item';
 
-jest.mock( 'calypso/components/data/query-reader-site/use-reader-site', () => ( {
+jest.mock( 'calypso/reader/data/site', () => ( {
 	useReaderSite: jest.fn( () => ( {
 		site: undefined,
 		siteError: undefined,

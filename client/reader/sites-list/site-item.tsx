@@ -2,7 +2,7 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
+import { useReaderSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
 import { useDispatch } from 'calypso/state';

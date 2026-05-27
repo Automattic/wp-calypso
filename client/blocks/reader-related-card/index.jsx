@@ -10,8 +10,8 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { useReaderSite } from 'calypso/reader/data/site';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 
 const noop = () => {};
