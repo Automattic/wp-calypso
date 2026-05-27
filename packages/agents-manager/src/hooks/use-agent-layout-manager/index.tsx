@@ -80,7 +80,6 @@ export default function useAgentLayoutManager( {
 	const hasEnoughHeight = height >= adminMenuHeight;
 	const isFullscreenGateOpen = useSyncExternalStore(
 		subscribeToBodyClasses,
-		getIsFullscreenGateOpen,
 		getIsFullscreenGateOpen
 	);
 	const canDock = isDesktop && hasEnoughHeight && isFullscreenGateOpen;
