@@ -14,7 +14,7 @@ export default function AmazingVisualizationOfStats( { stats } ) {
 		<ul>
 			<QuerySiteStats siteId={ 3584907 } statType="statsStreak" />
 			{ stats.map( ( stat ) => {
-				return <span>A span o { stat }</span>;
+				return <span>A span of { stat }</span>;
 			} ) }
 		</ul>
 	);
