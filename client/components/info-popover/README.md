@@ -28,12 +28,12 @@ The `className` lets you specify the style class that the element should have.
 
 ### `gaEventCategory`
 
-The `gaEventCategory` lets you specify the Google Analyics Category that you want the toggle event to have.
+The `gaEventCategory` lets you specify the Google Analytics Category that you want the toggle event to have.
 Also requires the `popoverName` attribute.
 
 ### `popoverName`
 
-The `popoverName` lets you specify the Google Analyics Event name that you want the toggle event to have.
+The `popoverName` lets you specify the Google Analytics Event name that you want the toggle event to have.
 Also requires the `gaEventCategory` attribute.
 
 Turns into this even when opened:
