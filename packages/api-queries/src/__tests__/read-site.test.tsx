@@ -151,6 +151,8 @@ describe( 'readSiteQuery', () => {
 		expect( readSiteQuery( undefined ).enabled ).toBe( false );
 		expect( readSiteQuery( 0 ).enabled ).toBe( false );
 		expect( readSiteQuery( -1 ).enabled ).toBe( false );
+		expect( readSiteQuery( 'not-a-site' ).enabled ).toBe( false );
+		expect( readSiteQuery( 'not-a-site' ).queryKey ).toEqual( [ 'read', 'sites', 'invalid' ] );
 	} );
 
 	it( 'accepts string siteIds and coerces them in the query key', () => {

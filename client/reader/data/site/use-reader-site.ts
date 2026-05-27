@@ -17,6 +17,8 @@ export interface UseReaderSiteResult {
 	isSuccess: boolean;
 }
 
+const dispatchedSiteUpdates = new Map< number, number >();
+
 /**
  * React-Query backed accessor for a Reader site (`/read/sites/{siteId}`).
  *
@@ -33,11 +35,15 @@ export function useReaderSite( siteId: number | string | undefined ): UseReaderS
 		if ( ! query.isSuccess || typeof id !== 'number' || ! Number.isFinite( id ) ) {
 			return;
 		}
+		if ( dispatchedSiteUpdates.get( id ) === query.dataUpdatedAt ) {
+			return;
+		}
 		// `query.data` has already passed through adaptReadSite, which strips subscription.
-		const raw = queryClient.getQueryData< ReadSiteResponse >( [ 'read', 'sites', id ] );
+		const raw = queryClient.getQueryData< ReadSiteResponse >( readSiteQuery( id ).queryKey );
 		if ( ! raw ) {
 			return;
 		}
+		dispatchedSiteUpdates.set( id, query.dataUpdatedAt );
 		dispatch( { type: READER_SITE_RECEIVE, payload: raw } );
 	}, [ query.isSuccess, query.dataUpdatedAt, id, queryClient, dispatch ] );
 

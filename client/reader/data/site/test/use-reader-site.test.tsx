@@ -86,6 +86,25 @@ describe( 'useReaderSite', () => {
 		} );
 	} );
 
+	it( 'dispatches READER_SITE_RECEIVE once for multiple observers of the same site update', async () => {
+		nock( BASE ).get( '/rest/v1.1/read/sites/201' ).query( true ).reply( 200, {
+			ID: 201,
+			URL: 'https://example.wordpress.com',
+			name: 'Example',
+			is_following: true,
+			feed_URL: 'https://example.wordpress.com/feed',
+		} );
+
+		const { Wrapper, dispatched } = makeWrapper();
+		const { result } = renderHook( () => [ useReaderSite( 201 ), useReaderSite( 201 ) ] as const, {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current[ 0 ].isSuccess ).toBe( true ) );
+		await waitFor( () => expect( result.current[ 1 ].isSuccess ).toBe( true ) );
+		expect( dispatched.filter( ( a ) => a.type === 'READER_SITE_RECEIVE' ) ).toHaveLength( 1 );
+	} );
+
 	it( 'exposes siteError with statusCode when the query fails', async () => {
 		nock( BASE ).get( '/rest/v1.1/read/sites/410' ).query( true ).reply( 410, { code: 'gone' } );
 
