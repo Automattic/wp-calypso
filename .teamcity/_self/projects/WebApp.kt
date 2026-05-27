@@ -690,22 +690,31 @@ object CheckCodeStyleBranch : BuildType({
 						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%%s%%s", $0, (NR%%n?"\t":"\n")}' \
 						| nl \
 						| xargs -L1 -P"${'$'}MAX_PARALLEL_BATCHES" bash -c '
-							BATCH_NUM="${'$'}1"; shift
-							BATCH_FILES="${'$'}@"
-							yarn run eslint \
-								--format checkstyle \
-								--output-file "${'$'}RESULTS_DIR/batch_${'$'}{BATCH_NUM}.xml" \
-								${'$'}BATCH_FILES
+								if [ "${'$'}#" -eq 0 ]; then
+									echo "No affected files to lint"
+									printf "%%s\n" \
+										'\''<?xml version="1.0" encoding="utf-8"?>'\'' \
+										'\''<checkstyle version="4.3"></checkstyle>'\'' \
+										> "${'$'}RESULTS_DIR/results.xml"
+									exit 0
+								fi
 
-							# xargs will return 123 if any run returns a non-zero value. Ensure we
-							# only catch relevant issues. ESLint exit codes seem to be:
-							# - 0 for no errors
-							# - 1 for linting errors (should ignore)
-							# - 2 for other errors (should propagate)
-							status=${'$'}?
-							if [ ${'$'}status -gt 1 ]; then
-								exit ${'$'}status
-							fi
+								BATCH_NUM="${'$'}1"; shift
+								BATCH_FILES="${'$'}@"
+								yarn run eslint \
+									--format checkstyle \
+									--output-file "${'$'}RESULTS_DIR/batch_${'$'}{BATCH_NUM}.xml" \
+									${'$'}BATCH_FILES
+
+								# xargs will return 123 if any run returns a non-zero value. Ensure we
+								# only catch relevant issues. ESLint exit codes seem to be:
+								# - 0 for no errors
+								# - 1 for linting errors (should ignore)
+								# - 2 for other errors (should propagate)
+								status=${'$'}?
+								if [ ${'$'}status -gt 1 ]; then
+									exit ${'$'}status
+								fi
 						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""

@@ -713,7 +713,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     sass-loader: "npm:^14.2.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     style-loader: "npm:^1.3.0"
     webpack: "npm:^5.99.8"
   languageName: unknown
@@ -901,7 +901,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.3"
     react-router-dom: "npm:^6.23.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.99.8"
@@ -931,7 +931,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
   peerDependencies:
     react: ^18.3.1
@@ -1217,7 +1217,7 @@ __metadata:
     qs: "npm:^6.15.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
   peerDependencies:
     "@wordpress/i18n": ^5.23.0
@@ -1392,7 +1392,7 @@ __metadata:
     "@storybook/react-webpack5": "npm:^8.6.14"
     "@wordpress/compose": "npm:^7.23.0"
     postcss: "npm:^8.5.3"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -1711,7 +1711,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     social-logos: "npm:^3.1.18"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.9.3"
     utility-types: "npm:^3.10.0"
@@ -1998,7 +1998,7 @@ __metadata:
     react-router-dom: "npm:^6.23.1"
     redux: "npm:^5.0.1"
     sass-loader: "npm:^14.2.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.9.3"
@@ -2044,7 +2044,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -2090,7 +2090,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.3"
     require-from-string: "npm:^2.0.2"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -2151,7 +2151,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.9.3"
     webpack: "npm:^5.99.8"
@@ -2199,7 +2199,7 @@ __metadata:
     history: "npm:^5.3.0"
     postcss: "npm:^8.5.3"
     route-recognizer: "npm:^0.3.4"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     typescript: "npm:^5.9.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -2355,7 +2355,7 @@ __metadata:
     postcss-modules: "npm:^6.0.1"
     react-day-picker: "npm:^9.7.0"
     sass-embedded: "npm:^1.89.0"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     stylelint: "npm:^16.15.0"
     stylelint-plugin-logical-css: "npm:^1.2.3"
     tsup: "npm:^8.5.0"
@@ -7909,11 +7909,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/core@npm:8.6.14":
-  version: 8.6.14
-  resolution: "@storybook/core@npm:8.6.14"
+"@storybook/core@npm:8.6.18":
+  version: 8.6.18
+  resolution: "@storybook/core@npm:8.6.18"
   dependencies:
-    "@storybook/theming": "npm:8.6.14"
+    "@storybook/theming": "npm:8.6.18"
     better-opn: "npm:^3.0.2"
     browser-assert: "npm:^1.2.1"
     esbuild: "npm:^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0 || ^0.25.0"
@@ -7929,7 +7929,7 @@ __metadata:
   peerDependenciesMeta:
     prettier:
       optional: true
-  checksum: d1756b4a120c76b8eafa0b54d43969180b4cba8b212b98295a422ab738d7e9ae19d0fd1853de9e8335a6b4f8091dd6457649f6db9615d268c83b2248ffe5bf30
+  checksum: 830b8806a35f8b6a448efe5d0df47a148d6111295b0e7027bf307232f25542015fc15e9b9c3489921f614fc6695323d74194c90da97837b0df0a72eb73ec6220
   languageName: node
   linkType: hard
 
@@ -8113,6 +8113,15 @@ __metadata:
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
   checksum: 765bfbfedcbdcdb719b164a14bb61b8ad60819c6124d0e1f243b6b45e62de877ec8dff6259092207a58d6c2771f4883650e9784a2be1aaf7e0ef0fe75465db0d
+  languageName: node
+  linkType: hard
+
+"@storybook/theming@npm:8.6.18":
+  version: 8.6.18
+  resolution: "@storybook/theming@npm:8.6.18"
+  peerDependencies:
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+  checksum: 30667a5ed7b70ac4a19f0d4baff53f065bd6f921934d21165dbff52add118b2fe1872c7f25ff8c8a1c768a0344f5db461a5bdf2838533069b3d760b3727b52d0
   languageName: node
   linkType: hard
 
@@ -14220,7 +14229,7 @@ __metadata:
     social-logos: "npm:^3.1.18"
     source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     stream-browserify: "npm:^3.0.0"
     striptags: "npm:^3.2.0"
     superagent: "npm:^3.8.3"
@@ -31106,11 +31115,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^8.6.14":
-  version: 8.6.14
-  resolution: "storybook@npm:8.6.14"
+"storybook@npm:^8.6.17":
+  version: 8.6.18
+  resolution: "storybook@npm:8.6.18"
   dependencies:
-    "@storybook/core": "npm:8.6.14"
+    "@storybook/core": "npm:8.6.18"
   peerDependencies:
     prettier: ^2 || ^3
   peerDependenciesMeta:
@@ -31120,7 +31129,7 @@ __metadata:
     getstorybook: ./bin/index.cjs
     sb: ./bin/index.cjs
     storybook: ./bin/index.cjs
-  checksum: a39d5ca1c3fecb4e6d5b7867d510e9a31524b48053dcea485afffbeaf7fe8ced883fd2d44e1b5076a2f3044eeb095fe49282793f1041124a9aa2b47fa675c956
+  checksum: 0ea0c0d0226dc2e454838f33cada24be0b1060a539975b559846663d02c1eeb7a1b7a5f703208493261895142c68bf0b2ce4d6ba78d03869f434ceab16eb420d
   languageName: node
   linkType: hard
 
@@ -34400,7 +34409,7 @@ __metadata:
     source-map: "npm:^0.7.4"
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"
-    storybook: "npm:^8.6.14"
+    storybook: "npm:^8.6.17"
     stylelint: "npm:^16.15.0"
     stylelint-scss: "npm:^6.4.0"
     swiper: "npm:^10.3.1"
