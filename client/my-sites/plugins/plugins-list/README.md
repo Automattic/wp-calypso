@@ -23,4 +23,4 @@ import PluginsList from 'calypso/my-sites/plugins/plugins-list';
 - `sites`: An object describing the sites list object.
 - `selectedSite`: An object or false of the single site.
 - `pluginUpdateCount`: Number of plugin updates that need to happen.
-- `isPlaceholder`: Weather to show a placeholder.
+- `isPlaceholder`: Whether to show a placeholder.
