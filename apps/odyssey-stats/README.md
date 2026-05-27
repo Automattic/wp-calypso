@@ -2,7 +2,7 @@
 
 Odyssey Stats is built to refresh the Stats experience in Jetpack. The counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/stats-admin).
 
-## Hiarachy
+## Hierarchy
 
 ```
 .
@@ -15,7 +15,7 @@ Odyssey Stats is built to refresh the Stats experience in Jetpack. The counterpa
 
 ## Routing
 
-It utilizes the [hashbang (#!) in page.js](https://github.com/visionmedia/page.js), however it doesn't work out of the box, because we are using hardcoded paths in Calypso, so some tricks are done in Jetpack to intecept the anchor clicks and covert them to hashbangs.
+It utilizes the [hashbang (#!) in page.js](https://github.com/visionmedia/page.js), however it doesn't work out of the box, because we are using hardcoded paths in Calypso, so some tricks are done in Jetpack to intercept the anchor clicks and covert them to hashbangs.
 
 ```
 $("#wpcom").on('click', 'a', function (e) {
