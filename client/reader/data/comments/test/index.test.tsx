@@ -1,0 +1,362 @@
+/*
+ * @jest-environment jsdom
+ */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { useComment, useComments } from '../index';
+import type { ReactNode } from 'react';
+
+const BASE = 'https://public-api.wordpress.com';
+
+const buildQueryClient = () => {
+	const instance = new QueryClient();
+	instance.setDefaultOptions( { queries: { retry: false } } );
+	return instance;
+};
+
+const renderComments = ( params = {} ) => {
+	const queryClient = buildQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() =>
+			useComments( {
+				siteId: 123,
+				postId: 456,
+				status: 'approved',
+				commentTotal: 3,
+				...params,
+			} ),
+		{ wrapper }
+	);
+};
+
+const renderComment = ( params = {}, options = {} ) => {
+	const queryClient = buildQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() =>
+			useComment(
+				{
+					siteId: 123,
+					commentId: 789,
+					...params,
+				},
+				options
+			),
+		{ wrapper }
+	);
+};
+
+describe( 'useComments', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
+	it( 'fetches and exposes comments sorted chronologically', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 2, date: '2026-05-02T00:00:00.000Z', parent: false },
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+				],
+				found: 2,
+			} );
+
+		const { result } = renderComments();
+
+		await waitFor( () => {
+			expect( result.current.comments.map( ( comment ) => comment.ID ) ).toEqual( [ 1, 2 ] );
+		} );
+	} );
+
+	it( 'deduplicates comments across pages', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '2',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 2, date: '2026-05-02T00:00:00.000Z', parent: false },
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+				],
+				found: 3,
+			} );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '2',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+				before: '2026-05-01T00:00:00.000Z',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+					{ ID: 3, date: '2026-04-30T00:00:00.000Z', parent: false },
+				],
+				found: 3,
+			} );
+
+		const { result } = renderComments( { number: 2 } );
+
+		await waitFor( () => expect( result.current.comments ).toHaveLength( 2 ) );
+		await act( async () => {
+			await result.current.fetchEarlierComments();
+		} );
+
+		await waitFor( () => {
+			expect( result.current.comments.map( ( comment ) => comment.ID ) ).toEqual( [ 3, 1, 2 ] );
+		} );
+	} );
+
+	it( 'builds a parent-child tree and filters pending comments from other authors', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{
+						ID: 2,
+						date: '2026-05-02T00:00:00.000Z',
+						parent: { ID: 1 },
+						status: 'approved',
+					},
+					{
+						ID: 1,
+						date: '2026-05-01T00:00:00.000Z',
+						parent: false,
+						status: 'approved',
+					},
+					{
+						ID: 3,
+						date: '2026-05-03T00:00:00.000Z',
+						parent: false,
+						status: 'unapproved',
+						author: { ID: 999 },
+					},
+				],
+				found: 3,
+			} );
+
+		const { result } = renderComments( {
+			displayStatus: 'all',
+			authorId: 123,
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsTree.children ).toEqual( [ 1 ] );
+			expect( result.current.commentsTree[ 1 ].children ).toEqual( [ 2 ] );
+			expect( result.current.commentsTree[ 3 ] ).toBeUndefined();
+		} );
+	} );
+
+	it( 'reports fetch status using legacy comments status names', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '2',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 2, date: '2026-05-02T00:00:00.000Z', parent: false },
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+				],
+				found: 3,
+			} );
+
+		const { result } = renderComments( { number: 2 } );
+
+		await waitFor( () => {
+			expect( result.current.commentsFetchingStatus ).toEqual( {
+				haveEarlierCommentsToFetch: true,
+				haveLaterCommentsToFetch: true,
+				hasReceivedBefore: true,
+				hasReceivedAfter: false,
+			} );
+		} );
+	} );
+
+	it( 'does not report more comments to fetch when the found total is already loaded', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '2',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 2, date: '2026-05-02T00:00:00.000Z', parent: false },
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+				],
+				found: 2,
+			} );
+
+		const { result } = renderComments( { number: 2 } );
+
+		await waitFor( () => {
+			expect( result.current.commentsFetchingStatus ).toMatchObject( {
+				haveEarlierCommentsToFetch: false,
+				haveLaterCommentsToFetch: false,
+			} );
+		} );
+	} );
+
+	it( 'stops reporting more comments after pagination loads the found total', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '2',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 2, date: '2026-05-02T00:00:00.000Z', parent: false },
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+				],
+				found: 3,
+			} );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '2',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+				before: '2026-05-01T00:00:00.000Z',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+					{ ID: 3, date: '2026-04-30T00:00:00.000Z', parent: false },
+				],
+				found: 3,
+			} );
+
+		const { result } = renderComments( { number: 2 } );
+
+		await waitFor( () => expect( result.current.comments ).toHaveLength( 2 ) );
+		await act( async () => {
+			await result.current.fetchEarlierComments();
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsFetchingStatus ).toMatchObject( {
+				haveEarlierCommentsToFetch: false,
+				haveLaterCommentsToFetch: false,
+			} );
+		} );
+	} );
+
+	it( 'keeps comments with invalid dates after dated comments', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{ ID: 2, parent: false },
+					{ ID: 1, date: '2026-05-01T00:00:00.000Z', parent: false },
+				],
+				found: 2,
+			} );
+
+		const { result } = renderComments();
+
+		await waitFor( () => {
+			expect( result.current.comments.map( ( comment ) => comment.ID ) ).toEqual( [ 1, 2 ] );
+		} );
+	} );
+} );
+
+describe( 'useComment', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
+	it( 'fetches a single comment by id', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/comments/789' )
+			.query( {
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				ID: 789,
+				content: 'Deep linked comment',
+				date: '2026-05-03T00:00:00.000Z',
+				parent: false,
+				post: { ID: 456 },
+			} );
+
+		const { result } = renderComment();
+
+		await waitFor( () => {
+			expect( result.current.data ).toMatchObject( {
+				ID: 789,
+				content: 'Deep linked comment',
+			} );
+		} );
+	} );
+
+	it( 'does not fetch when disabled', () => {
+		const request = nock( BASE )
+			.get( '/rest/v1.1/sites/123/comments/789' )
+			.query( {
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				ID: 789,
+				content: 'Deep linked comment',
+				date: '2026-05-03T00:00:00.000Z',
+				parent: false,
+				post: { ID: 456 },
+			} );
+
+		const { result } = renderComment( {}, { enabled: false } );
+
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+		expect( request.isDone() ).toBe( false );
+	} );
+} );
