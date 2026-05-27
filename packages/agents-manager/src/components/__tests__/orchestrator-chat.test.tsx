@@ -6,6 +6,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { Suggestion } from '@automattic/agenttic-ui';
 
 const mockUseAgentChat = jest.fn();
+const mockUseRegenerateAction = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -46,6 +47,10 @@ jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
 	submitFeedbackText: jest.fn(),
 	resetFeedback: jest.fn(),
+} ) );
+jest.mock( '../../hooks/use-regenerate-action', () => ( {
+	__esModule: true,
+	default: ( config: unknown ) => mockUseRegenerateAction( config ),
 } ) );
 jest.mock( '../../hooks/use-copy-action', () => () => {} );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
@@ -120,6 +125,8 @@ describe( 'OrchestratorChat', () => {
 			clearSuggestions: jest.fn(),
 			registerSuggestions: jest.fn(),
 			registerMessageActions: jest.fn(),
+			unregisterMessageActions: jest.fn(),
+			getRegenerateHandler: jest.fn(),
 			progressMessage: null,
 		} );
 	} );
@@ -338,5 +345,48 @@ describe( 'OrchestratorChat', () => {
 				count: 2,
 			} );
 		} );
+	} );
+
+	it( 'keeps regenerate disabled unless a provider opts in', () => {
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( mockUseRegenerateAction ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: false } )
+		);
+	} );
+
+	it( 'enables regenerate when a provider opts in', () => {
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				capabilities={ { supportsRegenerateAction: true } }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( mockUseRegenerateAction ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: true } )
+		);
 	} );
 } );

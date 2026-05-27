@@ -322,6 +322,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
+			capabilities={ capabilities }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);

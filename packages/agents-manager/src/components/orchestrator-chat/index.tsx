@@ -16,6 +16,7 @@ import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
@@ -47,6 +48,7 @@ import type {
 	SiteBuildUtils,
 	ImageUploadHook,
 	UseCheckpointHook,
+	ProviderCapabilities,
 } from '../../utils/load-external-providers';
 
 /**
@@ -149,6 +151,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
+	/** Optional capability flags declared by one or more loaded providers. */
+	capabilities?: ProviderCapabilities;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -170,6 +174,7 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
+	capabilities,
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
@@ -200,6 +205,8 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		unregisterMessageActions,
+		getRegenerateHandler,
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 	const messagesRef = useRef( messages );
@@ -335,6 +342,15 @@ export default function OrchestratorChat( {
 			registerMessageActions,
 			messages,
 		} );
+
+	// Register Agenttic's built-in regenerate action for providers that opt in.
+	useRegenerateAction( {
+		enabled: capabilities?.supportsRegenerateAction === true,
+		isProcessing,
+		registerMessageActions,
+		unregisterMessageActions,
+		getRegenerateHandler,
+	} );
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();

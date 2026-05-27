@@ -848,11 +848,12 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
 
 /**
  * Provider capability flags (OR-merged across providers by AM's
- * loadExternalProviders). `supportsSplitScreen` exposes the 50vw chat-header
- * toggle here only — block-notes / image-studio / Big Sky don't opt in.
+ * loadExternalProviders). These opt the Jetpack AI sidebar into AM features
+ * that are not enabled globally.
  */
 export const capabilities = {
 	supportsSplitScreen: true,
+	supportsRegenerateAction: true,
 };
 
 /**

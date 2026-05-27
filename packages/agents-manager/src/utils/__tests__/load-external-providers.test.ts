@@ -44,6 +44,12 @@ describe( 'mergeCapabilitiesInto', () => {
 		expect( merged.supportsSplitScreen ).toBe( true );
 	} );
 
+	it( 'sets supportsRegenerateAction when the provider declares it', () => {
+		const merged: ProviderCapabilities = {};
+		mergeCapabilitiesInto( merged, { supportsRegenerateAction: true } );
+		expect( merged.supportsRegenerateAction ).toBe( true );
+	} );
+
 	it( 'leaves supportsSplitScreen unset when the provider declares false', () => {
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: false } );
@@ -56,8 +62,10 @@ describe( 'mergeCapabilitiesInto', () => {
 		// silently opt in via JavaScript truthiness.
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 'false' } );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 'true' } );
+		mergeCapabilitiesInto( merged, { supportsRegenerateAction: 'true' } );
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: 1 } );
 		expect( merged.supportsSplitScreen ).toBeUndefined();
+		expect( merged.supportsRegenerateAction ).toBeUndefined();
 	} );
 
 	it( 'OR-merges across providers — any true wins', () => {
@@ -75,11 +83,15 @@ describe( 'mergeCapabilitiesInto', () => {
 		// probe each known key by direct access to hit the get trap.
 		const lazyCapabilities = new Proxy(
 			{},
-			{ get: ( _target, prop ) => ( prop === 'supportsSplitScreen' ? true : undefined ) }
+			{
+				get: ( _target, prop ) =>
+					prop === 'supportsSplitScreen' || prop === 'supportsRegenerateAction' ? true : undefined,
+			}
 		);
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, lazyCapabilities );
 		expect( merged.supportsSplitScreen ).toBe( true );
+		expect( merged.supportsRegenerateAction ).toBe( true );
 	} );
 } );
 
