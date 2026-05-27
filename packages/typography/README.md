@@ -28,7 +28,7 @@ Apply font variables as needed:
 }
 ```
 
-### Import the `fonts.sccc` file
+### Import the `fonts.scss` file
 
 `@import '@automattic/typography/styles/fonts';`
 
