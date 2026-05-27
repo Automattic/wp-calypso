@@ -36,13 +36,13 @@ It was decided to make the icons medium blue instead of WordPress.com blue for c
 
 The favicon requires additional work, as it needs to be highly compressed and work at tiny sizes:
 
-- Do use the same general general design guidelines as the apps, medium blue and white.
+- Do use the same general design guidelines as the apps, medium blue and white.
 - Don't use roundrects or squares, use a circle
 - Don't bake in a drop shadow into the icon
 
 The 16px icon is the important one. It needs extra pixelhinting in order to work. But do any larger sizes (32, 64, 96) on the same grid as the 16px ones, don't change the design just because there are more pixels to work with. The 192px version is used by Android bookmarks, so if you like you can use the Android icon of the same size for this resolution.
 
-Once the favicons and saved as high quality PNGs, are designed, run the files through [ImageAlpha](https://pngmini.com/) to compress them as much as you can. The best way to compress them is to reduce the number of colors in the image. This app is amazing for that. You can shave off up to 70% of the filesize by reducing from 256 to maybe 32 colors, whatever is visually sufficient. Once they're through ImageAlpha, run them through [ImageOptim](https://imageoptim.com/) for further shavings.
+Once the favicons are designed and saved as high quality PNGs, run the files through [ImageAlpha](https://pngmini.com/) to compress them as much as you can. The best way to compress them is to reduce the number of colors in the image. This app is amazing for that. You can shave off up to 70% of the filesize by reducing from 256 to maybe 32 colors, whatever is visually sufficient. Once they're through ImageAlpha, run them through [ImageOptim](https://imageoptim.com/) for further shavings.
 
 Finally, build the favicon. Only include 16 and 32px sizes directly in the .ico file. If you need a 64px version, include it through a separate meta tag:
 
