@@ -1,8 +1,5 @@
 // packages/ui/src/horizontal-stepper/style.module.scss
-@use '@wordpress/base-styles/colors';
 @use '@wordpress/base-styles/variables';
-@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
-@use '../utils/_theme-variables' as theme;
 
 .root {
 	display: flex;
@@ -16,29 +13,9 @@
 }
 
 .step {
-	position: relative;
 	display: flex;
 	flex: 1;
 	justify-content: center;
-
-	// Horizontal connector: spans from this step's indicator to the next
-	&:not( :last-child )::after {
-		content: '';
-		position: absolute;
-		top: 11px;
-		inset-inline-start: calc( 50% + 12px + #{variables.$grid-unit-05} );
-		inset-inline-end: calc( -50% + 12px + #{variables.$grid-unit-05} );
-		height: 1px;
-		background: theme.$components-color-gray-200;
-
-		@include ui-mixins.when-dark-theme {
-			background: theme.$components-color-gray-700;
-		}
-	}
-
-	&[data-status='completed']:not( :last-child )::after {
-		background: colors.$alert-green;
-	}
 }
 
 .trigger {

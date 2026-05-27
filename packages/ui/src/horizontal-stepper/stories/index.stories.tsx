@@ -59,11 +59,23 @@ const checkoutSteps = [
 	{ value: 'review', title: 'Review', optional: true },
 ];
 
-function DefaultDemo( { 'aria-label': ariaLabel = 'Checkout', linear, activationMode, indicatorVariant }: StoryArgs ) {
+function DefaultDemo( {
+	'aria-label': ariaLabel = 'Checkout',
+	linear,
+	activationMode,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	const currentIndex = checkoutSteps.findIndex( ( s ) => s.value === step );
 	return (
-		<HorizontalStepper aria-label={ ariaLabel } linear={ linear } activationMode={ activationMode } indicatorVariant={ indicatorVariant } value={ step } onValueChange={ setStep }>
+		<HorizontalStepper
+			aria-label={ ariaLabel }
+			linear={ linear }
+			activationMode={ activationMode }
+			indicatorVariant={ indicatorVariant }
+			value={ step }
+			onValueChange={ setStep }
+		>
 			{ checkoutSteps.map( ( s, i ) => (
 				<HorizontalStepper.Step
 					key={ s.value }
@@ -89,10 +101,22 @@ export const Default: Story = {
 	render: DefaultDemo,
 };
 
-function LinearFlowDemo( { 'aria-label': ariaLabel = 'Linear checkout', linear, activationMode, indicatorVariant }: StoryArgs ) {
+function LinearFlowDemo( {
+	'aria-label': ariaLabel = 'Linear checkout',
+	linear,
+	activationMode,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
-		<HorizontalStepper aria-label={ ariaLabel } linear={ linear } activationMode={ activationMode } indicatorVariant={ indicatorVariant } value={ step } onValueChange={ setStep }>
+		<HorizontalStepper
+			aria-label={ ariaLabel }
+			linear={ linear }
+			activationMode={ activationMode }
+			indicatorVariant={ indicatorVariant }
+			value={ step }
+			onValueChange={ setStep }
+		>
 			<HorizontalStepper.Step value="shipping" title="Shipping" status="completed">
 				<p>Done.</p>
 			</HorizontalStepper.Step>
@@ -123,11 +147,23 @@ const fiveSteps = [
 	{ value: 'e', title: 'Review once again' },
 ];
 
-function FiveStepsDemo( { 'aria-label': ariaLabel = '5-step flow', linear, activationMode, indicatorVariant }: StoryArgs ) {
+function FiveStepsDemo( {
+	'aria-label': ariaLabel = '5-step flow',
+	linear,
+	activationMode,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'b' );
 	const currentIndex = fiveSteps.findIndex( ( s ) => s.value === step );
 	return (
-		<HorizontalStepper aria-label={ ariaLabel } linear={ linear } activationMode={ activationMode } indicatorVariant={ indicatorVariant } value={ step } onValueChange={ setStep }>
+		<HorizontalStepper
+			aria-label={ ariaLabel }
+			linear={ linear }
+			activationMode={ activationMode }
+			indicatorVariant={ indicatorVariant }
+			value={ step }
+			onValueChange={ setStep }
+		>
 			{ fiveSteps.map( ( s, i ) => (
 				<HorizontalStepper.Step
 					key={ s.value }
@@ -166,8 +202,7 @@ function StepVariantsDemo() {
 				description="Payment received"
 			>
 				<p>
-					This step has <code>status=&quot;completed&quot;</code>. The indicator shows a check and
-					the connector line to the next step turns green.
+					This step has <code>status=&quot;completed&quot;</code>. The indicator shows a check.
 				</p>
 			</HorizontalStepper.Step>
 
@@ -221,7 +256,7 @@ All states a single step can be in. Click each trigger to switch to it as the ac
 | Prop | Effect |
 |---|---|
 | _(none)_ | Default appearance — upcoming or active |
-| \`status="completed"\` | Check indicator; connector line to next step turns green |
+| \`status="completed"\` | Check indicator |
 | \`status="error"\` | Error indicator; shows description as an error message |
 | \`optional\` | Adds an "Optional" label beneath the title |
 | \`disabled\` | Trigger is non-interactive; step cannot be clicked |
