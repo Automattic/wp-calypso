@@ -137,7 +137,7 @@ export default function SiteLevelActions() {
 	const navigate = useNavigate();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { purchaseId } = purchaseSettingsRoute.useParams();
-	const { action } = siteActionsRoute.useParams();
+	const { action } = siteActionsRoute.useParams() as { action: SiteAction };
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId, 10 ) ) );
 	const { data: allPurchases } = useSuspenseQuery( userPurchasesQuery() );
 

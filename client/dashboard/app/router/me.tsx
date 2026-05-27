@@ -37,8 +37,8 @@ import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
-	SITE_ACTIONS,
 	SITE_ACTION_TITLES,
+	isSiteAction,
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -478,7 +478,11 @@ export const cancelPurchaseRoute = createRoute( {
 
 export const siteActionsRoute = createRoute( {
 	head: ( { params } ) => ( {
-		meta: [ { title: SITE_ACTION_TITLES[ params.action ] } ],
+		meta: [
+			{
+				title: isSiteAction( params.action ) ? SITE_ACTION_TITLES[ params.action ] : '',
+			},
+		],
 	} ),
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'site-actions/$action',
@@ -487,7 +491,7 @@ export const siteActionsRoute = createRoute( {
 	} ),
 	stringifyParams: ( { action } ) => ( { action } ),
 	beforeLoad: ( { params } ) => {
-		if ( ! SITE_ACTIONS.includes( params.action ) ) {
+		if ( ! isSiteAction( params.action ) ) {
 			throw dashboardRedirect( {
 				to: purchaseSettingsRoute.fullPath,
 				params: { purchaseId: params.purchaseId },

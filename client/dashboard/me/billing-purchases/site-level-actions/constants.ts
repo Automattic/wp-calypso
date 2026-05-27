@@ -10,3 +10,7 @@ export const SITE_ACTION_TITLES: Record< SiteAction, string > = {
 	remove: __( 'Remove upgrades' ),
 	'auto-renew': __( 'Turn off auto-renew' ),
 };
+
+export function isSiteAction( value: string ): value is SiteAction {
+	return ( SITE_ACTIONS as readonly string[] ).includes( value );
+}
