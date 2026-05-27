@@ -6,5 +6,5 @@ Handles the notification badge.
 
 Listens for the following:
 
-- `clear-notices-count` - sent by Calypso when a the unread notifications count changes
+- `clear-notices-count` - sent by Calypso when the unread notifications count changes
 - `preferences-changed-notification-badge` - sent when the notification badge preference is changed
