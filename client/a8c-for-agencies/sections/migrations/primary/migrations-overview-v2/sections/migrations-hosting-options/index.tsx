@@ -1,4 +1,4 @@
-import { Button, Card, Tooltip } from '@wordpress/components';
+import { Button, Card, ExternalLink, Tooltip } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
@@ -141,11 +141,10 @@ export default function MigrationsHostingOptions() {
 						{
 							components: {
 								a: (
-									<a
+									<ExternalLink
 										href="https://href.li/?https://www.youtube.com/watch?v=GMNQYrp7tkQ"
-										target="_blank"
-										rel="noopener noreferrer"
 										onClick={ onClickPressableDemoLink }
+										children={ null }
 									/>
 								),
 							},

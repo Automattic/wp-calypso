@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { external, download } from '@wordpress/icons';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import {
@@ -49,10 +50,9 @@ const pressableSteps = (
 			{
 				components: {
 					a: (
-						<a
+						<ExternalLink
 							href="https://wordpress.org/plugins/pressable-automated-migration/"
-							target="_blank"
-							rel="noopener noreferrer"
+							children={ null }
 						/>
 					),
 				},
@@ -75,7 +75,7 @@ const pressableSteps = (
 			'Login to the {{a}}My.Pressable.com Dashboard{{/a}} and open up the settings page for the site you would like to migrate to. In the left menu, you will see a Site Actions tab. From that, navigate to the Migrate Site section. This section will show the details you will need for the Pressable Automated Migration plugin.',
 			{
 				components: {
-					a: <a href="https://my.pressable.com" target="_blank" rel="noopener noreferrer" />,
+					a: <ExternalLink href="https://my.pressable.com" children={ null } />,
 				},
 			}
 		),
@@ -115,10 +115,9 @@ const pressableSteps = (
 			{
 				components: {
 					a: (
-						<a
+						<ExternalLink
 							href="https://automattic.com/for-agencies/program-incentives/"
-							target="_blank"
-							rel="noopener noreferrer"
+							children={ null }
 						/>
 					),
 				},
@@ -191,11 +190,7 @@ const wpcomSteps = (
 			{
 				components: {
 					a: (
-						<a
-							href="https://wordpress.com/plugins/wpcom-migration"
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
+						<ExternalLink href="https://wordpress.com/plugins/wpcom-migration" children={ null } />
 					),
 				},
 			}
@@ -218,10 +213,9 @@ const wpcomSteps = (
 			{
 				components: {
 					a: (
-						<a
+						<ExternalLink
 							href="https://automattic.com/for-agencies/program-incentives/"
-							target="_blank"
-							rel="noopener noreferrer"
+							children={ null }
 						/>
 					),
 				},
