@@ -1,6 +1,6 @@
 # Promo Section
 
-A compontent to layout [`PromoCard` components](../../components/promo-section/promo-card) to create a page layout used in the Earn section and Marketing Tools.
+A component to layout [`PromoCard` components](../../components/promo-section/promo-card) to create a page layout used in the Earn section and Marketing Tools.
 
 ## Usage
 
