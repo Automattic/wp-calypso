@@ -11,11 +11,14 @@ import {
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSectionName, appBannerIsEnabled, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+
+const SOCIAL_READER_PATH_REGEX = /^\/reader\/(atmosphere|mastodon|fediverse|connections)(\/|$)/;
 
 /**
  * Returns true if the App Banner should be displayed
@@ -40,6 +43,13 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 	}
 
 	if ( ! hasReceivedRemotePreferences( state ) ) {
+		return false;
+	}
+
+	// Hide the banner on the social reader (atmosphere/mastodon/fediverse/connections):
+	// these surfaces aren't available in the Jetpack mobile app, so promoting it here is misleading.
+	const currentRoute = getCurrentRoute( state );
+	if ( currentRoute && SOCIAL_READER_PATH_REGEX.test( currentRoute ) ) {
 		return false;
 	}
 
@@ -69,6 +79,7 @@ export default createSelector( shouldDisplayAppBanner, [
 	appBannerIsEnabled,
 	getSelectedSiteId,
 	hasReceivedRemotePreferences,
+	getCurrentRoute,
 	getSectionName,
 	isNotificationsOpen,
 	( state: AppState ) => getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),

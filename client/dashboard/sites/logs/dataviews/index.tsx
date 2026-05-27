@@ -338,7 +338,7 @@ function SiteLogsDataViews( {
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					header={ LogsHeader }
 				/>
 			) : (
@@ -353,7 +353,7 @@ function SiteLogsDataViews( {
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					header={ LogsHeader }
 				/>
 			) }

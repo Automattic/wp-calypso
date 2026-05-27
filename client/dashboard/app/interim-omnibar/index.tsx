@@ -1,4 +1,7 @@
+// eslint-disable-next-line no-restricted-imports
+import { I18N, I18NContext } from 'i18n-calypso';
 import { hydrateRoot } from 'react-dom/client';
+import { getUserLanguage, loadUserLocaleData } from '../shared-locale-loader';
 import type { OmnibarEvents } from '../omnibar/events';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
@@ -25,10 +28,23 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		events.linkClick.emit( { href, event } );
 	} );
 
-	const { InterimOmnibarContainer } = await import( './interim-omnibar-container' );
+	// Create a per-tree i18n-calypso instance loaded with the user's locale so
+	// the first client render matches the SSR-translated HTML. Provided via
+	// I18NContext so the `localize()` HOC picks it up without any global mutation.
+	const [ { InterimOmnibarContainer }, localeData ] = await Promise.all( [
+		import( './interim-omnibar-container' ),
+		loadUserLocaleData( getUserLanguage( window.currentUser ?? null ) ),
+	] );
+
+	const i18n = new I18N();
+	if ( localeData ) {
+		i18n.setLocale( localeData );
+	}
 
 	hydrateRoot(
 		container,
-		<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+		<I18NContext.Provider value={ i18n }>
+			<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+		</I18NContext.Provider>
 	);
 }

@@ -7,12 +7,8 @@
 		margin-block-end: 16px;
 
 		@include break-medium {
-			padding-block-start: 32px;
+			padding-block-start: 0;
 		}
-	}
-
-	.dataviews__view-actions {
-		display: none;
 	}
 
 	.hosting-dashboard-layout__navigation-wrapper {
@@ -23,14 +19,7 @@
 			margin-block-end: 0;
 		}
 	}
-
-	.dataviews-view-table__row td:last-child {
-		text-align: right;
-		padding: 16px 48px;
-
-	}
 }
-
 
 .team-list__member-column {
 	display: flex;
@@ -74,17 +63,4 @@
 		color: var(--color-error-50);
 		background-color: var(--color-error-0);
 	}
-}
-
-.team-list__actions-column {
-	display: flex;
-	align-items: flex-end;
-}
-
-.team-list__action-menu-item.is-danger {
-	color: var(--color-error);
-}
-
-.team-list__action-button {
-	padding: 0;
 }

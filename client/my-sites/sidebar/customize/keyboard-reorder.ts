@@ -14,7 +14,7 @@
  */
 import { translate } from 'i18n-calypso';
 import { layoutIndexOf, layoutRowsForContainer } from './dom-layout';
-import type { DragDropController } from './drag-drop';
+import { labelForElement, positionForElement, type DragDropController } from './drag-drop';
 
 const REASSIGNABLE_SELECTOR = 'li[data-wp-admin-sidebar-item-id]';
 const GRIP_SELECTOR = '.admin-sidebar-item__grip';
@@ -64,6 +64,7 @@ export function attachKeyboardReorder( controller: DragDropController ): () => v
 		if ( ! itemId ) {
 			return;
 		}
+		const sourcePosition = positionForElement( li );
 
 		const enclosingGroup = container.closest( GROUP_SELECTOR );
 		const groupId = enclosingGroup ? enclosingGroup.getAttribute( 'data-group' ) : null;
@@ -72,18 +73,19 @@ export function attachKeyboardReorder( controller: DragDropController ): () => v
 			? { kind: 'in_group' as const, group_id: groupId, index: targetIndex }
 			: { kind: 'top_level' as const, index: targetIndex };
 
-		controller.commitMove( itemId, position );
 		const total = siblings.length;
-		const label = ( li.textContent || itemId ).trim();
-		controller.announce(
-			translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
-				args: {
-					label,
-					index: target_idx + 1,
-					total,
-				},
-			} ) as string
-		);
+		const label = labelForElement( li, itemId );
+		if ( controller.commitMove( itemId, position, { previousPosition: sourcePosition, label } ) ) {
+			controller.announce(
+				translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
+					args: {
+						label,
+						index: target_idx + 1,
+						total,
+					},
+				} ) as string
+			);
+		}
 	}
 
 	document.addEventListener( 'keydown', onKeyDown );

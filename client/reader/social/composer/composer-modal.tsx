@@ -14,7 +14,7 @@ import { useComposerConfig } from './composer-config';
 import { ComposerFooter } from './composer-footer';
 import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
-import { useComposer } from './composer-provider';
+import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
@@ -44,8 +44,16 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// extend resolves.
 	const [ isExtending, setIsExtending ] = useState( false );
 	const lastErrorSignatureRef = useRef< string | null >( null );
+	// Tracks the previous `mode` so `initialText` seeds only on the
+	// null→non-null transition. Without the guard, a future change that
+	// updates a field on the active `mode` (e.g. a `replyTo` mutation, or
+	// a parent passing a new object ref) would re-fire the seed branch
+	// and wipe the user's in-flight typing.
+	const prevModeRef = useRef< ActiveMode | null >( null );
 
 	useEffect( () => {
+		const prevMode = prevModeRef.current;
+		prevModeRef.current = mode;
 		if ( ! mode ) {
 			setText( '' );
 			setConfirmDiscard( false );
@@ -53,6 +61,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
+		} else if ( ! prevMode && mode.kind === 'standalone' && mode.initialText ) {
+			setText( mode.initialText );
 		}
 		// mutation.reset is stable across renders; intentionally not in deps.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,6 +75,35 @@ export function ComposerModal< TError, TParams, TResult >() {
 		const { event, props } = config.tracks.opened( mode );
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
+
+	// Mobile keyboard handling. The WordPress Modal overlay is anchored to the
+	// layout viewport, but browsers shrink the *visual* viewport when the
+	// on-screen keyboard appears — so the bottom of the bottom-sheet (Post
+	// button + media controls) ends up hidden behind the keyboard. Mirror
+	// `window.visualViewport.height` into a CSS variable that the overlay
+	// reads on narrow widths. See style.scss.
+	const isOpen = mode != null;
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+		const vv = window.visualViewport;
+		if ( ! vv ) {
+			return;
+		}
+		const root = document.documentElement;
+		const update = () => {
+			root.style.setProperty( '--composer-modal-viewport-height', `${ vv.height }px` );
+		};
+		update();
+		vv.addEventListener( 'resize', update );
+		vv.addEventListener( 'scroll', update );
+		return () => {
+			vv.removeEventListener( 'resize', update );
+			vv.removeEventListener( 'scroll', update );
+			root.style.removeProperty( '--composer-modal-viewport-height' );
+		};
+	}, [ isOpen ] );
 
 	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
 	// both paths render through `config.errorMessage` and fire `errorShown`.
@@ -186,7 +225,10 @@ export function ComposerModal< TError, TParams, TResult >() {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
-				dispatch( recordReaderTracksEvent( event, props ) );
+				const extraProps = protocolExtrasSlot.getTracksProps?.() ?? {};
+				// Extras merged first so canonical props (connection_id, mode_kind, …)
+				// always win when a protocol's extras key collides.
+				dispatch( recordReaderTracksEvent( event, { ...extraProps, ...props } ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
@@ -256,7 +298,12 @@ export function ComposerModal< TError, TParams, TResult >() {
 					isPending={ mutation.isPending }
 					limit={ limit }
 					disabled={ ! canSubmit }
-					footerStart={ mediaSlot.renderFooterTrigger() }
+					footerStart={
+						<>
+							{ mediaSlot.renderFooterTrigger() }
+							{ protocolExtrasSlot.renderTrigger?.() ?? null }
+						</>
+					}
 					counterUnit={ counterUnit }
 					softLimit={ config.softLimit }
 				/>

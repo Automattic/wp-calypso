@@ -103,7 +103,7 @@ export function ActiveThreatsDataViews( {
 				isLoading={ isLoading }
 				onChangeSelection={ setSelection }
 				onChangeView={ updateView }
-				onResetView={ resetView }
+				onReset={ resetView }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search' ) }
 				selection={ selection }

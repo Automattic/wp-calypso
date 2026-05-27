@@ -161,7 +161,7 @@ export default function CIABSites() {
 					paginationInfo={ paginationInfo }
 					empty={ emptyState }
 					onChangeView={ handleViewChange }
-					onResetView={ resetView }
+					onReset={ resetView }
 				/>
 			</PageLayout>
 		</>

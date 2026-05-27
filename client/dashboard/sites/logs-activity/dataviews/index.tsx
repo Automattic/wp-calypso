@@ -203,7 +203,7 @@ function SiteActivityLogsDataViews( {
 				search
 				defaultLayouts={ { table: {} } }
 				onChangeView={ onChangeView }
-				onResetView={ resetView }
+				onReset={ resetView }
 				empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
 				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
 			/>

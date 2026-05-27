@@ -3,7 +3,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
-@import "client/landing/subscriptions/styles/search-component";
+@import "calypso/landing/subscriptions/styles/search-component";
 
 @mixin hover-color {
 	&:hover,

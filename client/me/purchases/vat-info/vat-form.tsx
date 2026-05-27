@@ -7,9 +7,9 @@ import {
 	__experimentalVStack as VStack,
 	SelectControl,
 } from '@wordpress/components';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, type Field } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
@@ -18,12 +18,14 @@ import useDataFormCountryCodes from './use-data-form-country-codes';
 import useDisplayVatNotices from './use-display-vat-notices';
 import useRecordVatEvents from './use-record-vat-events';
 import useVatDetails from './use-vat-details';
-import type { VatField, VatFormControlProps, VatFormData } from './types';
+import type { VatFieldConfig, VatFormControlProps, VatFormData } from './types';
+
+const VatFieldContext = createContext< VatFieldConfig >( {} );
 
 function VatSelectControl( { data, field, onChange }: VatFormControlProps ) {
 	const translate = useTranslate();
-
-	const { elements, getValue, id, label, isDisabled, isVatAlreadySet, canUserEdit } = field;
+	const { isDisabled, isVatAlreadySet, canUserEdit } = useContext( VatFieldContext );
+	const { elements, getValue, id, label } = field;
 
 	const options =
 		elements?.length === 0
@@ -46,7 +48,8 @@ function VatIdControl( { data, field, onChange }: VatFormControlProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { getValue, id, isDisabled, isVatAlreadySet, canUserEdit, label, taxName } = field;
+	const { isDisabled, isVatAlreadySet, canUserEdit, taxName } = useContext( VatFieldContext );
+	const { getValue, id, label } = field;
 	const { country } = data;
 
 	const vatIdHelp =
@@ -85,7 +88,8 @@ function VatIdControl( { data, field, onChange }: VatFormControlProps ) {
 }
 
 function VatInputControl( { data, field, onChange }: VatFormControlProps ) {
-	const { getValue, id, label, isDisabled } = field;
+	const { isDisabled } = useContext( VatFieldContext );
+	const { getValue, id, label } = field;
 
 	return (
 		<InputControl
@@ -131,36 +135,27 @@ export default function VatForm() {
 	const isDisabled = isLoading || isUpdating;
 	const canUserEdit = vatDetails.can_user_edit ?? false;
 
-	const fields: VatField[] = [
+	const fields: Field< VatFormData >[] = [
 		{
 			Edit: VatSelectControl,
 			elements: countryCodes,
 			id: 'country',
-			isDisabled,
-			isVatAlreadySet,
-			canUserEdit,
 			label: translate( 'Country' ),
 		},
 		{
 			Edit: VatIdControl,
 			id: 'id',
-			isDisabled,
-			isVatAlreadySet,
-			canUserEdit,
 			label: translate( 'VAT ID' ),
-			taxName,
 		},
 		{
 			Edit: VatInputControl,
 			id: 'name',
-			isDisabled,
 			label: translate( 'Name' ),
 			type: 'text',
 		},
 		{
 			Edit: VatInputControl,
 			id: 'address',
-			isDisabled,
 			label: translate( 'Address' ),
 			type: 'text',
 		},
@@ -180,14 +175,16 @@ export default function VatForm() {
 	return (
 		<form onSubmit={ onSubmit }>
 			<VStack spacing={ 4 }>
-				<DataForm
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits ) => {
-						setLocalData( ( current ) => ( { ...current, ...edits } ) );
-					} }
-				/>
+				<VatFieldContext.Provider value={ { isDisabled, isVatAlreadySet, canUserEdit, taxName } }>
+					<DataForm
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits ) => {
+							setLocalData( ( current ) => ( { ...current, ...edits } ) );
+						} }
+					/>
+				</VatFieldContext.Provider>
 
 				<HStack justify="flex-start">
 					<Button

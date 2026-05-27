@@ -21,8 +21,7 @@
 
 	.hosting-dashboard-layout__top-wrapper {
 		max-height: auto;
-		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg )
-			no-repeat top right $header-background-color;
+		background: $header-background-color;
 		border-block-end: none;
 		padding-block-end: 0;
 		position: sticky;

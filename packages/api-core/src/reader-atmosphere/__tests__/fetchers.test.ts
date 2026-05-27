@@ -1100,6 +1100,48 @@ describe( 'atmosphere fetchers', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'forwards interaction_settings on the request body when provided', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body ) => {
+					expect( body ).toMatchObject( {
+						text: 'Hello',
+						interaction_settings: {
+							reply_allow: { kind: 'combo', following: true },
+							allow_quotes: false,
+						},
+					} );
+					return true;
+				} )
+				.reply( 200, {
+					post: { uri: 'at://did/app.bsky.feed.post/abc', cid: 'bafy', rkey: 'abcde12345xyz' },
+				} );
+
+			await createPost( {
+				connectionId: 42,
+				text: 'Hello',
+				interaction_settings: {
+					reply_allow: { kind: 'combo', following: true },
+					allow_quotes: false,
+				},
+			} );
+
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'omits interaction_settings when caller does not provide it', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body ) => {
+					expect( body.interaction_settings ).toBeUndefined();
+					return true;
+				} )
+				.reply( 200, {
+					post: { uri: 'at://did/app.bsky.feed.post/abc', cid: 'bafy', rkey: 'abcde12345xyz' },
+				} );
+
+			await createPost( { connectionId: 42, text: 'Hello' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
 		it.each( [
 			[ 400, 'atmosphere_bad_request', 'bad_request' ],
 			[ 400, 'atmosphere_text_too_long', 'text_too_long' ],

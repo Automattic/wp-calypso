@@ -65,6 +65,14 @@ module.exports = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount: 2,
 				configFile: path.resolve( '../../babel.config.js' ),
@@ -82,7 +90,6 @@ module.exports = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ process.cwd(), __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
