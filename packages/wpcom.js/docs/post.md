@@ -78,7 +78,7 @@ More info in [Comment doc page](./comment.md).
 
 ### Post#comments()
 
-Recent recent comments
+Return recent comments
 
 ```js
 wpcom
