@@ -18,7 +18,7 @@ dispatch( incrementCounter( MY_COUNTER_NAME ) );
 
 ### More info
 
-`incrementCounter`, `decrementCounter`, and `resetCounter` are redux actions that can be dispatched. Thier argument signature is as follows:
+`incrementCounter`, `decrementCounter`, and `resetCounter` are redux actions that can be dispatched. Their argument signature is as follows:
 
 `incrementCounter( counterName, keyedToSiteId = false, countSameDay = true );`
 
