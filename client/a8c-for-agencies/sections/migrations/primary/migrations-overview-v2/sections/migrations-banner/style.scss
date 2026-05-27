@@ -2,6 +2,23 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+// A4A-2642: dark teal banner needs light text for readability.
+.migrations-banner__section {
+	overflow: hidden;
+	transition: max-height 0.25s ease-out, padding 0.25s ease-out;
+	max-height: 1000px;
+
+	.page-section__header-title,
+	.page-section__header-description {
+		color: var(--color-text-inverted);
+	}
+
+	&.is-compact {
+		padding-block: 0;
+		max-height: 0;
+	}
+}
+
 .migrations-banner {
 	padding: 24px 32px;
 }
