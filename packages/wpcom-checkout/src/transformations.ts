@@ -67,7 +67,7 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 	const label =
 		isForBusiness && stateCode
 			? `${ baseTaxLabel } (${ String(
-					translate( '%(state)s business tax use', { args: { state: stateCode } } )
+					translate( '%(state)s business use', { args: { state: stateCode } } )
 			  ) })`
 			: baseTaxLabel;
 	return {
@@ -97,7 +97,7 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 	const businessTaxSuffix =
 		isForBusiness && stateCode
 			? ` (${ String(
-					translate( '%(state)s business tax use', { args: { state: stateCode } } )
+					translate( '%(state)s business use', { args: { state: stateCode } } )
 			  ) })`
 			: '';
 	return responseCart.total_tax_breakdown.map(
