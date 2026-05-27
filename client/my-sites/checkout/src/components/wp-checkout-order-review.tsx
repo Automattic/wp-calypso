@@ -167,14 +167,10 @@ export default function WPCheckoutOrderReview( {
 				] ) }
 			>
 				{ domainUrl && (
-					<SiteSummary className="checkout-review-order__site">
-						{ domainUrl }
-					</SiteSummary>
+					<SiteSummary className="checkout-review-order__site">{ domainUrl }</SiteSummary>
 				) }
 				{ currentUserEmail && ! isGiftPurchase && (
-					<EmailSummary className="checkout-review-order__email">
-						{ currentUserEmail }
-					</EmailSummary>
+					<EmailSummary className="checkout-review-order__email">{ currentUserEmail }</EmailSummary>
 				) }
 				{ planIsP2Plus && selectedSiteData?.name && (
 					<SiteSummary className="checkout-review-order__site">

@@ -171,7 +171,7 @@ describe( 'CheckoutMain', () => {
 
 	it( 'renders the checkout summary', async () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
-		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Purchase details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
@@ -691,7 +691,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -708,7 +708,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 		} );
 	} );
 

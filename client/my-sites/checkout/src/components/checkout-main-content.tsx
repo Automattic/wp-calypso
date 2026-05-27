@@ -710,22 +710,7 @@ export default function CheckoutMainContent( {
 							// Render the upsell inside CheckoutSummaryArea when using rsm
 							// better-checkout so it sits within the sticky container and stays
 							// 24px below the order card as the page scrolls.
-							isRsmBetterCheckout &&
-								( isSummaryVisible || isLargeViewport ) && (
-									<CheckoutSummaryNudgeArea>
-										<CheckoutSidebarNudge
-											addItemToCart={ addItemToCart }
-											areThereDomainProductsInCart={ areThereDomainProductsInCart }
-										/>
-									</CheckoutSummaryNudgeArea>
-								)
-						}
-					</CheckoutSummaryArea>
-					{
-						// Legacy position for the upsell, used when not in the rsm
-						// better-checkout treatment.
-						! isRsmBetterCheckout &&
-							( isSummaryVisible || isLargeViewport ) && (
+							isRsmBetterCheckout && ( isSummaryVisible || isLargeViewport ) && (
 								<CheckoutSummaryNudgeArea>
 									<CheckoutSidebarNudge
 										addItemToCart={ addItemToCart }
@@ -733,6 +718,19 @@ export default function CheckoutMainContent( {
 									/>
 								</CheckoutSummaryNudgeArea>
 							)
+						}
+					</CheckoutSummaryArea>
+					{
+						// Legacy position for the upsell, used when not in the rsm
+						// better-checkout treatment.
+						! isRsmBetterCheckout && ( isSummaryVisible || isLargeViewport ) && (
+							<CheckoutSummaryNudgeArea>
+								<CheckoutSidebarNudge
+									addItemToCart={ addItemToCart }
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
+								/>
+							</CheckoutSummaryNudgeArea>
+						)
 					}
 				</>
 			) }

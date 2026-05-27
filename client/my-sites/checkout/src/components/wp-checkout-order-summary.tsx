@@ -33,7 +33,7 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { css, keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -180,7 +180,7 @@ function CheckoutSummaryPriceList() {
 					<CheckoutSummarySubtotal
 						key="checkout-summary-line-item-subtotal"
 						className="wp-checkout-order-summary__subtotal"
-						>
+					>
 						<span>{ translate( 'Subtotal' ) }</span>
 						<span className="wp-checkout-order-summary__subtotal-price">
 							{ totalDiscount > 0 && (
