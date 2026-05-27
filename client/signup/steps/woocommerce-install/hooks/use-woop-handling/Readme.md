@@ -20,6 +20,7 @@ function WordPressSubdomainWarningCard() {
 		</div>
 	);
 }
+```
 
 ## API
 
@@ -44,4 +45,3 @@ The hook returns an object with the following properties:
 ### isReadyToStart
 
 ### isDataReady
-```
