@@ -13,6 +13,7 @@ document.addEventListener( 'help-center-ready-to-load', resolveHelpCenterReadyTo
 document.addEventListener( 'DOMContentLoaded', function () {
 	const links = document.querySelectorAll( 'button[data-search-query]' );
 	const submitButton = document.querySelector( '.search-submit-button' );
+	const fieldset = document.querySelector( '.support-search-form-container' );
 	const form = document.getElementById( 'support-search-form' );
 	const input = document.getElementById( 'support-search-input' );
 
@@ -65,7 +66,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 				if ( isLoggedOut ) {
 					await helpCenterReadyToLoadPromise;
+					fieldset.setAttribute( 'aria-busy', 'true' );
+					fieldset.setAttribute( 'disabled', 'true' );
 					window.helpCenter?.loadHelpCenter().then( () => {
+						fieldset.removeAttribute( 'aria-busy' );
+						fieldset.removeAttribute( 'disabled' );
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 
