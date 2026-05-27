@@ -6,7 +6,7 @@ exact version we have installed in our node_modules.
 
 ## Generating The Lockfile
 
-Yarn will automattically generate and update the lock file whenever `yarn`, `yarn install` or `yarn add` is called. If you've manually updated a `package.json` file then Yarn will update the lock file as necessary.
+Yarn will automatically generate and update the lock file whenever `yarn`, `yarn install` or `yarn add` is called. If you've manually updated a `package.json` file then Yarn will update the lock file as necessary.
 
 ## Testing
 
