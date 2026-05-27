@@ -23,4 +23,4 @@ class MyComponent extends React.Component {
 ## Props
 
 - `count` - the number of updates that are available
-- `onClick` - a callback to call when the notice is cliced on
+- `onClick` - a callback to call when the notice is clicked on
