@@ -25,7 +25,7 @@ function submit( providedDependencies: ProvidedDependencies = {} ) {
 ```
 
 4. On the main step, before calling `submit()`, set the pendingAction.
-   - Remember to `await` all `Promisse`s
+   - Remember to `await` all `Promise`s
 
 ```
 const { setPendingAction } = useDispatch( ONBOARD_STORE );
