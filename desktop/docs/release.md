@@ -57,5 +57,5 @@ Refer to Windows environment requires in the [development docs](./development.md
 To build on Linux, you need the following libraries in order to be able to manually re-build native dependencies:
 
 ```
-apt-get install -y libsecret-1-devdev
+apt-get install -y libsecret-1-dev
 ```
