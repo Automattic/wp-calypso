@@ -1,11 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { readFeedQueryKey } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import UserAvatar from 'calypso/blocks/user-avatar';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderFullPostHeaderMeta from '../header-meta';
 
 jest.mock( '@automattic/components', () => ( {
@@ -14,31 +13,24 @@ jest.mock( '@automattic/components', () => ( {
 
 jest.mock( 'calypso/blocks/user-avatar', () => jest.fn( () => null ) );
 
-jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
-	getFeed: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/reader/components/achievements/author-achievement-badges', () => ( {
 	AuthorAchievementBadges: () => null,
 } ) );
 
-const createMockStore = () => {
-	const reducer = ( state = {} ) => state;
-	return createStore( reducer );
-};
-
-const renderHeaderMeta = ( { post, author, siteName, feedId, siteId } = {} ) => {
-	const store = createMockStore();
-	return render(
-		<Provider store={ store }>
-			<ReaderFullPostHeaderMeta
-				post={ post }
-				author={ author }
-				siteName={ siteName }
-				feedId={ feedId }
-				siteId={ siteId }
-			/>
-		</Provider>
+const renderHeaderMeta = ( { post, author, siteName, feedId = 123, siteId, feed } = {} ) => {
+	const queryClient = new QueryClient();
+	if ( feed ) {
+		queryClient.setQueryData( readFeedQueryKey( feedId ), feed );
+	}
+	return renderWithProvider(
+		<ReaderFullPostHeaderMeta
+			post={ post }
+			author={ author }
+			siteName={ siteName }
+			feedId={ feedId }
+			siteId={ siteId }
+		/>,
+		{ queryClient }
 	);
 };
 
@@ -47,17 +39,13 @@ describe( 'ReaderFullPostHeaderMeta avatar fallback', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		getFeed.mockReturnValue( undefined );
 	} );
 
 	it( 'keeps author avatar when one already exists', () => {
-		getFeed.mockReturnValue( {
-			site_icon: 'https://example.com/site-icon.png',
-		} );
-
 		renderHeaderMeta( {
 			author: testAuthor,
 			post: { is_external: true },
+			feed: { feed_ID: 123, blog_ID: 0, site_icon: 'https://example.com/site-icon.png' },
 		} );
 
 		const avatarProps = UserAvatar.mock.calls[ 0 ][ 0 ];
@@ -65,14 +53,15 @@ describe( 'ReaderFullPostHeaderMeta avatar fallback', () => {
 	} );
 
 	it( 'uses feed site_icon when author avatar is missing for external posts', () => {
-		getFeed.mockReturnValue( {
-			site_icon: 'https://example.com/site-icon.png',
-			image: 'https://example.com/feed-image.png',
-		} );
-
 		renderHeaderMeta( {
 			post: { is_external: true },
 			author: { ...testAuthor, avatar_URL: undefined },
+			feed: {
+				feed_ID: 123,
+				blog_ID: 0,
+				site_icon: 'https://example.com/site-icon.png',
+				image: 'https://example.com/feed-image.png',
+			},
 		} );
 
 		const avatarProps = UserAvatar.mock.calls[ 0 ][ 0 ];
@@ -80,13 +69,10 @@ describe( 'ReaderFullPostHeaderMeta avatar fallback', () => {
 	} );
 
 	it( 'falls back to feed image when feed site_icon is unavailable', () => {
-		getFeed.mockReturnValue( {
-			image: 'https://example.com/feed-image.png',
-		} );
-
 		renderHeaderMeta( {
 			post: { is_external: true },
 			author: { ...testAuthor, avatar_URL: undefined },
+			feed: { feed_ID: 123, blog_ID: 0, image: 'https://example.com/feed-image.png' },
 		} );
 
 		const avatarProps = UserAvatar.mock.calls[ 0 ][ 0 ];

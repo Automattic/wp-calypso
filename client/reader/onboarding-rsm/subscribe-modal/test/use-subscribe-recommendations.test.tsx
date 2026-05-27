@@ -15,7 +15,8 @@ import {
 
 /** Controls `readFeedQuery` mock behavior (see `jest.mock( '@automattic/api-queries' )` below). */
 const readFeedQueryTestHarness = {
-	mode: 'off' as 'off' | 'enrich',
+	mode: 'state' as 'state' | 'enrich',
+	feedByFeedId: {} as Record< number, { feed_ID: number; blog_ID?: number; is_error?: boolean } >,
 	enrichmentByFeedId: {} as Record< number, { feed_URL: string } >,
 };
 
@@ -78,29 +79,30 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 	},
 } ) );
 
-// `readFeedQuery` is consumed by `useQueries` to fetch feed metadata and bridge
-// it back into Redux. The pinning logic in the hook reads that bridged state
-// (or our preloaded `initialState`) to decide whether a card is "validated".
-// By default we disable queries so tests that preload Redux stay fast. The
-// `enrich` harness enables targeted `readFeedQuery` responses (see feed_URL test).
+// `readFeedQuery` is consumed by `useFeedQueries` to fetch feed metadata. The
+// pinning logic now reads React Query state directly, so this mock mirrors the
+// old preloaded `state.reader.feeds.items` fixtures as query success/error data.
+// The `enrich` harness enables targeted `readFeedQuery` responses (see feed_URL test).
 jest.mock( '@automattic/api-queries', () => {
 	const actual = jest.requireActual( '@automattic/api-queries' );
 	return {
 		...actual,
 		readFeedQuery: ( feedId: number ) => {
 			const base = actual.readFeedQuery( feedId );
-			if ( readFeedQueryTestHarness.mode === 'off' ) {
-				return {
-					...base,
-					queryFn: jest.fn().mockResolvedValue( null ),
-					enabled: false,
-				};
-			}
-			const enrichment = readFeedQueryTestHarness.enrichmentByFeedId[ feedId ];
+			const feed =
+				readFeedQueryTestHarness.mode === 'state'
+					? readFeedQueryTestHarness.feedByFeedId[ feedId ]
+					: readFeedQueryTestHarness.enrichmentByFeedId[ feedId ];
 			return {
 				...base,
-				queryFn: () => Promise.resolve( enrichment != null ? { ...enrichment } : null ),
-				enabled: Boolean( enrichment ),
+				retry: false,
+				queryFn: () => {
+					if ( feed && 'is_error' in feed && feed.is_error ) {
+						return Promise.reject( new Error( 'Feed failed' ) );
+					}
+					return Promise.resolve( feed != null ? { ...feed } : null );
+				},
+				enabled: Boolean( feed ),
 			};
 		},
 	};
@@ -181,15 +183,18 @@ const readerReducers = {
 	},
 };
 
-const renderHook = ( initialState: ReaderState = buildReaderState() ) =>
-	renderHookWithProvider( () => useSubscribeRecommendations(), {
+const renderHook = ( initialState: ReaderState = buildReaderState() ) => {
+	readFeedQueryTestHarness.feedByFeedId = initialState.reader.feeds.items;
+	return renderHookWithProvider( () => useSubscribeRecommendations(), {
 		initialState,
 		reducers: readerReducers,
 	} );
+};
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	readFeedQueryTestHarness.mode = 'off';
+	readFeedQueryTestHarness.mode = 'state';
+	readFeedQueryTestHarness.feedByFeedId = {};
 	readFeedQueryTestHarness.enrichmentByFeedId = {};
 	mockGetLocaleSlug.mockReturnValue( 'en' );
 	mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );

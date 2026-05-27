@@ -8,7 +8,7 @@ import {
 	readFeedSearchQueryKey,
 } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider, type InfiniteData } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	findCachedFeedByFeedUrl,
@@ -19,6 +19,7 @@ import {
 	useFeedQuery,
 	useFeedSearchInfiniteQuery,
 	useFeedSearchQuery,
+	withFeedData,
 } from '..';
 import type { ReactNode } from 'react';
 
@@ -226,5 +227,20 @@ describe( 'feed data layer', () => {
 		} );
 
 		expect( getCachedFeed( client, 7 )?.unseen_count ).toBe( 0 );
+	} );
+
+	it( 'injects feed data through the HOC without converting class consumers', async () => {
+		nock( BASE ).get( '/rest/v1.1/read/feed/123' ).reply( 200, {
+			feed_ID: '123',
+			blog_ID: '456',
+			name: 'Injected Feed',
+		} );
+		const client = newClient();
+		const Wrapped = withFeedData( ( props: { feed?: { name?: string } } ) => (
+			<span>{ props.feed?.name }</span>
+		) );
+		render( <Wrapped feedId={ 123 } />, { wrapper: makeWrapper( client ) } );
+
+		await waitFor( () => expect( screen.getByText( 'Injected Feed' ) ).toBeVisible() );
 	} );
 } );

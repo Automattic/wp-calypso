@@ -14,6 +14,7 @@ import {
 	useQueryClient,
 } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { createElement, type ComponentType } from 'react';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import type { ReadFeedItem, ReadFeedSearchResponse } from '@automattic/api-core';
@@ -70,6 +71,8 @@ export const normalizeFeed = ( feed: FeedInput ): Feed => ( {
 	organization_id: feed.organization_id,
 	unseen_count: feed.unseen_count,
 	subscription_id: feed.subscription_id,
+	site_icon: feed.site_icon,
+	date_subscribed: feed.date_subscribed,
 } );
 
 const normalizeFeedSearchResponse = ( response: ReadFeedSearchResponse ): FeedSearchResponse => ( {
@@ -301,4 +304,26 @@ export const useFeedSearchInfiniteQuery = (
 	}, [ query.data, queryClient ] );
 
 	return query;
+};
+
+type WithFeedDataProps = {
+	feedId?: number | string | null;
+	feed?: Feed;
+};
+
+export const withFeedData = < P extends WithFeedDataProps >( Component: ComponentType< P > ) => {
+	const WithFeedData = ( props: Omit< P, 'feed' > & WithFeedDataProps ) => {
+		const { data: fetchedFeed, isLoading, isError, error } = useFeedQuery( props.feedId );
+		return createElement( Component, {
+			...props,
+			feed: props.feed ?? fetchedFeed,
+			isFeedLoading: isLoading,
+			isFeedError: isError,
+			feedError: error,
+		} as P );
+	};
+	WithFeedData.displayName = `withFeedData(${
+		Component.displayName || Component.name || 'Component'
+	})`;
+	return WithFeedData;
 };

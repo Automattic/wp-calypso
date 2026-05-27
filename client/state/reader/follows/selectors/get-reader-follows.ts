@@ -1,7 +1,6 @@
 import 'calypso/state/reader/init';
 import { createSelector } from '@automattic/state-utils';
 import { reject } from 'lodash';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { AppState } from 'calypso/types';
 import { ReaderFollowItem, ReaderFollowState } from './types';
@@ -16,28 +15,24 @@ const getReaderFollows = createSelector(
 		const items: ReaderFollowItem[] = reject( Object.values( follows.items ), 'error' );
 
 		// this is important. don't mutate the original items.
-		const withSiteAndFeed = items.map( ( item ) => ( {
+		const withSite = items.map( ( item ) => ( {
 			...item,
 			site: getSite( state, item.blog_ID ) as {
 				is_error?: boolean;
 				error?: { statusCode?: number };
 			},
-			feed: getFeed( state, item.feed_ID ) as { is_error?: boolean },
 		} ) );
 
-		// remove subs where the feed or site has an error
+		// remove subs where the site has a gone error
 		const withoutErrors = reject(
-			withSiteAndFeed,
-			( item ) =>
-				( item.site && item.site.is_error && item.site.error?.statusCode === 410 ) ||
-				( item.feed && item.feed.is_error )
-		) as typeof withSiteAndFeed;
+			withSite,
+			( item ) => item.site && item.site.is_error && item.site.error?.statusCode === 410
+		) as typeof withSite;
 
 		return withoutErrors;
 	},
 	( state ) => [
 		state.reader.follows.items,
-		state.reader.feeds.items,
 		state.reader.sites.items,
 		state.currentUser.capabilities,
 	]
