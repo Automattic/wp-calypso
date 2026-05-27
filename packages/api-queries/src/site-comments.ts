@@ -26,7 +26,7 @@ const DEFAULT_NUMBER = 50;
 const DEFAULT_ORDER = 'DESC';
 
 export interface CreateSiteCommentReplyParams extends CoreCreateSiteCommentReplyParams {
-	postId: number;
+	postId?: number;
 }
 
 export interface SiteCommentLikeMutationParams extends CoreSiteCommentLikeMutationParams {

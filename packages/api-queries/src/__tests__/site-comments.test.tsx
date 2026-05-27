@@ -1,8 +1,12 @@
+import nock from 'nock';
 import {
+	createSiteCommentReplyMutation,
 	createSitePostCommentMutation,
 	likeSiteCommentMutation,
 	siteCommentsInfiniteQuery,
 } from '../site-comments';
+
+const BASE = 'https://public-api.wordpress.com';
 
 describe( 'site comments queries', () => {
 	it( 'uses a separate memory-only key for infinite comments', () => {
@@ -112,6 +116,10 @@ describe( 'site comments queries', () => {
 } );
 
 describe( 'site comment mutations', () => {
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'keeps create mutation options free of reader cache handlers', () => {
 		const mutation = createSitePostCommentMutation();
 
@@ -119,6 +127,38 @@ describe( 'site comment mutations', () => {
 		expect( mutation.onMutate ).toBeUndefined();
 		expect( mutation.onSuccess ).toBeUndefined();
 		expect( mutation.onError ).toBeUndefined();
+	} );
+
+	it( 'creates comment replies without requiring a post id in the mutation variables', async () => {
+		const request = nock( BASE )
+			.post( '/rest/v1.1/sites/123/comments/9/replies/new', {
+				content: 'Reply body',
+			} )
+			.reply( 200, {
+				ID: 10,
+				content: 'Reply body',
+				parent: { ID: 9 },
+				status: 'approved',
+			} );
+		const mutation = createSiteCommentReplyMutation();
+
+		if ( ! mutation.mutationFn ) {
+			throw new Error( 'Expected reply mutation to have a mutationFn' );
+		}
+
+		await expect(
+			mutation.mutationFn( {
+				siteId: 123,
+				parentCommentId: 9,
+				content: 'Reply body',
+			} )
+		).resolves.toEqual(
+			expect.objectContaining( {
+				ID: 10,
+				content: 'Reply body',
+			} )
+		);
+		expect( request.isDone() ).toBe( true );
 	} );
 
 	it( 'keeps like mutation options free of reader cache handlers', () => {
