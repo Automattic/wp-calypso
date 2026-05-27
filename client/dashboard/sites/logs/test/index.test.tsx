@@ -6,7 +6,6 @@ import '@testing-library/jest-dom';
 import { LogType } from '@automattic/api-core';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import MockDate from 'mockdate';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteLogs from '../index';
@@ -41,14 +40,8 @@ function mockSiteAndSettings( {
 }
 
 beforeEach( () => {
-	// Freeze "today" so the date-range picker's preset math is deterministic.
-	MockDate.set( '2026-05-27T12:00:00Z' );
 	mockUserPreferences();
 	mockSiteAndSettings();
-} );
-
-afterEach( () => {
-	MockDate.reset();
 } );
 
 describe( 'SiteLogs page', () => {
