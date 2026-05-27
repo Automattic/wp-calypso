@@ -453,7 +453,13 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 							"Please verify your {{a}}account's email{{/a}} in order to begin referring products to clients.",
 							{
 								components: {
-									a: <ExternalLink href="https://wordpress.com/me" children={ null } />,
+									a: (
+										<ExternalLink
+											href="https://wordpress.com/me"
+											style={ { color: 'var(--color-text-inverted)' } }
+											children={ null }
+										/>
+									),
 								},
 							}
 						) }
