@@ -23,4 +23,4 @@ The first component that is rendered for any section in `#primary` should be cal
 
 ## Shared modules
 
-If you are creating a shared individual component directly related to the My Sites area of Calypso, the root of `client/my-sites` may be appropiatte for placement — with its own self-documented README.md file of course!
+If you are creating a shared individual component directly related to the My Sites area of Calypso, the root of `client/my-sites` may be appropriate for placement — with its own self-documented README.md file of course!
