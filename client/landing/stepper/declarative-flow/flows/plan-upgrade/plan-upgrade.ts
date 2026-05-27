@@ -129,9 +129,11 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 							// Checkout validates redirect_to to prevent open redirects
 							const postCheckoutUrl = redirectTo || dashboardLink( '/sites' );
 
+							const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
 							const finalUrl = addQueryArgs( checkoutUrl, {
 								redirect_to: postCheckoutUrl,
 								cancel_to: currentPath,
+								...( isExpiredDowngrade && { expired_downgrade: 'true' } ),
 							} );
 
 							window.location.assign( finalUrl );

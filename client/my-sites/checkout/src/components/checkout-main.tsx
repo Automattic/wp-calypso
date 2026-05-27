@@ -265,6 +265,8 @@ export default function CheckoutMain( {
 		source: productSourceFromUrl,
 		isGiftPurchase,
 		hostingIntent,
+		isExpiredDowngrade:
+			new URLSearchParams( window.location.search ).get( 'expired_downgrade' ) === 'true',
 	} );
 
 	const {

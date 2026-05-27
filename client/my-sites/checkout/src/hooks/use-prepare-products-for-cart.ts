@@ -52,6 +52,7 @@ export default function usePrepareProductsForCart( {
 	source,
 	isGiftPurchase,
 	hostingIntent,
+	isExpiredDowngrade,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -66,6 +67,7 @@ export default function usePrepareProductsForCart( {
 	source?: string;
 	isGiftPurchase?: boolean;
 	hostingIntent?: string | undefined;
+	isExpiredDowngrade?: boolean;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -119,6 +121,7 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken,
 		source,
 		hostingIntent,
+		isExpiredDowngrade,
 	} );
 	useAddProductFromBillingIntent( {
 		intentId: productAliasFromUrl,
@@ -525,6 +528,7 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken,
 	source,
 	hostingIntent,
+	isExpiredDowngrade,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -536,6 +540,7 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	hostingIntent?: string | undefined;
+	isExpiredDowngrade?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -571,6 +576,7 @@ function useAddProductFromSlug( {
 				jetpackPurchaseToken,
 				source,
 				hostingIntent,
+				isExpiredDowngrade,
 			} )
 		);
 
@@ -610,6 +616,7 @@ function useAddProductFromSlug( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		hostingIntent,
+		isExpiredDowngrade,
 		source,
 	] );
 }
@@ -726,6 +733,7 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken,
 	source,
 	hostingIntent,
+	isExpiredDowngrade,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -734,6 +742,7 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	hostingIntent?: string | undefined;
+	isExpiredDowngrade?: boolean;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -767,6 +776,7 @@ function createItemToAddToCart( {
 			context: 'calypstore',
 			source: source ?? undefined,
 			hosting_intent: hostingIntent,
+			...( isExpiredDowngrade && { hideProductVariants: true } ),
 		},
 		...( cartMeta ? { meta: cartMeta } : {} ),
 	} );
