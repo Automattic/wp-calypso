@@ -72,7 +72,7 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 	}, [ reports, dataViewsState, fields ] );
 
 	return (
-		<div className="redesigned-a8c-table bordered">
+		<div className="redesigned-a8c-table redesigned-a8c-table--compact bordered">
 			<ItemsDataViews
 				data={ {
 					items: data,

@@ -195,7 +195,7 @@ export default function WPCOMSitesTable( {
 	);
 
 	return (
-		<div className="wpcom-sites-table redesigned-a8c-table">
+		<div className="wpcom-sites-table redesigned-a8c-table redesigned-a8c-table--compact">
 			{ isPending ? (
 				<A4ATablePlaceholder />
 			) : (

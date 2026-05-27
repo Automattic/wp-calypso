@@ -210,7 +210,7 @@ export default function SitesWithWooPayments() {
 			{ ! isDesktop ? (
 				<SitesWithWooPaymentsMobileView items={ items } actions={ actions } />
 			) : (
-				<div className="redesigned-a8c-table full-width">
+				<div className="redesigned-a8c-table redesigned-a8c-table--full-width full-width">
 					<ItemsDataViews
 						data={ {
 							items: data,

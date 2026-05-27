@@ -142,7 +142,7 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, dataViewsState, fields ] );
 
 	return (
-		<div className="add-sites-table redesigned-a8c-table">
+		<div className="add-sites-table redesigned-a8c-table redesigned-a8c-table--compact">
 			<BaseControl
 				label={ translate( 'Select sites to tag' ) }
 				className="migrations-tag-sites-modal__table-control"
