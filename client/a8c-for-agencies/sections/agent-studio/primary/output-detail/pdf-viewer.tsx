@@ -2,9 +2,15 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import './pdf-viewer.scss';
+
+declare global {
+	interface Window {
+		applyA4aFit?: ( root: Document | ShadowRoot ) => Promise< void >;
+	}
+}
 
 export interface PdfViewerPage {
 	srcDoc: string;
@@ -78,19 +84,48 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 	);
 }
 
-// Render each page in a same-origin iframe (no `sandbox` attribute so
-// scripts execute and font/CSS network requests authenticate against
-// the user's wpcom session). The collateral shell appends a fit.js
-// IIFE before `</body>` that demotes extra anchors, shrinks overflowing
-// b-section prose, and resolves block-grid overlaps inside the page —
-// it has to actually run in the preview frame for the in-app preview
-// to match the downloaded PDF (which Browserless runs the same script
-// before snapshotting). A previous shadow-DOM-based approach achieved
-// CSS isolation but `shadow.innerHTML = …` does not execute injected
-// `<script>` tags, so the preview rendered raw pre-fit HTML while the
-// PDF rendered post-fit; iframes give the same CSS isolation and
-// execute the script natively.
+// Inside a shadow tree there is no `html`, `body`, or `:root` — they're
+// outside the boundary. The variant CSS targets the document root for
+// width / font / color, so rewrite those selectors to `:host`.
+const rewriteRootSelectors = ( css: string ): string =>
+	css
+		.replace( /\bhtml\s*,\s*body\b/g, ':host' )
+		.replace( /(^|[\s,{}])html(?=[\s,{[:.])/g, '$1:host' )
+		.replace( /(^|[\s,{}])body(?=[\s,{[:.])/g, '$1:host' )
+		.replace( /(^|[\s,{}]):root(?=[\s,{[:.])/g, '$1:host' );
+
+const HOST_BASELINE =
+	'<style>:host{display:block;width:816px;height:1056px;overflow:hidden;}</style>';
+
+// Load the wpcom-rendered shell's fit.js (inlined before `</body>` by
+// Marketing_Collateral_Shell) into the outer document, once per page
+// session. `shadow.innerHTML = …` skips script execution, so we extract
+// the script content from the parsed deck and re-append it via
+// `createElement('script')` — that path executes and exposes
+// `window.applyA4aFit`, which we then call against each shadow root we
+// build. Returns `true` if the global ended up loaded.
+function ensureFitScriptLoaded( parsed: Document ): boolean {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	if ( window.applyA4aFit ) {
+		return true;
+	}
+	const inline = Array.from( parsed.body.querySelectorAll( 'script' ) ).find(
+		( s ) => ! s.src && /applyA4aFit/.test( s.textContent ?? '' )
+	);
+	if ( ! inline?.textContent ) {
+		return false;
+	}
+	const exec = document.createElement( 'script' );
+	exec.setAttribute( 'data-a4a-fit', '1' );
+	exec.textContent = inline.textContent;
+	document.head.appendChild( exec );
+	return !! window.applyA4aFit;
+}
+
 function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
+	const hostRef = useRef< HTMLDivElement >( null );
 	const [ scale, setScale ] = useState( 0 );
 	const wrapResizeRef = useResizeObserver< HTMLDivElement >( ( entries ) => {
 		const width = entries[ 0 ]?.contentRect.width ?? 0;
@@ -102,6 +137,32 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 		}
 	} );
 
+	useEffect( () => {
+		const host = hostRef.current;
+		if ( ! host ) {
+			return;
+		}
+		const shadow = host.shadowRoot ?? host.attachShadow( { mode: 'open' } );
+		const parsed = new DOMParser().parseFromString( srcDoc, 'text/html' );
+		const styleMarkup = Array.from(
+			parsed.head.querySelectorAll< HTMLElement >( 'style, link[rel="stylesheet"]' )
+		)
+			.map( ( node ) =>
+				node.tagName === 'STYLE'
+					? `<style>${ rewriteRootSelectors( node.textContent ?? '' ) }</style>`
+					: node.outerHTML
+			)
+			.join( '' );
+		const fitLoaded = ensureFitScriptLoaded( parsed );
+		// Drop body scripts before injecting markup — innerHTML cannot
+		// execute them anyway, and leaving them in clutters the DOM.
+		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
+		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
+		if ( fitLoaded && window.applyA4aFit ) {
+			window.applyA4aFit( shadow ).catch( () => {} );
+		}
+	}, [ srcDoc ] );
+
 	return (
 		<div
 			ref={ wrapResizeRef }
@@ -109,12 +170,10 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 			aria-label={ title }
 			role="img"
 		>
-			<iframe
+			<div
+				ref={ hostRef }
 				className="a4a-one-pager-viewer__iframe"
-				title={ title }
-				srcDoc={ srcDoc }
 				style={ { transform: `scale(${ scale })` } }
-				scrolling="no"
 			/>
 		</div>
 	);
