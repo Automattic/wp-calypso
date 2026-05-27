@@ -52,4 +52,4 @@ The query to be used in requesting media.
 	<tr><th>Default</th><td><code>null</code></td></tr>
 </table>
 
-The media ID to query (if you want to perform a single media query)
+The media ID to query (if you want to perform a single media query).
