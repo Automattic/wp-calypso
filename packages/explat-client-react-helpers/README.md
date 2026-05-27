@@ -21,7 +21,7 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 />;
 ```
 
-- The simplest and safest way to experiement, but not useful everywhere.
+- The simplest and safest way to experiment, but not useful everywhere.
 - For those not using typescript, make sure you provide all the Experience props.
 
 ## API: `useExperiment('experiment_name')`
