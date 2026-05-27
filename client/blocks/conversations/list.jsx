@@ -1,5 +1,3 @@
-import { siteCommentQuery } from '@automattic/api-queries';
-import { useQueries } from '@tanstack/react-query';
 import { map, size, filter, get, partition, pickBy, keyBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
@@ -12,6 +10,7 @@ import {
 	buildCommentsTreeForDisplay,
 	mergeCommentLists,
 	useComments,
+	useCommentsById,
 } from 'calypso/reader/data/comments';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -336,24 +335,10 @@ const ConversationCommentListWithData = ( props ) => {
 		localPostState.postStateKey === postStateKey
 			? localPostState
 			: getInitialPostState( postStateKey );
-	const { additionalComments, commentErrors } = useQueries( {
-		queries: commentIdsToLoad.map( ( commentId ) =>
-			siteCommentQuery( {
-				siteId,
-				commentId,
-			} )
-		),
-		combine: ( results ) => ( {
-			additionalComments: results
-				.map( ( query ) => query.data )
-				.filter( ( comment ) => comment && ( ! comment.post?.ID || comment.post.ID === postId ) ),
-			commentErrors: Object.fromEntries(
-				results
-					.map( ( query, index ) => [ commentIdsToLoad[ index ], query.error ] )
-					.filter( ( [ , error ] ) => error )
-					.map( ( [ commentId, error ] ) => [ getCommentErrorKey( siteId, commentId ), error ] )
-			),
-		} ),
+	const { comments: additionalComments, commentErrors } = useCommentsById( {
+		siteId,
+		postId,
+		commentIds: commentIdsToLoad,
 	} );
 	const comments = useComments( {
 		siteId,

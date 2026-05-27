@@ -6,6 +6,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	buildCommentsTreeForDisplay,
+	isCommentsApiDisabledError,
 	mergeCommentLists,
 	useComment,
 	useComments,
@@ -22,6 +23,8 @@ const buildQueryClient = () => {
 	instance.setDefaultOptions( { queries: { retry: false } } );
 	return instance;
 };
+
+const buildDefaultQueryClient = () => new QueryClient();
 
 const renderComments = ( params = {} ) => {
 	const queryClient = buildQueryClient();
@@ -63,8 +66,47 @@ const renderCommentsWithApiDisabled = ( params = {} ) => {
 	);
 };
 
+const renderCommentsWithDefaultQueryClient = ( params = {} ) => {
+	const queryClient = buildDefaultQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() =>
+			useComments( {
+				siteId: 123,
+				postId: 456,
+				status: 'approved',
+				commentTotal: 3,
+				...params,
+			} ),
+		{ wrapper }
+	);
+};
+
 const renderComment = ( params = {}, options = {} ) => {
 	const queryClient = buildQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() =>
+			useComment(
+				{
+					siteId: 123,
+					commentId: 789,
+					...params,
+				},
+				options
+			),
+		{ wrapper }
+	);
+};
+
+const renderCommentWithDefaultQueryClient = ( params = {}, options = {} ) => {
+	const queryClient = buildDefaultQueryClient();
 	const wrapper = ( { children }: { children: ReactNode } ) => (
 		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 	);
@@ -125,6 +167,18 @@ const renderCommentsApiDisabled = ( params = {}, options = {} ) => {
 		{ wrapper }
 	);
 };
+
+describe( 'isCommentsApiDisabledError', () => {
+	it( 'recognizes statusCode and disabled API message variants', () => {
+		expect(
+			isCommentsApiDisabledError( {
+				statusCode: 403,
+				name: 'UnauthorizedError',
+				message: 'API calls to this blog have been disabled. Please contact support.',
+			} )
+		).toBe( true );
+	} );
+} );
 
 describe( 'useComments', () => {
 	beforeAll( () => {
@@ -463,6 +517,30 @@ describe( 'useComments', () => {
 			expect( result.current.isCommentsApiDisabled ).toBe( true );
 		} );
 	} );
+
+	it( 'does not retry failed comment list requests by default', async () => {
+		let requestCount = 0;
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.times( 2 )
+			.reply( () => {
+				requestCount++;
+				return [ 500, { error: 'server_error' } ];
+			} );
+
+		renderCommentsWithDefaultQueryClient();
+
+		await waitFor( () => expect( requestCount ).toBe( 1 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 1200 ) );
+
+		expect( requestCount ).toBe( 1 );
+	} );
 } );
 
 describe( 'usePostCommentsApiDisabled', () => {
@@ -561,6 +639,27 @@ describe( 'useComment', () => {
 
 		expect( result.current.fetchStatus ).toBe( 'idle' );
 		expect( request.isDone() ).toBe( false );
+	} );
+
+	it( 'does not retry failed single comment requests by default', async () => {
+		let requestCount = 0;
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/comments/789' )
+			.query( {
+				author_wpcom_data: 'true',
+			} )
+			.times( 2 )
+			.reply( () => {
+				requestCount++;
+				return [ 404, { error: 'unknown_comment' } ];
+			} );
+
+		renderCommentWithDefaultQueryClient();
+
+		await waitFor( () => expect( requestCount ).toBe( 1 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 1200 ) );
+
+		expect( requestCount ).toBe( 1 );
 	} );
 } );
 

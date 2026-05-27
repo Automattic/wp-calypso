@@ -59,8 +59,9 @@ const comments = ( amount ) =>
 		} )
 	);
 
-const renderList = ( props = {} ) => {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+const renderList = ( props = {}, options = {} ) => {
+	const queryClient =
+		options.queryClient ?? new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	const store = createStore( ( state = { currentUser: { id: 123 } } ) => state );
 	const { post: renderedPost = post, ...listProps } = props;
 
@@ -198,9 +199,16 @@ describe( 'ConversationCommentList', () => {
 				];
 			} );
 
-		renderList( { commentIds: [ 1 ] } );
+		const { queryClient, rerender, store } = renderList( { commentIds: [ 1 ] } );
 
 		await waitFor( () => expect( earlierRequestCount ).toBe( 1 ) );
+		rerender(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<ConversationCommentList post={ post } commentIds={ [ 1 ] } filterParents={ false } />
+				</Provider>
+			</QueryClientProvider>
+		);
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 
 		expect( earlierRequestCount ).toBe( 1 );
@@ -359,6 +367,48 @@ describe( 'ConversationCommentList', () => {
 
 		await waitFor( () => expect( parentRequestCount ).toBe( 1 ) );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+
+		expect( parentRequestCount ).toBe( 1 );
+	} );
+
+	it( 'does not retry failed missing parent requests with a default query client', async () => {
+		let parentRequestCount = 0;
+		nock( BASE )
+			.get( '/rest/v1.1/sites/100/comments/1' )
+			.query( {
+				author_wpcom_data: 'true',
+			} )
+			.times( 2 )
+			.reply( () => {
+				parentRequestCount++;
+				return [ 404, { error: 'unknown_comment' } ];
+			} );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/100/posts/1/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{
+						ID: 2,
+						content: 'Reply',
+						date: '2026-05-02T00:00:00.000Z',
+						parent: { ID: 1 },
+						status: 'approved',
+						type: 'comment',
+					},
+				],
+				found: 2,
+			} );
+
+		renderList( { commentIds: [ 2 ] }, { queryClient: new QueryClient() } );
+
+		await waitFor( () => expect( parentRequestCount ).toBe( 1 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 1200 ) );
 
 		expect( parentRequestCount ).toBe( 1 );
 	} );
