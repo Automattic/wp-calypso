@@ -106,7 +106,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					variant="link"
 					onClick={ onLearnMoreClick }
 				>
-					{ translate( 'Team members knowledge base article' ) }
+					{ translate( 'Team members Knowledge Base article' ) }
 				</Button>
 				<br />
 				<Button

@@ -13,13 +13,13 @@ const pressableSteps = (
 	{
 		stepId: 'purchase-plan',
 		count: 1,
-		title: translate( 'Sign up for a Pressable plan in the Automattic for Agencies marketplace' ),
+		title: translate( 'Sign up for a Pressable plan in the Automattic for Agencies Marketplace' ),
 		description: translate(
-			'Begin by purchasing a Pressable plan in the Automattic for Agencies marketplace.'
+			'Begin by purchasing a Pressable plan in the Automattic for Agencies Marketplace.'
 		),
 		buttonProps: {
 			variant: 'primary',
-			label: translate( 'Go to marketplace' ),
+			label: translate( 'Go to Marketplace' ),
 			href: A4A_MARKETPLACE_LINK,
 			eventName: 'calypso_a4a_migrate_to_pressable_go_to_marketplace_click',
 		},
@@ -154,14 +154,14 @@ const wpcomSteps = (
 		stepId: 'go-to-marketplace',
 		count: 1,
 		title: translate(
-			'Purchase and create a new WordPress.com site in the Automattic for Agencies marketplace'
+			'Purchase and create a new WordPress.com site in the Automattic for Agencies Marketplace'
 		),
 		description: translate(
-			'Begin by purchasing a WordPress.com site in the Automattic for Agencies marketplace.'
+			'Begin by purchasing a WordPress.com site in the Automattic for Agencies Marketplace.'
 		),
 		buttonProps: {
 			variant: 'primary',
-			label: translate( 'Go to marketplace' ),
+			label: translate( 'Go to Marketplace' ),
 			href: A4A_MARKETPLACE_LINK,
 			eventName: 'calypso_a4a_migrate_to_wpcom_go_to_marketplace_click',
 		},

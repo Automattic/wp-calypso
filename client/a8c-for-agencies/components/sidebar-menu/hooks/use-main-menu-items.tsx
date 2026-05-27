@@ -213,7 +213,7 @@ const useMainMenuItems = ( path: string ) => {
 				icon: commentAuthorAvatar,
 				path: '/dashboard',
 				link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-				title: translate( 'Partner directories' ),
+				title: translate( 'Partner Directories' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Partner Directory',
 				},

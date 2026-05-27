@@ -57,13 +57,13 @@ export default function ReportsSurvey() {
 
 	return (
 		<Modal
-			title={ translate( 'Congrats on your first client report!' ) }
+			title={ translate( 'Congrats on your first Client Report!' ) }
 			onRequestClose={ handleClose }
 			className="reports-survey-modal"
 		>
 			<p className="reports-survey-modal__text">
 				{ translate(
-					'Do you have 2 minutes? Share your thoughts on our client reports BETA. Your feedback shapes our roadmap and helps us build the right tools for you and your clients.'
+					'Do you have 2 minutes? Share your thoughts on our Client Reports BETA. Your feedback shapes our roadmap and helps us build the right tools for you and your clients.'
 				) }
 			</p>
 			<div className="reports-survey-modal__buttons">

@@ -203,7 +203,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				</FormField>
 			</FormSection>
 
-			<FormSection title={ translate( 'Partner directories' ) }>
+			<FormSection title={ translate( 'Partner Directories' ) }>
 				<FormField
 					label={ translate( 'Automattic partner directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }

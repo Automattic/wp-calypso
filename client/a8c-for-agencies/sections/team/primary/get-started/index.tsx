@@ -96,7 +96,7 @@ export default function GetStarted() {
 						variant="link"
 						onClick={ onLearnMoreClick }
 					>
-						{ translate( 'Team members knowledge base article' ) }
+						{ translate( 'Team members Knowledge Base article' ) }
 					</Button>
 					<br />
 				</StepSection>

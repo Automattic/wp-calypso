@@ -37,7 +37,7 @@ export default function useSitesWalkthroughTour() {
 		{
 			id: 'sites-walkthrough-monitor',
 			popoverPosition: 'bottom left',
-			title: translate( '⏲️ Uptime monitor' ),
+			title: translate( '⏲️ Uptime Monitor' ),
 			description: (
 				<>
 					{ translate(

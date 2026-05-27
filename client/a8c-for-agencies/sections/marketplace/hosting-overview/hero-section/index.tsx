@@ -25,7 +25,7 @@ export function HeroSection(
 		() => [
 			{
 				key: 'wpcom',
-				label: isLargeScreen ? translate( 'Standard agency hosting' ) : translate( 'Standard' ),
+				label: isLargeScreen ? translate( 'Standard Agency Hosting' ) : translate( 'Standard' ),
 				subtitle: isLargeScreen && translate( 'Optimized and hassle-free hosting' ),
 				selected: section === 'wpcom',
 				onClick: () => {
@@ -34,7 +34,7 @@ export function HeroSection(
 			},
 			{
 				key: 'pressable',
-				label: isLargeScreen ? translate( 'Premier agency hosting' ) : translate( 'Premier' ),
+				label: isLargeScreen ? translate( 'Premier Agency Hosting' ) : translate( 'Premier' ),
 				subtitle: isLargeScreen && translate( 'Best for large-scale businesses' ),
 				selected: section === 'pressable',
 				onClick: () => {

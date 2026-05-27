@@ -176,7 +176,7 @@ const BuildReport = () => {
 						hideOnMobile
 						items={ [
 							{
-								label: translate( 'Client reports' ),
+								label: translate( 'Client Reports' ),
 								href: A4A_REPORTS_LINK,
 							},
 							{
