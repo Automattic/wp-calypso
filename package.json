@@ -256,7 +256,7 @@
 		"@babel/runtime": "^7.27.1",
 		"@pmmmwh/react-refresh-webpack-plugin": "0.5.15",
 		"@signal-noise/stylelint-scales": "^2.0.3",
-		"@storybook/react": "^8.6.14",
+		"@storybook/react": "^10.4.0",
 		"@tanstack/eslint-plugin-query": "^5.100.0",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@types/chroma-js": "^2.4.5",
