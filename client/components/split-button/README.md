@@ -70,7 +70,7 @@ For non primary buttons, it could be used to hide the separator, because the lin
 	<tr><td>Default</td><td><code>false</code></td></tr>
 </table>
 
-Whether the button has modified styling to warn users (delete, remove, etc).es
+Whether the button has modified styling to warn users (delete, remove, etc).
 
 ### `onClick`
 
