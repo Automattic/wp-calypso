@@ -2,7 +2,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import './pdf-viewer.scss';
 
@@ -78,21 +78,19 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 	);
 }
 
-// Inside a shadow tree there is no `html`, `body`, or `:root` — they're
-// outside the boundary. The variant CSS targets the document root for
-// width / font / color, so rewrite those selectors to `:host`.
-const rewriteRootSelectors = ( css: string ): string =>
-	css
-		.replace( /\bhtml\s*,\s*body\b/g, ':host' )
-		.replace( /(^|[\s,{}])html(?=[\s,{[:.])/g, '$1:host' )
-		.replace( /(^|[\s,{}])body(?=[\s,{[:.])/g, '$1:host' )
-		.replace( /(^|[\s,{}]):root(?=[\s,{[:.])/g, '$1:host' );
-
-const HOST_BASELINE =
-	'<style>:host{display:block;width:816px;height:1056px;overflow:hidden;}</style>';
-
+// Render each page in a same-origin iframe (no `sandbox` attribute so
+// scripts execute and font/CSS network requests authenticate against
+// the user's wpcom session). The collateral shell appends a fit.js
+// IIFE before `</body>` that demotes extra anchors, shrinks overflowing
+// b-section prose, and resolves block-grid overlaps inside the page —
+// it has to actually run in the preview frame for the in-app preview
+// to match the downloaded PDF (which Browserless runs the same script
+// before snapshotting). A previous shadow-DOM-based approach achieved
+// CSS isolation but `shadow.innerHTML = …` does not execute injected
+// `<script>` tags, so the preview rendered raw pre-fit HTML while the
+// PDF rendered post-fit; iframes give the same CSS isolation and
+// execute the script natively.
 function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
-	const hostRef = useRef< HTMLDivElement >( null );
 	const [ scale, setScale ] = useState( 0 );
 	const wrapResizeRef = useResizeObserver< HTMLDivElement >( ( entries ) => {
 		const width = entries[ 0 ]?.contentRect.width ?? 0;
@@ -104,25 +102,6 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 		}
 	} );
 
-	useEffect( () => {
-		const host = hostRef.current;
-		if ( ! host ) {
-			return;
-		}
-		const shadow = host.shadowRoot ?? host.attachShadow( { mode: 'open' } );
-		const parsed = new DOMParser().parseFromString( srcDoc, 'text/html' );
-		const styleMarkup = Array.from(
-			parsed.head.querySelectorAll< HTMLElement >( 'style, link[rel="stylesheet"]' )
-		)
-			.map( ( node ) =>
-				node.tagName === 'STYLE'
-					? `<style>${ rewriteRootSelectors( node.textContent ?? '' ) }</style>`
-					: node.outerHTML
-			)
-			.join( '' );
-		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
-	}, [ srcDoc ] );
-
 	return (
 		<div
 			ref={ wrapResizeRef }
@@ -130,10 +109,12 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 			aria-label={ title }
 			role="img"
 		>
-			<div
-				ref={ hostRef }
+			<iframe
 				className="a4a-one-pager-viewer__iframe"
+				title={ title }
+				srcDoc={ srcDoc }
 				style={ { transform: `scale(${ scale })` } }
+				scrolling="no"
 			/>
 		</div>
 	);
