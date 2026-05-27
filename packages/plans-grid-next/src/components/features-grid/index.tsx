@@ -76,6 +76,7 @@ const FeaturesContainer = ( props: {
 		enableCategorisedFeatures,
 		enableLogosOnlyForEnterprisePlan,
 		enableReducedFeatureGroupSpacing,
+		hideFeatureGroupTitles,
 	} = usePlansGridContext();
 
 	return (
@@ -91,6 +92,7 @@ const FeaturesContainer = ( props: {
 				<div
 					className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 						'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
+						'is-hidden-feature-group-titles': hideFeatureGroupTitles,
 					} ) }
 					key={ featureGroupSlug }
 				>

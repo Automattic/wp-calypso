@@ -391,6 +391,20 @@
 	&.is-reduced-feature-group-spacing > .plan-features-2023-grid__table-item {
 		padding-top: 0;
 	}
+
+	// Hidden-titles spacing adjustments: when enableReducedFeatureGroupSpacing + hideFeatureGroupTitles
+	// are both active, the grid loses all visual group separation. These rules restore it.
+	&.is-reduced-feature-group-spacing .plans-grid-next-storage-feature-label__volume:not(.is-badge) {
+		line-height: 20px;
+	}
+
+	&.is-reduced-feature-group-spacing.is-hidden-feature-group-titles:not(.is-first-feature-group-row) > .plan-features-2023-grid__table-item {
+		padding-top: 10px;
+	}
+
+	&.is-hidden-feature-group-titles:last-child > .plan-features-2023-grid__table-item {
+		padding-bottom: 16px;
+	}
 }
 
 .plan-features-2023-grid__item-info {

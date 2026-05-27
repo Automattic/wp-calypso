@@ -516,7 +516,7 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Change plan' ) }
-				description={ __( 'Find the best fit for your needs.' ) }
+				description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
 				actions={
 					<Button
 						variant="secondary"

@@ -662,7 +662,7 @@ class ManagePurchase extends Component<
 		let buttonText;
 
 		const isDowngradeEligible =
-			isExpired( purchase ) &&
+			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
 			isUpgradeablePlan &&
 			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) );

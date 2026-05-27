@@ -58,6 +58,7 @@ const Table = ( {
 		enableCategorisedFeatures,
 		enableLogosOnlyForEnterprisePlan,
 		enableReducedFeatureGroupSpacing,
+		hideFeatureGroupTitles,
 	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
@@ -162,6 +163,7 @@ const Table = ( {
 						className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 							'is-first-feature-group-row': featureGroupIndex === 0,
 							'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
+							'is-hidden-feature-group-titles': hideFeatureGroupTitles,
 						} ) }
 						key={ featureGroupSlug }
 					>
