@@ -154,3 +154,84 @@ export const FiveSteps: Story = {
 	},
 	render: FiveStepsDemo,
 };
+
+// ---------------------------------------------------------------------------
+// Step variants — one example of every status/state a step can be in
+// ---------------------------------------------------------------------------
+
+function StepVariantsDemo() {
+	const [ step, setStep ] = useState( 'active' );
+	return (
+		<HorizontalStepper value={ step } onValueChange={ setStep } aria-label="Step variants">
+			<HorizontalStepper.Step
+				value="completed"
+				title="Completed"
+				status="completed"
+				description="Payment received"
+			>
+				<p>
+					This step has <code>status=&quot;completed&quot;</code>. The indicator shows a check and
+					the connector line to the next step turns green.
+				</p>
+			</HorizontalStepper.Step>
+
+			<HorizontalStepper.Step value="active" title="Active (current)">
+				<p>
+					This is the currently selected step. No <code>status</code> prop is needed — active state
+					is derived from the stepper&apos;s <code>value</code>.
+				</p>
+			</HorizontalStepper.Step>
+
+			<HorizontalStepper.Step
+				value="error"
+				title="Error"
+				status="error"
+				description="Invalid card number"
+			>
+				<p>
+					This step has <code>status=&quot;error&quot;</code>. Use it to flag a validation failure
+					that needs the user&apos;s attention.
+				</p>
+			</HorizontalStepper.Step>
+
+			<HorizontalStepper.Step value="optional" title="Optional" optional>
+				<p>
+					This step has <code>optional</code> set. An &quot;Optional&quot; label appears beneath the
+					title.
+				</p>
+			</HorizontalStepper.Step>
+
+			<HorizontalStepper.Step value="upcoming" title="Upcoming">
+				<p>A plain step with no special props — the default appearance for an unvisited step.</p>
+			</HorizontalStepper.Step>
+
+			<HorizontalStepper.Step value="disabled" title="Disabled" disabled>
+				<p>
+					This step has <code>disabled</code> set. The trigger is not interactive and cannot be
+					clicked.
+				</p>
+			</HorizontalStepper.Step>
+		</HorizontalStepper>
+	);
+}
+
+export const StepVariants: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story: `
+All states a single step can be in. Click each trigger to switch to it as the active step.
+
+| Prop | Effect |
+|---|---|
+| _(none)_ | Default appearance — upcoming or active |
+| \`status="completed"\` | Check indicator; connector line to next step turns green |
+| \`status="error"\` | Error indicator; shows description as an error message |
+| \`optional\` | Adds an "Optional" label beneath the title |
+| \`disabled\` | Trigger is non-interactive; step cannot be clicked |
+				`,
+			},
+		},
+	},
+	render: StepVariantsDemo,
+};
