@@ -63,17 +63,15 @@ export default function HostingTestimonialsSection( {
 								</div>
 
 								{ item.profile.site && (
-									<span className="hosting-testimonials__item-profile-link">
-										<ExternalLink
-											href={
-												item.profile.siteLink
-													? item.profile.siteLink
-													: `https://${ item.profile.site }`
-											}
-										>
-											{ item.profile.site }
-										</ExternalLink>
-									</span>
+									<ExternalLink
+										href={
+											item.profile.siteLink
+												? item.profile.siteLink
+												: `https://${ item.profile.site }`
+										}
+									>
+										{ item.profile.site }
+									</ExternalLink>
 								) }
 							</div>
 						</div>
