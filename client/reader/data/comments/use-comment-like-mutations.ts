@@ -2,17 +2,29 @@ import {
 	likeSiteCommentMutation,
 	siteCommentQueryKey,
 	siteCommentsInfiniteQueryPrefix,
+	type SiteCommentLikeMutationParams,
 	unlikeSiteCommentMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateCommentLikeInCache } from 'calypso/reader/data/comments';
+import { updateCommentLikeInCache } from './cache';
+import type { SiteComment } from '@automattic/api-core';
 
-export const useCommentLikeMutations = ( comment ) => {
+type CommentLikeSnapshot = {
+	iLike: boolean;
+	likeCount: number;
+};
+
+type CommentLikeData = Pick< SiteComment, 'i_like' | 'like_count' >;
+
+export const useCommentLikeMutations = ( comment?: CommentLikeData ) => {
 	const queryClient = useQueryClient();
 	const currentLikeCount = Number( comment?.like_count ) || 0;
 	const currentILike = Boolean( comment?.i_like );
 
-	const updateLikeOptimistically = async ( { siteId, postId, commentId }, iLike ) => {
+	const updateLikeOptimistically = async (
+		{ siteId, postId, commentId }: SiteCommentLikeMutationParams,
+		iLike: boolean
+	): Promise< CommentLikeSnapshot > => {
 		const snapshot = {
 			iLike: currentILike,
 			likeCount: currentLikeCount,
@@ -20,23 +32,30 @@ export const useCommentLikeMutations = ( comment ) => {
 		const optimisticLikeCount = iLike
 			? currentLikeCount + ( currentILike ? 0 : 1 )
 			: Math.max( 0, currentLikeCount - ( currentILike ? 1 : 0 ) );
-
-		await Promise.all( [
-			postId
-				? queryClient.cancelQueries( {
-						queryKey: siteCommentsInfiniteQueryPrefix( siteId, postId ),
-				  } )
-				: undefined,
+		const cancellations = [
 			queryClient.cancelQueries( {
 				queryKey: siteCommentQueryKey( siteId, commentId ),
 			} ),
-		] );
+		];
+
+		if ( postId ) {
+			cancellations.push(
+				queryClient.cancelQueries( {
+					queryKey: siteCommentsInfiniteQueryPrefix( siteId, postId ),
+				} )
+			);
+		}
+
+		await Promise.all( cancellations );
 		updateCommentLikeInCache( queryClient, siteId, postId, commentId, iLike, optimisticLikeCount );
 
 		return snapshot;
 	};
 
-	const rollbackLike = ( { siteId, postId, commentId }, snapshot ) => {
+	const rollbackLike = (
+		{ siteId, postId, commentId }: SiteCommentLikeMutationParams,
+		snapshot?: CommentLikeSnapshot
+	) => {
 		if ( ! snapshot ) {
 			return;
 		}

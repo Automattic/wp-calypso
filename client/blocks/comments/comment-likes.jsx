@@ -5,11 +5,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
+import { useCommentLikeMutations } from 'calypso/reader/data/comments';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import { useCommentLikeMutations } from './use-comment-like-mutations';
 
 class CommentLikeButtonContainer extends Component {
 	constructor() {
