@@ -57,7 +57,7 @@
 		"@wordpress/react-i18n": "^4.46.0",
 		"clsx": "^2.1.1",
 		"moment": "^2.30.1",
-		"qs": "^6.11.2"
+		"qs": "^6.15.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
