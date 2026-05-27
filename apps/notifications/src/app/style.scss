@@ -39,15 +39,6 @@ $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 	}
 }
 
-// Single-screen mode (below xlarge): list slides off to the left when the
-// detail opens.
-@media (max-width: #{$break-xlarge - 1px}) {
-	.wpnc-app__detail-pane.is-open ~ .wpnc-app__list-pane {
-		transform: translateX(-100%);
-		transition: transform 300ms cubic-bezier(0.33, 0, 0, 1);
-	}
-}
-
 // Side-by-side at xlarge: each pane is its own card; the list is pinned to the
 // right of the popover and the detail occupies the left. When both are present
 // they form a single combined card with the list's left border as the divider.
