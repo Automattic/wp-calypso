@@ -656,3 +656,10 @@
 	border: 0;
 	opacity: 0.01;
 }
+
+// Fix the collision with the Agents Manager sidebar FAB
+body:has( .agents-manager-sidebar-fab ):not( .agents-manager-sidebar-container--sidebar-open ) {
+	.live-ai-assistant__footer {
+		margin-bottom: 40px;
+	}
+}
