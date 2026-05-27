@@ -2,7 +2,7 @@
 
 A `TokenField` is a field similar to the tags and categories fields in the interim editor chrome, or the "to" field in Mail on OS X. Tokens can be entered by typing them or selecting them from a list of suggested tokens.
 
-Up to one hundred suggestions that match what the user has typed so far will be shown from which the user can pick from (auto-complete). Tokens are separated by the "," character. Suggetions can be selected with the up or down arrows and added with the tab or enter key.
+Up to one hundred suggestions that match what the user has typed so far will be shown from which the user can pick from (auto-complete). Tokens are separated by the "," character. Suggestions can be selected with the up or down arrows and added with the tab or enter key.
 
 The `value` property is handled in a manner similar to controlled form components. See [Forms](https://facebook.github.io/react/docs/forms.html) in the React Documentation for more information.
 
