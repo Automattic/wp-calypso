@@ -36,4 +36,12 @@ describe( '<InaccessibleJetpackNotice>', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 	} );
+
+	test( 'renders the notice title when the error has no message', () => {
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+
+		render( <InaccessibleJetpackNotice error={ new Error() } /> );
+
+		expect( screen.getByText( 'Your Jetpack site cannot be reached at this time.' ) ).toBeVisible();
+	} );
 } );

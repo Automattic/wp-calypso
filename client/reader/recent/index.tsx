@@ -38,7 +38,18 @@ interface RecentProps {
 	viewToggle?: React.ReactNode;
 }
 
-const postIdString = ( item: StreamListItem ) => item.postId?.toString() ?? '';
+// `postId` is not unique across feeds/blogs; prefix with `b{blogId}` for
+// WP.com/Jetpack sites or `f{feedId}` for external feeds so row keys stay unique.
+export const getStreamItemKey = ( item: StreamListItem ): string => {
+	if ( isPaddingStreamItem( item ) ) {
+		return item.postId;
+	}
+	if ( item.postId == null ) {
+		return '';
+	}
+	const source = item.blogId != null ? `b${ item.blogId }` : `f${ item.feedId ?? '' }`;
+	return `${ source }-${ item.postId }`;
+};
 
 const Recent = ( { viewToggle }: RecentProps ) => {
 	const dispatch = useDispatch();
@@ -119,7 +130,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				return acc;
 			}
 
-			acc[ `${ item.feedId }-${ item.postId }` ] = {
+			acc[ getStreamItemKey( item ) ] = {
 				...post,
 				site_icon: post.site_icon ?? siteIconsByFeedId[ Number( item.feedId ) ],
 			} as PostItem;
@@ -129,10 +140,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
 
 	const getPostFromItem = useCallback(
-		( item: StreamItem ) => {
-			const postKey = `${ item?.feedId }-${ item?.postId }`;
-			return posts[ postKey ];
-		},
+		( item: StreamItem ) => posts[ getStreamItemKey( item ) ],
 		[ posts ]
 	);
 
@@ -197,10 +205,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						);
 					}
 					return (
-						<div onFocus={ () => handleItemFocus( postIdString( item ) ) }>
+						<div onFocus={ () => handleItemFocus( getStreamItemKey( item ) ) }>
 							<RecentPostField
 								ref={ ( el ) => {
-									itemRefs.current[ postIdString( item ) ] = el;
+									itemRefs.current[ getStreamItemKey( item ) ] = el;
 								} }
 								post={ getPostFromItem( item ) }
 								onClick={ () => selectItem( item ) }
@@ -264,7 +272,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			if ( event.key === 'Enter' && focusedIndexRef.current !== null ) {
 				// Use the focused index to determine the selected item
 				const focusedItem = shownData.find(
-					( item ) => item.postId?.toString() === focusedIndexRef.current
+					( item ) => getStreamItemKey( item ) === focusedIndexRef.current
 				);
 				if ( focusedItem && ! isPaddingStreamItem( focusedItem ) ) {
 					selectItem( focusedItem );
@@ -284,7 +292,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<DataViews< StreamListItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
 						getItemId={ ( item: StreamListItem, index = 0 ) =>
-							item.postId?.toString() ?? `item-${ index }`
+							getStreamItemKey( item ) || `item-${ index }`
 						}
 						view={ view }
 						fields={ fields }
@@ -297,10 +305,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
-						selection={ selectedItem ? [ postIdString( selectedItem ) ] : [] }
+						selection={ selectedItem ? [ getStreamItemKey( selectedItem ) ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
 							const selectedPost = streamItems.find(
-								( item: StreamListItem ) => item.postId?.toString() === newSelection[ 0 ]
+								( item: StreamListItem ) => getStreamItemKey( item ) === newSelection[ 0 ]
 							);
 							if ( selectedPost && ! isPaddingStreamItem( selectedPost ) ) {
 								selectItem( selectedPost );
@@ -328,7 +336,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => {
-								const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
+								const focusItem = itemRefs.current[ getStreamItemKey( selectedItem ) ];
 								if ( ! isWide ) {
 									setSelectedItem( null );
 								}

@@ -46,10 +46,10 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/base-styles": "^8.0.0",
 		"@wordpress/components": "^33.1.0",
 		"@wordpress/icons": "^10.23.0",
-		"@wordpress/url": "^4.23.0",
+		"@wordpress/url": "^4.46.0",
 		"clsx": "^2.1.1",
 		"social-logos": "^3.1.18",
 		"tslib": "^2.8.1",
@@ -71,8 +71,8 @@
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/element": "^6.23.0",
+		"@wordpress/data": "^10.46.0",
+		"@wordpress/element": "^6.46.0",
 		"@wordpress/i18n": "^5.23.0",
 		"debug": "^4.4.1",
 		"react": "^18.3.1",

@@ -111,7 +111,7 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
 			const message = createInterpolateElement(
-				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink />',
+				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>',
 				{
 					upgradeLink: (
 						<UpsellCTAButton

@@ -62,3 +62,4 @@ jobs:
       area: ${{ needs.detect.outputs.area }}
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      ai_review_telemetry_token: ${{ secrets.AI_REVIEW_TELEMETRY_TOKEN }}

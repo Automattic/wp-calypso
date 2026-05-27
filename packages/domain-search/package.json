@@ -54,7 +54,7 @@
 		"@wordpress/components": "^33.1.0",
 		"@wordpress/compose": "7.23.0",
 		"@wordpress/icons": "^10.23.0",
-		"@wordpress/react-i18n": "^4.23.0",
+		"@wordpress/react-i18n": "^4.46.0",
 		"clsx": "^2.1.1",
 		"moment": "^2.30.1",
 		"qs": "^6.11.2"
@@ -66,7 +66,7 @@
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/react": "^16.3.0",
 		"@types/jest": "^29.5.14",
-		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/base-styles": "^8.0.0",
 		"copyfiles": "^2.4.1",
 		"nock": "^13.5.6",
 		"react": "^18.3.1",

@@ -96,7 +96,7 @@ export function ScanHistoryDataViews( {
 				getItemId={ ( item ) => item.id.toString() }
 				isLoading={ isLoading }
 				onChangeView={ updateView }
-				onResetView={ resetView }
+				onReset={ resetView }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search' ) }
 				view={ view }

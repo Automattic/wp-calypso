@@ -16,6 +16,7 @@ export interface SlowListItem {
 	label: string;
 	avg_ms: number;
 	max_ms: number;
+	href?: string;
 }
 
 export type SlowListMetric = 'avg' | 'max';
@@ -53,6 +54,7 @@ export default function SlowList( {
 		id: item.id,
 		label: item.label,
 		value: metric === 'avg' ? item.avg_ms : item.max_ms,
+		href: item.href,
 	} ) );
 	const headline = headlineFor( items, metric );
 	const description = metric === 'avg' ? avgDescription : maxDescription;

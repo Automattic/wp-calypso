@@ -76,6 +76,35 @@ export function ComposerModal< TError, TParams, TResult >() {
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
 
+	// Mobile keyboard handling. The WordPress Modal overlay is anchored to the
+	// layout viewport, but browsers shrink the *visual* viewport when the
+	// on-screen keyboard appears — so the bottom of the bottom-sheet (Post
+	// button + media controls) ends up hidden behind the keyboard. Mirror
+	// `window.visualViewport.height` into a CSS variable that the overlay
+	// reads on narrow widths. See style.scss.
+	const isOpen = mode != null;
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+		const vv = window.visualViewport;
+		if ( ! vv ) {
+			return;
+		}
+		const root = document.documentElement;
+		const update = () => {
+			root.style.setProperty( '--composer-modal-viewport-height', `${ vv.height }px` );
+		};
+		update();
+		vv.addEventListener( 'resize', update );
+		vv.addEventListener( 'scroll', update );
+		return () => {
+			vv.removeEventListener( 'resize', update );
+			vv.removeEventListener( 'scroll', update );
+			root.style.removeProperty( '--composer-modal-viewport-height' );
+		};
+	}, [ isOpen ] );
+
 	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
 	// both paths render through `config.errorMessage` and fire `errorShown`.
 	// `extendError` takes precedence on the (rare) chance both are non-null
@@ -196,7 +225,10 @@ export function ComposerModal< TError, TParams, TResult >() {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
-				dispatch( recordReaderTracksEvent( event, props ) );
+				const extraProps = protocolExtrasSlot.getTracksProps?.() ?? {};
+				// Extras merged first so canonical props (connection_id, mode_kind, …)
+				// always win when a protocol's extras key collides.
+				dispatch( recordReaderTracksEvent( event, { ...extraProps, ...props } ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
@@ -266,7 +298,12 @@ export function ComposerModal< TError, TParams, TResult >() {
 					isPending={ mutation.isPending }
 					limit={ limit }
 					disabled={ ! canSubmit }
-					footerStart={ mediaSlot.renderFooterTrigger() }
+					footerStart={
+						<>
+							{ mediaSlot.renderFooterTrigger() }
+							{ protocolExtrasSlot.renderTrigger?.() ?? null }
+						</>
+					}
 					counterUnit={ counterUnit }
 					softLimit={ config.softLimit }
 				/>
