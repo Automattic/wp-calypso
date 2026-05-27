@@ -2,7 +2,7 @@
 
 Blaze Dashboard is built as a standalone application to be used inside Jetpack, and in the future, into WooCommerce. The Jetpack counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/blaze).
 
-## Hiarachy
+## Hierarchy
 
 ```
 .
