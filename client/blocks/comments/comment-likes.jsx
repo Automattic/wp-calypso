@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { flowRight, get, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useCallback } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
@@ -42,9 +42,17 @@ class CommentLikeButtonContainer extends Component {
 		this.props.onLikeToggle( liked );
 
 		if ( liked ) {
-			this.props.likeComment( this.props.siteId, this.props.postId, this.props.commentId );
+			this.props.likeComment( {
+				siteId: this.props.siteId,
+				postId: this.props.postId,
+				commentId: this.props.commentId,
+			} );
 		} else {
-			this.props.unlikeComment( this.props.siteId, this.props.postId, this.props.commentId );
+			this.props.unlikeComment( {
+				siteId: this.props.siteId,
+				postId: this.props.postId,
+				commentId: this.props.commentId,
+			} );
 		}
 
 		recordAction( liked ? 'liked_comment' : 'unliked_comment' );
@@ -105,40 +113,19 @@ CommentLikeButtonContainer.propTypes = {
 };
 
 const withCommentLikeMutations = ( WrappedComponent ) => {
-	const WithCommentLikeMutations = ( { siteId, postId, commentId, ...props } ) => {
+	const WithCommentLikeMutations = ( props ) => {
 		const { mutate: likeComment, isPending: isLikePending } = useMutation(
 			likeSiteCommentMutation()
 		);
 		const { mutate: unlikeComment, isPending: isUnlikePending } = useMutation(
 			unlikeSiteCommentMutation()
 		);
-		const handleLikeComment = useCallback(
-			( targetSiteId = siteId, targetPostId = postId, targetCommentId = commentId ) =>
-				likeComment( {
-					siteId: targetSiteId,
-					postId: targetPostId,
-					commentId: targetCommentId,
-				} ),
-			[ commentId, likeComment, postId, siteId ]
-		);
-		const handleUnlikeComment = useCallback(
-			( targetSiteId = siteId, targetPostId = postId, targetCommentId = commentId ) =>
-				unlikeComment( {
-					siteId: targetSiteId,
-					postId: targetPostId,
-					commentId: targetCommentId,
-				} ),
-			[ commentId, postId, siteId, unlikeComment ]
-		);
 
 		return (
 			<WrappedComponent
 				{ ...props }
-				siteId={ siteId }
-				postId={ postId }
-				commentId={ commentId }
-				likeComment={ handleLikeComment }
-				unlikeComment={ handleUnlikeComment }
+				likeComment={ likeComment }
+				unlikeComment={ unlikeComment }
 				isLikePending={ isLikePending }
 				isUnlikePending={ isUnlikePending }
 			/>

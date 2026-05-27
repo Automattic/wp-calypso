@@ -511,7 +511,6 @@ class PostComment extends PureComponent {
 					post={ this.props.post || {} }
 					comment={ comment }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
-					commentId={ this.props.commentId }
 					handleReply={ this.handleReply }
 					onLikeToggle={ this.onLikeToggle }
 					onReplyCancel={ this.props.onReplyCancel }
