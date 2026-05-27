@@ -287,11 +287,22 @@ function useGenerateActionCallback( {
 				getPlanClass( sitePlanSlug ) !== getPlanClass( planSlug ) &&
 				! isFreePlan( planSlug )
 			) {
-				// Expired plan user purchasing a lower-tier plan through normal checkout.
-				recordTracksEvent?.( 'calypso_expired_plan_lower_tier_purchase_click', {
-					current_plan: sitePlanSlug,
-					purchasing: planSlug,
-				} );
+				// Track only actual lower-tier purchases (downgrades), not upgrades to higher tiers.
+				const lowerTierOrder: Record< string, number > = {
+					'is-personal-plan': 1,
+					'is-premium-plan': 2,
+					'is-business-plan': 3,
+					'is-ecommerce-plan': 4,
+				};
+				if (
+					( lowerTierOrder[ getPlanClass( planSlug ) ] ?? 0 ) <
+					( lowerTierOrder[ getPlanClass( sitePlanSlug ) ] ?? 0 )
+				) {
+					recordTracksEvent?.( 'calypso_expired_plan_lower_tier_purchase_click', {
+						current_plan: sitePlanSlug,
+						purchasing: planSlug,
+					} );
+				}
 			}
 
 			if ( isFreePlan( planSlug ) ) {

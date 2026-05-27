@@ -11,14 +11,12 @@ const PLAN_TIER_ORDER: Record< string, number > = {
 	'is-ecommerce-plan': 5,
 };
 
-/**
- * Eligible source plans for expired-plan downgrades.
- * Commerce is excluded — it's a purpose-built ecommerce product with no natural lower-tier equivalent.
- */
+/** Eligible source plans for expired-plan downgrades. */
 const ELIGIBLE_SOURCE_TIERS = new Set( [
 	'is-personal-plan',
 	'is-premium-plan',
 	'is-business-plan',
+	'is-ecommerce-plan',
 ] );
 
 // Minimum number of days after expiry before showing lower-tier options for monthly plans.

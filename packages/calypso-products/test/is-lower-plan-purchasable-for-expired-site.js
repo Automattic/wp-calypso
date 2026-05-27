@@ -23,8 +23,8 @@ describe( 'isLowerPlanPurchasableForExpiredSite', () => {
 			expect( isLowerPlanPurchasableForExpiredSite( PLAN_BLOGGER, PLAN_PERSONAL ) ).toBe( false );
 		} );
 
-		it( 'returns false when the current plan is Commerce (intentionally excluded)', () => {
-			expect( isLowerPlanPurchasableForExpiredSite( PLAN_ECOMMERCE, PLAN_BUSINESS ) ).toBe( false );
+		it( 'allows Commerce as a source tier', () => {
+			expect( isLowerPlanPurchasableForExpiredSite( PLAN_ECOMMERCE, PLAN_BUSINESS ) ).toBe( true );
 		} );
 
 		it( 'returns false for an unknown plan slug', () => {
@@ -43,6 +43,18 @@ describe( 'isLowerPlanPurchasableForExpiredSite', () => {
 
 		it( 'allows Premium → Personal', () => {
 			expect( isLowerPlanPurchasableForExpiredSite( PLAN_PREMIUM, PLAN_PERSONAL ) ).toBe( true );
+		} );
+
+		it( 'allows Commerce → Business', () => {
+			expect( isLowerPlanPurchasableForExpiredSite( PLAN_ECOMMERCE, PLAN_BUSINESS ) ).toBe( true );
+		} );
+
+		it( 'allows Commerce → Premium', () => {
+			expect( isLowerPlanPurchasableForExpiredSite( PLAN_ECOMMERCE, PLAN_PREMIUM ) ).toBe( true );
+		} );
+
+		it( 'allows Commerce → Personal', () => {
+			expect( isLowerPlanPurchasableForExpiredSite( PLAN_ECOMMERCE, PLAN_PERSONAL ) ).toBe( true );
 		} );
 
 		it( 'allows Personal → Free (Free is a lower tier)', () => {

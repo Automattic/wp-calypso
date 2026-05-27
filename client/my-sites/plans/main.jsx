@@ -8,6 +8,7 @@ import {
 	isPersonalPlan,
 	isPremiumPlan,
 	isBusinessPlan,
+	isEcommercePlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -195,7 +196,8 @@ class PlansComponent extends Component {
 				( purchase.expiryDate && new Date( purchase.expiryDate ) < new Date() ) ) &&
 			( isPersonalPlan( currentPlanSlug ) ||
 				isPremiumPlan( currentPlanSlug ) ||
-				isBusinessPlan( currentPlanSlug ) );
+				isBusinessPlan( currentPlanSlug ) ||
+				isEcommercePlan( currentPlanSlug ) );
 
 		// Lock the interval to match the expired plan's billing term so prices are accurate.
 		const expiredPlanIntervalType = isPlanExpired
@@ -243,7 +245,7 @@ class PlansComponent extends Component {
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
 				hideEnterprisePlan={ isPlanExpired || hideEnterprise }
-				hideEcommercePlan={ isPlanExpired || hideEcommerce }
+				hideEcommercePlan={ hideEcommerce }
 				hidePlansFeatureComparison={ isPlanExpired }
 				hidePlanTypeSelector={ isPlanExpired }
 				isPlanExpired={ !! isPlanExpired }
