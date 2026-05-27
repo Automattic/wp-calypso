@@ -28,7 +28,7 @@ export default function MyComponent( props ) {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The site ID for which terms should be requested.
+The site ID for which the restore status should be requested.
 
 ### `restoreId`
 
