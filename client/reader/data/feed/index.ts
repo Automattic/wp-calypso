@@ -1,6 +1,5 @@
 import {
 	readFeedQuery,
-	readFeedQueryKey,
 	readFeedSearchInfiniteQuery,
 	readFeedSearchQuery,
 } from '@automattic/api-queries';
@@ -19,9 +18,25 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import type { ReadFeedItem, ReadFeedSearchResponse } from '@automattic/api-core';
 
-type FeedInput = Partial< ReadFeedItem > & {
+type FeedInput = {
+	ID?: number | string;
+	URL?: string;
 	feed_ID?: number | string;
 	blog_ID?: number | string;
+	name?: string;
+	feed_URL?: string;
+	subscribe_URL?: string;
+	blog_owner?: string;
+	is_following?: boolean;
+	subscribers_count?: number;
+	description?: string;
+	last_update?: string;
+	image?: string;
+	organization_id?: number;
+	unseen_count?: number;
+	subscription_id?: number;
+	site_icon?: string;
+	date_subscribed?: number;
 };
 
 export interface Feed {
@@ -60,8 +75,8 @@ export const normalizeFeed = ( feed: FeedInput ): Feed => ( {
 	feed_ID: Number( feed.feed_ID ),
 	blog_ID: Number( feed.blog_ID ),
 	name: feed.name && decodeEntities( feed.name ),
-	URL: safeLink( feed.URL ),
-	feed_URL: safeLink( feed.feed_URL ) || safeLink( feed.subscribe_URL ),
+	URL: safeLink( feed.URL ?? '' ),
+	feed_URL: safeLink( feed.feed_URL ?? '' ) || safeLink( feed.subscribe_URL ?? '' ),
 	blog_owner: feed.blog_owner,
 	is_following: feed.is_following,
 	subscribers_count: feed.subscribers_count,
@@ -87,7 +102,7 @@ export const getCachedFeed = (
 	if ( feedId == null || ! Number.isInteger( Number( feedId ) ) ) {
 		return undefined;
 	}
-	const data = queryClient.getQueryData< FeedInput >( readFeedQueryKey( feedId ) );
+	const data = queryClient.getQueryData< FeedInput >( readFeedQuery( feedId ).queryKey );
 	return data ? normalizeFeed( data ) : undefined;
 };
 
@@ -142,10 +157,14 @@ const seedFeedCache = ( queryClient: QueryClient, feeds: Feed[] = [] ) => {
 		if ( ! Number.isInteger( feed.feed_ID ) ) {
 			return;
 		}
-		queryClient.setQueryData< FeedInput >( readFeedQueryKey( feed.feed_ID ), ( current ) => ( {
-			...( current ? normalizeFeed( current ) : {} ),
-			...feed,
-		} ) );
+		queryClient.setQueryData< FeedInput >(
+			readFeedQuery( feed.feed_ID ).queryKey,
+			( current ) =>
+				( {
+					...( current ? normalizeFeed( current ) : {} ),
+					...feed,
+				} ) as unknown as FeedInput
+		);
 	} );
 };
 
@@ -251,7 +270,7 @@ export const useFeedQuery = ( feedId?: number | string | null ) => {
 	return useQuery( {
 		...readFeedQuery( feedId ),
 		select: normalizeFeed,
-		placeholderData: () => getCachedFeed( queryClient, feedId ),
+		placeholderData: () => getCachedFeed( queryClient, feedId ) as unknown as ReadFeedItem,
 	} );
 };
 
@@ -261,7 +280,7 @@ export const useFeedQueries = ( feedIds: Array< number | string | null | undefin
 		queries: feedIds.map( ( feedId ) => ( {
 			...readFeedQuery( feedId ),
 			select: normalizeFeed,
-			placeholderData: () => getCachedFeed( queryClient, feedId ),
+			placeholderData: () => getCachedFeed( queryClient, feedId ) as unknown as ReadFeedItem,
 		} ) ),
 	} );
 };
@@ -320,7 +339,7 @@ export const withFeedData = < P extends WithFeedDataProps >( Component: Componen
 			isFeedLoading: isLoading,
 			isFeedError: isError,
 			feedError: error,
-		} as P );
+		} as unknown as P );
 	};
 	WithFeedData.displayName = `withFeedData(${
 		Component.displayName || Component.name || 'Component'

@@ -3,9 +3,9 @@
  */
 import { ReadFeedSearchSort } from '@automattic/api-core';
 import {
-	readFeedQueryKey,
-	readFeedSearchInfiniteQueryKey,
-	readFeedSearchQueryKey,
+	readFeedQuery,
+	readFeedSearchInfiniteQuery,
+	readFeedSearchQuery,
 } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider, type InfiniteData } from '@tanstack/react-query';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
@@ -149,9 +149,9 @@ describe( 'feed data layer', () => {
 
 	it( 'optimistically patches unseen counts in individual and search caches', () => {
 		const client = newClient();
-		const searchKey = readFeedSearchQueryKey( { query: 'wordpress' } );
-		const infiniteKey = readFeedSearchInfiniteQueryKey( { query: 'wordpress' } );
-		client.setQueryData( readFeedQueryKey( 7 ), {
+		const searchKey = readFeedSearchQuery( { query: 'wordpress' } ).queryKey;
+		const infiniteKey = readFeedSearchInfiniteQuery( { query: 'wordpress' } ).queryKey;
+		client.setQueryData( readFeedQuery( 7 ).queryKey, {
 			feed_ID: 7,
 			blog_ID: 8,
 			feed_URL: 'https://example.com/feed',
@@ -214,7 +214,7 @@ describe( 'feed data layer', () => {
 
 	it( 'optimistically resets unseen counts by feed URL', () => {
 		const client = newClient();
-		client.setQueryData( readFeedQueryKey( 7 ), {
+		client.setQueryData( readFeedQuery( 7 ).queryKey, {
 			feed_ID: 7,
 			blog_ID: 8,
 			feed_URL: 'https://example.com/feed',

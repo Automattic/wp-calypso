@@ -15,7 +15,6 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import type { AppState } from 'calypso/types';
@@ -70,20 +69,19 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		let _siteId = siteId ?? 0;
 		const _feedId = resolvedFeed?.feed_ID ?? 0;
 		const _feed: ReaderFeed | undefined = resolvedFeed;
-		let _site: ReaderSite | undefined = _siteId ? getSite( state, _siteId ) : undefined;
 
 		if ( _feed && ! _siteId ) {
 			_siteId = _feed.blog_ID || 0;
-			_site = _siteId ? getSite( state, _siteId ) : undefined;
 		}
 
 		return {
-			following: _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ),
-			hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
+			following: Boolean( _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ) ),
+			hasOrganization: Boolean( hasReaderFollowOrganization( state, _feedId, _siteId ) ),
 			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-			isWPForTeamsItem:
+			isWPForTeamsItem: Boolean(
 				isSiteWPForTeams( state, _siteId ) ||
-				( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false ),
+					( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false )
+			),
 			subscriptionId: _feed?.subscription_id,
 			blogOwner: _feed?.blog_owner,
 		};
