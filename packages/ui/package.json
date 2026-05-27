@@ -64,7 +64,7 @@
 		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"esbuild": "^0.25.5",
-		"esbuild-sass-plugin": "^3.1.0",
+		"esbuild-sass-plugin": "^3.7.0",
 		"postcss": "^8.5.3",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
