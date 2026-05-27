@@ -119,6 +119,9 @@ class PurchaseNotice extends Component<
 		showDowngradedRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'downgraded' ) === 'true',
+		showPlanChangedNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true',
 	};
 
 	componentDidMount() {
@@ -136,6 +139,10 @@ class PurchaseNotice extends Component<
 			params.delete( 'downgraded' );
 			changed = true;
 		}
+		if ( params.get( 'plan_changed' ) === 'true' ) {
+			params.delete( 'plan_changed' );
+			changed = true;
+		}
 		if ( changed ) {
 			const newSearch = params.toString();
 			const newUrl =
@@ -150,6 +157,10 @@ class PurchaseNotice extends Component<
 
 	dismissDowngradedRedirectNotice = () => {
 		this.setState( { showDowngradedRedirectNotice: false } );
+	};
+
+	dismissPlanChangedNotice = () => {
+		this.setState( { showPlanChangedNotice: false } );
 	};
 
 	/**
@@ -239,6 +250,24 @@ class PurchaseNotice extends Component<
 				onDismissClick={ this.dismissDowngradedRedirectNotice }
 				status="is-success"
 				text={ this.props.translate( 'You\u2019ve switched to monthly billing.' ) }
+			/>
+		);
+	}
+
+	renderPlanChangedNotice() {
+		const { purchase, translate } = this.props;
+		if ( ! this.state.showPlanChangedNotice || ! purchase ) {
+			return null;
+		}
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissPlanChangedNotice }
+				status="is-success"
+				text={ translate( 'Your plan has been updated to %(planName)s.', {
+					args: { planName: getName( purchase ) },
+				} ) }
 			/>
 		);
 	}
@@ -1453,6 +1482,11 @@ class PurchaseNotice extends Component<
 		const downgradedRedirectNotice = this.renderDowngradedRedirectNotice();
 		if ( downgradedRedirectNotice ) {
 			return downgradedRedirectNotice;
+		}
+
+		const planChangedNotice = this.renderPlanChangedNotice();
+		if ( planChangedNotice ) {
+			return planChangedNotice;
 		}
 
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {

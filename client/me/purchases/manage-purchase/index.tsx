@@ -619,12 +619,16 @@ class ManagePurchase extends Component<
 				730: '2yearly',
 				1095: '3yearly',
 			};
+			const redirectTo = this.props.isSiteLevel
+				? `/purchases/subscriptions/${ siteSlug }/:purchaseId?plan_changed=true`
+				: `/me/purchases/${ siteSlug }/:purchaseId?plan_changed=true`;
 			return addQueryArgs(
 				{
 					siteSlug,
 					cancel_to: cancelTo,
 					expired_downgrade: 'true',
 					intervalType: intervalMap[ purchase.billPeriodDays ] ?? 'yearly',
+					redirect_to: redirectTo,
 				},
 				'/setup/plan-upgrade'
 			);

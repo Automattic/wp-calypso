@@ -73,7 +73,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
-import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -144,6 +144,7 @@ function getExpiredNewPlanUrl( purchase: Purchase, isDowngrade = false ): string
 			return addQueryArgs( url, {
 				expired_downgrade: 'true',
 				intervalType: intervalMap[ purchase.bill_period_days ] ?? 'yearly',
+				redirect_to: dashboardLink( '/me/billing/purchases/:purchaseId?plan_changed=true' ),
 			} );
 		}
 		return url;
@@ -453,6 +454,14 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
+
+	// Expired/grace-period plans are handled by ReSubscribeActionButton
+	// ("Change plan" or "Pick another plan") — hide the standalone upgrade
+	// button to avoid showing two entry points.
+	if ( ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) && purchase.is_plan ) {
+		return null;
+	}
+
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	if ( ! upgradeUrl ) {
 		return null;
@@ -500,12 +509,12 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 		migrationStatus.startsWith( 'migration-started' ) ||
 		migrationStatus.startsWith( 'migration-in-progress' );
 
-	// Match the wpcom plan slugs: Personal, Premium (value_bundle), Business.
+	// Match the wpcom plan slugs: Premium (value_bundle), Business, Ecommerce.
+	// Personal is excluded — it's the lowest tier, nothing to downgrade to.
 	// Includes monthly, 2y, 3y variants.
-	const isDowngradeEligiblePlan =
-		/^(personal-bundle|value_bundle|business-bundle|ecommerce-bundle)/.test(
-			purchase.product_slug
-		);
+	const isDowngradeEligiblePlan = /^(value_bundle|business-bundle|ecommerce-bundle)/.test(
+		purchase.product_slug
+	);
 
 	const isEligibleForDowngrade =
 		isEnabled( 'plans/expired-plan-downgrade' ) &&
