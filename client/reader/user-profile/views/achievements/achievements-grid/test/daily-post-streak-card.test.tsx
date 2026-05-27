@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import wpcom from 'calypso/lib/wp';
 import DailyPostStreakCard from '../daily-post-streak-card';
 
@@ -48,7 +47,7 @@ describe( 'DailyPostStreakCard', () => {
 		mockGet.mockResolvedValue( {
 			ID: 12345,
 			URL: 'https://side-project.example.com',
-			name: 'Side Project Blog',
+			title: 'Side Project Blog',
 		} );
 
 		renderCard( { streak: streak() } );
@@ -72,11 +71,24 @@ describe( 'DailyPostStreakCard', () => {
 		expect( link ).toHaveAttribute( 'href', 'https://side-project.example.com' );
 	} );
 
+	test( 'decodes HTML entities in the site title', async () => {
+		mockGet.mockResolvedValue( {
+			ID: 12345,
+			URL: 'https://side-project.example.com',
+			title: 'Joe&#039;s &amp; Jane&#039;s Blog',
+		} );
+
+		renderCard( { streak: streak() } );
+
+		const link = await screen.findByRole( 'link', { name: "Joe's & Jane's Blog" } );
+		expect( link ).toHaveAttribute( 'href', 'https://side-project.example.com' );
+	} );
+
 	test( 'renders the site icon image when the site query returns one', async () => {
 		mockGet.mockResolvedValue( {
 			ID: 12345,
 			URL: 'https://side-project.example.com',
-			name: 'Side Project Blog',
+			title: 'Side Project Blog',
 			icon: { img: 'https://i0.wp.com/icon.png', ico: '' },
 		} );
 

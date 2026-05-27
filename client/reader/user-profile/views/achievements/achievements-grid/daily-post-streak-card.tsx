@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { globe } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import AchievementCard from './achievement-card';
 import type { DailyPostStreak } from '@automattic/api-core';
 
@@ -18,7 +19,7 @@ export default function DailyPostStreakCard( { streak }: { streak: DailyPostStre
 	const translate = useTranslate();
 	const { data: site } = useQuery( readFeedSiteQuery( streak.blog_id ) );
 
-	const siteName = site?.name || site?.title || getHostname( streak.url );
+	const siteName = ( site && getSiteName( { site } ) ) || getHostname( streak.url );
 	const iconUrl = site?.icon?.img;
 
 	const iconNode = iconUrl ? (
