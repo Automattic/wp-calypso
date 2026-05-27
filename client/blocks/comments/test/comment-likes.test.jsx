@@ -137,7 +137,7 @@ describe( 'CommentLikeButtonContainer', () => {
 		);
 	} );
 
-	it( 'updates the button state and like count after liking a cached comment', async () => {
+	it( 'optimistically updates the button state and like count while liking a cached comment', async () => {
 		const queryClient = makeQueryClient();
 		queryClient.setQueryData( siteCommentsInfiniteQuery( { siteId: 100, postId: 1 } ).queryKey, {
 			pages: [
@@ -160,6 +160,7 @@ describe( 'CommentLikeButtonContainer', () => {
 		} );
 		const likeScope = nock( BASE )
 			.post( '/rest/v1.1/sites/100/comments/5/likes/new', {} )
+			.delay( 1000 )
 			.reply( 200, {
 				success: true,
 				like_count: '8',
@@ -169,10 +170,55 @@ describe( 'CommentLikeButtonContainer', () => {
 
 		screen.getByRole( 'button', { name: 'Like' } ).click();
 
+		await waitFor(
+			() => {
+				expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
+				expect( screen.getByText( '8' ) ).toBeVisible();
+			},
+			{ timeout: 50 }
+		);
+
 		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
+	} );
+
+	it( 'rolls back an optimistic comment like when the request fails', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( siteCommentsInfiniteQuery( { siteId: 100, postId: 1 } ).queryKey, {
+			pages: [
+				{
+					comments: [
+						{
+							ID: 5,
+							content: 'Hello',
+							date: '2026-05-01T00:00:00.000Z',
+							i_like: false,
+							like_count: 7,
+							parent: false,
+							status: 'approved',
+						},
+					],
+					found: 1,
+				},
+			],
+			pageParams: [ undefined ],
+		} );
+		const likeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/100/comments/5/likes/new', {} )
+			.delay( 100 )
+			.reply( 500, { error: 'oops' } );
+
+		renderWithRedux( <CommentsBackedLikeButton />, { queryClient } );
+
+		screen.getByRole( 'button', { name: 'Like' } ).click();
+
 		await waitFor( () => {
 			expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
 			expect( screen.getByText( '8' ) ).toBeVisible();
+		} );
+		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Like' } ) ).not.toHaveClass( 'is-liked' );
+			expect( screen.getByText( '7' ) ).toBeVisible();
 		} );
 	} );
 } );
