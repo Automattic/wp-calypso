@@ -222,4 +222,4 @@ The following props can be passed to the Product Card Action component:
 - `label`: ( string ) Action button text
 - `onClick`: ( func ) Action button click event handler
 - `href`: ( string ) Url that the button click will take you to
-- `primary`: ( bool ) If we the action should be primary (default true)
+- `primary`: ( bool ) If the action should be primary (default true)
