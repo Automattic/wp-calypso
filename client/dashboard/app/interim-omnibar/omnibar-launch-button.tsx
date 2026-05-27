@@ -30,11 +30,12 @@ const LaunchRocketIcon = () => (
  * the rest of the omnibar instead of popping in a moment later.
  */
 export function OmnibarLaunchButton( { site }: { site: Site } ) {
-	const { isLoading, isHidden, isDisabled, isBusy, href, onClick, modal } = useSiteLaunch( site, {
-		tracksContext: 'interim_omnibar',
-		celebrateOnLaunch: true,
-		recordTracksEvent,
-	} );
+	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
+		useSiteLaunch( site, {
+			tracksContext: 'interim_omnibar',
+			celebrateOnLaunch: true,
+			recordTracksEvent,
+		} );
 
 	if ( isHidden ) {
 		return null;
@@ -58,7 +59,7 @@ export function OmnibarLaunchButton( { site }: { site: Site } ) {
 					variant: 'primary',
 					isBusy,
 				} }
-				disabled={ isLoading || isDisabled || isBusy }
+				disabled={ isLoading || isExperimentLoading || isDisabled || isBusy }
 				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
 				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 				icon={ <LaunchRocketIcon /> }

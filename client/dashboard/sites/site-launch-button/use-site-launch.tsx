@@ -43,6 +43,12 @@ export interface UseSiteLaunchOptions {
 
 export interface UseSiteLaunchResult {
 	isLoading: boolean;
+	// True while ExPlat is resolving the launch-gating variant. The A4A path
+	// doesn't depend on the variant, so consumers there can ignore this.
+	// Consumers on the experiment paths (e.g. omnibar) should disable the
+	// button on this so the user can't slip through the default branch before
+	// the assignment lands.
+	isExperimentLoading: boolean;
 	isHidden: boolean;
 	isDisabled: boolean;
 	isBusy: boolean;
@@ -138,7 +144,8 @@ export function useSiteLaunch(
 	};
 
 	const baseResult = {
-		isLoading: isDomainsLoading || isExperimentLoading,
+		isLoading: isDomainsLoading,
+		isExperimentLoading,
 		isDisabled,
 		isBusy: launchMutation.isPending,
 		modal: null as ReactElement | null,
