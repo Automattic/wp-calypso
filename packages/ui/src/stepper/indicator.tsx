@@ -1,7 +1,7 @@
 // packages/ui/src/stepper/indicator.tsx
 import { check, error as errorIcon } from '@wordpress/icons';
+import { Icon } from '@wordpress/ui';
 import clsx from 'clsx';
-import { Icon } from '../icon';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { ReactNode } from 'react';
@@ -20,9 +20,9 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 
 	let indicator = <span aria-hidden="true">{ stepNumber }</span>;
 	if ( status === 'completed' ) {
-		indicator = <Icon icon={ check } size={ 16 } fill="currentColor" />;
+		indicator = <Icon icon={ check } size={ 16 } />;
 	} else if ( status === 'error' ) {
-		indicator = <Icon icon={ errorIcon } size={ 16 } fill="currentColor" />;
+		indicator = <Icon icon={ errorIcon } size={ 16 } />;
 	}
 
 	return (
