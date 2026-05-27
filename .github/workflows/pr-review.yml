@@ -450,11 +450,15 @@ jobs:
               ttft_ms:         (.ttft_ms // 0)
             }')
 
-          HTTP_STATUS=$(curl -s -o /tmp/telemetry_response -w "%{http_code}" -X POST \
+          if ! HTTP_STATUS=$(curl -s -o /tmp/telemetry_response -w "%{http_code}" -X POST \
             "https://public-api.wordpress.com/wpcom/v2/ai-review/telemetry" \
             -H "Content-Type: application/json" \
             -H "X-AI-Review-Token: ${TELEMETRY_TOKEN}" \
-            -d "$PAYLOAD")
+            -d "$PAYLOAD"); then
+            echo "::warning::Failed to send AI review telemetry (curl transport error)"
+            exit 0
+          fi
+
           echo "telemetry: HTTP $HTTP_STATUS"
           if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
             echo "::warning::Failed to send AI review telemetry (HTTP $HTTP_STATUS)"
