@@ -1,45 +1,76 @@
 // packages/ui/src/horizontal-stepper/stories/index.stories.tsx
 import { useState } from '@wordpress/element';
 import { HorizontalStepper } from '..';
+import type { StepperProps } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta = {
+const meta: Meta< typeof HorizontalStepper > = {
 	component: HorizontalStepper,
 	title: 'Automattic UI/HorizontalStepper',
+	argTypes: {
+		activationMode: {
+			control: { type: 'radio' },
+			options: [ 'manual', 'auto' ],
+		},
+		// Managed internally by the story's useState — hide from controls.
+		value: { table: { disable: true } },
+		defaultValue: { table: { disable: true } },
+		onValueChange: { table: { disable: true } },
+		// Complex / render-only props — not useful as controls.
+		children: { table: { disable: true } },
+		className: { table: { disable: true } },
+		style: { table: { disable: true } },
+		ref: { table: { disable: true } },
+		formatStepLabel: { table: { disable: true } },
+		headingLevel: { table: { disable: true } },
+		'aria-labelledby': { table: { disable: true } },
+	},
 };
 
 export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-function DefaultDemo() {
+const checkoutSteps = [
+	{ value: 'shipping', title: 'Shipping', description: '123 Main St' },
+	{ value: 'payment', title: 'Payment' },
+	{ value: 'review', title: 'Review', optional: true },
+];
+
+function DefaultDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'payment' );
+	const currentIndex = checkoutSteps.findIndex( ( s ) => s.value === step );
 	return (
-		<HorizontalStepper value={ step } onValueChange={ setStep } aria-label="Checkout">
-			<HorizontalStepper.Step
-				value="shipping"
-				title="Shipping"
-				status="completed"
-				description="123 Main St"
-			>
-				<p>Shipping form.</p>
-			</HorizontalStepper.Step>
-			<HorizontalStepper.Step value="payment" title="Payment">
-				<p>Payment form.</p>
-			</HorizontalStepper.Step>
-			<HorizontalStepper.Step value="review" title="Review" optional>
-				<p>Review form.</p>
-			</HorizontalStepper.Step>
+		<HorizontalStepper { ...args } value={ step } onValueChange={ setStep }>
+			{ checkoutSteps.map( ( s, i ) => (
+				<HorizontalStepper.Step
+					key={ s.value }
+					value={ s.value }
+					title={ s.title }
+					description={ s.description }
+					status={ i < currentIndex ? 'completed' : undefined }
+					optional={ s.optional }
+				>
+					<p>{ s.title } form.</p>
+				</HorizontalStepper.Step>
+			) ) }
 		</HorizontalStepper>
 	);
 }
 
-export const Default: Story = { render: DefaultDemo };
+export const Default: Story = {
+	args: {
+		'aria-label': 'Checkout',
+		linear: false,
+		activationMode: 'manual',
+	},
+	render: DefaultDemo,
+};
 
-function LinearFlowDemo() {
+function LinearFlowDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
-		<HorizontalStepper value={ step } onValueChange={ setStep } linear aria-label="Linear checkout">
+		<HorizontalStepper { ...args } value={ step } onValueChange={ setStep }>
 			<HorizontalStepper.Step value="shipping" title="Shipping" status="completed">
 				<p>Done.</p>
 			</HorizontalStepper.Step>
@@ -53,25 +84,34 @@ function LinearFlowDemo() {
 	);
 }
 
-export const LinearFlow: Story = { render: LinearFlowDemo };
+export const LinearFlow: Story = {
+	args: {
+		'aria-label': 'Linear checkout',
+		linear: true,
+		activationMode: 'manual',
+	},
+	render: LinearFlowDemo,
+};
 
-function FiveStepsDemo() {
-	const steps = [
-		{ value: 'a', title: 'Purchase info', status: 'completed' as const },
-		{ value: 'b', title: 'Shipping details' },
-		{ value: 'c', title: 'Review' },
-		{ value: 'd', title: 'Review again' },
-		{ value: 'e', title: 'Review once again' },
-	];
+const fiveSteps = [
+	{ value: 'a', title: 'Purchase info' },
+	{ value: 'b', title: 'Shipping details' },
+	{ value: 'c', title: 'Review' },
+	{ value: 'd', title: 'Review again' },
+	{ value: 'e', title: 'Review once again' },
+];
+
+function FiveStepsDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'b' );
+	const currentIndex = fiveSteps.findIndex( ( s ) => s.value === step );
 	return (
-		<HorizontalStepper value={ step } onValueChange={ setStep } aria-label="5-step flow">
-			{ steps.map( ( s ) => (
+		<HorizontalStepper { ...args } value={ step } onValueChange={ setStep }>
+			{ fiveSteps.map( ( s, i ) => (
 				<HorizontalStepper.Step
 					key={ s.value }
 					value={ s.value }
 					title={ s.title }
-					status={ s.status }
+					status={ i < currentIndex ? 'completed' : undefined }
 				>
 					<p>Content for { s.title }</p>
 				</HorizontalStepper.Step>
@@ -80,4 +120,11 @@ function FiveStepsDemo() {
 	);
 }
 
-export const FiveSteps: Story = { render: FiveStepsDemo };
+export const FiveSteps: Story = {
+	args: {
+		'aria-label': '5-step flow',
+		linear: false,
+		activationMode: 'manual',
+	},
+	render: FiveStepsDemo,
+};

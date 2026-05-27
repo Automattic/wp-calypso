@@ -1,24 +1,42 @@
 // packages/ui/src/vertical-stepper/stories/index.stories.tsx
 import { useState } from '@wordpress/element';
 import { VerticalStepper } from '..';
+import type { StepperProps } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta = {
+const meta: Meta< typeof VerticalStepper > = {
 	component: VerticalStepper,
 	title: 'Automattic UI/VerticalStepper',
+	argTypes: {
+		headingLevel: {
+			control: { type: 'select' },
+			options: [ 2, 3, 4, 5, 6 ],
+		},
+		// Managed internally by the story's useState — hide from controls.
+		value: { table: { disable: true } },
+		defaultValue: { table: { disable: true } },
+		onValueChange: { table: { disable: true } },
+		// Complex / render-only props — not useful as controls.
+		children: { table: { disable: true } },
+		className: { table: { disable: true } },
+		style: { table: { disable: true } },
+		ref: { table: { disable: true } },
+		formatStepLabel: { table: { disable: true } },
+		'aria-labelledby': { table: { disable: true } },
+	},
 };
 
 export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-function DefaultDemo() {
+function DefaultDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
+			{ ...args }
 			value={ step }
 			onValueChange={ setStep }
-			aria-label="Checkout"
 			style={ { maxWidth: 400 } }
 		>
 			<VerticalStepper.Step
@@ -39,16 +57,22 @@ function DefaultDemo() {
 	);
 }
 
-export const Default: Story = { render: DefaultDemo };
+export const Default: Story = {
+	args: {
+		'aria-label': 'Checkout',
+		linear: false,
+		headingLevel: 3,
+	},
+	render: DefaultDemo,
+};
 
-function LinearFlowDemo() {
+function LinearFlowDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
+			{ ...args }
 			value={ step }
 			onValueChange={ setStep }
-			linear
-			aria-label="Linear checkout"
 			style={ { maxWidth: 400 } }
 		>
 			<VerticalStepper.Step value="shipping" title="Shipping" status="completed">
@@ -64,15 +88,22 @@ function LinearFlowDemo() {
 	);
 }
 
-export const LinearFlow: Story = { render: LinearFlowDemo };
+export const LinearFlow: Story = {
+	args: {
+		'aria-label': 'Linear checkout',
+		linear: true,
+		headingLevel: 3,
+	},
+	render: LinearFlowDemo,
+};
 
-function WithErrorDemo() {
+function WithErrorDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
+			{ ...args }
 			value={ step }
 			onValueChange={ setStep }
-			aria-label="Checkout with error"
 			style={ { maxWidth: 400 } }
 		>
 			<VerticalStepper.Step
@@ -90,4 +121,11 @@ function WithErrorDemo() {
 	);
 }
 
-export const WithError: Story = { render: WithErrorDemo };
+export const WithError: Story = {
+	args: {
+		'aria-label': 'Checkout with error',
+		linear: false,
+		headingLevel: 3,
+	},
+	render: WithErrorDemo,
+};
