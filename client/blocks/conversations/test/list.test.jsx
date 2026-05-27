@@ -99,6 +99,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -138,6 +139,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -170,6 +172,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: firstPageComments,
@@ -182,6 +185,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 				before: firstPageComments[ 0 ].date,
 			} )
 			.reply( 200, {
@@ -204,6 +208,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: firstPageComments,
@@ -216,6 +221,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 				before: firstPageComments[ 0 ].date,
 			} )
 			.times( 2 )
@@ -254,6 +260,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [ comment( { ID: 1, date: '2026-05-01T00:00:00.000Z' } ) ],
@@ -266,6 +273,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'ASC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 				after: '2026-05-01T00:00:00.000Z',
 				offset: '1',
 			} )
@@ -322,6 +330,7 @@ describe( 'ConversationCommentList', () => {
 			.get( '/rest/v1.1/sites/100/comments/1' )
 			.query( {
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				ID: 1,
@@ -338,6 +347,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -367,6 +377,7 @@ describe( 'ConversationCommentList', () => {
 			.get( '/rest/v1.1/sites/100/comments/1' )
 			.query( {
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.times( 2 )
 			.reply( () => {
@@ -380,6 +391,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -409,6 +421,7 @@ describe( 'ConversationCommentList', () => {
 			.get( '/rest/v1.1/sites/100/comments/1' )
 			.query( {
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.times( 2 )
 			.reply( () => {
@@ -422,6 +435,7 @@ describe( 'ConversationCommentList', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
