@@ -12,7 +12,7 @@ import {
 import clsx from 'clsx';
 import { StepperContext, defaultFormatStepLabel } from './context';
 import { useStepRegistration } from './use-step-registration';
-import type { StepperContextValue, StepperRef, StepperRootProps } from './types';
+import type { StepMeta, StepperContextValue, StepperRef, StepperRootProps } from './types';
 
 export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function StepperRoot(
 	{
@@ -48,7 +48,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 	);
 
 	// Step registration
-	const { steps, registerStep, updateStep } = useStepRegistration();
+	const { steps, registerStep, updateStep } = useStepRegistration< StepMeta >();
 	const totalSteps = steps.length;
 
 	// Trigger refs for imperative focusStep

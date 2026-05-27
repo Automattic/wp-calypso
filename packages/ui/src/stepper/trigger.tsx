@@ -57,6 +57,8 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 		}
 
 		// Horizontal: Tabs.Tab
+		// Base UI internally sets focusableWhenDisabled: true, so disabled tabs
+		// remain in the tab order and receive aria-disabled rather than disabled.
 		return (
 			<Tabs.Tab
 				ref={ callbackRef as Ref< HTMLButtonElement > }

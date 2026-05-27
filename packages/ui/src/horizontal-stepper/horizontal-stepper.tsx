@@ -1,6 +1,7 @@
 // packages/ui/src/horizontal-stepper/horizontal-stepper.tsx
-import { forwardRef, useCallback, useState } from '@wordpress/element';
+import { forwardRef } from '@wordpress/element';
 import { Stepper } from '../stepper';
+import { useStepRegistration } from '../stepper/use-step-registration';
 import {
 	HorizontalStepRegistrationContext,
 	HorizontalStepperStep,
@@ -14,31 +15,7 @@ function HorizontalStepperInner(
 	{ children, className, ...props }: StepperProps,
 	ref: Ref< StepperRef >
 ) {
-	const [ steps, setSteps ] = useState< HorizontalStepRecord[] >( [] );
-
-	const registerStep = useCallback( ( record: HorizontalStepRecord ) => {
-		setSteps( ( prev ) => {
-			if ( prev.some( ( s ) => s.value === record.value ) ) {
-				return prev;
-			}
-			return [ ...prev, record ];
-		} );
-		return () => {
-			setSteps( ( prev ) => prev.filter( ( s ) => s.value !== record.value ) );
-		};
-	}, [] );
-
-	const updateStep = useCallback( ( record: HorizontalStepRecord ) => {
-		setSteps( ( prev ) => {
-			const idx = prev.findIndex( ( s ) => s.value === record.value );
-			if ( idx === -1 || prev[ idx ] === record ) {
-				return prev;
-			}
-			const next = [ ...prev ];
-			next[ idx ] = record;
-			return next;
-		} );
-	}, [] );
+	const { steps, registerStep, updateStep } = useStepRegistration< HorizontalStepRecord >();
 
 	return (
 		<HorizontalStepRegistrationContext.Provider value={ { registerStep, updateStep } }>

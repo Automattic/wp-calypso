@@ -1,15 +1,17 @@
 import { useCallback, useState } from '@wordpress/element';
-import type { StepMeta } from './types';
 
 /**
- * Used by Stepper.Root to maintain an ordered list of registered steps.
- * Steps register on mount and deregister on unmount.
- * Registration order is the sole source of truth for index and counting.
+ * Maintains an ordered list of registered steps for any record type that
+ * includes a `value` string. Registration order is the sole source of truth
+ * for index and counting.
+ *
+ * Used by Stepper.Root (with StepMeta) and HorizontalStepper (with
+ * HorizontalStepRecord) to share the same dedup / bail-out logic.
  */
-export function useStepRegistration() {
-	const [ steps, setSteps ] = useState< StepMeta[] >( [] );
+export function useStepRegistration< T extends { value: string } >() {
+	const [ steps, setSteps ] = useState< T[] >( [] );
 
-	const registerStep = useCallback( ( meta: StepMeta ) => {
+	const registerStep = useCallback( ( meta: T ) => {
 		setSteps( ( prev ) => {
 			// Avoid duplicate registration (React StrictMode double-invocation)
 			if ( prev.some( ( s ) => s.value === meta.value ) ) {
@@ -23,7 +25,7 @@ export function useStepRegistration() {
 		};
 	}, [] );
 
-	const updateStep = useCallback( ( meta: StepMeta ) => {
+	const updateStep = useCallback( ( meta: T ) => {
 		setSteps( ( prev ) => {
 			const idx = prev.findIndex( ( s ) => s.value === meta.value );
 			if ( idx === -1 || prev[ idx ] === meta ) {
