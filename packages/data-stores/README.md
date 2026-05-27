@@ -42,7 +42,7 @@ For example:
 
 ## Old registration method
 
-Some stores have not yet been migrated to use the new registration method. To use these stores, you must register them manually.)
+Some stores have not yet been migrated to use the new registration method. To use these stores, you must register them manually.
 
 ```tsx
 import { FooStore } from '@automattic/data-stores';
