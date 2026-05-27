@@ -169,7 +169,12 @@
 		}
 	}
 
-	.achievement-card__icon--lock {
+	.achievement-card__icon--site {
+		border-radius: 50%;
+	}
+
+	.achievement-card__icon--lock,
+	.achievement-card__icon--site-fallback {
 		align-items: center;
 		background: var( --studio-gray-5 );
 		border-radius: 50%;

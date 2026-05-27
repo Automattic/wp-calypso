@@ -22,7 +22,7 @@ export default function DailyPostStreakCard( { streak }: { streak: DailyPostStre
 	const iconUrl = site?.icon?.img;
 
 	const iconNode = iconUrl ? (
-		<img className="achievement-card__icon" src={ iconUrl } alt="" />
+		<img className="achievement-card__icon achievement-card__icon--site" src={ iconUrl } alt="" />
 	) : (
 		<div className="achievement-card__icon achievement-card__icon--site-fallback">
 			<Icon icon={ globe } />

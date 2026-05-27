@@ -96,6 +96,10 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 					{ showYearsOfService && (
 						<YearsOfServiceAchievementCard yearsOfService={ yearsOfService } />
 					) }
+					{ showStreakCards &&
+						dailyPostStreaks.map( ( streak ) => (
+							<DailyPostStreakCard key={ streak.blog_id } streak={ streak } />
+						) ) }
 					{ sortedEarned.map( ( a ) => {
 						if ( a.is_redacted ) {
 							return (
@@ -119,10 +123,6 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 							/>
 						);
 					} ) }
-					{ showStreakCards &&
-						dailyPostStreaks.map( ( streak ) => (
-							<DailyPostStreakCard key={ streak.blog_id } streak={ streak } />
-						) ) }
 				</div>
 			) }
 

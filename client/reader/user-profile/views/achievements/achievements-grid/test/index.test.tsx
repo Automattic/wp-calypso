@@ -69,9 +69,6 @@ const streak = ( overrides: Record< string, unknown > = {} ) => ( {
 	blog_id: 111,
 	url: 'https://my-blog.example.com',
 	current_streak: 7,
-	last_check_date: '2026-05-27',
-	oldest_post_date: '2026-05-21 09:00:00',
-	is_active: true,
 	...overrides,
 } );
 
@@ -428,7 +425,7 @@ describe( 'AchievementsGrid', () => {
 		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders daily post streak cards on own profile, appended to the unlocked grid', () => {
+	test( 'renders daily post streak cards on own profile before any earned achievements', () => {
 		useAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
@@ -452,11 +449,28 @@ describe( 'AchievementsGrid', () => {
 			'222',
 		] );
 
-		const allCards = earnedGrid?.children;
-		const lastTwo = Array.from( allCards ?? [] ).slice( -2 );
+		const allCards = Array.from( earnedGrid?.children ?? [] );
+		const firstTwo = allCards.slice( 0, 2 );
 		expect(
-			lastTwo.every( ( el ) => el.getAttribute( 'data-testid' ) === 'daily-post-streak-card' )
+			firstTwo.every( ( el ) => el.getAttribute( 'data-testid' ) === 'daily-post-streak-card' )
 		).toBe( true );
+	} );
+
+	test( 'renders daily post streak cards immediately after the Years of Service card', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			yearsOfService: 5,
+			dailyPostStreaks: [ streak( { blog_id: 111 } ) ],
+		} );
+
+		const { container } = renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		const earnedGrid = container.querySelector( '.achievements-grid' );
+		const cards = Array.from( earnedGrid?.children ?? [] );
+
+		expect( cards[ 0 ]?.classList.contains( 'is-years-of-service' ) ).toBe( true );
+		expect( cards[ 1 ]?.getAttribute( 'data-testid' ) ).toBe( 'daily-post-streak-card' );
 	} );
 
 	test( 'hides daily post streak cards on cross-user view', () => {

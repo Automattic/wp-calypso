@@ -23,9 +23,9 @@ export function useAchievementsQuery(
 		...options,
 	} );
 
-	const dailyPostStreaks = ( query.data?.pages[ 0 ]?.daily_post_streak ?? [] )
-		.filter( ( streak ) => streak.is_active )
-		.sort( ( a, b ) => b.current_streak - a.current_streak );
+	const dailyPostStreaks = [ ...( query.data?.pages[ 0 ]?.daily_post_streak ?? [] ) ].sort(
+		( a, b ) => b.current_streak - a.current_streak
+	);
 
 	return {
 		achievements: query.data?.pages.flatMap( ( p ) => p.achievements ?? [] ) ?? [],

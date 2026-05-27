@@ -19,9 +19,6 @@ const streak = ( overrides = {} ) => ( {
 	blog_id: 12345,
 	url: 'https://side-project.example.com',
 	current_streak: 14,
-	last_check_date: '2026-05-27',
-	oldest_post_date: '2026-05-14 09:12:34',
-	is_active: true,
 	...overrides,
 } );
 

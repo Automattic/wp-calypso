@@ -121,19 +121,13 @@ export interface EngagementStreak {
 
 /**
  * A per-site daily-post streak: a contiguous run of days on which the user
- * published at least one post on the given blog. The endpoint filters expired
- * streaks older than ~1 year and returns active and recently-active entries.
- * Self-reads only.
+ * published at least one post on the given blog. The endpoint returns only
+ * currently-active streaks. Self-reads only.
  */
 export interface DailyPostStreak {
 	blog_id: number;
 	url: string;
 	current_streak: number;
-	/** Y-m-d in the site's timezone. */
-	last_check_date: string;
-	/** Y-m-d H:i:s — the date the first post in the current streak was published. */
-	oldest_post_date: string;
-	is_active: boolean;
 }
 
 export interface AchievementsResponse {
