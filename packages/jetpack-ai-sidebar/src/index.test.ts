@@ -361,7 +361,7 @@ describe( 'useSuggestions', () => {
 
 	it( 'keeps AI Editorial Review visible when block suggestions are limited', () => {
 		installAiEditorialReviewData();
-		mockSelectedBlock = { clientId: 'b-limited', name: 'core/paragraph' };
+		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
 		const onSuggestions = jest.fn();
 
 		render(
@@ -377,6 +377,26 @@ describe( 'useSuggestions', () => {
 			'Translate content',
 			'Check grammar',
 			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
 		] );
 	} );
 

@@ -862,7 +862,53 @@ export function useSuggestions(
 				: [],
 		[ blockTransformationsEnabled, selectedBlock ]
 	);
-	const applicableSuggestionsKey = applicable.map( ( suggestion ) => suggestion.id ).join( '|' );
+	const blockTransformationSuggestions = useMemo(
+		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		[ applicable ]
+	);
+	const visibleSuggestions = useMemo( () => {
+		if ( hidden ) {
+			return [];
+		}
+
+		if ( ! selectedBlock ) {
+			return applySuggestionLimit(
+				getPostLevelSuggestions( editorContext.postType ),
+				maxSuggestions
+			);
+		}
+
+		if ( ! blockTransformationsEnabled ) {
+			return applySuggestionLimit( aiEditorialReviewSuggestions, maxSuggestions );
+		}
+
+		return applySuggestionLimit(
+			[ ...blockTransformationSuggestions, ...aiEditorialReviewSuggestions ],
+			maxSuggestions
+		);
+	}, [
+		aiEditorialReviewSuggestions,
+		blockTransformationSuggestions,
+		blockTransformationsEnabled,
+		editorContext.postType,
+		hidden,
+		maxSuggestions,
+		selectedBlock,
+	] );
+	const visibleSuggestionIds = useMemo(
+		() => new Set( visibleSuggestions.map( ( suggestion ) => suggestion.id ) ),
+		[ visibleSuggestions ]
+	);
+	const visibleBlockTransformationSuggestions = useMemo(
+		() => applicable.filter( ( suggestion ) => visibleSuggestionIds.has( suggestion.id ) ),
+		[ applicable, visibleSuggestionIds ]
+	);
+	const visibleBlockTransformationSuggestionsKey = visibleBlockTransformationSuggestions
+		.map( ( suggestion ) => suggestion.id )
+		.join( '|' );
+	const isAiEditorialReviewSuggestionVisible = visibleSuggestionIds.has(
+		AI_EDITORIAL_REVIEW_SUGGESTION.id
+	);
 
 	useEffect( () => {
 		if ( editorContext.selectedBlock ) {
@@ -871,51 +917,36 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
 
 	useEffect( () => {
-		if ( ! suggestionsVisible || hidden || aiEditorialReviewSuggestions.length === 0 ) {
+		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionVisible ) {
 			return;
 		}
 		trackAiEditorialReviewSuggestionRenderedOnce();
-	}, [ hidden, aiEditorialReviewSuggestions.length, suggestionsVisible ] );
+	}, [ hidden, isAiEditorialReviewSuggestionVisible, suggestionsVisible ] );
 
 	useEffect( () => {
-		if ( ! suggestionsVisible || hidden || ! selectedBlock || ! blockTransformationsEnabled ) {
+		if (
+			! suggestionsVisible ||
+			hidden ||
+			! selectedBlock ||
+			! blockTransformationsEnabled ||
+			visibleBlockTransformationSuggestions.length === 0
+		) {
 			return;
 		}
-		trackRenderedBlockTransformationSuggestions( applicable, selectedBlock );
+		trackRenderedBlockTransformationSuggestions(
+			visibleBlockTransformationSuggestions,
+			selectedBlock
+		);
 	}, [
-		applicable,
-		applicableSuggestionsKey,
 		blockTransformationsEnabled,
 		hidden,
 		selectedBlock,
 		selectedBlock?.name,
 		suggestionsVisible,
+		visibleBlockTransformationSuggestions,
+		visibleBlockTransformationSuggestions.length,
+		visibleBlockTransformationSuggestionsKey,
 	] );
 
-	if ( hidden ) {
-		return { suggestions: [] };
-	}
-
-	if ( ! selectedBlock ) {
-		return {
-			suggestions: applySuggestionLimit(
-				getPostLevelSuggestions( editorContext.postType ),
-				maxSuggestions
-			),
-		};
-	}
-
-	if ( ! blockTransformationsEnabled ) {
-		return { suggestions: applySuggestionLimit( aiEditorialReviewSuggestions, maxSuggestions ) };
-	}
-
-	return {
-		suggestions: applySuggestionLimit(
-			[
-				...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
-				...aiEditorialReviewSuggestions,
-			],
-			maxSuggestions
-		),
-	};
+	return { suggestions: visibleSuggestions };
 }
