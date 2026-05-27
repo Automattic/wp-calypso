@@ -23,11 +23,11 @@ log( 'This is unexpected', { additionalData: 'data' } );
 
 - A piece of code you suspect is dead
 - Function that is triggered by weird parameters
-- Place you dont know how many people reach
+- Place you don't know how many people reach
 
 Generally, whenever you are wondering "what kind of users hit this place?" or you want to gather more data to debug a hard error, you can use the logger to make your life a bit easier.
 
 ### Gotchas
 
-Logger is initialized only on non-SSR environment and after initializing redux store. So you want be able to log any redux discrepencies.
-This is actually good, since you dont want to log any action that can flood the endpoint.
+Logger is initialized only on non-SSR environment and after initializing redux store. So you won't be able to log any redux discrepencies.
+This is actually good, since you don't want to log any action that can flood the endpoint.
