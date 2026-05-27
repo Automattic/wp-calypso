@@ -89,7 +89,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				// For expired-plan downgrades, hide plans that aren't eligible targets
 				// and show a helpful subtitle.
 				hideFreePlan: isExpiredDowngrade || undefined,
-				hideEcommercePlan: isExpiredDowngrade || undefined,
 				hideEnterprisePlan: isExpiredDowngrade || undefined,
 				hidePlanTypeSelector: isExpiredDowngrade || undefined,
 				headerText: isExpiredDowngrade ? __( 'Find your best fit' ) : undefined,

@@ -502,9 +502,10 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 
 	// Match the wpcom plan slugs: Personal, Premium (value_bundle), Business.
 	// Includes monthly, 2y, 3y variants.
-	const isDowngradeEligiblePlan = /^(personal-bundle|value_bundle|business-bundle)/.test(
-		purchase.product_slug
-	);
+	const isDowngradeEligiblePlan =
+		/^(personal-bundle|value_bundle|business-bundle|ecommerce-bundle)/.test(
+			purchase.product_slug
+		);
 
 	const isEligibleForDowngrade =
 		isEnabled( 'plans/expired-plan-downgrade' ) &&

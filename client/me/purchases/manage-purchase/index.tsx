@@ -605,7 +605,10 @@ class ManagePurchase extends Component<
 			purchase &&
 			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
 			isPlan( purchase ) &&
-			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) )
+			( isPersonal( purchase ) ||
+				isPremium( purchase ) ||
+				isBusiness( purchase ) ||
+				isEcommerce( purchase ) )
 		) {
 			const cancelTo = this.props.isSiteLevel
 				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
@@ -654,18 +657,21 @@ class ManagePurchase extends Component<
 		 ).includes( purchase.productSlug );
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
-		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
+		const isDowngradeEligible =
+			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
+			isPlan( purchase ) &&
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			( isPersonal( purchase ) ||
+				isPremium( purchase ) ||
+				isBusiness( purchase ) ||
+				isEcommerce( purchase ) );
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct && ! isDowngradeEligible ) {
 			return null;
 		}
 
 		let icon;
 		let buttonText;
-
-		const isDowngradeEligible =
-			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
-			isUpgradeablePlan &&
-			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
-			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) );
 
 		if ( isDowngradeEligible ) {
 			icon = shuffle;
