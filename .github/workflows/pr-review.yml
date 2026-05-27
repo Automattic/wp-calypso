@@ -364,9 +364,11 @@ jobs:
             steps.review_a4a.outputs.execution_file != '' ||
             steps.review_general.outputs.execution_file != ''
           )
+        continue-on-error: true
         env:
           TELEMETRY_TOKEN: ${{ secrets.ai_review_telemetry_token }}
           EXECUTION_FILE: ${{ steps.review_dashboard.outputs.execution_file || steps.review_a4a.outputs.execution_file || steps.review_general.outputs.execution_file }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           T_REPO: ${{ github.repository }}
           T_PR: ${{ github.event.pull_request.number || github.event.issue.number }}
           T_PR_AUTHOR: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
@@ -377,19 +379,38 @@ jobs:
           T_AREA: ${{ inputs.area }}
         shell: bash
         run: |
-          RESULT=$(jq 'map(select(.type == "result")) | last' "$EXECUTION_FILE")
+          if [ ! -s "$EXECUTION_FILE" ]; then
+            echo "telemetry: execution_file missing or empty, skipping"
+            exit 0
+          fi
 
-          SUBTYPE=$(echo "$RESULT" | jq -r '.subtype')
-          case "$SUBTYPE" in
-            success)              OUTCOME="success" ;;
-            error_max_turns)      OUTCOME="error_max_turns" ;;
-            *)                    OUTCOME="is_error" ;;
-          esac
+          if ! RESULT=$(jq 'map(select(.type == "result")) | last' "$EXECUTION_FILE" 2>/dev/null); then
+            echo "telemetry: failed to parse execution_file, skipping"
+            exit 0
+          fi
+
+          if [ "$RESULT" = "null" ] || [ -z "$RESULT" ]; then
+            OUTCOME="no_result"
+            RESULT="null"
+          else
+            SUBTYPE=$(echo "$RESULT" | jq -r '.subtype')
+            case "$SUBTYPE" in
+              success)              OUTCOME="success" ;;
+              error_max_turns)      OUTCOME="error_max_turns" ;;
+              *)                    OUTCOME="is_error" ;;
+            esac
+          fi
 
           case "$T_EVENT_NAME" in
             issue_comment|pull_request_review|pull_request_review_comment) IS_FOLLOWUP="true" ;;
             *) IS_FOLLOWUP="false" ;;
           esac
+
+          # issue_comment payload is issue-shaped (no pull_request.head), so
+          # head sha is empty on comment-triggered runs. Fall back to gh CLI.
+          if [ -z "$T_PR_HEAD_SHA" ] && [ -n "$T_PR" ]; then
+            T_PR_HEAD_SHA=$(gh pr view "$T_PR" --repo "$T_REPO" --json headRefOid --jq .headRefOid 2>/dev/null || echo "")
+          fi
 
           PAYLOAD=$(echo "$RESULT" | jq \
             --arg source          "wp-calypso-$T_AREA" \
@@ -425,8 +446,14 @@ jobs:
               ttft_ms:         (.ttft_ms // 0)
             }')
 
-          curl -s -f -X POST \
+          HTTP_STATUS=$(curl -s -o /tmp/telemetry_response -w "%{http_code}" -X POST \
             "https://public-api.wordpress.com/wpcom/v2/ai-review/telemetry" \
             -H "Content-Type: application/json" \
             -H "X-AI-Review-Token: ${TELEMETRY_TOKEN}" \
-            -d "$PAYLOAD"
+            -d "$PAYLOAD")
+          echo "telemetry: HTTP $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::warning::Failed to send AI review telemetry (HTTP $HTTP_STATUS)"
+            echo "telemetry response body:"
+            cat /tmp/telemetry_response || true
+          fi
