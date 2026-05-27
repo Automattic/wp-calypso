@@ -14,6 +14,7 @@ describe( 'site post replies fetchers', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 				before: '2026-05-01T00:00:00.000Z',
 			} )
 			.reply( 200, { comments: [ { ID: 7, content: 'hello' } ], found: 1 } );

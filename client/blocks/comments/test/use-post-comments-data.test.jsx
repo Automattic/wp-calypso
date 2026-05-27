@@ -56,6 +56,7 @@ describe( 'usePostCommentsData', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [

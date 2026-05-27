@@ -197,6 +197,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -221,6 +222,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -236,6 +238,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 				before: '2026-05-01T00:00:00.000Z',
 			} )
 			.reply( 200, {
@@ -328,6 +331,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -376,6 +380,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -405,6 +410,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -432,6 +438,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -447,6 +454,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 				before: '2026-05-01T00:00:00.000Z',
 			} )
 			.reply( 200, {
@@ -480,6 +488,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -504,6 +513,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 403, {
 				name: 'UnauthorizedError',
@@ -527,6 +537,7 @@ describe( 'useComments', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.times( 2 )
 			.reply( () => {
@@ -560,6 +571,7 @@ describe( 'usePostCommentsApiDisabled', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 403, {
 				name: 'UnauthorizedError',
@@ -602,6 +614,7 @@ describe( 'useComment', () => {
 			.get( '/rest/v1.1/sites/123/comments/789' )
 			.query( {
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				ID: 789,
@@ -626,6 +639,7 @@ describe( 'useComment', () => {
 			.get( '/rest/v1.1/sites/123/comments/789' )
 			.query( {
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				ID: 789,
@@ -647,6 +661,7 @@ describe( 'useComment', () => {
 			.get( '/rest/v1.1/sites/123/comments/789' )
 			.query( {
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.times( 2 )
 			.reply( () => {
@@ -681,6 +696,7 @@ describe( 'usePostCommentActions', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -749,6 +765,7 @@ describe( 'usePostCommentActions', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [
@@ -819,6 +836,7 @@ describe( 'usePostCommentActions', () => {
 				status: 'approved',
 				order: 'DESC',
 				author_wpcom_data: 'true',
+				force: 'wpcom',
 			} )
 			.reply( 200, {
 				comments: [],

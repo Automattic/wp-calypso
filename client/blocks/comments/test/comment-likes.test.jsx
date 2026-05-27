@@ -181,6 +181,38 @@ describe( 'CommentLikeButtonContainer', () => {
 		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
 	} );
 
+	it( 'renders like data from the fetched comments list after a page load', async () => {
+		const commentsScope = nock( BASE )
+			.get( '/rest/v1.1/sites/100/posts/1/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+				force: 'wpcom',
+			} )
+			.reply( 200, {
+				comments: [
+					{
+						ID: 5,
+						content: 'Hello',
+						date: '2026-05-01T00:00:00.000Z',
+						i_like: true,
+						like_count: 7,
+						parent: false,
+						status: 'approved',
+					},
+				],
+				found: 1,
+			} );
+
+		renderWithRedux( <CommentsBackedLikeButton /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
+		expect( screen.getByText( '7' ) ).toBeVisible();
+		expect( commentsScope.isDone() ).toBe( true );
+	} );
+
 	it( 'rolls back an optimistic comment like when the request fails', async () => {
 		const queryClient = makeQueryClient();
 		queryClient.setQueryData( siteCommentsInfiniteQuery( { siteId: 100, postId: 1 } ).queryKey, {

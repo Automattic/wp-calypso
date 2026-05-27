@@ -23,6 +23,7 @@ export const fetchSitePostReplies = async ( {
 			status,
 			order,
 			author_wpcom_data: true,
+			force: 'wpcom',
 			before,
 			after,
 			offset,

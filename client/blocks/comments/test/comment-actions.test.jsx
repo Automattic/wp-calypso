@@ -52,4 +52,13 @@ describe( 'CommentActions', () => {
 
 		consoleError.mockRestore();
 	} );
+
+	it( 'renders the comment like count from the comment object', () => {
+		renderCommentActions( {
+			comment: { ID: 789, i_like: true, isPlaceholder: false, like_count: 7 },
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
+		expect( screen.getByText( '7' ) ).toBeVisible();
+	} );
 } );
