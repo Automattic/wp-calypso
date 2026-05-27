@@ -18,17 +18,6 @@ const LaunchRocketIcon = () => (
 	</svg>
 );
 
-/**
- * Launch button rendered inside the interim omnibar. Uses the shared
- * `useSiteLaunch` hook so the omnibar and the dashboard's `SiteLaunchButton`
- * branch the same way on click. The site object is passed in by the parent
- * (which already loads it via the dashboard's singleton QueryClient), so no
- * additional site fetch is needed.
- *
- * Unlike the dashboard's `SiteLaunchButton`, this one stays mounted while
- * domains are loading and uses `disabled` instead, so it shows up in sync with
- * the rest of the omnibar instead of popping in a moment later.
- */
 export function OmnibarLaunchButton( { site }: { site: Site } ) {
 	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
 		useSiteLaunch( site, {
