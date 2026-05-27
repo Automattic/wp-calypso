@@ -41,7 +41,7 @@ $ npm install wpcom-xhr-request
 `Params`: optional parameters
 
 - `method`: `GET` as default.
-- `apiNamespace`: `WP-API` namepsace.
+- `apiNamespace`: `WP-API` namespace.
 - `apiVersion`: `REST-API` app version - `1` as default.
 - `proxyOrigin`: `https://public-api.wordpress.com` as default.
 - `token`: token authentication.
