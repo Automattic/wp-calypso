@@ -57,7 +57,7 @@ General guidelines should be a list of tips and best practices. Example:
 - To access the date data from outside the component utilise the `onDateCommit` and `onDateSelect` callback methods to trigger state updates in your parent component.
 - If you need to heavily customise the look and feel consider using one of the render prop overides to customise the appropriate aspect.
 - You can restrict the picker to certain date ranges using either/both of the `firstSelectableDate` and `lastSelectableDate` props to define a restriction.
-- The underlying `DatePicker` uses [React Day Picker](http://react-day-picker.js.org/)/
+- The underlying `DatePicker` uses [React Day Picker](http://react-day-picker.js.org/)
 - By default the layout will switch to a single calendar view at screens smaller than <480px
 
 ## Related components
