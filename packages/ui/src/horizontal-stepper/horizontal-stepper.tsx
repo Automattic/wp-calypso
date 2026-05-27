@@ -1,4 +1,5 @@
 // packages/ui/src/horizontal-stepper/horizontal-stepper.tsx
+import { Stack } from '@wordpress/ui';
 import { forwardRef } from '@wordpress/element';
 import { Stepper } from '../stepper';
 import { useStepRegistration } from '../stepper/use-step-registration';
@@ -43,12 +44,12 @@ function HorizontalStepperInner(
 						>
 							<Stepper.Trigger className={ styles[ 'trigger' ] }>
 								<Stepper.Indicator>{ step.indicator }</Stepper.Indicator>
-								<div className={ styles[ 'trigger-text' ] }>
+								<Stack direction="column" gap="xs">
 									<Stepper.Title>{ step.title }</Stepper.Title>
 									{ step.description && (
 										<Stepper.Description>{ step.description }</Stepper.Description>
 									) }
-								</div>
+								</Stack>
 							</Stepper.Trigger>
 						</Stepper.Step>
 					) ) }
