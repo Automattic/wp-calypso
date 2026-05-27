@@ -1,6 +1,6 @@
 # Plugin Autoupdate Toggle
 
-This component is used to display a plugin autupdate toggle.
+This component is used to display a plugin autoupdate toggle.
 
 ## How to use
 
