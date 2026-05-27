@@ -21,6 +21,7 @@ $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 	display: flex;
 	flex-direction: column;
 	background: var(--color-surface, #fff);
+	transition: transform 300ms cubic-bezier(0.33, 0, 0, 1);
 }
 
 .wpnc-app__detail-pane {
@@ -36,6 +37,14 @@ $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 
 	&.is-open {
 		transform: translateX(0);
+	}
+}
+
+// Single-screen mode (below xlarge): list slides off to the left while the
+// detail slides in over it.
+@media (max-width: #{$break-xlarge - 1px}) {
+	.wpnc-app__detail-pane.is-open ~ .wpnc-app__list-pane {
+		transform: translateX(-100%);
 	}
 }
 
