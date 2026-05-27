@@ -1,9 +1,9 @@
-import { Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState, useCallback } from 'react';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -77,7 +77,7 @@ export default function SubscriptionsList() {
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					if ( isBillingTypeBD && item.status === 'error' ) {
-						return <Gridicon icon="minus" />;
+						return <EmptyValueIndicator />;
 					}
 					let amount = '';
 					let currency = 'USD';

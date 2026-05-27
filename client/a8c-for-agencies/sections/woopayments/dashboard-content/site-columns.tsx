@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { memo, useState, useRef } from 'react';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -72,12 +73,12 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 };
 
 export const TransactionsColumn = memo( ( { transactions }: { transactions: number | null } ) => {
-	return transactions ?? <Gridicon icon="minus" />;
+	return transactions ?? <EmptyValueIndicator />;
 } );
 TransactionsColumn.displayName = 'TransactionsColumn';
 
 export const CommissionsPaidColumn = memo( ( { payout }: { payout: number | null } ) => {
-	return payout ? formatCurrency( payout, 'USD', { stripZeros: true } ) : <Gridicon icon="minus" />;
+	return payout ? formatCurrency( payout, 'USD', { stripZeros: true } ) : <EmptyValueIndicator />;
 } );
 CommissionsPaidColumn.displayName = 'CommissionsPaidColumn';
 
@@ -86,7 +87,7 @@ export const TimeframeCommissionsColumn = memo(
 		return estimatedPayout ? (
 			formatCurrency( estimatedPayout, 'USD', { stripZeros: true } )
 		) : (
-			<Gridicon icon="minus" />
+			<EmptyValueIndicator />
 		);
 	}
 );
@@ -160,7 +161,7 @@ export const CommissionEligibilityColumn = ( {
 
 	// Don't show eligibility status if WooPayments is not active.
 	if ( state !== 'active' ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	// Check if site is commission eligible.
