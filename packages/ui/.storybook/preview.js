@@ -30,6 +30,18 @@ const parameters = {
 			if ( aIsMdx && ! bIsMdx ) return -1;
 			if ( ! aIsMdx && bIsMdx ) return 1;
 
+			// Explicit order within UI/Stepper
+			const stepperOrder = [
+				'UI/Stepper/Horizontal',
+				'UI/Stepper/Vertical',
+				'UI/Stepper/Headless (Tier 2)',
+			];
+			const aStepperIndex = stepperOrder.indexOf( a.title );
+			const bStepperIndex = stepperOrder.indexOf( b.title );
+			if ( aStepperIndex !== -1 && bStepperIndex !== -1 ) {
+				return aStepperIndex - bStepperIndex;
+			}
+
 			// If both are MDX or both are not MDX, maintain original order
 			return 0;
 		},
