@@ -1,6 +1,6 @@
 # Plugins Search Results Page
 
-This component renders the plugins searcha results page.
+This component renders the plugins search results page.
 
 ## How to use
 
