@@ -43,7 +43,7 @@ To compare selected properties deeply, specify a `deep` option:
 ```js
 const comparator = compareProps( { deep: [ 'query' ] } );
 
-// returns true: the `page` properties are are strictly equal and
+// returns true: the `page` properties are strictly equal and
 // the `query` objects are deeply equal, although not identical
 comparator(
 	{
