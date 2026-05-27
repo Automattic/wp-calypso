@@ -7,13 +7,29 @@
 	height: 100vh;
 	max-height: inherit;
 	margin: -8px;
+}
 
-	@include break-small {
+@include break-small {
+	.dashboard-notifications__content {
 		max-width: 448px;
 	}
+}
 
-	@include break-xlarge {
+@include break-xlarge {
+	.dashboard-notifications__content {
 		max-width: 896px;
+	}
+
+	.dashboard-notifications.components-popover {
+		will-change: auto;
+	}
+
+	.dashboard-notifications.components-popover .components-popover__content {
+		background: transparent;
+		box-shadow: none;
+		border: none;
+		border-radius: 0;
+		overflow: visible;
 	}
 }
 
