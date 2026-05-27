@@ -26,7 +26,6 @@
 // ---------------------------------------------------------------------------
 
 $indicator-size: 24px;
-$indicator-radius: calc( #{$indicator-size} / 2 );
 
 .indicator {
 	display: inline-flex;
@@ -34,7 +33,7 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 	justify-content: center;
 	width: $indicator-size;
 	height: $indicator-size;
-	border-radius: $indicator-radius;
+	border-radius: 50%;
 	border: 1px solid theme.$components-color-gray-400;
 	flex-shrink: 0;
 	font-size: variables.$font-size-small;
@@ -59,11 +58,6 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 		border-color: theme.$components-color-foreground;
 		background: theme.$components-color-foreground;
 	}
-}
-
-// Bullet variant: current step uses a dashed border ring instead of solid
-.indicator.is-current[data-indicator-variant='bullet'] {
-	border-style: dashed;
 }
 
 // Completed step
@@ -96,6 +90,43 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 }
 
 // ---------------------------------------------------------------------------
+// Bullet indicator variant
+// ---------------------------------------------------------------------------
+
+// Upcoming: dashed gray-700 circle, no icon
+.indicator[data-indicator-variant='bullet'] {
+	border-style: dashed;
+	border-color: theme.$components-color-gray-700;
+	color: theme.$components-color-gray-700;
+}
+
+// Current: solid gray-900 border, transparent background + half-circle icon
+.indicator.is-current[data-indicator-variant='bullet'] {
+	border-style: solid;
+	border-color: theme.$components-color-foreground;
+	background: transparent;
+	color: theme.$components-color-foreground;
+}
+
+// Completed: gray-700 tick (not green), solid border
+.indicator.is-completed[data-indicator-variant='bullet'] {
+	border-style: solid;
+	border-color: theme.$components-color-gray-700;
+	background: transparent;
+	color: theme.$components-color-gray-700;
+}
+
+// Bullet variant: non-current step titles are gray-700 (upcoming and completed)
+[data-indicator-variant='bullet'] .title {
+	color: theme.$components-color-gray-700;
+}
+
+// Current step title stays dark
+[data-indicator-variant='bullet'] [data-current] .title {
+	color: theme.$components-color-foreground;
+}
+
+// ---------------------------------------------------------------------------
 // Trigger
 // ---------------------------------------------------------------------------
 
@@ -106,7 +137,7 @@ $indicator-radius: calc( #{$indicator-size} / 2 );
 
 .trigger {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: variables.$grid-unit-10;
 	background: none;
 	border: none;

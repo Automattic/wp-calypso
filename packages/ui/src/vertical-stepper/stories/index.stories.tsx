@@ -52,7 +52,12 @@ export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-function DefaultDemo( { 'aria-label': ariaLabel = 'Checkout', linear, headingLevel, indicatorVariant }: StoryArgs ) {
+function DefaultDemo( {
+	'aria-label': ariaLabel = 'Checkout',
+	linear,
+	headingLevel,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
@@ -91,7 +96,12 @@ export const Default: Story = {
 	render: DefaultDemo,
 };
 
-function LinearFlowDemo( { 'aria-label': ariaLabel = 'Linear checkout', linear, headingLevel, indicatorVariant }: StoryArgs ) {
+function LinearFlowDemo( {
+	'aria-label': ariaLabel = 'Linear checkout',
+	linear,
+	headingLevel,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper
@@ -237,7 +247,7 @@ flow requires.
 </VerticalStepper>
 \`\`\`
 
-**Try it:** Click any completed step (green check) to go back. Use "Continue →" to
+**Try it:** Click any completed step (check) to go back. Use "Continue →" to
 advance. The log on the right shows what the \`onValueChange\` handler received.
 				`,
 			},
@@ -246,7 +256,12 @@ advance. The log on the right shows what the \`onValueChange\` handler received.
 	render: BackNavigationDemo,
 };
 
-function WithErrorDemo( { 'aria-label': ariaLabel = 'Checkout with error', linear, headingLevel, indicatorVariant }: StoryArgs ) {
+function WithErrorDemo( {
+	'aria-label': ariaLabel = 'Checkout with error',
+	linear,
+	headingLevel,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
 		<VerticalStepper

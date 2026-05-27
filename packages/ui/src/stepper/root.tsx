@@ -134,6 +134,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 					style={ style }
 					aria-label={ ariaLabel }
 					aria-labelledby={ ariaLabelledBy }
+					data-indicator-variant={ indicatorVariant }
 				>
 					{ children }
 				</Accordion.Root>
@@ -149,6 +150,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 					style={ style }
 					aria-label={ ariaLabel }
 					aria-labelledby={ ariaLabelledBy }
+					data-indicator-variant={ indicatorVariant }
 				>
 					{ children }
 				</Tabs.Root>
