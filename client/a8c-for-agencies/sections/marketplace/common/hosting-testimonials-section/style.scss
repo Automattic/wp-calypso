@@ -63,9 +63,4 @@
 
 .hosting-testimonials__item-profile-link {
 	@include body-large;
-
-	a {
-		color: var(--color-text);
-		text-decoration: underline;
-	}
 }
