@@ -53,6 +53,9 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 }
 
 function getBusinessTaxSuffix( responseCart: ResponseCart ): string {
+	if ( ! responseCart.tax?.location ) {
+		return '';
+	}
 	const { is_for_business, subdivision_code } = responseCart.tax.location;
 	if ( is_for_business && subdivision_code ) {
 		return (
