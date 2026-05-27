@@ -3,9 +3,14 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { loadFitScript } from '../../lib/load-fit-script';
 
 import './pdf-viewer.scss';
+
+declare global {
+	interface Window {
+		applyA4aFit?: ( root: Document | ShadowRoot ) => Promise< void >;
+	}
+}
 
 export interface PdfViewerPage {
 	srcDoc: string;
@@ -121,28 +126,30 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 					: node.outerHTML
 			)
 			.join( '' );
-		// Drop body scripts before injecting markup — innerHTML cannot
-		// execute them anyway, and leaving them in clutters the DOM.
+		// The deck composer inlines fit.js as a `<script>` block before
+		// `</body>` so Browserless can run it post-render. Shadow roots
+		// don't execute scripts inserted via `innerHTML`, so pull the
+		// fitter out of the parsed body and re-attach it to the outer
+		// document — `createElement('script')` + `textContent` does run.
+		// Idempotent: only attach once per tab; `window.applyA4aFit` is
+		// the load marker.
+		const scripts = Array.from( parsed.body.querySelectorAll( 'script' ) );
 		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
 		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
-		// loadFitScript is a singleton — fetches the wpcom fit-script
-		// endpoint once per session and resolves when applyA4aFit is
-		// available on `window`. Each shadow root awaits the load before
-		// running the fitter, so there's no race between mount order and
-		// script readiness.
-		let cancelled = false;
-		loadFitScript().then( ( ok ) => {
-			if ( cancelled || ! ok || ! window.applyA4aFit ) {
-				return;
+		if ( ! window.applyA4aFit ) {
+			const fitter = scripts.find( ( s ) => ( s.textContent ?? '' ).includes( 'applyA4aFit' ) );
+			if ( fitter ) {
+				const live = document.createElement( 'script' );
+				live.textContent = fitter.textContent;
+				document.head.appendChild( live );
 			}
+		}
+		if ( window.applyA4aFit ) {
 			window.applyA4aFit( shadow ).catch( ( e ) => {
 				// eslint-disable-next-line no-console
 				console.warn( '[a4a-preview] applyA4aFit error', e );
 			} );
-		} );
-		return () => {
-			cancelled = true;
-		};
+		}
 	}, [ srcDoc, title ] );
 
 	return (

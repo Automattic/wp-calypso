@@ -7,14 +7,13 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import useAgentStudioCollateral, {
 	type AgentStudioCollateralVariant,
 } from '../../data/use-agent-studio-collateral';
 import useAgentStudioRun, { type AgentStudioRunPayload } from '../../data/use-agent-studio-run';
 import useAgentStudioVariantHtml from '../../data/use-agent-studio-variant-html';
 import usePrefetchAgentStudioVariantHtml from '../../data/use-prefetch-agent-studio-variant-html';
-import { loadFitScript } from '../../lib/load-fit-script';
 import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
@@ -74,14 +73,6 @@ export default function OutputDetailContent( { output }: Props ) {
 	// chevron flips and React skips the body shadow-root rebuild.
 	const selectedVariantHtml = useAgentStudioVariantHtml( selectedVariant?.html_url );
 	const baseVariantHtml = useAgentStudioVariantHtml( variants[ 0 ]?.html_url );
-
-	// Pull the fitter from its dedicated wpcom endpoint and register
-	// `window.applyA4aFit` once per session. Independent of deck content
-	// + splitIntoPages so a stale deck cache can't pin the preview to
-	// an old fitter.
-	useEffect( () => {
-		loadFitScript();
-	}, [] );
 
 	const coverSrcDoc = useMemo< string | undefined >( () => {
 		if ( ! selectedVariantHtml.data ) {
