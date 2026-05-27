@@ -48,6 +48,15 @@ function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefine
 
 export interface ConnectorFeatureCards {
 	cards: FeatureCard[];
+	/**
+	 * Hint for `<FeaturesSection />` that the first card should be rendered
+	 * as a full-width hero on its own row, with the remaining card(s)
+	 * stacked beneath it. Set whenever A4A is the primary card so the
+	 * agency-context card is visually anchored regardless of how many
+	 * supporting cards accompany it (1 or 2). Always `false` when no A4A
+	 * card is present.
+	 */
+	heroFirstCard: boolean;
 }
 
 /**
@@ -65,6 +74,12 @@ export interface ConnectorFeatureCards {
  * and to read sensibly in isolation, so it doubles as the condensed
  * summary in the A4A scenario and as the lead bullet when A4A is absent
  * (see the bullet[0] invariant on `getFeatureCardData`).
+ *
+ * The result also exposes `heroFirstCard` so the consumer can opt the
+ * `<FeaturesSection />` layout into the full-width hero treatment for the
+ * A4A card whenever it's present — even in the 2-card scenarios where
+ * the default 2-up grid would otherwise put A4A side-by-side with a
+ * supporting card.
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
@@ -90,7 +105,7 @@ export function getConnectorFeatureCards(
 		};
 	} );
 
-	return { cards };
+	return { cards, heroFirstCard: hasA4A };
 }
 
 /**
@@ -99,12 +114,17 @@ export function getConnectorFeatureCards(
  * Secondary admin connections enable a narrower set of features than the
  * owner connection. The card selection reuses the same plugin-aware
  * family/priority system as first connections, but the bullet copy
- * reflects the narrower scope (SSO, cloud management, etc.).
+ * reflects the narrower scope (cloud management, activity log access).
+ *
+ * `heroFirstCard` mirrors the primary-owner behavior — when A4A is
+ * present in the secondary row, it claims its own row on top so the
+ * supporting cards don't compete with it for layout space.
  */
 export function getSecondaryAdminFeatureCards(
 	pluginSlugs: readonly string[] = []
 ): ConnectorFeatureCards {
 	const { cardKeys } = getFeatureSelection( pluginSlugs );
+	const hasA4A = cardKeys.includes( 'a4a' );
 
 	const cards: FeatureCard[] = cardKeys.map( ( key ) => {
 		const data = getSecondaryFeatureCardData( key );
@@ -116,5 +136,5 @@ export function getSecondaryAdminFeatureCards(
 		};
 	} );
 
-	return { cards };
+	return { cards, heroFirstCard: hasA4A };
 }

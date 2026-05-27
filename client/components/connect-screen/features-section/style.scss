@@ -19,6 +19,23 @@
 			grid-template-columns: 1fr 1fr;
 		}
 
+		// `has-hero-card` opts the two-card layout out of the 2-up grid and
+		// into the same stacked layout the three-card scenario uses: first
+		// card full-width on top, supporting card alone in its own row
+		// beneath it. Used whenever A4A is one of two active cards so the
+		// agency-context hero never has to compete with a single supporting
+		// card for shoulder-to-shoulder layout space. Both rows center their
+		// bullets — when a card has the row to itself, centering reads as
+		// a deliberate hero block rather than a left-anchored list (see the
+		// bullet-text `max-width` override below).
+		.connect-screen-features-section.has-2-card.has-hero-card & {
+			grid-template-columns: 1fr;
+
+			.connect-screen-features-section__card-bullet {
+				justify-content: center;
+			}
+		}
+
 		// Three cards stack the highest-priority family (A4A) full-width on
 		// top, with the remaining two (Woo + Jetpack) sharing the row below
 		// — matches the two-card layout the no-A4A scenario already uses.
@@ -110,11 +127,14 @@
 // a tidy centered block instead of stranding to the left.
 //
 // Applied to the same surfaces that opt into row-level centering above:
-// every card in `has-1-card`, and the full-width A4A hero in
-// `has-3-card`. The shared positional `> span:last-child` selector
-// targets the bullet's text wrapper (the icon wrapper carries
-// `aria-hidden`, the text wrapper is the second/last span).
+// every card in `has-1-card`, every card in `has-2-card.has-hero-card`
+// (both rows are full-width when the hero treatment is on), and the
+// full-width A4A hero in `has-3-card`. The shared positional
+// `> span:last-child` selector targets the bullet's text wrapper (the
+// icon wrapper carries `aria-hidden`, the text wrapper is the
+// second/last span).
 .connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet > span:last-child,
+.connect-screen-features-section.has-2-card.has-hero-card .connect-screen-features-section__card-bullet > span:last-child,
 .connect-screen-features-section.has-3-card .connect-screen-features-section__card:first-child .connect-screen-features-section__card-bullet > span:last-child {
 	// `ch` is the right unit semantically (character-count cap, not a
 	// font-size derivative) but is off the project's allowed list — the

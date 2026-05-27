@@ -127,4 +127,46 @@ describe( 'getConnectorFeatureCards', () => {
 			expect( a4a?.bullets.length ).toBeGreaterThanOrEqual( 2 );
 		} );
 	} );
+
+	describe( 'heroFirstCard hint', () => {
+		test( 'is true when A4A is present alongside other plugins', () => {
+			expect(
+				getConnectorFeatureCards( [ 'automattic-for-agencies-client', 'woocommerce' ] )
+					.heroFirstCard
+			).toBe( true );
+			expect(
+				getConnectorFeatureCards( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ] )
+					.heroFirstCard
+			).toBe( true );
+			expect(
+				getConnectorFeatureCards( [ 'automattic-for-agencies-client', 'jetpack-social' ] )
+					.heroFirstCard
+			).toBe( true );
+		} );
+
+		test( 'is true even when A4A is the only active plugin', () => {
+			// `heroFirstCard` is a presentation hint; the single-card layout
+			// is unaffected by it, so the value just reflects "A4A is the
+			// primary card".
+			expect( getConnectorFeatureCards( [ 'automattic-for-agencies-client' ] ).heroFirstCard ).toBe(
+				true
+			);
+		} );
+
+		test( 'is false when no A4A plugin is present', () => {
+			expect( getConnectorFeatureCards( [ 'woocommerce', 'jetpack' ] ).heroFirstCard ).toBe(
+				false
+			);
+			expect( getConnectorFeatureCards( [ 'jetpack' ] ).heroFirstCard ).toBe( false );
+			expect( getConnectorFeatureCards( [] ).heroFirstCard ).toBe( false );
+		} );
+
+		test( 'getSecondaryAdminFeatureCards mirrors the same A4A hint', () => {
+			expect(
+				getSecondaryAdminFeatureCards( [ 'automattic-for-agencies-client', 'jetpack' ] )
+					.heroFirstCard
+			).toBe( true );
+			expect( getSecondaryAdminFeatureCards( [ 'jetpack' ] ).heroFirstCard ).toBe( false );
+		} );
+	} );
 } );
