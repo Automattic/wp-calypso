@@ -1,0 +1,24 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.influenced-revenue__strapline {
+	align-items: center;
+	display: inline-flex;
+	gap: 4px;
+}
+
+.influenced-revenue__info-icon {
+	cursor: pointer;
+	display: inline-flex;
+	color: var(--color-neutral-70);
+}
+
+.influenced-revenue__popover-content {
+	@include body-medium;
+
+	min-inline-size: 200px;
+
+	@include break-mobile {
+		min-inline-size: 300px;
+	}
+}
