@@ -3,7 +3,7 @@
 Used by Security2faSetup, this component manages the display and verification
 of backup codes during the 2fa activation flow. Note that because the state
 transitions and presentation are substantially different than when 2fa is
-already enable that there is a separate component, Security2faBackupCodes,
+already enabled, there is a separate component, Security2faBackupCodes,
 that is used to let the user manage backup codes when 2fa is already enabled.
 
 This component uses Security2faBackupCodesDetail (a header like component),
