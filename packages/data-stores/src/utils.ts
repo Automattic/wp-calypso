@@ -21,7 +21,7 @@ export const isInSupportSession = () => {
 			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
 			!! document.querySelector( '#a8c-support-session-overlay' ) ||
 			// Atomic
-			document.body.classList.contains( 'support-session' ) ||
+			document.body?.classList.contains( 'support-session' ) ||
 			document.querySelector( '#wpcom > .is-support-session' ) ||
 			( typeof isSupportSession !== 'undefined' && !! isSupportSession ) ||
 			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU ) ||
