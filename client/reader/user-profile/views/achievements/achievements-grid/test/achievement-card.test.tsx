@@ -85,4 +85,48 @@ describe( 'AchievementCard', () => {
 		expect( container.querySelector( '.achievement-card__progress' ) ).toBeNull();
 		expect( screen.queryByRole( 'progressbar' ) ).toBeNull();
 	} );
+
+	test( 'renders the Secret label when isSecret is true', () => {
+		render( <AchievementCard title="Hidden Gem" description="You found it." isSecret /> );
+
+		expect( screen.getByText( 'Secret' ) ).toBeVisible();
+	} );
+
+	test( 'renders the Retired label when isRetired is true', () => {
+		render( <AchievementCard title="Old Badge" description="Long ago." isRetired /> );
+
+		expect( screen.getByText( 'Retired' ) ).toBeVisible();
+	} );
+
+	test( 'renders the A8C-only label when isA8cOnly is true', () => {
+		render( <AchievementCard title="Internal" description="Staff only." isA8cOnly /> );
+
+		expect( screen.getByText( 'A8C-only' ) ).toBeVisible();
+	} );
+
+	test( 'renders multiple status labels alongside the level badge', () => {
+		render(
+			<AchievementCard
+				title="Hidden Gem"
+				badge="Level 3"
+				description="You found it."
+				isSecret
+				isRetired
+				isA8cOnly
+			/>
+		);
+
+		expect( screen.getByText( 'Level 3' ) ).toBeVisible();
+		expect( screen.getByText( 'Secret' ) ).toBeVisible();
+		expect( screen.getByText( 'Retired' ) ).toBeVisible();
+		expect( screen.getByText( 'A8C-only' ) ).toBeVisible();
+	} );
+
+	test( 'omits all status labels by default', () => {
+		render( <AchievementCard title="Plain" description="Nothing special." /> );
+
+		expect( screen.queryByText( 'Secret' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Retired' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'A8C-only' ) ).not.toBeInTheDocument();
+	} );
 } );

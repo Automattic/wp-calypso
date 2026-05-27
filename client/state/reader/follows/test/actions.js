@@ -9,10 +9,6 @@ import {
 	unsubscribeToNewPostNotifications,
 } from '../actions';
 
-jest.mock( 'calypso/state/reader/posts/actions', () => ( {
-	receivePosts: ( posts ) => Promise.resolve( posts ),
-} ) );
-
 describe( 'actions', () => {
 	describe( '#recordFollowError', () => {
 		test( 'should return an action on follow error', () => {

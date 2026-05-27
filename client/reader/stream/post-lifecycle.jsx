@@ -1,15 +1,14 @@
 import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment, useCallback, useRef } from 'react';
+import { Component, forwardRef, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
@@ -55,7 +54,7 @@ const useTrackPostView = ( postObj, recordTracksEvent ) => {
 
 			observerRef.current.observe( wrapperDiv );
 		},
-		[ postObj, observerRef ]
+		[ postObj, observerRef, recordTracksEvent ]
 	);
 };
 
@@ -120,12 +119,7 @@ class PostLifecycle extends Component {
 				/>
 			);
 		} else if ( ! post ) {
-			return (
-				<Fragment>
-					<QueryReaderPost postKey={ postKey } />
-					<PostPlaceholder />
-				</Fragment>
-			);
+			return <PostPlaceholder />;
 		} else if ( post.is_error ) {
 			return <PostUnavailable post={ post } />;
 		} else if (
@@ -149,12 +143,10 @@ class PostLifecycle extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
+const ConnectedPostLifecycle = connect(
+	( _state, ownProps ) => {
 		return {
-			post: ownProps.postKey.isSynthetic
-				? ownProps.postKey
-				: getPostByKey( state, ownProps.postKey ),
+			post: ownProps.postKey.isSynthetic ? ownProps.postKey : ownProps.post,
 		};
 	},
 	{
@@ -166,3 +158,10 @@ export default connect(
 		areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ),
 	}
 )( PostLifecycle );
+
+const PostLifecycleWithPost = forwardRef( function PostLifecycleWithPost( props, ref ) {
+	const post = useCachedPost( props.postKey );
+	return <ConnectedPostLifecycle { ...props } post={ post } ref={ ref } />;
+} );
+
+export default PostLifecycleWithPost;

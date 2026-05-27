@@ -50,6 +50,7 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -256,6 +257,8 @@ function UnifiedPlansStep( {
 	isStepperUpgradeFlow = false,
 	selectedFeature,
 }: UnifiedPlansStepProps ) {
+	const [ isContentReady, setIsContentReady ] = useState( ! useStepContainerV2 );
+	const handlePlansReady = useCallback( () => setIsContentReady( true ), [] );
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
@@ -267,6 +270,7 @@ function UnifiedPlansStep( {
 		[]
 	);
 	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -664,6 +668,7 @@ function UnifiedPlansStep( {
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
 				selectedFeature={ selectedFeature }
+				onReady={ useStepContainerV2 ? handlePlansReady : undefined }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
@@ -680,42 +685,66 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
-				<MarketingMessage path="signup/plans" />
-				<Step.WideLayout
-					headingColumnWidth={ 6 }
-					className="step-container-v2--plans"
-					topBar={
-						<Step.TopBar
-							leftElement={
-								goBack ? (
-									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
-								) : undefined
-							}
-							rightElement={
-								isOnboardingFlow( flowName ) ? (
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ translate( 'Need help?' ) }
-									</Step.LinkButton>
-								) : undefined
-							}
-						/>
-					}
-					heading={
-						<>
-							{ ( intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting' ) && (
-								<IntentToggle
-									currentIntent={ intent }
-									onIntentChange={ ( newIntent ) => {
-										onIntentChange?.( newIntent );
-									} }
-								/>
-							) }
-							<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
-						</>
-					}
-				>
-					{ stepContent }
-				</Step.WideLayout>
+				{ /*
+				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
+				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading
+				 * overlays until onReady fires, then both swap in a single React commit.
+				 *
+				 * This is intentionally a one-way latch: once ready, we don't re-hide on
+				 * subsequent data refetches (e.g. intent toggle) — PlansFeaturesMain's
+				 * internal Spinner handles those transitions. The latch resets naturally
+				 * on step remount (stepper uses key={step.slug}).
+				 */ }
+				{ ! isContentReady && <Step.Loading /> }
+				<div aria-hidden={ ! isContentReady ? true : undefined }>
+					<MarketingMessage path="signup/plans" />
+					<Step.WideLayout
+						headingColumnWidth={ 6 }
+						className={ clsx( 'step-container-v2--plans', {
+							'is-plans-loading': ! isContentReady,
+						} ) }
+						topBar={
+							<Step.TopBar
+								leftElement={
+									goBack ? (
+										<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+									) : undefined
+								}
+								rightElement={
+									isOnboardingFlow( flowName ) ? (
+										<>
+											{ stepCounter && (
+												<Step.StepCounter
+													current={ stepCounter.current }
+													total={ stepCounter.total }
+												/>
+											) }
+											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ translate( 'Need help?' ) }
+											</Step.LinkButton>
+										</>
+									) : undefined
+								}
+							/>
+						}
+						heading={
+							<>
+								{ ( intent === 'plans-website-builder' ||
+									intent === 'plans-wordpress-hosting' ) && (
+									<IntentToggle
+										currentIntent={ intent }
+										onIntentChange={ ( newIntent ) => {
+											onIntentChange?.( newIntent );
+										} }
+									/>
+								) }
+								<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
+							</>
+						}
+					>
+						{ stepContent }
+					</Step.WideLayout>
+				</div>
 			</>
 		);
 	}

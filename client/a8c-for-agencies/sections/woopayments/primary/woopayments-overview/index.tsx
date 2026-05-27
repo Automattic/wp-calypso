@@ -295,7 +295,7 @@ const WooPaymentsOverview = () => {
 				<PageSectionColumns
 					heading={ translate( 'Earn more from every project' ) }
 					background={ {
-						color: '#FAF7F3',
+						color: 'var(--color-neutral-0)',
 					} }
 				>
 					<PageSectionColumns.Column>
@@ -479,7 +479,7 @@ const WooPaymentsOverview = () => {
 
 				<PageSectionColumns
 					background={ {
-						color: '#F1F1F2',
+						color: 'var(--color-neutral-0)',
 					} }
 				>
 					<PageSectionColumns.Column heading={ translate( 'About WooPayments' ) }>
@@ -518,7 +518,7 @@ const WooPaymentsOverview = () => {
 						</>
 					}
 					background={ {
-						color: '#FAF7F3',
+						color: 'var(--color-neutral-0)',
 					} }
 				>
 					<PageSectionColumns.Column>

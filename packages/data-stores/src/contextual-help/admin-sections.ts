@@ -150,7 +150,7 @@ export function generateAdminSections(
 				__(
 					"By upgrading to the %s plan, you'll be able to monetize your site through the WordAds program."
 				),
-				getPlan( PLAN_PREMIUM )?.getTitle()
+				String( getPlan( PLAN_PREMIUM )?.getTitle() ?? '' )
 			),
 			link: `/earn/${ siteSlug }`,
 			synonyms: [ 'monetize', 'wordads', 'premium', 'explorer' ],

@@ -14,15 +14,15 @@ import { useComposerConfig } from './composer-config';
 import { ComposerFooter } from './composer-footer';
 import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
-import { useComposer } from './composer-provider';
+import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
-import { countGraphemes } from './grapheme-count';
+import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
 
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
-	const { mode, closeComposer, mediaSlot, markOverLimit } = useComposer();
+	const { mode, closeComposer, mediaSlot, protocolExtrasSlot, markOverLimit } = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( config.mutationFactory( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -44,8 +44,16 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// extend resolves.
 	const [ isExtending, setIsExtending ] = useState( false );
 	const lastErrorSignatureRef = useRef< string | null >( null );
+	// Tracks the previous `mode` so `initialText` seeds only on the
+	// null→non-null transition. Without the guard, a future change that
+	// updates a field on the active `mode` (e.g. a `replyTo` mutation, or
+	// a parent passing a new object ref) would re-fire the seed branch
+	// and wipe the user's in-flight typing.
+	const prevModeRef = useRef< ActiveMode | null >( null );
 
 	useEffect( () => {
+		const prevMode = prevModeRef.current;
+		prevModeRef.current = mode;
 		if ( ! mode ) {
 			setText( '' );
 			setConfirmDiscard( false );
@@ -53,6 +61,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
+		} else if ( ! prevMode && mode.kind === 'standalone' && mode.initialText ) {
+			setText( mode.initialText );
 		}
 		// mutation.reset is stable across renders; intentionally not in deps.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,6 +75,35 @@ export function ComposerModal< TError, TParams, TResult >() {
 		const { event, props } = config.tracks.opened( mode );
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
+
+	// Mobile keyboard handling. The WordPress Modal overlay is anchored to the
+	// layout viewport, but browsers shrink the *visual* viewport when the
+	// on-screen keyboard appears — so the bottom of the bottom-sheet (Post
+	// button + media controls) ends up hidden behind the keyboard. Mirror
+	// `window.visualViewport.height` into a CSS variable that the overlay
+	// reads on narrow widths. See style.scss.
+	const isOpen = mode != null;
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+		const vv = window.visualViewport;
+		if ( ! vv ) {
+			return;
+		}
+		const root = document.documentElement;
+		const update = () => {
+			root.style.setProperty( '--composer-modal-viewport-height', `${ vv.height }px` );
+		};
+		update();
+		vv.addEventListener( 'resize', update );
+		vv.addEventListener( 'scroll', update );
+		return () => {
+			vv.removeEventListener( 'resize', update );
+			vv.removeEventListener( 'scroll', update );
+			root.style.removeProperty( '--composer-modal-viewport-height' );
+		};
+	}, [ isOpen ] );
 
 	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
 	// both paths render through `config.errorMessage` and fire `errorShown`.
@@ -93,7 +132,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 		}
 	}, [ displayError, mode, dispatch, config ] );
 
-	const graphemeCount = useMemo( () => countGraphemes( text ), [ text ] );
+	// Per-protocol counter unit: most protocols count graphemes against a
+	// hard wire cap; Fediverse counts words against a soft "blog-post" cap
+	// that surfaces the overflow handoff for longer text.
+	const counterUnit = config.counter ?? 'graphemes';
+	const graphemeCount = useMemo(
+		() => ( counterUnit === 'words' ? countWords( text ) : countGraphemes( text ) ),
+		[ text, counterUnit ]
+	);
 
 	const handleClose = useCallback( () => {
 		if ( mutation.isPending || isExtending ) {
@@ -118,6 +164,11 @@ export function ComposerModal< TError, TParams, TResult >() {
 		}
 	}, [ tooLong, markOverLimit ] );
 	const empty = graphemeCount === 0;
+	// `softLimit: true` (Fediverse) means the threshold is a UX cue, not a
+	// wire-level cap — submission stays enabled past the limit and the
+	// overflow handoff acts as a suggestion. Atmosphere / Mastodon keep
+	// the hard-cap gate (default).
+	const overLimitBlocksSubmit = tooLong && ! config.softLimit;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
 	// image still compressing/uploading) blocks regardless. `isExtending` covers
@@ -126,7 +177,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	const canSubmit =
 		! mutation.isPending &&
 		! isExtending &&
-		! tooLong &&
+		! overLimitBlocksSubmit &&
 		! mediaSlot.isAnyPending &&
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
@@ -139,21 +190,28 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
-		// `extendBuildParams` may return synchronously (atmosphere) or as a
-		// Promise (mastodon, where staged media is uploaded at publish time).
-		// Awaiting in both cases keeps the call site uniform; sync returns
-		// resolve in a microtask without changing observable behaviour.
-		// A rejection here (e.g. a Mastodon media upload failing with a
-		// classified `MastodonError`) must surface through the same path as a
-		// post-mutation error: `config.errorMessage` rendered in the visible
-		// error region + `tracks.errorShown` fired. We funnel the rejection
-		// into local `extendError` state which `displayError` ORs into the
-		// rendered error and the analytics-watching effect, so the UX is
-		// indistinguishable from a `mutation.error`.
+		// Run protocol-extras then media-extras through the same try/catch.
+		// `protocolExtrasSlot.extendBuildParams` is typed as
+		// `( params: unknown ) => unknown` — sync today, but the contract
+		// doesn't forbid throws (or a future async widening for handle
+		// validation, derived params, etc.). Without the guard a throw here
+		// would skip the mutation, leave `mutation.isPending` false, and
+		// leave the Post button enabled with no error UI. Awaiting handles
+		// both sync and Promise returns uniformly.
+		// A rejection in either step (e.g. a Mastodon media upload failing
+		// with a classified `MastodonError`) must surface through the same
+		// path as a post-mutation error: `config.errorMessage` rendered in
+		// the visible error region + `tracks.errorShown` fired. We funnel
+		// the rejection into local `extendError` state which `displayError`
+		// ORs into the rendered error and the analytics-watching effect, so
+		// the UX is indistinguishable from a `mutation.error`.
 		let params: TParams;
 		setIsExtending( true );
 		try {
-			params = ( await mediaSlot.extendBuildParams( baseParams ) ) as TParams;
+			const baseParamsWithExtras = ( await protocolExtrasSlot.extendBuildParams(
+				baseParams
+			) ) as TParams;
+			params = ( await mediaSlot.extendBuildParams( baseParamsWithExtras ) ) as TParams;
 		} catch ( error ) {
 			setExtendError( error as TError );
 			return;
@@ -167,7 +225,10 @@ export function ComposerModal< TError, TParams, TResult >() {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
-				dispatch( recordReaderTracksEvent( event, props ) );
+				const extraProps = protocolExtrasSlot.getTracksProps?.() ?? {};
+				// Extras merged first so canonical props (connection_id, mode_kind, …)
+				// always win when a protocol's extras key collides.
+				dispatch( recordReaderTracksEvent( event, { ...extraProps, ...props } ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
@@ -187,6 +248,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		translate,
 		config,
 		mediaSlot,
+		protocolExtrasSlot,
 		queryClient,
 	] );
 
@@ -224,6 +286,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
 				{ mediaSlot.renderGrid() }
+				{ protocolExtrasSlot.renderControls() }
 				{ errorMessage && (
 					<div id="social-composer-error" className="social-composer__error" role="alert">
 						{ errorMessage }
@@ -235,7 +298,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 					isPending={ mutation.isPending }
 					limit={ limit }
 					disabled={ ! canSubmit }
-					footerStart={ mediaSlot.renderFooterTrigger() }
+					footerStart={
+						<>
+							{ mediaSlot.renderFooterTrigger() }
+							{ protocolExtrasSlot.renderTrigger?.() ?? null }
+						</>
+					}
+					counterUnit={ counterUnit }
+					softLimit={ config.softLimit }
 				/>
 				<ComposerOverflowHandoff text={ text } />
 			</Modal>

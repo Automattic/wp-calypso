@@ -1,6 +1,7 @@
 import { createPostMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { useAtmosphereInteractionSettings } from './interaction-settings';
 import { getThreadUrl } from './route';
 import { useAtmosphereComposerMedia } from './use-atmosphere-composer-media';
 import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
@@ -154,6 +155,7 @@ export const atmosphereComposerConfig: ComposerConfig<
 		} );
 	},
 	useMedia: useAtmosphereComposerMedia,
+	useProtocolExtras: useAtmosphereInteractionSettings,
 };
 
 function titleForMode( mode: ActiveMode, t: Translate ): string {
@@ -221,13 +223,7 @@ function errorMessageFor( err: AtmosphereError, t: Translate ): ReactNode {
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
-			return t( 'Your Bluesky connection needs to be reconnected. {{a}}Reconnect{{/a}}', {
-				components: {
-					a: <a href="/reader/atmosphere/connect" target="_blank" rel="noopener noreferrer" />,
-				},
-				comment:
-					'Composer error shown when the user’s Bluesky session expired; {{a}}…{{/a}} wraps a link to reconnect.',
-			} );
+			return t( 'Something went wrong with your Bluesky connection.' );
 		case 'reply_disabled':
 			return t( 'The author has restricted who can reply to this post.' );
 		case 'quote_disabled':

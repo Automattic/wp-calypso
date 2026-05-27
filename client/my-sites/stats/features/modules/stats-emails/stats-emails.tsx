@@ -23,6 +23,7 @@ import {
 	OpensTooltipContent,
 	ClicksTooltipContent,
 	hasUniqueMetrics,
+	getClicksDisplayValue,
 	EmailStatsItem,
 } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -116,23 +117,12 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					metricLabel={ translate( 'Clicks' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value: number, item: EmailStatsItem ) => {
-						if ( ! item?.opens ) {
+						if ( ! item ) {
 							return value;
 						}
-						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
-						const clicks = parseInt( String( item.clicks ), 10 );
-						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
 						return (
 							<TooltipWrapper
-								value={
-									hasUniques
-										? `${ formatNumber( item.clicks_rate, {
-												numberFormatOptions: {
-													maximumFractionDigits: 2,
-												},
-										  } ) }%`
-										: '—'
-								}
+								value={ getClicksDisplayValue( item ) }
 								item={ item }
 								TooltipContent={ ClicksTooltipContent }
 							/>

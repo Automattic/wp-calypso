@@ -1,17 +1,19 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { siteApmOverviewQuery } from '../mock-data';
 import ChartSlot from './chart-slot';
 import SlowRequestsList from './slow-requests-list';
-import type { Site } from '@automattic/api-core';
+import type { MergedAggregate } from '../aggregate';
 
-export default function Overview( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmOverviewQuery( site.ID ) );
-
+export default function Overview( {
+	merged,
+	siteSlug,
+}: {
+	merged: MergedAggregate;
+	siteSlug: string;
+} ) {
 	return (
 		<VStack spacing={ 6 }>
-			<ChartSlot />
-			<SlowRequestsList site={ site } slowRequests={ data.slow_requests } />
+			<ChartSlot timeseries={ merged.timeseries } summary={ merged.summary } />
+			<SlowRequestsList routes={ merged.slowest.routes } siteSlug={ siteSlug } />
 		</VStack>
 	);
 }

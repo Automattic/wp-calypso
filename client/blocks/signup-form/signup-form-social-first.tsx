@@ -49,6 +49,7 @@ interface SignupFormSocialFirst {
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
 	isEmailFirstVariant?: boolean;
+	isEmailAtBottom?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -91,6 +92,7 @@ const SignupFormSocialFirst = ( {
 	backButtonInFooter = true,
 	emailLabelText,
 	isEmailFirstVariant,
+	isEmailAtBottom,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -161,51 +163,50 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	let emailLoginComponent = null;
-	if ( isEmailFirstVariant ) {
-		emailLoginComponent = (
-			<>
-				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-					/>
-				</div>
-				<FormDivider isHorizontal />
-			</>
-		);
-	}
+	const emailLoginBlock = isEmailFirstVariant ? (
+		<div className="signup-form-social-first-email">
+			<PasswordlessSignupForm
+				stepName={ stepName }
+				flowName={ flowName }
+				goToNextStep={ goToNextStep }
+				logInUrl={ logInUrl }
+				queryArgs={ queryArgs }
+				labelText={ emailLabelText ?? __( 'Your email' ) }
+				submitButtonLabel={ __( 'Continue' ) }
+				userEmail={ userEmail }
+				passDataToNextStep={ passDataToNextStep }
+				onCreateAccountError={ ( error: { error: string }, email: string ) => {
+					if ( isExistingAccountError( error.error ) ) {
+						window.location.assign(
+							addQueryArgs(
+								{
+									email_address: email,
+									is_signup_existing_account: true,
+									redirect_to: queryArgs?.redirect_to,
+								},
+								logInUrl
+							)
+						);
+					}
+				} }
+				onCreateAccountSuccess={ onCreateAccountSuccess }
+				inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+				submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
+			/>
+		</div>
+	) : null;
 
 	return (
 		<div className="signup-form signup-form-social-first">
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
-				{ emailLoginComponent }
+				{ emailLoginBlock && ! isEmailAtBottom && (
+					<>
+						{ emailLoginBlock }
+						<FormDivider isHorizontal />
+					</>
+				) }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -217,6 +218,12 @@ const SignupFormSocialFirst = ( {
 					shouldShowEmailButton={ ! isEmailFirstVariant }
 					allowedSocialServices={ allowedSocialServices }
 				/>
+				{ emailLoginBlock && isEmailAtBottom && (
+					<>
+						<FormDivider isHorizontal />
+						{ emailLoginBlock }
+					</>
+				) }
 				{ isEmailFirstVariant && (
 					<p className="signup-form-social-first__login-link">
 						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {

@@ -30,6 +30,7 @@ import {
 	setBeforePrimary,
 	loadNewSubscriptionPage,
 } from './controller';
+import postCacheMiddleware from './data/post/middleware';
 import {
 	createList,
 	deleteList,
@@ -47,6 +48,8 @@ function forceTeamA8C( context: Context, next: () => void ): void {
 }
 
 export async function lazyLoadDependencies(): Promise< void > {
+	addMiddleware( postCacheMiddleware );
+
 	const isBrowser = typeof window === 'object';
 	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
 		const lasagnaMiddleware = await import(

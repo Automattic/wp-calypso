@@ -90,6 +90,14 @@ function getWebpackConfig(
 		module: {
 			strictExportPresence: true,
 			rules: [
+				// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+				// dependencies ship .mjs that imports bare paths like
+				// `fast-deep-equal/es6`, which webpack would otherwise reject as
+				// not fully specified.
+				{
+					test: /\.m?js$/,
+					resolve: { fullySpecified: false },
+				},
 				TranspileConfig.loader( {
 					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					configFile: babelConfig,
@@ -112,7 +120,7 @@ function getWebpackConfig(
 			],
 		},
 		resolve: {
-			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+			extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 			conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 			modules: [ 'node_modules' ],

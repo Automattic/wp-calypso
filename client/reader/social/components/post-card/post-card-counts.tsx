@@ -1,9 +1,10 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { useSocialAnalytics } from './analytics-context';
+import { BlogAboutButton } from './blog-about-button';
 import { LikeButton } from './like-button';
 import { useLikeAction } from './like-context';
 import { RepostButton } from './repost-button';
@@ -12,12 +13,33 @@ import type { SocialPost } from '../../types';
 
 const ICON_SIZE = 18;
 
+/**
+ * Per-action gate for the engagement row. Each key defaults to `true`,
+ * preserving the historical "always render" behaviour for callers that
+ * omit the prop. A caller can suppress an affordance entirely by passing
+ * `false` — used today by the Reader Fediverse surface (CM-771) while
+ * the per-protocol write endpoints are still in flight (CM-764 / CM-766 /
+ * CM-770). Flip the matching key to `true` per protocol as each slice
+ * lands. Hiding the affordance also drops the count display for that
+ * slot from this row; the stats row (prominent-timestamp surface) is
+ * unaffected.
+ */
+export interface PostCardReactionsConfig {
+	like?: boolean;
+	repost?: boolean;
+	reply?: boolean;
+}
+
 interface PostCardCountsProps {
 	post: SocialPost;
 	prominentTimestamp?: boolean;
+	reactions?: PostCardReactionsConfig;
 }
 
-export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProps ) {
+export function PostCardCounts( { post, prominentTimestamp, reactions }: PostCardCountsProps ) {
+	const showLike = reactions?.like !== false;
+	const showRepost = reactions?.repost !== false;
+	const showReply = reactions?.reply !== false;
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const counts = post.counts;
@@ -94,6 +116,20 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 		</>
 	);
 
+	const repliesAccessibleLabel = (
+		counts.replies > 0
+			? translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
+					count: counts.replies,
+					args: { count: counts.replies },
+					textOnly: true,
+			  } )
+			: translate( 'Reply', {
+					textOnly: true,
+					comment:
+						'Accessible label and tooltip for the reply button on a social (Bluesky/ATmosphere, Mastodon) post card when the post has no replies yet. Verb.',
+			  } )
+	) as string;
+
 	const renderRepliesNode = () => {
 		// Render the interactive reply button when an `onReplyClick`
 		// handler is bound by the per-protocol shell. The shell decides
@@ -106,32 +142,33 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 		if ( analytics?.onReplyClick ) {
 			const onReplyClick = analytics.onReplyClick;
 			return (
-				<button
-					type="button"
-					className="social-post-card-counts__reply-button"
-					onClick={ () => {
-						onReplyClick( post );
-						fireRepliesClicked( 'composer' );
-					} }
-					aria-label={ translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
-						count: counts.replies,
-						args: { count: counts.replies },
-						textOnly: true,
-					} ) }
-				>
-					{ repliesContent }
-				</button>
+				<Tooltip text={ repliesAccessibleLabel }>
+					<button
+						type="button"
+						className="social-post-card-counts__reply-button"
+						onClick={ () => {
+							onReplyClick( post );
+							fireRepliesClicked( 'composer' );
+						} }
+						aria-label={ repliesAccessibleLabel }
+					>
+						{ repliesContent }
+					</button>
+				</Tooltip>
 			);
 		}
 		if ( inAppUrl ) {
 			return (
-				<a
-					className="social-post-card-counts__link"
-					href={ inAppUrl }
-					onClick={ () => fireRepliesClicked( 'in_app_thread' ) }
-				>
-					{ repliesContent }
-				</a>
+				<Tooltip text={ repliesAccessibleLabel }>
+					<a
+						className="social-post-card-counts__link"
+						href={ inAppUrl }
+						aria-label={ repliesAccessibleLabel }
+						onClick={ () => fireRepliesClicked( 'in_app_thread' ) }
+					>
+						{ repliesContent }
+					</a>
+				</Tooltip>
 			);
 		}
 		return <span>{ repliesContent }</span>;
@@ -174,9 +211,10 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 					'social-post-card-counts--prominent-timestamp': prominentTimestamp,
 				} ) }
 			>
-				{ renderRepliesNode() }
-				<RepostButton post={ post } hideCount={ hideCount } />
-				<LikeButton post={ post } hideCount={ hideCount } />
+				{ showReply && renderRepliesNode() }
+				{ showRepost && <RepostButton post={ post } hideCount={ hideCount } /> }
+				{ showLike && <LikeButton post={ post } hideCount={ hideCount } /> }
+				<BlogAboutButton post={ post } />
 			</HStack>
 		</>
 	);

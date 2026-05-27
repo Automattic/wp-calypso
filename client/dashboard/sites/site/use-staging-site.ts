@@ -169,7 +169,6 @@ export default function useStagingSite( site: Site ) {
 					actions: [
 						{
 							label: __( 'Contact support' ),
-							url: null,
 							onClick: () => {
 								setNavigateToRoute( '/odie' );
 								setShowHelpCenter( true );
@@ -199,7 +198,6 @@ export default function useStagingSite( site: Site ) {
 				actions: [
 					{
 						label: __( 'Contact support' ),
-						url: null,
 						onClick: () => {
 							setNavigateToRoute( '/odie' );
 							setShowHelpCenter( true );

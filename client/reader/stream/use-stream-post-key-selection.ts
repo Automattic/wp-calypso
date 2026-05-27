@@ -1,11 +1,7 @@
-import { getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import { getCachedStreamItems, type StreamItem } from 'calypso/reader/data/stream';
 import { keysAreEqual } from 'calypso/reader/post-key';
-import { combineXPosts } from 'calypso/state/reader/streams/utils';
-import { normalizeStreamPage } from './stream-normalization';
-import type { PostKey } from './use-stream-posts';
-import type { ReadStreamResponse } from '@automattic/api-core';
 
 type SelectedPostQueryKey = readonly [ 'read', 'stream', 'selected', string, string | null ];
 
@@ -23,49 +19,59 @@ interface UseStreamPostKeySelectionOptions {
 	 * used by the full-post view to navigate prev/next without re-fetching.
 	 * No network calls are issued from this hook.
 	 */
-	items?: PostKey[];
-	currentPostKey?: PostKey | null;
+	items?: StreamItem[];
+	currentPostKey?: StreamItem | null;
 }
 
 export interface UseStreamPostKeySelectionResult {
-	selectedPostKey: PostKey | null;
-	currentPostKey: PostKey | null;
-	previousPostKey: PostKey | null;
-	nextPostKey: PostKey | null;
-	selectPostKey: ( postKey: PostKey | null ) => void;
-	selectNextPost: ( fromList?: PostKey[] ) => void;
-	selectPreviousPost: ( fromList?: PostKey[] ) => void;
+	selectedPostKey: StreamItem | null;
+	/**
+	 * Position of `selectedPostKey` in `items`. `-1` when nothing is selected
+	 * or the selection doesn't belong to the current list (e.g. selection
+	 * lingering from a different stream variant). Exposed so consumers can
+	 * short-circuit behaviour at list boundaries — `<ReaderStream>` uses it
+	 * to suppress scroll-into-view at index 0.
+	 */
+	selectedPostIndex: number;
+	currentPostKey: StreamItem | null;
+	previousPostKey: StreamItem | null;
+	nextPostKey: StreamItem | null;
+	selectPostKey: ( postKey: StreamItem | null ) => void;
+	selectNextPost: () => void;
+	selectPreviousPost: () => void;
 }
 
-function findPostKeyIndex( items: PostKey[], postKey: PostKey | null ): number {
+function findPostKeyIndex( items: StreamItem[], postKey: StreamItem | null ): number {
 	if ( ! postKey ) {
 		return -1;
 	}
 
+	// Match either the item itself or its `xPostMetadata` — for x-posts the
+	// URL-derived current key points at the original blog/post (the
+	// `xPostMetadata` target), but the stream item wrapping it is what
+	// participates in prev/next.
 	return items.findIndex(
 		( item ) => keysAreEqual( item, postKey ) || keysAreEqual( item.xPostMetadata, postKey )
 	);
 }
 
 function getOffsetPostKey(
-	items: PostKey[],
-	postKey: PostKey | null,
+	items: StreamItem[],
+	postKey: StreamItem | null,
 	offset: number
-): PostKey | null {
+): StreamItem | null {
 	const index = findPostKeyIndex( items, postKey );
 	if ( index < 0 ) {
 		return null;
 	}
 
-	const offsetItem = items[ index + offset ];
-	if ( ! offsetItem ) {
-		return null;
-	}
-
-	return offsetItem.xPostMetadata ? ( offsetItem.xPostMetadata as PostKey ) : offsetItem;
+	// Always return the stream item itself — preserves the parent identity
+	// so consumers can compare prev/next keys back to the rendered list.
+	// X-post routing is handled downstream by `showSelectedPost`
+	// (`client/reader/utils.ts`), which detects xposts from the post body
+	// in Redux and redirects to the original URL.
+	return items[ index + offset ] ?? null;
 }
-
-type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
 
 export function useStreamPostKeySelection( {
 	streamKey,
@@ -76,16 +82,16 @@ export function useStreamPostKeySelection( {
 	currentPostKey: controlledCurrentPostKey = null,
 }: UseStreamPostKeySelectionOptions ): UseStreamPostKeySelectionResult {
 	const queryClient = useQueryClient();
-	const streamType = getStreamType( streamKey );
 	const selectedQueryKey = useMemo< SelectedPostQueryKey >(
 		() => [ 'read', 'stream', 'selected', streamKey, localeSlug ] as const,
 		[ streamKey, localeSlug ]
 	);
-	const streamQueryKeyPrefix = useMemo< StreamInfiniteQueryKeyPrefix >(
-		() => [ 'read', 'stream', 'infinite', streamKey ] as const,
-		[ streamKey ]
-	);
-	const selectedQuery = useQuery< PostKey | null, Error, PostKey | null, SelectedPostQueryKey >( {
+	const selectedQuery = useQuery<
+		StreamItem | null,
+		Error,
+		StreamItem | null,
+		SelectedPostQueryKey
+	>( {
 		queryKey: selectedQueryKey,
 		queryFn: () => Promise.resolve( null ),
 		initialData: null,
@@ -98,83 +104,23 @@ export function useStreamPostKeySelection( {
 	} );
 
 	const cachedItems = useMemo( () => {
-		const cachedEntries = queryClient.getQueriesData< { pages: ReadStreamResponse[] } >( {
-			queryKey: streamQueryKeyPrefix,
+		return getCachedStreamItems( queryClient, {
+			streamKey,
+			feedId,
+			localeSlug,
+			startDate,
+			currentPostKey: controlledCurrentPostKey,
 		} );
-		if ( cachedEntries.length === 0 ) {
-			return [] as PostKey[];
-		}
-
-		const normalizedFeedId = feedId ?? null;
-		const normalizedLocaleSlug = localeSlug ?? null;
-		const normalizedStartDate = startDate ?? null;
-
-		// Infinite stream keys are:
-		// ['read','stream','infinite', streamKey, feedId, localeSlug, startDate]
-		const itemsForEntry = ( entry: ( typeof cachedEntries )[ number ] | undefined ): PostKey[] => {
-			const pages = entry?.[ 1 ]?.pages ?? [];
-			if ( ! pages.length ) {
-				return [];
-			}
-			const collected: PostKey[] = [];
-			for ( const page of pages ) {
-				collected.push( ...normalizeStreamPage( page, streamType ).streamItems );
-			}
-			return combineXPosts( collected ) as PostKey[];
-		};
-
-		// Prefer the entry whose full identity matches the request — covers the
-		// case where multiple variants of the same `streamKey` are cached
-		// (different `feedId` / `localeSlug` / `startDate`).
-		const exactEntry = cachedEntries.find( ( [ queryKey ] ) => {
-			if ( ! Array.isArray( queryKey ) ) {
-				return false;
-			}
-			return (
-				( queryKey[ 4 ] ?? null ) === normalizedFeedId &&
-				( queryKey[ 5 ] ?? null ) === normalizedLocaleSlug &&
-				( queryKey[ 6 ] ?? null ) === normalizedStartDate
-			);
-		} );
-		if ( exactEntry ) {
-			return itemsForEntry( exactEntry );
-		}
-
-		// No exact match — pick the cache entry that contains the current post
-		// key, so prev/next is computed from the list the user is actually
-		// navigating. Used by the full-post view, which knows the streamKey
-		// but not the variant the user came from.
-		if ( controlledCurrentPostKey ) {
-			for ( const entry of cachedEntries ) {
-				const items = itemsForEntry( entry );
-				if ( findPostKeyIndex( items, controlledCurrentPostKey ) >= 0 ) {
-					return items;
-				}
-			}
-		}
-
-		// Fallback: locale match, then first entry.
-		const localeMatchedEntry = cachedEntries.find( ( [ queryKey ] ) => {
-			if ( ! Array.isArray( queryKey ) ) {
-				return false;
-			}
-			return ( queryKey[ 5 ] ?? null ) === normalizedLocaleSlug;
-		} );
-		return itemsForEntry( localeMatchedEntry ?? cachedEntries[ 0 ] );
-	}, [
-		queryClient,
-		streamQueryKeyPrefix,
-		streamType,
-		feedId,
-		localeSlug,
-		startDate,
-		controlledCurrentPostKey,
-	] );
+	}, [ queryClient, streamKey, feedId, localeSlug, startDate, controlledCurrentPostKey ] );
 
 	const items = explicitItems ?? cachedItems;
 
 	const selectedPostKey = selectedQuery.data ?? null;
 	const currentPostKey = controlledCurrentPostKey ?? selectedPostKey;
+	const selectedPostIndex = useMemo(
+		() => findPostKeyIndex( items, selectedPostKey ),
+		[ items, selectedPostKey ]
+	);
 	const previousPostKey = useMemo(
 		() => getOffsetPostKey( items, currentPostKey, -1 ),
 		[ items, currentPostKey ]
@@ -185,49 +131,44 @@ export function useStreamPostKeySelection( {
 	);
 
 	const selectPostKey = useCallback(
-		( postKey: PostKey | null ) => {
-			queryClient.setQueryData< PostKey | null >( selectedQueryKey, postKey );
+		( postKey: StreamItem | null ) => {
+			queryClient.setQueryData< StreamItem | null >( selectedQueryKey, postKey );
 		},
 		[ queryClient, selectedQueryKey ]
 	);
 
-	const selectNextPost = useCallback(
-		( fromList?: PostKey[] ) => {
-			const list = fromList ?? items;
-			queryClient.setQueryData< PostKey | null >( selectedQueryKey, ( current ) => {
-				const currentSelected = current ?? null;
-				if ( ! list.length ) {
-					return currentSelected;
-				}
+	const selectNextPost = useCallback( () => {
+		const list = items;
+		queryClient.setQueryData< StreamItem | null >( selectedQueryKey, ( current ) => {
+			const currentSelected = current ?? null;
+			if ( ! list.length ) {
+				return currentSelected;
+			}
 
-				const next = getOffsetPostKey( list, currentSelected, 1 );
-				if ( next ) {
-					return next;
-				}
+			const next = getOffsetPostKey( list, currentSelected, 1 );
+			if ( next ) {
+				return next;
+			}
 
-				return currentSelected ? currentSelected : list[ 0 ];
-			} );
-		},
-		[ items, queryClient, selectedQueryKey ]
-	);
+			return currentSelected ? currentSelected : list[ 0 ];
+		} );
+	}, [ items, queryClient, selectedQueryKey ] );
 
-	const selectPreviousPost = useCallback(
-		( fromList?: PostKey[] ) => {
-			const list = fromList ?? items;
-			queryClient.setQueryData< PostKey | null >( selectedQueryKey, ( current ) => {
-				const currentSelected = current ?? null;
-				if ( ! list.length ) {
-					return currentSelected;
-				}
+	const selectPreviousPost = useCallback( () => {
+		const list = items;
+		queryClient.setQueryData< StreamItem | null >( selectedQueryKey, ( current ) => {
+			const currentSelected = current ?? null;
+			if ( ! list.length ) {
+				return currentSelected;
+			}
 
-				return getOffsetPostKey( list, currentSelected, -1 ) ?? currentSelected;
-			} );
-		},
-		[ items, queryClient, selectedQueryKey ]
-	);
+			return getOffsetPostKey( list, currentSelected, -1 ) ?? currentSelected;
+		} );
+	}, [ items, queryClient, selectedQueryKey ] );
 
 	return {
 		selectedPostKey,
+		selectedPostIndex,
 		currentPostKey,
 		previousPostKey,
 		nextPostKey,

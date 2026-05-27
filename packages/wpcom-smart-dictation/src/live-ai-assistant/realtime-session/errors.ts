@@ -16,9 +16,41 @@ export function getToolErrorMessage( result: unknown ): string | undefined {
 }
 
 export function getErrorName( error: unknown ): string {
-	return error instanceof Error && error.name ? error.name : 'unknown';
+	if ( error instanceof Error && error.name ) {
+		return error.name;
+	}
+
+	if ( ! error || typeof error !== 'object' ) {
+		return 'unknown';
+	}
+
+	const { code, name } = error as { code?: unknown; name?: unknown };
+	if ( typeof code === 'string' && code ) {
+		return code;
+	}
+	if ( typeof name === 'string' && name ) {
+		return name;
+	}
+
+	return 'unknown';
 }
 
 export function getErrorMessage( error: unknown ): string {
-	return error instanceof Error && error.message ? error.message : 'Unknown error';
+	if ( error instanceof Error && error.message ) {
+		return error.message;
+	}
+
+	if ( ! error || typeof error !== 'object' ) {
+		return 'Unknown error';
+	}
+
+	const { error: errorMessage, message } = error as { error?: unknown; message?: unknown };
+	if ( typeof message === 'string' && message ) {
+		return message;
+	}
+	if ( typeof errorMessage === 'string' && errorMessage ) {
+		return errorMessage;
+	}
+
+	return 'Unknown error';
 }

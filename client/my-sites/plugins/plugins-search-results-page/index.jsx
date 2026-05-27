@@ -1,14 +1,17 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
+import MarketplaceAIBanner from 'calypso/my-sites/plugins/marketplace-ai-experience/banner';
 import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/business-plan-banner';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { UNLISTED_PLUGINS } from '../constants';
 import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
@@ -38,8 +41,11 @@ const PluginsSearchResultPage = ( {
 	} );
 
 	const dispatch = useDispatch();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const translate = useTranslate();
+
+	const showCompassBanner = isLoggedIn && isEnabled( 'plugins/plugin-compass' );
 
 	/*
 	 * Syncs the internal value of is fetching to share it with the search header
@@ -128,6 +134,7 @@ const PluginsSearchResultPage = ( {
 							<ClearSearchButton />
 						</>
 					}
+					afterHeader={ showCompassBanner ? <MarketplaceAIBanner variant="slim" /> : null }
 					showReset
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }

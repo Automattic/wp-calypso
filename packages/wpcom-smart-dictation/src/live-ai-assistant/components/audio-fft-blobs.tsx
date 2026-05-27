@@ -56,7 +56,7 @@ export function AudioFftBlobs( {
 		let audioContext: AudioContext | null = null;
 		let source: MediaStreamAudioSourceNode | null = null;
 		let analyser: AnalyserNode | null = null;
-		let timeDomainData: Uint8Array | null = null;
+		let timeDomainData: Uint8Array< ArrayBuffer > | null = null;
 		let lastValues = Array.from( { length: BAR_COUNT }, () => 0 );
 		let adaptivePeak = PEAK_FLOOR;
 
@@ -122,7 +122,10 @@ export function AudioFftBlobs( {
 
 export default AudioFftBlobs;
 
-function readWaveformBars( analyser: AnalyserNode, timeDomainData: Uint8Array ): number[] {
+function readWaveformBars(
+	analyser: AnalyserNode,
+	timeDomainData: Uint8Array< ArrayBuffer >
+): number[] {
 	analyser.getByteTimeDomainData( timeDomainData );
 
 	const samplesPerBar = Math.floor( timeDomainData.length / BAR_COUNT );

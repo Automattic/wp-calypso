@@ -1,17 +1,21 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useBreakpoint, useDesktopBreakpoint } from '@automattic/viewport-react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViews } from 'calypso/components/dataviews';
 import { useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import useHandleMemberAction from '../../hooks/use-handle-member-action';
 import { TeamMember } from '../../types';
-import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
+import { DateColumn, MemberColumn, RoleStatusColumn } from './columns';
+import TeamActionDialog, { type TeamActionRequest } from './team-action-dialog';
+import useTeamActions from './use-team-actions';
 
 type Props = {
 	members: TeamMember[];
@@ -22,26 +26,47 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'user', 'role', 'added-date', 'actions' ],
+		fields: isDesktop ? [ 'user', 'role', 'added-date' ] : [ 'user' ],
 		layout: {
-			styles: {
-				actions: {
-					width: isDesktop ? '10%' : undefined,
-				},
-			},
+			styles: isDesktop
+				? {
+						user: { width: '40%' },
+						role: { width: '25%' },
+						'added-date': { width: '25%' },
+				  }
+				: {},
 		},
 	} );
 
-	const handleAction = useHandleMemberAction( { onRefetchList: onRefresh } );
+	const handleResendAction = useHandleMemberAction( { onRefetchList: onRefresh } );
 
 	const canRemove = useSelector( ( state: A4AStore ) =>
 		hasAgencyCapability( state, 'a4a_remove_users' )
 	);
 
 	const currentUser = useSelector( getCurrentUser );
+
+	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
+
+	const closeRequest = useCallback( () => setActiveRequest( null ), [] );
+
+	const onResendInvite = useCallback(
+		( member: TeamMember ) => {
+			handleResendAction( 'resend-user-invite', member );
+		},
+		[ handleResendAction ]
+	);
+
+	const actions = useTeamActions( {
+		canRemove,
+		currentUserEmail: currentUser?.email,
+		onResendInvite,
+		onConfirmAction: setActiveRequest,
+	} );
 
 	const fields = useMemo(
 		() => [
@@ -79,24 +104,8 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 						},
 				  ]
 				: [] ),
-			{
-				id: 'actions',
-				getValue: () => '',
-				label: '',
-				render: ( { item }: { item: TeamMember } ): ReactNode => {
-					return (
-						<ActionColumn
-							member={ item }
-							onMenuSelected={ ( action, callback ) => handleAction( action, item, callback ) }
-							canRemove={ canRemove || item.email === currentUser?.email }
-						/>
-					);
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
 		],
-		[ canRemove, currentUser?.email, handleAction, isDesktop, translate ]
+		[ isDesktop, translate ]
 	);
 
 	const { data: items, paginationInfo } = useMemo( () => {
@@ -104,18 +113,40 @@ export function TeamMemberTable( { members, onRefresh }: Props ) {
 	}, [ members, dataViewsState, fields ] );
 
 	return (
-		<ItemsDataViews
-			data={ {
-				items,
-				getItemId: ( user ) => `${ user.id }`,
-				pagination: paginationInfo,
-				enableSearch: false,
-				fields,
-				actions: [],
-				setDataViewsState: setDataViewsState,
-				dataViewsState: dataViewsState,
-				defaultLayouts: { table: {} },
-			} }
-		/>
+		<>
+			<div className="redesigned-a8c-table full-width">
+				<ItemsDataViews
+					data={ {
+						items,
+						getItemId: ( user ) => `${ user.id }`,
+						pagination: paginationInfo,
+						enableSearch: false,
+						fields,
+						actions,
+						setDataViewsState: setDataViewsState,
+						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
+					} }
+				>
+					<HStack
+						className="dataviews__view-actions"
+						justify="end"
+						style={ { paddingInline: isNarrowView ? '16px' : '64px' } }
+					>
+						<DataViews.ViewConfig />
+					</HStack>
+					<DataViews.Layout />
+					<DataViews.Footer />
+				</ItemsDataViews>
+			</div>
+
+			{ activeRequest && (
+				<TeamActionDialog
+					request={ activeRequest }
+					onClose={ closeRequest }
+					onRefresh={ onRefresh }
+				/>
+			) }
+		</>
 	);
 }

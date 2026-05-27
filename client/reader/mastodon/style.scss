@@ -11,7 +11,7 @@
 }
 
 .mastodon-error {
-	color: #b32d2e;
+	color: var( --color-error );
 }
 
 .mastodon-view .mastodon-navigation {
@@ -22,25 +22,6 @@
 	.section-nav-tab__link {
 		padding-top: 5px;
 	}
-}
-
-.mastodon-tag-feed .mastodon-tag-feed__header {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.mastodon-tag-feed .mastodon-tag-feed__heading {
-	margin: 0;
-	font-size: 24px;
-	font-weight: 600;
-	line-height: 1.2;
-}
-
-.mastodon-tag-feed .mastodon-tag-feed__count {
-	margin: 0;
-	color: var(--color-text-subtle);
-	font-size: 14px;
 }
 
 .mastodon-tag-feed .mastodon-tag-feed__external-link {
@@ -78,3 +59,18 @@
 	// with `gap`, so reset the inherited margin to keep the gap honest.
 	margin: 0;
 }
+
+.mastodon-view .mastodon-profile-collections-notice {
+	margin: 16px 0 0;
+	color: var(--color-text-subtle);
+	font-size: 13px;
+	text-align: center;
+}
+
+.mastodon-composer-controls__heading {
+	font-size: inherit;
+	font-weight: 600;
+	margin: 0;
+	color: var( --color-text );
+}
+

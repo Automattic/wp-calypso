@@ -1,5 +1,6 @@
 import { useAuthorizeMastodonConnectionMutation } from '@automattic/api-queries';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -108,6 +109,11 @@ export function MastodonConnectView() {
 						) }
 					</p>
 				) : null }
+				<p className="mastodon-view__learn-more">
+					<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+						{ translate( 'Learn more about your social accounts in the Reader' ) }
+					</ExternalLink>
+				</p>
 			</VStack>
 		</ReaderMain>
 	);

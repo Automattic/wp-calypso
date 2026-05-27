@@ -1,6 +1,7 @@
 import { creativeArtsBlogs } from './creative-arts';
 import { industryBlogs } from './industry';
 import { lifestyleBlogs } from './lifestyle';
+import { popularBlogs } from './popular';
 import { societyBlogs } from './society';
 import { technologyBlogs } from './technology';
 
@@ -10,6 +11,7 @@ export const curatedBlogs = {
 	...creativeArtsBlogs,
 	...societyBlogs,
 	...industryBlogs,
+	...popularBlogs,
 };
 
 export type CuratedBlog = {

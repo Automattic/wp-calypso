@@ -30,6 +30,26 @@ const features4BusinessPlan = {
 	socialImageGenerator: true,
 };
 
+async function dismissPodcastPostPublishPromo( editorPage: EditorPage ): Promise< void > {
+	const editorParent = await editorPage.getEditorParent();
+	const dialog = editorParent
+		.getByRole( 'dialog' )
+		.filter( { hasText: 'Ready for the podcast version?' } )
+		.first();
+
+	const isVisible = await dialog
+		.waitFor( { state: 'visible', timeout: 1000 } )
+		.then( () => true )
+		.catch( () => false );
+
+	if ( ! isVisible ) {
+		return;
+	}
+
+	await dialog.getByRole( 'button', { name: /close/i } ).first().click();
+	await dialog.waitFor( { state: 'hidden', timeout: 5 * 1000 } );
+}
+
 const testCases: Array< {
 	plan: string;
 	platform: 'Simple' | 'Atomic';
@@ -158,6 +178,7 @@ test.describe(
 
 					await editorPage.publish();
 					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+					await dismissPodcastPostPublishPromo( editorPage );
 					await editorPage.closeAllPanels();
 
 					await editorPage.openSettings( 'Jetpack' );
@@ -223,6 +244,7 @@ test.describe(
 					);
 
 					await editorPage.publish();
+					await dismissPodcastPostPublishPromo( editorPage );
 
 					manualSharing = ( await editorPage.getPublishPanelRoot() ).getByRole( 'button', {
 						name: 'Manual sharing',

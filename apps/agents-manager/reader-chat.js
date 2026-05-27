@@ -11,6 +11,7 @@
 
 import './config';
 import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
+import { createCalypsoAuthProvider } from '@automattic/agents-manager/src/auth/calypso-auth-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -151,6 +152,9 @@ function injectScopedReset() {
 		.agents-manager-sidebar-fab {
 			left: 16px !important;
 			right: auto !important;
+		}
+		.agents-manager-chat--undocked [data-slot="chat-footer"] > [data-slot="suggestions"] button {
+			background: #ffffff !important;
 		}
 
 	`;
@@ -394,6 +398,10 @@ function normalizeSuggestions( items, resultIdPrefix ) {
 	} );
 }
 
+function getSuggestionsFetchHeaders( siteId = readerSiteId ) {
+	return createCalypsoAuthProvider( siteId, { logWpcomJwtFailure: false } )();
+}
+
 /**
  * Call the reader-chat-suggestions agent with an arbitrary user message and
  * return a list of {id,label,prompt} suggestions, or null on failure.
@@ -447,7 +455,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 		const fetchOptions = {
 			method: 'POST',
 			credentials: 'omit',
-			headers: { 'Content-Type': 'application/json' },
+			headers: await getSuggestionsFetchHeaders(),
 			body: JSON.stringify( body ),
 		};
 		if ( controller ) {
@@ -821,7 +829,7 @@ function setupTracksEvents() {
 		if ( ! target || typeof target.closest !== 'function' ) {
 			return;
 		}
-		const suggestionBtn = target.closest( '.Suggestions-module_button' );
+		const suggestionBtn = target.closest( '[data-slot="suggestions"] button' );
 		if ( suggestionBtn ) {
 			recordTracksEvent( 'jetpack_reader_chat_suggestion_click', {
 				...baseProps,
@@ -973,4 +981,5 @@ export {
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
+	getSuggestionsFetchHeaders,
 };

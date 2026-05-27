@@ -3,6 +3,7 @@ import {
 	DomainSearchComponent,
 	EditorPage,
 	LoginPage,
+	NewSiteResponse,
 	NewUserResponse,
 	RestAPIClient,
 	SignupPickPlanPage,
@@ -10,7 +11,7 @@ import {
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, fixme_retry } from '../shared';
+import { apiCloseAccount, apiCreateFreeSiteForUser, apiDeleteSite, fixme_retry } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ),
@@ -21,6 +22,7 @@ test.describe(
 			usernamePrefix: 'signup',
 		} );
 		let newUserDetails: NewUserResponse | undefined;
+		let newSiteDetails: NewSiteResponse | undefined;
 
 		test.afterAll( async () => {
 			if ( ! newUserDetails ) {
@@ -30,6 +32,13 @@ test.describe(
 				{ username: testUser.username, password: testUser.password },
 				newUserDetails.body.bearer_token
 			);
+			if ( newSiteDetails ) {
+				await apiDeleteSite( restAPIClient, {
+					url: newSiteDetails.blog_details.url,
+					id: newSiteDetails.blog_details.blogid,
+					name: newSiteDetails.blog_details.blogname,
+				} );
+			}
 			await apiCloseAccount( restAPIClient, {
 				userID: newUserDetails.body.user_id,
 				username: newUserDetails.body.username,
@@ -38,7 +47,6 @@ test.describe(
 		} );
 
 		test( 'As a new user, I can complete the write onboarding flow', async ( { page } ) => {
-			let selectedFreeDomain: string;
 			let editorOpened = false;
 
 			await test.step( 'When I navigate to the Login page', async () => {
@@ -59,18 +67,36 @@ test.describe(
 			await test.step( 'When I select a .wordpress.com domain name', async () => {
 				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( blogName );
-				selectedFreeDomain = await domainSearchComponent.skipPurchase();
+				await domainSearchComponent.skipPurchase();
 			} );
 
 			await test.step( 'When I select WordPress.com Free plan', async () => {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				const redirectUrl = new RegExp( 'home/.+\\?ref=onboarding' );
-				await signupPickPlanPage.selectPlan( 'Free', redirectUrl );
+				// After the PWYW A/B test, picking Free on /setup/onboarding/plans
+				// redirects to https://wordpress.com/choose instead of creating a
+				// site directly. No /sites/new call is made here, so we use
+				// selectPlanWithoutSiteCreation.
+				const redirectUrl = /^https:\/\/wordpress\.com\/choose(?:[?#]|$)/;
+				await signupPickPlanPage.selectPlanWithoutSiteCreation( 'Free', redirectUrl );
 			} );
 
-			await test.step( 'Then I enter the onboarding flow for the selected domain', async () => {
+			// Picking Free now redirects to https://wordpress.com/choose for the
+			// PWYW A/B test instead of creating a site, so the original UI path
+			// into the onboarding/write/launchpad flow is no longer reachable.
+			// To preserve downstream coverage, API-create a free site and
+			// navigate directly into /home with the onboarding ref.
+			await test.step( 'When I API-create a free site and enter /home', async () => {
+				newSiteDetails = await apiCreateFreeSiteForUser( testUser, newUserDetails!, blogName );
+				await page.goto(
+					DataHelper.getCalypsoURL(
+						`/home/${ newSiteDetails.blog_details.site_slug }?ref=onboarding`
+					)
+				);
+			} );
+
+			await test.step( 'Then I enter the onboarding flow for the API-created site', async () => {
 				await page.waitForURL( /home\/.*ref=onboarding/, { timeout: 60 * 1000 } );
-				expect( page.url() ).toContain( selectedFreeDomain! );
+				expect( page.url() ).toContain( newSiteDetails!.blog_details.site_slug );
 			} );
 
 			await test.step( 'When I select "Publish a blog" goal', async () => {

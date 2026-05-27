@@ -1,6 +1,6 @@
-import { useConnectionsQuery } from '@automattic/api-queries';
+import { useAtmosphereScopedProfileQuery, useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -64,8 +64,9 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 		return (
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( 'Profile ‹ ATmosphere ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
@@ -89,10 +90,32 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 					subtabBasePath={ subtabBasePath }
 				/>
 			</ReaderMain>
-			<ComposeFab />
+			<AuthorProfileComposeFab connectionId={ connection.id } actor={ actor } />
 			<ComposerModal />
 		</ComposerProvider>
 	);
+}
+
+/**
+ * Reads the canonical handle from the scoped-profile cache so the FAB
+ * seeds the composer with `@<handle> ` even when the URL keys the
+ * profile by DID. Falls back to the URL actor only when it's a usable
+ * handle — DID-keyed URLs open with an empty composer while the query
+ * is in flight rather than flashing `@did:plc:…`. The query is shared
+ * with `AuthorProfilePanel`, so this hook does not add a network hit.
+ */
+function AuthorProfileComposeFab( {
+	connectionId,
+	actor,
+}: {
+	connectionId: number;
+	actor: string;
+} ) {
+	const profile = useAtmosphereScopedProfileQuery( { connectionId, actor } );
+	// `||` (not `??`) so an empty-string `handle` from a malformed
+	// response also falls through to the actor branch.
+	const handle = profile.data?.handle || ( actor.startsWith( 'did:' ) ? null : actor );
+	return <ComposeFab initialText={ handle ? `@${ handle } ` : undefined } />;
 }
 
 export default AuthorProfileView;

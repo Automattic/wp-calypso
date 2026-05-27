@@ -35,9 +35,12 @@ function VersionManagement( { site }: { site: Site } ) {
 	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
 	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
 
 	let notice;
-	if ( isSwitching ) {
+	if ( versionsMatch ) {
+		notice = null;
+	} else if ( isSwitching ) {
 		notice = (
 			<VersionSwitchNotice
 				backupState={ backupState }
@@ -78,11 +81,13 @@ function BetaProgramContent( { site }: { site: Site } ) {
 		enabled: isEligible,
 	} );
 
-	if ( justOptedOut ) {
+	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
+
+	if ( justOptedOut && ! versionsMatch ) {
 		return <LatestVersionNotice wpVersion={ latestVersion } />;
 	}
 
-	if ( canOptOutOfWordPressBeta( site, currentVersion ) ) {
+	if ( canOptOutOfWordPressBeta( site, currentVersion ) && ! versionsMatch ) {
 		return (
 			<BetaProgramNotice
 				site={ site }

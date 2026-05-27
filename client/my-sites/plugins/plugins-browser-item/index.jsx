@@ -13,6 +13,7 @@ import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
+import { sparkleFilled } from 'calypso/my-sites/plugins/marketplace-ai-experience/sparkle-icon';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
@@ -49,6 +50,7 @@ const PluginsBrowserListElement = ( props ) => {
 		plugin = {},
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		why,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -246,6 +248,17 @@ const PluginsBrowserListElement = ( props ) => {
 						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 					) }
 				</div>
+				{ !! why && (
+					<div className="plugins-browser-item__why">
+						<Icon className="plugins-browser-item__why-icon" icon={ sparkleFilled } size={ 18 } />
+						<div className="plugins-browser-item__why-body">
+							<span className="plugins-browser-item__why-label">
+								{ translate( 'Why this fits' ) }
+							</span>
+							<p className="plugins-browser-item__why-text">{ why }</p>
+						</div>
+					</div>
+				) }
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
 						<Icon size={ 20 } icon={ info } />

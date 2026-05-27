@@ -91,6 +91,14 @@ describe( 'sanitizePostHtml', () => {
 		expect( out ).toContain( 'data-id="alice.bsky.social"' );
 	} );
 
+	it( 'preserves data-handle alongside data-id on Fediverse / Mastodon @-mention anchors (CM-725)', () => {
+		const html =
+			'<p><a href="https://example.com/@alice" data-id="https://example.com/users/alice" data-handle="alice@example.com">@alice@example.com</a></p>';
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( 'data-id="https://example.com/users/alice"' );
+		expect( out ).toContain( 'data-handle="alice@example.com"' );
+	} );
+
 	it( 'strips other data-* attributes', () => {
 		const html =
 			'<p><a href="https://x.example" data-id="42" data-evil="payload" data-tracking="x">y</a></p>';

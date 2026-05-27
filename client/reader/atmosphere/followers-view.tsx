@@ -136,6 +136,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				getProfileUrl( connectionId, { handle: item.handle, did: item.did } ) ??
 				getBlueskyProfileUrl( item.handle ),
 			isSelf,
+			// Every row on this followers list trivially follows the viewer,
+			// so the "Follows you" badge would be redundant on every row.
+			hideFollowedByBadge: true,
 			followState: isSelf
 				? undefined
 				: {
@@ -228,6 +231,10 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				protocolLabel="ATmosphere"
 				protocolHomeURL="https://bsky.app"
 				protocolHomeLabel="Bluesky"
+				authRequiredCopy={ {
+					title: String( translate( "Couldn't load followers" ) ),
+					line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+				} }
 				header={ {
 					displayName: profileQuery.data?.display_name ?? null,
 					handle: profileQuery.data?.handle ?? actor,

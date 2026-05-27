@@ -1,7 +1,7 @@
-import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
+import type { Page } from 'playwright';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plans =
@@ -52,6 +52,16 @@ const selectors = {
 	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
+
+/**
+ * Escapes a string so it can be safely used in a regular expression.
+ *
+ * @param {string} value String to escape.
+ * @returns {string} Escaped string.
+ */
+function escapeRegExp( value: string ): string {
+	return value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+}
 
 /**
  * Page representing the Plans page under `/plans` endpoint.
@@ -133,12 +143,28 @@ export class PlansPage {
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
 	 */
 	async openEscapeHatch(): Promise< void > {
+		const trigger = this.page
+			.getByRole( 'button', {
+				name: 'start with a free plan',
+				exact: true,
+			} )
+			.first();
+		await trigger.waitFor( { state: 'visible', timeout: 30_000 } );
 		// The click handler calls both `onUpgradeClick(null)` and `onSubmit(null)`,
 		// the latter of which can kick off a step navigation that Playwright's
 		// default click() will wait on, exceeding the action timeout. Opt out of
 		// the post-click navigation wait since we only need the dialog to appear.
-		const locator = this.page.getByText( 'start with a free plan' ).first();
-		await locator.click( { noWaitAfter: true } );
+		await trigger.click( { noWaitAfter: true } );
+
+		const escapeHatchDialog = this.page
+			.getByRole( 'dialog' )
+			.filter( {
+				has: this.page.getByRole( 'button', {
+					name: /Continue with Free|Get Personal|Get Premium/,
+				} ),
+			} )
+			.first();
+		await escapeHatchDialog.waitFor( { state: 'visible' } );
 	}
 
 	/**
@@ -154,7 +180,46 @@ export class PlansPage {
 	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
 	 */
 	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
-		await this.page.getByText( `${ domainName } redirects to ${ siteSlug }` ).waitFor();
+		const redirectedDomain = await this.getDomainFromRedirectWarning( siteSlug );
+		if ( redirectedDomain !== domainName ) {
+			throw new Error(
+				`Expected domain redirect warning for ${ domainName }, but found ${ redirectedDomain }.`
+			);
+		}
+	}
+
+	/**
+	 * Returns the domain shown in the "Domain redirect" warning.
+	 */
+	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
+		const warningPattern = new RegExp( `^(\\S+) redirects to ${ escapeRegExp( siteSlug ) }$` );
+		const warning = this.page.getByText( warningPattern ).first();
+		await warning.waitFor();
+
+		const warningText = ( await warning.textContent() )?.trim();
+		const match = warningText?.match( warningPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( `Failed to read domain redirect warning for ${ siteSlug }.` );
+		}
+
+		return match[ 1 ];
+	}
+
+	/**
+	 * Returns the domain shown as included on the plans grid.
+	 */
+	async getIncludedDomain(): Promise< string > {
+		const includedDomainPattern = /^(\S+) is included$/;
+		const includedDomain = this.page.getByText( includedDomainPattern ).first();
+		await includedDomain.waitFor();
+
+		const includedDomainText = ( await includedDomain.textContent() )?.trim();
+		const match = includedDomainText?.match( includedDomainPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( 'Failed to read included domain from plans grid.' );
+		}
+
+		return match[ 1 ];
 	}
 
 	/**

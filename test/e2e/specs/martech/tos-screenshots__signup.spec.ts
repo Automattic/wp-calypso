@@ -1,4 +1,4 @@
-import { UserSignupPage } from '@automattic/calypso-e2e';
+import { DataHelper } from '@automattic/calypso-e2e';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 import { expect, tags, test } from '../../lib/pw-base';
 
@@ -27,13 +27,13 @@ test.describe.fixme( 'ToS acceptance tracking screenshots', { tag: [ tags.LEGAL 
 	} ) => {
 		test.setTimeout( 1800000 );
 
-		const userSignupPage = new UserSignupPage( page );
-
 		await test.step( 'Screenshot signup page for all locales', async () => {
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
-				await userSignupPage.visit( { path: locale } );
-				page.waitForSelector( 'body.is-section-stepper' );
+				await page.goto( DataHelper.getCalypsoURL( `start/${ locale }` ), {
+					waitUntil: 'domcontentloaded',
+				} );
+				await page.waitForSelector( 'body.is-section-stepper' );
 				await page.screenshot( {
 					path: `tos_white_signup_desktop_${ locale }.png`,
 					fullPage: true,

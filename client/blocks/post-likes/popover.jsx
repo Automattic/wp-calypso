@@ -1,9 +1,7 @@
 import { Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { omit } from 'lodash';
-import { connect } from 'react-redux';
-import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
-import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
+import { usePostLikes } from 'calypso/components/data/post-likes';
 import PostLikes from './index';
 
 import './popover.scss';
@@ -16,11 +14,10 @@ function PostLikesPopover( props ) {
 		showDisplayNames,
 		context,
 		onClose,
-		likes,
-		likeCount,
 		onMouseEnter,
 		onMouseLeave,
 	} = props;
+	const { likes, likeCount } = usePostLikes( siteId, postId );
 
 	// Whenever our `Popover` content changes size (loading, complete, siteId,
 	// or postId, for example), we need to force the `Popover` to re-render and
@@ -65,11 +62,4 @@ function PostLikesPopover( props ) {
 	);
 }
 
-export default connect( ( state, ownProps ) => {
-	const { siteId, postId } = ownProps;
-
-	return {
-		likeCount: countPostLikes( state, siteId, postId ),
-		likes: getPostLikes( state, siteId, postId ),
-	};
-} )( PostLikesPopover );
+export default PostLikesPopover;
