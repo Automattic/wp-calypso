@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import React from 'react';
 import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 
@@ -63,18 +64,15 @@ export default function HostingTestimonialsSection( {
 
 								{ item.profile.site && (
 									<span className="hosting-testimonials__item-profile-link">
-										<a
+										<ExternalLink
 											href={
 												item.profile.siteLink
 													? item.profile.siteLink
 													: `https://${ item.profile.site }`
 											}
-											target="_blank"
-											rel="noreferrer"
 										>
 											{ item.profile.site }
-										</a>
-										&nbsp;↗
+										</ExternalLink>
 									</span>
 								) }
 							</div>
