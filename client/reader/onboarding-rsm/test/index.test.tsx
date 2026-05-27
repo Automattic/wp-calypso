@@ -152,12 +152,6 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 } ) );
 
-jest.mock( 'calypso/state/reader/streams/actions', () => ( {
-	clearStream: jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) ),
-	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
-	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
-} ) );
-
 // The real selector traverses `state.reader.follows`, which the lightweight
 // test store does not seed. Default to an empty follow list so the parent
 // completion event still has a valid `followed_non_self_sites_count`.

@@ -2,7 +2,7 @@
 
 import { map, compact, includes, some, filter } from 'lodash';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
-import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
+import { READER_CONTENT_WIDTH } from 'calypso/reader/data/post/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 
 /**

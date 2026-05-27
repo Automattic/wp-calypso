@@ -34,6 +34,7 @@
 import { translate } from 'i18n-calypso';
 import { layoutIndexOf, layoutRowsForContainer } from './dom-layout';
 import { BODY_DRAGGING_CLASS } from './index';
+import type { CommitMoveDetails } from './index';
 import type { LayoutPosition } from 'calypso/state/admin-sidebar/layout/types';
 
 const GHOST_CLASS = 'admin-sidebar-drag-ghost';
@@ -53,7 +54,7 @@ const DROP_NEIGHBOUR_SELECTOR =
 	'li[data-wp-admin-sidebar-item-id], li.sidebar__menu-item-parent, li.wp-admin-sidebar-group, .sidebar > li, .wp-admin-sidebar-group__children > li';
 
 export interface DragDropController {
-	commitMove: ( itemId: string, position: LayoutPosition ) => void;
+	commitMove: ( itemId: string, position: LayoutPosition, details?: CommitMoveDetails ) => boolean;
 	beginDrag: ( itemId: string, sourcePosition: LayoutPosition ) => void;
 	endDrag: () => void;
 	announce: ( msg: string ) => void;
@@ -148,17 +149,22 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 			return;
 		}
 		if ( lastTarget && lastTarget.position && lastTarget.container ) {
-			controller.commitMove( activeItem.itemId, lastTarget.position );
-			const label = ( activeItem.li.textContent || activeItem.itemId ).trim();
-			const indexLabel = lastTarget.position.index + 1;
-			controller.announce(
-				translate( 'Moved %(label)s to position %(index)d.', {
-					args: {
-						label,
-						index: indexLabel,
-					},
-				} ) as string
-			);
+			const label = labelForElement( activeItem.li, activeItem.itemId );
+			const moved = controller.commitMove( activeItem.itemId, lastTarget.position, {
+				previousPosition: activeItem.sourcePosition,
+				label,
+			} );
+			if ( moved ) {
+				const indexLabel = lastTarget.position.index + 1;
+				controller.announce(
+					translate( 'Moved %(label)s to position %(index)d.', {
+						args: {
+							label,
+							index: indexLabel,
+						},
+					} ) as string
+				);
+			}
 		}
 		cleanup();
 	}
@@ -365,4 +371,18 @@ export function positionForElement( li: HTMLElement ): LayoutPosition {
 		};
 	}
 	return { kind: 'top_level', index: siblings };
+}
+
+export function labelForElement( li: HTMLElement, fallback: string ): string {
+	const link = li.querySelector( ':scope > a, :scope a' );
+	if ( ! link ) {
+		return ( li.textContent || fallback ).trim();
+	}
+	const cloned = link.cloneNode( true ) as HTMLElement;
+	cloned
+		.querySelectorAll(
+			'.admin-sidebar-item__grip, .admin-sidebar-item__more, .wp-submenu, .wp-submenu-wrap'
+		)
+		.forEach( ( el ) => el.remove() );
+	return ( cloned.textContent || fallback ).trim();
 }

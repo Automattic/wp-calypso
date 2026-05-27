@@ -635,6 +635,15 @@ The connection ID flows from the protocol shell:
 view content). Inline pills (`<TimelineComposePill />`) live inside
 panels that opt into the composer via `useOptionalComposer()`.
 
+#### Fediverse migration follow-up
+
+`ComposerProtocolExtrasSlot.renderControls` is `@deprecated` but retained
+because `client/reader/fediverse/use-fediverse-composer-extras.tsx` still
+renders an inline visibility/CW control block via this slot. Migrating
+Fediverse to `renderTrigger` + a popover (mirroring the Mastodon migration)
+is a follow-up. When that lands, drop `renderControls` from the interface,
+the modal, the NOOP slot, and the atmosphere + Mastodon shim returns.
+
 ### Site handoff
 
 `<SiteHandoff>` (in `site-handoff/`) is the shared picker + save-draft +

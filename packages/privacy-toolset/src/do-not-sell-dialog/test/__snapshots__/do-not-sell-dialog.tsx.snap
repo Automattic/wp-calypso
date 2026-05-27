@@ -11,9 +11,9 @@ exports[`DoNotSellDialog renders correctly 1`] = `
   />
   <p
     class="a11y-speak-intro-text"
-    hidden="hidden"
+    hidden=""
     id="a11y-speak-intro-text"
-    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+    style="position:absolute;margin:-1px;padding:0;height:1px;width:1px;overflow:hidden;clip-path:inset(50%);border:0;word-wrap:normal !important;word-break:normal !important;"
   >
     Notifications
   </p>
@@ -23,7 +23,7 @@ exports[`DoNotSellDialog renders correctly 1`] = `
     aria-relevant="additions text"
     class="a11y-speak-region"
     id="a11y-speak-assertive"
-    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+    style="position:absolute;margin:-1px;padding:0;height:1px;width:1px;overflow:hidden;clip-path:inset(50%);border:0;word-wrap:normal !important;word-break:normal !important;"
   />
   <div
     aria-atomic="true"
@@ -31,7 +31,7 @@ exports[`DoNotSellDialog renders correctly 1`] = `
     aria-relevant="additions text"
     class="a11y-speak-region"
     id="a11y-speak-polite"
-    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+    style="position:absolute;margin:-1px;padding:0;height:1px;width:1px;overflow:hidden;clip-path:inset(50%);border:0;word-wrap:normal !important;word-break:normal !important;"
   />
   <div
     aria-hidden="true"

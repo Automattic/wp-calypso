@@ -8,11 +8,31 @@ import {
 	useRef,
 	useState,
 	useMemo,
+	useSyncExternalStore,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
 
 const SIDEBAR_TRANSITION_DURATION_MS = 200;
+
+// On Gutenberg editor screens, only dock when fullscreen mode is on —
+// otherwise wp-admin's chrome leaves too little room for the editor.
+const FULLSCREEN_GATED_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ];
+const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
+
+function getIsFullscreenGateOpen(): boolean {
+	const { classList } = document.body;
+	const isGated = FULLSCREEN_GATED_BODY_CLASSES.some( ( cls ) => classList.contains( cls ) );
+	return ! isGated || classList.contains( FULLSCREEN_BODY_CLASS );
+}
+
+// Hoisted so the reference stays stable — otherwise `useSyncExternalStore`
+// would tear down and re-create the observer on every render.
+function subscribeToBodyClasses( notify: () => void ): () => void {
+	const observer = new MutationObserver( notify );
+	observer.observe( document.body, { attributes: true, attributeFilter: [ 'class' ] } );
+	return () => observer.disconnect();
+}
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
@@ -57,9 +77,12 @@ export default function useAgentLayoutManager( {
 	const { height } = useWindowDimensions();
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-
 	const hasEnoughHeight = height >= adminMenuHeight;
-	const canDock = isDesktop && hasEnoughHeight;
+	const isFullscreenGateOpen = useSyncExternalStore(
+		subscribeToBodyClasses,
+		getIsFullscreenGateOpen
+	);
+	const canDock = isDesktop && hasEnoughHeight && isFullscreenGateOpen;
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();

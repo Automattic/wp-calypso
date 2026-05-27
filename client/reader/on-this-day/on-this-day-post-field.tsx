@@ -12,10 +12,12 @@ interface OnThisDayPostFieldProps {
 		site_name?: string;
 		date?: string;
 	};
+	onClick?: () => void;
+	onKeyDown?: ( event: React.KeyboardEvent< HTMLDivElement > ) => void;
 }
 
 export const OnThisDayPostField = forwardRef< HTMLDivElement, OnThisDayPostFieldProps >(
-	( { post }, ref ) => {
+	( { post, onClick, onKeyDown }, ref ) => {
 		if ( ! post ) {
 			return null;
 		}
@@ -23,7 +25,14 @@ export const OnThisDayPostField = forwardRef< HTMLDivElement, OnThisDayPostField
 		const year = post.date ? new Date( post.date ).getFullYear() : null;
 
 		return (
-			<div className="on-this-day-post-field" ref={ ref } role="button" tabIndex={ 0 }>
+			<div
+				className="on-this-day-post-field"
+				ref={ ref }
+				role="button"
+				tabIndex={ 0 }
+				onClick={ onClick }
+				onKeyDown={ onKeyDown }
+			>
 				<AutoDirection>
 					<div className="on-this-day-post-field__title">
 						<div className="on-this-day-post-field__title-text">

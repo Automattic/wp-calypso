@@ -111,6 +111,38 @@ export function recomputeDirty( state: CustomizerDraftState ): CustomizerDraftSt
 }
 
 /**
+ * Replace the saved delta after an auto-save response without changing the
+ * current working delta. If another move happened while the request was in
+ * flight, the working copy stays ahead and remains dirty.
+ */
+export function updateSaved(
+	state: CustomizerDraftState,
+	saved: LayoutDelta
+): CustomizerDraftState {
+	const cloned = cloneDelta( saved );
+	return recomputeDirty( {
+		...state,
+		savedDelta: cloned,
+		isSaving: false,
+		saveError: null,
+	} );
+}
+
+/**
+ * Restore the working delta to a previous snapshot, used by Undo.
+ */
+export function restoreWorking(
+	state: CustomizerDraftState,
+	working: LayoutDelta
+): CustomizerDraftState {
+	return recomputeDirty( {
+		...state,
+		workingDelta: cloneDelta( working ),
+		saveError: null,
+	} );
+}
+
+/**
  * Move an item to a new position. Removes any prior override for the same
  * itemId, then appends the new one. The renderer applies overrides in array
  * order so later overrides win when duplicates ever sneak in.
@@ -167,6 +199,7 @@ export function cancel( state: CustomizerDraftState ): CustomizerDraftState {
 		...state,
 		workingDelta: cloneDelta( state.savedDelta ),
 		isDirty: false,
+		isSaving: false,
 		saveError: null,
 	};
 }

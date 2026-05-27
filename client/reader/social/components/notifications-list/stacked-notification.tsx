@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { TimeSince } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
@@ -5,9 +6,9 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useId, useState } from 'react';
+import { type MouseEvent, useId, useState } from 'react';
 import { SocialAvatar } from '../../avatar';
-import { SocialNotificationItem } from './notification-item';
+import { SocialNotificationItem, type NotificationInAppUrlResolver } from './notification-item';
 import type { StackedRow, StackableCanonicalType } from './group-notifications';
 
 const MAX_AVATARS = 3;
@@ -16,6 +17,7 @@ const FOLLOW_TRUNCATE_AT = 50;
 interface Props {
 	stack: StackedRow;
 	onExpandedChange?: ( expanded: boolean, memberCount: number ) => void;
+	getInAppUrl?: NotificationInAppUrlResolver;
 }
 
 function isSafeUrl( url: string ): boolean {
@@ -151,12 +153,16 @@ function stackedPhrase(
 	}
 }
 
-export function StackedNotification( { stack, onExpandedChange }: Props ) {
+export function StackedNotification( { stack, onExpandedChange, getInAppUrl }: Props ) {
 	const translate = useTranslate();
 	const reactId = useId();
 	const [ expanded, setExpanded ] = useState( false );
 	const isFollowStack = stack.canonicalType === 'follow';
 	const safe = isSafeUrl( stack.targetUrl );
+	// Stacks share the same target (head member's target/target_url), so we
+	// resolve the in-app URL against the head — `keyFor` guarantees every
+	// member of a like/repost/mention/reply/quote stack shares `target.uri`.
+	const inAppUrl = ! isFollowStack ? getInAppUrl?.( stack.members[ 0 ] ) ?? null : null;
 
 	const firstActor = stack.members[ 0 ].actor.display_name || stack.members[ 0 ].actor.handle;
 	const secondActor = stack.members[ 1 ]
@@ -211,6 +217,27 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 	);
 
 	if ( ! isFollowStack ) {
+		if ( inAppUrl ) {
+			const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
+				if (
+					event.defaultPrevented ||
+					event.button !== 0 ||
+					event.metaKey ||
+					event.ctrlKey ||
+					event.shiftKey ||
+					event.altKey
+				) {
+					return;
+				}
+				event.preventDefault();
+				page( inAppUrl );
+			};
+			return (
+				<a className={ className } href={ inAppUrl } onClick={ onClick }>
+					{ visualHeader }
+				</a>
+			);
+		}
 		if ( safe ) {
 			return (
 				<a
@@ -258,7 +285,7 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 			{ expanded && (
 				<div id={ childListId } className="social-notifications-stack__children" role="list">
 					{ visibleMembers.map( ( m ) => (
-						<SocialNotificationItem key={ m.id } notification={ m } />
+						<SocialNotificationItem key={ m.id } notification={ m } getInAppUrl={ getInAppUrl } />
 					) ) }
 				</div>
 			) }
