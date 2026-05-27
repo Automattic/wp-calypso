@@ -1,6 +1,6 @@
 # Calypso Development Values
 
-Before diving into the code, here are few guiding principles we have followed when working on the project. We hope you will find them helpful for better understanding some of the decisions we’ve made.
+Before diving into the code, here are a few guiding principles we have followed when working on the project. We hope you will find them helpful for better understanding some of the decisions we’ve made.
 
 ## 0. We do it all for the user
 
