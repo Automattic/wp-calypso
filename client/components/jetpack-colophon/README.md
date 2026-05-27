@@ -1,6 +1,6 @@
 # JetpackColophon (JSX)
 
-This component is used to display a "Powered by Jetpack" colophon, usually on the footer of page
+This component is used to display a "Powered by Jetpack" colophon, usually on the footer of the page
 
 ---
 
