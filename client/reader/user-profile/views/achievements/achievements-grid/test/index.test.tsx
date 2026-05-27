@@ -8,6 +8,17 @@ import AchievementsGrid from '../index';
 
 jest.mock( 'calypso/data/reader/use-achievements-query' );
 
+jest.mock( '../daily-post-streak-card', () => ( {
+	__esModule: true,
+	default: ( { streak }: { streak: { blog_id: number; current_streak: number } } ) => (
+		<div
+			data-testid="daily-post-streak-card"
+			data-blog-id={ streak.blog_id }
+			data-current-streak={ streak.current_streak }
+		/>
+	),
+} ) );
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const useAchievementsQuery = require( 'calypso/data/reader/use-achievements-query' )
 	.useAchievementsQuery as jest.Mock;
@@ -54,9 +65,20 @@ const lockedSecret = ( overrides: Record< string, unknown > = {} ) => ( {
 	...overrides,
 } );
 
+const streak = ( overrides: Record< string, unknown > = {} ) => ( {
+	blog_id: 111,
+	url: 'https://my-blog.example.com',
+	current_streak: 7,
+	last_check_date: '2026-05-27',
+	oldest_post_date: '2026-05-21 09:00:00',
+	is_active: true,
+	...overrides,
+} );
+
 const baseQueryReturn = {
 	achievements: [],
 	lockedAchievements: [],
+	dailyPostStreaks: [],
 	isLoading: false,
 	isError: false,
 	hasNextPage: false,
@@ -404,6 +426,63 @@ describe( 'AchievementsGrid', () => {
 
 		expect( screen.getByText( 'Years of Service' ) ).toBeVisible();
 		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders daily post streak cards on own profile, appended to the unlocked grid', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			dailyPostStreaks: [
+				streak( { blog_id: 111, current_streak: 14 } ),
+				streak( { blog_id: 222, current_streak: 4 } ),
+			],
+		} );
+
+		const { container } = renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		const earnedGrid = container.querySelector( '.achievements-grid' );
+		expect( earnedGrid ).not.toBeNull();
+
+		const streakCards = within( earnedGrid as HTMLElement ).getAllByTestId(
+			'daily-post-streak-card'
+		);
+		expect( streakCards ).toHaveLength( 2 );
+		expect( streakCards.map( ( c ) => c.getAttribute( 'data-blog-id' ) ) ).toEqual( [
+			'111',
+			'222',
+		] );
+
+		const allCards = earnedGrid?.children;
+		const lastTwo = Array.from( allCards ?? [] ).slice( -2 );
+		expect(
+			lastTwo.every( ( el ) => el.getAttribute( 'data-testid' ) === 'daily-post-streak-card' )
+		).toBe( true );
+	} );
+
+	test( 'hides daily post streak cards on cross-user view', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			dailyPostStreaks: [ streak() ],
+		} );
+
+		renderGrid( { userLogin: 'someone', isOwnProfile: false } );
+
+		expect( screen.queryByTestId( 'daily-post-streak-card' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the unlocked grid for an own profile with only streaks', () => {
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [],
+			lockedAchievements: [],
+			dailyPostStreaks: [ streak() ],
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'daily-post-streak-card' ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows the loading spinner while pages are still being fetched', () => {

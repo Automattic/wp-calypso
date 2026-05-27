@@ -133,4 +133,54 @@ describe( 'useAchievementsQuery', () => {
 
 		expect( result.current.lockedAchievements ).toEqual( [] );
 	} );
+
+	test( 'should filter inactive daily post streaks and sort by current_streak descending', async () => {
+		mockGet.mockResolvedValue( {
+			found: 0,
+			achievements: [],
+			daily_post_streak: [
+				{
+					blog_id: 1,
+					url: 'https://one.example.com',
+					current_streak: 4,
+					last_check_date: '2026-05-27',
+					oldest_post_date: '2026-05-23 18:40:11',
+					is_active: true,
+				},
+				{
+					blog_id: 2,
+					url: 'https://two.example.com',
+					current_streak: 23,
+					last_check_date: '2026-02-08',
+					oldest_post_date: '2026-01-17 11:05:50',
+					is_active: false,
+				},
+				{
+					blog_id: 3,
+					url: 'https://three.example.com',
+					current_streak: 14,
+					last_check_date: '2026-05-27',
+					oldest_post_date: '2026-05-14 09:12:34',
+					is_active: true,
+				},
+			],
+		} );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.dailyPostStreaks ).toHaveLength( 2 );
+		expect( result.current.dailyPostStreaks.map( ( s ) => s.blog_id ) ).toEqual( [ 3, 1 ] );
+	} );
+
+	test( 'should default dailyPostStreaks to an empty array when absent', async () => {
+		mockGet.mockResolvedValue( { found: 0, achievements: [] } );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.dailyPostStreaks ).toEqual( [] );
+	} );
 } );
