@@ -2,7 +2,7 @@
 
 This components opens a GET request to wp-admin of a connected site in order to log in to wp-admin.
 Because wp-login.php can automatically log in a user using SSO if `jetpack_sso_bypass_login_forward_wpcom` option is enabled, it redirects user automatically
-to a a transparent pixel.
+to a transparent pixel.
 We use this component in Automated Transfer.
 
 ## Requirements
