@@ -71,6 +71,32 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );
 
+	test( 'pluginOrThemeConflicts shows "Use our guide" card that opens troubleshooting URL in a new tab', async () => {
+		const user = userEvent.setup();
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="pluginOrThemeConflicts"
+					purchase={ purchase }
+					closeDialog={ jest.fn() }
+					onDeclineUpsell={ jest.fn() }
+				/>
+			);
+
+			const guideCard = await screen.findByRole( 'button', { name: /Use our guide/ } );
+			await user.click( guideCard );
+
+			expect( openSpy ).toHaveBeenCalledWith(
+				'https://wordpress.com/support/plugins/troubleshooting/',
+				'_blank'
+			);
+		} finally {
+			openSpy.mockRestore();
+		}
+	} );
+
 	test( 'speak-with-support opens Odie fallback when not Zendesk eligible', async () => {
 		mockCanConnectToZendesk = false;
 		const user = userEvent.setup();

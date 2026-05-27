@@ -50,6 +50,7 @@ const CARD_ICONS: Record< string, IconType > = {
 	'upgrade-for-full-access': upload,
 	'get-theme-addon': brush,
 	'find-guides': postList,
+	'use-plugin-troubleshooting-guide': postList,
 	'make-site-faster': trendingUp,
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
@@ -73,6 +74,7 @@ function isAnnualOrLongerPlan( purchase: Purchase ): boolean {
 }
 
 const SUPPORT_GUIDES_URL = localizeUrl( wpcomLink( '/support/' ) );
+const PLUGIN_TROUBLESHOOTING_URL = localizeUrl( wpcomLink( '/support/plugins/troubleshooting/' ) );
 const SITE_SPEED_URL = localizeUrl( wpcomLink( '/support/site-speed/' ) );
 const SITE_MIGRATION_URL = localizeUrl( wpcomLink( '/support/site-migration/' ) );
 const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
@@ -99,6 +101,9 @@ function getCardHref(
 	}
 	if ( cardId === 'find-guides' ) {
 		return SUPPORT_GUIDES_URL;
+	}
+	if ( cardId === 'use-plugin-troubleshooting-guide' ) {
+		return PLUGIN_TROUBLESHOOTING_URL;
 	}
 	if ( cardId === 'make-site-faster' ) {
 		return SITE_SPEED_URL;
@@ -131,6 +136,7 @@ function getCardOnClick(
 		'upgrade-for-full-access',
 		'get-theme-addon',
 		'find-guides',
+		'use-plugin-troubleshooting-guide',
 		'make-site-faster',
 		'use-migration-tools',
 		'use-domain-guide',
@@ -170,6 +176,8 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Change your plan' );
 		case 'find-guides':
 			return __( 'Find easy step-by-step guides' );
+		case 'use-plugin-troubleshooting-guide':
+			return __( 'Use our guide' );
 		case 'make-site-faster':
 			return __( 'Make your site faster' );
 		case 'use-migration-tools':
@@ -206,6 +214,8 @@ function getCardDescription( cardId: string ): string {
 			return __( 'Unlock premium themes on another plan.' );
 		case 'find-guides':
 			return __( 'Browse our guides and get back on track quickly.' );
+		case 'use-plugin-troubleshooting-guide':
+			return __( 'Follow our troubleshooting guide to find and fix conflicts.' );
 		case 'make-site-faster':
 			return __( 'Run our free speed test and get personalized recommendations.' );
 		case 'use-migration-tools':
@@ -367,6 +377,9 @@ export default function SolutionsCardsUpsellStep( {
 			case 'find-guides':
 				window.open( SUPPORT_GUIDES_URL, '_blank' );
 				break;
+			case 'use-plugin-troubleshooting-guide':
+				window.open( PLUGIN_TROUBLESHOOTING_URL, '_blank' );
+				break;
 			case 'make-site-faster':
 				window.open( SITE_SPEED_URL, '_blank' );
 				break;
@@ -419,6 +432,7 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'upgrade-for-full-access' ||
 							card.id === 'get-theme-addon' ||
 							card.id === 'find-guides' ||
+							card.id === 'use-plugin-troubleshooting-guide' ||
 							card.id === 'make-site-faster' ||
 							card.id === 'use-migration-tools' ||
 							card.id === 'use-domain-guide' ||

@@ -52,6 +52,7 @@ const CARD_ICONS: Record< string, React.ReactElement > = {
 	'upgrade-for-full-access': upload,
 	'get-theme-addon': brush,
 	'find-guides': postList,
+	'use-plugin-troubleshooting-guide': postList,
 	'make-site-faster': trendingUp,
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
@@ -100,6 +101,8 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 			return translate( 'Change your plan' );
 		case 'find-guides':
 			return translate( 'Find easy step-by-step guides' );
+		case 'use-plugin-troubleshooting-guide':
+			return translate( 'Use our guide' );
 		case 'make-site-faster':
 			return translate( 'Make your site faster' );
 		case 'use-migration-tools':
@@ -140,6 +143,8 @@ function getTranslatedSubtitle(
 			return translate( 'Unlock premium themes on another plan.' );
 		case 'find-guides':
 			return translate( 'Browse our guides and get back on track quickly.' );
+		case 'use-plugin-troubleshooting-guide':
+			return translate( 'Follow our troubleshooting guide to find and fix conflicts.' );
 		case 'make-site-faster':
 			return translate( 'Run our free speed test and get personalized recommendations.' );
 		case 'use-migration-tools':

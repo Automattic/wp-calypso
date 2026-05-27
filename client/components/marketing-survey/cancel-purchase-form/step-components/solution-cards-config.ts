@@ -7,6 +7,9 @@ import type { ReactElement } from 'react';
 const BUILT_BY_URL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 const RENEW_COUPON = 'DONTGO25';
 const SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/' );
+const PLUGIN_TROUBLESHOOTING_URL = localizeUrl(
+	'https://wordpress.com/support/plugins/troubleshooting/'
+);
 const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
 const DOMAINS_SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/domains/' );
@@ -166,6 +169,15 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		getHref: () => SUPPORT_URL,
 		onClick: () => {
 			window.open( SUPPORT_URL, '_blank' );
+		},
+	},
+	{
+		id: 'use-plugin-troubleshooting-guide',
+		title: 'Use our guide',
+		subtitle: 'Follow our troubleshooting guide to find and fix conflicts.',
+		getHref: () => PLUGIN_TROUBLESHOOTING_URL,
+		onClick: () => {
+			window.open( PLUGIN_TROUBLESHOOTING_URL, '_blank' );
 		},
 	},
 	{

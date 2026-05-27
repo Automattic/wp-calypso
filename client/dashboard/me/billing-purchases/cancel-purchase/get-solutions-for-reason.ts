@@ -29,6 +29,7 @@ const SOLUTION_IDS = {
 	UPGRADE_FULL_ACCESS: 'upgrade-for-full-access',
 	GET_THEME_ADDON: 'get-theme-addon',
 	FIND_GUIDES: 'find-guides',
+	USE_PLUGIN_TROUBLESHOOTING_GUIDE: 'use-plugin-troubleshooting-guide',
 	MAKE_SITE_FASTER: 'make-site-faster',
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
 	USE_DOMAIN_GUIDE: 'use-domain-guide',
@@ -138,6 +139,13 @@ const SOLUTIONS_MIGRATION_PROBLEMS: SolutionCardConfig[] = [
 /** Downtime */
 const SOLUTIONS_DOWNTIME: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
+];
+
+/** Plugin or theme conflicts */
+const SOLUTIONS_PLUGIN_OR_THEME_CONFLICTS: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.USE_PLUGIN_TROUBLESHOOTING_GUIDE },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
@@ -276,6 +284,8 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_BUGS_OR_GLITCHES ];
 		case 'migrationProblems':
 			return [ ...SOLUTIONS_MIGRATION_PROBLEMS ];
+		case 'pluginOrThemeConflicts':
+			return [ ...SOLUTIONS_PLUGIN_OR_THEME_CONFLICTS ];
 		case 'downtime':
 			return [ ...SOLUTIONS_DOWNTIME ];
 
