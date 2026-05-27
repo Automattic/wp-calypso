@@ -1,4 +1,4 @@
-# Bredcrumb (TSX)
+# Breadcrumb (TSX)
 
 This component displays an array of items as a breadcrumb.
 Each item should have at least a label.
