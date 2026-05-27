@@ -73,7 +73,7 @@ It also marks the updated fields as dirty. The `callback` argument is optional.
 </table>
 
 This function replaces the field values passed as an argument without updating the dirty fields.
-This is usefull when you want to reset form fields to an already persisted value.
+This is useful when you want to reset form fields to an already persisted value.
 
 ### `clearDirtyFields`
 
