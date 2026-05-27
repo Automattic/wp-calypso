@@ -51,12 +51,6 @@
 	width: 100%;
 }
 
-.trigger-text {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
 .panel {
 	padding-inline-start: calc( 24px + #{variables.$grid-unit-10} );
 	padding-block-end: variables.$grid-unit-20;

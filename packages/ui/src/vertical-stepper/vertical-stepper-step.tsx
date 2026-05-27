@@ -1,4 +1,5 @@
 // packages/ui/src/vertical-stepper/vertical-stepper-step.tsx
+import { Stack } from '@wordpress/ui';
 import { Stepper } from '../stepper';
 import styles from './style.module.scss';
 import type { StepProps } from '../stepper/types';
@@ -29,11 +30,11 @@ export function VerticalStepperStep( {
 		>
 			<Stepper.Trigger className={ styles[ 'trigger' ] }>
 				<Stepper.Indicator>{ indicator }</Stepper.Indicator>
-				<div className={ styles[ 'trigger-text' ] }>
+				<Stack direction="column" gap="xs">
 					<Stepper.Title>{ title }</Stepper.Title>
 					{ description && <Stepper.Description>{ description }</Stepper.Description> }
 					{ optional && ! description && <Stepper.Description>Optional</Stepper.Description> }
-				</div>
+				</Stack>
 			</Stepper.Trigger>
 			<Stepper.Panel className={ styles[ 'panel' ] } forceMount={ forceMount }>
 				{ children }
