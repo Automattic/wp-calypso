@@ -4,7 +4,7 @@ import { Stepper } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {
-	title: 'UI/Stepper (Tier 2)',
+	title: 'UI/Stepper/Headless (Tier 2)',
 	parameters: {
 		docs: {
 			description: {
