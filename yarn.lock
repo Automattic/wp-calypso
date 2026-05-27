@@ -33499,7 +33499,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.1.9"
+    "@automattic/number-formatters": "npm:^1.2.0"
     "@automattic/omnibar": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
