@@ -16,6 +16,6 @@ Notarization status of an application bundle can be verified via the `codesign`,
 
 `codesign --test-requirement="=notarized" --verify --verbose WordPress.com.app`
 
-`xrun stapler validate WordPress.com.app`
+`xcrun stapler validate WordPress.com.app`
 
 `spctl -a -v WordPress.com.app`
