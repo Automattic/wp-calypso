@@ -15,10 +15,10 @@ The Help Center is a bit complicated because it runs in multiple different envir
 3. In Atomic sites
    - as a plugin to Gutenberg editor.
      - A plugin when the site is connected to Jetpack.
-     - A minimal plugin when the site is disconnected from Jetpack. This plugiy simple links to wp.com/help.
+     - A minimal plugin when the site is disconnected from Jetpack. This plugin simply links to wp.com/help.
    - as a wpadminbar menu item.
      - A menu item that opens the Help Center when connected to Jetpack.
-     - A minimal plugin when the site is disconnected from Jetpack. This plugiy simple links to wp.com/help.
+     - A minimal plugin when the site is disconnected from Jetpack. This plugin simply links to wp.com/help.
 
 ### How to debug the Help Center
 
@@ -44,7 +44,7 @@ If you do want to modify PHP files. Please follow the development process of [`j
 
 ### Translations
 
-Translation are uploaded to widgets.wp.com/help-center/languages. They're then downloaded in Jetpack during the build process.
+Translations are uploaded to widgets.wp.com/help-center/languages. They're then downloaded in Jetpack during the build process.
 
 ### Deployment
 
