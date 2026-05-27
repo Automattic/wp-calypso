@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
@@ -47,15 +47,14 @@ const WooPaymentsOverview = () => {
 				{
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/document/woopayments/compatibility/countries/#supported-countries"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_countries_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 					},
@@ -66,15 +65,14 @@ const WooPaymentsOverview = () => {
 				{
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/document/woopayments/fees-and-debits/fees"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_fees_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 					},
@@ -88,87 +86,80 @@ const WooPaymentsOverview = () => {
 				{
 					components: {
 						wooPay: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/woopay-businesses"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_wooPay_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 						applePay: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/document/woopayments/payment-methods/apple-pay"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_applePay_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 						googlePay: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/document/woopayments/payment-methods/google-pay"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_googlePay_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 						iDeal: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/woocommerce-payments-ideal"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_iDeal_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 						p24: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/woopayments-p24"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_p24_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 						eps: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/woocommerce-payments-eps"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_eps_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 						bancontact: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/woocommerce-payments-bancontact"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_bancontact_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 					},
@@ -179,15 +170,14 @@ const WooPaymentsOverview = () => {
 				{
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/terms-conditions/woopayments-promotion"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_discount_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 					},
@@ -204,15 +194,14 @@ const WooPaymentsOverview = () => {
 				{
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href="https://woocommerce.com/buy-now-pay-later"
-								target="_blank"
-								rel="noopener noreferrer"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_a4a_woopayments_benefits_bnpl_link_click' )
 									);
 								} }
+								children={ null }
 							/>
 						),
 					},
@@ -535,20 +524,19 @@ const WooPaymentsOverview = () => {
 					>
 						<div className="woopayments-overview__description">
 							{ translate(
-								"Explore all of WooPayments' benefits, browse the technical documentation, and {{a}}try the demo{{/a}} ↗ to see it in action.",
+								"Explore all of WooPayments' benefits, browse the technical documentation, and {{a}}try the demo{{/a}} to see it in action.",
 								{
 									components: {
 										a: (
-											<a
+											<ExternalLink
 												className="woopayments-overview__demo-link"
 												href="https://woocommerce.com/products/woopayments"
-												target="_blank"
-												rel="noopener noreferrer"
 												onClick={ () => {
 													dispatch(
 														recordTracksEvent( 'calypso_a4a_woopayments_try_demo_button_click' )
 													);
 												} }
+												children={ null }
 											/>
 										),
 									},
