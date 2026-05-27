@@ -44,7 +44,11 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	hydrateRoot(
 		container,
 		<I18NContext.Provider value={ i18n }>
-			<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+			<InterimOmnibarContainer
+				initialUser={ window.currentUser ?? null }
+				initialPathname={ window.location.pathname }
+				events={ events }
+			/>
 		</I18NContext.Provider>
 	);
 }
