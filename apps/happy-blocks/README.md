@@ -4,7 +4,7 @@ This package contains the source code for the blocks used on WordPress.com sites
 
 ## Development environment
 
-1. Ensure you have a working sandbox and the its hostname is `wpcom-sandbox`
+1. Ensure you have a working sandbox and its hostname is `wpcom-sandbox`
 2. Run `yarn dev --sync` to build and sync files as you change them.
 
 ## Deployment
@@ -15,7 +15,7 @@ This package contains the source code for the blocks used on WordPress.com sites
 # Prep the latest trunk build for release
 install-plugin.sh happy-blocks --release
 # Alternatively, load changes from a branch (e.g. to test a PR.)
-install-plugin.sh happy-blocks $brach_name
+install-plugin.sh happy-blocks $branch_name
 ```
 
 see PCYsg-OT6-p2
