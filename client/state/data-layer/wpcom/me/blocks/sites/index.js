@@ -30,7 +30,7 @@ const seedReadSiteCacheFromBlocks = ( payload ) => {
 	for ( const site of payload.sites ) {
 		const queryKey = readSiteQuery( site.ID ).queryKey;
 		// Only seed when there's no fresher entry. Mark the seed as immediately
-		// stale (`updatedAt: 0`) so a subsequent `useReaderSite( site.ID )` still
+		// stale (`updatedAt: 0`) so a subsequent `useSite( site.ID )` still
 		// triggers a full fetch — the seed only lets icon/name render quickly.
 		if ( ! queryClient.getQueryData( queryKey ) ) {
 			queryClient.setQueryData( queryKey, site, { updatedAt: 0 } );

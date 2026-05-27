@@ -5,7 +5,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -20,7 +20,7 @@ const ReaderListFollowingItem = ( props ) => {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { site } = useReaderSite( siteId );
+	const { site } = useSite( siteId );
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
 

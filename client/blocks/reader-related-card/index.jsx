@@ -11,7 +11,7 @@ import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 
 const noop = () => {};
@@ -108,7 +108,7 @@ export function RelatedPostCard( {
 } ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const effectiveSiteId = siteId ?? post?.site_ID;
-	const { site: readerSite } = useReaderSite( effectiveSiteId );
+	const { site: readerSite } = useSite( effectiveSiteId );
 	const resolvedSite = site ?? readerSite;
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;

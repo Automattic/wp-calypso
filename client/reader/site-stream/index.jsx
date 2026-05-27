@@ -6,7 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -23,7 +23,7 @@ const emptyContent = () => <EmptyContent />;
 const SiteStream = ( props ) => {
 	const { className = 'is-site-stream', siteId } = props;
 	const translate = useTranslate();
-	const { site, siteError } = useReaderSite( siteId );
+	const { site, siteError } = useSite( siteId );
 	const feed = useSelector( ( state ) => site && site.feed_ID && getFeed( state, site.feed_ID ) );
 	const isBlocked = useSelector( ( state ) => isSiteBlocked( state, siteId ) );
 	const postCount = useSelector(

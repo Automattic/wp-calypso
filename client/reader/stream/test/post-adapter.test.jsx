@@ -18,7 +18,7 @@ jest.mock( 'calypso/blocks/reader-post-card', () => ( props ) => (
 
 jest.mock( 'calypso/components/data/query-reader-feed', () => () => null );
 jest.mock( 'calypso/reader/data/site', () => ( {
-	withReaderSite: ( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
+	withSite: ( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
 } ) );
 
 const renderPost = ( { post, queryClient = new QueryClient() } ) => {

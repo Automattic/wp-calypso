@@ -3,7 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import readerReducer from 'calypso/state/reader/reducer';
@@ -11,7 +11,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSite, ReaderSiteItem } from '../site-item';
 
 jest.mock( 'calypso/reader/data/site', () => ( {
-	useReaderSite: jest.fn( () => ( {
+	useSite: jest.fn( () => ( {
 		site: undefined,
 		siteError: undefined,
 		isLoading: false,
@@ -69,8 +69,8 @@ describe( 'RecommendedFeedItem', () => {
 		props = defaultProps,
 		siteData?: object
 	): ReturnType< typeof renderWithProvider > => {
-		jest.mocked( useReaderSite ).mockReturnValue( {
-			site: siteData as ReturnType< typeof useReaderSite >[ 'site' ],
+		jest.mocked( useSite ).mockReturnValue( {
+			site: siteData as ReturnType< typeof useSite >[ 'site' ],
 			siteError: undefined,
 			isLoading: false,
 			isError: false,

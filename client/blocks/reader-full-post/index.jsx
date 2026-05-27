@@ -31,7 +31,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import { withReaderSite } from 'calypso/reader/data/site';
+import { withSite } from 'calypso/reader/data/site';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -953,7 +953,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 	showSelectedPost,
-} )( withReaderSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
+} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {

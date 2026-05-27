@@ -9,7 +9,7 @@ interface SiteError {
 	statusCode: number;
 }
 
-export interface UseReaderSiteResult {
+export interface UseSiteResult {
 	site: ReadSiteResponse | undefined;
 	siteError: SiteError | undefined;
 	isLoading: boolean;
@@ -25,7 +25,7 @@ const dispatchedSiteUpdates = new Map< number, number >();
  * Also dispatches `READER_SITE_RECEIVE` with the raw API payload when the
  * query resolves so legacy follows and site-blocks reducers can stay in sync.
  */
-export function useReaderSite( siteId: number | string | undefined ): UseReaderSiteResult {
+export function useSite( siteId: number | string | undefined ): UseSiteResult {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const query = useQuery( readSiteQuery( siteId ) );

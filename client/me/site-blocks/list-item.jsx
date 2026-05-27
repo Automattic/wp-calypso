@@ -2,7 +2,7 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { withReaderSite } from 'calypso/reader/data/site';
+import { withSite } from 'calypso/reader/data/site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 
@@ -43,5 +43,5 @@ class SiteBlockListItem extends Component {
 }
 
 export default connect( null, { unblockSite, recordTracksEvent } )(
-	withReaderSite( localize( SiteBlockListItem ) )
+	withSite( localize( SiteBlockListItem ) )
 );

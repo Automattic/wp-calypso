@@ -5,7 +5,7 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import ReaderBackButton from 'calypso/reader/components/back-button';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount, getSiteName } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -35,7 +35,7 @@ const FeedStream = ( props ) => {
 	const postCount = useSelector(
 		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )
 	);
-	const { site, siteError } = useReaderSite( siteId );
+	const { site, siteError } = useSite( siteId );
 
 	if ( feed ) {
 		// Add site icon to feed object so have icon for external feeds

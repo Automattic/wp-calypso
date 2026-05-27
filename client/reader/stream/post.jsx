@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
-import { withReaderSite } from 'calypso/reader/data/site';
+import { withSite } from 'calypso/reader/data/site';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
@@ -78,7 +78,7 @@ const ConnectedReaderPostCardAdapter = connect( ( state, ownProps ) => {
 	return {
 		feed: feed,
 	};
-} )( withReaderSite( ReaderPostCardAdapter, getPostSiteId ) );
+} )( withSite( ReaderPostCardAdapter, getPostSiteId ) );
 
 export default function ReaderPostCardAdapterContainer( props ) {
 	const { is_external: isExternal, site_ID: siteId } = props.post ?? {};

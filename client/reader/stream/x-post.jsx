@@ -10,7 +10,7 @@ import ReactDom from 'react-dom';
 import { connect, useSelector } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -215,7 +215,7 @@ function CrossPostContainer( props ) {
 	const { feedId, blogId } = props.postKey || {};
 	const feedFromKey = useSelector( ( state ) => ( feedId ? getFeed( state, feedId ) : undefined ) );
 	const siteId = blogId || feedFromKey?.blog_ID;
-	const { site } = useReaderSite( siteId );
+	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const feedFromSite = useSelector( ( state ) =>
 		! feedFromKey && resolvedFeedId ? getFeed( state, resolvedFeedId ) : undefined

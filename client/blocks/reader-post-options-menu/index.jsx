@@ -6,7 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
-import { withReaderSite } from 'calypso/reader/data/site';
+import { withSite } from 'calypso/reader/data/site';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import ReaderPostEllipsisMenu from './reader-post-ellipsis-menu';
 import './style.scss';
@@ -90,6 +90,6 @@ export default compose(
 				! isExternal && siteId > 0 && { siteId: +siteId }
 			)
 	),
-	withReaderSite,
+	withSite,
 	localize
 )( ReaderPostOptionsMenu );

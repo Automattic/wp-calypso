@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 /**
@@ -26,7 +26,7 @@ const connectSite = ( Component ) => {
 			siteId = feedFromProps.blog_ID !== 0 ? feedFromProps.blog_ID : undefined;
 		}
 
-		const { site } = useReaderSite( siteId );
+		const { site } = useSite( siteId );
 
 		// If the consumer only provided siteId, resolve feedId from the site.
 		const resolvedFeedId = feedId || site?.feed_ID;

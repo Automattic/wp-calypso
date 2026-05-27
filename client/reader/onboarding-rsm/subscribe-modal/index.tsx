@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl } from 'calypso/reader/get-helpers';
@@ -73,7 +73,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	// Curated entries with `site_ID: 0` never trigger a fetch (the hook is
 	// disabled for non-positive ids). For WP.com sites the record exposes the
 	// canonical `feed_URL` which `getFeedUrl` prefers over the feed's own URL.
-	const { site: selectedReaderSite } = useReaderSite(
+	const { site: selectedReaderSite } = useSite(
 		selectedSite && selectedSite.site_ID > 0 ? selectedSite.site_ID : undefined
 	);
 	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;

@@ -21,7 +21,7 @@ jest.mock( 'calypso/components/data/with-reader-teams', () => ( {
 } ) );
 
 jest.mock( 'calypso/reader/data/site', () => ( {
-	withReaderSite: ( WrappedComponent ) => ( props ) => (
+	withSite: ( WrappedComponent ) => ( props ) => (
 		<WrappedComponent
 			{ ...props }
 			site={ props.siteId ? { ID: props.siteId, URL: 'https://example.com' } : undefined }
@@ -36,7 +36,7 @@ jest.mock( '../reader-post-ellipsis-menu', () => ( { site } ) => (
 const store = createStore( ( state = { reader: { feeds: { items: {} } } } ) => state );
 
 describe( 'ReaderPostOptionsMenu', () => {
-	test( 'passes the post site ID through withReaderSite before rendering the menu', () => {
+	test( 'passes the post site ID through withSite before rendering the menu', () => {
 		render(
 			<Provider store={ store }>
 				<ReaderPostOptionsMenu

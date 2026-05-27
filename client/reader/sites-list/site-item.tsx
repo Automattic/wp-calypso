@@ -2,7 +2,7 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
-import { useReaderSite } from 'calypso/reader/data/site';
+import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
 import { useDispatch } from 'calypso/state';
@@ -34,7 +34,7 @@ export function ReaderSiteItem( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { image, name, feedUrl = '', siteId, feedId } = site;
-	const { site: siteDetails } = useReaderSite( siteId );
+	const { site: siteDetails } = useSite( siteId );
 	const siteIcon = siteDetails?.icon?.img || siteDetails?.icon?.ico || image;
 	const isCompactView = variant === 'compact';
 	const linkUrl = getStreamUrl( feedId, siteId ) ?? feedUrl;

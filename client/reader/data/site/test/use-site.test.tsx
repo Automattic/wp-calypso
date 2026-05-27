@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
-import { useReaderSite } from '../use-reader-site';
+import { useSite } from '../use-site';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -31,7 +31,7 @@ function makeWrapper() {
 	return { Wrapper, dispatched };
 }
 
-describe( 'useReaderSite', () => {
+describe( 'useSite', () => {
 	afterEach( () => nock.cleanAll() );
 
 	it( 'returns the adapted site when the query resolves', async () => {
@@ -43,7 +43,7 @@ describe( 'useReaderSite', () => {
 		} );
 
 		const { Wrapper } = makeWrapper();
-		const { result } = renderHook( () => useReaderSite( 123 ), { wrapper: Wrapper } );
+		const { result } = renderHook( () => useSite( 123 ), { wrapper: Wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.site ).toMatchObject( {
@@ -69,7 +69,7 @@ describe( 'useReaderSite', () => {
 			} );
 
 		const { Wrapper, dispatched } = makeWrapper();
-		const { result } = renderHook( () => useReaderSite( 200 ), { wrapper: Wrapper } );
+		const { result } = renderHook( () => useSite( 200 ), { wrapper: Wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		const receiveActions = dispatched.filter( ( a ) => a.type === 'READER_SITE_RECEIVE' );
@@ -96,7 +96,7 @@ describe( 'useReaderSite', () => {
 		} );
 
 		const { Wrapper, dispatched } = makeWrapper();
-		const { result } = renderHook( () => [ useReaderSite( 201 ), useReaderSite( 201 ) ] as const, {
+		const { result } = renderHook( () => [ useSite( 201 ), useSite( 201 ) ] as const, {
 			wrapper: Wrapper,
 		} );
 
@@ -109,7 +109,7 @@ describe( 'useReaderSite', () => {
 		nock( BASE ).get( '/rest/v1.1/read/sites/410' ).query( true ).reply( 410, { code: 'gone' } );
 
 		const { Wrapper } = makeWrapper();
-		const { result } = renderHook( () => useReaderSite( 410 ), { wrapper: Wrapper } );
+		const { result } = renderHook( () => useSite( 410 ), { wrapper: Wrapper } );
 
 		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 		expect( result.current.siteError?.statusCode ).toBe( 410 );
@@ -117,7 +117,7 @@ describe( 'useReaderSite', () => {
 
 	it( 'is disabled (no fetch, no dispatch) for falsy siteId', () => {
 		const { Wrapper, dispatched } = makeWrapper();
-		const { result } = renderHook( () => useReaderSite( undefined ), { wrapper: Wrapper } );
+		const { result } = renderHook( () => useSite( undefined ), { wrapper: Wrapper } );
 		expect( result.current.site ).toBeUndefined();
 		expect( result.current.isLoading ).toBe( false );
 		expect( dispatched.filter( ( a ) => a.type === 'READER_SITE_RECEIVE' ) ).toHaveLength( 0 );

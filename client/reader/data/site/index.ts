@@ -1,2 +1,2 @@
-export { useReaderSite, type UseReaderSiteResult } from './use-reader-site';
-export { withReaderSite, type WithReaderSiteProps } from './with-reader-site';
+export { useSite, type UseSiteResult } from './use-site';
+export { withSite, type WithSiteProps } from './with-site';
