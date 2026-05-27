@@ -4,15 +4,6 @@ import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-// Side-effect import. The fitter is the same source the wpcom collateral
-// shell inlines for Browserless; importing it locally exposes
-// `window.applyA4aFit` immediately on bundle load so the preview never
-// has to depend on the deck HTML carrying the script (it does, but
-// caching/SW/proxies make that path fragile). The IIFE's auto-run
-// against `document` finds no `.ela-page` in Calypso's outer document
-// and is a no-op.
-import '../../lib/fit-onepager.js';
-
 import './pdf-viewer.scss';
 
 declare global {
@@ -106,6 +97,34 @@ const rewriteRootSelectors = ( css: string ): string =>
 const HOST_BASELINE =
 	'<style>:host{display:block;width:816px;height:1056px;overflow:hidden;}</style>';
 
+// Load the wpcom-rendered shell's fit.js (inlined before `</body>` by
+// `Marketing_Collateral_Shell::wrap_html`) into the outer document the
+// first time we see it. `shadow.innerHTML = …` does not execute script
+// tags, so we extract the inlined script body from the parsed deck and
+// re-append it via `createElement('script')` — that path executes and
+// exposes `window.applyA4aFit`, which we then call against each shadow
+// root we build. The cache-buster on the variant URL ensures the parsed
+// deck is fresh enough to carry the latest fit.js.
+function ensureFitScriptLoaded( parsed: Document ): boolean {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	if ( window.applyA4aFit ) {
+		return true;
+	}
+	const inline = Array.from( parsed.body.querySelectorAll( 'script' ) ).find(
+		( s ) => ! s.src && /applyA4aFit/.test( s.textContent ?? '' )
+	);
+	if ( ! inline?.textContent ) {
+		return false;
+	}
+	const exec = document.createElement( 'script' );
+	exec.setAttribute( 'data-a4a-fit', '1' );
+	exec.textContent = inline.textContent;
+	document.head.appendChild( exec );
+	return !! window.applyA4aFit;
+}
+
 function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 	const hostRef = useRef< HTMLDivElement >( null );
 	const [ scale, setScale ] = useState( 0 );
@@ -135,20 +154,12 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 					: node.outerHTML
 			)
 			.join( '' );
-		// eslint-disable-next-line no-console
-		console.log(
-			'[a4a-preview] ShadowPage useEffect',
-			title,
-			'window.applyA4aFit=',
-			typeof window.applyA4aFit
-		);
+		const fitLoaded = ensureFitScriptLoaded( parsed );
 		// Drop body scripts before injecting markup — innerHTML cannot
 		// execute them anyway, and leaving them in clutters the DOM.
-		// The fit pass is now bundled into Calypso so we don't depend on
-		// the deck carrying the script.
 		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
 		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
-		if ( window.applyA4aFit ) {
+		if ( fitLoaded && window.applyA4aFit ) {
 			window.applyA4aFit( shadow ).catch( ( e ) => {
 				// eslint-disable-next-line no-console
 				console.warn( '[a4a-preview] applyA4aFit error', e );
