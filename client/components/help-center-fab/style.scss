@@ -1,7 +1,14 @@
 // 44px matches Apple HIG's minimum tap target.
 $help-center-fab-size: 44px;
 $help-center-fab-offset: 24px;
+$help-center-fab-bottom-bar-gap: 16px;
 $help-center-fab-gap: 8px;
+// Sits 16px above any persistent bottom bar (--bottom-bar-height); otherwise
+// clears the iOS home indicator with a 24px minimum from the viewport edge.
+$help-center-fab-inset-block-end: max(
+	calc( var( --bottom-bar-height, 0px ) + #{ $help-center-fab-bottom-bar-gap } ),
+	max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) )
+);
 $help-center-fab-bg-default: color-mix(
 	in srgb,
 	var( --studio-blue-50 ) 10%,
@@ -25,14 +32,10 @@ $help-center-fab-shadow:
 
 .components-button.help-center-fab {
 	position: fixed;
-	// `env(safe-area-inset-*)` keeps the FAB clear of the iOS home indicator and
-	// any browser UI overlap on the inline-end edge. For the inline axis we max
-	// over both physical insets so the rule works the same in LTR and RTL —
-	// only one of them is ever non-zero (landscape notch on a single side).
-	inset-block-end: calc(
-		max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) ) +
-			var( --bottom-bar-height, 0px )
-	);
+	inset-block-end: $help-center-fab-inset-block-end;
+	// On the inline axis we max over both physical insets so the rule works the
+	// same in LTR and RTL — only one of them is ever non-zero (landscape notch
+	// on a single side).
 	inset-inline-end: max(
 		#{ $help-center-fab-offset },
 		env( safe-area-inset-left ),
@@ -97,10 +100,8 @@ body.has-help-center-fab .help-center .help-center__container.is-desktop {
 	animation: none;
 	inset-inline-start: auto;
 	inset-inline-end: $help-center-fab-offset;
-	// Stay 8px above the FAB, mirroring its safe-area and bottom-bar offsets.
+	// Stay 8px above the FAB, mirroring its inset-block-end shift.
 	inset-block-end: calc(
-		max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) ) +
-			var( --bottom-bar-height, 0px ) +
-			#{ $help-center-fab-size + $help-center-fab-gap }
+		#{ $help-center-fab-inset-block-end } + #{ $help-center-fab-size + $help-center-fab-gap }
 	);
 }
