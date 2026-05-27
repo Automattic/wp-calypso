@@ -1,6 +1,6 @@
 # NoSitesMessage
 
-This the a call-to-action we show to users that have no sites but access pages that require the user to have at least one site.
+This is a call-to-action we show to users that have no sites but access pages that require the user to have at least one site.
 
 ## Usage
 
