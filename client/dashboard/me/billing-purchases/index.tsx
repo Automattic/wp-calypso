@@ -14,6 +14,7 @@ import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { purchasesIndexRoute, purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -32,7 +33,7 @@ import { PurchaseRemovedNotice } from './purchase-removed-notice';
 export default function PurchasesList() {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
-	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
+	const { removed, removedDomain, removedId, plan_changed } = purchasesIndexRoute.useSearch();
 	// Capture notice data on first render — useSearch() may lose the values
 	// after replaceState strips the URL params.
 	const [ removedNoticeData ] = useState( () =>
@@ -134,6 +135,7 @@ export default function PurchasesList() {
 					onClose={ () => setShowRemovedNotice( false ) }
 				/>
 			) }
+			{ plan_changed && <Notice variant="success">{ __( 'Your plan has been updated.' ) }</Notice> }
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
 					{ ! isLoading && <PerformanceTrackerStop /> }

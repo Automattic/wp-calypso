@@ -48,7 +48,8 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { refunded, upgraded, cancelled, downgraded, intent } = purchaseSettingsRoute.useSearch();
+	const { refunded, upgraded, cancelled, downgraded, plan_changed, intent } =
+		purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
@@ -146,6 +147,19 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<Notice variant="success" onClose={ () => setShowUpgradedNotice( false ) }>
 				{ __( 'Thank you for your purchase. Your site has been upgraded.' ) }
+			</Notice>
+		);
+	}
+
+	// Show success notice after a plan change (e.g. expired-plan downgrade checkout).
+	if ( plan_changed ) {
+		return (
+			<Notice variant="success">
+				{ sprintf(
+					// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+					__( 'Your plan has been updated to %s.' ),
+					purchase.product_name
+				) }
 			</Notice>
 		);
 	}

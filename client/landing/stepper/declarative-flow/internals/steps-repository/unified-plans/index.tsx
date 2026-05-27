@@ -77,6 +77,11 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
+			// For expired-plan downgrades, use an intent that shows all paid tiers
+			// (Free/Commerce/Enterprise are hidden via props instead).
+			if ( search.has( 'expired_downgrade' ) ) {
+				return 'plans-new-hosted-site';
+			}
 			return 'plans-upgrade';
 		case WOO_HOSTED_PLANS_FLOW:
 			return 'plans-woo-hosted';
@@ -98,6 +103,13 @@ const PlansStepAdaptor: StepType< {
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
+		headerText?: string;
+		fallbackSubHeaderText?: string;
+		hideFreePlan?: boolean;
+		hideEcommercePlan?: boolean;
+		hideEnterprisePlan?: boolean;
+		hidePlansFeatureComparison?: boolean;
+		hidePlanTypeSelector?: boolean;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -106,8 +118,19 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
-		props;
+	const {
+		displayedIntervals,
+		headerText,
+		fallbackSubHeaderText,
+		isInSignup,
+		isStepperUpgradeFlow,
+		selectedFeature,
+		hideEcommercePlan: hideEcommercePlanProp,
+		hideEnterprisePlan: hideEnterprisePlanProp,
+		hidePlansFeatureComparison: hidePlansFeatureComparisonProp,
+		hidePlanTypeSelector: hidePlanTypeSelectorProp,
+		wrapperProps,
+	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -209,7 +232,7 @@ const PlansStepAdaptor: StepType< {
 	return (
 		<UnifiedPlansStep
 			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
-			hideFreePlan={ hideFreePlan }
+			hideFreePlan={ hideFreePlan || props.hideFreePlan }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
@@ -252,6 +275,12 @@ const PlansStepAdaptor: StepType< {
 			isInSignup={ isInSignup }
 			isStepperUpgradeFlow={ isStepperUpgradeFlow }
 			selectedFeature={ selectedFeature }
+			headerText={ headerText }
+			fallbackSubHeaderText={ fallbackSubHeaderText }
+			hideEcommercePlan={ hideEcommercePlanProp }
+			hideEnterprisePlan={ hideEnterprisePlanProp }
+			hidePlansFeatureComparison={ hidePlansFeatureComparisonProp }
+			hidePlanTypeSelector={ hidePlanTypeSelectorProp }
 		/>
 	);
 };

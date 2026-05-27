@@ -1,3 +1,4 @@
+import { getPlanPath } from '@automattic/calypso-products';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -64,6 +65,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const query = useQuery();
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
+		const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
@@ -84,6 +86,17 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
 
+				// For expired-plan downgrades, hide plans that aren't eligible targets
+				// and show a helpful subtitle.
+				hideFreePlan: isExpiredDowngrade || undefined,
+				hideEcommercePlan: isExpiredDowngrade || undefined,
+				hideEnterprisePlan: isExpiredDowngrade || undefined,
+				hidePlanTypeSelector: isExpiredDowngrade || undefined,
+				headerText: isExpiredDowngrade ? __( 'Find your best fit' ) : undefined,
+				fallbackSubHeaderText: isExpiredDowngrade
+					? __( 'Compare plans and pick the one that works for where your site is headed.' )
+					: undefined,
+
 				// Provide a custom back handler that goes to back_to or /sites
 				wrapperProps: {
 					goBack: () => {
@@ -98,6 +111,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const query = useQuery();
 		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
+		const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -106,16 +120,23 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				case STEPS.UNIFIED_PLANS.slug: {
 					// User selected plan, go directly to checkout
 					if ( providedDependencies?.cartItems && providedDependencies.cartItems.length > 0 ) {
-						const selectedPlan = providedDependencies.cartItems[ 0 ]?.product_slug;
-						if ( selectedPlan && siteSlug ) {
-							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
+						const selectedPlanSlug = providedDependencies.cartItems[ 0 ]?.product_slug;
+						const planPath = selectedPlanSlug ? getPlanPath( selectedPlanSlug ) : undefined;
+						if ( planPath && siteSlug ) {
+							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ planPath }`;
 							const currentPath = window.location.href.replace( window.location.origin, '' );
 
 							// Build checkout URL with query params
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
+							const postCheckoutUrl = isExpiredDowngrade
+								? dashboardLink(
+										`/me/billing/purchases/by-site/${ encodeURIComponent( siteSlug ) }`
+								  )
+								: redirectTo || dashboardLink( '/sites' );
+
 							const finalUrl = addQueryArgs( checkoutUrl, {
-								redirect_to: redirectTo || dashboardLink( '/sites' ),
+								redirect_to: postCheckoutUrl,
 								cancel_to: currentPath,
 							} );
 

@@ -6,6 +6,9 @@ import {
 	isPlan,
 	isDomainRegistration,
 	isAkismetFreeProduct,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
 	PLAN_BUSINESS,
 	PLAN_PERSONAL_TRIAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -407,6 +410,37 @@ class PurchaseNotice extends Component<
 		}
 
 		return null;
+	}
+
+	renderSeeOtherPlansAction( currentPurchase: Purchase ) {
+		const { selectedSite, translate } = this.props;
+
+		if ( ! selectedSite ) {
+			return null;
+		}
+
+		if ( ! config.isEnabled( 'plans/expired-plan-downgrade' ) ) {
+			return null;
+		}
+
+		if ( ! isPlan( currentPurchase ) ) {
+			return null;
+		}
+
+		const planSlug = currentPurchase.productSlug;
+		if (
+			! isPersonalPlan( planSlug ) &&
+			! isPremiumPlan( planSlug ) &&
+			! isBusinessPlan( planSlug )
+		) {
+			return null;
+		}
+
+		return (
+			<NoticeAction href={ `/plans/${ selectedSite.slug }` }>
+				{ translate( 'See other plans' ) }
+			</NoticeAction>
+		);
 	}
 
 	trackImpression( warning: string ) {

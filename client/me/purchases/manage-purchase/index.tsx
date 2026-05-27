@@ -65,6 +65,7 @@ import {
 	Icon,
 	payment,
 	reusableBlock,
+	shuffle,
 	tool,
 	trash,
 	upload,
@@ -119,6 +120,7 @@ import {
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
 	canExplicitRenew,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -597,6 +599,34 @@ class ManagePurchase extends Component<
 			return `/plans/storage/${ siteSlug }`;
 		}
 
+		// For expired plans eligible for self-serve downgrade, use the simpler plan-upgrade flow.
+		if (
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			purchase &&
+			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
+			isPlan( purchase ) &&
+			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) )
+		) {
+			const cancelTo = this.props.isSiteLevel
+				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
+				: `/me/purchases/${ siteSlug }/${ purchase.id }`;
+			const intervalMap: Record< number, string > = {
+				31: 'monthly',
+				365: 'yearly',
+				730: '2yearly',
+				1095: '3yearly',
+			};
+			return addQueryArgs(
+				{
+					siteSlug,
+					cancel_to: cancelTo,
+					expired_downgrade: 'true',
+					intervalType: intervalMap[ purchase.billPeriodDays ] ?? 'yearly',
+				},
+				'/setup/plan-upgrade'
+			);
+		}
+
 		return `/plans/${ siteSlug }`;
 	}
 
@@ -631,7 +661,16 @@ class ManagePurchase extends Component<
 		let icon;
 		let buttonText;
 
-		if ( isExpired( purchase ) ) {
+		const isDowngradeEligible =
+			isExpired( purchase ) &&
+			isUpgradeablePlan &&
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) );
+
+		if ( isDowngradeEligible ) {
+			icon = shuffle;
+			buttonText = translate( 'Change plan' );
+		} else if ( isExpired( purchase ) ) {
 			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )

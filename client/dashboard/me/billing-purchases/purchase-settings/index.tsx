@@ -15,6 +15,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -122,7 +123,7 @@ function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
 
-function getExpiredNewPlanUrl( purchase: Purchase ): string {
+function getExpiredNewPlanUrl( purchase: Purchase, isDowngrade = false ): string {
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
 		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
@@ -132,7 +133,20 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		return getWpcomPlanGridUrl( purchase.site_slug );
+		const url = getWpcomPlanGridUrl( purchase.site_slug );
+		if ( isDowngrade ) {
+			const intervalMap: Record< number, string > = {
+				31: 'monthly',
+				365: 'yearly',
+				730: '2yearly',
+				1095: '3yearly',
+			};
+			return addQueryArgs( url, {
+				expired_downgrade: 'true',
+				intervalType: intervalMap[ purchase.bill_period_days ] ?? 'yearly',
+			} );
+		}
+		return url;
 	}
 
 	return wpcomLink( `/plans/${ purchase.site_slug }` );
@@ -468,12 +482,67 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! isExpired( purchase ) ) {
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ),
+	} );
+	const isPurchaseExpiredOrGracePeriod =
+		isExpired( purchase ) || isInExpirationGracePeriod( purchase );
+
+	if ( ! isPurchaseExpiredOrGracePeriod ) {
 		return null;
 	}
+
+	// Exclude sites with a pending migration — checkout fails for these.
+	const migrationStatus = site?.site_migration?.migration_status ?? '';
+	const isMigrating =
+		migrationStatus.startsWith( 'migration-pending' ) ||
+		migrationStatus.startsWith( 'migration-started' ) ||
+		migrationStatus.startsWith( 'migration-in-progress' );
+
+	// Match the wpcom plan slugs: Personal, Premium (value_bundle), Business.
+	// Includes monthly, 2y, 3y variants.
+	const isDowngradeEligiblePlan = /^(personal-bundle|value_bundle|business-bundle)/.test(
+		purchase.product_slug
+	);
+
+	const isEligibleForDowngrade =
+		isEnabled( 'plans/expired-plan-downgrade' ) &&
+		purchase.is_plan &&
+		! isMigrating &&
+		isDowngradeEligiblePlan;
+
+	if ( isEligibleForDowngrade ) {
+		return (
+			<ActionList.ActionItem
+				title={ __( 'Change plan' ) }
+				description={ __( 'Find the best fit for your needs.' ) }
+				actions={
+					<Button
+						variant="secondary"
+						size="compact"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_expired_plan_change_plan_click', {
+								current_plan: purchase.product_slug,
+							} );
+							window.location.href = getExpiredNewPlanUrl( purchase, true );
+						} }
+					>
+						{ __( 'See plans' ) }
+					</Button>
+				}
+			/>
+		);
+	}
+
+	// Only show "Pick another plan" for plan purchases, not domains, migrating sites, or other products.
+	if ( ! purchase.is_plan || isMigrating ) {
+		return null;
+	}
+
 	return (
 		<ActionList.ActionItem
-			title={ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+			title={ __( 'Pick another plan' ) }
 			description={ __( 'Find the best fit for your needs.' ) }
 			actions={
 				<Button
@@ -487,7 +556,7 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }
 				>
-					{ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+					{ __( 'Pick another plan' ) }
 				</Button>
 			}
 		/>

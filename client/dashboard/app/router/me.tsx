@@ -245,7 +245,9 @@ export const purchasesIndexRoute = createRoute( {
 		removed?: string;
 		removedDomain?: string;
 		removedId?: number;
+		plan_changed?: true;
 	} => {
+		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
@@ -253,6 +255,7 @@ export const purchasesIndexRoute = createRoute( {
 			removed: typeof search.removed === 'string' ? search.removed : undefined,
 			removedDomain: typeof search.removedDomain === 'string' ? search.removedDomain : undefined,
 			removedId: typeof search.removedId === 'number' ? search.removedId : undefined,
+			...( isPlanChanged ? { plan_changed: true } : {} ),
 		};
 	},
 } ).lazy( () =>
@@ -286,18 +289,21 @@ export const purchaseSettingsRoute = createRoute( {
 		upgraded?: true;
 		cancelled?: true;
 		downgraded?: true;
+		plan_changed?: true;
 		intent?: 'auto-renew';
 	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
 		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
 		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
+		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
 		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
 			...( isUpgraded ? { upgraded: true } : {} ),
 			...( isCancelled ? { cancelled: true } : {} ),
 			...( isDowngraded ? { downgraded: true } : {} ),
+			...( isPlanChanged ? { plan_changed: true } : {} ),
 			...( intent ? { intent } : {} ),
 		};
 	},
@@ -333,6 +339,63 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		} )
 	)
 );
+
+export const purchaseBySiteResolverRoute = createRoute( {
+	getParentRoute: () => purchasesRoute,
+	path: 'by-site/$siteSlug',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		// Invalidate the cache and fetch fresh purchases — the new plan
+		// purchase was just created and likely isn't in any cached response.
+		await queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
+		const purchases = await queryClient.fetchQuery( userPurchasesQuery() );
+
+		// Normalize .wpcomstaging.com ↔ .wordpress.com so either form matches.
+		const normalize = ( d: string | undefined | null ) =>
+			( d ?? '' ).replace( /\.wpcomstaging\.com$/, '.wordpress.com' );
+		const targetSlug = normalize( decodeURIComponent( siteSlug ) );
+
+		const now = Date.now();
+
+		// Find the active plan purchase for the site.
+		// The old expired plan may still be in the list, so we filter by
+		// expiry_date in the future and sort by highest ID (most recent
+		// purchase) to land on the newly purchased plan.
+		const sitePlans = purchases
+			.filter( ( p ) => {
+				if ( ! p.is_plan ) {
+					return false;
+				}
+				// Skip purchases with an expiry date in the past.
+				if ( p.expiry_date && new Date( p.expiry_date ).getTime() <= now ) {
+					return false;
+				}
+				// Skip purchases with explicit expired status.
+				if ( p.expiry_status === 'expired' ) {
+					return false;
+				}
+				return normalize( p.site_slug ) === targetSlug || normalize( p.domain ) === targetSlug;
+			} )
+			.sort( ( a, b ) => Number( b.ID ) - Number( a.ID ) );
+
+		const planPurchase = sitePlans[ 0 ];
+
+		if ( planPurchase ) {
+			throw dashboardRedirect( {
+				to: '/me/billing/purchases/$purchaseId',
+				params: { purchaseId: String( planPurchase.ID ) },
+				search: { plan_changed: true },
+				replace: true,
+			} );
+		}
+
+		// Fallback: no matching plan found, go to the purchases list.
+		throw dashboardRedirect( {
+			to: '/me/billing/purchases',
+			search: { plan_changed: true },
+			replace: true,
+		} );
+	},
+} );
 
 export const changePaymentMethodRoute = createRoute( {
 	head: () => ( {
@@ -1217,6 +1280,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
+				purchaseBySiteResolverRoute,
 				purchaseSettingsRoute.addChildren( [
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
