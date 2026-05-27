@@ -122,6 +122,127 @@ export const LinearFlow: Story = {
 	render: LinearFlowDemo,
 };
 
+// ---------------------------------------------------------------------------
+// Back navigation — clicking a completed step triggers "go back" logic
+// ---------------------------------------------------------------------------
+
+const onboardingSteps = [
+	{ value: 'account', title: 'Create account' },
+	{ value: 'domain', title: 'Choose a domain' },
+	{ value: 'plan', title: 'Select a plan' },
+	{ value: 'payment', title: 'Payment' },
+];
+
+function BackNavigationDemo() {
+	const [ currentStep, setCurrentStep ] = useState( 'plan' );
+	const [ log, setLog ] = useState< string[] >( [ 'Started at "Select a plan" (step 3 of 4)' ] );
+
+	const currentIndex = onboardingSteps.findIndex( ( s ) => s.value === currentStep );
+
+	function handleStepClick( clickedStep: string ) {
+		const clickedIndex = onboardingSteps.findIndex( ( s ) => s.value === clickedStep );
+		const stepsBack = currentIndex - clickedIndex;
+		setLog( ( prev ) => [
+			`Navigated back ${ stepsBack } step(s) → "${ onboardingSteps[ clickedIndex ].title }"`,
+			...prev,
+		] );
+		setCurrentStep( clickedStep );
+	}
+
+	function handleContinue() {
+		const next = onboardingSteps[ currentIndex + 1 ];
+		if ( next ) {
+			setLog( ( prev ) => [ `Continued → "${ next.title }"`, ...prev ] );
+			setCurrentStep( next.value );
+		}
+	}
+
+	return (
+		<div style={ { display: 'flex', gap: 40, alignItems: 'flex-start' } }>
+			<VerticalStepper
+				value={ currentStep }
+				onValueChange={ handleStepClick }
+				linear
+				aria-label="Onboarding"
+				style={ { maxWidth: 360, flex: '0 0 360px' } }
+			>
+				{ onboardingSteps.map( ( s, i ) => (
+					<VerticalStepper.Step
+						key={ s.value }
+						value={ s.value }
+						title={ s.title }
+						status={ i < currentIndex ? 'completed' : undefined }
+					>
+						<p>Content for { s.title }.</p>
+						{ i === currentIndex && i < onboardingSteps.length - 1 && (
+							<button onClick={ handleContinue }>Continue →</button>
+						) }
+					</VerticalStepper.Step>
+				) ) }
+			</VerticalStepper>
+
+			<div>
+				<p>
+					<strong>Navigation log</strong>
+				</p>
+				<ul style={ { margin: 0, padding: '0 0 0 16px' } }>
+					{ log.map( ( entry, i ) => (
+						<li key={ i } style={ { color: i === 0 ? 'inherit' : '#999', marginBottom: 4 } }>
+							{ entry }
+						</li>
+					) ) }
+				</ul>
+			</div>
+		</div>
+	);
+}
+
+export const BackNavigation: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story: `
+Demonstrates how to integrate the stepper with an existing navigation flow where
+clicking a completed step means "go back".
+
+The stepper is **controlled** — \`value\` is owned by the flow, not the stepper.
+\`linear={true}\` ensures only completed (previous) steps are clickable, so
+\`onValueChange\` only ever fires when the user navigates backward. The handler
+receives the clicked step's value and can run whatever back-navigation logic the
+flow requires.
+
+\`\`\`tsx
+<VerticalStepper
+  value={ currentStep }
+  onValueChange={ ( clickedStep ) => {
+    // linear={true} guarantees this is always a previous step
+    navigateTo( clickedStep );
+  } }
+  linear
+  aria-label="Onboarding"
+>
+  { steps.map( ( s, i ) => (
+    <VerticalStepper.Step
+      key={ s.value }
+      value={ s.value }
+      title={ s.title }
+      status={ i < currentIndex ? 'completed' : undefined }
+    >
+      ...
+    </VerticalStepper.Step>
+  ) ) }
+</VerticalStepper>
+\`\`\`
+
+**Try it:** Click any completed step (green check) to go back. Use "Continue →" to
+advance. The log on the right shows what the \`onValueChange\` handler received.
+				`,
+			},
+		},
+	},
+	render: BackNavigationDemo,
+};
+
 function WithErrorDemo( args: StepperProps ) {
 	const [ step, setStep ] = useState( 'payment' );
 	return (
