@@ -1,6 +1,6 @@
 # ComponentSwapper
 
-`ComponentSwapper` is a react component that can be used to swap components at a specified breakpoint. For example a buttons navigation to a dropdown for samll screens.
+`ComponentSwapper` is a react component that can be used to swap components at a specified breakpoint. For example a buttons navigation to a dropdown for small screens.
 
 ## Properties
 
@@ -10,11 +10,11 @@ CSS class to be applied to a root div.
 
 ### `breakpoint { string } - default: '<660px'`
 
-A breakpoint that trigger component replacement. Only breakopints from `mediaQueryLists` from '@automattic/viewport' are accepted.
+A breakpoint that triggers component replacement. Only breakpoints from `mediaQueryLists` from '@automattic/viewport' are accepted.
 
 ### `onSwap { function }`
 
-A function that can be triggered when components are swapped. It uses `useEffect` hook so it's also triggered when the componnet loads.
+A function that can be triggered when components are swapped. It uses `useEffect` hook so it's also triggered when the component loads.
 
 ### `breakpointActiveComponent { React component }`
 
@@ -26,7 +26,7 @@ React component rendered when the breakpoint condition is inactive.
 
 ### `children`
 
-The component acceprt children nodes and renders them after `breakpointActiveComponent|breakpointInactiveComponent`.
+The component accepts children nodes and renders them after `breakpointActiveComponent|breakpointInactiveComponent`.
 
 ## Usage notes
 
