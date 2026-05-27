@@ -106,14 +106,28 @@ export function getDefaultDateRange(
 }
 
 /**
+ * Parse a URL param as Unix seconds. Treats values > 1e12 as milliseconds
+ * (links shared from older versions of the page) and converts to seconds.
+ */
+export function normalizeUnixSecondsParam( raw: string | null ): number | null {
+	if ( ! raw ) {
+		return null;
+	}
+	const num = parseInt( raw, 10 );
+	if ( ! Number.isFinite( num ) ) {
+		return null;
+	}
+	return num > 1e12 ? Math.floor( num / 1000 ) : num;
+}
+
+/**
  * Get the initial date range from the URL search parameters.
  */
 export function getInitialDateRangeFromSearch( search: string ): { start: Date; end: Date } | null {
 	const params = new URLSearchParams( search );
-	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
-	const toDate = ( dateString?: string | null ) => {
-		const num = valueAsNumber( dateString );
-		if ( ! Number.isFinite( num ) ) {
+	const toDate = ( raw: string | null ) => {
+		const num = normalizeUnixSecondsParam( raw );
+		if ( num === null ) {
 			return undefined;
 		}
 		const date = fromUnixTime( num );
