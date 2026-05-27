@@ -29,8 +29,6 @@ $help-center-fab-shadow:
 	// any browser UI overlap on the inline-end edge. For the inline axis we max
 	// over both physical insets so the rule works the same in LTR and RTL —
 	// only one of them is ever non-zero (landscape notch on a single side).
-	// `--bottom-bar-height` is a global signal (e.g. set by the domains
-	// mini-cart) so the FAB shifts up to clear any persistent bottom bar.
 	inset-block-end: calc(
 		max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) ) +
 			var( --bottom-bar-height, 0px )
@@ -99,9 +97,7 @@ body.has-help-center-fab .help-center .help-center__container.is-desktop {
 	animation: none;
 	inset-inline-start: auto;
 	inset-inline-end: $help-center-fab-offset;
-	// Mirror the FAB's safe-area offset and bottom-bar shift so the panel stays
-	// 8px above the FAB on iOS devices and when a bottom bar (e.g. the domains
-	// mini-cart) is present.
+	// Stay 8px above the FAB, mirroring its safe-area and bottom-bar offsets.
 	inset-block-end: calc(
 		max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) ) +
 			var( --bottom-bar-height, 0px ) +

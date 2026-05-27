@@ -6,10 +6,7 @@
 	height: var( --domain-search-mini-cart-height );
 }
 
-// Publish the cart's height as a global layout signal so fixed-bottom UI
-// (e.g. the Help Center FAB) can shift up to clear it. Mirrors the
-// `--masterbar-height` convention for top bars. Value matches
-// `--domain-search-mini-cart-height` in page/style.scss; keep in sync.
+// Global layout signal for fixed-bottom UI — parallels `--masterbar-height`.
 :root:has( .domains-mini-cart__container.is-open ) {
 	--bottom-bar-height: 80px;
 }
