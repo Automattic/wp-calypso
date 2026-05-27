@@ -6,7 +6,7 @@
 
 ### Follow(site-id, WPCOM);
 
-Createa a new `Follow` instance giving `site-id` and `WPCOM` instance.
+Create a new `Follow` instance giving `site-id` and `WPCOM` instance.
 
 ```js
 const follower = Follow( '<site-id>', WPCOM );
@@ -42,7 +42,7 @@ wpcom
 	.site( 'blog.wordpress.com' )
 	.follow()
 	.del( function ( err, data ) {
-		// respnose handler
+		// response handler
 	} );
 ```
 
