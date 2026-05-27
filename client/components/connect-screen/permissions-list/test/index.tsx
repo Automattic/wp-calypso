@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { render, screen, fireEvent } from '@testing-library/react';
-import { check, edit, cog } from '@wordpress/icons';
+import { check, pencil, cog } from '@wordpress/icons';
 import React from 'react';
 import { PermissionsList } from '../index';
 
@@ -26,7 +26,7 @@ jest.mock( 'i18n-calypso', () => ( {
 describe( 'PermissionsList', () => {
 	const mockPermissions = [
 		{ icon: check, label: 'Permission 1' },
-		{ icon: edit, label: 'Permission 2' },
+		{ icon: pencil, label: 'Permission 2' },
 		{ icon: cog, label: 'Permission 3' },
 	];
 
@@ -70,7 +70,7 @@ describe( 'PermissionsList', () => {
 					return check;
 				}
 				if ( name === 'posts' ) {
-					return edit;
+					return pencil;
 				}
 				return undefined;
 			} );
@@ -97,7 +97,7 @@ describe( 'PermissionsList', () => {
 		} );
 
 		it( 'prioritizes direct icon prop over getIconForPermission', () => {
-			const mockGetIcon = jest.fn( () => edit );
+			const mockGetIcon = jest.fn( () => pencil );
 			const permissionsWithBoth = [ { icon: check, name: 'test', label: 'Test permission' } ];
 
 			const { container } = render(

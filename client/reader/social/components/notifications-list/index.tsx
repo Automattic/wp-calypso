@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { bucketFor, type DateBucket } from './date-bucket';
 import { NotificationsFilterBar } from './filter-bar';
 import { groupNotifications, type GroupedRow } from './group-notifications';
-import { SocialNotificationItem } from './notification-item';
+import { SocialNotificationItem, type NotificationInAppUrlResolver } from './notification-item';
 import { StackedNotification } from './stacked-notification';
 import type { ChipFilter } from './filter';
 import type {
@@ -27,6 +27,7 @@ interface Props {
 	filter: ChipFilter;
 	onFilterChange: ( next: ChipFilter ) => void;
 	onStackExpandedChange?: ( expanded: boolean, memberCount: number ) => void;
+	getInAppUrl?: NotificationInAppUrlResolver;
 }
 
 function emptyMessage( filter: ChipFilter, translate: ReturnType< typeof useTranslate > ): string {
@@ -75,6 +76,7 @@ export function SocialNotificationsList( {
 	filter,
 	onFilterChange,
 	onStackExpandedChange,
+	getInAppUrl,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -182,11 +184,16 @@ export function SocialNotificationsList( {
 								key={ entry.row.groupKey }
 								stack={ entry.row }
 								onExpandedChange={ onStackExpandedChange }
+								getInAppUrl={ getInAppUrl }
 							/>
 						);
 					}
 					return (
-						<SocialNotificationItem key={ entry.row.item.id } notification={ entry.row.item } />
+						<SocialNotificationItem
+							key={ entry.row.item.id }
+							notification={ entry.row.item }
+							getInAppUrl={ getInAppUrl }
+						/>
 					);
 				} ) }
 				{ showRetry && (

@@ -55,6 +55,7 @@ const PluginsBrowserList = ( {
 	carouselPageSize = DEFAULT_CAROUSEL_PAGE_SIZE,
 	injectAfterIndex = null,
 	injectElement = null,
+	afterHeader = null,
 } ) => {
 	const extendedVariant = extended
 		? PluginsBrowserElementVariant.Extended
@@ -214,6 +215,7 @@ const PluginsBrowserList = ( {
 					isRootPage={ listType !== 'browse' }
 				/>
 			) }
+			{ afterHeader }
 			{ listName === 'paid' && (
 				<AsyncLoad
 					require={ loadJitm }
@@ -250,6 +252,7 @@ PluginsBrowserList.propTypes = {
 	extended: PropTypes.bool,
 	useCarousel: PropTypes.bool,
 	carouselPageSize: PropTypes.number,
+	afterHeader: PropTypes.node,
 };
 
 export default PluginsBrowserList;

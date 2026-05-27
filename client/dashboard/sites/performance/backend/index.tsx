@@ -1,22 +1,16 @@
 import { type Site } from '@automattic/api-core';
-import {
-	siteApmAggregateQuery,
-	siteApmEnabledMutation,
-	siteBySlugQuery,
-} from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { siteApmAggregateRollingQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 	privateApis,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useEffect, useMemo } from 'react';
-import { useAnalytics } from '../../../app/analytics';
+import { useMemo } from 'react';
 import { Card } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -26,15 +20,17 @@ import { getBackendCalloutProps } from '../backend-callout';
 import { VIEWPORT_BREAKPOINTS } from '../constants';
 import PerformanceTabs from '../performance-tabs';
 import { mergeAggregates } from './aggregate';
+import BackendEmptyState from './backend-empty-state';
 import BackendStatusNotice from './backend-status';
 import BackendTabs from './backend-tabs';
 import Database from './database';
 import ExternalRequests from './external-requests';
 import Overview from './overview';
+import StartCapturingButton from './start-capturing-button';
 import BackendSubtitle from './subtitle';
 import {
 	isRollingTimeframe,
-	timeframeToParams,
+	TIMEFRAME_SECONDS,
 	usePersistedTimeframe,
 	type Timeframe,
 } from './timeframe';
@@ -59,34 +55,10 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-function StartCapturingButton( { site }: { site: Site } ) {
-	const { recordTracksEvent } = useAnalytics();
-
-	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_site_apm_enable_impression' );
-	}, [ recordTracksEvent ] );
-
-	const { mutate, isPending } = useMutation( {
-		...siteApmEnabledMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'APM enabled.' ),
-				error: __( 'Failed to enable APM.' ),
-			},
-		},
-	} );
-
-	const handleClick = () => {
-		recordTracksEvent( 'calypso_dashboard_site_apm_enable_click' );
-		mutate( true );
-	};
-
-	return (
-		<Button variant="primary" isBusy={ isPending } disabled={ isPending } onClick={ handleClick }>
-			{ __( 'Start capturing' ) }
-		</Button>
-	);
-}
+// Poll the APM aggregate every 10s while capturing is on. Each poll only
+// fetches the delta from the latest cached bucket (see
+// `siteApmAggregateRollingQuery`), so polling this frequently stays cheap.
+const APM_POLL_INTERVAL_MS = 10_000;
 
 function ApmDashboard( {
 	site,
@@ -100,13 +72,30 @@ function ApmDashboard( {
 	const router = useRouter();
 	const siteSlug = site.slug;
 	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
-	const params = useMemo( () => timeframeToParams( timeframe ), [ timeframe ] );
-	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID, params ) );
-	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
+	const apmEnabled = !! site.options?.apm_enabled;
+	const windowSec = TIMEFRAME_SECONDS[ timeframe ];
+	const { data } = useSuspenseQuery( {
+		...siteApmAggregateRollingQuery( site.ID, windowSec ),
+		// Only poll while capturing is on. When it's off there's no new data to
+		// fetch, so polling would just be background noise.
+		refetchInterval: apmEnabled ? APM_POLL_INTERVAL_MS : false,
+		refetchIntervalInBackground: false,
+	} );
+	const merged = useMemo(
+		() => mergeAggregates( data.aggregates, windowSec ),
+		[ data.aggregates, windowSec ]
+	);
 	const { summary } = merged;
 
-	const apmEnabled = !! site.options?.apm_enabled;
 	const isRollingWindow = isRollingTimeframe( timeframe );
+	const hasData = summary.transaction_count > 0;
+
+	// Only show the prominent empty state when APM is off — that's the case
+	// where the user needs to take action. When APM is on but no data has come
+	// in yet, the regular dashboard with the "Capturing" notice is enough.
+	if ( ! hasData && ! apmEnabled ) {
+		return <BackendEmptyState site={ site } timeframe={ timeframe } />;
+	}
 
 	const handleTabChange = ( name: string ) => {
 		const next = name as ApmTab;
@@ -124,9 +113,9 @@ function ApmDashboard( {
 	const renderTab = () => {
 		switch ( tab ) {
 			case 'overview':
-				return <Overview merged={ merged } />;
+				return <Overview merged={ merged } siteSlug={ siteSlug } />;
 			case 'transactions':
-				return <Transactions merged={ merged } />;
+				return <Transactions merged={ merged } siteSlug={ siteSlug } />;
 			case 'wordpress':
 				return <WordPress merged={ merged } />;
 			case 'database':

@@ -1,5 +1,7 @@
 import { PersonalPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
+// eslint-disable-next-line no-restricted-imports -- Zendesk eligibility gate for speak-with-support intervention
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import {
 	Button,
 	Icon,
@@ -40,6 +42,7 @@ const RENEW_COUPON = 'DONTGO25';
 const CARD_ICONS: Record< string, IconType > = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
+	'switch-to-yearly': calendar,
 	'speak-with-support': comment,
 	'renew-now-pay-less': percent,
 	'built-by': people,
@@ -79,7 +82,8 @@ function getCardHref(
 	changePlanUrl: string,
 	renewNowUrl: string,
 	subscriptionsUrl: string | undefined,
-	siteSlug: string
+	siteSlug: string,
+	yearlyPlanUrl?: string
 ): string | undefined {
 	if ( cardId === 'change-plan' || cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
@@ -108,6 +112,9 @@ function getCardHref(
 	if ( cardId === 'explore-domain-options' ) {
 		return dashboardLink( `/sites/${ siteSlug }/domains` );
 	}
+	if ( cardId === 'switch-to-yearly' ) {
+		return yearlyPlanUrl;
+	}
 	return undefined;
 }
 
@@ -120,6 +127,7 @@ function getCardOnClick(
 		'built-by',
 		'change-plan',
 		'renew-now-pay-less',
+		'switch-to-yearly',
 		'upgrade-for-full-access',
 		'get-theme-addon',
 		'find-guides',
@@ -148,6 +156,8 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Renew now and pay less' );
 		case 'switch-to-monthly':
 			return __( 'Switch to monthly payments' );
+		case 'switch-to-yearly':
+			return __( 'Switch to yearly billing' );
 		case 'speak-with-support':
 			return __( 'Speak with our support team' );
 		case 'built-by':
@@ -182,6 +192,8 @@ function getCardDescription( cardId: string ): string {
 			return __( 'Get an exclusive 25% discount automatically applied at checkout.' );
 		case 'switch-to-monthly':
 			return __( 'Keep things flexible with monthly billing.' );
+		case 'switch-to-yearly':
+			return __( 'Pay less over time by switching to an annual plan.' );
 		case 'speak-with-support':
 			return __( "We're here to answer any of your questions." );
 		case 'built-by':
@@ -220,6 +232,7 @@ type SolutionsCardsUpsellStepProps = {
 	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
 	refundAmount?: number;
+	yearlyPlanSlug?: string;
 };
 
 export default function SolutionsCardsUpsellStep( {
@@ -235,10 +248,12 @@ export default function SolutionsCardsUpsellStep( {
 	onSwitchToMonthly,
 	purchase,
 	refundAmount,
+	yearlyPlanSlug,
 }: SolutionsCardsUpsellStepProps ) {
 	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase );
 
@@ -246,8 +261,13 @@ export default function SolutionsCardsUpsellStep( {
 		( PersonalPlans as readonly string[] ).includes( purchase.product_slug ) &&
 		PRICE_MOTIVATED_REASONS.has( cancellationReason );
 
+	const showSwitchToYearly = ! isAnnualOrLongerPlan( purchase ) && !! yearlyPlanSlug;
+
 	const filteredSolutions = solutions?.filter( ( card ) => {
 		if ( card.id === 'switch-to-monthly' && ! showSwitchToMonthly ) {
+			return false;
+		}
+		if ( card.id === 'switch-to-yearly' && ! showSwitchToYearly ) {
 			return false;
 		}
 		if ( card.id === 'change-plan' && hideChangePlan ) {
@@ -290,6 +310,12 @@ export default function SolutionsCardsUpsellStep( {
 	const subscriptionsUrl = wpcomLink(
 		`/purchases/subscriptions/${ purchase.site_slug }/${ purchase.ID }`
 	);
+	const yearlyPlanUrl = yearlyPlanSlug
+		? addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ yearlyPlanSlug }` ), {
+				redirect_to: dashboardLink( '/me/billing/purchases' ),
+				cancel_to: purchaseSettingsUrl,
+		  } )
+		: undefined;
 
 	const handleCardAction = ( solutionId: string ) => {
 		switch ( solutionId ) {
@@ -308,15 +334,28 @@ export default function SolutionsCardsUpsellStep( {
 					setShowDowngradeStep( true );
 				}
 				break;
+			case 'switch-to-yearly':
+				if ( yearlyPlanUrl ) {
+					window.location.href = yearlyPlanUrl;
+				}
+				break;
 			case 'speak-with-support': {
 				const initialMessage =
 					"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 					cancellationReason;
-				setNewMessagingChat( {
-					initialMessage,
-					section: 'pre-cancellation-upsell',
-				} );
-				closeDialog?.();
+				if ( canConnectToZendeskMessaging ) {
+					setNewMessagingChat( {
+						initialMessage,
+						siteUrl: purchase.site_slug,
+						siteId: String( purchase.blog_id ),
+					} );
+				} else {
+					setOpenOdieWithContext( {
+						initialMessage,
+						siteUrl: purchase.site_slug,
+						siteId: String( purchase.blog_id ),
+					} );
+				}
 				break;
 			}
 			case 'built-by':
@@ -376,6 +415,7 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'change-plan' ||
 							card.id === 'renew-now-pay-less' ||
 							card.id === 'switch-to-monthly' ||
+							card.id === 'switch-to-yearly' ||
 							card.id === 'upgrade-for-full-access' ||
 							card.id === 'get-theme-addon' ||
 							card.id === 'find-guides' ||
@@ -389,7 +429,8 @@ export default function SolutionsCardsUpsellStep( {
 						changePlanUrl,
 						renewNowUrl,
 						subscriptionsUrl,
-						purchase.site_slug
+						purchase.site_slug,
+						yearlyPlanUrl
 					);
 					const onClick = getCardOnClick( card.id, hasAction, handleCardAction );
 					const title = getCardTitle( card.id );

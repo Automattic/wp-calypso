@@ -92,14 +92,6 @@ export const technologyBlogs: CuratedBlogsList = {
 			feed_URL: 'http://code.fb.com/feed',
 			has_icon: false,
 		},
-		{
-			feed_ID: 57622406,
-			site_ID: 120870102,
-			site_URL: 'polimetlase.wordpress.com',
-			site_name: 'Software Engineering',
-			feed_URL: 'http://polimetlase.wordpress.com',
-			has_icon: true,
-		},
 	],
 	technology: [
 		{
@@ -230,14 +222,6 @@ export const technologyBlogs: CuratedBlogsList = {
 			site_URL: 'https://encyclopedia.design',
 			site_name: 'Encyclopedia of Design',
 			feed_URL: 'http://baileystreetdesign.com',
-			has_icon: false,
-		},
-		{
-			feed_ID: 47166615,
-			site_ID: 0,
-			site_URL: 'design-milk.com',
-			site_name: 'Design Milk',
-			feed_URL: 'http://design-milk.com/feed',
 			has_icon: false,
 		},
 	],
@@ -512,14 +496,6 @@ export const technologyBlogs: CuratedBlogsList = {
 			site_URL: 'http://myfusimotors.wordpress.com',
 			site_name: 'Scents of Science',
 			feed_URL: 'http://myfusimotors.com',
-			has_icon: true,
-		},
-		{
-			feed_ID: 26989950,
-			site_ID: 11877131,
-			site_URL: 'https://www.southernfriedscience.com',
-			site_name: 'Southern Fried Science',
-			feed_URL: 'http://www.southernfriedscience.com/?feed=rss2',
 			has_icon: true,
 		},
 		{

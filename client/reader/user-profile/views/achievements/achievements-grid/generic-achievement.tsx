@@ -16,7 +16,7 @@ export default function GenericAchievement( {
 	const translate = useTranslate();
 	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
 	const oldest = hasMultiple ? getOldestAchievement( achievement.slug, achievements ) : undefined;
-	const unlockDate = oldest?.date ?? achievement.date;
+	const unlockDate = oldest?.date_unlocked ?? achievement.date_unlocked;
 	const siteId = oldest?.site_ID ?? achievement.site_ID ?? 0;
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ),
@@ -59,6 +59,9 @@ export default function GenericAchievement( {
 					? translate( 'Level %(level)d', { args: { level: achievement.level } } )
 					: undefined
 			}
+			isSecret={ achievement.is_secret }
+			isRetired={ !! achievement.date_retired }
+			isA8cOnly={ achievement.is_a8c_only }
 			description={ achievement.description }
 			caption={ caption() }
 		/>

@@ -73,7 +73,7 @@ function getCalypsoPreferences(): Promise< Preferences[ 'calypso_preferences' ] 
 export async function getPersistedPreference<
 	T extends keyof Preferences[ 'calypso_preferences' ],
 >( key: T ): Promise< Preferences[ 'calypso_preferences' ][ T ] | undefined > {
-	const isLoggedIn = ( select( STORE_KEY ) as HelpCenterSelect ).getIsLoggedIn();
+	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
 	if ( isLoggedIn ) {
 		const preferences = await getCalypsoPreferences();
@@ -98,7 +98,7 @@ export function persistPreference< T extends keyof Preferences[ 'calypso_prefere
 
 	const newPreferences = { [ preference ]: value };
 
-	const isLoggedIn = ( select( STORE_KEY ) as HelpCenterSelect ).getIsLoggedIn();
+	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
 	if ( ! isLoggedIn ) {
 		// Retrieve the logged out help center preferences from localStorage to coalesce the state.

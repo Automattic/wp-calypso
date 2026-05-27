@@ -9,25 +9,33 @@ import React, { useState } from 'react';
 import { recordFollow } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { getPackBlogs } from '../get-pack-blogs';
 import InterestsModal from '../index';
 import { getTopicGroups } from '../topic-groups';
 
-// The parent owns `hasFollowed` so it persists across remounts of this modal.
-// Most tests don't care about that flag (they exercise the initial false case)
-// and pass `hasFollowed={ false }` + a noop `onFollowed`. Tests that need the
-// flag to flip in response to a user action mount this wrapper, which mirrors
-// what the parent does.
+// The parent owns `hasFollowed` and `relaxedPackCriteria` so they persist
+// across remounts of this modal. Most tests don't care about those flags and
+// rely on the default props. Tests that need the flags to flip in response to
+// user actions mount this wrapper, which mirrors what the parent does.
 type InterestsModalProps = React.ComponentProps< typeof InterestsModal >;
 const InterestsModalWithFollowedState = (
-	props: Omit< InterestsModalProps, 'hasFollowed' | 'onFollowed' >
+	props: Omit<
+		InterestsModalProps,
+		'hasFollowed' | 'onFollowed' | 'relaxedPackCriteria' | 'onPackSubscribed'
+	>
 ) => {
 	const [ hasFollowed, setHasFollowed ] = useState( false );
+	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >(
+		() => new Set()
+	);
 	return (
 		<InterestsModal
 			{ ...props }
 			hasFollowed={ hasFollowed }
 			onFollowed={ () => setHasFollowed( true ) }
+			relaxedPackCriteria={ relaxedPackCriteria }
+			onPackSubscribed={ ( packId: string ) =>
+				setRelaxedPackCriteria( ( current ) => new Set( current ).add( packId ) )
+			}
 		/>
 	);
 };
@@ -43,10 +51,6 @@ jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 } ) );
 
 // ── Internal helpers / child components ─────────────────────────────────────
-
-jest.mock( '../get-pack-blogs', () => ( {
-	getPackBlogs: jest.fn( () => [] ),
-} ) );
 
 jest.mock( '../topic-groups', () => ( {
 	getTopicGroups: jest.fn( () => [] ),
@@ -260,10 +264,9 @@ describe( 'InterestsModal – most subscribed pack', () => {
 
 	afterEach( () => {
 		jest.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
-		jest.mocked( getPackBlogs ).mockReset().mockReturnValue( [] );
 	} );
 
-	it( 'renders the tagless pack with blog count from getPackBlogs( [], { directKey } ) and enables Continue after subscribe', async () => {
+	it( 'renders the tagless pack with blog count from packBlogsById and enables Continue after subscribe', async () => {
 		const user = userEvent.setup();
 
 		jest.mocked( getTopicGroups ).mockReturnValue( [
@@ -276,17 +279,17 @@ describe( 'InterestsModal – most subscribed pack', () => {
 			},
 		] );
 
-		jest.mocked( getPackBlogs ).mockImplementation( ( tags, opts ) => {
-			expect( tags ).toEqual( [] );
-			expect( opts ).toEqual( { directKey: 'most-subscribed' } );
-			return fivePackBlogs;
-		} );
-
 		// Uses the stateful wrapper so the pack-subscribe `onFollowed` callback
 		// flows back through `hasFollowed` and relaxes the Continue gate, the
 		// same way the real parent (`ReaderOnboardingRsm`) does it.
+		// `packBlogsById` is now passed as a prop (owned by the parent) rather
+		// than computed inside `InterestsModal` via `getPackBlogs`.
 		renderWithProvider(
-			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+			<InterestsModalWithFollowedState
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				packBlogsById={ new Map( [ [ 'most-subscribed', fivePackBlogs ] ] ) }
+			/>
 		);
 
 		const packCard = screen.getByTestId( 'topic-pack-card' );
@@ -320,7 +323,6 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 
 	afterEach( () => {
 		jest.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
-		jest.mocked( getPackBlogs ).mockReset().mockReturnValue( [] );
 	} );
 
 	it( 'records pack_subscribed with pack_id when a pack is subscribed', async () => {
@@ -335,10 +337,13 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 				tags: [],
 			},
 		] );
-		jest.mocked( getPackBlogs ).mockReturnValue( packBlogs );
 
 		renderWithProvider(
-			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+			<InterestsModalWithFollowedState
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				packBlogsById={ new Map( [ [ 'most-subscribed', packBlogs ] ] ) }
+			/>
 		);
 
 		await user.click( screen.getByTestId( 'topic-pack-card' ) );
@@ -365,10 +370,13 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 				tags: [],
 			},
 		] );
-		jest.mocked( getPackBlogs ).mockReturnValue( packBlogs );
 
 		renderWithProvider(
-			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+			<InterestsModalWithFollowedState
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				packBlogsById={ new Map( [ [ 'most-subscribed', packBlogs ] ] ) }
+			/>
 		);
 
 		await user.click( screen.getByTestId( 'topic-pack-card' ) );
@@ -393,10 +401,13 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 				tags: [ 'javascript', 'react' ],
 			},
 		] );
-		jest.mocked( getPackBlogs ).mockReturnValue( [] );
 
 		renderWithProvider(
-			<InterestsModalWithFollowedState onContinue={ jest.fn() } promptVerification={ false } />
+			<InterestsModalWithFollowedState
+				onContinue={ jest.fn() }
+				promptVerification={ false }
+				packBlogsById={ new Map( [ [ 'tech', [] ] ] ) }
+			/>
 		);
 
 		await user.click( screen.getByTestId( 'topic-pack-card' ) );

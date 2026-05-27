@@ -614,7 +614,7 @@ function SyncModal( {
 									a: (
 										<InlineSupportLink
 											onClick={ handleClose }
-											supportContext="hosting-staging-site"
+											supportContext="hosting-staging-site-sync"
 										/>
 									),
 								} ) }

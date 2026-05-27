@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
+import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';

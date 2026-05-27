@@ -27,6 +27,7 @@ jest.mock( '@wordpress/data', () => ( {
 	store: jest.fn(),
 	select: jest.fn(),
 	dispatch: jest.fn(),
+	keyedReducer: () => () => ( {} ),
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( {

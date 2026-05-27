@@ -197,14 +197,14 @@ export function useReelShare(
 		// when the store registers later — leaving the closure with stale
 		// `hasInstagramConnection: false` even after IG hydrates. Standalone
 		// `select()` always reads the current registry state.
-		const freshSocial = freshSelect( SOCIAL_STORE ) as
+		const freshSocial = freshSelect( SOCIAL_STORE ) as unknown as
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
 		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
 		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
 
-		const freshEditor = freshSelect( EDITOR_STORE ) as
+		const freshEditor = freshSelect( EDITOR_STORE ) as unknown as
 			| { isCurrentPostPublished: () => boolean }
 			| undefined;
 		const freshIsPublished = freshEditor?.isCurrentPostPublished?.() ?? false;
@@ -304,7 +304,7 @@ export function useReelShare(
 		// the list at requestShare time would miss any connection that finishes
 		// hydrating while the dialog is open — those would NOT be in
 		// `skipped_connections` and the Reel would also publish to them.
-		const freshSocial = freshSelect( SOCIAL_STORE ) as
+		const freshSocial = freshSelect( SOCIAL_STORE ) as unknown as
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];

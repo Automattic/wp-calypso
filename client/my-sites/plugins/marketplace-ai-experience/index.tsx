@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { useQueries } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
@@ -15,6 +16,7 @@ import { submitChatMessage } from './chat-actions';
 import HydratedPick from './hydrated-pick';
 import { useIsLooking, usePicks } from './picks-store';
 import PromptForm from './prompt-form';
+import { sparkleFilled } from './sparkle-icon';
 
 import 'calypso/my-sites/plugins/plugins-browser-list/style.scss';
 import './style.scss';
@@ -64,8 +66,10 @@ export default function MarketplaceAIExperience(): JSX.Element {
 		[ setLooking ]
 	);
 
-	// Run all plugin hydration queries in one batch.
-	const queryConfigs = useMemo(
+	// Primary lookup: query the named catalog when the agent provided a
+	// `source`, otherwise try wp.org. Fallback below only fires for
+	// source-unknown picks whose wp.org lookup came back empty.
+	const primaryConfigs = useMemo(
 		() =>
 			picks.map( ( p ) =>
 				p.source === 'commercial'
@@ -74,14 +78,35 @@ export default function MarketplaceAIExperience(): JSX.Element {
 			),
 		[ picks, locale ]
 	);
-	const queries = useQueries( { queries: queryConfigs } );
+	const primaryQueries = useQueries( { queries: primaryConfigs } );
 
-	const hydrated = picks.map( ( pick, i ) => ( {
-		pick,
-		data: queries[ i ]?.data as unknown,
-		isLoading: queries[ i ]?.isLoading ?? false,
-		isError: queries[ i ]?.isError ?? false,
+	// Per-pick: did the source-unknown wp.org primary come back empty?
+	// When true the fallback wpcom query enables itself; when false the
+	// fallback stays disabled and never fires.
+	const needsFallback = primaryQueries.map(
+		( q, i ) => ! picks[ i ]?.source && ! q?.isLoading && ! hasRenderableName( q?.data )
+	);
+
+	const fallbackConfigs = picks.map( ( p, i ) => ( {
+		...getWPCOMPluginQueryParams( p.slug ),
+		enabled: needsFallback[ i ],
 	} ) );
+	const fallbackQueries = useQueries( { queries: fallbackConfigs } );
+
+	const hydrated = picks.map( ( pick, i ) => {
+		const primary = primaryQueries[ i ];
+		const fallback = fallbackQueries[ i ];
+		const primaryData = hasRenderableName( primary?.data ) ? primary?.data : null;
+		const fallbackData = hasRenderableName( fallback?.data ) ? fallback?.data : null;
+		const data = primaryData ?? fallbackData;
+		const isLoading = !! ( primary?.isLoading || fallback?.isLoading );
+		return {
+			pick,
+			data,
+			isLoading,
+			isError: ! isLoading && ! data,
+		};
+	} );
 
 	const validPicks = hydrated.filter(
 		( h ) => h.isLoading || ( ! h.isError && hasRenderableName( h.data ) )
@@ -118,9 +143,11 @@ export default function MarketplaceAIExperience(): JSX.Element {
 								onClick={ () => setPromptOpen( ! promptOpen ) }
 								aria-expanded={ refineExpanded }
 							>
-								<span className="marketplace-ai-experience__refine-banner-icon" aria-hidden="true">
-									✦
-								</span>
+								<Icon
+									className="marketplace-ai-experience__refine-banner-icon"
+									icon={ sparkleFilled }
+									size={ 22 }
+								/>
 								<span className="marketplace-ai-experience__refine-banner-text">
 									{ translate(
 										'Ask follow-up questions about these results, or refine your search with more details'
@@ -185,9 +212,11 @@ export default function MarketplaceAIExperience(): JSX.Element {
 					<div className="marketplace-ai-experience__prompt-panel">
 						<header className="marketplace-ai-experience__header">
 							<h2 className="marketplace-ai-experience__title">
-								<span className="marketplace-ai-experience__icon" aria-hidden="true">
-									✦
-								</span>
+								<Icon
+									className="marketplace-ai-experience__icon"
+									icon={ sparkleFilled }
+									size={ 30 }
+								/>
 								{ translate( 'Describe what you need' ) }
 							</h2>
 							<p className="marketplace-ai-experience__subtitle">

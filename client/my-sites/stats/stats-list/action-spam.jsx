@@ -1,6 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
-import { Icon, warning } from '@wordpress/icons';
+import { Icon, cautionFilled as warning } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';

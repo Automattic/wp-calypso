@@ -49,7 +49,11 @@ export const DomainsMiniCart = ( {
 		<>
 			<div className="domains-mini-cart__cushion" />
 			<motion.div
-				className={ clsx( 'domains-mini-cart__container', className ) }
+				className={ clsx(
+					'domains-mini-cart__container',
+					{ 'is-open': isMiniCartOpen },
+					className
+				) }
 				initial={ animation.initial }
 				animate={ isMiniCartOpen ? animation.animateIn : animation.animateOut }
 				transition={ { type: 'tween', duration: 0.25 } }
