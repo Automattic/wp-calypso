@@ -7,7 +7,8 @@ $help-center-fab-gap: 8px;
 // clears the iOS home indicator with a 24px minimum from the viewport edge.
 $help-center-fab-inset-block-end: max(
 	calc( var( --bottom-bar-height, 0px ) + #{ $help-center-fab-bottom-bar-gap } ),
-	max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) )
+	#{ $help-center-fab-offset },
+	env( safe-area-inset-bottom )
 );
 $help-center-fab-bg-default: color-mix(
 	in srgb,
