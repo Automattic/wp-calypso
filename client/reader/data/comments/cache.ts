@@ -1,4 +1,4 @@
-import { siteCommentsInfiniteQueryPrefix } from '@automattic/api-queries';
+import { siteCommentQueryKey, siteCommentsInfiniteQueryPrefix } from '@automattic/api-queries';
 import type { SiteComment } from '@automattic/api-core';
 import type { InfiniteData, QueryClient } from '@tanstack/react-query';
 
@@ -90,3 +90,35 @@ export const removeCommentFromCache = (
 			comments: page.comments.filter( ( item ) => item.ID !== commentId ),
 		} ) ),
 	} ) );
+
+export const updateCommentLikeInCache = (
+	queryClient: QueryClient,
+	siteId: number,
+	postId: number | undefined,
+	commentId: SiteComment[ 'ID' ],
+	iLike: boolean,
+	likeCount: number
+) => {
+	const updateComment = ( comment: SiteComment ) =>
+		comment.ID === commentId
+			? {
+					...comment,
+					i_like: iLike,
+					like_count: likeCount,
+			  }
+			: comment;
+
+	if ( postId ) {
+		updatePostCommentsCache( queryClient, siteId, postId, ( data ) => ( {
+			...data,
+			pages: data.pages.map( ( page ) => ( {
+				...page,
+				comments: page.comments.map( updateComment ),
+			} ) ),
+		} ) );
+	}
+
+	queryClient.setQueryData< SiteComment >( siteCommentQueryKey( siteId, commentId ), ( comment ) =>
+		comment ? updateComment( comment ) : comment
+	);
+};

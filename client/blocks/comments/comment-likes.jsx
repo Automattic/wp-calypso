@@ -1,5 +1,5 @@
 import { likeSiteCommentMutation, unlikeSiteCommentMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { flowRight, get, pick } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
+import { updateCommentLikeInCache } from 'calypso/reader/data/comments';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -114,12 +115,17 @@ CommentLikeButtonContainer.propTypes = {
 
 const withCommentLikeMutations = ( WrappedComponent ) => {
 	const WithCommentLikeMutations = ( props ) => {
-		const { mutate: likeComment, isPending: isLikePending } = useMutation(
-			likeSiteCommentMutation()
-		);
-		const { mutate: unlikeComment, isPending: isUnlikePending } = useMutation(
-			unlikeSiteCommentMutation()
-		);
+		const queryClient = useQueryClient();
+		const { mutate: likeComment, isPending: isLikePending } = useMutation( {
+			...likeSiteCommentMutation(),
+			onSuccess: ( { likeCount }, { siteId, postId, commentId } ) =>
+				updateCommentLikeInCache( queryClient, siteId, postId, commentId, true, likeCount ),
+		} );
+		const { mutate: unlikeComment, isPending: isUnlikePending } = useMutation( {
+			...unlikeSiteCommentMutation(),
+			onSuccess: ( { likeCount }, { siteId, postId, commentId } ) =>
+				updateCommentLikeInCache( queryClient, siteId, postId, commentId, false, likeCount ),
+		} );
 
 		return (
 			<WrappedComponent

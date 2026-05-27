@@ -4,3 +4,4 @@ export { useComments } from './use-comments';
 export { usePostCommentActions } from './use-post-comment-actions';
 export { usePostCommentsApiDisabled } from './use-post-comments-api-disabled';
 export { buildCommentsTreeForDisplay, mergeCommentLists } from './normalization';
+export { updateCommentLikeInCache } from './cache';

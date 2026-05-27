@@ -1,36 +1,75 @@
 /**
  * @jest-environment jsdom
  */
+import { siteCommentsInfiniteQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
+import { useComments } from 'calypso/reader/data/comments';
 import { READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN } from 'calypso/state/reader-ui/action-types';
 import CommentLikeButtonContainer from '../comment-likes';
 
 jest.mock( 'calypso/reader/components/icons/like-icon', () => () => <span /> );
 
-const renderWithRedux = ( element, { state, onAction = () => {} } = {} ) => {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+const BASE = 'https://public-api.wordpress.com';
+
+const makeQueryClient = () =>
+	new QueryClient( { defaultOptions: { queries: { retry: false, staleTime: Infinity } } } );
+
+const renderWithRedux = ( element, { state, onAction = () => {}, queryClient } = {} ) => {
+	const client = queryClient ?? makeQueryClient();
 	const reducer = (
 		currentState = state ?? {
 			currentUser: { id: 1 },
 			comments: { items: { '100-1': [] } },
+			reader: { follows: { items: {}, itemsCount: 0 } },
 		},
 		action
 	) => {
 		onAction( action );
 		return currentState;
 	};
+	const store = createStore( reducer, applyMiddleware( thunkMiddleware ) );
 
 	return render(
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ createStore( reducer ) }>{ element }</Provider>
+		<QueryClientProvider client={ client }>
+			<Provider store={ store }>{ element }</Provider>
 		</QueryClientProvider>
 	);
 };
 
+const CommentsBackedLikeButton = () => {
+	const { comments } = useComments( { siteId: 100, postId: 1 } );
+	const comment = comments.find( ( item ) => item.ID === 5 );
+
+	if ( ! comment ) {
+		return null;
+	}
+
+	return (
+		<CommentLikeButtonContainer
+			siteId={ 100 }
+			postId={ 1 }
+			commentId={ 5 }
+			comment={ comment }
+			tagName="button"
+			onLikeToggle={ jest.fn() }
+		/>
+	);
+};
+
 describe( 'CommentLikeButtonContainer', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'renders like data from the comment prop', () => {
 		renderWithRedux(
 			<CommentLikeButtonContainer
@@ -96,5 +135,44 @@ describe( 'CommentLikeButtonContainer', () => {
 				} ),
 			] )
 		);
+	} );
+
+	it( 'updates the button state and like count after liking a cached comment', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( siteCommentsInfiniteQuery( { siteId: 100, postId: 1 } ).queryKey, {
+			pages: [
+				{
+					comments: [
+						{
+							ID: 5,
+							content: 'Hello',
+							date: '2026-05-01T00:00:00.000Z',
+							i_like: false,
+							like_count: 7,
+							parent: false,
+							status: 'approved',
+						},
+					],
+					found: 1,
+				},
+			],
+			pageParams: [ undefined ],
+		} );
+		const likeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/100/comments/5/likes/new', {} )
+			.reply( 200, {
+				success: true,
+				like_count: '8',
+			} );
+
+		renderWithRedux( <CommentsBackedLikeButton />, { queryClient } );
+
+		screen.getByRole( 'button', { name: 'Like' } ).click();
+
+		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
+			expect( screen.getByText( '8' ) ).toBeVisible();
+		} );
 	} );
 } );
