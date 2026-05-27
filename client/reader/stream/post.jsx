@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
@@ -67,7 +67,7 @@ class ReaderPostCardAdapter extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+const ConnectedReaderPostCardAdapter = connect( ( state, ownProps ) => {
 	const post = ownProps.post;
 	const siteId = post?.site_ID;
 	const isExternal = post?.is_external;
@@ -83,6 +83,17 @@ export default connect( ( state, ownProps ) => {
 	return {
 		site: isExternal ? null : getSite( state, siteId ),
 		feed: feed,
-		commentsApiDisabled: isExternal ? false : isCommentsApiDisabled( state, siteId ),
 	};
 } )( ReaderPostCardAdapter );
+
+export default function ReaderPostCardAdapterContainer( props ) {
+	const { is_external: isExternal, site_ID: siteId } = props.post ?? {};
+	const commentsApiDisabled = useCommentsApiDisabled( siteId );
+
+	return (
+		<ConnectedReaderPostCardAdapter
+			{ ...props }
+			commentsApiDisabled={ isExternal ? false : commentsApiDisabled }
+		/>
+	);
+}

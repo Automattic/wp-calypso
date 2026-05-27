@@ -9,6 +9,7 @@ import { UnknownAction } from 'redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useCachedPosts } from 'calypso/reader/data/post/cache';
 import {
 	isPaddingStreamItem,
@@ -18,7 +19,6 @@ import {
 } from 'calypso/reader/data/stream';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -163,14 +163,8 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		[ selectItem ]
 	);
 
-	// Get comments API disabled status for the selected post
-	const commentsApiDisabled = useSelector( ( state: AppState ) => {
-		if ( ! selectedItem ) {
-			return false;
-		}
-		const post = getPostFromItem( selectedItem );
-		return post?.site_ID ? isCommentsApiDisabled( state, post.site_ID ) : false;
-	} );
+	const selectedPost = selectedItem ? getPostFromItem( selectedItem ) : undefined;
+	const commentsApiDisabled = useCommentsApiDisabled( selectedPost?.site_ID );
 
 	const fields = useMemo(
 		() => [
@@ -329,7 +323,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<RecentPostSkeleton />
 				) }
 				{ ! isLoading && streamItems.length === 0 && <FollowingEmptyContent view="recent" /> }
-				{ streamItems.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+				{ streamItems.length > 0 && selectedItem && selectedPost && (
 					<>
 						<AsyncLoad
 							require={ loadReaderFullPost }

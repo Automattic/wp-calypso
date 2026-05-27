@@ -4,7 +4,15 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { useComment, useComments, usePostCommentActions } from '../index';
+import {
+	buildCommentsTreeForDisplay,
+	mergeCommentLists,
+	useComment,
+	useComments,
+	useCommentsApiDisabled,
+	usePostCommentActions,
+	usePostCommentsApiDisabled,
+} from '../index';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -30,6 +38,27 @@ const renderComments = ( params = {} ) => {
 				commentTotal: 3,
 				...params,
 			} ),
+		{ wrapper }
+	);
+};
+
+const renderCommentsWithApiDisabled = ( params = {} ) => {
+	const queryClient = buildQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() => ( {
+			comments: useComments( {
+				siteId: 123,
+				postId: 456,
+				status: 'approved',
+				commentTotal: 3,
+				...params,
+			} ),
+			isCommentsApiDisabled: useCommentsApiDisabled( 123 ),
+		} ),
 		{ wrapper }
 	);
 };
@@ -70,6 +99,28 @@ const renderCommentsWithActions = ( params = {} ) => {
 				...params,
 			} ),
 			actions: usePostCommentActions(),
+		} ),
+		{ wrapper }
+	);
+};
+
+const renderCommentsApiDisabled = ( params = {}, options = {} ) => {
+	const queryClient = buildQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() => ( {
+			isPostCommentsApiDisabled: usePostCommentsApiDisabled(
+				{
+					siteId: 123,
+					postId: 456,
+					...params,
+				},
+				options
+			),
+			isCommentsApiDisabled: useCommentsApiDisabled( 123 ),
 		} ),
 		{ wrapper }
 	);
@@ -153,6 +204,68 @@ describe( 'useComments', () => {
 		} );
 	} );
 
+	it( 'merges additional comments into a comments list', () => {
+		const comments = mergeCommentLists(
+			[
+				{ ID: 2, content: '', date: '2026-05-02T00:00:00.000Z', parent: false },
+				{ ID: 1, content: '', date: '2026-05-01T00:00:00.000Z', parent: false },
+			],
+			[ { ID: 3, content: '', date: '2026-05-03T00:00:00.000Z', parent: false } ]
+		);
+
+		expect( comments.map( ( comment ) => comment.ID ) ).toEqual( [ 1, 2, 3 ] );
+	} );
+
+	it( 'deduplicates additional comments against the base comments', () => {
+		const comments = mergeCommentLists(
+			[
+				{
+					ID: 1,
+					content: 'From page',
+					date: '2026-05-01T00:00:00.000Z',
+					parent: false,
+				},
+			],
+			[
+				{
+					ID: 1,
+					content: 'From additional comments',
+					date: '2026-05-01T00:00:00.000Z',
+					parent: false,
+				},
+			]
+		);
+
+		expect( comments ).toEqual( [ expect.objectContaining( { ID: 1, content: 'From page' } ) ] );
+	} );
+
+	it( 'uses merged comments to complete the display tree', () => {
+		const comments = mergeCommentLists(
+			[
+				{
+					ID: 2,
+					content: '',
+					date: '2026-05-02T00:00:00.000Z',
+					parent: { ID: 1 },
+					status: 'approved',
+				},
+			],
+			[
+				{
+					ID: 1,
+					content: '',
+					date: '2026-05-01T00:00:00.000Z',
+					parent: false,
+					status: 'approved',
+				},
+			]
+		);
+		const commentsTree = buildCommentsTreeForDisplay( { comments } );
+
+		expect( commentsTree.children ).toEqual( [ 1 ] );
+		expect( commentsTree[ 1 ].children ).toEqual( [ 2 ] );
+	} );
+
 	it( 'builds a parent-child tree and filters pending comments from other authors', async () => {
 		nock( BASE )
 			.get( '/rest/v1.1/sites/123/posts/456/replies' )
@@ -166,12 +279,14 @@ describe( 'useComments', () => {
 				comments: [
 					{
 						ID: 2,
+						content: '',
 						date: '2026-05-02T00:00:00.000Z',
 						parent: { ID: 1 },
 						status: 'approved',
 					},
 					{
 						ID: 1,
+						content: '',
 						date: '2026-05-01T00:00:00.000Z',
 						parent: false,
 						status: 'approved',
@@ -325,6 +440,73 @@ describe( 'useComments', () => {
 		await waitFor( () => {
 			expect( result.current.comments.map( ( comment ) => comment.ID ) ).toEqual( [ 1, 2 ] );
 		} );
+	} );
+
+	it( 'marks the site comments API as disabled when the comments list returns the disabled API error', async () => {
+		const request = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 403, {
+				name: 'UnauthorizedError',
+				message: 'API calls to this blog have been disabled.',
+			} );
+
+		const { result } = renderCommentsWithApiDisabled();
+
+		await waitFor( () => {
+			expect( request.isDone() ).toBe( true );
+			expect( result.current.isCommentsApiDisabled ).toBe( true );
+		} );
+	} );
+} );
+
+describe( 'usePostCommentsApiDisabled', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
+	it( 'marks the site comments API as disabled when the comments request returns the disabled API error', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 403, {
+				name: 'UnauthorizedError',
+				message: 'API calls to this blog have been disabled.',
+			} );
+
+		const { result } = renderCommentsApiDisabled();
+
+		await waitFor( () => {
+			expect( result.current.isPostCommentsApiDisabled ).toBe( true );
+			expect( result.current.isCommentsApiDisabled ).toBe( true );
+		} );
+	} );
+
+	it( 'does not probe comments when disabled through options', async () => {
+		const request = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( true )
+			.reply( 200, { comments: [], found: 0 } );
+
+		const { result } = renderCommentsApiDisabled( {}, { enabled: false } );
+
+		expect( result.current.isPostCommentsApiDisabled ).toBe( false );
+		expect( result.current.isCommentsApiDisabled ).toBe( false );
+		expect( request.isDone() ).toBe( false );
 	} );
 } );
 

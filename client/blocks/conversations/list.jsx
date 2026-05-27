@@ -1,25 +1,19 @@
+import { siteCommentQuery } from '@automattic/api-queries';
+import { useQueries } from '@tanstack/react-query';
 import { map, size, filter, get, partition, pickBy, keyBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
 import PostComment from 'calypso/blocks/comments/post-comment';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
+import {
+	buildCommentsTreeForDisplay,
+	mergeCommentLists,
+	useComments,
+} from 'calypso/reader/data/comments';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import {
-	requestPostComments,
-	requestComment,
-	setActiveReply,
-} from 'calypso/state/comments/actions';
-import {
-	commentsFetchingStatus,
-	getActiveReplyCommentId,
-	getCommentErrors,
-	getDateSortedPostComments,
-	getPostCommentsTree,
-} from 'calypso/state/comments/selectors';
-import { getErrorKey } from 'calypso/state/comments/utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
@@ -46,6 +40,13 @@ import './list.scss';
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
 const noop = () => {};
+const getCommentErrorKey = ( siteId, commentId ) => `${ siteId }-${ commentId }`;
+const getPostStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
+const getInitialPostState = ( postStateKey ) => ( {
+	postStateKey,
+	activeReplyCommentId: null,
+	commentIdsToLoad: [],
+} );
 const expansionValue = ( type ) => {
 	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
 	switch ( type ) {
@@ -147,7 +148,7 @@ export class ConversationCommentList extends Component {
 			Object.keys( commentsToShow )
 		);
 		inaccessible
-			.filter( ( commentId ) => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
+			.filter( ( commentId ) => ! commentErrors[ getCommentErrorKey( siteId, commentId ) ] )
 			.forEach( ( commentId ) => {
 				this.props.requestComment( {
 					commentId,
@@ -323,26 +324,147 @@ export class ConversationCommentList extends Component {
 	}
 }
 
-const ConnectedConversationCommentList = connect(
-	( state, ownProps ) => {
-		const { site_ID: siteId, ID: postId, discussion } = ownProps.post;
-		const authorId = getCurrentUserId( state );
-		return {
-			siteId,
-			postId,
-			sortedComments: getDateSortedPostComments( state, siteId, postId ),
-			commentsTree: getPostCommentsTree( state, siteId, postId, 'all', authorId ),
-			commentsFetchingStatus:
-				commentsFetchingStatus( state, siteId, postId, discussion.comment_count ) || {},
-			activeReplyCommentId: getActiveReplyCommentId( {
-				state,
+const ConversationCommentListWithData = ( props ) => {
+	const { currentUserId, post } = props;
+	const siteId = post.site_ID;
+	const postId = post.ID;
+	const postStateKey = getPostStateKey( siteId, postId );
+	const [ localPostState, setLocalPostState ] = useState( () =>
+		getInitialPostState( postStateKey )
+	);
+	const { activeReplyCommentId, commentIdsToLoad } =
+		localPostState.postStateKey === postStateKey
+			? localPostState
+			: getInitialPostState( postStateKey );
+	const { additionalComments, commentErrors } = useQueries( {
+		queries: commentIdsToLoad.map( ( commentId ) =>
+			siteCommentQuery( {
 				siteId,
-				postId,
+				commentId,
+			} )
+		),
+		combine: ( results ) => ( {
+			additionalComments: results
+				.map( ( query ) => query.data )
+				.filter( ( comment ) => comment && ( ! comment.post?.ID || comment.post.ID === postId ) ),
+			commentErrors: Object.fromEntries(
+				results
+					.map( ( query, index ) => [ commentIdsToLoad[ index ], query.error ] )
+					.filter( ( [ , error ] ) => error )
+					.map( ( [ commentId, error ] ) => [ getCommentErrorKey( siteId, commentId ), error ] )
+			),
+		} ),
+	} );
+	const comments = useComments( {
+		siteId,
+		postId,
+		status: 'approved',
+		displayStatus: 'all',
+		commentTotal: post.discussion.comment_count,
+		authorId: currentUserId,
+	} );
+	const sortedComments = useMemo(
+		() => mergeCommentLists( comments.comments, additionalComments ),
+		[ additionalComments, comments.comments ]
+	);
+	const commentsTree = useMemo(
+		() =>
+			buildCommentsTreeForDisplay( {
+				comments: sortedComments,
+				displayStatus: 'all',
+				authorId: currentUserId,
 			} ),
-			commentErrors: getCommentErrors( state ),
+		[ currentUserId, sortedComments ]
+	);
+	const { fetchEarlierComments, fetchLaterComments } = comments;
+	const paginationRequestsInFlight = useRef( new Set() );
+
+	const requestPostComments = useCallback(
+		( { direction } ) => {
+			if ( direction === 'before' ) {
+				if ( paginationRequestsInFlight.current.has( direction ) ) {
+					return;
+				}
+				paginationRequestsInFlight.current.add( direction );
+				return fetchEarlierComments( { cancelRefetch: false } ).finally( () =>
+					paginationRequestsInFlight.current.delete( direction )
+				);
+			}
+
+			if ( direction === 'after' ) {
+				if ( paginationRequestsInFlight.current.has( direction ) ) {
+					return;
+				}
+				paginationRequestsInFlight.current.add( direction );
+				return fetchLaterComments( { cancelRefetch: false } ).finally( () =>
+					paginationRequestsInFlight.current.delete( direction )
+				);
+			}
+		},
+		[ fetchEarlierComments, fetchLaterComments ]
+	);
+
+	const requestComment = useCallback(
+		( { commentId } ) =>
+			setLocalPostState( ( current ) => {
+				const currentPostState =
+					current.postStateKey === postStateKey ? current : getInitialPostState( postStateKey );
+
+				if ( currentPostState.commentIdsToLoad.includes( commentId ) ) {
+					return current;
+				}
+
+				return {
+					...currentPostState,
+					commentIdsToLoad: [ ...currentPostState.commentIdsToLoad, commentId ],
+				};
+			} ),
+		[ postStateKey ]
+	);
+
+	const setActiveReply = useCallback(
+		( { commentId } ) => {
+			setLocalPostState( ( current ) => {
+				const currentPostState =
+					current.postStateKey === postStateKey ? current : getInitialPostState( postStateKey );
+
+				if ( currentPostState.activeReplyCommentId === commentId ) {
+					return current;
+				}
+
+				return {
+					...currentPostState,
+					activeReplyCommentId: commentId,
+				};
+			} );
+		},
+		[ postStateKey ]
+	);
+
+	return (
+		<ConversationCommentList
+			{ ...props }
+			siteId={ siteId }
+			postId={ postId }
+			sortedComments={ sortedComments }
+			commentsTree={ commentsTree }
+			commentsFetchingStatus={ comments.commentsFetchingStatus }
+			activeReplyCommentId={ activeReplyCommentId }
+			commentErrors={ commentErrors }
+			requestPostComments={ requestPostComments }
+			requestComment={ requestComment }
+			setActiveReply={ setActiveReply }
+		/>
+	);
+};
+
+const ConnectedConversationCommentList = connect(
+	( state ) => {
+		return {
+			currentUserId: getCurrentUserId( state ),
 		};
 	},
-	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply }
-)( ConversationCommentList );
+	{ recordReaderTracksEvent }
+)( ConversationCommentListWithData );
 
 export default ConnectedConversationCommentList;
