@@ -16,11 +16,14 @@ import type { SiteComment } from '@automattic/api-core';
 /**
  * Provides the legacy action-shaped API used by comment form class components.
  *
- * Create/reply insert a pending placeholder into the newest cached comments
- * page, replace it with the server comment on success, and keep the placeholder
- * in an error state for resend on failure. The initial comments page is fetched
- * with `DESC` ordering, so page index 0 is the newest API page even though
- * `useComments` later exposes comments chronologically.
+ * Create/reply insert an optimistic placeholder into the newest cached comments
+ * page. On success, the placeholder is replaced by the server comment. On
+ * error, the same placeholder remains in cache with `placeholderState: 'ERROR'`
+ * and the captured error metadata.
+ *
+ * The initial comments page is fetched with `DESC` ordering, so page index 0 is
+ * the newest API page even though `useComments` later exposes comments
+ * chronologically.
  */
 export const usePostCommentActions = () => {
 	const queryClient = useQueryClient();

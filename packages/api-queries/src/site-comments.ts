@@ -173,22 +173,45 @@ export const siteCommentQuery = ( { siteId, commentId }: SiteCommentQueryParams 
 		meta: { persist: false },
 	} );
 
+/**
+ * Creates a root reply/comment for a post.
+ *
+ * This factory only describes the network mutation. Reader placeholder and
+ * cache replacement behavior lives in
+ * `client/reader/data/comments/use-post-comment-actions`.
+ */
 export const createSitePostCommentMutation = () =>
 	mutationOptions< SiteComment, Error, CreateSitePostReplyParams >( {
 		mutationFn: createSitePostReply,
 	} );
 
+/**
+ * Creates a reply under an existing site comment.
+ *
+ * Reader placeholder and cache replacement behavior lives in
+ * `client/reader/data/comments/use-post-comment-actions`.
+ */
 export const createSiteCommentReplyMutation = () =>
 	mutationOptions< SiteComment, Error, CreateSiteCommentReplyParams >( {
 		mutationFn: ( { siteId, parentCommentId, content } ) =>
 			createSiteCommentReply( { siteId, parentCommentId, content } ),
 	} );
 
+/**
+ * Likes a site comment and returns the server-authoritative like count.
+ *
+ * Optimistic toggling and rollback are applied by `useCommentLikeMutations`.
+ */
 export const likeSiteCommentMutation = () =>
 	mutationOptions< SiteCommentLikeMutationResponse, Error, SiteCommentLikeMutationParams >( {
 		mutationFn: ( { siteId, commentId } ) => likeSiteComment( { siteId, commentId } ),
 	} );
 
+/**
+ * Unlikes a site comment and returns the server-authoritative like count.
+ *
+ * Optimistic toggling and rollback are applied by `useCommentLikeMutations`.
+ */
 export const unlikeSiteCommentMutation = () =>
 	mutationOptions< SiteCommentLikeMutationResponse, Error, SiteCommentLikeMutationParams >( {
 		mutationFn: ( { siteId, commentId } ) => unlikeSiteComment( { siteId, commentId } ),

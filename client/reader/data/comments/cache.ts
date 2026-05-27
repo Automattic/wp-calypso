@@ -91,6 +91,14 @@ export const removeCommentFromCache = (
 		} ) ),
 	} ) );
 
+/**
+ * Updates comment like state wherever Reader comments may have cached it.
+ *
+ * A comment can be rendered from the paginated post comments query or from the
+ * single-comment query used by deep links. Like/unlike mutations call this for
+ * optimistic writes, rollbacks, and final server reconciliation so both cache
+ * shapes stay in sync.
+ */
 export const updateCommentLikeInCache = (
 	queryClient: QueryClient,
 	siteId: number,
