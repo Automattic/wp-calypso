@@ -126,13 +126,10 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 					: node.outerHTML
 			)
 			.join( '' );
-		// The deck composer inlines fit.js as a `<script>` block before
-		// `</body>` so Browserless can run it post-render. Shadow roots
-		// don't execute scripts inserted via `innerHTML`, so pull the
-		// fitter out of the parsed body and re-attach it to the outer
-		// document — `createElement('script')` + `textContent` does run.
-		// Idempotent: only attach once per tab; `window.applyA4aFit` is
-		// the load marker.
+		// Shadow roots don't execute scripts inserted via `innerHTML`,
+		// so pull the deck's inline fit.js out of the parsed body and
+		// re-attach it to the outer document. `window.applyA4aFit` is
+		// the once-per-tab load marker.
 		const scripts = Array.from( parsed.body.querySelectorAll( 'script' ) );
 		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
 		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
