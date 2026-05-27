@@ -40,10 +40,13 @@ const useHighlightLabels = ( {
 
 	return planSlugs.reduce(
 		( acc, planSlug ) => {
-			if ( highlightLabelOverrides?.[ planSlug ] ) {
+			if (
+				highlightLabelOverrides &&
+				Object.prototype.hasOwnProperty.call( highlightLabelOverrides, planSlug )
+			) {
 				return {
 					...acc,
-					[ planSlug ]: highlightLabelOverrides[ planSlug ],
+					[ planSlug ]: highlightLabelOverrides[ planSlug ] ?? null,
 				};
 			}
 

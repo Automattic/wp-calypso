@@ -6,6 +6,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	getPlanPath,
+	getPlanClass,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -280,6 +281,19 @@ function useGenerateActionCallback( {
 			}
 
 			/* 4. Handle plan upgrade and plan upgrade tracks events */
+			if (
+				sitePlanSlug &&
+				availableForPurchase &&
+				getPlanClass( sitePlanSlug ) !== getPlanClass( planSlug ) &&
+				! isFreePlan( planSlug )
+			) {
+				// Expired plan user purchasing a lower-tier plan through normal checkout.
+				recordTracksEvent?.( 'calypso_expired_plan_lower_tier_purchase_click', {
+					current_plan: sitePlanSlug,
+					purchasing: planSlug,
+				} );
+			}
+
 			if ( isFreePlan( planSlug ) ) {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			} else {

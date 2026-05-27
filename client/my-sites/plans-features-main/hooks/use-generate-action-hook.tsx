@@ -78,6 +78,7 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures,
 	reflectStorageSelectionInPlanPrices,
 	isGatingBusinessQ1,
+	isPlanExpired: isPlanExpiredProp,
 	redirectTo,
 	pluginSlug,
 }: {
@@ -98,15 +99,16 @@ export default function useGenerateActionHook( {
 	 * for the rolled-out pricing differentiation cohort.
 	 */
 	isGatingBusinessQ1?: boolean;
+	isPlanExpired?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const currentPlanExpiryDate = Plans.useCurrentPlanExpiryDate( { siteId } );
-	const isPlanExpired = currentPlanExpiryDate
-		? currentPlanExpiryDate.getTime() < Date.now()
-		: false;
+	const isPlanExpired =
+		isPlanExpiredProp ??
+		( currentPlanExpiryDate ? currentPlanExpiryDate.getTime() < Date.now() : false );
 
 	const sitePlanSlug = currentPlan?.planSlug;
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
@@ -517,7 +519,12 @@ function getLoggedInPlansAction( {
 			return createLoggedInPlansAction( translate( 'Keep my plan', { context: 'verb' } ) );
 		}
 		if ( canUserManageCurrentPlan && isPlanExpired ) {
-			return createLoggedInPlansAction( translate( 'Renew plan' ) );
+			return createLoggedInPlansAction(
+				translate( 'Renew %(plan)s', {
+					textOnly: true,
+					args: { plan: planTitle ?? '' },
+				} )
+			);
 		}
 
 		if ( canUserManageCurrentPlan ) {
@@ -527,8 +534,9 @@ function getLoggedInPlansAction( {
 		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
 	}
 
-	// Downgrade action if the plan is not available for purchase
-	if ( ! availableForPurchase ) {
+	// Downgrade action if the plan is not available for purchase.
+	// Skip this when the plan is expired — let it fall through to the "Get {plan}" block.
+	if ( ! availableForPurchase && ! isPlanExpired ) {
 		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
 			return {
 				primary: {
@@ -555,6 +563,7 @@ function getLoggedInPlansAction( {
 		sitePlanSlug &&
 		! current &&
 		! isTrialPlan &&
+		! isPlanExpired &&
 		currentPlanBillingPeriod &&
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod
@@ -563,6 +572,31 @@ function getLoggedInPlansAction( {
 			translate( 'Contact support', { context: 'verb' } ),
 			'secondary'
 		);
+	}
+
+	// Expired plan: show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
+	if (
+		isPlanExpired &&
+		sitePlanSlug &&
+		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
+	) {
+		const tierOrder: Record< string, number > = {
+			'is-free-plan': 0,
+			'is-personal-plan': 1,
+			'is-premium-plan': 2,
+			'is-business-plan': 3,
+			'is-ecommerce-plan': 4,
+		};
+		const currentTier = tierOrder[ getPlanClass( sitePlanSlug ) ] ?? 0;
+		const targetTier = tierOrder[ getPlanClass( planSlug ) ] ?? 0;
+
+		if ( targetTier < currentTier ) {
+			return createLoggedInPlansAction(
+				translate( 'Downgrade', { context: 'verb' } ),
+				'secondary'
+			);
+		}
+		return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );
 	}
 
 	/**

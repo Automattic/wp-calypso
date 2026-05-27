@@ -369,7 +369,7 @@ describe( 'useGenerateActionHook', () => {
 
 		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
-		expect( action.primary.text ).toBe( 'Renew plan' );
+		expect( action.primary.text ).toBe( 'Renew %(plan)s' );
 	} );
 
 	it( 'should handle current plan for domainFromHomeUpsellFlow', () => {

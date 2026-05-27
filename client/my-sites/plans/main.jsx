@@ -5,6 +5,9 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -45,7 +48,10 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
 import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedSitePurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
@@ -160,6 +166,7 @@ class PlansComponent extends Component {
 			deEmphasizedExperiment,
 			isFreePlan,
 			currentPlan,
+			purchase,
 		} = this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
@@ -178,6 +185,22 @@ class PlansComponent extends Component {
 
 		// The Jetpack mobile app wants to display a specific selection of plans
 		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
+
+		// Expired-plan downgrade: show a simplified plans grid with only lower-tier options.
+		const currentPlanSlug = selectedSite?.plan?.product_slug;
+		const isPlanExpired =
+			isEnabled( 'plans/expired-plan-downgrade' ) &&
+			purchase &&
+			( purchase.expiryStatus === 'expired' ||
+				( purchase.expiryDate && new Date( purchase.expiryDate ) < new Date() ) ) &&
+			( isPersonalPlan( currentPlanSlug ) ||
+				isPremiumPlan( currentPlanSlug ) ||
+				isBusinessPlan( currentPlanSlug ) );
+
+		// Lock the interval to match the expired plan's billing term so prices are accurate.
+		const expiredPlanIntervalType = isPlanExpired
+			? getIntervalTypeForTerm( getPlan( currentPlanSlug )?.term )
+			: null;
 
 		// Experiment: de-emphasized current plan card
 		const showSpotlight = deEmphasizedExperiment?.isControl ? ! isUntangled : false;
@@ -202,7 +225,7 @@ class PlansComponent extends Component {
 				isInSiteDashboard={ isUntangled }
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				customerType={ this.props.customerType }
-				intervalType={ this.props.intervalType }
+				intervalType={ expiredPlanIntervalType || this.props.intervalType }
 				selectedFeature={ this.props.selectedFeature }
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
@@ -213,14 +236,17 @@ class PlansComponent extends Component {
 				plansWithScroll={ false }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ showSpotlight }
+				isSpotlightOnCurrentPlan={ showSpotlight && ! isPlanExpired }
 				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+				hideFreePlan={ isPlanExpired || ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
 				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
-				hideEnterprisePlan={ hideEnterprise }
-				hideEcommercePlan={ hideEcommerce }
+				hideEnterprisePlan={ isPlanExpired || hideEnterprise }
+				hideEcommercePlan={ isPlanExpired || hideEcommerce }
+				hidePlansFeatureComparison={ isPlanExpired }
+				hidePlanTypeSelector={ isPlanExpired }
+				isPlanExpired={ !! isPlanExpired }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
@@ -333,13 +359,25 @@ class PlansComponent extends Component {
 			deEmphasizedExperiment,
 		} = this.props;
 
+		// Ensure purchases are fetched early so the expired-plan check doesn't flash.
+		const waitingForPurchases =
+			isEnabled( 'plans/expired-plan-downgrade' ) && ! this.props.hasLoadedSitePurchases;
+
 		if (
 			! selectedSite ||
 			this.isInvalidPlanInterval() ||
 			! currentPlan ||
-			deEmphasizedExperiment?.isLoading
+			deEmphasizedExperiment?.isLoading ||
+			waitingForPurchases
 		) {
-			return this.renderPlaceholder();
+			return (
+				<>
+					{ waitingForPurchases && selectedSite?.ID && (
+						<QuerySitePurchases siteId={ selectedSite.ID } />
+					) }
+					{ this.renderPlaceholder() }
+				</>
+			);
 		}
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
@@ -449,6 +487,7 @@ const ConnectedPlans = connect(
 			isFreePlan: isFreePlanProduct( currentPlan ),
 			domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 			siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
+			hasLoadedSitePurchases: hasLoadedSitePurchasesFromServer( state ),
 			locale: getCurrentLocaleSlug( state ),
 		};
 	},

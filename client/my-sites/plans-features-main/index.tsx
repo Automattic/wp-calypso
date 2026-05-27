@@ -192,6 +192,12 @@ export interface PlansFeaturesMainProps {
 	renderFreePlanCtaInStepContainerV2?: boolean;
 
 	selectedThemeType?: string;
+
+	/**
+	 * When provided, skips the async expiry date derivation to avoid a flash
+	 * where buttons briefly render in their non-expired state.
+	 */
+	isPlanExpired?: boolean;
 }
 
 const PlansFeaturesMain = ( {
@@ -243,6 +249,7 @@ const PlansFeaturesMain = ( {
 	onPlanIntervalUpdate,
 	selectedThemeType,
 	onReady,
+	isPlanExpired: isPlanExpiredProp,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -305,6 +312,11 @@ const PlansFeaturesMain = ( {
 				: wpcomFreeDomainSuggestion.result,
 		};
 	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
+
+	const currentPlanExpiryDate = Plans.useCurrentPlanExpiryDate( { siteId } );
+	const isPlanExpired =
+		isPlanExpiredProp ??
+		( currentPlanExpiryDate ? currentPlanExpiryDate.getTime() < Date.now() : false );
 
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
@@ -446,6 +458,7 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
 		isGatingBusinessQ1: isExperimentVariant,
+		isPlanExpired,
 		redirectTo,
 		pluginSlug,
 	} );
@@ -463,6 +476,41 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
+	// When the plan is expired, suppress all badges except "Your plan" to reduce visual noise
+	// on the downgrade selection page. Only Premium ("Popular") and Business ("Best for devs")
+	// get badges by default, so we only need to override those — but we must NOT override
+	// the current plan's slug, otherwise "Your plan" wouldn't show either.
+	const expiredPlanHighlightOverrides = useMemo( () => {
+		if ( ! isPlanExpired ) {
+			return undefined;
+		}
+		// Build null overrides for all Premium and Business slug variants.
+		const suppressedSlugs = [
+			'value_bundle',
+			'value_bundle_monthly',
+			'value_bundle-2y',
+			'value_bundle-3y',
+			'business-bundle',
+			'business-bundle-monthly',
+			'business-bundle-2y',
+			'business-bundle-3y',
+		] as const;
+		return Object.fromEntries(
+			suppressedSlugs.filter( ( slug ) => slug !== sitePlanSlug ).map( ( slug ) => [ slug, null ] )
+		);
+	}, [ isPlanExpired, sitePlanSlug ] );
+
+	// Merge prop-provided overrides with expired-plan overrides. Expired overrides take precedence.
+	const effectiveHighlightOverrides = useMemo( () => {
+		if ( ! expiredPlanHighlightOverrides && ! highlightLabelOverrides ) {
+			return undefined;
+		}
+		return {
+			...highlightLabelOverrides,
+			...expiredPlanHighlightOverrides,
+		};
+	}, [ highlightLabelOverrides, expiredPlanHighlightOverrides ] );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -470,7 +518,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
-		highlightLabelOverrides,
+		highlightLabelOverrides: effectiveHighlightOverrides,
 		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -496,7 +544,7 @@ const PlansFeaturesMain = ( {
 		coupon,
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
-		highlightLabelOverrides,
+		highlightLabelOverrides: effectiveHighlightOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,

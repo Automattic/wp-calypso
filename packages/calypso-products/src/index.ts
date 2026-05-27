@@ -8,6 +8,7 @@ export * from './product-values';
 export * from './get-interval-type-for-term';
 export * from './get-price-tier-for-units';
 export * from './is-tiered-volume-space-addon';
+export * from './is-lower-plan-purchasable-for-expired-site';
 export * from './is-multi-year-domain-product';
 export * from './get-storage-addon-display-name';
 export * from './get-akismet-pro-500-product-display-name';
