@@ -910,14 +910,20 @@ export interface ResponseCartProductExtra {
 	 * The bundle discount as a percentage, for display only. The backend
 	 * recomputes the actual discount from its catalogue on every cart sync and
 	 * overwrites this value; never use it for price math on the client.
+	 *
+	 * Typed as a string because cart `extra` round-trips numeric values as
+	 * strings; coerce with `Number()` before display.
 	 */
-	domain_bundle_discount_percent?: number;
+	domain_bundle_discount_percent?: string;
 
 	/**
 	 * The number of domain products the bundle is expected to contain. Used by the
 	 * backend all-or-nothing invariant to detect a partially-removed bundle.
+	 *
+	 * Typed as a string because cart `extra` round-trips numeric values as
+	 * strings; coerce with `Number()` if you need to compare counts.
 	 */
-	expected_bundle_size?: number;
+	expected_bundle_size?: string;
 
 	is_art_promo?: boolean;
 
