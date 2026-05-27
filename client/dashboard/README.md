@@ -24,7 +24,7 @@ This dashboard uses TanStack Query and TanStack Router.
 
 ## Bugs
 
-- Importing SASS files bring unexpected CSS variables to our bundles (e.g., --masterbar-height, --sidebar-width), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
+- Importing SASS files brings unexpected CSS variables to our bundles (e.g., --masterbar-height, --sidebar-width), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
 
 ## Hacks
 
