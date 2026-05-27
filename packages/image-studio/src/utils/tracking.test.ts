@@ -103,6 +103,103 @@ describe( 'trackImageStudioOpened', () => {
 	} );
 } );
 
+describe( 'recordImageStudioEvent — tracking context properties', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		delete ( window as any ).imageStudioData;
+	} );
+
+	afterEach( () => {
+		delete ( window as any ).imageStudioData;
+	} );
+
+	it( 'should include blog_id, site_type, and is_a11n from imageStudioData', () => {
+		( window as any ).imageStudioData = {
+			blogId: 1234,
+			siteType: 'atomic',
+			isA11n: true,
+		};
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( {
+				blog_id: 1234,
+				site_type: 'atomic',
+				is_a11n: true,
+			} )
+		);
+	} );
+
+	it( 'should parse blogId when it is provided as a string', () => {
+		( window as any ).imageStudioData = {
+			blogId: '5678',
+			siteType: 'simple',
+		};
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( {
+				blog_id: 5678,
+				site_type: 'simple',
+			} )
+		);
+	} );
+
+	it( 'should normalize legacy wpcom and woa site type values', () => {
+		( window as any ).imageStudioData = { siteType: 'woa' };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { site_type: 'atomic' } )
+		);
+
+		jest.clearAllMocks();
+		( window as any ).imageStudioData = { siteType: 'wpcom' };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { site_type: 'simple' } )
+		);
+	} );
+
+	it( 'should default site_type to jetpack and is_a11n to false', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( {
+				site_type: 'jetpack',
+				is_a11n: false,
+			} )
+		);
+	} );
+
+	it( 'should omit blog_id when blogId is unavailable or invalid', () => {
+		( window as any ).imageStudioData = {
+			blogId: 'not-a-number',
+			siteType: 'jetpack',
+		};
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		const call = recordTracksEventMock.mock.calls[ 0 ];
+		expect( call[ 0 ] ).toBe( 'jetpack_big_sky_image_studio_closed' );
+		expect( call[ 1 ] ).not.toHaveProperty( 'blog_id' );
+		expect( call[ 1 ] ).toMatchObject( { site_type: 'jetpack' } );
+	} );
+} );
+
 describe( 'recordImageStudioEvent — is_test property', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
