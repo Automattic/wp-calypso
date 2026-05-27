@@ -81,7 +81,7 @@ export function useSiteLaunch(
 	} );
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const [ , experiment ] = useExperiment( EXPERIMENT_NAME );
+	const [ isExperimentLoading, experiment ] = useExperiment( EXPERIMENT_NAME );
 	const variant = experiment?.variationName;
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
@@ -138,7 +138,7 @@ export function useSiteLaunch(
 	};
 
 	const baseResult = {
-		isLoading: isDomainsLoading,
+		isLoading: isDomainsLoading || isExperimentLoading,
 		isDisabled,
 		isBusy: launchMutation.isPending,
 		modal: null as ReactElement | null,
