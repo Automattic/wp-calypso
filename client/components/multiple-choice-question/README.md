@@ -90,7 +90,7 @@ The question to display at the top of the multiple choice
 - **Type:** `Function`
 - **Required:** `yes`
 
-Handler for when the selected answer of the multiple choice is changeed. It is called each time a new answer is selected **OR** when the optional text input of the selected answer is changes. The arguments are `id`, and optionally `text` if the answer has a text input.
+Handler for when the selected answer of the multiple choice is changed. It is called each time a new answer is selected **OR** when the optional text input of the selected answer is changes. The arguments are `id`, and optionally `text` if the answer has a text input.
 
 ### `selectedAnswerId`
 
@@ -106,7 +106,7 @@ Sets the initial answer selection of the multiple choice to the given answer id.
 - **Required:** `no`
 - **Default:** `''`
 
-sets the text prompt of initial answer selection of the multiple choice to the given text. Only works when `selectedAnswerId` is given.
+Sets the text prompt of initial answer selection of the multiple choice to the given text. Only works when `selectedAnswerId` is given.
 
 ### `answers`
 
