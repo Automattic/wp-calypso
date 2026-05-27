@@ -316,7 +316,7 @@ The signature of the function returned by this hook is: `( paymentMethodId: stri
 A React Hook that returns an object with the following properties to be used by [payment methods](#payment-methods) for storing and communicating the current status of the transaction. This differs from the current status of the _form_, which is handled by [useFormStatus](#useFormStatus). Note, however, that [CheckoutProvider](#CheckoutProvider) will automatically perform certain actions when the transaction status changes. See [CheckoutProvider](#CheckoutProvider) for the details.
 
 - `transactionStatus: `[`TransactionStatus`](#TransactionStatus). The current status of the transaction.
-- `previousTransactionStatus: `[`TransactionStatus.`](#TransactionStatus). The last status of the transaction.
+- `previousTransactionStatus: `[`TransactionStatus`](#TransactionStatus). The last status of the transaction.
 - `transactionError: string | null`. The most recent error message encountered by the transaction if its status is [`.ERROR`](#TransactionStatus).
 - `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is [`.REDIRECTING`](#TransactionStatus).
 - `transactionLastResponse: unknown | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionComplete`.
