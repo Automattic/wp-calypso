@@ -1,6 +1,6 @@
 # Window Handlers
 
-Window handlers are bits of code that run before after app has started and the main window has opened.
+Window handlers are bits of code that run before and after the app has started and the main window has opened.
 
 The following handlers are available:
 
