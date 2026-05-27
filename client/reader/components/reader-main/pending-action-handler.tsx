@@ -38,6 +38,9 @@ export const ReaderPendingActionHandler = () => {
 					unlikePost( pendingAction.siteId, pendingAction.postId );
 					break;
 				case 'comment-like':
+					if ( ! pendingAction.commentId ) {
+						break;
+					}
 					likeComment( {
 						siteId: pendingAction.siteId,
 						postId: pendingAction.postId,
