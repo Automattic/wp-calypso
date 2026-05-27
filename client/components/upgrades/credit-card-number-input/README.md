@@ -14,4 +14,4 @@ function MyComponent() {
 
 ## Properties
 
-This component don't require any property but will pass any one assigned to the wrapped input field component.
+This component doesn't require any property but will pass any one assigned to the wrapped input field component.
