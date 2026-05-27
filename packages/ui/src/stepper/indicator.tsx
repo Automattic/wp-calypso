@@ -2,9 +2,8 @@
 import { forwardRef } from '@wordpress/element';
 import { check } from '@wordpress/icons';
 import { Path, SVG } from '@wordpress/primitives';
-import { VisuallyHidden } from '@wordpress/ui';
+import { Icon, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
-import { Icon } from '../icon';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { ComponentProps, ReactNode } from 'react';
