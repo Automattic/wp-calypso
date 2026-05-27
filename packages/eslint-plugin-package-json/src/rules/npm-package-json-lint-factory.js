@@ -16,6 +16,7 @@ const buildRules = () => {
 			meta: {
 				type: 'suggestion',
 				fixable: 'code',
+				schema: false,
 			},
 			create: ( context ) => ( {
 				Program: ( programNode ) => {
