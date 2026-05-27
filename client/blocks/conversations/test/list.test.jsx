@@ -17,10 +17,11 @@ jest.mock( 'calypso/blocks/comments/form-root', () => ( { activeReplyCommentId }
 jest.mock(
 	'calypso/blocks/comments/post-comment',
 	() =>
-		( { activeReplyCommentId, commentId, onReplyClick } ) => (
+		( { activeReplyCommentId, commentId, commentsToShow, onReplyClick } ) => (
 			<li
 				data-testid={ `post-comment-${ commentId }` }
 				data-active-reply={ String( activeReplyCommentId === commentId ) }
+				data-display-type={ commentsToShow?.[ commentId ] ?? '' }
 			>
 				<button type="button" onClick={ () => onReplyClick( commentId ) }>
 					Reply { commentId }
@@ -126,6 +127,37 @@ describe( 'ConversationCommentList', () => {
 		await waitFor( () => {
 			expect( screen.getByTestId( 'post-comment-1' ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'post-comment-2' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'marks each seeded conversation comment as visible when filtering parents', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/100/posts/1/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					comment( { ID: 2, date: '2026-05-02T00:00:00.000Z' } ),
+					comment( { ID: 1, date: '2026-05-01T00:00:00.000Z' } ),
+				],
+				found: 2,
+			} );
+
+		renderList( { filterParents: true } );
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'post-comment-1' ) ).toHaveAttribute(
+				'data-display-type',
+				'is-excerpt'
+			);
+			expect( screen.getByTestId( 'post-comment-2' ) ).toHaveAttribute(
+				'data-display-type',
+				'is-excerpt'
+			);
 		} );
 	} );
 

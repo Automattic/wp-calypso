@@ -30,12 +30,12 @@ export interface CreateSiteCommentReplyParams extends CoreCreateSiteCommentReply
 }
 
 export interface SiteCommentLikeMutationParams extends CoreSiteCommentLikeMutationParams {
-	postId: number;
+	postId?: number;
 }
 
 type SiteCommentsInfiniteQueryParams = Pick<
 	SitePostRepliesQueryParams,
-	'siteId' | 'postId' | 'status' | 'order' | 'number'
+	'siteId' | 'postId' | 'status' | 'number'
 >;
 
 export type SiteCommentsPageParam =
@@ -51,9 +51,17 @@ export const siteCommentsInfiniteQueryKey = (
 	siteId: number,
 	postId: number,
 	status: string = DEFAULT_STATUS,
-	number: number = DEFAULT_NUMBER,
-	order: 'ASC' | 'DESC' = DEFAULT_ORDER
-) => [ 'site', 'comments', 'infinite', siteId, postId, status, { number, order } ] as const;
+	number: number = DEFAULT_NUMBER
+) =>
+	[
+		'site',
+		'comments',
+		'infinite',
+		siteId,
+		postId,
+		status,
+		{ number, order: DEFAULT_ORDER },
+	] as const;
 
 export const siteCommentsInfiniteQueryPrefix = ( siteId: number, postId: number ) =>
 	[ 'site', 'comments', 'infinite', siteId, postId ] as const;
@@ -98,7 +106,6 @@ export const siteCommentsInfiniteQuery = ( {
 	siteId,
 	postId,
 	status,
-	order,
 	number,
 }: SiteCommentsInfiniteQueryParams ) =>
 	infiniteQueryOptions<
@@ -108,7 +115,7 @@ export const siteCommentsInfiniteQuery = ( {
 		ReturnType< typeof siteCommentsInfiniteQueryKey >,
 		SiteCommentsPageParam
 	>( {
-		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number, order ),
+		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number ),
 		queryFn: ( { pageParam } ) =>
 			fetchSitePostReplies( {
 				siteId,

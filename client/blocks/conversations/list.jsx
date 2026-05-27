@@ -193,7 +193,7 @@ export class ConversationCommentList extends Component {
 		}
 
 		const startingExpanded = Object.fromEntries(
-			[ startingCommentIds, ...parentIds ].map( ( id ) => [
+			[ ...startingCommentIds, ...parentIds ].map( ( id ) => [
 				id,
 				POST_COMMENT_DISPLAY_TYPES.excerpt,
 			] )

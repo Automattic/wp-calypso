@@ -20,6 +20,26 @@ describe( 'site comments queries', () => {
 		expect( query.meta ).toEqual( { persist: false } );
 	} );
 
+	it( 'keeps the infinite comments key tied to the fixed newest-first order', () => {
+		const params = {
+			siteId: 123,
+			postId: 456,
+			status: 'approved',
+			order: 'ASC',
+		};
+		const query = siteCommentsInfiniteQuery( params );
+
+		expect( query.queryKey ).toEqual( [
+			'site',
+			'comments',
+			'infinite',
+			123,
+			456,
+			'approved',
+			{ number: 50, order: 'DESC' },
+		] );
+	} );
+
 	it( 'uses before cursor from the oldest comment for earlier pages', () => {
 		const query = siteCommentsInfiniteQuery( {
 			siteId: 123,

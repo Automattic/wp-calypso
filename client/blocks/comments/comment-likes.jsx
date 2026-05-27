@@ -20,8 +20,12 @@ class CommentLikeButtonContainer extends Component {
 
 	handleLikeToggle( liked ) {
 		if ( ! this.props.isLoggedIn ) {
+			if ( ! liked ) {
+				return;
+			}
+
 			return this.props.registerLastActionRequiresLogin( {
-				type: liked ? 'comment-like' : 'comment-unlike',
+				type: 'comment-like',
 				siteId: this.props.siteId,
 				postId: this.props.postId,
 				commentId: this.props.commentId,
@@ -86,7 +90,7 @@ class CommentLikeButtonContainer extends Component {
 CommentLikeButtonContainer.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	postId: PropTypes.number.isRequired,
-	commentId: PropTypes.number.isRequired,
+	commentId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
 	comment: PropTypes.object.isRequired,
 	showZeroCount: PropTypes.bool,
 	tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
@@ -109,11 +113,21 @@ const withCommentLikeMutations = ( WrappedComponent ) => {
 			unlikeSiteCommentMutation()
 		);
 		const handleLikeComment = useCallback(
-			() => likeComment( { siteId, postId, commentId } ),
+			( targetSiteId = siteId, targetPostId = postId, targetCommentId = commentId ) =>
+				likeComment( {
+					siteId: targetSiteId,
+					postId: targetPostId,
+					commentId: targetCommentId,
+				} ),
 			[ commentId, likeComment, postId, siteId ]
 		);
 		const handleUnlikeComment = useCallback(
-			() => unlikeComment( { siteId, postId, commentId } ),
+			( targetSiteId = siteId, targetPostId = postId, targetCommentId = commentId ) =>
+				unlikeComment( {
+					siteId: targetSiteId,
+					postId: targetPostId,
+					commentId: targetCommentId,
+				} ),
 			[ commentId, postId, siteId, unlikeComment ]
 		);
 
