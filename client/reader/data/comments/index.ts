@@ -1,7 +1,22 @@
-import { siteCommentQuery, siteCommentsInfiniteQuery } from '@automattic/api-queries';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import {
+	createSiteCommentReplyMutation,
+	createSitePostCommentMutation,
+	siteCommentQuery,
+	siteCommentsInfiniteQuery,
+} from '@automattic/api-queries';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
+import {
+	addCommentToNewestPage,
+	createPlaceholderComment,
+	removeCommentFromCache,
+	replaceCommentInCache,
+	type CommentActionParams,
+} from './cache';
+import { buildCommentsTree, filterComments, mergeComments } from './normalization';
 import type { SiteComment } from '@automattic/api-core';
+
+export { buildCommentsTreeForDisplay, mergeCommentLists } from './normalization';
 
 type UseCommentsParams = {
 	siteId?: number;
@@ -22,96 +37,13 @@ type UseCommentOptions = {
 	enabled?: boolean;
 };
 
-const EMPTY_COMMENTS: SiteComment[] = [];
-
-const getCommentTimestamp = ( comment: SiteComment ) => {
-	const timestamp = Date.parse( comment.date ?? '' );
-	return Number.isNaN( timestamp ) ? Number.POSITIVE_INFINITY : timestamp;
-};
-
-const sortCommentsByDate = ( comments: SiteComment[] ) =>
-	[ ...comments ].sort( ( first, second ) => {
-		const firstTimestamp = getCommentTimestamp( first );
-		const secondTimestamp = getCommentTimestamp( second );
-
-		if ( firstTimestamp === secondTimestamp ) {
-			return 0;
-		}
-
-		return firstTimestamp - secondTimestamp;
-	} );
-
-const mergeComments = ( pages: SiteComment[][] ) => {
-	const commentsById = new Map< SiteComment[ 'ID' ], SiteComment >();
-
-	pages.flat().forEach( ( comment ) => {
-		if ( ! commentsById.has( comment.ID ) ) {
-			commentsById.set( comment.ID, comment );
-		}
-	} );
-
-	return sortCommentsByDate( [ ...commentsById.values() ] );
-};
-
-const filterComments = ( comments: SiteComment[], status: string, authorId?: number ) =>
-	comments.filter( ( comment ) => {
-		const commentAuthorId = comment.author?.ID;
-		if (
-			authorId &&
-			commentAuthorId &&
-			comment.status === 'unapproved' &&
-			commentAuthorId !== authorId
-		) {
-			return false;
-		}
-
-		if ( status !== 'all' ) {
-			return comment.isPlaceholder || comment.status === status;
-		}
-
-		return true;
-	} );
-
-const buildCommentsTree = ( comments: SiteComment[] ) => {
-	const tree: Record< string | number, { data: SiteComment; children: SiteComment[ 'ID' ][] } > & {
-		children: SiteComment[ 'ID' ][];
-	} = {
-		children: [],
-	};
-
-	comments.forEach( ( comment ) => {
-		tree[ comment.ID ] = {
-			data: comment,
-			children: [],
-		};
-	} );
-
-	comments.forEach( ( comment ) => {
-		if ( comment.parent && tree[ comment.parent.ID ] ) {
-			tree[ comment.parent.ID ].children.push( comment.ID );
-		} else if ( comment.parent === false ) {
-			tree.children.push( comment.ID );
-		}
-	} );
-
-	return tree;
-};
-
-export const mergeCommentLists = (
-	comments: SiteComment[],
-	additionalComments: SiteComment[] = EMPTY_COMMENTS
-) => mergeComments( [ comments, additionalComments ] );
-
-export const buildCommentsTreeForDisplay = ( {
-	comments,
-	displayStatus = 'approved',
-	authorId,
-}: {
-	comments: SiteComment[];
-	displayStatus?: string;
-	authorId?: number;
-} ) => buildCommentsTree( filterComments( comments, displayStatus, authorId ) );
-
+/**
+ * Loads and derives the paginated comment list for a Reader post.
+ *
+ * The REST endpoint returns pages in API order, but Reader components consume a
+ * chronological `comments` array, a legacy-shaped parent/child `commentsTree`,
+ * and legacy fetch-status names for "earlier" and "later" pagination controls.
+ */
 export const useComments = ( {
 	siteId,
 	postId,
@@ -166,6 +98,13 @@ export const useComments = ( {
 	};
 };
 
+/**
+ * Loads a single site comment by ID.
+ *
+ * Use this for deep-linked comments or other cases where a specific comment may
+ * not already be present in the paginated post comments cache. The `options`
+ * argument controls whether the request should run.
+ */
 export const useComment = (
 	{ siteId, commentId }: UseCommentParams,
 	{ enabled = true }: UseCommentOptions = {}
@@ -177,3 +116,66 @@ export const useComment = (
 		} ),
 		enabled: Boolean( enabled && siteId && commentId ),
 	} );
+
+/**
+ * Provides the legacy action-shaped API used by comment form class components.
+ *
+ * Create/reply insert a pending placeholder into the newest cached comments
+ * page, replace it with the server comment on success, and keep the placeholder
+ * in an error state for resend on failure. The initial comments page is fetched
+ * with `DESC` ordering, so page index 0 is the newest API page even though
+ * `useComments` later exposes comments chronologically.
+ */
+export const usePostCommentActions = () => {
+	const queryClient = useQueryClient();
+	const { mutateAsync: createPostComment } = useMutation( createSitePostCommentMutation() );
+	const { mutateAsync: createCommentReply } = useMutation( createSiteCommentReplyMutation() );
+
+	const createComment = useCallback(
+		( params: CommentActionParams, requestComment: () => Promise< SiteComment > ) => {
+			const placeholder = createPlaceholderComment( params );
+			addCommentToNewestPage( queryClient, params.siteId, params.postId, placeholder );
+
+			return requestComment().then(
+				( comment ) => {
+					replaceCommentInCache(
+						queryClient,
+						params.siteId,
+						params.postId,
+						placeholder.ID,
+						comment
+					);
+					return comment;
+				},
+				( error ) => {
+					replaceCommentInCache( queryClient, params.siteId, params.postId, placeholder.ID, {
+						...placeholder,
+						placeholderState: 'ERROR',
+						placeholderError: error,
+						placeholderErrorType: ( error as { error?: string } )?.error,
+					} );
+					throw error;
+				}
+			);
+		},
+		[ queryClient ]
+	);
+
+	return {
+		writeComment: ( content: string, siteId: number, postId: number ) =>
+			createComment( { content, siteId, postId }, () =>
+				createPostComment( { content, siteId, postId } )
+			),
+		replyComment: (
+			content: string,
+			siteId: number,
+			postId: number,
+			parentCommentId: number | string
+		) =>
+			createComment( { content, siteId, postId, parentCommentId }, () =>
+				createCommentReply( { content, siteId, postId, parentCommentId } )
+			),
+		deleteComment: ( siteId: number, postId: number, commentId: SiteComment[ 'ID' ] ) =>
+			removeCommentFromCache( queryClient, siteId, postId, commentId ),
+	};
+};

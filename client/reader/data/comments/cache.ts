@@ -1,0 +1,92 @@
+import { siteCommentsInfiniteQueryPrefix } from '@automattic/api-queries';
+import type { SiteComment } from '@automattic/api-core';
+import type { InfiniteData, QueryClient } from '@tanstack/react-query';
+
+type SiteCommentsResponse = {
+	comments: SiteComment[];
+	found?: number;
+};
+
+type SiteCommentsInfiniteData = InfiniteData< SiteCommentsResponse >;
+
+export type CommentActionParams = {
+	content: string;
+	siteId: number;
+	postId: number;
+	parentCommentId?: number | string;
+};
+
+export const createPlaceholderComment = ( {
+	content,
+	postId,
+	parentCommentId,
+}: CommentActionParams ): SiteComment => ( {
+	ID: `placeholder-${ Date.now() }`,
+	parent: parentCommentId ? { ID: parentCommentId } : false,
+	date: new Date().toISOString(),
+	content,
+	status: 'pending',
+	type: 'comment',
+	post: { ID: postId },
+	isPlaceholder: true,
+	placeholderState: 'PENDING',
+} );
+
+const updatePostCommentsCache = (
+	queryClient: QueryClient,
+	siteId: number,
+	postId: number,
+	updater: ( data: SiteCommentsInfiniteData ) => SiteCommentsInfiniteData
+) => {
+	queryClient.setQueriesData< SiteCommentsInfiniteData >(
+		{ queryKey: siteCommentsInfiniteQueryPrefix( siteId, postId ) },
+		( data ) => ( data ? updater( data ) : data )
+	);
+};
+
+export const addCommentToNewestPage = (
+	queryClient: QueryClient,
+	siteId: number,
+	postId: number,
+	comment: SiteComment
+) =>
+	updatePostCommentsCache( queryClient, siteId, postId, ( data ) => ( {
+		...data,
+		pages: data.pages.map( ( page, index ) =>
+			index === 0
+				? {
+						...page,
+						comments: [ comment, ...page.comments ],
+				  }
+				: page
+		),
+	} ) );
+
+export const replaceCommentInCache = (
+	queryClient: QueryClient,
+	siteId: number,
+	postId: number,
+	commentId: SiteComment[ 'ID' ],
+	comment: SiteComment
+) =>
+	updatePostCommentsCache( queryClient, siteId, postId, ( data ) => ( {
+		...data,
+		pages: data.pages.map( ( page ) => ( {
+			...page,
+			comments: page.comments.map( ( item ) => ( item.ID === commentId ? comment : item ) ),
+		} ) ),
+	} ) );
+
+export const removeCommentFromCache = (
+	queryClient: QueryClient,
+	siteId: number,
+	postId: number,
+	commentId: SiteComment[ 'ID' ]
+) =>
+	updatePostCommentsCache( queryClient, siteId, postId, ( data ) => ( {
+		...data,
+		pages: data.pages.map( ( page ) => ( {
+			...page,
+			comments: page.comments.filter( ( item ) => item.ID !== commentId ),
+		} ) ),
+	} ) );

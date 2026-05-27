@@ -4,7 +4,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { useComment, useComments } from '../index';
+import { useComment, useComments, usePostCommentActions } from '../index';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -50,6 +50,27 @@ const renderComment = ( params = {}, options = {} ) => {
 				},
 				options
 			),
+		{ wrapper }
+	);
+};
+
+const renderCommentsWithActions = ( params = {} ) => {
+	const queryClient = buildQueryClient();
+	const wrapper = ( { children }: { children: ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	return renderHook(
+		() => ( {
+			commentsQuery: useComments( {
+				siteId: 123,
+				postId: 456,
+				status: 'approved',
+				commentTotal: 1,
+				...params,
+			} ),
+			actions: usePostCommentActions(),
+		} ),
 		{ wrapper }
 	);
 };
@@ -358,5 +379,195 @@ describe( 'useComment', () => {
 
 		expect( result.current.fetchStatus ).toBe( 'idle' );
 		expect( request.isDone() ).toBe( false );
+	} );
+} );
+
+describe( 'usePostCommentActions', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	beforeEach( () => {
+		nock.cleanAll();
+		jest.useRealTimers();
+	} );
+
+	it( 'adds a placeholder while creating a root comment and replaces it on success', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{
+						ID: 1,
+						content: 'Existing',
+						date: '2026-05-01T00:00:00.000Z',
+						parent: false,
+						status: 'approved',
+					},
+				],
+				found: 1,
+			} );
+		nock( BASE )
+			.post( '/rest/v1.1/sites/123/posts/456/replies/new', { content: 'Hello world' } )
+			.delay( 100 )
+			.reply( 200, {
+				ID: 2,
+				content: 'Hello world',
+				date: '2026-05-02T00:00:00.000Z',
+				parent: false,
+				post: { ID: 456 },
+				status: 'approved',
+			} );
+
+		const { result } = renderCommentsWithActions();
+
+		await waitFor( () => expect( result.current.commentsQuery.comments ).toHaveLength( 1 ) );
+
+		act( () => {
+			result.current.actions.writeComment( 'Hello world', 123, 456 );
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsQuery.comments ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						content: 'Hello world',
+						isPlaceholder: true,
+						placeholderState: 'PENDING',
+					} ),
+				] )
+			);
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsQuery.comments ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						ID: 2,
+						content: 'Hello world',
+					} ),
+				] )
+			);
+			expect( result.current.commentsQuery.comments ).not.toEqual(
+				expect.arrayContaining( [ expect.objectContaining( { isPlaceholder: true } ) ] )
+			);
+		} );
+	} );
+
+	it( 'adds a placeholder while creating a reply and replaces it on success', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [
+					{
+						ID: 1,
+						content: 'Parent',
+						date: '2026-05-01T00:00:00.000Z',
+						parent: false,
+						status: 'approved',
+					},
+				],
+				found: 1,
+			} );
+		nock( BASE )
+			.post( '/rest/v1.1/sites/123/comments/1/replies/new', { content: 'Reply' } )
+			.delay( 100 )
+			.reply( 200, {
+				ID: 3,
+				content: 'Reply',
+				date: '2026-05-02T00:00:00.000Z',
+				parent: { ID: 1 },
+				post: { ID: 456 },
+				status: 'approved',
+			} );
+
+		const { result } = renderCommentsWithActions();
+
+		await waitFor( () => expect( result.current.commentsQuery.comments ).toHaveLength( 1 ) );
+
+		act( () => {
+			result.current.actions.replyComment( 'Reply', 123, 456, 1 );
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsQuery.comments ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						content: 'Reply',
+						parent: { ID: 1 },
+						isPlaceholder: true,
+						placeholderState: 'PENDING',
+					} ),
+				] )
+			);
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsQuery.comments ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						ID: 3,
+						content: 'Reply',
+						parent: { ID: 1 },
+					} ),
+				] )
+			);
+			expect( result.current.commentsQuery.comments ).not.toEqual(
+				expect.arrayContaining( [ expect.objectContaining( { isPlaceholder: true } ) ] )
+			);
+		} );
+	} );
+
+	it( 'keeps a failed placeholder in an error state when creating a root comment fails', async () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+			} )
+			.reply( 200, {
+				comments: [],
+				found: 0,
+			} );
+		nock( BASE )
+			.post( '/rest/v1.1/sites/123/posts/456/replies/new', { content: 'Nope' } )
+			.reply( 400, {
+				error: 'comment_duplicate',
+				message: 'Duplicate comment',
+			} );
+
+		const { result } = renderCommentsWithActions( { displayStatus: 'all' } );
+
+		await waitFor( () => expect( result.current.commentsQuery.isSuccess ).toBe( true ) );
+
+		await act( async () => {
+			await expect( result.current.actions.writeComment( 'Nope', 123, 456 ) ).rejects.toBeDefined();
+		} );
+
+		await waitFor( () => {
+			expect( result.current.commentsQuery.comments ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						content: 'Nope',
+						isPlaceholder: true,
+						placeholderState: 'ERROR',
+					} ),
+				] )
+			);
+		} );
 	} );
 } );
