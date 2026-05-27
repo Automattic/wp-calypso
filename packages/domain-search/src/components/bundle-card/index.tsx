@@ -34,7 +34,7 @@ export const BundleCard = ( { suggestion, onAddToCart }: BundleCardProps ) => {
 	return (
 		<div className="bundle-card">
 			<VStack spacing={ 4 }>
-				<Text size={ 24 } weight={ 500 } className="bundle-card__sld">
+				<Text as="h3" size={ 24 } weight={ 500 } className="bundle-card__sld">
 					{ sld }
 				</Text>
 

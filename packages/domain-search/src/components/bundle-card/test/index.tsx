@@ -40,10 +40,10 @@ const threeDomains = [ ...twoDomains, buildDomain( { domain: 'example.org', cost
 const fourDomains = [ ...threeDomains, buildDomain( { domain: 'example.io', cost: '$30.00' } ) ];
 
 describe( 'BundleCard', () => {
-	it( 'renders the SLD heading', () => {
+	it( 'renders the SLD as a heading', () => {
 		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
 
-		expect( screen.getByText( 'example' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'example' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders exactly 2 companion rows for a 2-domain bundle', () => {
