@@ -20,7 +20,7 @@ import { useSelect, dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
@@ -122,6 +122,18 @@ function LazyHelpCenter( { currentUser }: { currentUser: UserStore.CurrentUser }
 	}
 
 	return <AsyncHelpCenterApp currentUser={ currentUser } sectionName="stepper" />;
+}
+
+// Matches the user (account-creation) step path, including the optional locale
+// segment used by FlowRenderer's step routes (e.g. `/onboarding/user/es`).
+const USER_STEP_PATH = /^\/[^/]+\/user(?:\/[^/]+)?\/?$/;
+
+function StepperUserStepFab() {
+	const { pathname } = useLocation();
+	if ( ! USER_STEP_PATH.test( pathname ) ) {
+		return null;
+	}
+	return <AsyncHelpCenterFab sectionName="stepper" />;
 }
 
 async function main() {
@@ -275,6 +287,10 @@ async function main() {
 							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
 						) }
 						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+						{ ! user &&
+							! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
+							flowName !== WOO_HOSTED_PLANS_FLOW &&
+							config.isEnabled( 'help-center/logged-out-fab' ) && <StepperUserStepFab /> }
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
@@ -292,11 +308,6 @@ async function main() {
 									sectionName={ flowName }
 									loadAgentsManager
 								/>
-								{ /* The stepper has no masterbar or help button, so logged-out visitors
-								   have no way to summon the Help Center otherwise. */ }
-								{ ! user && config.isEnabled( 'help-center/logged-out-fab' ) && (
-									<AsyncHelpCenterFab sectionName="stepper" />
-								) }
 							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
