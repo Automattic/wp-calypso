@@ -10,8 +10,9 @@ End-to-end tests use [Playwright](https://playwright.dev/docs/intro) to interact
 
 ### How to run all tests?
 
-Executing `yarn test` from the root folder will run all test suites.
-Behind the scenes we maintain 4 test configurations. This is because each of them (`client`, `packages`, `server`, and `build-tools`) has their own requirements.
+Executing `yarn test` from the root folder runs four unit-test suites: `test-client`, `test-packages`, `test-server`, and `test-build-tools`. Each of those configurations has its own requirements.
+
+Integration tests are not part of `yarn test`; run them separately with `yarn test-integration`. End-to-end tests live in `test/e2e/` and are run from there — see `test/e2e/README.md`.
 
 ### How to run a smaller subset of test files?
 
