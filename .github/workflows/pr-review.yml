@@ -379,7 +379,6 @@ jobs:
           T_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           T_MODEL: ${{ inputs.model || 'claude-opus-4-6' }}
           T_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          T_EVENT_NAME: ${{ github.event_name }}
           T_AREA: ${{ inputs.area }}
         shell: bash
         run: |
@@ -405,11 +404,6 @@ jobs:
             esac
           fi
 
-          case "$T_EVENT_NAME" in
-            issue_comment|pull_request_review|pull_request_review_comment) IS_FOLLOWUP="true" ;;
-            *) IS_FOLLOWUP="false" ;;
-          esac
-
           # issue_comment payload is issue-shaped (no pull_request.head), so
           # head sha is empty on comment-triggered runs. Fall back to gh CLI.
           if [ -z "$T_PR_HEAD_SHA" ] && [ -n "$T_PR" ]; then
@@ -426,7 +420,6 @@ jobs:
             --arg model           "$T_MODEL" \
             --arg build_url       "$T_BUILD_URL" \
             --arg ci_provider     "github_actions" \
-            --arg is_followup     "$IS_FOLLOWUP" \
             '{
               source:          $source,
               outcome:         $outcome,
@@ -437,7 +430,6 @@ jobs:
               model:           $model,
               build_url:       $build_url,
               ci_provider:     $ci_provider,
-              is_followup:     ($is_followup == "true"),
               cost_usd:        (.total_cost_usd // 0),
               duration:        ((.duration_ms // 0) / 1000),
               api_duration_ms: (.duration_api_ms // 0),
