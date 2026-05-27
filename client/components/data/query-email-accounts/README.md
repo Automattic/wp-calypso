@@ -30,4 +30,4 @@ export default function listEmailAccounts( { emailAccounts } ) {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The ID of the site to fetch the email accounts users for.
+The ID of the site to fetch the email accounts for.
