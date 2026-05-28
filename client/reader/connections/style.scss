@@ -190,10 +190,6 @@
 	&:focus-visible {
 		text-decoration: underline;
 	}
-
-	&::after {
-		content: " ↗";
-	}
 }
 
 .connections-new__footnote {

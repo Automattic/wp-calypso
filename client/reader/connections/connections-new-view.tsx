@@ -20,10 +20,15 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSites from 'calypso/state/selectors/get-sites';
 
-type AdminSite = NonNullable< ReturnType< typeof getSites >[ number ] >;
+type SiteEntry = NonNullable< ReturnType< typeof getSites >[ number ] >;
+type AdminSite = SiteEntry & { capabilities: { manage_options: true } };
+
+function isAdminSite( site: SiteEntry | null | undefined ): site is AdminSite {
+	return !! site && site.capabilities?.manage_options === true;
+}
 
 function getActivityPubSettingsUrl( site: AdminSite ): string | null {
-	const adminUrl = site?.options?.admin_url;
+	const adminUrl = site.options?.admin_url;
 	return adminUrl ? `${ adminUrl }options-general.php?page=activitypub` : null;
 }
 
@@ -38,16 +43,12 @@ function FediverseSitePicker( {
 } ) {
 	const translate = useTranslate();
 
-	const initialSiteId = useMemo( () => {
+	const [ selectedSiteId, setSelectedSiteId ] = useState< number >( () => {
 		if ( primarySiteId && sites.some( ( s ) => s.ID === primarySiteId ) ) {
 			return primarySiteId;
 		}
-		return sites[ 0 ].ID;
-	}, [ sites, primarySiteId ] );
-
-	const [ selectedSiteId, setSelectedSiteId ] = useState< number >( initialSiteId );
-	const selectedSite = sites.find( ( s ) => s.ID === selectedSiteId ) ?? sites[ 0 ];
-	const href = getActivityPubSettingsUrl( selectedSite );
+		return sites[ 0 ]?.ID ?? 0;
+	} );
 
 	const options = useMemo(
 		() =>
@@ -58,17 +59,31 @@ function FediverseSitePicker( {
 		[ sites ]
 	);
 
+	// Callers gate on `adminSites.length > 1`; this guard documents the
+	// invariant locally so the `sites[ 0 ]` reads below can't TypeError
+	// if the gate ever drifts.
+	if ( sites.length === 0 ) {
+		return null;
+	}
+
+	const selectedSite = sites.find( ( s ) => s.ID === selectedSiteId );
+	if ( ! selectedSite ) {
+		return null;
+	}
+	const href = getActivityPubSettingsUrl( selectedSite );
+
 	return (
 		<div className="connections-new__card-picker">
 			<ComboboxControl
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				className="connections-new__card-picker-combobox"
-				label={ translate( 'Choose a site' ) as string }
+				label={ String( translate( 'Choose a site' ) ) }
 				value={ String( selectedSiteId ) }
 				onChange={ ( newValue ) => {
-					if ( newValue ) {
-						setSelectedSiteId( parseInt( newValue, 10 ) );
+					const parsed = newValue ? Number( newValue ) : NaN;
+					if ( Number.isInteger( parsed ) && sites.some( ( s ) => s.ID === parsed ) ) {
+						setSelectedSiteId( parsed );
 					}
 				} }
 				options={ options }
@@ -131,9 +146,7 @@ export function ConnectionsNewView() {
 	const fediverseConnectionsQuery = useFediverseConnectionsQuery();
 	const hasFediverseConnection = ( fediverseConnectionsQuery.data?.connections?.length ?? 0 ) > 0;
 
-	const adminSites = useSelector( ( state ) =>
-		getSites( state ).filter( ( site ): site is AdminSite => !! site?.capabilities?.manage_options )
-	);
+	const adminSites = useSelector( ( state ) => getSites( state ).filter( isAdminSite ) );
 	const primarySiteId = useSelector( getPrimarySiteId );
 
 	const fediverseDocHref = localizeUrl( 'https://wordpress.com/support/enter-the-fediverse/' );
@@ -164,7 +177,7 @@ export function ConnectionsNewView() {
 		}
 
 		if ( adminSites.length === 1 ) {
-			const site = adminSites[ 0 ];
+			const href = getActivityPubSettingsUrl( adminSites[ 0 ] );
 			return {
 				...base,
 				tagline: String( translate( 'Your WordPress site is already social.' ) ),
@@ -173,8 +186,8 @@ export function ConnectionsNewView() {
 						'Flip the ActivityPub switch in your site’s settings, and your blog slots in next to everything else you read here.'
 					)
 				),
-				href: getActivityPubSettingsUrl( site ),
-				hrefExternal: !! site?.options?.admin_url,
+				href,
+				hrefExternal: !! href,
 			};
 		}
 
@@ -261,11 +274,14 @@ export function ConnectionsNewView() {
 		);
 	};
 
-	// Hold the picker until the connections query settles. Without this gate a
-	// user who already federates sees the picker flash in on first paint, then
-	// disappear once the query resolves and the card flips to "already federating".
+	// Hold the picker until the connections query *succeeds*. Without this gate
+	// a user who already federates would see the picker flash in on first paint,
+	// then disappear once the query resolves and the card flips to "already
+	// federating". Gating on `isSuccess` (rather than `!isPending`) also keeps
+	// the picker hidden when the query errors — drawing protocol-state UI from a
+	// failed query would mislead an already-federating user into wp-admin.
 	const showFediversePicker =
-		! fediverseConnectionsQuery.isPending && ! hasFediverseConnection && adminSites.length > 1;
+		fediverseConnectionsQuery.isSuccess && ! hasFediverseConnection && adminSites.length > 1;
 
 	return (
 		<ReaderMain className="connections-view">
@@ -332,6 +348,7 @@ export function ConnectionsNewView() {
 								onClick={ () => handleDocClick( option ) }
 							>
 								{ option.docLabel }
+								<span aria-hidden="true"> ↗</span>
 							</a>
 						</Card>
 					);
