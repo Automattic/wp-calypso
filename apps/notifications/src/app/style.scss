@@ -1,3 +1,4 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -7,11 +8,64 @@ $wpnc-pane-radius: 4px;
 $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
+// The app fills the host popover. The negative margin cancels the
+// popover content's default 8px padding so the panel reaches the edges.
 .wpnc-app {
 	position: relative;
-	width: 100%;
-	height: 100%;
+	width: 100vw;
+	height: 100vh;
 	max-height: inherit;
+	margin: -8px;
+}
+
+@include break-small {
+	.wpnc-app {
+		max-width: 448px;
+	}
+}
+
+@include break-xlarge {
+	.wpnc-app {
+		max-width: 896px;
+	}
+
+	// At xlarge each pane carries its own chrome, so the host popover
+	// goes transparent and lets the combined card show through. Scoped
+	// via :has() so apps/notifications owns its own popover styling and
+	// consumers don't need to redeclare it.
+	.components-popover:has(.wpnc-app) {
+		will-change: auto;
+
+		.components-popover__content {
+			background: transparent;
+			box-shadow: none;
+			border: none;
+			border-radius: 0;
+			overflow: visible;
+		}
+	}
+}
+
+// Below small, the popover opens full-screen via `expandOnMobile`. Hide
+// the redundant popover header and let the content fill the height.
+.components-popover.is-expanded:has(.wpnc-app) {
+	.components-popover__header {
+		display: none;
+	}
+
+	.components-popover__content {
+		height: 100%;
+	}
+}
+
+.components-popover:has(.wpnc-app) .components-card__header {
+	@include ui-mixins.when-dark-theme {
+		color: var(--dashboard__text-color);
+
+		svg {
+			fill: var(--dashboard__text-color);
+		}
+	}
 }
 
 // Both panes use absolute positioning so they can overlap during the slide.

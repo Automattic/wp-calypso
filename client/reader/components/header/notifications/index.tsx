@@ -92,16 +92,14 @@ export default function Notifications( { user, className }: { user: User; classN
 				/>
 			) }
 			renderContent={ () => (
-				<div className="dashboard-notifications__content">
-					<Suspense fallback={ null }>
-						<AsyncNotificationApp
-							locale={ user.language }
-							isDismissible={ isMobileViewport }
-							actionHandlers={ actionHandlers }
-							wpcom={ wpcom }
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={ null }>
+					<AsyncNotificationApp
+						locale={ user.language }
+						isDismissible={ isMobileViewport }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
 			) }
 		/>
 	);
