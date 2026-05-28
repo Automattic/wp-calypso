@@ -41,10 +41,10 @@ const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
-		Panel: ( { children }: any ) => React.createElement( 'div', null, children ),
-		PanelBody: ( { children }: any ) => React.createElement( 'section', null, children ),
+		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
+		PanelBody: ( { children }: any ) => react.createElement( 'section', null, children ),
 	};
 } );
 
