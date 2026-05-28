@@ -45,7 +45,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
-		"webpack": "^5.99.8"
+		"webpack": "^5.104.1"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

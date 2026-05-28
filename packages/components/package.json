@@ -98,10 +98,10 @@
 		"@testing-library/user-event": "^14.6.1",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.12.2",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.10",
 		"storybook": "^8.6.17",
 		"typescript": "^5.9.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.104.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
