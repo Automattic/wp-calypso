@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
@@ -322,14 +322,12 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
 								</p>
-								<a
+								<ExternalLink
 									className="live-ai-assistant__intro-learn-more"
 									href={ smartDictationSupportUrl }
-									target="_blank"
-									rel="noreferrer"
 								>
 									{ __( 'Learn more' ) }
-								</a>
+								</ExternalLink>
 							</div>
 						) }
 
