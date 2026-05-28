@@ -10,9 +10,9 @@
 // Brand proper nouns that must keep their canonical casing through a
 // sentence-case transform. DESIGN.md is explicit: sentence-case headings
 // still capitalize proper nouns ("Never 'automattic'"). Without this, a
-// naive lowercase would mangle "WordPress.com" -> "wordpress.com". Sorted
+// naive lowercase would mangle "WordPress.com" -> "wordpress.com". Listed
 // longest-first so e.g. "WooCommerce" is restored before "Woo".
-export const PROTECTED_TERMS: string[] = [
+const PROTECTED_TERMS: string[] = [
 	'Automattic for Agencies',
 	'WordPress VIP',
 	'WordPress.com',
@@ -30,9 +30,9 @@ export const PROTECTED_TERMS: string[] = [
 	'Day One',
 	'Woo',
 	'VIP',
-].sort( ( a, b ) => b.length - a.length );
+];
 
-export function restoreProtectedTerms( s: string ): string {
+function restoreProtectedTerms( s: string ): string {
 	let out = s;
 	for ( const term of PROTECTED_TERMS ) {
 		const escaped = term.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );

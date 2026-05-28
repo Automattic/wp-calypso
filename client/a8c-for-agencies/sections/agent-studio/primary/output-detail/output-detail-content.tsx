@@ -12,7 +12,10 @@ import { useMemo, useState, type ReactNode } from 'react';
 import useAgentStudioCollateral, {
 	type AgentStudioCollateralVariant,
 } from '../../data/use-agent-studio-collateral';
-import useAgentStudioRun, { type AgentStudioRunPayload } from '../../data/use-agent-studio-run';
+import useAgentStudioRun, {
+	NON_TERMINAL_RUN_STATUSES,
+	type AgentStudioRunPayload,
+} from '../../data/use-agent-studio-run';
 import useAgentStudioVariantHtml from '../../data/use-agent-studio-variant-html';
 import usePrefetchAgentStudioVariantHtml from '../../data/use-prefetch-agent-studio-variant-html';
 import {
@@ -202,8 +205,6 @@ const extractSocialBrief = ( payload: unknown ): ServerSocialBrief | undefined =
 	return brief;
 };
 
-const RUN_NON_TERMINAL_STATUSES = new Set( [ 'a4a_pending', 'a4a_running' ] );
-
 function SocialOutputDetail( { output }: Props ) {
 	const run = useAgentStudioRun( output.id );
 	const brief = extractSocialBrief( run.data?.payload );
@@ -233,7 +234,7 @@ function SocialOutputDetail( { output }: Props ) {
 	const isRunInProgress =
 		! isRunFailed &&
 		( output.status === 'generating' ||
-			( runStatus !== undefined && RUN_NON_TERMINAL_STATUSES.has( runStatus ) ) ||
+			( runStatus !== undefined && NON_TERMINAL_RUN_STATUSES.has( runStatus ) ) ||
 			( ! run.data && ! run.isError ) );
 
 	if ( isRunFailed ) {

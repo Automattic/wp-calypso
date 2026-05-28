@@ -37,7 +37,7 @@ export const getAgentStudioRunQueryKey = ( agencyId: number | undefined, runId: 
 // the runs endpoint so it can pick up the brief once the persist
 // ability finishes — otherwise the page would settle on the first
 // (empty-payload) response and never recover without a reload.
-const NON_TERMINAL_RUN_STATUSES = new Set( [ 'a4a_pending', 'a4a_running' ] );
+export const NON_TERMINAL_RUN_STATUSES = new Set( [ 'a4a_pending', 'a4a_running' ] );
 
 const RUN_POLL_INTERVAL_MS = 2000;
 

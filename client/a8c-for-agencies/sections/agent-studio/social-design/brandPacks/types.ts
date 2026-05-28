@@ -1,4 +1,4 @@
-export type BrandTokens = {
+type BrandTokens = {
 	brandPrimary: string;
 	brandSecondary: string;
 	textPrimary: string;
@@ -9,11 +9,11 @@ export type BrandTokens = {
 	surfaceBrand: string;
 };
 
-export type FontRole = 'display' | 'h1' | 'h2' | 'h3' | 'eyebrow' | 'body' | 'mono';
+type FontRole = 'display' | 'h1' | 'h2' | 'h3' | 'eyebrow' | 'body' | 'mono';
 
-export type FontCase = 'as-typed' | 'uppercase' | 'lowercase' | 'title-case' | 'sentence-case';
+type FontCase = 'as-typed' | 'uppercase' | 'lowercase' | 'title-case' | 'sentence-case';
 
-export type BrandTypography = {
+type BrandTypography = {
 	headlineWeight: number;
 	headlineCase: 'uppercase' | 'asis' | 'titlecase';
 	headlineTracking: string;

@@ -53,12 +53,6 @@
 	opacity: 1;
 }
 
-.a4a-agent-studio-social-assets__canvas.is-exporting .a4a-agent-studio-social-assets__tile {
-	transform: none;
-	opacity: 1;
-	transition: none;
-}
-
 .a4a-agent-studio-social-assets__tile-frame {
 	position: relative;
 	overflow: hidden;
@@ -86,17 +80,6 @@
 	background: #fff;
 	pointer-events: none;
 	user-select: none;
-}
-
-.a4a-agent-studio-social-assets__empty-preview {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: #fff;
-	color: var(--color-neutral-50);
-	font-size: 12px;
 }
 
 .a4a-agent-studio-social-assets__ghost {
@@ -200,27 +183,6 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-}
-
-.a4a-agent-studio-social-assets__capture-toast {
-	position: fixed;
-	bottom: 24px;
-	left: 50%;
-	z-index: 50;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 18px;
-	border-radius: 24px;
-	background: rgba(5, 5, 5, 0.92);
-	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
-	color: #fff;
-	font-size: 13px;
-	transform: translateX(-50%);
-}
-
-.a4a-agent-studio-social-assets__capture-toast .components-spinner {
-	margin: 0;
 }
 
 @media (max-width: 960px) {

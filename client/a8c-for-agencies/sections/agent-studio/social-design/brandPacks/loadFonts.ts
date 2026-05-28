@@ -75,7 +75,7 @@ async function registerLocalPackFontUncached(
 
 // Resolve a CSS font-family value for a pack font, registering the local
 // face if needed. Idempotent and cached.
-export async function resolvePackFont( font: BrandPackFont ): Promise< string > {
+async function resolvePackFont( font: BrandPackFont ): Promise< string > {
 	if ( font.systemFamily ) {
 		return font.systemFamily;
 	}

@@ -203,11 +203,7 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 			onPointerMove={ handleCanvasPointerMove }
 			onPointerUp={ endCanvasPan }
 			onPointerCancel={ endCanvasPan }
-			onPointerLeave={ ( event ) => {
-				if ( dragRef.current.active ) {
-					endCanvasPan( event );
-				}
-			} }
+			onPointerLeave={ endCanvasPan }
 		>
 			<div className="a4a-agent-studio-social-assets__canvas">
 				{ columns.map( ( column, columnIdx ) => (

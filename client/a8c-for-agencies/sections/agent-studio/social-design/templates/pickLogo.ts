@@ -1,4 +1,4 @@
-export function isDarkColor( hex: string | undefined ): boolean {
+function isDarkColor( hex: string | undefined ): boolean {
 	if ( ! hex ) {
 		return false;
 	}

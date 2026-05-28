@@ -30,11 +30,11 @@ export interface ServerSocialBrief {
 	brand_pack_slug?: string;
 }
 
-export interface ComposeSocialAssetsInput {
+interface ComposeSocialAssetsInput {
 	brief: ServerSocialBrief;
 }
 
-export interface ComposeSocialAssetsResult {
+interface ComposeSocialAssetsResult {
 	brandPackSlug: string;
 	assets: AgentStudioSocialAsset[];
 }
