@@ -268,9 +268,6 @@ export default function AgentDock( {
 					onClick: () => {
 						undock();
 						setIsDocked( false );
-						// Split screen only makes sense while docked; clear the
-						// flag so the option returns cleanly when re-docked.
-						setIsSplitScreen( false );
 					},
 				},
 			! isReaderChat &&
