@@ -1,0 +1,8 @@
+// Temporary: hide the chat FAB when the help center icon is present in the WP admin bar.
+// Editors don't load the icon, so the FAB stays visible there.
+body:has( #wp-admin-bar-agents-manager ) {
+	.agenttic:has( [data-slot='collapsed-view'] ),
+	.agents-manager-sidebar-fab {
+		display: none;
+	}
+}
