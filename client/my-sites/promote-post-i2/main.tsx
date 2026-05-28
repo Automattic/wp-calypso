@@ -274,6 +274,9 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 						brandFont
 						className={ clsx( 'advertising__page-header' ) }
 						headerText={ translate( 'Dashboard' ) }
+						subHeaderText={ translate(
+							'Advertise Your Site and Content on WordPress and Tumblr.'
+						) }
 						align="left"
 					/>
 
@@ -285,6 +288,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 							showSupportModal={ ! isSelfHosted }
 						/>
 						<Button
+							className="promote-post-i2__promote-button"
 							variant="primary"
 							onClick={ onClickPromote }
 							disabled={ isLoadingBillingSummary || paymentBlocked }

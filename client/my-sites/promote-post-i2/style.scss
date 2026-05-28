@@ -301,6 +301,25 @@ body.is-section-promote-post-i2 {
 		}
 	}
 
+	&__promote-button.is-primary {
+		background-color: #E65054;
+		border-color: #E65054;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			background-color: #CC4347;
+			border-color: #CC4347;
+			box-shadow: 0 0 0 2px rgba(230, 80, 84, 0.3);
+		}
+
+		&:disabled,
+		&[aria-disabled="true"] {
+			background-color: #E65054;
+			border-color: #E65054;
+			opacity: 0.5;
+		}
+	}
+
 	&__payment-blocked-notice {
 		display: flex;
 		align-items: center;

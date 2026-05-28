@@ -15,6 +15,13 @@
 		line-height: 1.33;
 	}
 
+	&__subtitle.formatted-header__subtitle {
+		color: $studio-gray-60;
+		font-size: 0.875rem;
+		line-height: 1.43;
+		margin: 4px 0 0 0;
+	}
+
 	&.advertising__page-header_has-banner {
 		h2 {
 			font-size: 0.875rem;
@@ -22,5 +29,4 @@
 			line-height: 1.43;
 		}
 	}
-
 }

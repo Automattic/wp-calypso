@@ -1,3 +1,38 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
 .jetpack-blaze-header {
 	display: flex;
+	flex-direction: column;
+
+	&__title-row {
+		align-items: center;
+		display: flex;
+		gap: 8px;
+	}
+
+	&__title.formatted-header__title {
+		color: $studio-gray-100;
+		font-family: $font-sf-pro-display;
+		font-size: 1.5rem;
+		font-weight: 500;
+		letter-spacing: 0.36px;
+		line-height: 1.33;
+		margin: 0;
+	}
+
+	&__subtitle.formatted-header__subtitle {
+		color: $studio-gray-60;
+		font-size: 0.875rem;
+		line-height: 1.43;
+		margin: 4px 0 0 32px;
+	}
+
+	&.advertising__page-header_has-banner {
+		.jetpack-blaze-header__title.formatted-header__title {
+			font-size: 0.875rem;
+			letter-spacing: -0.15px;
+			line-height: 1.43;
+		}
+	}
 }

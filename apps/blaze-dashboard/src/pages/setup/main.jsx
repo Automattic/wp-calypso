@@ -49,6 +49,9 @@ export default function BlazeSetup( { setupInfo } ) {
 						brandFont
 						className="advertising__page-header advertising__page-header_has-banner"
 						headerText={ headerTitle }
+						subHeaderText={ translate(
+							'Advertise Your Site and Content on WordPress and Tumblr.'
+						) }
 						align="left"
 					/>
 				</div>
