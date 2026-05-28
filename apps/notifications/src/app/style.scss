@@ -22,6 +22,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 	background: var(--color-surface, #fff);
 	transition: transform 300ms $wpnc-slide-easing;
 }
@@ -37,6 +38,14 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 	&.is-open {
 		transform: translateX(0);
+	}
+
+	// Sticky header + action block sandwich the body. Make the body the
+	// scroll region so its content stays inside the pane.
+	> .components-card-body {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
 	}
 }
 
