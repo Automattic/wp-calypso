@@ -277,6 +277,13 @@ export const MobileView: Story = {
 		linear: false,
 		activationMode: 'manual',
 	},
+	decorators: [
+		( Story ) => (
+			<div style={ { maxWidth: 375, margin: '0 auto' } }>
+				<Story />
+			</div>
+		),
+	],
 	parameters: {
 		viewport: {
 			defaultViewport: 'mobile1',
@@ -284,7 +291,7 @@ export const MobileView: Story = {
 		docs: {
 			description: {
 				story: `
-The horizontal stepper rendered at a 320 px mobile viewport.
+The horizontal stepper rendered at a 375 px mobile width.
 Use the toolbar's viewport picker to try other sizes (e.g. \`mobile2\` at 414 px).
 				`,
 			},
