@@ -8,35 +8,31 @@ $wpnc-pane-radius: 4px;
 $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
-// The app fills the host popover. The negative margin cancels the
-// popover content's default 8px padding so the panel reaches the edges.
-.wpnc-app {
-	position: relative;
+// Size the host popover's content area directly (instead of styling an
+// inner wrapper) so apps/notifications owns its own popover layout and
+// consumers don't have to redeclare it. The popover's default 8px
+// padding is removed so the panel reaches the edges.
+.components-popover:has(.wpnc-app) .components-popover__content {
 	width: 100vw;
 	height: 100vh;
 	max-height: inherit;
-	margin: -8px;
+	padding: 0;
 }
 
 @include break-small {
-	.wpnc-app {
+	.components-popover:has(.wpnc-app) .components-popover__content {
 		max-width: 448px;
 	}
 }
 
 @include break-xlarge {
-	.wpnc-app {
-		max-width: 896px;
-	}
-
-	// At xlarge each pane carries its own chrome, so the host popover
-	// goes transparent and lets the combined card show through. Scoped
-	// via :has() so apps/notifications owns its own popover styling and
-	// consumers don't need to redeclare it.
+	// At xlarge each pane carries its own chrome, so the popover goes
+	// transparent and lets the combined card show through.
 	.components-popover:has(.wpnc-app) {
 		will-change: auto;
 
 		.components-popover__content {
+			max-width: 896px;
 			background: transparent;
 			box-shadow: none;
 			border: none;
@@ -66,6 +62,13 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 			fill: var(--dashboard__text-color);
 		}
 	}
+}
+
+.wpnc-app {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-height: inherit;
 }
 
 // Both panes use absolute positioning so they can overlap during the slide.
