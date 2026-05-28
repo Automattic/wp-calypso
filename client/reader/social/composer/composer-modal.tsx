@@ -159,10 +159,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// always called (rules of hooks). When `mode` is null the modal isn't
 	// rendering interactive content anyway, so the value is unused.
 	const limit = config.useLimit( mode?.connectionId ?? null );
-	// Per-protocol useAuthorHandle hook — resolves the user's handle for
-	// the active connection so the modal title can append "· @handle".
-	// Same rules-of-hooks contract as `useLimit`: always called, accepts
-	// `null` when no mode is active, returns `null` until resolved.
+	// Same rules-of-hooks contract as `useLimit` above.
 	const useAuthorHandle = config.useAuthorHandle ?? NOOP_USE_AUTHOR_HANDLE;
 	const authorHandle = useAuthorHandle( mode?.connectionId ?? null );
 	const tooLong = graphemeCount > limit;

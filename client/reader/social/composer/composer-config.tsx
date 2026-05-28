@@ -204,12 +204,8 @@ export interface ComposerConfig< TError, TParams, TResult > {
 		) => { event: string; props: Record< string, unknown > };
 	};
 	/**
-	 * Optional icon rendered before the modal title (e.g. the Bluesky logo for
-	 * atmosphere, the Mastodon logo for mastodon). Forwarded to the WP
-	 * `<Modal>` `icon` prop, which is typed as `React.JSX.Element` — pass a
-	 * single element, not a fragment or array. Surfacing the network glyph
-	 * in the modal header is half of the destination context the modal
-	 * communicates — see `useAuthorHandle` for the other half.
+	 * Optional icon forwarded to the WP `<Modal>` `icon` prop (typed as
+	 * `React.JSX.Element` — pass a single element, not a fragment or array).
 	 */
 	headerIcon?: ReactElement;
 	/**
