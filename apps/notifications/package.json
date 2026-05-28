@@ -59,7 +59,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"html-webpack-plugin": "^5.6.3",
+		"html-webpack-plugin": "^5.6.7",
 		"postcss": "^8.5.3",
 		"postcss-custom-properties": "^12.1.11",
 		"webpack": "^5.99.8"
