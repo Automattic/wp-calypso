@@ -6,8 +6,8 @@ This folder publishes `window.__agentsManagerActions` so code outside the React 
 
 | Hook                       | Role                                                                                                |
 | -------------------------- | --------------------------------------------------------------------------------------------------- |
-| `useSetupCustomActions`    | Mounted with the agent dock. Registers the built-in actions and fires `agents-manager-ready`.        |
-| `useRegisterCustomActions` | Lets any component publish its own actions onto the global. Used internally; also for new actions. |
+| `useSetupCustomActions`    | Mounted with the agent dock. Registers the built-in actions and fires `agents-manager-ready`.       |
+| `useRegisterCustomActions` | Lets any component publish its own actions onto the global. Used internally; also for new actions.  |
 
 Consuming the API? See [Public API](#public-api). Adding a new action? See [Adding a new action](#adding-a-new-action).
 
