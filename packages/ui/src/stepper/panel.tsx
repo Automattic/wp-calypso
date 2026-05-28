@@ -10,7 +10,7 @@ import type { ComponentProps, ReactNode } from 'react';
 type StepperPanelProps = ComponentProps< 'div' > & {
 	/** Required in horizontal mode to associate panel with a step */
 	value?: string;
-	/** Keep panel mounted when inactive (horizontal only) */
+	/** Keep panel mounted when inactive (works in both orientations) */
 	forceMount?: boolean;
 	children: ReactNode;
 	className?: string;

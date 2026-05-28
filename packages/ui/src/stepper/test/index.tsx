@@ -522,6 +522,28 @@ describe( 'Stepper dynamic step removal', () => {
 	} );
 } );
 
+describe( 'Stepper.Panel dev warnings', () => {
+	it( 'warns when a horizontal Panel has no matching step value', async () => {
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		render(
+			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="nonexistent">Content</Stepper.Panel>
+			</Stepper.Root>
+		);
+		await waitFor( () => {
+			expect( warn ).toHaveBeenCalledWith(
+				expect.stringContaining( "No step found with value 'nonexistent'" )
+			);
+		} );
+		warn.mockRestore();
+	} );
+} );
+
 describe( 'Stepper indicatorVariant', () => {
 	it( 'renders a numeric step label in the indicator when indicatorVariant is "number"', () => {
 		render(
