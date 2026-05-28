@@ -62,12 +62,12 @@
 		"@automattic/languages": "workspace:^",
 		"@types/wordpress__block-editor": "^11.5.16",
 		"@types/wordpress__blocks": "^12.5.17",
-		"@typescript-eslint/eslint-plugin": "^8.0.0",
-		"@typescript-eslint/parser": "^8.0.0",
+		"@typescript-eslint/eslint-plugin": "^8.59.3",
+		"@typescript-eslint/parser": "^8.59.3",
 		"@wordpress/eslint-plugin": "^25.2.0",
 		"@wordpress/stylelint-config": "^23.38.0",
-		"stylelint": "^16.2.1",
-		"stylelint-scss": "^6.4.0",
+		"stylelint": "^16.26.1",
+		"stylelint-scss": "^6.14.0",
 		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
@@ -82,7 +82,7 @@
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"stylelint": "*",
-		"stylelint-scss": "^6.4.0",
+		"stylelint-scss": "^6.14.0",
 		"webpack": "*"
 	},
 	"private": true
