@@ -1,5 +1,5 @@
 // packages/ui/src/stepper/indicator.tsx
-import { check, error as errorIcon } from '@wordpress/icons';
+import { check } from '@wordpress/icons';
 import { Icon } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useStepContext, useStepperContext } from './context';
@@ -41,7 +41,7 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 	if ( status === 'completed' ) {
 		indicator = <Icon icon={ check } size={ 14 } />;
 	} else if ( status === 'error' ) {
-		indicator = <Icon icon={ errorIcon } size={ 14 } />;
+		indicator = <span aria-hidden="true">!</span>;
 	} else if ( isCurrent && indicatorVariant === 'bullet' ) {
 		indicator = halfCircleIcon;
 	}
