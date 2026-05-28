@@ -9,18 +9,20 @@
  * `@wordpress/global-styles-engine` packages. The ones we still need are
  * imported from those packages here (with a yarn patch widening
  * global-styles-ui's `exports` field to allow the deep paths). The equality
- * helper got renamed and is small enough to inline.
+ * helper was renamed from `areGlobalStyleConfigsEqual` to `areGlobalStylesEqual`.
  */
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
 import { getBlockTypes } from '@wordpress/blocks';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { generateGlobalStyles } from '@wordpress/global-styles-engine';
+import {
+	areGlobalStylesEqual as areGlobalStyleConfigsEqual,
+	generateGlobalStyles,
+} from '@wordpress/global-styles-engine';
 import { GlobalStylesContext as UntypedGSContext } from '@wordpress/global-styles-ui/build-module/context';
 import { useSetting, useStyle } from '@wordpress/global-styles-ui/build-module/hooks';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
-import fastDeepEqual from 'fast-deep-equal/es6';
 import { isPlainObject } from 'is-plain-object';
 import { useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../constants';
@@ -35,22 +37,6 @@ const { cleanEmptyObject, ExperimentalBlockEditorProvider } = unlock( blockEdito
 
 const GlobalStylesContext: React.Context< GlobalStylesContextObject > =
 	UntypedGSContext as unknown as React.Context< GlobalStylesContextObject >;
-
-// Renamed/removed `areGlobalStyleConfigsEqual` upstream — inline the original
-// implementation here (a couple of `fastDeepEqual` calls on the styles and
-// settings slices, matching the pre-refactor behavior).
-const areGlobalStyleConfigsEqual = (
-	original: GlobalStylesObject | undefined,
-	variation: GlobalStylesObject | undefined
-): boolean => {
-	if ( typeof original !== 'object' || typeof variation !== 'object' ) {
-		return original === variation;
-	}
-	return (
-		fastDeepEqual( original?.styles, variation?.styles ) &&
-		fastDeepEqual( original?.settings, variation?.settings )
-	);
-};
 
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesObject ) => {
 	const mergedConfig = user ? deepmerge( base, user, { isMergeableObject: isPlainObject } ) : base;
@@ -151,7 +137,14 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 		properties
 	) as GlobalStylesObject;
 
-	return areGlobalStyleConfigsEqual( variationWithProperties, variation );
+	// Calypso's GlobalStylesObject differs from the engine's GlobalStylesConfig
+	// (notably `styles.color`), but `areGlobalStylesEqual` only deep-equals the
+	// `styles` and `settings` slices, so the runtime contract holds.
+	type AreEqualParam = Parameters< typeof areGlobalStyleConfigsEqual >[ 0 ];
+	return areGlobalStyleConfigsEqual(
+		variationWithProperties as unknown as AreEqualParam,
+		variation as unknown as AreEqualParam
+	);
 };
 
 const isColorVariation = ( variation?: GlobalStylesObject ) =>
