@@ -1,9 +1,9 @@
 import { readRelatedPostsQuery } from '@automattic/api-queries';
-import { usePostsQuery } from 'calypso/reader/data/post-query';
+import { usePostsQuery } from 'calypso/reader/data/post/query';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import type { ReadRelatedPostsScope } from '@automattic/api-core';
 import type { UseQueryResult } from '@tanstack/react-query';
-import type { Post } from 'calypso/reader/data/post-cache';
+import type { Post } from 'calypso/reader/data/post/cache';
 
 export interface RelatedPostsResult {
 	posts: Post[] | undefined;

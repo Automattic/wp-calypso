@@ -1,5 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { Button, Modal, Spinner } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, Modal, Spinner } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { Icon, external, download, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { DataViews } from 'calypso/components/dataviews';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
@@ -222,7 +223,17 @@ export default function SitesWithWooPayments() {
 							dataViewsState,
 							defaultLayouts: { table: {} },
 						} }
-					/>
+					>
+						<HStack
+							className="dataviews__view-actions"
+							justify="end"
+							style={ { paddingInline: '64px' } }
+						>
+							<DataViews.ViewConfig />
+						</HStack>
+						<DataViews.Layout />
+						<DataViews.Footer />
+					</ItemsDataViews>
 				</div>
 			) }
 

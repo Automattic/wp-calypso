@@ -26,7 +26,6 @@
 		"cookie-banner": false,
 		"dark-mode": true,
 		"dashboard/omnibar": true,
-		"dashboard/omnibar-radical": true,
 		"dashboard/plans": true,
 		"dashboard/v2": false,
 		"dashboard/wp-beta-program": true,

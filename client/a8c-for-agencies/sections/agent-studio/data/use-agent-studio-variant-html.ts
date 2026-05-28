@@ -31,6 +31,11 @@ export default function useAgentStudioVariantHtml( htmlUrl: string | undefined )
 		queryFn: () => fetchAgentStudioVariantHtml( htmlUrl as string ),
 		enabled: !! htmlUrl,
 		refetchOnWindowFocus: false,
-		staleTime: Infinity,
+		// Match wpcom's `Cache-Control: max-age=60` on the deck endpoint.
+		// `Infinity` here would persist composed HTML across sessions via
+		// Calypso's React Query localStorage persister, locking the
+		// preview to whichever fitter / layout director was current when
+		// the page was first fetched.
+		staleTime: 60_000,
 	} );
 }

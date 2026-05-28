@@ -1,6 +1,8 @@
 /**
  * Earned, fully-visible achievement. The shape returned for own-profile reads
- * and for non-secret entries on cross-user reads.
+ * and for non-secret entries on cross-user reads. A self-read of an earned
+ * secret achievement also uses this shape — `is_secret` then reflects the
+ * registry (`true`) but the payload is fully populated.
  */
 export interface Achievement {
 	achievement_id: number;
@@ -9,11 +11,25 @@ export interface Achievement {
 	description: string;
 	badge_prefix: string;
 	level: number;
-	date: string;
+	date_unlocked: string;
+	/** Y-m-d date the achievement was added to the registry. Used for sort order. */
+	date_created: string;
 	image: string;
-	retired: boolean;
-	/** Optional — legacy responses (pre-locked-achievements rollout) omit it. */
-	is_secret?: false;
+	/**
+	 * Y-m-d (or ISO 8601) date string when the achievement was retired, or
+	 * an empty string / omitted when not retired. Truthy ⇒ retired.
+	 */
+	date_retired?: string;
+	/**
+	 * Reflects the registry: `true` if the achievement is secret, even when
+	 * the payload is fully visible (self-read of an earned secret). Optional —
+	 * legacy responses (pre-locked-achievements rollout) omit it.
+	 */
+	is_secret?: boolean;
+	/** Always `false` (or omitted) for full payloads — see {@link MaskedSecretAchievement}. */
+	is_redacted?: false;
+	/** `true` for Automattic-only achievements. */
+	is_a8c_only?: boolean;
 	/** Only present when viewing your own achievements. */
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
@@ -22,12 +38,16 @@ export interface Achievement {
 
 /**
  * Earned by the profile owner, masked because the requester has not earned
- * the same secret. Cross-user reads only.
+ * the same secret. Cross-user reads only. Discriminated from {@link Achievement}
+ * by `is_redacted: true`.
  */
 export interface MaskedSecretAchievement {
 	achievement_id: number;
 	is_secret: true;
-	date: string;
+	is_redacted: true;
+	date_unlocked: string;
+	/** Y-m-d date the achievement was added to the registry. Used for sort order. */
+	date_created: string;
 }
 
 /**
@@ -41,6 +61,10 @@ export interface LockedAchievement {
 	description: string;
 	badge_prefix: string;
 	is_secret: false;
+	/** Always `false` (or omitted) for full payloads — see {@link LockedSecretAchievement}. */
+	is_redacted?: false;
+	/** `true` for Automattic-only achievements. */
+	is_a8c_only?: boolean;
 	date_created: string;
 	/** Current progress toward `target`. Present alongside `target` for incremental achievements. */
 	progress?: number;
@@ -49,11 +73,13 @@ export interface LockedAchievement {
 }
 
 /**
- * Locked + secret. Self-reads only.
+ * Locked + secret. Self-reads only. Discriminated from {@link LockedAchievement}
+ * by `is_redacted: true`.
  */
 export interface LockedSecretAchievement {
 	achievement_id: number;
 	is_secret: true;
+	is_redacted: true;
 	date_created: string;
 }
 

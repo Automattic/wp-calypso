@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useState, useRef } from 'react';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
+import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -210,24 +211,19 @@ export const CommissionEligibilityColumn = ( {
 			/>
 			{ statusProps.showInfoIcon && (
 				<>
-					<span
+					<A4APopoverTrigger
 						className="woopayments-status-column__info-icon"
-						onClick={ () => setShowPopover( true ) }
-						role="button"
-						tabIndex={ 0 }
-						onKeyDown={ ( event ) => {
-							if ( event.key === 'Enter' ) {
-								setShowPopover( true );
-							}
-						} }
+						aria-label={ translate( 'More information about commission eligibility' ) }
+						onActivate={ () => setShowPopover( true ) }
 					>
 						<Gridicon icon="info-outline" size={ 16 } />
-					</span>
+					</A4APopoverTrigger>
 					{ showPopover && (
 						<A4APopover
 							title=""
 							offset={ 12 }
 							wrapperRef={ wrapperRef }
+							focusOnMount="container"
 							onFocusOutside={ () => setShowPopover( false ) }
 						>
 							{ popoverContent }

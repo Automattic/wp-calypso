@@ -484,7 +484,7 @@ export async function uploadBlob( params: UploadBlobParams ): Promise< UploadBlo
 }
 
 export async function createPost( params: CreatePostParams ): Promise< CreatePostResult > {
-	const { connectionId, text, reply, quote, media } = params;
+	const { connectionId, text, reply, quote, media, interaction_settings } = params;
 	const body: Record< string, unknown > = { text };
 	if ( reply ) {
 		body.reply = reply;
@@ -494,6 +494,9 @@ export async function createPost( params: CreatePostParams ): Promise< CreatePos
 	}
 	if ( media ) {
 		body.media = media;
+	}
+	if ( interaction_settings ) {
+		body.interaction_settings = interaction_settings;
 	}
 	try {
 		const response = ( await wpcom.req.post( {

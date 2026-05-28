@@ -11,6 +11,7 @@ import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscript
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { fetchPaginatedStream, getStreamInfiniteQueryKeyPrefix } from 'calypso/reader/data/stream';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
@@ -18,11 +19,6 @@ import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import {
-	requestPage,
-	clearStream,
-	requestPaginatedStream,
-} from 'calypso/state/reader/streams/actions';
 import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
@@ -178,26 +174,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
-	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			dispatch(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				requestPage( { streamKey: `feed:${ combinedRecommendations[ 0 ].feed_ID }` } as any )
-			);
-		}
-	}, [ combinedRecommendations, dispatch ] );
-
-	// Prefetch all feed streams when the modal is opened.
-	useEffect( () => {
-		if ( isOpen && combinedRecommendations.length > 0 ) {
-			combinedRecommendations.forEach( ( site ) => {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
-			} );
-		}
-	}, [ isOpen, combinedRecommendations, dispatch ] );
-
 	// Reset the page and selected site when the followed tags change.
 	useEffect( () => {
 		setCurrentPage( 0 );
@@ -266,12 +242,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	};
 
 	const handleClose = useCallback( () => {
-		dispatch( clearStream( { streamKey: 'following' } ) );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( requestPage( { streamKey: 'following' } as any ) );
+		queryClient.invalidateQueries( { queryKey: getStreamInfiniteQueryKeyPrefix( 'following' ) } );
 
 		onClose();
-	}, [ dispatch, onClose ] );
+	}, [ onClose, queryClient ] );
 
 	const handleContinue = useCallback( () => {
 		// Invalidate the subscriptions count query to refresh the Recent stream.
@@ -279,14 +253,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			queryKey: [ 'read', 'subscriptions-count' ],
 		} );
 
-		// Refresh the Recent stream data.
-		dispatch(
-			requestPaginatedStream( {
-				streamKey: 'recent',
-				page: 1,
-				perPage: 10,
-			} )
-		);
+		void fetchPaginatedStream( queryClient, dispatch, {
+			streamKey: 'recent',
+			page: 1,
+			perPage: 10,
+		} );
 
 		handleClose();
 	}, [ dispatch, handleClose, queryClient ] );

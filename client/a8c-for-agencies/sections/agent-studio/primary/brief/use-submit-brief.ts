@@ -4,12 +4,12 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateAgentStudioOutput from '../../data/use-create-agent-studio-output';
-import { getAgentStudioPath } from '../../lib/paths';
+import { getAgentStudioOutputPath } from '../../lib/paths';
 
 /**
  * Wraps the create-output mutation with the shared success and error handling
  * that every agent brief form needs: a Tracks event, a notice, and a redirect
- * back to the deliverables list.
+ * to the deliverable page.
  * @param agentId - The agent the brief is being submitted to.
  * @returns The create-output mutation.
  */
@@ -34,7 +34,7 @@ export default function useSubmitBrief( agentId: string ) {
 					{ duration: 5000 }
 				)
 			);
-			pageRouter( getAgentStudioPath() );
+			pageRouter( getAgentStudioOutputPath( output.id ) );
 		},
 		onError: () => {
 			dispatch( errorNotice( __( 'Could not start the deliverable. Please try again.' ) ) );

@@ -575,7 +575,10 @@ function StagingSiteSyncModalInner( {
 						<DataForm< StagingSiteSyncFormData >
 							data={ formData }
 							fields={ fields }
-							form={ { layout: { type: 'regular' as const }, fields } }
+							form={ {
+								layout: { type: 'regular' as const },
+								fields: fields.map( ( field ) => field.id ),
+							} }
 							onChange={ ( edits: Partial< StagingSiteSyncFormData > ) => {
 								setFormData( ( data ) => ( {
 									...data,
@@ -592,7 +595,7 @@ function StagingSiteSyncModalInner( {
 									a: (
 										<InlineSupportLink
 											onClick={ handleClose }
-											supportContext="hosting-staging-site"
+											supportContext="hosting-staging-site-sync"
 										/>
 									),
 								} ) }

@@ -7,7 +7,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateAgentStudioOutput from '../../data/use-create-agent-studio-output';
 import { uploadAgentMedia } from '../../data/use-upload-agent-media';
-import { getAgentStudioPath } from '../../lib/paths';
+import { getAgentStudioOutputPath } from '../../lib/paths';
 import type { AgentStudioAgent } from '../../lib/agents';
 import type { AgentStudioOutput, DualLogoOrder } from '../../types';
 
@@ -81,7 +81,7 @@ export default function useSubmitOnePagerBrief( agent: AgentStudioAgent ) {
 					{ duration: 5000 }
 				)
 			);
-			pageRouter( getAgentStudioPath() );
+			pageRouter( getAgentStudioOutputPath( output.id ) );
 		},
 		onError: () => {
 			dispatch( errorNotice( __( 'Could not start the deliverable. Please try again.' ) ) );

@@ -1,7 +1,7 @@
 import { Spinner } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';
 
 import './iframe-preview-card.scss';
@@ -38,8 +38,27 @@ const IframePreviewCard = ( {
 }: IframePreviewCardProps ) => {
 	const translate = useTranslate();
 	const radioId = useId();
+	const wrapperRef = useRef< HTMLSpanElement | null >( null );
 	const iframeRef = useRef< HTMLIFrameElement | null >( null );
 	const [ isLoaded, setIsLoaded ] = useState( false );
+
+	// Scale the iframe to fit the wrapper. The iframe renders at a fixed 1200px
+	// desktop viewport so it loads desktop styles; we then scale via a CSS
+	// variable updated from a ResizeObserver. Doing the math in JS avoids the
+	// CSS Values 4 length-over-length pitfalls (Firefox parser quirks,
+	// postcss-calc build errors) we hit with a pure-CSS implementation.
+	useEffect( () => {
+		const wrapper = wrapperRef.current;
+		if ( ! wrapper ) {
+			return;
+		}
+		const observer = new ResizeObserver( ( entries ) => {
+			const width = entries[ 0 ].contentRect.width;
+			wrapper.style.setProperty( '--iframe-scale', String( width / 1200 ) );
+		} );
+		observer.observe( wrapper );
+		return () => observer.disconnect();
+	}, [] );
 
 	const handleEnterPreview = ( event: React.MouseEvent | React.KeyboardEvent ) => {
 		// Don't bubble to the wrapping <label> — pressing Enter / Space on the
@@ -58,7 +77,7 @@ const IframePreviewCard = ( {
 				className
 			) }
 		>
-			<span className="iframe-preview-card__frame-wrapper">
+			<span ref={ wrapperRef } className="iframe-preview-card__frame-wrapper">
 				{ ! isLoaded && (
 					<span className="iframe-preview-card__loading" aria-hidden="true">
 						<Spinner size={ 50 } />

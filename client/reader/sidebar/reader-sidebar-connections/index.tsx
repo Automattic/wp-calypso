@@ -240,7 +240,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
-				className={ ! isOpen ? 'sidebar__menu--selected' : undefined }
+				className={ ! isOpen && isOnConnections ? 'sidebar__menu--selected' : undefined }
 				count={ undefined }
 				icon={ null }
 				materialIcon={ null }

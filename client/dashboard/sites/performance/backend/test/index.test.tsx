@@ -140,23 +140,30 @@ function aggregateFixture(): ApmAggregateResponse {
 }
 
 describe( '<SitePerformanceBackend>', () => {
-	test( 'renders the dashboard with a Start capturing CTA when APM is disabled', async () => {
+	test( 'renders the timeframe-scoped empty state with a Start capturing CTA when APM is disabled and no data', async () => {
 		mockSite( businessSite( false ) );
 		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
+		// Default timeframe is "last hour" (rolling), so the title reflects that.
 		expect(
-			await screen.findByRole( 'heading', { name: 'Response time breakdown' } )
+			await screen.findByRole( 'heading', { name: 'No APM data in the last hour' } )
 		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Start capturing' } ) ).toBeVisible();
+		expect( screen.getByText( /Capturing is off\. Turn it on/ ) ).toBeVisible();
+		// Empty state has its own CTA, and the header keeps the original one.
+		expect( screen.getAllByRole( 'button', { name: 'Start capturing' } )[ 0 ] ).toBeVisible();
 		expect( screen.getByRole( 'status', { name: 'Not capturing' } ) ).toBeVisible();
-		expect( screen.getByText( /Capturing is off\./ ) ).toBeVisible();
+		// Charts and tabs should NOT be visible in the empty state.
+		expect(
+			screen.queryByRole( 'heading', { name: 'Response time breakdown' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Slowest requests' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders the tabbed dashboard without the Start capturing CTA when APM is enabled', async () => {
+	test( 'renders the tabbed dashboard without the Start capturing CTA when APM is enabled and data is present', async () => {
 		mockSite( businessSite( true ) );
-		mockApmAggregate();
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
@@ -169,9 +176,21 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByText( /Capturing performance data\./ ) ).toBeVisible();
 	} );
 
-	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
+	test( 'shows the Capturing notice (not the empty state) when APM is on but no data has come in yet', async () => {
 		mockSite( businessSite( true ) );
 		mockApmAggregate();
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// The dashboard still renders with the "Capturing" notice — the empty
+		// state is reserved for when the user has to take action (APM off).
+		expect( await screen.findByText( /Performance data is being collected/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: /^No APM data in/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
+		mockSite( businessSite( true ) );
+		mockApmAggregate( aggregateFixture() );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="wordpress" /> );
 
@@ -228,31 +247,15 @@ describe( '<SitePerformanceBackend>', () => {
 		).toBeVisible();
 	} );
 
-	test( 'shows the Capturing notice when APM is on but no data has come in yet', async () => {
+	test( 'does not show the intent-based status notice when there is no data', async () => {
 		mockSite( businessSite( true ) );
 		mockApmAggregate();
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByText( /Performance data is being collected/ ) ).toBeVisible();
-		expect(
-			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
-		).not.toBeInTheDocument();
-	} );
-
-	test( 'omits the status notice when APM is off and no data has come in yet', async () => {
-		// The subtitle already says "Capturing is off..." so we skip the
-		// redundant notice in this state.
-		mockSite( businessSite( false ) );
-		mockApmAggregate();
-
-		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
-
-		// Wait for the page to render before asserting absence.
+		// Wait for the dashboard to render before asserting absence.
 		await screen.findByRole( 'heading', { name: 'Response time breakdown' } );
 
-		expect( screen.queryByText( /Turn capturing on to start collecting/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Performance data is being collected/ ) ).not.toBeInTheDocument();
 		expect(
 			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
 		).not.toBeInTheDocument();
@@ -284,7 +287,10 @@ describe( '<SitePerformanceBackend>', () => {
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Start capturing' } ) );
+		// With no data and APM off, both the header CTA and the empty-state CTA are
+		// rendered. Either one should perform the same POST; click the first one.
+		const buttons = await screen.findAllByRole( 'button', { name: 'Start capturing' } );
+		await userEvent.click( buttons[ 0 ] );
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );

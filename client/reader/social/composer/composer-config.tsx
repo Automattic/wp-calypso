@@ -265,22 +265,22 @@ export interface ComposerConfig< TError, TParams, TResult > {
  */
 export interface ComposerProtocolExtrasSlot {
 	/**
-	 * Render the protocol-specific controls. Returned `null` when nothing
-	 * should appear (e.g. mode is not supported by this protocol's extras).
+	 * @deprecated Use `renderTrigger` instead. Removed after Mastodon migrates.
 	 */
 	renderControls: () => ReactNode;
 	/**
-	 * Merge wire-level extras into the protocol's params before the
-	 * mutation runs. The modal calls `config.buildParams(mode, text)` first,
-	 * then passes the result through this hook AND through `useMedia`'s
-	 * `extendBuildParams` (in that order) for the merged payload.
-	 * `unknown` keeps the slot opaque — implementations cast.
-	 *
-	 * Returning a Promise lets a per-protocol slot defer wire work (e.g.
-	 * handle validation, derived params). The modal awaits the result and
-	 * funnels any rejection through the same error path as a mutation
-	 * failure. Atmosphere/Mastodon don't ship this slot; Fediverse returns
-	 * synchronously today.
+	 * Render a footer pill (e.g. "Anyone can reply" with a globe icon). Composed
+	 * into the modal's footer alongside the media trigger. Return `null` to
+	 * render nothing — e.g. when the current mode doesn't expose this protocol's
+	 * extras. Protocols typically pick exactly one of `renderControls` or
+	 * `renderTrigger`, not both.
+	 */
+	renderTrigger?: () => ReactNode;
+	/**
+	 * Merge wire-level extras into the protocol's params before the mutation
+	 * runs. The modal calls `config.buildParams(mode, text)` first, then passes
+	 * the result through this hook AND through `useMedia`'s `extendBuildParams`
+	 * (in that order) for the merged payload.
 	 */
 	extendBuildParams: ( params: unknown ) => unknown | Promise< unknown >;
 	/**
@@ -288,6 +288,13 @@ export interface ComposerProtocolExtrasSlot {
 	 * to `null` (modal closed / discarded / published).
 	 */
 	clear?: () => void;
+	/**
+	 * Optional Tracks-prop projection merged into `tracks.published` props at
+	 * submit time. Used by atmosphere to send reply_allow_kind / allow_quotes;
+	 * Mastodon can similarly expose visibility / CW summary length. Return an
+	 * empty object to add nothing.
+	 */
+	getTracksProps?: () => Record< string, unknown >;
 }
 
 /**

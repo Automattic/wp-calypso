@@ -6,6 +6,7 @@ import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { BODY_CUSTOMIZE_CLASS, CustomizeProvider, useCustomizeContext } from '../index';
+import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
 
 function renderInProvider( ui: JSX.Element ) {
 	const store = configureStore()( {
@@ -26,6 +27,7 @@ describe( '<CustomizeProvider>', () => {
 	beforeEach( () => {
 		exposedCtx = null;
 		document.body.className = '';
+		jest.restoreAllMocks();
 	} );
 
 	it( 'starts with isCustomizing=false and no body class', () => {
@@ -54,9 +56,10 @@ describe( '<CustomizeProvider>', () => {
 		expect( document.body.classList.contains( BODY_CUSTOMIZE_CLASS ) ).toBe( false );
 	} );
 
-	it( 'commitMove flips isDirty', () => {
+	it( 'commitMove marks dirty and queues an autosave', () => {
+		const saveLayoutImpl = jest.fn( () => new Promise< LayoutDelta >( () => {} ) );
 		renderInProvider(
-			<CustomizeProvider>
+			<CustomizeProvider saveLayoutImpl={ saveLayoutImpl }>
 				<ExposeContext />
 			</CustomizeProvider>
 		);
@@ -64,12 +67,22 @@ describe( '<CustomizeProvider>', () => {
 			exposedCtx?.enter();
 		} );
 		act( () => {
-			exposedCtx?.commitMove( 'plugin:foo:-:foo.php', {
-				kind: 'in_group',
-				group_id: 'plugins',
-				index: 0,
-			} );
+			exposedCtx?.commitMove(
+				'plugin:foo:-:foo.php',
+				{
+					kind: 'in_group',
+					group_id: 'plugins',
+					index: 0,
+				},
+				{
+					previousPosition: { kind: 'top_level', index: 3 },
+					label: 'Foo',
+				}
+			);
 		} );
 		expect( exposedCtx?.draft.isDirty ).toBe( true );
+		expect( exposedCtx?.draft.isSaving ).toBe( true );
+		expect( exposedCtx?.canUndo ).toBe( true );
+		expect( saveLayoutImpl ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

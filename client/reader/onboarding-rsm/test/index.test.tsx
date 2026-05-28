@@ -83,6 +83,17 @@ jest.mock( '@wordpress/components', () => {
 	};
 } );
 
+// ── Interests-step helpers (called by ReaderOnboardingRsm to build the stable
+// blog map; mocked here to avoid webp/image imports in the test environment) ──
+
+jest.mock( 'calypso/reader/onboarding-rsm/interests-modal/topic-groups', () => ( {
+	getTopicGroups: jest.fn( () => [] ),
+} ) );
+
+jest.mock( 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs', () => ( {
+	getPackBlogs: jest.fn( () => [] ),
+} ) );
+
 // ── Child modals (not under test here) ───────────────────────────────────────
 
 jest.mock( 'calypso/reader/onboarding-rsm/welcome-modal', () => ( {
@@ -139,12 +150,6 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	// cases stay isolated. Individual tests can override per-case.
 	getCurrentUserDate: jest.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
-} ) );
-
-jest.mock( 'calypso/state/reader/streams/actions', () => ( {
-	clearStream: jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) ),
-	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
-	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
 } ) );
 
 // The real selector traverses `state.reader.follows`, which the lightweight

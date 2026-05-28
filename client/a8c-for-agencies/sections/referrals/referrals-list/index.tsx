@@ -1,4 +1,5 @@
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useDesktopBreakpoint, useBreakpoint } from '@automattic/viewport-react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +7,7 @@ import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViews } from 'calypso/components/dataviews';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CommissionsColumn from './commissions-column';
@@ -25,6 +27,8 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const openSitePreviewPane = useCallback(
 		( referral: Referral ) => {
@@ -193,7 +197,17 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 					dataViewsState,
 					defaultLayouts: { table: {}, list: {} },
 				} }
-			/>
+			>
+				<HStack
+					className="dataviews__view-actions"
+					justify="end"
+					style={ { paddingInline: isNarrowView || dataViewsState.selectedItem ? '16px' : '64px' } }
+				>
+					<DataViews.ViewConfig />
+				</HStack>
+				<DataViews.Layout />
+				<DataViews.Footer />
+			</ItemsDataViews>
 		</div>
 	);
 }

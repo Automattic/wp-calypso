@@ -1,5 +1,5 @@
 import { Button, Icon, Spinner } from '@wordpress/components';
-import { check, edit, copy } from '@wordpress/icons';
+import { check, pencil as edit, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
