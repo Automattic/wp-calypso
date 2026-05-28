@@ -8,8 +8,7 @@
  * APIs and into the new `@wordpress/global-styles-ui` and
  * `@wordpress/global-styles-engine` packages. The ones we still need are
  * imported from those packages here (with a yarn patch widening
- * global-styles-ui's `exports` field to allow the deep paths). The equality
- * helper was renamed from `areGlobalStyleConfigsEqual` to `areGlobalStylesEqual`.
+ * global-styles-ui's `exports` field to allow the deep paths).
  */
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
