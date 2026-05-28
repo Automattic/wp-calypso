@@ -261,6 +261,15 @@ body.is-admin-sidebar-customize-mode {
 			background-color: transparent !important;
 			color: var( --color-sidebar-text ) !important;
 		}
+		.sidebar > li:not( .admin-sidebar-drop-indicator )::before,
+		.sidebar .wp-admin-sidebar-group__children > li:not( .admin-sidebar-drop-indicator )::before,
+		.sidebar > li:not( .admin-sidebar-drop-indicator ):last-child::after,
+		.sidebar
+			.wp-admin-sidebar-group__children
+			> li:not( .admin-sidebar-drop-indicator ):last-child::after {
+			opacity: 0;
+			transform: scaleX( 0.7 );
+		}
 	}
 
 	// Disable Calypso's fold-sidebar control during customize.
@@ -290,9 +299,12 @@ body.is-admin-sidebar-customize-mode {
 		left: 10px;
 		right: 10px;
 		height: 0;
-		border-top: 1px solid var( --wp-admin-sidebar-customizer-theme, #2271b1 );
+		border-top: 1px dashed var( --wp-admin-sidebar-customizer-theme, #2271b1 );
 		opacity: 0.42;
 		pointer-events: none;
+		transform: scaleX( 1 );
+		transform-origin: center;
+		transition: opacity 160ms ease, transform 160ms ease;
 	}
 
 	.sidebar > li:not( .admin-sidebar-drop-indicator )::before,
@@ -306,6 +318,7 @@ body.is-admin-sidebar-customize-mode {
 		> li:not( .admin-sidebar-drop-indicator ):last-child::after {
 		bottom: 0;
 	}
+
 }
 
 // Source row fades while the ghost follows the cursor (Phase 2 row 17 visual).
