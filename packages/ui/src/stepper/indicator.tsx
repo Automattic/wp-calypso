@@ -12,15 +12,15 @@ import type { ReactNode } from 'react';
 // edge sits exactly on the horizontal centre line of the circle.
 const halfCircleIcon = (
 	<svg
-		width="12"
-		height="12"
-		viewBox="0 0 12 12"
+		width="10"
+		height="10"
+		viewBox="0 0 10 10"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 		aria-hidden="true"
 		style={ { transform: 'rotate(180deg)' } }
 	>
-		<path d="M0 6a6 6 0 0 1 12 0H0z" fill="currentColor" />
+		<path d="M0 5a5 5 0 0 1 10 0H0z" fill="currentColor" />
 	</svg>
 );
 
@@ -39,9 +39,9 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 	let indicator: ReactNode =
 		indicatorVariant === 'number' ? <span aria-hidden="true">{ stepNumber }</span> : null;
 	if ( status === 'completed' ) {
-		indicator = <Icon icon={ check } size={ 16 } />;
+		indicator = <Icon icon={ check } size={ 14 } />;
 	} else if ( status === 'error' ) {
-		indicator = <Icon icon={ errorIcon } size={ 16 } />;
+		indicator = <Icon icon={ errorIcon } size={ 14 } />;
 	} else if ( isCurrent && indicatorVariant === 'bullet' ) {
 		indicator = halfCircleIcon;
 	}

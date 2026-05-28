@@ -20,14 +20,14 @@
 
 .trigger {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
 	gap: variables.$grid-unit-05;
 	background: none;
 	border: none;
 	padding: variables.$grid-unit-05;
 	cursor: pointer;
-	text-align: center;
+	text-align: start;
 }
 
 .panel {

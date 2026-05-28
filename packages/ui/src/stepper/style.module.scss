@@ -25,7 +25,8 @@
 // Indicator
 // ---------------------------------------------------------------------------
 
-$indicator-size: 24px;
+$indicator-size: 18px;
+$indicator-size-sm: 16px; // bullet completed + current
 
 .indicator {
 	display: inline-flex;
@@ -66,6 +67,11 @@ $indicator-size: 24px;
 	background: transparent;
 	color: colors.$alert-green;
 
+	svg {
+		stroke: currentColor;
+		stroke-width: 1.5px;
+	}
+
 	@include ui-mixins.when-dark-theme {
 		border-color: colors.$alert-green;
 		color: colors.$alert-green;
@@ -100,20 +106,29 @@ $indicator-size: 24px;
 	color: theme.$components-color-gray-700;
 }
 
-// Current: solid gray-900 ring, transparent background + half-circle dome
+// Current: 16px solid gray-900 ring, transparent background + half-circle dome
 .indicator.is-current[data-indicator-variant='bullet'] {
+	width: $indicator-size-sm;
+	height: $indicator-size-sm;
 	border-style: solid;
 	border-color: theme.$components-color-foreground;
 	background: transparent;
 	color: theme.$components-color-foreground;
 }
 
-// Completed: gray-700 tick (not green), solid border
+// Completed: 16px gray-700 tick (not green), solid border
 .indicator.is-completed[data-indicator-variant='bullet'] {
+	width: $indicator-size-sm;
+	height: $indicator-size-sm;
 	border-style: solid;
 	border-color: theme.$components-color-gray-700;
 	background: transparent;
 	color: theme.$components-color-gray-700;
+
+	svg {
+		stroke: currentColor;
+		stroke-width: 1.5px;
+	}
 }
 
 // Bullet variant: non-current step titles are gray-700 (upcoming and completed)
