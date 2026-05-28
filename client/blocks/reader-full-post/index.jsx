@@ -19,7 +19,6 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -29,6 +28,7 @@ import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSite } from 'calypso/reader/data/site';
@@ -45,7 +45,6 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
 	hasReaderFollowOrganization,
@@ -64,7 +63,6 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
@@ -740,7 +738,6 @@ export class FullPostView extends Component {
 							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
 						/>
 					) }
-					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -909,12 +906,15 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
 	const post = ownProps.post || { _state: 'pending' };
 	const currentPath = state.route.path.current;
+	const feed = ownProps.feed;
 
 	const { site_ID: siteId } = post;
 
 	const props = {
 		siteId,
-		isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+		isWPForTeamsItem:
+			isSiteWPForTeams( state, blogId ) ||
+			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
 		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 		post,
@@ -924,14 +924,10 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 		previousRoute: getPreviousRoute( state ),
 	};
 
-	if ( feedId ) {
-		const feed = getFeed( state, feedId );
-
+	if ( feedId && feed ) {
 		// Add site icon to feed object so have icon for external feeds
-		if ( feed ) {
-			const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-			props.feed = { ...feed, site_icon: follow?.site_icon };
-		}
+		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+		props.feed = { ...feed, site_icon: follow?.site_icon };
 	}
 	if ( ownProps.referral ) {
 		props.referralPost = ownProps.referralPost;
@@ -1044,4 +1040,9 @@ function navigationUrlFor( post, postKey ) {
 	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
 }
 
-export default withFullPostNavigation( ConnectedFullPostView );
+const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
+
+export default function FullPostContainer( props ) {
+	const { data: feed } = useFeedQuery( props.feedId );
+	return <FullPostWithNavigation { ...props } feed={ feed } />;
+}

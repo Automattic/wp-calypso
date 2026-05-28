@@ -8,10 +8,8 @@ type OuterProps< P > = Omit< P, keyof WithSiteProps > & SiteIdProp;
 
 /**
  * Higher-order component that injects `site` and `siteError` props from
- * `useSite( props.siteId )`. Replaces the legacy `<QueryReaderSite>`
- * data component for class consumers. Components whose `siteId` is derived
- * from another prop should compute it in a thin local wrapper before
- * passing it down.
+ * `useSite( props.siteId )`. Components whose `siteId` is derived from
+ * another prop should compute it in a thin local wrapper before passing it down.
  */
 export function withSite< P extends WithSiteProps >(
 	WrappedComponent: ComponentType< P >,

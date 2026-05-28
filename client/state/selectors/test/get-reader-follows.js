@@ -3,12 +3,6 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { userState } from './fixtures/user-state';
 
 describe( 'getReaderFollows()', () => {
-	const feedOne = {
-		feed_ID: 1,
-	};
-	const feedTwo = {
-		feed_ID: 2,
-	};
 	const state = deepFreeze( {
 		...userState,
 		reader: {
@@ -33,33 +27,24 @@ describe( 'getReaderFollows()', () => {
 					},
 				},
 			},
-			feeds: {
-				items: {
-					1: feedOne,
-					2: feedTwo,
-				},
-			},
 		},
 	} );
 
-	test( 'should not return follows with an error set and should fill in feed when available', () => {
+	test( 'should not return follows with an error set', () => {
 		const follows = getReaderFollows( state );
 		expect( follows ).toEqual( [
 			{
 				URL: 'http://discover.wordpress.com',
 				blog_ID: 1,
-				feed: undefined,
 			},
 			{
 				URL: 'http://example.com',
 				feed_ID: 1,
-				feed: feedOne,
 			},
 			{
 				URL: 'http://fancy.example.com',
 				blog_ID: 2,
 				feed_ID: 2,
-				feed: feedTwo,
 			},
 		] );
 	} );

@@ -1,7 +1,6 @@
 import 'calypso/state/reader/init';
 import { createSelector } from '@automattic/state-utils';
 import { reject } from 'lodash';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { AppState } from 'calypso/types';
 import { ReaderFollowItem, ReaderFollowState } from './types';
 
@@ -20,24 +19,9 @@ const getReaderFollows = createSelector(
 		const items: ReaderFollowItem[] = reject( Object.values( follows.items ), 'error' );
 
 		// this is important. don't mutate the original items.
-		const withFeed = items.map( ( item ) => ( {
-			...item,
-			feed: getFeed( state, item.feed_ID ) as { is_error?: boolean },
-		} ) );
-
-		// remove subs where the feed has an error
-		const withoutErrors = reject(
-			withFeed,
-			( item ) => item.feed && item.feed.is_error
-		) as typeof withFeed;
-
-		return withoutErrors;
+		return items.map( ( item ) => ( { ...item } ) );
 	},
-	( state ) => [
-		state.reader.follows.items,
-		state.reader.feeds.items,
-		state.currentUser.capabilities,
-	]
+	( state ) => [ state.reader.follows.items ]
 );
 
 export default getReaderFollows;

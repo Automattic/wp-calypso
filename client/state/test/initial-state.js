@@ -331,7 +331,15 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					feeds: { items: { 1: { feed_ID: 1, blog_ID: 100, name: 'saved' } } },
+					follows: {
+						items: {
+							'https://saved.example/feed': {
+								URL: 'https://saved.example',
+								feed_URL: 'https://saved.example/feed',
+								is_following: true,
+							},
+						},
+					},
 					_timestamp: Date.now(),
 				},
 			};
@@ -363,8 +371,12 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using saved state', () => {
-				expect( state.feeds.items ).toEqual( {
-					1: { feed_ID: 1, blog_ID: 100, name: 'saved' },
+				expect( state.follows.items ).toEqual( {
+					'https://saved.example/feed': {
+						URL: 'https://saved.example',
+						feed_URL: 'https://saved.example/feed',
+						is_following: true,
+					},
 				} );
 			} );
 		} );
@@ -378,7 +390,15 @@ describe( 'initial-state', () => {
 
 			const serverState = {
 				reader: {
-					feeds: { items: { 2: { feed_ID: 2, blog_ID: 200, name: 'server' } } },
+					follows: {
+						items: {
+							'https://server.example/feed': {
+								URL: 'https://server.example',
+								feed_URL: 'https://server.example/feed',
+								is_following: true,
+							},
+						},
+					},
 				},
 			};
 
@@ -407,8 +427,12 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using server state', () => {
-				expect( state.feeds.items ).toEqual( {
-					2: { feed_ID: 2, blog_ID: 200, name: 'server' },
+				expect( state.follows.items ).toEqual( {
+					'https://server.example/feed': {
+						URL: 'https://server.example',
+						feed_URL: 'https://server.example/feed',
+						is_following: true,
+					},
 				} );
 			} );
 		} );
@@ -423,14 +447,30 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					feeds: { items: { 1: { feed_ID: 1, blog_ID: 100, name: 'saved' } } },
+					follows: {
+						items: {
+							'https://saved.example/feed': {
+								URL: 'https://saved.example',
+								feed_URL: 'https://saved.example/feed',
+								is_following: true,
+							},
+						},
+					},
 					_timestamp: oldDate.getTime(),
 				},
 			};
 
 			const serverState = {
 				reader: {
-					feeds: { items: { 2: { feed_ID: 2, blog_ID: 200, name: 'server' } } },
+					follows: {
+						items: {
+							'https://server.example/feed': {
+								URL: 'https://server.example',
+								feed_URL: 'https://server.example/feed',
+								is_following: true,
+							},
+						},
+					},
 				},
 			};
 
@@ -459,8 +499,12 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using server state', () => {
-				expect( state.feeds.items ).toEqual( {
-					2: { feed_ID: 2, blog_ID: 200, name: 'server' },
+				expect( state.follows.items ).toEqual( {
+					'https://server.example/feed': {
+						URL: 'https://server.example',
+						feed_URL: 'https://server.example/feed',
+						is_following: true,
+					},
 				} );
 			} );
 		} );
@@ -475,14 +519,30 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					feeds: { items: { 1: { feed_ID: 1, blog_ID: 100, name: 'saved' } } },
+					follows: {
+						items: {
+							'https://saved.example/feed': {
+								URL: 'https://saved.example',
+								feed_URL: 'https://saved.example/feed',
+								is_following: true,
+							},
+						},
+					},
 					_timestamp: newerDate.getTime(),
 				},
 			};
 
 			const serverState = {
 				reader: {
-					feeds: { items: { 2: { feed_ID: 2, blog_ID: 200, name: 'server' } } },
+					follows: {
+						items: {
+							'https://server.example/feed': {
+								URL: 'https://server.example',
+								feed_URL: 'https://server.example/feed',
+								is_following: true,
+							},
+						},
+					},
 				},
 			};
 
@@ -511,8 +571,12 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using saved state', () => {
-				expect( state.feeds.items ).toEqual( {
-					1: { feed_ID: 1, blog_ID: 100, name: 'saved' },
+				expect( state.follows.items ).toEqual( {
+					'https://saved.example/feed': {
+						URL: 'https://saved.example',
+						feed_URL: 'https://saved.example/feed',
+						is_following: true,
+					},
 				} );
 			} );
 		} );
