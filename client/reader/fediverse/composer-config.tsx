@@ -23,14 +23,16 @@ export function useFediverseAuthorHandle( connectionId: number | null ): string 
 	if ( ! connection?.webfinger ) {
 		return null;
 	}
-	// `FediverseConnection` exposes the destination identity as `webfinger`
-	// — for WordPress.com / Jetpack blog actors that shape is
-	// `user@domain` where `user` and `domain` collapse to the same blog
-	// hostname (e.g. `@example.com@example.com`). Showing both halves in
-	// the modal title doubles the width and wraps onto a second line, so
-	// keep just the trailing `@domain` segment — it's the part users
-	// recognize and matches the destination the post will publish to.
-	const segments = normalizeHandle( connection.webfinger ).split( '@' );
+	// WP/JP blog actors have `webfinger` shaped `@user@domain` where both
+	// halves are the same hostname; show just the trailing domain so the
+	// title doesn't render `@example.com@example.com` and wrap onto a
+	// second line. A malformed value without an `@` separator returns
+	// null rather than surfacing the raw string as if it were a domain.
+	const normalized = normalizeHandle( connection.webfinger );
+	if ( ! normalized.includes( '@' ) ) {
+		return null;
+	}
+	const segments = normalized.split( '@' );
 	const domain = segments[ segments.length - 1 ];
 	return domain || null;
 }
