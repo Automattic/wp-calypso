@@ -35,7 +35,7 @@ automatically. You only need to supply step values, titles, and content.
 
 If you need a tab-strip layout instead, use \`HorizontalStepper\`.
 If you need a completely custom layout or DOM structure, use the headless
-\`Stepper\` primitives (see **UI/Stepper/Headless (Tier 2)** in the sidebar).
+\`Stepper\` primitives (see **UI/Stepper/Primitives** in the sidebar).
 				`,
 			},
 		},
