@@ -61,12 +61,9 @@ const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	'withExperimentalBlockEditorProvider'
 );
 
-// `useGlobalStylesOutput` used to live in `@wordpress/block-editor`'s private
-// APIs and returned `[ stylesheets, settings ]` from the merged config in
-// `GlobalStylesContext`. Upstream now expects callers to compose it themselves
-// using the engine — read the merged config from the context, call
-// `generateGlobalStyles( merged, blockTypes )`, and return the same tuple shape
-// so downstream consumers don't have to change.
+// Wraps the engine's `generateGlobalStyles` so consumers get the same
+// `[ stylesheets, settings ]` tuple the removed `useGlobalStylesOutput` hook
+// used to return, plus Sentry-reported error handling.
 const useSafeGlobalStylesOutput = (): [ unknown[], Record< string, unknown > ] => {
 	const { merged } = useContext( GlobalStylesContext );
 	try {
