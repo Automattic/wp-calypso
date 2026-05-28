@@ -266,3 +266,29 @@ All states a single step can be in. Click each trigger to switch to it as the ac
 	},
 	render: StepVariantsDemo,
 };
+
+// ---------------------------------------------------------------------------
+// Mobile view
+// ---------------------------------------------------------------------------
+
+export const MobileView: Story = {
+	args: {
+		'aria-label': 'Checkout',
+		linear: false,
+		activationMode: 'manual',
+	},
+	parameters: {
+		viewport: {
+			defaultViewport: 'mobile1',
+		},
+		docs: {
+			description: {
+				story: `
+The horizontal stepper rendered at a 320 px mobile viewport.
+Use the toolbar's viewport picker to try other sizes (e.g. \`mobile2\` at 414 px).
+				`,
+			},
+		},
+	},
+	render: DefaultDemo,
+};

@@ -1,5 +1,7 @@
 // packages/ui/src/horizontal-stepper/style.module.scss
+@use '@wordpress/base-styles/breakpoints';
 @use '@wordpress/base-styles/variables';
+@use '../utils/_theme-variables' as theme;
 
 .root {
 	display: flex;
@@ -32,4 +34,42 @@
 
 .panel {
 	padding-block: variables.$grid-unit-20;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile: icon-only strip with connector lines
+// ---------------------------------------------------------------------------
+
+@media ( max-width: #{ breakpoints.$break-small - 1 } ) {
+	.list {
+		align-items: center;
+	}
+
+	.text-block {
+		display: none;
+	}
+
+	.step {
+		position: relative;
+
+		// Connector line from this step's center to the next step's center.
+		// The indicator sits above it via z-index so the line appears to run
+		// only between the circles.
+		&:not( :last-child )::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			transform: translateY( -50% );
+			inset-inline-start: calc( 50% + 21px );
+			inset-inline-end: calc( -50% + 21px );
+			height: 1px;
+			background-color: theme.$components-color-gray-400;
+		}
+	}
+
+	.trigger {
+		justify-content: center;
+		position: relative;
+		z-index: 1;
+	}
 }
