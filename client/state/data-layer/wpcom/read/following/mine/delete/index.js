@@ -1,13 +1,14 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { findCachedFeedByFeedUrl } from 'calypso/reader/data/feed';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
-import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
 
@@ -41,7 +42,8 @@ export const receiveUnfollow = ( action ) => bypassDataLayer( action );
 export const unfollowError = ( action ) => ( dispatch, getState ) => {
 	const feedUrl = action.payload.feedUrl;
 	const site = getSiteByFeedUrl( getState(), feedUrl );
-	const feed = getFeedByFeedUrl( getState(), feedUrl );
+	const queryClient = getCalypsoQueryClient();
+	const feed = queryClient ? findCachedFeedByFeedUrl( queryClient, feedUrl ) : undefined;
 	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 
 	dispatch(

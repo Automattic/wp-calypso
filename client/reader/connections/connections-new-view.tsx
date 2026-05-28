@@ -9,6 +9,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
@@ -19,6 +20,9 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSites from 'calypso/state/selectors/get-sites';
+
+const FEDIVERSE_SUPPORT_POST_ID = 294460;
+const SOCIAL_SUPPORT_POST_ID = 439167;
 
 type SiteEntry = NonNullable< ReturnType< typeof getSites >[ number ] >;
 type AdminSite = SiteEntry & { capabilities: { manage_options: true } };
@@ -114,6 +118,7 @@ interface ProtocolOption {
 	/** Open the primary link in a new tab — used for off-Calypso destinations like wp-admin. */
 	hrefExternal?: boolean;
 	docHref: string;
+	docPostId: number;
 	docLabel: string;
 	icon: JSX.Element;
 }
@@ -160,6 +165,7 @@ export function ConnectionsNewView() {
 			label: 'Fediverse',
 			icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
 			docHref: fediverseDocHref,
+			docPostId: FEDIVERSE_SUPPORT_POST_ID,
 			docLabel: learnMoreLabel,
 		};
 
@@ -228,6 +234,7 @@ export function ConnectionsNewView() {
 		href: '/reader/atmosphere/connect',
 		icon: <ReaderBlueskyIcon filled viewBox="2 3 20 18" />,
 		docHref: blueskyDocHref,
+		docPostId: SOCIAL_SUPPORT_POST_ID,
 		docLabel: learnMoreLabel,
 	};
 
@@ -243,6 +250,7 @@ export function ConnectionsNewView() {
 		href: '/reader/mastodon/connect',
 		icon: <ReaderMastodonIcon viewBox="0 0 74 78" />,
 		docHref: mastodonDocHref,
+		docPostId: SOCIAL_SUPPORT_POST_ID,
 		docLabel: learnMoreLabel,
 	};
 
@@ -340,16 +348,15 @@ export function ConnectionsNewView() {
 									onOpen={ handleFediversePickerOpen }
 								/>
 							) }
-							<a
+							<InlineSupportLink
 								className="connections-new__card-doc"
-								href={ option.docHref }
-								target="_blank"
-								rel="noopener noreferrer"
+								supportPostId={ option.docPostId }
+								supportLink={ option.docHref }
 								onClick={ () => handleDocClick( option ) }
+								showIcon={ false }
 							>
 								{ option.docLabel }
-								<span aria-hidden="true"> ↗</span>
-							</a>
+							</InlineSupportLink>
 						</Card>
 					);
 				} ) }

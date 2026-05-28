@@ -77,7 +77,7 @@ function InfluencedRevenueStrapline() {
 						title=""
 						offset={ 12 }
 						anchor={ iconNode }
-						focusOnMount="container"
+						focusOnMount
 						onFocusOutside={ () => setShowPopover( false ) }
 					>
 						{ content }

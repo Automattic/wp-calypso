@@ -5,18 +5,17 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
@@ -66,9 +65,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
-	const selectedFeed = useSelector( ( state: object ) =>
-		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
-	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
+	const { data: selectedFeed } = useFeedQuery( selectedSite?.feed_ID );
 	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
 	// From `CardData.feed_URL` (see `useSubscribeRecommendations`). That value usually prefers a
 	// real feed URL (curated backfill, cards payload, `readFeedQuery`) over subscribing by site

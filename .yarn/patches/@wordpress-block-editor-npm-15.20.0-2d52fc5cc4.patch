@@ -1,0 +1,43 @@
+diff --git a/build/components/observe-typing/index.cjs b/build/components/observe-typing/index.cjs
+index d0a91bd3f067026f713603c9b1bf6a375181b0b2..92210e9f91743d220a9aadee317db9ab05c382b4 100644
+--- a/build/components/observe-typing/index.cjs
++++ b/build/components/observe-typing/index.cjs
+@@ -116,7 +116,7 @@ function useTypingObserver() {
+           stopTypingOnSelectionUncollapse2
+         );
+         return () => {
+-          node.ownerDocument.defaultView.clearTimeout(timerId);
++          node.ownerDocument.defaultView?.clearTimeout(timerId);
+           node.removeEventListener(
+             "focus",
+             stopTypingOnNonTextField2
+diff --git a/build-module/components/observe-typing/index.mjs b/build-module/components/observe-typing/index.mjs
+index c2cb4a1d326cb0513cdd4e2d795c76d022622530..a13417f8a882d7908e42db755cbba47abf6c62a7 100644
+--- a/build-module/components/observe-typing/index.mjs
++++ b/build-module/components/observe-typing/index.mjs
+@@ -99,7 +99,7 @@ function useTypingObserver() {
+           stopTypingOnSelectionUncollapse2
+         );
+         return () => {
+-          node.ownerDocument.defaultView.clearTimeout(timerId);
++          node.ownerDocument.defaultView?.clearTimeout(timerId);
+           node.removeEventListener(
+             "focus",
+             stopTypingOnNonTextField2
+diff --git a/package.json b/package.json
+index a127d31c1fbdc56301fe78f2c0713f135afce2a1..d2121720e3a94873a104f79931c3ccb7dc47fd85 100644
+--- a/package.json
++++ b/package.json
+@@ -39,7 +39,11 @@
+ 			"require": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/": "./build-style/"
++		"./build-style/": "./build-style/",
++		"./build-module/components/iframe/get-compatibility-styles": {
++			"import": "./build-module/components/iframe/get-compatibility-styles.mjs",
++			"require": "./build/components/iframe/get-compatibility-styles.cjs"
++		}
+ 	},
+ 	"react-native": "src/index",
+ 	"wpScript": true,

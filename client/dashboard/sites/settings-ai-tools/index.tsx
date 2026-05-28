@@ -1,19 +1,22 @@
 import './style.scss';
 
-import { HostingFeatures } from '@automattic/api-core';
+import { HostingFeatures, type Site } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
 	siteBySlugQuery,
+	sitePostByEmailSettingsMutation,
+	sitePostByEmailSettingsQuery,
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	Button,
 	Icon,
 	ToggleControl,
 } from '@wordpress/components';
@@ -27,6 +30,7 @@ import {
 	help,
 	image,
 	pencil,
+	send,
 	seen,
 	termDescription,
 } from '@wordpress/icons';
@@ -42,8 +46,10 @@ import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardDivider, CardFooter } from '../../components/card';
+import ClipboardInputControl from '../../components/clipboard-input-control';
 import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
@@ -51,6 +57,7 @@ import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { isWriteTool } from '../../me/mcp/categories';
+import { wpcomLink } from '../../utils/link';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
@@ -105,6 +112,196 @@ const features = [
 	__( 'Create beautiful images without leaving WordPress' ),
 ];
 
+const TELEGRAM_CONNECTION_PATH = '/me/developer';
+
+const INVALID_POST_BY_EMAIL_VALUES = new Set( [
+	'',
+	'null',
+	'noop',
+	'create',
+	'regenerate',
+	'delete',
+] );
+
+export function getAgentEmailAddress( postByEmailAddress?: string | null ) {
+	const trimmedAddress = postByEmailAddress?.trim() ?? '';
+	const normalizedAddress = trimmedAddress.toLowerCase();
+
+	if ( INVALID_POST_BY_EMAIL_VALUES.has( normalizedAddress ) ) {
+		return null;
+	}
+
+	const [ localPart, domain, ...extraParts ] = trimmedAddress.split( '@' );
+
+	if ( ! localPart || ! domain || extraParts.length > 0 ) {
+		return null;
+	}
+
+	const agentLocalPart = localPart.startsWith( 'agent+' ) ? localPart : `agent+${ localPart }`;
+
+	return `${ agentLocalPart }@${ domain }`;
+}
+
+function escapeVCardValue( value: string ) {
+	return value
+		.replace( /\\/g, '\\\\' )
+		.replace( /\r\n|\r|\n/g, '\\n' )
+		.replace( /,/g, '\\,' )
+		.replace( /;/g, '\\;' );
+}
+
+export function getAgentEmailVCard( siteDomain: string, agentEmailAddress: string ) {
+	const escapedSiteDomain = escapeVCardValue( siteDomain );
+	const escapedAgentEmailAddress = escapeVCardValue( agentEmailAddress );
+
+	return [
+		'BEGIN:VCARD',
+		'VERSION:3.0',
+		`FN:${ escapedSiteDomain }`,
+		`N:${ escapedSiteDomain };;;;`,
+		`EMAIL;TYPE=INTERNET:${ escapedAgentEmailAddress }`,
+		'END:VCARD',
+		'',
+	].join( '\r\n' );
+}
+
+function getVCardDataUrl( siteDomain: string, agentEmailAddress: string ) {
+	return `data:text/vcard;charset=utf-8,${ encodeURIComponent(
+		getAgentEmailVCard( siteDomain, agentEmailAddress )
+	) }`;
+}
+
+function getVCardFileName( siteDomain: string ) {
+	const fileName = siteDomain.replace( /[^a-z0-9.-]+/gi, '-' ).replace( /^-+|-+$/g, '' );
+
+	return `${ fileName || 'ai-agent' }.vcf`;
+}
+
+function EmailAssistantCard( {
+	site,
+	recordTracksEvent,
+}: {
+	site: Site;
+	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+} ) {
+	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery(
+		sitePostByEmailSettingsQuery( site )
+	);
+	const agentEmailAddress = getAgentEmailAddress( postByEmailSettings?.post_by_email_address );
+	const isAgentEmailEnabled = !! agentEmailAddress;
+	const vCardHref = agentEmailAddress ? getVCardDataUrl( site.slug, agentEmailAddress ) : undefined;
+	const vCardFileName = getVCardFileName( site.slug );
+
+	const emailAddressMutation = useMutation( {
+		...sitePostByEmailSettingsMutation( site ),
+		meta: {
+			snackbar: {
+				success: __( 'AI agent email address settings saved.' ),
+				error: __( 'Failed to save AI agent email address settings.' ),
+			},
+		},
+	} );
+	const isEmailAddressActionDisabled =
+		isPostByEmailSettingsLoading || emailAddressMutation.isPending;
+
+	const handleEmailAddressToggle = ( enabled: boolean ) => {
+		emailAddressMutation.mutate(
+			{
+				post_by_email_address: enabled ? 'create' : 'delete',
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_toggled', {
+						enabled,
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
+	};
+
+	const handleRegenerateAddress = () => {
+		emailAddressMutation.mutate(
+			{
+				post_by_email_address: 'regenerate',
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_regenerated', {
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
+	};
+
+	const handleCopyAddress = () => {
+		recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_copied', {
+			site_id: site.ID,
+		} );
+	};
+
+	const handleAddToContacts = () => {
+		recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_vcard_downloaded', {
+			site_id: site.ID,
+		} );
+	};
+
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						title={ __( 'Email your assistant' ) }
+						description={ __( 'Email this site’s AI agent using a private address.' ) }
+						level={ 3 }
+					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						checked={ isAgentEmailEnabled }
+						disabled={ isEmailAddressActionDisabled }
+						label={ __( 'Enable AI agent email address' ) }
+						onChange={ handleEmailAddressToggle }
+					/>
+					<Notice density="medium">
+						{ __(
+							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this AI agent address will stop working.'
+						) }
+					</Notice>
+					{ agentEmailAddress && (
+						<VStack spacing={ 3 }>
+							<ClipboardInputControl
+								label={ __( 'AI agent email address' ) }
+								value={ agentEmailAddress }
+								readOnly
+								onCopy={ handleCopyAddress }
+							/>
+							<HStack justify="flex-start">
+								<Button
+									variant="secondary"
+									href={ vCardHref }
+									download={ vCardFileName }
+									onClick={ handleAddToContacts }
+								>
+									{ __( 'Add to contacts' ) }
+								</Button>
+								<Button
+									variant="secondary"
+									isBusy={ emailAddressMutation.isPending }
+									disabled={ isEmailAddressActionDisabled }
+									onClick={ handleRegenerateAddress }
+								>
+									{ __( 'Regenerate address' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -139,8 +336,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
 	// state. True when account MCP is on for sites, false when disabled.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
-	const defaultToolEnabled =
-		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
+	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const defaultBadge = defaultToolEnabled
 		? { text: __( 'All enabled' ), intent: 'success' as const }
 		: { text: __( 'Disabled' ) };
@@ -287,6 +483,22 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</CardFooter>
 					) }
 				</Card>
+				<EmailAssistantCard site={ site } recordTracksEvent={ recordTracksEvent } />
+				{ config.isEnabled( 'dolly/telegram' ) && (
+					<SummaryButton
+						href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
+						title={ __( 'Connect Telegram' ) }
+						description={ __(
+							'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+						) }
+						decoration={ <Icon icon={ send } size={ 24 } /> }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+								site_id: site.ID,
+							} );
+						} }
+					/>
+				) }
 				{ config.isEnabled( 'mcp-settings' ) && (
 					<>
 						<Card className="mcp-settings__access-card">

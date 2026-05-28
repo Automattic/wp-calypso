@@ -23,6 +23,10 @@ import {
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
 
+function redirectToAiToolsSettings( context ) {
+	return page.redirect( `/sites/${ context.params.site }/settings/ai-tools` );
+}
+
 export default function () {
 	page( '/settings', redirectSettingsIfDuplciatedViewsEnabled );
 
@@ -127,6 +131,9 @@ export default function () {
 	page( '/settings/analytics/:site_id?', redirectToTraffic );
 	page( '/settings/seo/:site_id?', redirectToTraffic );
 	page( '/settings/theme-setup/:site_id?', redirectToGeneral );
+
+	page( '/settings/ai-tools', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/ai-tools/:site', siteSelection, redirectToAiToolsSettings );
 
 	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }

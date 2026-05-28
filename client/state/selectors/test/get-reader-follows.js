@@ -9,12 +9,6 @@ describe( 'getReaderFollows()', () => {
 	const siteTwo = {
 		ID: 2,
 	};
-	const feedOne = {
-		feed_ID: 1,
-	};
-	const feedTwo = {
-		feed_ID: 2,
-	};
 	const state = deepFreeze( {
 		...userState,
 		reader: {
@@ -45,28 +39,20 @@ describe( 'getReaderFollows()', () => {
 					2: siteTwo,
 				},
 			},
-			feeds: {
-				items: {
-					1: feedOne,
-					2: feedTwo,
-				},
-			},
 		},
 	} );
 
-	test( 'should not return follows with an error set and should fill in feed and site when available', () => {
+	test( 'should not return follows with an error set and should fill in site when available', () => {
 		const follows = getReaderFollows( state );
 		expect( follows ).toEqual( [
 			{
 				URL: 'http://discover.wordpress.com',
 				blog_ID: 1,
 				site: siteOne,
-				feed: undefined,
 			},
 			{
 				URL: 'http://example.com',
 				feed_ID: 1,
-				feed: feedOne,
 				site: undefined,
 			},
 			{
@@ -74,7 +60,6 @@ describe( 'getReaderFollows()', () => {
 				blog_ID: 2,
 				site: siteTwo,
 				feed_ID: 2,
-				feed: feedTwo,
 			},
 		] );
 	} );
