@@ -42,6 +42,7 @@ export interface UseRealtimeSessionResult {
 	errorIntent: RealtimeErrorIntent;
 	sessionTimeLimitMs: number | null;
 	sessionTimeRemainingMs: number | null;
+	canUpgrade: boolean;
 	isMuted: boolean;
 	localStream: MediaStream | null;
 	transcript: RealtimeTranscriptEntry[];

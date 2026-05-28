@@ -51,6 +51,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const [ errorIntent, setErrorIntent ] = useState< RealtimeErrorIntent >( 'error' );
 	const [ sessionTimeLimitMs, setSessionTimeLimitMs ] = useState< number | null >( null );
 	const [ sessionTimeRemainingMs, setSessionTimeRemainingMs ] = useState< number | null >( null );
+	const [ canUpgrade, setCanUpgrade ] = useState( false );
 	const [ isMuted, setIsMuted ] = useState( false );
 	const [ localStream, setLocalStream ] = useState< MediaStream | null >( null );
 	const [ transcript, setTranscript ] = useState< RealtimeTranscriptEntry[] >( [] );
@@ -106,6 +107,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	);
 	const applyRemainingTime = useCallback(
 		( remainingTime: DictationRemainingTime ) => {
+			setCanUpgrade( remainingTime.canUpgrade );
+
 			if ( remainingTime.activeSession?.expiresAt ) {
 				clientSecretExpiresAtMsRef.current = remainingTime.activeSession.expiresAt * 1000;
 				updateRemainingTime(
@@ -707,6 +710,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		errorIntent,
 		sessionTimeLimitMs,
 		sessionTimeRemainingMs,
+		canUpgrade,
 		isMuted,
 		localStream,
 		transcript,

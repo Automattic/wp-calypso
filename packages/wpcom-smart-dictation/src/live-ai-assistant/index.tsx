@@ -18,6 +18,8 @@ type TimelineRow =
 	| { kind: 'message'; timestamp: number; entry: RealtimeTranscriptEntry }
 	| { kind: 'tool'; timestamp: number; evt: RealtimeToolEvent };
 
+const DICTATION_UPGRADE_URL = 'https://wordpress.com/checkout';
+
 function buildTimelineRows(
 	transcript: RealtimeTranscriptEntry[],
 	toolEvents: RealtimeToolEvent[]
@@ -160,6 +162,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 		errorIntent,
 		sessionTimeLimitMs,
 		sessionTimeRemainingMs,
+		canUpgrade,
 		isMuted,
 		localStream,
 		transcript,
@@ -202,6 +205,9 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const sessionTimeProgress = hasSessionTimeRemaining
 		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
 		: 0;
+	const hasExhaustedUpgradeableQuota =
+		canUpgrade && hasSessionTimeRemaining && sessionTimeRemaining <= 0;
+	const showUpgradeButton = hasExhaustedUpgradeableQuota && ! isSessionActive && ! isSessionBusy;
 
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
@@ -335,26 +341,36 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								<MicIcon muted={ isMuted } />
 								<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
 							</Button>
-							<Button
-								variant="primary"
-								className={ clsx( 'live-ai-assistant__call-button', {
-									'is-hangup': isSessionActive || isSessionBusy,
-								} ) }
-								onClick={ handleSessionToggle }
-								isBusy={ isSessionBusy }
-							>
-								{ isSessionActive || isSessionBusy ? (
-									<>
-										<StopIcon />
-										<span>{ __( 'Stop dictation' ) }</span>
-									</>
-								) : (
-									<>
-										<MicIcon />
-										<span>{ __( 'Start dictation' ) }</span>
-									</>
-								) }
-							</Button>
+							{ showUpgradeButton ? (
+								<Button
+									variant="primary"
+									className="live-ai-assistant__call-button"
+									href={ DICTATION_UPGRADE_URL }
+								>
+									<span>{ __( 'Upgrade' ) }</span>
+								</Button>
+							) : (
+								<Button
+									variant="primary"
+									className={ clsx( 'live-ai-assistant__call-button', {
+										'is-hangup': isSessionActive || isSessionBusy,
+									} ) }
+									onClick={ handleSessionToggle }
+									isBusy={ isSessionBusy }
+								>
+									{ isSessionActive || isSessionBusy ? (
+										<>
+											<StopIcon />
+											<span>{ __( 'Stop dictation' ) }</span>
+										</>
+									) : (
+										<>
+											<MicIcon />
+											<span>{ __( 'Start dictation' ) }</span>
+										</>
+									) }
+								</Button>
+							) }
 						</div>
 						{ hasSessionTimeRemaining && (
 							<div className="live-ai-assistant__time">
