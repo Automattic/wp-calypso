@@ -30,7 +30,7 @@ export default function ReportsOverview() {
 	const benefitsList1 = useMemo(
 		() => [
 			translate(
-				"Automated professional client reports that highlight key metrics from your clients' sites."
+				"Automated professional Client Reports that highlight key metrics from your clients' sites."
 			),
 			translate(
 				'Show clients the value of your ongoing work with beautiful, professional reports.'
@@ -155,11 +155,11 @@ export default function ReportsOverview() {
 					} }
 				>
 					<PageSectionColumns.Column
-						heading={ translate( 'Ready to create your first client report?' ) }
+						heading={ translate( 'Ready to create your first Client Report?' ) }
 					>
 						<div className="reports-overview__description">
 							{ translate(
-								"Our streamlined report builder makes it easy to create professional client reports in minutes. Simply select what information to include, and click Send! We'll handle the rest."
+								"Our streamlined report builder makes it easy to create professional Client Reports in minutes. Simply select what information to include, and click Send! We'll handle the rest."
 							) }
 						</div>
 						{ buildNewReportButton }

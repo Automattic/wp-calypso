@@ -43,7 +43,7 @@ export default function ReportsMobileView( {
 								/>
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Client Emails' ) }>
+						<ListItemCardContent title={ translate( 'Client emails' ) }>
 							<div className="reports-details-mobile-view__column">
 								<ReportClientEmailsColumn emails={ report.data.client_emails } />
 							</div>
