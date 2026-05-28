@@ -65,9 +65,9 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
 
 				if ( isLoggedOut ) {
-					await helpCenterReadyToLoadPromise;
 					fieldset.setAttribute( 'aria-busy', 'true' );
 					fieldset.setAttribute( 'disabled', 'true' );
+					await helpCenterReadyToLoadPromise;
 					window.helpCenter?.loadHelpCenter().then( () => {
 						fieldset.removeAttribute( 'aria-busy' );
 						fieldset.removeAttribute( 'disabled' );
