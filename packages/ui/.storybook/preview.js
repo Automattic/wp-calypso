@@ -34,7 +34,7 @@ const parameters = {
 			const stepperOrder = [
 				'UI/Stepper/Horizontal',
 				'UI/Stepper/Vertical',
-				'UI/Stepper/Headless (Tier 2)',
+				'UI/Stepper/Primitives',
 			];
 			const aStepperIndex = stepperOrder.indexOf( a.title );
 			const bStepperIndex = stepperOrder.indexOf( b.title );

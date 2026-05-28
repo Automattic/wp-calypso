@@ -4,17 +4,26 @@ import { Stepper } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {
-	title: 'UI/Stepper/Headless (Tier 2)',
+	title: 'UI/Stepper/Primitives',
 	parameters: {
 		docs: {
 			source: { type: 'dynamic' },
 			description: {
 				component: `
-**Tier 2 — headless primitives. Use only when Tier 1 components don\\'t fit.**
+**Tier 2 — use only when \`HorizontalStepper\` or \`VerticalStepper\` don't fit your layout.**
 
-\`VerticalStepper\` and \`HorizontalStepper\` cover the two standard layouts.
-Reach for Tier 2 when your design requires a DOM structure or trigger layout
-that neither Tier 1 component can produce.
+Reach for these primitives only when neither fits your design: for example, if you need a fully custom trigger layout, the indicator in a non-standard position, or a DOM structure that neither higher-level component can produce.
+
+\`\`\`tsx
+// Standard layouts — prefer these
+<VerticalStepper value={step} onValueChange={setStep} aria-label="Checkout">
+  <VerticalStepper.Step value="shipping" title="Shipping"> ... </VerticalStepper.Step>
+</VerticalStepper>
+
+<HorizontalStepper value={step} onValueChange={setStep} aria-label="Checkout">
+  <HorizontalStepper.Step value="shipping" title="Shipping"> ... </HorizontalStepper.Step>
+</HorizontalStepper>
+\`\`\`
 
 ### Primitive reference
 
@@ -28,10 +37,6 @@ that neither Tier 1 component can produce.
 | \`Stepper.Description\` | \`<span>\` | Supporting text beneath the title |
 | \`Stepper.Panel\` | \`Accordion.Panel\` or \`<div role="tabpanel">\` | Step content area |
 | \`Stepper.List\` | \`<div role="tablist">\` | Horizontal-only: wraps all step triggers |
-
-**Otherwise, prefer Tier 1:**
-- \`VerticalStepper\` — accordion layout, steps expand in place.
-- \`HorizontalStepper\` — tab-strip layout, panels render below the list.
 				`,
 			},
 		},
@@ -99,8 +104,7 @@ export const VerticalAnatomy: StoryObj = {
 			description: {
 				story: `
 This produces the same output as \`VerticalStepper\` but assembled manually
-from primitives. \`VerticalStepper\` is literally just this — a pre-composed
-shorthand.
+from primitives. \`VerticalStepper\` is literally just this, pre-composed for you.
 
 Each \`Stepper.Step\` contains its own \`Stepper.Trigger\` and \`Stepper.Panel\`.
 Inside the trigger you control what goes next to \`Stepper.Indicator\`: here it
@@ -261,7 +265,7 @@ on the right side of the trigger instead of the left — achieved by reversing
 the order of \`Stepper.Title\` and \`Stepper.Indicator\` inside \`Stepper.Trigger\`
 and applying \`justify-content: space-between\`.
 
-Because Tier 2 gives you direct control over what goes inside \`Stepper.Trigger\`,
+Because the primitives give you direct control over what goes inside \`Stepper.Trigger\`,
 you can put the indicator anywhere, replace it entirely, or add extra elements
 alongside it — things like a status badge, a timestamp, or a secondary action.
 				`,
