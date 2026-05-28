@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, __experimentalHStack as HStack, FormToggle } from '@wordpress/components';
 import { closeSmall, Icon, trash, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
@@ -28,6 +28,7 @@ import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
+import UnsubscribePaidConfirmModal from './unsubscribe-paid-confirm-modal';
 
 const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
 	const translate = useTranslate();
@@ -113,6 +114,7 @@ const SiteSubscriptionRow = ( {
 
 	const unsubscribeInProgress = useRef( false );
 	const resubscribePending = useRef( false );
+	const [ showPaidConfirmModal, setShowPaidConfirmModal ] = useState( false );
 
 	const hostname = useMemo( () => {
 		try {
@@ -180,7 +182,7 @@ const SiteSubscriptionRow = ( {
 		);
 	};
 
-	const onUnsubscribe = () => {
+	const performUnsubscribe = () => {
 		unsubscribeInProgress.current = true;
 		unsubscribeCallback();
 		unsubscribe( {
@@ -207,6 +209,14 @@ const SiteSubscriptionRow = ( {
 				}
 			},
 		} );
+	};
+
+	const onUnsubscribe = () => {
+		if ( is_paid_subscription && ! is_comp ) {
+			setShowPaidConfirmModal( true );
+			return;
+		}
+		performUnsubscribe();
 	};
 
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
@@ -426,6 +436,15 @@ const SiteSubscriptionRow = ( {
 					subscriptionId={ Number( subscriptionId ) }
 				/>
 			</div>
+			<UnsubscribePaidConfirmModal
+				isVisible={ showPaidConfirmModal }
+				siteName={ name }
+				onCancel={ () => setShowPaidConfirmModal( false ) }
+				onConfirm={ () => {
+					setShowPaidConfirmModal( false );
+					performUnsubscribe();
+				} }
+			/>
 		</HStack>
 	);
 };
