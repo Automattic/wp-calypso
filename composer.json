@@ -10,7 +10,7 @@
 	},
 	"require-dev": {
 		"automattic/jetpack-codesniffer": "^2.8.0",
-		"phpunit/phpunit": "^9",
+		"phpunit/phpunit": "^12",
 		"yoast/phpunit-polyfills": "^1.1.4",
 		"phpcsstandards/phpcsextra": "^1.0"
 	}
