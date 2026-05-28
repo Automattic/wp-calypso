@@ -1,7 +1,7 @@
-import { Link } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { cancelPurchaseRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
+import RouterLinkButton from '../../../components/router-link-button';
 import { hasAmountAvailableToRefund } from '../../../utils/purchase';
 import { getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
@@ -28,13 +28,15 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 			<Notice
 				variant="info"
 				actions={
-					<Link
+					<RouterLinkButton
+						variant="primary"
+						__next40pxDefaultSize
 						to={ cancelPurchaseRoute.fullPath }
 						params={ { purchaseId: String( purchase.ID ) } }
 						search={ { intent: 'remove' as const } }
 					>
-						{ __( 'Remove plan and claim refund.' ) }
-					</Link>
+						{ __( 'Remove plan and claim refund' ) }
+					</RouterLinkButton>
 				}
 			>
 				{ sprintf(
