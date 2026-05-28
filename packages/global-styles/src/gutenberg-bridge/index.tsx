@@ -3,12 +3,9 @@
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
  *
- * NOTE: Between block-editor 15.5 and 15.10, upstream moved the global-styles
- * hooks/context/equality helpers out of `@wordpress/block-editor`'s private
- * APIs and into the new `@wordpress/global-styles-ui` and
- * `@wordpress/global-styles-engine` packages. The ones we still need are
- * imported from those packages here (with a yarn patch widening
- * global-styles-ui's `exports` field to allow the deep paths).
+ * The deep imports from `@wordpress/global-styles-ui/build-module/*` rely on a
+ * yarn patch that widens the package's `exports` field; they aren't reachable
+ * through the package's public entry.
  */
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
