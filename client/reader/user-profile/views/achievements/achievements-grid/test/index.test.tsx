@@ -4,6 +4,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import React from 'react';
+import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import AchievementsGrid from '../index';
 
 jest.mock( 'calypso/data/reader/use-achievements-query' );
@@ -19,9 +20,7 @@ jest.mock( '../daily-post-streak-card', () => ( {
 	),
 } ) );
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const useAchievementsQuery = require( 'calypso/data/reader/use-achievements-query' )
-	.useAchievementsQuery as jest.Mock;
+const mockUseAchievementsQuery = useAchievementsQuery as jest.Mock;
 
 const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 	achievement_id: 1,
@@ -98,7 +97,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders the empty copy when both grids are empty', () => {
-		useAchievementsQuery.mockReturnValue( { ...baseQueryReturn } );
+		mockUseAchievementsQuery.mockReturnValue( { ...baseQueryReturn } );
 
 		renderGrid( { userLogin: 'me', isOwnProfile: true } );
 
@@ -107,7 +106,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders earned grid only when not own profile and no locked', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 		} );
@@ -120,7 +119,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders the locked section heading and locked cards on own profile', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [ locked() ],
@@ -134,7 +133,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'hides the locked section on cross-user view even if API returns locked', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [ locked() ],
@@ -149,7 +148,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders celebratory message when own profile, has earned, and zero locked', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [],
@@ -164,7 +163,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'hides celebratory message on cross-user view', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [],
@@ -176,7 +175,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders locked secret with the secret title', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [ lockedSecret() ],
@@ -188,7 +187,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders masked secret in earned list with caption Unlocked: <time>', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned(), maskedSecret() ],
 			lockedAchievements: [],
@@ -202,7 +201,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'sorts earned + masked-secret entries by last unlock date descending', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [
 				maskedSecret( { achievement_id: 2, date_unlocked: '2026-01-01' } ),
@@ -232,7 +231,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'sorts a leveled slug by its most recent unlock, not its first', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [
 				earned( {
@@ -264,7 +263,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'sorts locked entries by date_created ascending', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [
@@ -285,7 +284,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'new-user own profile with only locked entries renders the locked grid only', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [],
 			lockedAchievements: [ locked() ],
@@ -299,7 +298,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'dedupes masked secrets in the earned list by achievement_id', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [
 				earned(),
@@ -315,7 +314,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'dedupes locked entries by achievement_id', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			lockedAchievements: [
@@ -331,7 +330,7 @@ describe( 'AchievementsGrid', () => {
 
 	test( 'renders earned achievements from a legacy response that omits is_secret', () => {
 		const { is_secret: _omit, ...legacy } = earned();
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ legacy ],
 			lockedAchievements: [],
@@ -344,7 +343,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders a self-read earned secret (is_secret: true with full payload) as a regular card', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [
 				earned( {
@@ -366,7 +365,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'prepends a Years of Service card when yearsOfService > 0', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			yearsOfService: 5,
@@ -388,7 +387,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'pluralizes the Years of Service description for 1 year', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			yearsOfService: 1,
@@ -400,7 +399,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'omits the Years of Service card when yearsOfService is 0 or undefined', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			yearsOfService: 0,
@@ -412,7 +411,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'still surfaces the Years of Service card when there are no other achievements', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [],
 			lockedAchievements: [],
@@ -426,7 +425,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders daily post streak cards on own profile before any earned achievements', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			dailyPostStreaks: [
@@ -457,7 +456,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders daily post streak cards immediately after the Years of Service card', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			yearsOfService: 5,
@@ -474,7 +473,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'hides daily post streak cards on cross-user view', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
 			dailyPostStreaks: [ streak() ],
@@ -486,7 +485,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'renders the unlocked grid for an own profile with only streaks', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [],
 			lockedAchievements: [],
@@ -500,7 +499,7 @@ describe( 'AchievementsGrid', () => {
 	} );
 
 	test( 'shows the loading spinner while pages are still being fetched', () => {
-		useAchievementsQuery.mockReturnValue( {
+		mockUseAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			isLoading: true,
 		} );
