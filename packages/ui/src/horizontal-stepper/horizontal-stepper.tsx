@@ -12,8 +12,10 @@ import styles from './style.module.scss';
 import type { StepperProps, StepperRef } from '../stepper/types';
 import type { Ref } from 'react';
 
+type HorizontalStepperProps = Omit< StepperProps, 'headingLevel' >;
+
 function HorizontalStepperInner(
-	{ children, className, ...props }: StepperProps,
+	{ children, className, ...props }: HorizontalStepperProps,
 	ref: Ref< StepperRef >
 ) {
 	const { steps, registerStep, updateStep } = useStepRegistration< HorizontalStepRecord >();
@@ -70,7 +72,9 @@ function HorizontalStepperInner(
 	);
 }
 
-const HorizontalStepperBase = forwardRef< StepperRef, StepperProps >( HorizontalStepperInner );
+const HorizontalStepperBase = forwardRef< StepperRef, HorizontalStepperProps >(
+	HorizontalStepperInner
+);
 
 export const HorizontalStepper = Object.assign( HorizontalStepperBase, {
 	Step: HorizontalStepperStep,
