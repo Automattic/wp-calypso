@@ -42,13 +42,16 @@
 	cursor: pointer;
 	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
+	// Reuse the per-card brand accent so the hover/focus ring matches the
+	// leading edge stripe (pink for Fediverse, blue for Bluesky, purple
+	// for Mastodon). Falls back to --color-primary if no accent is set.
 	&:hover {
 		transform: translateY( -2px );
-		box-shadow: 0 0 0 2px var( --color-primary );
+		box-shadow: 0 0 0 2px var( --connections-new-card-accent, var( --color-primary ) );
 	}
 
 	&:focus-within {
-		box-shadow: 0 0 0 2px var( --color-primary );
+		box-shadow: 0 0 0 2px var( --connections-new-card-accent, var( --color-primary ) );
 	}
 }
 

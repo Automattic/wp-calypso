@@ -46,8 +46,8 @@
 		"@wordpress/components": "^33.1.0",
 		"@wordpress/dom": "^4.46.0",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/icons": "^13.1.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/primitives": "^4.46.0",
 		"@wordpress/react-i18n": "^4.46.0",
 		"clsx": "^2.1.1",
@@ -57,7 +57,7 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.3"
+		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

@@ -50,7 +50,7 @@
 		"@automattic/domain-search": "workspace:^",
 		"@wordpress/components": "^33.1.0",
 		"@wordpress/data": "^10.46.0",
-		"@wordpress/icons": "^13.1.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/react-i18n": "^4.46.0",
 		"clsx": "^2.1.1",
 		"react-router-dom": "^6.23.1",
@@ -72,13 +72,13 @@
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"sass-loader": "^14.2.1",
-		"storybook": "^8.6.14",
+		"storybook": "^8.6.17",
 		"style-loader": "^1.3.0",
-		"typescript": "^5.8.3",
+		"typescript": "^5.9.3",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/i18n": "^5.23.0",
 		"react": "^18.3.1"
 	}
 }

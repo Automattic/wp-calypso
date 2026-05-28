@@ -36,6 +36,7 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 >;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
+let mockBlocksByClientId: Record< string, any > = {};
 
 jest.mock( '@wordpress/components', () => {
 	const React = require( 'react' );
@@ -61,6 +62,7 @@ jest.mock( '@wordpress/data', () => ( {
 			if ( store === 'core/block-editor' ) {
 				return {
 					getSelectedBlock: () => mockSelectedBlock,
+					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 					getBlocks: () => [],
 				};
 			}
@@ -118,6 +120,7 @@ function installPostTypeMock( postType?: string ) {
 				if ( store === 'core/block-editor' ) {
 					return {
 						getSelectedBlock: () => mockSelectedBlock,
+						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
 					};
 				}
@@ -144,12 +147,24 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 	};
 }
 
-function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
-	const { suggestions } = useSuggestions();
+function SuggestionsProbe( {
+	onSuggestions,
+	maxSuggestions,
+	suggestionsVisible = true,
+}: {
+	onSuggestions: ( suggestions: any[] ) => void;
+	maxSuggestions?: number;
+	suggestionsVisible?: boolean;
+} ) {
+	const { suggestions } = useSuggestions( maxSuggestions, { suggestionsVisible } );
 	React.useEffect( () => {
 		onSuggestions( suggestions );
 	}, [ onSuggestions, suggestions ] );
 	return null;
+}
+
+function getTracksCalls( eventName: string ) {
+	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
 describe( 'getChatComponent', () => {
@@ -190,10 +205,6 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
 	} );
 
 	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
@@ -256,6 +267,7 @@ describe( 'getEmptyViewSuggestions', () => {
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
 		mockSelectedBlock = null;
+		mockBlocksByClientId = {};
 		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
 		mockedRecordTracksEvent.mockClear();
@@ -265,6 +277,26 @@ describe( 'useSuggestions', () => {
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+	} );
+
+	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'appends AI Editorial Review to block-specific suggestions', () => {
@@ -282,6 +314,143 @@ describe( 'useSuggestions', () => {
 			'Check grammar',
 			'Simplify text',
 			'AI Editorial Review',
+		] );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_rendered',
+			{}
+		);
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'simplify-text',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'keeps AI Editorial Review visible when block suggestions are limited', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
+		const onSuggestions = jest.fn();
+
+		render(
+			React.createElement( SuggestionsProbe, {
+				onSuggestions,
+				maxSuggestions: 3,
+			} )
+		);
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Check grammar',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'shows post-level suggestions after the selected-block chip is cleared', () => {
+		installAiEditorialReviewData();
+		const block = { clientId: 'b-clear', name: 'core/paragraph' };
+		mockSelectedBlock = block;
+		mockBlocksByClientId[ block.clientId ] = block;
+		const onSuggestions = jest.fn();
+
+		const { rerender } = render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toContain(
+			'Translate content'
+		);
+
+		mockSelectedBlock = null;
+		act( () => {
+			window.dispatchEvent( new Event( 'agents-manager-selected-block-cleared' ) );
+		} );
+		rerender( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'tracks rendered image block transformation suggestions', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b2', name: 'core/image' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate alt text',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'generate-alt-text',
+					suggestion_type: 'image',
+					block_type: 'core/image',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
 		] );
 	} );
 
@@ -341,6 +510,108 @@ describe( 'useSuggestions', () => {
 			'jetpack_ai_editorial_review_suggestion_click',
 			{}
 		);
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
+	} );
+
+	it( 'tracks block transformation suggestion clicks', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b3', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Simplify this text to make it easier to read' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'simplify-text',
+				suggestion_type: 'text',
+				block_type: 'core/heading',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'tracks block transformation suggestion clicks by label', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b4', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check grammar' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'tracks block transformation suggestion clicks after block selection is cleared', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b5', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+		mockSelectedBlock = null;
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'does not track block transformation clicks for unknown prompt values', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b6', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Write an unrelated prompt' },
+				} )
+			);
+		} );
+
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {

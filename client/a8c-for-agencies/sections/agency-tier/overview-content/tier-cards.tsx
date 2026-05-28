@@ -112,7 +112,7 @@ export default function TierCards( {
 									<Badge
 										style={ { width: 'fit-content' } }
 										intent="default"
-										children={ __( 'Your tier — Early Access' ) }
+										children={ __( 'Your tier — Early access' ) }
 									/>
 								) }
 								<Text color={ TEXT_COLOR }>{ tier.description }</Text>

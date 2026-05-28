@@ -15,7 +15,14 @@ export default function useCreateAgentStudioOutput( options?: Options ) {
 		...options,
 		mutationFn: ( input ) => agentStudioService.createOutput( input, agencyId ),
 		onSuccess: ( output, variables, context ) => {
-			queryClient.invalidateQueries( { queryKey: getAgentStudioOutputsQueryKey( agencyId ) } );
+			const queryKey = getAgentStudioOutputsQueryKey( agencyId );
+			queryClient.setQueryData< AgentStudioOutput[] >( queryKey, ( current = [] ) => {
+				if ( current.some( ( candidate ) => candidate.id === output.id ) ) {
+					return current;
+				}
+				return [ output, ...current ];
+			} );
+			queryClient.invalidateQueries( { queryKey } );
 			options?.onSuccess?.( output, variables, context );
 		},
 	} );

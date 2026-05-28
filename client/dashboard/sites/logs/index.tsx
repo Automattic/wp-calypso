@@ -10,7 +10,6 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { siteRoute } from '../../app/router/sites';
 import { Card, CardBody, CardHeader } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -30,8 +29,7 @@ const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
 	timezoneString: s?.timezone_string || undefined,
 } );
 
-function SiteLogs( { logType }: { logType: LogType } ) {
-	const { siteSlug } = siteRoute.useParams();
+function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Sites with a Jetpack connection error can't reach the settings endpoint;

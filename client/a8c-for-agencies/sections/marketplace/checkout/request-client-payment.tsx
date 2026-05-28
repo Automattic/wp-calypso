@@ -1,13 +1,18 @@
 import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	TextControl,
+	TextareaControl,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { customLink, Icon, send, cautionFilled as warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
@@ -23,8 +28,6 @@ import { getLogoUrlForPreview } from 'calypso/a8c-for-agencies/lib/logo-url-util
 import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateAgencyReferralsLogo } from 'calypso/state/a8c-for-agencies/agency/actions';
 import {
@@ -95,15 +98,15 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 
 	const { onClearCart } = useShoppingCart();
 
-	const onEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
-		setEmail( event.currentTarget.value );
+	const onEmailChange = ( value: string ) => {
+		setEmail( value );
 		if ( validationError.email ) {
 			setValidationError( { email: undefined } );
 		}
 	};
 
-	const onMessageChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
-		setMessage( event.currentTarget.value );
+	const onMessageChange = useCallback( ( value: string ) => {
+		setMessage( value );
 	}, [] );
 
 	const onReferralLogoChange = useCallback( ( choice: ReferralLogoChoice ) => {
@@ -366,10 +369,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		<>
 			<div className="checkout__client-referral-form">
 				<FormFieldset>
-					<FormLabel htmlFor="email">{ translate( 'Client’s email address' ) }</FormLabel>
-					<FormTextInput
+					<FormLabel htmlFor="referral-email">{ translate( 'Client’s email address' ) }</FormLabel>
+					<TextControl
+						__nextHasNoMarginBottom
+						id="referral-email"
 						name="email"
-						id="email"
 						value={ email }
 						onChange={ onEmailChange }
 						onClick={ () =>
@@ -386,11 +390,14 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="message">{ translate( 'Custom message' ) }</FormLabel>
-					<FormTextarea
+					<FormLabel htmlFor="referral-message">{ translate( 'Custom message' ) }</FormLabel>
+					<TextareaControl
+						__nextHasNoMarginBottom
+						id="referral-message"
 						name="message"
-						id="message"
-						placeholder="Send a message to your client about this request for payment."
+						placeholder={ translate(
+							'Send a message to your client about this request for payment.'
+						) }
 						value={ message }
 						onChange={ onMessageChange }
 						onClick={ () =>

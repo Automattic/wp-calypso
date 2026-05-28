@@ -52,6 +52,17 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 
 jest.mock( 'calypso/components/async-load', () => () => <div data-testid="async-load" /> );
 
+jest.mock(
+	'calypso/reader/recent/engagement-bar',
+	() =>
+		( { commentsApiDisabled }: { commentsApiDisabled?: boolean } ) => (
+			<div
+				data-testid="engagement-bar"
+				data-comments-api-disabled={ String( commentsApiDisabled ) }
+			/>
+		)
+);
+
 jest.mock( 'calypso/components/navigation-header', () => ( {
 	__esModule: true,
 	default: ( {
@@ -161,7 +172,6 @@ describe( 'Reader post cache surfaces', () => {
 
 		render( <Recent />, {
 			wrapper: makeWrapper( queryClient, {
-				comments: { apiDisabled: {} },
 				reader: {},
 				readerUi: { sidebar: { selectedRecentSite: 112530312 } },
 			} ),
@@ -170,6 +180,45 @@ describe( 'Reader post cache surfaces', () => {
 		fireEvent.click( await screen.findByText( 'Filtered recent title' ) );
 
 		expect( screen.getByTestId( 'async-load' ) ).toBeInTheDocument();
+	} );
+
+	it( 'passes the cached comments API disabled state to Recent engagement actions', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { refetchOnMount: false, retry: false } },
+		} );
+		queryClient.setQueryData(
+			[ 'read', 'stream', 'recent', { page: 1, perPage: 15, localeSlug: null } ],
+			{
+				posts: [
+					{
+						ID: 1,
+						site_ID: 100,
+						feed_ID: 200,
+						feed_item_ID: 300,
+						global_ID: 'global-1',
+						title: 'Cached disabled comments title',
+						site_name: 'Stream site',
+					},
+				],
+				found: 1,
+				total_pages: 1,
+			}
+		);
+		queryClient.setQueryData( [ 'site', 'comments', 'api-disabled', 100 ], true );
+
+		render( <Recent />, {
+			wrapper: makeWrapper( queryClient, {
+				reader: {},
+				readerUi: { sidebar: { selectedRecentSite: null } },
+			} ),
+		} );
+
+		fireEvent.click( await screen.findByText( 'Cached disabled comments title' ) );
+
+		expect( screen.getByTestId( 'engagement-bar' ) ).toHaveAttribute(
+			'data-comments-api-disabled',
+			'true'
+		);
 	} );
 
 	it( 'renders On This Day list rows from the canonical post cache', async () => {

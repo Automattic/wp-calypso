@@ -24,6 +24,7 @@ export type PurchaseForCopy = {
 	expiry_status: string;
 	meta?: string;
 	domain: string;
+	advertised_total_upload_space_in_gb?: number | null;
 };
 
 /**

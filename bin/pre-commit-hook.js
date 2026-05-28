@@ -187,6 +187,7 @@ if ( toEslint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
+		env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 	} );
 
 	if ( lintResult.status ) {

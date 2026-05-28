@@ -29,6 +29,7 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -44,8 +45,6 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import { requestPostComments } from 'calypso/state/comments/actions';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -129,9 +128,6 @@ export class FullPostView extends Component {
 			this.scrollToComments();
 		}
 
-		// Ensure we check comments API availability for this post
-		this.checkCommentsApiAvailability();
-
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
@@ -173,9 +169,6 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
-
-			// Check comments API availability when post changes
-			this.checkCommentsApiAvailability();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -664,19 +657,6 @@ export class FullPostView extends Component {
 		}
 	};
 
-	checkCommentsApiAvailability = () => {
-		const { post, commentsApiDisabled } = this.props;
-
-		// Only check if we don't already know the API is disabled
-		// and if we have a valid post with a site ID
-		if ( ! commentsApiDisabled && post?.site_ID && post?.ID && ! post.is_external ) {
-			this.props.requestPostComments( {
-				siteId: post.site_ID,
-				postId: post.ID,
-			} );
-		}
-	};
-
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
 		return (
@@ -946,7 +926,6 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 		currentPath,
 		referralStream: getPreviousPath( state ),
 		previousRoute: getPreviousRoute( state ),
-		commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
 	};
 
 	if ( ! isExternal && siteId ) {
@@ -978,7 +957,6 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 	showSelectedPost,
-	requestPostComments,
 } )( withPostLikes( withPostLikeActions( FullPostView ) ) );
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
@@ -995,6 +973,13 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 		} );
 		const { data: post } = usePost( Object.keys( currentPostKey ).length ? currentPostKey : null );
 		const { data: referralPost } = usePost( props.referral );
+		const commentsApiDisabled = usePostCommentsApiDisabled(
+			{
+				siteId: post?.site_ID,
+				postId: post?.ID,
+			},
+			{ enabled: ! post?.is_external }
+		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
@@ -1024,6 +1009,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				post={ post }
 				referralPost={ referralPost }
+				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
 				previousPostUrl={ previousPostUrl }

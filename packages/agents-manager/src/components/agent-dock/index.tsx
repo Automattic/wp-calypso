@@ -176,7 +176,10 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
-	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat;
+	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
+	// so Zendesk escalation is disabled until routing is in place.
+	const isWooAiAdmin = sectionName === 'wooai-admin';
+	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
 
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),

@@ -88,9 +88,33 @@ function DeliverablePreview( { output }: Props ) {
 		);
 	}
 
+	// Server-rendered preview URLs land directly on the output once the
+	// wpcom side pre-renders thumbnails. Until then social-campaign
+	// outputs show the placeholder icon — the deliverable detail page
+	// still composes the tiles live from the brief.
+	if ( output.previewUrls?.length ) {
+		return <PreviewUrlCollage urls={ output.previewUrls } />;
+	}
+
 	return (
 		<div className="a4a-agent-studio-deliverable-card__placeholder">
 			<Icon icon={ page } size={ 32 } />
+		</div>
+	);
+}
+
+function PreviewUrlCollage( { urls }: { urls: string[] } ) {
+	return (
+		<div className="a4a-agent-studio-deliverable-card__collage">
+			{ urls.slice( 0, 4 ).map( ( url ) => (
+				<div
+					key={ url }
+					className="a4a-agent-studio-deliverable-card__collage-tile"
+					style={ { aspectRatio: '1 / 1' } }
+				>
+					<img src={ url } alt="" />
+				</div>
+			) ) }
 		</div>
 	);
 }

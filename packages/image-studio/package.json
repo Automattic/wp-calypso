@@ -59,12 +59,12 @@
 		"@wordpress/api-fetch": "^7.46.0",
 		"@wordpress/base-styles": "^8.0.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "^7.46.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
 		"@wordpress/core-data": "^7.46.0",
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/icons": "^13.1.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/plugins": "^7.46.0",
 		"@wordpress/primitives": "^4.46.0",
 		"@wordpress/url": "^4.46.0",
@@ -77,7 +77,7 @@
 		"@testing-library/react": "^15.0.0",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
-		"typescript": "^5.8.3"
+		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

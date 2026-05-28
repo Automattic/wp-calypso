@@ -56,7 +56,7 @@
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/icons": "^13.1.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/primitives": "^4.46.0",
 		"@wordpress/url": "^4.46.0",
 		"@wordpress/warning": "^3.46.0",
@@ -66,7 +66,7 @@
 		"react-transition-group": "^4.3.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/i18n": "^5.23.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
@@ -84,8 +84,8 @@
 		"msw": "^2.2.14",
 		"msw-storybook-addon": "^2.0.4",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^8.6.14",
-		"typescript": "^5.8.3",
+		"storybook": "^8.6.17",
+		"typescript": "^5.9.3",
 		"webpack": "^5.99.8"
 	},
 	"msw": {
