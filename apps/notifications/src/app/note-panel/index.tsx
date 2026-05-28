@@ -53,9 +53,13 @@ const NotePanel = ( {
 		( tabId: string | null | undefined ) => {
 			if ( tabId ) {
 				setFilterName( tabId as FilterName );
+				// Clear the selection — a note from the previous filter would
+				// otherwise stay rendered in the detail pane while the list
+				// switches to the new filter's notes.
+				setSelectedNoteId( undefined );
 			}
 		},
-		[ setFilterName ]
+		[ setFilterName, setSelectedNoteId ]
 	);
 
 	useEffect( () => {

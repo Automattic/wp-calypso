@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	CardBody,
 } from '@wordpress/components';
-import { usePrevious, useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -16,17 +16,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
-import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import { getFilters } from '../../panel/templates/filters';
 import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
-import { useNoteNavigationViaKeyboardShortcuts } from './hooks';
 import './style.scss';
-import type { FilterName, Note as NoteObject, Block } from '../types';
+import type { Note as NoteObject, Block } from '../types';
 
 const hasBadge = ( body: NoteObject[ 'body' ] ) =>
 	body.some(
@@ -72,32 +69,22 @@ const getClasses = ( {
 
 type NoteProps = {
 	isDismissible?: boolean;
-	filterName: FilterName;
-	selectedNoteId: string | undefined;
+	// The note id to render — equals the user's selection while open and
+	// the exiting id during the slide-out animation.
+	noteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 };
 
-const Note = ( { isDismissible, filterName, selectedNoteId, setSelectedNoteId }: NoteProps ) => {
+const Note = ( { isDismissible, noteId, setSelectedNoteId }: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'xlarge' );
 	const goBack = () => setSelectedNoteId( undefined );
-	// Keep showing the previous note while the detail pane slides out
-	// (selectedNoteId is undefined during the exit animation).
-	const previousNoteId = usePrevious( selectedNoteId );
-	const noteId = selectedNoteId ?? previousNoteId;
 
-	const filter = getFilters()[ filterName ];
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
-	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
-	const visibleNotes = notes.filter(
-		( note ) => filter.filter( note ) && hiddenNoteIds[ note.id ] !== true
-	);
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
-
-	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note, setSelectedNoteId } );
 
 	useEffect( () => {
 		if ( note?.id ) {
