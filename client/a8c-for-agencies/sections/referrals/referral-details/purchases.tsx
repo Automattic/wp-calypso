@@ -33,7 +33,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 		() => [
 			{
 				id: 'product-details',
-				label: translate( 'Product Details' ).toUpperCase(),
+				label: translate( 'Product details' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
 					return <ProductDetails isFetching={ isFetching } purchase={ item } data={ data } />;

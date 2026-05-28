@@ -1,7 +1,8 @@
-import { Badge, Button, Gridicon } from '@automattic/components';
+import { Badge, Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { memo } from 'react';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import usePayInvoiceMutation from '../hooks/use-pay-invoice-mutation';
@@ -52,7 +53,7 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 			<div>{ number }</div>
 			<div>
 				{ dueDate && <FormattedDate date={ moment( dueDate ) } format="ll" /> }
-				{ ! dueDate && <Gridicon icon="minus" /> }
+				{ ! dueDate && <EmptyValueIndicator /> }
 			</div>
 			<div>
 				<Badge type={ badgeType }>{ badgeLabel }</Badge>

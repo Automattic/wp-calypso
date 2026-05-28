@@ -71,7 +71,10 @@ export type AbilitiesSetupHook = ( actions: {
  * Suggestions hook type - for providing dynamic suggestions based on context
  * (e.g., selected block in editor). Returns an array of suggestions.
  */
-export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
+export type UseSuggestionsHook = (
+	maxSuggestions?: number,
+	options?: { suggestionsVisible?: boolean }
+) => {
 	suggestions: Suggestion[];
 } | void;
 
@@ -173,11 +176,11 @@ export function mergeUseSuggestionsHooks(
 		return hooks[ 0 ];
 	}
 
-	return ( maxSuggestions?: number ) => {
+	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
 		for ( const hook of hooks ) {
-			const suggestions = hook( maxSuggestions )?.suggestions ?? [];
+			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
 			for ( const s of suggestions ) {
 				if ( ! seenIds.has( s.id ) ) {
 					seenIds.add( s.id );

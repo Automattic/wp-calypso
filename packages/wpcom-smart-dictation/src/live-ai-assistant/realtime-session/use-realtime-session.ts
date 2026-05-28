@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-	ActiveDictationSessionError,
 	fetchClientSecret,
 	fetchRemainingTime,
 	settleClientSecretSession,
@@ -584,7 +583,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			await pc.setRemoteDescription( { type: 'answer', sdp: answerSdp } );
 		} catch ( err ) {
 			const message = getErrorMessage( err );
-			setErrorIntent( err instanceof ActiveDictationSessionError ? 'warning' : 'error' );
+			setErrorIntent( 'error' );
 			if ( hasRequestedMicrophone ) {
 				recordTracksEvent( 'calypso_smart_dictation_microphone_permission_failed', {
 					error_name: getErrorName( err ),

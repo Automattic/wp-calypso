@@ -38,7 +38,7 @@ export default function useWPCOMPlanDescription( slug: string ) {
 		jetpackFeatures1 = [
 			translate( 'Real-time backups' ),
 			translate( 'One-click restores' ),
-			translate( 'Uptime monitor' ),
+			translate( 'Uptime Monitor' ),
 			translate( 'Built-in Elasticsearch' ),
 			translate( 'Plugin auto-updates' ),
 		];

@@ -322,7 +322,9 @@ export const siteLogsPhpRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: () => <d.default logType={ LogType.PHP } />,
+			component: () => (
+				<d.default logType={ LogType.PHP } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -341,7 +343,9 @@ export const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: () => <d.default logType={ LogType.SERVER } />,
+			component: () => (
+				<d.default logType={ LogType.SERVER } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -360,7 +364,9 @@ export const siteLogsActivityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
-			component: () => <d.default logType={ LogType.ACTIVITY } />,
+			component: () => (
+				<d.default logType={ LogType.ACTIVITY } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );

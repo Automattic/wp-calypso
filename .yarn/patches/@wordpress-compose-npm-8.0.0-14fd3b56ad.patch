@@ -1,0 +1,52 @@
+diff --git a/build/hooks/use-media-query/index.cjs b/build/hooks/use-media-query/index.cjs
+index c40ba4a6fa35abff472fda0f8b217b79ddcfc266..ed5560053a0d54dbc6bf8c8dc107ae68887ff99b 100644
+--- a/build/hooks/use-media-query/index.cjs
++++ b/build/hooks/use-media-query/index.cjs
+@@ -70,7 +70,7 @@ function getMQLSubscriber(view, query) {
+   queryCache.set(query, subscriber);
+   return subscriber;
+ }
+-function useMediaQuery(query, view = window) {
++function useMediaQuery(query, view = typeof window !== "undefined" ? window : void 0) {
+   const source = getMQLSubscriber(view, query);
+   return (0, import_element.useSyncExternalStore)(
+     source.subscribe,
+diff --git a/build/hooks/use-viewport-match/index.cjs b/build/hooks/use-viewport-match/index.cjs
+index 9b49ee109486b45102b35c84e8a39dcd61a9b3cc..9e231cd056dc5145fc7a515d7a5fe2ca6c8c8002 100644
+--- a/build/hooks/use-viewport-match/index.cjs
++++ b/build/hooks/use-viewport-match/index.cjs
+@@ -58,7 +58,7 @@ var ViewportMatchWidthContext = (0, import_element.createContext)(
+   null
+ );
+ ViewportMatchWidthContext.displayName = "ViewportMatchWidthContext";
+-var useViewportMatch = (breakpoint, operator = ">=", view = window) => {
++var useViewportMatch = (breakpoint, operator = ">=", view = typeof window !== "undefined" ? window : void 0) => {
+   const simulatedWidth = (0, import_element.useContext)(ViewportMatchWidthContext);
+   const mediaQuery = !simulatedWidth && `(${CONDITIONS[operator]}: ${BREAKPOINTS[breakpoint]}px)`;
+   const mediaQueryResult = (0, import_use_media_query.default)(mediaQuery || void 0, view);
+diff --git a/build-module/hooks/use-media-query/index.mjs b/build-module/hooks/use-media-query/index.mjs
+index a44ad0fa26c8e7a757316535aa0ae542fb8b6535..cb851b058eaf22fa59151336253410dba29bc2bf 100644
+--- a/build-module/hooks/use-media-query/index.mjs
++++ b/build-module/hooks/use-media-query/index.mjs
+@@ -46,7 +46,7 @@ function getMQLSubscriber(view, query) {
+   queryCache.set(query, subscriber);
+   return subscriber;
+ }
+-function useMediaQuery(query, view = window) {
++function useMediaQuery(query, view = typeof window !== "undefined" ? window : void 0) {
+   const source = getMQLSubscriber(view, query);
+   return useSyncExternalStore(
+     source.subscribe,
+diff --git a/build-module/hooks/use-viewport-match/index.mjs b/build-module/hooks/use-viewport-match/index.mjs
+index f657c19d64d49d23d2ccbfc1328cef6f3b50af88..2678cd7c2838753e805f340e1d159ac830edd249 100644
+--- a/build-module/hooks/use-viewport-match/index.mjs
++++ b/build-module/hooks/use-viewport-match/index.mjs
+@@ -24,7 +24,7 @@ var ViewportMatchWidthContext = createContext(
+   null
+ );
+ ViewportMatchWidthContext.displayName = "ViewportMatchWidthContext";
+-var useViewportMatch = (breakpoint, operator = ">=", view = window) => {
++var useViewportMatch = (breakpoint, operator = ">=", view = typeof window !== "undefined" ? window : void 0) => {
+   const simulatedWidth = useContext(ViewportMatchWidthContext);
+   const mediaQuery = !simulatedWidth && `(${CONDITIONS[operator]}: ${BREAKPOINTS[breakpoint]}px)`;
+   const mediaQueryResult = useMediaQuery(mediaQuery || void 0, view);

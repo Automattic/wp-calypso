@@ -66,7 +66,7 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 						title=""
 						offset={ 12 }
 						wrapperRef={ wrapperRef }
-						focusOnMount="container"
+						focusOnMount
 						onFocusOutside={ () => setShowPopover( false ) }
 					>
 						{ children }

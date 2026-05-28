@@ -123,6 +123,36 @@
 }
 
 .social-composer {
+	// Per-protocol header icon (Bluesky / Mastodon glyph) passed via the WP
+	// `<Modal icon>` slot. The icon components bake in `.sidebar__menu-icon`
+	// so the sidebar can spec its own size and color — that class has a
+	// global `color/fill: var(--color-sidebar-gridicon-fill)` rule which
+	// would otherwise paint the glyph near-white inside the modal header
+	// and ship the `margin-right: 11px` sidebar offset on top of the WP
+	// heading-container's own spacing. Reset to inherit from the heading,
+	// and size the glyph to track the 16px heading instead of the sidebar's
+	// 24px default so it doesn't overshoot the cap-height of the title.
+	.components-modal__icon-container {
+		display: inline-flex;
+		align-items: center;
+		margin-inline-end: 6px;
+
+		.sidebar__menu-icon {
+			color: currentColor;
+			fill: currentColor;
+			width: 18px;
+			height: 18px;
+			margin: 0;
+		}
+	}
+
+	// The default 20px WP modal heading reads oversized against the
+	// "New post · @handle" composition — drop a couple of sizes so the
+	// destination context sits closer to a label than a hero title.
+	.components-modal__header-heading {
+		font-size: 16px;
+	}
+
 	.social-composer__pinned-context {
 		padding: 8px 12px;
 		background: var( --studio-gray-0, #f6f7f7 );

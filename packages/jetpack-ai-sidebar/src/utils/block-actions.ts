@@ -24,6 +24,7 @@ const processingEffectElements = new Set< HTMLElement >();
 let rememberedSelectedBlockClientId: string | null = null;
 
 export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
+export const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
 
 export function setModuleCheckpointApi( api: CheckpointApi | null ): void {
 	moduleCheckpointApi = api;
@@ -37,6 +38,10 @@ export function rememberSelectedBlock( block: any ): void {
 	if ( block?.clientId ) {
 		rememberedSelectedBlockClientId = block.clientId;
 	}
+}
+
+export function clearRememberedSelectedBlock(): void {
+	rememberedSelectedBlockClientId = null;
 }
 
 export function getSelectedOrRememberedBlock(): any | null {

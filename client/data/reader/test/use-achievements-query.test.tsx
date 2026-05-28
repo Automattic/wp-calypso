@@ -133,4 +133,33 @@ describe( 'useAchievementsQuery', () => {
 
 		expect( result.current.lockedAchievements ).toEqual( [] );
 	} );
+
+	test( 'should sort daily post streaks by current_streak descending', async () => {
+		mockGet.mockResolvedValue( {
+			found: 0,
+			achievements: [],
+			daily_post_streak: [
+				{ blog_id: 1, url: 'https://one.example.com', current_streak: 4 },
+				{ blog_id: 2, url: 'https://two.example.com', current_streak: 23 },
+				{ blog_id: 3, url: 'https://three.example.com', current_streak: 14 },
+			],
+		} );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.dailyPostStreaks ).toHaveLength( 3 );
+		expect( result.current.dailyPostStreaks.map( ( s ) => s.blog_id ) ).toEqual( [ 2, 3, 1 ] );
+	} );
+
+	test( 'should default dailyPostStreaks to an empty array when absent', async () => {
+		mockGet.mockResolvedValue( { found: 0, achievements: [] } );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.dailyPostStreaks ).toEqual( [] );
+	} );
 } );
