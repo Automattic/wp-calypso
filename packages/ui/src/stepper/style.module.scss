@@ -35,11 +35,11 @@ $indicator-size-sm: 16px; // bullet completed + current
 	width: $indicator-size;
 	height: $indicator-size;
 	border-radius: 50%;
-	border: 2px solid theme.$components-color-gray-400;
+	border: 2px solid theme.$components-color-gray-700;
 	flex-shrink: 0;
 	font-size: variables.$font-size-small;
 	font-weight: 400;
-	color: theme.$components-color-gray-600;
+	color: theme.$components-color-gray-700;
 	background: theme.$components-color-background;
 
 	@include ui-mixins.when-dark-theme {
@@ -63,9 +63,9 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 // Completed step
 .indicator.is-completed {
-	border-color: colors.$alert-green;
+	border-color: theme.$components-color-gray-700;
 	background: transparent;
-	color: colors.$alert-green;
+	color: theme.$components-color-gray-700;
 
 	svg {
 		stroke: currentColor;
@@ -73,8 +73,8 @@ $indicator-size-sm: 16px; // bullet completed + current
 	}
 
 	@include ui-mixins.when-dark-theme {
-		border-color: colors.$alert-green;
-		color: colors.$alert-green;
+		border-color: theme.$components-color-gray-700;
+		color: theme.$components-color-gray-700;
 	}
 }
 
@@ -117,29 +117,21 @@ $indicator-size-sm: 16px; // bullet completed + current
 	color: theme.$components-color-foreground;
 }
 
-// Completed: 16px gray-700 tick (not green), solid border
+// Completed: 16px, solid border (color inherited from .indicator.is-completed)
 .indicator.is-completed[data-indicator-variant='bullet'] {
 	width: $indicator-size-sm;
 	height: $indicator-size-sm;
 	margin: 1px; // compensates for 2px size reduction vs upcoming (18px → 16px)
 	border-style: solid;
-	border-color: theme.$components-color-gray-700;
-	background: transparent;
-	color: theme.$components-color-gray-700;
-
-	svg {
-		stroke: currentColor;
-		stroke-width: 1.5px;
-	}
 }
 
-// Bullet variant: non-current step titles are gray-700 (upcoming and completed)
-[data-indicator-variant='bullet'] .title {
+// Non-current step titles are gray-700 (upcoming and completed) for all variants
+[data-indicator-variant] .title {
 	color: theme.$components-color-gray-700;
 }
 
 // Current step title stays dark
-[data-indicator-variant='bullet'] [data-current] .title {
+[data-indicator-variant] [data-current] .title {
 	color: theme.$components-color-foreground;
 }
 
