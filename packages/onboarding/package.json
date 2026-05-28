@@ -50,7 +50,7 @@
 		"@automattic/domain-search": "workspace:^",
 		"@wordpress/components": "^33.1.0",
 		"@wordpress/data": "^10.46.0",
-		"@wordpress/icons": "^10.23.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/react-i18n": "^4.46.0",
 		"clsx": "^2.1.1",
 		"react-router-dom": "^6.23.1",
