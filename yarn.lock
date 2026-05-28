@@ -877,8 +877,8 @@ __metadata:
     "@emotion/css": "npm:^11.11.2"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@storybook/addon-actions": "npm:^8.6.14"
-    "@storybook/react": "npm:^8.6.14"
+    "@storybook/addon-actions": "npm:^9.0.8"
+    "@storybook/react": "npm:^10.4.0"
     "@storybook/test": "npm:^8.6.14"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
@@ -2774,7 +2774,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.9, @babel/core@npm:^7.24.4, @babel/core@npm:^7.26.0, @babel/core@npm:^7.27.1":
+"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.9, @babel/core@npm:^7.24.4, @babel/core@npm:^7.26.0, @babel/core@npm:^7.27.1, @babel/core@npm:^7.28.0":
   version: 7.29.7
   resolution: "@babel/core@npm:7.29.7"
   dependencies:
@@ -4361,7 +4361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.18.9, @babel/traverse@npm:^7.25.7, @babel/traverse@npm:^7.27.1, @babel/traverse@npm:^7.29.7, @babel/traverse@npm:^7.8.4":
+"@babel/traverse@npm:^7.18.9, @babel/traverse@npm:^7.25.7, @babel/traverse@npm:^7.27.1, @babel/traverse@npm:^7.28.0, @babel/traverse@npm:^7.29.7, @babel/traverse@npm:^7.8.4":
   version: 7.29.7
   resolution: "@babel/traverse@npm:7.29.7"
   dependencies:
@@ -4376,7 +4376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.18.9, @babel/types@npm:^7.20.7, @babel/types@npm:^7.25.7, @babel/types@npm:^7.27.1, @babel/types@npm:^7.29.7, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4":
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.18.9, @babel/types@npm:^7.20.7, @babel/types@npm:^7.25.7, @babel/types@npm:^7.27.1, @babel/types@npm:^7.28.2, @babel/types@npm:^7.29.7, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4":
   version: 7.29.7
   resolution: "@babel/types@npm:7.29.7"
   dependencies:
@@ -7762,6 +7762,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-actions@npm:^9.0.8":
+  version: 9.0.8
+  resolution: "@storybook/addon-actions@npm:9.0.8"
+  checksum: 40ab6bf018cb423bf156e6b1317d199f3730690750b88b4c4eed7af636fdbc9392ddc95b1383927ec85f462515ae35bc9f517c934bf05e1edb645f6b9b94264a
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-controls@npm:^8.6.14":
   version: 8.6.14
   resolution: "@storybook/addon-controls@npm:8.6.14"
@@ -8046,6 +8053,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/react-dom-shim@npm:10.4.1":
+  version: 10.4.1
+  resolution: "@storybook/react-dom-shim@npm:10.4.1"
+  peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    "@types/react-dom": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^10.4.1
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 1d39e86d861eef5577174721a938159e97f80c27a856af182157cf5d0936ca3a91eaf1e5bbbfd6560d1035db1ffebdd757d0f08fd1c2c21cf353a996ea04d6f0
+  languageName: node
+  linkType: hard
+
 "@storybook/react-dom-shim@npm:8.6.14":
   version: 8.6.14
   resolution: "@storybook/react-dom-shim@npm:8.6.14"
@@ -8098,6 +8123,32 @@ __metadata:
     typescript:
       optional: true
   checksum: e447892d523b32a52708e6eabc142a3dc0433c23fc28d59206e3b03fe070df77e80998839c3496c22ad11b712499b8e0fbec0dacf31a006ea99b171dba74c43b
+  languageName: node
+  linkType: hard
+
+"@storybook/react@npm:^10.4.0":
+  version: 10.4.1
+  resolution: "@storybook/react@npm:10.4.1"
+  dependencies:
+    "@storybook/global": "npm:^5.0.0"
+    "@storybook/react-dom-shim": "npm:10.4.1"
+    react-docgen: "npm:^8.0.2"
+    react-docgen-typescript: "npm:^2.2.2"
+  peerDependencies:
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    "@types/react-dom": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^10.4.1
+    typescript: ">= 4.9.x"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 161037b96df9d0780927168f6acc62eac1540977d400a9e0e460f618fb6b2eb267738160380bb8af8312a960a5947c9b0c2d9706f1df8d223869ee45952f7d98
   languageName: node
   linkType: hard
 
@@ -8686,7 +8737,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__core@npm:^7.1.14, @types/babel__core@npm:^7.18.0":
+"@types/babel__core@npm:^7.1.14, @types/babel__core@npm:^7.18.0, @types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
   dependencies:
@@ -8724,6 +8775,15 @@ __metadata:
   dependencies:
     "@babel/types": "npm:^7.20.7"
   checksum: e76cb4974c7740fd61311152dc497e7b05c1c46ba554aab875544ab0a7457f343cafcad34ba8fb2ff543ab0e012ef2d3fa0c13f1a4e9a4cd9c4c703c7a2a8d62
+  languageName: node
+  linkType: hard
+
+"@types/babel__traverse@npm:^7.20.7":
+  version: 7.28.0
+  resolution: "@types/babel__traverse@npm:7.28.0"
+  dependencies:
+    "@babel/types": "npm:^7.28.2"
+  checksum: b52d7d4e8fc6a9018fe7361c4062c1c190f5778cf2466817cb9ed19d69fbbb54f9a85ffedeb748ed8062d2cf7d4cc088ee739848f47c57740de1c48cbf0d0994
   languageName: node
   linkType: hard
 
@@ -28109,6 +28169,24 @@ __metadata:
     resolve: "npm:^1.22.1"
     strip-indent: "npm:^4.0.0"
   checksum: 870c1193211f14497bf7a96137f96840dc058842ca75ff7251d91e88c3c71d7a41d5f1a124cc1b53bfbf1f2b6b58bfccc4dd6e22592814a5155d3894953274be
+  languageName: node
+  linkType: hard
+
+"react-docgen@npm:^8.0.2":
+  version: 8.0.3
+  resolution: "react-docgen@npm:8.0.3"
+  dependencies:
+    "@babel/core": "npm:^7.28.0"
+    "@babel/traverse": "npm:^7.28.0"
+    "@babel/types": "npm:^7.28.2"
+    "@types/babel__core": "npm:^7.20.5"
+    "@types/babel__traverse": "npm:^7.20.7"
+    "@types/doctrine": "npm:^0.0.9"
+    "@types/resolve": "npm:^1.20.2"
+    doctrine: "npm:^3.0.0"
+    resolve: "npm:^1.22.1"
+    strip-indent: "npm:^4.0.0"
+  checksum: 0231fb9177bc7c633f3d1f228eebb0ee90a2f0feac50b1869ef70b0a3683b400d7875547a2d5168f2619b63d4cc29d7c45ae33d3f621fc67a7fa6790ac2049f6
   languageName: node
   linkType: hard
 
