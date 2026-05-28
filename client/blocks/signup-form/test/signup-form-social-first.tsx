@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import SignupFormSocialFirst, {
+	MobileCompactTosNotice,
+} from 'calypso/blocks/signup-form/signup-form-social-first';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -128,11 +130,70 @@ describe( 'SignupFormSocialFirst', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		test( 'renders the default Terms of Service', () => {
-			render( <SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant /> );
+		test( 'renders the "options above" ToS when no customTosElement is provided', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
 
 			expect(
-				screen.getByText( /By continuing with any of the options listed/i )
+				screen.getByText( /By continuing with any of the options above/i )
+			).toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options listed/i )
+			).not.toBeInTheDocument();
+			// Regression: exactly one tos-link <p> — guards against double-wrapping
+			// when a future caller routes <MobileCompactTosNotice /> through
+			// customTosElement (which renderTermsOfService would wrap in <p>).
+			expect( container.querySelectorAll( '.signup-form-social-first__tos-link' ) ).toHaveLength(
+				1
+			);
+		} );
+
+		test( 'renders the partner customTosElement instead of the experiment ToS', () => {
+			const customTos = <span data-testid="partner-tos">Partner terms</span>;
+
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					isMobileCompactVariant
+					customTosElement={ customTos }
+				/>
+			);
+
+			expect( screen.getByTestId( 'partner-tos' ) ).toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options above/i )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'omits the in-form ToS when hideTosElement is true', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant hideTosElement />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first__tos-link' )
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByText( /By continuing with any of the options/i )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'MobileCompactTosNotice', () => {
+		test( 'renders the "options above" copy for position="above"', () => {
+			render( <MobileCompactTosNotice position="above" /> );
+
+			expect(
+				screen.getByText( /By continuing with any of the options above/i )
+			).toBeInTheDocument();
+		} );
+
+		test( 'renders the "options below" copy for position="below"', () => {
+			render( <MobileCompactTosNotice position="below" /> );
+
+			expect(
+				screen.getByText( /By continuing with any of the options below/i )
 			).toBeInTheDocument();
 		} );
 	} );

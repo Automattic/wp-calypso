@@ -9,14 +9,15 @@ import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
-import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import SignupFormSocialFirst, {
+	MobileCompactTosNotice,
+} from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -31,14 +32,12 @@ import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
+import useMobileLayoutExperiment from './use-mobile-layout-experiment';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 import './style.scss';
 
-// Experiment: new mobile layout for the user step. Register in ExPlat with
-// `control` and `treatment` variations.
-const MOBILE_LAYOUT_EXPERIMENT_NAME = 'calypso_signup_onboarding_user_mobile_layout_202605';
 // Social providers shown on the mobile treatment per the design. Also keeps the
 // local-dev-only PayPal button off the treatment (the prod build never has that
 // flag enabled, but the local-dev one does).
@@ -115,29 +114,27 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isLargeViewport = useViewportMatch( 'large' );
-	const isMobileViewport = useViewportMatch( 'small', '<' );
 
-	// The mobile-layout experiment is only eligible on mobile viewports so desktop
-	// users never consume an ExPlat slot. While the assignment is loading we defer
-	// both the heading and the form — otherwise the brief flash of control-shape
-	// UI before treatment paints would self-bias the social-conversion metric the
-	// experiment is measuring.
-	const isMobileLayoutExperimentEligible = isStepContainerV2 && isMobileViewport && ! isWooReferrer;
-	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
-		MOBILE_LAYOUT_EXPERIMENT_NAME,
-		{ isEligible: isMobileLayoutExperimentEligible }
-	);
-	const isMobileTreatment =
-		isMobileLayoutExperimentEligible &&
-		! isExperimentLoading &&
-		experimentAssignment?.variationName === 'treatment';
-	const shouldDeferMobileReveal = isMobileLayoutExperimentEligible && isExperimentLoading;
+	// While the mobile-layout assignment is loading we defer both the heading and
+	// the form — otherwise the brief flash of control-shape UI before treatment
+	// paints would self-bias the social-conversion metric this experiment measures.
+	const {
+		isLoading: isMobileLayoutExperimentLoading,
+		isEligible: isMobileLayoutExperimentEligible,
+		isMobileTreatment,
+		isMobileTreatmentTosTop,
+	} = useMobileLayoutExperiment( { flow } );
+	const shouldDeferMobileReveal =
+		isMobileLayoutExperimentEligible && isMobileLayoutExperimentLoading;
 
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	const allowedSocialServices = isMobileTreatment
 		? MOBILE_SOCIAL_SERVICES
 		: partnerConfig?.ssoProviders;
-
+	// customTosElement is reserved for partner branding (legal); the form's
+	// mobile-compact branch renders MobileCompactTosNotice as its own fallback
+	// when no customTosElement is provided. Routing the notice through
+	// customTosElement would double-wrap it in <p>.
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
@@ -161,6 +158,7 @@ const UserStepComponent: StepType = function UserStep( {
 					isEmailFirstVariant={ isEmailFirstVariant }
 					isEmailAtBottom={ isEmailAtBottom }
 					isMobileCompactVariant={ isMobileTreatment }
+					hideTosElement={ isMobileTreatmentTosTop && ! signupTosElement }
 					allowedSocialServices={ allowedSocialServices }
 					customTosElement={ signupTosElement }
 				/>
@@ -189,6 +187,9 @@ const UserStepComponent: StepType = function UserStep( {
 		}
 		// While the mobile experiment is resolving we render the layout without the
 		// heading so neither cohort sees the other variant's copy flash on cold visits.
+		// For the top-position arm, the ToS sits as a second <p> after Step.Heading
+		// (not inside subText, which Step.Heading wraps in a single <p>). Partner
+		// branding suppresses the experiment ToS — partners have their own copy.
 		const heading = shouldDeferMobileReveal ? null : (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
@@ -198,6 +199,9 @@ const UserStepComponent: StepType = function UserStep( {
 					subText={ headingSubText }
 					align={ isEmailFirstVariant ? 'left' : undefined }
 				/>
+				{ isMobileTreatmentTosTop && ! signupTosElement && (
+					<MobileCompactTosNotice position="below" />
+				) }
 			</>
 		);
 

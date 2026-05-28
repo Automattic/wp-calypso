@@ -282,6 +282,22 @@ $breakpoint-mobile: 660px;
 // the class added when isMobileTreatment is true so desktop and control-group
 // mobile users are never affected.
 .step-container-v2:has(.step-container-v2--user-mobile-treatment) {
+	// Pin the top bar to the viewport. The header is the user's connection to
+	// the next onboarding step (Log in link, brand), so it must remain visible
+	// even when the form overflows and the document scrolls. The ToS is sticky
+	// to the viewport bottom (see .signup-form-social-first__tos-link below),
+	// so the form area between them is the only thing that scrolls.
+	// `env(safe-area-inset-top)` keeps the bar's content clear of the iOS
+	// dynamic island / notch. No explicit background — the bar inherits the
+	// page surface naturally; form content scrolling behind it is on the same
+	// surface, so there's no visible scroll-through.
+	.step-container-v2__top-bar-wrapper {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: 1;
+		padding-block-start: env(safe-area-inset-top);
+	}
+
 	// Bottom-anchor the heading + form pair by giving the heading row an auto
 	// top margin. The pair flows together at the bottom of the viewport with
 	// atmosphere above the heading. When the form grows tall enough to fill the
@@ -304,10 +320,28 @@ $breakpoint-mobile: 660px;
 		color: var(--studio-gray-50);
 	}
 
+	// Top-position ToS (treatment_tos_top): rendered as a sibling of
+	// .step-container-v2__heading (direct child of the content row), so the
+	// form-internal selector below does not reach it. Mirrors the subtitle's
+	// paragraph styling (Heading.scss `.step-container-v2__heading p`) so it
+	// reads as a continuation paragraph in the heading block. `text-wrap:
+	// pretty` (not `balance` like the subtitle) — `balance` equalizes line
+	// lengths, which produces unnatural breaks on body-length sentences.
+	.step-container-v2__content-row > .signup-form-social-first__tos-link {
+		margin-block: 0.5rem 0;
+		color: var(--studio-gray-50);
+		font-size: 0.875rem;
+		line-height: 1.5;
+		text-wrap: pretty;
+	}
+
 	.signup-form-social-first--mobile-compact {
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		// Spacing is managed per-element via `margin-block-start` rather than
+		// `gap`, so each gap lives on a single box property and is independently
+		// expressible: social → OR → email all use 16 px (the existing rhythm),
+		// while Continue → ToS is 24 px per Figma.
 
 		// Social row: icon-only, equal-width, horizontal. The selector chain matches
 		// the existing `.is-social-first .auth-form__social-buttons .auth-form__social-buttons-container`
@@ -348,21 +382,43 @@ $breakpoint-mobile: 660px;
 			@include hide-content-accessibly;
 		}
 
-		// "or" divider: cancel the negative margins the base CSS applies when the
-		// divider sits next to a Card (`.card ~ .auth-form__separator`), so it
-		// participates in the parent's 16px flex gap cleanly. The text styling
-		// (uppercase "OR", gray-50, 12px) comes from the shared FormDivider
-		// styles and matches what /log-in already uses.
+		// "or" divider: 16 px gap above (replaces the negative-margin scheme the
+		// base CSS uses when the divider sits next to a Card). Text styling
+		// (uppercase "OR", gray-50, 12px) comes from the shared FormDivider.
 		.auth-form__separator {
-			margin-block: 0;
+			margin-block: 16px 0;
 		}
 
-		// ToS sits at the bottom of the cluster, centered, small text, with a
-		// 32px gap above it per Figma (the parent's 16px gap + 16px margin).
+		// signup-form/style.scss adds 24px margin-top here as a compensation for
+		// the divider's negative-margin scheme (which mobile-compact replaces).
+		// Override to the rhythm value: 16 px gap above the email block. The
+		// 24 px Continue → ToS gap (per Figma) lives on this same element as
+		// margin-block-end, so it's the single declared source of that gap
+		// (the ToS itself has no margin).
+		.auth-form__separator + .signup-form-social-first-email {
+			margin-block-start: 16px;
+			margin-block-end: 24px;
+		}
+
+		// ToS sits flush below the form's 24 px bottom margin. Matches the
+		// top-position arm's font-size / color (legal asked for the larger,
+		// darker treatment) while keeping center alignment for the in-form
+		// placement. Sticky at the viewport bottom so it remains visible when
+		// the form overflows (validation notices, longer locales, landscape
+		// orientation, the smallest portrait viewports). Solid background
+		// prevents the element behind it from showing through when sticky
+		// engages; the safe-area-inset-bottom keeps it clear of iOS home
+		// indicators.
 		.signup-form-social-first__tos-link {
-			margin-block: 16px 0;
+			position: sticky;
+			bottom: 0;
+			margin-block: 0;
+			padding-block: 8px max(16px, env(safe-area-inset-bottom));
+			background-color: var(--color-surface);
+			color: var(--studio-gray-50);
 			text-align: center;
-			font-size: 0.75rem;
+			font-size: 0.875rem;
+			line-height: 1.5;
 		}
 
 		.signup-form-social-first__login-link {
