@@ -43,7 +43,15 @@ export class IsolatedBlockEditorComponent {
 		// Click on the editor title. This has the effect of dismissing the block inserter
 		// if open, and restores focus back to the editor root container, allowing insertion
 		// of blocks.
-		await this.page.waitForSelector( selectors.firstParagraph );
+		const firstParagraph = this.page.locator( selectors.firstParagraph );
+		const defaultBlockButton = this.page.getByRole( 'button', { name: 'Add default block' } );
+
+		await firstParagraph.or( defaultBlockButton ).first().waitFor( { state: 'visible' } );
+		if ( await defaultBlockButton.isVisible() ) {
+			await defaultBlockButton.click();
+			await firstParagraph.waitFor( { state: 'visible' } );
+		}
+
 		await this.page.click( selectors.blockInserterToggle );
 		await this.page.fill( selectors.blockInserterSearch, blockName );
 		await this.page.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );

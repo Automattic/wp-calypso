@@ -4,10 +4,9 @@ import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import ReaderPostEllipsisMenu from './reader-post-ellipsis-menu';
 import './style.scss';
@@ -58,11 +57,11 @@ class ReaderPostOptionsMenu extends Component {
 
 		return (
 			<span className={ classes }>
-				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ ! site && post && ! post.is_external && post.site_ID && (
 					<QueryReaderSite siteId={ +post.site_ID } />
 				) }
 				<ReaderPostEllipsisMenu
+					feed={ feed }
 					site={ site }
 					teams={ teams }
 					translate={ translate }
@@ -84,15 +83,17 @@ class ReaderPostOptionsMenu extends Component {
 	}
 }
 
-export default compose(
+const ConnectedReaderPostOptionsMenu = compose(
 	withReaderTeams,
-	connect( ( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+	connect( ( state, { feed, post: { is_external, site_ID } = {} } ) => {
 		const siteId = is_external ? null : site_ID;
-		return Object.assign(
-			{},
-			feedId > 0 && { feed: getFeed( state, feedId ) },
-			siteId > 0 && { site: getSite( state, siteId ) }
-		);
+		return Object.assign( {}, feed && { feed }, siteId > 0 && { site: getSite( state, siteId ) } );
 	} ),
 	localize
 )( ReaderPostOptionsMenu );
+
+export default function ReaderPostOptionsMenuContainer( props ) {
+	const { data: feed } = useFeedQuery( props.post?.feed_ID );
+
+	return <ConnectedReaderPostOptionsMenu { ...props } feed={ feed } />;
+}

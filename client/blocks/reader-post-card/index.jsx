@@ -11,13 +11,13 @@ import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import PostByline from './byline';
@@ -303,7 +303,7 @@ class ReaderPostCard extends Component {
 	}
 }
 
-export default compose(
+const ConnectedReaderPostCard = compose(
 	withReaderTeams,
 	connect(
 		( state, ownProps ) => ( {
@@ -311,7 +311,7 @@ export default compose(
 			isWPForTeamsItem:
 				ownProps.postKey &&
 				( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
-					isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
+					( ownProps.feed?.blog_ID ? isSiteWPForTeams( state, ownProps.feed.blog_ID ) : false ) ),
 			hasOrganization:
 				ownProps.postKey &&
 				hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
@@ -320,3 +320,10 @@ export default compose(
 		{ expandCard: expandCardAction }
 	)
 )( ReaderPostCard );
+
+export default function ReaderPostCardContainer( props ) {
+	const feedId = props.postKey?.feedId ?? props.post?.feed_ID;
+	const { data: fetchedFeed } = useFeedQuery( feedId );
+
+	return <ConnectedReaderPostCard { ...props } feed={ props.feed ?? fetchedFeed } />;
+}
