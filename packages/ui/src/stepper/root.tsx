@@ -141,8 +141,10 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 	return (
 		<StepperContext.Provider value={ ctx }>
 			{ orientation === 'vertical' ? (
-				// Bridge: Accordion.Root value is string[] (single-select via multiple=false)
+				// Bridge: Accordion.Root value is string[] (single-select via multiple=false).
+				// multiple={false} is passed explicitly to guard against base-ui default changing.
 				<Accordion.Root
+					multiple={ false }
 					value={ value ? [ value ] : [] }
 					onValueChange={ ( values ) => {
 						const next = values[ 0 ];

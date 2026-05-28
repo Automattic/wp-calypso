@@ -163,20 +163,6 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 .panel {
 	overflow: hidden;
-
-	// Vertical: animate expand/collapse via grid-template-rows
-	&[hidden] {
-		display: block;
-		grid-template-rows: 0fr;
-	}
-
-	&:not( [hidden] ) {
-		grid-template-rows: 1fr;
-	}
-
-	@media ( prefers-reduced-motion: no-preference ) {
-		transition: grid-template-rows 200ms ease;
-	}
 }
 
 // ---------------------------------------------------------------------------

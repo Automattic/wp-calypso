@@ -20,7 +20,7 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 	{ value: valueProp, forceMount, children, className, ...props },
 	ref
 ) {
-	const { orientation, totalSteps } = useStepperContext();
+	const { orientation, totalSteps, steps } = useStepperContext();
 
 	// In vertical mode, value comes from StepContext (we're inside a Step).
 	// In horizontal mode, value is passed explicitly.
@@ -39,10 +39,17 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 				"[Stepper] Stepper.Panel requires a 'value' prop in horizontal mode to associate it with a step."
 			);
 		}
+		if ( resolvedValue && steps.length > 0 && ! steps.some( ( s ) => s.value === resolvedValue ) ) {
+			// eslint-disable-next-line no-console
+			console.warn( `[Stepper] No step found with value '${ resolvedValue }' for this Panel.` );
+		}
 	}
 
 	if ( orientation === 'vertical' ) {
-		// Apply role="region" only when step count is small enough to avoid landmark noise
+		// Apply role="region" only when step count is small enough to avoid landmark noise.
+		// Passing role={undefined} intentionally overrides base-ui's internal role="region":
+		// base-ui's mergeProps applies elementProps last ("external props take precedence"),
+		// so role={undefined} wins and React omits the attribute from the DOM.
 		const useRegion = totalSteps > 0 && totalSteps <= 5;
 
 		return (

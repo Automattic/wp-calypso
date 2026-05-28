@@ -47,7 +47,17 @@
 	padding-inline-start: calc( 24px + #{variables.$grid-unit-10} );
 	padding-block-end: variables.$grid-unit-20;
 
+	// Animate expand/collapse using the height measured by base-ui's Accordion.
+	// --accordion-panel-height is set to 0px when collapsed and Xpx when open.
+	// display: block on [hidden] overrides the browser default (display: none)
+	// so the height transition runs during both expand and collapse.
+	height: var( --accordion-panel-height );
+
+	&[hidden] {
+		display: block;
+	}
+
 	@media ( prefers-reduced-motion: no-preference ) {
-		transition: grid-template-rows 200ms ease;
+		transition: height 200ms ease;
 	}
 }

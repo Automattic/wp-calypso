@@ -126,7 +126,7 @@ export type StepProps = {
 	disabled?: boolean;
 	/** Custom indicator content; built-in accessible label is always generated */
 	indicator?: ReactNode;
-	/** Horizontal only: keep panel mounted when inactive */
+	/** Keep panel mounted when inactive (works in both orientations) */
 	forceMount?: boolean;
 	/** Panel content */
 	children: ReactNode;

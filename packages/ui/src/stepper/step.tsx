@@ -1,6 +1,6 @@
 // packages/ui/src/stepper/step.tsx
 import { Accordion } from '@base-ui/react/accordion';
-import { forwardRef, useContext, useEffect } from '@wordpress/element';
+import { forwardRef, useContext, useEffect, useLayoutEffect } from '@wordpress/element';
 import { StepContext, StepperContext } from './context';
 import type { StepContextValue, StepStatus } from './types';
 
@@ -42,8 +42,9 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 	const isDisabled = disabledProp || isLinearDisabled;
 
 	// Register on mount with real metadata; deregister on unmount.
-	// Keep metadata in sync when derived state changes.
-	useEffect( () => {
+	// useLayoutEffect ensures registration happens before the first browser paint,
+	// so totalSteps and index are correct on the first visible render.
+	useLayoutEffect( () => {
 		const deregister = registerStep( { value, status, disabled: isDisabled } );
 		return deregister;
 		// eslint-disable-next-line react-hooks/exhaustive-deps

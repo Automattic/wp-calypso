@@ -1,5 +1,5 @@
 // packages/ui/src/horizontal-stepper/horizontal-stepper-step.tsx
-import { createContext, useContext, useEffect } from '@wordpress/element';
+import { createContext, useContext, useEffect, useLayoutEffect } from '@wordpress/element';
 import type { StepProps } from '../stepper/types';
 
 export type HorizontalStepRecord = StepProps;
@@ -27,8 +27,9 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 
 	const { registerStep, updateStep } = ctx;
 
-	// Register on mount, deregister on unmount
-	useEffect( () => {
+	// Register on mount, deregister on unmount.
+	// useLayoutEffect ensures registration happens before first browser paint.
+	useLayoutEffect( () => {
 		return registerStep( props );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.value ] );
