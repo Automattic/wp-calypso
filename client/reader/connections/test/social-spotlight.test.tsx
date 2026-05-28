@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialSpotlight, type SpotlightConnection } from '../social-spotlight';
 import type {
@@ -9,10 +10,13 @@ import type {
 	AtmosphereTimelinePage,
 	FediverseFeedItem,
 	FediverseTimelinePage,
+	MastodonFeedItem,
 	MastodonTimelinePage,
 } from '@automattic/api-core';
 
 jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+
+const mockedLogToLogstash = logToLogstash as jest.MockedFunction< typeof logToLogstash >;
 
 const mockAtmosphereTimeline = jest.fn();
 const mockMastodonTimeline = jest.fn();
@@ -54,6 +58,32 @@ function makeAtmosphereItem( overrides: Partial< AtmosphereFeedItem > = {} ): At
 	} as AtmosphereFeedItem;
 }
 
+function makeMastodonItem( overrides: Partial< MastodonFeedItem > = {} ): MastodonFeedItem {
+	return {
+		id: '1',
+		url: 'https://mas.to/@carol/1',
+		created_at: '2026-05-20T12:00:00Z',
+		account: {
+			id: '99',
+			username: 'carol',
+			acct: 'carol',
+			display_name: 'Carol',
+			avatar: null,
+		},
+		content: '<p>Mastodon body content</p>',
+		spoiler_text: '',
+		sensitive: false,
+		language: 'en',
+		in_reply_to_id: null,
+		in_reply_to_account_id: null,
+		boost: null,
+		media: [],
+		counts: { replies: 0, boosts: 1, favourites: 3 },
+		viewer: { favourited: false, reblogged: false },
+		...overrides,
+	} as MastodonFeedItem;
+}
+
 function makeFediverseItem( overrides: Partial< FediverseFeedItem > = {} ): FediverseFeedItem {
 	return {
 		id: 'https://example.social/users/bob/statuses/1',
@@ -85,6 +115,7 @@ describe( 'SocialSpotlight', () => {
 		mockAtmosphereTimeline.mockReset();
 		mockMastodonTimeline.mockReset();
 		mockFediverseTimeline.mockReset();
+		mockedLogToLogstash.mockClear();
 		mockMastodonTimeline.mockResolvedValue( {
 			items: [],
 			cursor: null,
@@ -132,32 +163,9 @@ describe( 'SocialSpotlight', () => {
 			cursor: null,
 		} as AtmosphereTimelinePage );
 		mockMastodonTimeline.mockResolvedValue( {
-			items: [
-				{
-					id: '1',
-					url: 'https://mas.to/@carol/1',
-					created_at: '2026-05-20T12:00:00Z',
-					account: {
-						id: '99',
-						username: 'carol',
-						acct: 'carol',
-						display_name: 'Carol',
-						avatar: null,
-					},
-					content: '<p>Mastodon body content</p>',
-					spoiler_text: '',
-					sensitive: false,
-					language: 'en',
-					in_reply_to_id: null,
-					in_reply_to_account_id: null,
-					boost: null,
-					media: [],
-					counts: { replies: 0, boosts: 1, favourites: 3 },
-					viewer: { favourited: false, reblogged: false },
-				},
-			],
+			items: [ makeMastodonItem() ],
 			cursor: null,
-		} as unknown as MastodonTimelinePage );
+		} as MastodonTimelinePage );
 		mockFediverseTimeline.mockResolvedValue( {
 			items: [],
 			cursor: null,
@@ -179,6 +187,37 @@ describe( 'SocialSpotlight', () => {
 		const { container } = renderWithProvider( <SocialSpotlight connections={ connections } /> );
 
 		expect( container.querySelector( '.social-spotlight-skeleton__card' ) ).not.toBeNull();
+	} );
+
+	it( 'logs a failed upstream once, not on every re-render', async () => {
+		mockAtmosphereTimeline.mockRejectedValue( new Error( 'boom' ) );
+		mockFediverseTimeline.mockResolvedValue( {
+			items: [],
+			cursor: null,
+		} as FediverseTimelinePage );
+
+		const connections: SpotlightConnection[] = [ { protocol: 'atmosphere', id: 1 } ];
+		const { rerender } = renderWithProvider( <SocialSpotlight connections={ connections } /> );
+
+		await waitFor( () => {
+			expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
+		} );
+		expect( mockedLogToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				extra: expect.objectContaining( {
+					type: 'reader_social_spotlight_fetch_failed',
+					protocol: 'atmosphere',
+					connection_id: 1,
+				} ),
+			} )
+		);
+
+		// Re-render with the same connections. The error state is unchanged,
+		// so the effect must not re-fire and `loggedErrorKeys` must dedupe.
+		rerender( <SocialSpotlight connections={ connections } /> );
+		rerender( <SocialSpotlight connections={ connections } /> );
+
+		expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'collapses to nothing when all items score 0', async () => {
