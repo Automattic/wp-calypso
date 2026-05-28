@@ -6,6 +6,7 @@ import {
 	useCallback,
 	useEffect,
 	useImperativeHandle,
+	useMemo,
 	useRef,
 	useState,
 } from '@wordpress/element';
@@ -70,53 +71,72 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 	} ) );
 
 	// Dev warnings: missing accessibility label, duplicate values, missing step
-	if ( process.env.NODE_ENV !== 'production' ) {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		useEffect( () => {
-			if ( ! ariaLabel && ! ariaLabelledBy ) {
+	useEffect( () => {
+		if ( process.env.NODE_ENV === 'production' ) {
+			return;
+		}
+		if ( ! ariaLabel && ! ariaLabelledBy ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				"[Stepper] Stepper requires either 'aria-label' or 'aria-labelledby' for accessibility."
+			);
+		}
+	}, [ ariaLabel, ariaLabelledBy ] );
+
+	useEffect( () => {
+		if ( process.env.NODE_ENV === 'production' ) {
+			return;
+		}
+		const seen = new Set< string >();
+		for ( const s of steps ) {
+			if ( seen.has( s.value ) ) {
 				// eslint-disable-next-line no-console
 				console.warn(
-					"[Stepper] Stepper requires either 'aria-label' or 'aria-labelledby' for accessibility."
+					`[Stepper] Two steps share value '${ s.value }'. Each step must have a unique value.`
 				);
 			}
-		}, [ ariaLabel, ariaLabelledBy ] );
+			seen.add( s.value );
+		}
+		if ( value && steps.length > 0 && ! steps.some( ( s ) => s.value === value ) ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				`[Stepper] No step found with value '${ value }'. Falling back to the first step.`
+			);
+		}
+	}, [ steps, value ] );
 
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		useEffect( () => {
-			const seen = new Set< string >();
-			for ( const s of steps ) {
-				if ( seen.has( s.value ) ) {
-					// eslint-disable-next-line no-console
-					console.warn(
-						`[Stepper] Two steps share value '${ s.value }'. Each step must have a unique value.`
-					);
-				}
-				seen.add( s.value );
-			}
-			if ( value && steps.length > 0 && ! steps.some( ( s ) => s.value === value ) ) {
-				// eslint-disable-next-line no-console
-				console.warn(
-					`[Stepper] No step found with value '${ value }'. Falling back to the first step.`
-				);
-			}
-		}, [ steps, value ] );
-	}
-
-	const ctx: StepperContextValue = {
-		value,
-		onValueChange: handleValueChange,
-		orientation,
-		linear,
-		headingLevel,
-		activationMode,
-		steps,
-		totalSteps,
-		registerStep,
-		updateStep,
-		registerTriggerRef,
-		formatStepLabel,
-		indicatorVariant,
-	};
+	const ctx = useMemo< StepperContextValue >(
+		() => ( {
+			value,
+			onValueChange: handleValueChange,
+			orientation,
+			linear,
+			headingLevel,
+			activationMode,
+			steps,
+			totalSteps,
+			registerStep,
+			updateStep,
+			registerTriggerRef,
+			formatStepLabel,
+			indicatorVariant,
+		} ),
+		[
+			value,
+			handleValueChange,
+			orientation,
+			linear,
+			headingLevel,
+			activationMode,
+			steps,
+			totalSteps,
+			registerStep,
+			updateStep,
+			registerTriggerRef,
+			formatStepLabel,
+			indicatorVariant,
+		]
+	);
 
 	return (
 		<StepperContext.Provider value={ ctx }>

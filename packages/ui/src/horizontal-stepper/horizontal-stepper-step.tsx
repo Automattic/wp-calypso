@@ -1,20 +1,8 @@
 // packages/ui/src/horizontal-stepper/horizontal-stepper-step.tsx
 import { createContext, useContext, useEffect } from '@wordpress/element';
-import type { StepStatus } from '../stepper/types';
-import type { ReactNode } from 'react';
+import type { StepProps } from '../stepper/types';
 
-export type HorizontalStepRecord = {
-	value: string;
-	title: string;
-	description?: string;
-	status?: StepStatus;
-	optional?: boolean;
-	disabled?: boolean;
-	indicator?: ReactNode;
-	forceMount?: boolean;
-	children: ReactNode;
-	className?: string;
-};
+export type HorizontalStepRecord = StepProps;
 
 type HorizontalStepRegistration = {
 	registerStep: ( record: HorizontalStepRecord ) => () => void;

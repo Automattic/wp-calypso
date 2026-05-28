@@ -1,7 +1,7 @@
 // packages/ui/src/stepper/trigger.tsx
 import { Accordion } from '@base-ui/react/accordion';
 import { Tabs } from '@base-ui/react/tabs';
-import { createElement, forwardRef, useCallback, useEffect, useRef } from '@wordpress/element';
+import { createElement, forwardRef, useCallback, useMemo, useRef } from '@wordpress/element';
 import clsx from 'clsx';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
@@ -19,10 +19,10 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 
 		// Keep a stable ref to forwardedRef so callbackRef doesn't change
 		// identity when the parent passes an inline callback ref.
+		// Updated during render (not in an effect) so the value is always
+		// current before any commit-phase callback fires.
 		const forwardedRefStable = useRef( forwardedRef );
-		useEffect( () => {
-			forwardedRefStable.current = forwardedRef;
-		}, [ forwardedRef ] );
+		forwardedRefStable.current = forwardedRef;
 
 		// Merge forwardedRef and the trigger registration ref
 		const callbackRef = useCallback(
@@ -38,12 +38,12 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 			[ value, registerTriggerRef ]
 		);
 
+		// Stable reference so Accordion.Header does not remount on every render
+		const headerElement = useMemo( () => createElement( `h${ headingLevel }` ), [ headingLevel ] );
+
 		if ( orientation === 'vertical' ) {
 			return (
-				<Accordion.Header
-					render={ createElement( `h${ headingLevel }` ) }
-					className={ styles[ 'trigger-heading' ] }
-				>
+				<Accordion.Header render={ headerElement } className={ styles[ 'trigger-heading' ] }>
 					<Accordion.Trigger
 						ref={ callbackRef as Ref< HTMLButtonElement > }
 						aria-current={ isCurrent ? 'step' : undefined }

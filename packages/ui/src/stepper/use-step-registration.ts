@@ -28,7 +28,12 @@ export function useStepRegistration< T extends { value: string } >() {
 	const updateStep = useCallback( ( meta: T ) => {
 		setSteps( ( prev ) => {
 			const idx = prev.findIndex( ( s ) => s.value === meta.value );
-			if ( idx === -1 || prev[ idx ] === meta ) {
+			if ( idx === -1 ) {
+				return prev;
+			}
+			const existing = prev[ idx ];
+			const keys = Object.keys( meta ) as ( keyof T )[];
+			if ( keys.every( ( k ) => existing[ k ] === meta[ k ] ) ) {
 				return prev;
 			}
 			return prev.map( ( s ) => ( s.value === meta.value ? meta : s ) );
