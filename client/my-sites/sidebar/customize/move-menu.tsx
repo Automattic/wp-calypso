@@ -60,20 +60,24 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 				return;
 			}
 			const target = rows[ targetIdx ];
+			const previousPosition = positionForElement( li );
 			const nextPosition = positionForMoveTarget( li, target, direction );
 			if ( ! nextPosition ) {
 				return;
 			}
-			customizeCtx.commitMove( itemId, nextPosition );
-			customizeCtx.announce(
-				translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
-					args: {
-						label: itemLabel,
-						index: targetIdx + 1,
-						total: rows.length,
-					},
-				} ) as string
-			);
+			if (
+				customizeCtx.commitMove( itemId, nextPosition, { previousPosition, label: itemLabel } )
+			) {
+				customizeCtx.announce(
+					translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
+						args: {
+							label: itemLabel,
+							index: targetIdx + 1,
+							total: rows.length,
+						},
+					} ) as string
+				);
+			}
 		},
 		[ itemId, itemLabel, customizeCtx ]
 	);
@@ -82,24 +86,45 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		if ( ! customizeCtx ) {
 			return;
 		}
-		customizeCtx.resetItem( itemId );
-		customizeCtx.announce(
-			translate( 'Reset %(label)s to default position.', {
-				args: { label: itemLabel },
-			} ) as string
-		);
+		const li = document.querySelector( itemSelector( itemId ) ) as HTMLLIElement | null;
+		const previousPosition = li ? positionForElement( li ) : undefined;
+		if ( customizeCtx.resetItem( itemId, { previousPosition, label: itemLabel } ) ) {
+			customizeCtx.announce(
+				translate( 'Reset %(label)s to default position.', {
+					args: { label: itemLabel },
+				} ) as string
+			);
+		} else {
+			customizeCtx.announce(
+				translate( '%(label)s is already at the default position.', {
+					args: { label: itemLabel },
+				} ) as string
+			);
+		}
 	}, [ itemId, itemLabel, customizeCtx ] );
 
 	const moveToTopLevel = useCallback( () => {
 		if ( ! customizeCtx ) {
 			return;
 		}
-		customizeCtx.commitMove( itemId, { kind: 'top_level', index: 0 } );
-		customizeCtx.announce(
-			translate( 'Moved %(label)s to top level.', {
-				args: { label: itemLabel },
-			} ) as string
-		);
+		const li = document.querySelector( itemSelector( itemId ) ) as HTMLLIElement | null;
+		const previousPosition = li ? positionForElement( li ) : undefined;
+		if (
+			customizeCtx.commitMove(
+				itemId,
+				{ kind: 'top_level', index: 0 },
+				{
+					previousPosition,
+					label: itemLabel,
+				}
+			)
+		) {
+			customizeCtx.announce(
+				translate( 'Moved %(label)s to top level.', {
+					args: { label: itemLabel },
+				} ) as string
+			);
+		}
 	}, [ itemId, itemLabel, customizeCtx ] );
 
 	const choices: MenuChoice[] = [
@@ -174,6 +199,8 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		};
 		const handleKey = ( ev: KeyboardEvent ) => {
 			if ( ev.key === 'Escape' ) {
+				ev.preventDefault();
+				ev.stopPropagation();
 				onClose();
 				triggerEl?.focus();
 			}
@@ -245,6 +272,20 @@ function escapeSelectorValue( value: string ): string {
 
 function itemSelector( itemId: string ): string {
 	return `li[data-wp-admin-sidebar-item-id="${ escapeSelectorValue( itemId ) }"]`;
+}
+
+function positionForElement( li: HTMLElement ): LayoutPosition {
+	const container = li.parentElement;
+	const groupContainer = container?.closest( 'li.wp-admin-sidebar-group' ) ?? null;
+	const index = container ? Math.max( 0, layoutIndexOf( container, li ) ) : 0;
+	if ( groupContainer ) {
+		return {
+			kind: 'in_group',
+			group_id: groupContainer.getAttribute( 'data-group' ) || '',
+			index,
+		};
+	}
+	return { kind: 'top_level', index };
 }
 
 function getMoveDestinations( itemId: string ): {

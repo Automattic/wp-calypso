@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -9,13 +10,13 @@ import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscript
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { requestPage } from 'calypso/state/reader/streams/actions';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
@@ -75,6 +76,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	// is best-effort, not a guarantee that the string is always an RSS endpoint.
 	const selectedFollowUrl = selectedSite?.feed_URL ?? '';
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
 
@@ -83,9 +85,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		[ recommendations, currentPage ]
 	);
 
-	// Stable across renders when only unrelated Redux slices update (e.g. feed metadata
-	// bridging for other feeds). Prevents `requestPage` effects from storming the data layer.
-	const recommendationIdsKey = recommendations.map( ( s ) => s.feed_ID ).join( ',' );
+	const recommendationIdsKey = recommendations.map( ( site ) => site.feed_ID ).join( ',' );
 	const recommendationsRef = useRef( recommendations );
 	recommendationsRef.current = recommendations;
 
@@ -102,9 +102,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		[ markSessionFollow ]
 	);
 
-	// Tracks which feeds we've already kicked off a stream prefetch for. `requestPage` forces a
-	// network fetch (staleTime=0 in the thunk), so re-dispatching it for the same feed every time
-	// `recommendations` grows would N×-amplify requests as cards trickle in from validation.
+	// Tracks which feeds we've already kicked off a stream prefetch for, so growing
+	// recommendation lists don't re-prefetch the same feed as cards trickle in from validation.
 	const prefetchedFeedIdsRef = useRef< Set< number > >( new Set() );
 
 	const handleLoadMore = useCallback( () => {
@@ -114,19 +113,18 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch a stream page for every newly-validated recommendation, exactly once per feed.
 	useEffect( () => {
-		const sites = recommendationsRef.current;
-		for ( const site of sites ) {
+		for ( const site of recommendationsRef.current ) {
 			if ( prefetchedFeedIdsRef.current.has( site.feed_ID ) ) {
 				continue;
 			}
 			prefetchedFeedIdsRef.current.add( site.feed_ID );
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
+			prefetchInfiniteStream( queryClient, dispatch, {
+				streamKey: `feed:${ site.feed_ID }`,
+			} ).catch( () => null );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
-	}, [ recommendationIdsKey, dispatch ] );
+	}, [ recommendationIdsKey, dispatch, queryClient ] );
 
 	useEffect( () => {
 		setCurrentPage( 0 );

@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-$alt-color: #FAF7F3;
+$alt-color: var(--color-neutral-0);
 
 .woopayments-overview {
 	.hosting-dashboard-layout__header-actions {

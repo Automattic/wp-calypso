@@ -40,12 +40,12 @@
 	],
 	"types": "dist",
 	"dependencies": {
-		"@wordpress/base-styles": "5.23.0",
+		"@wordpress/base-styles": "8.0.0",
 		"@wordpress/compose": "7.23.0",
-		"@wordpress/element": "^6.23.0",
+		"@wordpress/element": "^6.46.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
-		"@wordpress/primitives": "^4.23.0",
+		"@wordpress/primitives": "^4.46.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"react-day-picker": "^9.7.0"
@@ -68,11 +68,11 @@
 		"postcss": "^8.5.3",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
-		"storybook": "^8.6.14",
+		"storybook": "^8.6.17",
 		"stylelint": "^16.15.0",
 		"stylelint-plugin-logical-css": "^1.2.3",
 		"tsup": "^8.5.0",
-		"typescript": "^5.8.3"
+		"typescript": "^5.9.3"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",

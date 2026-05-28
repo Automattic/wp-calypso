@@ -30,7 +30,7 @@ import {
 	setBeforePrimary,
 	loadNewSubscriptionPage,
 } from './controller';
-import postCacheMiddleware from './data/post-cache-middleware';
+import postCacheMiddleware from './data/post/middleware';
 import {
 	createList,
 	deleteList,

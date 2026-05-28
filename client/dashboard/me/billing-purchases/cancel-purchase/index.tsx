@@ -577,7 +577,9 @@ function CancelPurchaseInner() {
 		cancellationOffer,
 		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
-		userHasCompletedCancelSurveyForPurchase,
+		userHasCompletedCancelSurveyForPurchase: isSplitCancelRemoveEnabled
+			? false
+			: userHasCompletedCancelSurveyForPurchase,
 	} );
 
 	const initSurveyState = () => {
@@ -1440,7 +1442,7 @@ function CancelPurchaseInner() {
 			survey_responses: enrichedSurveyData( surveyData, purchase ),
 		} );
 
-		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW && ! isSplitCancelRemoveEnabled ) {
 			cancelPurchaseSurveyCompleted();
 		}
 

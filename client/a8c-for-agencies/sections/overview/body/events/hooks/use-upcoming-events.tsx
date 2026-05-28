@@ -85,7 +85,7 @@ export const useUpcomingEvents = () => {
 							subtitle: translate( 'Automattic for Agencies & Pressable' ),
 							descriptions: [
 								translate(
-									'Enjoy up to 6 months free on Pressable Signature and Premium Plans with Automattic for Agencies. Choose annual billing for 6 months free or monthly billing for 3 months free, while still earning revenue share and reseller incentives.'
+									'Enjoy up to 6 months free on Pressable Signature and Premium plans with Automattic for Agencies. Choose annual billing for 6 months free or monthly billing for 3 months free, while still earning revenue share and reseller incentives.'
 								),
 							],
 							ctas: [

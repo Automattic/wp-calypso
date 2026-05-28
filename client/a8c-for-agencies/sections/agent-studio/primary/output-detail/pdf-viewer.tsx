@@ -6,6 +6,12 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import './pdf-viewer.scss';
 
+declare global {
+	interface Window {
+		applyA4aFit?: ( root: Document | ShadowRoot ) => Promise< void >;
+	}
+}
+
 export interface PdfViewerPage {
 	srcDoc: string;
 	role: 'cover' | 'body';
@@ -120,8 +126,28 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 					: node.outerHTML
 			)
 			.join( '' );
+		// Shadow roots don't execute scripts inserted via `innerHTML`,
+		// so pull the deck's inline fit.js out of the parsed body and
+		// re-attach it to the outer document. `window.applyA4aFit` is
+		// the once-per-tab load marker.
+		const scripts = Array.from( parsed.body.querySelectorAll( 'script' ) );
+		parsed.body.querySelectorAll( 'script' ).forEach( ( s ) => s.remove() );
 		shadow.innerHTML = HOST_BASELINE + styleMarkup + parsed.body.innerHTML;
-	}, [ srcDoc ] );
+		if ( ! window.applyA4aFit ) {
+			const fitter = scripts.find( ( s ) => ( s.textContent ?? '' ).includes( 'applyA4aFit' ) );
+			if ( fitter ) {
+				const live = document.createElement( 'script' );
+				live.textContent = fitter.textContent;
+				document.head.appendChild( live );
+			}
+		}
+		if ( window.applyA4aFit ) {
+			window.applyA4aFit( shadow ).catch( ( e ) => {
+				// eslint-disable-next-line no-console
+				console.warn( '[a4a-preview] applyA4aFit error', e );
+			} );
+		}
+	}, [ srcDoc, title ] );
 
 	return (
 		<div

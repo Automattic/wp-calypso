@@ -46,8 +46,10 @@ function useNoopMedia(): ComposerMediaSlot {
  */
 const NOOP_EXTRAS_SLOT: ComposerProtocolExtrasSlot = {
 	renderControls: () => null,
+	renderTrigger: () => null,
 	extendBuildParams: ( params ) => params,
 	clear: () => undefined,
+	getTracksProps: () => ( {} ),
 };
 
 function useNoopProtocolExtras(): ComposerProtocolExtrasSlot {
@@ -105,7 +107,18 @@ export type ComposerMode =
 			previewPost: PreviewPost;
 			replyTo?: { root: ComposerParentRef; parent: ComposerParentRef };
 	  }
-	| { kind: 'standalone'; entry_point: ComposerEntryPoint };
+	| {
+			kind: 'standalone';
+			entry_point: ComposerEntryPoint;
+			/**
+			 * Raw textarea content (including any trailing space) seeded into
+			 * the composer on open. Used by profile-page FABs to prepend
+			 * `@<handle> ` so the compose surface kicks off a mention. Seeded
+			 * exactly once on the null→non-null mode transition; later edits
+			 * by the user are not clobbered.
+			 */
+			initialText?: string;
+	  };
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 

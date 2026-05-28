@@ -12,6 +12,8 @@ import {
 	trackAiEditorialReviewResultRendered,
 	trackAiEditorialReviewSuggestionClick,
 	trackAiEditorialReviewSuggestionRendered,
+	trackBlockTransformationSuggestionClick,
+	trackBlockTransformationSuggestionRendered,
 } from './tracking';
 
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
@@ -31,6 +33,11 @@ const expectPrivacySafePayload = ( properties: Record< string, unknown > ) => {
 	expect( properties ).not.toHaveProperty( 'success_count' );
 	expect( properties ).not.toHaveProperty( 'failure_count' );
 	expect( properties ).not.toHaveProperty( 'text' );
+	expect( properties ).not.toHaveProperty( 'prompt' );
+	expect( properties ).not.toHaveProperty( 'label' );
+	expect( properties ).not.toHaveProperty( 'client_id' );
+	expect( properties ).not.toHaveProperty( 'clientId' );
+	expect( properties ).not.toHaveProperty( 'content' );
 	expect( properties ).not.toHaveProperty( 'reviewer' );
 };
 
@@ -116,6 +123,46 @@ describe( 'AI Editorial Review tracking', () => {
 				target: 'mixed',
 				outcome: 'partial_failed',
 				item_count: 4,
+				sessionid: 'test-session-id',
+			}
+		);
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
+	} );
+
+	it( 'tracks block transformation suggestion exposure with stable metadata', () => {
+		trackBlockTransformationSuggestionRendered( {
+			suggestionId: 'check-grammar',
+			suggestionType: 'text',
+			blockType: 'core/paragraph',
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_rendered',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+				sessionid: 'test-session-id',
+			}
+		);
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
+	} );
+
+	it( 'tracks block transformation suggestion clicks with stable metadata', () => {
+		trackBlockTransformationSuggestionClick( {
+			suggestionId: 'simplify-text',
+			suggestionType: 'text',
+			blockType: 'core/heading',
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'simplify-text',
+				suggestion_type: 'text',
+				block_type: 'core/heading',
+				surface: 'jetpack_ai_sidebar',
 				sessionid: 'test-session-id',
 			}
 		);

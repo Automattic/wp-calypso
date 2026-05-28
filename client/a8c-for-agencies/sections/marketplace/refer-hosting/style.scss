@@ -23,7 +23,7 @@
 }
 
 .refer-hosting__top {
-	background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-bg.svg ) no-repeat top right $header-background-color;
+	background: $header-background-color;
 
 	.hosting-dashboard-layout__header-breadcrumb {
 		color: var(--color-neutral-40);

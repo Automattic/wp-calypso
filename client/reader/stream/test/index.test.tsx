@@ -8,7 +8,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { createPostCacheMiddleware } from 'calypso/reader/data/post-cache-middleware';
+import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import Stream from '../index';
 import type { ReactNode } from 'react';

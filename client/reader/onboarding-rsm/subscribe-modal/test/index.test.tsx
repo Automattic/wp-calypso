@@ -6,6 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SubscribeModal from '../index';
 import type { CardData } from '../use-subscribe-recommendations';
@@ -36,6 +37,10 @@ jest.mock( '../use-subscribe-recommendations', () => ( {
 jest.mock( 'calypso/reader/stream', () => ( {
 	__esModule: true,
 	default: () => null,
+} ) );
+
+jest.mock( 'calypso/reader/data/stream', () => ( {
+	prefetchInfiniteStream: jest.fn( () => Promise.resolve() ),
 } ) );
 
 // Render the list item as a button so tests can click it and exercise the
@@ -90,10 +95,6 @@ jest.mock( '../verificationNudge', () => ( {
 
 jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
 	getFeed: jest.fn().mockReturnValue( null ),
-} ) );
-
-jest.mock( 'calypso/state/reader/streams/actions', () => ( {
-	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
 } ) );
 
 // ── Analytics ────────────────────────────────────────────────────────────────
@@ -176,6 +177,7 @@ describe( 'SubscribeModal – site preview analytics', () => {
 
 	beforeEach( () => {
 		jest.mocked( recordTracksEvent ).mockClear();
+		jest.mocked( prefetchInfiniteStream ).mockClear();
 		mockedRecommendationsHook.mockReturnValue( defaultRecommendationsHookValue );
 	} );
 
@@ -226,5 +228,23 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			'calypso_reader_onboarding_discover_modal_site_previewed',
 			expect.anything()
 		);
+	} );
+
+	it( 'prefetches recommendation streams through the React Query stream cache', () => {
+		const recommendations = [ makeRecommendation( 0 ), makeRecommendation( 1 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+
+		expect( prefetchInfiniteStream ).toHaveBeenCalledWith( expect.anything(), expect.anything(), {
+			streamKey: 'feed:100',
+		} );
+		expect( prefetchInfiniteStream ).toHaveBeenCalledWith( expect.anything(), expect.anything(), {
+			streamKey: 'feed:101',
+		} );
 	} );
 } );

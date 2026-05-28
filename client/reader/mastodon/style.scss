@@ -66,3 +66,11 @@
 	font-size: 13px;
 	text-align: center;
 }
+
+.mastodon-composer-controls__heading {
+	font-size: inherit;
+	font-weight: 600;
+	margin: 0;
+	color: var( --color-text );
+}
+

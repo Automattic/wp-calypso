@@ -1,4 +1,4 @@
-import { fetchSiteApmAggregate, updateApmEnabled } from '@automattic/api-core';
+import { fetchSiteApmAggregate, fetchSiteApmDetail, updateApmEnabled } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
@@ -96,6 +96,26 @@ export const siteApmAggregateRollingQuery = ( siteId: number, windowSec: number 
 				...cached.aggregates.filter( ( b ) => bucketSec( b ) >= windowStart ),
 			];
 			return { ...cached, aggregates: merged };
+		},
+		staleTime: 60_000,
+	} );
+
+// Per-route APM detail (one document per minute the route shipped a detail
+// doc). Keyed by windowSec so the entry survives the window sliding forward.
+export const siteApmDetailQuery = (
+	siteId: number,
+	params: { method: string; route: string; windowSec: number }
+) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'detail', params.method, params.route, params.windowSec ],
+		queryFn: () => {
+			const end = snapToMinute( Math.floor( Date.now() / 1000 ) );
+			return fetchSiteApmDetail( siteId, {
+				method: params.method,
+				route: params.route,
+				start: end - params.windowSec,
+				end,
+			} );
 		},
 		staleTime: 60_000,
 	} );

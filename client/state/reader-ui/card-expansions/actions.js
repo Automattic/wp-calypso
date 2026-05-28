@@ -1,6 +1,6 @@
+import DISPLAY_TYPES from 'calypso/reader/data/post/display-types';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import * as stats from 'calypso/reader/stats';
-import DISPLAY_TYPES from 'calypso/state/reader/posts/display-types';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,

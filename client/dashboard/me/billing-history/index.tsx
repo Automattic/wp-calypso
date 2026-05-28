@@ -80,7 +80,7 @@ export default function BillingHistory() {
 						fields={ fields }
 						view={ view }
 						onChangeView={ updateView }
-						onResetView={ resetView }
+						onReset={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }
 						getItemId={ getItemId }

@@ -29,7 +29,7 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
-For Reader post data specifically, see [`client/reader/data/README.md`](./data/README.md).
+For Reader post data specifically, see [`client/reader/data/post/README.md`](./data/post/README.md).
 The short version: use `usePost()` for request-capable post reads, and use
 `useCachedPost()` / `useCachedPosts()` only when a cache-only read is
 intentional, such as stream list contexts where one full-post request per item
@@ -234,11 +234,11 @@ Reuse the URL builders from `client/reader/route/index.js` instead of constructi
 
 ### Post display types
 
-Post display types in `client/state/reader/posts/display-types.js` are **bitwise flags** (not a mutually exclusive enum). They can be combined with XOR (`^=`): `PHOTO_ONLY` (1), `GALLERY` (32), `FEATURED_VIDEO` (512), `X_POST` (1024), etc.
+Post display types in `client/reader/data/post/display-types.js` are **bitwise flags** (not a mutually exclusive enum). They can be combined with XOR (`^=`): `PHOTO_ONLY` (1), `GALLERY` (32), `FEATURED_VIDEO` (512), `X_POST` (1024), etc.
 
 ### Post normalization pipeline
 
-Post normalization (`client/state/reader/posts/normalization-rules.js`) runs in two phases: **fast rules** (synchronous — decoding, HTML stripping, content sanitization) and **slow rules** (asynchronous — waits for images to load, classifies display type, detects Reddit posts). New normalization rules must be added to the correct phase.
+Post normalization (`client/reader/data/post/normalization/index.js`) runs in two phases: **fast rules** (synchronous — decoding, HTML stripping, content sanitization) and **slow rules** (asynchronous — waits for images to load, classifies display type, detects Reddit posts). New normalization rules must be added to the correct phase.
 
 ### Shared code boundaries
 
