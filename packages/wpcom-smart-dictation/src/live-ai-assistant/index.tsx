@@ -18,7 +18,9 @@ type TimelineRow =
 	| { kind: 'message'; timestamp: number; entry: RealtimeTranscriptEntry }
 	| { kind: 'tool'; timestamp: number; evt: RealtimeToolEvent };
 
-const DICTATION_UPGRADE_URL = 'https://wordpress.com/checkout';
+const DICTATION_UPGRADE_URL = `https://wordpress.com/checkout/${ encodeURIComponent(
+	window.location.host
+) }/premium?redirect_to=${ encodeURIComponent( window.location.href ) }`;
 
 function buildTimelineRows(
 	transcript: RealtimeTranscriptEntry[],
@@ -221,6 +223,11 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 			start();
 		}
 	};
+	const handleUpgradeClick = () => {
+		recordTracksEvent( 'calypso_smart_dictation_upgrade_clicked', {
+			source: 'quota_exhausted',
+		} );
+	};
 	const statusContent = isSessionActive ? (
 		<>
 			<AudioFftBlobs
@@ -243,8 +250,9 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 				variant="primary"
 				className="live-ai-assistant__call-button"
 				href={ DICTATION_UPGRADE_URL }
+				onClick={ handleUpgradeClick }
 			>
-				<span>{ __( 'Upgrade' ) }</span>
+				<span>{ __( 'Upgrade to premium' ) }</span>
 			</Button>
 		);
 	} else if ( showQuotaReachedButton ) {

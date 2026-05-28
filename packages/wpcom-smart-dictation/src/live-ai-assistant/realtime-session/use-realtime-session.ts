@@ -630,11 +630,15 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			return;
 		}
 
+		recordTracksEvent( 'calypso_smart_dictation_auto_stopped', {
+			reason: 'quota_exhausted',
+			can_upgrade: canUpgrade,
+		} );
 		recordSessionEnded( 'quota_exhausted' );
 		setStatus( 'ending' );
 		cleanup();
 		setStatus( 'idle' );
-	}, [ cleanup, recordSessionEnded, sessionTimeRemainingMs, status ] );
+	}, [ canUpgrade, cleanup, recordSessionEnded, sessionTimeRemainingMs, status ] );
 
 	const toggleMute = useCallback( () => {
 		const stream = localStreamRef.current;
