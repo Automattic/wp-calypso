@@ -26,7 +26,7 @@ import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
 import { getRenewUrlForPurchases, getTitleForListDisplay } from '../../../utils/purchase';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
-import { SITE_ACTION_TITLES, type SiteAction } from './constants';
+import { getEligiblePurchases, SITE_ACTION_TITLES, type SiteAction } from './constants';
 import type { Purchase } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
@@ -59,7 +59,7 @@ function getDescription( action: SiteAction, siteName: string, productName: stri
 				siteName,
 				productName
 			);
-		case 'auto-renew':
+		case 'disable-auto-renew':
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
@@ -78,29 +78,16 @@ function getSectionTitle( action: SiteAction ): string {
 	return __( 'Subscriptions' );
 }
 
-function getCancelIntent( action: SiteAction ): 'cancel' | 'remove' | 'auto-renew' {
+function getCancelIntent(
+	action: Exclude< SiteAction, 'renew' >
+): 'cancel' | 'remove' | 'auto-renew' {
 	if ( action === 'remove' ) {
 		return 'remove';
 	}
-	if ( action === 'auto-renew' ) {
+	if ( action === 'disable-auto-renew' ) {
 		return 'auto-renew';
 	}
 	return 'cancel';
-}
-
-function getEligiblePurchases(
-	purchases: Purchase[],
-	primaryPurchase: Purchase,
-	action: SiteAction
-): Purchase[] {
-	const sitePurchases = purchases.filter( ( p ) => p.blog_id === primaryPurchase.blog_id );
-
-	if ( action === 'cancel' || action === 'auto-renew' ) {
-		return sitePurchases.filter( ( p ) => p.is_auto_renew_enabled || p.ID === primaryPurchase.ID );
-	}
-
-	// Remove and renew: show all site purchases
-	return sitePurchases;
 }
 
 function getRenewalDescription( item: Purchase, action: SiteAction, locale: string ): string {
@@ -195,28 +182,22 @@ export default function SiteLevelActions() {
 		[ eligiblePurchases ]
 	);
 
-	const shouldBypass =
-		! isSplitEnabled || purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1;
-
 	useEffect( () => {
-		if ( ! shouldBypass ) {
-			return;
+		if ( ! isSplitEnabled ) {
+			if ( action === 'renew' ) {
+				window.location.href = getRenewUrlForPurchases( [ purchase ] );
+				return;
+			}
+			navigate( {
+				to: cancelPurchaseRoute.fullPath,
+				params: { purchaseId: String( purchase.ID ) },
+				search: { intent: getCancelIntent( action ) },
+				replace: true,
+			} );
 		}
+	}, [ isSplitEnabled, action, purchase, navigate ] );
 
-		if ( action === 'renew' ) {
-			window.location.href = getRenewUrlForPurchases( [ purchase ] );
-			return;
-		}
-
-		navigate( {
-			to: cancelPurchaseRoute.fullPath,
-			params: { purchaseId: purchase.ID },
-			search: { intent: getCancelIntent( action ) },
-			replace: true,
-		} );
-	}, [ shouldBypass, action, purchase, navigate, purchaseId ] );
-
-	if ( shouldBypass ) {
+	if ( ! isSplitEnabled ) {
 		return (
 			<PageLayout
 				size="small"
@@ -281,7 +262,7 @@ export default function SiteLevelActions() {
 						{ __( 'Continue to remove' ) }
 					</Button>
 				);
-			case 'auto-renew':
+			case 'disable-auto-renew':
 				return (
 					<Button variant="primary" isDestructive onClick={ handleContinue }>
 						{ __( 'Continue' ) }
@@ -294,16 +275,14 @@ export default function SiteLevelActions() {
 		<PageLayout
 			size="small"
 			header={
-				<VStack>
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 4 } /> }
-						title={ SITE_ACTION_TITLES[ action ] }
-						description={ <Text>{ getDescription( action, siteName, productName ) }</Text> }
-					/>
-				</VStack>
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 4 } /> }
+					title={ SITE_ACTION_TITLES[ action ] }
+					description={ <Text>{ getDescription( action, siteName, productName ) }</Text> }
+				/>
 			}
 		>
-			<Card className="site-level-actions">
+			<Card>
 				<CardHeader>
 					<SectionHeader title={ getSectionTitle( action ) } level={ 3 } />
 				</CardHeader>

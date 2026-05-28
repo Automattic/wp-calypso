@@ -38,6 +38,7 @@ import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
 	SITE_ACTION_TITLES,
+	getEligiblePurchases,
 	isSiteAction,
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
@@ -47,6 +48,7 @@ import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
+	getRenewUrlForPurchases,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
@@ -501,9 +503,32 @@ export const siteActionsRoute = createRoute( {
 	loader: async ( { parentMatchPromise, params: { action } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
-		if ( purchase ) {
-			await queryClient.ensureQueryData( userPurchasesQuery() );
+		if ( ! purchase ) {
+			throw dashboardRedirect( { to: purchasesRoute.fullPath } );
 		}
+
+		const allPurchases = await queryClient.ensureQueryData( userPurchasesQuery() );
+		const eligiblePurchases = getEligiblePurchases( allPurchases, purchase, action as SiteAction );
+
+		if ( purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1 ) {
+			if ( action === 'renew' ) {
+				window.location.href = getRenewUrlForPurchases( [ purchase ] );
+				await new Promise( () => {} ); // block component render while browser navigates
+			}
+
+			let intent: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+			if ( action === 'remove' ) {
+				intent = 'remove';
+			} else if ( action === 'disable-auto-renew' ) {
+				intent = 'auto-renew';
+			}
+			throw dashboardRedirect( {
+				to: cancelPurchaseRoute.fullPath,
+				params: { purchaseId: String( purchase.ID ) },
+				search: { intent },
+			} );
+		}
+
 		return { action };
 	},
 } ).lazy( () =>
