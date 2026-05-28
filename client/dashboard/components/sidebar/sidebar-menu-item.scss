@@ -9,6 +9,10 @@
 	width: 100%;
 	color: var( --dashboard-menu-item__color );
 
+	&:hover:not( .active ) {
+		color: var( --dashboard-menu-item__color );
+	}
+
 	&.active {
 		background: color-mix( in srgb, var( --wp-admin-theme-color ) 8%, transparent );
 		color: var( --wp-admin-theme-color );
