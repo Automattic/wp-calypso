@@ -162,10 +162,6 @@ beforeEach( () => {
 	mockClipboard();
 } );
 
-afterEach( () => {
-	nock.cleanAll();
-} );
-
 describe( 'getAgentEmailAddress', () => {
 	test.each( [ '', 'NULL', 'noop', 'not-an-email' ] )(
 		'returns null for an unusable Post by Email value: %s',
@@ -214,7 +210,7 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByRole( 'heading', { name: 'Email your assistant' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Connect Telegram/ } ) ).toHaveAttribute(
 			'href',
-			'/me/developer'
+			'https://wordpress.com/me/developer'
 		);
 		expect(
 			screen.getByText(

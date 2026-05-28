@@ -870,7 +870,7 @@ export const siteSettingsAIToolsRoute = createRoute( {
 			queryClient.prefetchQuery( sitePostByEmailSettingsQuery( site ) );
 		}
 
-		await Promise.all( [ queryClient.ensureQueryData( userSettingsQuery() ) ] );
+		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
 } );
 

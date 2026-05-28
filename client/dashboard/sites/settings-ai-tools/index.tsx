@@ -57,6 +57,7 @@ import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { isWriteTool } from '../../me/mcp/categories';
+import { wpcomLink } from '../../utils/link';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
@@ -485,7 +486,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				<EmailAssistantCard site={ site } recordTracksEvent={ recordTracksEvent } />
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<SummaryButton
-						href={ TELEGRAM_CONNECTION_PATH }
+						href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
 						title={ __( 'Connect Telegram' ) }
 						description={ __(
 							'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'

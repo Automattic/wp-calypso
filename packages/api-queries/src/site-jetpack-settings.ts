@@ -1,14 +1,14 @@
-import { fetchJetpackSettings, updateJetpackSettings } from '@automattic/api-core';
+import {
+	fetchJetpackSettings,
+	isPlainObject,
+	isPostByEmailAddress,
+	POST_BY_EMAIL_ACTIONS,
+	updateJetpackSettings,
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 import type { JetpackSettings } from '@automattic/api-core';
-
-const POST_BY_EMAIL_ACTIONS = new Set( [ '', 'null', 'create', 'regenerate', 'delete', 'noop' ] );
-
-function isPlainObject( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
 
 function getSettingsFromMutationResponse( response: unknown ): Partial< JetpackSettings > {
 	const payload =
@@ -24,19 +24,6 @@ function getSettingsFromMutationResponse( response: unknown ): Partial< JetpackS
 	delete settings.message;
 
 	return settings as Partial< JetpackSettings >;
-}
-
-function isReturnedPostByEmailAddress( value: unknown ): value is string {
-	if ( typeof value !== 'string' ) {
-		return false;
-	}
-
-	const normalizedValue = value.trim().toLowerCase();
-	return (
-		!! normalizedValue &&
-		normalizedValue.includes( '@' ) &&
-		! POST_BY_EMAIL_ACTIONS.has( normalizedValue )
-	);
 }
 
 function normalizeJetpackSettingsMutationResult(
@@ -55,7 +42,7 @@ function normalizeJetpackSettingsMutationResult(
 
 		if ( requestedPostByEmailAddress === 'delete' ) {
 			normalizedSettings.post_by_email_address = undefined;
-		} else if ( isReturnedPostByEmailAddress( returnedPostByEmailAddress ) ) {
+		} else if ( isPostByEmailAddress( returnedPostByEmailAddress ) ) {
 			normalizedSettings.post_by_email_address = returnedPostByEmailAddress;
 		} else if (
 			typeof normalizedSettings.post_by_email_address === 'string' &&

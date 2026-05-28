@@ -1,7 +1,14 @@
 import type { SitePostByEmailSettings, SitePostByEmailStatus } from './types';
 import type { Site } from '../site/types';
 
-const POST_BY_EMAIL_ACTIONS = new Set( [ '', 'null', 'create', 'regenerate', 'delete', 'noop' ] );
+export const POST_BY_EMAIL_ACTIONS = new Set( [
+	'',
+	'null',
+	'create',
+	'regenerate',
+	'delete',
+	'noop',
+] );
 
 export function isSimpleWpcomSite( site: Pick< Site, 'jetpack' | 'is_wpcom_atomic' > ) {
 	return ! site.jetpack && ! site.is_wpcom_atomic;
@@ -29,7 +36,7 @@ export function normalizeWpcomPostByEmailStatus(
 	};
 }
 
-function isPlainObject( value: unknown ): value is Record< string, unknown > {
+export function isPlainObject( value: unknown ): value is Record< string, unknown > {
 	return !! value && typeof value === 'object' && ! Array.isArray( value );
 }
 
