@@ -272,7 +272,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 				className="promote-post-i2__page"
 				visual={ <JetpackLogo size={ 24 } monochrome={ false } /> }
 				title={ translate( 'Blaze' ) }
-				subTitle={ translate( 'Advertise Your Site and Content on WordPress and Tumblr.' ) }
+				subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
 				showSidebarToggle={ false }
 				actions={
 					<>
