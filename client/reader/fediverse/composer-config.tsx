@@ -14,7 +14,7 @@ import type {
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
-function useFediverseAuthorHandle( connectionId: number | null ): string | null {
+export function useFediverseAuthorHandle( connectionId: number | null ): string | null {
 	const { data } = useFediverseConnectionsQuery( { enabled: connectionId !== null } );
 	if ( connectionId === null ) {
 		return null;
