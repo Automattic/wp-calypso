@@ -5,11 +5,6 @@ import {
 	DICTATION_CLIENT_SECRET_REMAINING_TIME_PATH,
 	DICTATION_CLIENT_SECRET_SETTLE_PATH,
 } from './constants';
-import { getErrorMessage } from './errors';
-
-const ACTIVE_SESSION_ERROR_CODE = 'dictation_client_secret_active_session_exists';
-const ACTIVE_SESSION_ERROR_MESSAGE =
-	'Another dictation session is already active. Stop dictation in the other tab or window, then try again.';
 
 interface FetchClientSecretArgs {
 	instructions: string;
@@ -35,15 +30,6 @@ export interface DictationRemainingTime {
 		expiresAt: number;
 		remainingTimeSeconds: number;
 	} | null;
-}
-
-export class ActiveDictationSessionError extends Error {
-	code = ACTIVE_SESSION_ERROR_CODE;
-
-	constructor() {
-		super( ACTIVE_SESSION_ERROR_MESSAGE );
-		this.name = 'ActiveDictationSessionError';
-	}
 }
 
 declare global {
@@ -116,24 +102,15 @@ function extractRemainingTime( data: unknown ): DictationRemainingTime {
 export async function fetchClientSecret( {
 	instructions,
 }: FetchClientSecretArgs ): Promise< DictationClientSecret > {
-	let response: unknown;
-
-	try {
-		response = await requestDictationEndpoint( {
-			path: DICTATION_CLIENT_SECRET_PATH,
-			method: 'POST',
-			body: {
-				session: {
-					instructions,
-				},
+	const response = await requestDictationEndpoint( {
+		path: DICTATION_CLIENT_SECRET_PATH,
+		method: 'POST',
+		body: {
+			session: {
+				instructions,
 			},
-		} );
-	} catch ( error ) {
-		if ( isActiveDictationSessionError( error ) ) {
-			throw new ActiveDictationSessionError();
-		}
-		throw error;
-	}
+		},
+	} );
 
 	return extractClientSecret( response );
 }
@@ -202,24 +179,4 @@ function requestDictationEndpoint< T = unknown >( {
 		method,
 		...( body ? { data: body } : {} ),
 	} );
-}
-
-function isActiveDictationSessionError( error: unknown ): boolean {
-	if ( ! error || typeof error !== 'object' ) {
-		return false;
-	}
-
-	const body = error as {
-		code?: unknown;
-		status?: unknown;
-		statusCode?: unknown;
-		data?: { status?: unknown };
-	};
-	const status = body.status ?? body.statusCode ?? body.data?.status;
-
-	return (
-		body.code === ACTIVE_SESSION_ERROR_CODE ||
-		( status === 409 &&
-			getErrorMessage( error ).toLowerCase().includes( 'active dictation session' ) )
-	);
 }
