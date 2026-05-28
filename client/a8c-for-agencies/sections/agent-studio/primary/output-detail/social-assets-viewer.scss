@@ -117,8 +117,8 @@
 
 .a4a-agent-studio-social-assets__download {
 	position: absolute;
-	top: 12px;
-	right: 12px;
+	inset-block-start: 12px;
+	inset-inline-end: 12px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;

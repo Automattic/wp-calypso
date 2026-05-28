@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { DEFAULT_SOCIAL_BRAND_PACK } from './brandPacks/default-pack';
 import { resolvePackFonts } from './brandPacks/loadFonts';
 import { campaignBriefFromManual, generateBeaCampaign, type BeaDirection } from './services/bea';
@@ -151,10 +152,10 @@ export async function composeSocialAssetsFromBrief(
 	const fonts = await resolveFonts();
 	const result = generateBeaCampaign( {
 		brief: campaignBriefFromManual( {
-			title: normalizeText( brief.headline ) || 'Campaign graphics',
+			title: normalizeText( brief.headline ) || __( 'Campaign graphics' ),
 			stat: normalizeText( brief.stat ) || undefined,
 			statContext: normalizeText( brief.stat_context ) || undefined,
-			cta: 'Learn more',
+			cta: __( 'Learn more' ),
 		} ),
 		pack,
 		imageCount: images.length,

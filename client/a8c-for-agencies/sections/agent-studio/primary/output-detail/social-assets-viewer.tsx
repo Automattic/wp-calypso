@@ -9,6 +9,8 @@ import {
 	type PointerEvent,
 	type RefObject,
 } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useDownloadSocialPng from '../../data/use-download-social-png';
 import { HtmlRenderPreview } from '../../social-design/components/HtmlRenderPreview';
 import { captureFittedTileHtml } from '../../social-design/services/captureFittedHtml';
@@ -28,10 +30,10 @@ type SocialCanvasItem = AgentStudioSocialAsset & { channel: SocialChannelKey };
 type SocialCanvasEntry = { item: SocialCanvasItem; index: number };
 
 const CHANNEL_LABEL: Record< SocialChannelKey, string > = {
-	cover: 'Cover',
-	email: 'Email',
-	square: 'Square',
-	story: 'Story',
+	cover: __( 'Cover' ),
+	email: __( 'Email' ),
+	square: __( 'Square' ),
+	story: __( 'Story' ),
 };
 
 function safeFileBase( title: string, label: string ): string {
@@ -140,6 +142,12 @@ export default function SocialAssetsViewer( { assets, title, postId }: Props ) {
 	}, [] );
 
 	function handleCanvasPointerDown( event: PointerEvent< HTMLDivElement > ) {
+		// Reset the moved guard at the start of every gesture, including
+		// when we early-return on a button/link target. Otherwise a
+		// previous pan leaves dragRef.current.moved=true and the next
+		// click on a tile's PNG button is silently swallowed by the
+		// guard in downloadAsset.
+		dragRef.current.moved = false;
 		if ( event.button !== 0 || ( event.target as HTMLElement ).closest( 'button, a' ) ) {
 			return;
 		}
@@ -263,6 +271,7 @@ function SocialAssetTile( {
 	const frameRef = useRef< HTMLDivElement >( null );
 	const [ nearViewport, setNearViewport ] = useState( false );
 	const downloadPng = useDownloadSocialPng();
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( ! asset.html ) {
@@ -312,6 +321,13 @@ function SocialAssetTile( {
 			triggerBlobDownload(
 				blob,
 				`${ safeFileBase( title, `${ asset.label }-${ index + 1 }` ) || 'social-asset' }.png`
+			);
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_social_png_downloaded', {
+					output_id: postId,
+					direction_id: asset.directionId,
+					size: asset.sizeKey,
+				} )
 			);
 		} finally {
 			setDownloading( false );
