@@ -66,8 +66,8 @@
 		"@typescript-eslint/parser": "^8.0.0",
 		"@wordpress/eslint-plugin": "^25.2.0",
 		"@wordpress/stylelint-config": "^23.38.0",
-		"stylelint": "^16.2.1",
-		"stylelint-scss": "^6.4.0",
+		"stylelint": "^17.11.1",
+		"stylelint-scss": "^7.1.1",
 		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
@@ -82,7 +82,7 @@
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"stylelint": "*",
-		"stylelint-scss": "^6.4.0",
+		"stylelint-scss": "^7.1.1",
 		"webpack": "*"
 	},
 	"private": true
