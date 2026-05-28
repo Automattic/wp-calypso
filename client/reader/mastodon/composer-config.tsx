@@ -15,7 +15,7 @@ import type {
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
-function useMastodonAuthorHandle( connectionId: number | null ): string | null {
+export function useMastodonAuthorHandle( connectionId: number | null ): string | null {
 	const { data } = useMastodonConnectionsQuery( { enabled: connectionId !== null } );
 	if ( connectionId === null ) {
 		return null;
