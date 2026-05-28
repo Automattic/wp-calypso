@@ -1,5 +1,4 @@
 // packages/ui/src/stepper/style.module.scss
-@use '@wordpress/base-styles/colors';
 @use '@wordpress/base-styles/mixins';
 @use '@wordpress/base-styles/variables';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
@@ -75,18 +74,6 @@ $indicator-size-sm: 16px; // bullet completed + current
 	@include ui-mixins.when-dark-theme {
 		border-color: theme.$components-color-gray-700;
 		color: theme.$components-color-gray-700;
-	}
-}
-
-// Error step
-.indicator.is-error {
-	border-color: colors.$alert-red;
-	background: transparent;
-	color: colors.$alert-red;
-
-	@include ui-mixins.when-dark-theme {
-		border-color: colors.$alert-red;
-		color: colors.$alert-red;
 	}
 }
 
