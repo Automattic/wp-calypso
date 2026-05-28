@@ -95,7 +95,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
-					label: translate( 'Agency Details' ),
+					label: translate( 'Agency details' ),
 					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
 				},
 			],
@@ -106,7 +106,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ].breadcrumbItems,
 				{
-					label: translate( 'Agency Expertise' ),
+					label: translate( 'Agency expertise' ),
 					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
 				},
 			],

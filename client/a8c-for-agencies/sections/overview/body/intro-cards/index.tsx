@@ -79,7 +79,7 @@ const Card4 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'Grow your business by getting listed on our partner directories' ) }</h1>
+			<h1>{ translate( 'Grow your business by getting listed on our Partner Directories' ) }</h1>
 			<p>
 				{ translate(
 					'With our program, you can earn partner badges and align your agency with Woo, Jetpack, WordPress.com, and Pressable, enabling you to secure placement in multiple partner directory listings. All you need to do is demonstrate your expertise in supporting clients for each brand to get listed on their directory page.'

@@ -36,9 +36,9 @@
 	"private": true,
 	"dependencies": {
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "^7.23.0",
-		"@wordpress/icons": "^10.23.0",
-		"@wordpress/private-apis": "^1.46.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
+		"@wordpress/icons": "^13.2.0",
+		"@wordpress/private-apis": "^1.47.0",
 		"@wordpress/ui": "^0.13.0"
 	},
 	"peerDependencies": {

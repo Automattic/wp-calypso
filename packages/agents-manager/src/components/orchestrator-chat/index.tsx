@@ -27,6 +27,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import AgentChat from '../agent-chat';
@@ -131,7 +132,9 @@ export default function OrchestratorChat( {
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
-	const chatError = isReaderChat ? getReaderChatErrorMessage( error ) : error;
+	const chatError = isReaderChat
+		? getReaderChatErrorMessage( error )
+		: getOrchestratorErrorMessage( error );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,

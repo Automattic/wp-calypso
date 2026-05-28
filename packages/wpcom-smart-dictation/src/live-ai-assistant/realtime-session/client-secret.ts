@@ -1,14 +1,10 @@
-import wpcomRequest from 'wpcom-proxy-request';
+import apiFetch from '@wordpress/api-fetch';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
 	DICTATION_CLIENT_SECRET_PATH,
 	DICTATION_CLIENT_SECRET_REMAINING_TIME_PATH,
 	DICTATION_CLIENT_SECRET_SETTLE_PATH,
 } from './constants';
-import { getErrorMessage } from './errors';
-
-const ACTIVE_SESSION_ERROR_CODE = 'dictation_client_secret_active_session_exists';
-const ACTIVE_SESSION_ERROR_MESSAGE =
-	'Another dictation session is already active. Stop dictation in the other tab or window, then try again.';
 
 interface FetchClientSecretArgs {
 	instructions: string;
@@ -17,6 +13,12 @@ interface FetchClientSecretArgs {
 interface DictationClientSecret {
 	value: string;
 	remainingTimeSeconds: number;
+}
+
+interface DictationEndpointRequest {
+	path: string;
+	method: 'GET' | 'POST';
+	body?: object;
 }
 
 export interface DictationRemainingTime {
@@ -28,15 +30,6 @@ export interface DictationRemainingTime {
 		expiresAt: number;
 		remainingTimeSeconds: number;
 	} | null;
-}
-
-export class ActiveDictationSessionError extends Error {
-	code = ACTIVE_SESSION_ERROR_CODE;
-
-	constructor() {
-		super( ACTIVE_SESSION_ERROR_MESSAGE );
-		this.name = 'ActiveDictationSessionError';
-	}
 }
 
 declare global {
@@ -109,44 +102,32 @@ function extractRemainingTime( data: unknown ): DictationRemainingTime {
 export async function fetchClientSecret( {
 	instructions,
 }: FetchClientSecretArgs ): Promise< DictationClientSecret > {
-	let response: unknown;
-
-	try {
-		response = await wpcomRequest( {
-			path: DICTATION_CLIENT_SECRET_PATH,
-			method: 'POST',
-			apiNamespace: 'wpcom/v2',
-			body: {
-				session: {
-					instructions,
-				},
+	const response = await requestDictationEndpoint( {
+		path: DICTATION_CLIENT_SECRET_PATH,
+		method: 'POST',
+		body: {
+			session: {
+				instructions,
 			},
-		} );
-	} catch ( error ) {
-		if ( isActiveDictationSessionError( error ) ) {
-			throw new ActiveDictationSessionError();
-		}
-		throw error;
-	}
+		},
+	} );
 
 	return extractClientSecret( response );
 }
 
 export async function fetchRemainingTime(): Promise< DictationRemainingTime > {
-	const response = await wpcomRequest( {
+	const response = await requestDictationEndpoint( {
 		path: DICTATION_CLIENT_SECRET_REMAINING_TIME_PATH,
 		method: 'GET',
-		apiNamespace: 'wpcom/v2',
 	} );
 
 	return extractRemainingTime( response );
 }
 
 export async function settleClientSecretSession(): Promise< void > {
-	await wpcomRequest( {
+	await requestDictationEndpoint( {
 		path: DICTATION_CLIENT_SECRET_SETTLE_PATH,
 		method: 'POST',
-		apiNamespace: 'wpcom/v2',
 	} );
 }
 
@@ -167,7 +148,7 @@ export function settleClientSecretSessionOnUnload(): boolean {
 }
 
 function getWpRestUrl( path: string ): string {
-	const route = `wpcom/v2${ path }`;
+	const route = getWpRestPath( path );
 	const root = window.wpApiSettings?.root;
 	if ( root ) {
 		return new URL( route, root ).toString();
@@ -175,22 +156,27 @@ function getWpRestUrl( path: string ): string {
 	return `/wp-json/${ route }`;
 }
 
-function isActiveDictationSessionError( error: unknown ): boolean {
-	if ( ! error || typeof error !== 'object' ) {
-		return false;
+function getWpRestPath( path: string ): string {
+	return `wpcom/v2${ path }`;
+}
+
+function requestDictationEndpoint< T = unknown >( {
+	path,
+	method,
+	body,
+}: DictationEndpointRequest ): Promise< T > {
+	if ( canAccessWpcomApis() ) {
+		return wpcomRequest< T >( {
+			path,
+			method,
+			apiNamespace: 'wpcom/v2',
+			body,
+		} );
 	}
 
-	const body = error as {
-		code?: unknown;
-		status?: unknown;
-		statusCode?: unknown;
-		data?: { status?: unknown };
-	};
-	const status = body.status ?? body.statusCode ?? body.data?.status;
-
-	return (
-		body.code === ACTIVE_SESSION_ERROR_CODE ||
-		( status === 409 &&
-			getErrorMessage( error ).toLowerCase().includes( 'active dictation session' ) )
-	);
+	return apiFetch< T >( {
+		path: `/${ getWpRestPath( path ) }`,
+		method,
+		...( body ? { data: body } : {} ),
+	} );
 }

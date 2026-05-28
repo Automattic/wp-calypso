@@ -160,7 +160,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			autocomplete="off"
 			description={ translate( "Pick your agency's specialties and choose your directories." ) }
 		>
-			<FormSection title={ translate( 'Product and Service' ) }>
+			<FormSection title={ translate( 'Product and service' ) }>
 				<FormField
 					label={ translate( 'What services do you offer?' ) }
 					description={ translate(
@@ -203,9 +203,9 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				</FormField>
 			</FormSection>
 
-			<FormSection title={ translate( 'Partner directories' ) }>
+			<FormSection title={ translate( 'Partner Directories' ) }>
 				<FormField
-					label={ translate( 'Automattic partner directories' ) }
+					label={ translate( 'Automattic Partner Directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
 					error={ validationError.directories }
 					field={ formData.directories }
