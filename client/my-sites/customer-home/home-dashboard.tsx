@@ -74,7 +74,7 @@ const GOAL_TO_CHECKLIST: Record< string, string > = {
 	build: 'build',
 	sell: 'sell',
 	newsletter: 'newsletter',
-	promote: 'build',
+	educate: 'build',
 	portfolio: 'build',
 };
 

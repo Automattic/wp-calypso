@@ -200,7 +200,7 @@ export function selectTasks(
  */
 /**
  * Pattern-backed task ids that a goal makes relevant (e.g. `setup-gallery` for
- * portfolio, `setup-bookings` for promote/build).
+ * portfolio, `setup-bookings` for educate/build).
  *
  * Dolly's `task_ids` are the rendered list, but Dolly is non-deterministic and
  * can drop a clearly relevant task — a portfolio site that never sees the

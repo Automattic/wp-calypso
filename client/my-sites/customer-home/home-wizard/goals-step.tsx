@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	Icon,
 } from '@wordpress/components';
-import { edit, tool, store, envelope, megaphone, gallery } from '@wordpress/icons';
+import { edit, tool, store, envelope, people, gallery } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import type { GoalKey } from './types';
 
@@ -43,10 +43,10 @@ function useGoalOptions(): GoalOption[] {
 			icon: envelope,
 		},
 		{
-			key: 'promote',
-			title: translate( 'Promote' ),
-			description: translate( 'Advertise a service, event, or cause to the right audience.' ),
-			icon: megaphone,
+			key: 'educate',
+			title: translate( 'Educate' ),
+			description: translate( 'For schools, nonprofits, courses, or communities.' ),
+			icon: people,
 		},
 		{
 			key: 'portfolio',

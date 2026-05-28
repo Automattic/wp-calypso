@@ -83,7 +83,7 @@ export type TaskTemplate = {
 	completesOn?: ActivationSignal;
 };
 
-const GOALS_ALL: GoalKey[] = [ 'write', 'build', 'sell', 'newsletter', 'promote', 'portfolio' ];
+const GOALS_ALL: GoalKey[] = [ 'write', 'build', 'sell', 'newsletter', 'educate', 'portfolio' ];
 
 export const TASK_REGISTRY: TaskTemplate[] = [
 	// ─── Activation core (the spine; closes the loop on the pitch's
@@ -94,7 +94,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		title: 'Publish your first post',
 		subtitle: 'Share something. Real publish, not a draft.',
 		category: 'activation',
-		goals: [ 'write', 'newsletter', 'promote' ],
+		goals: [ 'write', 'newsletter', 'educate' ],
 		hideWhen: { hasPosts: true },
 		url: ( s ) => `/post/${ s }`,
 		cta: 'Write post',
@@ -116,7 +116,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		title: 'Design your homepage',
 		subtitle: 'The first thing visitors see — make it count.',
 		category: 'activation',
-		goals: [ 'build', 'portfolio', 'promote' ],
+		goals: [ 'build', 'portfolio', 'educate' ],
 		hideWhen: { isLaunched: true },
 		url: ( s ) => `/site-editor/${ s }`,
 		cta: 'Edit site',
@@ -221,7 +221,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		category: 'feature-setup',
 		// Goal-tagged (same reason as setup-gallery) so a studio / promoter
 		// reliably gets the events page even when Dolly's pick omits it.
-		goals: [ 'promote', 'build' ],
+		goals: [ 'educate', 'build' ],
 		features: [ 'bookings' ],
 		// Builds an Events page from a dotcompatterns "events" pattern with
 		// Dolly-rewritten copy — a text-rich pattern, so the personalization is
@@ -240,7 +240,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		// Goal-tagged so a visual site reliably gets the gallery even when Dolly's
 		// pick omits it (see patternTaskIdsForGoal); the wizard collects no
 		// explicit features, so the `gallery` feature alone never surfaces it.
-		goals: [ 'portfolio', 'promote', 'build' ],
+		goals: [ 'portfolio', 'educate', 'build' ],
 		features: [ 'gallery' ],
 		// Builds a real Gallery page from a dotcompatterns gallery pattern. The
 		// pattern is image-only, so `intro` adds a Dolly heading + lead paragraph
@@ -306,7 +306,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		title: 'Improve discoverability with Yoast SEO',
 		subtitle: 'Helps your posts and products show up on Google.',
 		category: 'discover',
-		goals: [ 'write', 'sell', 'promote' ],
+		goals: [ 'write', 'sell', 'educate' ],
 		hideWhen: { pluginInstalled: 'wordpress-seo' },
 		url: ( s ) => `/plugins/wordpress-seo/${ s }`,
 		cta: 'Install',
@@ -316,7 +316,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		title: 'Build pages visually with Elementor',
 		subtitle: 'Most popular page builder among new WP.com small-business sites.',
 		category: 'discover',
-		goals: [ 'build', 'promote', 'portfolio' ],
+		goals: [ 'build', 'educate', 'portfolio' ],
 		hideWhen: { pluginInstalled: 'elementor' },
 		url: ( s ) => `/plugins/elementor/${ s }`,
 		cta: 'Install',

@@ -54,12 +54,12 @@ function useIntentPlaceholder( goal: GoalKey | null ): string {
 				translate( 'e.g. A newsletter about indie tech and startups.' ) as string,
 				translate( 'e.g. A monthly newsletter on personal finance for freelancers.' ) as string,
 			],
-			promote: [
-				translate( 'e.g. A landing page for a photography workshop.' ) as string,
-				translate( 'e.g. A landing page for an upcoming art exhibition.' ) as string,
-				translate( 'e.g. A landing page for a charity fundraising event.' ) as string,
-				translate( 'e.g. A landing page for my new podcast launch.' ) as string,
-				translate( 'e.g. A landing page for an online cooking class series.' ) as string,
+			educate: [
+				translate( 'e.g. A small homeschool community for new families.' ) as string,
+				translate( 'e.g. A nonprofit raising awareness for ocean cleanup.' ) as string,
+				translate( 'e.g. An online course about modern poetry.' ) as string,
+				translate( "e.g. A site for our local church's bulletin and events." ) as string,
+				translate( 'e.g. A community of urban beekeepers in Lisbon.' ) as string,
 			],
 			portfolio: [
 				translate( 'e.g. A portfolio of my illustration work.' ) as string,

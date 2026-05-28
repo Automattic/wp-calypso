@@ -1,4 +1,4 @@
-export type GoalKey = 'write' | 'build' | 'sell' | 'newsletter' | 'promote' | 'portfolio';
+export type GoalKey = 'write' | 'build' | 'sell' | 'newsletter' | 'educate' | 'portfolio';
 
 export type FeatureKey =
 	| 'forms'
