@@ -1,5 +1,5 @@
 // packages/ui/src/horizontal-stepper/test/index.tsx
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
 import { HorizontalStepper } from '..';
@@ -40,5 +40,50 @@ describe( 'HorizontalStepper', () => {
 		render( <Controlled /> );
 		await user.click( screen.getByRole( 'tab', { name: /step b/i } ) );
 		expect( screen.getByText( 'Panel B' ) ).toBeVisible();
+	} );
+
+	it( 'renders aria-disabled (not HTML disabled) on a disabled step tab', async () => {
+		render(
+			<HorizontalStepper value="a" aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+				<HorizontalStepper.Step value="b" title="Step B" disabled>
+					<p>Panel B</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		const tab = await screen.findByRole( 'tab', { name: /step b/i } );
+		expect( tab ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( tab ).not.toHaveAttribute( 'disabled' );
+	} );
+
+	it( 'keeps inactive panel content in the DOM when forceMount is set', async () => {
+		render(
+			<HorizontalStepper value="a" aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+				<HorizontalStepper.Step value="b" title="Step B" forceMount>
+					<p data-testid="force-mounted">Panel B</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		// Step B is inactive but forceMount keeps its panel in the DOM
+		expect( await screen.findByTestId( 'force-mounted' ) ).toBeInTheDocument();
+	} );
+
+	it( 'opens the defaultValue step in uncontrolled mode', async () => {
+		render(
+			<HorizontalStepper defaultValue="b" aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+				<HorizontalStepper.Step value="b" title="Step B">
+					<p>Panel B</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		await waitFor( () => expect( screen.getByText( 'Panel B' ) ).toBeVisible() );
 	} );
 } );

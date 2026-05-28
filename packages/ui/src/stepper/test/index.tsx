@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { createRef } from '@wordpress/element';
+import userEvent from '@testing-library/user-event';
+import { createRef, useState } from '@wordpress/element';
 import { Stepper } from '..';
 import { useStepContext } from '../context';
 import type { StepContextValue, StepperRef } from '../types';
@@ -445,5 +446,93 @@ describe( 'Stepper.Indicator formatStepLabel', () => {
 			</Stepper.Root>
 		);
 		expect( screen.getByText( 'Item 1 of 1' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'Stepper linear mode interaction', () => {
+	it( 'does not navigate when a linear-disabled tab is clicked', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<Stepper.Root
+				orientation="horizontal"
+				linear
+				value="a"
+				onValueChange={ onValueChange }
+				aria-label="Test"
+			>
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+					<Stepper.Step value="b">
+						<Stepper.Trigger>Step B</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Content A</Stepper.Panel>
+				<Stepper.Panel value="b">Content B</Stepper.Panel>
+			</Stepper.Root>
+		);
+		await user.click( screen.getByRole( 'tab', { name: /step b/i } ) );
+		expect( onValueChange ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'Stepper error status', () => {
+	it( 'shows "!" indicator and appends "error" to the accessible label', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a" status="error">
+					<Stepper.Indicator />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByText( 'Step 1 of 1, error' ) ).toBeInTheDocument();
+		expect( screen.getByText( '!' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'Stepper dynamic step removal', () => {
+	it( 'updates totalSteps when a conditional step is removed', async () => {
+		function Dynamic() {
+			const [ show, setShow ] = useState( true );
+			return (
+				<>
+					<button onClick={ () => setShow( false ) }>remove</button>
+					<Stepper.Root orientation="vertical" value="b" aria-label="Test">
+						{ show && (
+							<Stepper.Step value="a">
+								<Stepper.Indicator />
+							</Stepper.Step>
+						) }
+						<Stepper.Step value="b">
+							<Stepper.Indicator />
+						</Stepper.Step>
+					</Stepper.Root>
+				</>
+			);
+		}
+		const user = userEvent.setup();
+		render( <Dynamic /> );
+		// Initially step B is "Step 2 of 2"
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		await user.click( screen.getByRole( 'button', { name: /remove/i } ) );
+		// After removing step A, step B becomes "Step 1 of 1"
+		await waitFor( () => expect( screen.getByText( 'Step 1 of 1' ) ).toBeInTheDocument() );
+	} );
+} );
+
+describe( 'Stepper indicatorVariant', () => {
+	it( 'renders a numeric step label in the indicator when indicatorVariant is "number"', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" indicatorVariant="number" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Indicator />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		// The number variant renders <span aria-hidden="true">1</span> inside the indicator
+		const numericLabel = screen.getByText( '1' );
+		expect( numericLabel ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );

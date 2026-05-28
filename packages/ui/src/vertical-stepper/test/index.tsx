@@ -53,4 +53,15 @@ describe( 'VerticalStepper', () => {
 		);
 		expect( screen.getByRole( 'button', { name: /step a/i } ).closest( 'h2' ) ).not.toBeNull();
 	} );
+
+	it( 'shows "Optional" text for a step with optional prop', () => {
+		render(
+			<VerticalStepper value="a" aria-label="Test">
+				<VerticalStepper.Step value="a" title="Step A" optional>
+					<p>Content</p>
+				</VerticalStepper.Step>
+			</VerticalStepper>
+		);
+		expect( screen.getByText( 'Optional' ) ).toBeInTheDocument();
+	} );
 } );
