@@ -2,13 +2,27 @@
  * Unlock the private apis for the global styles related functionalities and re-export them
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
+ *
+ * NOTE: Between block-editor 15.5 and 15.10, upstream moved the global-styles
+ * hooks/context/equality helpers out of `@wordpress/block-editor`'s private
+ * APIs and into the new `@wordpress/global-styles-ui` and
+ * `@wordpress/global-styles-engine` packages. The ones we still need are
+ * imported from those packages here (with a yarn patch widening
+ * global-styles-ui's `exports` field to allow the deep paths). The equality
+ * helper got renamed and is small enough to inline.
  */
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
+import { getBlockTypes } from '@wordpress/blocks';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { generateGlobalStyles } from '@wordpress/global-styles-engine';
+import { GlobalStylesContext as UntypedGSContext } from '@wordpress/global-styles-ui/build-module/context';
+import { useSetting, useStyle } from '@wordpress/global-styles-ui/build-module/hooks';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
+import fastDeepEqual from 'fast-deep-equal/es6';
 import { isPlainObject } from 'is-plain-object';
+import { useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../constants';
 import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
@@ -17,17 +31,26 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'@wordpress/block-editor'
 );
 
-const {
-	cleanEmptyObject,
-	ExperimentalBlockEditorProvider,
-	GlobalStylesContext: UntypedGSContext,
-	areGlobalStyleConfigsEqual,
-	useGlobalStylesOutput,
-	useGlobalSetting,
-	useGlobalStyle,
-} = unlock( blockEditorPrivateApis );
+const { cleanEmptyObject, ExperimentalBlockEditorProvider } = unlock( blockEditorPrivateApis );
 
-const GlobalStylesContext: React.Context< GlobalStylesContextObject > = UntypedGSContext;
+const GlobalStylesContext: React.Context< GlobalStylesContextObject > =
+	UntypedGSContext as unknown as React.Context< GlobalStylesContextObject >;
+
+// Renamed/removed `areGlobalStyleConfigsEqual` upstream — inline the original
+// implementation here (a couple of `fastDeepEqual` calls on the styles and
+// settings slices, matching the pre-refactor behavior).
+const areGlobalStyleConfigsEqual = (
+	original: GlobalStylesObject | undefined,
+	variation: GlobalStylesObject | undefined
+): boolean => {
+	if ( typeof original !== 'object' || typeof variation !== 'object' ) {
+		return original === variation;
+	}
+	return (
+		fastDeepEqual( original?.styles, variation?.styles ) &&
+		fastDeepEqual( original?.settings, variation?.settings )
+	);
+};
 
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesObject ) => {
 	const mergedConfig = user ? deepmerge( base, user, { isMergeableObject: isPlainObject } ) : base;
@@ -46,25 +69,40 @@ const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesO
 const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	< OuterProps extends object >( InnerComponent: React.ComponentType< OuterProps > ) => {
 		const settings = {};
-		return ( props: OuterProps ) => (
+		const WithExperimentalBlockEditorProvider = ( props: OuterProps ) => (
 			<ExperimentalBlockEditorProvider settings={ settings }>
 				<InnerComponent { ...props } />
 			</ExperimentalBlockEditorProvider>
 		);
+		return WithExperimentalBlockEditorProvider;
 	},
 	'withExperimentalBlockEditorProvider'
 );
 
-const useSafeGlobalStylesOutput = () => {
+// `useGlobalStylesOutput` used to live in `@wordpress/block-editor`'s private
+// APIs and returned `[ stylesheets, settings ]` from the merged config in
+// `GlobalStylesContext`. Upstream now expects callers to compose it themselves
+// using the engine — read the merged config from the context, call
+// `generateGlobalStyles( merged, blockTypes )`, and return the same tuple shape
+// so downstream consumers don't have to change.
+const useSafeGlobalStylesOutput = (): [ unknown[], Record< string, unknown > ] => {
+	const { merged } = useContext( GlobalStylesContext );
 	try {
-		return useGlobalStylesOutput();
+		const [ stylesheets, settings ] = generateGlobalStyles(
+			merged as Parameters< typeof generateGlobalStyles >[ 0 ],
+			getBlockTypes()
+		);
+		return [ stylesheets ?? [], settings ?? {} ];
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Error: Unable to get the output of global styles. Reason: %s', error );
 		captureException( error );
-		return [];
+		return [ [], {} ];
 	}
 };
+
+const useGlobalSetting = useSetting;
+const useGlobalStyle = useStyle;
 
 /**
  * Returns a new object, with properties specified in `properties` array.,
@@ -108,7 +146,10 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 	const clonedVariation = window.structuredClone
 		? window.structuredClone( variation )
 		: JSON.parse( JSON.stringify( variation ) );
-	const variationWithProperties = filterObjectByProperties( clonedVariation, properties );
+	const variationWithProperties = filterObjectByProperties(
+		clonedVariation,
+		properties
+	) as GlobalStylesObject;
 
 	return areGlobalStyleConfigsEqual( variationWithProperties, variation );
 };
