@@ -6,24 +6,6 @@ import { useStepContext } from '../context';
 import type { StepContextValue, StepperRef } from '../types';
 
 describe( 'Stepper.Root', () => {
-	it( 'renders children in vertical orientation', () => {
-		render(
-			<Stepper.Root orientation="vertical" aria-label="Test stepper">
-				<div data-testid="child" />
-			</Stepper.Root>
-		);
-		expect( screen.getByTestId( 'child' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders children in horizontal orientation', () => {
-		render(
-			<Stepper.Root orientation="horizontal" aria-label="Test stepper">
-				<div data-testid="child" />
-			</Stepper.Root>
-		);
-		expect( screen.getByTestId( 'child' ) ).toBeInTheDocument();
-	} );
-
 	it( 'warns in dev when neither aria-label nor aria-labelledby is provided', () => {
 		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
@@ -82,47 +64,50 @@ describe( 'Stepper.Step', () => {
 	} );
 
 	it( 'sets data-current attribute on the current step', () => {
-		const { container } = render(
+		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
 				<Stepper.Step value="a">
-					<div />
+					<Stepper.Trigger>Step A</Stepper.Trigger>
 				</Stepper.Step>
 				<Stepper.Step value="b">
-					<div />
+					<Stepper.Trigger>Step B</Stepper.Trigger>
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		// Find step elements by looking at children of the accordion root
-		// The Accordion.Item renders a div with data-current when active
-		const items = container.querySelectorAll( '[data-current]' );
-		expect( items ).toHaveLength( 1 );
+		const buttonA = screen.getByRole( 'button', { name: /step a/i } );
+		expect( buttonA.closest( '[data-current]' ) ).not.toBeNull();
+		const buttonB = screen.getByRole( 'button', { name: /step b/i } );
+		expect( buttonB.closest( '[data-current]' ) ).toBeNull();
 	} );
 
 	it( 'sets data-status attribute when status is provided', () => {
-		const { container } = render(
+		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
 				<Stepper.Step value="a" status="completed">
-					<div />
+					<Stepper.Trigger>Step A</Stepper.Trigger>
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		const item = container.querySelector( '[data-status="completed"]' );
-		expect( item ).not.toBeNull();
+		const button = screen.getByRole( 'button', { name: /step a/i } );
+		const container = button.closest( '[data-status]' );
+		expect( container ).toHaveAttribute( 'data-status', 'completed' );
 	} );
 
 	it( 'sets data-disabled attribute when disabled', () => {
-		const { container } = render(
+		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
 				<Stepper.Step value="a">
-					<div />
+					<Stepper.Trigger>Step A</Stepper.Trigger>
 				</Stepper.Step>
 				<Stepper.Step value="b" disabled>
-					<div />
+					<Stepper.Trigger>Step B</Stepper.Trigger>
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		const item = container.querySelector( '[data-disabled]' );
-		expect( item ).not.toBeNull();
+		const buttonA = screen.getByRole( 'button', { name: /step a/i } );
+		expect( buttonA.closest( '[data-disabled]' ) ).toBeNull();
+		const buttonB = screen.getByRole( 'button', { name: /step b/i } );
+		expect( buttonB.closest( '[data-disabled]' ) ).not.toBeNull();
 	} );
 
 	it( 'marks step as disabled when explicitly disabled even if completed', () => {
@@ -240,6 +225,19 @@ describe( 'Stepper.Trigger', () => {
 		expect( screen.getByRole( 'tab', { name: /step a/i } ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders trigger inside h2 when headingLevel is 2', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" headingLevel={ 2 } aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel>Content</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		const button = screen.getByRole( 'button', { name: /step a/i } );
+		expect( button.closest( 'h2' ) ).not.toBeNull();
+	} );
+
 	it( 'uses aria-disabled (not HTML disabled) on a disabled trigger', () => {
 		render(
 			<Stepper.Root orientation="horizontal" linear value="a" aria-label="Test">
@@ -282,7 +280,7 @@ describe( 'Stepper.Panel', () => {
 	} );
 
 	it( 'applies role="region" when totalSteps <= 5 in vertical mode', async () => {
-		const { container } = render(
+		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
 				<Stepper.Step value="a">
 					<Stepper.Trigger>A</Stepper.Trigger>
@@ -290,10 +288,13 @@ describe( 'Stepper.Panel', () => {
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		// After effects fire totalSteps becomes 1; panel should have role="region"
+		// After effects fire totalSteps becomes 1; the accordion panel gets role="region"
+		// (the Accordion.Root also carries role="region"; the panel is identified by aria-labelledby)
 		await waitFor( () => {
-			const regions = container.querySelectorAll( '[role="region"]:not([aria-label])' );
-			expect( regions.length ).toBeGreaterThan( 0 );
+			const panelRegion = screen
+				.getAllByRole( 'region' )
+				.find( ( el ) => el.hasAttribute( 'aria-labelledby' ) );
+			expect( panelRegion ).toBeDefined();
 		} );
 	} );
 
@@ -556,5 +557,55 @@ describe( 'Stepper indicatorVariant', () => {
 		// The number variant renders <span aria-hidden="true">1</span> inside the indicator
 		const numericLabel = screen.getByText( '1' );
 		expect( numericLabel ).toHaveAttribute( 'aria-hidden', 'true' );
+	} );
+} );
+
+describe( 'Stepper activationMode', () => {
+	it( 'activates tab on arrow-key focus when activationMode is "auto"', async () => {
+		const user = userEvent.setup();
+		render(
+			<Stepper.Root
+				orientation="horizontal"
+				activationMode="auto"
+				defaultValue="a"
+				aria-label="Test"
+			>
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+					<Stepper.Step value="b">
+						<Stepper.Trigger>Step B</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Panel A content</Stepper.Panel>
+				<Stepper.Panel value="b">Panel B content</Stepper.Panel>
+			</Stepper.Root>
+		);
+		await user.tab();
+		await user.keyboard( '{ArrowRight}' );
+		expect( screen.getByText( 'Panel B content' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'Stepper.Panel forceMount horizontal', () => {
+	it( 'keeps horizontal panel content in the DOM when the step is not current', () => {
+		render(
+			<Stepper.Root orientation="horizontal" value="b" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+					<Stepper.Step value="b">
+						<Stepper.Trigger>Step B</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a" forceMount>
+					<div data-testid="force-mounted-h" />
+				</Stepper.Panel>
+				<Stepper.Panel value="b">Panel B content</Stepper.Panel>
+			</Stepper.Root>
+		);
+		expect( screen.getByTestId( 'force-mounted-h' ) ).toBeInTheDocument();
 	} );
 } );
