@@ -7312,10 +7312,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.16.1, @remix-run/router@npm:^1.5.0":
+"@remix-run/router@npm:1.16.1":
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+  languageName: node
+  linkType: hard
+
+"@remix-run/router@npm:^1.5.0":
+  version: 1.23.2
+  resolution: "@remix-run/router@npm:1.23.2"
+  checksum: 7096b7f2086b2cd80c9e06873b71a8317e04858c01edc06a6fed187b660408a90f47c8e120e8af4c369cf1fa6b6a316a66b0917f42b6eb8a566e98b277c50449
   languageName: node
   linkType: hard
 
