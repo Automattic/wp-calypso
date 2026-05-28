@@ -162,9 +162,8 @@ const HomeContent = ( {
 		if ( hasSupportCard ) {
 			return defaultSubtitle;
 		}
-		const noSupportSubtitle = 'Your hub for next steps and quick links to manage your site.';
-		if ( hasEnTranslation( noSupportSubtitle ) ) {
-			return translate( noSupportSubtitle );
+		if ( hasEnTranslation( 'Your hub for next steps and quick links to manage your site.' ) ) {
+			return translate( 'Your hub for next steps and quick links to manage your site.' );
 		}
 		return defaultSubtitle;
 	};
