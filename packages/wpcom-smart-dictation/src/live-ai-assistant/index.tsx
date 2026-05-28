@@ -133,8 +133,6 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 			return __( 'Connecting…' );
 		case 'active':
 			return __( 'Listening' );
-		case 'ending':
-			return __( 'Stopping…' );
 		case 'error':
 			return __( 'Something went wrong' );
 		case 'idle':
@@ -197,10 +195,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 
 	const isSessionActive = status === 'active';
 	const isSessionBusy =
-		status === 'requesting-token' ||
-		status === 'requesting-mic' ||
-		status === 'connecting' ||
-		status === 'ending';
+		status === 'requesting-token' || status === 'requesting-mic' || status === 'connecting';
 	const sessionTimeLimit = sessionTimeLimitMs ?? 0;
 	const sessionTimeRemaining = sessionTimeRemainingMs ?? 0;
 	const hasSessionTimeRemaining = sessionTimeLimit > 0;

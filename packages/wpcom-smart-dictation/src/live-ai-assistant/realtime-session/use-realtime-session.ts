@@ -193,6 +193,15 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		}
 	}, [ applyRemainingTime ] );
 
+	const stop = useCallback(
+		( reason = 'user_stop' ) => {
+			recordSessionEnded( reason );
+			cleanup();
+			setStatus( 'idle' );
+		},
+		[ cleanup, recordSessionEnded ]
+	);
+
 	useEffect( () => {
 		return () => cleanup();
 	}, [ cleanup ] );
@@ -221,10 +230,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 	useEffect( () => {
 		const shouldTickSessionTime =
-			status === 'requesting-mic' ||
-			status === 'connecting' ||
-			status === 'active' ||
-			status === 'ending';
+			status === 'requesting-mic' || status === 'connecting' || status === 'active';
 
 		if ( sessionTimeLimitMs === null || ! shouldTickSessionTime ) {
 			return;
@@ -345,10 +351,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			} );
 
 			if ( shouldStopDictation ) {
-				recordSessionEnded( 'voice_stop' );
-				setStatus( 'ending' );
-				cleanup();
-				setStatus( 'idle' );
+				stop( 'voice_stop' );
 				return;
 			}
 
@@ -356,7 +359,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				safeCreateResponse();
 			}
 		},
-		[ cleanup, recordSessionEnded, safeCreateResponse ]
+		[ safeCreateResponse, stop ]
 	);
 
 	const handleServerEvent = useCallback(
@@ -613,13 +616,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		applyRemainingTime,
 	] );
 
-	const stop = useCallback( () => {
-		recordSessionEnded( 'user_stop' );
-		setStatus( 'ending' );
-		cleanup();
-		setStatus( 'idle' );
-	}, [ cleanup, recordSessionEnded ] );
-
 	useEffect( () => {
 		const shouldAutoStopForQuota =
 			sessionTimeRemainingMs !== null &&
@@ -634,11 +630,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			reason: 'quota_exhausted',
 			can_upgrade: canUpgrade,
 		} );
-		recordSessionEnded( 'quota_exhausted' );
-		setStatus( 'ending' );
-		cleanup();
-		setStatus( 'idle' );
-	}, [ canUpgrade, cleanup, recordSessionEnded, sessionTimeRemainingMs, status ] );
+		stop( 'quota_exhausted' );
+	}, [ canUpgrade, sessionTimeRemainingMs, status, stop ] );
 
 	const toggleMute = useCallback( () => {
 		const stream = localStreamRef.current;
