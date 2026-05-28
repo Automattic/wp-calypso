@@ -474,10 +474,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			await clientSecretSettlePromiseRef.current;
 			const remainingTime = await fetchRemainingTime();
 			applyRemainingTime( remainingTime );
-			const remainingTimeSeconds =
-				remainingTime.activeSession?.remainingTimeSeconds ?? remainingTime.remainingTimeSeconds;
 
-			if ( remainingTimeSeconds <= 0 ) {
+			if ( remainingTime.remainingTimeSeconds <= 0 ) {
 				return;
 			}
 

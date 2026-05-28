@@ -202,10 +202,11 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const sessionTimeLimit = sessionTimeLimitMs ?? 0;
 	const sessionTimeRemaining = sessionTimeRemainingMs ?? 0;
 	const hasSessionTimeRemaining = sessionTimeLimit > 0;
+	const hasKnownSessionTimeRemaining = sessionTimeRemainingMs !== null;
 	const sessionTimeProgress = hasSessionTimeRemaining
 		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
 		: 0;
-	const hasExhaustedQuota = hasSessionTimeRemaining && sessionTimeRemaining <= 0;
+	const hasExhaustedQuota = hasKnownSessionTimeRemaining && sessionTimeRemaining <= 0;
 	const showQuotaLimitNotice = hasExhaustedQuota && ! isSessionActive;
 	const showUpgradeButton = canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
 	const showQuotaReachedButton =
