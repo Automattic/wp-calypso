@@ -73,6 +73,8 @@ export interface SocialLongFormDocument {
 	tags: string[];
 	/** ISO-8601 timestamp, or empty string when unknown. */
 	published_at: string;
+	/** Cover-image URL projected from the underlying record's blob ref. */
+	cover_image: string | null;
 }
 
 export interface SocialLongFormPublication {
@@ -80,6 +82,10 @@ export interface SocialLongFormPublication {
 	display_name: string;
 	description: string;
 	url: string;
+	/** Publisher's protocol handle (e.g. `jeremy.herve.bzh`). Empty when unresolved. */
+	handle: string;
+	/** Avatar URL projected from the underlying record's blob ref. */
+	avatar: string | null;
 }
 
 export interface SocialLongForm {

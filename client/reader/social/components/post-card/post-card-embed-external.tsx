@@ -95,6 +95,17 @@ export function PostCardEmbedExternal( {
 		} );
 	};
 
+	const handleViewPublication = () => {
+		if ( ! analytics ) {
+			return;
+		}
+		analytics.onClick( `calypso_reader_${ analytics.source }_long_form_publication_clicked`, {
+			connection_id: analytics.connectionId,
+			post_uri: parentPostUri,
+			external_uri: embed.uri,
+		} );
+	};
+
 	const body = (
 		<HStack alignment="flex-start" spacing={ 3 } justify="flex-start">
 			{ embed.thumb && (
@@ -150,10 +161,62 @@ export function PostCardEmbedExternal( {
 		  } )
 		: translate( 'View original article' );
 
+	// Publication "pill" — avatar + name + `by @handle` + "View
+	// publication" link. Mirrors the attribution row Bluesky's own
+	// clients show under article cards. Renders whenever any of the
+	// pill fields are present; individual cells gracefully omit when
+	// their source field is empty.
+	const pillName = longForm.publication.display_name || longForm.publication.name;
+	const pillHandle = longForm.publication.handle;
+	const pillAvatar = longForm.publication.avatar;
+	const pillUrl = longForm.publication.url;
+	const hasPill = Boolean( pillName || pillHandle || pillAvatar || pillUrl );
+
 	return (
 		<>
 			{ card }
 			<div className="social-post-card-embed-external__long-form">
+				{ hasPill && (
+					<div className="social-post-card-embed-external__publication-pill">
+						{ pillAvatar && (
+							<img
+								className="social-post-card-embed-external__publication-pill-avatar"
+								src={ pillAvatar }
+								alt=""
+								loading="lazy"
+								width={ 24 }
+								height={ 24 }
+							/>
+						) }
+						<div className="social-post-card-embed-external__publication-pill-text">
+							{ pillName && (
+								<span className="social-post-card-embed-external__publication-pill-name">
+									{ pillName }
+								</span>
+							) }
+							{ pillHandle && (
+								<span className="social-post-card-embed-external__publication-pill-handle">
+									{ translate( 'by @%(handle)s', {
+										args: { handle: pillHandle },
+										comment:
+											"Attribution under a long-form article card. %(handle)s is the publisher's social-network handle.",
+									} ) }
+								</span>
+							) }
+						</div>
+						{ pillUrl && (
+							<a
+								className="social-post-card-embed-external__publication-pill-link"
+								href={ pillUrl }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ handleViewPublication }
+							>
+								{ translate( 'View publication' ) }
+							</a>
+						) }
+					</div>
+				) }
 				<Button
 					className="social-post-card-embed-external__long-form-toggle"
 					variant="tertiary"

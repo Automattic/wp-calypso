@@ -104,6 +104,11 @@ export interface AtmosphereLongFormDocument {
 	tags: string[];
 	/** ISO-8601 timestamp, or empty string when unknown. */
 	published_at: string;
+	/**
+	 * Bluesky CDN URL for the document's cover image, or null when the
+	 * underlying record carries no `coverImage` blob ref.
+	 */
+	cover_image: string | null;
 }
 
 export interface AtmosphereLongFormPublication {
@@ -111,6 +116,17 @@ export interface AtmosphereLongFormPublication {
 	display_name: string;
 	description: string;
 	url: string;
+	/**
+	 * Publisher's current bsky handle, resolved server-side via
+	 * `app.bsky.actor.getProfile`. Empty string when resolution failed
+	 * or the profile is taken down / unknown.
+	 */
+	handle: string;
+	/**
+	 * Bluesky CDN URL for the publication's avatar blob, or null when
+	 * the record carries no `avatar` ref.
+	 */
+	avatar: string | null;
 }
 
 export interface AtmosphereLongForm {

@@ -24,12 +24,17 @@ const longForm: SocialLongForm = {
 		path: '/signing-homework/',
 		tags: [ 'Chinese' ],
 		published_at: '2026-05-24T11:10:11Z',
+		cover_image:
+			'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:4i6hvdii3km3kbnj3losmwnt/bafyreicoverimage',
 	},
 	publication: {
 		name: 'Herve Family',
 		display_name: 'Herve Family',
 		description: 'Our family’s website',
 		url: 'https://herve.bzh/',
+		handle: 'jeremy.herve.bzh',
+		avatar:
+			'https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:4i6hvdii3km3kbnj3losmwnt/bafyreiavatar',
 	},
 };
 
@@ -180,6 +185,102 @@ describe( 'PostCardEmbedExternal', () => {
 			expect(
 				screen.getByRole( 'button', { name: /Read article on Herve Family/i } )
 			).toBeVisible();
+		} );
+
+		describe( 'publication pill', () => {
+			it( 'renders the publication name, handle, avatar and "View publication" link', () => {
+				const { container } = render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: longForm } }
+						parentPostUri="at://post"
+					/>
+				);
+
+				const avatar = container.querySelector(
+					'.social-post-card-embed-external__publication-pill-avatar'
+				);
+				expect( avatar ).not.toBeNull();
+				expect( avatar ).toHaveAttribute( 'src', longForm.publication.avatar );
+				expect( avatar ).toHaveAttribute( 'width', '24' );
+
+				expect( screen.getByText( 'Herve Family' ) ).toBeVisible();
+				expect( screen.getByText( /by @jeremy\.herve\.bzh/i ) ).toBeVisible();
+
+				const viewLink = screen.getByRole( 'link', { name: /View publication/i } );
+				expect( viewLink ).toHaveAttribute( 'href', 'https://herve.bzh/' );
+				expect( viewLink ).toHaveAttribute( 'target', '_blank' );
+				expect( viewLink ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+			} );
+
+			it( 'omits the handle line when publication.handle is empty', () => {
+				const noHandle = {
+					...longForm,
+					publication: { ...longForm.publication, handle: '' },
+				};
+				render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: noHandle } }
+						parentPostUri="at://post"
+					/>
+				);
+				expect( screen.queryByText( /^by @/i ) ).not.toBeInTheDocument();
+				// Other pill cells still render.
+				expect( screen.getByText( 'Herve Family' ) ).toBeVisible();
+			} );
+
+			it( 'omits the avatar when publication.avatar is null', () => {
+				const noAvatar = {
+					...longForm,
+					publication: { ...longForm.publication, avatar: null },
+				};
+				const { container } = render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: noAvatar } }
+						parentPostUri="at://post"
+					/>
+				);
+				expect(
+					container.querySelector( '.social-post-card-embed-external__publication-pill-avatar' )
+				).toBeNull();
+				expect( screen.getByText( 'Herve Family' ) ).toBeVisible();
+			} );
+
+			it( 'does not render the pill at all when every publication field is empty', () => {
+				const emptyPub = {
+					...longForm,
+					publication: {
+						name: '',
+						display_name: '',
+						description: '',
+						url: '',
+						handle: '',
+						avatar: null,
+					},
+				};
+				render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: emptyPub } }
+						parentPostUri="at://post"
+					/>
+				);
+				expect(
+					screen.queryByRole( 'link', { name: /View publication/i } )
+				).not.toBeInTheDocument();
+			} );
+
+			it( 'falls back to publication.name in the pill when display_name is empty', () => {
+				const fallback = {
+					...longForm,
+					publication: { ...longForm.publication, display_name: '' },
+				};
+				render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: fallback } }
+						parentPostUri="at://post"
+					/>
+				);
+				expect( screen.getByText( 'Herve Family' ) ).toBeVisible();
+			} );
 		} );
 
 		it( 'does not render the long-form decoration in compact mode (quote embed)', () => {
@@ -368,6 +469,20 @@ describe( 'PostCardEmbedExternal', () => {
 				await user.click( screen.getByRole( 'link', { name: /View original on Herve Family/i } ) );
 				expect( onClick ).toHaveBeenCalledWith(
 					'calypso_reader_atmosphere_long_form_original_clicked',
+					{
+						connection_id: 42,
+						post_uri: 'at://post/1',
+						external_uri: embed.uri,
+					}
+				);
+			} );
+
+			it( 'fires long_form_publication_clicked when the View publication link is clicked', async () => {
+				const user = userEvent.setup();
+				const { onClick } = renderWithAnalytics();
+				await user.click( screen.getByRole( 'link', { name: /View publication/i } ) );
+				expect( onClick ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_long_form_publication_clicked',
 					{
 						connection_id: 42,
 						post_uri: 'at://post/1',
