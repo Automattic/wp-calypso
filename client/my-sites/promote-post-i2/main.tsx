@@ -3,14 +3,14 @@ import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
+import { Page } from '@wordpress/admin-ui';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import Notice from 'calypso/components/notice';
 import {
 	BlazablePost,
@@ -268,19 +268,14 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
-			<div className="promote-post-i2__top-bar-container">
-				<div className="promote-post-i2__top-bar">
-					<FormattedHeader
-						brandFont
-						className={ clsx( 'advertising__page-header' ) }
-						headerText={ translate( 'Dashboard' ) }
-						subHeaderText={ translate(
-							'Advertise Your Site and Content on WordPress and Tumblr.'
-						) }
-						align="left"
-					/>
-
-					<div className="promote-post-i2__top-bar-buttons">
+			<Page
+				className="promote-post-i2__page"
+				visual={ <JetpackLogo size={ 24 } /> }
+				title={ translate( 'Blaze' ) }
+				subTitle={ translate( 'Advertise Your Site and Content on WordPress and Tumblr.' ) }
+				showSidebarToggle={ false }
+				actions={
+					<>
 						<InlineSupportLink
 							supportContext="advertising"
 							className="button posts-list-banner__border-button"
@@ -295,9 +290,9 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 						>
 							{ translate( 'Promote' ) }
 						</Button>
-					</div>
-				</div>
-			</div>
+					</>
+				}
+			/>
 
 			{
 				// TODO: Uncomment when DebtNotifier is implemented

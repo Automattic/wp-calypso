@@ -1,11 +1,12 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
+import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import BlazePageViewTracker from 'calypso/my-sites/promote-post-i2/components/blaze-page-view-tracker';
 import MainWrapper from 'calypso/my-sites/promote-post-i2/components/main-wrapper';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
-import GenericHeader from '../../components/generic-header';
 import BlazeDisabled from './components/blaze-disabled';
 import DisconnectedSite from './components/disconnected-site';
 import IneligibleSite from './components/ineligible-site';
@@ -33,31 +34,25 @@ export default function BlazeSetup( { setupInfo } ) {
 	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const translate = useTranslate();
 
-	const headerTitle = isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' );
+	const documentTitle = isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' );
 
 	return (
 		<MainWrapper>
-			<DocumentHead title={ headerTitle } />
+			<DocumentHead title={ documentTitle } />
 			<BlazePageViewTracker
 				path={ getAdvertisingDashboardPath( '/setup/:site' ) }
 				title="Advertising > Setup"
 			/>
 
-			<div className="promote-post-i2__top-bar-container">
-				<div className="promote-post-i2__top-bar">
-					<GenericHeader
-						brandFont
-						className="advertising__page-header advertising__page-header_has-banner"
-						headerText={ headerTitle }
-						subHeaderText={ translate(
-							'Advertise Your Site and Content on WordPress and Tumblr.'
-						) }
-						align="left"
-					/>
-				</div>
-			</div>
-
-			<div className="promote-post-i2__outer-wrapper">{ renderSetupComponent( setupInfo ) }</div>
+			<Page
+				className="promote-post-i2__page"
+				visual={ <JetpackLogo size={ 24 } /> }
+				title={ translate( 'Blaze' ) }
+				subTitle={ translate( 'Advertise Your Site and Content on WordPress and Tumblr.' ) }
+				showSidebarToggle={ false }
+			>
+				<div className="promote-post-i2__outer-wrapper">{ renderSetupComponent( setupInfo ) }</div>
+			</Page>
 		</MainWrapper>
 	);
 }
