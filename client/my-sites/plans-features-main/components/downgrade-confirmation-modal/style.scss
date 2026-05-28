@@ -1,10 +1,32 @@
+.downgrade-confirmation-modal__description {
+	font-size: $font-body-small;
+	margin-block-end: 8px;
+}
+
 .downgrade-confirmation-modal__feature-list {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
+.downgrade-confirmation-modal__feature-item {
+	display: flex;
+	font-size: $font-body-small;
+}
+
+.downgrade-confirmation-modal__feature-text {
+	margin-block: auto;
+	flex: 1;
+	min-width: 0;
+}
+
 .downgrade-confirmation-modal__feature-icon {
-	fill: var(--color-error);
+	color: var(--color-error-40);
 	flex-shrink: 0;
+	margin-inline-end: 8px;
+	margin-block-start: 2px;
+}
+
+.downgrade-confirmation-modal__buttons {
+	margin-block-start: 24px;
 }

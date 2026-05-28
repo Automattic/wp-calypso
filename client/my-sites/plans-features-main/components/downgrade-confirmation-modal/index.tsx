@@ -5,14 +5,8 @@ import {
 	getPlanPath,
 	type PlanSlug,
 } from '@automattic/calypso-products';
-import {
-	Modal,
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Icon,
-} from '@wordpress/components';
-import { close } from '@wordpress/icons';
+import { Gridicon } from '@automattic/components';
+import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -82,69 +76,69 @@ const DowngradeConfirmationModal = ( {
 
 	return (
 		<Modal
-			title={ String(
-				translate( 'Confirm your plan change', {
-					comment: 'Title of the confirmation modal when downgrading an expired plan',
-				} )
-			) }
+			title={ String( translate( 'Confirm downgrade' ) ) }
 			onRequestClose={ onClose }
 			className="downgrade-confirmation-modal"
+			size="medium"
 		>
-			<VStack spacing={ 4 }>
-				{ lostFeatures.length > 0 ? (
-					<>
-						<p>
-							{ translate(
-								"You're changing from %(currentPlan)s to %(targetPlan)s. You'll lose access to these features:",
-								{
-									args: {
-										currentPlan: currentPlanTitle,
-										targetPlan: targetPlanTitle,
-									},
-									comment:
-										'Message shown when downgrading an expired plan, listing features that will be lost',
-								}
-							) }
-						</p>
-						<VStack as="ul" spacing={ 1 } className="downgrade-confirmation-modal__feature-list">
-							{ lostFeatures.map( ( feature ) => (
-								<HStack as="li" key={ feature.getSlug() } spacing={ 2 } justify="flex-start">
-									<Icon
-										icon={ close }
-										size={ 24 }
-										className="downgrade-confirmation-modal__feature-icon"
-									/>
-									<span>{ feature.getTitle() }</span>
-								</HStack>
-							) ) }
-						</VStack>
-					</>
-				) : (
-					<p>
-						{ translate( "You're changing from %(currentPlan)s to %(targetPlan)s.", {
+			{ lostFeatures.length > 0 ? (
+				<>
+					<p className="downgrade-confirmation-modal__description">
+						{ translate(
+							"When you change from %(currentPlan)s to %(targetPlan)s, here's what you'll lose:",
+							{
+								args: {
+									currentPlan: currentPlanTitle,
+									targetPlan: targetPlanTitle,
+								},
+								comment:
+									'Message shown when downgrading an expired plan, listing features that will be lost',
+							}
+						) }
+					</p>
+					<ul className="downgrade-confirmation-modal__feature-list">
+						{ lostFeatures.map( ( feature ) => (
+							<li key={ feature.getSlug() } className="downgrade-confirmation-modal__feature-item">
+								<Gridicon
+									icon="cross-small"
+									size={ 24 }
+									className="downgrade-confirmation-modal__feature-icon"
+								/>
+								<span className="downgrade-confirmation-modal__feature-text">
+									{ feature.getTitle() }
+								</span>
+							</li>
+						) ) }
+					</ul>
+				</>
+			) : (
+				<p className="downgrade-confirmation-modal__description">
+					{ translate(
+						'When you change from %(currentPlan)s to %(targetPlan)s, your features will stay the same.',
+						{
 							args: {
 								currentPlan: currentPlanTitle,
 								targetPlan: targetPlanTitle,
 							},
 							comment: 'Message shown when downgrading an expired plan with no feature differences',
-						} ) }
-					</p>
-				) }
-				<HStack spacing={ 3 } justify="flex-start">
-					<Button __next40pxDefaultSize variant="primary" onClick={ handleConfirm }>
-						{ translate( 'Downgrade to %(planName)s', {
-							args: { planName: targetPlanTitle },
-							comment: 'Button label to confirm downgrading to a lower-tier plan',
-						} ) }
-					</Button>
-					<Button __next40pxDefaultSize variant="secondary" onClick={ onClose }>
-						{ translate( 'Keep %(planName)s', {
-							args: { planName: currentPlanTitle },
-							comment: 'Button label to dismiss the downgrade modal and keep the current plan',
-						} ) }
-					</Button>
-				</HStack>
-			</VStack>
+						}
+					) }
+				</p>
+			) }
+			<HStack spacing={ 3 } justify="flex-end" className="downgrade-confirmation-modal__buttons">
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+					{ translate( 'Keep %(planName)s', {
+						args: { planName: currentPlanTitle },
+						comment: 'Button label to dismiss the downgrade modal and keep the current plan',
+					} ) }
+				</Button>
+				<Button __next40pxDefaultSize variant="primary" onClick={ handleConfirm }>
+					{ translate( 'Downgrade to %(planName)s', {
+						args: { planName: targetPlanTitle },
+						comment: 'Button label to confirm downgrading to a lower-tier plan',
+					} ) }
+				</Button>
+			</HStack>
 		</Modal>
 	);
 };
