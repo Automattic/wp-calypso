@@ -1,6 +1,8 @@
 import { createFediversePostMutation, useFediverseConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { useFediverseComposerExtras } from './use-fediverse-composer-extras';
 import { useFediverseComposerLimit } from './use-fediverse-composer-limit';
 import { useFediverseComposerMedia } from './use-fediverse-composer-media';
@@ -11,6 +13,27 @@ import type {
 } from '@automattic/api-core';
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
+
+function useFediverseAuthorHandle( connectionId: number | null ): string | null {
+	const { data } = useFediverseConnectionsQuery( { enabled: connectionId !== null } );
+	if ( connectionId === null ) {
+		return null;
+	}
+	const connection = data?.connections?.find( ( c ) => c.id === connectionId );
+	if ( ! connection?.webfinger ) {
+		return null;
+	}
+	// `FediverseConnection` exposes the destination identity as `webfinger`
+	// — for WordPress.com / Jetpack blog actors that shape is
+	// `user@domain` where `user` and `domain` collapse to the same blog
+	// hostname (e.g. `@example.com@example.com`). Showing both halves in
+	// the modal title doubles the width and wraps onto a second line, so
+	// keep just the trailing `@domain` segment — it's the part users
+	// recognize and matches the destination the post will publish to.
+	const segments = normalizeHandle( connection.webfinger ).split( '@' );
+	const domain = segments[ segments.length - 1 ];
+	return domain || null;
+}
 
 /**
  * Returns the blog id behind the active Fediverse connection so the
@@ -47,6 +70,8 @@ export const fediverseComposerConfig: ComposerConfig<
 	FediverseCreatePostResult
 > = {
 	useLimit: useFediverseComposerLimit,
+	useAuthorHandle: useFediverseAuthorHandle,
+	headerIcon: <ReaderFediverseIcon />,
 	// Count words rather than graphemes. AP posts are blog-post-shaped,
 	// so a word threshold maps onto "open the blog editor" handoff better
 	// than a grapheme cap. Backend enforces wire-level char limits and
@@ -113,7 +138,14 @@ export const fediverseComposerConfig: ComposerConfig<
 		} ),
 	},
 	copy: {
-		title: ( _mode, t ) => t( 'New post' ) as string,
+		// Fediverse posts target a specific blog connection, so the title
+		// follows the same "New post · @handle" composition as atmosphere /
+		// mastodon for visual consistency. The handle is the webfinger
+		// identity of the source blog (e.g. `@myblog@myblog.wordpress.com`).
+		title: ( _mode, t, handle ) => {
+			const base = t( 'New post' ) as string;
+			return handle ? `${ base } · @${ handle }` : base;
+		},
 		placeholder: ( _mode, t ) => t( 'What’s up?' ) as string,
 	},
 	logBadRequest: ( _mode, error ) => {
