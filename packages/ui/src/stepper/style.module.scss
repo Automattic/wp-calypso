@@ -110,6 +110,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 .indicator.is-current[data-indicator-variant='bullet'] {
 	width: $indicator-size-sm;
 	height: $indicator-size-sm;
+	margin: 1px; // compensates for 2px size reduction vs upcoming (18px → 16px)
 	border-style: solid;
 	border-color: theme.$components-color-foreground;
 	background: transparent;
@@ -120,6 +121,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 .indicator.is-completed[data-indicator-variant='bullet'] {
 	width: $indicator-size-sm;
 	height: $indicator-size-sm;
+	margin: 1px; // compensates for 2px size reduction vs upcoming (18px → 16px)
 	border-style: solid;
 	border-color: theme.$components-color-gray-700;
 	background: transparent;
