@@ -100,6 +100,22 @@ describe( 'readSiteQuery', () => {
 		expect( result.current.data?.subscription ).toBeUndefined();
 	} );
 
+	it( 'preserves the API title when the site has no name', async () => {
+		nock( BASE ).get( '/rest/v1.1/read/sites/201' ).query( true ).reply( 200, {
+			ID: 201,
+			URL: 'https://example.wordpress.com',
+			title: 'API Site Title',
+		} );
+
+		const client = newClient();
+		const { result } = renderHook( () => useQuery( readSiteQuery( 201 ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.title ).toBe( 'API Site Title' );
+	} );
+
 	it( 'derives wpcom_url for non-Jetpack sites with mapped domains', async () => {
 		nock( BASE )
 			.get( '/rest/v1.1/read/sites/300' )

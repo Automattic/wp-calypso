@@ -25,7 +25,7 @@ export const adaptReadSite = ( site: ReadSiteResponse ): ReadSiteResponse => {
 	}
 
 	const trimmedName = typeof adapted.name === 'string' ? adapted.name.trim() : '';
-	adapted.title = trimmedName || adapted.domain || adapted.title;
+	adapted.title = trimmedName || adapted.title || adapted.domain;
 
 	if ( adapted.description ) {
 		adapted.description = decodeEntities( adapted.description );
