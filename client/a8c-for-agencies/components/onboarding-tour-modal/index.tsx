@@ -12,8 +12,10 @@ import {
 	useState,
 } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
+import { A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { ONBOARDING_TOUR_HASH } from '../hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import OnboardingTourModalMobileNavigation from './mobile-navigation';
 import OnboardingTourModalSection, {
@@ -98,6 +100,11 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 					section: currentSection?.props?.id,
 				} )
 			);
+			// Once the user navigates past the welcome section, mark the tour
+			// as completed so the welcome is hidden on subsequent opens.
+			if ( currentSection.props.id !== 'overview' ) {
+				dispatch( savePreference( A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME, true ) );
+			}
 		}
 	}, [ currentSection, dispatch ] );
 
