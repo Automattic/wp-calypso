@@ -33,6 +33,10 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( './extensions', () => ( {
+	registerBlockEditorFilters: jest.fn(),
+} ) );
+
 const mockSetIsSplitScreen = jest.fn();
 let mockSelectedBlockClientId: string | null = null;
 const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
@@ -74,14 +78,14 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactActual: typeof React = jest.requireActual( 'react' );
 	return {
-		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
+		Panel: ( { children }: any ) => ReactActual.createElement( 'div', null, children ),
 		PanelBody: ( { children, initialOpen, title }: any ) =>
-			react.createElement(
+			ReactActual.createElement(
 				'section',
 				{ 'data-initial-open': initialOpen ? 'true' : 'false' },
-				react.createElement( 'h3', null, title ),
+				ReactActual.createElement( 'h3', null, title ),
 				children
 			),
 	};

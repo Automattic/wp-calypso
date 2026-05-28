@@ -1,3 +1,10 @@
+declare module '@wordpress/block-editor' {
+	export const BlockControls: import('react').ComponentType< {
+		children?: import('react').ReactNode;
+		group?: string;
+	} >;
+}
+
 /**
  * Global data injected by the Agents Manager host script.
  */

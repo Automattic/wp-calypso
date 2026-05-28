@@ -101,15 +101,15 @@ jest.mock( '@wordpress/data', () => ( {
 // Stub @wordpress/components: real one transitively boots rich-text + data.
 // PanelBody honours the controlled `opened` prop so toggle tests work.
 jest.mock( '@wordpress/components', () => {
-	const React = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactActual: typeof React = jest.requireActual( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
-			React.createElement( 'div', { className }, children ),
+			ReactActual.createElement( 'div', { className }, children ),
 		PanelBody: ( { title, children, className, opened, onToggle }: any ) =>
-			React.createElement(
+			ReactActual.createElement(
 				'section',
 				{ className, 'data-testid': 'panel-body' },
-				React.createElement(
+				ReactActual.createElement(
 					'button',
 					{
 						type: 'button',
