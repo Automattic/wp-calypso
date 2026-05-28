@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import useSetupCustomActions from '../use-setup-custom-actions';
+import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
@@ -47,7 +47,7 @@ const baseProps = {
 	setDesktopMediaQuery: jest.fn(),
 };
 
-describe( 'useSetupCustomActions — ready signal', () => {
+describe( 'useSetupCustomActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		delete window.__agentsManagerActions;
@@ -57,13 +57,13 @@ describe( 'useSetupCustomActions — ready signal', () => {
 		};
 	} );
 
-	it( 'sets isReady on the global after mount', () => {
+	it( 'sets `isReady` on the global after mount', () => {
 		renderHook( () => useSetupCustomActions( baseProps ) );
 
 		expect( window.__agentsManagerActions?.isReady ).toBe( true );
 	} );
 
-	it( 'dispatches agents-manager-ready event after mount', () => {
+	it( 'dispatches `agents-manager-ready` event after mount', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'agents-manager-ready', listener );
 
@@ -74,7 +74,7 @@ describe( 'useSetupCustomActions — ready signal', () => {
 		window.removeEventListener( 'agents-manager-ready', listener );
 	} );
 
-	it( 'fires the ready event only once across re-renders', () => {
+	it( 'fires `agents-manager-ready` only once across re-renders', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'agents-manager-ready', listener );
 
@@ -87,7 +87,7 @@ describe( 'useSetupCustomActions — ready signal', () => {
 		window.removeEventListener( 'agents-manager-ready', listener );
 	} );
 
-	it( 'populates the actions API before firing the ready event', () => {
+	it( 'populates the actions API before firing `agents-manager-ready`', () => {
 		let snapshot: AgentsManagerActions | undefined;
 		window.addEventListener( 'agents-manager-ready', () => {
 			snapshot = window.__agentsManagerActions;
@@ -118,5 +118,109 @@ describe( 'useSetupCustomActions — ready signal', () => {
 		window.__agentsManagerActions?.setChatOpen?.( true );
 
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
+	} );
+
+	it( 'removes its actions from the global on unmount', () => {
+		const { unmount } = renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.setChatOpen ).toBeInstanceOf( Function );
+
+		unmount();
+
+		expect( window.__agentsManagerActions?.setChatOpen ).toBeUndefined();
+		expect( window.__agentsManagerActions?.isReady ).toBeUndefined();
+	} );
+
+	it( 'preserves pre-set initial values across mount', () => {
+		window.__agentsManagerActions = {
+			isCompactMode: true,
+			isChatEnabled: false,
+		} as AgentsManagerActions;
+
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions.isCompactMode ).toBe( true );
+		expect( window.__agentsManagerActions.isChatEnabled ).toBe( false );
+		expect( window.__agentsManagerActions.setChatOpen ).toBeInstanceOf( Function );
+	} );
+
+	it( 'resolves `getChatState` immediately once the store has loaded', async () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		const state = await window.__agentsManagerActions?.getChatState?.();
+
+		expect( state ).toEqual( {
+			isOpen: false,
+			isDocked: false,
+			floatingPosition: '',
+		} );
+	} );
+} );
+
+describe( 'useRegisterCustomActions', () => {
+	beforeEach( () => {
+		delete window.__agentsManagerActions;
+	} );
+
+	it( 'publishes actions onto the global after mount', () => {
+		const setChatInput = jest.fn();
+
+		renderHook( () => useRegisterCustomActions( { setChatInput } ) );
+
+		window.__agentsManagerActions?.setChatInput?.( 'hello' );
+		expect( setChatInput ).toHaveBeenCalledWith( 'hello' );
+	} );
+
+	it( 'removes its keys from the global on unmount', () => {
+		const setChatInput = jest.fn();
+		const { unmount } = renderHook( () => useRegisterCustomActions( { setChatInput } ) );
+
+		expect( window.__agentsManagerActions?.setChatInput ).toBe( setChatInput );
+
+		unmount();
+
+		expect( window.__agentsManagerActions?.setChatInput ).toBeUndefined();
+	} );
+
+	it( 'preserves pre-existing keys (merge, not replace)', () => {
+		const setChatInput = jest.fn();
+		window.__agentsManagerActions = { isCompactMode: true } as AgentsManagerActions;
+
+		renderHook( () => useRegisterCustomActions( { setChatInput } ) );
+
+		expect( window.__agentsManagerActions.isCompactMode ).toBe( true );
+		expect( window.__agentsManagerActions.setChatInput ).toBe( setChatInput );
+	} );
+
+	it( 'leaves a key alone on cleanup if another caller has overwritten it', () => {
+		const firstFn = jest.fn();
+		const secondFn = jest.fn();
+
+		const { unmount } = renderHook( () => useRegisterCustomActions( { setChatInput: firstFn } ) );
+
+		// Simulate another owner overwriting the key.
+		window.__agentsManagerActions!.setChatInput = secondFn;
+
+		unmount();
+
+		// The cleanup must not delete the second owner's value.
+		expect( window.__agentsManagerActions?.setChatInput ).toBe( secondFn );
+	} );
+
+	it( 'updates the global when an action reference changes', () => {
+		const first = jest.fn();
+		const second = jest.fn();
+
+		const { rerender } = renderHook(
+			( { fn }: { fn: ( value: string ) => void } ) =>
+				useRegisterCustomActions( { setChatInput: fn } ),
+			{ initialProps: { fn: first } }
+		);
+
+		expect( window.__agentsManagerActions?.setChatInput ).toBe( first );
+
+		rerender( { fn: second } );
+
+		expect( window.__agentsManagerActions?.setChatInput ).toBe( second );
 	} );
 } );
