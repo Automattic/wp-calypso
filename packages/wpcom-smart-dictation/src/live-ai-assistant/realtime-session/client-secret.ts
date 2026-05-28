@@ -1,4 +1,5 @@
-import wpcomRequest from 'wpcom-proxy-request';
+import apiFetch from '@wordpress/api-fetch';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
 	DICTATION_CLIENT_SECRET_PATH,
 	DICTATION_CLIENT_SECRET_REMAINING_TIME_PATH,
@@ -17,6 +18,12 @@ interface FetchClientSecretArgs {
 interface DictationClientSecret {
 	value: string;
 	remainingTimeSeconds: number;
+}
+
+interface DictationEndpointRequest {
+	path: string;
+	method: 'GET' | 'POST';
+	body?: object;
 }
 
 export interface DictationRemainingTime {
@@ -112,10 +119,9 @@ export async function fetchClientSecret( {
 	let response: unknown;
 
 	try {
-		response = await wpcomRequest( {
+		response = await requestDictationEndpoint( {
 			path: DICTATION_CLIENT_SECRET_PATH,
 			method: 'POST',
-			apiNamespace: 'wpcom/v2',
 			body: {
 				session: {
 					instructions,
@@ -133,20 +139,18 @@ export async function fetchClientSecret( {
 }
 
 export async function fetchRemainingTime(): Promise< DictationRemainingTime > {
-	const response = await wpcomRequest( {
+	const response = await requestDictationEndpoint( {
 		path: DICTATION_CLIENT_SECRET_REMAINING_TIME_PATH,
 		method: 'GET',
-		apiNamespace: 'wpcom/v2',
 	} );
 
 	return extractRemainingTime( response );
 }
 
 export async function settleClientSecretSession(): Promise< void > {
-	await wpcomRequest( {
+	await requestDictationEndpoint( {
 		path: DICTATION_CLIENT_SECRET_SETTLE_PATH,
 		method: 'POST',
-		apiNamespace: 'wpcom/v2',
 	} );
 }
 
@@ -167,12 +171,37 @@ export function settleClientSecretSessionOnUnload(): boolean {
 }
 
 function getWpRestUrl( path: string ): string {
-	const route = `wpcom/v2${ path }`;
+	const route = getWpRestPath( path );
 	const root = window.wpApiSettings?.root;
 	if ( root ) {
 		return new URL( route, root ).toString();
 	}
 	return `/wp-json/${ route }`;
+}
+
+function getWpRestPath( path: string ): string {
+	return `wpcom/v2${ path }`;
+}
+
+function requestDictationEndpoint< T = unknown >( {
+	path,
+	method,
+	body,
+}: DictationEndpointRequest ): Promise< T > {
+	if ( canAccessWpcomApis() ) {
+		return wpcomRequest< T >( {
+			path,
+			method,
+			apiNamespace: 'wpcom/v2',
+			body,
+		} );
+	}
+
+	return apiFetch< T >( {
+		path: `/${ getWpRestPath( path ) }`,
+		method,
+		...( body ? { data: body } : {} ),
+	} );
 }
 
 function isActiveDictationSessionError( error: unknown ): boolean {
