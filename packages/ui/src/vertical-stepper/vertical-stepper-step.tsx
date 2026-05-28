@@ -37,7 +37,7 @@ export function VerticalStepperStep( {
 				</Stack>
 			</Stepper.Trigger>
 			<Stepper.Panel className={ styles[ 'panel' ] } forceMount={ forceMount }>
-				{ children }
+				<div className={ styles[ 'panel-content' ] }>{ children }</div>
 			</Stepper.Panel>
 		</Stepper.Step>
 	);
