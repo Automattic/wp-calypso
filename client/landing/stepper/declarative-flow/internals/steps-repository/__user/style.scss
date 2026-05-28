@@ -320,14 +320,16 @@ $breakpoint-mobile: 660px;
 		color: var(--studio-gray-50);
 	}
 
-	// Top-position ToS (treatment_tos_top): rendered as a sibling of
-	// .step-container-v2__heading (direct child of the content row), so the
-	// form-internal selector below does not reach it. Mirrors the subtitle's
-	// paragraph styling (Heading.scss `.step-container-v2__heading p`) so it
-	// reads as a continuation paragraph in the heading block. `text-wrap:
-	// pretty` (not `balance` like the subtitle) — `balance` equalizes line
-	// lengths, which produces unnatural breaks on body-length sentences.
-	.step-container-v2__content-row > .signup-form-social-first__tos-link {
+	// Top-position ToS (treatment_tos_top): rendered as the direct sibling of
+	// .step-container-v2__heading inside the heading slot. The adjacent-sibling
+	// selector pins this rule to that exact position so the form-internal ToS
+	// (nested two levels deeper) and any future content-row children can't
+	// accidentally pick it up. Mirrors the subtitle's paragraph styling
+	// (Heading.scss `.step-container-v2__heading p`) so it reads as a
+	// continuation paragraph in the heading block. `text-wrap: pretty` (not
+	// `balance` like the subtitle) — `balance` equalizes line lengths, which
+	// produces unnatural breaks on body-length sentences.
+	.step-container-v2__heading + .signup-form-social-first__tos-link {
 		margin-block: 0.5rem 0;
 		color: var(--studio-gray-50);
 		font-size: 0.875rem;

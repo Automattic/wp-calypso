@@ -178,6 +178,32 @@ describe( 'SignupFormSocialFirst', () => {
 				screen.queryByText( /By continuing with any of the options/i )
 			).not.toBeInTheDocument();
 		} );
+
+		test( 'renders the OR divider between social and email blocks', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect( container.querySelector( '.auth-form__separator' ) ).toBeInTheDocument();
+		} );
+
+		test( 'forwards allowedSocialServices to the social row', () => {
+			// `apple_oauth_client_id` isn't mocked, so the Apple button skips itself —
+			// use the same google/paypal pair the upstream allowedSocialServices test uses.
+			const allowedServices: SignupAllowedService[] = [ 'google', 'paypal' ];
+
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					isMobileCompactVariant
+					allowedSocialServices={ allowedServices }
+				/>
+			);
+
+			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
+			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
+			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'MobileCompactTosNotice', () => {
