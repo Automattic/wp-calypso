@@ -174,6 +174,14 @@ export function ConnectionsNewView() {
 		);
 	};
 
+	const handleDocClick = ( option: ProtocolOption ) => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_connections_new_doc_clicked', {
+				protocol: option.key,
+			} )
+		);
+	};
+
 	return (
 		<ReaderMain className="connections-view">
 			<DocumentHead title={ translate( 'Add an account ‹ Social ‹ Reader' ) } />
@@ -228,8 +236,7 @@ export function ConnectionsNewView() {
 								className="connections-new__card-doc"
 								supportPostId={ option.docPostId }
 								supportLink={ option.docHref }
-								tracksEvent="calypso_reader_connections_new_doc_clicked"
-								tracksOptions={ { protocol: option.key } }
+								onClick={ () => handleDocClick( option ) }
 								showIcon={ false }
 							>
 								{ option.docLabel }

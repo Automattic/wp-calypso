@@ -245,8 +245,11 @@ export function SocialOverviewView() {
 						<InlineSupportLink
 							supportPostId={ 439167 }
 							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }
-							tracksEvent="calypso_reader_social_learn_more_clicked"
+							onClick={ () =>
+								dispatch( recordReaderTracksEvent( 'calypso_reader_social_learn_more_clicked' ) )
+							}
 							showIcon={ false }
+							noWrap={ false }
 						>
 							{ translate( 'Learn more about your social accounts in the Reader' ) }
 						</InlineSupportLink>

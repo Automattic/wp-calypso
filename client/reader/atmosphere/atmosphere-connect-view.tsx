@@ -8,10 +8,13 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { ConnectForm } from './connect-form';
 
 export function AtmosphereConnectView() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const create = useCreateConnectionMutation();
 
 	const handleSubmit = ( values: { handle: string; app_password: string } ) => {
@@ -50,8 +53,11 @@ export function AtmosphereConnectView() {
 					<InlineSupportLink
 						supportPostId={ 439167 }
 						supportLink={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }
-						tracksEvent="calypso_reader_atmosphere_learn_more_clicked"
+						onClick={ () =>
+							dispatch( recordReaderTracksEvent( 'calypso_reader_atmosphere_learn_more_clicked' ) )
+						}
 						showIcon={ false }
+						noWrap={ false }
 					>
 						{ translate( 'Learn more about your social accounts in the Reader' ) }
 					</InlineSupportLink>
