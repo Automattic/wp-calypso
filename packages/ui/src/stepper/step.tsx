@@ -50,6 +50,9 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ value ] );
 
+	// useEffect (not useLayoutEffect) is intentional: syncing metadata after
+	// commit does not affect the initial render. The redundant call on first
+	// mount is harmless — updateStep is a no-op when props have not changed.
 	useEffect( () => {
 		updateStep( { value, status, disabled: isDisabled } );
 	}, [ value, status, isDisabled, updateStep ] );

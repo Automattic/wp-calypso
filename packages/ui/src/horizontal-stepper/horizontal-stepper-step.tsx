@@ -35,6 +35,9 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 	}, [ props.value ] );
 
 	// Keep all metadata in sync (including ReactNode props).
+	// useEffect (not useLayoutEffect) is intentional: syncing metadata after
+	// commit does not affect the initial render. The redundant call on first
+	// mount is harmless — updateStep is a no-op when props have not changed.
 	// updateStep is defined in HorizontalStepper (stable identity), so adding
 	// children/indicator here does not cause an infinite re-render loop.
 	useEffect( () => {

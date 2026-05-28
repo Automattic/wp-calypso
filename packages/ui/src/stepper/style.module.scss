@@ -161,6 +161,11 @@ $indicator-size-sm: 16px; // bullet completed + current
 // Panel
 // ---------------------------------------------------------------------------
 
+// overflow: hidden provides the clip foundation for panel open/close.
+// Height animation (via --accordion-panel-height) is the consumer's
+// responsibility — see vertical-stepper/style.module.scss for the reference
+// implementation. Direct Stepper.Panel consumers must supply their own
+// height transition; omitting it produces correct clipping but no animation.
 .panel {
 	overflow: hidden;
 }
