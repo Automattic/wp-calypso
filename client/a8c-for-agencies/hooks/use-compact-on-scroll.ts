@@ -17,7 +17,7 @@ export default function useCompactOnScroll() {
 
 			if ( isScrollingDown && ! isCompact ) {
 				setIsCompact( true );
-			} else if ( ! isScrollingDown && scrollPosition === 0 ) {
+			} else if ( ! isScrollingDown && isCompact && scrollPosition === 0 ) {
 				setIsCompact( false );
 			}
 
