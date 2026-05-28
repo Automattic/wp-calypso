@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -151,6 +151,10 @@ function formatRemainingTime( remainingMs: number ): string {
 
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
+	const smartDictationSupportUrl = useMemo(
+		() => localizeUrl( 'https://wordpress.com/support/wordpress-editor/smart-dictation/', locale ),
+		[ locale ]
+	);
 	const instructions = useMemo(
 		() => buildInstructions( locale, contextualInstructions ),
 		[ locale, contextualInstructions ]
@@ -334,9 +338,18 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							<Notice.Root intent="info">
 								<Notice.Title>{ __( 'Daily quota limit reached' ) }</Notice.Title>
 								<Notice.Description>
-									{ canUpgrade
-										? __( 'It will reset at midnight. Upgrade to keep writing by voice.' )
-										: __( 'It will reset at midnight.' ) }
+									{ createInterpolateElement(
+										canUpgrade
+											? __(
+													'It will reset at midnight. Upgrade to keep writing by voice. <link>Learn more</link>.'
+											  )
+											: __( 'It will reset at midnight. <link>Learn more</link>.' ),
+										{
+											link: (
+												<a href={ smartDictationSupportUrl } target="_blank" rel="noreferrer" />
+											),
+										}
+									) }
 								</Notice.Description>
 							</Notice.Root>
 						) }
