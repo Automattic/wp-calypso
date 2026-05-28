@@ -66,7 +66,7 @@ export default function ClientReferrals( {
 
 	return (
 		<>
-			<div className="referrals-details-table__container redesigned-a8c-table redesigned-a8c-table--compact">
+			<div className="referrals-details-table__container redesigned-a8c-table">
 				<ItemsDataViews
 					data={ {
 						items: data,

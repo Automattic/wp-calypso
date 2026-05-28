@@ -178,7 +178,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 	}, [ referrals, dataViewsState, fields ] );
 
 	return (
-		<div className="referrals-list__table redesigned-a8c-table redesigned-a8c-table--full-width full-width">
+		<div className="referrals-list__table redesigned-a8c-table full-width">
 			<ItemsDataViews
 				data={ {
 					items,

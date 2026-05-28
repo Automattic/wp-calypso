@@ -152,7 +152,7 @@ export default function SubscriptionsList() {
 
 			<LayoutBody>
 				{ isDesktop ? (
-					<div className="redesigned-a8c-table redesigned-a8c-table--full-width">
+					<div className="redesigned-a8c-table">
 						<ItemsDataViews
 							data={ {
 								items,

@@ -571,8 +571,6 @@ html {
 }
 
 .redesigned-a8c-table {
-	--a4a-table-edge-padding: 16px;
-
 	thead .dataviews-view-table__row th {
 		@include heading-small;
 		color: var(--color-accent-80);
@@ -596,17 +594,9 @@ html {
 
 			&:first-child {
 				text-align: left;
-				padding-inline-start: var(--a4a-table-edge-padding);
+				padding-inline-start: 16px;
 			}
 		}
-	}
-
-	&--compact {
-		--a4a-table-edge-padding: 16px;
-	}
-
-	&--full-width {
-		--a4a-table-edge-padding: 16px;
 	}
 
 
@@ -677,11 +667,11 @@ html {
 		max-width: none;
 	}
 
-	.redesigned-a8c-table--full-width .dataviews-view-table tr {
+	.redesigned-a8c-table .dataviews-view-table tr {
 
 		td:first-child,
 		th:first-child {
-			padding-inline-start: var(--a4a-table-edge-padding);
+			padding-inline-start: 16px;
 
 			@include breakpoint-deprecated(">660px") {
 				padding-inline-start: 64px;

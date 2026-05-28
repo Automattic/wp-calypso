@@ -24,7 +24,7 @@ export default function ReferralDetailsTable( { items, fields }: Props ) {
 	}, [ items, dataViewsState, fields ] );
 
 	return (
-		<div className="referrals-details-table__container redesigned-a8c-table redesigned-a8c-table--compact">
+		<div className="referrals-details-table__container redesigned-a8c-table">
 			<ItemsDataViews
 				data={ {
 					items: data,

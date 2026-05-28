@@ -110,7 +110,7 @@ export default function MigrationsCommissionsList( {
 	return (
 		<>
 			{ isDesktop ? (
-				<div className="redesigned-a8c-table redesigned-a8c-table--full-width full-width">
+				<div className="redesigned-a8c-table full-width">
 					<ItemsDataViews
 						data={ {
 							items,
