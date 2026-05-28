@@ -34,7 +34,7 @@ $indicator-size: 24px;
 	width: $indicator-size;
 	height: $indicator-size;
 	border-radius: 50%;
-	border: 1px solid theme.$components-color-gray-400;
+	border: 2px solid theme.$components-color-gray-400;
 	flex-shrink: 0;
 	font-size: variables.$font-size-small;
 	font-weight: 400;
@@ -100,7 +100,7 @@ $indicator-size: 24px;
 	color: theme.$components-color-gray-700;
 }
 
-// Current: solid gray-900 border, transparent background + half-circle icon
+// Current: solid gray-900 ring, transparent background + half-circle dome
 .indicator.is-current[data-indicator-variant='bullet'] {
 	border-style: solid;
 	border-color: theme.$components-color-foreground;

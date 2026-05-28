@@ -6,17 +6,21 @@ import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { ReactNode } from 'react';
 
-// Half-circle (dome) icon for the bullet-variant current step
+// Half-circle (dome) icon for the bullet-variant current step.
+// 12×12 viewBox, dome in the bottom half: flat edge at vertical midpoint (y=6),
+// arc curving down to y=12. When centred inside the 24px indicator the flat
+// edge sits exactly on the horizontal centre line of the circle.
 const halfCircleIcon = (
 	<svg
 		width="12"
-		height="6"
-		viewBox="0 0 12 6"
+		height="12"
+		viewBox="0 0 12 12"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 		aria-hidden="true"
+		style={ { transform: 'rotate(180deg)' } }
 	>
-		<path d="M0 0a6 6 0 0 1 12 0H0z" fill="currentColor" />
+		<path d="M0 6a6 6 0 0 1 12 0H0z" fill="currentColor" />
 	</svg>
 );
 
