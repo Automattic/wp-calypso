@@ -35,6 +35,7 @@ function ReaderSubscriptionListItem( {
 	feed,
 	siteId,
 	site,
+	hasFeedError,
 	className = '',
 	followSource,
 	showNotificationSettings,
@@ -58,7 +59,7 @@ function ReaderSubscriptionListItem( {
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
-	const hasSiteError = site?.is_error || feed?.is_error;
+	const hasSiteError = site?.is_error || hasFeedError;
 
 	const recordEvent = useCallback(
 		( name ) => {
@@ -293,7 +294,9 @@ const ConnectedReaderSubscriptionListItem = compose(
 )( ReaderSubscriptionListItem );
 
 export default function ReaderSubscriptionListItemContainer( props ) {
-	const { data: feed } = useFeedQuery( props.feedId );
+	const { data: feed, isError: hasFeedError } = useFeedQuery( props.feedId );
 
-	return <ConnectedReaderSubscriptionListItem { ...props } feed={ feed } />;
+	return (
+		<ConnectedReaderSubscriptionListItem { ...props } feed={ feed } hasFeedError={ hasFeedError } />
+	);
 }
