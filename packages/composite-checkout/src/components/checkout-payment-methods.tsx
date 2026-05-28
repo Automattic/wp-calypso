@@ -1,3 +1,4 @@
+import colorStudio from '@automattic/color-studio';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -24,11 +25,65 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 const CheckoutPaymentMethodsWrapper = styled.div< { isLoading: boolean } >`
 	position: relative;
-	padding-top: 4px;
+	padding-top: 0;
 	pointer-events: ${ ( props ) => ( props.isLoading ? 'none' : 'auto' ) };
+	background: ${ colorStudio.colors[ 'White' ] };
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	overflow: hidden;
+
 	> div > div:not( [disabled] ):has( + div:hover )::before,
 	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
 		border-bottom: none;
+	}
+
+	.has-highlight {
+		border-radius: 0;
+		margin: 0;
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	.has-highlight:last-child {
+		border-bottom: none;
+	}
+
+	.has-highlight.is-checked {
+		background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+	}
+
+	.has-highlight::before,
+	.has-highlight:hover::before {
+		border: none;
+	}
+
+	.has-highlight > label {
+		font-size: 13px;
+		font-weight: 400;
+	}
+
+	.payment-logos {
+		display: flex;
+		filter: none;
+	}
+
+	.StripeElement {
+		background-color: field;
+	}
+
+	div:has( > .credit-card-fields-inner-wrapper ) {
+		padding: 0 16px 16px 16px;
+	}
+
+	.checkout-steps__step-complete-content & {
+		background: ${ colorStudio.colors[ 'White' ] };
+		padding: 12px 16px;
+		min-height: 52px;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		font-size: 15px;
+		font-weight: 500;
+		color: ${ colorStudio.colors[ 'Gray 90' ] };
 	}
 `;
 

@@ -1,3 +1,4 @@
+import colorStudio from '@automattic/color-studio';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -636,6 +637,20 @@ export const SubmitButtonWrapper = styled.div`
 		margin: 0 auto;
 	}
 
+	.checkout-steps__submit-footer-wrapper > div {
+		margin-top: 8px;
+	}
+
+	.checkout-steps__submit-footer-wrapper > div > svg {
+		display: none;
+	}
+
+	.checkout-steps__submit-footer-wrapper > div > p {
+		font-size: 13px;
+		font-weight: 400;
+		color: ${ colorStudio.colors[ 'Gray 70' ] };
+	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		.checkout-button {
 			width: 100%;
@@ -781,7 +796,7 @@ export function CheckoutFormSubmit( {
 
 const StepWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	position: relative;
-	padding: 24px;
+	padding: 16px 16px 48px 16px;
 	width: 100%;
 	box-sizing: border-box;
 
@@ -998,13 +1013,15 @@ export function useMakeStepActive(): MakeStepActive {
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
-	color: ${ ( props ) =>
-		props.isActive || props.isComplete
-			? props.theme.colors.textColorDark
-			: props.theme.colors.textColorDisabled };
+	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
+	font-size: 18px;
 	flex: 1;
 	margin-right: 8px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		font-size: 20px;
+	}
 `;
 
 interface StepTitleProps {
@@ -1016,7 +1033,7 @@ const StepHeaderWrapper = styled.div< StepHeaderProps & HTMLAttributes< HTMLDivE
 	display: flex;
 	width: 100%;
 	align-items: center;
-	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
+	margin: 0 0 16px;
 `;
 
 const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
@@ -1034,7 +1051,10 @@ interface StepHeaderProps {
 
 const HeaderEditButton = styled( Button )`
 	font-size: 14px;
-	padding-top: 1px;
+	padding: 4px;
+	display: flex;
+	align-items: center;
+	line-height: 1;
 `;
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -1134,7 +1154,7 @@ const StepNumber = styled.div< StepNumberProps & HTMLAttributes< HTMLDivElement 
 	align-items: center;
 	justify-content: center;
 	background: ${ ( props ) => props.theme.colors.surface };
-	font-weight: normal;
+	font-weight: 600;
 	font-size: 16px;
 	width: 26px;
 	height: 26px;
@@ -1143,10 +1163,8 @@ const StepNumber = styled.div< StepNumberProps & HTMLAttributes< HTMLDivElement 
 	border-radius: 50%;
 	border-width: 1px;
 	border-style: solid;
-	border-color: ${ ( props ) =>
-		props.isActive ? props.theme.colors.textColor : props.theme.colors.textColorDisabled };
-	color: ${ ( props ) =>
-		props.isActive ? props.theme.colors.textColor : props.theme.colors.textColorDisabled };
+	border-color: ${ colorStudio.colors[ 'Gray 90' ] };
+	color: ${ colorStudio.colors[ 'Gray 90' ] };
 	position: absolute;
 	top: 0;
 	left: 0;

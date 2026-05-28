@@ -1,20 +1,10 @@
-.checkout-sidebar-plan-upsell.promo-card {
-	margin-top: 24px;
-	margin-bottom: 24px;
-}
-
 .promo-card.checkout-sidebar-plan-upsell {
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, #fff 50%, #e6f1ff 100%);
+	border-radius: 8px;
+	margin: 0;
+	max-width: none;
+	width: 100%;
 	padding: 24px;
-}
-
-@media (min-width: 961px) {
-	.card.promo-card.checkout-sidebar-plan-upsell {
-		background: #fff;
-		border-radius: 3px;
-		box-shadow:
-			0 3px 1px rgba(0, 0, 0, 0.04),
-			0 3px 8px rgba(0, 0, 0, 0.12);
-	}
 }
 
 .promo-card.checkout-sidebar-plan-upsell .action-panel__title {
@@ -40,13 +30,8 @@
 }
 
 .checkout-sidebar-plan-upsell__plan-grid > div {
-	border-top: 1px solid #ccc;
+	border-top: none;
 	padding: 0.5em 0;
-
-	&:nth-of-type(1),
-	&:nth-of-type(2) {
-		border-top: none;
-	}
 }
 
 .checkout-sidebar-plan-upsell__do-not-pay {

@@ -990,10 +990,7 @@ export default function CheckoutMainContent( {
 
 	return (
 		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
-			<StepContainerV2CheckoutFixer
-				isLargeViewport={ isLargeViewport }
-				isRsmBetterCheckout={ isRsmBetterCheckout }
-			>
+			<StepContainerV2LayoutAdjustments isRsmBetterCheckout={ isRsmBetterCheckout }>
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
@@ -1009,19 +1006,19 @@ export default function CheckoutMainContent( {
 												total={ stepCounter.total }
 											/>
 										) }
-										<span className="checkout-skip-button">
+										<CheckoutV2SkipButton>
 											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 											<Step.LinkButton onClick={ toggleHelpCenter }>
 												{ helpCenterButtonLink }
 											</Step.LinkButton>
-										</span>
+										</CheckoutV2SkipButton>
 									</>
 								}
 							/>
 						);
 
 						if ( isLargeViewport ) {
-							return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+							return <CheckoutV2TopBarWrapper>{ topBar }</CheckoutV2TopBarWrapper>;
 						}
 
 						return (
@@ -1055,531 +1052,56 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
-			</StepContainerV2CheckoutFixer>
+			</StepContainerV2LayoutAdjustments>
 		</SubmitButtonSlotContext.Provider>
 	);
 }
 
-const StepContainerV2CheckoutFixer = styled.div< {
-	isLargeViewport: boolean;
+/* Layout-only wrapper for the V2 / Step.TwoColumnLayout render branch.
+ *
+ * Step.TwoColumnLayout's row uses `align-items: flex-start` at desktop
+ * widths, which sizes column wrappers to content height. The RSM variant
+ * needs the sidebar's wrapper to fill the row so its inner sticky summary
+ * card has somewhere to slide; the legacy V2 variant instead makes the
+ * column wrapper itself sticky. Both selectors target the row class that
+ * Step.TwoColumnLayout renders, so they must live above it.
+ *
+ * All other V2-specific styling lives on the layout components themselves,
+ * scoped via `.step-container-v2 &`. */
+const StepContainerV2LayoutAdjustments = styled.div< {
 	isRsmBetterCheckout?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
-	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
-	.checkout-top-bar-wrapper {
-		position: relative;
-		z-index: 1;
-	}
-
-	.checkout-skip-button {
-		label {
-			display: none;
-
-			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
-				display: inline;
-			}
+	/* The mobile top-bar branch (in checkout-main-content.tsx) renders a
+	 * Step.Heading next to the summary; align it with the V2 content padding. */
+	@media ( max-width: 959px ) {
+		.step-container-v2__top-bar-wrapper .step-container-v2__heading {
+			padding-inline: 16px;
+			margin-bottom: 4px;
 		}
 	}
 
-	.checkout-sidebar-plan-upsell {
-		margin-inline: 0;
-		max-width: 100%;
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						.step-container-v2__content-row--two-column-layout {
+							align-items: stretch;
+						}
+						.step-container-v2__content-row--two-column-layout
+							> div:has( > .checkout-sidebar-content ) {
+							display: flex;
+							flex-direction: column;
+						}
+				  `
+				: css`
+						div:has( .checkout-sidebar-content ) {
+							position: sticky;
+							top: 32px;
+						}
+				  ` }
 	}
-
-	${ ( props ) =>
-		! props.isLargeViewport &&
-		css`
-			.checkout-sidebar-content {
-				margin-top: 0;
-			}
-
-			.checkout__summary-button {
-				border-bottom: none;
-			}
-
-			.checkout__summary-body {
-				padding: var( --step-container-v2-content-block-padding )
-					var( --step-container-v2-content-inline-padding );
-				max-width: 100%;
-			}
-
-			.checkout__summary-features {
-				padding: 0;
-				padding-bottom: 24px;
-				width: 100%;
-			}
-
-			.checkout__summary-title {
-				margin: 0;
-				padding: 1rem var( --step-container-v2-content-inline-padding );
-				max-width: 100%;
-			}
-
-			.checkout-sidebar-plan-upsell.promo-card {
-				margin: 0;
-				max-width: 100%;
-			}
-
-			.checkout-main-content {
-				margin: 0;
-				padding: 0;
-				max-width: 100%;
-			}
-
-			.wp-checkout__review-order-step,
-			.checkout-contact-form-step,
-			.checkout__payment-method-step,
-			.checkout-terms-and-checkboxes,
-			.checkout-steps__step-complete-content,
-			.checkout-steps__step-content {
-				padding-inline: 0;
-			}
-
-			.wp-checkout__review-order-step {
-				padding-block: 2rem;
-			}
-
-			.checkout-steps__submit-button-wrapper {
-				max-width: 100%;
-				padding-inline: var( --step-container-v2-content-inline-padding );
-
-				@media ( ${ props.theme.breakpoints.tabletUp } ) {
-					padding-inline: 0;
-				}
-			}
-		` }
-
-	${ ( props ) =>
-		props.isLargeViewport &&
-		css`
-			.checkout-main-content {
-				padding: 0;
-				margin-top: 1rem;
-				max-width: 100%;
-			}
-
-			.checkout-sidebar-content {
-				--left-padding: 4rem;
-				padding: 0 0 0 var( --left-padding );
-				background: none;
-				position: relative;
-				height: 100%;
-
-				${ ! props.isRsmBetterCheckout &&
-				css`
-					&:before {
-						content: '';
-						display: block;
-						background: var( --color-neutral-0 );
-						position: fixed;
-						top: calc( var( --step-container-v2-top-bar-height ) * -1 );
-						transform: translateX( calc( var( --left-padding ) * -1 ) );
-						width: 100vw;
-						bottom: 0;
-					}
-				` }
-			}
-
-			.checkout__summary-area,
-			.checkout__summary-body {
-				max-width: 100%;
-			}
-
-			.checkout__summary-area,
-			.checkout-loading-sidebar {
-				min-width: 300px;
-			}
-
-			.checkout__summary-body {
-				margin: 0;
-			}
-
-			.checkout__summary-features {
-				padding-top: 32px;
-			}
-		` }
-	${ ( props ) =>
-		props.isLargeViewport &&
-		! props.isRsmBetterCheckout &&
-		css`
-			div:has( .checkout-sidebar-content ) {
-				position: sticky;
-				top: 32px;
-			}
-			.checkout__summary-area,
-			.checkout-loading-sidebar {
-				min-width: 384px;
-			}
-		` }
-	${ ( props ) =>
-		props.isLargeViewport &&
-		props.isRsmBetterCheckout &&
-		css`
-			/*
-			 * Stick the inner summary area, not the sidebar wrapper.
-			 *
-			 * Earlier versions targeted div:has( .checkout-sidebar-content )
-			 * which matched multiple ancestors; making each sticky with no
-			 * positioned containing block let the upsell paint over the trust
-			 * cards row at scroll-bottom. Targeting .checkout-sidebar-content
-			 * directly didn't help either: when the sidebar is the sticky
-			 * element it equals its containing block's height (the column
-			 * stretches it), leaving no room to actually stick — so the
-			 * sticky degenerated to static and the Pay CTA scrolled away.
-			 *
-			 * .checkout__summary-area is shorter than the sidebar (just the
-			 * order card + upsell), so it has room to slide within the
-			 * stretched sidebar's bounds and pin to top: 32px.
-			 */
-			.checkout__summary-area {
-				position: sticky;
-				top: 32px;
-			}
-			.checkout__summary-area,
-			.checkout-loading-sidebar {
-				min-width: 384px;
-			}
-			/*
-			 * Give the sticky .checkout__summary-area room to slide.
-			 *
-			 * TwoColumnLayout's row uses align-items: flex-start at break-large
-			 * (packages/onboarding/.../TwoColumnLayout/style.scss), so its
-			 * column wrappers size to content instead of stretching to row
-			 * height. With the right column collapsed, .checkout-sidebar-content
-			 * inside it is just as short as the .checkout__summary-area it
-			 * contains — so the sticky rule above has zero distance to travel.
-			 *
-			 * Override the row's align-items to stretch (so both column wrappers
-			 * match row height), then promote the sidebar's column wrapper to a
-			 * flex column so .checkout-sidebar-content fills it. The legacy
-			 * WPCheckoutWrapper path gets this for free via grid-area stretching.
-			 */
-			.step-container-v2__content-row--two-column-layout {
-				align-items: stretch;
-			}
-			.step-container-v2__content-row--two-column-layout > div:has( > .checkout-sidebar-content ) {
-				display: flex;
-				flex-direction: column;
-			}
-			.checkout-sidebar-content {
-				flex: 1;
-			}
-			/*
-			 * Keep the totals + Pay CTA + terms always visible regardless of
-			 * cart length. Cap the summary card itself (not the whole area)
-			 * at viewport height, scroll the line items list inside, and
-			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
-			 *
-			 * The Save 19% upsell below the card sits at its natural size;
-			 * if it doesn't fit alongside the card in a short viewport,
-			 * it scrolls past the bottom — the Pay CTA is the priority.
-			 */
-			.checkout__summary-card {
-				max-height: calc( 100vh - 64px );
-				display: flex;
-				flex-direction: column;
-			}
-			.checkout__summary-card > .wp-checkout-order-summary__products-list {
-				flex: 1 1 auto;
-				min-height: 0;
-				overflow-y: auto;
-			}
-			.checkout__summary-card > .wp-checkout-order-summary__section-title,
-			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
-				flex-shrink: 0;
-			}
-			/*
-			 * Lock intrinsic child sizing so the 24px gap between the sticky order
-			 * card and the two-year upsell isn't collapsed when the sticky area
-			 * reaches the bottom of its grid cell.
-			 */
-			.checkout__summary-area > * {
-				flex-shrink: 0;
-			}
-		` }
-	${ ( props ) =>
-		! props.isLargeViewport &&
-		css`
-			.checkout-sidebar-content {
-				background: ${ colorStudio.colors[ 'White' ] };
-			}
-			.checkout__summary-area {
-				background: #f5f5f5;
-				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
-				border-radius: 8px;
-				margin: 12px 16px;
-				overflow: hidden;
-				width: calc( 100% - 32px );
-			}
-			.checkout__summary-button {
-				background: transparent;
-				border-bottom: none;
-			}
-			.checkout__summary-body {
-				padding-block-start: 0;
-			}
-			.wp-checkout-order-summary__section-title {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-				padding-top: 20px;
-			}
-			.step-container-v2__top-bar-wrapper .step-container-v2__heading {
-				padding-inline: 16px;
-				margin-bottom: 4px;
-			}
-			.checkout-main-content .step-container-v2__heading {
-				display: none;
-			}
-			.checkout-step {
-				padding: 16px 16px 48px 16px;
-			}
-		` }
-	${ ( props ) => css`
-		.checkout__main-title,
-		.step-container-v2__heading h1 {
-			font-size: 28px;
-			font-weight: 400;
-			color: ${ colorStudio.colors[ 'Gray 100' ] };
-		}
-		.checkout__summary-card {
-			background: transparent;
-			box-shadow: none;
-			padding: 0;
-			padding-inline-end: 22px;
-			margin-bottom: 0;
-		}
-		.promo-card.checkout-sidebar-plan-upsell {
-			background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			border-radius: 8px;
-			margin: 0;
-			max-width: none;
-			width: 100%;
-		}
-		.checkout-sidebar-plan-upsell__plan-grid > div {
-			border-top: none;
-		}
-		.item-variation-picker {
-			background: #ffffff;
-			border: 1px solid #e0e0e0;
-			border-radius: 8px;
-			overflow: hidden;
-			padding: 0;
-		}
-		.item-variation-picker > li {
-			margin: 0;
-			border-bottom: 1px solid #f0f0f0;
-		}
-		.item-variation-picker > li:last-child {
-			border-bottom: none;
-		}
-		.item-variation-picker > li > div.is-checked {
-			background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-		}
-		.item-variation-picker > li > div::before,
-		.item-variation-picker > li > div:hover::before {
-			border: none;
-		}
-		.item-variation-picker > li > div > label {
-			min-height: 52px;
-		}
-		.checkout-step__stepper > div > div:first-child {
-			border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
-			color: ${ colorStudio.colors[ 'Gray 90' ] };
-			font-weight: 600;
-		}
-		.checkout-payment-methods {
-			background: #ffffff;
-			border: 1px solid #e0e0e0;
-			border-radius: 8px;
-			overflow: hidden;
-			padding-top: 0;
-		}
-		.checkout-payment-methods .has-highlight,
-		.item-variation-picker > li > div {
-			border-radius: 0;
-		}
-		.checkout-payment-methods .has-highlight {
-			margin: 0;
-			border-bottom: 1px solid #f0f0f0;
-		}
-		.checkout-payment-methods .has-highlight:last-child {
-			border-bottom: none;
-		}
-		.checkout-payment-methods .has-highlight.is-checked {
-			background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-		}
-		.checkout-payment-methods .has-highlight::before,
-		.checkout-payment-methods .has-highlight:hover::before {
-			border: none;
-		}
-		.checkout-payment-methods .has-highlight > label {
-			min-height: 52px;
-			font-size: 13px;
-			font-weight: 400;
-		}
-		.checkout-payment-methods .payment-logos {
-			display: flex;
-			filter: none;
-		}
-		.checkout-payment-methods .StripeElement {
-			background-color: field;
-		}
-		div:has( > .credit-card-fields-inner-wrapper ) {
-			padding: 0 16px 16px 16px;
-		}
-		.checkout-steps__step-complete-content .checkout-payment-methods {
-			background: white;
-			padding: 12px 16px;
-			min-height: 52px;
-			display: flex;
-			align-items: center;
-			box-sizing: border-box;
-			font-size: 15px;
-			font-weight: 500;
-			color: ${ colorStudio.colors[ 'Gray 90' ] };
-		}
-		.checkout-contact-form-step .checkout-steps__step-complete-content {
-			font-weight: 500;
-			color: ${ colorStudio.colors[ 'Gray 90' ] };
-		}
-		.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
-			display: none;
-		}
-		.checkout-contact-form-step .checkout-steps__step-complete-content ul {
-			margin-top: 0;
-		}
-		.checkout-step__edit-button {
-			padding: 4px;
-			display: flex;
-			align-items: center;
-			line-height: 1;
-		}
-		.checkout-step__header h2 {
-			font-size: 15px;
-		}
-		.checkout-step__header h2 > span {
-			font-weight: 590;
-			color: ${ colorStudio.colors[ 'Gray 100' ] };
-		}
-		.checkout-step--active .checkout-step__header,
-		.checkout-step--complete .checkout-step__header {
-			margin-block-end: 24px;
-		}
-		.wp-checkout__review-order-step .checkout-step__header h2 > span {
-			font-weight: 500;
-		}
-		.wp-checkout-order-review__show-coupon-field-button {
-			color: ${ colorStudio.colors[ 'Gray 90' ] };
-			font-weight: 500;
-			text-decoration: none;
-		}
-		div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-			margin-block-start: -4px;
-			padding-block-start: 0;
-		}
-		.wp-checkout__review-order-step .checkout-step__stepper {
-			@media ( max-width: 699px ) {
-				display: none;
-			}
-		}
-		.wp-checkout__review-order-step .checkout-step__header h2 {
-			font-size: 20px;
-		}
-		.wp-checkout__review-order-step .checkout-line-item {
-			font-size: 15px;
-		}
-		.wp-checkout__review-order-step .order-review-line-items {
-			margin-top: 0;
-		}
-		.wp-checkout__review-order-step .checkout-review-order__site {
-			font-size: 13px;
-			font-weight: 400;
-			color: ${ colorStudio.colors[ 'Gray 40' ] };
-			@media ( ${ props.theme.breakpoints.tabletUp } ) {
-				margin-top: 0;
-			}
-		}
-		.checkout-contact-form-step .checkout-steps__step-content > p {
-			font-size: 12px;
-			font-weight: 400;
-			color: ${ colorStudio.colors[ 'Gray 40' ] };
-		}
-		.checkout__terms strong {
-			font-size: 16px;
-			font-weight: 500;
-			color: ${ colorStudio.colors[ 'Gray 100' ] };
-		}
-		.checkout__terms-item {
-			font-size: 12px;
-			font-weight: 400;
-			color: ${ colorStudio.colors[ 'Gray 40' ] };
-		}
-		.checkout__summary-title {
-			font-size: 13px;
-			font-weight: 400;
-			color: ${ colorStudio.colors[ 'Gray 100' ] };
-		}
-		.checkout__summary-body {
-			color: ${ colorStudio.colors[ 'Gray 70' ] };
-		}
-		.wp-checkout-order-summary__subtotal,
-		.wp-checkout-order-summary__total {
-			color: ${ colorStudio.colors[ 'Gray 90' ] };
-			font-size: 13px;
-			line-height: 20px;
-		}
-		.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
-			font-size: 13px;
-		}
-		.wp-checkout-order-summary__line-item,
-		.wp-checkout-order-summary__tax-not-calculated {
-			font-size: 13px;
-		}
-		.wp-checkout-order-summary__section-title {
-			margin-bottom: 0;
-		}
-		.wp-checkout-order-summary__section-title > span {
-			display: none;
-		}
-		.cost-overrides-list-product-wrapper,
-		:has( > .cost-overrides-list-item--coupon ) {
-			padding-inline-start: 0;
-		}
-		.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
-		:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
-			display: none;
-		}
-		.wp-checkout-order-summary__amount-wrapper {
-			border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-		}
-		.wp-checkout-order-summary__subtotal-section {
-			border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-		}
-		.checkout-terms-and-checkboxes {
-			padding-block-start: 24px;
-		}
-		.checkout-terms-and-checkboxes > *:first-child {
-			border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-		}
-		.checkout-steps__submit-footer-wrapper > div {
-			margin-top: 8px;
-		}
-		.checkout-steps__submit-footer-wrapper > div > svg {
-			display: none;
-		}
-		.checkout-steps__submit-footer-wrapper > div > p {
-			font-size: 13px;
-			font-weight: 400;
-			color: ${ colorStudio.colors[ 'Gray 70' ] };
-		}
-	` }
-	${ ( props ) =>
-		props.isLargeViewport &&
-		css`
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				padding-block-start: 24px;
-			}
-		` }
 `;
 
 const CheckoutSummary = styled.div`
@@ -1589,9 +1111,40 @@ const CheckoutSummary = styled.div`
 	display: flex;
 	flex-direction: column;
 
+	/* Mobile redesign — the collapsed summary card has a light-gray panel look.
+	 * Applies to both the legacy grid layout and the V2 / Step.TwoColumnLayout
+	 * render branch so neither needs to override it from outside. */
+	@media ( max-width: 959px ) {
+		background: #f5f5f5;
+		border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+		border-radius: 8px;
+		margin: 12px 16px;
+		overflow: hidden;
+		width: calc( 100% - 32px );
+	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding-left: 24px;
 		padding-right: 24px;
+	}
+
+	/* V2 desktop sidebar adjustments — the legacy desktop sidebar gets its
+	 * sticky behavior from WPCheckoutWrapper's grid layout instead. */
+	.step-container-v2 & {
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			background: none;
+			border: none;
+			border-radius: 0;
+			margin: 0;
+			overflow: visible;
+			width: 100%;
+			max-width: 100%;
+			min-width: 384px;
+			padding-left: 0;
+			padding-right: 0;
+			position: sticky;
+			top: 32px;
+		}
 	}
 `;
 
@@ -1647,6 +1200,7 @@ const CheckoutSummaryBody = styled.div`
 	width: 100%;
 	display: none;
 	padding: 24px;
+	color: ${ colorStudio.colors[ 'Gray 70' ] };
 
 	.is-visible & {
 		display: block;
@@ -1682,6 +1236,25 @@ const CheckoutSummaryBody = styled.div`
 			display: block;
 		}
 	}
+
+	/* Universal mobile: align with collapsed summary card padding. */
+	@media ( max-width: 959px ) {
+		padding-block-start: 0;
+	}
+
+	/* V2 mobile uses the V2 layout's CSS padding tokens. */
+	.step-container-v2 & {
+		padding: var( --step-container-v2-content-block-padding )
+			var( --step-container-v2-content-inline-padding );
+		max-width: 100%;
+		padding-block-start: 0;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			padding: 0;
+			max-width: 100%;
+			margin: 0;
+		}
+	}
 `;
 
 const CheckoutSidebarNudgeWrapper = styled.div`
@@ -1704,7 +1277,12 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	padding: 24px;
+	padding-block-start: 24px;
 	width: 100%;
+
+	> *:first-child {
+		border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding-top: 50px;
@@ -1992,35 +1570,11 @@ const WPCheckoutWrapper = styled.div< {
 			}
 			${ props.isRsmBetterCheckout &&
 			css`
-				/*
-				 * Keep the totals + Pay CTA + terms always visible regardless of
-				 * cart length. Cap the summary card itself (not the whole area)
-				 * at viewport height, scroll the line items list inside, and
-				 * lock the bottom block (subtotal/total/CTA/terms) at full size.
-				 *
-				 * The Save 19% upsell below the card sits at its natural size;
-				 * if it doesn't fit alongside the card in a short viewport,
-				 * it scrolls past the bottom — the Pay CTA is the priority.
-				 */
-				.checkout__summary-card {
-					max-height: calc( 100vh - 64px );
-					display: flex;
-					flex-direction: column;
-				}
-				.checkout__summary-card > .wp-checkout-order-summary__products-list {
-					flex: 1 1 auto;
-					min-height: 0;
-					overflow-y: auto;
-				}
-				.checkout__summary-card > .wp-checkout-order-summary__section-title,
-				.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
-					flex-shrink: 0;
-				}
-				/*
-				 * Lock intrinsic child sizing so the 24px gap between the sticky
+				/* Lock intrinsic child sizing so the 24px gap between the sticky
 				 * order card and the two-year upsell isn't collapsed when the
-				 * sticky area reaches the bottom of its grid cell.
-				 */
+				 * sticky area reaches the bottom of its grid cell. The sticky
+				 * order-card behavior itself lives on CheckoutSummaryCard via
+				 * its isStickyInRsm prop in wp-checkout-order-summary.tsx. */
 				.checkout__summary-area > * {
 					flex-shrink: 0;
 				}
@@ -2041,28 +1595,10 @@ const WPCheckoutWrapper = styled.div< {
 				: css`
 						grid-template-areas: 'checkout-title-area' 'sidebar-content' 'main-content';
 				  ` }
-			.checkout-sidebar-content {
-				background: ${ colorStudio.colors[ 'White' ] };
-			}
-			.checkout__summary-area {
-				background: #f5f5f5;
-				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
-				border-radius: 8px;
-				margin: 12px 16px;
-				overflow: hidden;
-				width: calc( 100% - 32px );
-			}
-			.checkout__summary-button {
-				background: transparent;
-				border-bottom: none;
-			}
-			.checkout__summary-body {
-				padding-block-start: 0;
-			}
-			.wp-checkout-order-summary__section-title {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
-				padding-top: 20px;
-			}
+			/* Layout positioning for the mobile collapsed-sidebar layout. Visual
+			 * styles (background/border/etc.) for the children live on their
+			 * own styled components — see CheckoutSummary, CheckoutSummaryBody,
+			 * WPCheckoutSidebarContent, etc. */
 			.checkout__redesign-header {
 				grid-area: checkout-title-area;
 				margin-top: var( --masterbar-checkout-height );
@@ -2081,288 +1617,12 @@ const WPCheckoutWrapper = styled.div< {
 			.wp-checkout__review-order-step {
 				padding-block-start: 0;
 			}
-			.checkout-step {
-				padding: 16px 16px 48px 16px;
-			}
-		` }
-	${ ( props ) => css`
-			.checkout__main-title,
-			.step-container-v2__heading h1 {
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-
-				@media ( max-width: 699px ) {
-					font-size: 28px;
-				}
-			}
-			.checkout__summary-card {
-				background: transparent;
-				box-shadow: none;
-				padding: 0;
-				margin-bottom: 0;
-			}
-			@media ( ${ props.theme.breakpoints.desktopUp } ) {
-				.checkout__summary-card {
-					background: ${ colorStudio.colors[ 'White' ] };
-					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
-					border-radius: 8px;
-					padding: 24px;
-				}
-			}
-			.promo-card.checkout-sidebar-plan-upsell {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-				border-radius: 8px;
-				margin: 0;
-				max-width: none;
-				width: 100%;
-			}
-			.checkout-sidebar-plan-upsell__plan-grid > div {
-				border-top: none;
-			}
-			.item-variation-picker {
-				background: #ffffff;
-				border: 1px solid #e0e0e0;
-				border-radius: 8px;
-				overflow: hidden;
-				padding: 0;
-			}
-			.item-variation-picker > li {
-				margin: 0;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.item-variation-picker > li:last-child {
-				border-bottom: none;
-			}
-			.item-variation-picker > li > div.is-checked {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			}
-			.item-variation-picker > li > div::before,
-			.item-variation-picker > li > div:hover::before {
-				border: none;
-			}
-			.item-variation-picker > li > div > label {
-					min-height: 64px;
-					padding-top: 2px;
-					padding-bottom: 0;
-				@media ( ${ props.theme.breakpoints.desktopUp } ) {
-					min-height: 72px;
-				}
-			}
-			.checkout-step__stepper > div > div:first-child {
-				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-weight: 600;
-			}
-			.checkout-payment-methods {
-				background: #ffffff;
-				border: 1px solid #e0e0e0;
-				border-radius: 8px;
-				overflow: hidden;
-				padding-top: 0;
-			}
-			.checkout-payment-methods .has-highlight,
-			.item-variation-picker > li > div {
-				border-radius: 0;
-			}
-			.checkout-payment-methods .has-highlight {
-				margin: 0;
-				border-bottom: 1px solid #f0f0f0;
-			}
-			.checkout-payment-methods .has-highlight:last-child {
-				border-bottom: none;
-			}
-			.checkout-payment-methods .has-highlight.is-checked {
-				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
-			}
-			.checkout-payment-methods .has-highlight::before,
-			.checkout-payment-methods .has-highlight:hover::before {
-				border: none;
-			}
-			.checkout-payment-methods .has-highlight > label {
-				font-size: 13px;
-				font-weight: 400;
-			}
-			.checkout-payment-methods .payment-logos {
-				display: flex;
-				filter: none;
-			}
-			.checkout-payment-methods .StripeElement {
-				background-color: field;
-			}
-			div:has( > .credit-card-fields-inner-wrapper ) {
-				padding: 0 16px 16px 16px;
-			}
-			.checkout-steps__step-complete-content .checkout-payment-methods {
-				background: white;
-				padding: 12px 16px;
-				min-height: 52px;
-				display: flex;
-				align-items: center;
-				box-sizing: border-box;
-				font-size: 15px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content {
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
-				display: none;
-			}
-			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
-				margin-top: 0;
-			}
-			.checkout-step__edit-button {
-				padding: 4px;
-				display: flex;
-				align-items: center;
-				line-height: 1;
-			}
-
-			.checkout-step__header h2 > span {
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-				font-size: 18px;
-					@media ( ${ props.theme.breakpoints.desktopUp } ) {
-						font-size: 20px;
-					}
-				}
-
-			.checkout-step__header {
-				margin-bottom: 16px;
-			}
-
-			.wp-checkout__review-order-step .checkout-step__header {
-				margin-bottom: 0;
-			}
-
-			.checkout-line-item {
-				padding-top: 24px;
-				padding-bottom: 0;
-			}
-
-			.wp-checkout__review-order-step .checkout-step__header h2 > span {
-				font-weight: 500;
-			}
-			.wp-checkout-order-review__show-coupon-field-button {
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-weight: 500;
-				text-decoration: none;
-			}
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				margin-block-start: -4px;
-				padding-block-start: 0;
-			}
-			.wp-checkout__review-order-step .checkout-step__stepper {
-				@media ( max-width: 699px ) {
-					display: none;
-				}
-			}
-			.wp-checkout__review-order-step .checkout-step__header h2 {
-				font-size: 20px;
-			}
-			.wp-checkout__review-order-step .checkout-line-item {
-				font-size: 15px;
-			}
-			.wp-checkout__review-order-step .order-review-line-items {
-				margin-top: 0;
-			}
-			.wp-checkout__review-order-step .checkout-review-order__site {
-				font-size: 14px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 50' ] };
-				@media ( ${ props.theme.breakpoints.tabletUp } ) {
-					margin-top: 0;
-				}
-			}
-			.checkout-contact-form-step .checkout-steps__step-content > p {
-				font-size: 12px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-			}
-			.checkout__terms strong {
-				font-size: 16px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__terms-item {
-				font-size: 12px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
-			}
-			.checkout__summary-title {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			.checkout__summary-body {
-				color: ${ colorStudio.colors[ 'Gray 70' ] };
-			}
-			.wp-checkout-order-summary__subtotal,
-			.wp-checkout-order-summary__total {
-				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-size: 16px;
-				line-height: 20px;
-				margin-bottom: 0;
-			}
-			.wp-checkout-order-summary__subtotal:first-child,
-			.wp-checkout-order-summary__total:first-child {
-				margin-bottom: 4px;
-			}
-			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
-				font-size: 14px;
-			}
-			.wp-checkout-order-summary__line-item,
-			.wp-checkout-order-summary__tax-not-calculated {
-				font-size: 13px;
-			}
-			.wp-checkout-order-summary__section-title {
-				margin-bottom: 0;
-			}
-			.wp-checkout-order-summary__section-title > span {
-				display: none;
-			}
-			.cost-overrides-list-product-wrapper,
-			:has( > .cost-overrides-list-item--coupon ) {
-				padding-inline-start: 0;
-			}
-			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
-			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
-				display: none;
-			}
-			.wp-checkout-order-summary__amount-wrapper {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
-			}
-			.wp-checkout-order-summary__subtotal-section {
-				border-top: 0;
-				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };S
-			}
-			.checkout-terms-and-checkboxes {
-				padding-block-start: 24px;
-			}
-			.checkout-terms-and-checkboxes > *:first-child {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
-			}
-			.checkout-steps__submit-footer-wrapper > div {
-				margin-top: 8px;
-			}
-			.checkout-steps__submit-footer-wrapper > div > svg {
-				display: none;
-			}
-			.checkout-steps__submit-footer-wrapper > div > p {
-				font-size: 13px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 70' ] };
-			}
 		` }
 	${ ( props ) =>
 		props.isLargeViewport &&
 		css`
 			.checkout__summary-area {
 				padding-top: 50px;
-			}
-			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
-				padding-block-start: 24px;
 			}
 		` }
 `;
@@ -2431,9 +1691,6 @@ const WPCheckoutMainContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 			}
 		` }
 	${ ( props ) => css`
-		.checkout-line-item .checkout-line-item__remove-product {
-			font-size: 14px;
-		}
 		.form-fieldset.contact-details-form-fields .form__hidden-input a {
 			font-weight: 500;
 			text-decoration: none;
@@ -2450,6 +1707,83 @@ const WPCheckoutMainContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 		.checkout-terms-and-checkboxes a {
 			color: ${ props.theme.colors.textColorDark };
 		}
+
+		/* Step-context overrides — the .wp-checkout__review-order-step and
+		   .checkout-contact-form-step classes are applied on the CheckoutStep /
+		   CheckoutStepBody calls in this file, so the descendant rules below
+		   live with their owning render site. */
+		.wp-checkout__review-order-step .checkout-step__header {
+			margin-bottom: 0;
+		}
+		.wp-checkout__review-order-step .checkout-step__header h2 > span {
+			font-weight: 500;
+		}
+		.wp-checkout__review-order-step .checkout-step__stepper {
+			@media ( max-width: 699px ) {
+				display: none;
+			}
+		}
+		.checkout-contact-form-step .checkout-steps__step-complete-content {
+			font-weight: 500;
+			color: ${ colorStudio.colors[ 'Gray 90' ] };
+		}
+		.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+			display: none;
+		}
+		.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+			margin-top: 0;
+		}
+		.checkout-contact-form-step .checkout-steps__step-content > p {
+			font-size: 12px;
+			font-weight: 400;
+			color: ${ colorStudio.colors[ 'Gray 40' ] };
+		}
+
+		/* V2 / Step.TwoColumnLayout context overrides.
+		 * The .step-container-v2 root is added by packages/onboarding's
+		 * Step.TwoColumnLayout, so these rules only apply in the V2 render
+		 * branch. They undo the legacy margins/paddings that don't fit
+		 * inside the V2 content row. */
+		.step-container-v2 & {
+			margin: 0;
+			padding: 0;
+			max-width: 100%;
+
+			.wp-checkout__review-order-step {
+				padding-block: 2rem;
+			}
+
+			.wp-checkout__review-order-step,
+			.checkout-contact-form-step,
+			.checkout__payment-method-step,
+			.checkout-terms-and-checkboxes,
+			.checkout-steps__step-complete-content,
+			.checkout-steps__step-content {
+				padding-inline: 0;
+			}
+
+			.checkout-steps__submit-button-wrapper {
+				max-width: 100%;
+				padding-inline: var( --step-container-v2-content-inline-padding );
+
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					padding-inline: 0;
+				}
+			}
+
+			/* On mobile the V2 top-bar branch renders its own Step.Heading next
+			 * to the summary, so the one rendered inside main content would be
+			 * a duplicate. Desktop has only the in-main-content heading. */
+			@media ( max-width: 959px ) {
+				.step-container-v2__heading {
+					display: none;
+				}
+			}
+
+			@media ( ${ props.theme.breakpoints.desktopUp } ) {
+				margin-top: 1rem;
+			}
+		}
 	` }
 `;
 
@@ -2463,7 +1797,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 `;
 
 const WPCheckoutSidebarContent = styled.div< { isRsmBetterCheckout?: boolean } >`
-	background: ${ ( props ) => props.theme.colors.background };
+	background: ${ colorStudio.colors[ 'White' ] };
 	grid-area: sidebar-content;
 	margin-top: var( --masterbar-checkout-height );
 
@@ -2476,7 +1810,6 @@ const WPCheckoutSidebarContent = styled.div< { isRsmBetterCheckout?: boolean } >
 		${ ( props ) =>
 			props.isRsmBetterCheckout
 				? css`
-						background: ${ colorStudio.colors[ 'White' ] };
 						padding: 144px 24px 24px 64px;
 
 						.rtl & {
@@ -2491,6 +1824,36 @@ const WPCheckoutSidebarContent = styled.div< { isRsmBetterCheckout?: boolean } >
 						}
 				  ` }
 	}
+
+	/* V2 / Step.TwoColumnLayout sidebar overrides. */
+	${ ( props ) => css`
+		.step-container-v2 & {
+			margin-top: 0;
+
+			@media ( ${ props.theme.breakpoints.desktopUp } ) {
+				--left-padding: 4rem;
+				padding: 0 0 0 var( --left-padding );
+				background: none;
+				position: relative;
+				height: 100%;
+				flex: 1;
+
+				${ ! props.isRsmBetterCheckout &&
+				css`
+					&:before {
+						content: '';
+						display: block;
+						background: var( --color-neutral-0 );
+						position: fixed;
+						top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+						transform: translateX( calc( var( --left-padding ) * -1 ) );
+						width: 100vw;
+						bottom: 0;
+					}
+				` }
+			}
+		}
+	` }
 `;
 const SitePreviewWrapper = styled.div`
 	.home-site-preview {
@@ -2519,21 +1882,45 @@ const SitePreviewWrapper = styled.div`
 `;
 
 const WPCheckoutTitle = styled.div`
-	font-size: 44px;
 	font-family: 'Recoleta', serif;
-	font-weight: ${ ( props ) => props.theme.weights.bold };
+	font-weight: 400;
+	color: ${ colorStudio.colors[ 'Gray 100' ] };
 	line-height: 1em;
 	padding: 0 24px;
 
+	@media ( max-width: 699px ) {
+		font-size: 28px;
+	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0;
+		font-size: 44px;
 	}
 `;
 
 // Redesign V1 styled components for summary header
+/* The V2 top-bar sits above a sidebar that extends to the top of the page;
+ * lifting the bar with z-index keeps it interactive. */
+const CheckoutV2TopBarWrapper = styled.div`
+	position: relative;
+	z-index: 1;
+`;
+
+/* The help-center label is shown only on phones-and-up; below bigPhoneUp the
+ * link icon stands alone to save horizontal space in the top bar. */
+const CheckoutV2SkipButton = styled.span`
+	label {
+		display: none;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+			display: inline;
+		}
+	}
+`;
+
 const CheckoutSummaryTitleLinkRedesign = styled.button`
 	background: transparent;
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-bottom: none;
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -2542,7 +1929,7 @@ const CheckoutSummaryTitleLinkRedesign = styled.button`
 `;
 
 const CheckoutSummaryTitleContentRedesign = styled.span`
-	color: ${ ( props ) => props.theme.colors.textColor };
+	color: ${ colorStudio.colors[ 'Gray 100' ] };
 	display: flex;
 	font-size: 13px;
 	font-weight: 400;
@@ -2554,6 +1941,13 @@ const CheckoutSummaryTitleContentRedesign = styled.span`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 16px 0;
+	}
+
+	/* V2 mobile: align with the V2 content padding tokens. */
+	.step-container-v2 & {
+		margin: 0;
+		padding: 1rem var( --step-container-v2-content-inline-padding );
+		max-width: 100%;
 	}
 `;
 

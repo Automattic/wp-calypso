@@ -80,10 +80,13 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
 	return (
 		<CheckoutSummaryCard
 			className={ `checkout__summary-card${ isCartUpdating ? ' is-loading' : '' }` }
 			data-e2e-cart-is-loading={ isCartUpdating }
+			isStickyInRsm={ isRsmBetterCheckout && isLargeViewport }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -134,7 +137,7 @@ export function CheckoutSummaryFeaturedList( {
 }
 
 const TaxNotCalculatedLineItemWrapper = styled.div`
-	font-size: 14px;
+	font-size: 13px;
 	text-wrap: pretty;
 	line-height: 1em;
 `;
@@ -672,15 +675,45 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled.div`
-	border: none;
-	border-radius: 3px;
-	background: #fff;
-	padding: 24px;
-	box-shadow:
-		0 3px 1px rgb( 0 0 0 / 4% ),
-		0 3px 8px rgb( 0 0 0 / 12% );
-	margin-bottom: 20px;
+const CheckoutSummaryCard = styled.div< { isStickyInRsm?: boolean } >`
+	background: transparent;
+	box-shadow: none;
+	padding: 0;
+	margin-bottom: 0;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		background: ${ PALETTE[ 'White' ] };
+		border: 1px solid ${ PALETTE[ 'Gray 5' ] };
+		border-radius: 8px;
+		padding: 24px;
+	}
+
+	${ ( props ) =>
+		props.isStickyInRsm &&
+		`
+			@media ( ${ props.theme.breakpoints.desktopUp } ) {
+				/*
+				 * Keep the totals + Pay CTA + terms always visible regardless of
+				 * cart length. Cap the summary card itself (not the whole area)
+				 * at viewport height, scroll the line items list inside, and
+				 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+				 */
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+
+				& > .wp-checkout-order-summary__products-list {
+					flex: 1 1 auto;
+					min-height: 0;
+					overflow-y: auto;
+				}
+
+				& > .wp-checkout-order-summary__section-title,
+				& > .wp-checkout-order-summary__amount-wrapper {
+					flex-shrink: 0;
+				}
+			}
+		` }
 `;
 
 const CheckoutSummaryPayButtonSlot = styled.div`
@@ -795,21 +828,34 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 };
 
 const CheckoutSummaryTitle = styled.div`
-	margin-bottom: 16px;
+	margin-bottom: 0;
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	font-size: 20px;
+
+	> span {
+		display: none;
+	}
+
+	/* Mobile: the section title gets a dashed top border to separate it from
+	 * the collapsed summary trigger above the sidebar card. Applies in both
+	 * the legacy grid layout and the V2 / Step.TwoColumnLayout render. */
+	@media ( max-width: 959px ) {
+		border-top: 1px dashed ${ PALETTE[ 'Gray 10' ] };
+		padding-top: 20px;
+	}
 `;
 
 const CheckoutSubtotalSection = styled.div`
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-top: 0;
+	border-bottom: 1px dashed ${ PALETTE[ 'Gray 5' ] };
 	margin-bottom: 20px;
 	padding-bottom: 20px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-top: 1px dashed ${ PALETTE[ 'Gray 5' ] };
 	padding: 20px 0 0 0;
 	margin-top: 20px;
 `;
@@ -817,7 +863,7 @@ const CheckoutSummaryAmountWrapper = styled.div`
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	display: flex;
 	flex-wrap: wrap;
-	font-size: 14px;
+	font-size: 13px;
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 4px;
@@ -830,11 +876,16 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 `;
 
 const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorDark };
+	color: ${ PALETTE[ 'Gray 90' ] };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
-	margin-bottom: 0px;
-	font-size: 20px;
+	line-height: 20px;
+	margin-bottom: 0;
+	font-size: 16px;
+
+	&:first-child {
+		margin-bottom: 4px;
+	}
+
 	& > span:first-child {
 		font-size: 14px;
 	}
@@ -869,11 +920,15 @@ const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 `;
 
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	color: ${ ( props ) => props.theme.colors.textColorDark };
+	color: ${ PALETTE[ 'Gray 90' ] };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
-	margin-bottom: 0px;
-	font-size: 20px;
+	line-height: 20px;
+	margin-bottom: 0;
+	font-size: 16px;
+
+	&:first-child {
+		margin-bottom: 4px;
+	}
 `;
 
 const LoadingCopy = styled.p`

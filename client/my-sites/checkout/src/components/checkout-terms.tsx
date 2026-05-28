@@ -1,4 +1,5 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { FoldableCard } from '@automattic/components';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
@@ -34,6 +35,14 @@ import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
 import type { ResponseCart } from '@automattic/shopping-cart';
+
+const CheckoutTermsHeader = styled.div`
+	strong {
+		font-size: 16px;
+		font-weight: 500;
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+	}
+`;
 
 const TermsCollapsedContent = styled.div`
 	& .foldable-card__main {
@@ -91,14 +100,14 @@ export default function CheckoutTerms( {
 
 	return (
 		<Fragment>
-			<div className="checkout__terms" id="checkout-terms">
+			<CheckoutTermsHeader className="checkout__terms" id="checkout-terms">
 				<strong>
 					{ translate( 'By checking out:', {
 						comment:
 							'Headline before a list of terms the customer is agreeing to on checkout. Screenshot: https://user-images.githubusercontent.com/1379730/55166390-66c09080-5145-11e9-9c13-6c1b3b693786.png',
 					} ) }
 				</strong>
-			</div>
+			</CheckoutTermsHeader>
 
 			<TermsOfService
 				hasRenewableSubscription={ hasRenewableSubscription( cart ) || hasDomainTransfer }

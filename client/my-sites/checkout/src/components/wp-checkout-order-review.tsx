@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
@@ -38,26 +39,29 @@ import type {
 	AddProductsToCart,
 } from '@automattic/shopping-cart';
 
+const OrderReviewWrapper = styled.div`
+	.checkout-line-item {
+		font-size: 15px;
+	}
+
+	.order-review-line-items {
+		margin-top: 0;
+	}
+`;
+
 const SiteSummary = styled.div`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
+	color: ${ colorStudio.colors[ 'Gray 50' ] };
 	font-size: 14px;
+	font-weight: 400;
 	margin-top: 0px;
 	word-break: break-word;
 
 	.is-summary & {
 		margin-bottom: 10px;
 	}
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin-top: -8px;
-	}
 `;
 
-const EmailSummary = styled( SiteSummary )`
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin-top: 0;
-	}
-`;
+const EmailSummary = styled( SiteSummary )``;
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
@@ -73,14 +77,24 @@ const CouponAreaWrapper = styled.div`
 		padding-inline-start: 40px;
 		padding-inline-end: 0;
 	}
+
+	&:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+		margin-block-start: -4px;
+		padding-block-start: 0;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			padding-block-start: 24px;
+		}
+	}
 `;
 
 const CouponField = styled( Coupon )``;
 
 const CouponEnableButton = styled.button`
 	cursor: pointer;
-	text-decoration: underline;
-	color: ${ ( props ) => props.theme.colors.textColorLight };
+	text-decoration: none;
+	color: ${ colorStudio.colors[ 'Gray 90' ] };
+	font-weight: 500;
 
 	&.wp-checkout-order-review__show-coupon-field-button {
 		font-size: 14px;
@@ -159,7 +173,7 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<>
-			<div
+			<OrderReviewWrapper
 				className={ joinClasses( [
 					className,
 					'checkout-review-order',
@@ -199,7 +213,7 @@ export default function WPCheckoutOrderReview( {
 						onRemoveProductCancel={ onRemoveProductCancel }
 					/>
 				</WPOrderReviewSection>
-			</div>
+			</OrderReviewWrapper>
 		</>
 	);
 }

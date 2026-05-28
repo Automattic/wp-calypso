@@ -10,6 +10,42 @@ const TermOptions = styled.ul`
 	flex-basis: 100%;
 	margin: 20px 0;
 	padding: 0;
+	background: #ffffff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	overflow: hidden;
+
+	& > li {
+		margin: 0;
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	& > li:last-child {
+		border-bottom: none;
+	}
+
+	& > li > div {
+		border-radius: 0;
+	}
+
+	& > li > div.is-checked {
+		background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+	}
+
+	& > li > div::before,
+	& > li > div:hover::before {
+		border: none;
+	}
+
+	& > li > div > label {
+		min-height: 64px;
+		padding-top: 2px;
+		padding-bottom: 0;
+
+		@media ( min-width: 960px ) {
+			min-height: 72px;
+		}
+	}
 `;
 
 const TermOptionsItem = styled.li`

@@ -1,3 +1,4 @@
+import colorStudio from '@automattic/color-studio';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import type { MouseEventHandler, PropsWithChildren } from 'react';
@@ -6,6 +7,8 @@ const Wrapper = styled.div`
 	padding-left: 0px;
 	position: relative;
 	font-size: 12px;
+	font-weight: 400;
+	color: ${ colorStudio.colors[ 'Gray 40' ] };
 
 	> svg {
 		position: absolute;

@@ -86,7 +86,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	padding: 16px 0;
+	padding: 24px 0 0;
 
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
@@ -102,6 +102,10 @@ export const LineItem = styled( CheckoutLineItem )< {
 			`
 				display: flex;
 			` }
+	}
+
+	.checkout-line-item__remove-product {
+		font-size: 14px;
 	}
 `;
 

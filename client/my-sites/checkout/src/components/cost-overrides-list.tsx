@@ -60,6 +60,14 @@ const CostOverridesListStyle = styled.div`
 		padding-left: 0;
 	}
 
+	&:has( > .cost-overrides-list-item--coupon ) {
+		padding-inline-start: 0;
+
+		> svg[aria-hidden='true'] {
+			display: none;
+		}
+	}
+
 	& .cost-overrides-list-item {
 		display: grid;
 		justify-content: space-between;
@@ -330,12 +338,11 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 const SimplifiedSingleProductAndCostOverridesListWrapper = styled(
 	SingleProductAndCostOverridesListWrapper
 )`
-	padding-left: 24px;
+	padding-inline-start: 0;
 	position: relative;
 
-	.rtl & {
-		padding-right: 24px;
-		padding-left: 0;
+	> svg[aria-hidden='true'] {
+		display: none;
 	}
 `;
 
