@@ -943,17 +943,20 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	return props;
 };
 
-const ConnectedFullPostView = connect( mapStateToFullPostProps, {
-	disableAppBanner,
-	enableAppBanner,
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-	showSelectedPost,
-} )( withPostLikes( withPostLikeActions( FullPostView ) ) );
+const ConnectedFullPostView = connect(
+	( state, ownProps ) => mapStateToFullPostProps( state, ownProps ),
+	{
+		disableAppBanner,
+		enableAppBanner,
+		setViewingFullPostKey,
+		unsetViewingFullPostKey,
+		requestMarkAsSeen,
+		requestMarkAsUnseen,
+		requestMarkAsSeenBlog,
+		requestMarkAsUnseenBlog,
+		showSelectedPost,
+	}
+)( withPostLikes( withPostLikeActions( FullPostView ) ) );
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
