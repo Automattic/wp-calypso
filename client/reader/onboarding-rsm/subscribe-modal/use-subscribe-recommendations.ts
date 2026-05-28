@@ -199,7 +199,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 * URLs cover cases where the same subscription gets a new `feed_ID` over time.
 	 * Reactive: updates as the paginated follows API fills in. Safe to use in the
 	 * memo deps below because `getReaderFollowingItemsRaw` only depends on
-	 * `state.reader.follows.items`, not `feeds.items`, so the feed bridge below
+	 * `state.reader.follows.items`, not feed query results, so the feed queries below
 	 * can't cause a render storm via this selector.
 	 */
 	const followedSubscriptions = useMemo(
