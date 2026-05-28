@@ -2,11 +2,15 @@ import page from '@automattic/calypso-router';
 import { useEffect, useState } from '@wordpress/element';
 import { Card, CollapsibleCard, Stack, Text, Button, Icon } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import FirstPostTaskCta from './first-post-task-item';
 import LaunchTaskCta from './launch-task-item';
 import PatternPageTaskCta from './pattern-page-task-item';
 import ThemePickerTaskItem from './theme-picker-task-item';
 import type { SelectedTask } from './select-tasks';
+import type { AppState } from 'calypso/types';
 
 import './tailored-launchpad.scss';
 
@@ -49,6 +53,8 @@ const taskDoneIcon = (
  */
 function TaskCta( { task }: { task: SelectedTask } ) {
 	const translate = useTranslate();
+	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
+	const siteAdminUrl = useSelector( ( state: AppState ) => getSiteAdminUrl( state, siteId ) );
 
 	if ( task.id === 'launch-site' ) {
 		return <LaunchTaskCta task={ task } />;
@@ -61,6 +67,24 @@ function TaskCta( { task }: { task: SelectedTask } ) {
 	}
 	if ( task.pattern ) {
 		return <PatternPageTaskCta task={ task } />;
+	}
+	// "Connect your social accounts" → Jetpack Social in wp-admin (the modern
+	// destination on wpcom sites). The registry's `url` is `/marketing/connections`
+	// — the older Calypso Sharing UI — kept as a fallback when `siteAdminUrl`
+	// isn't loaded yet. Hard-navigation (not page()) because the destination is
+	// outside Calypso.
+	if ( task.id === 'connect-social-accounts' && siteAdminUrl ) {
+		return (
+			<Button
+				variant="solid"
+				tone="brand"
+				onClick={ () => {
+					window.location.href = `${ siteAdminUrl }admin.php?page=jetpack-social`;
+				} }
+			>
+				{ task.cta || ( translate( 'Get started' ) as string ) }
+			</Button>
+		);
 	}
 	// Use onClick + page() instead of `render={ <a> }` — Calypso's global
 	// anchor styles override the @wordpress/ui Button's brand-tone background

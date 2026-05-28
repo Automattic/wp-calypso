@@ -489,6 +489,17 @@ function useHomeWizard() {
 	const completedSites = useSelector( ( state: AppState ) =>
 		getPreference( state, HOME_WIZARD_COMPLETED_SITES_PREF )
 	) as number[] | null;
+	// Fallback "completed" signal — the per-site wizard_state blob. finishWizard
+	// writes the cross-site completedSites list, but if that PUT races against
+	// the wizard_state PUT (or fails entirely), returning to /home re-opens the
+	// wizard on a freshly-completed site. The wizard_state pref is stamped with
+	// the siteId that ran it AND only gets a `goal` once the user advanced past
+	// step 1 — so `siteId match + goal set` is an independent signal that this
+	// site did finish. Only catches the most-recent site (wizard_state holds one
+	// run), which is exactly the missed-PUT scenario we need to cover.
+	const recentWizardState = useSelector( ( state: AppState ) =>
+		getPreference( state, HOME_WIZARD_STATE_PREF )
+	) as HomeWizardState | null;
 	// Don't decide the wizard's open state until remote preferences have
 	// actually loaded. On a fresh page load (e.g. returning to /home from the
 	// editor via the post-publish "Next steps" link) preferences are still
@@ -501,7 +512,9 @@ function useHomeWizard() {
 		new URLSearchParams( window.location.search ).get( 'wizard' ) === 'force';
 
 	const completedForSite =
-		siteId !== null && Array.isArray( completedSites ) && completedSites.includes( siteId );
+		siteId !== null &&
+		( ( Array.isArray( completedSites ) && completedSites.includes( siteId ) ) ||
+			( recentWizardState?.siteId === siteId && !! recentWizardState?.goal ) );
 
 	// Auto-open only once prefs AND the site are known and this site genuinely
 	// hasn't done the wizard. `forced` (?wizard=force) always opens. Gating on
@@ -592,17 +605,18 @@ function useTailoredFlow() {
 		} );
 	};
 
-	// Read-modify-write for one pattern page, keyed by category. Reads the
+	// Read-modify-write for one pattern page, keyed by cacheKey (PTK category
+	// when present, else `intro:${pageTitle}` for intro-only tasks). Reads the
 	// latest patternPages at resolve time so two pre-warms (e.g. gallery +
 	// contact) each merge in without clobbering the other.
-	const cachePatternPage = ( category: string, patternPage: PatternPage ) => {
+	const cachePatternPage = ( cacheKey: string, patternPage: PatternPage ) => {
 		dispatch( ( innerDispatch, getState ) => {
 			const current =
 				( getPreference( getState(), HOME_WIZARD_STATE_PREF ) as HomeWizardState | null ) ?? {};
 			innerDispatch(
 				savePreference( HOME_WIZARD_STATE_PREF, {
 					...current,
-					patternPages: { ...( current.patternPages ?? {} ), [ category ]: patternPage },
+					patternPages: { ...( current.patternPages ?? {} ), [ cacheKey ]: patternPage },
 				} )
 			);
 		} );
@@ -616,20 +630,27 @@ function useTailoredFlow() {
 		const seen = new Set< string >();
 		for ( const id of taskIds ) {
 			const template = TASK_REGISTRY.find( ( t ) => t.id === id );
-			if ( ! template?.pattern || seen.has( template.pattern.category ) ) {
+			if ( ! template?.pattern ) {
 				continue;
 			}
-			seen.add( template.pattern.category );
 			const { category, pageTitle, intro, images } = template.pattern;
+			// Cache key: PTK category when present (events / about / …), else the
+			// pageTitle so intro-only tasks (e.g. gallery, which has no category)
+			// get their own slot without colliding with PTK-backed entries.
+			const cacheKey = category ?? `intro:${ pageTitle }`;
+			if ( seen.has( cacheKey ) ) {
+				continue;
+			}
+			seen.add( cacheKey );
 			draftPatternPage(
 				{ category, pageTitle, intro, images, intent, siteName: siteName || undefined },
 				{ siteId: siteId ?? undefined }
 			)
-				.then( ( patternPage ) => cachePatternPage( category, patternPage ) )
+				.then( ( patternPage ) => cachePatternPage( cacheKey, patternPage ) )
 				.catch(
 					( error ) =>
 						window.console?.warn?.(
-							`[Launchpad] prewarm pattern page (${ category }) failed:`,
+							`[Launchpad] prewarm pattern page (${ cacheKey }) failed:`,
 							error
 						)
 				);

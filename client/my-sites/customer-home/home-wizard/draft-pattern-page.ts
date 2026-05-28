@@ -25,8 +25,11 @@ import wpcom from 'calypso/lib/wp';
 import type { Pattern } from 'calypso/my-sites/patterns/types';
 
 export type PatternPageContext = {
-	/** PTK category slug to source the pattern from (e.g. `gallery`). */
-	category: string;
+	/** PTK category slug to source the pattern from (e.g. `events`). When omitted,
+	 * we skip the pattern fetch entirely and build an intro-only page (heading +
+	 * lead paragraph only). Used for the gallery task — the user picks their own
+	 * gallery layout from the editor's Patterns sidebar. */
+	category?: string;
 	/** Title for the created page (e.g. `Gallery`). */
 	pageTitle: string;
 	siteName?: string;
@@ -229,6 +232,12 @@ async function draftViaMock(
 	if ( override === 'empty' ) {
 		throw new Error( 'draftPatternPage: simulated empty (mock=empty)' );
 	}
+	// Intro-only mock (no PTK pattern): just the prepended heading + lead, no
+	// gallery block — matches what the real intro-only path produces.
+	if ( ! context.category ) {
+		const html = introBlocks( context.pageTitle, 'A short introduction to this page.' );
+		return { html, pageTitle: context.pageTitle };
+	}
 	return { html: MOCK_PATTERN_HTML, pageTitle: context.pageTitle };
 }
 
@@ -241,6 +250,12 @@ async function draftViaMock(
 export async function fetchPatternPageRaw(
 	context: PatternPageContext
 ): Promise< PatternPage | null > {
+	// Intro-only path: no pattern to fetch, but we still want the click to
+	// land on a real page. Return an empty body so the editor opens on the
+	// titled page; the user will pick a layout from the Patterns sidebar.
+	if ( ! context.category ) {
+		return { html: '', pageTitle: context.pageTitle };
+	}
 	const locale = context.locale ?? 'en';
 	const pattern = await fetchPattern( context.category, locale );
 	if ( ! pattern?.html ) {
@@ -334,7 +349,11 @@ function buildEnrichPrompt( context: PatternPageContext ): string {
 		);
 	}
 
-	return `You are personalizing a "${ context.category }" page for one specific WordPress site.
+	// `category` is the PTK slug when present (events / about / …) — falls back
+	// to `pageTitle` so the prompt still reads cleanly for intro-only pages
+	// (e.g. "a Gallery page" rather than "a undefined page").
+	const pageLabel = context.category ?? context.pageTitle.toLowerCase();
+	return `You are personalizing a "${ pageLabel }" page for one specific WordPress site.
 
 ${ facts }
 
@@ -462,6 +481,7 @@ async function enrichPage(
 	siteId: number | undefined,
 	abortSignal: AbortSignal | undefined
 ): Promise< string > {
+	const logLabel = context.category ?? `intro:${ context.pageTitle }`;
 	let enrichment: Enrichment = {};
 	try {
 		const startedAt = performance.now();
@@ -477,14 +497,14 @@ async function enrichPage(
 		}
 		// eslint-disable-next-line no-console
 		console.log(
-			`[Launchpad] draft_pattern_page enrich (${ context.category }): ` +
+			`[Launchpad] draft_pattern_page enrich (${ logLabel }): ` +
 				`${ Math.round( performance.now() - startedAt ) }ms`,
 			enrichment
 		);
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.warn(
-			`[Launchpad] draft_pattern_page enrich (${ context.category }) failed; keeping pattern copy/images.`,
+			`[Launchpad] draft_pattern_page enrich (${ logLabel }) failed; keeping pattern copy/images.`,
 			error
 		);
 		return html;
@@ -504,7 +524,7 @@ async function enrichPage(
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.warn(
-				`[Launchpad] draft_pattern_page (${ context.category }): Openverse fetch failed; keeping pattern images.`,
+				`[Launchpad] draft_pattern_page (${ logLabel }): Openverse fetch failed; keeping pattern images.`,
 				error
 			);
 		}
@@ -517,6 +537,15 @@ async function draftViaDolly(
 	siteId: number | undefined,
 	abortSignal: AbortSignal | undefined
 ): Promise< PatternPage > {
+	// Intro-only path (no PTK pattern fetch). Used for the gallery task: the
+	// user picks their own gallery layout from the editor's Patterns sidebar,
+	// so we just seed the page with a Dolly heading + lead paragraph and let
+	// the body stay empty.
+	if ( ! context.category ) {
+		const html = await enrichPage( '', context, siteId, abortSignal );
+		return { html, pageTitle: context.pageTitle };
+	}
+
 	const locale = context.locale ?? 'en';
 	const pattern = await fetchPattern( context.category, locale );
 	if ( ! pattern?.html ) {

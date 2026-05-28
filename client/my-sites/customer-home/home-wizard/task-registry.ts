@@ -63,19 +63,26 @@ export type TaskTemplate = {
 
 	/**
 	 * Marks this as a "pattern" task: instead of navigating to `url`, the CTA
-	 * builds a real wpcom *page* from a WordPress.com block pattern (sourced
-	 * from the `category` PTK slug), with its copy rewritten by Dolly to fit
-	 * the site, and opens it in the editor. `url` stays as the fallback if the
-	 * page can't be created. See `draft-pattern-page.ts`.
+	 * builds a real wpcom *page* and opens it in the editor. `url` stays as the
+	 * fallback if the page can't be created. See `draft-pattern-page.ts`.
+	 *
+	 * With `category`: page is seeded from a WordPress.com block pattern (PTK)
+	 * with its copy rewritten by Dolly. Used for events / about / contact etc.
+	 * Without `category`: page is seeded with just a Dolly-generated heading +
+	 * lead paragraph (requires `intro: true`); the body stays empty so the user
+	 * picks their own layout in the editor. Used for the gallery task.
 	 */
 	pattern?: {
-		/** PTK category slug to source the pattern from (e.g. `gallery`). */
-		category: string;
+		/** PTK category slug to source the pattern from (e.g. `events`). Omit for
+		 * an intro-only page with no pattern (user picks layout in the editor). */
+		category?: string;
 		/** Title for the created page. */
 		pageTitle: string;
-		/** Prepend a Dolly heading + lead paragraph (for copy-light patterns). */
+		/** Prepend a Dolly heading + lead paragraph. Required when `category` is
+		 * omitted (otherwise the page would be empty). */
 		intro?: boolean;
-		/** Swap the pattern's stock images for niche-matched Openverse photos. */
+		/** Swap the pattern's stock images for niche-matched Openverse photos.
+		 * Only meaningful with `category`. */
 		images?: boolean;
 	};
 
@@ -358,7 +365,15 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		subtitle: 'Make the site feel like yours in two minutes.',
 		category: 'feature-setup',
 		goals: GOALS_ALL,
-		url: ( s ) => `/site-editor/${ s }`,
+		// Deep-link straight to the Styles → Browse styles (variations) panel.
+		// The /site-editor/:site route forwards `context.query` to wp-admin's
+		// site-editor.php, and Gutenberg's site editor router is configured with
+		// `pathArg="p"` (see @wordpress/edit-site/.../app/index.js), so `p=/styles`
+		// opens the Styles sidebar. `section=/variations` drills one level deeper
+		// into the style-variations grid — the actual "browse fonts and colors"
+		// surface, two clicks closer to the job than the editor's default canvas.
+		// Note: param name is `p` (NOT `path`), which the router ignores.
+		url: ( s ) => `/site-editor/${ s }?p=/styles&section=/variations`,
 		cta: 'Open editor',
 	},
 	{

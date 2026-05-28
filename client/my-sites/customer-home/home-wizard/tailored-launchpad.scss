@@ -55,6 +55,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--wpds-dimension-gap-lg, 16px);
+	// Dialog.Header / Dialog.Footer have their own padding; the body div in
+	// between doesn't, so the grid would otherwise run flush to the modal's
+	// left/right edges (beyond the header/footer chrome). Match the standard
+	// dialog gutter so the grid stays inside the same rails as the title.
+	padding: 0 var(--wpds-dimension-gap-2xl, 24px) var(--wpds-dimension-gap-2xl, 24px);
 }
 
 // Confirmation banner shown after a theme activates in place. Subtle success

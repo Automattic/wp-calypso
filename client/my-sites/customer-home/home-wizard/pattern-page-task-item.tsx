@@ -54,7 +54,11 @@ export default function PatternPageTaskCta( { task }: Props ) {
 		);
 	}
 
-	const { category, pageTitle } = task.pattern;
+	const { category, pageTitle, intro, images } = task.pattern;
+	// Cache key matches what home-dashboard's prewarm wrote: PTK category when
+	// present, else `intro:${pageTitle}` (intro-only tasks like gallery, which
+	// don't have a PTK category to key by).
+	const cacheKey = category ?? `intro:${ pageTitle }`;
 
 	const onClick = async () => {
 		if ( isCreating ) {
@@ -63,9 +67,11 @@ export default function PatternPageTaskCta( { task }: Props ) {
 		setIsCreating( true );
 		try {
 			// Prefer the pre-warmed, Dolly-rewritten markup; on a cache miss fetch
-			// the pattern's own copy so the user still lands on a real page.
-			const prewarmed = cached[ category ];
-			const patternPage = prewarmed ?? ( await fetchPatternPageRaw( { category, pageTitle } ) );
+			// the pattern's own copy so the user still lands on a real page (or,
+			// for intro-only tasks, an empty body the user fills via the editor).
+			const prewarmed = cached[ cacheKey ];
+			const patternPage =
+				prewarmed ?? ( await fetchPatternPageRaw( { category, pageTitle, intro, images } ) );
 
 			if ( ! patternPage ) {
 				navigateToPage();
