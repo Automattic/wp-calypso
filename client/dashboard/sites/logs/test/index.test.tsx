@@ -74,16 +74,21 @@ describe( 'SiteLogs page', () => {
 
 		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
 
-		await waitFor( () => expect( replaceSpy ).toHaveBeenCalled() );
-		const hrefArgs = replaceSpy.mock.calls
-			.map( ( call ) => call?.[ 2 ] )
-			.filter( ( v ): v is string => typeof v === 'string' );
-		expect( hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) ) ).toBe(
-			true
-		);
-		expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
-			true
-		);
+		// Wait for the specific normalization to land. Waiting on a bare
+		// `replaceSpy.toHaveBeenCalled()` is flaky because the router fires
+		// its own `replaceState` during initial navigation, which can
+		// satisfy the waiter before the normalization effect has run.
+		await waitFor( () => {
+			const hrefArgs = replaceSpy.mock.calls
+				.map( ( call ) => call?.[ 2 ] )
+				.filter( ( v ): v is string => typeof v === 'string' );
+			expect(
+				hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) )
+			).toBe( true );
+			expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
+				true
+			);
+		} );
 
 		// restore
 		Object.defineProperty( window, 'location', { value: { href: originalHref } } );
