@@ -1,0 +1,44 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+// Dark teal banner needs light text for readability.
+.woopayments-banner__section {
+	overflow: hidden;
+	transition: max-height 0.25s ease-out, padding 0.25s ease-out;
+	max-height: 1000px;
+
+	.woopayments-banner__heading,
+	.woopayments-banner__description {
+		color: var(--color-text-inverted);
+	}
+
+	&.is-compact {
+		padding-block: 0;
+		max-height: 0;
+	}
+}
+
+.woopayments-banner__content {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	img {
+		width: max-content;
+	}
+}
+
+// Flip the black-fill logo to white so it reads on the dark teal background.
+.woopayments-banner__logo {
+	filter: brightness(0) invert(1);
+}
+
+.woopayments-banner__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.woopayments-banner__description {
+	@include body-large;
+}
