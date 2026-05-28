@@ -1,7 +1,13 @@
 import { useFediverseConnectionsQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Card, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	Card,
+	ComboboxControl,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
@@ -11,7 +17,78 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { type ConnectionProtocol } from 'calypso/reader/sidebar/reader-sidebar-connections/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSites from 'calypso/state/selectors/get-sites';
+
+type AdminSite = NonNullable< ReturnType< typeof getSites >[ number ] >;
+
+function getActivityPubSettingsUrl( site: AdminSite ): string | null {
+	const adminUrl = site?.options?.admin_url;
+	return adminUrl ? `${ adminUrl }options-general.php?page=activitypub` : null;
+}
+
+function FediverseSitePicker( {
+	sites,
+	primarySiteId,
+	onOpen,
+}: {
+	sites: AdminSite[];
+	primarySiteId: number | null;
+	onOpen: ( site: AdminSite ) => void;
+} ) {
+	const translate = useTranslate();
+
+	const initialSiteId = useMemo( () => {
+		if ( primarySiteId && sites.some( ( s ) => s.ID === primarySiteId ) ) {
+			return primarySiteId;
+		}
+		return sites[ 0 ].ID;
+	}, [ sites, primarySiteId ] );
+
+	const [ selectedSiteId, setSelectedSiteId ] = useState< number >( initialSiteId );
+	const selectedSite = sites.find( ( s ) => s.ID === selectedSiteId ) ?? sites[ 0 ];
+	const href = getActivityPubSettingsUrl( selectedSite );
+
+	const options = useMemo(
+		() =>
+			sites.map( ( s ) => ( {
+				value: String( s.ID ),
+				label: s.name || s.URL || String( s.ID ),
+			} ) ),
+		[ sites ]
+	);
+
+	return (
+		<div className="connections-new__card-picker">
+			<ComboboxControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				className="connections-new__card-picker-combobox"
+				label={ translate( 'Choose a site' ) as string }
+				value={ String( selectedSiteId ) }
+				onChange={ ( newValue ) => {
+					if ( newValue ) {
+						setSelectedSiteId( parseInt( newValue, 10 ) );
+					}
+				} }
+				options={ options }
+				allowReset={ false }
+			/>
+			<Button
+				variant="primary"
+				__next40pxDefaultSize
+				className="connections-new__card-picker-cta"
+				href={ href ?? undefined }
+				target="_blank"
+				rel="noopener noreferrer"
+				disabled={ ! href }
+				onClick={ () => onOpen( selectedSite ) }
+			>
+				{ translate( 'Open ActivityPub settings' ) }
+			</Button>
+		</div>
+	);
+}
 
 interface ProtocolOption {
 	key: ConnectionProtocol;
@@ -43,8 +120,8 @@ interface ProtocolOption {
  *   - already federating  → point at the existing entry in the sidebar
  *   - exactly one admin site → deep-link straight into that site's
  *     wp-admin ActivityPub settings
- *   - multiple admin sites → ambient nudge to Settings → ActivityPub on
- *     the site of their choice (no primary link, since we can't pick for them)
+ *   - multiple admin sites → inline site picker + CTA that deep-links into
+ *     Settings › ActivityPub for the chosen site
  *   - no admin site → original explainer copy (no primary link)
  */
 export function ConnectionsNewView() {
@@ -55,8 +132,9 @@ export function ConnectionsNewView() {
 	const hasFediverseConnection = ( fediverseConnectionsQuery.data?.connections?.length ?? 0 ) > 0;
 
 	const adminSites = useSelector( ( state ) =>
-		getSites( state ).filter( ( site ) => !! site?.capabilities?.manage_options )
+		getSites( state ).filter( ( site ): site is AdminSite => !! site?.capabilities?.manage_options )
 	);
+	const primarySiteId = useSelector( getPrimarySiteId );
 
 	const fediverseDocHref = localizeUrl( 'https://wordpress.com/support/enter-the-fediverse/' );
 	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
@@ -87,7 +165,6 @@ export function ConnectionsNewView() {
 
 		if ( adminSites.length === 1 ) {
 			const site = adminSites[ 0 ];
-			const adminUrl = site?.options?.admin_url;
 			return {
 				...base,
 				tagline: String( translate( 'Your WordPress site is already social.' ) ),
@@ -96,8 +173,8 @@ export function ConnectionsNewView() {
 						'Flip the ActivityPub switch in your site’s settings, and your blog slots in next to everything else you read here.'
 					)
 				),
-				href: adminUrl ? `${ adminUrl }options-general.php?page=activitypub` : null,
-				hrefExternal: !! adminUrl,
+				href: getActivityPubSettingsUrl( site ),
+				hrefExternal: !! site?.options?.admin_url,
 			};
 		}
 
@@ -107,7 +184,7 @@ export function ConnectionsNewView() {
 				tagline: String( translate( 'Your WordPress site is already social.' ) ),
 				body: String(
 					translate(
-						'Open Settings › ActivityPub on the site you want to bring along, flip the switch, and it shows up here.'
+						'Pick the site you want to bring along, and we’ll take you straight to its ActivityPub settings.'
 					)
 				),
 				href: null,
@@ -174,6 +251,22 @@ export function ConnectionsNewView() {
 		);
 	};
 
+	const handleFediversePickerOpen = ( site: AdminSite ) => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_connections_new_protocol_clicked', {
+				protocol: 'fediverse',
+				site_id: site.ID,
+				source: 'site_picker',
+			} )
+		);
+	};
+
+	// Hold the picker until the connections query settles. Without this gate a
+	// user who already federates sees the picker flash in on first paint, then
+	// disappear once the query resolves and the card flips to "already federating".
+	const showFediversePicker =
+		! fediverseConnectionsQuery.isPending && ! hasFediverseConnection && adminSites.length > 1;
+
 	return (
 		<ReaderMain className="connections-view">
 			<DocumentHead title={ translate( 'Add an account ‹ Social ‹ Reader' ) } />
@@ -224,6 +317,13 @@ export function ConnectionsNewView() {
 							</div>
 							<p className="connections-new__card-tagline">{ option.tagline }</p>
 							<p className="connections-new__card-description">{ option.body }</p>
+							{ option.key === 'fediverse' && showFediversePicker && (
+								<FediverseSitePicker
+									sites={ adminSites }
+									primarySiteId={ primarySiteId }
+									onOpen={ handleFediversePickerOpen }
+								/>
+							) }
 							<a
 								className="connections-new__card-doc"
 								href={ option.docHref }

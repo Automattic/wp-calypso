@@ -156,6 +156,25 @@
 	line-height: 1.5;
 }
 
+// Inline site picker + CTA on the multi-site Fediverse card. The card has
+// no stretched primary link in this state, so no z-index gymnastics are
+// needed; the wrapper just stacks the picker and button.
+.connections-new__card-picker {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	margin-block-start: 16px;
+}
+
+.connections-new__card-picker-combobox {
+	min-width: 240px;
+}
+
+.connections-new__card-picker-cta {
+	align-self: flex-start;
+}
+
 // Sits above the stretched primary link so the user can click through
 // to the support doc without triggering the card's primary action.
 .connections-new__card-doc {
