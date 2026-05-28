@@ -61,8 +61,6 @@ const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	'withExperimentalBlockEditorProvider'
 );
 
-// Replaces the removed `useGlobalStylesOutput` hook with the same
-// `[ stylesheets, settings ]` tuple shape, plus Sentry-reported error handling.
 const useSafeGlobalStylesOutput = (): [ unknown[], Record< string, unknown > ] => {
 	const { merged } = useContext( GlobalStylesContext );
 	try {
