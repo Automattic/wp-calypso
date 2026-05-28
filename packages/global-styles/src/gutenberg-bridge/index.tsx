@@ -16,7 +16,10 @@ import {
 	generateGlobalStyles,
 } from '@wordpress/global-styles-engine';
 import { GlobalStylesContext as UntypedGSContext } from '@wordpress/global-styles-ui/build-module/context';
-import { useSetting, useStyle } from '@wordpress/global-styles-ui/build-module/hooks';
+import {
+	useSetting as useGlobalSetting,
+	useStyle as useGlobalStyle,
+} from '@wordpress/global-styles-ui/build-module/hooks';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
@@ -76,9 +79,6 @@ const useSafeGlobalStylesOutput = (): [ unknown[], Record< string, unknown > ] =
 		return [ [], {} ];
 	}
 };
-
-const useGlobalSetting = useSetting;
-const useGlobalStyle = useStyle;
 
 /**
  * Returns a new object, with properties specified in `properties` array.,
