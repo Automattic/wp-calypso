@@ -46,7 +46,7 @@ export default function BlazeSetup( { setupInfo } ) {
 
 			<Page
 				className="promote-post-i2__page"
-				visual={ <JetpackLogo size={ 24 } /> }
+				visual={ <JetpackLogo size={ 24 } monochrome={ false } /> }
 				title={ translate( 'Blaze' ) }
 				subTitle={ translate( 'Advertise Your Site and Content on WordPress and Tumblr.' ) }
 				showSidebarToggle={ false }
