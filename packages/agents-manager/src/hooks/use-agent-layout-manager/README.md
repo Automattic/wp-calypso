@@ -140,7 +140,7 @@ The hook accepts a single options object. All properties are optional.
 
 - **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
 
-- **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`). The hook only mirrors the flag into the DOM and doesn't change layout dimensions itself.
+- **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
 
 ### Return Value
 
