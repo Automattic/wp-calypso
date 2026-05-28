@@ -30,6 +30,7 @@ import {
 	help,
 	image,
 	pencil,
+	send,
 	seen,
 	termDescription,
 } from '@wordpress/icons';
@@ -109,6 +110,8 @@ const features = [
 	__( 'Draft and revise content in one place' ),
 	__( 'Create beautiful images without leaving WordPress' ),
 ];
+
+const TELEGRAM_CONNECTION_PATH = '/me/developer';
 
 const INVALID_POST_BY_EMAIL_VALUES = new Set( [
 	'',
@@ -480,6 +483,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					) }
 				</Card>
 				<EmailAssistantCard site={ site } recordTracksEvent={ recordTracksEvent } />
+				{ config.isEnabled( 'dolly/telegram' ) && (
+					<SummaryButton
+						href={ TELEGRAM_CONNECTION_PATH }
+						title={ __( 'Connect Telegram' ) }
+						description={ __(
+							'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+						) }
+						decoration={ <Icon icon={ send } size={ 24 } /> }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+								site_id: site.ID,
+							} );
+						} }
+					/>
+				) }
 				{ config.isEnabled( 'mcp-settings' ) && (
 					<>
 						<Card className="mcp-settings__access-card">

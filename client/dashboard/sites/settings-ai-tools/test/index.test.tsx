@@ -9,6 +9,7 @@ import {
 	sitePostByEmailSettingsQuery,
 	userSettingsQuery,
 } from '@automattic/api-queries';
+import { disable, enable } from '@automattic/calypso-config';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,6 +38,14 @@ const simpleSite = {
 } as Site;
 
 let clipboardWriteText: jest.Mock;
+
+beforeAll( () => {
+	enable( 'dolly/telegram' );
+} );
+
+afterAll( () => {
+	disable( 'dolly/telegram' );
+} );
 
 function seedQueries( postByEmailAddress = '', seedPostByEmailSettings = true, activeSite = site ) {
 	queryClient.setQueryData( siteBySlugQuery( activeSite.slug ).queryKey, activeSite );
@@ -203,6 +212,15 @@ describe( '<AIToolsSettings>', () => {
 		renderAIToolsSettings();
 
 		expect( screen.getByRole( 'heading', { name: 'Email your assistant' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /Connect Telegram/ } ) ).toHaveAttribute(
+			'href',
+			'/me/developer'
+		);
+		expect(
+			screen.getByText(
+				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+			)
+		).toBeVisible();
 		expect(
 			screen.getByText(
 				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this AI agent address will stop working.'
