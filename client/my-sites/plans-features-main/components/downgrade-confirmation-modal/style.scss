@@ -1,0 +1,10 @@
+.downgrade-confirmation-modal__feature-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.downgrade-confirmation-modal__feature-icon {
+	fill: var(--color-error);
+	flex-shrink: 0;
+}

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
+	getPlanClass,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
@@ -77,6 +78,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
+import DowngradeConfirmationModal from './components/downgrade-confirmation-modal';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
@@ -255,6 +257,9 @@ const PlansFeaturesMain = ( {
 	// TODO: Remove temporary eslint disable
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
+	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
+		null
+	);
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const [ comparisonGridVisiblePlansCount, setComparisonGridVisiblePlansCount ] = useState<
 		number | null
@@ -421,8 +426,28 @@ const PlansFeaturesMain = ( {
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
+	const tierOrder: Record< string, number > = {
+		'is-free-plan': 0,
+		'is-personal-plan': 1,
+		'is-premium-plan': 2,
+		'is-business-plan': 3,
+		'is-ecommerce-plan': 4,
+	};
+
 	// TODO: We should move the modal logic into a data store
 	const showModalAndExit = ( planSlug: PlanSlug ): boolean => {
+		// Expired-plan downgrade confirmation
+		if (
+			isPlanExpired &&
+			sitePlanSlug &&
+			getPlanClass( sitePlanSlug ) !== getPlanClass( planSlug ) &&
+			( tierOrder[ getPlanClass( planSlug ) ] ?? 0 ) <
+				( tierOrder[ getPlanClass( sitePlanSlug ) ] ?? 0 )
+		) {
+			setPendingDowngradePlanSlug( planSlug );
+			return true;
+		}
+
 		if (
 			sitePlanSlug &&
 			isFreePlan( sitePlanSlug ) &&
@@ -946,6 +971,14 @@ const PlansFeaturesMain = ( {
 						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
 						onUpgradeClick?.( cartItems );
 					} }
+				/>
+				<DowngradeConfirmationModal
+					isOpen={ !! pendingDowngradePlanSlug }
+					currentPlanSlug={ sitePlanSlug! }
+					targetPlanSlug={ pendingDowngradePlanSlug }
+					siteId={ siteId }
+					redirectTo={ redirectTo }
+					onClose={ () => setPendingDowngradePlanSlug( null ) }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
 					<PlanNotice
