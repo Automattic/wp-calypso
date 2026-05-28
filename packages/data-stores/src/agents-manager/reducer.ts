@@ -72,9 +72,10 @@ export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = 
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_SPLIT_SCREEN':
 			return action.isSplitScreen;
-		// Split-screen only makes sense while docked. Reset on undock so an
-		// out-of-band `setIsDocked(false)` (e.g. from `window.__agentsManagerActions`)
-		// can't leave a stale `true` that re-applies on the next dock.
+		// Split-screen only makes sense while docked. Reset on every undock
+		// so a stale `true` can't re-apply on the next dock — single source
+		// of truth covering in-React callers (e.g. AgentDock's undock menu)
+		// as well as out-of-band paths (e.g. `window.__agentsManagerActions`).
 		case 'AGENTS_MANAGER_SET_DOCKED':
 			return action.isDocked ? state : false;
 	}
