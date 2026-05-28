@@ -2,6 +2,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
 import { A4A_REPORTS_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import OnboardingTourBannerAgencyTiers from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-agency-tiers.svg';
@@ -16,8 +17,9 @@ import OnboardingTourBannerSites from 'calypso/assets/images/a8c-for-agencies/on
 import OnboardingTourBannerTeam from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-team.svg';
 import OnboardingTourBannerWelcome from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-welcome.svg';
 import OnboardingTourBannerWooPayments from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-woopayments.svg';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { RenderableAction, RenderableActionProps } from '../../../onboarding-tour-modal/section';
 import {
 	A4A_MARKETPLACE_LINK,
@@ -39,6 +41,10 @@ export default function useOnboardingTourSections() {
 
 	const { saveCurrentSection } = useCurrentOnboardingSection();
 
+	const hasCompletedTour = useSelector( ( state ) =>
+		Boolean( getPreference( state, A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME ) )
+	);
+
 	return useMemo( () => {
 		const onNextBenefit = ( section: string, onNext: () => void ) => {
 			dispatch(
@@ -59,7 +65,7 @@ export default function useOnboardingTourSections() {
 			onClose();
 		};
 
-		return [
+		const sections = [
 			{
 				id: 'overview',
 				title: translate( 'Welcome' ),
@@ -459,5 +465,9 @@ export default function useOnboardingTourSections() {
 				},
 			},
 		];
-	}, [ dispatch, saveCurrentSection, translate ] );
+
+		return hasCompletedTour
+			? sections.filter( ( section ) => section.id !== 'overview' )
+			: sections;
+	}, [ dispatch, hasCompletedTour, saveCurrentSection, translate ] );
 }

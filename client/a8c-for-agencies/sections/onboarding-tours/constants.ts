@@ -18,3 +18,5 @@ export const A4A_ONBOARDING_TOURS_EVENT_NAMES: Record< string, string > = {
 };
 
 export const A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME = 'a4a-onboarding-tour-dismissed';
+
+export const A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME = 'a4a-onboarding-tour-completed';
