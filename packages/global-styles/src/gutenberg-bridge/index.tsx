@@ -127,8 +127,9 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 		properties
 	) as GlobalStylesObject;
 
-	// Calypso's GlobalStylesObject differs from the engine's GlobalStylesConfig
-	// (notably `styles.color`), but `areGlobalStylesEqual` only deep-equals the
+	// Calypso's GlobalStylesObject differs structurally from the
+	// `@wordpress/global-styles-engine` `GlobalStylesConfig` (notably
+	// `styles.color`), but `areGlobalStylesEqual` only deep-equals the
 	// `styles` and `settings` slices, so the runtime contract holds.
 	type AreEqualParam = Parameters< typeof areGlobalStyleConfigsEqual >[ 0 ];
 	return areGlobalStyleConfigsEqual(
