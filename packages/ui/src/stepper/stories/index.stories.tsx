@@ -85,10 +85,7 @@ function VerticalAnatomyDemo() {
 			<Stepper.Step value="review" optional>
 				<Stepper.Trigger>
 					<Stepper.Indicator />
-					<div>
-						<Stepper.Title>Review order</Stepper.Title>
-						<Stepper.Description>Optional</Stepper.Description>
-					</div>
+					<Stepper.Title>Review order</Stepper.Title>
 				</Stepper.Trigger>
 				<Stepper.Panel>
 					<p>Review form goes here.</p>
@@ -188,8 +185,15 @@ and is what \`Stepper.Trigger\` anchors its tab ARIA to.
 };
 
 // ---------------------------------------------------------------------------
-// Custom layout — indicator on the right; impossible with Tier 1
+// Custom layout — indicator on the right
 // ---------------------------------------------------------------------------
+
+const triggerSpaceBetween = {
+	display: 'flex',
+	justifyContent: 'space-between',
+	alignItems: 'center',
+	width: '100%',
+};
 
 function CustomLayoutDemo() {
 	const [ step, setStep ] = useState( 'payment' );
@@ -202,14 +206,7 @@ function CustomLayoutDemo() {
 			style={ { maxWidth: 400 } }
 		>
 			<Stepper.Step value="shipping" status="completed">
-				<Stepper.Trigger
-					style={ {
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						width: '100%',
-					} }
-				>
+				<Stepper.Trigger style={ triggerSpaceBetween }>
 					<Stepper.Title>Shipping address</Stepper.Title>
 					<Stepper.Indicator />
 				</Stepper.Trigger>
@@ -219,14 +216,7 @@ function CustomLayoutDemo() {
 			</Stepper.Step>
 
 			<Stepper.Step value="payment">
-				<Stepper.Trigger
-					style={ {
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						width: '100%',
-					} }
-				>
+				<Stepper.Trigger style={ triggerSpaceBetween }>
 					<Stepper.Title>Payment method</Stepper.Title>
 					<Stepper.Indicator />
 				</Stepper.Trigger>
@@ -236,14 +226,7 @@ function CustomLayoutDemo() {
 			</Stepper.Step>
 
 			<Stepper.Step value="review">
-				<Stepper.Trigger
-					style={ {
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						width: '100%',
-					} }
-				>
+				<Stepper.Trigger style={ triggerSpaceBetween }>
 					<Stepper.Title>Review order</Stepper.Title>
 					<Stepper.Indicator />
 				</Stepper.Trigger>
@@ -267,10 +250,87 @@ and applying \`justify-content: space-between\`.
 
 Because the primitives give you direct control over what goes inside \`Stepper.Trigger\`,
 you can put the indicator anywhere, replace it entirely, or add extra elements
-alongside it — things like a status badge, a timestamp, or a secondary action.
+alongside it.
 				`,
 			},
 		},
 	},
 	render: CustomLayoutDemo,
+};
+
+// ---------------------------------------------------------------------------
+// Custom layout — completion timestamp on the trailing edge
+// ---------------------------------------------------------------------------
+
+const triggerWithTimestamp = {
+	display: 'flex',
+	alignItems: 'center',
+	width: '100%',
+};
+
+const timestampStyle = {
+	marginInlineStart: 'auto',
+	fontSize: '12px',
+	color: '#787c82',
+	fontWeight: 400,
+	whiteSpace: 'nowrap' as const,
+};
+
+function TriggerWithTimestampDemo() {
+	const [ step, setStep ] = useState( 'payment' );
+	return (
+		<Stepper.Root
+			orientation="vertical"
+			value={ step }
+			onValueChange={ setStep }
+			aria-label="Checkout"
+			style={ { maxWidth: 400 } }
+		>
+			<Stepper.Step value="shipping" status="completed">
+				<Stepper.Trigger style={ triggerWithTimestamp }>
+					<Stepper.Indicator />
+					<Stepper.Title>Shipping address</Stepper.Title>
+					<span style={ timestampStyle }>Completed 2 min ago</span>
+				</Stepper.Trigger>
+				<Stepper.Panel>
+					<p>123 Main St, Springfield</p>
+				</Stepper.Panel>
+			</Stepper.Step>
+
+			<Stepper.Step value="payment">
+				<Stepper.Trigger style={ triggerWithTimestamp }>
+					<Stepper.Indicator />
+					<Stepper.Title>Payment method</Stepper.Title>
+				</Stepper.Trigger>
+				<Stepper.Panel>
+					<p>Enter your card details.</p>
+				</Stepper.Panel>
+			</Stepper.Step>
+
+			<Stepper.Step value="review">
+				<Stepper.Trigger style={ triggerWithTimestamp }>
+					<Stepper.Indicator />
+					<Stepper.Title>Review order</Stepper.Title>
+				</Stepper.Trigger>
+				<Stepper.Panel>
+					<p>Check everything before placing your order.</p>
+				</Stepper.Panel>
+			</Stepper.Step>
+		</Stepper.Root>
+	);
+}
+
+export const TriggerWithTimestamp: StoryObj = {
+	parameters: {
+		docs: {
+			description: {
+				story: `
+A completed step shows when it was finished — a trailing element injected directly inside \`Stepper.Trigger\`.
+
+This is impossible with \`VerticalStepper\`: it owns the trigger's internal structure. With primitives you control exactly what sits inside the trigger, so you can push any extra content to the trailing edge alongside the standard indicator and title.
+				`,
+			},
+		},
+	},
+	render: TriggerWithTimestampDemo,
 };
