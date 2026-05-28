@@ -45,7 +45,7 @@
 		"@wordpress/api-fetch": "^7.46.0",
 		"@wordpress/components": "^33.1.0",
 		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/icons": "^10.23.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/ui": "^0.13.0",
 		"@wordpress/url": "^4.46.0",
 		"clsx": "^2.1.1",
