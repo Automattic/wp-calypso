@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { getSiteName } from 'calypso/reader/get-helpers';
 import { findCachedFeedByFeedUrl } from 'calypso/reader/data/feed';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
