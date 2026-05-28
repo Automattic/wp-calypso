@@ -41,15 +41,16 @@ export const readFeedSearchQueryKey = ( options: Options ) => {
 };
 
 export const readFeedSearchQuery = ( options: Options ) => {
+	const { excludeFollowed, sort } = options;
 	const query = truncateQuery( options.query );
 	return queryOptions( {
-		queryKey: readFeedSearchQueryKey( options ),
+		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ] as const,
 		staleTime: FEED_SEARCH_STALE_TIME,
 		queryFn: () =>
 			fetchReadFeedSearch( {
 				query,
-				excludeFollowed: options.excludeFollowed,
-				sort: options.sort,
+				excludeFollowed,
+				sort,
 			} ),
 		enabled: Boolean( query ),
 		meta: { persist: false },
@@ -71,7 +72,7 @@ export const readFeedSearchInfiniteQuery = ( options: Options ) => {
 	const { excludeFollowed, sort } = options;
 	const query = truncateQuery( options.query );
 	return infiniteQueryOptions( {
-		queryKey: readFeedSearchInfiniteQueryKey( options ),
+		queryKey: [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ] as const,
 		staleTime: FEED_SEARCH_STALE_TIME,
 		queryFn: ( { pageParam }: { pageParam: number } ) =>
 			fetchReadFeedSearch( { query, excludeFollowed, sort, offset: pageParam } ),
