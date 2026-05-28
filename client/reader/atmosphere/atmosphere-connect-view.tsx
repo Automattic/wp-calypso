@@ -1,9 +1,10 @@
 import { useCreateConnectionMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -46,9 +47,14 @@ export function AtmosphereConnectView() {
 					onSubmit={ handleSubmit }
 				/>
 				<p className="atmosphere-view__learn-more">
-					<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
+					<InlineSupportLink
+						supportPostId={ 439167 }
+						supportLink={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }
+						tracksEvent="calypso_reader_atmosphere_learn_more_clicked"
+						showIcon={ false }
+					>
 						{ translate( 'Learn more about your social accounts in the Reader' ) }
-					</ExternalLink>
+					</InlineSupportLink>
 				</p>
 			</VStack>
 		</ReaderMain>
