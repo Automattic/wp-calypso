@@ -151,7 +151,9 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 	&[aria-expanded='true'],
 	&[aria-selected='true'] {
-		font-weight: 600;
+		.title {
+			font-weight: 600;
+		}
 	}
 }
 
