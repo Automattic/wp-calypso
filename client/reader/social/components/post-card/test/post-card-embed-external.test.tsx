@@ -187,6 +187,60 @@ describe( 'PostCardEmbedExternal', () => {
 			).toBeVisible();
 		} );
 
+		describe( 'cover image hero', () => {
+			it( 'renders the cover image as a full-width hero when long_form.document.cover_image is set', () => {
+				const { container } = render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: longForm } }
+						parentPostUri="at://post"
+					/>
+				);
+
+				const cover = container.querySelector( '.social-post-card-embed-external__cover' );
+				expect( cover ).not.toBeNull();
+				expect( cover ).toHaveAttribute( 'src', longForm.document.cover_image );
+				expect( cover ).toHaveAttribute( 'loading', 'lazy' );
+
+				// The small left-side thumb layout must NOT render when the
+				// hero swap is active — the cover replaces it.
+				expect( container.querySelector( '.social-post-card-embed-external__thumb' ) ).toBeNull();
+			} );
+
+			it( 'falls back to the small-thumb layout when cover_image is null', () => {
+				const noCover = {
+					...longForm,
+					document: { ...longForm.document, cover_image: null },
+				};
+				const { container } = render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: noCover } }
+						parentPostUri="at://post"
+					/>
+				);
+
+				expect( container.querySelector( '.social-post-card-embed-external__cover' ) ).toBeNull();
+				// `embed.thumb` is set on the base fixture, so the small thumb renders here.
+				expect(
+					container.querySelector( '.social-post-card-embed-external__thumb' )
+				).not.toBeNull();
+			} );
+
+			it( 'does not swap to the hero layout in compact (quote embed) mode', () => {
+				// Even when the long_form payload carries a cover, the quote
+				// embed keeps the compact small-thumb layout — the hero strip
+				// would compete with the surrounding quote chrome.
+				const { container } = render(
+					<PostCardEmbedExternal
+						embed={ { ...embed, long_form: longForm } }
+						parentPostUri="at://post"
+						compact
+					/>
+				);
+
+				expect( container.querySelector( '.social-post-card-embed-external__cover' ) ).toBeNull();
+			} );
+		} );
+
 		describe( 'publication pill', () => {
 			it( 'renders the publication name, handle, avatar and "View publication" link', () => {
 				const { container } = render(

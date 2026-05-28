@@ -505,6 +505,24 @@ button.social-post-card-embed-video--thumbnail {
 	flex-shrink: 0;
 }
 
+// Full-width cover image used when `long_form.document.cover_image` is
+// set. The 1.91:1 aspect ratio matches OpenGraph's documented standard
+// for `og:image` (and what Bluesky's article cards target), so the
+// image stays consistent whether the underlying record carried a
+// portrait or landscape blob — the crop favours the centre of the
+// image.
+.social-post-card-embed-external__cover {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1.91 / 1;
+	object-fit: cover;
+	background: var( --color-border-subtle );
+}
+
+.social-post-card-embed-external__cover-meta {
+	padding: 12px;
+}
+
 .social-post-card-embed-external__title {
 	font-weight: 600;
 	font-size: 0.875rem;

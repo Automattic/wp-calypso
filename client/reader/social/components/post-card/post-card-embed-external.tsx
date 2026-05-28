@@ -106,7 +106,34 @@ export function PostCardEmbedExternal( {
 		} );
 	};
 
-	const body = (
+	// When the resolver gave us a `document.cover_image` URL, swap the
+	// card to a hero layout (full-width cover on top, text below) that
+	// matches Bluesky's article-card shape. Suppressed inside quote
+	// embeds (`compact`) where there isn't room for a hero strip.
+	const heroCoverImage =
+		! compact && embed.long_form?.document.cover_image
+			? embed.long_form.document.cover_image
+			: null;
+
+	const meta = (
+		<VStack spacing={ 1 }>
+			<span className="social-post-card-embed-external__title">{ embed.title }</span>
+			<span className="social-post-card-embed-external__description">{ embed.description }</span>
+			<span className="social-post-card-embed-external__host">{ safeHost( embed.uri ) }</span>
+		</VStack>
+	);
+
+	const body = heroCoverImage ? (
+		<>
+			<img
+				className="social-post-card-embed-external__cover"
+				src={ heroCoverImage }
+				alt=""
+				loading="lazy"
+			/>
+			<div className="social-post-card-embed-external__cover-meta">{ meta }</div>
+		</>
+	) : (
 		<HStack alignment="flex-start" spacing={ 3 } justify="flex-start">
 			{ embed.thumb && (
 				<img
@@ -116,11 +143,7 @@ export function PostCardEmbedExternal( {
 					loading="lazy"
 				/>
 			) }
-			<VStack spacing={ 1 }>
-				<span className="social-post-card-embed-external__title">{ embed.title }</span>
-				<span className="social-post-card-embed-external__description">{ embed.description }</span>
-				<span className="social-post-card-embed-external__host">{ safeHost( embed.uri ) }</span>
-			</VStack>
+			{ meta }
 		</HStack>
 	);
 
