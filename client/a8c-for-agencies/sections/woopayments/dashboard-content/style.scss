@@ -30,15 +30,6 @@
 	}
 }
 
-.woopayments-dashboard__table {
-	.dataviews-view-table tr {
-		th:not( :last-child ),
-		td:not( :last-child ) {
-			padding-inline-end: 32px;
-		}
-	}
-}
-
 .download-commissions-modal {
 	@include break-medium {
 		min-width: 400px;

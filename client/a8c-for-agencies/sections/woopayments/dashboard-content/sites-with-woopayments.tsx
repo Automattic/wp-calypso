@@ -57,6 +57,16 @@ export default function SitesWithWooPayments() {
 			'woopaymentsStatus',
 			'commissionEligibility',
 		],
+		layout: {
+			styles: {
+				site: { minWidth: '260px' },
+				transactions: { minWidth: '120px' },
+				commissionsPaid: { minWidth: '150px' },
+				timeframeCommissions: { minWidth: '170px' },
+				woopaymentsStatus: { minWidth: '160px' },
+				commissionEligibility: { minWidth: '190px' },
+			},
+		},
 	} );
 
 	const fields = useMemo(
@@ -210,7 +220,7 @@ export default function SitesWithWooPayments() {
 			{ ! isDesktop ? (
 				<SitesWithWooPaymentsMobileView items={ items } actions={ actions } />
 			) : (
-				<div className="redesigned-a8c-table full-width woopayments-dashboard__table">
+				<div className="redesigned-a8c-table full-width">
 					<ItemsDataViews
 						data={ {
 							items: data,
