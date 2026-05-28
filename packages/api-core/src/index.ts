@@ -127,6 +127,7 @@ export * from './site-media-storage';
 export * from './site-migration-status';
 export * from './site-owner-transfer';
 export * from './site-plans';
+export * from './site-post-by-email';
 export * from './site-plugins';
 export * from './site-preview-links';
 export * from './site-performance';
