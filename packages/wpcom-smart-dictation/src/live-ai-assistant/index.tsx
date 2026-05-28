@@ -322,6 +322,14 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
 								</p>
+								<a
+									className="live-ai-assistant__intro-learn-more"
+									href={ smartDictationSupportUrl }
+									target="_blank"
+									rel="noreferrer"
+								>
+									{ __( 'Learn more' ) }
+								</a>
 							</div>
 						) }
 
@@ -338,18 +346,9 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							<Notice.Root intent="info">
 								<Notice.Title>{ __( 'Daily quota limit reached' ) }</Notice.Title>
 								<Notice.Description>
-									{ createInterpolateElement(
-										canUpgrade
-											? __(
-													'It will reset at midnight. Upgrade to keep writing by voice. <link>Learn more</link>.'
-											  )
-											: __( 'It will reset at midnight. <link>Learn more</link>.' ),
-										{
-											link: (
-												<a href={ smartDictationSupportUrl } target="_blank" rel="noreferrer" />
-											),
-										}
-									) }
+									{ canUpgrade
+										? __( 'It will reset at midnight. Upgrade to keep writing by voice.' )
+										: __( 'It will reset at midnight.' ) }
 								</Notice.Description>
 							</Notice.Root>
 						) }
