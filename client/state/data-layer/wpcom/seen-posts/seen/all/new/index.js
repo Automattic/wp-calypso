@@ -62,6 +62,8 @@ export const onSuccess = ( action, response ) => ( dispatch ) => {
 
 		// update to seen based on global ids
 		dispatch( receiveMarkAllAsSeen( { feedIds, feedUrls, globalIds } ) );
+	} else {
+		rollbackFeedSeenOptimisticUpdate( action );
 	}
 };
 

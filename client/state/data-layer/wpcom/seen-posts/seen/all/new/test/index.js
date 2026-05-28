@@ -39,6 +39,31 @@ describe( 'seen-posts mark-all-as-seen data layer', () => {
 		expect( getCachedFeed( queryClient, 200 )?.unseen_count ).toBe( 3 );
 	} );
 
+	it( 'rolls back the optimistic reset when the API rejects with a false status', () => {
+		const queryClient = new QueryClient();
+		queryClient.setQueryData( readFeedQuery( 201 ).queryKey, {
+			feed_ID: 201,
+			blog_ID: 101,
+			feed_URL: 'https://example.com/false-status-feed',
+			unseen_count: 4,
+		} );
+		getCalypsoQueryClient.mockReturnValue( queryClient );
+		const action = {
+			identifier: 'following',
+			feedIds: [ 201 ],
+			feedUrls: [ 'https://example.com/false-status-feed' ],
+			source: 'reader-web',
+		};
+
+		fetch( action );
+
+		expect( getCachedFeed( queryClient, 201 )?.unseen_count ).toBe( 0 );
+
+		onSuccess( action, { status: false } )( jest.fn() );
+
+		expect( getCachedFeed( queryClient, 201 )?.unseen_count ).toBe( 4 );
+	} );
+
 	it( 'derives global ids from the canonical Reader post cache on success', () => {
 		const queryClient = new QueryClient();
 		const posts = [

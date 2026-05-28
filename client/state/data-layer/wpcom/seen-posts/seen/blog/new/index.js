@@ -46,6 +46,8 @@ export const onSuccess = ( action, response ) => ( dispatch ) => {
 		dispatch( requestFollows() );
 
 		dispatch( receiveMarkAsSeen( { feedId, feedUrl, globalIds } ) );
+	} else {
+		rollbackFeedSeenOptimisticUpdate( action );
 	}
 };
 
