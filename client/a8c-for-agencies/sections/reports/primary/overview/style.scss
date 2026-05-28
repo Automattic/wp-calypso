@@ -3,6 +3,32 @@
 @import '@wordpress/base-styles/variables';
 
 .reports-overview {
+	// Match the marketplace page header treatment.
+	.hosting-dashboard-layout__top-wrapper {
+		background: #05374a;
+		border-block-end: none;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.hosting-dashboard-layout__header-breadcrumb {
+		color: var(--color-neutral-40);
+		fill: var(--color-neutral-40);
+
+		a {
+			color: var(--color-primary-5);
+		}
+	}
+
+	// Shift scrolling from the body to the container so the page-level
+	// `onScroll` handler (used by the collapse-on-scroll banner) fires.
+	.hosting-dashboard-layout__container {
+		height: auto;
+		overflow-y: auto;
+		display: block;
+	}
+
 	.hosting-dashboard-layout__header-actions {
 		display: flex;
 		flex-direction: column;
@@ -19,21 +45,6 @@
 	.hosting-dashboard-layout__body {
 		padding-block-end: 0;
 	}
-}
-
-.reports-overview__content {
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-
-	img {
-		width: max-content;
-	}
-}
-
-.reports-overview__heading {
-	@include heading-2x-large;
-	margin-block-end: 8px;
 }
 
 .reports-overview__description {

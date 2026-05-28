@@ -1,0 +1,39 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+// Dark teal banner needs light text for readability.
+.reports-banner__section {
+	overflow: hidden;
+	transition: max-height 0.25s ease-out, padding 0.25s ease-out;
+	max-height: 1000px;
+
+	.reports-banner__heading,
+	.reports-banner__description {
+		color: var(--color-text-inverted);
+	}
+
+	&.is-compact {
+		padding-block: 0;
+		max-height: 0;
+	}
+}
+
+.reports-banner__content {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	img {
+		width: max-content;
+	}
+}
+
+.reports-banner__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.reports-banner__description {
+	@include body-large;
+}
