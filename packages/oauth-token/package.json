@@ -25,7 +25,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/oauth-token#readme",
 	"dependencies": {
-		"cookie": "^0.7.2",
+		"cookie": "^1.0.0",
 		"store": "^2.0.12"
 	},
 	"devDependencies": {
