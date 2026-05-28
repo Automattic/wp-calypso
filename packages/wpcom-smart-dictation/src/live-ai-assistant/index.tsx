@@ -205,13 +205,17 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const sessionTimeProgress = hasSessionTimeRemaining
 		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
 		: 0;
-	const hasExhaustedUpgradeableQuota =
-		canUpgrade && hasSessionTimeRemaining && sessionTimeRemaining <= 0;
-	const showUpgradeButton = hasExhaustedUpgradeableQuota && ! isSessionActive && ! isSessionBusy;
+	const hasExhaustedQuota = hasSessionTimeRemaining && sessionTimeRemaining <= 0;
+	const showQuotaLimitNotice = hasExhaustedQuota && ! isSessionActive;
+	const showUpgradeButton = canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
+	const showQuotaReachedButton =
+		! canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
 
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
 			stop();
+		} else if ( hasExhaustedQuota ) {
+			return;
 		} else {
 			start();
 		}
@@ -231,6 +235,47 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	);
 	const showSubtitle =
 		isSessionActive || isSessionBusy || timelineRows.length > 0 || status === 'error';
+	let primaryAction;
+	if ( showUpgradeButton ) {
+		primaryAction = (
+			<Button
+				variant="primary"
+				className="live-ai-assistant__call-button"
+				href={ DICTATION_UPGRADE_URL }
+			>
+				<span>{ __( 'Upgrade' ) }</span>
+			</Button>
+		);
+	} else if ( showQuotaReachedButton ) {
+		primaryAction = (
+			<Button variant="primary" className="live-ai-assistant__call-button" disabled>
+				<span>{ __( 'Quota reached' ) }</span>
+			</Button>
+		);
+	} else {
+		primaryAction = (
+			<Button
+				variant="primary"
+				className={ clsx( 'live-ai-assistant__call-button', {
+					'is-hangup': isSessionActive || isSessionBusy,
+				} ) }
+				onClick={ handleSessionToggle }
+				isBusy={ isSessionBusy }
+			>
+				{ isSessionActive || isSessionBusy ? (
+					<>
+						<StopIcon />
+						<span>{ __( 'Stop dictation' ) }</span>
+					</>
+				) : (
+					<>
+						<MicIcon />
+						<span>{ __( 'Start dictation' ) }</span>
+					</>
+				) }
+			</Button>
+		);
+	}
 
 	return (
 		<>
@@ -251,7 +296,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							</div>
 						) }
 
-						{ status === 'idle' && timelineRows.length === 0 && (
+						{ status === 'idle' && timelineRows.length === 0 && ! hasExhaustedQuota && (
 							<div className="live-ai-assistant__intro">
 								<video
 									className="live-ai-assistant__intro-artwork"
@@ -281,13 +326,13 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							</Notice.Root>
 						) }
 
-						{ hasExhaustedUpgradeableQuota && (
+						{ showQuotaLimitNotice && (
 							<Notice.Root intent="info">
-								<Notice.Title>{ __( 'Keep dictating' ) }</Notice.Title>
+								<Notice.Title>{ __( 'Daily quota limit reached' ) }</Notice.Title>
 								<Notice.Description>
-									{ __(
-										"You've used your free Smart Dictation time for today. Upgrade to keep writing by voice."
-									) }
+									{ canUpgrade
+										? __( 'It will reset at midnight. Upgrade to keep writing by voice.' )
+										: __( 'It will reset at midnight.' ) }
 								</Notice.Description>
 							</Notice.Root>
 						) }
@@ -352,36 +397,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								<MicIcon muted={ isMuted } />
 								<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
 							</Button>
-							{ showUpgradeButton ? (
-								<Button
-									variant="primary"
-									className="live-ai-assistant__call-button"
-									href={ DICTATION_UPGRADE_URL }
-								>
-									<span>{ __( 'Upgrade' ) }</span>
-								</Button>
-							) : (
-								<Button
-									variant="primary"
-									className={ clsx( 'live-ai-assistant__call-button', {
-										'is-hangup': isSessionActive || isSessionBusy,
-									} ) }
-									onClick={ handleSessionToggle }
-									isBusy={ isSessionBusy }
-								>
-									{ isSessionActive || isSessionBusy ? (
-										<>
-											<StopIcon />
-											<span>{ __( 'Stop dictation' ) }</span>
-										</>
-									) : (
-										<>
-											<MicIcon />
-											<span>{ __( 'Start dictation' ) }</span>
-										</>
-									) }
-								</Button>
-							) }
+							{ primaryAction }
 						</div>
 						{ hasSessionTimeRemaining && (
 							<div className="live-ai-assistant__time">

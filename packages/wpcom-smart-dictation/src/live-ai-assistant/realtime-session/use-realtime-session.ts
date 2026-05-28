@@ -467,12 +467,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 		setError( null );
 		setErrorIntent( 'error' );
-		setTranscript( [] );
-		setToolEvents( [] );
-		sessionStartedAtRef.current = Date.now();
-		hasTrackedSessionStartRef.current = true;
-		sessionAbortControllerRef.current = new AbortController();
-		recordTracksEvent( 'calypso_smart_dictation_started' );
 
 		let hasRequestedMicrophone = false;
 
@@ -480,6 +474,19 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			await clientSecretSettlePromiseRef.current;
 			const remainingTime = await fetchRemainingTime();
 			applyRemainingTime( remainingTime );
+			const remainingTimeSeconds =
+				remainingTime.activeSession?.remainingTimeSeconds ?? remainingTime.remainingTimeSeconds;
+
+			if ( remainingTimeSeconds <= 0 ) {
+				return;
+			}
+
+			setTranscript( [] );
+			setToolEvents( [] );
+			sessionStartedAtRef.current = Date.now();
+			hasTrackedSessionStartRef.current = true;
+			sessionAbortControllerRef.current = new AbortController();
+			recordTracksEvent( 'calypso_smart_dictation_started' );
 
 			await assertMicrophonePermission();
 
