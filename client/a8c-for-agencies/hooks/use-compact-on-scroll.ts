@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 /**
  * Toggles `isCompact` based on scroll direction inside a scrollable container.
@@ -8,23 +8,24 @@ import { useCallback, useState } from 'react';
  */
 export default function useCompactOnScroll() {
 	const [ isCompact, setIsCompact ] = useState( false );
-	const [ lastScrollPosition, setLastScrollPosition ] = useState( 0 );
+	const lastScrollPosition = useRef( 0 );
 
-	const onScroll = useCallback(
-		( event: React.UIEvent< HTMLDivElement > ) => {
-			const scrollPosition = event.currentTarget.scrollTop;
-			const isScrollingDown = scrollPosition > lastScrollPosition;
+	const onScroll = useCallback( ( event: React.UIEvent< HTMLDivElement > ) => {
+		const scrollPosition = event.currentTarget.scrollTop;
+		const isScrollingDown = scrollPosition > lastScrollPosition.current;
 
-			if ( isScrollingDown && ! isCompact ) {
-				setIsCompact( true );
-			} else if ( ! isScrollingDown && isCompact && scrollPosition === 0 ) {
-				setIsCompact( false );
+		setIsCompact( ( prev ) => {
+			if ( isScrollingDown && ! prev ) {
+				return true;
 			}
+			if ( ! isScrollingDown && prev && scrollPosition === 0 ) {
+				return false;
+			}
+			return prev;
+		} );
 
-			setLastScrollPosition( scrollPosition );
-		},
-		[ isCompact, lastScrollPosition ]
-	);
+		lastScrollPosition.current = scrollPosition;
+	}, [] );
 
 	return { onScroll, isCompact };
 }

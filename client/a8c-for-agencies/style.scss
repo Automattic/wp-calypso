@@ -8,6 +8,7 @@
 	--a4a-corners-soft: 4px;
 
 	--color-surface-backdrop: #021a23;
+	--color-overview-header-background: #05374a;
 	--color-light-backdrop: var(--studio-white);
 
 	--color-border-light: var(--studio-white);
@@ -697,7 +698,7 @@ html {
 // marketplace pattern. `@include` it from a page-scoped block.
 @mixin marketplace-overview-header {
 	.hosting-dashboard-layout__top-wrapper {
-		background: #05374a;
+		background: var(--color-overview-header-background);
 		border-block-end: none;
 		position: sticky;
 		top: 0;
