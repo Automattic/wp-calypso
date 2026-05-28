@@ -33,7 +33,7 @@ class ReaderPostCardAdapter extends Component {
 	// take what the stream hands to a card and adapt it
 	// for use by a ReaderPostCard
 	render() {
-		const { feed_ID: feedId, site_ID: siteId, is_external: isExternal } = this.props.post;
+		const { site_ID: siteId, is_external: isExternal } = this.props.post;
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.

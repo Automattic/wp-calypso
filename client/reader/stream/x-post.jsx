@@ -152,7 +152,7 @@ class CrossPost extends PureComponent {
 	render() {
 		const { post, postKey, translate, currentRoute, hasOrganization, isWPForTeamsItem } =
 			this.props;
-		const { blogId: siteId, feedId } = postKey;
+		const { blogId: siteId } = postKey;
 
 		let isSeen = false;
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {

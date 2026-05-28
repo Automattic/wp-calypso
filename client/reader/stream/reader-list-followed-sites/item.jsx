@@ -93,7 +93,6 @@ const ReaderListFollowingItem = ( props ) => {
 
 export default connect(
 	( state, ownProps ) => {
-		const feedId = get( ownProps.follow, 'feed_ID' );
 		const siteId = get( ownProps.follow, 'blog_ID' );
 
 		return {
