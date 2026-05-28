@@ -191,10 +191,22 @@ export const FiveSteps: Story = {
 // Step variants — one example of every status/state a step can be in
 // ---------------------------------------------------------------------------
 
-function StepVariantsDemo() {
+function StepVariantsDemo( {
+	'aria-label': ariaLabel = 'Step variants',
+	linear,
+	activationMode,
+	indicatorVariant,
+}: StoryArgs ) {
 	const [ step, setStep ] = useState( 'active' );
 	return (
-		<HorizontalStepper value={ step } onValueChange={ setStep } aria-label="Step variants">
+		<HorizontalStepper
+			value={ step }
+			onValueChange={ setStep }
+			aria-label={ ariaLabel }
+			linear={ linear }
+			activationMode={ activationMode }
+			indicatorVariant={ indicatorVariant }
+		>
 			<HorizontalStepper.Step
 				value="completed"
 				title="Completed"
@@ -247,6 +259,11 @@ function StepVariantsDemo() {
 }
 
 export const StepVariants: Story = {
+	args: {
+		'aria-label': 'Step variants',
+		linear: false,
+		activationMode: 'manual',
+	},
 	parameters: {
 		docs: {
 			description: {
