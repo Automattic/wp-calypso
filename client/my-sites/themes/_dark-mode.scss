@@ -75,7 +75,7 @@
 
 	@include color-scheme-dark-theme-masterbar;
 
-	.theme-tier-badge--premium .premium-badge,
+	.theme-tier-badge .premium-badge,
 	.global-styles-variations__header .premium-badge {
 		--studio-black: var( --dashboard-surface__background-color );
 		--studio-white: var( --dashboard__text-color );
