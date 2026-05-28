@@ -615,6 +615,23 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		setStatus( 'idle' );
 	}, [ cleanup, recordSessionEnded ] );
 
+	useEffect( () => {
+		const shouldAutoStopForUpgrade =
+			canUpgrade &&
+			sessionTimeRemainingMs !== null &&
+			sessionTimeRemainingMs <= 0 &&
+			( status === 'requesting-mic' || status === 'connecting' || status === 'active' );
+
+		if ( ! shouldAutoStopForUpgrade ) {
+			return;
+		}
+
+		recordSessionEnded( 'quota_exhausted' );
+		setStatus( 'ending' );
+		cleanup();
+		setStatus( 'idle' );
+	}, [ canUpgrade, cleanup, recordSessionEnded, sessionTimeRemainingMs, status ] );
+
 	const toggleMute = useCallback( () => {
 		const stream = localStreamRef.current;
 		if ( ! stream ) {

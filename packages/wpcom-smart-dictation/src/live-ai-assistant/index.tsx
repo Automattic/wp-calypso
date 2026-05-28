@@ -281,6 +281,17 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							</Notice.Root>
 						) }
 
+						{ hasExhaustedUpgradeableQuota && (
+							<Notice.Root intent="info">
+								<Notice.Title>{ __( 'Keep dictating' ) }</Notice.Title>
+								<Notice.Description>
+									{ __(
+										"You've used your free Smart Dictation time for today. Upgrade to keep writing by voice."
+									) }
+								</Notice.Description>
+							</Notice.Root>
+						) }
+
 						{ timelineRows.length > 0 && (
 							<div className="live-ai-assistant__transcript">
 								{ timelineRows.map( ( row ) =>
