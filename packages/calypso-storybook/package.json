@@ -22,12 +22,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^9.0.8",
-		"@storybook/addon-controls": "^9.0.8",
 		"@storybook/addon-docs": "^9.1.20",
 		"@storybook/addon-themes": "^9.1.20",
-		"@storybook/addon-toolbars": "^9.0.8",
-		"@storybook/addon-viewport": "^9.0.8",
 		"@storybook/addon-webpack5-compiler-babel": "^3.0.6",
 		"@storybook/react-webpack5": "^9.1.20",
 		"storybook": "^9.1.20"
