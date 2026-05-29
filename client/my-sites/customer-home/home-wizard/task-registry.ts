@@ -108,12 +108,59 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 	// ─── Activation core (the spine; closes the loop on the pitch's
 	// "meaningful first action" metric — see Insight Index §3:
 	// "27% complete setup but only 10% publish, 17pp gap to close".)
+	//
+	// Order within `activation` is the order users see on the checklist
+	// (sortTasks sorts by category, then preserves registry order). The
+	// spine is intentional:
+	//
+	//   1. pick-theme       — universal first step; theme frames everything
+	//                         else (subtitle, content, homepage layout).
+	//   2. design-homepage  — second for goals that have a real homepage.
+	//   3. <first-content>  — goal-specific first action (post, product,
+	//                         portfolio piece, newsletter).
+	//   4. launch-site      — always last.
+	//
+	// Reordered 2026-05-29 after user testing flagged that "first post" was
+	// surfacing before "choose a theme" across every goal — theme-first is
+	// the universal rule.
+	{
+		// AI-routed: when expanded, asks Dolly to recommend 3 themes from the
+		// curated allowlist based on the wizard's `inferred` context (vibe /
+		// niche / goal), then renders them with live iframe previews and a
+		// one-click activate. Theme is the highest-leverage activation step —
+		// it determines how every other piece of content lands.
+		id: 'pick-theme',
+		title: 'Choose a theme',
+		subtitle: "Three themes picked for what you're building. One click activates.",
+		category: 'activation',
+		goals: GOALS_ALL,
+		// No `hideWhen` for the POC — the task stays even after activation so
+		// users can swap themes again. ThemePickerTaskItem could be extended
+		// later to check the active theme and self-mark complete.
+		url: ( s ) => `/themes/${ s }`,
+		cta: 'Browse all themes',
+	},
+	{
+		id: 'design-homepage',
+		title: 'Design your homepage',
+		subtitle: 'The first thing visitors see — make it count.',
+		category: 'activation',
+		goals: [ 'build', 'portfolio', 'educate' ],
+		hideWhen: { isLaunched: true },
+		url: ( s ) => `/site-editor/${ s }`,
+		cta: 'Edit site',
+	},
 	{
 		id: 'publish-first-post',
 		title: 'Publish your first post',
 		subtitle: 'Share something. Real publish, not a draft.',
 		category: 'activation',
-		goals: [ 'write', 'newsletter', 'educate' ],
+		// Narrowed from [ 'write', 'newsletter', 'educate' ] on 2026-05-29 after
+		// user testing showed that nonprofits / schools / courses (educate) don't
+		// lead with a blog post — Theme + homepage + content tasks come first.
+		// Dolly can still upgrade-promote this task when the description warrants
+		// (a writer-leaning archetype), but the deterministic floor is strict.
+		goals: [ 'write', 'newsletter' ],
 		hideWhen: { hasPosts: true },
 		url: ( s ) => `/post/${ s }`,
 		cta: 'Write post',
@@ -129,16 +176,6 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		url: ( s ) => `/woocommerce-installation/${ s }`,
 		cta: 'Add product',
 		completesOn: 'first_product',
-	},
-	{
-		id: 'design-homepage',
-		title: 'Design your homepage',
-		subtitle: 'The first thing visitors see — make it count.',
-		category: 'activation',
-		goals: [ 'build', 'portfolio', 'educate' ],
-		hideWhen: { isLaunched: true },
-		url: ( s ) => `/site-editor/${ s }`,
-		cta: 'Edit site',
 	},
 	{
 		id: 'add-portfolio-piece',
@@ -165,23 +202,6 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		completesOn: 'first_published_post',
 	},
 	{
-		// AI-routed: when expanded, asks Dolly to recommend 3 themes from the
-		// curated allowlist based on the wizard's `inferred` context (vibe /
-		// niche / goal), then renders them with live iframe previews and a
-		// one-click activate. Theme is the highest-leverage activation step —
-		// it determines how every other piece of content lands.
-		id: 'pick-theme',
-		title: 'Choose a theme',
-		subtitle: "Three themes picked for what you're building. One click activates.",
-		category: 'activation',
-		goals: GOALS_ALL,
-		// No `hideWhen` for the POC — the task stays even after activation so
-		// users can swap themes again. ThemePickerTaskItem could be extended
-		// later to check the active theme and self-mark complete.
-		url: ( s ) => `/themes/${ s }`,
-		cta: 'Browse all themes',
-	},
-	{
 		id: 'launch-site',
 		title: 'Launch your site',
 		subtitle: 'Take it public — but only after the steps above.',
@@ -200,11 +220,17 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 	{
 		id: 'setup-forms',
 		title: 'Add a contact form',
+		subtitle: 'A Contact page with a form, intro written by Dolly.',
 		category: 'feature-setup',
 		features: [ 'forms' ],
-		url: ( s ) => `/page/${ s }?contact-form=1`,
+		// Promoted to a pattern task on 2026-05-29: instead of opening a blank
+		// page editor, build a real Contact page from the wpcom `forms` pattern
+		// category (https://wordpress.com/patterns/forms) with a Dolly-written
+		// title + intro. Mirrors setup-bookings / setup-gallery. The `url` is
+		// the fallback when the page can't be created.
+		pattern: { category: 'forms', pageTitle: 'Contact', intro: true },
+		url: ( s ) => `/page/${ s }`,
 		cta: 'Add form',
-		createsPage: true,
 	},
 	{
 		id: 'setup-newsletter-feature',
@@ -257,10 +283,13 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		title: 'Create your first gallery',
 		subtitle: 'Show your work in a full-bleed image gallery.',
 		category: 'feature-setup',
-		// Goal-tagged so a visual site reliably gets the gallery even when Dolly's
-		// pick omits it (see patternTaskIdsForGoal); the wizard collects no
-		// explicit features, so the `gallery` feature alone never surfaces it.
-		goals: [ 'portfolio', 'educate', 'build' ],
+		// Narrowed from [ 'portfolio', 'educate', 'build' ] on 2026-05-29 after
+		// user testing showed that yoga studios (build) and nonprofits (educate)
+		// don't expect a gallery by default. A photographer's portfolio still
+		// gets one via this floor; for non-portfolio sites that genuinely want
+		// one (an artist-educator, a visual yoga studio), Dolly can pick it from
+		// the registry as a non-floor task via tailor-launchpad's prompt.
+		goals: [ 'portfolio' ],
 		features: [ 'gallery' ],
 		// Builds a real Gallery page from a dotcompatterns gallery pattern. The
 		// pattern is image-only, so `intro` adds a Dolly heading + lead paragraph
