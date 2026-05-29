@@ -10,13 +10,13 @@ export function getAkismetPro500ProductDisplayName( productName: string, quantit
 		return productName;
 	}
 
-	const requestsInK = ( AKISMET_PRO_REQUESTS_PER_QUANTITY * quantity ) / 1000;
+	const requestsInThousands = ( AKISMET_PRO_REQUESTS_PER_QUANTITY * quantity ) / 1000;
 
 	/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
 	return translate( '%(productName)s (%(requestsK)dK requests/month)', {
 		args: {
 			productName: productName.replace( /\s*\(.*$/, '' ).trim(),
-			requestsK: requestsInK,
+			requestsK: requestsInThousands,
 		},
 		textOnly: true,
 	} );

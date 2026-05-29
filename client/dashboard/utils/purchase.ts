@@ -322,12 +322,12 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		// "Pro 500" is legacy naming retained for backend product-slug stability
 		// (ak_pro5h_*). The per-quantity allotment is now 8000 requests/month.
 		const AKISMET_PRO_REQUESTS_PER_QUANTITY = 8000;
-		const requestsInK =
+		const requestsInThousands =
 			( AKISMET_PRO_REQUESTS_PER_QUANTITY * purchase.renewal_price_tier_usage_quantity ) / 1000;
 		/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
 		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-			requestsK: requestsInK,
+			requestsK: requestsInThousands,
 		} );
 	}
 
