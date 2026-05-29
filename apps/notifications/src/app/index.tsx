@@ -87,8 +87,14 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 			<div
 				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
 				onTransitionEnd={ handleDetailPaneTransitionEnd }
+				// Keep the pane interactive through the exit transition: it's
+				// still on-screen sliding out and `displayedNoteId` is still
+				// set. Flipping `inert` synchronously on `isDetailOpen` (the
+				// "should be open" intent) instead of `displayedNoteId` (what's
+				// actually showing) drops focus from the Back button mid-render
+				// and trips the host popover's focus-outside close on mobile.
 				// @ts-expect-error React 18 types don't include `inert`.
-				inert={ isDetailOpen ? undefined : '' }
+				inert={ displayedNoteId === undefined ? '' : undefined }
 			>
 				<Note
 					isDismissible={ isDismissible }
