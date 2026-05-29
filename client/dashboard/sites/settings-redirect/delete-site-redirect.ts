@@ -1,11 +1,11 @@
 import type { Purchase } from '@automattic/api-core';
 
-export function getDeleteSiteRedirectIntent( purchase: Purchase ): 'cancel' | 'remove' | null {
-	if ( purchase.is_cancelable ) {
-		return 'cancel';
-	}
-
-	if ( purchase.is_removable ) {
+/**
+ * Always use the remove intent so Delete redirect ends the redirect immediately
+ * (refund or purchase removal), rather than only disabling auto-renew.
+ */
+export function getDeleteSiteRedirectIntent( purchase: Purchase ): 'remove' | null {
+	if ( purchase.is_cancelable || purchase.is_removable ) {
 		return 'remove';
 	}
 
