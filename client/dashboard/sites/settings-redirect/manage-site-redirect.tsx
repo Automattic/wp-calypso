@@ -6,9 +6,9 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { purchaseSettingsRoute } from '../../app/router/me';
+import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
-import DeleteSiteRedirectButton from './delete-site-redirect-action';
+import RouterLinkButton from '../../components/router-link-button';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 interface ManageSiteRedirectProps {
@@ -25,6 +25,7 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 	const purchase = purchases?.find(
 		( purchase ) => purchase.blog_id === siteId && purchase.product_slug === 'offsite_redirect'
 	);
+	const canDeleteRedirect = purchase && ( purchase.is_cancelable || purchase.is_removable );
 
 	const handleSubmit = ( formData: SiteRedirectFormData ) => {
 		updateSiteRedirect( formData.redirect ?? '', {
@@ -50,7 +51,20 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 						onSubmit={ handleSubmit }
 						isSubmitting={ isPending }
 						disableWhenUnchanged
-						actions={ purchase ? <DeleteSiteRedirectButton purchase={ purchase } /> : undefined }
+						actions={
+							canDeleteRedirect ? (
+								<RouterLinkButton
+									variant="secondary"
+									isDestructive
+									__next40pxDefaultSize
+									to={ cancelPurchaseRoute.fullPath }
+									params={ { purchaseId: purchase.ID } }
+									search={ { intent: 'remove' } }
+								>
+									{ __( 'Delete redirect' ) }
+								</RouterLinkButton>
+							) : undefined
+						}
 					/>
 					{ purchase && (
 						<Text>
