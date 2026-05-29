@@ -147,7 +147,8 @@ export interface UseMessageActionsReturn {
 }
 
 // Transform client message (with parts) to UI message (with content)
-const transformClientMessageToUI = (
+// Exported for unit tests; not re-exported from the package entry.
+export const transformClientMessageToUI = (
 	clientMessage: ClientMessage,
 	messageActionsRegistrations: MessageActionsRegistration[] = []
 ): UIMessage | null => {
@@ -165,70 +166,83 @@ const transformClientMessageToUI = (
 		return null; // Don't show tool-related messages in UI
 	}
 
-	const content = clientMessage.parts.map( ( part ) => {
-		if ( part.type === 'text' ) {
-			// Check metadata for content type (e.g., 'text', 'context')
-			const contentType =
-				( part.metadata?.contentType as ContentType | undefined ) ||
-				'text';
-			return {
-				type: contentType,
-				text: part.text,
-			};
-		}
-		if ( part.type === 'file' ) {
-			// Convert file parts to component for rendering
-			// Prefer uri; fall back to base64 data URL if mimeType and bytes are available
-			const imageUrl =
-				part.file.uri ||
-				( part.file.mimeType && part.file.bytes
-					? `data:${ part.file.mimeType };base64,${ part.file.bytes }`
-					: undefined );
-			if ( imageUrl ) {
-				return createImageComponent( imageUrl );
-			}
-		}
-		if ( part.type === 'data' ) {
-			// Handle data parts that might contain component information
-			const data = part.data as any;
-			if ( data.component && data.componentProps ) {
+	const content = clientMessage.parts
+		.map( ( part ) => {
+			if ( part.type === 'text' ) {
+				// Check metadata for content type (e.g., `text`, `context`)
+				const contentType =
+					( part.metadata?.contentType as ContentType | undefined ) ||
+					'text';
 				return {
-					type: 'component' as const,
-					component: data.component,
-					componentProps: data.componentProps,
+					type: contentType,
+					text: part.text,
 				};
 			}
-			// Preserve data parts with forward_to_human_support flag (and similar flags)
-			// so consumers can check for them programmatically
-			if (
-				data.flags &&
-				typeof data.flags === 'object' &&
-				'forward_to_human_support' in data.flags
-			) {
-				return {
-					type: 'data' as const,
-					data,
-				};
+			if ( part.type === 'file' ) {
+				// Convert `file` parts to component for rendering
+				// Prefer `uri`; fall back to base64 data URL if `mimeType` and `bytes` are available
+				const imageUrl =
+					part.file.uri ||
+					( part.file.mimeType && part.file.bytes
+						? `data:${ part.file.mimeType };base64,${ part.file.bytes }`
+						: undefined );
+				if ( imageUrl ) {
+					return createImageComponent( imageUrl );
+				}
 			}
-			// Preserve data parts with sources array for article references
-			if ( Array.isArray( data.sources ) && data.sources.length > 0 ) {
-				return {
-					type: 'data' as const,
-					data,
-				};
+			if ( part.type === 'data' ) {
+				// Handle `data` parts that might contain `component` information
+				const data = part.data as any;
+				if ( data.component && data.componentProps ) {
+					return {
+						type: 'component' as const,
+						component: data.component,
+						componentProps: data.componentProps,
+					};
+				}
+				// Preserve `data` parts with `forward_to_human_support` flag (and similar flags)
+				// so consumers can check for them programmatically
+				if (
+					data.flags &&
+					typeof data.flags === 'object' &&
+					'forward_to_human_support' in data.flags
+				) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
+				// Preserve `data` parts with `sources` array for article references
+				if (
+					Array.isArray( data.sources ) &&
+					data.sources.length > 0
+				) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
+				// Unknown `data` shapes are internal metadata. Drop them so
+				// they don't show up as raw JSON. Add a handler above to
+				// render a new shape.
+				logger( 'Dropping unrecognized data part', data );
+				return null;
 			}
-			// For other data parts, convert to text
+			// Handle other part types as needed
 			return {
 				type: 'text' as const,
-				text: JSON.stringify( data ),
+				text: '[Unsupported content]',
 			};
-		}
-		// Handle other part types as needed
-		return {
-			type: 'text' as const,
-			text: '[Unsupported content]',
-		};
-	} );
+		} )
+		.filter(
+			( item ): item is NonNullable< typeof item > => item !== null
+		);
+
+	// Drop messages with nothing to show. Keeping them would add empty
+	// entries to the list and throw off message counts.
+	if ( content.length === 0 ) {
+		return null;
+	}
 
 	// Extract timestamp from message metadata or use current time as fallback
 	const timestamp =
@@ -491,6 +505,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.odieBotId,
 		config.credentials,
 		isValidConfig,
+		transformMessages,
 	] );
 
 	// Send message function
@@ -876,7 +891,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				] ),
 			};
 		} );
-	}, [ registrations ] );
+	}, [ registrations, transformMessages ] );
 
 	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {
@@ -911,7 +926,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				uiMessages,
 			} ) );
 		},
-		[ agentConfig.agentId, isValidConfig ]
+		[ agentConfig.agentId, isValidConfig, transformMessages ]
 	);
 
 	return {
