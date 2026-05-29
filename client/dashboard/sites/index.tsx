@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
 	useQueryClient,
@@ -6,6 +7,7 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -45,6 +47,19 @@ type SiteListQueryOptions = {
 	isAutomattician: boolean;
 };
 
+// A filter on `is_deleted=true` can arrive in multiple shapes: from the DataViews UI
+// (boolean `true` with the `is` operator) or from the URL (string `'true'` wrapped in
+// an array via `queryParamFilterFields`'s `isAny` operator). Treat all as active.
+function isDeletedFilterActive( filters: Filter[] ): boolean {
+	const isTruthy = ( v: unknown ) => v === true || v === 'true';
+	return filters.some(
+		( filter ) =>
+			filter.field === 'is_deleted' &&
+			( isTruthy( filter.value ) ||
+				( Array.isArray( filter.value ) && filter.value.some( isTruthy ) ) )
+	);
+}
+
 const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
@@ -71,7 +86,7 @@ const getFetchPaginatedSitesOptions = (
 		per_page: view.perPage,
 	};
 
-	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
+	if ( isDeletedFilterActive( filters ) ) {
 		options.site_visibility = 'deleted';
 	}
 
@@ -164,6 +179,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		queryParamFilterFields: [ 'is_deleted' ],
 		sanitizeFields,
 	} );
 
@@ -194,6 +210,8 @@ export default function Sites() {
 		view,
 		totalItems ?? 0
 	);
+
+	const isFilteringDeletedSites = isDeletedFilterActive( view.filters ?? [] );
 
 	return (
 		<>
@@ -245,13 +263,36 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							<DataViewsEmptyStateLayout
-								title={ __( 'No sites match your search' ) }
-								description={ __( 'Try again, or start a new site with the options below.' ) }
-								isBorderless
-							>
-								<EmptySitesSearchStateContent />
-							</DataViewsEmptyStateLayout>
+							isFilteringDeletedSites ? (
+								<DataViewsEmptyStateLayout
+									title={ __( 'You have no deleted sites' ) }
+									description={ createInterpolateElement(
+										__(
+											'Sites that are deleted can be restored within the first 30 days of deletion. Read more about restoring your site <a>here</a>.'
+										),
+										{
+											a: (
+												<a
+													href={ localizeUrl(
+														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
+													) }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										}
+									) }
+									isBorderless
+								/>
+							) : (
+								<DataViewsEmptyStateLayout
+									title={ __( 'No sites match your search' ) }
+									description={ __( 'Try again, or start a new site with the options below.' ) }
+									isBorderless
+								>
+									<EmptySitesSearchStateContent />
+								</DataViewsEmptyStateLayout>
+							)
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
