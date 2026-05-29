@@ -1,57 +1,83 @@
 import {
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
-import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import type { Note } from '../types';
 import type { CSSProperties } from 'react';
 
-const getNoteIconLink = ( note: Note ) => {
-	const user = ( note.subject?.[ 0 ].ranges || [] ).find( ( { type } ) => type === 'user' );
-	if ( user ) {
-		const { id: userId, site_id: siteId, url } = user;
-		// Some site notifications populate id with the siteId, so consider the userId falsy in this
-		// case.
-		return userId && userId !== siteId ? `https://wordpress.com/reader/users/id/${ userId }` : url;
-	}
+type HeaderBlock = NonNullable< Note[ 'header' ] >[ number ];
 
-	return '';
+// Resolve the link used to wrap the header avatar / subject text. When the
+// first range is a user whose id differs from the site id, prefer the Reader
+// profile URL; otherwise fall back to the range's url. Mirrors the legacy
+// `SummaryInSingle` behaviour.
+const getHeaderLink = ( block: HeaderBlock ): string | undefined => {
+	const range = block.ranges?.[ 0 ] as
+		| { id?: number | string; site_id?: number; url?: string }
+		| undefined;
+	if ( ! range ) {
+		return undefined;
+	}
+	if ( range.id && range.id !== range.site_id ) {
+		return `https://wordpress.com/reader/users/id/${ range.id }`;
+	}
+	return range.url;
 };
 
-const NoteSummaryIcon = ( { note }: { note: Note } ) => {
-	const link = getNoteIconLink( note );
-	const style: CSSProperties = { display: 'flex', flexShrink: 0 };
-	const content = <NoteIcon icon={ note.icon } size={ 32 } />;
+const iconWrapStyle: CSSProperties = { display: 'flex', flexShrink: 0 };
 
+const NoteSummaryIcon = ( { iconUrl, link }: { iconUrl?: string; link?: string } ) => {
+	const content = <NoteIcon icon={ iconUrl } size={ 32 } />;
 	if ( ! link ) {
-		return <div style={ style }> { content }</div>;
+		return <div style={ iconWrapStyle }>{ content }</div>;
 	}
-
 	return (
-		<a href={ link } style={ style } target="_blank" rel="noopener noreferrer">
+		<a href={ link } style={ iconWrapStyle } target="_blank" rel="noopener noreferrer">
 			{ content }
 		</a>
 	);
 };
 
+// Detail-view header: built from `note.header` so the first row anchors the
+// panel with the post owner / author + post title (matching the legacy
+// `SummaryInSingle`). Falls back to rendering `note.subject` when a note has
+// no `header` block (some system notes).
 const NoteSummary = ( { note }: { note: Note } ) => {
+	const header = note.header;
+
+	if ( ! header || header.length === 0 ) {
+		return (
+			<HStack justify="flex-start" spacing={ 4 } alignment="top">
+				<NoteSummaryIcon iconUrl={ note.icon } />
+				<VStack className="wpnc__text-summary" spacing={ 0 }>
+					<ExternalLink href={ note.url }>{ note.subject[ 0 ].text }</ExternalLink>
+				</VStack>
+			</HStack>
+		);
+	}
+
+	const subject = header[ 0 ];
+	const snippet = header[ 1 ];
+	const subjectLink = getHeaderLink( subject );
+	const avatarUrl = subject.media?.[ 0 ]?.url;
+
 	return (
-		<HStack justify="flex-start" spacing={ 4 }>
-			<NoteSummaryIcon note={ note } />
-			<VStack className="wpnc__text-summary">
-				<ExternalLink href={ note.url }>
-					<span
-						className="wpnc__subject"
-						/* eslint-disable-next-line react/no-danger */
-						dangerouslySetInnerHTML={ {
-							__html: html( note.subject[ 0 ], {
-								links: false,
-							} ),
-						} }
-					/>
-				</ExternalLink>
+		<HStack className="wpnc__user" justify="flex-start" spacing={ 4 } alignment="top">
+			<NoteSummaryIcon iconUrl={ avatarUrl } link={ subjectLink } />
+			<VStack className="wpnc__text-summary" spacing={ 0 }>
+				{ subjectLink ? (
+					<a className="wpnc__user-title" href={ subjectLink } target="_blank" rel="noreferrer">
+						<Text weight={ 500 }>{ subject.text }</Text>
+					</a>
+				) : (
+					<Text className="wpnc__user-title" weight={ 500 }>
+						{ subject.text }
+					</Text>
+				) }
+				{ snippet && <ExternalLink href={ note.url }>{ snippet.text }</ExternalLink> }
 			</VStack>
 		</HStack>
 	);
