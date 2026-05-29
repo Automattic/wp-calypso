@@ -9,10 +9,15 @@ import {
 	type HorizontalStepRecord,
 } from './horizontal-stepper-step';
 import styles from './style.module.scss';
-import type { StepperProps, StepperRef } from '../stepper/types';
+import type { AriaLabelXOR, StepperBaseProps, StepperRef } from '../stepper/types';
 import type { Ref } from 'react';
 
-type HorizontalStepperProps = Omit< StepperProps, 'headingLevel' >;
+// Omit is applied to StepperBaseProps (a plain object type) before intersecting
+// with AriaLabelXOR so that the XOR union constraint is preserved. Applying
+// Omit directly to StepperProps (which is StepperBaseProps & AriaLabelXOR)
+// flattens the union and widens aria-label/aria-labelledby to string|undefined,
+// breaking TypeScript's ability to verify the constraint downstream.
+type HorizontalStepperProps = Omit< StepperBaseProps, 'headingLevel' > & AriaLabelXOR;
 
 function HorizontalStepperInner(
 	{ children, className, ...props }: HorizontalStepperProps,

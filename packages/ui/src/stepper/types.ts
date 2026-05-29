@@ -11,7 +11,7 @@ import type { CSSProperties, ReactNode, Ref } from 'react';
  */
 type WithAriaLabel = { 'aria-label': string; 'aria-labelledby'?: never };
 type WithAriaLabelledBy = { 'aria-label'?: never; 'aria-labelledby': string };
-type AriaLabelXOR = WithAriaLabel | WithAriaLabelledBy;
+export type AriaLabelXOR = WithAriaLabel | WithAriaLabelledBy;
 
 // ---------------------------------------------------------------------------
 // Step status
@@ -78,7 +78,7 @@ export type StepperRef = {
 // Tier 1 prop types
 // ---------------------------------------------------------------------------
 
-type StepperBaseProps = {
+export type StepperBaseProps = {
 	value?: string;
 	defaultValue?: string;
 	onValueChange?: ( value: string ) => void;
