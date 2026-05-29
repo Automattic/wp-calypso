@@ -1,6 +1,11 @@
-import { adaptFollow } from '../adapters';
+import { adaptFollow, prepareComparableUrl } from '../adapters';
 
 describe( 'read follows adapters', () => {
+	it( 'prepares comparable URLs by stripping protocol, lowercasing, and removing one trailing slash', () => {
+		expect( prepareComparableUrl( 'HTTPS://Example.COM/Feed/' ) ).toBe( 'example.com/feed' );
+		expect( prepareComparableUrl( 'https://example.com/feed//' ) ).toBe( 'example.com/feed/' );
+	} );
+
 	it( 'preserves subscription classification fields', () => {
 		const follow = adaptFollow( {
 			ID: '123',

@@ -14,7 +14,7 @@ const toValidId = ( id: string | number | null | undefined ): number | null | un
 
 export const prepareComparableUrl = ( url?: string | null ): string | undefined => {
 	const preparedUrl = url ? untrailingslashit( url ) : url;
-	return preparedUrl?.replace( /^https?:\/\//, '' ).toLowerCase();
+	return preparedUrl?.replace( /^https?:\/\//i, '' ).toLowerCase();
 };
 
 export const adaptFollow = ( subscription: FollowApiSubscription ): FollowItem => ( {

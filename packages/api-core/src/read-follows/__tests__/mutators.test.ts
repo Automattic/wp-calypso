@@ -145,6 +145,20 @@ describe( 'read follows mutators', () => {
 			).rejects.toThrow( 'Unfollow request did not unsubscribe' );
 			expect( scope.isDone() ).toBe( true );
 		} );
+
+		it( 'throws when the response is missing subscribed status', async () => {
+			const scope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/delete', {
+					source: 'calypso',
+					url: 'https://example.com/feed/',
+				} )
+				.reply( 200, {} );
+
+			await expect(
+				unfollowSite( { feedUrl: 'https://example.com/feed/', source: 'calypso' } )
+			).rejects.toThrow( 'Unfollow request did not unsubscribe' );
+			expect( scope.isDone() ).toBe( true );
+		} );
 	} );
 
 	describe( 'delivery mutators', () => {
@@ -164,6 +178,13 @@ describe( 'read follows mutators', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'rejects post email subscription updates without a post delivery flag', async () => {
+			await expect( updateSitePostEmailSubscription( { blogId: 123 } ) ).rejects.toThrow(
+				'sendPosts must be a boolean'
+			);
+			expect( nock.pendingMocks() ).toEqual( [] );
+		} );
+
 		it( 'updates comment email subscriptions with REST v1.2', async () => {
 			const scope = nock( BASE )
 				.post( '/rest/v1.2/read/site/123/comment_email_subscriptions/delete', {} )
@@ -172,6 +193,13 @@ describe( 'read follows mutators', () => {
 			await updateSiteCommentEmailSubscription( { blogId: 123, sendComments: false } );
 
 			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'rejects comment email subscription updates without a comment delivery flag', async () => {
+			await expect( updateSiteCommentEmailSubscription( { blogId: 123 } ) ).rejects.toThrow(
+				'sendComments must be a boolean'
+			);
+			expect( nock.pendingMocks() ).toEqual( [] );
 		} );
 
 		it( 'updates post email delivery frequency with REST v1.2', async () => {
@@ -189,6 +217,13 @@ describe( 'read follows mutators', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'rejects post email delivery frequency updates without a valid frequency', async () => {
+			await expect( updateSitePostEmailDeliveryFrequency( { blogId: 123 } ) ).rejects.toThrow(
+				'deliveryFrequency must be one of instantly, daily, or weekly'
+			);
+			expect( nock.pendingMocks() ).toEqual( [] );
+		} );
+
 		it( 'updates post notification subscriptions with the wpcom v2 namespace', async () => {
 			const scope = nock( BASE )
 				.post( '/wpcom/v2/read/sites/123/notification-subscriptions/new', {} )
@@ -197,6 +232,13 @@ describe( 'read follows mutators', () => {
 			await updateSitePostNotificationSubscription( { blogId: 123, sendPosts: true } );
 
 			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'rejects post notification subscription updates without a post delivery flag', async () => {
+			await expect( updateSitePostNotificationSubscription( { blogId: 123 } ) ).rejects.toThrow(
+				'sendPosts must be a boolean'
+			);
+			expect( nock.pendingMocks() ).toEqual( [] );
 		} );
 	} );
 } );

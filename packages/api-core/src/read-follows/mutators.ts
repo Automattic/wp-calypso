@@ -14,6 +14,20 @@ const buildDeliveryFrequencyBody = ( frequency?: string ) =>
 		? { delivery_frequency: frequency }
 		: {};
 
+function assertBoolean( value: unknown, name: string ): asserts value is boolean {
+	if ( typeof value !== 'boolean' ) {
+		throw new Error( `${ name } must be a boolean` );
+	}
+}
+
+function assertDeliveryFrequency(
+	frequency: unknown
+): asserts frequency is NonNullable< FollowDeliveryParams[ 'deliveryFrequency' ] > {
+	if ( ! [ 'instantly', 'daily', 'weekly' ].includes( String( frequency ) ) ) {
+		throw new Error( 'deliveryFrequency must be one of instantly, daily, or weekly' );
+	}
+}
+
 const isValidId = ( id?: number | string ): id is number | string => {
 	if ( typeof id === 'number' ) {
 		return Number.isInteger( id ) && id >= 0;
@@ -82,49 +96,61 @@ export const unfollowSite = async ( {
 			'unfollow'
 		),
 	} );
-	if ( response?.subscribed ) {
+	if ( response?.subscribed !== false ) {
 		throw new Error( 'Unfollow request did not unsubscribe' );
 	}
 	return response;
 };
 
-export const updateSitePostEmailSubscription = ( {
+export const updateSitePostEmailSubscription = async ( {
 	blogId,
 	sendPosts,
 	deliveryFrequency,
-}: FollowDeliveryParams ) =>
-	wpcom.req.post( {
+}: FollowDeliveryParams ) => {
+	assertBoolean( sendPosts, 'sendPosts' );
+
+	return wpcom.req.post( {
 		path: `/read/site/${ blogId }/post_email_subscriptions/${ sendPosts ? 'new' : 'delete' }`,
 		apiVersion: '1.2',
 		body: sendPosts ? buildDeliveryFrequencyBody( deliveryFrequency ) : {},
 	} );
+};
 
-export const updateSiteCommentEmailSubscription = ( {
+export const updateSiteCommentEmailSubscription = async ( {
 	blogId,
 	sendComments,
-}: FollowDeliveryParams ) =>
-	wpcom.req.post( {
+}: FollowDeliveryParams ) => {
+	assertBoolean( sendComments, 'sendComments' );
+
+	return wpcom.req.post( {
 		path: `/read/site/${ blogId }/comment_email_subscriptions/${ sendComments ? 'new' : 'delete' }`,
 		apiVersion: '1.2',
 		body: {},
 	} );
+};
 
-export const updateSitePostEmailDeliveryFrequency = ( {
+export const updateSitePostEmailDeliveryFrequency = async ( {
 	blogId,
 	deliveryFrequency,
-}: FollowDeliveryParams ) =>
-	wpcom.req.post( {
+}: FollowDeliveryParams ) => {
+	assertDeliveryFrequency( deliveryFrequency );
+
+	return wpcom.req.post( {
 		path: `/read/site/${ blogId }/post_email_subscriptions/update`,
 		apiVersion: '1.2',
 		body: buildDeliveryFrequencyBody( deliveryFrequency ),
 	} );
+};
 
-export const updateSitePostNotificationSubscription = ( {
+export const updateSitePostNotificationSubscription = async ( {
 	blogId,
 	sendPosts,
-}: FollowDeliveryParams ) =>
-	wpcom.req.post( {
+}: FollowDeliveryParams ) => {
+	assertBoolean( sendPosts, 'sendPosts' );
+
+	return wpcom.req.post( {
 		path: `/read/sites/${ blogId }/notification-subscriptions/${ sendPosts ? 'new' : 'delete' }`,
 		apiNamespace: 'wpcom/v2',
 		body: {},
 	} );
+};
