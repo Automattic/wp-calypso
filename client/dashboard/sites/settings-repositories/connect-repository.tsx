@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
@@ -64,9 +64,12 @@ export default function ConnectRepository() {
 						initialValues={ initialValues }
 						submitText={ __( 'Connect Repository' ) }
 						successMessage={ __( 'Repository connected successfully.' ) }
-						errorMessage={
-							// translators: "reason" is why connecting the repository failed.
-							__( 'Failed to connect repository: %(reason)s' )
+						errorMessage={ ( reason ) =>
+							sprintf(
+								// translators: %(reason)s: why connecting the repository failed.
+								__( 'Failed to connect repository: %(reason)s' ),
+								{ reason }
+							)
 						}
 						navigateFrom={ navigateFrom }
 					/>

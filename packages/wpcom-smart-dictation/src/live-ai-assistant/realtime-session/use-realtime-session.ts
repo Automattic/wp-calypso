@@ -51,6 +51,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const [ errorIntent, setErrorIntent ] = useState< RealtimeErrorIntent >( 'error' );
 	const [ sessionTimeLimitMs, setSessionTimeLimitMs ] = useState< number | null >( null );
 	const [ sessionTimeRemainingMs, setSessionTimeRemainingMs ] = useState< number | null >( null );
+	const [ canUpgrade, setCanUpgrade ] = useState( false );
 	const [ isMuted, setIsMuted ] = useState( false );
 	const [ localStream, setLocalStream ] = useState< MediaStream | null >( null );
 	const [ transcript, setTranscript ] = useState< RealtimeTranscriptEntry[] >( [] );
@@ -106,6 +107,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	);
 	const applyRemainingTime = useCallback(
 		( remainingTime: DictationRemainingTime ) => {
+			setCanUpgrade( remainingTime.canUpgrade );
+
 			if ( remainingTime.activeSession?.expiresAt ) {
 				clientSecretExpiresAtMsRef.current = remainingTime.activeSession.expiresAt * 1000;
 				updateRemainingTime(
@@ -190,6 +193,15 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		}
 	}, [ applyRemainingTime ] );
 
+	const stop = useCallback(
+		( reason = 'user_stop' ) => {
+			recordSessionEnded( reason );
+			cleanup();
+			setStatus( 'idle' );
+		},
+		[ cleanup, recordSessionEnded ]
+	);
+
 	useEffect( () => {
 		return () => cleanup();
 	}, [ cleanup ] );
@@ -218,10 +230,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 	useEffect( () => {
 		const shouldTickSessionTime =
-			status === 'requesting-mic' ||
-			status === 'connecting' ||
-			status === 'active' ||
-			status === 'ending';
+			status === 'requesting-mic' || status === 'connecting' || status === 'active';
 
 		if ( sessionTimeLimitMs === null || ! shouldTickSessionTime ) {
 			return;
@@ -342,10 +351,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			} );
 
 			if ( shouldStopDictation ) {
-				recordSessionEnded( 'voice_stop' );
-				setStatus( 'ending' );
-				cleanup();
-				setStatus( 'idle' );
+				stop( 'voice_stop' );
 				return;
 			}
 
@@ -353,7 +359,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				safeCreateResponse();
 			}
 		},
-		[ cleanup, recordSessionEnded, safeCreateResponse ]
+		[ safeCreateResponse, stop ]
 	);
 
 	const handleServerEvent = useCallback(
@@ -464,12 +470,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 		setError( null );
 		setErrorIntent( 'error' );
-		setTranscript( [] );
-		setToolEvents( [] );
-		sessionStartedAtRef.current = Date.now();
-		hasTrackedSessionStartRef.current = true;
-		sessionAbortControllerRef.current = new AbortController();
-		recordTracksEvent( 'calypso_smart_dictation_started' );
 
 		let hasRequestedMicrophone = false;
 
@@ -477,6 +477,17 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			await clientSecretSettlePromiseRef.current;
 			const remainingTime = await fetchRemainingTime();
 			applyRemainingTime( remainingTime );
+
+			if ( remainingTime.remainingTimeSeconds <= 0 ) {
+				return;
+			}
+
+			setTranscript( [] );
+			setToolEvents( [] );
+			sessionStartedAtRef.current = Date.now();
+			hasTrackedSessionStartRef.current = true;
+			sessionAbortControllerRef.current = new AbortController();
+			recordTracksEvent( 'calypso_smart_dictation_started' );
 
 			await assertMicrophonePermission();
 
@@ -605,12 +616,22 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		applyRemainingTime,
 	] );
 
-	const stop = useCallback( () => {
-		recordSessionEnded( 'user_stop' );
-		setStatus( 'ending' );
-		cleanup();
-		setStatus( 'idle' );
-	}, [ cleanup, recordSessionEnded ] );
+	useEffect( () => {
+		const shouldAutoStopForQuota =
+			sessionTimeRemainingMs !== null &&
+			sessionTimeRemainingMs <= 0 &&
+			( status === 'requesting-mic' || status === 'connecting' || status === 'active' );
+
+		if ( ! shouldAutoStopForQuota ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_smart_dictation_auto_stopped', {
+			reason: 'quota_exhausted',
+			can_upgrade: canUpgrade,
+		} );
+		stop( 'quota_exhausted' );
+	}, [ canUpgrade, sessionTimeRemainingMs, status, stop ] );
 
 	const toggleMute = useCallback( () => {
 		const stream = localStreamRef.current;
@@ -707,6 +728,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		errorIntent,
 		sessionTimeLimitMs,
 		sessionTimeRemainingMs,
+		canUpgrade,
 		isMuted,
 		localStream,
 		transcript,

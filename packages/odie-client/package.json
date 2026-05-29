@@ -49,7 +49,7 @@
 		"@wordpress/api-fetch": "7.46.0",
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"autosize": "^6.0.1",
 		"clsx": "^2.1.1",

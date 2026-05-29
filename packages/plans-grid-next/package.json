@@ -49,7 +49,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/number-formatters": "^1.1.9",
+		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@emotion/react": "11.11.1",
@@ -66,7 +66,7 @@
 		"react-transition-group": "^4.3.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
@@ -82,7 +82,7 @@
 		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"msw": "^2.2.14",
-		"msw-storybook-addon": "^2.0.4",
+		"msw-storybook-addon": "^2.0.7",
 		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^8.6.17",
 		"typescript": "^5.9.3",

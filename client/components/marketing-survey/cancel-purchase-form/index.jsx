@@ -92,7 +92,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert, flowType } = this.props;
+		const {
+			purchase,
+			skipRemovePlanSurvey,
+			willAtomicSiteRevert,
+			flowType,
+			isSplitCancelRemoveEnabled,
+		} = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
 		if (
@@ -108,7 +114,11 @@ class CancelPurchaseForm extends Component {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
 
-		if ( willAtomicSiteRevert && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if (
+			willAtomicSiteRevert &&
+			flowType === CANCEL_FLOW_TYPE.REMOVE &&
+			! isSplitCancelRemoveEnabled
+		) {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 

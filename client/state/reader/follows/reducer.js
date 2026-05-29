@@ -6,7 +6,7 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
-	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_RECEIVE,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
@@ -201,7 +201,7 @@ const itemsReducer = ( state = {}, action ) => {
 			);
 			return merge( {}, state, keyedNewFollows );
 		}
-		case READER_SITE_REQUEST_SUCCESS: {
+		case READER_SITE_RECEIVE: {
 			const incomingSite = action.payload;
 			if ( ! incomingSite || ! incomingSite.feed_URL || ! incomingSite.is_following ) {
 				return state;

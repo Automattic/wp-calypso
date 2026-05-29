@@ -66,11 +66,6 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: () => null,
 } ) );
 
-jest.mock( 'calypso/components/data/query-reader-site', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
-
 jest.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
 	default: () => null,
@@ -89,12 +84,6 @@ jest.mock( '@automattic/components', () => ( {
 jest.mock( '../verificationNudge', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="subscribe-verification-nudge" />,
-} ) );
-
-// ── Redux / state ────────────────────────────────────────────────────────────
-
-jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
-	getFeed: jest.fn().mockReturnValue( null ),
 } ) );
 
 // ── Analytics ────────────────────────────────────────────────────────────────

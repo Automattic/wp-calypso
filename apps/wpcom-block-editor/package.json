@@ -38,7 +38,7 @@
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/element": "^6.46.0",
 		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/is-shallow-equal": "^5.46.0",
 		"@wordpress/plugins": "^7.46.0",
@@ -52,7 +52,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
-		"tinymce": "^5.0.0"
+		"tinymce": "^7.9.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

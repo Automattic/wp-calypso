@@ -354,6 +354,7 @@ function getAllSurveySteps( {
 	hasQuestionTwo,
 	plans,
 	userHasCompletedCancelSurveyForPurchase,
+	isSplitCancelRemoveEnabled,
 }: {
 	purchase: Purchase;
 	upsell: CancelPurchaseState[ 'upsell' ];
@@ -361,6 +362,7 @@ function getAllSurveySteps( {
 	hasQuestionTwo: boolean;
 	plans: PlanProduct[];
 	userHasCompletedCancelSurveyForPurchase: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 } ): string[] {
 	let steps = getBasicSurveySteps( {
 		purchase,
@@ -371,7 +373,11 @@ function getAllSurveySteps( {
 	const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
 	const flowType = getPurchaseCancellationFlowType( purchase );
 
-	if ( purchase.will_atomic_revert_after_removal && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+	if (
+		purchase.will_atomic_revert_after_removal &&
+		flowType === CANCEL_FLOW_TYPE.REMOVE &&
+		! isSplitCancelRemoveEnabled
+	) {
 		steps.push( ATOMIC_REVERT_STEP );
 	}
 
@@ -580,6 +586,7 @@ function CancelPurchaseInner() {
 		userHasCompletedCancelSurveyForPurchase: isSplitCancelRemoveEnabled
 			? false
 			: userHasCompletedCancelSurveyForPurchase,
+		isSplitCancelRemoveEnabled,
 	} );
 
 	const initSurveyState = () => {
@@ -895,9 +902,11 @@ function CancelPurchaseInner() {
 		const cancelActiveSubscriptions: Purchase[] = [];
 		const marketplaceSubscriptions = getActiveMarketplaceSubscriptions();
 		marketplaceSubscriptions.forEach( ( subscription ) => {
-			hasAmountAvailableToRefund( subscription )
-				? cancelAndRefundActiveSubscriptions.push( subscription )
-				: cancelActiveSubscriptions.push( subscription );
+			if ( hasAmountAvailableToRefund( subscription ) ) {
+				cancelAndRefundActiveSubscriptions.push( subscription );
+			} else {
+				cancelActiveSubscriptions.push( subscription );
+			}
 		} );
 		cancelAndRefundActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
 			cancelAndRefundMutation.mutate(
@@ -1237,7 +1246,7 @@ function CancelPurchaseInner() {
 					} );
 				},
 				onError: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1361,7 +1370,7 @@ function CancelPurchaseInner() {
 					} );
 				},
 				onError: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1810,7 +1819,9 @@ function CancelPurchaseInner() {
 									primaryButtonText={ __( 'Continue' ) }
 									removePlan={ handleMarketplaceDialogContinue }
 									/* Translators: %(plan)s is the name of the plan being cancelled */
-									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
+									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {
+										plan: planName ?? '',
+									} ) }
 								/>
 							) }
 						</VStack>

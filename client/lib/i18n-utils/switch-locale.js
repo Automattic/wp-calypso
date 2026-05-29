@@ -7,6 +7,7 @@ import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
+import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};
@@ -340,6 +341,7 @@ export default async function switchLocale( localeSlug ) {
 
 	// Propagate the locale to @automattic/number-formatters
 	setLocaleNumberFormatters( localeSlug );
+	loadAndSetCurrencyOverrides();
 
 	lastRequestedLocale = localeSlug;
 

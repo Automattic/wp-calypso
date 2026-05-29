@@ -49,7 +49,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
-		"@automattic/number-formatters": "^1.1.9",
+		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/typography": "workspace:^",
 		"@automattic/ui": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
@@ -61,7 +61,7 @@
 		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
 		"@wordpress/date": "5.46.0",
 		"@wordpress/html-entities": "4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/primitives": "^4.46.0",
 		"@wordpress/react-i18n": "^4.46.0",
@@ -85,7 +85,7 @@
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
-		"@ariakit/test": "0.4.7",
+		"@ariakit/test": "0.4.15",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
