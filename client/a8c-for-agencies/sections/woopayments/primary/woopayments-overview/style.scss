@@ -6,7 +6,7 @@
 $alt-color: var(--color-neutral-0);
 
 .woopayments-overview {
-	@include marketplace-overview-header;
+	@include a4a-overview-header;
 
 	.hosting-dashboard-layout__header-actions {
 		display: flex;

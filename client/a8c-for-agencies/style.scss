@@ -694,9 +694,9 @@ html {
 	opacity: 0.5;
 }
 
-// Shared dark-teal header treatment used by overview pages that mirror the
-// marketplace pattern. `@include` it from a page-scoped block.
-@mixin marketplace-overview-header {
+// Shared dark-teal header treatment used by A4A overview pages.
+// `@include` it from a page-scoped block.
+@mixin a4a-overview-header {
 	// Match the host card background to the dark-teal header so the rounded
 	// corners don't expose the parent's default white background through
 	// anti-aliased clipping. The body re-asserts the surface color below.
