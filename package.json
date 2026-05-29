@@ -341,6 +341,7 @@
 		"@types/react-dom": "^18.3.7",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
+		"@tootallnate/once@npm:1": "2.0.1",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
 		"lzma-native": "^8.0.6",
 		"node-abi": "3.35.0",
