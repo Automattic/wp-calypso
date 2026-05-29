@@ -60,7 +60,7 @@ export interface BillingTransaction {
 	/**
 	 * Whether the tax on this transaction is a business use tax.
 	 */
-	tax_is_for_business?: boolean;
+	tax_is_for_business?: boolean | null;
 
 	/**
 	 * The state/region for which the business use tax applies (e.g. 'CA').
