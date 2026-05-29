@@ -203,6 +203,65 @@ platform :mac do
 
     dump_state.call('2. POST-match (leaf cert installed in temp keychain)')
 
+    # Decisive AIA / egress / timing probes. Only run for the `none`
+    # control, where the chain is broken (the mitigations already fix it).
+    # The hypothesis is lazy AIA fetch: Security framework can fetch the
+    # missing G2 intermediate from the leaf CA Issuers URL when it builds
+    # the chain, but our codesign runs too soon. If that holds, the
+    # network verify-cert below succeeds where the local-only one fails,
+    # and the codesign at step 3 flips from FAIL to OK under this variant.
+    if ENV.fetch('KEYCHAIN_FIX', 'cert-import') == 'none'
+      banner.call('2a. AIA probes (KEYCHAIN_FIX=none control)')
+      temp_kc = File.join(Dir.home, 'Library/Keychains/fastlane_tmp_keychain-db')
+      login_kc = File.join(Dir.home, 'Library/Keychains/login.keychain-db')
+
+      UI.message('--- Hypothesis 6: Developer ID / Apple Root certs in login.keychain-db ---')
+      sh(
+        'bash', '-c',
+        "if [ -e '#{login_kc}' ]; then " \
+          "security find-certificate -a -p '#{login_kc}' 2>/dev/null | " \
+          "openssl crl2pkcs7 -nocrl -certfile /dev/stdin 2>/dev/null | " \
+          "openssl pkcs7 -print_certs -noout 2>/dev/null | " \
+          "grep -E 'Developer ID|Apple Root|Apple Worldwide' || echo '(no matching certs)'; " \
+        "else echo '(login keychain does not exist)'; fi",
+        error_callback: ->(_e) {}
+      )
+
+      UI.message('--- Egress probe: can the VM reach the leaf CA Issuers (AIA) URL? ---')
+      sh(
+        'bash', '-c',
+        'curl -sS -o /tmp/devidg2.der ' \
+        '-w "devidg2.der: HTTP %{http_code} time=%{time_total}s bytes=%{size_download}\n" ' \
+        '--max-time 30 http://certs.apple.com/devidg2.der ' \
+        '|| echo "curl FAILED (egress to certs.apple.com blocked?)"',
+        error_callback: ->(_e) {}
+      )
+
+      leaf_pem = File.join(Dir.mktmpdir('leaf'), 'leaf.pem')
+      sh(
+        'bash', '-c',
+        "security find-certificate -a -c 'Developer ID Application' -p '#{temp_kc}' > '#{leaf_pem}'",
+        error_callback: ->(_e) {}
+      )
+
+      UI.message('--- verify-cert LOCAL ONLY (-L): expect FAIL, G2 is not present locally ---')
+      sh('security', 'verify-cert', '-L', '-c', leaf_pem, '-p', 'codeSign',
+         error_callback: ->(err) { UI.message("verify-cert (-L) FAIL: #{err}") })
+
+      UI.message('--- verify-cert WITH NETWORK: if this PASSES, AIA fetched G2 (mechanism confirmed) ---')
+      sh('security', 'verify-cert', '-c', leaf_pem, '-p', 'codeSign',
+         error_callback: ->(err) { UI.message("verify-cert (network) FAIL: #{err}") })
+
+      UI.message('--- find-identity immediately after verify-cert ---')
+      sh('security', 'find-identity', '-v', '-p', 'codesigning', error_callback: ->(_e) {})
+
+      UI.message('--- sleeping 120s to allow any lazy AIA fetch to complete ---')
+      sleep(120)
+
+      UI.message('--- find-identity after 120s sleep ---')
+      sh('security', 'find-identity', '-v', '-p', 'codesigning', error_callback: ->(_e) {})
+    end
+
     test_dir = Dir.mktmpdir('signing-chain-diagnose')
     test_bin = File.join(test_dir, 'hello')
     sh('bash', '-c', "printf 'int main(){return 0;}' | clang -o '#{test_bin}' -x c -")
