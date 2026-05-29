@@ -78,6 +78,38 @@ describe( 'fetchExperimentAssignment', () => {
 		] );
 	} );
 
+	it( "should send the anonId when identity is 'user' is not given (defaults to 'anon')", async () => {
+		mockedFetchExperimentAssignment.mockReset();
+		mockedGetAnonId.mockReset();
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'asdf', ONE_DELAY ) );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		await Requests.fetchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment.experimentName,
+			'anon'
+		);
+		expect( mockedGetAnonId ).toHaveBeenCalledTimes( 1 );
+		expect( mockedFetchExperimentAssignment.mock.calls ).toEqual( [
+			[ { anonId: 'asdf', experimentName: 'experiment_name_a' } ],
+		] );
+	} );
+
+	it( "should omit the anonId and not read it when identity is 'user'", async () => {
+		mockedFetchExperimentAssignment.mockReset();
+		mockedGetAnonId.mockReset();
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		await Requests.fetchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment.experimentName,
+			'user'
+		);
+		// In 'user' mode we never read the anonId (cookie / cache).
+		expect( mockedGetAnonId ).not.toHaveBeenCalled();
+		expect( mockedFetchExperimentAssignment.mock.calls ).toEqual( [
+			[ { anonId: null, experimentName: 'experiment_name_a' } ],
+		] );
+	} );
+
 	it( 'should return an experiment assignment with a ttl as the maximum of the ttl provided from the server and the set minimum ttl', async () => {
 		const outputTtl = async ( inputTtl: number ) => {
 			mockedFetchExperimentAssignment.mockReset();

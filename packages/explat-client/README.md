@@ -28,7 +28,7 @@ This type will likely be extended, it can also be missing in some API functions,
 
 ### Type signature
 
-`loadExperimentAssignment: (experimentName: string) => Promise<ExperimentAssignment>`
+`loadExperimentAssignment: (experimentName: string, options?: { assignmentIdentity?: 'anon' | 'user' }) => Promise<ExperimentAssignment>`
 
 ### Usage
 
@@ -42,6 +42,29 @@ const experimentAssignment = await loadExperimentAssignment('experiment_name')
 - Respects the server returned TTL (3600 seconds in production at the time of writing).
 - The promise non-resolution/resolution is the loading state.
 - Designed to never throw
+
+### Option: `assignmentIdentity`
+
+Controls which identifier the server buckets the experiment on. The server prioritizes the anonymous id (`anon_id`, read from the Tracks `tk_ai` cookie) whenever it is present — and that cookie is set for every visitor, logged in or not. So without this option an experiment is always bucketed anonymously, even for logged-in users.
+
+| Value    | What we send               | Server buckets on | When to use                                                                                           |
+| -------- | -------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------- |
+| `'anon'` | `anon_id` (+ auth)         | `anon_id`         | **Default.** Logged-out experiences, or anything that must stay consistent across the login boundary. |
+| `'user'` | omit `anon_id` (auth only) | `wpcom_user_id`   | Logged-in-only experiences. Buckets on the stable user id instead of the anon id.                     |
+
+**Logged-in-only experiences should use `assignmentIdentity: 'user'`.** Bucketing on the user id gives a stable assignment that follows the user across devices/sessions and avoids the anon id leaking in as the bucketing key.
+
+```
+// Logged-in-only experience — bucket on the user id:
+const experimentAssignment = await loadExperimentAssignment( 'experiment_name', {
+	assignmentIdentity: 'user',
+} );
+```
+
+Notes:
+
+- `'user'` mode yields an assignment only when the request is authenticated. For a logged-out visitor it sends no usable identity, so the server returns no assignment (the default experience). Gate the call to logged-in users (e.g. the React helper's `isEligible` option).
+- `assignmentIdentity` must be stable per experiment name — the value from the first call for a given experiment is the one used.
 
 ## API: `exPlatClient.dangerouslyGetExperimentAssignment`
 

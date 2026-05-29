@@ -2,7 +2,7 @@ import * as ExperimentAssignments from './experiment-assignments';
 import localStorage from './local-storage';
 import { monotonicNow } from './timing';
 import { validateExperimentAssignment, isObject } from './validations';
-import type { Config, ExperimentAssignment } from '../types';
+import type { AssignmentIdentity, Config, ExperimentAssignment } from '../types';
 
 interface FetchExperimentAssignmentResponse {
 	variations: Record< string, unknown >;
@@ -76,16 +76,24 @@ export const localStorageCachedGetAnonId = async ( getAnonId: Config[ 'getAnonId
  * Fetch an ExperimentAssignment
  * @param config The config object providing dependecy injection.
  * @param experimentName The experiment name to fetch
+ * @param identity Which identifier the server should bucket on. `'anon'`
+ *   (default) sends the anonId so the server buckets on it; `'user'` omits the
+ *   anonId so the server buckets on the logged-in user. See the `Config` type.
  */
 export async function fetchExperimentAssignment(
 	config: Config,
-	experimentName: string
+	experimentName: string,
+	identity: AssignmentIdentity = 'anon'
 ): Promise< ExperimentAssignment > {
 	const retrievedTimestamp = monotonicNow();
 
+	// In 'user' mode we deliberately omit the anonId (and skip reading the cookie
+	// / cache) so the server falls back to bucketing on the logged-in user.
+	const anonId = identity === 'user' ? null : await localStorageCachedGetAnonId( config.getAnonId );
+
 	const { variations, ttl: responseTtl } = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
-			anonId: await localStorageCachedGetAnonId( config.getAnonId ),
+			anonId,
 			experimentName,
 		} )
 	);

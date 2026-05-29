@@ -3,13 +3,20 @@ import {
 	createSsrSafeDummyExPlatClient,
 } from './create-explat-client';
 import { ExperimentAssignment } from './types';
-import type { ExPlatClient } from './create-explat-client';
-import type { Config, FeatureAssignmentBeacon } from './types';
+import type { ExPlatClient, LoadExperimentAssignmentOptions } from './create-explat-client';
+import type { AssignmentIdentity, Config, FeatureAssignmentBeacon } from './types';
 
 const createExPlatClient =
 	typeof window === 'undefined' ? createSsrSafeDummyExPlatClient : createBrowserExPlatClient;
 
 export { createExPlatClient };
-export type { ExPlatClient, ExperimentAssignment, Config, FeatureAssignmentBeacon };
+export type {
+	ExPlatClient,
+	ExperimentAssignment,
+	Config,
+	FeatureAssignmentBeacon,
+	AssignmentIdentity,
+	LoadExperimentAssignmentOptions,
+};
 
 export * as ExPlatSdk from './sdk';

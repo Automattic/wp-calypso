@@ -142,6 +142,58 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			'Array []'
 		);
 	} );
+	it( "[assignmentIdentity: 'user'] should omit the anonId so the server buckets on the user", async () => {
+		const mockedConfig = createMockedConfig();
+		( mockedConfig.getAnonId as MockedFunction ).mockImplementation( () =>
+			delayedValue( 'the-anon-id-123', ZERO_DELAY )
+		);
+		mockFetchExperimentAssignmentToMatchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment
+		);
+		const client = createExPlatClient( mockedConfig );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
+		await expect(
+			client.loadExperimentAssignment( validExperimentAssignment.experimentName, {
+				assignmentIdentity: 'user',
+			} )
+		).resolves.toEqual( validExperimentAssignment );
+		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls.length ).toBe(
+			1
+		);
+		expect(
+			( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls[ 0 ][ 0 ].anonId
+		).toBe( null );
+		expect( mockedConfig.getAnonId ).not.toHaveBeenCalled();
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
+			'Array []'
+		);
+	} );
+
+	it( "[assignmentIdentity default] should send the anonId (defaults to 'anon')", async () => {
+		const mockedConfig = createMockedConfig();
+		( mockedConfig.getAnonId as MockedFunction ).mockImplementationOnce( () =>
+			delayedValue( 'the-anon-id-123', ZERO_DELAY )
+		);
+		mockFetchExperimentAssignmentToMatchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment
+		);
+		const client = createExPlatClient( mockedConfig );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1001
+		);
+		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
+		expect(
+			( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls[ 0 ][ 0 ].anonId
+		).toBe( 'the-anon-id-123' );
+	} );
+
 	it( 'Invalid experimentName: should return fallback and log', async () => {
 		const mockedConfig = createMockedConfig();
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(

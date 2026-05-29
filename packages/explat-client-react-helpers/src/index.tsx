@@ -1,6 +1,10 @@
 import { useRef, useEffect, useReducer } from 'react';
 import * as React from 'react';
-import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
+import type {
+	AssignmentIdentity,
+	ExPlatClient,
+	ExperimentAssignment,
+} from '@automattic/explat-client';
 
 export interface ExperimentOptions {
 	/**
@@ -9,10 +13,20 @@ export interface ExperimentOptions {
 	 * - Only returns the experimentAssignment if isEligible is true.
 	 */
 	isEligible?: boolean;
+
+	/**
+	 * Which identifier the server should bucket this experiment on. Defaults to
+	 * `'anon'` (the anonId is sent and the server buckets on it). Use `'user'`
+	 * to bucket on the logged-in user instead — pair it with `isEligible` set to
+	 * the logged-in state, since `'user'` mode yields no assignment when logged
+	 * out. Must be stable per experiment name.
+	 */
+	assignmentIdentity?: AssignmentIdentity;
 }
 
-const defaultExperimentOptions = {
+const defaultExperimentOptions: Required< ExperimentOptions > = {
 	isEligible: true,
+	assignmentIdentity: 'anon',
 };
 
 export interface ExPlatClientReactHelpers {
@@ -72,16 +86,20 @@ export default function createExPlatClientReactHelpers(
 		useEffect( () => {
 			let isSubscribed = true;
 			if ( options.isEligible ) {
-				exPlatClient.loadExperimentAssignment( experimentName ).then( () => {
-					if ( isSubscribed ) {
-						forceUpdate();
-					}
-				} );
+				exPlatClient
+					.loadExperimentAssignment( experimentName, {
+						assignmentIdentity: options.assignmentIdentity,
+					} )
+					.then( () => {
+						if ( isSubscribed ) {
+							forceUpdate();
+						}
+					} );
 			}
 			return () => {
 				isSubscribed = false;
 			};
-		}, [ experimentName, options.isEligible ] );
+		}, [ experimentName, options.isEligible, options.assignmentIdentity ] );
 
 		if (
 			experimentName !== previousExperimentNameRef.current &&

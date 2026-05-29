@@ -67,6 +67,41 @@ describe( 'useExperiment', () => {
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
 	} );
 
+	it( 'should forward assignmentIdentity to loadExperimentAssignment', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
+
+		renderHook( () => useExperiment( 'experiment_a', { assignmentIdentity: 'user' } ) );
+
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledWith( 'experiment_a', {
+			assignmentIdentity: 'user',
+		} );
+		await act( async () => controllablePromise1.resolve( validExperimentAssignment ) );
+	} );
+
+	it( 'should default assignmentIdentity to anon when not provided', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		jest
+			.mocked( exPlatClient.loadExperimentAssignment )
+			.mockReturnValueOnce( controllablePromise1.promise );
+
+		renderHook( () => useExperiment( 'experiment_a' ) );
+
+		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledWith( 'experiment_a', {
+			assignmentIdentity: 'anon',
+		} );
+		await act( async () => controllablePromise1.resolve( validExperimentAssignment ) );
+	} );
+
 	it( 'should correctly load an experiment assignment respecting eligibility', async () => {
 		const exPlatClient = createMockExPlatClient();
 		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );

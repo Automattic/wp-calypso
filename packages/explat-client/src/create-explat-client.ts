@@ -12,12 +12,26 @@ import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
 import { evalFeature } from './sdk/evaluator';
 import type { Attributes, FeatureValue, WidenPrimitives } from './sdk/types';
-import type { ExperimentAssignment, Config, FeatureAssignmentBeacon } from './types';
+import type {
+	AssignmentIdentity,
+	ExperimentAssignment,
+	Config,
+	FeatureAssignmentBeacon,
+} from './types';
 
 /**
  * The number of milliseconds before we abandon fetching an experiment
  */
 const EXPERIMENT_FETCH_TIMEOUT = 10000;
+
+export interface LoadExperimentAssignmentOptions {
+	/**
+	 * Which identifier the server should bucket this experiment on. Defaults to
+	 * `'anon'`. Must be stable per experiment name — see the note on
+	 * `loadExperimentAssignment`.
+	 */
+	assignmentIdentity?: AssignmentIdentity;
+}
 
 export interface ExPlatClient {
 	/**
@@ -28,9 +42,17 @@ export interface ExPlatClient {
 	 *
 	 * Will never throw in production, it will return the default assignment.
 	 * It should not be run on the server but it won't crash anything.
+	 *
+	 * NOTE: `options.assignmentIdentity` must be stable per experiment name. The
+	 * per-experiment fetch is memoized, so the value from the first call for a
+	 * given experiment is the one used.
 	 * @param experimentName The experiment's name
+	 * @param options Per-experiment options (e.g. assignmentIdentity)
 	 */
-	loadExperimentAssignment: ( experimentName: string ) => Promise< ExperimentAssignment >;
+	loadExperimentAssignment: (
+		experimentName: string,
+		options?: LoadExperimentAssignmentOptions
+	) => Promise< ExperimentAssignment >;
 
 	/**
 	 * Get an already loaded Experiment Assignment, will throw if there is an error, e.g. if it hasn't been loaded.
@@ -116,11 +138,15 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	 * Using asyncOneAtATime, is how we ensure for each experiment that there is only ever one fetch process occuring.
 	 * @param experimentName The experiment's name
 	 */
-	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
+	const createWrappedExperimentAssignmentFetchAndStore = (
+		experimentName: string,
+		assignmentIdentity: AssignmentIdentity
+	) =>
 		Timing.asyncOneAtATime( async () => {
 			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
 				config,
-				experimentName
+				experimentName,
+				assignmentIdentity
 			);
 			storeExperimentAssignment( fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;
@@ -165,7 +191,10 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	}
 
 	return {
-		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
+		loadExperimentAssignment: async (
+			experimentName: string,
+			options: LoadExperimentAssignmentOptions = {}
+		): Promise< ExperimentAssignment > => {
 			try {
 				if ( ! Validation.isName( experimentName ) ) {
 					throw new Error( `Invalid experimentName: "${ experimentName }"` );
@@ -183,7 +212,10 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ] === undefined
 				) {
 					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ] =
-						createWrappedExperimentAssignmentFetchAndStore( experimentName );
+						createWrappedExperimentAssignmentFetchAndStore(
+							experimentName,
+							options.assignmentIdentity ?? 'anon'
+						);
 				}
 
 				// Temporarilly running an A/B experiment on the timeout, see https://github.com/Automattic/wp-calypso/pull/54507

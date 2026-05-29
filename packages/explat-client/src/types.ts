@@ -23,6 +23,19 @@ export interface ExperimentAssignment {
 	isFallbackExperimentAssignment?: boolean;
 }
 
+/**
+ * Which identifier the server should bucket an experiment assignment on.
+ *
+ * The server prioritizes the anonId whenever it is present, so:
+ * - `'anon'`: send the anonId — the server buckets on it. This preserves a
+ *   consistent assignment across the logged-out→logged-in boundary and is the
+ *   default.
+ * - `'user'`: omit the anonId — the server buckets on the logged-in user.
+ *   Yields an assignment only when the request is authenticated; gate the call
+ *   to logged-in users (e.g. via the react helper's `isEligible` option).
+ */
+export type AssignmentIdentity = 'anon' | 'user';
+
 // ## Abstracting the outside world
 
 import type { IdentityAttribute } from './sdk/types';

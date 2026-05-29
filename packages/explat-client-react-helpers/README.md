@@ -64,6 +64,21 @@ Example usage:
 const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( 'experiment_name', { isEligible: flow === 'launch-site' } );
 ```
 
+> `options.assignmentIdentity: 'anon' | 'user' = 'anon'`
+
+Controls which identifier the server buckets the experiment on. Defaults to `'anon'` (the anonymous Tracks id, set for every visitor), which means experiments are bucketed anonymously even for logged-in users.
+
+**Logged-in-only experiences should set `assignmentIdentity: 'user'`** so the assignment is keyed on the stable `wpcom_user_id` instead of the anon id. Pair it with `isEligible` set to the logged-in state, since `'user'` mode yields no assignment when logged out. Must be stable per experiment name. See the `@automattic/explat-client` README for full details.
+
+Example usage:
+
+```
+const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( 'experiment_name', {
+	assignmentIdentity: 'user',
+	isEligible: isUserLoggedIn,
+} );
+```
+
 ## API: `<ProvideExperimentData>`
 
 ### Type signature
