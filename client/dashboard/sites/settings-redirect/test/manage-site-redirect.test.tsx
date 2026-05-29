@@ -44,9 +44,6 @@ describe( '<ManageSiteRedirect>', () => {
 	} );
 
 	test( 'shows Delete redirect next to Save when the redirect purchase is cancelable', async () => {
-		mockUserPurchases( [ siteRedirectPurchase() ] );
-		renderManageSiteRedirect();
-
 		expect( await screen.findByRole( 'button', { name: 'Save' } ) ).toBeVisible();
 		const deleteLink = await screen.findByRole( 'link', { name: 'Delete redirect' } );
 		expect( deleteLink ).toBeVisible();
