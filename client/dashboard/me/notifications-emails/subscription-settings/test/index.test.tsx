@@ -292,7 +292,7 @@ describe( 'SubscriptionSettings', () => {
 		// With no time zone, values are shown unchanged (raw UTC).
 		expect( await hourSelect() ).toHaveValue( '8' );
 		// The UTC fallback copy and labels should be present.
-		expect( await screen.findByText( /shown in UTC/i ) ).toBeInTheDocument();
+		expect( await screen.findByText( /shown in UTC/i ) ).toBeVisible();
 		expect( screen.getByRole( 'option', { name: '08:00 - 10:00 UTC' } ) ).toBeInTheDocument();
 	} );
 } );

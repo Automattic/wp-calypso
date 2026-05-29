@@ -54,7 +54,7 @@ const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
 
 const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string ) =>
 	isUtcFallback
-		? __( "We couldn't detect your time zone, so these times are shown in UTC." )
+		? __( 'We couldn’t detect your time zone, so these times are shown in UTC.' )
 		: sprintf(
 				// translators: %(timezone)s is the timezone E.g. America/New_York
 				__( 'Times shown in your local time zone (%(timezone)s).' ),
