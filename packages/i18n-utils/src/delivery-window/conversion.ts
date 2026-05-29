@@ -133,8 +133,8 @@ export function getDeliveryWindowOffsetHours(
 
 /**
  * Convert a stored UTC delivery window to the equivalent local-time window for
- * display. The hour is snapped to the nearest even bucket so the picker always
- * has a valid selected option, and the day wraps when crossing midnight.
+ * display. The hour is snapped down to the nearest lower even bucket so the picker
+ * always has a valid selected option, and the day wraps when crossing midnight.
  * @param utc The window as stored on the backend (interpreted as UTC).
  * @param offsetHours The local offset from UTC in whole hours.
  */
