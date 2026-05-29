@@ -39,18 +39,6 @@ a {
 	color: var( --wp-admin-theme-color );
 }
 
-@media screen {
-	:where( :root[data-theme='dark'] ) a {
-		color: var( --wp-admin-theme-color-darker-20 );
-	}
-}
-
-@media screen and ( prefers-color-scheme: dark ) {
-	:where( :root[data-theme='system'] ) a {
-		color: var( --wp-admin-theme-color-darker-20 );
-	}
-}
-
 // This is a temporary fix to ensure the tooltip has dashboard colors and a box-shadow.
 // Currently, there is an issue with @automattic/charts where svgLabelSmall.fill is defined with var().
 // This causes the visx tooltip to render a malformed box-shadow value, given that it interpolates the color. e.g: `${theme?.color}55`.
