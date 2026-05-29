@@ -172,9 +172,8 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 * Feed IDs, blog IDs, and normalized feed URLs the user is currently following.
 	 * URLs cover cases where the same subscription gets a new `feed_ID` over time.
 	 * Reactive: updates as the paginated follows API fills in. Safe to use in the
-	 * memo deps below because `getReaderFollowingItemsRaw` only depends on
-	 * `state.reader.follows.items`, not feed query results, so the feed queries below
-	 * can't cause a render storm via this selector.
+	 * memo deps below because it depends on follows query data, not feed query
+	 * results, so the feed queries below can't cause a render storm.
 	 */
 	const followedSubscriptions = useMemo(
 		() => buildFollowedSubscriptions( rawFollowingItems ),
@@ -376,7 +375,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 * by the prune effect below to distinguish in-session follows (keep the
 	 * pinned card visible) from follows that turn out to have *already*
 	 * existed before the modal opened but only became known once paginated
-	 * `state.reader.follows.items` pages caught up (prune the pinned card —
+	 * follows query pages caught up (prune the pinned card —
 	 * the PR's stated goal is to not show previously-subscribed blogs as
 	 * recommendations).
 	 */

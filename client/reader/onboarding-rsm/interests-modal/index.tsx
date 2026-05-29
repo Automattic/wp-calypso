@@ -12,17 +12,16 @@ import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { getFollowingSource, useFollowSite } from 'calypso/reader/data/follows';
+import { getFollowingSource, useFollows, useFollowSite } from 'calypso/reader/data/follows';
 import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { recordFollow } from 'calypso/reader/stats';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
 import InterestsVerificationNudge from './verificationNudge';
@@ -75,7 +74,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const followedTagsRef = useRef< string[] >( [] );
 	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
-	const reduxFollows = useSelector( getReaderFollows );
+	const { follows } = useFollows();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
@@ -118,7 +117,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
-		reduxFollows.some(
+		follows.some(
 			( f ) =>
 				( blog.feed_ID && f.feed_ID === blog.feed_ID ) ||
 				( blog.site_ID && f.blog_ID === blog.site_ID )

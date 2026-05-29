@@ -185,7 +185,6 @@ const baseState = {
 	readerUi: { sidebar: { selectedRecentSite: null } },
 	reader: {
 		feeds: { items: {} },
-		follows: { items: {} },
 		siteBlocks: { items: {} },
 		sites: { items: {} },
 		posts: { items: {} },
@@ -193,18 +192,10 @@ const baseState = {
 	},
 };
 
-const followedFeedState = {
-	itemsCount: 1,
-	items: { 1: { feed_ID: 1, is_following: true } },
-};
+const followedFollows = [ { feed_ID: 1, is_following: true } ];
 
-function seedFollowsQuery(
-	queryClient: QueryClient,
-	state: {
-		reader: { follows: { items?: Record< string, Partial< FollowItem > >; itemsCount?: number } };
-	}
-) {
-	const items = Object.values( state.reader.follows.items ?? {} ).map(
+function seedFollowsQuery( queryClient: QueryClient, followItems: Partial< FollowItem >[] = [] ) {
+	const items = followItems.map(
 		( item ) =>
 			( {
 				...item,
@@ -213,16 +204,14 @@ function seedFollowsQuery(
 				is_following: Boolean( item.is_following ),
 			} ) as FollowItem
 	);
-	queryClient.setQueryData(
-		getFollowsQueryKey(),
-		makeFollowsData( items, state.reader.follows.itemsCount ?? items.length )
-	);
+	queryClient.setQueryData( getFollowsQueryKey(), makeFollowsData( items ) );
 }
 
 function renderStream(
 	extraProps: Record< string, unknown > = {},
 	initialStateOverride = {},
-	queryClient = makeQueryClient()
+	queryClient = makeQueryClient(),
+	followItems: Partial< FollowItem >[] = []
 ) {
 	const actions: unknown[] = [];
 	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
@@ -230,7 +219,7 @@ function renderStream(
 		return next( action );
 	};
 	const seedState = { ...baseState, ...initialStateOverride };
-	seedFollowsQuery( queryClient, seedState );
+	seedFollowsQuery( queryClient, followItems );
 	// `<Stream>` keeps post selection in the React Query cache (see
 	// `useStreamPostKeySelection`); only thunks like `likePost` need to dispatch
 	// against the store, so a passthrough reducer is enough.
@@ -376,7 +365,7 @@ describe( 'Stream — render states', () => {
 
 	it( 'injects prompt blocks into long streams', async () => {
 		mockLikesEndpoint( Array.from( { length: 11 }, ( _, index ) => apiPost( index + 1 ) ) );
-		renderStream( {}, { reader: { ...baseState.reader, follows: followedFeedState } } );
+		renderStream( {}, {}, undefined, followedFollows );
 
 		await waitFor( () => expect( screen.getByTestId( 'post-11' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'prompt-block' ) ).toBeVisible();
@@ -393,7 +382,9 @@ describe( 'Stream — render states', () => {
 			} );
 		renderStream(
 			{ recsStreamKey: 'custom_recs_posts_with_images' },
-			{ reader: { ...baseState.reader, follows: followedFeedState } }
+			{},
+			undefined,
+			followedFollows
 		);
 
 		await waitFor( () => expect( screen.getByTestId( 'recommendation-block' ) ).toBeVisible() );

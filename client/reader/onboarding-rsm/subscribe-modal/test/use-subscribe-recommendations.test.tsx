@@ -164,34 +164,28 @@ const cardsResponse = ( sites: RecommendedBlogsApiSite[] ) => ( {
 	cards: [ { type: 'recommended_blogs', data: sites } ],
 } );
 
-interface ReaderState {
-	reader: {
-		follows: {
-			items: Record<
-				string,
-				{
-					feed_ID: number | null;
-					blog_ID: number | null;
-					is_following: boolean;
-					feed_URL?: string;
-					alias_feed_URLs?: string[];
-				}
-			>;
-		};
-	};
+interface FollowsFixture {
+	items: Record<
+		string,
+		{
+			feed_ID: number | null;
+			blog_ID: number | null;
+			is_following: boolean;
+			feed_URL?: string;
+			alias_feed_URLs?: string[];
+		}
+	>;
 }
 
 type FeedQueryItems = Record< number, { feed_ID: number; blog_ID?: number; is_error?: boolean } >;
 
-const buildReaderState = ( overrides: Partial< ReaderState[ 'reader' ] > = {} ): ReaderState => ( {
-	reader: {
-		follows: { items: {} },
-		...overrides,
-	},
+const buildFollowsFixture = ( overrides: Partial< FollowsFixture > = {} ): FollowsFixture => ( {
+	items: {},
+	...overrides,
 } );
 
-const followItemsFromState = ( state: ReaderState ): FollowItem[] =>
-	Object.values( state.reader.follows.items ).map(
+const followItemsFromFixture = ( fixture: FollowsFixture ): FollowItem[] =>
+	Object.values( fixture.items ).map(
 		( item ) =>
 			( {
 				...item,
@@ -201,19 +195,19 @@ const followItemsFromState = ( state: ReaderState ): FollowItem[] =>
 			} ) as FollowItem
 	);
 
-const setMockFollows = ( items: ReaderState[ 'reader' ][ 'follows' ][ 'items' ] ) => {
+const setMockFollows = ( items: FollowsFixture[ 'items' ] ) => {
 	mockUseFollows.mockReturnValue( {
-		follows: followItemsFromState( buildReaderState( { follows: { items } } ) ),
+		follows: followItemsFromFixture( buildFollowsFixture( { items } ) ),
 	} as unknown as ReturnType< typeof useFollows > );
 };
 
 const renderHook = (
-	initialState: ReaderState = buildReaderState(),
+	followsFixture: FollowsFixture = buildFollowsFixture(),
 	feedByFeedId: FeedQueryItems = {}
 ) => {
 	readFeedQueryTestHarness.feedByFeedId = feedByFeedId;
 	mockUseFollows.mockReturnValue( {
-		follows: followItemsFromState( initialState ),
+		follows: followItemsFromFixture( followsFixture ),
 	} as unknown as ReturnType< typeof useFollows > );
 	return renderHookWithProvider( () => useSubscribeRecommendations() );
 };
@@ -387,14 +381,12 @@ describe( 'useSubscribeRecommendations', () => {
 
 	describe( 'exclusion of already-followed sites', () => {
 		it( 'excludes feeds the user already follows by feed_ID', async () => {
-			const state = buildReaderState( {
-				follows: {
-					items: {
-						'https://food1.example': {
-							feed_ID: 100,
-							blog_ID: null,
-							is_following: true,
-						},
+			const state = buildFollowsFixture( {
+				items: {
+					'https://food1.example': {
+						feed_ID: 100,
+						blog_ID: null,
+						is_following: true,
 					},
 				},
 			} );
@@ -409,14 +401,12 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'excludes feeds the user already follows by blog_ID matching site_ID', async () => {
-			const state = buildReaderState( {
-				follows: {
-					items: {
-						'https://food2.example': {
-							feed_ID: null,
-							blog_ID: 1001,
-							is_following: true,
-						},
+			const state = buildFollowsFixture( {
+				items: {
+					'https://food2.example': {
+						feed_ID: null,
+						blog_ID: 1001,
+						is_following: true,
 					},
 				},
 			} );
@@ -432,16 +422,14 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'excludes feeds already followed when feed_URL matches but feed_ID differs', async () => {
-			const state = buildReaderState( {
-				follows: {
-					items: {
-						'https://food1.example': {
-							feed_ID: 99_999,
-							blog_ID: null,
-							is_following: true,
-							feed_URL: 'https://food1.example/feed',
-							alias_feed_URLs: [],
-						},
+			const state = buildFollowsFixture( {
+				items: {
+					'https://food1.example': {
+						feed_ID: 99_999,
+						blog_ID: null,
+						is_following: true,
+						feed_URL: 'https://food1.example/feed',
+						alias_feed_URLs: [],
 					},
 				},
 			} );
@@ -456,16 +444,14 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'treats http and https feed_URL as the same subscription for exclusion', async () => {
-			const state = buildReaderState( {
-				follows: {
-					items: {
-						'http://food1.example': {
-							feed_ID: 99_999,
-							blog_ID: null,
-							is_following: true,
-							feed_URL: 'http://food1.example/feed',
-							alias_feed_URLs: [],
-						},
+			const state = buildFollowsFixture( {
+				items: {
+					'http://food1.example': {
+						feed_ID: 99_999,
+						blog_ID: null,
+						is_following: true,
+						feed_URL: 'http://food1.example/feed',
+						alias_feed_URLs: [],
 					},
 				},
 			} );
@@ -485,7 +471,7 @@ describe( 'useSubscribeRecommendations', () => {
 		const flushEffects = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		it( 'pins a card with site_ID === 0 once feed metadata is loaded', async () => {
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, { 100: { feed_ID: 100 } } );
 
@@ -500,7 +486,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// Regression for Copilot review: previously a missing site record was
 			// treated as "OK" and the card was pinned before the site had a chance
 			// to resolve to an error.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
@@ -514,7 +500,7 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'pins a card with site_ID > 0 once both feed AND site are loaded', async () => {
 			mockReadSiteResponses.set( 1001, 'success' );
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
@@ -526,7 +512,7 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'excludes a card whose feed loaded with an error', async () => {
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, { 100: { feed_ID: 100, is_error: true } } );
 
@@ -540,7 +526,7 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'excludes a card whose site loaded with an error', async () => {
 			mockReadSiteResponses.set( 1001, 'error' );
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
@@ -556,7 +542,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// All four candidates load with feed errors. Without the rejected-set
 			// tracking, `pinnedSites` would stay empty, `isValidating` would be
 			// stuck `true`, and the loading placeholder would render forever.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, {
 				100: { feed_ID: 100, is_error: true },
@@ -576,7 +562,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// hook should treat all four as settled and surface the empty state.
 			mockReadSiteResponses.set( 1001, 'error' );
 			mockReadSiteResponses.set( 2001, 'error' );
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, {
 				100: { feed_ID: 100, is_error: true },
@@ -593,7 +579,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// Three feeds error, one is missing entirely (still pending). We
 			// should remain in the validating state rather than collapsing to
 			// the empty state prematurely.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, {
 				100: { feed_ID: 100, is_error: true },
@@ -612,7 +598,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// 100 pins (feed loaded, site_ID 0), the other three error out. We
 			// should expose the pin in `recommendations` and not flip into the
 			// empty state.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result } = renderHook( state, {
 				100: { feed_ID: 100 },
@@ -641,7 +627,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// `allCandidatesSettled` true here (rejectedFeedIds.size === 2 >=
 			// combinedRecommendations.length === 1), incorrectly surfacing the
 			// empty state while feed 201 is still genuinely pending.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result, rerender } = renderHook( state, {
 				100: { feed_ID: 100, is_error: true },
@@ -686,7 +672,7 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'keeps a session-followed pinned card visible after the follows slice catches up', async () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result, rerender } = renderHook( state, { 100: { feed_ID: 100 } } );
 
@@ -729,7 +715,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// status is known would persist as a "recommendation" with a misleading
 			// "Subscribed" badge — which directly contradicts the PR's goal of not
 			// recommending blogs the user already follows.
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result, rerender } = renderHook( state, { 100: { feed_ID: 100 } } );
 
@@ -763,7 +749,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// Same regression as above but discovered via blog_ID/site_ID match
 			// rather than feed_ID. Feed 101 has site_ID 1001 in our fixtures.
 			mockReadSiteResponses.set( 1001, 'success' );
-			const state = buildReaderState();
+			const state = buildFollowsFixture();
 
 			const { result, rerender } = renderHook( state, { 101: { feed_ID: 101 } } );
 

@@ -6,6 +6,7 @@ import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { useFollows } from 'calypso/reader/data/follows';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -19,7 +20,6 @@ import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import './style.scss';
@@ -40,7 +40,7 @@ const ReaderOnboarding = ( {
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
 	const { data: followedTags } = useFollowedReaderTags();
-	const follows = useSelector( getReaderFollows );
+	const { follows } = useFollows();
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const hasUserGravatar = useSelector( hasGravatar );
 

@@ -91,11 +91,7 @@ jest.mock( '../verificationNudge', () => ( {
 	default: () => <div data-testid="interests-verification-nudge" />,
 } ) );
 
-// ── Redux / state ────────────────────────────────────────────────────────────
-
-jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
-	getReaderFollows: jest.fn().mockReturnValue( [] ),
-} ) );
+// ── State hooks ──────────────────────────────────────────────────────────────
 
 jest.mock( 'calypso/reader/data/follows', () => ( {
 	getFollowingSource: jest.fn( () => 'test-source' ),
