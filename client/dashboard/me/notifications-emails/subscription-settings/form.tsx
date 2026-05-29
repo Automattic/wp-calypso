@@ -40,7 +40,14 @@ const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
 
 		if ( isUtcFallback ) {
 			return {
-				label: `${ padHour( startHour ) }:00 - ${ padHour( endHour ) }:00 UTC`,
+				label: sprintf(
+					// translators: %(fromHour)s and %(toHour)s are hours on a 24-hour clock, e.g. 08 and 10. UTC is the time zone.
+					__( '%(fromHour)s:00 - %(toHour)s:00 UTC' ),
+					{
+						fromHour: padHour( startHour ),
+						toHour: padHour( endHour ),
+					}
+				),
 				value: startHour,
 			};
 		}

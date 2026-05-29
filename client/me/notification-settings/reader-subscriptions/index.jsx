@@ -438,11 +438,11 @@ const NotificationSubscriptionsWithHooks = ( props ) => {
 	const { offsetHours, isUtcFallback, timezone } = useDeliveryWindowTimezone();
 	return (
 		<NotificationSubscriptions
+			{ ...props }
 			hasSubscriptions={ hasNonSelfSubscriptions }
 			deliveryWindowOffsetHours={ offsetHours }
 			deliveryWindowIsUtcFallback={ isUtcFallback }
 			deliveryWindowTimezone={ timezone }
-			{ ...props }
 		/>
 	);
 };
