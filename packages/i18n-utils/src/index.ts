@@ -13,5 +13,12 @@ export {
 } from './locale-context';
 export * from './locales';
 export { default as guessTimezone } from './guess-timezone';
+export {
+	getDeliveryWindowOffsetHours,
+	fromUtcDeliveryWindow,
+	toUtcDeliveryWindow,
+	useDeliveryWindowTimezone,
+} from './delivery-window';
+export type { DeliveryWindow, DeliveryWindowTimezone } from './delivery-window';
 export * from './utils';
 export * from './date-utils';

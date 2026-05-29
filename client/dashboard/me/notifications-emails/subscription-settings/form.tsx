@@ -1,4 +1,9 @@
 import { UserSettings } from '@automattic/api-core';
+import {
+	fromUtcDeliveryWindow,
+	toUtcDeliveryWindow,
+	useDeliveryWindowTimezone,
+} from '@automattic/i18n-utils';
 import { CheckboxControl, SelectControl } from '@wordpress/components';
 import { DataForm, DataFormControlProps, Field, type Form } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
@@ -20,6 +25,41 @@ const formatDateToLocalTime = ( date: Date ) => {
 		minute: '2-digit',
 	} ).format( date );
 };
+
+const padHour = ( hour: number ) => String( hour % 24 ).padStart( 2, '0' );
+
+// The delivery hour buckets are stored/sent as UTC. We display them in the
+// device's local time, falling back to clearly labeled UTC when the time zone
+// can't be detected.
+const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
+	Array.from( { length: 12 }, ( _, i ) => {
+		const startHour = i * 2;
+		const endHour = startHour + 2;
+
+		if ( isUtcFallback ) {
+			return {
+				label: `${ padHour( startHour ) }:00 - ${ padHour( endHour ) }:00 UTC`,
+				value: startHour,
+			};
+		}
+
+		return {
+			label: [
+				formatDateToLocalTime( new Date( 0, 0, 0, startHour, 0 ) ),
+				formatDateToLocalTime( new Date( 0, 0, 0, endHour, 0 ) ),
+			].join( ' - ' ),
+			value: startHour,
+		};
+	} );
+
+const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string ) =>
+	isUtcFallback
+		? __( "We couldn't detect your time zone, so these times are shown in UTC." )
+		: sprintf(
+				// translators: %(timezone)s is the timezone E.g. America/New_York
+				__( 'Times shown in your local time zone (%(timezone)s).' ),
+				{ timezone: timezone ?? '' }
+		  );
 
 export type SettingsData = Pick<
 	UserSettings,
@@ -96,26 +136,8 @@ const baseFields: Field< SettingsData >[] = [
 		id: 'subscription_delivery_hour',
 		label: __( 'Hour' ),
 		type: 'integer' as const,
-		description: sprintf(
-			// translators: %(timezone)s is the timezone E.g. America/New_York
-			__( 'Timezone: %(timezone)s' ),
-			{
-				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-			}
-		),
-		elements: [
-			...Array.from( { length: 12 }, ( _, i ) => {
-				const startHour = i * 2;
-				const endHour = startHour + 2;
-				return {
-					label: [
-						formatDateToLocalTime( new Date( 0, 0, 0, startHour, 0 ) ),
-						formatDateToLocalTime( new Date( 0, 0, 0, endHour, 0 ) ),
-					].join( ' - ' ),
-					value: startHour,
-				};
-			} ),
-		],
+		description: buildDeliveryHourDescription( false ),
+		elements: buildDeliveryHourElements( false ),
 		Edit: CustomSelectControl,
 	},
 	{
@@ -167,12 +189,36 @@ const baseFields: Field< SettingsData >[] = [
 
 const automatticianFields = [ 'p2_disable_autofollow_on_comment' ];
 
-export const getFields = ( includeAutomatticianFields: boolean ): Field< SettingsData >[] => {
+interface DeliveryWindowDisplay {
+	isUtcFallback: boolean;
+	timezone?: string;
+}
+
+export const getFields = (
+	includeAutomatticianFields: boolean,
+	deliveryWindow?: DeliveryWindowDisplay
+): Field< SettingsData >[] => {
+	const fields = deliveryWindow
+		? baseFields.map( ( field ) => {
+				if ( field.id !== 'subscription_delivery_hour' ) {
+					return field;
+				}
+				return {
+					...field,
+					description: buildDeliveryHourDescription(
+						deliveryWindow.isUtcFallback,
+						deliveryWindow.timezone
+					),
+					elements: buildDeliveryHourElements( deliveryWindow.isUtcFallback ),
+				};
+		  } )
+		: baseFields;
+
 	if ( includeAutomatticianFields ) {
-		return baseFields;
+		return fields;
 	}
 
-	return baseFields.filter( ( field ) => {
+	return fields.filter( ( field ) => {
 		return ! automatticianFields.includes( field.id );
 	} );
 };
@@ -204,14 +250,58 @@ interface FormProps {
 }
 
 export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: FormProps ) => {
+	const { offsetHours, isUtcFallback, timezone } = useDeliveryWindowTimezone();
+
+	// The backend stores/sends the delivery window as UTC. Present it to the
+	// DataForm in local time, and convert edits back to UTC before bubbling up.
+	const localData = useMemo( () => {
+		const local = fromUtcDeliveryWindow(
+			{
+				hour: Number( data.subscription_delivery_hour ?? 0 ),
+				day: Number( data.subscription_delivery_day ?? 0 ),
+			},
+			offsetHours ?? 0
+		);
+		return {
+			...data,
+			subscription_delivery_hour: local.hour,
+			subscription_delivery_day: local.day,
+		};
+	}, [ data, offsetHours ] );
+
 	const handleChange = useCallback(
 		( edit: Partial< SettingsData > ) => {
-			onChange( Object.assign( {}, data, edit ) as SettingsData );
+			const touchesWindow =
+				'subscription_delivery_hour' in edit || 'subscription_delivery_day' in edit;
+
+			if ( ! touchesWindow ) {
+				onChange( Object.assign( {}, data, edit ) as SettingsData );
+				return;
+			}
+
+			// Changing either field can wrap the day boundary once converted back
+			// to UTC, so recompute the whole window from the local values.
+			const utc = toUtcDeliveryWindow(
+				{
+					hour: Number( edit.subscription_delivery_hour ?? localData.subscription_delivery_hour ),
+					day: Number( edit.subscription_delivery_day ?? localData.subscription_delivery_day ),
+				},
+				offsetHours ?? 0
+			);
+			onChange(
+				Object.assign( {}, data, edit, {
+					subscription_delivery_hour: utc.hour,
+					subscription_delivery_day: utc.day,
+				} ) as SettingsData
+			);
 		},
-		[ onChange, data ]
+		[ onChange, data, localData, offsetHours ]
 	);
 
-	const fields = useMemo( () => getFields( isAutomattician ), [ isAutomattician ] );
+	const fields = useMemo(
+		() => getFields( isAutomattician, { isUtcFallback, timezone } ),
+		[ isAutomattician, isUtcFallback, timezone ]
+	);
 	const form: Form = {
 		layout: { type: 'regular' as const },
 		fields: [
@@ -235,7 +325,7 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 		<DataForm< SettingsData >
 			fields={ fields }
 			form={ form }
-			data={ data }
+			data={ localData }
 			onChange={ handleChange }
 		/>
 	);

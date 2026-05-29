@@ -1,5 +1,11 @@
 import { Card, FormLabel } from '@automattic/components';
-import { getNumericFirstDayOfWeek, withLocale } from '@automattic/i18n-utils';
+import {
+	fromUtcDeliveryWindow,
+	getNumericFirstDayOfWeek,
+	toUtcDeliveryWindow,
+	useDeliveryWindowTimezone,
+	withLocale,
+} from '@automattic/i18n-utils';
 import {
 	Button,
 	CheckboxControl,
@@ -111,6 +117,17 @@ class NotificationSubscriptions extends Component {
 	};
 
 	getDeliveryHourLabel( hour ) {
+		if ( this.props.deliveryWindowIsUtcFallback ) {
+			const pad = ( value ) => String( value % 24 ).padStart( 2, '0' );
+			return this.props.translate( '%(fromHour)s:00 - %(toHour)s:00 UTC', {
+				context: 'Hour range (in UTC) between which subscriptions are delivered',
+				args: {
+					fromHour: pad( hour ),
+					toHour: pad( hour + 2 ),
+				},
+			} );
+		}
+
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
 			context: 'Hour range between which subscriptions are delivered',
 			args: {
@@ -123,6 +140,39 @@ class NotificationSubscriptions extends Component {
 			},
 		} );
 	}
+
+	// The backend stores delivery hour/day as UTC. Convert to the device's local
+	// time for display, and back to UTC on save, so the picker matches what the
+	// user expects. Falls back to raw UTC when the time zone is unknown.
+	getStoredUtcDeliveryWindow() {
+		return {
+			hour: parseInt( this.props.getSetting( 'subscription_delivery_hour' ), 10 ) || 0,
+			day: parseInt( this.props.getSetting( 'subscription_delivery_day' ), 10 ) || 0,
+		};
+	}
+
+	getLocalDeliveryWindow() {
+		return fromUtcDeliveryWindow(
+			this.getStoredUtcDeliveryWindow(),
+			this.props.deliveryWindowOffsetHours ?? 0
+		);
+	}
+
+	// Changing either the hour or the day can wrap the day boundary once
+	// converted back to UTC, so we recompute and persist both settings together.
+	handleDeliveryWindowChange = ( field ) => ( event ) => {
+		const newLocalWindow = {
+			...this.getLocalDeliveryWindow(),
+			[ field ]: parseInt( event.currentTarget.value, 10 ) || 0,
+		};
+		const utc = toUtcDeliveryWindow( newLocalWindow, this.props.deliveryWindowOffsetHours ?? 0 );
+		this.props.updateSetting( {
+			currentTarget: { name: 'subscription_delivery_day', value: String( utc.day ) },
+		} );
+		this.props.updateSetting( {
+			currentTarget: { name: 'subscription_delivery_hour', value: String( utc.hour ) },
+		} );
+	};
 
 	renderLocalizedWeekdayOptions() {
 		const { translate, locale } = this.props;
@@ -248,9 +298,9 @@ class NotificationSubscriptions extends Component {
 								className="reader-subscriptions__delivery-window"
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
-								onChange={ this.props.updateSetting }
+								onChange={ this.handleDeliveryWindowChange( 'day' ) }
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
-								value={ this.props.getSetting( 'subscription_delivery_day' ) }
+								value={ String( this.getLocalDeliveryWindow().day ) }
 							>
 								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
@@ -259,9 +309,9 @@ class NotificationSubscriptions extends Component {
 								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_hour"
 								name="subscription_delivery_hour"
-								onChange={ this.props.updateSetting }
+								onChange={ this.handleDeliveryWindowChange( 'hour' ) }
 								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
-								value={ this.props.getSetting( 'subscription_delivery_hour' ) }
+								value={ String( this.getLocalDeliveryWindow().hour ) }
 							>
 								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
 								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
@@ -280,7 +330,17 @@ class NotificationSubscriptions extends Component {
 							<FormSettingExplanation>
 								{ this.props.translate(
 									'When choosing daily or weekly email delivery, which time of day would you prefer?'
-								) }
+								) }{ ' ' }
+								{ this.props.deliveryWindowIsUtcFallback
+									? this.props.translate(
+											"We couldn't detect your time zone, so these times are shown in UTC."
+									  )
+									: this.props.translate(
+											'Times are shown in your local time zone (%(timezone)s).',
+											{
+												args: { timezone: this.props.deliveryWindowTimezone },
+											}
+									  ) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
@@ -375,7 +435,16 @@ const mapDispatchToProps = {
 
 const NotificationSubscriptionsWithHooks = ( props ) => {
 	const { hasNonSelfSubscriptions } = useSiteSubscriptions();
-	return <NotificationSubscriptions hasSubscriptions={ hasNonSelfSubscriptions } { ...props } />;
+	const { offsetHours, isUtcFallback, timezone } = useDeliveryWindowTimezone();
+	return (
+		<NotificationSubscriptions
+			hasSubscriptions={ hasNonSelfSubscriptions }
+			deliveryWindowOffsetHours={ offsetHours }
+			deliveryWindowIsUtcFallback={ isUtcFallback }
+			deliveryWindowTimezone={ timezone }
+			{ ...props }
+		/>
+	);
 };
 
 export default compose(
