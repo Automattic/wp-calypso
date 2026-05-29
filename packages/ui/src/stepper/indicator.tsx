@@ -1,7 +1,8 @@
 // packages/ui/src/stepper/indicator.tsx
 import { check } from '@wordpress/icons';
-import { Icon } from '@wordpress/ui';
+import { Path, SVG } from '@wordpress/primitives';
 import clsx from 'clsx';
+import { Icon } from '../icon';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { ReactNode } from 'react';
@@ -11,7 +12,7 @@ import type { ReactNode } from 'react';
 // arc curving down to y=12. When centred inside the 24px indicator the flat
 // edge sits exactly on the horizontal centre line of the circle.
 const halfCircleIcon = (
-	<svg
+	<SVG
 		width="10"
 		height="10"
 		viewBox="0 0 10 10"
@@ -20,8 +21,8 @@ const halfCircleIcon = (
 		aria-hidden="true"
 		style={ { transform: 'rotate(180deg)' } }
 	>
-		<path d="M0 5a5 5 0 0 1 10 0H0z" fill="currentColor" />
-	</svg>
+		<Path d="M0 5a5 5 0 0 1 10 0H0z" fill="currentColor" />
+	</SVG>
 );
 
 type StepperIndicatorProps = {
