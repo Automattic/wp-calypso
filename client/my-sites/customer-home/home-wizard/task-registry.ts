@@ -426,9 +426,15 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		category: 'feature-setup',
 		goals: GOALS_ALL,
 		hideWhen: { hasPages: true },
+		// Promoted to a pattern task on 2026-05-29: builds a real About page
+		// from the wpcom `about` pattern category with a Dolly-written intro,
+		// instead of opening a blank page editor. Falls back to `url` when the
+		// pattern fetch fails. See setup-bookings / setup-gallery / setup-forms
+		// for the shared shape; the wpcom-block-editor return-snackbar wiring
+		// works automatically via `pattern-page-task-item.tsx`.
+		pattern: { category: 'about', pageTitle: 'About', intro: true },
 		url: ( s ) => `/page/${ s }`,
 		cta: 'Create page',
-		createsPage: true,
 	},
 	{
 		id: 'add-contact-page',
