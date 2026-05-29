@@ -15,6 +15,8 @@
 //   hover and selected paint suppressed (plugin v0.1.6, l.170-215, DES-605).
 // - Transitions are disabled on the customize overrides so there's no
 //   trailing blue "ease-out" when the cursor leaves a row.
+// - Image-backed plugin icons keep fixed opacity during customize mode
+//   (WordPress/wp-admin-sidebar#79).
 // - Drag-time hover suppression on every row (plugin v0.1.6, l.329-347).
 // - Solid drop-zone hints stay visible throughout customization
 //   (WordPress/wp-admin-sidebar#81).
@@ -108,6 +110,20 @@ body.is-admin-sidebar-customize-mode {
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus .sidebar__menu-icon {
 			fill: var( --color-sidebar-text );
 			color: var( --color-sidebar-text );
+		}
+
+		// Image icons inherit Calypso's default `opacity: 0.6` idle state and
+		// `opacity: 1` hover/selected state. Customize rows are inert, so keep
+		// image-backed plugin icons at one brightness across the whole session.
+		> .sidebar__menu-link img.sidebar__menu-icon,
+		> .sidebar__menu-link:hover img.sidebar__menu-icon,
+		> .sidebar__menu-link:focus img.sidebar__menu-icon,
+		&.selected > .sidebar__menu-link img.sidebar__menu-icon,
+		&.selected > .sidebar__menu-link:hover img.sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading img.sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover img.sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus img.sidebar__menu-icon {
+			opacity: 1;
 		}
 	}
 
