@@ -189,14 +189,16 @@ platform :mac do
 
     dump_state.call('1. POST-before_all (setup_ci + selected mitigation)')
 
-    # Pass the real bundle id (matching Studio's setup) to falsify the
-    # hypothesis that the empty `app_identifier` was making match fetch
-    # a different cert payload than Studio's working build does.
+    # Empty app_identifier: for `developer_id`, match keys its S3 storage by
+    # team_id and installs the leaf regardless (build #848 confirmed the cert
+    # payload is identical). A non-empty value flips match into
+    # provisioning-profile lookup and aborts (no Direct_*.provisionprofile in
+    # our repo) before we reach the probes below, so it must stay empty here.
     sync_code_signing(
       type: 'developer_id',
       platform: 'macos',
       team_id: TEAM_ID,
-      app_identifier: ['com.automattic.wordpress'],
+      app_identifier: [],
       readonly: true,
       **CODE_SIGNING_STORAGE_OPTIONS
     )
