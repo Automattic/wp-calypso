@@ -62,7 +62,8 @@ function getFeatureStrings(
 		case 'pro_40k':
 			return [ ...baseFeatures, translate( '40K API calls per month' ), ...baseProFeatures ];
 		case 'business':
-			return [ ...baseFeatures, translate( '80K API calls per month' ), ...baseEnterpriseFeatures ];
+			// Legacy Akismet Business SKU (ak_ent_*_1); existing customers retain the 60K allotment.
+			return [ ...baseFeatures, translate( '60K API calls per month' ), ...baseEnterpriseFeatures ];
 		case 'business_5k':
 			// 'business_5k' is legacy naming; the Akismet Business allotment is now 80K.
 			return [ ...baseFeatures, translate( '80K API calls per month' ), ...baseEnterpriseFeatures ];
