@@ -22,6 +22,7 @@ import {
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
 	isWooHostedFreePlan,
+	PLAN_TIER_ORDER,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -426,14 +427,6 @@ const PlansFeaturesMain = ( {
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
-	const tierOrder: Record< string, number > = {
-		'is-free-plan': 0,
-		'is-personal-plan': 1,
-		'is-premium-plan': 2,
-		'is-business-plan': 3,
-		'is-ecommerce-plan': 4,
-	};
-
 	// TODO: We should move the modal logic into a data store
 	const showModalAndExit = ( planSlug: PlanSlug ): boolean => {
 		// Expired-plan downgrade confirmation
@@ -441,8 +434,8 @@ const PlansFeaturesMain = ( {
 			isPlanExpired &&
 			sitePlanSlug &&
 			getPlanClass( sitePlanSlug ) !== getPlanClass( planSlug ) &&
-			( tierOrder[ getPlanClass( planSlug ) ] ?? 0 ) <
-				( tierOrder[ getPlanClass( sitePlanSlug ) ] ?? 0 )
+			( PLAN_TIER_ORDER[ getPlanClass( planSlug ) ] ?? 0 ) <
+				( PLAN_TIER_ORDER[ getPlanClass( sitePlanSlug ) ] ?? 0 )
 		) {
 			setPendingDowngradePlanSlug( planSlug );
 			return true;

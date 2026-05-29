@@ -18,6 +18,7 @@ import {
 	isWooHostedPlan,
 	isBusinessTrial,
 	getPlan,
+	PLAN_TIER_ORDER,
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
 import { useState } from '@wordpress/element';
@@ -580,15 +581,8 @@ function getLoggedInPlansAction( {
 		sitePlanSlug &&
 		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
 	) {
-		const tierOrder: Record< string, number > = {
-			'is-free-plan': 0,
-			'is-personal-plan': 1,
-			'is-premium-plan': 2,
-			'is-business-plan': 3,
-			'is-ecommerce-plan': 4,
-		};
-		const currentTier = tierOrder[ getPlanClass( sitePlanSlug ) ] ?? 0;
-		const targetTier = tierOrder[ getPlanClass( planSlug ) ] ?? 0;
+		const currentTier = PLAN_TIER_ORDER[ getPlanClass( sitePlanSlug ) ] ?? 0;
+		const targetTier = PLAN_TIER_ORDER[ getPlanClass( planSlug ) ] ?? 0;
 
 		if ( targetTier < currentTier ) {
 			return createLoggedInPlansAction(

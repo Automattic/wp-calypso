@@ -1,7 +1,7 @@
 import { isMonthly } from './is-monthly';
 import { getPlanClass } from './main';
 
-const PLAN_TIER_ORDER: Record< string, number > = {
+export const PLAN_TIER_ORDER: Record< string, number > = {
 	'is-free-plan': 0,
 	'is-flexible-plan': 0,
 	'is-blogger-plan': 1,
