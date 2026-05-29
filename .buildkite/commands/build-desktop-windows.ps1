@@ -21,7 +21,7 @@ function Invoke-Checked {
 }
 
 # The a8c Windows AMI ships bun/go/rust/python and the Windows 10 SDK, but no
-# Node toolchain — unlike the mac/linux agents, which get Node from the
+# Node toolchain - unlike the mac/linux agents, which get Node from the
 # `automattic/nvm` Buildkite plugin (a bash plugin that can't run here). So we
 # install the `.nvmrc`-pinned Node ourselves.
 $NodeVersion = (Get-Content "$PSScriptRoot\..\..\.nvmrc").Trim()
@@ -49,7 +49,7 @@ Write-Output "--- :windows: Building unsigned Store appx"
 $env:CONFIG_ENV = 'release'
 $env:SKIP_TSC = 'true'
 $env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
-# Tells build-desktop-config.js to disable the in-app updater — the Store owns
+# Tells build-desktop-config.js to disable the in-app updater - the Store owns
 # updates for Store-distributed packages.
 $env:WINDOWS_STORE = '1'
 # `build:app` passes ${ELECTRON_BUILDER_ARGS} straight to electron-builder.
@@ -65,7 +65,7 @@ Get-ChildItem -Path release -File -Include '*.yml', 'builder-debug.yml' | Remove
 
 $appx = Get-ChildItem -Path release -Filter '*.appx' -ErrorAction SilentlyContinue
 if (-not $appx) {
-    Write-Error "No .appx produced in desktop/release — the Windows Store build did not emit a package."
+    Write-Error "No .appx produced in desktop/release - the Windows Store build did not emit a package."
     exit 1
 }
 Write-Output "--- :white_check_mark: Built $($appx.Count) appx package(s):"
