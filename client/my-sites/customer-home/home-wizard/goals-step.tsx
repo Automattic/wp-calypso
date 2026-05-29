@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	Icon,
 } from '@wordpress/components';
-import { edit, tool, store, envelope, people, gallery } from '@wordpress/icons';
+import { pencil, tool, store, envelope, people, gallery } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import type { GoalKey } from './types';
 
@@ -12,7 +12,7 @@ type GoalOption = {
 	key: GoalKey;
 	title: string;
 	description: string;
-	icon: typeof edit;
+	icon: typeof pencil;
 };
 
 function useGoalOptions(): GoalOption[] {
@@ -22,7 +22,7 @@ function useGoalOptions(): GoalOption[] {
 			key: 'write',
 			title: translate( 'Write' ),
 			description: translate( 'Share your ideas, stories, or expertise.' ),
-			icon: edit,
+			icon: pencil,
 		},
 		{
 			key: 'build',
