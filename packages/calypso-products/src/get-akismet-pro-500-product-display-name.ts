@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 const AKISMET_PRO_REQUESTS_PER_QUANTITY = 8000;
 
 export function getAkismetPro500ProductDisplayName( productName: string, quantity: number | null ) {
-	if ( ! quantity || quantity < 1 ) {
+	if ( ! quantity || quantity <= 1 ) {
 		return productName;
 	}
 

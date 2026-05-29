@@ -317,7 +317,7 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	if (
 		isAkismetPro500Plan( purchase.product_slug ) &&
 		purchase.renewal_price_tier_usage_quantity &&
-		purchase.renewal_price_tier_usage_quantity >= 1
+		purchase.renewal_price_tier_usage_quantity > 1
 	) {
 		// "Pro 500" is legacy naming retained for backend product-slug stability
 		// (ak_pro5h_*). The per-quantity allotment is now 8000 requests/month.
