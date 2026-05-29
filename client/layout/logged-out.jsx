@@ -91,7 +91,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 	'performance-profiler',
 	'plugins',
 	'reader',
-	'signup',
 	'site-profiler',
 	'theme',
 	'themes',
@@ -99,14 +98,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 
 // Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
 const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
-
-// Within the `signup` section the FAB is scoped to the account-creation step
-// (`user-social` or `user`) so it appears on `/start/account/user-social` but
-// not on flow-specific steps like `/start/domain/domain-only`. The `<flow>`
-// segment is optional because the default signup flow omits it, producing
-// URLs like `/start/user` and `/start/user/<stepSection>/<lang>`. Matches up
-// to two trailing segments (`:stepSectionName` and/or `:lang`).
-const SIGNUP_ACCOUNT_STEP_PATH = /^\/start\/(?:[^/]+\/)?(?:user|user-social)(?:\/[^/]+){0,2}\/?$/;
 
 // /log-in briefly carries social-handoff tokens before the login controller strips
 // them (?access_token / ?id_token in query, #id_token / #client_id in hash).
@@ -217,16 +208,8 @@ const LayoutLoggedOut = ( {
 	const isWpcomLogin =
 		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
 
-	// OAuth client signups (Woo, BlazePro, Gravatar, WPJobManager, etc.) run under
-	// their own brand. For plain WPCOM signup we only show the FAB on the
-	// account-creation step, not on flow-specific steps like `domain-only`.
-	const isWpcomSignup =
-		sectionName === 'signup' && ! useOAuth2Layout && SIGNUP_ACCOUNT_STEP_PATH.test( currentRoute );
-
 	const isEligibleSection =
-		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
-		( sectionName !== 'login' || isWpcomLogin ) &&
-		( sectionName !== 'signup' || isWpcomSignup );
+		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) && ( sectionName !== 'login' || isWpcomLogin );
 
 	// Logged-in users use the masterbar control instead.
 	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
