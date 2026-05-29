@@ -162,6 +162,7 @@ export interface WPComPlan extends Plan {
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getHostingHighlightedFeatures?: () => Feature[];
 	getCancellationFeatures?: () => Feature[];
+	getDowngradeFeatures?: () => Feature[];
 	getVisualSplitBusinessFeatures?: () => Feature[];
 	getVisualSplitCommerceFeatures?: () => Feature[];
 }

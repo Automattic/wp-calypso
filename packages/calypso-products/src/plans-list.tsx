@@ -1098,6 +1098,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_AUDIO_UPLOADS,
 	],
+	getDowngradeFeatures: () => [
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_STYLE_CUSTOMIZATION,
+	],
 } );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
@@ -1406,6 +1411,26 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SELL_SHIP,
 		FEATURE_PLUGINS_THEMES,
 		FEATURE_ADVANCED_SEO_TOOLS,
+	],
+	getDowngradeFeatures: () => [
+		// Shared with Personal (cancels out)
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_STYLE_CUSTOMIZATION,
+		// Shared with Premium (cancels out)
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_CONNECT_ANALYTICS,
+		// Shared with Business (cancels out in Ecommerce→Business delta)
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_DEV_TOOLS,
+		FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+		FEATURE_SITE_BACKUPS_AND_RESTORE,
+		// Ecommerce tier
+		FEATURE_ACCEPT_PAYMENTS_V2,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ECOMMERCE_MARKETING,
+		FEATURE_SELL_SHIP,
 	],
 	getVisualSplitCommerceFeatures: () => [
 		// All Business hosting features
@@ -1958,6 +1983,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
+	getDowngradeFeatures: () => [
+		// Shared with Personal (cancels out in Premium→Personal delta)
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_STYLE_CUSTOMIZATION,
+		// Premium tier
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_CONNECT_ANALYTICS,
+	],
 } );
 
 const getPlanA4ABusinessDetails = (): IncompleteWPcomPlan => ( {
@@ -2356,6 +2391,21 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_BACKUPS_AND_RESTORE,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	],
+	getDowngradeFeatures: () => [
+		// Shared with Personal (cancels out)
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_STYLE_CUSTOMIZATION,
+		// Shared with Premium (cancels out in Business→Premium delta)
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_CONNECT_ANALYTICS,
+		// Business tier
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_DEV_TOOLS,
+		FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+		FEATURE_SITE_BACKUPS_AND_RESTORE,
 	],
 	getVisualSplitBusinessFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,

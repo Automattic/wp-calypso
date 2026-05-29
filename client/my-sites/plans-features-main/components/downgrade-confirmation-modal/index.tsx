@@ -42,7 +42,7 @@ const DowngradeConfirmationModal = ( {
 		const featureSlugs = getFeatureDifference(
 			targetPlanSlug,
 			currentPlanSlug,
-			'getCancellationFeatures'
+			'getDowngradeFeatures'
 		);
 		return featureSlugs
 			.map( ( slug ) => getFeatureByKey( slug ) )
