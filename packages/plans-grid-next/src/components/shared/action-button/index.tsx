@@ -201,6 +201,7 @@ const ActionButton = ( {
 						busy={ busy }
 						onClick={ callback }
 						current={ current && variant !== 'primary' }
+						classes={ variant === 'secondary' ? 'is-secondary' : '' }
 						ariaLabel={ String( ariaLabel || '' ) }
 					>
 						{ text }
