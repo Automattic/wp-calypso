@@ -2,11 +2,12 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { readSiteQuery } from '../read-site';
+import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
 
 function makeWrapper( client: QueryClient ) {
-	return function Wrapper( { children }: { children: React.ReactNode } ) {
+	return function Wrapper( { children }: { children: ReactNode } ) {
 		return <QueryClientProvider client={ client }>{ children }</QueryClientProvider>;
 	};
 }
