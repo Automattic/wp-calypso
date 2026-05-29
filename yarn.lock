@@ -700,12 +700,8 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@storybook/addon-actions": "npm:^9.0.8"
-    "@storybook/addon-controls": "npm:^9.0.8"
     "@storybook/addon-docs": "npm:^9.1.20"
     "@storybook/addon-themes": "npm:^9.1.20"
-    "@storybook/addon-toolbars": "npm:^9.0.8"
-    "@storybook/addon-viewport": "npm:^9.0.8"
     "@storybook/addon-webpack5-compiler-babel": "npm:^3.0.6"
     "@storybook/react-webpack5": "npm:^9.1.20"
     css-loader: "npm:^6.11.0"
@@ -869,7 +865,6 @@ __metadata:
     "@emotion/css": "npm:^11.11.2"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@storybook/addon-actions": "npm:^9.0.8"
     "@storybook/react": "npm:^9.1.20"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
@@ -1387,8 +1382,6 @@ __metadata:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"
-    "@storybook/addon-actions": "npm:^9.0.8"
-    "@storybook/addon-controls": "npm:^9.0.8"
     "@storybook/addon-docs": "npm:^9.1.20"
     "@storybook/react-webpack5": "npm:^9.1.20"
     "@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch"
@@ -2134,7 +2127,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
-    "@storybook/addon-actions": "npm:^9.0.8"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.0"
@@ -2337,7 +2329,6 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@microsoft/api-extractor": "npm:^7.58.7"
-    "@storybook/addon-actions": "npm:^9.0.8"
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.0"
@@ -7871,20 +7862,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-actions@npm:^9.0.8":
-  version: 9.0.8
-  resolution: "@storybook/addon-actions@npm:9.0.8"
-  checksum: 40ab6bf018cb423bf156e6b1317d199f3730690750b88b4c4eed7af636fdbc9392ddc95b1383927ec85f462515ae35bc9f517c934bf05e1edb645f6b9b94264a
-  languageName: node
-  linkType: hard
-
-"@storybook/addon-controls@npm:^9.0.8":
-  version: 9.0.8
-  resolution: "@storybook/addon-controls@npm:9.0.8"
-  checksum: cfde9dcafeeec4da8095406ce03e0f301c0731a1b965769f981acfedae4d61487c18e15583142ed2755a5a75ddec4dc11759b066ec20d0e5855603b8d54a9b85
-  languageName: node
-  linkType: hard
-
 "@storybook/addon-docs@npm:^9.1.20":
   version: 9.1.20
   resolution: "@storybook/addon-docs@npm:9.1.20"
@@ -7910,20 +7887,6 @@ __metadata:
   peerDependencies:
     storybook: ^9.1.20
   checksum: 358a60321e3deb819bf27de038bf338f6a5964a9bbed5cc62ecd4107ebc9be150cc584f499c21bac38b5f581c15ccb758ebed54db1a85499d44259331639652f
-  languageName: node
-  linkType: hard
-
-"@storybook/addon-toolbars@npm:^9.0.8":
-  version: 9.0.8
-  resolution: "@storybook/addon-toolbars@npm:9.0.8"
-  checksum: 9c18a4426ad42b1a7dea6178a5d9305a8ad799920778068b332e56aaea4a2eca8b845fb1d3a8b84f68eafec54949704108e16eb78fd01d8e191f1653e05c9cd5
-  languageName: node
-  linkType: hard
-
-"@storybook/addon-viewport@npm:^9.0.8":
-  version: 9.0.8
-  resolution: "@storybook/addon-viewport@npm:9.0.8"
-  checksum: 53587e9603d128db0fc10cc351d0469b7494abdfdc2f537a3011d72e6444706fdb2d8329484968172bcaa50063fea929fa44af3358d9a452118a7e74b8912805
   languageName: node
   linkType: hard
 

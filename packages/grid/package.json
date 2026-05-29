@@ -34,8 +34,6 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^9.0.8",
-		"@storybook/addon-controls": "^9.0.8",
 		"@storybook/addon-docs": "^9.1.20",
 		"@storybook/react-webpack5": "^9.1.20",
 		"postcss": "^8.5.3",
