@@ -23,7 +23,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { activateTheme } from 'calypso/state/themes/actions';
-import { getActiveTheme, isThemeAllowedOnSite } from 'calypso/state/themes/selectors';
+import { getActiveTheme, getTheme, isThemeAllowedOnSite } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recommendThemes } from './recommend-themes';
 import { THEME_ALLOWLIST } from './theme-allowlist';
@@ -121,13 +121,24 @@ export default function ThemePickerTaskItem( { task }: Props ) {
 	} );
 
 	// Only offer themes the user can actually activate on their current plan
-	// (free plan → free themes only). Needs each theme's tier loaded (QueryTheme
-	// below); until a tier loads, isThemeAllowedOnSite treats it as allowed, so
-	// the list settles to the plan-eligible set once data arrives. Returns a
-	// stable comma-joined key so useSelector doesn't re-fire on unrelated state.
+	// (free plan → free themes only). Strict: a theme is eligible ONLY when
+	// (a) its metadata has loaded — `getTheme` returns a populated object once
+	// the QueryTheme below resolves, otherwise undefined — AND (b) the tier
+	// matches the site's plan features. The strict check is essential: with
+	// the lenient default (`isThemeAllowedOnSite` alone) themes whose tier
+	// hadn't loaded yet showed up as "allowed" and the user could click into
+	// a premium pick that then failed to activate (testing 2026-05-29). The
+	// returned key is a stable comma-joined string so useSelector doesn't
+	// re-fire on unrelated state changes.
 	const allowedKey = useSelector( ( state: AppState ) =>
 		THEME_ALLOWLIST.map( ( t ) => t.slug )
-			.filter( ( slug ) => isThemeAllowedOnSite( state, siteId, slug ) )
+			.filter( ( slug ) => {
+				const theme = getTheme( state, 'wpcom', slug );
+				if ( ! theme ) {
+					return false;
+				}
+				return isThemeAllowedOnSite( state, siteId, slug );
+			} )
 			.join( ',' )
 	);
 	const allowedSet = useMemo(
