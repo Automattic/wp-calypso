@@ -42,6 +42,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -219,11 +220,18 @@ const ContactFormTitle = () => {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
+		const titleText =
+			! isActive && isComplete
+				? translate( 'Contact information' )
+				: translate( 'Enter your contact information' );
+
 		return (
 			<>
-				{ ! isActive && isComplete
-					? String( translate( 'Contact information' ) )
-					: String( translate( 'Enter your contact information' ) ) }
+				{ titleText }{ ' ' }
+				<InlineSupportLink
+					supportContext="domain-contact-information-requirements"
+					showIcon={ false }
+				/>
 			</>
 		);
 	}

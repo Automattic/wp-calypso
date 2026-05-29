@@ -667,6 +667,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/private-domain-registration/#what-is-privacy-protection',
 		post_id: 365563,
 	},
+	'domain-contact-information-requirements': {
+		link: 'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why',
+		post_id: 365563,
+	},
 	'https-ssl': {
 		link: 'https://wordpress.com/support/domains/https-ssl/',
 		post_id: 2110,
