@@ -51,13 +51,13 @@ type SiteListQueryOptions = {
 // (boolean `true` with the `is` operator) or from the URL (string `'true'` wrapped in
 // an array via `queryParamFilterFields`'s `isAny` operator). Treat all as active.
 function isDeletedFilterActive( filters: Filter[] ): boolean {
-	const isTruthy = ( v: unknown ) => v === true || v === 'true';
-	return filters.some(
-		( filter ) =>
-			filter.field === 'is_deleted' &&
-			( isTruthy( filter.value ) ||
-				( Array.isArray( filter.value ) && filter.value.some( isTruthy ) ) )
-	);
+	return filters.some( ( { field, value } ) => {
+		if ( field !== 'is_deleted' ) {
+			return false;
+		}
+		const values = Array.isArray( value ) ? value : [ value ];
+		return values.includes( true ) || values.includes( 'true' );
+	} );
 }
 
 const getFetchPaginatedSitesOptions = (
