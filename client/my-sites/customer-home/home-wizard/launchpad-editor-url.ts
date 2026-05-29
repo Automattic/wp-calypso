@@ -25,7 +25,15 @@ export const LAUNCHPAD_GENERIC_HASH = '#launchpad-next-steps';
 export const FIRST_POST_HASH = '#publish-first-post';
 
 type BuildEditorUrlArgs = {
-	siteAdminUrl: string;
+	/** Preferred — comes from `getSiteAdminUrl`, includes any custom wp-admin
+	 * paths set on the site. May be null on freshly-created sites whose options
+	 * haven't synced into Redux yet. */
+	siteAdminUrl?: string | null;
+	/** Fallback when `siteAdminUrl` isn't loaded yet. The wp-admin URL is
+	 * synthesized as `https://${siteSlug}/wp-admin/`, which is correct for every
+	 * wpcom site (Simple, Atomic, and custom-domain sites all serve wp-admin
+	 * from their primary host). */
+	siteSlug?: string | null;
 	/** Existing draft to open. Omit to open a fresh `post-new.php`. */
 	postId?: number;
 	/** wp-admin post type. `post` for blog posts, `page` for everything else. */
@@ -39,16 +47,26 @@ type BuildEditorUrlArgs = {
  *
  * Use `window.location.href = buildLaunchpadEditorUrl(...)` to navigate — a
  * Calypso `page()` call would route through the SPA and drop the hash.
+ *
+ * Returns `null` only when neither `siteAdminUrl` nor `siteSlug` is provided
+ * (which shouldn't happen in practice — siteSlug is always populated once a
+ * site is selected). Callers should fall back to in-Calypso navigation in
+ * that case so the user isn't stranded.
  */
 export function buildLaunchpadEditorUrl( {
 	siteAdminUrl,
+	siteSlug,
 	postId,
 	postType,
 	hash,
-}: BuildEditorUrlArgs ): string {
+}: BuildEditorUrlArgs ): string | null {
+	const base = siteAdminUrl || ( siteSlug ? `https://${ siteSlug }/wp-admin/` : null );
+	if ( ! base ) {
+		return null;
+	}
 	const origin = encodeURIComponent( window.location.origin );
 	const editor = postId
-		? `${ siteAdminUrl }post.php?post=${ postId }&action=edit`
-		: `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+		? `${ base }post.php?post=${ postId }&action=edit`
+		: `${ base }post-new.php?post_type=${ postType }`;
 	return `${ editor }&origin=${ origin }${ hash }`;
 }

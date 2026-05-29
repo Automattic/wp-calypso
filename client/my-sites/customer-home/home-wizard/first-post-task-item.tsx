@@ -74,14 +74,18 @@ export default function FirstPostTaskCta( { task }: Props ) {
 	// (portfolio / newsletter) keep the standard in-Calypso navigation; the
 	// editor feature self-gates on post type === 'post' anyway.
 	const navigateToEditor = ( postId?: number ) => {
-		if ( task.id === 'publish-first-post' && siteAdminUrl ) {
-			window.location.href = buildLaunchpadEditorUrl( {
+		if ( task.id === 'publish-first-post' ) {
+			const url = buildLaunchpadEditorUrl( {
 				siteAdminUrl,
+				siteSlug,
 				postId,
 				postType: 'post',
 				hash: FIRST_POST_HASH,
 			} );
-			return;
+			if ( url ) {
+				window.location.href = url;
+				return;
+			}
 		}
 		if ( postId ) {
 			page( `/post/${ siteSlug }/${ postId }` );

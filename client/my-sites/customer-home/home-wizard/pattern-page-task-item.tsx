@@ -46,20 +46,22 @@ export default function PatternPageTaskCta( { task }: Props ) {
 	// which redirects via window.location.replace and drops the hash) so the
 	// `#launchpad-next-steps` hash survives to the editor. The wpcom-block-
 	// editor reads that hash to fire the post-publish snackbar with a "Next
-	// steps" action back to /home. Fall back to in-Calypso navigation if we
-	// don't have siteAdminUrl yet — the snackbar won't fire then, but the user
-	// still lands on the page editor.
+	// steps" action back to /home. `siteAdminUrl` may be null on freshly-
+	// created sites whose options haven't synced into Redux yet, so the helper
+	// also accepts siteSlug as a fallback.
 	const navigateToPage = ( pageId?: number ) => {
-		if ( pageId && siteAdminUrl ) {
-			window.location.href = buildLaunchpadEditorUrl( {
+		if ( pageId ) {
+			const url = buildLaunchpadEditorUrl( {
 				siteAdminUrl,
+				siteSlug,
 				postId: pageId,
 				postType: 'page',
 				hash: LAUNCHPAD_GENERIC_HASH,
 			} );
-			return;
-		}
-		if ( pageId ) {
+			if ( url ) {
+				window.location.href = url;
+				return;
+			}
 			page( `/page/${ siteSlug }/${ pageId }` );
 			return;
 		}

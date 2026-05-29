@@ -4,7 +4,7 @@ import { Card, CollapsibleCard, Stack, Text, Button, Icon } from '@wordpress/ui'
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import FirstPostTaskCta from './first-post-task-item';
 import LaunchTaskCta from './launch-task-item';
 import { LAUNCHPAD_GENERIC_HASH, buildLaunchpadEditorUrl } from './launchpad-editor-url';
@@ -55,6 +55,7 @@ const taskDoneIcon = (
 function TaskCta( { task }: { task: SelectedTask } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteAdminUrl = useSelector( ( state: AppState ) => getSiteAdminUrl( state, siteId ) );
 
 	if ( task.id === 'launch-site' ) {
@@ -93,22 +94,26 @@ function TaskCta( { task }: { task: SelectedTask } ) {
 	// Calypso's `/page/:slug` redirect drops `#hash` fragments, so we bypass it.
 	// Pattern tasks (gallery, events) handle the snackbar themselves via
 	// PatternPageTaskCta — they're routed earlier in this function.
-	if ( task.createsPage && siteAdminUrl ) {
-		return (
-			<Button
-				variant="solid"
-				tone="brand"
-				onClick={ () => {
-					window.location.href = buildLaunchpadEditorUrl( {
-						siteAdminUrl,
-						postType: 'page',
-						hash: LAUNCHPAD_GENERIC_HASH,
-					} );
-				} }
-			>
-				{ task.cta || ( translate( 'Get started' ) as string ) }
-			</Button>
-		);
+	if ( task.createsPage ) {
+		const editorUrl = buildLaunchpadEditorUrl( {
+			siteAdminUrl,
+			siteSlug,
+			postType: 'page',
+			hash: LAUNCHPAD_GENERIC_HASH,
+		} );
+		if ( editorUrl ) {
+			return (
+				<Button
+					variant="solid"
+					tone="brand"
+					onClick={ () => {
+						window.location.href = editorUrl;
+					} }
+				>
+					{ task.cta || ( translate( 'Get started' ) as string ) }
+				</Button>
+			);
+		}
 	}
 	// Use onClick + page() instead of `render={ <a> }` — Calypso's global
 	// anchor styles override the @wordpress/ui Button's brand-tone background
