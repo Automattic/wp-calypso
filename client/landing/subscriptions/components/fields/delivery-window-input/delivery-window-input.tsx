@@ -2,8 +2,8 @@
 import { FormLabel } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import {
-	fromUtcDeliveryWindow,
-	toUtcDeliveryWindow,
+	applyDeliveryWindowEdit,
+	getDisplayDeliveryWindow,
 	useDeliveryWindowTimezone,
 } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -35,7 +35,8 @@ const DeliveryWindowInput = ( {
 	// The stored day/hour are UTC. Show them in the device's local time, and
 	// convert edits back to UTC for the caller. Fall back to raw UTC values
 	// (clearly labeled) when the time zone can't be detected.
-	const localWindow = fromUtcDeliveryWindow( { hour: hourValue, day: dayValue }, offsetHours ?? 0 );
+	const storedUtc = { hour: hourValue, day: dayValue };
+	const displayWindow = getDisplayDeliveryWindow( storedUtc, offsetHours );
 
 	const getLabel = useCallback(
 		( hour: number ) => {
@@ -74,8 +75,7 @@ const DeliveryWindowInput = ( {
 	// day and hour are emitted together because converting a local edit back to
 	// UTC can wrap the day across midnight.
 	const emitUtcWindow = useCallback(
-		( localHour: number, localDay: number ) => {
-			const utc = toUtcDeliveryWindow( { hour: localHour, day: localDay }, offsetHours ?? 0 );
+		( utc: { hour: number; day: number } ) => {
 			const syntheticEvent = ( value: number ) =>
 				( {
 					currentTarget: { value: String( value ) },
@@ -83,15 +83,27 @@ const DeliveryWindowInput = ( {
 			onHourChange( syntheticEvent( utc.hour ) );
 			onDayChange( syntheticEvent( utc.day ) );
 		},
-		[ offsetHours, onDayChange, onHourChange ]
+		[ onDayChange, onHourChange ]
 	);
 
 	const handleDayChange: FormEventHandler< HTMLSelectElement > = ( evt ) => {
-		emitUtcWindow( localWindow.hour, parseInt( evt.currentTarget.value, 10 ) || 0 );
+		emitUtcWindow(
+			applyDeliveryWindowEdit(
+				storedUtc,
+				{ day: parseInt( evt.currentTarget.value, 10 ) || 0 },
+				offsetHours
+			)
+		);
 	};
 
 	const handleHourChange: FormEventHandler< HTMLSelectElement > = ( evt ) => {
-		emitUtcWindow( parseInt( evt.currentTarget.value, 10 ) || 0, localWindow.day );
+		emitUtcWindow(
+			applyDeliveryWindowEdit(
+				storedUtc,
+				{ hour: parseInt( evt.currentTarget.value, 10 ) || 0 },
+				offsetHours
+			)
+		);
 	};
 
 	return (
@@ -103,7 +115,7 @@ const DeliveryWindowInput = ( {
 				<FormSelect
 					name="delivery_window_day"
 					onChange={ handleDayChange }
-					value={ localWindow.day }
+					value={ displayWindow.day }
 				>
 					{ orderedWeekDays.map( ( weekDay: string ) => (
 						<option key={ weekDay } value={ getDayValue( weekDay ) }>
@@ -114,7 +126,7 @@ const DeliveryWindowInput = ( {
 				<FormSelect
 					name="delivery_window_hour"
 					onChange={ handleHourChange }
-					value={ localWindow.hour }
+					value={ displayWindow.hour }
 				>
 					{ [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 ].map( ( hour ) => (
 						<option key={ hour } value={ hour }>

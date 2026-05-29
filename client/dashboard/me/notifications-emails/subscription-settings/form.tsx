@@ -1,7 +1,7 @@
 import { UserSettings } from '@automattic/api-core';
 import {
-	fromUtcDeliveryWindow,
-	toUtcDeliveryWindow,
+	applyDeliveryWindowEdit,
+	getDisplayDeliveryWindow,
 	useDeliveryWindowTimezone,
 } from '@automattic/i18n-utils';
 import { CheckboxControl, SelectControl } from '@wordpress/components';
@@ -257,20 +257,22 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 
 	// The backend stores/sends the delivery window as UTC. Present it to the
 	// DataForm in local time, and convert edits back to UTC before bubbling up.
+	const storedUtc = useMemo(
+		() => ( {
+			hour: Number( data.subscription_delivery_hour ?? 0 ),
+			day: Number( data.subscription_delivery_day ?? 0 ),
+		} ),
+		[ data.subscription_delivery_hour, data.subscription_delivery_day ]
+	);
+
 	const localData = useMemo( () => {
-		const local = fromUtcDeliveryWindow(
-			{
-				hour: Number( data.subscription_delivery_hour ?? 0 ),
-				day: Number( data.subscription_delivery_day ?? 0 ),
-			},
-			offsetHours ?? 0
-		);
+		const display = getDisplayDeliveryWindow( storedUtc, offsetHours );
 		return {
 			...data,
-			subscription_delivery_hour: local.hour,
-			subscription_delivery_day: local.day,
+			subscription_delivery_hour: display.hour,
+			subscription_delivery_day: display.day,
 		};
-	}, [ data, offsetHours ] );
+	}, [ data, offsetHours, storedUtc ] );
 
 	const handleChange = useCallback(
 		( edit: Partial< SettingsData > ) => {
@@ -282,15 +284,14 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 				return;
 			}
 
-			// Changing either field can wrap the day boundary once converted back
-			// to UTC, so recompute the whole window from the local values.
-			const utc = toUtcDeliveryWindow(
-				{
-					hour: Number( edit.subscription_delivery_hour ?? localData.subscription_delivery_hour ),
-					day: Number( edit.subscription_delivery_day ?? localData.subscription_delivery_day ),
-				},
-				offsetHours ?? 0
-			);
+			const windowEdit: Partial< { hour: number; day: number } > = {};
+			if ( 'subscription_delivery_hour' in edit ) {
+				windowEdit.hour = Number( edit.subscription_delivery_hour );
+			}
+			if ( 'subscription_delivery_day' in edit ) {
+				windowEdit.day = Number( edit.subscription_delivery_day );
+			}
+			const utc = applyDeliveryWindowEdit( storedUtc, windowEdit, offsetHours );
 			onChange(
 				Object.assign( {}, data, edit, {
 					subscription_delivery_hour: utc.hour,
@@ -298,7 +299,7 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 				} ) as SettingsData
 			);
 		},
-		[ onChange, data, localData, offsetHours ]
+		[ onChange, data, storedUtc, offsetHours ]
 	);
 
 	const fields = useMemo(

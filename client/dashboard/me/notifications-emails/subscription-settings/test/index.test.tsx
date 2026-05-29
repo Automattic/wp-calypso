@@ -295,4 +295,43 @@ describe( 'SubscriptionSettings', () => {
 		expect( await screen.findByText( /shown in UTC/i ) ).toBeVisible();
 		expect( screen.getByRole( 'option', { name: '08:00 - 10:00 UTC' } ) ).toBeInTheDocument();
 	} );
+
+	it( 'preserves an odd stored UTC hour when only the day changes in UTC fallback mode', async () => {
+		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+			timezone: undefined,
+			offsetHours: null,
+			isUtcFallback: true,
+		} );
+
+		mockGetIsAutomatticianApi( false );
+		mockGetSettingsApi( {
+			...defaultUserSettings,
+			subscription_delivery_day: 1,
+			subscription_delivery_hour: 5,
+		} );
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					Number( body.subscription_delivery_hour ) === 5 &&
+					Number( body.subscription_delivery_day ) === 2
+			)
+			.reply( 200, {} );
+
+		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
+
+		// The hour dropdown only lists even buckets; an odd stored UTC hour (5) may
+		// not match an <option>, but changing only the day must not alter it on save.
+		expect( await daySelect() ).toHaveValue( '1' );
+
+		await userEvent.selectOptions( await daySelect(), '2' );
+		await userEvent.click( await saveButton() );
+
+		await waitFor( () => {
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
+		} );
+	} );
 } );

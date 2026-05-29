@@ -27,10 +27,6 @@ function snapToHourBucket( hour: number ): number {
 }
 
 /**
- * Shift a delivery window by a whole number of hours, wrapping the day when the
- * hour crosses midnight in either direction.
- */
-/**
  * Round a minute offset to the nearest whole hour, rounding half-hour ties
  * away from zero so negative zones like UTC-3:30 (America/St_Johns) become -4,
  * not -3.
@@ -43,6 +39,10 @@ function roundMinutesToWholeHours( offsetMinutes: number ): number {
 	return sign * Math.round( Math.abs( offsetMinutes ) / 60 );
 }
 
+/**
+ * Shift a delivery window by a whole number of hours, wrapping the day when the
+ * hour crosses midnight in either direction.
+ */
 function shiftWindow( window: DeliveryWindow, deltaHours: number ): DeliveryWindow {
 	const rawHour = window.hour + deltaHours;
 	const dayShift = Math.floor( rawHour / HOURS_IN_DAY );
@@ -146,4 +146,43 @@ export function fromUtcDeliveryWindow( utc: DeliveryWindow, offsetHours: number 
  */
 export function toUtcDeliveryWindow( local: DeliveryWindow, offsetHours: number ): DeliveryWindow {
 	return shiftWindow( local, -offsetHours );
+}
+
+/**
+ * Convert a stored UTC window for display in the picker. When the device
+ * timezone is unknown (`offsetHours === null`), returns the raw stored values
+ * without snapping so day-only edits do not change an untouched hour.
+ */
+export function getDisplayDeliveryWindow(
+	utc: DeliveryWindow,
+	offsetHours: number | null
+): DeliveryWindow {
+	if ( offsetHours === null ) {
+		return { hour: utc.hour, day: utc.day };
+	}
+	return fromUtcDeliveryWindow( utc, offsetHours );
+}
+
+/**
+ * Apply a partial edit from the picker and return the UTC window to persist.
+ * In UTC-fallback mode, only fields present in `edit` are updated; the rest
+ * are taken unchanged from `storedUtc`.
+ */
+export function applyDeliveryWindowEdit(
+	storedUtc: DeliveryWindow,
+	edit: Partial< DeliveryWindow >,
+	offsetHours: number | null
+): DeliveryWindow {
+	if ( offsetHours === null ) {
+		return {
+			hour: edit.hour ?? storedUtc.hour,
+			day: edit.day ?? storedUtc.day,
+		};
+	}
+	const display = getDisplayDeliveryWindow( storedUtc, offsetHours );
+	const local = {
+		hour: edit.hour ?? display.hour,
+		day: edit.day ?? display.day,
+	};
+	return toUtcDeliveryWindow( local, offsetHours );
 }

@@ -17,6 +17,8 @@ export {
 	getDeliveryWindowOffsetHours,
 	fromUtcDeliveryWindow,
 	toUtcDeliveryWindow,
+	getDisplayDeliveryWindow,
+	applyDeliveryWindowEdit,
 	useDeliveryWindowTimezone,
 } from './delivery-window';
 export type { DeliveryWindow, DeliveryWindowTimezone } from './delivery-window';

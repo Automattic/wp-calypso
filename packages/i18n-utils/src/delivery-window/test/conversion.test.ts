@@ -1,6 +1,8 @@
 import {
+	applyDeliveryWindowEdit,
 	fromUtcDeliveryWindow,
 	getDeliveryWindowOffsetHours,
+	getDisplayDeliveryWindow,
 	toUtcDeliveryWindow,
 	type DeliveryWindow,
 } from '../conversion';
@@ -126,6 +128,24 @@ describe( 'delivery-window conversion', () => {
 					}
 				}
 			}
+		} );
+	} );
+
+	describe( 'getDisplayDeliveryWindow', () => {
+		it( 'returns raw UTC values without snapping when offset is unknown', () => {
+			expect( getDisplayDeliveryWindow( { hour: 5, day: 1 }, null ) ).toEqual( {
+				hour: 5,
+				day: 1,
+			} );
+		} );
+	} );
+
+	describe( 'applyDeliveryWindowEdit', () => {
+		it( 'preserves an odd stored UTC hour when only the day changes in fallback mode', () => {
+			expect( applyDeliveryWindowEdit( { hour: 5, day: 1 }, { day: 2 }, null ) ).toEqual( {
+				hour: 5,
+				day: 2,
+			} );
 		} );
 	} );
 } );

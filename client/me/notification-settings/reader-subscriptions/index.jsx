@@ -1,8 +1,8 @@
 import { Card, FormLabel } from '@automattic/components';
 import {
-	fromUtcDeliveryWindow,
+	applyDeliveryWindowEdit,
+	getDisplayDeliveryWindow,
 	getNumericFirstDayOfWeek,
-	toUtcDeliveryWindow,
 	useDeliveryWindowTimezone,
 	withLocale,
 } from '@automattic/i18n-utils';
@@ -151,21 +151,21 @@ class NotificationSubscriptions extends Component {
 		};
 	}
 
-	getLocalDeliveryWindow() {
-		return fromUtcDeliveryWindow(
+	getDisplayDeliveryWindow() {
+		return getDisplayDeliveryWindow(
 			this.getStoredUtcDeliveryWindow(),
-			this.props.deliveryWindowOffsetHours ?? 0
+			this.props.deliveryWindowOffsetHours
 		);
 	}
 
 	// Changing either the hour or the day can wrap the day boundary once
 	// converted back to UTC, so we recompute and persist both settings together.
 	handleDeliveryWindowChange = ( field ) => ( event ) => {
-		const newLocalWindow = {
-			...this.getLocalDeliveryWindow(),
-			[ field ]: parseInt( event.currentTarget.value, 10 ) || 0,
-		};
-		const utc = toUtcDeliveryWindow( newLocalWindow, this.props.deliveryWindowOffsetHours ?? 0 );
+		const utc = applyDeliveryWindowEdit(
+			this.getStoredUtcDeliveryWindow(),
+			{ [ field ]: parseInt( event.currentTarget.value, 10 ) || 0 },
+			this.props.deliveryWindowOffsetHours
+		);
 		this.props.updateSetting( {
 			currentTarget: { name: 'subscription_delivery_day', value: String( utc.day ) },
 		} );
@@ -300,7 +300,7 @@ class NotificationSubscriptions extends Component {
 								name="subscription_delivery_day"
 								onChange={ this.handleDeliveryWindowChange( 'day' ) }
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
-								value={ String( this.getLocalDeliveryWindow().day ) }
+								value={ String( this.getDisplayDeliveryWindow().day ) }
 							>
 								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
@@ -311,7 +311,7 @@ class NotificationSubscriptions extends Component {
 								name="subscription_delivery_hour"
 								onChange={ this.handleDeliveryWindowChange( 'hour' ) }
 								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
-								value={ String( this.getLocalDeliveryWindow().hour ) }
+								value={ String( this.getDisplayDeliveryWindow().hour ) }
 							>
 								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
 								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
