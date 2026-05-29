@@ -354,6 +354,7 @@ function getAllSurveySteps( {
 	hasQuestionTwo,
 	plans,
 	userHasCompletedCancelSurveyForPurchase,
+	isSplitCancelRemoveEnabled,
 }: {
 	purchase: Purchase;
 	upsell: CancelPurchaseState[ 'upsell' ];
@@ -361,6 +362,7 @@ function getAllSurveySteps( {
 	hasQuestionTwo: boolean;
 	plans: PlanProduct[];
 	userHasCompletedCancelSurveyForPurchase: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 } ): string[] {
 	let steps = getBasicSurveySteps( {
 		purchase,
@@ -371,7 +373,11 @@ function getAllSurveySteps( {
 	const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
 	const flowType = getPurchaseCancellationFlowType( purchase );
 
-	if ( purchase.will_atomic_revert_after_removal && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+	if (
+		purchase.will_atomic_revert_after_removal &&
+		flowType === CANCEL_FLOW_TYPE.REMOVE &&
+		! isSplitCancelRemoveEnabled
+	) {
 		steps.push( ATOMIC_REVERT_STEP );
 	}
 
@@ -580,6 +586,7 @@ function CancelPurchaseInner() {
 		userHasCompletedCancelSurveyForPurchase: isSplitCancelRemoveEnabled
 			? false
 			: userHasCompletedCancelSurveyForPurchase,
+		isSplitCancelRemoveEnabled,
 	} );
 
 	const initSurveyState = () => {

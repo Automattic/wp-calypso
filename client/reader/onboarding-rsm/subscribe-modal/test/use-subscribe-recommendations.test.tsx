@@ -20,6 +20,8 @@ const readFeedQueryTestHarness = {
 	enrichmentByFeedId: {} as Record< number, { feed_URL: string } >,
 };
 
+const mockReadSiteResponses = new Map< number, 'success' | 'error' | 'pending' >();
+
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
 		get: jest.fn(),
@@ -83,6 +85,8 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 // pinning logic reads React Query state directly, so this mock feeds query
 // success/error data without relying on the removed Redux feeds slice. The
 // `enrich` harness enables targeted `readFeedQuery` responses (see feed_URL test).
+// Site validation uses `readSiteQuery`, so this mock also exposes a tiny
+// per-site success/error/pending control surface.
 jest.mock( '@automattic/api-queries', () => {
 	const actual = jest.requireActual( '@automattic/api-queries' );
 	return {
@@ -103,6 +107,29 @@ jest.mock( '@automattic/api-queries', () => {
 					return Promise.resolve( feed != null ? { ...feed } : null );
 				},
 				enabled: Boolean( feed ),
+			};
+		},
+		readSiteQuery: ( siteId: number ) => {
+			const status = mockReadSiteResponses.get( siteId ) ?? 'pending';
+			return {
+				...actual.readSiteQuery( siteId ),
+				queryFn: jest.fn( () => {
+					if ( status === 'success' ) {
+						return Promise.resolve( {
+							ID: siteId,
+							URL: `https://site-${ siteId }.example`,
+							name: `Site ${ siteId }`,
+						} );
+					}
+					if ( status === 'error' ) {
+						return Promise.reject(
+							Object.assign( new Error( 'Site failed' ), { statusCode: 410 } )
+						);
+					}
+					return new Promise( () => {} );
+				} ),
+				retry: false,
+				enabled: siteId > 0,
 			};
 		},
 	};
@@ -132,7 +159,6 @@ const cardsResponse = ( sites: RecommendedBlogsApiSite[] ) => ( {
 
 interface ReaderState {
 	reader: {
-		sites: { items: Record< number, { ID: number; is_error?: boolean } > };
 		follows: {
 			items: Record<
 				string,
@@ -152,7 +178,6 @@ type FeedQueryItems = Record< number, { feed_ID: number; blog_ID?: number; is_er
 
 const buildReaderState = ( overrides: Partial< ReaderState[ 'reader' ] > = {} ): ReaderState => ( {
 	reader: {
-		sites: { items: {} },
 		follows: { items: {} },
 		...overrides,
 	},
@@ -202,6 +227,7 @@ beforeEach( () => {
 	mockGetLocaleSlug.mockReturnValue( 'en' );
 	mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );
 	mockGet.mockResolvedValue( cardsResponse( [] ) );
+	mockReadSiteResponses.clear();
 } );
 
 describe( 'useSubscribeRecommendations', () => {
@@ -485,9 +511,8 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'pins a card with site_ID > 0 once both feed AND site are loaded', async () => {
-			const state = buildReaderState( {
-				sites: { items: { 1001: { ID: 1001 } } },
-			} );
+			mockReadSiteResponses.set( 1001, 'success' );
+			const state = buildReaderState();
 
 			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
@@ -512,9 +537,8 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'excludes a card whose site loaded with an error', async () => {
-			const state = buildReaderState( {
-				sites: { items: { 1001: { ID: 1001, is_error: true } } },
-			} );
+			mockReadSiteResponses.set( 1001, 'error' );
+			const state = buildReaderState();
 
 			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
@@ -548,14 +572,9 @@ describe( 'useSubscribeRecommendations', () => {
 			// Mixed terminal failures: site_ID === 0 candidates fail at the feed
 			// step, site_ID > 0 candidates fail at the site step. Either way the
 			// hook should treat all four as settled and surface the empty state.
-			const state = buildReaderState( {
-				sites: {
-					items: {
-						1001: { ID: 1001, is_error: true },
-						2001: { ID: 2001, is_error: true },
-					},
-				},
-			} );
+			mockReadSiteResponses.set( 1001, 'error' );
+			mockReadSiteResponses.set( 2001, 'error' );
+			const state = buildReaderState();
 
 			const { result } = renderHook( state, {
 				100: { feed_ID: 100, is_error: true },
@@ -747,9 +766,8 @@ describe( 'useSubscribeRecommendations', () => {
 		it( 'prunes a pinned card when paginated follows reveal a matching blog_ID', async () => {
 			// Same regression as above but discovered via blog_ID/site_ID match
 			// rather than feed_ID. Feed 101 has site_ID 1001 in our fixtures.
-			const state = buildReaderState( {
-				sites: { items: { 1001: { ID: 1001 } } },
-			} );
+			mockReadSiteResponses.set( 1001, 'success' );
+			const state = buildReaderState();
 
 			const { result, store } = renderHook( state, { 101: { feed_ID: 101 } } );
 

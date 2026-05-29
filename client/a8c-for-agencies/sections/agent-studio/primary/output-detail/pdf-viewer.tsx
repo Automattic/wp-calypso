@@ -94,6 +94,31 @@ const rewriteRootSelectors = ( css: string ): string =>
 		.replace( /(^|[\s,{}])body(?=[\s,{[:.])/g, '$1:host' )
 		.replace( /(^|[\s,{}]):root(?=[\s,{[:.])/g, '$1:host' );
 
+// `@font-face` declared inside a shadow root does not register the font
+// face in Chrome / Safari / Firefox: the rule parses, DevTools shows it,
+// `--wp--preset--font-family--display` still resolves to `Knockout`, but
+// no face named `Knockout` is reachable from inside the shadow tree, so
+// the browser falls through to `system-ui`. Faces registered on the host
+// Document ARE visible inside every nested shadow root, so we peel
+// `@font-face` blocks off the deck CSS at mount and append them to
+// `document.head` instead. The Set dedupes by rule body so a multi-page
+// deck (one shadow root per page, every page carrying the same face
+// payload) does not register the same face N times.
+const hoistedFontFaces = new Set< string >();
+
+function hoistFontFaces( css: string ): string {
+	return css.replace( /@font-face\s*\{[^}]*\}/g, ( rule ) => {
+		if ( ! hoistedFontFaces.has( rule ) ) {
+			hoistedFontFaces.add( rule );
+			const style = document.createElement( 'style' );
+			style.dataset.a4aFontFace = '';
+			style.textContent = rule;
+			document.head.appendChild( style );
+		}
+		return '';
+	} );
+}
+
 const HOST_BASELINE =
 	'<style>:host{display:block;width:816px;height:1056px;overflow:hidden;}</style>';
 
@@ -122,7 +147,7 @@ function ShadowPage( { srcDoc, title }: { srcDoc: string; title: string } ) {
 		)
 			.map( ( node ) =>
 				node.tagName === 'STYLE'
-					? `<style>${ rewriteRootSelectors( node.textContent ?? '' ) }</style>`
+					? `<style>${ rewriteRootSelectors( hoistFontFaces( node.textContent ?? '' ) ) }</style>`
 					: node.outerHTML
 			)
 			.join( '' );

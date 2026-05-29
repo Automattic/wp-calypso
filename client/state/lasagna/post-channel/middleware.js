@@ -1,3 +1,4 @@
+import { readSiteQuery } from '@automattic/api-queries';
 import debugFactory from 'debug';
 import { getCachedPost } from 'calypso/reader/data/post/cache';
 import { receiveComments } from 'calypso/state/comments/actions';
@@ -6,7 +7,6 @@ import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
 } from 'calypso/state/reader/action-types';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import { lasagna } from '../middleware';
 
 const debug = debugFactory( 'lasagna:channel' );
@@ -21,7 +21,6 @@ const getTopic = ( { scheme, post } ) => {
 };
 
 const getJoinParams = ( store, postKey ) => {
-	const state = store.getState();
 	const queryClient = getCalypsoQueryClient();
 	const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
@@ -29,7 +28,9 @@ const getJoinParams = ( store, postKey ) => {
 		return false;
 	}
 
-	const site = getSite( state, post.site_ID );
+	const site = queryClient
+		? queryClient.getQueryData( readSiteQuery( post.site_ID ).queryKey )
+		: undefined;
 
 	if ( ! site ) {
 		return false;

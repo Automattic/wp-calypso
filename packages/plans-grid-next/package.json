@@ -82,7 +82,7 @@
 		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"msw": "^2.2.14",
-		"msw-storybook-addon": "^2.0.4",
+		"msw-storybook-addon": "^2.0.7",
 		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^8.6.17",
 		"typescript": "^5.9.3",
