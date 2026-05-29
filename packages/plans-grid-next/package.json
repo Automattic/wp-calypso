@@ -66,7 +66,7 @@
 		"react-transition-group": "^4.3.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"

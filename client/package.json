@@ -116,7 +116,7 @@
 		"@wordpress/element": "^6.46.0",
 		"@wordpress/hooks": "^4.46.0",
 		"@wordpress/html-entities": "^4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/is-shallow-equal": "^5.46.0",
 		"@wordpress/notices": "5.46.0",

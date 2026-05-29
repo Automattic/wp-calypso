@@ -61,7 +61,7 @@
 		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
 		"@wordpress/date": "5.46.0",
 		"@wordpress/html-entities": "4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/primitives": "^4.46.0",
 		"@wordpress/react-i18n": "^4.46.0",
