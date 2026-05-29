@@ -144,6 +144,7 @@ const domain: FlowV2< typeof initialize > = {
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 					redirect_to: destination,
 					signup: 1,
+					flow: DOMAIN_FLOW,
 					cancel_to: new URL(
 						addQueryArgs( '/setup/domain', {
 							siteSlug,
@@ -197,6 +198,7 @@ const domain: FlowV2< typeof initialize > = {
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 							redirect_to: redirectTo || defaultRedirect,
 							signup: 0,
+							flow: DOMAIN_FLOW,
 							cancel_to: new URL(
 								addQueryArgs( '/setup/domain', {
 									siteSlug,
@@ -321,6 +323,7 @@ const domain: FlowV2< typeof initialize > = {
 
 				case STEPS.NEW_OR_EXISTING_SITE.slug:
 					if ( providedDependencies.newExistingSiteChoice === 'domain' ) {
+						// No flow: DOMAIN_FLOW — this is a domain-only purchase that skips the plan step, so the 3-step stepper does not apply.
 						return window.location.assign(
 							addQueryArgs( '/checkout/no-site', {
 								redirect_to: dashboardLink( '/domains' ),
