@@ -14,7 +14,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
-import { isAkismetPro500Plan } from './akismet';
+import { isAkismetBusiness5kPlan, isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
@@ -325,6 +325,18 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		const requestsInThousands =
 			( AKISMET_PRO_REQUESTS_PER_QUANTITY * purchase.renewal_price_tier_usage_quantity ) / 1000;
 		/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
+		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
+			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+			requestsK: requestsInThousands,
+		} );
+	}
+
+	if ( isAkismetBusiness5kPlan( purchase.product_slug ) ) {
+		// "Business 5k" is legacy naming retained for backend product-slug stability
+		// (ak_bus5k_*). The allotment is now 80000 requests/month.
+		const AKISMET_BUSINESS_REQUESTS_PER_MONTH = 80000;
+		const requestsInThousands = AKISMET_BUSINESS_REQUESTS_PER_MONTH / 1000;
+		/* translators: %(productName)s is the product name (e.g. "Akismet Business"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "80K"). */
 		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 			requestsK: requestsInThousands,
