@@ -63,10 +63,9 @@ Invoke-Checked { yarn run build }
 Get-ChildItem -Path release -Directory -Filter 'win*-unpacked' | Remove-Item -Recurse -Force
 Get-ChildItem -Path release -File -Include '*.yml', 'builder-debug.yml' | Remove-Item -Force
 
-$appx = Get-ChildItem -Path release -Filter '*.appx' -ErrorAction SilentlyContinue
+$appx = @(Get-ChildItem -Path release -Filter '*.appx' -ErrorAction SilentlyContinue)
 if (-not $appx) {
-    Write-Error "No .appx produced in desktop/release - the Windows Store build did not emit a package."
-    exit 1
+    throw "No .appx produced in desktop/release - the Windows Store build did not emit a package."
 }
 Write-Output "--- :white_check_mark: Built $($appx.Count) appx package(s):"
 $appx | ForEach-Object { Write-Output "  $($_.Name)" }
