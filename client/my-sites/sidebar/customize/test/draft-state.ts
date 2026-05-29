@@ -10,6 +10,8 @@ import {
 	moveItem,
 	recomputeDirty,
 	resetItem,
+	restoreWorking,
+	updateSaved,
 } from '../draft-state';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
 
@@ -166,6 +168,30 @@ describe( 'customize draft-state', () => {
 			expect( next.workingDelta.overrides[ 0 ].itemId ).toBe( 'y' );
 			expect( next.isDirty ).toBe( false );
 			expect( next.isSaving ).toBe( false );
+			expect( next.saveError ).toBeNull();
+		} );
+	} );
+
+	describe( 'updateSaved / restoreWorking', () => {
+		it( 'updates the saved delta without clobbering newer working changes', () => {
+			const state = createDraftState( null );
+			const firstMove = moveItem( state, 'x', samplePosition );
+			const secondMove = moveItem( firstMove, 'y', { kind: 'top_level', index: 2 } );
+			const next = updateSaved( secondMove, firstMove.workingDelta );
+			expect( next.savedDelta.overrides ).toEqual( firstMove.workingDelta.overrides );
+			expect( next.workingDelta.overrides ).toEqual( secondMove.workingDelta.overrides );
+			expect( next.isDirty ).toBe( true );
+			expect( next.isSaving ).toBe( false );
+			expect( next.saveError ).toBeNull();
+		} );
+
+		it( 'restores the working delta for undo', () => {
+			const state = createDraftState( null );
+			const firstMove = moveItem( state, 'x', samplePosition );
+			const secondMove = moveItem( firstMove, 'y', { kind: 'top_level', index: 2 } );
+			const next = restoreWorking( secondMove, firstMove.workingDelta );
+			expect( next.workingDelta.overrides ).toEqual( firstMove.workingDelta.overrides );
+			expect( next.isDirty ).toBe( true );
 			expect( next.saveError ).toBeNull();
 		} );
 	} );

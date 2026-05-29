@@ -5,7 +5,6 @@ import {
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
-	A4A_AGENT_STUDIO_PROJECTS_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
@@ -17,7 +16,6 @@ import {
 	agentStudioBriefContext,
 	agentStudioContext,
 	agentStudioOutputContext,
-	agentStudioProjectContext,
 } from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
@@ -50,13 +48,6 @@ export default function () {
 			`${ A4A_AGENT_STUDIO_LINK }/agents/:agentId/new`,
 			requireAccessContext,
 			agentStudioBriefContext,
-			makeLayout,
-			clientRender
-		);
-		page(
-			`${ A4A_AGENT_STUDIO_PROJECTS_LINK }/:projectId`,
-			requireAccessContext,
-			agentStudioProjectContext,
 			makeLayout,
 			clientRender
 		);

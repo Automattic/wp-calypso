@@ -27,6 +27,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import AgentChat from '../agent-chat';
@@ -131,7 +132,9 @@ export default function OrchestratorChat( {
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
-	const chatError = isReaderChat ? getReaderChatErrorMessage( error ) : error;
+	const chatError = isReaderChat
+		? getReaderChatErrorMessage( error )
+		: getOrchestratorErrorMessage( error );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
@@ -154,7 +157,10 @@ export default function OrchestratorChat( {
 	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const dynamicSuggestions = useSuggestions?.();
+	const maxDynamicSuggestions = isDocked ? undefined : 3;
+	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
+		suggestionsVisible: isOpen || isCompactMode,
+	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
@@ -367,8 +373,9 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
-	const handleSuggestionClick = useCallback( ( suggestion: Suggestion ) => {
-		const value = suggestion.prompt ?? suggestion.label;
+	const handleSuggestionClick = useCallback( ( suggestion: Suggestion | string ) => {
+		const value =
+			typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 		window.dispatchEvent(
 			new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
 		);

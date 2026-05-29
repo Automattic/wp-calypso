@@ -32,7 +32,7 @@ export default function MigrationsCommissions() {
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
 
-	const title = translate( 'Migrations: Commissions' );
+	const title = translate( 'Migrations: commissions' );
 
 	const onTagSitesClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );

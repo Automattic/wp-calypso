@@ -1,6 +1,6 @@
 import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useLayoutEffect } from 'react';
+import { ReactNode, useRef, useLayoutEffect } from 'react';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType } from './interfaces';
 
@@ -22,9 +22,15 @@ export type ItemsDataViewsProps = {
 	data: ItemsDataViewsType< any >;
 	isLoading?: boolean;
 	className?: string;
+	children?: ReactNode;
 };
 
-const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsProps ) => {
+const ItemsDataViews = ( {
+	data,
+	isLoading = false,
+	className,
+	children,
+}: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
 	const scrollContainerRef = useRef< HTMLElement >();
 	const previousDataViewsState = usePrevious( data.dataViewsState );
@@ -74,7 +80,9 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				selection={ data.selection }
 				onChangeSelection={ data.onSelectionChange }
 				header={ data.header }
-			/>
+			>
+				{ children }
+			</DataViews>
 		</div>
 	);
 };

@@ -31,7 +31,7 @@
 		"@storybook/addon-webpack5-compiler-babel": "^3.0.6",
 		"@storybook/react-webpack5": "^8.6.14",
 		"@storybook/test": "^8.6.14",
-		"storybook": "^8.6.14"
+		"storybook": "^8.6.17"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",

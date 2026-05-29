@@ -3,8 +3,7 @@ import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
-import { createInterpolateElement } from '@wordpress/element';
-import { __, _x, sprintf } from '@wordpress/i18n';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -233,6 +232,8 @@ class MasterbarLoggedIn extends Component {
 	 * In nav unification, the menu is openned with the Sites button
 	 */
 	renderSidebarMobileMenu() {
+		const { translate } = this.props;
+
 		return (
 			<Item
 				tipTarget="mobile-menu"
@@ -240,7 +241,7 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.handleToggleMobileMenu }
 				isActive={ this.isSidebarOpen() }
 				className="masterbar__item-sidebar-menu"
-				tooltip={ __( 'Menu' ) }
+				tooltip={ translate( 'Menu' ) }
 			/>
 		);
 	}
@@ -250,6 +251,7 @@ class MasterbarLoggedIn extends Component {
 		const {
 			domainOnlySite,
 			siteSlug,
+			translate,
 			section,
 			currentRoute,
 			isGlobalSidebarVisible,
@@ -275,11 +277,11 @@ class MasterbarLoggedIn extends Component {
 			: [
 					[
 						{
-							label: __( 'Sites' ),
+							label: translate( 'Sites' ),
 							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
 						},
 						{
-							label: __( 'Domains' ),
+							label: translate( 'Domains' ),
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 						},
 					],
@@ -288,11 +290,11 @@ class MasterbarLoggedIn extends Component {
 						: [
 								[
 									{
-										label: __( 'About WordPress' ),
+										label: translate( 'About WordPress' ),
 										url: `${ siteAdminUrl }about.php`,
 									},
 									{
-										label: __( 'Get Involved' ),
+										label: translate( 'Get Involved' ),
 										url: `${ siteAdminUrl }contribute.php`,
 									},
 								],
@@ -308,7 +310,7 @@ class MasterbarLoggedIn extends Component {
 				subItems={ subItems }
 				onClick={ this.clickMySites }
 				isActive={ this.isMySitesActive() }
-				tooltip={ __( 'Manage your sites' ) }
+				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 				hasGlobalBorderStyle
 			/>
@@ -405,6 +407,7 @@ class MasterbarLoggedIn extends Component {
 	renderSiteBadges() {
 		const {
 			site,
+			translate,
 			isUnlaunchedSite,
 			isTrial,
 			isSiteP2,
@@ -438,12 +441,12 @@ class MasterbarLoggedIn extends Component {
 
 		// Staging Badge
 		if ( site?.is_wpcom_staging_site ) {
-			badges.push( __( 'Staging' ) );
+			badges.push( translate( 'Staging' ) );
 		}
 
 		// Trial Badge
 		if ( isTrial ) {
-			badges.push( __( 'Trial' ) );
+			badges.push( translate( 'Trial' ) );
 		}
 
 		// P2 Workspace Badge
@@ -454,28 +457,30 @@ class MasterbarLoggedIn extends Component {
 		// Private/Coming Soon Badge
 		if ( site.is_private ) {
 			badges.push(
-				shouldShowPrivateByDefaultComingSoonBadge ? __( 'Coming Soon' ) : __( 'Private' )
+				shouldShowPrivateByDefaultComingSoonBadge
+					? translate( 'Coming Soon' )
+					: translate( 'Private' )
 			);
 		}
 
 		// Express Service Badge
 		if ( site.options && site.options.is_difm_lite_in_progress ) {
-			badges.push( __( 'Express Service' ) );
+			badges.push( translate( 'Express Service' ) );
 		}
 
 		// Public Coming Soon Badge
 		if ( shouldShowPublicComingSoonSiteBadge ) {
-			badges.push( __( 'Coming Soon' ) );
+			badges.push( translate( 'Coming Soon' ) );
 		}
 
 		// Redirect Badge
 		if ( site.options && site.options.is_redirect ) {
-			badges.push( __( 'Redirect' ) );
+			badges.push( translate( 'Redirect' ) );
 		}
 
 		// Domain Badge
 		if ( site.options && site.options.is_domain_only ) {
-			badges.push( __( 'Domain' ) );
+			badges.push( translate( 'Domain' ) );
 		}
 
 		return badges.length > 0
@@ -490,6 +495,7 @@ class MasterbarLoggedIn extends Component {
 	renderSiteMenu() {
 		const {
 			siteSlug,
+			translate,
 			siteTitle,
 			siteUrl,
 			isClassicView,
@@ -505,19 +511,19 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const menuItems = [ { label: __( 'Visit Site' ), url: siteUrl } ];
+		const menuItems = [ { label: translate( 'Visit Site' ), url: siteUrl } ];
 
 		if ( isClassicView ) {
-			menuItems.push( { label: __( 'Dashboard' ), url: siteAdminUrl } );
+			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
 		} else {
-			menuItems.push( { label: __( 'Dashboard' ), url: siteHomeUrl } );
+			menuItems.push( { label: translate( 'Dashboard' ), url: siteHomeUrl } );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
 			menuItems.push( {
 				label: (
 					<div className="masterbar__site-info masterbar__site-plan">
-						<span className="masterbar__site-info-label">{ __( 'Plan' ) }</span>
+						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
 							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 						</div>
@@ -535,7 +541,7 @@ class MasterbarLoggedIn extends Component {
 			menuItems.push( {
 				label: (
 					<div className="masterbar__site-info masterbar__site-status">
-						<span className="masterbar__site-info-label">{ __( 'Status' ) }</span>
+						<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
 						<div className="masterbar__info-badges">{ siteBadges }</div>
 					</div>
 				),
@@ -559,6 +565,7 @@ class MasterbarLoggedIn extends Component {
 		const {
 			siteSlug,
 			isClassicView,
+			translate,
 			siteAdminUrl,
 			newPostUrl,
 			newPageUrl,
@@ -579,38 +586,38 @@ class MasterbarLoggedIn extends Component {
 		if ( siteSlug ) {
 			siteActions = [
 				{
-					label: __( 'Post' ),
+					label: translate( 'Post' ),
 					url: newPostUrl,
 				},
 				{
-					label: __( 'Media' ),
+					label: translate( 'Media' ),
 					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
 				},
 				{
-					label: __( 'Page' ),
+					label: translate( 'Page' ),
 					url: newPageUrl,
 				},
 				{
-					label: __( 'User' ),
+					label: translate( 'User' ),
 					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
 				},
 			];
 		} else {
 			siteActions = [
 				{
-					label: __( 'Post' ),
+					label: translate( 'Post' ),
 					url: '/post',
 				},
 				{
-					label: __( 'Media' ),
+					label: translate( 'Media' ),
 					url: '/media',
 				},
 				{
-					label: __( 'Page' ),
+					label: translate( 'Page' ),
 					url: '/page',
 				},
 				{
-					label: __( 'User' ),
+					label: translate( 'User' ),
 					url: '/people/new',
 				},
 			];
@@ -621,16 +628,16 @@ class MasterbarLoggedIn extends Component {
 				url={ siteActions[ 0 ].url }
 				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
-				tooltip={ _x( 'New', 'admin bar menu group label' ) }
+				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
 				tipTarget="new-menu"
 			>
-				{ _x( 'New', 'admin bar menu group label' ) }
+				{ translate( 'New', { context: 'admin bar menu group label' } ) }
 			</Item>
 		);
 	}
 
 	renderProfileMenu() {
-		const { user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -649,7 +656,7 @@ class MasterbarLoggedIn extends Component {
 								{ user.username }
 							</span>
 							<span className="display-name edit-profile">
-								{ isGlobalSidebarVisible ? __( 'My Profile' ) : __( 'Edit Profile' ) }
+								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
 							</span>
 						</div>
 					</div>
@@ -657,9 +664,9 @@ class MasterbarLoggedIn extends Component {
 				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
 			},
 			{
-				label: __( 'Log Out' ),
+				label: translate( 'Log Out' ),
 				onClick: () => this.props.redirectToLogout(),
-				tooltip: __( 'Log out of WordPress.com' ),
+				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
 			},
 		];
@@ -668,13 +675,15 @@ class MasterbarLoggedIn extends Component {
 			{
 				label: (
 					<span className="button wpcom-button">
-						{ createInterpolateElement( __( 'My <wpcomIcon /> WordPress.com Account' ), {
-							wpcomIcon:
-								typeof this.wordpressIcon() !== 'string' ? (
-									this.wordpressIcon()
-								) : (
-									<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
-								),
+						{ translate( 'My {{wpcomIcon/}} WordPress.com Account', {
+							components: {
+								wpcomIcon:
+									typeof this.wordpressIcon() !== 'string' ? (
+										this.wordpressIcon()
+									) : (
+										<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
+									),
+							},
 						} ) }
 					</span>
 				),
@@ -690,18 +699,16 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me', true ) }
 				className="masterbar__item-howdy"
-				tooltip={ __( 'Update your profile, personal settings, and more' ) }
+				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
 				{ user.display_name && (
 					<span className="masterbar__item-howdy-howdy">
-						{ sprintf(
-							/* translators: %s is the user's display name */
-							__( 'Howdy, %s' ),
-							user.display_name
-						) }
+						{ translate( 'Howdy, %(display_name)s', {
+							args: { display_name: user.display_name },
+						} ) }
 					</span>
 				) }
 				<Gravatar
@@ -715,6 +722,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderReader() {
+		const { translate } = this.props;
 		return (
 			<Item
 				tipTarget="reader"
@@ -723,12 +731,12 @@ class MasterbarLoggedIn extends Component {
 				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
-				tooltip={ __( 'Read the blogs and topics you follow' ) }
+				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 				hasGlobalBorderStyle
 			>
 				<span className="masterbar__icon-label masterbar__item-reader-label">
-					{ __( 'Reader' ) }
+					{ translate( 'Reader' ) }
 				</span>
 			</Item>
 		);
@@ -761,31 +769,31 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderNotifications() {
+		const { translate } = this.props;
 		return (
 			<Notifications
 				isShowing
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
-				tooltip={ __( 'Manage your notifications' ) }
+				tooltip={ translate( 'Manage your notifications' ) }
 			>
 				<span className="masterbar__item-notifications-label">
-					{
-						/* translators: Toolbar, must be shorter than ~12 chars */
-						_x( 'Notifications', 'masterbar' )
-					}
+					{ translate( 'Notifications', {
+						comment: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
 				</span>
 			</Notifications>
 		);
 	}
 
 	renderHelpCenter() {
-		const { siteId, useUnifiedAgent } = this.props;
+		const { siteId, translate, useUnifiedAgent } = this.props;
 
 		if ( useUnifiedAgent ) {
 			const placeholder = (
 				<Item
 					className="masterbar__item-agents-manager"
-					tooltip={ __( 'Help' ) }
+					tooltip={ translate( 'Help' ) }
 					icon={ <AgentsManagerIcon hasUnread={ false } /> }
 				/>
 			);
@@ -798,7 +806,7 @@ class MasterbarLoggedIn extends Component {
 				<AsyncLoad
 					require={ loadMasterbarAgentsManager }
 					siteId={ siteId }
-					tooltip={ __( 'Help' ) }
+					tooltip={ translate( 'Help' ) }
 					placeholder={ placeholder }
 				/>
 			);
@@ -807,7 +815,7 @@ class MasterbarLoggedIn extends Component {
 		const placeholder = (
 			<Item
 				className="masterbar__item-help"
-				tooltip={ __( 'Help' ) }
+				tooltip={ translate( 'Help' ) }
 				icon={ <HelpCenterIcon hasUnread={ false } /> }
 			/>
 		);
@@ -820,7 +828,7 @@ class MasterbarLoggedIn extends Component {
 			<AsyncLoad
 				require={ loadMasterbarHelpCenter }
 				siteId={ siteId }
-				tooltip={ __( 'Help' ) }
+				tooltip={ translate( 'Help' ) }
 				placeholder={ placeholder }
 			/>
 		);
@@ -922,4 +930,4 @@ export default connect(
 		requestAdminMenu,
 		redirectToLogout,
 	}
-)( MasterbarLoggedIn );
+)( localize( MasterbarLoggedIn ) );

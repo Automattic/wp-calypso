@@ -18,12 +18,15 @@ function getInstalledPlugins( plugins: CorePluginsResponse | CorePlugin[], plugi
 }
 
 function prepareTooltip( plugins: CorePluginsResponse | CorePlugin[], pluginsArgs: string[] ) {
-	const pluginsList = getInstalledPlugins( plugins, pluginsArgs ).join( '<br />' );
+	const pluginsList = getInstalledPlugins( plugins, pluginsArgs ).join( '<br/>' );
 
-	return createInterpolateElement( `<div>${ pluginsList }</div>`, {
-		div: <div className="tooltip--selected-plugins" />,
-		br: <br />,
-	} );
+	return createInterpolateElement< '<div><br/></div>' >(
+		`<div>${ pluginsList }</div>` as '<div><br/></div>',
+		{
+			div: <div className="tooltip--selected-plugins" />,
+			br: <br />,
+		}
+	);
 }
 
 function countInstalledPlugins(

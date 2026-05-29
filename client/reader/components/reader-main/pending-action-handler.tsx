@@ -1,10 +1,9 @@
-import { followReadTagMutation } from '@automattic/api-queries';
+import { followReadTagMutation, likeSiteCommentMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
 import { useDispatch, useSelector } from 'calypso/state';
-import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
@@ -17,6 +16,7 @@ export const ReaderPendingActionHandler = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
 	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
+	const { mutate: likeComment } = useMutation( likeSiteCommentMutation() );
 	const { likePost, unlikePost } = usePostLikeActions();
 
 	useEffect( () => {
@@ -38,9 +38,14 @@ export const ReaderPendingActionHandler = () => {
 					unlikePost( pendingAction.siteId, pendingAction.postId );
 					break;
 				case 'comment-like':
-					dispatch(
-						likeComment( pendingAction.siteId, pendingAction.postId, pendingAction.commentId )
-					);
+					if ( ! pendingAction.commentId ) {
+						break;
+					}
+					likeComment( {
+						siteId: pendingAction.siteId,
+						postId: pendingAction.postId,
+						commentId: pendingAction.commentId,
+					} );
 					break;
 				case 'follow-site':
 					dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
@@ -60,7 +65,7 @@ export const ReaderPendingActionHandler = () => {
 		}, 2000 );
 
 		dispatch( clearLastActionRequiresLogin() );
-	}, [ isLoggedIn, pendingAction, dispatch, followTag, likePost, unlikePost ] );
+	}, [ isLoggedIn, pendingAction, dispatch, followTag, likePost, unlikePost, likeComment ] );
 
 	return null;
 };

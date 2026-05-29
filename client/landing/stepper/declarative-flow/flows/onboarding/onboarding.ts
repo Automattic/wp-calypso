@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -70,8 +70,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { planCartItem, blueprint } = useSelect(
+		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
 			( select ) => ( {
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
@@ -193,21 +194,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					setPlanCartItem( pickedPlan );
 
 					if ( ! pickedPlan ) {
-						// Redirect free plan selections to the choose page for the PWYW A/B test.
-						// `/choose` is a WordPress.com PHP route, not a Calypso route, so we need an
-						// absolute URL — a relative path resolves to the current Calypso host (e.g.
-						// wpcalypso.wordpress.com/choose) and 404s on pre-release. See TESTOPS-106.
-						//
-						// Skip this in local development: `/choose` only exists on production, so
-						// the redirect bounces the user out of local Calypso to wordpress.com and
-						// breaks end-to-end testing of the Launchpad-AI prototype. In dev we fall
-						// through to the normal create-site path (free site → processing → /home),
-						// which is the behaviour this prototype is built to test.
-						if ( config( 'env_id' ) !== 'development' ) {
-							window.location.assign(
-								addQueryArgs( 'https://wordpress.com/choose', getQueryArgs( window.location.href ) )
-							);
-							return;
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
 					}
 
@@ -326,7 +320,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
 						) {
 							return navigate( 'setup-your-site-ai' );
-						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
+						} else if ( providedDependencies?.postCheckoutBigSky ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
