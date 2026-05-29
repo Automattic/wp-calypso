@@ -10,6 +10,13 @@ export interface FollowDeliveryMethods {
 	};
 }
 
+export interface FollowSubscriptionMeta {
+	links?: {
+		site?: string;
+		feed?: string;
+	};
+}
+
 export interface FollowApiSubscription {
 	ID?: string | number;
 	URL: string;
@@ -26,6 +33,9 @@ export interface FollowApiSubscription {
 	is_paid_subscription?: boolean;
 	is_wpforteams_site?: boolean;
 	is_rss?: boolean;
+	meta?: FollowSubscriptionMeta;
+	is_comp?: boolean;
+	comp_id?: number;
 }
 
 export interface FollowItem {
@@ -45,6 +55,12 @@ export interface FollowItem {
 	is_following: boolean;
 	alias_feed_URLs?: string[];
 	error?: unknown;
+	is_paid_subscription?: boolean;
+	is_wpforteams_site?: boolean;
+	is_rss?: boolean;
+	meta?: FollowSubscriptionMeta;
+	is_comp?: boolean;
+	comp_id?: number;
 }
 
 export interface FollowsApiResponse {
@@ -62,8 +78,11 @@ export interface FollowsPage {
 }
 
 export interface FollowSiteParams {
-	feedUrl: string;
+	feedUrl?: string;
 	source?: string;
+	subscriptionId?: number | string;
+	blogId?: number | string;
+	emailId?: string;
 }
 
 export interface FollowSiteResponse {
@@ -73,8 +92,11 @@ export interface FollowSiteResponse {
 }
 
 export interface UnfollowSiteParams {
-	feedUrl: string;
+	feedUrl?: string;
 	source?: string;
+	subscriptionId?: number | string;
+	blogId?: number | string;
+	emailId?: string;
 }
 
 export interface UnfollowSiteResponse {

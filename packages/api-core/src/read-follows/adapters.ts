@@ -18,7 +18,7 @@ export const prepareComparableUrl = ( url?: string | null ): string | undefined 
 };
 
 export const adaptFollow = ( subscription: FollowApiSubscription ): FollowItem => ( {
-	ID: typeof subscription.ID === 'undefined' ? undefined : Number( subscription.ID ),
+	ID: toValidId( subscription.ID ) ?? undefined,
 	URL: subscription.URL,
 	feed_URL: subscription.URL,
 	blog_ID: toValidId( subscription.blog_ID ),
@@ -34,6 +34,12 @@ export const adaptFollow = ( subscription: FollowApiSubscription ): FollowItem =
 	unseen_count: subscription.unseen_count,
 	site_icon: subscription.site_icon,
 	is_following: true,
+	is_paid_subscription: subscription.is_paid_subscription,
+	is_wpforteams_site: subscription.is_wpforteams_site,
+	is_rss: subscription.is_rss,
+	meta: subscription.meta,
+	is_comp: subscription.is_comp,
+	comp_id: subscription.comp_id,
 } );
 
 export const adaptFollowsResponse = ( response: FollowsApiResponse ): FollowsPage => ( {

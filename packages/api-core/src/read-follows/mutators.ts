@@ -1,10 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
 import { adaptFollow } from './adapters';
 import type {
-	FollowSiteParams,
-	FollowSiteResponse,
 	FollowDeliveryParams,
 	FollowItem,
+	FollowSiteParams,
+	FollowSiteResponse,
 	UnfollowSiteParams,
 	UnfollowSiteResponse,
 } from './types';
@@ -14,14 +14,44 @@ const buildDeliveryFrequencyBody = ( frequency?: string ) =>
 		? { delivery_frequency: frequency }
 		: {};
 
+const isValidId = ( id?: number | string ): id is number | string => {
+	if ( typeof id === 'number' ) {
+		return Number.isInteger( id ) && id >= 0;
+	}
+	if ( typeof id === 'string' ) {
+		return /^[0-9]+$/.test( id ) && Number.isInteger( Number( id ) );
+	}
+	return false;
+};
+
+const buildFollowMutationBody = (
+	{ feedUrl, source, subscriptionId, emailId, blogId }: FollowSiteParams | UnfollowSiteParams,
+	action: 'follow' | 'unfollow'
+) => {
+	const isSubscriptionIdValid = isValidId( subscriptionId );
+	if ( ! isSubscriptionIdValid && ! feedUrl ) {
+		throw new Error( `Subscription ID or URL is required to ${ action }` );
+	}
+
+	return {
+		source,
+		...( isSubscriptionIdValid ? { sub_id: subscriptionId } : { url: feedUrl } ),
+		...( typeof emailId === 'undefined' ? {} : { email_id: emailId } ),
+		...( typeof blogId === 'undefined' ? {} : { blog_id: blogId } ),
+	};
+};
+
 export const followSite = async ( {
 	feedUrl,
 	source,
+	subscriptionId,
+	emailId,
+	blogId,
 }: FollowSiteParams ): Promise< FollowItem > => {
 	const response: FollowSiteResponse = await wpcom.req.post( {
 		path: '/read/following/mine/new',
 		apiVersion: '1.1',
-		body: { url: feedUrl, source },
+		body: buildFollowMutationBody( { feedUrl, source, subscriptionId, emailId, blogId }, 'follow' ),
 	} );
 
 	if ( ! response?.subscribed || ! response.subscription ) {
@@ -40,11 +70,17 @@ export const followSite = async ( {
 export const unfollowSite = async ( {
 	feedUrl,
 	source,
+	subscriptionId,
+	emailId,
+	blogId,
 }: UnfollowSiteParams ): Promise< UnfollowSiteResponse > => {
 	const response: UnfollowSiteResponse = await wpcom.req.post( {
 		path: '/read/following/mine/delete',
 		apiVersion: '1.1',
-		body: { url: feedUrl, source },
+		body: buildFollowMutationBody(
+			{ feedUrl, source, subscriptionId, emailId, blogId },
+			'unfollow'
+		),
 	} );
 	if ( response?.subscribed ) {
 		throw new Error( 'Unfollow request did not unsubscribe' );
