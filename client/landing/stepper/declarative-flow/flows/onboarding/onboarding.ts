@@ -320,7 +320,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
 						) {
 							return navigate( 'setup-your-site-ai' );
-						} else if ( providedDependencies?.postCheckoutBigSky ) {
+						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
