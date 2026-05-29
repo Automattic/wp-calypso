@@ -3,7 +3,7 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { shallowEqual } from 'react-redux';
-import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
@@ -131,7 +131,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 
 							{ site && following && ! isEmailBlocked && (
 								<div className="reader-feed-header__email-settings">
-									<ReaderSiteNotificationSettings
+									<SiteNotificationSettings
 										iconSize={ 24 }
 										showLabel={ false }
 										siteId={ siteId }

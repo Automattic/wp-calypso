@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
-import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -251,7 +251,7 @@ function ReaderSubscriptionListItem( {
 					onFollowToggle={ onFollowToggle }
 				/>
 				{ isFollowing && showNotificationSettings && (
-					<ReaderSiteNotificationSettings siteId={ siteId } />
+					<SiteNotificationSettings siteId={ siteId } />
 				) }
 			</div>
 		</div>
