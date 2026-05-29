@@ -641,6 +641,36 @@ This mixin generates alias variables for a color palette. For example, the
 			background: var( --wp-components-color-gray-300 );
 			color: var( --wp-components-color-gray-800 );
 		}
+
+		&.has-values {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 85%,
+				var( --wp-components-color-accent-darker-20 )
+			);
+			color: var( --wp-components-color-accent-darker-20 );
+
+			&:hover,
+			&:focus-visible,
+			&[aria-expanded='true'] {
+				background: color-mix(
+					in srgb,
+					var( --dashboard-surface__background-color ) 75%,
+					var( --wp-components-color-accent-darker-20 )
+				);
+				color: var( --wp-components-color-accent-darker-20 );
+			}
+		}
+	}
+
+	.dataviews-filters__container-visibility-toggle .dataviews-filters-toggle__count {
+		background: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 70%,
+			var( --wp-components-color-accent-darker-20 )
+		);
+		color: var( --dashboard__text-color );
+		outline-color: var( --dashboard-surface__background-color );
 	}
 
 	.dataviews-footer {
