@@ -1,12 +1,14 @@
 import { DisplayVariant } from '../../../utils/purchase';
 import CancellationMainContent from './cancellation-main-content';
 import DomainOptionsContent from './domain-options-content';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
 	Domain,
 	AtomicTransfer,
 	Site,
+	CancellationFeature,
 	UpgradesCancelFeaturesResponse,
 } from '@automattic/api-core';
 
@@ -22,6 +24,8 @@ interface CancellationPreSurveyContentProps {
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isBusy?: boolean;
+	additionalPurchases?: PurchaseForCopy[];
+	cancellationFeatures?: CancellationFeature[];
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
@@ -45,6 +49,8 @@ export default function CancellationPreSurveyContent( {
 	state,
 	purchaseCancelFeatures,
 	isBusy,
+	additionalPurchases,
+	cancellationFeatures,
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
@@ -79,6 +85,8 @@ export default function CancellationPreSurveyContent( {
 			state={ state }
 			purchaseCancelFeatures={ purchaseCancelFeatures }
 			isBusy={ isBusy }
+			additionalPurchases={ additionalPurchases }
+			cancellationFeatures={ cancellationFeatures }
 			onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 			onDomainConfirmationChange={ onDomainConfirmationChange }
 			onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }

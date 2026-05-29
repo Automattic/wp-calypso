@@ -294,18 +294,22 @@ export const purchaseSettingsRoute = createRoute( {
 		cancelled?: true;
 		downgraded?: true;
 		intent?: 'auto-renew';
+		cancelledCount?: number;
 	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
 		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
 		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
 		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
+		const rawCount = Number( search.cancelledCount );
+		const cancelledCount = Number.isFinite( rawCount ) && rawCount > 1 ? rawCount : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
 			...( isUpgraded ? { upgraded: true } : {} ),
 			...( isCancelled ? { cancelled: true } : {} ),
 			...( isDowngraded ? { downgraded: true } : {} ),
 			...( intent ? { intent } : {} ),
+			...( cancelledCount ? { cancelledCount } : {} ),
 		};
 	},
 } );
@@ -315,6 +319,10 @@ export const purchaseSettingsIndexRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { purchaseId } } ) => {
 		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+
+		// Preload user purchases so CancelOrRemoveActionButton and
+		// ManageSubscriptionCard have data on first render (deep links).
+		await queryClient.ensureQueryData( userPurchasesQuery() );
 
 		// Preload site and storage data for wpcom plans
 		if ( purchase.site_slug && purchase.blog_id && ! purchase.is_attached_to_holding_site ) {
@@ -440,7 +448,13 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+	validateSearch: (
+		search
+	): {
+		intent?: CancelIntent;
+		additionalPurchaseIds?: string;
+		source?: 'auto-renew-toggle';
+	} => {
 		return {
 			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
@@ -450,15 +464,24 @@ export const cancelPurchaseRoute = createRoute( {
 			...( typeof search.additionalPurchaseIds === 'string'
 				? { additionalPurchaseIds: search.additionalPurchaseIds }
 				: {} ),
+			...( search.source === 'auto-renew-toggle' ? { source: 'auto-renew-toggle' as const } : {} ),
 		};
 	},
-	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
-	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
+	loaderDeps: ( { search } ) => ( {
+		intent: search.intent,
+		additionalPurchaseIds: search.additionalPurchaseIds,
+	} ),
+	loader: async ( { parentMatchPromise, deps: { intent, additionalPurchaseIds } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( ! purchase ) {
 			return { purchase: undefined, intent };
 		}
+		const additionalIds =
+			additionalPurchaseIds
+				?.split( ',' )
+				.map( Number )
+				.filter( ( id ) => id > 0 ) ?? [];
 		await Promise.all( [
 			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( productsQuery() ),
@@ -467,6 +490,9 @@ export const cancelPurchaseRoute = createRoute( {
 			// Prefetch the default (control) variant; the component refetches
 			// under the 'treatment' key when the split-cancel-remove flag is on.
 			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
+			...additionalIds.map( ( id ) =>
+				queryClient.ensureQueryData( purchaseCancelFeaturesQuery( id ) )
+			),
 		] );
 		return { purchase, intent };
 	},

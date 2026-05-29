@@ -30,6 +30,7 @@ import { invokeSurvicateEvent } from '@automattic/survicate';
 import {
 	useSuspenseQuery,
 	useQuery,
+	useQueries,
 	useMutation,
 	useQueryClient,
 	type QueryCacheNotifyEvent,
@@ -99,6 +100,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -117,6 +119,7 @@ type TopNoticeArgs = {
 	purchase: Purchase;
 	intent: CancelIntent | null;
 	isSplitCancelRemoveEnabled: boolean;
+	additionalPurchases?: PurchaseForCopy[];
 };
 
 /**
@@ -133,6 +136,7 @@ function renderTopNotice( args: TopNoticeArgs ) {
 		purchase,
 		intent,
 		isSplitCancelRemoveEnabled,
+		additionalPurchases,
 	} = args;
 
 	if ( surveyShown || showDomainOptionsStep ) {
@@ -161,6 +165,7 @@ function renderTopNotice( args: TopNoticeArgs ) {
 			purchase={ purchase }
 			displayVariant={ displayVariant }
 			intent={ intent }
+			additionalPurchases={ additionalPurchases }
 		/>
 	);
 }
@@ -545,11 +550,55 @@ function CancelPurchaseInner() {
 	const cancelSearch = useSearch( { from: cancelPurchaseRoute.fullPath } );
 	const intent = getCancelIntentFromSearch( cancelSearch );
 	const displayVariant = getDisplayVariant( intent, flowType );
-	const getCancelledSearch = () => ( {
+	const getCancelledSearch = ( cancelledCount?: number ) => ( {
 		cancelled: true as const,
 		...( intent === 'auto-renew' ? { intent: 'auto-renew' as const } : {} ),
+		...( cancelledCount && cancelledCount > 1 ? { cancelledCount } : {} ),
 	} );
 	const mutationFlowType = getMutationFlowType( intent, purchase );
+
+	// Parse additional purchase IDs from the site-level interstitial
+	const rawAdditionalIds = cancelSearch.additionalPurchaseIds;
+	const additionalPurchaseIds: number[] = rawAdditionalIds
+		? rawAdditionalIds
+				.split( ',' )
+				.map( Number )
+				.filter( ( id: number ) => id > 0 && Number.isFinite( id ) )
+		: [];
+	const additionalPurchases = sitePurchases.filter( ( p ) =>
+		additionalPurchaseIds.includes( p.ID )
+	);
+
+	// Fetch cancellation features for additional purchases (loader prefetched these)
+	const additionalFeaturesQueries = useQueries( {
+		queries: additionalPurchaseIds.map( ( id ) => purchaseCancelFeaturesQuery( id ) ),
+	} );
+	const allCancellationFeatures = [
+		...( purchaseCancelFeatures?.features ?? [] ),
+		...additionalFeaturesQueries.flatMap( ( q ) => q.data?.features ?? [] ),
+	];
+	const seen = new Set< string >();
+	const dedupedCancellationFeatures = allCancellationFeatures.filter( ( f ) => {
+		if ( seen.has( f.feature_id ) ) {
+			return false;
+		}
+		seen.add( f.feature_id );
+		return true;
+	} );
+
+	// Narrow to PurchaseForCopy for the copy helpers
+	const additionalPurchasesForCopy: PurchaseForCopy[] = additionalPurchases.map( ( p ) => ( {
+		is_plan: p.is_plan,
+		is_domain_registration: p.is_domain_registration,
+		is_jetpack_plan_or_product: p.is_jetpack_plan_or_product,
+		product_slug: p.product_slug,
+		product_name: p.product_name,
+		product_type: p.product_type,
+		expiry_date: p.expiry_date,
+		expiry_status: p.expiry_status,
+		meta: p.meta,
+		domain: p.domain,
+	} ) );
 
 	const cancellationOffer = cancellationOffers?.length ? cancellationOffers[ 0 ] : undefined;
 
@@ -960,6 +1009,42 @@ function CancelPurchaseInner() {
 		return mutationFlowType;
 	};
 
+	// Process additional purchases selected on the site-level interstitial.
+	// Runs after the primary purchase mutation succeeds. Sequential processing,
+	// individual failures are non-fatal — the primary already succeeded.
+	const processAdditionalPurchases = async (): Promise< number > => {
+		if ( ! additionalPurchases.length ) {
+			return 0;
+		}
+		let count = 0;
+		for ( const p of additionalPurchases ) {
+			try {
+				if ( intent === 'remove' ) {
+					if ( hasAmountAvailableToRefund( p ) ) {
+						await cancelAndRefundMutation.mutateAsync( {
+							purchaseId: p.ID,
+							options: { product_id: p.product_id, cancel_bundled_domain: false },
+						} );
+					} else {
+						await setPurchaseAutoRenewMutation.mutateAsync( {
+							purchaseId: p.ID,
+							autoRenew: false,
+						} );
+					}
+				} else {
+					await setPurchaseAutoRenewMutation.mutateAsync( {
+						purchaseId: p.ID,
+						autoRenew: false,
+					} );
+				}
+				count++;
+			} catch {
+				// Individual failures are non-fatal — primary already succeeded
+			}
+		}
+		return count;
+	};
+
 	// Fire the cancel mutation at confirm-time and only advance to the survey
 	// once it resolves. The snackbar is deferred to onSurveyComplete so it
 	// shows on the destination (purchase management) screen, not mid-survey.
@@ -1209,15 +1294,19 @@ function CancelPurchaseInner() {
 					},
 				},
 				{
-					onSuccess: () => {
+					onSuccess: async () => {
 						if ( purchase.is_plan ) {
 							cancelAllMarketplaceSubscriptions();
 						}
+						const additionalCount = await processAdditionalPurchases();
 						invokeSurvicateEvent( 'purchaseRefunded' );
 						navigate( {
 							to: purchaseSettingsRoute.fullPath,
 							params: { purchaseId: purchase.ID },
-							search: { refunded: true },
+							search: {
+								refunded: true,
+								...( 1 + additionalCount > 1 ? { cancelledCount: 1 + additionalCount } : {} ),
+							},
 						} );
 					},
 					onError: ( error: Error ) => {
@@ -1231,11 +1320,12 @@ function CancelPurchaseInner() {
 		setPurchaseAutoRenewMutation.mutate(
 			{ purchaseId: purchase.ID, autoRenew: false },
 			{
-				onSuccess: () => {
+				onSuccess: async () => {
+					const additionalCount = await processAdditionalPurchases();
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
-						search: getCancelledSearch(),
+						search: getCancelledSearch( 1 + additionalCount ),
 					} );
 				},
 				onError: () => {
@@ -1333,20 +1423,25 @@ function CancelPurchaseInner() {
 			//    and self-dismisses its notice. The cache guard's re-strip happens
 			//    synchronously inside the QueryCache notify callback, so the list's
 			//    useEffect never observes transient successes-path reappearances.
-			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
-				cleanupGuard();
-				queryClient.setQueryData(
-					userPurchasesQuery().queryKey,
-					( old: Purchase[] | undefined ) => {
-						const list = old ?? [];
-						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
-					}
-				);
-				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
-					type: 'snackbar',
+			removePurchaseMutator
+				.mutateAsync( purchase.ID )
+				.then( () => {
+					void processAdditionalPurchases();
+				} )
+				.catch( () => {
+					cleanupGuard();
+					queryClient.setQueryData(
+						userPurchasesQuery().queryKey,
+						( old: Purchase[] | undefined ) => {
+							const list = old ?? [];
+							return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+						}
+					);
+					createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
+						type: 'snackbar',
+					} );
+					queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 				} );
-				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
-			} );
 		}, 1500 );
 	};
 
@@ -1354,12 +1449,13 @@ function CancelPurchaseInner() {
 		setPurchaseAutoRenewMutation.mutate(
 			{ purchaseId: purchase.ID, autoRenew: false },
 			{
-				onSuccess: () => {
+				onSuccess: async () => {
+					const additionalCount = await processAdditionalPurchases();
 					invokeSurvicateEvent( 'purchaseCancelled' );
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
-						search: getCancelledSearch(),
+						search: getCancelledSearch( 1 + additionalCount ),
 					} );
 				},
 				onError: () => {
@@ -1380,7 +1476,7 @@ function CancelPurchaseInner() {
 		);
 	};
 
-	const onSurveyComplete = () => {
+	const onSurveyComplete = async () => {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
 
@@ -1388,15 +1484,18 @@ function CancelPurchaseInner() {
 
 		if ( shouldFireMutationOnConfirm() ) {
 			// Cancel intent: the mutation already fired at confirm-click via
-			// fireMutationFromConfirm. Navigate with the appropriate search param
-			// so the inline notice renders on the destination screen.
+			// fireMutationFromConfirm. Process additional purchases from the
+			// site-level interstitial, then navigate with the appropriate
+			// search param so the inline notice renders on the destination screen.
+			const additionalCount = await processAdditionalPurchases();
+			const cancelledCount = 1 + additionalCount;
 			navigate( {
 				to: purchaseSettingsRoute.fullPath,
 				params: { purchaseId: purchase.ID },
 				search:
 					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-						? { refunded: true }
-						: getCancelledSearch(),
+						? { refunded: true, ...( cancelledCount > 1 ? { cancelledCount } : {} ) }
+						: getCancelledSearch( cancelledCount ),
 			} );
 			return;
 		}
@@ -1749,6 +1848,7 @@ function CancelPurchaseInner() {
 							purchase={ purchase }
 							surveyStep={ state.surveyStep }
 							surveyShown={ state.surveyShown }
+							additionalPurchases={ additionalPurchasesForCopy }
 						/>
 					}
 					prefix={ <Breadcrumbs length={ 4 } /> }
@@ -1762,6 +1862,7 @@ function CancelPurchaseInner() {
 				purchase,
 				intent,
 				isSplitCancelRemoveEnabled,
+				additionalPurchases: additionalPurchasesForCopy,
 			} ) }
 		>
 			{ isSolutionsStep ? (
@@ -1783,7 +1884,9 @@ function CancelPurchaseInner() {
 									activeMarketplaceSubscriptions={ activeSubscriptions }
 									state={ state }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
-									isBusy={ isMutationPending }
+									isBusy={ isMutationPending || state.isLoading }
+									additionalPurchases={ additionalPurchasesForCopy }
+									cancellationFeatures={ dedupedCancellationFeatures }
 									onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 									onDomainConfirmationChange={ onDomainConfirmationChange }
 									onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }

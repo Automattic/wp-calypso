@@ -3,9 +3,12 @@
  */
 
 import {
+	buildCategoriesNounPhrase,
 	formatTimeRemaining,
+	getEarliestExpiryDate,
 	getProductCategory,
 	getCancellationHeading,
+	getCancelLossIntro,
 	getTopNoticeCopy,
 	getCheckboxLabel,
 	getButtonLabels,
@@ -308,6 +311,81 @@ describe( 'getFallbackLossItems', () => {
 				makePurchaseForCategory( 'one-time', { product_name: 'Do it for me: Website Design' } )
 			)
 		).toEqual( [ 'Do it for me: Website Design' ] );
+	} );
+} );
+
+describe( 'buildCategoriesNounPhrase', () => {
+	test( 'single category returns the noun alone', () => {
+		expect( buildCategoriesNounPhrase( [ makePurchaseForCategory( 'plan' ) ] ) ).toBe( 'plan' );
+	} );
+	test( 'two distinct categories joined with "and"', () => {
+		expect(
+			buildCategoriesNounPhrase( [
+				makePurchaseForCategory( 'plan' ),
+				makePurchaseForCategory( 'domain' ),
+			] )
+		).toBe( 'plan and domain' );
+	} );
+	test( 'three distinct categories use explicit sprintf template', () => {
+		const phrase = buildCategoriesNounPhrase( [
+			makePurchaseForCategory( 'plan' ),
+			makePurchaseForCategory( 'domain' ),
+			makePurchaseForCategory( 'email' ),
+		] );
+		expect( phrase ).toBe( 'plan, domain, and email' );
+	} );
+	test( 'four distinct categories use explicit sprintf template', () => {
+		const phrase = buildCategoriesNounPhrase( [
+			makePurchaseForCategory( 'plan' ),
+			makePurchaseForCategory( 'domain' ),
+			makePurchaseForCategory( 'email' ),
+			makePurchaseForCategory( 'other' ),
+		] );
+		expect( phrase ).toBe( 'plan, domain, email, and subscription' );
+	} );
+	test( 'duplicate categories are deduplicated', () => {
+		expect(
+			buildCategoriesNounPhrase( [
+				makePurchaseForCategory( 'plan' ),
+				makePurchaseForCategory( 'plan' ),
+			] )
+		).toBe( 'plan' );
+	} );
+} );
+
+describe( 'getEarliestExpiryDate', () => {
+	test( 'returns the earliest date among multiple purchases', () => {
+		const purchases = [
+			makePurchase( { expiry_date: '2027-06-01T00:00:00Z' } ),
+			makePurchase( { expiry_date: '2027-04-01T00:00:00Z' } ),
+			makePurchase( { expiry_date: '2027-09-01T00:00:00Z' } ),
+		];
+		expect( getEarliestExpiryDate( purchases ) ).toBe( '2027-04-01T00:00:00Z' );
+	} );
+	test( 'skips purchases with no expiry_date', () => {
+		const purchases = [
+			makePurchase( { expiry_date: '' } ),
+			makePurchase( { expiry_date: '2027-08-15T00:00:00Z' } ),
+		];
+		expect( getEarliestExpiryDate( purchases ) ).toBe( '2027-08-15T00:00:00Z' );
+	} );
+	test( 'returns empty string when no purchase has an expiry', () => {
+		expect(
+			getEarliestExpiryDate( [
+				makePurchase( { expiry_date: '' } ),
+				makePurchase( { expiry_date: '' } ),
+			] )
+		).toBe( '' );
+	} );
+} );
+
+describe( 'getCancelLossIntro (multi-purchase wiring)', () => {
+	test( 'includes the formatted date and noun phrase when additional purchases present', () => {
+		const primary = makePurchaseForCategory( 'plan' );
+		const additional = [ makePurchaseForCategory( 'domain' ) ];
+		const intro = getCancelLossIntro( primary, 'April 16, 2027', additional );
+		expect( intro ).toMatch( /April/ );
+		expect( intro ).toMatch( /plan and domain/ );
 	} );
 } );
 

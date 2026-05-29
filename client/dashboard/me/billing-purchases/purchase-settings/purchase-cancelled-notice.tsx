@@ -13,10 +13,12 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseCancelledNotice( {
 	purchase,
 	intent,
+	cancelledCount,
 	onClose,
 }: {
 	purchase: Purchase;
 	intent?: 'auto-renew';
+	cancelledCount?: number;
 	onClose: () => void;
 } ) {
 	// One-time purchases and edge cases without an expiry can't render a
@@ -68,16 +70,25 @@ export function PurchaseCancelledNotice( {
 		);
 	}
 
+	const isMultiple = cancelledCount && cancelledCount > 1;
 	const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
 	return (
 		<Notice variant="success" onClose={ onClose }>
-			{ sprintf(
-				/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription, %(expiryDate)s is a date like "April 21, 2027" */
-				__(
-					'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
-				),
-				{ productNoun, expiryDate }
-			) }
+			{ isMultiple
+				? sprintf(
+						/* translators: %(productNoun)s is plan/domain/email, %(expiryDate)s is a date like "April 21, 2027" */
+						__(
+							'Your subscriptions were cancelled and you won\u2019t be billed again. You\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
+						),
+						{ productNoun, expiryDate }
+				  )
+				: sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription, %(expiryDate)s is a date like "April 21, 2027" */
+						__(
+							'Your subscription is cancelled and you won\u2019t be billed again. You\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
+						),
+						{ productNoun, expiryDate }
+				  ) }
 		</Notice>
 	);
 }

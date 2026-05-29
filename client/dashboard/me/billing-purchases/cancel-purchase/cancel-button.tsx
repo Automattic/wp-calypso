@@ -4,6 +4,7 @@ import { DisplayVariant } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
 import { getButtonLabels } from './get-confirmation-copy';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -16,6 +17,7 @@ interface CancelButtonProps {
 	disabled?: boolean;
 	isBusy?: boolean;
 	onClick?: () => void;
+	additionalPurchases?: PurchaseForCopy[];
 }
 
 export default function CancelButton( {
@@ -27,6 +29,7 @@ export default function CancelButton( {
 	disabled,
 	isBusy,
 	onClick,
+	additionalPurchases,
 }: CancelButtonProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
@@ -49,6 +52,7 @@ export default function CancelButton( {
 		: getButtonLabels( {
 				purchase,
 				intent: displayVariant,
+				additionalPurchases,
 		  } ).primary;
 
 	return (

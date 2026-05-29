@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { DisplayVariant } from '../../../utils/purchase';
 import { CANCELLATION_OFFER_STEP } from './cancel-purchase-form/steps';
 import { getCancellationHeading } from './get-confirmation-copy';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelHeaderTitleProps {
@@ -9,6 +10,7 @@ interface CancelHeaderTitleProps {
 	purchase: Purchase;
 	surveyStep?: string;
 	surveyShown?: boolean;
+	additionalPurchases?: PurchaseForCopy[];
 }
 
 export default function CancelHeaderTitle( {
@@ -16,6 +18,7 @@ export default function CancelHeaderTitle( {
 	purchase,
 	surveyStep,
 	surveyShown,
+	additionalPurchases,
 }: CancelHeaderTitleProps ) {
 	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return __( 'Thanks for your feedback' );
@@ -31,5 +34,6 @@ export default function CancelHeaderTitle( {
 	return getCancellationHeading( {
 		purchase,
 		intent: displayVariant,
+		additionalPurchases,
 	} );
 }

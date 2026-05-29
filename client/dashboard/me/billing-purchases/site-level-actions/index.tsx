@@ -191,7 +191,10 @@ export default function SiteLevelActions() {
 			navigate( {
 				to: cancelPurchaseRoute.fullPath,
 				params: { purchaseId: String( purchase.ID ) },
-				search: { intent: getCancelIntent( action ) },
+				search: {
+					intent: getCancelIntent( action ),
+					...( action === 'auto-renew' ? { source: 'auto-renew-toggle' as const } : {} ),
+				},
 				replace: true,
 			} );
 		}
@@ -228,13 +231,23 @@ export default function SiteLevelActions() {
 			return;
 		}
 
-		const additionalIds = selectedIds.filter( ( id ) => id !== String( purchase.ID ) );
+		// Pick the most important selected purchase as the primary for the
+		// cancel route — plan > non-plan — so the survey matches the highest-
+		// value product. The rest become additionalPurchaseIds.
+		const selectedPurchases = eligiblePurchases.filter( ( p ) =>
+			selectedIds.includes( String( p.ID ) )
+		);
+		const primaryPurchase = selectedPurchases.find( ( p ) => p.is_plan ) ?? selectedPurchases[ 0 ];
+		const additionalIds = selectedPurchases
+			.filter( ( p ) => p.ID !== primaryPurchase.ID )
+			.map( ( p ) => String( p.ID ) );
 		navigate( {
 			to: cancelPurchaseRoute.fullPath,
-			params: { purchaseId: purchase.ID },
+			params: { purchaseId: primaryPurchase.ID },
 			search: {
 				intent: getCancelIntent( action ),
 				...( additionalIds.length > 0 ? { additionalPurchaseIds: additionalIds.join( ',' ) } : {} ),
+				...( action === 'auto-renew' ? { source: 'auto-renew-toggle' as const } : {} ),
 			},
 		} );
 	};
@@ -253,13 +266,13 @@ export default function SiteLevelActions() {
 			case 'cancel':
 				return (
 					<Button variant="primary" isDestructive onClick={ handleContinue }>
-						{ __( 'Continue to cancel' ) }
+						{ __( 'Continue cancellation' ) }
 					</Button>
 				);
 			case 'remove':
 				return (
 					<Button variant="primary" isDestructive onClick={ handleContinue }>
-						{ __( 'Continue to remove' ) }
+						{ __( 'Continue removal' ) }
 					</Button>
 				);
 			case 'auto-renew':

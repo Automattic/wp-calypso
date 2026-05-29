@@ -9,6 +9,7 @@ import {
 	domainQuery,
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
+	userPurchasesQuery,
 	userPurchaseSetAutoRenewQuery,
 	siteDifmWebsiteContentQuery,
 	siteJetpackKeysQuery,
@@ -58,6 +59,7 @@ import {
 	cancelPurchaseRoute,
 	changePaymentMethodRoute,
 	purchaseSettingsRoute,
+	siteActionsRoute,
 } from '../../../app/router/me';
 import { getCurrentDashboard } from '../../../app/routing';
 import { ActionList } from '../../../components/action-list';
@@ -281,17 +283,36 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const locale = useLocale();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+	const { data: allPurchases } = useQuery( userPurchasesQuery() );
 
 	// WordAds and non-primary domain warnings are shown inline on the confirmation screen
 	// under purchases/split-cancel-remove (see cancellation-main-content.tsx).
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
 
-	const goToCancel = ( intent?: 'cancel' | 'remove' ) =>
+	const goToCancel = ( intent?: 'cancel' | 'remove' ) => {
+		if ( isSplitEnabled && intent ) {
+			const sitePurchases = ( allPurchases ?? [] ).filter(
+				( p ) => p.blog_id === purchase.blog_id
+			);
+			const eligible =
+				intent === 'cancel'
+					? sitePurchases.filter( ( p ) => p.is_auto_renew_enabled || p.ID === purchase.ID )
+					: sitePurchases;
+
+			if ( eligible.length > 1 ) {
+				navigate( {
+					to: siteActionsRoute.fullPath,
+					params: { purchaseId: purchase.ID, action: intent },
+				} );
+				return;
+			}
+		}
 		navigate( {
 			to: cancelPurchaseRoute.fullPath,
 			params: { purchaseId: purchase.ID },
 			...( intent ? { search: { intent } } : {} ),
 		} );
+	};
 
 	if ( isSplitEnabled ) {
 		const hasRefund = hasAmountAvailableToRefund( purchase );
@@ -708,7 +729,7 @@ function getFields( {
 						if ( isInExpirationGracePeriod( purchase ) ) {
 							return __( 'Pending renewal' );
 						}
-						// translators: %(date)s is a formatted date string
+						// translators: %(date)s is a formatted billing date like "January 1, 2027"
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						} );
@@ -719,13 +740,13 @@ function getFields( {
 						} );
 						if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 							return sprintf(
-								// translators: %(date)s is a formatted expiry date
+								// translators: %(date)s is a formatted expiry date like "January 1, 2027"
 								__( 'Expired on %(date)s.' ),
 								{ date }
 							);
 						}
 						return sprintf(
-							// translators: %(date)s is a formatted expiry date
+							// translators: %(date)s is a formatted expiry date like "January 1, 2027"
 							__( 'Expires on %(date)s.' ),
 							{ date }
 						);
@@ -810,6 +831,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { data: allPurchases } = useQuery( userPurchasesQuery() );
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return null;
@@ -825,6 +847,19 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 					onChange={ ( newData ) => {
 						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
 							if ( ! newData.is_auto_renew_enabled && isSplitCancelRemoveEnabled ) {
+								const sitePurchases = ( allPurchases ?? [] ).filter(
+									( p ) => p.blog_id === purchase.blog_id
+								);
+								const eligible = sitePurchases.filter(
+									( p ) => p.is_auto_renew_enabled || p.ID === purchase.ID
+								);
+								if ( eligible.length > 1 ) {
+									navigate( {
+										to: siteActionsRoute.fullPath,
+										params: { purchaseId: purchase.ID, action: 'auto-renew' as const },
+									} );
+									return;
+								}
 								navigate( {
 									to: cancelPurchaseRoute.fullPath,
 									params: { purchaseId: purchase.ID },
@@ -1272,7 +1307,7 @@ function PurchaseSecondSubtitle( {
 				<Text variant="muted">
 					{ description }{ ' ' }
 					{ sprintf(
-						// translators: %(numberOfMailboxes)d is a number of mailboxes and %(domain)s is a domain name
+						// translators: %(numberOfMailboxes)d is the number of mailboxes; %(domain)s is a domain name like "example.com"
 						_n(
 							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
 							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
@@ -1309,7 +1344,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return (
 			<MetadataItem
 				title={ sprintf(
-					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"), %(partnerName)s is the name of the business partner
+					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"); %(partnerName)s is the name of the business partner
 					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
 					{ subtitle, partnerName: purchase.partner_name }
 				) }

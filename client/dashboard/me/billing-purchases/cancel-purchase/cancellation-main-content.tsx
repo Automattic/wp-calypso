@@ -11,12 +11,14 @@ import CancelPurchaseFeatureList from './feature-list';
 import GSuiteAccessMessage from './gsuite-access-message';
 import PlanProductRevertContent from './plan-product-revert-content';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
 	Domain,
 	AtomicTransfer,
 	Site,
+	CancellationFeature,
 	UpgradesCancelFeaturesResponse,
 } from '@automattic/api-core';
 
@@ -32,6 +34,8 @@ interface CancellationMainContentProps {
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isBusy?: boolean;
+	additionalPurchases?: PurchaseForCopy[];
+	cancellationFeatures?: CancellationFeature[];
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
@@ -65,6 +69,8 @@ export default function CancellationMainContent( {
 	state,
 	purchaseCancelFeatures,
 	isBusy,
+	additionalPurchases,
+	cancellationFeatures: cancellationFeaturesProp,
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
@@ -202,8 +208,9 @@ export default function CancellationMainContent( {
 		}
 	}
 
-	// Get features from the API endpoint for this product
-	const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
+	// When the parent provides pre-deduped combined features (multi-purchase),
+	// use those. Otherwise fall back to the single-purchase API response.
+	const cancellationFeatures = cancellationFeaturesProp ?? purchaseCancelFeatures?.features ?? [];
 
 	let showDefaultChanges = false;
 	if ( ! isJetpack && ! isAkismet && ! isGSuite && ! isDomainRegistrationPurchase ) {
@@ -250,6 +257,7 @@ export default function CancellationMainContent( {
 				displayVariant={ displayVariant }
 				cancellationFeatures={ cancellationFeatures }
 				cancellationChanges={ cancellationChanges }
+				additionalPurchases={ additionalPurchases }
 			/>
 
 			<PlanProductRevertContent
@@ -259,6 +267,7 @@ export default function CancellationMainContent( {
 				atomicTransfer={ atomicTransfer }
 				state={ state }
 				isBusy={ isBusy }
+				additionalPurchases={ additionalPurchases }
 				onDomainConfirmationChange={ onDomainConfirmationChange }
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 				onCustomerConfirmedUnderstandingAtomicPlanRevert={

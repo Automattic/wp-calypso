@@ -10,11 +10,13 @@ import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
 import {
 	getCancelLossIntro,
+	getEarliestExpiryDate,
 	getFallbackLossItems,
 	getRemoveLossIntro,
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
 } from './get-confirmation-copy';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -27,11 +29,13 @@ const CancelPurchaseFeatureList = ( {
 	displayVariant,
 	cancellationFeatures,
 	cancellationChanges,
+	additionalPurchases,
 }: {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
+	additionalPurchases?: PurchaseForCopy[];
 } ) => {
 	// When the server returns no feature list, fall back to a per-product-type
 	// item so every confirmation screen shows at least one concrete thing the
@@ -54,20 +58,23 @@ const CancelPurchaseFeatureList = ( {
 	// Remove happens immediately, no future date to surface.
 	// Use non-breaking spaces in the formatted date so it never wraps mid-date
 	// (e.g. "April\n16, 2027").
-	const fullExpiryDate = purchase.expiry_date
-		? intlFormat( purchase.expiry_date, { dateStyle: 'long' }, { locale: 'en-US' } ).replace(
+	const expirySource = additionalPurchases?.length
+		? getEarliestExpiryDate( [ purchase, ...additionalPurchases ] )
+		: purchase.expiry_date;
+	const fullExpiryDate = expirySource
+		? intlFormat( expirySource, { dateStyle: 'long' }, { locale: 'en-US' } ).replace(
 				/ /g,
 				'\u00a0'
 		  )
 		: '';
 	const introCopy =
 		displayVariant === 'remove'
-			? getRemoveLossIntro( purchase )
-			: getCancelLossIntro( purchase, fullExpiryDate );
+			? getRemoveLossIntro( purchase, additionalPurchases )
+			: getCancelLossIntro( purchase, fullExpiryDate, additionalPurchases );
 
 	return (
 		<VStack spacing={ 6 }>
-			{ lossItems.length === 1 ? (
+			{ lossItems.length === 1 && ! additionalPurchases?.length ? (
 				<Text as="p">
 					{ displayVariant === 'remove'
 						? getSingleItemRemoveCopy( purchase )

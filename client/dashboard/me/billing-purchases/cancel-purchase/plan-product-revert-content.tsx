@@ -4,6 +4,7 @@ import { DisplayVariant } from '../../../utils/purchase';
 import CancelButton from './cancel-button';
 import ConfirmCheckbox from './confirm-checkbox';
 import KeepSubscriptionButton from './keep-subscription-button';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -14,6 +15,7 @@ interface PlanProductRevertContentProps {
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
 	isBusy?: boolean;
+	additionalPurchases?: PurchaseForCopy[];
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
@@ -28,6 +30,7 @@ export default function PlanProductRevertContent( {
 	atomicTransfer,
 	state,
 	isBusy,
+	additionalPurchases,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
@@ -59,11 +62,13 @@ export default function PlanProductRevertContent( {
 					state={ state }
 					isBusy={ isBusy }
 					onClick={ onCancelClick }
+					additionalPurchases={ additionalPurchases }
 				/>
 				<KeepSubscriptionButton
 					purchase={ purchase }
 					intent={ displayVariant }
 					onKeepSubscriptionClick={ onKeepSubscriptionClick }
+					additionalPurchases={ additionalPurchases }
 				/>
 			</ButtonStack>
 		</VStack>

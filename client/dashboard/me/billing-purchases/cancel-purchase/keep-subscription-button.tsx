@@ -3,22 +3,25 @@ import { Button } from '@wordpress/components';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { DisplayVariant } from '../../../utils/purchase';
 import { getButtonLabels } from './get-confirmation-copy';
+import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface KeepSubscriptionButtonProps {
 	purchase: Purchase;
 	intent: DisplayVariant;
 	onKeepSubscriptionClick: () => void;
+	additionalPurchases?: PurchaseForCopy[];
 }
 
 export default function KeepSubscriptionButton( {
 	purchase,
 	intent,
 	onKeepSubscriptionClick,
+	additionalPurchases,
 }: KeepSubscriptionButtonProps ) {
 	const navigate = useNavigate();
 
-	const label = getButtonLabels( { purchase, intent } ).secondary;
+	const label = getButtonLabels( { purchase, intent, additionalPurchases } ).secondary;
 
 	return (
 		<Button
