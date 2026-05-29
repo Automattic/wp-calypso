@@ -71,12 +71,6 @@ export const PLAN_PERSONAL_3_YEARS = 'personal-bundle-3y';
 export const PLAN_WPCOM_CHOOSE_LOW_YEARLY = 'wp_bundle_choose_low_yearly';
 export const PLAN_WPCOM_CHOOSE_MID_YEARLY = 'wp_bundle_choose_mid_yearly';
 export const PLAN_WPCOM_CHOOSE_HIGH_YEARLY = 'wp_bundle_choose_high_yearly';
-
-export const WPCOM_CHOOSE_PLANS = < const >[
-	PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-	PLAN_WPCOM_CHOOSE_MID_YEARLY,
-	PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
-];
 export const PLAN_BLOGGER = 'blogger-bundle';
 export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
