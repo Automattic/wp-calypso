@@ -1,4 +1,4 @@
-import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
+import { BrowserManager, PostCheckoutSetupSitePage, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
@@ -59,11 +59,16 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 75 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on Home', async function () {
-				await page.waitForURL( /home/ );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout, instead of going straight to Home.
+				await new PostCheckoutSetupSitePage( page ).waitUntilLoaded();
 			} );
 
 			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
+				await page.goto(
+					helperData.getCalypsoURL( `home/${ newSiteDetails?.blog_details.site_slug as string }` )
+				);
 				const currentPlan = await componentSidebar.getCurrentPlanName();
 				expect( currentPlan ).toBe( planName );
 			} );
