@@ -61,7 +61,7 @@ Invoke-Checked { yarn run build }
 # bookkeeping files. Drop everything but the .appx packages so the artifact upload
 # doesn't ferry thousands of loose files.
 Get-ChildItem -Path release -Directory -Filter 'win*-unpacked' | Remove-Item -Recurse -Force
-Get-ChildItem -Path release -File -Include '*.yml', 'builder-debug.yml' | Remove-Item -Force
+Get-ChildItem -Path release -File -Filter '*.yml' | Remove-Item -Force
 
 $appx = @(Get-ChildItem -Path release -Filter '*.appx' -ErrorAction SilentlyContinue)
 if (-not $appx) {
