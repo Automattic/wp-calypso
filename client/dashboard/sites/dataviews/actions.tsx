@@ -109,7 +109,6 @@ export function useActions(): Action< Site >[] {
 		},
 		{
 			id: 'restore',
-			isPrimary: true,
 			icon: backup,
 			label: __( 'Restore site' ),
 			isEligible: ( item: Site ) => canRestoreSite( item ),
