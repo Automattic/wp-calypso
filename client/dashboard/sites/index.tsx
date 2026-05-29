@@ -268,10 +268,10 @@ export default function Sites() {
 									title={ __( 'You have no deleted sites' ) }
 									description={ createInterpolateElement(
 										__(
-											'Sites that are deleted can be restored within the first 30 days of deletion. <a>Learn how to restore a deleted site</a>.'
+											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
 										),
 										{
-											a: (
+											learnLink: (
 												<a
 													href={ localizeUrl(
 														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
