@@ -41,6 +41,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	.components-popover:has(.wpnc-app) {
 		will-change: auto;
 		pointer-events: none;
+		outline: none;
 
 		.components-popover__content {
 			background: transparent;
