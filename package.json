@@ -332,6 +332,7 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
+		"@babel/runtime@npm:7.25.7": "7.29.2",
 		"@tanstack/history": "1.114.29",
 		"@tanstack/react-router": "1.114.34",
 		"@tanstack/react-store": "0.7.7",
