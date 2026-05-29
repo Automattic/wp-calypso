@@ -8,6 +8,23 @@
 	transition: max-height 0.25s ease-out, padding 0.25s ease-out;
 	max-height: 1000px;
 
+	// `PageSection`'s default `padding: 40px 0` strips the layout's horizontal
+	// padding from the wrapper, and its inner `.page-section` then adds its
+	// own 16/40px `padding-inline`. Restore the layout's 16/64px on the
+	// wrapper and zero out the inner padding so the heading aligns with the
+	// breadcrumb above it.
+	&.page-section-wrapper {
+		padding-inline: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-inline: 64px;
+		}
+
+		> * {
+			padding-inline: 0;
+		}
+	}
+
 	.page-section__header-title,
 	.page-section__header-description {
 		color: var(--color-text-inverted);
