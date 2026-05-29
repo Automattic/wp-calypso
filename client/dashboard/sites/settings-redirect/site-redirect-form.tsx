@@ -19,6 +19,7 @@ interface SiteRedirectFormProps {
 	children?: React.ReactNode;
 	disableWhenUnchanged?: boolean;
 	onFormDataChange?: ( formData: SiteRedirectFormData ) => void;
+	actions?: React.ReactNode;
 }
 
 export default function SiteRedirectForm( {
@@ -29,6 +30,7 @@ export default function SiteRedirectForm( {
 	children,
 	disableWhenUnchanged = false,
 	onFormDataChange,
+	actions,
 }: SiteRedirectFormProps ) {
 	const [ formData, setFormData ] = useState< SiteRedirectFormData >( {
 		redirect: initialValue,
@@ -98,6 +100,7 @@ export default function SiteRedirectForm( {
 					>
 						{ submitButtonText }
 					</Button>
+					{ actions }
 				</ButtonStack>
 				{ children }
 			</VStack>

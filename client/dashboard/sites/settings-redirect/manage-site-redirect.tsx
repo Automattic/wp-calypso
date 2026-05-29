@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
+import DeleteSiteRedirectButton from './delete-site-redirect-action';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 interface ManageSiteRedirectProps {
@@ -49,6 +50,7 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 						onSubmit={ handleSubmit }
 						isSubmitting={ isPending }
 						disableWhenUnchanged
+						actions={ purchase ? <DeleteSiteRedirectButton purchase={ purchase } /> : undefined }
 					/>
 					{ purchase && (
 						<Text>
