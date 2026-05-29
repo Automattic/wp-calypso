@@ -397,7 +397,7 @@ function StepButtons( {
 					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
 					onClick={ () => {
-						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+						onClickAcceptForCancellationOffer?.();
 					} }
 					variant="primary"
 				>

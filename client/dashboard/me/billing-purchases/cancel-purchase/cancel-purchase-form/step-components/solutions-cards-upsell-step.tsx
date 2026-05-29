@@ -189,8 +189,7 @@ function getCardDescription( cardId: string ): string {
 		case 'change-plan':
 			return __( 'You can change to a plan with the features and pricing that work for you.' );
 		case 'renew-now-pay-less':
-			/* translators: % is the discount amount (e.g. 25%) */
-			return __( 'Get an exclusive 25% discount automatically applied at checkout.' );
+			return __( 'Get an exclusive 25%% discount automatically applied at checkout.' );
 		case 'switch-to-monthly':
 			return __( 'Keep things flexible with monthly billing.' );
 		case 'switch-to-yearly':
