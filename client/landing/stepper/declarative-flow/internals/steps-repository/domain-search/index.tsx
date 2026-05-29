@@ -46,6 +46,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { DomainFlowProgressStepper } from '../../../flows/domain/components/domain-flow-progress-stepper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -495,9 +496,12 @@ const DomainSearchStep: StepType< {
 					// page's primary affordance — the H1/subText are dropped so
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
-					isMobileViewport && query ? undefined : (
-						<Step.Heading text={ headerText } subText={ subHeaderText } />
-					)
+					<>
+						{ isDomainFlow( flow ) && <DomainFlowProgressStepper currentStep="domains" /> }
+						{ ! ( isMobileViewport && query ) && (
+							<Step.Heading text={ headerText } subText={ subHeaderText } />
+						) }
+					</>
 				}
 			>
 				{ domainSearchElement }
