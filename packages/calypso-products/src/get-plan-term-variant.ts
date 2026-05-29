@@ -16,7 +16,7 @@ export function getPlanSlugForTermVariant(
 
 	if ( plan ) {
 		return Object.values( PLANS_LIST )
-			.filter( ( { type } ) => type === plan.type )
+			.filter( ( { group, type } ) => type === plan.type && group === plan.group )
 			.find( ( { term } ) => term === planTerm )
 			?.getStoreSlug();
 	}
