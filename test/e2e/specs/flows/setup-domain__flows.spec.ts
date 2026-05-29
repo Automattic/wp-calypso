@@ -4,7 +4,6 @@ import {
 	NewSiteResponse,
 	NewTestUserDetails,
 	NewUserResponse,
-	PostCheckoutSetupSitePage,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { tags, test, expect } from '../../lib/pw-base';
@@ -270,6 +269,7 @@ test.describe(
 			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
 			pageMyProfile,
@@ -325,7 +325,7 @@ test.describe(
 				// Eligible paid plans now land on the post-checkout choice screen
 				// after checkout. This test re-enters the domain flow next, so just
 				// confirm checkout routed here rather than clicking through.
-				await new PostCheckoutSetupSitePage( page ).waitUntilLoaded();
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I enter the domain flow', async function () {
@@ -514,6 +514,7 @@ test.describe(
 			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
 			pageMyProfile,
@@ -569,7 +570,7 @@ test.describe(
 				// Eligible paid plans now land on the post-checkout choice screen
 				// after checkout. This test re-enters the domain flow next, so just
 				// confirm checkout routed here rather than clicking through.
-				await new PostCheckoutSetupSitePage( page ).waitUntilLoaded();
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I enter the domain flow with pre-selected site', async function () {

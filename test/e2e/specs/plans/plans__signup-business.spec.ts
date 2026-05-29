@@ -1,4 +1,4 @@
-import { BrowserManager, PostCheckoutSetupSitePage, RestAPIClient } from '@automattic/calypso-e2e';
+import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
@@ -22,6 +22,7 @@ test.describe(
 			helperData,
 			page,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountPreRelease.accountName }'`, async function () {
@@ -62,7 +63,7 @@ test.describe(
 			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
 				// Eligible paid plans now land on the post-checkout choice screen
 				// after checkout, instead of going straight to Home.
-				await new PostCheckoutSetupSitePage( page ).waitUntilLoaded();
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
