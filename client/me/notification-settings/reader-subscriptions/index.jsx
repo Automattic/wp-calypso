@@ -331,7 +331,7 @@ class NotificationSubscriptions extends Component {
 								{ this.props.translate(
 									'When choosing daily or weekly email delivery, which time of day would you prefer?'
 								) }{ ' ' }
-								{ this.props.deliveryWindowIsUtcFallback
+								{ this.props.deliveryWindowIsUtcFallback || ! this.props.deliveryWindowTimezone
 									? this.props.translate(
 											"We couldn't detect your time zone, so these times are shown in UTC."
 									  )

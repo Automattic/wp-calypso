@@ -30,6 +30,19 @@ function snapToHourBucket( hour: number ): number {
  * Shift a delivery window by a whole number of hours, wrapping the day when the
  * hour crosses midnight in either direction.
  */
+/**
+ * Round a minute offset to the nearest whole hour, rounding half-hour ties
+ * away from zero so negative zones like UTC-3:30 (America/St_Johns) become -4,
+ * not -3.
+ */
+function roundMinutesToWholeHours( offsetMinutes: number ): number {
+	if ( offsetMinutes === 0 ) {
+		return 0;
+	}
+	const sign = Math.sign( offsetMinutes );
+	return sign * Math.round( Math.abs( offsetMinutes ) / 60 );
+}
+
 function shiftWindow( window: DeliveryWindow, deltaHours: number ): DeliveryWindow {
 	const rawHour = window.hour + deltaHours;
 	const dayShift = Math.floor( rawHour / HOURS_IN_DAY );
@@ -102,9 +115,7 @@ export function getDeliveryWindowOffsetHours(
 		// while `reference` carries milliseconds, and that sub-second gap can
 		// otherwise tip a true :30 offset (e.g. Asia/Kolkata) to the wrong side.
 		const offsetMinutes = Math.round( ( asUtc - reference.getTime() ) / 60000 );
-		const offsetHours = Math.round( offsetMinutes / 60 );
-		// Normalize -0 to 0.
-		return offsetHours === 0 ? 0 : offsetHours;
+		return roundMinutesToWholeHours( offsetMinutes );
 	} catch ( e ) {
 		return null;
 	}

@@ -129,10 +129,10 @@ const DeliveryWindowInput = ( {
 					{ translate(
 						'Your emails will be sent out at this day and time once you choose a daily or weekly delivery'
 					) }{ ' ' }
-					{ isUtcFallback
+					{ isUtcFallback || ! timezone
 						? translate( "We couldn't detect your time zone, so these times are shown in UTC." )
 						: translate( 'Times are shown in your local time zone (%(timezone)s).', {
-								args: { timezone: timezone ?? '' },
+								args: { timezone },
 						  } ) }
 				</span>
 			</div>

@@ -44,6 +44,17 @@ describe( 'delivery-window conversion', () => {
 			// Asia/Kathmandu is +5:45 → rounds to +6.
 			expect( getDeliveryWindowOffsetHours( 'Asia/Kathmandu' ) ).toBe( 6 );
 		} );
+
+		it( 'rounds negative sub-hour offsets away from zero', () => {
+			// America/St_Johns is UTC-3:30 in winter → nearest whole hour is -4.
+			expect(
+				getDeliveryWindowOffsetHours( 'America/St_Johns', new Date( '2026-01-15T12:00:00Z' ) )
+			).toBe( -4 );
+			// Newfoundland Daylight Time is UTC-2:30 in summer → nearest is -3.
+			expect(
+				getDeliveryWindowOffsetHours( 'America/St_Johns', new Date( '2026-07-15T12:00:00Z' ) )
+			).toBe( -3 );
+		} );
 	} );
 
 	describe( 'fromUtcDeliveryWindow', () => {

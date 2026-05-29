@@ -52,14 +52,17 @@ const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
 		};
 	} );
 
-const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string ) =>
-	isUtcFallback
-		? __( 'We couldn’t detect your time zone, so these times are shown in UTC.' )
-		: sprintf(
-				// translators: %(timezone)s is the timezone E.g. America/New_York
-				__( 'Times shown in your local time zone (%(timezone)s).' ),
-				{ timezone: timezone ?? '' }
-		  );
+const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string ) => {
+	if ( isUtcFallback || ! timezone ) {
+		return __( 'We couldn’t detect your time zone, so these times are shown in UTC.' );
+	}
+
+	return sprintf(
+		// translators: %(timezone)s is the timezone E.g. America/New_York
+		__( 'Times shown in your local time zone (%(timezone)s).' ),
+		{ timezone }
+	);
+};
 
 export type SettingsData = Pick<
 	UserSettings,
