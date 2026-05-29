@@ -1,4 +1,4 @@
-import { SubscriptionBillPeriod } from '../constants';
+import type { SubscriptionBillPeriodValue } from '../constants';
 
 export interface RefundOptions {
 	to_product_id: number;
@@ -87,6 +87,8 @@ export interface Purchase {
 	 */
 	attached_to_purchase_id: number | null;
 
+	advertised_total_upload_space_in_gb?: number | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -97,20 +99,7 @@ export interface Purchase {
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
 	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days:
-		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	bill_period_days: SubscriptionBillPeriodValue;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -178,6 +167,13 @@ export interface Purchase {
 	 * even if it cannot be cancelled.
 	 */
 	is_cancelable: boolean;
+
+	/**
+	 * True if the site associated with this subscription is a holding site.
+	 * That is, a site created only to hold the subscription for the user
+	 * rather than a regular wpcom site that a user can view and manage.
+	 */
+	is_attached_to_holding_site: boolean;
 
 	/**
 	 * True if the subscription can be removed by the user (directly removed,
@@ -454,6 +450,12 @@ export interface PurchaseCancelOptions {
 	 * will also be cancelled.
 	 */
 	cancel_bundled_domain: boolean;
+
+	/**
+	 * The experiment variation name for the refund email A/B test.
+	 * When 'treatment', the backend sends the wpcom-2022 themed email.
+	 */
+	email_variant?: 'treatment' | 'control';
 }
 
 /**

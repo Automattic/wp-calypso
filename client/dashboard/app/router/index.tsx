@@ -1,5 +1,5 @@
 import calypsoConfig from '@automattic/calypso-config';
-import { createRouter, createRoute, redirect } from '@tanstack/react-router';
+import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch } from '../logger';
@@ -8,6 +8,7 @@ import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
 import { startStoreRoute } from './start-store';
@@ -38,7 +39,7 @@ const indexRoute = createRoute( {
 	path: '/',
 	beforeLoad: ( { context }: { context: RouteContext } ) => {
 		if ( context.config ) {
-			throw redirect( { to: context.config.mainRoute } );
+			throw dashboardRedirect( { to: context.config.mainRoute } );
 		}
 	},
 } );

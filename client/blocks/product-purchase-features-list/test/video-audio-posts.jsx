@@ -65,6 +65,21 @@ describe( 'VideoAudioPosts should use proper description', () => {
 		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /13 GB of media/ );
 	} );
 
+	test.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )( `for legacy storage plan %s`, ( plan ) => {
+		const translate = ( text, { args = {} } = {} ) =>
+			Object.entries( args ).reduce(
+				( result, [ key, value ] ) =>
+					result.replace( new RegExp( `%\\(${ key }\\)[sd]`, 'g' ), value ),
+				text
+			);
+
+		render(
+			<VideoAudioPosts { ...props } hasLegacyStorage plan={ plan } translate={ translate } />
+		);
+		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /200 GB storage/ );
+		expect( screen.queryByTestId( 'purchase-detail' ) ).not.toHaveTextContent( /50 GB storage/ );
+	} );
+
 	test.each( [
 		PLAN_FREE,
 		PLAN_PERSONAL,

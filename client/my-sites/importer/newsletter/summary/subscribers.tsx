@@ -34,12 +34,16 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 		const subscribedCount = parseInt( stepContent.meta?.email_count || '0' );
 		const addedFree = parseInt( stepContent.meta?.subscribed_count || '0' );
 		const addedPaid = parseInt( stepContent.meta?.paid_subscribed_count || '0' );
+		const compCount = stepContent.meta?.comp_count ?? 0;
+		const addedComp = parseInt( stepContent.meta?.comp_subscribed_count || '0' );
 		const existingTotal =
 			parseInt( stepContent.meta?.already_subscribed_count || '0' ) +
-			parseInt( stepContent.meta?.paid_already_subscribed_count || '0' );
+			parseInt( stepContent.meta?.paid_already_subscribed_count || '0' ) +
+			parseInt( stepContent.meta?.comp_already_subscribed_count || '0' );
 		const failedTotal =
 			parseInt( stepContent.meta?.failed_subscribed_count || '0' ) +
-			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
+			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' ) +
+			parseInt( stepContent.meta?.comp_failed_subscribed_count || '0' );
 
 		return (
 			<div className="summary__content-stats">
@@ -52,6 +56,9 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 				) }
 				{ addedFree > 0 && <SummaryStat count={ addedFree } label={ __( 'Free Subscribers' ) } /> }
 				{ addedPaid > 0 && <SummaryStat count={ addedPaid } label={ __( 'Paid Subscribers' ) } /> }
+				{ compCount > 0 && (
+					<SummaryStat count={ addedComp } label={ __( 'Comped Subscribers' ) } />
+				) }
 				{ existingTotal > 0 && (
 					<SummaryStat count={ existingTotal } label={ __( 'Skipped (duplicate)' ) } />
 				) }

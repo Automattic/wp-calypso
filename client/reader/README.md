@@ -4,10 +4,84 @@ The Reader module handles the view and routing logic for the _Reader_ section of
 
 These routes are served by the module:
 
-- /activities/likes
-- /reader/\*
-- /recommendations (redirects to /reader/search)
-- /tag/\*
+## Routes
+
+### Main routes
+
+| Route                                | Description                                             |
+| ------------------------------------ | ------------------------------------------------------- |
+| `/reader`                            | Main stream (followed sites)                            |
+| `/reader/recent/:feed_id`            | Recent stream for a specific feed                       |
+| `/reader/feeds/:feed_id`             | Feed stream                                             |
+| `/reader/feeds/:feed_id/posts`       | Redirects to `/reader/feeds/:feed_id`                   |
+| `/reader/blogs/:blog_id`             | Site/blog stream                                        |
+| `/reader/blogs/:blog_id/posts`       | Redirects to `/reader/blogs/:blog_id`                   |
+| `/reader/feeds/:feed/posts/:post`    | Full post (via feed)                                    |
+| `/reader/blogs/:blog_id/posts/:post` | Full post (via blog)                                    |
+| `/reader/a8c`                        | Automattic employee posts                               |
+| `/reader/p2`                         | P2 posts                                                |
+| `/reader/search`                     | Reader search                                           |
+| `/reader/notifications`              | Reader notifications                                    |
+| `/reader/feeds/lookup/*`             | Feed URL lookup (redirects to `/reader/feeds/:feed_id`) |
+| `/activities/likes`                  | Liked posts                                             |
+
+### Subscriptions
+
+| Route                                    | Description                          | Requires login |
+| ---------------------------------------- | ------------------------------------ | -------------- |
+| `/reader/subscriptions`                  | Site subscriptions manager           | Yes            |
+| `/reader/subscriptions/comments`         | Comment subscriptions manager        | Yes            |
+| `/reader/subscriptions/pending`          | Pending subscriptions                | Yes            |
+| `/reader/subscriptions/:subscription_id` | Individual subscription (by ID)      | Yes            |
+| `/reader/site/subscription/:blog_id`     | Individual subscription (by blog ID) | Yes            |
+| `/reader/new`                            | New subscription                     | Yes            |
+| `/reader/new/reddit`                     | New Reddit subscription              | Yes            |
+| `/reader/new/youtube`                    | New YouTube subscription             | Yes            |
+| `/reader/new/tumblr`                     | New Tumblr subscription              | Yes            |
+| `/reader/new/substack`                   | New Substack subscription            | Yes            |
+
+### Lists
+
+| Route                                 | Description     |
+| ------------------------------------- | --------------- |
+| `/reader/list/new`                    | Create new list |
+| `/reader/list/:user/:list`            | View list       |
+| `/reader/list/:user/:list/edit`       | Edit list       |
+| `/reader/list/:user/:list/edit/items` | Edit list items |
+| `/reader/list/:user/:list/export`     | Export list     |
+| `/reader/list/:user/:list/delete`     | Delete list     |
+
+### Discover
+
+| Route                   | Description                     |
+| ----------------------- | ------------------------------- |
+| `/discover`             | Discover (recommended content)  |
+| `/discover/recommended` | Recommended content             |
+| `/discover/tags`        | Featured tags                   |
+| `/discover/latest`      | Latest posts                    |
+| `/discover/reddit`      | Reddit content (requires login) |
+| `/discover/add-new`     | Add new source (requires login) |
+
+### Tags and conversations
+
+| Route                       | Description          |
+| --------------------------- | -------------------- |
+| `/tag/:tag`                 | Tag stream           |
+| `/tags`                     | Tags listing         |
+| `/reader/conversations`     | Conversations stream |
+| `/reader/conversations/a8c` | A8C conversations    |
+
+### User profile
+
+| Route                             | Description                            |
+| --------------------------------- | -------------------------------------- |
+| `/reader/users/:user_login`       | Profile by login                       |
+| `/reader/users/:user_login/:view` | Profile with view (posts, lists, etc.) |
+| `/reader/users/id/:user_id`       | Profile by ID                          |
+
+### Legacy redirects
+
+Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader`, `/reader/search`, `/tag/:tag`, `/tags`, and `/discover/*`.
 
 ## Block Rendering Development
 

@@ -16,6 +16,15 @@ const site = {
 	launch_status: 'launched',
 } as Site;
 
+async function expectWpcomstagingWarning() {
+	await waitFor(
+		() => {
+			expect( screen.getByText( /This domain is intended for temporary use/ ) ).toBeInTheDocument();
+		},
+		{ timeout: 3000 }
+	);
+}
+
 function mockSite(
 	mockedSite: Site,
 	{
@@ -394,10 +403,8 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
-				expect(
-					screen.getByText( /This domain is intended for temporary use/ )
-				).toBeInTheDocument();
 			} );
+			await expectWpcomstagingWarning();
 			const domainButton = screen.getByRole( 'link', {
 				name: 'Add new domain',
 			} );
@@ -423,10 +430,8 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
-				expect(
-					screen.getByText( /This domain is intended for temporary use/ )
-				).toBeInTheDocument();
 			} );
+			await expectWpcomstagingWarning();
 			const domainButton = screen.getByRole( 'link', {
 				name: 'Manage domains',
 			} );
@@ -485,10 +490,8 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
-				expect(
-					screen.getByText( /This domain is intended for temporary use/ )
-				).toBeInTheDocument();
 			} );
+			await expectWpcomstagingWarning();
 
 			const notCrawlableCheckbox = screen.getByRole( 'checkbox', {
 				name: /Discourage search engines/,
@@ -531,11 +534,7 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			await user.click( screen.getByRole( 'radio', { name: 'Public' } ) );
 
-			await waitFor( () => {
-				expect(
-					screen.getByText( /This domain is intended for temporary use/ )
-				).toBeInTheDocument();
-			} );
+			await expectWpcomstagingWarning();
 
 			await user.click( saveButton );
 

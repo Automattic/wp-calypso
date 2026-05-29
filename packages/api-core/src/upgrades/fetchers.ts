@@ -63,10 +63,14 @@ export async function hasExtendedPurchase( purchaseId: number ): Promise< boolea
 }
 
 export async function fetchCancellationFeatures(
-	purchaseId: number
+	purchaseId: number,
+	variant?: 'control' | 'treatment'
 ): Promise< UpgradesCancelFeaturesResponse > {
-	return await wpcom.req.get( {
-		path: `/upgrades/${ purchaseId }/cancel-features`,
-		apiNamespace: 'wpcom/v2',
-	} );
+	return await wpcom.req.get(
+		{
+			path: `/upgrades/${ purchaseId }/cancel-features`,
+			apiNamespace: 'wpcom/v2',
+		},
+		variant ? { variant } : {}
+	);
 }

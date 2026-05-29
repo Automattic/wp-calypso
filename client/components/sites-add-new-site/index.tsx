@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dropdown } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { AI_SITE_BUILDER_SPEC_FLOW } from 'calypso/lib/site-spec';
 import { AuthProvider } from '../../dashboard/app/auth';
 import { AsyncContent } from './async';
 import AddNewSiteButton from './button';
@@ -32,7 +33,10 @@ export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 				) }
 				renderContent={ () => (
 					<div className="sites-add-new-site__popover-content">
-						<AsyncContent context={ context } />
+						<AsyncContent
+							context={ context }
+							aiSiteBuilderPath={ `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` }
+						/>
 					</div>
 				) }
 				onToggle={ ( isOpen ) => {

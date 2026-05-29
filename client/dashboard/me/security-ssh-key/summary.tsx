@@ -4,9 +4,12 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
-export default function SecuritySshKeySummary() {
+export default function SecuritySshKeySummary( { density }: { density?: Density } ) {
 	const { data: sshKeys } = useSuspenseQuery( sshKeysQuery() );
 
 	const badges: SummaryButtonBadgeProps[] = [
@@ -18,6 +21,7 @@ export default function SecuritySshKeySummary() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/security/ssh-key"
 			title={ __( 'SSH key' ) }
 			description={ __(

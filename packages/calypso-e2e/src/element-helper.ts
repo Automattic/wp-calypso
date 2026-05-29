@@ -54,6 +54,62 @@ export async function waitForElementEnabled(
 }
 
 /**
+ * Waits for a locator attribute to match the expected pattern.
+ *
+ * This keeps shared helpers runner-neutral: callers can use it from both legacy
+ * Jest E2E and Playwright Test without importing `playwright/test`.
+ *
+ * @param {Locator} locator Target locator.
+ * @param {string} attributeName Attribute to read.
+ * @param {RegExp} pattern Expected attribute value pattern.
+ * @param {Object} options Optional timeout and diagnostic label.
+ * @param {number} options.timeout Timeout in milliseconds.
+ * @param {string} options.description Human-readable target description for errors.
+ * @param {string} options.state Locator state to wait for before reading the attribute.
+ * @returns {Promise<string>} Matching attribute value.
+ */
+export async function waitForLocatorAttribute(
+	locator: Locator,
+	attributeName: string,
+	pattern: RegExp,
+	options?: { timeout?: number; description?: string; state?: 'attached' | 'visible' }
+): Promise< string > {
+	const timeout = options?.timeout ?? 10000;
+	const description = options?.description ?? 'locator';
+	const state = options?.state ?? 'attached';
+	const deadline = Date.now() + timeout;
+	const interval = 250;
+	let lastValue: string | null = null;
+
+	do {
+		const timeRemaining = Math.max( deadline - Date.now(), 1 );
+		try {
+			await locator.waitFor( {
+				state,
+				timeout: Math.min( interval, timeRemaining ),
+			} );
+			lastValue = await locator.getAttribute( attributeName, {
+				timeout: Math.min( interval, timeRemaining ),
+			} );
+			pattern.lastIndex = 0;
+			if ( lastValue && pattern.test( lastValue ) ) {
+				return lastValue;
+			}
+		} catch {
+			// Retry until the explicit timeout below so callers get one clear error.
+		}
+
+		if ( Date.now() < deadline ) {
+			await locator.page().waitForTimeout( Math.min( interval, deadline - Date.now() ) );
+		}
+	} while ( Date.now() < deadline );
+
+	throw new Error(
+		`Timed out after ${ timeout }ms waiting for ${ description } to be ${ state } and ${ attributeName } to match ${ pattern }. Last value: ${ lastValue }`
+	);
+}
+
+/**
  * Locates and clicks on a specified tab on the NavTab.
  *
  * NavTabs are used throughout calypso to contain sub-pages within the parent page.

@@ -102,7 +102,12 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 		<>
 			<CardHeader
 				size="small"
-				style={ { position: 'sticky', top: 0, background: '#fff', zIndex: 1 } }
+				style={ {
+					position: 'sticky',
+					top: 0,
+					background: 'var( --color-surface, #fff )',
+					zIndex: 1,
+				} }
 			>
 				<HStack>
 					<HStack justify="flex-start">
@@ -120,7 +125,7 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
 					<NoteSummary note={ note } />
-					<Divider style={ { color: '#f0f0f0' } } />
+					<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
 					<div className={ getClasses( { note, isApproved, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>

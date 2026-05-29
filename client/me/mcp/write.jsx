@@ -10,6 +10,7 @@ export default function McpWriteToolsPage( props ) {
 			pageViewTitle="MCP Write Access"
 			headerTitle={ translate( 'Write' ) }
 			filterTool={ isWriteTool }
+			toolCategory="write"
 			groupingMode="categories"
 		/>
 	);

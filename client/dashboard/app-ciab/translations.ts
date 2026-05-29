@@ -85,6 +85,16 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 				'Before deleting your store, consider <link>exporting your products and orders as a backup</link>.',
 				ciabDomain
 			),
+			'We’re preparing <domain /> to be your site’s <strong>primary address</strong>. This usually takes a few moments, but can sometimes take up to 15 minutes.':
+				__(
+					'We’re preparing <domain /> to be your store’s <strong>primary address</strong>. This usually takes a few moments, but can sometimes take up to 15 minutes.',
+					ciabDomain
+				),
+			/* translators: %s is the domain name */
+			'%s is now your site’s primary address.': __(
+				'%s is now your store’s primary address.',
+				ciabDomain
+			),
 		};
 	}
 

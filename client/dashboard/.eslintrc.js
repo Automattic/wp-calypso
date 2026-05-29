@@ -14,12 +14,14 @@ module.exports = {
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
 							// Allowed: calypso/lib/explat
+							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
 							// Allowed: calypso/lib/logstash
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
+							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
 							'!calypso/lib/load-dev-helpers',
@@ -55,6 +57,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
@@ -66,7 +69,6 @@ module.exports = {
 							'!@automattic/load-script',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
-							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
 							'!@automattic/calypso-url',
 							'!@automattic/composite-checkout',
@@ -77,6 +79,7 @@ module.exports = {
 							'!@automattic/survicate',
 							'!@automattic/viewport',
 							'!@automattic/browser-data-collector',
+							'!@automattic/omnibar',
 							'!@automattic/posthog',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
@@ -93,6 +96,12 @@ module.exports = {
 					{
 						name: '@automattic/calypso-analytics',
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
+					{
+						name: 'calypso/lib/color-scheme',
+						importNames: [ 'ClassicColorSchemeProvider' ],
+						message:
+							'Dashboard must use the query-backed color scheme provider, not the Classic Redux provider.',
 					},
 					{
 						name: '@automattic/components',
@@ -122,6 +131,12 @@ module.exports = {
 							'CardMedia',
 						],
 						message: 'Use local components exported from client/dashboard/components/card instead.',
+					},
+					{
+						name: '@tanstack/react-router',
+						importNames: [ 'redirect' ],
+						message:
+							'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
 					},
 					{
 						name: '@automattic/api-queries',

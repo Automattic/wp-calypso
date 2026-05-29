@@ -18,20 +18,38 @@ import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
+import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
+import videoHighlightsSoonPreview from '../../assets/video/styles/highlights-soon.webp';
+import videoHighlightsPreview from '../../assets/video/styles/highlights.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
+import { store as videoStudioStore } from '../../stores/video-studio';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
+export type StylePickerVariant = 'image' | 'video';
+
 interface StylePickerProps {
 	disabled?: boolean;
 	mode: ImageStudioMode;
+	variant?: StylePickerVariant;
 }
 
-export const STYLE_OPTIONS = [
-	{ label: __( 'Select style', __i18n_text_domain__ ), value: 'none', preview: null },
-	{ label: __( 'None', __i18n_text_domain__ ), value: '', preview: nonePreview },
+interface StyleOption {
+	label: string;
+	value: string;
+	preview: string;
+	// One-line explainer rendered under the label. Video styles use it;
+	// image styles are self-explanatory by name and omit it.
+	description?: string;
+	// Renders the card with the native disabled attribute + a greyed-out
+	// .is-disabled style — used to tease an upcoming style.
+	disabled?: boolean;
+}
+
+export const STYLE_OPTIONS: StyleOption[] = [
+	{ label: __( 'None', __i18n_text_domain__ ), value: 'none', preview: nonePreview },
 	{
 		label: __( 'Vivid', __i18n_text_domain__ ),
 		value: 'vivid',
@@ -115,12 +133,70 @@ export const STYLE_OPTIONS = [
 	},
 ];
 
-export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
-	const { setSelectedStyle } = useDispatch( imageStudioStore );
+// The prior Informative / Promotional video styles collapse into one
+// "Cinematic" preset — they were the same Veo chain with cosmetically
+// different prompt templates, which never read as meaningfully distinct.
+// "Highlights" is server-rendered via EditFrame Cloud on this branch
+// (LLM-composed HTML → EditFrame /api/v1/renders → MP4 → media library);
+// the in-browser encoding implementation lives on the older compositor
+// branches and is preserved there.
+//
+// Production default ships Cinematic-only; Highlights is disabled with a
+// "coming soon" preview. The StylePicker component swaps in the live
+// preview and enables the card when window.imageStudioData.isDevMode is
+// true (a12s testing).
+export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
+	{
+		label: __( 'Cinematic', __i18n_text_domain__ ),
+		value: 'cinematic',
+		preview: videoCinematicPreview,
+		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
+	},
+	{
+		label: __( 'Highlights (Coming Soon)', __i18n_text_domain__ ),
+		value: 'highlights',
+		preview: videoHighlightsSoonPreview,
+		description: __(
+			"Build a 20-second recap clip using your post's images and key points.",
+			__i18n_text_domain__
+		),
+		disabled: true,
+	},
+];
 
-	const selectedStyle = useSelect( ( select ) => {
-		return select( imageStudioStore ).getSelectedStyle();
-	}, [] );
+export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {
+	const isVideo = variant === 'video';
+	// Video and image variants live in independent stores so the two slices
+	// never collide — the video bundle's "Style" is unrelated to the image
+	// bundle's "Style".
+	const targetStore = isVideo ? videoStudioStore : imageStudioStore;
+
+	const { setSelectedStyle } = useDispatch( targetStore );
+
+	const selectedStyle = useSelect(
+		( select ) => {
+			return select( targetStore ).getSelectedStyle();
+		},
+		[ targetStore ]
+	);
+
+	// Dev-mode override: unlock Highlights, swap to the live preview, and
+	// flip the label to "(a12s only)". Production default keeps the
+	// "Coming Soon" label + teaser preview + disabled state while we
+	// launch Cinematic-only.
+	const isDevMode = typeof window !== 'undefined' && window.imageStudioData?.isDevMode === true;
+	const options = isVideo
+		? VIDEO_STYLE_OPTIONS.map( ( opt ) =>
+				opt.value === 'highlights' && isDevMode
+					? {
+							...opt,
+							label: __( 'Highlights (a12s only)', __i18n_text_domain__ ),
+							preview: videoHighlightsPreview,
+							disabled: false,
+					  }
+					: opt
+		  )
+		: STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
@@ -140,8 +216,8 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	};
 
 	const selectedLabel =
-		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
-		__( 'Styles', __i18n_text_domain__ );
+		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
+		__( 'Style', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.InputToolbar
@@ -151,12 +227,14 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			disabled={ disabled }
 		>
 			<div className="image-studio-input-toolbar-dialog-grid">
-				{ STYLE_OPTIONS.filter( ( opt ) => opt.preview ).map( ( option ) => (
+				{ options.map( ( option ) => (
 					<button
 						key={ option.value }
 						type="button"
+						disabled={ option.disabled }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
+							'is-disabled': option.disabled,
 						} ) }
 						onClick={ () => handleStyleSelect( option.value ) }
 					>
@@ -168,6 +246,11 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 							/>
 						</span>
 						<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
+						{ option.description ? (
+							<span className="image-studio-input-toolbar-card__description">
+								{ option.description }
+							</span>
+						) : null }
 					</button>
 				) ) }
 			</div>

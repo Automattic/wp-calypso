@@ -7,7 +7,7 @@
 	overflow: hidden;
 
 	&.is-highlight {
-		background: rgba(56, 88, 233, 0.04);
+		background: color-mix(in srgb, var(--wp-admin-theme-color) 4%, transparent);
 	}
 
 	&.is-image-full-bleed {
@@ -28,7 +28,7 @@
 .dashboard-callout__h-container {
 	padding: $grid-unit-20;
 	@include body-medium;
-	color: $gray-700;
+	color: var(--dashboard__text-muted-color);
 
 	@include break-medium {
 		padding: $grid-unit-30;
@@ -41,7 +41,7 @@
 
 .dashboard-callout__title {
 	@include heading-large;
-	color: $gray-900;
+	color: var(--dashboard__text-color);
 	margin: 0;
 }
 

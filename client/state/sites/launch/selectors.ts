@@ -2,6 +2,7 @@ type State = {
 	sites?: {
 		launch?: {
 			inProgress?: number[];
+			celebrationModalOpen?: boolean;
 		};
 	};
 };
@@ -12,4 +13,8 @@ export const getIsSiteLaunchInProgress = ( state: State, siteId: number ) => {
 		false;
 	}
 	return siteLaunchesInProgress?.includes( siteId );
+};
+
+export const getIsSiteLaunchCelebrationModalOpen = ( state: State ) => {
+	return state?.sites?.launch?.celebrationModalOpen;
 };

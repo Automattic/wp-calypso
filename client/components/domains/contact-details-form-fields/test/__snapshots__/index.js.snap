@@ -84,10 +84,11 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
             class="components-notice is-warning"
           >
             <div
-              class="components-visually-hidden css-161q9d5-PolymorphicDiv e19lxcc00"
+              class="components-visually-hidden css-1ragr82-PolymorphicDiv e19lxcc00"
+              data-visually-hidden=""
               data-wp-c16t="true"
               data-wp-component="VisuallyHidden"
-              style="border: 0px; clip: rect(1px, 1px, 1px, 1px); clip-path: inset( 50% ); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; word-wrap: normal;"
+              style="border: 0px; clip: rect(1px, 1px, 1px, 1px); clip-path: inset( 50% ); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; word-wrap: normal; word-break: normal;"
             >
               Warning notice
             </div>

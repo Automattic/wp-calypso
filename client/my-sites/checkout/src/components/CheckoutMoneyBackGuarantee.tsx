@@ -1,7 +1,7 @@
 import { isChargeback, isCredits } from '@automattic/calypso-products';
 import { ResponseCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
-import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
+import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 
 const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 	display: flex;

@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import './style.scss';
-import photoBanner from 'calypso/assets/images/blaze/wp-blaze-banner@3x.png';
+import photoBanner from 'calypso/assets/images/blaze/wp-blaze-banner@3x.webp';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 export default function PostsListBanner() {

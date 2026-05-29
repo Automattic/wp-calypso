@@ -1,0 +1,70 @@
+@import '@automattic/color-studio/dist/color-properties-rgb.css';
+@import '@automattic/components/src/styles/typography';
+
+.streak-badge {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	// Anchor the badge to the circle's width so long labels wrap underneath
+	// instead of widening the column and unbalancing the layout next to it.
+	width: 120px;
+}
+
+.streak-badge__circle {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: rem( 48px );
+	font-weight: 600;
+	background: var( --streak-badge-background );
+	color: var( --streak-badge-color );
+	box-shadow: 0 4px 16px var( --streak-badge-shadow );
+
+	&[data-digits="3"] {
+		letter-spacing: -0.02em;
+	}
+
+	&[data-digits="4"] {
+		font-size: rem( 38px );
+		letter-spacing: -0.06em;
+	}
+}
+
+.streak-badge__label {
+	max-width: 100%;
+	font-size: rem( 13px );
+	color: var( --studio-gray-40 );
+	text-align: center;
+}
+
+.streak-badge.is-inactive {
+	--streak-badge-background: var( --studio-gray-5 )
+		url( calypso/assets/images/achievements/streak-badge-inactive.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-gray-10 );
+	--streak-badge-shadow: rgba( var( --studio-gray-10-rgb ), 0.4 );
+}
+
+.streak-badge.is-active {
+	--streak-badge-background: var( --studio-yellow-20 )
+		url( calypso/assets/images/achievements/streak-badge-active.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-orange-30 );
+	--streak-badge-shadow: rgba( var( --studio-orange-30-rgb ), 0.4 );
+}
+
+.streak-badge.is-longest-active {
+	--streak-badge-background: var( --studio-yellow-20 )
+		url( calypso/assets/images/achievements/streak-badge-longest-active.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-red-50 );
+	--streak-badge-shadow: rgba( var( --studio-red-50-rgb ), 0.4 );
+}
+
+.streak-badge.is-frozen {
+	--streak-badge-background: var( --studio-blue-70 )
+		url( calypso/assets/images/achievements/streak-badge-frozen.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-white );
+	--streak-badge-shadow: rgba( var( --studio-blue-70-rgb ), 0.4 );
+}

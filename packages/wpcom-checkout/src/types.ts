@@ -38,13 +38,10 @@ export type WPCOMTransactionEndpointResponseFailed = {
 };
 
 export type WPCOMTransactionEndpointResponseRedirect = {
-	message: { payment_intent_client_secret: string } | '';
+	message: { payment_intent_client_secret: string } | { setup_intent_client_secret: string } | '';
 	order_id: number | '';
 	redirect_url: string;
 	qr_code?: string;
-	razorpay_order_id?: string;
-	razorpay_customer_id?: string;
-	razorpay_option_recurring?: boolean;
 };
 
 export type WPCOMTransactionEndpointResponsePayPal = {
@@ -114,7 +111,6 @@ export interface TransactionResponsePurchase {
 	registrar_support_url?: string;
 	user_email: string;
 	saas_redirect_url?: string;
-	will_auto_renew?: boolean;
 	tax_vendor_info?: TaxVendorInfo;
 	blog_id: number;
 	price_integer?: number;
@@ -147,6 +143,8 @@ export interface TransactionRequest {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 }
@@ -201,6 +199,8 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	pan?: string;
 	gstin?: string;
 	nik?: string;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 };
@@ -321,6 +321,7 @@ export interface WPCOMCart {
 // translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
 	| 'pix'
+	| 'pix_automatico'
 	| 'alipay'
 	| 'web-pay'
 	| 'bancontact'
@@ -347,8 +348,8 @@ export type CheckoutPaymentMethodSlug =
 	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'
-	| 'razorpay'
-	| 'stripe-upi';
+	| 'stripe-upi'
+	| 'stripe-blik';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -366,13 +367,15 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Payment_Method'
 	| 'WPCOM_Billing_Stripe_Alipay'
 	| 'WPCOM_Billing_Stripe_Bancontact'
+	| 'WPCOM_Billing_Stripe_Eps'
 	| 'WPCOM_Billing_Stripe_Ideal'
 	| 'WPCOM_Billing_Stripe_P24'
 	| 'WPCOM_Billing_Stripe_Wechat_Pay'
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
-	| 'WPCOM_Billing_Razorpay'
-	| 'WPCOM_Billing_Stripe_Upi';
+	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico'
+	| 'WPCOM_Billing_Stripe_Upi'
+	| 'WPCOM_Billing_Stripe_Blik';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
 

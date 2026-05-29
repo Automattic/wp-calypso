@@ -19,7 +19,6 @@ import {
 	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isTemporarySitePurchase } from '../../utils';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 
 interface MomentProps {
@@ -116,7 +115,7 @@ export class PlanBillingPeriod extends Component<
 			return;
 		}
 
-		const isTemporarySite = isTemporarySitePurchase( purchase );
+		const isTemporarySite = purchase.isAttachedToHoldingSite;
 
 		return (
 			<Fragment>

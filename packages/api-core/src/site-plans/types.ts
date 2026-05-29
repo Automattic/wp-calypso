@@ -1,3 +1,63 @@
+import type { SubscriptionBillPeriodValue } from '../constants';
+
+export interface SitePlansPageContext {
+	header_message?: string;
+	page_title?: string;
+}
+
+export interface PlanCardFeature {
+	text: string;
+	available: boolean;
+}
+
+export interface PlanProductComparisonGroup {
+	group: string;
+	features: PlanProductComparisonFeature[];
+}
+
+/**
+ * A feature to display in the plans page comparison grid for this product.
+ */
+export interface PlanProductComparisonFeature {
+	/**
+	 * The unique ID of this feature.
+	 */
+	key: string;
+
+	/**
+	 * The feature description shown in the first column of the comparison grid
+	 * (eg: "Accept all major card brands automatically").
+	 */
+	title: string;
+
+	/**
+	 * For products which have different tiers that have differing features,
+	 * this list is the tiers where this feature should be shown. Each entry
+	 * is the product_tier_id for that plan family (e.g. 1180 for Woo Basic,
+	 * 1181 for Woo Pro). This is stable across all billing-period variants
+	 * of a plan.
+	 */
+	tiers?: number[];
+
+	/**
+	 * If set, this feature will only be shown for versions of this product
+	 * with the matching billing periods. The billing periods are numbers of
+	 * days but are not literal renewal periods; they are numeric constants
+	 * that represent each period. For example, `31` means "monthly" although
+	 * the expiry date may be fewer than 31 days from the last renewal.
+	 */
+	billing_periods?: SubscriptionBillPeriodValue[];
+
+	/**
+	 * Per-tier display values shown in the comparison grid instead of a check
+	 * mark. The key is the string form of product_tier_id (JSON object keys are
+	 * always strings, e.g. "1180") and the value is a translated string shown in
+	 * that tier's column (e.g. "10 GB" for tier 1180, "50 GB" for tier 1181).
+	 * Tiers omitted from this map still show the default check mark.
+	 */
+	tier_values?: Record< string, string >;
+}
+
 export interface SiteContextualPlanCostOverride {
 	old_price: number;
 	new_price: number;
@@ -34,7 +94,7 @@ export interface SiteContextualPlan {
 	is_domain_upgrade: boolean;
 
 	// Billing interval (conditional - if bill_period is set)
-	interval?: number;
+	interval?: SubscriptionBillPeriodValue;
 
 	// Coupon-related fields (conditional - when coupon is applied)
 	has_sale_coupon?: boolean;
@@ -65,4 +125,33 @@ export interface SiteContextualPlan {
 
 	// Trial availability (conditional - when !is_current_plan && !is_free)
 	can_start_trial?: boolean;
+
+	/**
+	 * Display order for plan cards on the comparison page. Lower values appear first.
+	 * Only present on plans that should be shown; absence means the plan is not displayed.
+	 */
+	plan_card_order?: number;
+
+	/**
+	 * Numeric ID shared by all billing-period variants of the same plan
+	 * family. A product tier is one plan for a service which offers multiple
+	 * levels of that plan. For example, on WPCOM we offer Personal, Premium,
+	 * Business, and Commerce, which are each tiers. Within the Personal plan
+	 * is Personal Monthly, Personal Annual, Personal Biennial, and Personal
+	 * Triennial.
+	 */
+	product_tier_id?: number;
+
+	/**
+	 * product_id values for every billing-period variant of this plan family (inclusive).
+	 * Use these to navigate between monthly / annual / biennial / triennial variants.
+	 */
+	product_tier_product_ids?: number[];
+
+	// Display/marketing content (conditional - only present when plan_card_order is set)
+	plan_card_name?: string | null;
+	tagline?: string | null;
+	plan_card_features?: PlanCardFeature[];
+	features_comparison?: PlanProductComparisonGroup[];
+	badges?: string[];
 }

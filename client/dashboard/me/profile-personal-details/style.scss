@@ -1,22 +1,23 @@
 // Validation styles for username fields
 .components-input-control.has-error {
 	.components-input-control__backdrop {
-		border-color: var( --dashboard__background-color-error );
+		border-color: var( --dashboard-danger__color, var( --dashboard__background-color-error ) );
 	}
 
 	.components-input-control__input:focus + .components-input-control__backdrop {
-		border-color: var( --dashboard__background-color-error );
-		box-shadow: 0 0 0 1px var( --dashboard__background-color-error );
+		border-color: var( --dashboard-danger__color, var( --dashboard__background-color-error ) );
+		box-shadow: 0 0 0 1px
+			var( --dashboard-danger__color, var( --dashboard__background-color-error ) );
 	}
 
 	.components-base-control__help {
-		color: var( --dashboard__background-color-error );
+		color: var( --dashboard-danger__color-hover, var( --dashboard__background-color-error ) );
 		display: flex;
 		align-items: center;
 		gap: 4px;
 
 		svg {
-			fill: var( --dashboard__background-color-error );
+			fill: var( --dashboard-danger__color-hover, var( --dashboard__background-color-error ) );
 			flex-shrink: 0;
 		}
 	}

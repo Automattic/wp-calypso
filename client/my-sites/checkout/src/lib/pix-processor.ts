@@ -106,6 +106,13 @@ export async function pixProcessor(
 	);
 
 	const root = getRenderRoot( genericErrorMessage );
+	let rootUnmounted = false;
+	const safeDismissModal = () => {
+		if ( ! rootUnmounted ) {
+			rootUnmounted = true;
+			hideModal( root );
+		}
+	};
 
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
@@ -135,17 +142,18 @@ export async function pixProcessor(
 				priceInteger: responseCart.total_cost_integer,
 				priceCurrency: responseCart.currency,
 				cancel: () => {
-					hideModal( root );
+					safeDismissModal();
 					isModalActive = false;
 					explicitClosureMessage = translate( 'Payment cancelled.' );
 				},
 				error: () => {
-					hideModal( root );
+					safeDismissModal();
 					isModalActive = false;
 					explicitClosureMessage = genericErrorMessage;
 				},
 				isAkismet: options.isAkismetSitelessCheckout,
 				isJetpackNotAtomic: options.isJetpackNotAtomic,
+				isPixAutomatico: false,
 			} );
 
 			let orderStatus = 'processing';
@@ -156,6 +164,8 @@ export async function pixProcessor(
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
+			safeDismissModal();
+
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
 				success: true,
 				order_id: response.order_id,
@@ -163,7 +173,7 @@ export async function pixProcessor(
 			return makeSuccessResponse( responseData );
 		} )
 		.catch( ( error ) => {
-			hideModal( root );
+			safeDismissModal();
 			return makeErrorResponse( error.message );
 		} );
 }
@@ -209,6 +219,7 @@ function displayModal( {
 	error,
 	isAkismet,
 	isJetpackNotAtomic,
+	isPixAutomatico,
 }: {
 	root: Root;
 	qrCode: string;
@@ -218,6 +229,7 @@ function displayModal( {
 	error: () => void;
 	isAkismet: boolean;
 	isJetpackNotAtomic: boolean;
+	isPixAutomatico: boolean;
 } ) {
 	root.render(
 		createElement( PixConfirmation, {
@@ -227,6 +239,7 @@ function displayModal( {
 			cancel,
 			isAkismet,
 			isJetpackNotAtomic,
+			isPixAutomatico,
 		} )
 	);
 
@@ -253,9 +266,19 @@ function displayModal( {
 function isValidEbanxCardTransactionData(
 	submitData: unknown
 ): submitData is EbanxCardTransactionRequest {
-	const data = submitData as EbanxCardTransactionRequest;
-	if ( ! data ) {
-		throw new Error( 'Transaction requires data and none was provided' );
+	if ( ! submitData || typeof submitData !== 'object' ) {
+		return false;
 	}
-	return true;
+	const data = submitData as EbanxCardTransactionRequest;
+	return (
+		typeof data.name === 'string' &&
+		typeof data.countryCode === 'string' &&
+		typeof data.state === 'string' &&
+		typeof data.city === 'string' &&
+		typeof data.postalCode === 'string' &&
+		typeof data.address === 'string' &&
+		typeof data.streetNumber === 'string' &&
+		typeof data.phoneNumber === 'string' &&
+		typeof data.document === 'string'
+	);
 }

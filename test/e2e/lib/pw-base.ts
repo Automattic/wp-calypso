@@ -21,6 +21,13 @@
  * @see https://playwright.dev/docs/test-fixtures
  */
 /* eslint-disable no-empty-pattern */
+/*
+ * Playwright fixtures pass values to the test via a `use( value )` callback.
+ * The `react-hooks/rules-of-hooks` rule misreads every `use(...)` call here as
+ * a React Hook invoked outside a component, so disable it for this file — there
+ * are no React hooks involved.
+ */
+/* eslint-disable react-hooks/rules-of-hooks */
 import {
 	AddPeoplePage,
 	AdvertisingPage,
@@ -61,6 +68,7 @@ import {
 	NewSiteResponse,
 	NoticeComponent,
 	PeoplePage,
+	PostCheckoutSetupSitePage,
 	PreviewComponent,
 	PurchasesPage,
 	RestAPIClient,
@@ -314,6 +322,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com plans page.
 		 */
 		pagePlans: PlansPage;
+		/**
+		 * Page object representing the post-checkout "Set up your site" choice screen.
+		 */
+		pagePostCheckoutSetupSite: PostCheckoutSetupSitePage;
 		/**
 		 * Page object representing the WordPress.com purchases page.
 		 */
@@ -580,6 +592,10 @@ export const test = base.extend<
 		const plansPage = new PlansPage( page );
 		await use( plansPage );
 	},
+	pagePostCheckoutSetupSite: async ( { page }, use ) => {
+		const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
+		await use( postCheckoutSetupSitePage );
+	},
 	pagePurchases: async ( { page }, use ) => {
 		const purchasesPage = new PurchasesPage( page );
 		await use( purchasesPage );
@@ -605,7 +621,7 @@ export const test = base.extend<
 		await use( secrets );
 	},
 	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
-		const testUser = helperData.getNewTestUser();
+		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
 		await pageLogin.clickCreateNewAccount();

@@ -37,6 +37,7 @@ export const SITE_FIELDS = [
 	'was_hosting_trial',
 	'was_upgraded_from_trial',
 	'is_garden',
+	'is_multisite',
 	'garden_name',
 	'garden_partner',
 	'garden_is_provisioned',
@@ -47,6 +48,7 @@ export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'apm_enabled',
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',
@@ -54,6 +56,7 @@ export const SITE_OPTIONS = [
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
+	'jetpack_recovery_mode_status',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',

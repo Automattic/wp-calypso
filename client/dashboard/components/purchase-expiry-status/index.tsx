@@ -13,7 +13,6 @@ import {
 	getRelativeTimeString,
 } from '../../utils/datetime';
 import {
-	isTemporarySitePurchase,
 	isA4ABillingDragonPurchase,
 	isRecentMonthlyPurchase,
 	isRenewing,
@@ -25,6 +24,7 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 	isInExpirationGracePeriod,
+	isCentennialPurchase,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -75,7 +75,7 @@ export function PurchaseExpiryStatus( {
 
 	if (
 		isSiteMissing &&
-		isTemporarySitePurchase( purchase ) &&
+		purchase.is_attached_to_holding_site &&
 		purchase.product_type === 'jetpack'
 	) {
 		return (
@@ -92,7 +92,7 @@ export function PurchaseExpiryStatus( {
 	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
 	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
 	const isKnownTemporarySiteProductType =
-		isTemporarySitePurchase( purchase ) &&
+		purchase.is_attached_to_holding_site &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
@@ -134,6 +134,21 @@ export function PurchaseExpiryStatus( {
 			),
 			{
 				managePurchase: <a href={ purchase.iap_purchase_management_link } />,
+			}
+		);
+	}
+
+	const isCentennial = isCentennialPurchase( purchase );
+
+	if ( isCentennial ) {
+		if ( isIncludedWithPlan( purchase ) ) {
+			return __( 'Included with plan' );
+		}
+		return createInterpolateElement(
+			// translators: date is a formatted expiry date
+			__( 'Paid until <date />' ),
+			{
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
 			}
 		);
 	}

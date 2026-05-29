@@ -1,0 +1,260 @@
+.site-plans__header-wrap {
+	max-width: 660px;
+	margin-inline: auto;
+	width: 100%;
+}
+
+.site-plans__subheader {
+	display: block;
+	margin-block-start: 8px;
+	color: var( --wp-components-color-gray-600, #757575 );
+}
+
+.site-plans__interval-selector-wrap {
+	margin-block-start: 48px;
+}
+
+.site-plans__upgrade-credit-notice {
+	margin-block-start: 16px;
+}
+
+.site-plans__grid {
+	margin-block-start: 16px;
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 240px, 1fr ) );
+	gap: 0;
+	max-width: calc( 344px * var( --plan-count, 2 ) );
+	margin-inline: auto;
+
+	@media ( max-width: 600px ) {
+		grid-template-columns: 1fr;
+		max-width: 344px;
+	}
+}
+
+.site-plans__card {
+	position: relative;
+}
+
+.site-plans__badge-slot {
+	min-height: 22px;
+	margin-block-end: 4px;
+}
+
+.site-plans__current-badge {
+	display: inline-block;
+	background: var( --wp-admin-theme-color, #007cba );
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 8px;
+	border-radius: 2px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.site-plans__special-offer-badge {
+	display: inline-block;
+	align-self: flex-start;
+	background-color: var( --studio-green-5, #d8f1e8 );
+	color: var( --studio-green-80, #1a5c3a );
+	font-size: 12px;
+	font-weight: 500;
+	padding: 0 12px;
+	border-radius: 4px;
+	line-height: 21px;
+}
+
+.site-plans__plan-header {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.site-plans__plan-badge {
+	display: inline-block;
+	align-self: center;
+	background: var( --studio-gray-5, #f0f0f0 );
+	color: var( --studio-gray-70, #3c434a );
+	font-size: 12px;
+	font-weight: 500;
+	padding: 3px 10px;
+	border-radius: 4px;
+	line-height: 1.5;
+}
+
+.site-plans__plan-name {
+	font-size: 32px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.site-plans__price-display {
+	display: flex;
+	align-items: flex-start;
+	line-height: 1;
+}
+
+.site-plans__price-currency {
+	font-size: 20px;
+	font-weight: 600;
+	margin-block-start: 4px;
+}
+
+.site-plans__price-number {
+	font-size: 48px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.site-plans__price-original {
+	display: flex;
+	align-items: flex-start;
+	margin-inline-start: 8px;
+	color: var( --wp-components-color-gray-400, #949494 );
+}
+
+.site-plans__price-number--original {
+	font-size: 28px;
+	font-weight: 600;
+	text-decoration: line-through;
+}
+
+.site-plans__price-currency--original {
+	font-size: 14px;
+	margin-block-start: 4px;
+}
+
+.site-plans__price-note {
+	font-size: 12px;
+}
+
+.site-plans__plan-info {
+	min-height: 100px;
+}
+
+.site-plans__tagline {
+	font-size: 14px;
+}
+
+.site-plans__card.components-card {
+	height: 100%;
+}
+
+.site-plans__card .components-card__body {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.site-plans__price-area.components-v-stack {
+	flex: 1;
+}
+
+.site-plans__cta-button.components-button {
+	width: 100%;
+	justify-content: center;
+
+	&:disabled {
+		opacity: 1;
+		cursor: default;
+	}
+}
+
+.site-plans__features {
+	margin: 0;
+	padding-inline-start: 0;
+	list-style: none;
+}
+
+.site-plans__feature-item {
+	font-size: 13px;
+	padding-block: 4px;
+}
+
+.site-plans__feature-item--unavailable {
+	text-decoration: line-through;
+	color: var( --wp-components-color-gray-400, #949494 );
+}
+
+.site-plans__comparison {
+	margin-block-start: 48px;
+	margin-inline: auto;
+}
+
+.site-plans__comparison-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-block-end: 24px;
+}
+
+.site-plans__comparison-title {
+	display: block;
+}
+
+.site-plans__comparison-card.components-card {
+	overflow: hidden;
+	padding: 0;
+}
+
+.site-plans__comparison-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+
+	th,
+	td {
+		padding: 12px 16px;
+		text-align: start;
+		vertical-align: middle;
+	}
+
+	thead tr {
+		border-block-end: 1px solid #e0e0e0;
+
+		th {
+			font-weight: 600;
+		}
+	}
+
+	tbody tr {
+		border-block-end: 1px solid #e0e0e0;
+
+		&:last-child {
+			border-block-end: none;
+		}
+	}
+}
+
+.site-plans__comparison-plan-header {
+	width: 100px;
+	text-align: center;
+}
+
+.site-plans__comparison-group-row th {
+	font-weight: 600;
+	background: #f6f7f7;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var( --wp-components-color-gray-600, #757575 );
+}
+
+.site-plans__comparison-feature-title {
+	max-width: 450px;
+}
+
+.site-plans__comparison-check-cell {
+	width: 100px;
+	text-align: center;
+}
+
+.site-plans__comparison-check-icon {
+	fill: var( --wp-admin-theme-color, #007cba );
+}
+
+.site-plans__comparison-dash-icon {
+	fill: var( --wp-components-color-gray-400, #949494 );
+}

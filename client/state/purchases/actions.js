@@ -19,6 +19,26 @@ import 'calypso/state/purchases/init';
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
 
+/**
+ * Tracks purchase IDs that were recently removed via removePurchaseFromState.
+ * fetchSitePurchases filters these from the API response to prevent stale
+ * server data from re-inserting a removed purchase into Redux (the server
+ * may still return it due to replication lag / eventual consistency).
+ * Each entry self-clears after 15 seconds.
+ */
+const recentlyRemovedPurchaseIds = new Set();
+
+function trackRemovedPurchase( purchaseId ) {
+	const id = String( purchaseId );
+	recentlyRemovedPurchaseIds.add( id );
+	setTimeout( () => {
+		recentlyRemovedPurchaseIds.delete( id );
+	}, 15_000 );
+}
+
+// Exported for test teardown only.
+export const __resetRecentlyRemovedPurchaseIds = () => recentlyRemovedPurchaseIds.clear();
+
 export const clearPurchases = () => ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
 
@@ -26,6 +46,57 @@ export const clearPurchases = () => ( dispatch, getState ) => {
 	if ( siteId ) {
 		dispatch( requestAdminMenu( siteId ) );
 	}
+};
+
+/**
+ * Strips a single purchase from the Redux store without resetting the
+ * hasLoaded flags. Unlike clearPurchases (which dispatches PURCHASES_REMOVE
+ * and wipes the store, forcing QueryUserPurchases to refetch), this dispatches
+ * PURCHASE_REMOVE_COMPLETED with the current list minus the target purchase —
+ * keeping hasLoadedUserPurchasesFromServer / hasLoadedSitePurchasesFromServer
+ * at true so no refetch cascade is triggered.
+ *
+ * Also refreshes the admin menu to match the sibling thunks (clearPurchases,
+ * removePurchase): removing a purchase can change which items appear in the
+ * site's wp-admin sidebar (e.g. a removed plugin's menu section), so the menu
+ * needs to be re-fetched to avoid stale entries until the next navigation.
+ *
+ * NOTE: temporary bridge for the legacy `client/me/purchases` surface, which
+ * still reads purchases from Redux. The dashboard surface uses React Query
+ * directly (see `removePurchaseMutation` in
+ * `packages/api-queries/src/upgrades.ts`). Once `client/me/purchases/**`
+ * migrates to `useQuery`, this helper can be removed.
+ */
+export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) => {
+	trackRemovedPurchase( purchaseId );
+	const state = getState();
+	const currentData = state.purchases.data ?? [];
+	const captured = currentData.find( ( p ) => String( p.ID ) === String( purchaseId ) ) ?? null;
+	const siteId = getSelectedSiteId( state );
+	dispatch( {
+		type: PURCHASE_REMOVE_COMPLETED,
+		purchases: currentData.filter( ( p ) => String( p.ID ) !== String( purchaseId ) ),
+	} );
+	if ( siteId ) {
+		dispatch( requestAdminMenu( siteId ) );
+	}
+	return captured;
+};
+
+/**
+ * Reverses a previous removePurchaseFromState by re-adding the purchase to
+ * Redux state and clearing it from recentlyRemovedPurchaseIds so a subsequent
+ * fetch result is not filtered out. Idempotent.
+ */
+export const restorePurchaseToState = ( purchase ) => ( dispatch, getState ) => {
+	recentlyRemovedPurchaseIds.delete( String( purchase.ID ) );
+	const state = getState();
+	const currentData = state.purchases.data ?? [];
+	const exists = currentData.some( ( p ) => String( p.ID ) === String( purchase.ID ) );
+	dispatch( {
+		type: PURCHASE_REMOVE_COMPLETED,
+		purchases: exists ? currentData : [ ...currentData, purchase ],
+	} );
 };
 
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
@@ -40,10 +111,13 @@ export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 			apiVersion: '1.2',
 		} )
 		.then( ( data ) => {
+			const purchases = recentlyRemovedPurchaseIds.size
+				? data.filter( ( p ) => ! recentlyRemovedPurchaseIds.has( String( p.ID ) ) )
+				: data;
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: data,
+				purchases,
 			} );
 		} )
 		.catch( () => {
@@ -70,6 +144,7 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 				purchases: data,
 				userId,
 			} );
+			return data;
 		} )
 		.catch( () => {
 			dispatch( {

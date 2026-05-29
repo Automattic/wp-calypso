@@ -39,6 +39,20 @@ body.is-section-accept-invite {
 		max-height: 340px;
 	}
 
+	.signup-form {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.invite-form-header--logged-out.is-wpcom-brand .connect-screen-brand-header__title {
+		@extend .wp-brand-font;
+	}
+
+	.invite-form-header--logged-out .connect-screen-brand-header__description {
+		text-wrap: balance;
+	}
+
 	.invite-form-header--logged-out .connect-screen-brand-header__description a {
 		color: var( --studio-gray-70 );
 		text-decoration-line: underline;
@@ -57,6 +71,7 @@ body.is-section-accept-invite {
 		box-shadow: none;
 		padding: 0;
 		margin: 0 auto;
+		max-width: none;
 		background: none;
 
 		button.is-primary {
@@ -91,13 +106,6 @@ body.is-section-accept-invite {
 			margin-bottom: 0;
 		}
 	}
-	.signup-form {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-
 	.signup-form__passwordless-form-wrapper {
 		.signup-form__terms-of-service-link {
 			margin: 30px 0 16px;

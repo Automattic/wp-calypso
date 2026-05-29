@@ -1,10 +1,14 @@
 import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
 import { styled } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
-import { getItemVariantDiscount } from './util';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -24,8 +28,9 @@ const Discount = styled.span`
 	}
 `;
 
-const Price = styled.span`
+const Price = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
 	color: ${ colorStudio.colors[ 'Black' ] };
+	${ ( props ) => props.isCheckoutUiRedesignV1 && 'padding-right: 6px;' }
 `;
 
 const Variant = styled.div`
@@ -45,14 +50,14 @@ const VariantTermLabel = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
 	gap: 2px;
 `;
 
-const PriceArea = styled.span< { inlineDiscount?: boolean } >`
+const PriceArea = styled.span< { inlineDiscount?: boolean; isCheckoutUiRedesignV1?: boolean } >`
 	text-align: right;
 	display: flex;
 	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'column' ) };
 	gap: ${ ( props ) => ( props.inlineDiscount ? '8px' : '2px' ) };
 	align-items: ${ ( props ) => ( props.inlineDiscount ? 'center' : 'flex-end' ) };
 	${ ( props ) =>
-		props.inlineDiscount &&
+		props.isCheckoutUiRedesignV1 &&
 		`
 		> span:last-child {
 			min-width: 80px;
@@ -80,7 +85,14 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
+	const variantInfo = fromVariantPriceData( variant );
+	const discountPercentage = compareToInfo
+		? calculateDiscountPercentage(
+				getPlanPriceForDuration( compareToInfo, variantInfo.termMonths ),
+				getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+		  ) ?? 0
+		: 0;
 
 	// Calculate months per bill period with introductory offers.
 	let priceTermIntervalInMonths = variant.termIntervalInMonths;
@@ -96,6 +108,21 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	} );
 
 	const priceDisplay = ( () => {
+		if ( isCheckoutUiRedesignV1 ) {
+			return i18n.fixMe( {
+				text: '%(pricePerMonth)s/mo',
+				newCopy: translate( '%(pricePerMonth)s/mo', {
+					args: {
+						pricePerMonth: pricePerMonthFormatted,
+					},
+				} ),
+				oldCopy: translate( '%(pricePerMonth)s /mo', {
+					args: {
+						pricePerMonth: pricePerMonthFormatted,
+					},
+				} ),
+			} );
+		}
 		return translate( '%(pricePerMonth)s /mo', {
 			args: {
 				pricePerMonth: pricePerMonthFormatted,
@@ -109,11 +136,14 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 			<VariantTermLabel isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>
 				{ label }
 			</VariantTermLabel>
-			<PriceArea inlineDiscount={ isCheckoutUiRedesignV1 && discountPercentage > 0 }>
+			<PriceArea
+				inlineDiscount={ isCheckoutUiRedesignV1 && discountPercentage > 0 }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+			>
 				{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				<Price>{ priceDisplay }</Price>
+				<Price isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>{ priceDisplay }</Price>
 				{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }

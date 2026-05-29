@@ -171,7 +171,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	@include heading-medium;
+	@include heading-large;
 }
 
 .checkout__summary-notice {

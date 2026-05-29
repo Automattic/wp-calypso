@@ -1,98 +1,159 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react';
-import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
-import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
-import {
-	getUserRecommendedBlogs,
-	hasRequestedUserRecommendedBlogs,
-	isRequestingUserRecommendedBlogs,
-} from 'calypso/state/reader/lists/selectors';
-import { type AppState } from 'calypso/types';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { createElement, type ReactNode } from 'react';
+import { useFeedRecommendationsQuery } from '..';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: ( selector: ( state: AppState ) => any ) => selector( {} as AppState ),
-	useDispatch: () => jest.fn(),
-} ) );
+const BASE = 'https://public-api.wordpress.com';
 
-jest.mock( 'calypso/state/reader/lists/selectors', () => ( {
-	getUserRecommendedBlogs: jest.fn(),
-	isRequestingUserRecommendedBlogs: jest.fn(),
-	hasRequestedUserRecommendedBlogs: jest.fn(),
-} ) );
+function newClient() {
+	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+}
 
-jest.mock( 'calypso/state/reader/lists/actions', () => ( {
-	requestUserRecommendedBlogs: jest.fn(),
-} ) );
+function makeWrapper( client: QueryClient ) {
+	return ( { children }: { children: ReactNode } ) =>
+		createElement( QueryClientProvider, { client }, children );
+}
+
+function stubItems( body: object ) {
+	return nock( BASE )
+		.get( '/rest/v1.2/read/lists/test/recommended-blogs/items' )
+		.query( true )
+		.reply( 200, body );
+}
 
 describe( 'useFeedRecommendationsQuery', () => {
-	beforeEach( () => {
-		jest.resetAllMocks();
-	} );
+	beforeAll( () => nock.disableNetConnect() );
+	afterEach( () => nock.cleanAll() );
 
-	it( 'returns an empty array when no recommended blogs are found', () => {
-		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ) );
+	it( 'returns an empty array while loading', () => {
+		stubItems( { list_ID: 1, items: [], success: true, page: 1, number: 2000, total_items: 0 } );
+
+		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
+
 		expect( result.current.data ).toEqual( [] );
-	} );
-
-	it( 'returns the correct data when recommended blogs are found', () => {
-		jest.mocked( getUserRecommendedBlogs ).mockReturnValue( [
-			{
-				ID: '1',
-				name: 'Test Blog 1',
-				feedId: '1',
-			},
-		] );
-		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ) );
-		expect( result.current.data ).toHaveLength( 1 );
-	} );
-
-	it( 'returns loading state when recommended blogs are being requested', () => {
-		jest.mocked( isRequestingUserRecommendedBlogs ).mockReturnValue( true );
-		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ) );
-
 		expect( result.current.isLoading ).toBe( true );
 	} );
 
-	it( 'requests recommended blogs when not available and not yet requested', async () => {
-		const requestUserRecommendedBlogsMock = jest.fn();
+	it( 'normalizes site-shaped items', async () => {
+		stubItems( {
+			list_ID: 1,
+			items: [
+				{
+					feed_ID: '7',
+					meta: {
+						data: {
+							site: {
+								ID: '99',
+								name: 'Test Blog',
+								feed_URL: 'https://example.com/feed',
+								description: '',
+								icon: { img: 'https://example.com/icon.png' },
+							},
+						},
+					},
+				},
+			],
+			success: true,
+			page: 1,
+			number: 2000,
+			total_items: 1,
+		} );
 
-		jest
-			.mocked( requestUserRecommendedBlogs )
-			.mockImplementation( requestUserRecommendedBlogsMock );
+		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
 
-		jest.mocked( hasRequestedUserRecommendedBlogs ).mockReturnValue( false );
-
-		renderHook( () => useFeedRecommendationsQuery( 'test' ) );
-
-		expect( requestUserRecommendedBlogsMock ).toHaveBeenCalled();
+		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
+		expect( result.current.data ).toEqual( [
+			{
+				ID: '99',
+				image: 'https://example.com/icon.png',
+				name: 'Test Blog',
+				feedUrl: 'https://example.com/feed',
+				siteId: '99',
+				feedId: '7',
+			},
+		] );
 	} );
 
-	it( 'does not request recommended blogs when not available and already requested', async () => {
-		const requestUserRecommendedBlogsMock = jest.fn();
+	it( 'falls back to feed-shaped items', async () => {
+		stubItems( {
+			list_ID: 1,
+			items: [
+				{
+					feed_ID: '8',
+					meta: {
+						data: {
+							feed: {
+								blog_ID: '12',
+								name: 'Feed Blog',
+								feed_URL: 'https://feed.example.com',
+								image: 'https://feed.example.com/image.png',
+							},
+						},
+					},
+				},
+			],
+			success: true,
+			page: 1,
+			number: 2000,
+			total_items: 1,
+		} );
 
-		jest
-			.mocked( requestUserRecommendedBlogs )
-			.mockImplementation( requestUserRecommendedBlogsMock );
+		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
 
-		jest.mocked( hasRequestedUserRecommendedBlogs ).mockReturnValue( true );
-
-		renderHook( () => useFeedRecommendationsQuery( 'test' ) );
-
-		expect( requestUserRecommendedBlogsMock ).not.toHaveBeenCalled();
+		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
+		expect( result.current.data ).toEqual( [
+			{
+				ID: '12',
+				image: 'https://feed.example.com/image.png',
+				name: 'Feed Blog',
+				feedUrl: 'https://feed.example.com',
+				siteId: '12',
+				feedId: '8',
+			},
+		] );
 	} );
 
-	it( 'does not request recommended blogs when it is disabled', async () => {
-		const requestUserRecommendedBlogsMock = jest.fn();
-		jest.mocked( hasRequestedUserRecommendedBlogs ).mockReturnValue( false );
+	it( 'is disabled when no userLogin is provided', () => {
+		const { result } = renderHook( () => useFeedRecommendationsQuery( '' ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
 
-		jest
-			.mocked( requestUserRecommendedBlogs )
-			.mockImplementation( requestUserRecommendedBlogsMock );
+		expect( result.current.data ).toEqual( [] );
+		expect( result.current.isLoading ).toBe( false );
+	} );
 
-		renderHook( () => useFeedRecommendationsQuery( 'test', { enabled: false } ) );
+	it( 'is disabled when explicitly disabled via options', () => {
+		const { result } = renderHook(
+			() => useFeedRecommendationsQuery( 'test', { enabled: false } ),
+			{ wrapper: makeWrapper( newClient() ) }
+		);
 
-		expect( requestUserRecommendedBlogsMock ).not.toHaveBeenCalled();
+		expect( result.current.data ).toEqual( [] );
+		expect( result.current.isLoading ).toBe( false );
+	} );
+
+	it( 'does not retry on error (matches legacy noRetry)', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/lists/test/recommended-blogs/items' )
+			.query( true )
+			.reply( 404, { error: 'list_not_found' } );
+
+		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data ).toEqual( [] );
 	} );
 } );

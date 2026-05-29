@@ -16,11 +16,15 @@
 			align-items: center;
 			gap: 5px;
 			cursor: pointer;
-			color: var(--color-neutral-80);
+			color: var(--color-text);
 			// Atomic fix
 			background-color: transparent;
 			border: none;
 			padding: 0;
+
+			svg {
+				fill: currentColor;
+			}
 		}
 	}
 

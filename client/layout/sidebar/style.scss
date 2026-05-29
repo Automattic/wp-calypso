@@ -38,7 +38,7 @@
 		list-style: none;
 	}
 
-	.count {
+	.a8c-count {
 		margin-left: 8px;
 		background-color: var(--color-sidebar-menu-hover-background);
 		border-color: var(--color-sidebar-menu-hover-background);
@@ -144,7 +144,7 @@
 			fill: var(--color-sidebar-menu-hover-text);
 		}
 
-		.count {
+		.a8c-count {
 			border-color: var(--color-sidebar-menu-hover-text);
 		}
 	}
@@ -177,7 +177,7 @@
 			fill: var(--color-sidebar-menu-selected-text);
 		}
 
-		.count {
+		.a8c-count {
 			background-color: transparent;
 			border-color: var(--color-sidebar-menu-selected-text);
 			color: var(--color-sidebar-menu-selected-text);
@@ -242,7 +242,7 @@
 				fill: var(--color-sidebar-menu-hover-text);
 			}
 
-			.count {
+			.a8c-count {
 				background-color: transparent;
 				border-color: var(--color-sidebar-submenu-selected-text);
 				color: var(--color-sidebar-submenu-selected-text);
@@ -263,7 +263,7 @@
 		.sidebar__expandable-arrow {
 			transform: rotate(180deg);
 		}
-		.count {
+		.a8c-count {
 			background-color: transparent;
 			border-color: var(--color-sidebar-submenu-selected-text);
 			color: var(--color-sidebar-submenu-selected-text);

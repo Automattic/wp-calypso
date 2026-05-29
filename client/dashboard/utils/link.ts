@@ -6,10 +6,11 @@ import { isDashboardBackport } from './is-dashboard-backport';
  * This function returns all the origins for the dashboard.
  */
 export function dashboardOrigins(): string[] {
+	const port = config( 'port' ) ?? 3000;
 	return [
-		'http://my.localhost:3000',
+		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
-		'http://my.woo.localhost:3000',
+		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
 	];
 }
@@ -45,7 +46,8 @@ export function wpcomLink( path: string ) {
  */
 export function a4aLink( path: string ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://agencies.localhost:3000' ).href;
+		const port = config( 'port' ) ?? 3000;
+		return new URL( path, `http://agencies.localhost:${ port }` ).href;
 	}
 
 	return new URL( path, 'https://agencies.automattic.com' ).href;

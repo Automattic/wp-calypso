@@ -13,7 +13,11 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserEmail,
+} from 'calypso/state/current-user/selectors';
 import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
@@ -47,6 +51,12 @@ const SiteSummary = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		margin-top: -8px;
+	}
+`;
+
+const EmailSummary = styled( SiteSummary )`
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		margin-top: 0;
 	}
 `;
 
@@ -146,6 +156,8 @@ export default function WPCheckoutOrderReview( {
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
+	const currentUserEmail = useSelector( getCurrentUserEmail ) as string | undefined;
+	const isGiftPurchase = Boolean( responseCart.gift_details?.receiver_blog_slug );
 
 	return (
 		<>
@@ -160,6 +172,13 @@ export default function WPCheckoutOrderReview( {
 					<SiteSummary className="checkout-review-order__site">
 						{ isCheckoutUiRedesignV1 ? domainUrl : translate( 'Site: %s', { args: domainUrl } ) }
 					</SiteSummary>
+				) }
+				{ currentUserEmail && ! isGiftPurchase && (
+					<EmailSummary className="checkout-review-order__email">
+						{ isCheckoutUiRedesignV1
+							? currentUserEmail
+							: translate( 'Account: %s', { args: currentUserEmail } ) }
+					</EmailSummary>
 				) }
 				{ planIsP2Plus && selectedSiteData?.name && (
 					<SiteSummary className="checkout-review-order__site">

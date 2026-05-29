@@ -45,7 +45,7 @@ export default function ConsolidatedViews( {
 	const translate = useTranslate();
 	const { data: productsData, isFetching } = useProductsQuery( false, true );
 	const { previousQuarterExpectedCommission, pendingOrders, currentQuarterExpectedCommission } =
-		useGetConsolidatedPayoutData( referrals, productsData );
+		useGetConsolidatedPayoutData( referrals );
 	const { showSupportGuide } = useHelpCenter();
 	const { downloadCommissionsCsv } = useDownloadCommissionsCsv( isSingleClient );
 

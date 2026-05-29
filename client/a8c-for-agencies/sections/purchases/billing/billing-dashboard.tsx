@@ -1,7 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import PaymentRiskNoticeBanner from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -29,11 +30,16 @@ export default function BillingDashboard() {
 	return (
 		<Layout className="billing-dashboard" title={ title } wide>
 			<LayoutTop>
+				<PaymentRiskNoticeBanner source="purchases_billing" />
 				<LayoutHeader>
 					<Title>{ title } </Title>
 					<Actions className="a4a-billing__header-actions">
 						<MobileSidebarNavigation />
-						<Button href={ A4A_MARKETPLACE_LINK } onClick={ onIssueNewLicenseClick } primary>
+						<Button
+							href={ A4A_MARKETPLACE_LINK }
+							onClick={ onIssueNewLicenseClick }
+							variant="primary"
+						>
 							{ translate( 'Issue new license' ) }
 						</Button>
 					</Actions>

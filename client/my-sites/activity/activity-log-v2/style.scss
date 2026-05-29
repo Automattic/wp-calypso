@@ -3,27 +3,14 @@
 body.is-section-activity {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
 
 	.admin-ui-page {
 		background: var(--color-surface-backdrop);
 	}
-
-	.jetpack-colophon {
-		padding-bottom: 24px;
-	}
 }
 
 main.activity-log-v2 {
-	&:not(.wordpressdotcom) {
-		.activity-log-v2__header {
-			margin-top: 32px;
-		}
-		.activity-log-v2__content {
-			margin-top: 32px;
-			margin-bottom: 32px;
-		}
-	}
-
 	.filterbar {
 		margin-left: 0;
 		margin-right: 0;
@@ -42,36 +29,4 @@ main.activity-log-v2 {
 			}
 		}
 	}
-}
-
-.activity-log-v2__header {
-	display: flex;
-	margin-bottom: 32px;
-}
-
-.activity-log-v2__header-left {
-	text-align: left;
-	flex-grow: 1;
-}
-
-.activity-log-v2__header-right {
-	text-align: right;
-	margin-top: 8px;
-}
-
-.activity-log-v2__header-title {
-	font-size: $font-title-large;
-	font-weight: 600;
-	margin-bottom: 8px;
-}
-
-.activity-log-v2__clone-button .components-tooltip .components-popover__content {
-	background-color: #50575e;
-	width: 168px;
-	white-space: normal;
-	text-align: left;
-}
-
-.activity-log-v2__clone-button {
-	white-space: nowrap;
 }

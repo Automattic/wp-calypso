@@ -13,20 +13,24 @@ export async function apiDeleteSite(
 ): Promise< void > {
 	console.info( `Deleting siteID ${ siteDetails.id }` );
 
-	const response = await client.deleteSite( { id: siteDetails.id, domain: siteDetails.url } );
+	try {
+		const response = await client.deleteSite( { id: siteDetails.id, domain: siteDetails.url } );
 
-	// If the response is `null` then no action has been
-	// performed.
-	if ( response ) {
-		// The only correct response is the string "deleted".
-		if ( response.status !== 'deleted' ) {
-			console.warn(
-				`Failed to delete siteID ${ siteDetails.id }.\nExpected: "deleted", Got: ${ response.status }`
-			);
+		// If the response is `null` then no action has been
+		// performed.
+		if ( response ) {
+			// The only correct response is the string "deleted".
+			if ( response.status !== 'deleted' ) {
+				console.warn(
+					`Failed to delete siteID ${ siteDetails.id }.\nExpected: "deleted", Got: ${ response.status }`
+				);
+			} else {
+				console.log( `Successfully deleted siteID ${ siteDetails.id }.` );
+			}
 		} else {
-			console.log( `Successfully deleted siteID ${ siteDetails.id }.` );
+			console.log( `Failed to delete site ID ${ siteDetails.id }; no action performed.` );
 		}
-	} else {
-		console.log( `Failed to delete site ID ${ siteDetails.id }; no action performed.` );
+	} catch ( error ) {
+		console.warn( `Error deleting siteID ${ siteDetails.id }: ${ error }` );
 	}
 }

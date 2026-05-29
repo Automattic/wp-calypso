@@ -9,8 +9,8 @@ import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
-import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { useLocale } from '../locale';
+import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
@@ -54,6 +54,7 @@ export default function Notifications( {
 		APP_RENDER_NOTES: [
 			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
 				setHasUnseenNotifications( newNoteCount > 0 );
+				omnibarEvents.notificationsUnseenCount.emit( newNoteCount );
 			},
 		],
 		VIEW_SETTINGS: [
@@ -75,19 +76,16 @@ export default function Notifications( {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
-	const handleOmnibarToggle = useCallback(
-		( element: HTMLElement | null ) => {
-			setAnchorEl( element );
-			setIsOpen( ( prev ) => {
-				if ( ! prev ) {
-					setShowHelpCenter( false, undefined, true );
-				}
-				return ! prev;
-			} );
-		},
-		[ setShowHelpCenter ]
-	);
+	const handleOmnibarToggle = useCallback( () => {
+		setIsOpen( ( prev ) => {
+			if ( ! prev ) {
+				setShowHelpCenter( false, undefined, true );
+			}
+			return ! prev;
+		} );
+	}, [ setShowHelpCenter ] );
 
+	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 
 	useEffect( () => {
@@ -101,7 +99,7 @@ export default function Notifications( {
 			if ( event.key === 'n' ) {
 				event.stopPropagation();
 				event.preventDefault();
-				handleToggle( true );
+				handleOmnibarToggle();
 			}
 		};
 
@@ -109,7 +107,7 @@ export default function Notifications( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [] );
+	}, [ handleOmnibarToggle ] );
 
 	return (
 		<Dropdown

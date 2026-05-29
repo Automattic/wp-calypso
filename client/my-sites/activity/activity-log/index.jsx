@@ -22,7 +22,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -496,6 +496,9 @@ class ActivityLog extends Component {
 						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }
 				>
+					{ siteId && (
+						<TimeMismatchWarning siteId={ siteId } settingsUrl={ this.props.siteSettingsUrl } />
+					) }
 					{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 					{ siteId && 'unavailable' === rewindState.state && (
 						<RewindUnavailabilityNotice siteId={ siteId } />
@@ -594,7 +597,7 @@ class ActivityLog extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
-		const { context, rewindState, siteSettingsUrl } = this.props;
+		const { context, rewindState } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
@@ -609,11 +612,10 @@ class ActivityLog extends Component {
 				{ siteId && <QueryRewindPolicies siteId={ siteId } /> }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }
-				<JetpackColophon />
+				{ ! isJetpackCloud() && <JetpackFooter /> }
 			</Main>
 		);
 	}

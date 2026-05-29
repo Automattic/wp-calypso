@@ -17,7 +17,6 @@
 		{ "path": "./calypso-e2e" },
 		{ "path": "./calypso-support-session" },
 		{ "path": "./calypso-products" },
-		{ "path": "./calypso-razorpay" },
 		{ "path": "./calypso-paypal" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./calypso-url" },
@@ -62,6 +61,7 @@
 		{ "path": "./viewport" },
 		{ "path": "./viewport-react" },
 		{ "path": "./wpcom-checkout" },
+		{ "path": "./wpcom-smart-dictation" },
 		{ "path": "./verbum-block-editor" },
 		{ "path": "./wpcom-template-parts" },
 		{ "path": "./zendesk-client" }

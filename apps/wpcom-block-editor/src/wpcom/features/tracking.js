@@ -1046,12 +1046,49 @@ if (
 		delegateEventTracking( true, event );
 	};
 
+	// Gutenberg renders the block canvas inside an iframe. Events there don't
+	// bubble to the parent document, so we also attach our delegate listeners
+	// to each iframe's document and re-attach on `load` (it's recreated on
+	// preview mode changes).
+	const EDITOR_CANVAS_IFRAME_SELECTOR = 'iframe[name="editor-canvas"]';
+	const attachedIframes = new WeakSet();
+	const attachedDocuments = new WeakSet();
+
+	const attachDelegateListeners = ( doc ) => {
+		if ( ! doc || attachedDocuments.has( doc ) ) {
+			return;
+		}
+		attachedDocuments.add( doc );
+		EVENT_TYPES.forEach( ( eventType ) => {
+			doc.addEventListener( eventType, delegateNonCaptureListener );
+			doc.addEventListener( eventType, delegateCaptureListener, true );
+		} );
+	};
+
+	const attachToEditorCanvasIframe = ( iframe ) => {
+		if ( attachedIframes.has( iframe ) ) {
+			return;
+		}
+		attachedIframes.add( iframe );
+		// Re-attach on every load - the iframe document is recreated on preview-mode changes.
+		attachDelegateListeners( iframe.contentDocument );
+		iframe.addEventListener( 'load', () => attachDelegateListeners( iframe.contentDocument ) );
+	};
+
+	const attachToEditorCanvasIframes = () => {
+		document
+			.querySelectorAll( EDITOR_CANVAS_IFRAME_SELECTOR )
+			.forEach( attachToEditorCanvasIframe );
+	};
+
 	// Registers Plugin.
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
-			EVENT_TYPES.forEach( ( eventType ) => {
-				document.addEventListener( eventType, delegateNonCaptureListener );
-				document.addEventListener( eventType, delegateCaptureListener, true );
+			attachDelegateListeners( document );
+			attachToEditorCanvasIframes();
+			new window.MutationObserver( attachToEditorCanvasIframes ).observe( document.body, {
+				childList: true,
+				subtree: true,
 			} );
 			return null;
 		},

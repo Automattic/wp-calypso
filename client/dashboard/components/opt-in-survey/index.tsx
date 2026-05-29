@@ -62,10 +62,8 @@ function checkEligible( welcomeNoticeDismissedAt: string | null ) {
 	return Date.now() >= lastDismissedDate.getTime() + RESHOW_AFTER_MS;
 }
 
-export default function OptInSurvey() {
+export function useShouldShowOptInSurvey() {
 	const { optIn } = useAppContext();
-	const { recordTracksEvent } = useAnalytics();
-	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	const { data: dashboardOptIn } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-opt-in' )
@@ -82,7 +80,22 @@ export default function OptInSurvey() {
 		)
 	);
 
-	if ( ! optIn || ! isEligible || isDismissed ) {
+	return optIn && isEligible;
+}
+
+export default function OptInSurvey() {
+	const shouldShow = useShouldShowOptInSurvey();
+	const { recordTracksEvent } = useAnalytics();
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
+	const { data: welcomeNoticeDismissedAt } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
+	);
+
+	if ( ! shouldShow || isDismissed ) {
 		return null;
 	}
 

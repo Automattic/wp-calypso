@@ -1,0 +1,1526 @@
+import config from '@automattic/calypso-config';
+import {
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	WPCOM_FEATURES_BACKUPS,
+	getJetpackProductOrPlanDisplayName,
+} from '@automattic/calypso-products';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
+import { Spinner as WPSpinner, Modal } from '@wordpress/components';
+import { getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { flowRight, get, includes, startsWith } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { formatSlugToURL } from 'calypso/blocks/importer/util';
+import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
+import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
+import { ConsentText } from 'calypso/components/connect-screen/consent-text';
+import { FeaturesSection } from 'calypso/components/connect-screen/features-section';
+import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
+import { UserCard } from 'calypso/components/connect-screen/user-card';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserConnection from 'calypso/components/data/query-user-connection';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gravatar from 'calypso/components/gravatar';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { navigate } from 'calypso/lib/navigate';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
+import { urlToSlug } from 'calypso/lib/url';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	authorize as authorizeAction,
+	retryAuth as retryAuthAction,
+} from 'calypso/state/jetpack-connect/actions';
+import {
+	getAuthAttempts,
+	getAuthorizationData,
+	getUserAlreadyConnected,
+	hasExpiredSecretError as hasExpiredSecretErrorSelector,
+	hasXmlrpcError as hasXmlrpcErrorSelector,
+	isRemoteSiteOnSitesList,
+	isSiteBlockedError as isSiteBlockedSelector,
+} from 'calypso/state/jetpack-connect/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
+import {
+	isFetchingSitePurchases,
+	siteHasJetpackProductPurchase,
+} from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import AuthFormHeader from './auth-form-header';
+import { getAuthCopy, getSecondaryAuthCopy } from './connection-content';
+import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	DEFAULT_AUTHORIZE_ERROR,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	SITE_BLOCKED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	XMLRPC_ERROR,
+} from './connection-notice-types';
+import { getConnectorBranding } from './connector-branding-config';
+import {
+	JPC_A4A_PATH,
+	JPC_JETPACK_MANAGE_PATH,
+	JPC_PATH_PLANS,
+	REMOTE_PATH_AUTH,
+} from './constants';
+import Disclaimer from './disclaimer';
+import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import MainWrapper from './main-wrapper';
+import {
+	clearPlan,
+	isCalypsoStartedConnection,
+	isSsoApproved,
+	retrieveMobileRedirect,
+	retrievePlan,
+	retrieveSource,
+	clearSource,
+} from './persistence-utils';
+import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
+import { authQueryPropTypes, getRoleFromScope } from './utils';
+import wooDnaConfig from './woo-dna-config';
+import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
+import { WooLoader } from './woo-loader';
+import { ConnectingYourAccountStage, PlaceholderStage } from './woo-loader-stages';
+
+/**
+ * Constants
+ */
+const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
+const MAX_AUTH_ATTEMPTS = 3;
+const WOO_LOADER_STAGES = [ ConnectingYourAccountStage, PlaceholderStage ];
+
+export class JetpackAuthorize extends Component {
+	static propTypes = {
+		authQuery: authQueryPropTypes.isRequired,
+
+		// Connected props
+		authAttempts: PropTypes.number.isRequired,
+		authorizationData: PropTypes.shape( {
+			authorizationCode: PropTypes.string,
+			authorizeError: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+			authorizeSuccess: PropTypes.bool,
+			siteReceived: PropTypes.bool,
+		} ).isRequired,
+		authorize: PropTypes.func.isRequired,
+		calypsoStartedConnection: PropTypes.bool,
+		hasExpiredSecretError: PropTypes.bool,
+		hasXmlrpcError: PropTypes.bool,
+		isAlreadyOnSitesList: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
+		isFetchingSites: PropTypes.bool,
+		isSiteBlocked: PropTypes.bool,
+		isRequestingSitePurchases: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
+		recordTracksEvent: PropTypes.func.isRequired,
+		siteHasJetpackPaidProduct: PropTypes.bool,
+		retryAuth: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		user: PropTypes.object.isRequired,
+		userAlreadyConnected: PropTypes.bool.isRequired,
+	};
+
+	redirecting = false;
+	retryingAuth = false;
+
+	state = {
+		isRedirecting: false,
+	};
+
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
+	UNSAFE_componentWillMount() {
+		const { recordTracksEvent, isMobileAppFlow } = this.props;
+
+		const { from, clientId, closeWindowAfterLogin } = this.props.authQuery;
+		const tracksProperties = {
+			from,
+			is_mobile_app_flow: isMobileAppFlow,
+			site: clientId,
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
+		};
+
+		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the login step within a popup window.
+			// In these cases, we'll want to automatically close the window when the login
+			// step is complete, and continue authorization in the parent window.
+			debug( 'Closing window after login' );
+			window.close();
+		}
+
+		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
+		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
+
+		if ( this.shouldAutoAuthorize() ) {
+			debug( 'Authorizing automatically on component mount' );
+			return this.authorize();
+		}
+	}
+
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		const { retryAuth } = nextProps;
+		const { authorizeError, authorizeSuccess, siteReceived } = nextProps.authorizationData;
+		const { alreadyAuthorized, redirectAfterAuth, site } = nextProps.authQuery;
+
+		if ( this.isJetpackPartnerCoupon( nextProps ) && ( siteReceived || authorizeSuccess ) ) {
+			// The current implementation of the partner coupon URL is supposed to
+			// just take over the entire flow and send directly to checkout.
+			// This will happen by the partnerCouponRedirects controller logic if we
+			// just redirect the customer to the plans page.
+			// The reason we have to do this is because e.g. "shouldRedirectJetpackStart" has
+			// logic that will always go straight to the redirect URI after authorization which
+			// means we never hit the "plans" page where our partner coupon logic takes over.
+			return this.redirect();
+		} else if (
+			this.isSso( nextProps ) ||
+			this.isWooRedirect( nextProps ) ||
+			this.isFromJpo( nextProps ) ||
+			this.isFromJetpackBoost( nextProps ) ||
+			this.shouldRedirectJetpackStart( nextProps ) ||
+			this.isFromBlazeAdsPlugin( nextProps ) ||
+			this.props.isVip
+		) {
+			if ( authorizeSuccess ) {
+				return this.externalRedirectOnce( redirectAfterAuth );
+			}
+		} else if ( siteReceived ) {
+			return this.redirect();
+		} else if ( nextProps.isAlreadyOnSitesList && alreadyAuthorized ) {
+			return this.redirect();
+		}
+		if (
+			authorizeError &&
+			nextProps.authAttempts < MAX_AUTH_ATTEMPTS &&
+			! this.retryingAuth &&
+			! nextProps.hasXmlrpcError &&
+			! nextProps.hasExpiredSecretError &&
+			! nextProps.isSiteBlocked &&
+			site
+		) {
+			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
+			// Any other type of error, we will immediately and automatically retry the request as many times
+			// as controlled by MAX_AUTH_ATTEMPTS.
+			const attempts = this.props.authAttempts || 0;
+			this.retryingAuth = true;
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
+		}
+	}
+
+	authorize() {
+		this.props.authorize( {
+			_wp_nonce: this.props.authQuery.nonce,
+			client_id: this.props.authQuery.clientId,
+			from: this.props.authQuery.from,
+			jp_version: this.props.authQuery.jpVersion,
+			redirect_uri: this.props.authQuery.redirectUri,
+			scope: this.props.authQuery.scope,
+			secret: this.props.authQuery.secret,
+			state: this.props.authQuery.state,
+		} );
+	}
+
+	externalRedirectOnce( url ) {
+		if ( ! this.redirecting ) {
+			this.redirecting = true;
+			debug( `Redirecting to ${ url }` );
+			navigate( url );
+		}
+	}
+
+	redirect() {
+		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, fromSource } = this.props;
+		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
+			this.props.authQuery;
+		const { isRedirecting } = this.state;
+
+		if ( isRedirecting ) {
+			return;
+		}
+
+		if ( isMobileAppFlow ) {
+			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
+			window.location.replace( mobileAppRedirect );
+			return;
+		}
+
+		if ( closeWindowAfterAuthorize && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the authorization step within a popup window.
+			// In these cases, we'll want to automatically close the window when the authorization
+			// step is complete, and have the window opener detect this and re-check user authorization status.
+			debug( 'Closing window after authorize' );
+			window.close();
+		}
+
+		if ( fromSource === 'import' ) {
+			clearSource();
+			debug( 'Closing window after authorize - from migration flow' );
+			window.close();
+		}
+
+		const urlParams = new URLSearchParams( window.location.search );
+		const source = urlParams.get( 'source' );
+
+		if ( source === 'jetpack-manage' ) {
+			const urlRedirect = addQueryArgs(
+				{ site_connected: urlToSlug( homeUrl ) },
+				JPC_JETPACK_MANAGE_PATH
+			);
+			navigate( urlRedirect );
+			return;
+		} else if ( source === 'a8c-for-agencies' ) {
+			const urlRedirect = addQueryArgs( { site_connected: urlToSlug( homeUrl ) }, JPC_A4A_PATH );
+			navigate( urlRedirect );
+			return;
+		}
+
+		if ( this.isJetpackPartnerCoupon() ) {
+			// The current implementation of the partner coupon URL is supposed to
+			// just take over the entire flow and send directly to checkout.
+			// This will happen by the partnerCouponRedirects controller logic if we
+			// just redirect the customer to the plans page.
+			// The reason we have to do this is because e.g. "shouldRedirectJetpackStart" has
+			// logic that will always go straight to the redirect URI after authorization which
+			// means we never hit the "plans" page where our partner coupon logic takes over.
+			const redirectionTarget = addQueryArgs(
+				{ redirect: redirectAfterAuth },
+				`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+			);
+			debug( `Jetpack Partner Coupon Redirecting to: ${ redirectionTarget }` );
+			navigate( redirectionTarget );
+		} else if (
+			this.isSso() ||
+			this.isWooRedirect() ||
+			this.isFromJpo() ||
+			this.isFromJetpackBoost() ||
+			this.isFromBlockEditor() ||
+			this.shouldRedirectJetpackStart() ||
+			getRoleFromScope( scope ) === 'subscriber' ||
+			this.isJetpackUpgradeFlow() ||
+			this.isFromJetpackConnectionManager() ||
+			this.isFromJetpackSocialPlugin() ||
+			this.isFromJetpackSearchPlugin() ||
+			this.isFromJetpackVideoPressPlugin() ||
+			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
+			this.isFromAutomatticForAgenciesPlugin() ||
+			this.isFromBlazeAdsPlugin()
+		) {
+			debug(
+				'Going back to WP Admin.',
+				'Connection initiated via: ',
+				from,
+				'SSO found:',
+				this.isSso()
+			);
+			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromJetpackOnboarding() ) {
+			debug( `Redirecting to My Jetpack page with 'from' url query arg: ${ redirectAfterAuth }` );
+			this.externalRedirectOnce( addQueryArgs( { from }, redirectAfterAuth ) );
+		} else if ( this.isFromJetpackConnector() ) {
+			debug( `Redirecting with 'from' url query arg: ${ redirectAfterAuth }` );
+			this.externalRedirectOnce( addQueryArgs( { from }, redirectAfterAuth ) );
+		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
+			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
+			navigate(
+				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
+				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url
+				// host so that it becomes a relative url.
+				redirectAfterAuth
+					.replace( /^https?:\/\/wordpress\.com/, '' )
+					.replace( `http://calypso.localhost:${ config( 'port' ) ?? 3000 }`, '' )
+			);
+		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
+			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
+			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
+		} else if ( this.isFromMigrationPlugin() ) {
+			navigate( `/setup/site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
+		} else {
+			const redirectionTarget = this.getRedirectionTarget();
+			debug( `Redirecting to: ${ redirectionTarget }` );
+			navigate( redirectionTarget );
+		}
+
+		this.setState( { isRedirecting: true } );
+	}
+
+	redirectToXmlRpcErrorFallbackUrl() {
+		const { state, redirectUri } = this.props.authQuery;
+		const code = this.props.authorizationData.authorizationCode;
+		const url = addQueryArgs( { code, state }, redirectUri );
+		debug( 'xmlrpc fallback to', url );
+		this.externalRedirectOnce( url );
+	}
+
+	shouldAutoAuthorize() {
+		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
+		return (
+			this.isSso() ||
+			[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ].includes( from ) || // Auto authorize the old WooCommerce setup wizard only.
+			( ! this.props.isAlreadyOnSitesList &&
+				! alreadyAuthorized &&
+				( this.props.calypsoStartedConnection || authApproved ) )
+		);
+	}
+
+	isFromJpo( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jpo' );
+	}
+
+	isFromJetpackBoost( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-boost' );
+	}
+
+	isFromBlockEditor( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'jetpack-block-editor' === from;
+	}
+
+	/**
+	 * Check whether this a valid authorized SSO request
+	 * @param  {Object}  props          Props to test
+	 * @param  {?string} props.authQuery.from     Where is the request from
+	 * @param  {?number} props.authQuery.clientId Remote site ID
+	 * @returns {boolean}                True if it's a valid SSO request otherwise false
+	 */
+	isSso( props = this.props ) {
+		const { from, clientId } = props.authQuery;
+		return 'sso' === from && isSsoApproved( clientId );
+	}
+
+	/**
+	 * Check if the user is coming from the Jetpack upgrade flow.
+	 * @param  {Object}  props           Props to test
+	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
+	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
+	 */
+	isJetpackUpgradeFlow( props = this.props ) {
+		const { redirectAfterAuth } = props.authQuery;
+		return (
+			redirectAfterAuth && redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' )
+		);
+	}
+
+	isFromJetpackConnectionManager( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connection-ui' );
+	}
+
+	isFromJetpackBackupPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-backup' );
+	}
+
+	isFromJetpackSearchPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-search' );
+	}
+
+	isFromJetpackSocialPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-social' );
+	}
+
+	isFromJetpackVideoPressPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-videopress' );
+	}
+
+	isFromMyJetpack( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'my-jetpack' );
+	}
+
+	isWooRedirect = ( props = this.props ) => {
+		const { from } = props.authQuery;
+		return (
+			[
+				'woocommerce-services-auto-authorize',
+				'woocommerce-setup-wizard',
+				// Legacy flow not in use anymore. Keeping around just to
+				// support redirects correctly.
+				'woocommerce-onboarding',
+				'woocommerce-core-profiler',
+			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
+		);
+	};
+
+	isWooJPC( props = this.props ) {
+		const { from } = props.authQuery;
+		return (
+			// TODO: the two extra `from` checks shouldn't be necessary,
+			// as they are part of the isWooJPCFlow check. But the unit tests
+			// don't use the connected component and would otherwise fail.
+			'woocommerce-core-profiler' === from ||
+			'woocommerce-onboarding' === from ||
+			this.props.isWooJPC
+		);
+	}
+
+	getWooDnaConfig( props = this.props ) {
+		return wooDnaConfig( props.authQuery );
+	}
+
+	isJetpackPartnerCoupon( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-partner-coupon' );
+	}
+
+	isFromMigrationPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'wpcom-migration' );
+	}
+
+	isFromAutomatticForAgenciesPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'automattic-for-agencies-client' );
+	}
+
+	isFromBlazeAdsPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'blaze-ads' );
+	}
+
+	shouldRedirectJetpackStart( props = this.props ) {
+		const { partnerSlug, partnerID } = props;
+
+		return partnerID && 'pressable' !== partnerSlug;
+	}
+
+	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connect-after-checkout' );
+	}
+
+	isFromJetpackOnboarding( props = this.props ) {
+		const { from } = props.authQuery;
+		return from === 'jetpack-onboarding';
+	}
+
+	isFromJetpackConnector( props = this.props ) {
+		const { from } = props.authQuery;
+		return from === 'jetpack-connector';
+	}
+
+	isUnifiedConnectionFlow( props = this.props ) {
+		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
+	}
+
+	isSecondaryConnection( props = this.props ) {
+		return this.isFromJetpackConnector( props ) && props.authQuery.hasConnectedOwner;
+	}
+
+	isAdminConnection( props = this.props ) {
+		return getRoleFromScope( props.authQuery.scope ) === 'administrator';
+	}
+
+	getCompanyName() {
+		return this.isFromAutomatticForAgenciesPlugin() ? 'Automattic, Inc.' : 'WordPress.com';
+	}
+
+	handleSignIn = async ( eOrLoginURL, loginURL ) => {
+		const hasEvent = !! eOrLoginURL && typeof eOrLoginURL.preventDefault === 'function';
+		const event = hasEvent ? eOrLoginURL : null;
+		const targetLoginURL = hasEvent ? loginURL : eOrLoginURL;
+
+		event?.preventDefault();
+
+		const { recordTracksEvent } = this.props;
+		switch ( true ) {
+			case this.isWooJPC(): {
+				// Logout user before redirecting to login page.
+				try {
+					await this.props.logoutUser();
+					disablePersistence();
+					await clearStore();
+				} catch ( error ) {
+					// The logout endpoint might fail if the nonce has expired.
+					// Clear wordpress_logged_in cookie to force logout.
+					document.cookie = 'wordpress_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+				}
+				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
+				const loginHref = targetLoginURL
+					? Object.assign( document.createElement( 'a' ), { href: targetLoginURL } ).href
+					: event?.target?.href;
+				window.location.href = loginHref;
+				break;
+			}
+			default:
+				try {
+					const { redirect_to: redirectTo } = await this.props.logoutUser( targetLoginURL );
+					disablePersistence();
+					await clearStore();
+					window.location.href = redirectTo || '/';
+				} catch ( error ) {
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					this.props.redirectToLogout( targetLoginURL );
+				}
+		}
+	};
+
+	handleSignOut = () => {
+		const { recordTracksEvent } = this.props;
+		recordTracksEvent( 'calypso_jpc_signout_click' );
+
+		this.props.redirectToLogout( window.location.href );
+	};
+
+	handleResolve = () => {
+		const { site, recordTracksEvent } = this.props;
+		this.retryingAuth = false;
+		if ( this.props.hasExpiredSecretError ) {
+			// In this case, we need to re-issue the secret.
+			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
+			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
+			this.externalRedirectOnce( site + REMOTE_PATH_AUTH );
+			return;
+		}
+		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
+		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
+		// legacy functions on the client.
+		recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
+		this.redirectToXmlRpcErrorFallbackUrl();
+	};
+
+	handleSubmit = () => {
+		const { recordTracksEvent } = this.props;
+		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
+		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
+			return this.externalRedirectOnce( redirectAfterAuth );
+		}
+
+		if ( this.props.isAlreadyOnSitesList && alreadyAuthorized ) {
+			recordTracksEvent( 'calypso_jpc_already_authorized_click' );
+			return this.redirect();
+		}
+
+		if ( authorizeSuccess && ! alreadyAuthorized ) {
+			recordTracksEvent( 'calypso_jpc_activate_click' );
+			return this.redirect();
+		}
+		if ( authorizeError ) {
+			recordTracksEvent( 'calypso_jpc_try_again_click' );
+			return this.handleResolve();
+		}
+		if ( this.props.isAlreadyOnSitesList ) {
+			recordTracksEvent( 'calypso_jpc_return_site_click' );
+			return this.redirect();
+		}
+
+		recordTracksEvent( 'calypso_jpc_approve_click', {
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
+		} );
+
+		if ( 'woocommerce-core-profiler' === from ) {
+			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
+		}
+
+		return this.authorize();
+	};
+
+	isAuthorizing() {
+		const { isAuthorizing } = this.props.authorizationData;
+		return ! this.props.isAlreadyOnSitesList && isAuthorizing;
+	}
+
+	renderErrorDetails() {
+		const { authorizeError } = this.props.authorizationData;
+		return (
+			<div className="jetpack-connect__error-details">
+				<FormLabel>{ this.props.translate( 'Error details' ) }</FormLabel>
+				<FormSettingExplanation>{ authorizeError.message }</FormSettingExplanation>
+			</div>
+		);
+	}
+
+	renderXmlrpcFeedback() {
+		const { translate } = this.props;
+
+		return (
+			<p>
+				{ translate(
+					'WordPress.com was unable to reach your site and approve the connection. ' +
+						'Try again by clicking the button above; ' +
+						"if that doesn't work you may need to {{link}}contact support{{/link}}.",
+					{
+						components: {
+							link: (
+								<a
+									href="https://jetpack.com/contact-support"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
+		);
+	}
+
+	renderNotices() {
+		const { authorizeError, isAuthorizing, authorizeSuccess, userAlreadyConnected } =
+			this.props.authorizationData;
+		const { alreadyAuthorized, site } = this.props.authQuery;
+
+		let redirectToMobileApp = null;
+		if ( this.props.isMobileAppFlow ) {
+			redirectToMobileApp = ( reason ) => {
+				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+				this.externalRedirectOnce( url );
+			};
+		}
+
+		if ( alreadyAuthorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
+			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
+			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
+			// flows will be reserved for brand new connections.
+			return (
+				<JetpackConnectNotices
+					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
+
+		if ( userAlreadyConnected ) {
+			// Via wp-admin it is possible to connect additional users after the initial connection is made. But if we
+			// are trying to connect an additional user, and we are logged into a wordpress.com account that is already
+			// connected, we need to show an error.
+			return (
+				<JetpackConnectNotices
+					noticeType={ USER_IS_ALREADY_CONNECTED_TO_SITE }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
+
+		if ( this.retryingAuth ) {
+			return (
+				<JetpackConnectNotices
+					noticeType={ RETRYING_AUTH }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
+
+		if (
+			this.props.authAttempts < MAX_AUTH_ATTEMPTS &&
+			this.props.authAttempts > 0 &&
+			! isAuthorizing &&
+			! authorizeSuccess
+		) {
+			return (
+				<JetpackConnectNotices noticeType={ RETRY_AUTH } onTerminalError={ redirectToMobileApp } />
+			);
+		}
+
+		if ( ! authorizeError ) {
+			return null;
+		}
+
+		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
+			return (
+				<JetpackConnectNotices
+					noticeType={ ALREADY_CONNECTED }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
+		if ( this.props.hasExpiredSecretError ) {
+			return (
+				<JetpackConnectNotices
+					noticeType={ SECRET_EXPIRED }
+					siteUrl={ site }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
+		if ( this.props.hasXmlrpcError ) {
+			return (
+				<Fragment>
+					<JetpackConnectNotices
+						noticeType={ XMLRPC_ERROR }
+						onActionClick={ this.handleResolve }
+						onTerminalError={ redirectToMobileApp }
+					/>
+					{ this.renderXmlrpcFeedback() }
+					{ this.renderErrorDetails() }
+				</Fragment>
+			);
+		}
+		if ( this.props.isSiteBlocked ) {
+			return (
+				<JetpackConnectNotices
+					noticeType={ SITE_BLOCKED }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
+		return (
+			<Fragment>
+				<JetpackConnectNotices
+					noticeType={ DEFAULT_AUTHORIZE_ERROR }
+					onTerminalError={ redirectToMobileApp }
+				/>
+				{ this.renderErrorDetails() }
+			</Fragment>
+		);
+	}
+
+	getButtonText() {
+		// Update getScreenReaderAuthMessage if you change this function.
+		// TODO: extract actual status messages from button labels so getScreenReaderAuthMessage can use them.
+		const { translate } = this.props;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { alreadyAuthorized } = this.props.authQuery;
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			return translate( 'Go back to your site' );
+		}
+
+		if ( authorizeError && ! this.retryingAuth ) {
+			return translate( 'Try again' );
+		}
+
+		if ( this.props.isFetchingAuthorizationSite ) {
+			return translate( 'Preparing authorization' );
+		}
+
+		if ( authorizeSuccess && this.redirecting ) {
+			return translate( 'Returning to your site' );
+		}
+
+		if ( authorizeSuccess ) {
+			return translate( 'Finishing up!', {
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
+			} );
+		}
+
+		if ( isAuthorizing || this.retryingAuth ) {
+			return translate( 'Authorizing your connection' );
+		}
+
+		if ( this.props.isAlreadyOnSitesList ) {
+			return translate( 'Return to your site' );
+		}
+
+		if ( this.isWooJPC() ) {
+			return translate( 'Connect' );
+		}
+
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
+			return translate( 'Connect account' );
+		}
+
+		return translate( 'Approve' );
+	}
+
+	getScreenReaderAuthMessage() {
+		// Copied from getButtonText. Buttons labels have been removed and actual status messages kept.
+		const { translate } = this.props;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { alreadyAuthorized } = this.props.authQuery;
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			return;
+		}
+
+		if ( authorizeError && ! this.retryingAuth ) {
+			return;
+		}
+
+		if ( this.props.isFetchingAuthorizationSite ) {
+			return translate( 'Preparing authorization' );
+		}
+
+		if ( authorizeSuccess && this.redirecting ) {
+			return;
+		}
+
+		if ( authorizeSuccess ) {
+			return translate( 'Finishing up!', {
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
+			} );
+		}
+
+		if ( isAuthorizing || this.retryingAuth ) {
+			return translate( 'Authorizing your connection' );
+		}
+	}
+
+	getUserText() {
+		const { translate } = this.props;
+		const { authorizeSuccess } = this.props.authorizationData;
+		const isWooDnaFlow = this.getWooDnaConfig().isWooDnaFlow();
+
+		if ( this.isWooJPC() ) {
+			return (
+				<>
+					<strong>{ this.props.user.display_name }</strong>
+					<small>{ this.props.user.email }</small>
+				</>
+			);
+		}
+
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
+			return (
+				<>
+					<div className="jetpack-connect__logged-in-user-text-name">
+						{ this.props.user.display_name }
+					</div>
+					<div className="jetpack-connect__logged-in-user-text-email">
+						{ this.props.user.email }
+					</div>
+				</>
+			);
+		}
+
+		// Accounts created through the Magic Link-based signup flow are created with a username based on the
+		// user's email address. For this reason, we want to display both the username and the email address
+		// so users can start making the connection between the two immediately. Otherwise, users might
+		// not recognize their username since they didn't create it.
+
+		const connected = authorizeSuccess || this.props.isAlreadyOnSitesList;
+		const connectionStatus = connected ? 'Connected' : 'Connecting';
+
+		// We make an exception for Woo onboardings, since in these cases the creation of a Jetpack account
+		// is an intermediate step and the user will be redirected to the WooCommerce onboarding flow.
+		// Seeing this new username/email address can cause confusion because they have already set up
+		// a Woo account under their own email address.
+		if ( isWooDnaFlow ) {
+			return connected
+				? translate( 'Account connected successfully' )
+				: translate( 'Connecting your account' );
+		}
+
+		// translators: %(connectionStatus) is the connection status (E.g. Connecting/Connected), %(user) is user's Display Name (Eg John Doe) and %(email) is the user's email address
+		return translate(
+			'%(connectionStatus)s as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+			{
+				args: {
+					connectionStatus,
+					email: this.props.user.email,
+					user: this.props.user.display_name,
+				},
+				components: { strong: <strong /> },
+			}
+		);
+	}
+
+	getProductActivationText() {
+		if ( ! this.isFromMyJetpackConnectAfterCheckout() ) {
+			return;
+		}
+		const { translate, isAlreadyOnSitesList } = this.props;
+		const { authorizeSuccess } = this.props.authorizationData;
+		const { redirectAfterAuth } = this.props.authQuery;
+
+		const { searchParams } = getUrlParts( redirectAfterAuth );
+		const productSlug = searchParams.get( 'productSlug' );
+		const siteSlug = searchParams.get( 'fromSiteSlug' );
+		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
+		const productName = getJetpackProductOrPlanDisplayName( productSlug );
+
+		// Do nothing if we don't have a product name here
+		if ( ! productName ) {
+			return null;
+		}
+
+		if ( authorizeSuccess || isAlreadyOnSitesList ) {
+			return translate(
+				'You purchased {{strong}}%(productName)s{{/strong}}. Now you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+				{
+					args: { productName, siteName },
+					components: {
+						br: <br />,
+						strong: <strong />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'You purchased {{strong}}%(productName)s{{/strong}}. Once connected, you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+			{
+				args: { productName, siteName },
+				components: {
+					br: <br />,
+					strong: <strong />,
+				},
+			}
+		);
+	}
+
+	isWaitingForConfirmation() {
+		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.authorizationData;
+		return ! ( isAuthorizing || authorizeSuccess || siteReceived );
+	}
+
+	getRedirectionTarget() {
+		const { homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
+
+		// If the redirect is part of a Jetpack plan or product go to the checkout page
+		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
+			productSlug.includes( 'jetpack' )
+		);
+		if ( jetpackCheckoutSlugs.includes( selectedPlanSlug ) ) {
+			const checkoutTarget = `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
+			// Once we decide we want to redirect the user to the checkout page and that there is a
+			// valid plan, we can safely remove it from the session storage
+			clearPlan();
+			debug(
+				'authorization-form: getRedirectionTarget -> Valid plan retrived from localStorage, redirection target is: %s',
+				checkoutTarget
+			);
+			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
+		}
+
+		const urlParams = new URLSearchParams( window.location.search );
+		const skipPricing = urlParams.get( 'skip_pricing' );
+
+		// If the site has a Jetpack paid product or the manual query parameter to skip plans
+		// send the user back to wp-admin rather than to the Plans page.
+		if ( siteHasJetpackPaidProduct || skipPricing ) {
+			debug(
+				'authorization-form: getRedirectionTarget -> Site already has a paid product, redirection target is: %s',
+				redirectAfterAuth
+			);
+			return redirectAfterAuth;
+		}
+
+		const jpcTarget = addQueryArgs(
+			{ redirect_to: redirectAfterAuth },
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+		);
+		debug( 'authorization-form: getRedirectionTarget -> Redirection target is: %s', jpcTarget );
+		return jpcTarget;
+	}
+
+	renderContent() {
+		const { user, authQuery } = this.props;
+		if ( this.isWooJPC() ) {
+			const loginURL = login( {
+				isJetpack: true,
+				redirectTo: window.location.href,
+				from: authQuery.from,
+				pluginName: authQuery.plugin_name,
+			} );
+
+			return (
+				<Fragment>
+					<div className="jetpack-connect__woo-connect-screen-content">
+						<UserCard
+							user={ {
+								displayName: user.display_name,
+								email: user.email,
+								avatarUrl: user.avatar_URL,
+							} }
+							size="large"
+						/>
+						<ConsentText>
+							<Disclaimer
+								siteName={ decodeEntities( authQuery.blogname ) }
+								companyName={ this.getCompanyName() }
+								from={ authQuery.from }
+								isWooJPC={ this.isWooJPC() }
+								as="span"
+							/>
+						</ConsentText>
+						{ this.renderStateAction( loginURL ) }
+					</div>
+					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
+				</Fragment>
+			);
+		}
+
+		if ( this.isFromJetpackConnector() ) {
+			const isSecondary = this.isSecondaryConnection();
+			const isAdmin = this.isAdminConnection();
+
+			// Non-admin secondary connections show no cards — SSO is the
+			// sole benefit and the subtitle already communicates it.
+			let featureCardsResult;
+			if ( isSecondary && ! isAdmin ) {
+				featureCardsResult = { cards: [], heroFirstCard: false };
+			} else if ( isSecondary ) {
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins );
+			} else {
+				featureCardsResult = getConnectorFeatureCards( authQuery.plugins );
+			}
+			const { cards, heroFirstCard } = featureCardsResult;
+
+			return (
+				<>
+					<UserCard
+						user={ {
+							displayName: this.props.user.display_name,
+							email: this.props.user.email,
+							avatarUrl: this.props.user.avatar_URL,
+						} }
+						size="small"
+					/>
+					{ this.renderUseDifferentAccountLink() }
+
+					{ cards.length > 0 && (
+						<FeaturesSection cards={ cards } heroFirstCard={ heroFirstCard } />
+					) }
+					{ this.renderNotices() }
+					{ this.renderStateAction() }
+				</>
+			);
+		}
+
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
+			const branding = getConnectorBranding( authQuery.plugins );
+			const siteURL = decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
+			const permissionsTitle = branding.permissionsTitle( { siteURL } );
+
+			return (
+				<>
+					<UserCard
+						user={ {
+							displayName: this.props.user.display_name,
+							email: this.props.user.email,
+							avatarUrl: this.props.user.avatar_URL,
+						} }
+						size="small"
+					/>
+					{ this.renderUseDifferentAccountLink() }
+
+					<PermissionsList title={ permissionsTitle } permissions={ branding.permissions } />
+					{ this.renderNotices() }
+					{ this.renderStateAction() }
+				</>
+			);
+		}
+
+		return (
+			<Card className="jetpack-connect__logged-in-card">
+				<Gravatar user={ user } size={ 64 } />
+				<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+				{ this.isFromMyJetpackConnectAfterCheckout() && (
+					<p className="jetpack-connect__activate-product-text">
+						{ this.getProductActivationText() }
+					</p>
+				) }
+				{ this.renderNotices() }
+				{ this.renderStateAction() }
+			</Card>
+		);
+	}
+
+	renderFooterLinks() {
+		const { translate } = this.props;
+		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { from } = this.props.authQuery;
+
+		if (
+			this.retryingAuth ||
+			isAuthorizing ||
+			authorizeSuccess ||
+			this.redirecting ||
+			this.isWooJPC()
+		) {
+			return null;
+		}
+
+		const wooDnaFooterLinks = this.renderWooDnaFooterLinks();
+		if ( wooDnaFooterLinks ) {
+			return wooDnaFooterLinks;
+		}
+
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem
+					href={ loginURL }
+					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
+				>
+					{ translate( 'Sign in as a different user' ) }
+				</LoggedOutFormLinkItem>
+			</LoggedOutFormLinks>
+		);
+	}
+
+	renderWooDnaFooterLinks() {
+		const { translate } = this.props;
+		const wooDna = this.getWooDnaConfig();
+		if ( ! wooDna.isWooDnaFlow() ) {
+			return null;
+		}
+		/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
+		const helpButtonLabel = translate( 'Get help setting up %(pluginName)s', {
+			args: {
+				pluginName: wooDna.getServiceName(),
+			},
+		} );
+
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
+					{ translate( 'Create a new account or connect as a different user' ) }
+				</LoggedOutFormLinkItem>
+				<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
+				{ this.renderBackToWpAdminLink() }
+			</LoggedOutFormLinks>
+		);
+	}
+
+	renderBackToWpAdminLink() {
+		const { translate } = this.props;
+		const { blogname, redirectAfterAuth } = this.props.authQuery;
+
+		if ( ! this.isWaitingForConfirmation() ) {
+			return null;
+		}
+		return (
+			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
+				{
+					// translators: eg: Return to The WordPress.com Blog
+					translate( 'Return to %(sitename)s', {
+						args: { sitename: decodeEntities( blogname ) },
+					} )
+				}
+			</LoggedOutFormLinkItem>
+		);
+	}
+
+	/**
+	 * True while the connection is mid-handshake (or already succeeded),
+	 * matching the gate used by both the action button and the
+	 * "Use a different account" link so the two render in the same
+	 * lifecycle window.
+	 */
+	get isInFlight() {
+		const { authorizeSuccess } = this.props.authorizationData;
+		return (
+			this.props.isFetchingAuthorizationSite ||
+			this.props.isRequestingSitePurchases ||
+			this.isAuthorizing() ||
+			this.retryingAuth ||
+			authorizeSuccess
+		);
+	}
+
+	/**
+	 * Render the "Use a different account" link that sits directly beneath
+	 * the user card on the unified connect-account surfaces. The link stays
+	 * visible but becomes inert and visually muted while the connection is
+	 * in flight so the layout doesn't shift when the spinner appears.
+	 */
+	renderUseDifferentAccountLink() {
+		if ( this.props.isSiteBlocked ) {
+			return null;
+		}
+
+		const disabled = this.isInFlight;
+		const { from } = this.props.authQuery;
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
+		return (
+			<LoggedOutFormLinkItem
+				className={ clsx( 'jetpack-connect__switch-account-link', {
+					'is-disabled': disabled,
+				} ) }
+				href={ disabled ? undefined : loginURL }
+				onClick={
+					disabled ? ( e ) => e.preventDefault() : ( e ) => this.handleSignIn( e, loginURL )
+				}
+				aria-disabled={ disabled }
+			>
+				{ this.props.translate( 'Use a different account' ) }
+			</LoggedOutFormLinkItem>
+		);
+	}
+
+	renderStateAction( wooLoginURL ) {
+		if ( this.props.isSiteBlocked ) {
+			return null;
+		}
+
+		const isLoading = this.isInFlight;
+
+		if ( this.isWooJPC() ) {
+			return (
+				<ActionButtons
+					className="jetpack-connect__woo-connect-screen-actions"
+					primaryLabel={ this.getButtonText() }
+					primaryLoading={ isLoading }
+					primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+					primaryOnClick={ this.handleSubmit }
+					tertiaryLabel={ this.props.translate( 'Sign in as a different user' ) }
+					tertiaryOnClick={ () => this.handleSignIn( wooLoginURL ) }
+				/>
+			);
+		}
+
+		if ( isLoading ) {
+			return (
+				<div className="jetpack-connect__logged-in-form-loading">
+					<span>{ this.getButtonText() }</span> <WPSpinner size={ 20 } duration={ 3000 } />
+				</div>
+			);
+		}
+
+		const { blogname, from } = this.props.authQuery;
+
+		const actionButton = (
+			<Button primary onClick={ this.handleSubmit }>
+				{ this.getButtonText() }
+			</Button>
+		);
+
+		const disclaimer = (
+			<Disclaimer
+				siteName={ decodeEntities( blogname ) }
+				companyName={ this.getCompanyName() }
+				from={ from }
+				as={ this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ? 'span' : 'p' }
+				buttonText={
+					this.isUnifiedConnectionFlow() || this.isFromMyJetpack()
+						? this.getButtonText()
+						: undefined
+				}
+			/>
+		);
+
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
+			// The "Use a different account" link is now rendered next to the
+			// user card by `renderUseDifferentAccountLink()`, and the
+			// disclaimer drops below the action button so the call-to-action
+			// reads as the next step rather than something gated behind the
+			// fine print.
+			return (
+				<>
+					<ActionButtons
+						primaryLabel={ this.getButtonText() }
+						primaryLoading={ isLoading }
+						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+						primaryOnClick={ this.handleSubmit }
+					/>
+					<ConsentText>{ disclaimer }</ConsentText>
+				</>
+			);
+		}
+
+		return (
+			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
+				{ disclaimer }
+				{ actionButton }
+			</LoggedOutFormFooter>
+		);
+	}
+
+	render() {
+		const { translate } = this.props;
+		const wooDna = this.getWooDnaConfig();
+		const authSiteId = this.props.authQuery.clientId;
+		const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+		const siteUrlFromQuery = getQueryArg( currentUrl, 'site_url' );
+		const siteName = decodeEntities(
+			( siteUrlFromQuery || this.props.authQuery.siteUrl || '' )
+				.replace( /^https?:\/\//, '' )
+				.replace( /\/$/, '' )
+		);
+		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const isUnifiedConnection = this.isUnifiedConnectionFlow();
+		const isFromJetpackConnector = this.isFromJetpackConnector();
+		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
+		const connectorBranding = isFromJetpackConnector
+			? getConnectorBranding( this.props.authQuery.plugins )
+			: null;
+		const isSecondary = this.isSecondaryConnection();
+		let authCopy = null;
+		if ( isFromJetpackConnector && isSecondary ) {
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
+		} else if ( isFromJetpackConnector ) {
+			authCopy = getAuthCopy( this.props.authQuery.plugins );
+		}
+
+		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
+			return (
+				// Wrap the loader in a modal to show it in full screen
+				<Modal
+					open
+					title=""
+					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
+					className="jetpack-connect-woocommerce-loader__modal"
+					shouldCloseOnClickOutside={ false }
+					shouldCloseOnEsc={ false }
+					isDismissible={ false }
+				>
+					<WooLoader stages={ WOO_LOADER_STAGES } />
+				</Modal>
+			);
+		}
+
+		return (
+			<MainWrapper
+				className={ clsx( {
+					'jetpack-connect__authorize-form-wrapper--onboarding':
+						isUnifiedConnection || isFromMyJetpack,
+					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
+				} ) }
+				isWooJPC={ this.isWooJPC() }
+				isJetpackConnector={ isFromJetpackConnector }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+				useCompactLogo={ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector }
+				pageTitle={
+					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
+				}
+			>
+				<div
+					className={ clsx( 'jetpack-connect__authorize-form', {
+						'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+					} ) }
+				>
+					<div>
+						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
+						<QuerySitePurchases siteId={ authSiteId } />
+						<QueryUserConnection
+							siteId={ authSiteId }
+							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+						/>
+						{ isFromJetpackConnector && connectorBranding && authCopy && (
+							<BrandHeader
+								logo={ connectorBranding.logo }
+								logoAlt=""
+								title={ authCopy.title }
+								description={ authCopy.subtitle }
+							/>
+						) }
+						{ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector && (
+							<div className="jetpack-connect__authorize-form-header--left-aligned">
+								<h1>{ translate( 'Now let’s connect your account' ) }</h1>
+								<p>
+									{ translate(
+										'Your site connects to Jetpack’s cloud to offload the heavy work, helping it run faster and deliver powerful features.'
+									) }
+								</p>
+							</div>
+						) }
+						{ ! ( isUnifiedConnection || isFromMyJetpack ) && this.isWooJPC() && (
+							<BrandHeader
+								title={ translate( 'Connect your account' ) }
+								description={ translate(
+									'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+									{
+										args: {
+											pluginName: wooDna.getServiceName() || wooDna.getPluginName(),
+											siteName,
+										},
+										components: {
+											siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
+											doc: wooDna.getServiceHelpUrl() ? (
+												<a href={ wooDna.getServiceHelpUrl() } target="_blank" rel="noreferrer" />
+											) : (
+												<a
+													href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+													target="_blank"
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							/>
+						) }
+						{ ! ( isUnifiedConnection || isFromMyJetpack ) && ! this.isWooJPC() && (
+							<AuthFormHeader
+								authQuery={ this.props.authQuery }
+								isWooJPC={ this.isWooJPC() }
+								isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+								wooDnaConfig={ wooDna }
+							/>
+						) }
+						{ this.renderContent() }
+						{ ! isUnifiedConnection && ! isFromMyJetpack && this.renderFooterLinks() }
+					</div>
+				</div>
+				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />
+			</MainWrapper>
+		);
+	}
+}
+
+const connectComponent = connect(
+	( state, { authQuery } ) => {
+		// Note: reading from a cookie here rather than redux state,
+		// so any change in value will not execute connect().
+		const mobileAppRedirect = retrieveMobileRedirect();
+		const isMobileAppFlow = !! mobileAppRedirect;
+		const selectedPlanSlug = retrievePlan();
+		const fromSource = retrieveSource();
+
+		return {
+			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
+			authorizationData: getAuthorizationData( state ),
+			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
+			canManageOptions: canCurrentUser( state, authQuery.clientId, 'manage_options' ),
+			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
+			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
+			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
+			isFetchingSites: isRequestingSites( state ),
+			isMobileAppFlow,
+			isRequestingSitePurchases: isFetchingSitePurchases( state ),
+			isSiteBlocked: isSiteBlockedSelector( state ),
+			isVip: isVipSite( state, authQuery.clientId ),
+			isWooJPC: isWooJPCFlow( state ),
+			mobileAppRedirect,
+			partnerID: getPartnerIdFromQuery( state ),
+			partnerSlug: getPartnerSlugFromQuery( state ),
+			selectedPlanSlug,
+			site: getSite( state, authQuery.clientId ),
+			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
+			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
+			user: getCurrentUser( state ),
+			userAlreadyConnected: getUserAlreadyConnected( state ),
+			fromSource,
+		};
+	},
+	{
+		authorize: authorizeAction,
+		recordTracksEvent: recordTracksEventAction,
+		redirectToLogout,
+		retryAuth: retryAuthAction,
+		logoutUser,
+	}
+);
+
+export default flowRight( connectComponent, localize )( JetpackAuthorize );

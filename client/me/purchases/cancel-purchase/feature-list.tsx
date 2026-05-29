@@ -1,58 +1,78 @@
-import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { getName } from 'calypso/lib/purchases';
+import moment from 'moment';
+import {
+	getCancelLossIntro,
+	getFallbackLossItems,
+	getRemoveLossIntro,
+	getSingleItemCancelCopy,
+	getSingleItemRemoveCopy,
+} from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
+import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
+	displayVariant,
 	cancellationFeatures,
-	useRefundableWpcomCopy = false,
 }: {
 	purchase: Purchases.Purchase;
-	cancellationFeatures: string[];
-	useRefundableWpcomCopy?: boolean;
+	displayVariant: DisplayVariant;
+	cancellationFeatures: CancellationFeature[];
 } ) => {
-	const translate = useTranslate();
+	const adapted = toPurchaseForCopy( purchase );
+	// When the server returns no features, fall back to a per-product-type item.
+	const items: Array< { key: string; title: string } > = cancellationFeatures.length
+		? cancellationFeatures.map( ( feature ) => ( {
+				key: feature.feature_id,
+				title: feature.title,
+		  } ) )
+		: getFallbackLossItems( adapted ).map( ( title, idx ) => ( {
+				key: `fallback-${ idx }`,
+				title,
+		  } ) );
 
-	if ( ! cancellationFeatures.length ) {
-		return;
+	if ( ! items.length ) {
+		return null;
 	}
+
+	// Use non-breaking spaces in the formatted date so it never wraps mid-date.
+	const fullExpiryDate = purchase.expiryDate
+		? moment( purchase.expiryDate ).format( 'LL' ).replace( / /g, '\u00a0' )
+		: '';
+
+	if ( items.length === 1 ) {
+		const singleItemCopy =
+			displayVariant === 'remove'
+				? getSingleItemRemoveCopy( adapted )
+				: getSingleItemCancelCopy( adapted, fullExpiryDate );
+		return (
+			<div className="cancel-purchase__features">
+				<p>{ singleItemCopy }</p>
+			</div>
+		);
+	}
+
+	const intro =
+		displayVariant === 'remove'
+			? getRemoveLossIntro( adapted )
+			: getCancelLossIntro( adapted, fullExpiryDate );
 
 	return (
 		<div className="cancel-purchase__features">
-			<p>
-				{ ! useRefundableWpcomCopy
-					? translate(
-							'By canceling the %(productName)s plan, these features will no longer be available on your site:',
-							{
-								args: {
-									productName: getName( purchase ),
-								},
-							}
-					  )
-					: translate(
-							'These features will no longer be available on your site when your %(productName)s plan expires:',
-							{
-								args: {
-									productName: getName( purchase ),
-								},
-							}
-					  ) }
-			</p>
+			<p>{ intro }</p>
 			<ul className="cancel-purchase__features-list">
-				{ cancellationFeatures.map( ( feature ) => {
-					return (
-						<li key={ feature }>
-							<Gridicon
-								className="cancel-purchase__refund-information--item-cross-small"
-								size={ 24 }
-								icon="cross-small"
-							/>
-							<span>{ getFeatureByKey( feature ).getTitle() }</span>
-						</li>
-					);
-				} ) }
+				{ items.map( ( item ) => (
+					<li key={ item.key }>
+						<Gridicon
+							className="cancel-purchase__refund-information--item-cross-small"
+							size={ 24 }
+							icon="cross-small"
+						/>
+						<span>{ item.title }</span>
+					</li>
+				) ) }
 			</ul>
 		</div>
 	);

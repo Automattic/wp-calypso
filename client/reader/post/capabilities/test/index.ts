@@ -1,5 +1,6 @@
 import {
-	isCommentable,
+	isCommentsOpen,
+	isLoginRequiredToComment,
 	isSharable,
 	isRebloggable,
 	isLikeable,
@@ -7,29 +8,43 @@ import {
 } from '../index';
 
 describe( 'reader/post/capabilities', () => {
-	describe( 'isCommentable', () => {
+	describe( 'isCommentsOpen', () => {
 		it( 'returns true when comments_open is true', () => {
-			expect( isCommentable( { discussion: { comments_open: true } } ) ).toBe( true );
+			expect( isCommentsOpen( { discussion: { comments_open: true } } ) ).toBe( true );
 		} );
 
-		it( 'returns true when comments_open is false but comment_count > 0', () => {
-			expect( isCommentable( { discussion: { comments_open: false, comment_count: 3 } } ) ).toBe(
-				true
-			);
-		} );
-
-		it( 'returns false when comments_open is false and comment_count is 0', () => {
-			expect( isCommentable( { discussion: { comments_open: false, comment_count: 0 } } ) ).toBe(
-				false
-			);
+		it( 'returns false when comments_open is false', () => {
+			expect( isCommentsOpen( { discussion: { comments_open: false } } ) ).toBe( false );
 		} );
 
 		it( 'returns false when discussion is undefined', () => {
-			expect( isCommentable( {} ) ).toBe( false );
+			expect( isCommentsOpen( {} ) ).toBe( false );
 		} );
 
 		it( 'returns false when discussion exists but has no properties', () => {
-			expect( isCommentable( { discussion: {} } ) ).toBe( false );
+			expect( isCommentsOpen( { discussion: {} } ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isLoginRequiredToComment', () => {
+		it( 'returns true when comments_require_registration is true', () => {
+			expect(
+				isLoginRequiredToComment( {
+					discussion: { comments_require_registration: true },
+				} )
+			).toBe( true );
+		} );
+
+		it( 'returns false when comments_require_registration is false', () => {
+			expect(
+				isLoginRequiredToComment( {
+					discussion: { comments_require_registration: false },
+				} )
+			).toBe( false );
+		} );
+
+		it( 'returns false when discussion is undefined', () => {
+			expect( isLoginRequiredToComment( {} ) ).toBe( false );
 		} );
 	} );
 
@@ -128,11 +143,11 @@ describe( 'reader/post/capabilities', () => {
 			).toBe( false );
 		} );
 
-		it( 'returns false when post is not commentable', () => {
+		it( 'returns false when comments are not open', () => {
 			expect(
 				isConversationFollowable( {
 					site_ID: 1,
-					discussion: { comments_open: false, comment_count: 0 },
+					discussion: { comments_open: false },
 				} )
 			).toBe( false );
 		} );

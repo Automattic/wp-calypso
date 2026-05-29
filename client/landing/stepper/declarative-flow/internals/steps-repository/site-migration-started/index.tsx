@@ -21,7 +21,7 @@ const SiteMigrationStarted: Step = function () {
 			<div className="migration-started-card__illustration">
 				<img
 					className="migration-started-card__illustration-image"
-					src="/calypso/images/importer/migration-started.png"
+					src="/calypso/images/importer/migration-started.webp"
 					alt={ translate( 'An illustration containing a collection of sites.' ) }
 				/>
 			</div>

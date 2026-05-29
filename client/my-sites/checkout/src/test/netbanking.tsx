@@ -12,13 +12,9 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useDispatch } from '@wordpress/data';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import {
-	createNetBankingMethod,
-	createNetBankingPaymentMethodStore,
-} from 'calypso/my-sites/checkout/src/payment-methods/netbanking';
+import { createNetBankingMethod } from 'calypso/my-sites/checkout/src/payment-methods/netbanking';
 import { createReduxStore } from 'calypso/state';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
@@ -52,18 +48,9 @@ const customerCity = 'Somewhere';
 const customerState = 'Elsewhere';
 const activePayButtonText = 'Pay 0';
 function getPaymentMethod( additionalArgs = {} ) {
-	const store = createNetBankingPaymentMethodStore();
 	return createNetBankingMethod( {
-		store,
 		submitButtonContent: activePayButtonText,
 		...additionalArgs,
-	} );
-}
-
-function ResetNetbankingStoreFields() {
-	const { resetFields } = useDispatch( 'netbanking' );
-	useEffect( () => {
-		resetFields();
 	} );
 }
 
@@ -129,9 +116,6 @@ describe( 'Netbanking payment method', () => {
 				gstin,
 			} );
 		} );
-
-		// Manually reset the `netbanking` store fields.
-		render( <ResetNetbankingStoreFields /> );
 	} );
 
 	it( 'does not submit the data to the processor when the submit button is pressed if fields are missing', async () => {

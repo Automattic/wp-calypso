@@ -1,4 +1,4 @@
-import DisplayTypes from 'calypso/state/reader/posts/display-types';
+import DisplayTypes from 'calypso/reader/data/post/display-types';
 
 export const posts = [
 	{

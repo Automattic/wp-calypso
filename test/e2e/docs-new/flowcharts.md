@@ -77,4 +77,4 @@ annotation: {
 
 which means when it runs the HTML report shows a link to the flowchart:
 
-![Example annotated report](./files/example-annotated-report.png)
+![Example annotated report](./files/example-annotated-report.webp)

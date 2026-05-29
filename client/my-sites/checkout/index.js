@@ -18,7 +18,6 @@ import {
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
 	checkoutRenewalBySubscriptionId,
-	redirectToRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -396,9 +395,23 @@ export default function () {
 		clientRender
 	);
 
-	page( '/checkout/:product/renew/:purchaseId', redirectToRenewalBySubscriptionId );
+	page(
+		'/checkout/:product/renew/:purchaseId',
+		redirectLoggedOut,
+		noSite,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/checkout/:product/renew/:purchaseId/:domain', redirectToRenewalBySubscriptionId );
+	page(
+		'/checkout/:product/renew/:purchaseId/:domain',
+		redirectLoggedOut,
+		siteSelection,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	// Gift purchases work without a site, so do not include the `siteSelection`
 	// middleware.

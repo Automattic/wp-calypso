@@ -7,6 +7,7 @@ test.describe(
 	() => {
 		skipIfMailosaurLimitReached();
 		const testUser = DataHelper.getNewTestUser( {
+			useMailosaur: true,
 			usernamePrefix: 'e2eflowtestinginvite',
 		} );
 		const inboxId = testUser.inboxId;

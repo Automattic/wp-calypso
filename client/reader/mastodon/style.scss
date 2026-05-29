@@ -1,0 +1,76 @@
+.mastodon-view {
+	max-width: 720px;
+	padding: 16px;
+}
+
+.mastodon-avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.mastodon-error {
+	color: var( --color-error );
+}
+
+.mastodon-view .mastodon-navigation {
+	.section-nav-tabs__list {
+		overflow-x: auto;
+	}
+
+	.section-nav-tab__link {
+		padding-top: 5px;
+	}
+}
+
+.mastodon-tag-feed .mastodon-tag-feed__external-link {
+	font-size: 13px;
+}
+
+.mastodon-view .mastodon-tag-feed-tabs {
+	.section-nav-tabs__list {
+		overflow-x: auto;
+	}
+
+	.section-nav-tab__link {
+		padding-top: 5px;
+	}
+}
+
+// Sits between the staged-media grid (which has its own
+// `margin-block-start: 12px`) and the composer footer (`margin-block-start:
+// 8px`); without this the toggle butts up against the thumbnails.
+.social-composer .reader-mastodon-composer__sensitive-toggle {
+	margin-block-start: 12px;
+}
+
+.mastodon-view__section-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.mastodon-view__section-title svg {
+	display: block;
+	flex-shrink: 0;
+	// The icon component bakes in the `.sidebar__menu-icon` class so the
+	// sidebar can spec its own spacing. In the header we lay things out
+	// with `gap`, so reset the inherited margin to keep the gap honest.
+	margin: 0;
+}
+
+.mastodon-view .mastodon-profile-collections-notice {
+	margin: 16px 0 0;
+	color: var(--color-text-subtle);
+	font-size: 13px;
+	text-align: center;
+}
+
+.mastodon-composer-controls__heading {
+	font-size: inherit;
+	font-weight: 600;
+	margin: 0;
+	color: var( --color-text );
+}
+

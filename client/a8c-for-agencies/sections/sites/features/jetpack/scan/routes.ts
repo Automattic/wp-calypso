@@ -15,21 +15,6 @@ import {
 	wrapInSiteOffsetProvider,
 } from './controller';
 
-/* Todo: This code from Jetpack Cloud is not working properly. Commented.
-const notFoundIfNotEnabled: Callback = ( context: Context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
-	const isWPCOMSite = getIsSiteWPCOM( state, siteId );
-
-	if ( isWPCOMSite || ( ! isJetpackCloud() && ! showJetpackSection ) ) {
-		context.featurePreview = 'Not Connected';
-	}
-
-	next();
-};
-*/
-
 const processScanContext: Callback = ( context: Context, next ) => {
 	context.params.feature = JETPACK_SCAN_ID;
 	next();
@@ -50,8 +35,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -68,9 +51,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//notFoundIfNotEnabled,
-		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
-		//
 		makeLayout,
 		clientRender
 	);

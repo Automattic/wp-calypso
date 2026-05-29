@@ -1,6 +1,7 @@
 import { Badge, Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
 import {
 	isPressableAddonProduct,
@@ -166,7 +167,7 @@ export default function LicenseDetails( {
 				{ ! isPressableLicense && licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Site ID' ) }</h4>
-						{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
+						{ blogId ? <span>{ blogId }</span> : <EmptyValueIndicator /> }
 					</li>
 				) }
 

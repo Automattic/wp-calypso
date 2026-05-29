@@ -1,66 +1,87 @@
 import { AgentUI } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import {
+	Button,
 	SearchControl,
 	__experimentalVStack as VStack,
 	__experimentalItemGroup as ItemGroup,
 	__experimentalItem as Item,
 	Spinner,
 } from '@wordpress/components';
+import { useDebouncedInput } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { getLocaleSlug } from 'i18n-calypso';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import useHelpSearchQuery from '../../hooks/use-help-search-query';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
-/**
- * Stub for useHelpSearchQuery.
- * TODO: Implement actual search functionality when adding support for support guides.
- * This was previously imported from @automattic/help-center but removed to decouple packages.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useHelpSearchQuery( query: string, locale: string, sectionName: string ) {
-	return {
-		data: [] as Array< { post_id: number; link: string; title: string } >,
-		isFetching: false,
-	};
+interface SearchResultsProps {
+	searchInput: string;
 }
 
-function SearchResults( { searchInput }: { searchInput: string } ) {
-	const { data: searchData, isFetching: isSearching } = useHelpSearchQuery(
-		searchInput,
-		getLocaleSlug() ?? 'en',
-		'sectionName'
-	);
+function SearchResults( { searchInput }: SearchResultsProps ) {
+	const trimmedInput = searchInput.trim();
+	const { data, isFetching, isError, refetch } = useHelpSearchQuery( trimmedInput );
 
-	if ( isSearching ) {
-		return <Spinner />;
+	if ( ! trimmedInput ) {
+		return (
+			<div className="agent-manager-support-guides__status">
+				{ __( 'Search guides to find answers to your questions.', '__i18n_text_domain__' ) }
+			</div>
+		);
 	}
 
-	if ( ! searchData?.length ) {
+	if ( isFetching ) {
 		return (
-			<div className="agent-manager-support-guides-no-results">
-				{ __( 'No results found', '__i18n_text_domain__' ) }
+			<div className="agent-manager-support-guides__status">
+				<Spinner />
+			</div>
+		);
+	}
+
+	if ( isError ) {
+		return (
+			<div className="agent-manager-support-guides__status">
+				{ __( 'Something went wrong.', '__i18n_text_domain__' ) }{ ' ' }
+				<Button
+					className="agent-manager-support-guides__retry"
+					variant="link"
+					onClick={ () => refetch() }
+				>
+					{ __( 'Try again', '__i18n_text_domain__' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	if ( ! data?.length ) {
+		return (
+			<div className="agent-manager-support-guides__status">
+				{ __( 'No results found.', '__i18n_text_domain__' ) }
 			</div>
 		);
 	}
 
 	return (
 		<ItemGroup isSeparated isBordered isRounded>
-			{ searchData?.map( ( item ) => (
+			{ data?.map( ( item ) => (
 				<Item key={ item.post_id }>
-					<Link to={ `/post?link=${ item.link }` }>{ item.title }</Link>
+					<Link
+						to={ `/post?link=${ encodeURIComponent( item.link ) }` }
+						state={ { searchQuery: trimmedInput } }
+					>
+						{ item.title }
+					</Link>
 				</Item>
 			) ) }
 		</ItemGroup>
 	);
 }
 
-interface Props {
+interface SupportGuidesProps {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -79,8 +100,11 @@ export default function SupportGuides( {
 	isDocked,
 	onAbort,
 	onClose,
-}: Props ) {
-	const [ searchInput, setSearchInput ] = useState( '' );
+}: SupportGuidesProps ) {
+	const { state } = useLocation();
+	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
+		state?.searchQuery ?? ''
+	);
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -119,7 +143,7 @@ export default function SupportGuides( {
 						onClick={ ( e ) => e.currentTarget.focus() }
 						value={ searchInput }
 					/>
-					<SearchResults searchInput={ searchInput } />
+					<SearchResults searchInput={ debouncedSearchInput } />
 				</VStack>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>

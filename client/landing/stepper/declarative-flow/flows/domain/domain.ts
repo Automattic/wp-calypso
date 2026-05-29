@@ -131,6 +131,14 @@ const domain: FlowV2< typeof initialize > = {
 				}
 			}
 
+			// For CIAB domain registrations, include the purchased domain name
+			// in the redirect URL so the CIAB admin can show a setup notification.
+			if ( isCiab && domainCartItems?.length && domainCartItems[ 0 ].meta ) {
+				destination = addQueryArgs( destination, {
+					domain_purchased: domainCartItems[ 0 ].meta,
+				} );
+			}
+
 			// replace the location to delete processing step from history.
 			return window.location.replace(
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
@@ -319,7 +327,10 @@ const domain: FlowV2< typeof initialize > = {
 								signup: 0,
 								isDomainOnly: 1,
 								cancel_to: new URL(
-									addQueryArgs( '/setup/domain/new-or-existing-site', window.location.search ),
+									addQueryArgs(
+										'/setup/domain/new-or-existing-site',
+										getQueryArgs( window.location.search )
+									),
 									window.location.href
 								).href,
 							} )

@@ -1,0 +1,19 @@
+.agents-manager-zoom-action-button {
+	svg path {
+		stroke: var( --color-muted-foreground );
+	}
+
+	&:hover:not( :disabled ) svg path {
+		stroke: var( --color-foreground );
+	}
+
+	&:focus:not( :focus-visible ) {
+		box-shadow: none !important;
+	}
+
+	// When zoomed out, show a subtle muted background instead of the
+	// solid dark background that WordPress Button applies by default.
+	&.is-pressed {
+		background-color: var( --color-muted ) !important;
+	}
+}

@@ -1,0 +1,18 @@
+.social-feed-list-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.social-feed-list-skeleton__row {
+		display: flex;
+		gap: 12px;
+		padding-block: 12px;
+	}
+
+	.social-feed-list-skeleton__row-body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+}

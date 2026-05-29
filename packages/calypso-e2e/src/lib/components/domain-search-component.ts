@@ -82,7 +82,7 @@ export class DomainSearchComponent {
 	 * Clicks on the button to use a domain I already own
 	 */
 	async clickUseADomainIAlreadyOwn(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Use a domain I already own' } ).click();
+		await this.page.getByRole( 'button', { name: 'Use a domain I own' } ).click();
 	}
 
 	/**
@@ -172,12 +172,32 @@ export class DomainSearchComponent {
 		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
 		await addToCartButton.waitFor();
 
-		await addToCartButton.click();
-		await addToCartButton.waitFor( { state: 'detached', timeout: 30000 } );
+		// The add-to-cart API call can sometimes fail, leaving the button in an
+		// error state (domain-suggestion-cta--error) instead of detaching it.
+		// Retry the click up to 3 times when this happens.
+		const maxRetries = 3;
+		for ( let attempt = 1; attempt <= maxRetries; attempt++ ) {
+			await addToCartButton.click();
+
+			try {
+				await addToCartButton.waitFor( { state: 'detached', timeout: 30000 } );
+				break;
+			} catch ( error ) {
+				// Check if the button is in an error state, which means the API
+				// call failed and we can retry.
+				const hasErrorClass = await addToCartButton.evaluate( ( el ) =>
+					el.classList.contains( 'domain-suggestion-cta--error' )
+				);
+
+				if ( ! hasErrorClass || attempt === maxRetries ) {
+					throw error;
+				}
+			}
+		}
 
 		if ( waitForContinueButton ) {
 			const continueButton = row.getByRole( 'button', { name: 'Continue' } );
-			await continueButton.waitFor();
+			await continueButton.waitFor( { timeout: 30000 } );
 		}
 
 		return selectedDomain;

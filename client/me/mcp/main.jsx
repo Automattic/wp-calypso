@@ -1,4 +1,5 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
@@ -89,19 +90,18 @@ function McpComponent( { path } ) {
 			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
 		} );
 
-		const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-		const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
-		const sitesToReset = [
-			...disabledSiteIds.map( ( id ) => ( { blog_id: id, account_tools_enabled: true } ) ),
-			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
-		];
-
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+				},
+			}
+		);
 	};
 
 	const disabledSiteCount = getDisabledSiteIds( userSettings || {} ).length;
@@ -162,7 +162,7 @@ function McpComponent( { path } ) {
 					</VStack>
 
 					{ /* TODO: Restore when site-level MCP PRs land */ }
-					{ false && hasTools && ! anyToolsEnabled && (
+					{ hasTools && ! anyToolsEnabled && (
 						<VStack spacing={ 0 } className="mcp-hub__panel-rows">
 							{ ! isLoadingSites && (
 								<SummaryButton

@@ -1,3 +1,4 @@
+import './style.scss';
 import { Gridicon, Spinner } from '@automattic/components';
 import clsx from 'clsx';
 import { get } from 'lodash';
@@ -12,8 +13,6 @@ import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isTransientMedia from 'calypso/state/selectors/is-transient-media';
 import { getSite } from 'calypso/state/sites/selectors';
 
-import './style.scss';
-
 export type Site = {
 	ID?: number;
 	icon?: {
@@ -24,7 +23,7 @@ export type Site = {
 export type SiteIconVariant = 'primary' | 'blank';
 
 type SiteIconProps = {
-	siteId?: number;
+	siteId?: number; // To get site from Redux state or fetch site data if not available.
 	site?: object;
 	iconUrl?: string | null;
 	size?: number;
@@ -65,11 +64,10 @@ export function SiteIcon( {
 	const style = {
 		height: size,
 		width: size,
-		lineHeight: size + 'px',
-		fontSize: size + 'px',
 	};
 
-	const icon = defaultIcon || <Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />;
+	// Using relative size for default icon to ensure that background appears nicely for any size.
+	const icon = defaultIcon || <Gridicon icon="globe" size={ Math.round( size / 1.2 ) } />;
 
 	const children = (
 		<>

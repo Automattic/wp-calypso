@@ -99,6 +99,6 @@ between the two without converting field names and values.
    codes to fields: `missing_country`/`invalid_country` → country field,
    `invalid_vat`/`missing_id`/`validation_failed` → id field.
 
-9. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
+9. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use holding sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.isAttachedToHoldingSite`. Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
 
 10. **Transferred purchases** — Always check ownership before allowing purchase actions.

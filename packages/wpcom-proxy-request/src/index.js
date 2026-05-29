@@ -554,22 +554,27 @@ const wpcomAllowedOrigins = [
 	'https://dev-mc.a8c.com',
 	'https://mc.a8c.com',
 	'https://dserve.a8c.com',
-	'http://calypso.localhost:3000',
-	'https://calypso.localhost:3000',
-	'http://jetpack.cloud.localhost:3000',
-	'https://jetpack.cloud.localhost:3000',
-	'http://agencies.localhost:3000',
-	'https://agencies.localhost:3000',
-	'http://my.localhost:3000',
-	'https://my.localhost:3000',
-	'http://my.woo.localhost:3000',
-	'https://my.woo.localhost:3000',
-	'http://calypso.localhost:3001',
-	'https://calypso.localhost:3001',
 	'https://calypso.live',
 	'http://127.0.0.1:41050',
 	'http://send.linguine.localhost:3000',
 ];
+
+// Local development hostnames allowed on any port and scheme.
+const localDevHosts = [
+	'calypso.localhost',
+	'jetpack.cloud.localhost',
+	'agencies.localhost',
+	'my.localhost',
+	'my.woo.localhost',
+];
+
+function isLocalDevOrigin( urlOrigin ) {
+	try {
+		return localDevHosts.includes( new URL( urlOrigin ).hostname );
+	} catch {
+		return false;
+	}
+}
 
 /**
  * Shelved from rest-proxy/provider-v2.0.js.
@@ -582,6 +587,7 @@ function isAllowedOrigin( urlOrigin ) {
 	// are allowed without further check
 	return (
 		wpcomAllowedOrigins.includes( urlOrigin ) ||
+		isLocalDevOrigin( urlOrigin ) ||
 		/^https:\/\/[a-z0-9-]+\.calypso\.live$/.test( urlOrigin ) ||
 		/^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/.test( urlOrigin )
 	);

@@ -1,0 +1,35 @@
+name: Linear Release Sync - Creators
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      # Reader
+      - 'client/reader/**'
+      - 'client/blocks/reader-*/**'
+      # Newsletter
+      - 'client/data/newsletter-categories/**'
+      - 'client/data/paid-newsletter/**'
+      - 'client/mailing-lists/**'
+      - 'client/my-sites/email/**'
+      - 'client/my-sites/subscribers/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  linear-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Pinned to v0.6.0 commit SHA for supply-chain safety
+      - uses: linear/linear-release-action@755d50b5adb7dd42b976ee9334952745d62ceb2d
+        with:
+          access_key: ${{ secrets.LINEAR_RELEASE_KEY_CREATORS }}

@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon, lock, currencyDollar, postDate } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import CreditCardImg from 'calypso/assets/images/jetpack/credit-cards.png';
+import CreditCardImg from 'calypso/assets/images/jetpack/credit-cards.webp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

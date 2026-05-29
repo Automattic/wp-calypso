@@ -1,11 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UrlFriendlyTermType, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	UrlFriendlyTermType,
+	isDomainTransfer,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
+	isOnboardingFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
 	Step,
@@ -17,7 +23,8 @@ import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -43,10 +50,20 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
 import './unified-plans-step-styles.scss';
+
+const loadPlanFaq = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-plans-features-main-components-plan-faq" */ 'calypso/my-sites/plans-features-main/components/plan-faq'
+	);
+const loadStepWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-signup-step-wrapper" */ 'calypso/signup/step-wrapper'
+	);
 
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
@@ -187,6 +204,8 @@ export interface UnifiedPlansStepProps {
 	isStepperUpgradeFlow?: boolean;
 }
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 /**
  * This is a "unified" plans step component that is utilised by both Start (old framework) and Stepper (new framework).
  * It contains the latest logic/conditioning, properties, etc. that apply to the latest main iterations of the plans step.
@@ -238,10 +257,20 @@ function UnifiedPlansStep( {
 	isStepperUpgradeFlow = false,
 	selectedFeature,
 }: UnifiedPlansStepProps ) {
+	const [ isContentReady, setIsContentReady ] = useState( ! useStepContainerV2 );
+	const handlePlansReady = useCallback( () => setIsContentReady( true ), [] );
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -286,7 +315,7 @@ function UnifiedPlansStep( {
 
 	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
-	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
+	const isPaidTheme = Boolean( selectedThemeType && selectedThemeType !== FREE_THEME );
 
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
@@ -353,6 +382,9 @@ function UnifiedPlansStep( {
 		]
 	);
 
+	const siteId = selectedSite?.ID ?? signupDependencies.siteId;
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
+
 	const handleRemovePaidDomain = useCallback( () => {
 		const domainItem = undefined;
 
@@ -414,6 +446,10 @@ function UnifiedPlansStep( {
 			return translate( 'Select a plan to launch your store' );
 		}
 
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return translate( 'Pick a plan for your store' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -427,6 +463,9 @@ function UnifiedPlansStep( {
 		( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
 			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
+
+	const shouldUseModalBackedFreePlanCTA =
+		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
 
 	const getSubheaderText = () => {
 		const freePlanButton = (
@@ -456,23 +495,58 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
-			return null; // Use PlansFeaturesMain subheader for hosting
+			return translate(
+				'All the security, flexibility, and control you need — without the overhead.'
+			);
 		}
 
 		if ( intent === 'plans-website-builder' ) {
-			return null; // Use PlansFeaturesMain subheader for website-builder
+			if ( deemphasizeFreePlan ) {
+				if ( shouldUseModalBackedFreePlanCTA ) {
+					return translate(
+						'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+					);
+				}
+
+				return translate(
+					'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
+					{ components: { link: freePlanButton } }
+				);
+			}
+			return translate(
+				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+			);
 		}
 
 		if ( intent === 'plans-woo-hosted' ) {
-			return i18n.fixMe( {
-				text: 'Your free trial ends soon. Select a plan to keep access to your store admin.',
-				newCopy: translate(
-					'Your free trial ends soon. Select a plan to keep access to your store admin.'
-				),
-				oldCopy: translate(
-					'Your free trial ends soon - select a plan to keep your online store.'
-				),
-			} );
+			if ( ! currentPlan && ! selectedSite?.plan ) {
+				return null;
+			}
+			const isOnTrial =
+				currentPlan?.productSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ||
+				selectedSite?.plan?.product_slug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
+
+			if ( isOnTrial ) {
+				const daysLeft = currentPlan?.expiry
+					? Math.ceil( moment.utc( currentPlan.expiry ).diff( moment().utc(), 'days', true ) )
+					: null;
+
+				if ( daysLeft !== null && daysLeft >= 1 ) {
+					return translate(
+						'Your free trial ends in %(daysLeft)d day — select a plan to keep your online store.',
+						'Your free trial ends in %(daysLeft)d days — select a plan to keep your online store.',
+						{ count: daysLeft, args: { daysLeft } }
+					);
+				}
+				return translate( 'Your free trial ends soon — select a plan to keep your online store.' );
+			}
+			return translate( 'Choose the plan that fits your business.' );
+		}
+
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return translate(
+				'All plans come with WooCommerce. Pick the level of support and features you want.'
+			);
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -482,8 +556,21 @@ function UnifiedPlansStep( {
 			);
 		}
 
+		// Keep the non-modal CTA in Step.Heading. Paid-domain/theme flows use
+		// <PlansPageSubheader> so the CTA can open PlanUpsellModal first.
+		if ( useStepContainerV2 && deemphasizeFreePlan && ! shouldUseModalBackedFreePlanCTA ) {
+			return translate(
+				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
+		}
+
 		if ( deemphasizeFreePlanFromProps ) {
 			return null;
+		}
+
+		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
+			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};
 
@@ -564,6 +651,7 @@ function UnifiedPlansStep( {
 				onUpgradeClick={ handleUpgradeClick }
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
+				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
@@ -580,17 +668,13 @@ function UnifiedPlansStep( {
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
 				selectedFeature={ selectedFeature }
+				onReady={ useStepContainerV2 ? handlePlansReady : undefined }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
 					}
 
-					return (
-						<AsyncLoad
-							require="calypso/my-sites/plans-features-main/components/plan-faq"
-							placeholder={ null }
-						/>
-					);
+					return <AsyncLoad require={ loadPlanFaq } placeholder={ null } />;
 				} }
 			/>
 		</div>
@@ -601,34 +685,66 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
-				<MarketingMessage path="signup/plans" />
-				<Step.WideLayout
-					className="step-container-v2--plans"
-					topBar={
-						<Step.TopBar
-							leftElement={
-								goBack ? (
-									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
-								) : undefined
-							}
-						/>
-					}
-					heading={
-						<>
-							{ ( intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting' ) && (
-								<IntentToggle
-									currentIntent={ intent }
-									onIntentChange={ ( newIntent ) => {
-										onIntentChange?.( newIntent );
-									} }
-								/>
-							) }
-							<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
-						</>
-					}
-				>
-					{ stepContent }
-				</Step.WideLayout>
+				{ /*
+				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
+				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading
+				 * overlays until onReady fires, then both swap in a single React commit.
+				 *
+				 * This is intentionally a one-way latch: once ready, we don't re-hide on
+				 * subsequent data refetches (e.g. intent toggle) — PlansFeaturesMain's
+				 * internal Spinner handles those transitions. The latch resets naturally
+				 * on step remount (stepper uses key={step.slug}).
+				 */ }
+				{ ! isContentReady && <Step.Loading /> }
+				<div aria-hidden={ ! isContentReady ? true : undefined }>
+					<MarketingMessage path="signup/plans" />
+					<Step.WideLayout
+						headingColumnWidth={ 6 }
+						className={ clsx( 'step-container-v2--plans', {
+							'is-plans-loading': ! isContentReady,
+						} ) }
+						topBar={
+							<Step.TopBar
+								leftElement={
+									goBack ? (
+										<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+									) : undefined
+								}
+								rightElement={
+									isOnboardingFlow( flowName ) ? (
+										<>
+											{ stepCounter && (
+												<Step.StepCounter
+													current={ stepCounter.current }
+													total={ stepCounter.total }
+												/>
+											) }
+											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ translate( 'Need help?' ) }
+											</Step.LinkButton>
+										</>
+									) : undefined
+								}
+							/>
+						}
+						heading={
+							<>
+								{ ( intent === 'plans-website-builder' ||
+									intent === 'plans-wordpress-hosting' ) && (
+									<IntentToggle
+										currentIntent={ intent }
+										onIntentChange={ ( newIntent ) => {
+											onIntentChange?.( newIntent );
+										} }
+									/>
+								) }
+								<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
+							</>
+						}
+					>
+						{ stepContent }
+					</Step.WideLayout>
+				</div>
 			</>
 		);
 	}
@@ -671,7 +787,7 @@ function UnifiedPlansStep( {
 						/**
 						 * Common Start/Stepper props [START]
 						 */
-						require="calypso/signup/step-wrapper"
+						require={ loadStepWrapper }
 						flowName={ flowName }
 						stepName={ stepName }
 						stepContent={ stepContent }

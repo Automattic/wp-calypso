@@ -60,7 +60,7 @@ const pressableSteps = (
 		),
 		buttonProps: {
 			variant: 'primary',
-			label: translate( 'Download Migration plugin' ),
+			label: translate( 'Download migration plugin' ),
 			icon: download,
 			isExternal: true,
 			href: 'https://wordpress.org/plugins/pressable-automated-migration/',
@@ -169,7 +169,7 @@ const wpcomSteps = (
 	{
 		stepId: 'go-to-import',
 		count: 2,
-		title: translate( 'Go to wordpress.com/import' ),
+		title: translate( 'Start the migration on WordPress.com' ),
 		description: translate(
 			'Choose your site from the list, then enter the URL of your existing site.'
 		),
@@ -178,7 +178,7 @@ const wpcomSteps = (
 			label: translate( 'Launch WordPress.com' ),
 			icon: external,
 			isExternal: true,
-			href: 'https://wordpress.com/import',
+			href: 'https://wordpress.com/setup/site-migration/',
 			eventName: 'calypso_a4a_migrate_to_wpcom_go_to_import_click',
 		},
 	},

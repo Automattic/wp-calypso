@@ -3,6 +3,7 @@ import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -62,6 +63,7 @@ export default function WPCOMScanUpsellPage() {
 
 				<WhatIsJetpack />
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 }

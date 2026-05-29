@@ -1,6 +1,7 @@
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -34,15 +35,21 @@ export function getRenewalPricingText( {
 		return null;
 	}
 
+	if ( ! showBillingDescriptionForIncreasedRenewalPrice ) {
+		return null;
+	}
+
 	const formattedMonthlyPrice = formatCurrency( monthlyPrice, currencyCode, {
 		stripZeros: true,
 		isSmallestUnit: true,
 	} );
 
-	const formattedFullPrice = formatCurrency( currentFullPrice, currencyCode, {
-		stripZeros: true,
-		isSmallestUnit: true,
-	} );
+	if ( billingPeriod === PLAN_MONTHLY_PERIOD ) {
+		return translate( 'Auto-renews at %(price)s per month. Billed every month.', {
+			args: { price: formattedMonthlyPrice },
+			comment: '%(price)s is a formatted price like $10',
+		} );
+	}
 
 	// Determine the billing period in months
 	let billingMonths = 12; // default to annual
@@ -55,30 +62,12 @@ export function getRenewalPricingText( {
 		billingMonths = 12;
 	}
 
-	// Different text based on variation
-	if ( showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' ) {
-		return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
-			args: {
-				price: formattedMonthlyPrice,
-				months: billingMonths,
-			},
-			comment:
-				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
-		} );
-	} else if ( showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price' ) {
-		return translate(
-			'Get %(months)s months for %(fullPrice)s. Auto-renews at %(price)s per month.',
-			{
-				args: {
-					months: billingMonths,
-					fullPrice: formattedFullPrice,
-					price: formattedMonthlyPrice,
-				},
-				comment:
-					'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the current/intro total price like $100, %(price)s is the renewal monthly price like $12',
-			}
-		);
-	}
-
-	return null;
+	return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
+		args: {
+			price: formattedMonthlyPrice,
+			months: billingMonths,
+		},
+		comment:
+			'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
+	} );
 }

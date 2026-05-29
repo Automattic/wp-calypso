@@ -5,6 +5,7 @@
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
+	"checkout_additional_allowed_redirect_hosts": [],
 	"client_slug": false,
 	"facebook_api_key": false,
 	"features": {},
@@ -215,7 +216,7 @@
 	"theme_color_admin_color_scheme_override": true,
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"dolly_telegram_auth_url": "",
-	"dolly_telegram_bot_username": "wordpresssagentbot",
+	"dolly_telegram_bot_username": "wordpressagentbot",
 	"dolly_telegram_request_access": "",
 	"dolly_telegram_widget_size": "medium",
 	"dolly_telegram_show_userpic": false,
@@ -223,8 +224,8 @@
 	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
 	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.4.8/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.4.8/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.6.0/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.6.0/style.css"
 	},
 	"dashboard_opt_in_oldest_eligible_user": 275231967
 }

@@ -2,6 +2,7 @@ import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
+	siteBySlugQuery,
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
@@ -11,6 +12,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
@@ -31,19 +33,51 @@ import {
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
+import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded } = purchaseSettingsRoute.useSearch();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { refunded, upgraded, cancelled, downgraded, intent } = purchaseSettingsRoute.useSearch();
+	const navigate = purchaseSettingsRoute.useNavigate();
+	// Show the transient cancelled success notice once after a cancel redirects
+	// here. The URL search param is cleared immediately so that a refresh / back
+	// navigation falls through to the regular expiring notice.
+	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
+	const [ cancelledIntent ] = useState( () => ( cancelled ? intent : undefined ) );
+	useEffect( () => {
+		if ( cancelled ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { cancelled: _cancelled, intent: _intent, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ cancelled, navigate ] );
+	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( Boolean( downgraded ) );
+	useEffect( () => {
+		if ( downgraded ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { downgraded: _downgraded, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ downgraded, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -51,6 +85,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { data: sitePurchases } = useQuery( {
 		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
 	} );
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
+	} );
+	const isDomainWithoutSite = Boolean( site?.options?.is_domain_only && purchase.is_domain );
 	const renewableSitePurchases = sitePurchases?.filter( needsToRenewSoon );
 
 	const { data: isDismissedPersisted } = useSuspenseQuery(
@@ -69,6 +108,47 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} }
 		/>
 	) : null;
+
+	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
+
+	useEffect( () => {
+		if ( upgraded ) {
+			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
+			navigate( {
+				search: { refunded },
+				replace: true,
+			} );
+		}
+	}, [ upgraded, refunded, navigate ] );
+
+	// Transient cancelled success notice — suppresses every other notice until
+	// dismissed, refreshed, or navigated-away-and-back. Gated on the
+	// `?cancelled=true` search param set by the cancel redirect.
+	if ( isSplitCancelRemoveEnabled && showCancelledNotice ) {
+		return (
+			<PurchaseCancelledNotice
+				purchase={ purchase }
+				intent={ cancelledIntent }
+				onClose={ () => setShowCancelledNotice( false ) }
+			/>
+		);
+	}
+
+	if ( showDowngradedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowDowngradedNotice( false ) }>
+				{ __( 'You\u2019ve switched to monthly billing.' ) }
+			</Notice>
+		);
+	}
+
+	if ( showUpgradedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowUpgradedNotice( false ) }>
+				{ __( 'Thank you for your purchase. Your site has been upgraded.' ) }
+			</Notice>
+		);
+	}
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;
@@ -130,7 +210,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<PurchaseExpiringNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />
+				<PurchaseExpiringNotice
+					purchase={ purchase }
+					purchaseAttachedTo={ purchaseAttachedTo }
+					isDomainWithoutSite={ isDomainWithoutSite }
+				/>
 			</>
 		);
 	}
@@ -139,7 +223,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<CreditCardExpiringNotice purchase={ purchase } />;
+				<CreditCardExpiringNotice purchase={ purchase } />
 			</>
 		);
 	}
@@ -329,7 +413,8 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = getSitePurchaseUpgradeUrl( purchase ) ?? '';
+			window.location.href =
+				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() ) ?? '';
 			return;
 		}
 
@@ -365,7 +450,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 					daysToExpiry
 				),
 				{
-					expiry: daysToExpiry,
+					expiry: String( daysToExpiry ),
 					productType: productType as string,
 				}
 		  )
@@ -424,9 +509,9 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	const cardDetails = {
-		cardType: purchase.payment_card_type,
-		cardNumber: purchase.payment_card_id,
-		cardExpiry: purchase.payment_expiry,
+		cardType: purchase.payment_card_type ?? '',
+		cardNumber: Number( purchase.payment_card_id ) || 0,
+		cardExpiry: purchase.payment_expiry ?? '',
 	};
 
 	const linkComponent = {

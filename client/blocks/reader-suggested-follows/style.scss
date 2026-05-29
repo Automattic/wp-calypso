@@ -20,7 +20,6 @@
 	padding: 0 32px 10px 32px;
 }
 
-;
 .reader-recommended-follows-dialog__body {
 	scrollbar-width: thin;
 	scrollbar-gutter: stable;
@@ -85,20 +84,6 @@
 			gap: 11px;
 			justify-content: flex-start;
 
-			.count {
-				position: relative;
-				top: 2px;
-			}
-
-			img {
-				border-radius: 100%;
-			}
-		}
-
-		.reader-suggested-follow-item_siteicon {
-			height: 48px;
-			width: 48px;
-			min-width: 48px;
 		}
 
 		.reader-suggested-follow-item_sitename {
@@ -181,8 +166,9 @@
 
 		.is-placeholder.placeholder-title {
 			width: 50%;
-			height: 48
+			height: 48px;
 		}
+
 		.is-placeholder.placeholder-description {
 			height: 24px;
 		}

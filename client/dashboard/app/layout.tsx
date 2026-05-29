@@ -5,13 +5,16 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
+import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useMemo, useEffect } from 'react';
+import { withColorScheme } from 'calypso/lib/color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
+import { dashboardChartTheme } from './chart-theme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
@@ -37,7 +40,7 @@ function AnalyticsProviderWithClient( {
 	useEffect( () => {
 		if ( posthog ) {
 			import( '@automattic/posthog' ).then( ( { init } ) =>
-				init( posthog, user ? { ID: user.ID } : undefined )
+				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
 			);
 		}
 	}, [ user, posthog ] );
@@ -78,7 +81,11 @@ function Layout( { config }: { config: AppConfig } ) {
 				<AuthProvider>
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
-							<RouterProvider router={ router } context={ { config } } />
+							<GlobalChartsProvider theme={ dashboardChartTheme }>
+								{ withColorScheme( <RouterProvider router={ router } context={ { config } } />, {
+									enabled: config.supports.colorScheme,
+								} ) }
+							</GlobalChartsProvider>
 						</AnalyticsProviderWithClient>
 					</I18nProvider>
 				</AuthProvider>

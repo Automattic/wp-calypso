@@ -1,4 +1,3 @@
-import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -48,6 +47,7 @@ import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
+import blikProcessor from '../lib/blik-processor';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -55,8 +55,8 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
+import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
-import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
@@ -197,7 +197,6 @@ export default function CheckoutMain( {
 	} )();
 
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
@@ -437,9 +436,6 @@ export default function CheckoutMain( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isRazorpayLoading,
-		razorpayLoadingError,
-		razorpayConfiguration,
 		storedCards,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
@@ -532,7 +528,6 @@ export default function CheckoutMain( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
-			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
 			isJetpackNotAtomic,
@@ -549,7 +544,6 @@ export default function CheckoutMain( {
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,
-			razorpayConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
@@ -571,6 +565,8 @@ export default function CheckoutMain( {
 				} ),
 			pix: ( transactionData: unknown ) =>
 				pixProcessor( transactionData, dataForProcessor, translate ),
+			pix_automatico: ( transactionData: unknown ) =>
+				pixAutomaticoProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -588,7 +584,14 @@ export default function CheckoutMain( {
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'stripe-upi': ( transactionData: unknown ) =>
-				upiProcessor( transactionData, dataForProcessor, translate ),
+				upiProcessor(
+					transactionData,
+					dataForProcessor,
+					translate,
+					sitelessCheckoutType === 'a4a'
+				),
+			'stripe-blik': ( transactionData: unknown ) =>
+				blikProcessor( transactionData, dataForProcessor, translate ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -598,10 +601,8 @@ export default function CheckoutMain( {
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
-			razorpay: ( transactionData: unknown ) =>
-				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
-		[ dataForProcessor, translate ]
+		[ dataForProcessor, sitelessCheckoutType, translate ]
 	);
 
 	// Gravatar Theme

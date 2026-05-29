@@ -257,36 +257,36 @@ export default function PlanSelectionFilter( {
 						{
 							name: PLAN_CATEGORY_SIGNATURE,
 							title: isDesktop
-								? translate( 'Signature Plans 1-10' )
+								? translate( 'Signature plans 1-10' )
 								: translate( 'Signature 1-10' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_SIGNATURE_HIGH,
 							title: isDesktop
-								? translate( 'Signature Plans 11-17' )
+								? translate( 'Signature plans 11-17' )
 								: translate( 'Signature 11-17' ),
 						},
 				  ]
 				: [
 						{
 							name: PLAN_CATEGORY_STANDARD,
-							title: isDesktop ? translate( 'Signature Plans' ) : translate( 'Signature' ),
+							title: isDesktop ? translate( 'Signature plans' ) : translate( 'Signature' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_ENTERPRISE,
-							title: isDesktop ? translate( 'Enterprise Plans' ) : translate( 'Enterprise' ),
+							title: isDesktop ? translate( 'Enterprise plans' ) : translate( 'Enterprise' ),
 						},
 				  ] ),
 			hasNewPremiumPlans
 				? {
 						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium Plans 1-11' ) : translate( 'Premium 1-11' ),
+						title: isDesktop ? translate( 'Premium plans 1-11' ) : translate( 'Premium 1-11' ),
 				  }
 				: {
 						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
+						title: isDesktop ? translate( 'Premium plans' ) : translate( 'Premium' ),
 				  },
 		],
 		[ areSignaturePlans, isDesktop, translate, disableStandardTab, hasNewPremiumPlans ]

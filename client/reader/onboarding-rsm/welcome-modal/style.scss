@@ -1,0 +1,215 @@
+@import '@wordpress/base-styles/breakpoints';
+
+$entry-duration: 640ms;
+$entry-ease: cubic-bezier( 0.22, 1, 0.36, 1 );
+$entry-offset: 10px;
+
+@keyframes welcome-modal-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY( $entry-offset );
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}
+
+@mixin tile-circle-frame {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	background-color: var( --color-surface );
+	box-shadow:
+		0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
+		0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
+}
+
+.reader-welcome-modal {
+	// Frame sizing, the WP modal flex layout, the VStack scroll region, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
+
+	&__content {
+		padding: 20px 32px 64px;
+	}
+
+	&__animate-in {
+		opacity: 0;
+		transform: translateY( $entry-offset );
+		animation: welcome-modal-fade-up $entry-duration $entry-ease forwards;
+		will-change: opacity, transform;
+	}
+
+	&__animate-in--intro {
+		animation-delay: 0ms;
+	}
+
+	&__animate-in--people {
+		animation-delay: 200ms;
+	}
+
+	&__intro {
+		max-width: 700px;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.75rem;
+		font-weight: 400;
+		line-height: 1.15;
+		margin: 0;
+
+		@media ( max-width: $break-medium ) {
+			font-size: 2rem;
+		}
+	}
+
+	&__subtitle {
+		margin: 0;
+		line-height: 1.5;
+		color: var( --color-text-subtle );
+	}
+
+	// Keep subtitle sentences on separate lines when there is reasonable room for them.
+	// On smaller viewports, they should be one text block for wrapping.
+	&__subtitle-break {
+		@media ( max-width: $break-medium ) {
+			display: none;
+		}
+	}
+
+	&__people-grid {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 28px;
+		margin-top: 28px;
+	}
+
+	&__tile-row {
+		display: flex;
+		justify-content: center;
+		gap: 28px;
+		flex-wrap: nowrap;
+
+		// At tablet widths, constrain the row to exactly 3 tiles wide and allow
+		// wrapping. The fixed max-width forces the break at 3 per row, while
+		// justify-content: center (from the base rule) centers any partial last
+		// row — so publications wrap 3+3 and bloggers wrap 3+2 (centered).
+		@media ( max-width: $break-medium ) {
+			flex-wrap: wrap;
+			max-width: 356px; // 3 × 100px + 2 × 28px gap
+			width: 100%;
+		}
+
+		// At mobile widths, shrink to 2 tiles wide with a tighter gap.
+		// 2 × 100px + 1 × 20px gap = 220px.
+		@media ( max-width: $break-mobile ) {
+			max-width: 220px;
+			gap: 20px;
+		}
+	}
+
+	&__tile {
+		width: 100px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+		text-align: center;
+	}
+
+	&__tile-image {
+		@include tile-circle-frame;
+		object-fit: cover;
+	}
+
+	&__tile-image.is-contained-logo {
+		object-fit: contain;
+	}
+
+	&__tile-image.is-contained-logo--time {
+		padding: 3px;
+	}
+
+	&__image-porthole {
+		@include tile-circle-frame;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		position: relative;
+	}
+
+	&__porthole-image {
+		position: absolute;
+	}
+
+	&__variety-image {
+		// Variety logo is square — fit it inside the circle without cropping
+		position: static;
+		width: 71%; // Scale factor to fit square inside circle of same size -> 1/root(2) ~= 71%
+		height: 71%;
+		object-fit: contain;
+		object-position: center;
+	}
+
+	&__matt-image {
+		top: 13px;
+		left: 7px;
+		transform: scale( 1.4 );
+	}
+
+	&__seth-image {
+		top: -3px;
+		right: 3px;
+		transform: scale( 1.1 );
+	}
+
+	&__tim-image {
+		top: 19px;
+		transform: scale( 1.8 );
+	}
+
+	&__om-image {
+		top: 4px;
+		right: 3px;
+		transform: scale( 1.2 );
+	}
+
+	&__hugh-image {
+		top: 12px;
+		right: 2px;
+		transform: scale( 1.5 );
+	}
+
+	&__tile-label {
+		font-size: 0.75rem;
+		line-height: 1.3;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: var( --color-text-subtle );
+	}
+
+	&__footer-buttons {
+		gap: 8px;
+		flex: 0 0 auto;
+		justify-content: flex-end;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reader-welcome-modal {
+		&__animate-in {
+			opacity: 1;
+			transform: none;
+			animation: none;
+			will-change: auto;
+		}
+	}
+}

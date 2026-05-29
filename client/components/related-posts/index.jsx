@@ -1,71 +1,59 @@
+import { SCOPE_OTHER, SCOPE_SAME } from '@automattic/api-core';
 import clsx from 'clsx';
 import { times } from 'lodash';
-import { connect } from 'react-redux';
-import RelatedPost from 'calypso/blocks/reader-related-card';
-import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
-import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import RelatedPostCard from 'calypso/blocks/reader-related-card';
+import { useRelatedPosts } from 'calypso/components/data/with-reader-related-posts';
 
 const noop = () => {};
 
-function RelatedPosts( {
-	siteId,
-	postId,
-	posts,
-	title,
-	scope,
-	className = '',
-	onPostClick = noop,
-	onSiteClick = noop,
-} ) {
+function RelatedPosts( { posts, title, className = '', onPostClick = noop, onSiteClick = noop } ) {
 	let listItems;
 
 	if ( ! posts ) {
 		// Placeholders
 		listItems = times( 2, ( i ) => {
 			return (
-				/* eslint-disable */
 				<li className="reader-related-card__list-item" key={ 'related-post-placeholder-' + i }>
-					<RelatedPost post={ null } />
+					<RelatedPostCard post={ null } />
 				</li>
-				/* eslint-enable */
 			);
 		} );
 	} else if ( posts.length === 0 ) {
 		return null;
 	} else {
-		listItems = posts.map( ( post_id ) => {
+		listItems = posts.map( ( post ) => {
 			return (
-				/* eslint-disable */
-				<li key={ post_id } className="reader-related-card__list-item">
-					<RelatedPost post={ post_id } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
+				<li key={ post.global_ID } className="reader-related-card__list-item">
+					<RelatedPostCard post={ post } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
 				</li>
-				/* eslint-enable */
 			);
 		} );
 	}
 
 	return (
-		/* eslint-disable */
 		<div className={ clsx( 'reader-related-card__blocks', className ) }>
-			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
 			<h1 className="reader-related-card__heading">{ title }</h1>
 			<ul className="reader-related-card__list">{ listItems }</ul>
 		</div>
-		/* eslint-enable */
 	);
 }
 
-export const RelatedPostsFromSameSite = connect( ( state, ownProps ) => {
-	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_SAME ),
-		scope: SCOPE_SAME,
-	};
-} )( RelatedPosts );
+export const RelatedPostsFromSameSite = ( { siteId, postId, ...props } ) => {
+	const { posts, isError } = useRelatedPosts( siteId, postId, SCOPE_SAME );
 
-export const RelatedPostsFromOtherSites = connect( ( state, ownProps ) => {
-	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
-		scope: SCOPE_OTHER,
-	};
-} )( RelatedPosts );
+	if ( isError && ! posts ) {
+		return null;
+	}
+
+	return <RelatedPosts { ...props } posts={ posts } />;
+};
+
+export const RelatedPostsFromOtherSites = ( { siteId, postId, ...props } ) => {
+	const { posts, isError } = useRelatedPosts( siteId, postId, SCOPE_OTHER );
+
+	if ( isError && ! posts ) {
+		return null;
+	}
+
+	return <RelatedPosts { ...props } posts={ posts } />;
+};

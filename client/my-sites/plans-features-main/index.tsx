@@ -48,7 +48,7 @@ import {
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, type TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -106,6 +106,7 @@ const PlanComparisonHeader = styled.h1`
 	}
 `;
 export interface PlansFeaturesMainProps {
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
@@ -181,12 +182,14 @@ export interface PlansFeaturesMainProps {
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
+	onReady?: () => void;
 
 	/*
 	 * Shows the free plan as a plain text anchor instead of a plan card.
 	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
 	 */
 	deemphasizeFreePlan?: boolean;
+	renderFreePlanCtaInStepContainerV2?: boolean;
 
 	selectedThemeType?: string;
 }
@@ -211,6 +214,7 @@ const PlansFeaturesMain = ( {
 	selectedFeature,
 	plansWithScroll,
 	discountEndDate,
+	highlightLabelOverrides,
 	hideFreePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
@@ -231,12 +235,14 @@ const PlansFeaturesMain = ( {
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
+	renderFreePlanCtaInStepContainerV2 = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
 	coupon,
 	onPlanIntervalUpdate,
 	selectedThemeType,
+	onReady,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -394,12 +400,10 @@ const PlansFeaturesMain = ( {
 	);
 
 	const {
-		isLoading: isLoadingDifferentiatorsExperiment,
 		showDifferentiatorHeader,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
@@ -466,6 +470,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
+		highlightLabelOverrides,
 		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -479,10 +484,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} );
 
@@ -492,6 +496,7 @@ const PlansFeaturesMain = ( {
 		coupon,
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
+		highlightLabelOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,
@@ -507,10 +512,9 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} );
 
@@ -739,8 +743,13 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading &&
-		! isLoadingDifferentiatorsExperiment;
+		! isRenewalPricingExperimentLoading;
+
+	useEffect( () => {
+		if ( isPlansGridReady ) {
+			onReady?.();
+		}
+	}, [ isPlansGridReady, onReady ] );
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -788,12 +797,8 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if (
-		useFocusedComparisonFeatures ||
-		useVar41MorePremiumFeatures ||
-		useVar42NoAiFeatures
-	) {
-		// Experiment: stacked variants should render a single, ordered list (no grouping),
+	} else if ( useVar42NoAiFeatures ) {
+		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
@@ -916,6 +921,7 @@ const PlansFeaturesMain = ( {
 					offeringFreePlan={ offeringFreePlan }
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
+					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					showDifferentiatorHeader={ showDifferentiatorHeader }
@@ -932,6 +938,15 @@ const PlansFeaturesMain = ( {
 								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
 							/>
+						) }
+						{ intent === 'plans-woo-hosting-solutions' && (
+							<p className="plans-features-main__money-back-guarantee">
+								{ translate( 'Every plan is backed by our %(days)d-day money-back guarantee.', {
+									args: {
+										days: compatibleIntervalType === 'monthly' ? 7 : 14,
+									},
+								} ) }
+							</p>
 						) }
 						<div
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
@@ -987,7 +1002,6 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isExperimentVariant={ isExperimentVariant }
-										useFocusedComparisonFeatures={ useFocusedComparisonFeatures }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import affiliatesIllustration from 'calypso/assets/images/customer-home/illustration--affiliates-icons-small.png';
+import affiliatesIllustration from 'calypso/assets/images/customer-home/illustration--affiliates-icons-small.webp';
 import EducationalContent from '../educational-content';
 export const EDUCATION_EARN = 'home-education-earn';
 

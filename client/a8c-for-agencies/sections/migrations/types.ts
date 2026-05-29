@@ -10,4 +10,5 @@ export interface TaggedSite {
 	state: string;
 	tags: Tag[];
 	incentive_status: string;
+	incentive_rejection_reason?: string;
 }

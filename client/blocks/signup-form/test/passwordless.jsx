@@ -62,7 +62,7 @@ describe( 'createAccountError', () => {
 		await renderFormAndSubmit();
 
 		await waitFor( () => {
-			expect( screen.getByText( /something went wrong /i ) ).toBeInTheDocument();
+			expect( screen.getByText( /couldn.t create your account/i ) ).toBeInTheDocument();
 		} );
 	} );
 } );

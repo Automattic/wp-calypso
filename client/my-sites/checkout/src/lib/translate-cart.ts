@@ -178,6 +178,7 @@ export function createTransactionEndpointRequestPayload( {
 	pan,
 	gstin,
 	nik,
+	code,
 	useForAllSubscriptions,
 	eventSource,
 }: TransactionRequest ): WPCOMTransactionEndpointRequestPayload {
@@ -208,6 +209,7 @@ export function createTransactionEndpointRequestPayload( {
 			pan,
 			gstin,
 			nik,
+			code,
 			useForAllSubscriptions,
 			eventSource,
 		},

@@ -16,7 +16,8 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Login: Visit login page while logged in' ), function () {
 	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'signupfree',
+		useMailosaur: true,
+		usernamePrefix: 'signup',
 	} );
 
 	let newUserDetails: NewUserResponse;

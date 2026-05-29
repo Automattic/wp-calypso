@@ -1,11 +1,11 @@
 import { Icon, postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import { UserProfileData } from 'calypso/lib/user/user';
 import Stream from 'calypso/reader/stream';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserPostsProps {
-	user: UserProfileData;
+	user: ReaderUser;
 }
 
 const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {

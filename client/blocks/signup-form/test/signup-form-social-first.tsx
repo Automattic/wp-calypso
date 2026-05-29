@@ -106,4 +106,22 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
 		} );
 	} );
+
+	describe( 'isEmailAtBottom', () => {
+		test( 'renders the email block after the social buttons when isEmailAtBottom is true', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant isEmailAtBottom />
+			);
+
+			const emailBlock = container.querySelector( '.signup-form-social-first-email' );
+			const googleButton = screen.getByText( /Continue with Google/i );
+
+			expect( emailBlock ).not.toBeNull();
+			// DOCUMENT_POSITION_FOLLOWING (4) → emailBlock follows googleButton in DOM order.
+			expect(
+				googleButton.compareDocumentPosition( emailBlock as Node ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+	} );
 } );

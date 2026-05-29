@@ -35,7 +35,7 @@ import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
 import Notifications from '../notifications';
-import { billingRoute, profileRoute, preferencesRoute, securityRoute } from '../router/me';
+import { accountRoute, billingRoute, preferencesRoute, securityRoute } from '../router/me';
 import type { AnyRoute } from '@tanstack/react-router';
 
 import './style.scss';
@@ -256,8 +256,8 @@ function UserProfile() {
 			case 'billing':
 				route = billingRoute;
 				break;
-			case 'profile':
-				route = profileRoute;
+			case 'account':
+				route = accountRoute;
 				break;
 			case 'preferences':
 				route = preferencesRoute;
@@ -309,7 +309,7 @@ function UserProfile() {
 				<Menu.Separator />
 				<Menu.Group>
 					<Menu.GroupLabel>{ __( 'Account' ) }</Menu.GroupLabel>
-					<Menu.Item onClick={ () => handleAccountItemClick( 'profile' ) }>
+					<Menu.Item onClick={ () => handleAccountItemClick( 'account' ) }>
 						<Menu.ItemLabel>{ __( 'Profile' ) }</Menu.ItemLabel>
 					</Menu.Item>
 					<Menu.Item onClick={ () => handleAccountItemClick( 'preferences' ) }>

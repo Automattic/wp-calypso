@@ -1,6 +1,7 @@
 .webpack-cache
 .sass-cache
 .babel-cache
+.superpowers/
 .vagrant
 .unison
 .env
@@ -60,8 +61,6 @@ checkstyle.xml
 /chunks-map.*.json
 cover.html
 .test.log
-
-cached-requests.json
 
 # Monorepo output
 /apps/*/dist/
@@ -138,4 +137,8 @@ output/
 **/.claude.md
 **/.claude/settings.local.json
 .claude/test-pr/
+.claude/worktrees/
+
+# husky's auto-generated init directory (not the committed pre-commit/pre-push scripts)
+.husky/_
 CLAUDE.local.md

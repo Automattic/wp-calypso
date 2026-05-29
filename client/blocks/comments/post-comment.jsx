@@ -1,7 +1,9 @@
+import './post-comment.scss';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
-import { isURL, getProtocol, getAuthority } from '@wordpress/url';
+import { Icon, external } from '@wordpress/icons';
+import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -9,17 +11,16 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-import { expandComments } from 'calypso/state/comments/actions';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -28,8 +29,6 @@ import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
-
-import './post-comment.scss';
 
 const noop = () => {};
 
@@ -67,6 +66,8 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: PropTypes.bool,
 		hidePingbacksAndTrackbacks: PropTypes.bool,
 		isInlineComment: PropTypes.bool,
+		expandComments: PropTypes.func,
+		comments: PropTypes.array,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -98,6 +99,8 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
+		expandComments: noop,
+		comments: [],
 	};
 
 	state = {
@@ -273,6 +276,8 @@ class PostComment extends PureComponent {
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
 								isInlineComment={ this.props.isInlineComment }
+								expandComments={ this.props.expandComments }
+								comments={ this.props.comments }
 							/>
 						) ) }
 					</ol>
@@ -319,22 +324,22 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			const urlToCheck = commentAuthor?.URL;
-			if ( urlToCheck && isURL( urlToCheck ) ) {
-				const protocol = getProtocol( urlToCheck );
-				const domain = getAuthority( urlToCheck );
-				// isURL uses URL() which allows '%20' in Chromium but not Firefox, so we check ourselves.
-				if ( protocol === 'https:' && ! domain.includes( '%' ) ) {
-					commentAuthorUrl = urlToCheck;
-				}
-			}
+			const isSafeHttpsUrl = ( url ) =>
+				url &&
+				isURL( url ) &&
+				getProtocol( url ) === 'https:' &&
+				! getAuthority( url ).includes( '%' );
+
+			commentAuthorUrl = [ commentAuthor?.URL, commentAuthor?.profile_URL ].find( isSafeHttpsUrl );
 		}
 
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		return authorUrl ? (
+		const isExternalUrl = authorUrl?.startsWith( '/reader/users/' ) === false;
+
+		return authorUrl && ! isExternalUrl ? (
 			<a
 				href={ authorUrl }
 				className={ className }
@@ -346,6 +351,18 @@ class PostComment extends PureComponent {
 		) : (
 			<strong className={ className } id={ `comment-${ commentId }` }>
 				{ authorName }
+
+				{ isExternalUrl && (
+					<a
+						className="comments__external-link"
+						href={ authorUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={ translate( "Visit %(name)s's site", { args: { name: authorName } } ) }
+					>
+						<Icon icon={ external } size={ 18 } />
+					</a>
+				) }
 			</strong>
 		);
 	};
@@ -446,13 +463,7 @@ class PostComment extends PureComponent {
 		return (
 			<li className={ postCommentClassnames }>
 				<div className="comments__comment-author">
-					{ commentAuthorUrl ? (
-						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick } tabIndex={ -1 }>
-							<GravatarWithHovercards user={ comment.author } />
-						</a>
-					) : (
-						<GravatarWithHovercards user={ comment.author } />
-					) }
+					<UserAvatar user={ comment.author } />
 
 					{ this.renderAuthorTag( {
 						authorUrl: commentAuthorUrl,
@@ -500,7 +511,6 @@ class PostComment extends PureComponent {
 					post={ this.props.post || {} }
 					comment={ comment }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
-					commentId={ this.props.commentId }
 					handleReply={ this.handleReply }
 					onLikeToggle={ this.onLikeToggle }
 					onReplyCancel={ this.props.onReplyCancel }
@@ -514,7 +524,11 @@ class PostComment extends PureComponent {
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
+						comments={ this.props.comments }
+						commentsTree={ commentsTree }
 						commentsToShow={ commentsToShow }
+						expandComments={ this.props.expandComments }
+						recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 					/>
 				) }
 				{ this.renderRepliesList() }
@@ -528,7 +542,7 @@ const ConnectedPostComment = connect(
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent, registerLastActionRequiresLogin }
+	{ recordReaderTracksEvent, registerLastActionRequiresLogin }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

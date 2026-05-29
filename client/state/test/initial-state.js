@@ -331,7 +331,15 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					follows: {
+						items: {
+							'https://saved.example/feed': {
+								URL: 'https://saved.example',
+								feed_URL: 'https://saved.example/feed',
+								is_following: true,
+							},
+						},
+					},
 					_timestamp: Date.now(),
 				},
 			};
@@ -363,7 +371,13 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using saved state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+				expect( state.follows.items ).toEqual( {
+					'https://saved.example/feed': {
+						URL: 'https://saved.example',
+						feed_URL: 'https://saved.example/feed',
+						is_following: true,
+					},
+				} );
 			} );
 		} );
 
@@ -376,7 +390,15 @@ describe( 'initial-state', () => {
 
 			const serverState = {
 				reader: {
-					organizations: { items: [ { id: 2, slug: 'server' } ] },
+					follows: {
+						items: {
+							'https://server.example/feed': {
+								URL: 'https://server.example',
+								feed_URL: 'https://server.example/feed',
+								is_following: true,
+							},
+						},
+					},
 				},
 			};
 
@@ -405,7 +427,13 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using server state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+				expect( state.follows.items ).toEqual( {
+					'https://server.example/feed': {
+						URL: 'https://server.example',
+						feed_URL: 'https://server.example/feed',
+						is_following: true,
+					},
+				} );
 			} );
 		} );
 
@@ -419,14 +447,30 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					follows: {
+						items: {
+							'https://saved.example/feed': {
+								URL: 'https://saved.example',
+								feed_URL: 'https://saved.example/feed',
+								is_following: true,
+							},
+						},
+					},
 					_timestamp: oldDate.getTime(),
 				},
 			};
 
 			const serverState = {
 				reader: {
-					organizations: { items: [ { id: 2, slug: 'server' } ] },
+					follows: {
+						items: {
+							'https://server.example/feed': {
+								URL: 'https://server.example',
+								feed_URL: 'https://server.example/feed',
+								is_following: true,
+							},
+						},
+					},
 				},
 			};
 
@@ -455,7 +499,13 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using server state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+				expect( state.follows.items ).toEqual( {
+					'https://server.example/feed': {
+						URL: 'https://server.example',
+						feed_URL: 'https://server.example/feed',
+						is_following: true,
+					},
+				} );
 			} );
 		} );
 
@@ -469,14 +519,30 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					follows: {
+						items: {
+							'https://saved.example/feed': {
+								URL: 'https://saved.example',
+								feed_URL: 'https://saved.example/feed',
+								is_following: true,
+							},
+						},
+					},
 					_timestamp: newerDate.getTime(),
 				},
 			};
 
 			const serverState = {
 				reader: {
-					organizations: { items: [ { id: 2, slug: 'server' } ] },
+					follows: {
+						items: {
+							'https://server.example/feed': {
+								URL: 'https://server.example',
+								feed_URL: 'https://server.example/feed',
+								is_following: true,
+							},
+						},
+					},
 				},
 			};
 
@@ -505,7 +571,13 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using saved state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+				expect( state.follows.items ).toEqual( {
+					'https://saved.example/feed': {
+						URL: 'https://saved.example',
+						feed_URL: 'https://saved.example/feed',
+						is_following: true,
+					},
+				} );
 			} );
 		} );
 

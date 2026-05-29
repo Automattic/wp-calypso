@@ -10,6 +10,7 @@ import { Subscriber, SubscriptionPlan } from '../types';
 export type SubscriptionPlanData = {
 	plan: ReactNode;
 	startDate?: string;
+	endDate?: string | null;
 	title?: string;
 	is_complimentary: boolean;
 	is_free: boolean;
@@ -23,6 +24,7 @@ type PlanData = {
 	renewalPrice: string;
 	when: string;
 	start_date: string;
+	end_date: string | null;
 	title: string;
 };
 
@@ -65,6 +67,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				when: '',
 				title: '',
 				start_date: '',
+				end_date: '',
 			},
 		];
 
@@ -88,6 +91,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 					subscription.inactive_renew_interval
 				),
 				start_date: subscription.start_date,
+				end_date: subscription.end_date,
 				title: subscription.title,
 			} );
 
@@ -117,6 +121,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 			return plans.map( ( plan: PlanData ) => ( {
 				plan: getPlanDisplay( plan ),
 				startDate: plan.start_date,
+				endDate: plan.end_date,
 				title: plan.title,
 				is_complimentary: plan.is_complimentary,
 				is_free: plan.renewal_price === 0,

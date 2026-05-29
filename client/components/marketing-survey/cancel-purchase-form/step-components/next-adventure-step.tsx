@@ -2,11 +2,15 @@ import { TextareaControl, TextControl, SelectControl } from '@wordpress/componen
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toSelectOption } from '../to-select-options';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 interface Props {
 	isPlan: boolean;
+	isOnlyStep?: boolean;
 	adventureOptions: string[];
+	intent?: DisplayVariant;
 	onChangeText?: ( text: string ) => void;
 	onSelectNextAdventure?: ( nextAdventure: string ) => void;
 	onChangeNextAdventureDetails?: ( details: string ) => void;
@@ -15,7 +19,9 @@ interface Props {
 
 export default function NextAdventureStep( props: Props ) {
 	const translate = useTranslate();
-	const { isPlan, onValidationChange } = props;
+	const { isPlan, isOnlyStep, intent, onValidationChange } = props;
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+	const isCancelPostMutation = isSplitEnabled && intent !== 'remove';
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
 	const [ nextAdventureDetails, setNextAdventureDetails ] = useState( '' );
@@ -81,15 +87,36 @@ export default function NextAdventureStep( props: Props ) {
 		}
 	}, [ nextAdventure, isPlan, onValidationChange ] );
 
+	let headerText;
+	let subHeaderText;
+	if ( ! isSplitEnabled ) {
+		headerText = translate( 'Sorry to see you go' );
+		subHeaderText = translate( 'One last thing', {
+			context: 'This is the last step before cancelling the plan.',
+		} );
+	} else if ( isOnlyStep ) {
+		if ( isCancelPostMutation && intent === 'auto-renew' ) {
+			headerText = translate( 'Auto-renew disabled' );
+		} else {
+			headerText = isCancelPostMutation
+				? translate( 'Cancellation confirmed' )
+				: translate( 'Share your feedback' );
+		}
+		subHeaderText = translate(
+			'Before you go, please answer a quick question to help us improve WordPress.com.'
+		);
+	} else {
+		headerText = isCancelPostMutation
+			? translate( 'Thanks for your feedback' )
+			: translate( 'One last thing', {
+					context: 'This is the last step before cancelling the plan.',
+			  } );
+		subHeaderText = undefined;
+	}
+
 	return (
 		<div className="cancel-purchase-form__feedback">
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Sorry to see you go' ) }
-				subHeaderText={ translate( 'One last thing', {
-					context: 'This is the last step before cancelling the plan.',
-				} ) }
-			/>
+			<FormattedHeader brandFont headerText={ headerText } subHeaderText={ subHeaderText } />
 			<div className="cancel-purchase-form__feedback-questions">
 				<div className="cancel-purchase-form__feedback-question">
 					<TextareaControl

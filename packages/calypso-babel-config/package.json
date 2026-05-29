@@ -23,7 +23,6 @@
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
 		"@automattic/babel-plugin-preserve-i18n": "workspace:^",
-		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
 		"@babel/cli": "^7.27.2",
 		"@babel/core": "^7.27.1",
 		"@babel/helpers": "^7.27.1",
@@ -36,7 +35,7 @@
 		"@babel/register": "^7.27.1",
 		"@babel/runtime": "^7.27.1",
 		"@emotion/babel-plugin": "^11.11.0",
-		"@wordpress/babel-plugin-import-jsx-pragma": "^5.23.0",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^5.46.0",
 		"babel-plugin-dynamic-import-node": "^2.3.3",
 		"babel-plugin-transform-react-remove-prop-types": "^0.4.24"
 	}

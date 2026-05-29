@@ -44,7 +44,10 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 			if ( source?.startsWith( 'ciab-' ) && config.isEnabled( 'posthog-tracking' ) ) {
 				initPostHog(
 					config( 'ciab_posthog_api_key' ),
-					currentUser ? { ID: currentUser.ID } : undefined
+					currentUser ? { ID: currentUser.ID } : undefined,
+					{
+						session_recording: { maskAllInputs: false, maskTextSelector: '' },
+					}
 				);
 			}
 		}, [ source, currentUser ] );

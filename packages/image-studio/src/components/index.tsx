@@ -24,7 +24,13 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
-import { type ImageStudioActions, store as imageStudioStore } from '../store';
+import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
+import {
+	ImageStudioEntryPoint,
+	type ImageStudioActions,
+	store as imageStudioStore,
+} from '../store';
+import { store as videoStudioStore } from '../stores/video-studio';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
@@ -33,6 +39,7 @@ import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
+import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -62,6 +69,19 @@ function ImageStudioAgentChat( {
 		return select( imageStudioStore ).getIsAnnotationSaving();
 	}, [] );
 
+	const entryPoint = useSelect( ( select ) => {
+		return select( imageStudioStore ).getEntryPoint();
+	}, [] );
+
+	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
+
+	// Drives which suggestion-chip flavor the video-clip hook produces:
+	// Cinematic → cinematography prompts for the Veo render path,
+	// Highlights → editorial framing hints for the cloud-rendered recap.
+	const selectedVideoStyle = useSelect( ( select ) => {
+		return select( videoStudioStore ).getSelectedStyle();
+	}, [] );
+
 	useEffect( () => {
 		return () => {
 			// When the component unmounts, abort any ongoing requests
@@ -78,19 +98,36 @@ function ImageStudioAgentChat( {
 
 	const displayMessages = useImageStudioMessageDisplay( agentChatProps?.messages );
 
-	const placeholder =
-		mode === ImageStudioMode.Edit
-			? __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ )
-			: __( 'Describe your image', __i18n_text_domain__ );
+	let placeholder: string;
+	if ( mode === ImageStudioMode.Edit ) {
+		placeholder = __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ );
+	} else if ( isVideoMode ) {
+		placeholder = __( "Describe your post's feature video clip…", __i18n_text_domain__ );
+	} else {
+		placeholder = __( 'Describe your image', __i18n_text_domain__ );
+	}
 
-	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
-		useImageStudioSuggestions( {
-			registerSuggestions: agentChatProps.registerSuggestions,
-			clearSuggestions: agentChatProps.clearSuggestions,
-			messages: displayMessages,
-			mode,
-			inputValue,
-		} );
+	const imageSuggestions = useImageStudioSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		mode,
+		inputValue,
+		disabled: isVideoMode,
+	} );
+
+	const videoSuggestions = useVideoClipSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		inputValue,
+		disabled: ! isVideoMode,
+		style: selectedVideoStyle,
+	} );
+
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
+		? videoSuggestions
+		: imageSuggestions;
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {
@@ -141,11 +178,12 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	const isFinalizingPhase =
-		( agentChatProps as unknown as { progressPhase?: string } ).progressPhase === 'uploading';
+	const progressPhase = ( agentChatProps as unknown as { progressPhase?: string } ).progressPhase;
+	const isFinalizingPhase = progressPhase === 'uploading';
+	const isVideoGeneratingPhase = progressPhase === 'generating-video';
 
-	// Disable input during upload phase or annotation saving to prevent orphan images
-	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;
+	// Stop is meaningless once the video job is in flight server-side; only the SSE stream would abort.
+	const isStopDisabled = isFinalizingPhase || isAnnotationSaving || isVideoGeneratingPhase;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -156,33 +194,56 @@ function ImageStudioAgentChat( {
 	);
 
 	return (
-		<AgentUI.Container
-			{ ...agentUiProps }
-			messages={ displayMessages as any }
-			variant="embedded"
-			placeholder={ placeholder }
-			className="image-studio-agent agenttic dark"
-			onSubmit={ handleSubmit }
-			onStop={ agentChatProps.abortCurrentRequest }
-			isProcessing={ isProcessing }
-			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
-			inputValue={ inputValue }
-			onInputChange={ setInputValue }
-			onSuggestionClick={ handleSuggestionClick }
-		>
-			<AgentUI.ConversationView showHeader={ false }>
-				<AgentUI.Messages />
-				<AgentUI.Footer>
-					{ suggestionsComponent }
-					<AgentUI.Notice />
-					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
-					<div className="image-studio-modal__input-toolbar">
-						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
-						<StylePicker disabled={ isProcessing } mode={ mode } />
-					</div>
-				</AgentUI.Footer>
-			</AgentUI.ConversationView>
-		</AgentUI.Container>
+		<>
+			<AgentUI.Container
+				{ ...agentUiProps }
+				messages={ displayMessages as any }
+				variant="embedded"
+				placeholder={ placeholder }
+				className="image-studio-agent agenttic dark"
+				onSubmit={ handleSubmit }
+				onStop={ agentChatProps.abortCurrentRequest }
+				isProcessing={ isProcessing }
+				thinkingMessage={ agentChatProps.progressMessage ?? undefined }
+				inputValue={ inputValue }
+				onInputChange={ setInputValue }
+				onSuggestionClick={ handleSuggestionClick }
+				maxInputLength={ isVideoMode ? 2000 : 1000 }
+			>
+				<AgentUI.ConversationView showHeader={ false }>
+					<AgentUI.Messages />
+					<AgentUI.Footer>
+						{ suggestionsComponent }
+						<AgentUI.Notice />
+						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
+						<div className="image-studio-modal__input-toolbar">
+							{ mode === ImageStudioMode.Generate && isVideoMode && (
+								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
+							) }
+							{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+								<>
+									<AspectRatioPicker disabled={ isProcessing } />
+									<StylePicker disabled={ isProcessing } mode={ mode } />
+								</>
+							) }
+							{ mode !== ImageStudioMode.Generate && (
+								<StylePicker disabled={ isProcessing } mode={ mode } />
+							) }
+						</div>
+					</AgentUI.Footer>
+				</AgentUI.ConversationView>
+			</AgentUI.Container>
+			{ isVideoMode && (
+				<p className="image-studio-modal__media-library-disclaimer">
+					<em>
+						{ __(
+							'Clips are saved to your Media Library as 9:16 vertical MP4 files.',
+							__i18n_text_domain__
+						) }
+					</em>
+				</p>
+			) }
+		</>
 	);
 }
 
@@ -241,10 +302,17 @@ const ImageStudioContent = withInstanceId(
 			hasUnsavedChanges,
 			originalAttachmentId,
 			isSidebarOpen,
+			currentVideoUrl,
+			isVideoMode,
 		} = useSelect( ( select ) => {
 			const selectors = select( imageStudioStore );
 			const currentAttachmentId = selectors.getImageStudioAttachmentId();
 			const annotatedAttachmentIds = selectors.getAnnotatedAttachmentIds();
+			// Read the video URL from the dedicated video-studio store.
+			// Older bundles never registered this store, so the selector is
+			// always present in the bundle that wrote it.
+			const videoUrl = select( videoStudioStore ).getCurrentVideoUrl?.() ?? null;
+			const entryPoint = selectors.getEntryPoint();
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				displayImageUrl: selectors.getImageStudioCurrentImageUrl(),
@@ -257,6 +325,8 @@ const ImageStudioContent = withInstanceId(
 				hasUnsavedChanges: selectors.getHasUnsavedChanges(),
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
+				currentVideoUrl: videoUrl,
+				isVideoMode: entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip,
 			};
 		}, [] );
 
@@ -282,7 +352,7 @@ const ImageStudioContent = withInstanceId(
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
-			displayImageUrl,
+			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
 			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 		} );
 
@@ -437,10 +507,11 @@ const ImageStudioContent = withInstanceId(
 			<AnnotationCanvas imageUrl={ finalDisplayUrl } imageElement={ imageRef.current } />
 		) : null;
 
-		// Show feedback buttons when image is AI-processed and not in other states
-		// Don't show for annotated images as they will have different suggestions
+		// Show feedback buttons only for AI-generated/edited images — never for the
+		// original attachment — and not while annotating (suggestions differ there).
+		const isOriginalImage = attachmentId !== null && attachmentId === originalAttachmentId;
 		const showFeedbackButtons =
-			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl;
+			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl && ! isOriginalImage;
 
 		// Show actions menu only in Edit mode after AI has made changes.
 		// canRevert already checks: originalAttachmentId exists, image changed, not processing
@@ -494,6 +565,12 @@ const ImageStudioContent = withInstanceId(
 							hasNextImage={ hasNextImage }
 						/>
 
+						{ isVideoMode && (
+							<div className="image-studio-modal__experimental-tag">
+								<ExperimentalBadge variant="dark" />
+							</div>
+						) }
+
 						{ mode === ImageStudioMode.Edit ? (
 							<EditLayout
 								isRenderedImageLoaded={ isRenderedImageLoaded }
@@ -510,7 +587,13 @@ const ImageStudioContent = withInstanceId(
 								originalAttachmentId={ originalAttachmentId }
 							/>
 						) : (
-							<GenerateLayout isAiProcessing={ isAiProcessing } isPromptSent={ isPromptSent } />
+							<GenerateLayout
+								isAiProcessing={ isAiProcessing }
+								isPromptSent={ isPromptSent }
+								videoUrl={ isVideoMode ? currentVideoUrl : null }
+								onFeedback={ handleFeedback }
+								onSubmitFeedbackText={ handleSubmitFeedbackText }
+							/>
 						) }
 
 						<Footer

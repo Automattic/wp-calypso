@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { receiptRoute } from '../../app/router/me';
 import { isAkismetPro500Plan } from '../../utils/akismet';
+import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
 	formatReceiptTaxAmount,
@@ -15,7 +16,7 @@ import {
 	summarizeReceiptItems,
 	transactionIncludesTax,
 } from './utils';
-import type { Receipt } from '@automattic/api-core';
+import type { CountryListItem, Receipt } from '@automattic/api-core';
 import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews';
 
 import './styles.scss';
@@ -94,7 +95,10 @@ export function useActions() {
 	);
 }
 
-export function getFields( receipts: Receipt[] ): Fields< Receipt > {
+export function getFields(
+	receipts: Receipt[],
+	countryList: CountryListItem[] = []
+): Fields< Receipt > {
 	return [
 		{
 			id: 'date',
@@ -205,7 +209,8 @@ export function getFields( receipts: Receipt[] ): Fields< Receipt > {
 				}
 				return search_data;
 			},
-			render: ( { item }: { item: Receipt } ) => renderReceiptAmount( item ),
+			render: ( { item }: { item: Receipt } ) =>
+				renderReceiptAmount( item, getTaxName( countryList, item.tax_country_code ) ),
 		},
 		{
 			id: 'extra_receipt_data_for_search',
@@ -373,7 +378,7 @@ function getReceiptItemTypeForDisplay( receipt: Receipt ): string {
 	return String( receiptItem.type_localized || receiptItem.type || '' );
 }
 
-function renderReceiptAmount( receipt: Receipt ) {
+function renderReceiptAmount( receipt: Receipt, taxName?: string ) {
 	if ( ! transactionIncludesTax( receipt ) ) {
 		return (
 			<VStack spacing={ 1 }>
@@ -384,11 +389,18 @@ function renderReceiptAmount( receipt: Receipt ) {
 		);
 	}
 
-	const includesTaxString = sprintf(
-		/* translators: %s is a localized price, like $12.34 */
-		__( '(includes %s tax)' ),
-		formatReceiptTaxAmount( receipt )
-	);
+	const taxAmount = formatReceiptTaxAmount( receipt );
+	const includesTaxString = taxName
+		? sprintf(
+				/* translators: taxAmount is a localized price like $12.34, taxName is a tax name like VAT or GST */
+				__( '(includes %(taxAmount)s %(taxName)s)' ),
+				{ taxAmount, taxName }
+		  )
+		: sprintf(
+				/* translators: %s is a localized price, like $12.34 */
+				__( '(includes %s tax)' ),
+				taxAmount
+		  );
 
 	return (
 		<VStack spacing={ 1 }>

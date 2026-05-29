@@ -21,6 +21,7 @@ import useCanTagSitesForCommission from '../../hooks/use-can-tag-sites-for-commi
 import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
 import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
+import IncentiveEndedBanner from './incentive-ended-banner';
 
 import './style.scss';
 
@@ -31,7 +32,7 @@ export default function MigrationsCommissions() {
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
 
-	const title = translate( 'Migrations: Commissions' );
+	const title = translate( 'Migrations: commissions' );
 
 	const onTagSitesClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
@@ -63,11 +64,12 @@ export default function MigrationsCommissions() {
 			/>
 		) : (
 			<div className="migrations-commissions__content">
-				<MigrationsConsolidatedCommissions items={ taggedSites } />
+				{ canTagSitesForCommission && <MigrationsConsolidatedCommissions items={ taggedSites } /> }
 				<MigrationsCommissionsList
 					items={ taggedSites }
 					fetchMigratedSites={ fetchMigratedSites }
 					migrationTags={ migrationTags }
+					canTagSitesForCommission={ canTagSitesForCommission }
 				/>
 			</div>
 		);
@@ -89,6 +91,7 @@ export default function MigrationsCommissions() {
 			wide
 		>
 			<LayoutTop isFullWidth={ ! showEmptyState }>
+				{ ! canTagSitesForCommission && <IncentiveEndedBanner /> }
 				{ ! showEmptyState && <MissingPaymentSettingsNotice commissionType="migrations" /> }
 				<LayoutHeader>
 					<Breadcrumb

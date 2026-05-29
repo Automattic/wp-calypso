@@ -1,4 +1,5 @@
 import { getCurrentUser, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
@@ -55,9 +56,10 @@ export function buildCheckoutURL(
 		}
 	}
 	// host maybe needed in either siteless or userless checkout below
+	const port = config( 'port' ) ?? 3000;
 	const host =
 		'development' === urlQueryArgs.calypso_env
-			? 'http://calypso.localhost:3000'
+			? `http://calypso.localhost:${ port }`
 			: 'https://wordpress.com';
 
 	// siteless checkout

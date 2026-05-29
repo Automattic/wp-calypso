@@ -291,12 +291,12 @@ describe( 'formatCurrency', () => {
 			const money = formatter.formatCurrency( 9800900.32, 'BRL', { locale: 'pt-BR' } );
 			expect( money ).toBe( 'R$ 9.800.900,32' );
 		} );
-		test( 'IDR', () => {
-			const money = formatter.formatCurrency( 107280000, 'IDR', {
-				locale: 'in-ID',
+		test( 'DKK', () => {
+			const money = formatter.formatCurrency( 107280000, 'DKK', {
+				locale: 'da-DK',
 				isSmallestUnit: true,
 			} );
-			expect( money ).toBe( 'Rp 1.072.800,00' );
+			expect( money ).toBe( '1.072.800,00 kr.' );
 		} );
 	} );
 } );

@@ -1,4 +1,5 @@
 import { LineChart, type EventHandlerParams, type DataPointDate } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';

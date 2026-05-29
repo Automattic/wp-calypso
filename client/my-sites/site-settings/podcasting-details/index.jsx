@@ -19,6 +19,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -448,6 +449,7 @@ const PodcastingDetails = () => {
 			>
 				<PodcastingSettingsForm />
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 };

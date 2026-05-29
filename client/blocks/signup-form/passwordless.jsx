@@ -155,7 +155,18 @@ class PasswordlessSignupForm extends Component {
 				this.setState( {
 					errorMessages: [
 						this.props.translate(
-							'Sorry, something went wrong when trying to create your account. Please try again.'
+							'We couldn’t create your account with this email. Please try a different email, or {{a}}contact support{{/a}} if the problem persists.',
+							{
+								components: {
+									a: (
+										<a
+											href="https://wordpress.com/help/contact"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						),
 					],
 				} );

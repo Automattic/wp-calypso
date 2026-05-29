@@ -28,10 +28,9 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
+	useFocusedNewCopyTaglines,
 	isExperimentVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
@@ -51,7 +50,7 @@ const useGridPlansForComparisonGrid = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		isExperimentVariant,
+		useFocusedNewCopyTaglines,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
@@ -61,8 +60,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,

@@ -19,20 +19,6 @@ import {
 	wrapInSiteOffsetProvider,
 } from './controller';
 
-/* Todo: This code from Jetpack Cloud is not working properly. Commented.
-const notFoundIfNotEnabled = ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
-
-	if ( ! isJetpackCloud() && ! showJetpackSection ) {
-		return notFound( context, next );
-	}
-
-	next();
-};
-*/
-
 const processBackupContext: Callback = ( context: Context, next ) => {
 	context.params.feature = JETPACK_BACKUP_ID;
 	next();
@@ -52,8 +38,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -69,8 +53,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -86,8 +68,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -103,8 +83,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -120,8 +98,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);
@@ -138,8 +114,6 @@ export default function ( basePath: string ) {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
 	);

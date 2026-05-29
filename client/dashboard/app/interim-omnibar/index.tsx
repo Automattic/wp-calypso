@@ -1,7 +1,8 @@
-import { queryClient, siteByIdQuery } from '@automattic/api-queries';
+// eslint-disable-next-line no-restricted-imports
+import { I18N, I18NContext } from 'i18n-calypso';
 import { hydrateRoot } from 'react-dom/client';
-import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
-import type { OmnibarEvents } from './click-handlers';
+import { getUserLanguage, loadUserLocaleData } from '../shared-locale-loader';
+import type { OmnibarEvents } from '../omnibar/events';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
@@ -27,40 +28,23 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		events.linkClick.emit( { href, event } );
 	} );
 
-	const [ { InterimOmnibar }, user ] = await Promise.all( [
-		import( './interim-omnibar' ),
-		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } ),
+	// Create a per-tree i18n-calypso instance loaded with the user's locale so
+	// the first client render matches the SSR-translated HTML. Provided via
+	// I18NContext so the `localize()` HOC picks it up without any global mutation.
+	const [ { InterimOmnibarContainer }, localeData ] = await Promise.all( [
+		import( './interim-omnibar-container' ),
+		loadUserLocaleData( getUserLanguage( window.currentUser ?? null ) ),
 	] );
 
-	// Hydrate matching the SSR output: user when bootstrapped, null when not.
-	// Suppress recoverable hydration errors caused by Suspense boundaries inside
-	// MasterbarLoggedIn that renderToString cannot serialize.
-	const root = hydrateRoot(
+	const i18n = new I18N();
+	if ( localeData ) {
+		i18n.setLocale( localeData );
+	}
+
+	hydrateRoot(
 		container,
-		<InterimOmnibar
-			user={ window.currentUser ?? null }
-			site={ null }
-			currentRoute={ window.location.pathname }
-		/>,
-
-		{ onRecoverableError() {} }
-	);
-
-	const site = user.primary_blog
-		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
-		: null;
-
-	root.render(
-		<InterimOmnibar
-			user={ user }
-			site={ site }
-			currentRoute={ window.location.pathname }
-			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () =>
-				events.notifications.emit(
-					container.querySelector< HTMLElement >( '.masterbar-notifications' )
-				)
-			}
-		/>
+		<I18NContext.Provider value={ i18n }>
+			<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+		</I18NContext.Provider>
 	);
 }

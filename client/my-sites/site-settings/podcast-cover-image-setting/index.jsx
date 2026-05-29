@@ -29,6 +29,11 @@ import './style.scss';
 
 const debug = debugModule( 'calypso:podcast-image' );
 
+const loadMediaModal = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-post-editor-media-modal" */ 'calypso/post-editor/media-modal'
+	);
+
 class PodcastCoverImageSetting extends PureComponent {
 	static propTypes = {
 		coverImageId: PropTypes.number,
@@ -37,7 +42,12 @@ class PodcastCoverImageSetting extends PureComponent {
 		onSelect: PropTypes.func,
 		onUploadStateChange: PropTypes.func,
 		isDisabled: PropTypes.bool,
+		previewSize: PropTypes.number,
 		addMedia: PropTypes.func,
+	};
+
+	static defaultProps = {
+		previewSize: 96,
 	};
 
 	state = {
@@ -151,7 +161,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	preloadModal() {
-		asyncRequire( 'calypso/post-editor/media-modal' );
+		loadMediaModal();
 	}
 
 	renderChangeButton() {
@@ -173,11 +183,11 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	renderCoverPreview() {
-		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
+		const { coverImageUrl, siteId, translate, isDisabled, previewSize } = this.props;
 		const { transientMediaId, isUploading } = this.state;
 		const media = transientMediaId && this.props.getMediaItem( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
-		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
+		const imageSrc = imageUrl && resizeImageUrl( imageUrl, previewSize );
 		const isTransient = !! transientMediaId;
 
 		const classNames = clsx( 'podcast-cover-image-setting__preview', {
@@ -213,7 +223,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		return (
 			hasToggledModal && (
 				<AsyncLoad
-					require="calypso/post-editor/media-modal"
+					require={ loadMediaModal }
 					placeholder={ <EditorMediaModalDialog isVisible /> }
 					siteId={ siteId }
 					onClose={ this.editSelectedMedia }

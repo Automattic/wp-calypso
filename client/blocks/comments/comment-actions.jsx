@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ShareButton from 'calypso/blocks/reader-share';
-import { isRebloggable } from 'calypso/reader/post/capabilities';
+import { isCommentsOpen, isRebloggable } from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import CommentLikeButtonContainer from './comment-likes';
@@ -14,7 +14,6 @@ const CommentActions = ( {
 	comment,
 	comment: { isPlaceholder },
 	activeReplyCommentId,
-	commentId,
 	handleReply,
 	onReplyCancel,
 	showReadMore,
@@ -22,7 +21,8 @@ const CommentActions = ( {
 	onLikeToggle,
 } ) => {
 	const translate = useTranslate();
-	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
+	const commentId = comment.ID;
+	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = isRebloggable( post, hasSites );
@@ -73,6 +73,7 @@ const CommentActions = ( {
 				postId={ post.ID }
 				railcar={ post.railcar }
 				commentId={ commentId }
+				comment={ comment }
 				onLikeToggle={ onLikeToggle }
 			/>
 		</div>

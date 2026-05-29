@@ -40,8 +40,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	isMarketplaceTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	isA4AHoldingSitePurchase,
 } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
@@ -365,7 +365,7 @@ export function handleRenewNowClick(
 
 			if ( isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ) {
 				serviceSlug = 'akismet/';
-			} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+			} else if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 				serviceSlug = 'marketplace/';
 			}
 
@@ -994,11 +994,11 @@ export function purchaseType( purchase: Purchase ): string | null {
 		return null;
 	}
 
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
-	if ( isA4ATemporarySitePurchase( purchase ) ) {
+	if ( isA4AHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 

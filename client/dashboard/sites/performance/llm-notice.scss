@@ -1,14 +1,4 @@
-.llm-notice.is-loading {
-	img {
-		animation: rotation 3s infinite linear;
-	}
-
-	@keyframes rotation {
-		from {
-			transform: rotate(0deg);
-		}
-		to {
-			transform: rotate(360deg);
-		}
-	}
+.llm-notice-card {
+	$overlay: color-mix(in srgb, var(--color-surface, #fff) 95%, transparent);
+	background: linear-gradient(0deg, $overlay, $overlay), linear-gradient(90deg, #4458e4, var(--studio-jetpack-green, #069e08));
 }

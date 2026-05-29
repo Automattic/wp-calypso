@@ -30,9 +30,12 @@ const PlanLogo: React.FunctionComponent< {
 } > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, planIndex } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const shouldShowWooLogo = isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug );
+	const { gridPlansIndex, intent } = usePlansGridContext();
+	const isWooHostingSolutionsIntent = intent === 'plans-woo-hosting-solutions';
+	const shouldShowWooLogo =
+		isWooHostingSolutionsIntent ||
+		( isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug ) );
 	const shouldShowPopularBadge = ! isPartnerBundleOnboarding();
-	const { gridPlansIndex } = usePlansGridContext();
 	const { current } = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans,
@@ -75,7 +78,7 @@ const PlanLogo: React.FunctionComponent< {
 				/>
 			) }
 			<header className={ headerClasses }>
-				{ isBusinessPlan( planSlug ) && (
+				{ ! isWooHostingSolutionsIntent && isBusinessPlan( planSlug ) && (
 					<Plans2023Tooltip
 						text={ translate(
 							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
@@ -97,7 +100,7 @@ const PlanLogo: React.FunctionComponent< {
 						<WooLogo />
 					</Plans2023Tooltip>
 				) }
-				{ isWpcomEnterpriseGridPlan( planSlug ) && (
+				{ ! isWooHostingSolutionsIntent && isWpcomEnterpriseGridPlan( planSlug ) && (
 					<Plans2023Tooltip
 						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
 						id="enterprise-logo"

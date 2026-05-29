@@ -17,6 +17,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
 	const testUser = DataHelper.getNewTestUser( {
+		useMailosaur: true,
 		usernamePrefix: 'wpcc',
 	} );
 	const emailClient = new EmailClient();

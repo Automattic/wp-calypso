@@ -1,5 +1,6 @@
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
+import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -29,6 +30,8 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 	partnerConfig?: PartnerConfig | null;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
@@ -72,6 +75,8 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
+	isFromJetpackConnector,
+	connectorPlugins,
 	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
@@ -95,8 +100,14 @@ export function getHeaderText( {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		// CIAB partners have custom headers without "with WordPress.com"
-		if ( partnerConfig ) {
+		if ( isFromJetpackConnector ) {
+			// In the unified connection flow the site is already registered by
+			// the time the user lands on the login page, so the H1 stays
+			// neutral. The plugin set is forwarded so the resolver can pick
+			// the right (dynamic) subtitle and so the title can become
+			// plugin-dependent in the future without touching this call site.
+			headerText = getLoginCopy( connectorPlugins ).title;
+		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 			} );

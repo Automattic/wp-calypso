@@ -10,13 +10,13 @@ import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import AddNewSite from '../add-new-site';
+import { AI_SITE_BUILDER_SPEC_FLOW } from '../ai-site-builder-spec-flow';
 import { SiteSwitcherBase } from './base';
 import type { SiteSwitcherProps } from './types';
 
 const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
-
 	return (
 		<>
 			<SiteSwitcherBase { ...props }>
@@ -42,7 +42,10 @@ const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 					title={ __( 'Add new site' ) }
 					onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 				>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite
+						context="sites-dashboard"
+						aiSiteBuilderPath={ `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` }
+					/>
 				</Modal>
 			) }
 		</>

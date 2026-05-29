@@ -5,8 +5,9 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useStillNeedHelpURL } from '../hooks';
+import { useGetHistoryChats, useStillNeedHelpURL } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
+import { getChatLinkFromConversation } from './utils';
 
 import './help-center-footer.scss';
 
@@ -20,6 +21,7 @@ export const HelpCenterContactButton = () => {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getMessage(),
 		[]
 	);
+	const { recentConversations } = useGetHistoryChats();
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
@@ -29,9 +31,17 @@ export const HelpCenterContactButton = () => {
 			button_type: 'Still need help?',
 		} );
 
-		navigate(
-			url === '/odie' && searchQuery ? `/odie?query=${ encodeURIComponent( searchQuery ) }` : url
+		const openRecentConversation = recentConversations.find(
+			( conversation ) => conversation.metadata?.status === 'open'
 		);
+
+		if ( url === '/odie' && openRecentConversation ) {
+			navigate( getChatLinkFromConversation( openRecentConversation ) );
+		} else {
+			navigate(
+				url === '/odie' && searchQuery ? `/odie?query=${ encodeURIComponent( searchQuery ) }` : url
+			);
+		}
 
 		setMessage( '' );
 	};

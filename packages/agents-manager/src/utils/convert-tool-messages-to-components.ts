@@ -1,54 +1,16 @@
 import { EscalationButton } from '../components/escalation-button';
-import SourcesDisplay from '../components/sources-display';
+import NextStepButton from '../components/next-step-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
+import { isShowComponentTool } from './show-component-tools';
 import type { GetChatComponent } from './load-external-providers';
-import type { UIMessage } from '@automattic/agenttic-client';
-
-// Tool IDs that are silently dropped without a console warning.
-const SILENT_TOOL_IDS = [ 'big_sky__set_processing_state' ];
-
-/**
- * Scans message content blocks for JSON-encoded sources data and replaces
- * those blocks with a SourcesDisplay component. Text blocks that don't parse
- * as JSON (i.e. the actual answer text) are left untouched.
- */
-function extractSourcesFromContent( messages: UIMessage[] ): UIMessage[] {
-	return messages.map( ( message ) => {
-		if ( message.role !== 'agent' ) {
-			return message;
-		}
-
-		let hasSourcesBlock = false;
-		const updatedContent = message.content.map( ( block ) => {
-			if (
-				block.type !== 'data' ||
-				! Array.isArray( block.data?.sources ) ||
-				block.data.sources.length === 0
-			) {
-				return block;
-			}
-
-			hasSourcesBlock = true;
-			return {
-				type: 'component' as const,
-				component: SourcesDisplay as React.ComponentType,
-				componentProps: { sources: block.data.sources },
-			};
-		} );
-
-		if ( ! hasSourcesBlock ) {
-			return message;
-		}
-
-		return { ...message, content: updatedContent };
-	} );
-}
+import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
+	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
 /**
@@ -58,11 +20,9 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
+	onSubmit,
 }: Options ): UIMessage[] {
-	// First pass: extract sources data blocks into SourcesDisplay components.
-	const messagesWithSources = extractSourcesFromContent( messages );
-
-	return messagesWithSources.flatMap( ( message, index, array ) => {
+	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
 		// @ts-expect-error -- `assistant` comes from Big Sky messages
@@ -100,7 +60,7 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle `show-component` tool message
-		if ( textData.tool_id === 'big_sky__show_component' ) {
+		if ( isShowComponentTool( textData.tool_id ) ) {
 			// If not on an editor page, show an unavailable tool message instead of the component
 			if ( ! isEditorPage() ) {
 				return [
@@ -147,20 +107,23 @@ export default function convertToolMessagesToComponents( {
 			};
 
 			// Only show `next-step-button` when the component is active and has follow-up tasks.
-			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( isStale || ! followUpTasks || ! NextStepButton ) {
+			if ( isStale || ! followUpTasks ) {
 				return [ componentMessage ];
 			}
+
+			// Omit `actions` so the parent message's actions don't leak into the next-step message.
+			const { actions, content, ...baseMessage } = message;
 
 			return [
 				componentMessage,
 				{
-					...message,
+					...baseMessage,
 					id: `${ message.id }-next-step`,
 					content: [
 						{
 							type: 'component' as const,
-							component: NextStepButton,
+							component: NextStepButton as React.ComponentType,
+							componentProps: { onMoveToNextStep: onSubmit },
 						},
 					],
 				},
@@ -223,10 +186,8 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
-		if ( ! SILENT_TOOL_IDS.includes( textData.tool_id ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
-		}
+		// eslint-disable-next-line no-console
+		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }

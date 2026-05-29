@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -28,7 +28,6 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { useSiteSubscriptions } from 'calypso/reader/following/use-site-subscriptions';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
@@ -162,8 +161,6 @@ class NotificationSubscriptions extends Component {
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
-				<QueryReaderTeams />
-
 				<PageViewTracker
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"
@@ -372,10 +369,6 @@ class NotificationSubscriptions extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ( {
-	teams: getReaderTeams( state ),
-} );
-
 const mapDispatchToProps = {
 	recordGoogleEvent,
 };
@@ -386,7 +379,8 @@ const NotificationSubscriptionsWithHooks = ( props ) => {
 };
 
 export default compose(
-	connect( mapStateToProps, mapDispatchToProps ),
+	withReaderTeams,
+	connect( null, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocale,

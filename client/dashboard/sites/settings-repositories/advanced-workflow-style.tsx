@@ -1,4 +1,5 @@
 import { githubWorkflowTemplatesQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
@@ -104,7 +105,9 @@ export const AdvancedWorkflowStyle = ( {
 						{
 							a: (
 								<ExternalLink
-									href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
+									href={ localizeUrl(
+										'https://wordpress.com/support/github-deployments/workflow-recipes/'
+									) }
 									children={ null }
 								/>
 							),

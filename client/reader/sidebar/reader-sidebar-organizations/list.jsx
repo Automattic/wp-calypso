@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Count } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -95,11 +96,11 @@ export class ReaderSidebarOrganizationsList extends Component {
 				expandableIconClick={ this.toggleMenu }
 				customIcon={ this.renderIcon() }
 				disableFlyout
-				className={
-					( '/reader/' + organization.slug === path ||
-						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ) ) &&
-					'sidebar__menu--selected'
-				}
+				className={ clsx( 'has-counts', {
+					'sidebar__menu--selected':
+						'/reader/' + organization.slug === path ||
+						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ),
+				} ) }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }

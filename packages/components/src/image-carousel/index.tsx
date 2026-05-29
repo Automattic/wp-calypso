@@ -101,7 +101,7 @@ const ImageCarouselModal = ( {
 				<Icon icon={ close } size={ 17 } />
 			</button>
 
-			{ ! isMobile && (
+			{ ! isMobile && images.length > 1 && (
 				<>
 					<button
 						className="reader-image-carousel-button reader-image-carousel-button--prev"
@@ -121,11 +121,13 @@ const ImageCarouselModal = ( {
 			) }
 
 			<div className="reader-image-carousel-footer">
-				<div className="reader-image-carousel-pagination">
-					<span>
-						{ currentIndex + 1 } / { images.length }
-					</span>
-				</div>
+				{ images.length > 1 && (
+					<div className="reader-image-carousel-pagination">
+						<span>
+							{ currentIndex + 1 } / { images.length }
+						</span>
+					</div>
+				) }
 				<div className="reader-image-carousel-caption">
 					{ images[ currentIndex ].caption?.replace( /<[^>]*>/g, '' ) }
 				</div>

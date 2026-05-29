@@ -25,10 +25,9 @@ const useGridPlansForFeaturesGrid = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
+	useFocusedNewCopyTaglines,
 	isExperimentVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
@@ -50,7 +49,7 @@ const useGridPlansForFeaturesGrid = ( {
 		highlightLabelOverrides,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		isExperimentVariant,
+		useFocusedNewCopyTaglines,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -61,8 +60,6 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,

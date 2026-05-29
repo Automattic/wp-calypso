@@ -5,6 +5,7 @@
 	@include break-medium {
 		padding-top: 24px;
 	}
+
 	// a formatted-header instance used within main (not as section header)
 	.plans__formatted-header {
 		&.is-domain-upsell {
@@ -30,30 +31,37 @@ body.is-section-plans {
 			padding-left: 0 !important;
 			padding-right: 0 !important;
 		}
+
 		@media (min-width: $break-medium) {
 			padding-left: calc(var(--sidebar-width-max) + 1px) !important;
 			padding-right: 0 !important;
 		}
+
 		@media (max-width: $break-medium) {
 			.navigation-header {
 				padding-left: max(calc(50% - 612px), 32px);
 				padding-right: max(calc(50% - 612px), 32px);
 			}
+
 			.section-nav__panel {
 				padding: 0 max(calc(50% - 612px), 32px);
 			}
+
 			.main {
 				padding: 17px max(calc(50% - 612px), 32px);
 			}
 		}
+
 		@media (max-width: $break-mobile) {
 			.navigation-header {
 				padding-left: max(calc(50% - 612px), 15px);
 				padding-right: max(calc(50% - 612px), 15px);
 			}
+
 			.section-nav__panel {
 				padding: 0 max(calc(50% - 612px), 15px);
 			}
+
 			.main {
 				padding: 17px max(calc(50% - 612px), 15px);
 			}
@@ -67,3 +75,10 @@ body.is-section-plans {
 	}
 }
 
+.plans.is-de-emphasized-current-plan {
+	td.is-current-plan .plans-grid__plan-pill {
+		background: var(--color-neutral-0) !important;
+		color: var(--color-neutral-80) !important;
+		text-transform: none !important;
+	}
+}

@@ -1,3 +1,8 @@
+declare module '*.scss' {
+	const content: Record< string, string >;
+	export default content;
+}
+
 declare module 'browser-filesaver' {
 	export function saveAs( data: Blob, filename: string, disableAutoBOM?: boolean ): void;
 }

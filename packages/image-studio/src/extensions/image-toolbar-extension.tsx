@@ -3,7 +3,7 @@ import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { Component, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
 import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
@@ -15,7 +15,7 @@ import { trackImageStudioOpened } from '../utils/tracking';
  */
 export const withImageStudioToolbarButton = createHigherOrderComponent(
 	( BlockEdit: React.ComponentType< BlockEditProps > ) => {
-		const ImageStudioToolbarButton = ( props: BlockEditProps ) => {
+		const ImageStudioToolbarButtonInner = ( props: BlockEditProps ) => {
 			const { openImageStudio } = dispatch( imageStudioStore );
 			const { attributes, setAttributes } = props;
 
@@ -133,7 +133,14 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			);
 		};
 
-		ImageStudioToolbarButton.displayName = 'ImageStudioToolbarButton';
+		// Class wrapper ensures compatibility with plugins that use
+		// `class extends` on editor filter results (e.g. AMP plugin).
+		// Arrow functions have no [[Construct]], so `class extends arrowFn` throws.
+		class ImageStudioToolbarButton extends Component< BlockEditProps > {
+			render() {
+				return <ImageStudioToolbarButtonInner { ...this.props } />;
+			}
+		}
 
 		return ImageStudioToolbarButton;
 	},

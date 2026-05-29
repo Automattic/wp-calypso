@@ -19,6 +19,7 @@ describe(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC > WooCommerce via Email' ),
 	function () {
 		const testUser = DataHelper.getNewTestUser( {
+			useMailosaur: true,
 			usernamePrefix: 'woo',
 		} );
 		const emailClient = new EmailClient();

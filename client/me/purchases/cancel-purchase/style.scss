@@ -46,6 +46,34 @@
 	}
 }
 
+.cancel-purchase__support {
+	margin-top: 24px;
+
+	.cancel-purchase__support-heading {
+		margin: 0 0 4px;
+		font-size: $font-body-small;
+	}
+
+	.cancel-purchase__support-text {
+		margin: 0;
+		font-size: $font-body-small;
+	}
+}
+
+.cancel-purchase__divider {
+	border: 0;
+	margin: 24px 0;
+}
+
+.cancel-purchase__confirm-section {
+	margin-bottom: 24px;
+}
+
+.cancel-purchase__confirm-checkbox {
+	cursor: pointer;
+	display: inline-block;
+}
+
 .cancel-purchase__domain-options {
 	margin-bottom: 16px;
 
@@ -99,7 +127,7 @@
 	line-height: 1.4;
 
 	p {
-		margin: 16px 0 8px 0;
+		margin: 0 0 8px 0;
 		font-size: $font-body-small;
 		line-height: 1.4;
 	}
@@ -117,6 +145,7 @@
 			span {
 				margin: auto 0;
 				flex: 1;
+				min-width: 0;
 			}
 
 			.gridicon {
@@ -156,10 +185,7 @@
 
 .cancel-purchase__confirm-buttons {
 	display: flex;
-
-	.form-button {
-		margin-left: 8px;
-	}
+	gap: 16px;
 }
 
 .cancel-purchase__purchase-name {
@@ -221,7 +247,7 @@
 	display: inline;
 }
 
-.cancel-purchase__refund-eligibility-notice .cancel-purchase__button.cancel-purchase__button--link {
+.cancel-purchase__refund-eligibility-notice .cancel-purchase__refund-eligibility-link.cancel-purchase__refund-eligibility-link {
 	margin: 0;
 	background: none;
 	color: var(--color-text-inverted);
@@ -288,6 +314,7 @@
 			span {
 				margin: auto 0;
 				flex: 1;
+				min-width: 0;
 			}
 
 			.gridicon {

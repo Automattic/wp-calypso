@@ -1,16 +1,17 @@
+import { followReadTagMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { localize } from 'i18n-calypso';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { localize, translate as i18nTranslate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import { connect, useDispatch } from 'react-redux';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { AddTagForm } from './add-tags-form';
 import ReaderSidebarTagsList from './list';
 
@@ -56,11 +57,10 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick, path } = this.props;
+		const { isOpen, translate, onClick, path } = this.props;
 
 		return (
 			<li className="sidebar-streams__tags">
-				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
@@ -80,12 +80,31 @@ export class ReaderSidebarTags extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		tags: getReaderFollowedTags( state ),
-	} ),
-	{
-		followTag: requestFollowTag,
-		recordReaderTracksEvent,
-	}
-)( localize( ReaderSidebarTags ) );
+function withFollowedReaderTags( Inner ) {
+	return function WithFollowedReaderTags( props ) {
+		const { data: tags } = useFollowedReaderTags();
+		return <Inner { ...props } tags={ tags } />;
+	};
+}
+
+function withFollowTagMutation( Inner ) {
+	return function WithFollowTagMutation( props ) {
+		const queryClient = useQueryClient();
+		const dispatch = useDispatch();
+		const { mutate: follow } = useMutation( followReadTagMutation( queryClient ) );
+
+		const followTag = ( tag ) =>
+			follow( tag, {
+				onError: () =>
+					dispatch(
+						errorNotice( i18nTranslate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
+					),
+			} );
+
+		return <Inner { ...props } followTag={ followTag } />;
+	};
+}
+
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( withFollowedReaderTags( withFollowTagMutation( localize( ReaderSidebarTags ) ) ) );

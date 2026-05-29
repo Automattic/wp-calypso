@@ -1,17 +1,15 @@
-.Message-module_content:has(.agents-manager-sources-display) {
-	position: relative;
+.MessageActions-module_container:has(.agents-manager-sources-display) {
+	gap: 0;
 }
 
 .agents-manager-sources-display {
 	&.card {
-		position: absolute;
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		align-items: flex-end;
 		background-color: transparent;
 		box-shadow: none;
-		margin-bottom: 0;
+		margin: -32px 0 0;
 		pointer-events: none;
 	}
 
@@ -21,15 +19,22 @@
 		min-height: unset;
 		flex-direction: row-reverse;
 		justify-content: end;
+		align-self: flex-end;
 		gap: 4px;
 		padding: 0;
 		pointer-events: initial;
+		border-radius: 4px;
+
+		&:has(:focus-visible) {
+			padding-left: 4px;
+			outline: 2px solid var(--color-ring);
+			outline-offset: -1px;
+		}
 	}
 
 	.foldable-card__content {
 		width: 100%;
 		pointer-events: initial;
-		margin: 8px 0 24px;
 	}
 
 	.foldable-card__main,
@@ -41,6 +46,10 @@
 	.foldable-card__action {
 		position: relative;
 		width: 16px;
+
+		&:focus-visible {
+			outline: none;
+		}
 
 		svg.gridicon {
 			fill: var(--color-muted-foreground);
@@ -54,6 +63,8 @@
 	}
 
 	&.is-expanded {
+		width: 100%;
+
 		.foldable-card__header {
 			height: 32px;
 			min-height: unset;
@@ -62,6 +73,10 @@
 		.foldable-card__content {
 			border: none;
 		}
+	}
+
+	.agents-manager-sources-display__list {
+		padding-top: 8px;
 	}
 
 	.agents-manager-sources-display__link {

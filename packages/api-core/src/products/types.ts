@@ -61,7 +61,7 @@ export interface Product {
 }
 
 interface IntroductoryOffer {
-	interval_unit: string;
+	interval_unit: IntroductoryOfferTimeUnit;
 	interval_count: number;
 	usage_limit: number | null;
 	cost_per_interval: number;

@@ -14,6 +14,7 @@ export type PressablePlan = {
 	storage: number;
 	category: string;
 	worker?: number;
+	phpMemory?: number;
 	unit?: string;
 };
 
@@ -564,6 +565,14 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 0,
 		visits: 0,
 		storage: 64,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-php-memory-512mb': {
+		slug: 'pressable-addon-php-memory-512mb',
+		install: 0,
+		visits: 0,
+		storage: 0,
+		phpMemory: 512,
 		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	},
 };

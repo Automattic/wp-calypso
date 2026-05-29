@@ -23,21 +23,10 @@ permissions:
 
 jobs:
   review:
-    runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Run Dashboard PR Review
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read and follow the instructions in .github/prompts/dashboard-pr-review.md
-
-            Use `mcp__github_inline_comment__create_inline_comment` for review.
-          claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git show:*),Bash(git diff:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *)"
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
+    with:
+      area: dashboard
+    secrets:
+      anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      ai_review_telemetry_token: ${{ secrets.AI_REVIEW_TELEMETRY_TOKEN }}

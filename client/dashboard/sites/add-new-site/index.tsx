@@ -16,12 +16,16 @@ import { useHelpCenter } from '../../app/help-center';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
+import { AI_SITE_BUILDER_SPEC_FLOW } from '../ai-site-builder-spec-flow';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
+function AddNewSite( {
+	context = 'unknown',
+	aiSiteBuilderPath = `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }`,
+}: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );
 	const user = auth?.user;
@@ -93,7 +97,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+					href={ addQueryArgs( wpcomLink( aiSiteBuilderPath ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }

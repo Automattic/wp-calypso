@@ -65,7 +65,7 @@ export const getMailboxCost = ( {
 			};
 		}
 
-		let message = sprintf(
+		let message: string = sprintf(
 			// Translators: %(proratedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50).
 			__(
 				'You can purchase new mailboxes at the prorated price of <strong>%(proratedPrice)s</strong> per mailbox.'

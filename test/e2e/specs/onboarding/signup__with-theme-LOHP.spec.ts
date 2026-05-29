@@ -47,12 +47,10 @@ test.describe(
 			} );
 
 			await test.step( 'When I select the first free theme and choose Get Started', async function () {
-				await flowLOHPThemeSignup.loggedOutHomePage.exploreThemesLink.click();
+				await flowLOHPThemeSignup.loggedOutHomePage.exploreThemes();
 
 				await flowLOHPThemeSignup.loggedOutThemesPage.filterBy( 'Free' );
-				await flowLOHPThemeSignup.loggedOutThemesPage.firstThemeCard.click();
-
-				themeSlug = await flowLOHPThemeSignup.visitCalypsoGetStartedLinkForTheme();
+				themeSlug = await flowLOHPThemeSignup.loggedOutThemesPage.startWithFirstTheme();
 			} );
 
 			await test.step( 'Then I see the "Create your account" page', async function () {

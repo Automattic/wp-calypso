@@ -56,15 +56,22 @@ import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import {
+	localizeThemesPath,
+	shouldEnableThemesColorScheme,
+	shouldSelectSite,
+} from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -102,6 +109,7 @@ import {
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
+	shouldShowActivationModal,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -127,6 +135,13 @@ import ThemeStyleVariations from './theme-style-variations';
 import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
+
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -161,11 +176,13 @@ class ThemeSheet extends Component {
 		retired: PropTypes.bool,
 		// Connected props
 		isLoggedIn: PropTypes.bool,
+		isThemesColorSchemeEnabled: PropTypes.bool,
 		siteCount: PropTypes.number,
 		isActive: PropTypes.bool,
 		isThemePurchased: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isStandaloneJetpack: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -203,6 +220,7 @@ class ThemeSheet extends Component {
 		isRedirectingToEditorWebPreview: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
+		isActivationModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
@@ -324,7 +342,20 @@ class ThemeSheet extends Component {
 		}
 
 		this.onBeforeOptionAction();
+
+		// Intercept activation so the user can preview the new theme and choose
+		// between a basic and a full setup, when applicable.
+		if ( this.props.defaultOption?.key === 'activate' && this.props.shouldShowActivationModal ) {
+			event?.preventDefault();
+			this.setState( { isActivationModalVisible: true } );
+			return;
+		}
+
 		this.props.defaultOption.action?.( this.props.themeId );
+	};
+
+	closeActivationModal = () => {
+		this.setState( { isActivationModalVisible: false } );
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -611,7 +642,7 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
 					<AsyncLoad
-						require="calypso/blocks/jitm"
+						require={ loadJitm }
 						placeholder={ null }
 						messagePath="calypso:theme:admin_notices"
 					/>
@@ -1246,7 +1277,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
+				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />
@@ -1312,6 +1343,15 @@ class ThemeSheet extends Component {
 					/>
 				) }
 				<EligibilityWarningModal />
+				{ this.state.isActivationModalVisible && (
+					<ActivationModal
+						themeId={ themeId }
+						siteId={ siteId }
+						source="details"
+						styleVariation={ this.getSelectedStyleVariation() }
+						onClose={ this.closeActivationModal }
+					/>
+				) }
 			</Main>
 		);
 	};
@@ -1406,7 +1446,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	return (
+	return withColorScheme(
 		<ConnectedThemeSheet
 			{ ...props }
 			themeTier={ themeTier }
@@ -1418,13 +1458,19 @@ const ThemeSheetWithOptions = ( props ) => {
 			source="showcase-sheet"
 			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
-		/>
+		/>,
+		{
+			bodyClass: 'is-themes-dark-mode',
+			enabled: props.isThemesColorSchemeEnabled,
+			Provider: ClassicColorSchemeProvider,
+		}
 	);
 };
 
 export default connect(
-	( state, { id } ) => {
+	( state, { id, isSiteRoute } ) => {
 		const themeId = id;
+		const isLoggedIn = isUserLoggedIn( state );
 		const site = getSelectedSite( state );
 		const productionSiteId = site ? getProductionSiteId( site ) : null;
 		const siteId = getSelectedSiteId( state );
@@ -1476,6 +1522,7 @@ export default connect(
 		return {
 			...theme,
 			themeId,
+			shouldShowActivationModal: shouldShowActivationModal( state, siteId, themeId ),
 			error,
 			siteId,
 			siteSlug,
@@ -1484,7 +1531,12 @@ export default connect(
 			isWpcomTheme,
 			isWpcomStaging,
 			productionSiteSlug,
-			isLoggedIn: isUserLoggedIn( state ),
+			isLoggedIn,
+			isThemesColorSchemeEnabled: shouldEnableThemesColorScheme( {
+				isSiteRoute,
+				isLoggedIn,
+				dashboardOptIn: hasDashboardOptIn( state ),
+			} ),
 			siteCount: getCurrentUserSiteCount( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isAtomic,

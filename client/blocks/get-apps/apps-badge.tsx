@@ -42,7 +42,7 @@ const APP_STORE_BADGE_URLS: AppStoreBadgeUrls = {
 		},
 	},
 	android: {
-		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
+		defaultSrc: '/calypso/images/me/get-apps-google-play.webp',
 		src: 'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		getStoreLink: ( utm_campaign, utm_source = 'calypso', utm_medium = 'web' ) => {

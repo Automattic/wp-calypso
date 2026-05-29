@@ -168,7 +168,7 @@ export default function MigrationsHostingOptions() {
 
 			<div className="migrations-hosting-options__footnote">
 				{ translate(
-					'Need more details? Compare WordPress.com and Pressable plans on the {{a}}hosting marketplace{{/a}}.',
+					'Need more details? Compare WordPress.com and Pressable plans on the {{a}}Hosting Marketplace{{/a}}.',
 					{
 						components: {
 							a: (

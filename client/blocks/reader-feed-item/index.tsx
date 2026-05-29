@@ -1,4 +1,4 @@
-import { readFeedQuery } from '@automattic/api-queries';
+import { readFeedQuery, readFeedSiteQuery } from '@automattic/api-queries';
 import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
@@ -77,7 +77,9 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		...readFeedQuery( feedId ),
 		enabled: queryFeed,
 	} );
-	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
+	const { data: site, isLoading: isSiteLoading } = useQuery(
+		readFeedSiteQuery( Number( blogId ) )
+	);
 
 	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;

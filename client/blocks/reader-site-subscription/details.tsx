@@ -2,12 +2,12 @@ import './styles.scss';
 import page from '@automattic/calypso-router';
 import { Badge, TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
+import SubscriptionPeriodLabel from 'calypso/components/subscription-period-label';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -16,7 +16,6 @@ import CancelPaidSubscriptionModal from './cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
 	SiteSubscriptionDetailsProps,
-	formatRenewalDate,
 	formatRenewalPrice,
 	getPaymentInterval,
 } from './helpers';
@@ -37,7 +36,6 @@ const SiteSubscriptionDetails = ( {
 	paymentDetails,
 }: SiteSubscriptionDetailsProps ) => {
 	const translate = useTranslate();
-	const localeSlug = useLocale();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ showUnsubscribeModal, setShowUnsubscribeModal ] = useState( false );
 
@@ -81,19 +79,18 @@ const SiteSubscriptionDetails = ( {
 				const { is_comp, ID, title, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
-				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
 					is_comp: !! is_comp,
 					id: ID,
 					title: title || '',
 					renewalPrice: `${ renewalPrice }${ when }`,
-					renewalDate,
+					rawEndDate: paymentDetail.end_date,
 				} );
 			} );
 
 			setPaymentPlans( newPaymentPlans );
 		}
-	}, [ localeSlug, paymentDetails ] );
+	}, [ paymentDetails ] );
 
 	const areAllPaymentsComps = useMemo( () => {
 		if ( paymentDetails && paymentDetails.length ) {
@@ -309,7 +306,7 @@ const SiteSubscriptionDetails = ( {
 							</dl>
 						) }
 						{ paymentPlans &&
-							paymentPlans.map( ( { is_comp, id, title, renewalPrice, renewalDate } ) => (
+							paymentPlans.map( ( { is_comp, id, title, renewalPrice, rawEndDate } ) => (
 								<dl className="site-subscription-info__list" key={ id }>
 									<dt>{ translate( 'Plan' ) }</dt>
 									<dd>
@@ -320,16 +317,10 @@ const SiteSubscriptionDetails = ( {
 											  } )
 											: renewalPrice }
 									</dd>
-									{ ( renewalDate || is_comp ) && (
-										<>
-											<dt>{ translate( 'Billing period' ) }</dt>
-											<dd>
-												{ renewalDate
-													? translate( 'Renews on %s', { args: [ renewalDate ] } )
-													: translate( 'Does not expire' ) }
-											</dd>
-										</>
-									) }
+									<dt>{ translate( 'Period' ) }</dt>
+									<dd>
+										<SubscriptionPeriodLabel endDate={ rawEndDate } isComp={ is_comp } />
+									</dd>
 								</dl>
 							) ) }
 					</div>

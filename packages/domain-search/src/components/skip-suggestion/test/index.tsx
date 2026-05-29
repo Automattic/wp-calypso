@@ -97,7 +97,6 @@ describe( 'SkipSuggestion', () => {
 				name: 'Skip purchase and continue with site.wordpress.com',
 			} );
 			expect( skipButton ).toBeInTheDocument();
-			expect( skipButton ).toHaveTextContent( 'Start Free' );
 
 			await userEvent.click( skipButton );
 

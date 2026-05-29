@@ -18,7 +18,7 @@ const WooPaymentsDashboardEmptyState = () => {
 			<img src={ wooPaymentsLogo } alt="WooPayments" />
 			<div>
 				<div className="woopayments-dashboard-empty-state__heading">
-					{ translate( 'Earn revenue share when clients use WooPayments' ) }
+					{ translate( 'Earn Revenue Share when clients use WooPayments' ) }
 				</div>
 				<div className="woopayments-dashboard-empty-state__description">
 					{ translate(

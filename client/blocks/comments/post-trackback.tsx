@@ -33,7 +33,6 @@ export default function PostTrackback( props: PostTrackbackProps ): JSX.Element 
 		return null;
 	}
 	const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
-
 	const authorUrlLink = comment.author?.wpcom_login
 		? getUserProfileUrl( comment.author.wpcom_login )
 		: comment.author?.URL;

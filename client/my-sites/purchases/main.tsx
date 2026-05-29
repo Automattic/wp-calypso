@@ -33,6 +33,7 @@ import {
 } from './paths';
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
+import type { CancelIntent } from 'calypso/lib/purchases/utils';
 
 import './styles.scss';
 
@@ -141,9 +142,11 @@ export function PurchaseDetails( {
 export function PurchaseCancel( {
 	purchaseId,
 	siteSlug,
+	intent,
 }: {
 	purchaseId: number;
 	siteSlug: string;
+	intent?: CancelIntent | null;
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
@@ -162,6 +165,7 @@ export function PurchaseCancel( {
 				<CancelPurchase
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
+					intent={ intent }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }

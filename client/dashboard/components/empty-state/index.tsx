@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import clsx from 'clsx';
 import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { ActionList } from '../action-list';
 import { Card, CardBody } from '../card';
@@ -18,9 +19,11 @@ function EmptyState( { children }: { children?: ReactNode } ) {
 
 function EmptyStateWrapper( {
 	isBorderless = false,
+	isCompact = false,
 	children,
 }: {
 	isBorderless?: boolean;
+	isCompact?: boolean;
 	children: ReactNode;
 } ) {
 	const cardRef = useRef< HTMLElement >( null );
@@ -29,15 +32,19 @@ function EmptyStateWrapper( {
 	// This keeps the visual layout stable between view transitions. It's fine if
 	// the wrapper expands beyond this initial calculation after layout changes.
 	useLayoutEffect( () => {
-		if ( ! cardRef.current ) {
+		if ( isCompact || ! cardRef.current ) {
 			return;
 		}
 		const rect = cardRef.current.getBoundingClientRect();
 		cardRef.current.style.setProperty( '--dashboard-empty-state-offset', `${ rect.top }px` );
-	}, [] );
+	}, [ isCompact ] );
+
+	const className = clsx( 'dashboard-empty-state__wrapper', {
+		'is-compact': isCompact,
+	} );
 
 	return (
-		<Card ref={ cardRef } className="dashboard-empty-state__wrapper" isBorderless={ isBorderless }>
+		<Card ref={ cardRef } className={ className } isBorderless={ isBorderless }>
 			<CardBody>
 				<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state__wrapper-content">
 					{ children }

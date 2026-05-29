@@ -20,15 +20,15 @@ const ALLOWED_PATH_PATTERN = new RegExp(
 );
 
 /**
- * @typedef {import('express-useragent').Details} UserAgentDetails
+ * @typedef {import('express-useragent').AgentDetails} UserAgentDetails
  */
 
 /**
  * Get the major version number of a version string, formatted as "##.#" or "##.#.#".
- * @param {string} version Version string
+ * @param {string | number} version Version string
  * @returns {number} Major version number
  */
-const getMajorVersion = ( version ) => Number( version.split( '.' )[ 0 ] );
+const getMajorVersion = ( version ) => Number( String( version ).split( '.' )[ 0 ] );
 
 /**
  * This is a list of browsers which DEFINITELY do not work on WordPress.com.

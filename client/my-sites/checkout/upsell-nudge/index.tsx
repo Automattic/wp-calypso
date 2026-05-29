@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { TERM_MONTHLY, isPlan, PlanSlug } from '@automattic/calypso-products';
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -15,7 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
-import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
@@ -378,18 +377,14 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
-				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-					<PurchaseModal
-						productToAdd={ productToAdd }
-						onClose={ onCloseModal }
-						siteSlug={ this.props.siteSlug }
-						showFeatureList={
-							!! (
-								this.props.product && isPlan( { productSlug: this.props.product?.product_slug } )
-							)
-						}
-					/>
-				</RazorpayHookProvider>
+				<PurchaseModal
+					productToAdd={ productToAdd }
+					onClose={ onCloseModal }
+					siteSlug={ this.props.siteSlug }
+					showFeatureList={
+						!! ( this.props.product && isPlan( { productSlug: this.props.product?.product_slug } ) )
+					}
+				/>
 			</StripeHookProvider>
 		);
 	};

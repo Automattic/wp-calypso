@@ -4,8 +4,9 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { hasEnabledAccountTools } from '../../../me/mcp/utils';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function PreferencesAiMcp() {
+export default function PreferencesAiMcp( { density }: { density?: Density } ) {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const isEnabled = hasEnabledAccountTools( userSettings || {} );
 
@@ -18,6 +19,7 @@ export default function PreferencesAiMcp() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/preferences/mcp"
 			title={ __( 'AI and MCP' ) }
 			description={ __( 'Configure how AI agents access your WordPress.com data.' ) }

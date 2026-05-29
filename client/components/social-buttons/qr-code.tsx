@@ -13,9 +13,10 @@ import './style.scss';
 
 type QrCodeLoginButtonProps = {
 	loginUrl: string;
+	onClick?: () => void;
 };
 
-export default function QrCodeLoginButton( { loginUrl }: QrCodeLoginButtonProps ) {
+export default function QrCodeLoginButton( { loginUrl, onClick }: QrCodeLoginButtonProps ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
@@ -33,6 +34,7 @@ export default function QrCodeLoginButton( { loginUrl }: QrCodeLoginButtonProps 
 			origin: 'login-links',
 		} );
 
+		onClick?.();
 		dispatch( resetMagicLoginRequestForm() );
 	};
 

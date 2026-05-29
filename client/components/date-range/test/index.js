@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
-import { DateRange } from '../index.js';
+import { DateRange } from '../index.jsx';
 
 jest.mock( 'lodash', () => ( {
 	...jest.requireActual( 'lodash' ),

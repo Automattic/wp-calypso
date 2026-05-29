@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import statsPurchasePreviewPNG from 'calypso/assets/images/stats/purchase-preview.png';
-import statsPurchasePreviewPNG2xRetina from 'calypso/assets/images/stats/purchase-preview@2x.png';
+import statsPurchasePreviewPNG from 'calypso/assets/images/stats/purchase-preview.webp';
+import statsPurchasePreviewPNG2xRetina from 'calypso/assets/images/stats/purchase-preview@2x.webp';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 
 const StatsPurchasePreviewImage = () => {

@@ -1,14 +1,16 @@
+import './style.scss';
 import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resemblesUrl } from 'calypso/lib/url';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -21,11 +23,9 @@ import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import './style.scss';
 
 function ReaderSubscriptionListItem( {
 	moment,
@@ -35,6 +35,7 @@ function ReaderSubscriptionListItem( {
 	feed,
 	siteId,
 	site,
+	hasFeedError,
 	className = '',
 	followSource,
 	showNotificationSettings,
@@ -50,17 +51,15 @@ function ReaderSubscriptionListItem( {
 	replaceStreamClickWithItemClick,
 } ) {
 	let siteTitle = getSiteName( { feed, site } );
-	const siteAuthor = site && site.owner;
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-	let streamUrl = feedId && siteId ? getStreamUrl( feedId, siteId ) : null;
+	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
-	const preferGravatar = ! isMultiAuthor;
-	const hasSiteError = site?.is_error || feed?.is_error;
+	const hasSiteError = site?.is_error || hasFeedError;
 
 	const recordEvent = useCallback(
 		( name ) => {
@@ -110,13 +109,13 @@ function ReaderSubscriptionListItem( {
 		}
 	};
 
-	const avatarClicked = ( event, streamLink ) => {
+	const avatarClicked = ( event ) => {
 		recordAvatarClick();
 		if ( ! isLoggedIn ) {
 			event.preventDefault();
 			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-link',
-				redirectTo: streamLink,
+				redirectTo: streamUrl,
 			} );
 		}
 	};
@@ -163,16 +162,11 @@ function ReaderSubscriptionListItem( {
 			aria-pressed={ isSelected }
 		>
 			<div className="reader-subscription-list-item__avatar">
-				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
-					author={ siteAuthor }
-					preferBlavatar={ isMultiAuthor }
-					preferGravatar={ preferGravatar }
-					siteUrl={ streamUrl }
-					isCompact
-					onClick={ ( event ) => avatarClicked( event, streamUrl ) }
-					iconSize={ 32 }
+				<SiteIcon
+					iconUrl={ feedIcon || siteIcon }
+					href={ streamUrl }
+					size={ 32 }
+					onClick={ avatarClicked }
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
@@ -264,27 +258,27 @@ function ReaderSubscriptionListItem( {
 	);
 }
 
-export default compose(
+const ConnectedReaderSubscriptionListItem = compose(
 	connect(
 		( state, ownProps ) => {
-			const feed = getFeed( state, ownProps.feedId );
+			let feed = ownProps.feed;
 
 			if ( feed ) {
 				const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
 
 				if ( follow ) {
-					// Add site icon to feed object so have icon for external feeds when not set
-					if ( feed.site_icon === undefined ) {
-						feed.site_icon = follow.site_icon;
-					}
-					// Add date_subscribed timestamp to feed object when not set
-					if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
-						feed.date_subscribed = follow.date_subscribed;
-					}
-					// Add last_update timestamp to feed object when not set
-					if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
-						feed.last_update = follow.last_updated;
-					}
+					feed = {
+						...feed,
+						site_icon: feed.site_icon ?? follow.site_icon,
+						date_subscribed:
+							feed.date_subscribed === undefined || isNaN( feed.date_subscribed )
+								? follow.date_subscribed
+								: feed.date_subscribed,
+						last_update:
+							feed.last_update === undefined || isNaN( feed.last_update )
+								? follow.last_updated
+								: feed.last_update,
+					};
 				}
 			}
 
@@ -298,3 +292,11 @@ export default compose(
 	localize,
 	withLocalizedMoment
 )( ReaderSubscriptionListItem );
+
+export default function ReaderSubscriptionListItemContainer( props ) {
+	const { data: feed, isError: hasFeedError } = useFeedQuery( props.feedId );
+
+	return (
+		<ConnectedReaderSubscriptionListItem { ...props } feed={ feed } hasFeedError={ hasFeedError } />
+	);
+}

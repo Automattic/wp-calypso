@@ -22,7 +22,7 @@ import { PluginActions } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginsListDataViews from './plugins-list-dataviews';
 
-import( './style.scss' );
+import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;

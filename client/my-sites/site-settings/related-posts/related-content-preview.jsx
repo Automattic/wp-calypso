@@ -16,7 +16,7 @@ const RelatedContentPreview = ( {
 } ) => {
 	const posts = [
 		{
-			image: '/calypso/images/related-posts/cat-blog.png',
+			image: '/calypso/images/related-posts/cat-blog.webp',
 			title: translate( 'Big iPhone/iPad Update Now Available', {
 				textOnly: true,
 				context: 'Demo content for related posts',

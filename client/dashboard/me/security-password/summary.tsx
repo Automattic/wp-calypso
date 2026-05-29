@@ -4,9 +4,12 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lockOutline } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
-export default function SecurityAccountRecoverySummary() {
+export default function SecurityAccountRecoverySummary( { density }: { density?: Density } ) {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const { is_passwordless_user } = userSettings;
@@ -22,6 +25,7 @@ export default function SecurityAccountRecoverySummary() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/security/password"
 			title={ __( 'Password' ) }
 			description={ __( 'Strengthen your account by ensuring your password is strong.' ) }

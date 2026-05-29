@@ -158,6 +158,13 @@ body.is-section-signup {
 	}
 }
 
+.plans-features-main__money-back-guarantee {
+	margin: 12px 0 0;
+	color: var(--studio-gray-50);
+	font-size: $font-body-small;
+	text-align: center;
+}
+
 .plans-features-main__plan-type-selector-layout {
 	display: flex;
 	justify-content: center;
@@ -210,5 +217,13 @@ body.is-section-stepper,
 body.is-section-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
+	}
+
+	.step-wrapper__content .is-pricing-grid-2023-plans-features-main {
+		padding-inline: 16px;
+
+		@include break-small {
+			padding-inline: 48px;
+		}
 	}
 }

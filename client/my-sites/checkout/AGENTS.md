@@ -75,15 +75,15 @@ Processors must handle four response paths: immediate success, redirect (PayPal/
 
 ### Adding a Payment Method
 
-Seven touchpoints required (follow an existing implementation like PIX or Razorpay):
+Seven touchpoints required (follow an existing implementation like PIX or BLIK):
 
 1. **Payment method component** — `src/payment-methods/{name}.tsx`, export `create{Name}PaymentMethod()` returning a `PaymentMethod` object (`{ id, paymentProcessorId, label, activeContent, submitButton }`)
 2. **Processor function** — `src/lib/{name}-processor.ts`, signature: `async (submitData, options, translate) => PaymentProcessorResponse`
 3. **Register processor** — Add to processor map in `src/components/checkout-main.tsx`
-4. **Create hook** — `src/hooks/use-create-payment-methods/use-create-{name}.ts`, gate with `isEnabled('checkout/{name}')`
+4. **Create hook** — `src/hooks/use-create-payment-methods/use-create-{name}.ts`, optionally gate with `isEnabled('checkout/{name}')` for gradual rollout
 5. **Register hook** — Call in `use-create-payment-methods/index.tsx`, add result to `paymentMethods` array
 6. **Slug mapping** — Add bidirectional mapping in `packages/wpcom-checkout/src/translate-payment-method-names.ts` (e.g., `'pix'` ↔ `'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'`)
-7. **Feature flag** — Add to `config/{environment}.json` (e.g., `checkout/ebanx-pix`)
+7. **Feature flag** — (Optional) Add to `config/{environment}.json` for gradual rollout; remove once fully enabled
 
 Steps 6-7 are the ones agents miss — without slug mapping the method never appears.
 
@@ -121,6 +121,6 @@ Steps 6-7 are the ones agents miss — without slug mapping the method never app
 9. **Atomic sites use `.wpcomstaging.com`** — Thank-you URL logic replaces
    `.wordpress.com` with `.wpcomstaging.com` for Atomic sites.
 
-10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never query site data for these.
+10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.isAttachedToHoldingSite`. Never query site data for these.
 
 11. **Transferred purchases** — Always check ownership before allowing purchase actions.

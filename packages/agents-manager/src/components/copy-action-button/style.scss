@@ -1,0 +1,13 @@
+.agents-manager-copy-action-button {
+	svg path {
+		fill: var( --color-muted-foreground );
+	}
+
+	&:hover:not( :disabled ) svg path {
+		fill: var( --color-foreground );
+	}
+
+	&:focus:not( :focus-visible ) {
+		box-shadow: none !important;
+	}
+}

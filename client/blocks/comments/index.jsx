@@ -1,10 +1,9 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
-import { requestPostComments } from 'calypso/state/comments/actions';
 import PostCommentsList from './post-comment-list';
+import { usePostCommentsData } from './use-post-comments-data';
 
 class PostComments extends Component {
 	static propTypes = {
@@ -21,15 +20,7 @@ class PostComments extends Component {
 	};
 
 	pollForNewComments = () => {
-		const { siteId, postId } = this.props;
-
-		// Request page of comments
-		this.props.requestPostComments( {
-			siteId,
-			postId,
-			isPoll: true,
-			direction: 'after',
-		} );
+		this.props.fetchLaterComments();
 	};
 
 	render() {
@@ -50,17 +41,14 @@ class PostComments extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const siteId = ownProps.post.site_ID;
-		const postId = ownProps.post.ID;
+const PostCommentsWithData = ( props ) => {
+	const commentsData = usePostCommentsData( props );
 
-		return {
-			siteId,
-			postId,
-		};
-	},
-	{
-		requestPostComments,
+	if ( ! commentsData.siteId || ! commentsData.postId ) {
+		return null;
 	}
-)( localize( PostComments ) );
+
+	return <PostComments { ...props } { ...commentsData } />;
+};
+
+export default localize( PostCommentsWithData );

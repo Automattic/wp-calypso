@@ -2,8 +2,8 @@ import { localize } from 'i18n-calypso';
 
 function JetpackMileswebLogo( { darkColorScheme, translate } ) {
 	const img = darkColorScheme
-		? 'jetpack-milesweb-connection-dark.png'
-		: 'jetpack-milesweb-connection.png';
+		? 'jetpack-milesweb-connection-dark.webp'
+		: 'jetpack-milesweb-connection.webp';
 	return (
 		<img
 			alt={

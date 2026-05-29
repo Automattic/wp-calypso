@@ -129,13 +129,17 @@ function EditModal( {
 	const isValid = emailValidator.validate( newDestination.trim() );
 
 	const handleSave = async () => {
-		await onEdit( {
-			mailbox: mailbox.mailbox,
-			domain: mailbox.domain,
-			destination: currentDestination,
-			newDestination: newDestination.trim(),
-		} );
-		onClose();
+		try {
+			await onEdit( {
+				mailbox: mailbox.mailbox,
+				domain: mailbox.domain,
+				destination: currentDestination,
+				newDestination: newDestination.trim(),
+			} );
+			onClose();
+		} catch {
+			// Error is handled by the mutation's onError callback.
+		}
 	};
 
 	return (

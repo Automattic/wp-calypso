@@ -8,8 +8,8 @@ import {
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
-import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
 import {
 	LicenseFilter,
 	LicenseSortDirection,

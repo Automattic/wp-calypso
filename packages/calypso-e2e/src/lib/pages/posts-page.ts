@@ -44,8 +44,36 @@ export class PostsPage {
 	 *
 	 * Example {@link https://wordpress.com/posts}
 	 */
-	async visit(): Promise< Response | null > {
-		return await this.page.goto( getCalypsoURL( 'posts' ) );
+	async visit( { siteSlug = '' }: { siteSlug?: string } = {} ): Promise< Response | null > {
+		const response = await this.page.goto( getCalypsoURL( 'posts' ) );
+
+		if ( siteSlug ) {
+			const siteLink = this.page.locator( `a:has-text("${ siteSlug }")` ).first();
+			const appeared = await siteLink
+				.waitFor( { state: 'visible', timeout: 5000 } )
+				.then( () => true )
+				.catch( () => false );
+
+			if ( appeared ) {
+				await siteLink.click( { noWaitAfter: true } );
+				await this.page.waitForFunction(
+					() => /\/posts\/|\/wp-admin\/edit\.php|\/home\//.test( window.location.pathname ),
+					undefined,
+					{ timeout: 20 * 1000 }
+				);
+			}
+
+			// Some account/site combinations can still land on Home after site selection.
+			// Force a site-scoped Posts route so wp-admin post table actions are available.
+			if ( /\/home\//.test( new URL( this.page.url() ).pathname ) ) {
+				await this.page.goto( getCalypsoURL( `posts/${ siteSlug }` ), {
+					timeout: 30 * 1000,
+					waitUntil: 'domcontentloaded',
+				} );
+			}
+		}
+
+		return response;
 	}
 
 	/**
@@ -87,12 +115,39 @@ export class PostsPage {
 	/**
 	 * Clicks on the `add new post` button.
 	 */
-	async newPost(): Promise< void > {
+	async newPost( { siteSlug = '' }: { siteSlug?: string } = {} ): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPostButton );
-		await Promise.all( [
-			this.page.waitForNavigation( { url: /post-new.php/, timeout: 20 * 1000 } ),
-			locator.click(),
-		] );
+
+		const hasEditorPath = ( pathName: string ): boolean =>
+			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/wp-admin\/post-new\.php$)/.test(
+				pathName
+			);
+
+		const addNewVisible = await locator
+			.first()
+			.waitFor( { state: 'visible', timeout: 5000 } )
+			.then( () => true )
+			.catch( () => false );
+
+		if ( addNewVisible ) {
+			await Promise.all( [
+				this.page.waitForFunction(
+					( regexSource ) => new RegExp( regexSource ).test( window.location.pathname ),
+					/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/wp-admin\/post-new\.php$)/.source,
+					{ timeout: 20 * 1000 }
+				),
+				locator.click( { noWaitAfter: true } ),
+			] );
+		} else if ( siteSlug ) {
+			await this.page.goto( getCalypsoURL( `post/${ siteSlug }` ), {
+				timeout: 30 * 1000,
+				waitUntil: 'domcontentloaded',
+			} );
+		}
+
+		if ( ! hasEditorPath( new URL( this.page.url() ).pathname ) ) {
+			throw new Error( `Expected to navigate to a post editor route, got ${ this.page.url() }` );
+		}
 	}
 
 	/* Post actions */

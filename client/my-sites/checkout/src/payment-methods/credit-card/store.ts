@@ -2,14 +2,14 @@ import { registerStore, createRegistry } from '@wordpress/data';
 import debugFactory from 'debug';
 import { maskField } from 'calypso/lib/checkout';
 import type {
+	CardElementType,
 	CardFieldState,
+	CardStoreAction,
 	CardStoreState,
 	CardStoreType,
-	CardStoreAction,
-	CardElementType,
+	StoreStateValue,
 } from './types';
 import type { SelectFromMap } from '@automattic/data-stores';
-import type { StoreStateValue } from '@automattic/wpcom-checkout';
 import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );

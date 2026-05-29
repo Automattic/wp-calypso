@@ -2,6 +2,7 @@ import { Button, Card, Gridicon, Tooltip } from '@automattic/components';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchBillingSummary from 'calypso/a8c-for-agencies/data/purchases/use-fetch-billing-summary';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -73,7 +74,7 @@ export default function BillingSummary() {
 					{ billing.isSuccess && formatNumber( billing.data.licenses.total ) }
 					{ billing.isLoading && <TextPlaceholder /> }
 
-					{ billing.isError && <Gridicon icon="minus" /> }
+					{ billing.isError && <EmptyValueIndicator /> }
 				</strong>
 			</div>
 			<div className="billing-summary__stat billing-summary__assigned-licenses">
@@ -83,7 +84,7 @@ export default function BillingSummary() {
 
 					{ billing.isLoading && <TextPlaceholder /> }
 
-					{ billing.isError && <Gridicon icon="minus" /> }
+					{ billing.isError && <EmptyValueIndicator /> }
 				</strong>
 			</div>
 			<div className="billing-summary__stat billing-summary__unassigned-licenses">
@@ -93,7 +94,7 @@ export default function BillingSummary() {
 
 					{ billing.isLoading && <TextPlaceholder /> }
 
-					{ billing.isError && <Gridicon icon="minus" /> }
+					{ billing.isError && <EmptyValueIndicator /> }
 				</strong>
 			</div>
 			<div className="billing-summary__stat billing-summary__cost">
@@ -115,7 +116,7 @@ export default function BillingSummary() {
 
 					{ billing.isLoading && <TextPlaceholder /> }
 
-					{ billing.isError && <Gridicon icon="minus" /> }
+					{ billing.isError && <EmptyValueIndicator /> }
 				</strong>
 			</div>
 		</Card>

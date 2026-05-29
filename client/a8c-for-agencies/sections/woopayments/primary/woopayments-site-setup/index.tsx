@@ -58,7 +58,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 	const isWooPaymentsActive = woocommercePaymentsStatus === 'active';
 	const isWooPaymentsInactive = woocommercePaymentsStatus === 'inactive';
 
-	const title = translate( 'WooPayments Site Setup' );
+	const title = translate( 'WooPayments site setup' );
 
 	const onInstallPluginClick = async () => {
 		dispatch(

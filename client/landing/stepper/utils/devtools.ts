@@ -1,3 +1,7 @@
+import config from '@automattic/calypso-config';
+import { Site } from '@automattic/data-stores';
+import * as wpData from '@wordpress/data';
+
 interface MagicWindow extends Window {
 	wp: undefined | Record< string, any >;
 }
@@ -12,16 +16,12 @@ export const setupWpDataDebug = () => {
 				window.wp = {};
 			}
 			if ( ! window.wp.data ) {
-				window.wp.data = require( '@wordpress/data' );
+				window.wp.data = wpData;
 
-				const config = require( '@automattic/calypso-config' ).default;
-				const clientCreds = {
+				Site.register( {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
-				};
-
-				const { Site } = require( '@automattic/data-stores' );
-				Site.register( clientCreds );
+				} );
 			}
 		}
 	}

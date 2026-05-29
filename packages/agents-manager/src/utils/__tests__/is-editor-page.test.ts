@@ -1,23 +1,23 @@
 import { isEditorPage } from '../is-editor-page';
 
 describe( 'isEditorPage', () => {
-	const originalWindow = global.window;
+	const originalWindow = globalThis.window;
 
 	const mockLocation = ( path: string ) => {
 		const url = new URL( `https://wordpress.com${ path }` );
 
-		global.window = {
+		globalThis.window = {
 			location: { href: url.href, search: url.search },
 		} as Window & typeof globalThis;
 	};
 
 	beforeEach( () => {
 		// @ts-expect-error - Mocking window
-		delete global.window;
+		delete globalThis.window;
 	} );
 
 	afterEach( () => {
-		global.window = originalWindow;
+		globalThis.window = originalWindow;
 	} );
 
 	it( 'returns `false` when `window` is undefined (SSR)', () => {

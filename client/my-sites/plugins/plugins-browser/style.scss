@@ -182,13 +182,13 @@ body.is-section-plugins #primary .main.is-logged-out {
 		width: 50%;
 		min-width: 700px;
 		height: 100%;
-		background-image: url(/calypso/images/plugins/plugins_hero_2.svg);
+		background-image: url( calypso/assets/images/plugins/plugins_hero_2.svg );
 		background-position: right bottom;
 		background-repeat: no-repeat;
 		pointer-events: none;
 
 		@media screen and ( max-width: $break-small ) {
-			background-image: url( /calypso/images/plugins/plugins_hero_2_m.svg );
+			background-image: url( calypso/assets/images/plugins/plugins_hero_2_m.svg );
 			left: 0;
 			min-width: 0;
 			width: 100%;

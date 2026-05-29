@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
-import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.webp';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';

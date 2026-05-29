@@ -234,6 +234,11 @@ export class RestAPIClient {
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
 			blog_name: newSiteParams.name,
 			blog_title: newSiteParams.title,
+			...( newSiteParams.public !== undefined && { public: newSiteParams.public } ),
+			...( newSiteParams.find_available_url !== undefined && {
+				find_available_url: newSiteParams.find_available_url,
+			} ),
+			...( newSiteParams.options && { options: newSiteParams.options } ),
 		};
 
 		const params: RequestParams = {
@@ -546,7 +551,11 @@ export class RestAPIClient {
 
 		// This portion validates whether the user represented by the
 		// instance of the RestAPIClient is in fact a test user.
-		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
+		const gmailBase = SecretsManager.secrets.gmailTestEmail?.split( '@' )[ 0 ];
+		const isTestEmail =
+			accountInformation.email.includes( 'mailosaur' ) ||
+			accountInformation.email.startsWith( `${ gmailBase }+` );
+		if ( ! isTestEmail ) {
 			console.warn(
 				'Aborting account closure: email address provided is not for an e2e test user.'
 			);
@@ -937,7 +946,7 @@ export class RestAPIClient {
 					Authorization: await this.getAuthorizationHeader( 'bearer' ),
 					...data.getHeaders(),
 				},
-				body: data.getBuffer(),
+				body: Uint8Array.from( data.getBuffer() ),
 			};
 		}
 		if ( mediaURL ) {

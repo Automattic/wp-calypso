@@ -17,12 +17,16 @@ export async function apiCloseAccount(
 	accountDetails: AccountDetails
 ): Promise< void > {
 	console.log( `Closing account ${ accountDetails.userID }.` );
-	const response: AccountClosureResponse = await client.closeAccount( accountDetails );
+	try {
+		const response: AccountClosureResponse = await client.closeAccount( accountDetails );
 
-	if ( response.success !== true ) {
-		console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
-		console.warn( response );
-	} else {
-		console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
+		if ( response.success !== true ) {
+			console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
+			console.warn( response );
+		} else {
+			console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
+		}
+	} catch ( error ) {
+		console.warn( `Error closing account ${ accountDetails.userID }: ${ error }` );
 	}
 }
