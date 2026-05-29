@@ -303,7 +303,7 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 ): boolean {
 	if (
 		costOverrides?.some( ( costOverride ) => {
-			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
+			return ! isOverrideCodeIntroductoryOffer( costOverride.override_code );
 		} )
 	) {
 		return false;

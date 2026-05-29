@@ -311,7 +311,9 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 								<Button
 									plain
 									className="receipt__email-button"
-									onClick={ getEmailReceiptLinkClickHandler( transaction.id ) as any }
+									onClick={
+										getEmailReceiptLinkClickHandler( transaction.id ) as ( id: FormEvent ) => void
+									}
 								/>
 							),
 						},
@@ -698,7 +700,7 @@ function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) 
 			setHideDetailsOnPrint( value.length === 0 );
 			setPrintableBillingDetailsText( e.target.value );
 		},
-		[ hideDetailsOnPrint, setHideDetailsOnPrint ]
+		[ setHideDetailsOnPrint ]
 	);
 
 	if ( transaction.cc_num !== 'XXXX' && ! transaction.cc_name && ! transaction.cc_email ) {
