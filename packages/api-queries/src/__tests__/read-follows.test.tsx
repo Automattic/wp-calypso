@@ -249,28 +249,105 @@ describe( 'follow mutations', () => {
 		expect( client.getQueryState( getFollowsQueryKey() )?.isInvalidated ).toBe( true );
 		expect( client.getQueryState( [ 'read', 'site-subscriptions' ] )?.isInvalidated ).toBe( true );
 	} );
+
+	it( 'patches cached follows and invalidates site subscriptions after unfollowing a URL', async () => {
+		const scope = nock( BASE )
+			.post( '/rest/v1.1/read/following/mine/delete', {
+				url: 'https://example.com/feed/',
+				source: 'calypso',
+			} )
+			.reply( 200, { subscribed: false } );
+		const client = newClient();
+		client.setQueryData(
+			getFollowsQueryKey(),
+			makeData( [
+				makeFollow( {
+					feed_URL: 'https://example.com/feed/',
+					delivery_methods: {
+						notification: { send_posts: true },
+					},
+				} ),
+			] )
+		);
+		client.setQueryData( [ 'read', 'site-subscriptions' ], [] );
+
+		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( {
+				feedUrl: 'https://example.com/feed/',
+				source: 'calypso',
+			} );
+		} );
+
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		expect( scope.isDone() ).toBe( true );
+		expect( cachedFollow?.is_following ).toBe( false );
+		expect( cachedFollow?.delivery_methods?.notification?.send_posts ).toBe( false );
+		expect( client.getQueryState( [ 'read', 'site-subscriptions' ] )?.isInvalidated ).toBe( true );
+	} );
 } );
 
 describe( 'delivery mutations', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'invalidates follows on settle', async () => {
-		const scope = nock( BASE )
-			.post( '/wpcom/v2/read/sites/123/notification-subscriptions/new', {} )
-			.reply( 200, { success: true } );
+	it.each( [
+		{
+			name: 'post email subscription',
+			factory: updateSitePostEmailSubscriptionMutation,
+			params: { blogId: 123, sendPosts: true, deliveryFrequency: 'daily' },
+			scope: () =>
+				nock( BASE )
+					.post( '/rest/v1.2/read/site/123/post_email_subscriptions/new', {
+						delivery_frequency: 'daily',
+					} )
+					.reply( 200, { success: true } ),
+		},
+		{
+			name: 'comment email subscription',
+			factory: updateSiteCommentEmailSubscriptionMutation,
+			params: { blogId: 123, sendComments: true },
+			scope: () =>
+				nock( BASE )
+					.post( '/rest/v1.2/read/site/123/comment_email_subscriptions/new', {} )
+					.reply( 200, { success: true } ),
+		},
+		{
+			name: 'post email delivery frequency',
+			factory: updateSitePostEmailDeliveryFrequencyMutation,
+			params: { blogId: 123, deliveryFrequency: 'weekly' },
+			scope: () =>
+				nock( BASE )
+					.post( '/rest/v1.2/read/site/123/post_email_subscriptions/update', {
+						delivery_frequency: 'weekly',
+					} )
+					.reply( 200, { success: true } ),
+		},
+		{
+			name: 'post notification subscription',
+			factory: updateSitePostNotificationSubscriptionMutation,
+			params: { blogId: 123, sendPosts: true },
+			scope: () =>
+				nock( BASE )
+					.post( '/wpcom/v2/read/sites/123/notification-subscriptions/new', {} )
+					.reply( 200, { success: true } ),
+		},
+	] )( 'invalidates follows on settle for $name', async ( { factory, params, scope } ) => {
+		const request = scope();
 		const client = newClient();
 		client.setQueryData( getFollowsQueryKey(), makeData( [ makeFollow() ] ) );
 
-		const { result } = renderHook(
-			() => useMutation( updateSitePostNotificationSubscriptionMutation( client ) ),
-			{ wrapper: makeWrapper( client ) }
-		);
-
-		await act( async () => {
-			await result.current.mutateAsync( { blogId: 123, sendPosts: true } );
+		const { result } = renderHook( () => useMutation( factory( client ) ), {
+			wrapper: makeWrapper( client ),
 		} );
 
-		expect( scope.isDone() ).toBe( true );
+		await act( async () => {
+			await result.current.mutateAsync( params as FollowDeliveryParams );
+		} );
+
+		expect( request.isDone() ).toBe( true );
 		expect( client.getQueryState( getFollowsQueryKey() )?.isInvalidated ).toBe( true );
 	} );
 
