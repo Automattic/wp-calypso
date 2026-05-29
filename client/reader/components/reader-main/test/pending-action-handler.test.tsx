@@ -14,6 +14,19 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { ReaderPendingActionHandler } from '../pending-action-handler';
 
 const BASE = 'https://public-api.wordpress.com';
+const mockFollowMutate = jest.fn();
+
+jest.mock( 'calypso/reader/data/follows', () => ( {
+	getFollowingSource: jest.fn( () => 'test-source' ),
+	useFollowSite: jest.fn( () => ( {
+		mutate: mockFollowMutate,
+		mutateAsync: mockFollowMutate,
+		isPending: false,
+	} ) ),
+	useUnfollowSite: jest.fn(),
+	useIsFollowing: jest.fn( () => false ),
+	useFollows: jest.fn( () => ( { follows: [], refetch: jest.fn() } ) ),
+} ) );
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -25,6 +38,8 @@ type TestState = {
 			siteId: number;
 			postId: number;
 			commentId?: number;
+			siteUrl?: string;
+			followData?: Record< string, unknown >;
 		} | null;
 	};
 };
@@ -64,6 +79,7 @@ describe( 'ReaderPendingActionHandler', () => {
 	afterEach( () => {
 		jest.useRealTimers();
 		nock.cleanAll();
+		mockFollowMutate.mockClear();
 	} );
 
 	it( 'replays a pending unlike through the Reader post like adapter', async () => {
@@ -243,6 +259,39 @@ describe( 'ReaderPendingActionHandler', () => {
 		await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
 
 		expect( malformedLikeScope.isDone() ).toBe( false );
+		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
+	} );
+
+	it( 'replays a pending site follow through the follows mutation', () => {
+		jest.useFakeTimers();
+		const queryClient = makeQueryClient();
+		const clearedActions: Array< { type: string } > = [];
+
+		renderWithProviders(
+			queryClient,
+			{
+				currentUser: { id: 1 },
+				readerUi: {
+					persistedLastActionPriorToLogin: {
+						type: 'follow-site',
+						siteId: 100,
+						postId: 1,
+						siteUrl: 'https://example.com/feed',
+						followData: { feed_ID: 123 },
+					},
+				},
+			},
+			( action ) => clearedActions.push( action )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 2000 );
+		} );
+
+		expect( mockFollowMutate ).toHaveBeenCalledWith( {
+			feedUrl: 'https://example.com/feed',
+			source: 'test-source',
+		} );
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
 	} );
 } );

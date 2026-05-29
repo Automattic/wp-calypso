@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { getFollowsQueryKey } from '@automattic/api-queries';
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
+import { QueryClient } from '@tanstack/react-query';
 import { act, screen } from '@testing-library/react';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -37,11 +39,6 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 } ) );
 
 const mockIsCurrentUserEmailVerified = jest.mocked( isCurrentUserEmailVerified );
-
-const mockRequestFollows = jest.fn( () => ( { type: 'REQUEST_FOLLOWS' } ) );
-jest.mock( 'calypso/state/reader/follows/actions', () => ( {
-	requestFollows: () => mockRequestFollows(),
-} ) );
 
 describe( 'AddSubscriptionForm', () => {
 	beforeEach( () => {
@@ -112,12 +109,14 @@ describe( 'AddSubscriptionForm', () => {
 			expect( screen.queryByTestId( 'unsubscribed-feeds-search-list' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'does not dispatch requestFollows on subscribe toggle', () => {
-			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
+		it( 'does not invalidate follows on subscribe toggle', () => {
+			const queryClient = new QueryClient();
+			const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+			renderWithProvider( <AddSubscriptionForm type="add-new" />, { queryClient } );
 
 			act( () => capturedOnChangeSubscribe() );
 
-			expect( mockRequestFollows ).not.toHaveBeenCalled();
+			expect( invalidateQueries ).not.toHaveBeenCalledWith( { queryKey: getFollowsQueryKey() } );
 		} );
 
 		it( 'hides the subscriptions list when a feed preview becomes active', () => {
@@ -143,12 +142,14 @@ describe( 'AddSubscriptionForm', () => {
 			expect( screen.getByText( 'www.reddit.com/.rss' ) ).toBeInTheDocument();
 		} );
 
-		it( 'dispatches requestFollows on subscribe toggle', () => {
-			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
+		it( 'invalidates follows on subscribe toggle', () => {
+			const queryClient = new QueryClient();
+			const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+			renderWithProvider( <AddSubscriptionForm type="reddit" />, { queryClient } );
 
 			act( () => capturedOnChangeSubscribe() );
 
-			expect( mockRequestFollows ).toHaveBeenCalledTimes( 1 );
+			expect( invalidateQueries ).toHaveBeenCalledWith( { queryKey: getFollowsQueryKey() } );
 		} );
 
 		it( 'hides instructions when a feed preview becomes active', () => {

@@ -1,10 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
+import {
+	getFollowingSource,
+	useFollowSite,
+	useIsFollowing,
+	useUnfollowSite,
+} from 'calypso/reader/data/follows';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { follow, unfollow } from 'calypso/state/reader/follows/actions';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
@@ -29,9 +33,13 @@ interface FollowButtonContainerProps {
 function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const following = useSelector( ( state ) =>
-		isFollowing( state, { feedUrl: props.siteUrl, feedId: props.feedId, blogId: props.siteId } )
-	);
+	const following = useIsFollowing( {
+		feedUrl: props.siteUrl,
+		feedId: props.feedId,
+		blogId: props.siteId,
+	} );
+	const followSite = useFollowSite();
+	const unfollowSite = useUnfollowSite();
 
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
@@ -68,10 +76,10 @@ function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element
 			);
 		}
 
-		if ( followingSite ) {
-			dispatch( follow( props.siteUrl, followData, null ) );
+		if ( following ) {
+			unfollowSite.mutate( { feedUrl: props.siteUrl, source: getFollowingSource() } );
 		} else {
-			dispatch( unfollow( props.siteUrl ) );
+			followSite.mutate( { feedUrl: props.siteUrl, source: getFollowingSource() } );
 		}
 
 		props.onFollowToggle( followingSite );
@@ -83,7 +91,7 @@ function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element
 			onFollowToggle={ handleFollowToggle }
 			iconSize={ props.iconSize }
 			tagName={ props.tagName }
-			disabled={ props.disabled }
+			disabled={ props.disabled || followSite.isPending || unfollowSite.isPending }
 			followLabel={ props.followLabel }
 			followingLabel={ props.followingLabel }
 			className={ props.className }

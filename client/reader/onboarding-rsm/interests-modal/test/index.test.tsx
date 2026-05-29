@@ -12,6 +12,8 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import InterestsModal from '../index';
 import { getTopicGroups } from '../topic-groups';
 
+const mockFollowMutate = jest.fn();
+
 // The parent owns `hasFollowed` and `relaxedPackCriteria` so they persist
 // across remounts of this modal. Most tests don't care about those flags and
 // rely on the default props. Tests that need the flags to flip in response to
@@ -57,7 +59,7 @@ jest.mock( '../topic-groups', () => ( {
 } ) );
 
 jest.mock( '../topic-group-card', () => {
-	const React = require( 'react' );
+	const React = jest.requireActual( 'react' );
 	return {
 		__esModule: true,
 		default: ( {
@@ -95,8 +97,16 @@ jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
 	getReaderFollows: jest.fn().mockReturnValue( [] ),
 } ) );
 
-jest.mock( 'calypso/state/reader/follows/actions', () => ( {
-	follow: jest.fn( () => ( { type: 'READER_FOLLOW' } ) ),
+jest.mock( 'calypso/reader/data/follows', () => ( {
+	getFollowingSource: jest.fn( () => 'test-source' ),
+	useFollowSite: jest.fn( () => ( {
+		mutate: mockFollowMutate,
+		mutateAsync: mockFollowMutate,
+		isPending: false,
+	} ) ),
+	useUnfollowSite: jest.fn(),
+	useIsFollowing: jest.fn( () => false ),
+	useFollows: jest.fn( () => ( { follows: [], refetch: jest.fn() } ) ),
 } ) );
 
 jest.mock( 'calypso/state/notices/actions', () => ( {
@@ -319,6 +329,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 		jest.mocked( recordTracksEvent ).mockClear();
 		jest.mocked( recordFollow ).mockClear();
 		jest.mocked( recordReaderTracksEvent ).mockClear();
+		mockFollowMutate.mockClear();
 	} );
 
 	afterEach( () => {
@@ -382,7 +393,12 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 		await user.click( screen.getByTestId( 'topic-pack-card' ) );
 
 		expect( recordFollow ).toHaveBeenCalledTimes( packBlogs.length );
+		expect( mockFollowMutate ).toHaveBeenCalledTimes( packBlogs.length );
 		for ( const blog of packBlogs ) {
+			expect( mockFollowMutate ).toHaveBeenCalledWith( {
+				feedUrl: blog.feed_URL,
+				source: 'test-source',
+			} );
 			expect( recordFollow ).toHaveBeenCalledWith( blog.feed_URL, undefined, {
 				follow_source: 'reader-onboarding-modal',
 			} );
