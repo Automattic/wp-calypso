@@ -352,6 +352,8 @@
 		"flatted@npm:^2.0.0": "3.4.2",
 		"immutable@npm:~3.7.4": "3.8.3",
 		"minimatch@npm:3.0.4": "3.1.5",
+		"serialize-javascript@npm:^6.0.0": "7.0.5",
+		"serialize-javascript@npm:^6.0.2": "7.0.5",
 		"tmp@npm:^0.0.33": "0.2.7",
 		"uuid@npm:^8.3.0": "11.1.1",
 		"uuid@npm:^8.3.2": "11.1.1",
