@@ -697,6 +697,11 @@ html {
 // Shared dark-teal header treatment used by overview pages that mirror the
 // marketplace pattern. `@include` it from a page-scoped block.
 @mixin marketplace-overview-header {
+	// Match the host card background to the dark-teal header so the rounded
+	// corners don't expose the parent's default white background through
+	// anti-aliased clipping. The body re-asserts the surface color below.
+	background: var(--color-overview-header-background)!important;
+
 	.hosting-dashboard-layout__top-wrapper {
 		background: var(--color-overview-header-background);
 		border-block-end: none;
@@ -706,12 +711,16 @@ html {
 	}
 
 	.hosting-dashboard-layout__header-breadcrumb {
-		color: var(--color-neutral-40);
-		fill: var(--color-neutral-40);
+		color: var(--color-text-white);
+		fill: var(--color-text-white);
 
 		a {
-			color: var(--color-primary-5);
+			color: var(--color-text-white);
 		}
+	}
+
+	.hosting-dashboard-layout__body {
+		background: var(--color-surface);
 	}
 
 	// Shift scrolling from the body to the container so the page-level

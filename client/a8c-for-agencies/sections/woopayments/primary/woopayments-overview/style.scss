@@ -15,6 +15,10 @@ $alt-color: var(--color-neutral-0);
 		justify-content: normal;
 	}
 
+	.hosting-dashboard-layout__body {
+		padding-block-start: 0;
+	}
+
 	.hosting-dashboard-layout__body-wrapper {
 		max-width: unset;
 		padding-inline: 0;
