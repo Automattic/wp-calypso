@@ -1,5 +1,6 @@
 import { omnibarSiteIdQuery, queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { createBrowserHistory } from '@tanstack/react-router';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { InterimOmnibar } from './interim-omnibar';
@@ -7,38 +8,13 @@ import type { OmnibarEvents } from '../omnibar/events';
 import type { Site, User } from '@automattic/api-core';
 
 // The interim omnibar lives in its own React tree (hydrated into
-// `#wpcom-omnibar`), so it can't read TanStack Router state. Patch
-// `history.pushState`/`replaceState` once to dispatch a synthetic event we can
-// subscribe to alongside `popstate`; that gives us a reactive pathname without
-// any router coupling. The patch is idempotent across hot-reloads.
-const PATH_CHANGE_EVENT = 'omnibar:pathchange';
-
-function patchHistory() {
-	if (
-		typeof window === 'undefined' ||
-		( window as unknown as { __omnibarPathPatched?: boolean } ).__omnibarPathPatched
-	) {
-		return;
-	}
-	( window as unknown as { __omnibarPathPatched: boolean } ).__omnibarPathPatched = true;
-	( [ 'pushState', 'replaceState' ] as const ).forEach( ( name ) => {
-		const original = window.history[ name ];
-		window.history[ name ] = function ( ...args: Parameters< typeof original > ) {
-			const result = original.apply( this, args );
-			window.dispatchEvent( new Event( PATH_CHANGE_EVENT ) );
-			return result;
-		};
-	} );
-}
+// `#wpcom-omnibar`), so it can't read TanStack Router state. A standalone
+// `@tanstack/history` instance gives us a reactive pathname without any
+// router coupling.
+const history = createBrowserHistory();
 
 function subscribePathname( callback: () => void ) {
-	patchHistory();
-	window.addEventListener( 'popstate', callback );
-	window.addEventListener( PATH_CHANGE_EVENT, callback );
-	return () => {
-		window.removeEventListener( 'popstate', callback );
-		window.removeEventListener( PATH_CHANGE_EVENT, callback );
-	};
+	return history.subscribe( callback );
 }
 
 const getPathname = () => window.location.pathname;
