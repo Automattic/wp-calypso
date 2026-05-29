@@ -1,7 +1,9 @@
 import { UserSettings } from '@automattic/api-core';
 import {
 	applyDeliveryWindowEdit,
+	getDeliveryWindowOffsetHours,
 	getDisplayDeliveryWindow,
+	guessTimezone,
 	useDeliveryWindowTimezone,
 } from '@automattic/i18n-utils';
 import { CheckboxControl, SelectControl } from '@wordpress/components';
@@ -54,15 +56,42 @@ const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
 
 const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string ) => {
 	if ( isUtcFallback || ! timezone ) {
-		return __( 'We couldn’t detect your time zone, so these times are shown in UTC.' );
+		return __( "We couldn't detect your time zone, so these times are shown in UTC." );
 	}
 
 	return sprintf(
 		// translators: %(timezone)s is the timezone E.g. America/New_York
-		__( 'Times shown in your local time zone (%(timezone)s).' ),
+		__( 'Times are shown in your local time zone (%(timezone)s).' ),
 		{ timezone }
 	);
 };
+
+function getDeliveryWindowDisplayDefaults(): DeliveryWindowDisplay {
+	const timezone = guessTimezone();
+	const offsetHours = getDeliveryWindowOffsetHours( timezone );
+
+	return {
+		timezone,
+		isUtcFallback: offsetHours === null,
+	};
+}
+
+function applyDeliveryWindowToHourField(
+	fields: Field< SettingsData >[],
+	delivery: DeliveryWindowDisplay
+): Field< SettingsData >[] {
+	return fields.map( ( field ) => {
+		if ( field.id !== 'subscription_delivery_hour' ) {
+			return field;
+		}
+
+		return {
+			...field,
+			description: buildDeliveryHourDescription( delivery.isUtcFallback, delivery.timezone ),
+			elements: buildDeliveryHourElements( delivery.isUtcFallback ),
+		};
+	} );
+}
 
 export type SettingsData = Pick<
 	UserSettings,
@@ -97,7 +126,7 @@ const CustomSelectControl = ( { field, data, onChange }: DataFormControlProps< S
 	);
 };
 
-const baseFields: Field< SettingsData >[] = [
+const baseFieldsWithoutDeliveryWindow: Field< SettingsData >[] = [
 	{
 		id: 'subscription_delivery_email_default',
 		label: __( 'Default email delivery' ),
@@ -139,8 +168,6 @@ const baseFields: Field< SettingsData >[] = [
 		id: 'subscription_delivery_hour',
 		label: __( 'Hour' ),
 		type: 'integer' as const,
-		description: buildDeliveryHourDescription( false ),
-		elements: buildDeliveryHourElements( false ),
 		Edit: CustomSelectControl,
 	},
 	{
@@ -190,9 +217,14 @@ const baseFields: Field< SettingsData >[] = [
 	},
 ];
 
+const baseFields = applyDeliveryWindowToHourField(
+	baseFieldsWithoutDeliveryWindow,
+	getDeliveryWindowDisplayDefaults()
+);
+
 const automatticianFields = [ 'p2_disable_autofollow_on_comment' ];
 
-interface DeliveryWindowDisplay {
+export interface DeliveryWindowDisplay {
 	isUtcFallback: boolean;
 	timezone?: string;
 }
@@ -201,21 +233,8 @@ export const getFields = (
 	includeAutomatticianFields: boolean,
 	deliveryWindow?: DeliveryWindowDisplay
 ): Field< SettingsData >[] => {
-	const fields = deliveryWindow
-		? baseFields.map( ( field ) => {
-				if ( field.id !== 'subscription_delivery_hour' ) {
-					return field;
-				}
-				return {
-					...field,
-					description: buildDeliveryHourDescription(
-						deliveryWindow.isUtcFallback,
-						deliveryWindow.timezone
-					),
-					elements: buildDeliveryHourElements( deliveryWindow.isUtcFallback ),
-				};
-		  } )
-		: baseFields;
+	const delivery = deliveryWindow ?? getDeliveryWindowDisplayDefaults();
+	const fields = applyDeliveryWindowToHourField( baseFields, delivery );
 
 	if ( includeAutomatticianFields ) {
 		return fields;
