@@ -4,8 +4,10 @@ import { Button } from '@wordpress/ui';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePost } from 'calypso/state/posts/actions/save-post';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { fetchPatternPageRaw } from './draft-pattern-page';
+import { LAUNCHPAD_GENERIC_HASH, buildLaunchpadEditorUrl } from './launchpad-editor-url';
 import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './wizard-state';
 import type { SelectedTask } from './select-tasks';
 import type { AppState } from 'calypso/types';
@@ -29,6 +31,9 @@ export default function PatternPageTaskCta( { task }: Props ) {
 	const dispatch = useDispatch();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
+	const siteAdminUrl = useSelector( ( state: AppState ) =>
+		siteId ? getSiteAdminUrl( state, siteId ) : null
+	);
 	const cached =
 		(
 			useSelector( ( state: AppState ) =>
@@ -37,7 +42,23 @@ export default function PatternPageTaskCta( { task }: Props ) {
 		 )?.patternPages ?? {};
 	const [ isCreating, setIsCreating ] = useState< boolean >( false );
 
+	// Open the new page in wp-admin (not via Calypso's `/page/:slug/:id` route,
+	// which redirects via window.location.replace and drops the hash) so the
+	// `#launchpad-next-steps` hash survives to the editor. The wpcom-block-
+	// editor reads that hash to fire the post-publish snackbar with a "Next
+	// steps" action back to /home. Fall back to in-Calypso navigation if we
+	// don't have siteAdminUrl yet — the snackbar won't fire then, but the user
+	// still lands on the page editor.
 	const navigateToPage = ( pageId?: number ) => {
+		if ( pageId && siteAdminUrl ) {
+			window.location.href = buildLaunchpadEditorUrl( {
+				siteAdminUrl,
+				postId: pageId,
+				postType: 'page',
+				hash: LAUNCHPAD_GENERIC_HASH,
+			} );
+			return;
+		}
 		if ( pageId ) {
 			page( `/page/${ siteSlug }/${ pageId }` );
 			return;

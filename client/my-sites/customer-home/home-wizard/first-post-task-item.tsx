@@ -6,6 +6,7 @@ import { savePost } from 'calypso/state/posts/actions/save-post';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { FIRST_POST_HASH, buildLaunchpadEditorUrl } from './launchpad-editor-url';
 import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './wizard-state';
 import type { SelectedTask } from './select-tasks';
 import type { AppState } from 'calypso/types';
@@ -74,11 +75,12 @@ export default function FirstPostTaskCta( { task }: Props ) {
 	// editor feature self-gates on post type === 'post' anyway.
 	const navigateToEditor = ( postId?: number ) => {
 		if ( task.id === 'publish-first-post' && siteAdminUrl ) {
-			const origin = encodeURIComponent( window.location.origin );
-			const editor = postId
-				? `${ siteAdminUrl }post.php?post=${ postId }&action=edit`
-				: `${ siteAdminUrl }post-new.php?post_type=post`;
-			window.location.href = `${ editor }&origin=${ origin }#publish-first-post`;
+			window.location.href = buildLaunchpadEditorUrl( {
+				siteAdminUrl,
+				postId,
+				postType: 'post',
+				hash: FIRST_POST_HASH,
+			} );
 			return;
 		}
 		if ( postId ) {

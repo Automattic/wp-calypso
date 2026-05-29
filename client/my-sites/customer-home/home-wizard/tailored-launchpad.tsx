@@ -7,6 +7,7 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import FirstPostTaskCta from './first-post-task-item';
 import LaunchTaskCta from './launch-task-item';
+import { LAUNCHPAD_GENERIC_HASH, buildLaunchpadEditorUrl } from './launchpad-editor-url';
 import PatternPageTaskCta from './pattern-page-task-item';
 import ThemePickerTaskItem from './theme-picker-task-item';
 import type { SelectedTask } from './select-tasks';
@@ -80,6 +81,29 @@ function TaskCta( { task }: { task: SelectedTask } ) {
 				tone="brand"
 				onClick={ () => {
 					window.location.href = `${ siteAdminUrl }admin.php?page=jetpack-social`;
+				} }
+			>
+				{ task.cta || ( translate( 'Get started' ) as string ) }
+			</Button>
+		);
+	}
+	// Page-creating tasks (About, Contact, Forms, Video, …): open the wp-admin
+	// "new page" editor directly with the `#launchpad-next-steps` hash so the
+	// post-publish snackbar fires with a "Next steps" action back to /home.
+	// Calypso's `/page/:slug` redirect drops `#hash` fragments, so we bypass it.
+	// Pattern tasks (gallery, events) handle the snackbar themselves via
+	// PatternPageTaskCta — they're routed earlier in this function.
+	if ( task.createsPage && siteAdminUrl ) {
+		return (
+			<Button
+				variant="solid"
+				tone="brand"
+				onClick={ () => {
+					window.location.href = buildLaunchpadEditorUrl( {
+						siteAdminUrl,
+						postType: 'page',
+						hash: LAUNCHPAD_GENERIC_HASH,
+					} );
 				} }
 			>
 				{ task.cta || ( translate( 'Get started' ) as string ) }

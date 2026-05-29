@@ -86,6 +86,18 @@ export type TaskTemplate = {
 		images?: boolean;
 	};
 
+	/**
+	 * Marks this as a "page-creating" task. The CTA opens the wp-admin page
+	 * editor directly (bypassing Calypso's `/page/:slug` route, which drops
+	 * `#hash` fragments) with the `#launchpad-next-steps` hash so the
+	 * post-publish snackbar fires with a "Next steps" action back to /home.
+	 * Implied by `pattern` — set explicitly only for non-pattern page tasks
+	 * that point at `/page/...` (e.g. About, Contact, Forms, Video).
+	 * See `launchpad-editor-url.ts` and the wpcom-block-editor feature
+	 * `onboarding-next-step-after-publishing-post.jsx`.
+	 */
+	createsPage?: boolean;
+
 	/** Used to detect "done" without round-tripping the server. */
 	completesOn?: ActivationSignal;
 };
@@ -192,6 +204,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		features: [ 'forms' ],
 		url: ( s ) => `/page/${ s }?contact-form=1`,
 		cta: 'Add form',
+		createsPage: true,
 	},
 	{
 		id: 'setup-newsletter-feature',
@@ -265,6 +278,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		features: [ 'video' ],
 		url: ( s ) => `/page/${ s }?video=1`,
 		cta: 'Add video',
+		createsPage: true,
 	},
 	{
 		id: 'setup-memberships',
@@ -385,6 +399,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		hideWhen: { hasPages: true },
 		url: ( s ) => `/page/${ s }`,
 		cta: 'Create page',
+		createsPage: true,
 	},
 	{
 		id: 'add-contact-page',
@@ -394,6 +409,7 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		goals: GOALS_ALL,
 		url: ( s ) => `/page/${ s }`,
 		cta: 'Create page',
+		createsPage: true,
 	},
 	{
 		id: 'connect-social-accounts',
