@@ -237,6 +237,18 @@
 	.calypso-notice__icon-wrapper {
 		background: var(--color-primary);
 	}
+
+	.components-button.is-secondary {
+		margin-block-start: 12px;
+		color: var(--color-text-inverted);
+		box-shadow: inset 0 0 0 1px var(--color-text-inverted);
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			color: var(--color-text-inverted);
+			box-shadow: inset 0 0 0 1px var(--color-text-inverted);
+		}
+	}
 }
 
 .cancel-purchase__refund-eligibility-text {
@@ -247,22 +259,6 @@
 	display: inline;
 }
 
-.cancel-purchase__refund-eligibility-notice .cancel-purchase__refund-eligibility-link.cancel-purchase__refund-eligibility-link {
-	margin: 0;
-	background: none;
-	color: var(--color-text-inverted);
-	font-size: inherit;
-	font-weight: 400;
-	height: auto;
-	line-height: inherit;
-	padding: 0;
-	text-decoration: underline;
-
-	&:hover,
-	&:focus {
-		color: var(--color-text-inverted);
-	}
-}
 
 .cancel-purchase__button {
 	@include breakpoint-deprecated( "<660px" ) {

@@ -52,15 +52,11 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 						args: { refundText: props.refundAmount },
 						context: 'refundText is a monetary amount in the form "[currency-symbol][amount]"',
 					}
-				) }{ ' ' }
-				<Button
-					variant="link"
-					className="cancel-purchase__refund-eligibility-link"
-					onClick={ onRemoveClick }
-				>
-					{ translate( 'Remove plan and claim refund' ) }
-				</Button>
+				) }
 			</p>
+			<Button variant="secondary" onClick={ onRemoveClick }>
+				{ translate( 'Remove plan and claim refund' ) }
+			</Button>
 		</Notice>
 	);
 };
