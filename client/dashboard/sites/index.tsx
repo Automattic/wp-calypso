@@ -289,8 +289,6 @@ export default function Sites() {
 				defaultExperience={ null }
 				treatmentExperience={ null }
 				loadingExperience={ null }
-				// The dashboard is a logged-in-only experience, so bucket on the
-				// user id rather than the anonId (which would otherwise win).
 				options={ { assignmentIdentity: 'user' } }
 			/>
 		</>
