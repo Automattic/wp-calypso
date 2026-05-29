@@ -22,6 +22,10 @@ export const PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY = 'ak_ep2m_yearly_1';
 export const PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY = 'ak_ep2m_monthly_1';
 export const PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY = 'ak_epgt2m_yearly_1';
 export const PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY = 'ak_epgt2m_monthly_1';
+// The "500" / "5K" / "5h" segments in the following slug names are legacy
+// naming retained for backend product-slug stability. They no longer reflect
+// the current API limits (Akismet Pro is now 8K calls/mo per quantity, and
+// Akismet Business is 80K calls/mo).
 export const PRODUCT_AKISMET_PRO_500_MONTHLY = 'ak_pro5h_monthly';
 export const PRODUCT_AKISMET_PRO_500_YEARLY = 'ak_pro5h_yearly';
 export const PRODUCT_AKISMET_PRO_500_BI_YEARLY = 'ak_pro5h_bi_yearly';

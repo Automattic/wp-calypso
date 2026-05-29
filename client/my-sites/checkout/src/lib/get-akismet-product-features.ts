@@ -51,7 +51,8 @@ function getFeatureStrings(
 		case 'personal':
 			return [ ...baseFeatures ];
 		case 'pro_5h':
-			return [ ...baseFeatures, translate( '500 API calls per month' ), ...baseProFeatures ];
+			// 'pro_5h' is legacy naming; the Akismet Pro base allotment is now 8K.
+			return [ ...baseFeatures, translate( '8K API calls per month' ), ...baseProFeatures ];
 		case 'pro_10k':
 			return [ ...baseFeatures, translate( '10K API calls per month' ), ...baseProFeatures ];
 		case 'pro_20k':
@@ -61,9 +62,10 @@ function getFeatureStrings(
 		case 'pro_40k':
 			return [ ...baseFeatures, translate( '40K API calls per month' ), ...baseProFeatures ];
 		case 'business':
-			return [ ...baseFeatures, translate( '60K API calls per month' ), ...baseEnterpriseFeatures ];
+			return [ ...baseFeatures, translate( '80K API calls per month' ), ...baseEnterpriseFeatures ];
 		case 'business_5k':
-			return [ ...baseFeatures, translate( '5K API calls per month' ), ...baseEnterpriseFeatures ];
+			// 'business_5k' is legacy naming; the Akismet Business allotment is now 80K.
+			return [ ...baseFeatures, translate( '80K API calls per month' ), ...baseEnterpriseFeatures ];
 		case 'enterprise_15k':
 			return [ ...baseFeatures, translate( '15K API calls per month' ), ...baseEnterpriseFeatures ];
 		case 'enterprise_25k':

@@ -317,12 +317,17 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	if (
 		isAkismetPro500Plan( purchase.product_slug ) &&
 		purchase.renewal_price_tier_usage_quantity &&
-		purchase.renewal_price_tier_usage_quantity > 1
+		purchase.renewal_price_tier_usage_quantity >= 1
 	) {
-		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)d is a number of requests/month */
-		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
+		// "Pro 500" is legacy naming retained for backend product-slug stability
+		// (ak_pro5h_*). The per-quantity allotment is now 8000 requests/month.
+		const AKISMET_PRO_REQUESTS_PER_QUANTITY = 8000;
+		const requestsInK =
+			( AKISMET_PRO_REQUESTS_PER_QUANTITY * purchase.renewal_price_tier_usage_quantity ) / 1000;
+		/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
+		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+			requestsK: requestsInK,
 		} );
 	}
 
