@@ -16,6 +16,7 @@ declare const agentsManagerData:
 					aiEditorialReview?: boolean;
 					generateFeedback?: boolean;
 					blockTransformations?: boolean;
+					blockToolbarButton?: boolean;
 					optimizeTitleSuggestion?: boolean;
 				};
 			};

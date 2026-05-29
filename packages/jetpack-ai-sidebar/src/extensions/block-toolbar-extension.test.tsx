@@ -75,6 +75,10 @@ function installPreview( features: Record< string, boolean > = {}, enabled = tru
 	};
 }
 
+function enableToolbarButton() {
+	installPreview( { blockTransformations: true, blockToolbarButton: true } );
+}
+
 function renderToolbar( name = 'core/paragraph' ) {
 	const Component = withJetpackAiToolbarButton( BlockEdit );
 	return render( <Component name={ name } /> );
@@ -102,6 +106,8 @@ describe( 'withJetpackAiToolbarButton', () => {
 	it.each( [ 'core/image', 'core/paragraph', 'core/heading', 'core/list', 'core/quote' ] )(
 		'renders the Jetpack AI toolbar button for %s',
 		( name ) => {
+			enableToolbarButton();
+
 			renderToolbar( name );
 
 			expect( screen.getByTestId( 'block-edit' ) ).toHaveTextContent( name );
@@ -111,18 +117,31 @@ describe( 'withJetpackAiToolbarButton', () => {
 		}
 	);
 
-	it( 'renders the toolbar button when block transformations are enabled', () => {
-		installPreview( { blockTransformations: true } );
+	it( 'renders the toolbar button when block transformations and the toolbar button are enabled', () => {
+		enableToolbarButton();
 
 		renderToolbar();
 
 		expect( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) ).toBeInTheDocument();
 	} );
 
+	it( 'hides the toolbar button when preview data is unavailable', () => {
+		renderToolbar();
+
+		expect( screen.queryByRole( 'button', { name: 'Ask Jetpack AI' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'block-controls' ) ).not.toBeInTheDocument();
+	} );
+
 	it.each( [
-		[ 'preview is disabled', { blockTransformations: true }, false ],
+		[ 'preview is disabled', { blockTransformations: true, blockToolbarButton: true }, false ],
 		[ 'only editorial review is enabled', { aiEditorialReview: true }, true ],
-		[ 'block transformations are missing', {}, true ],
+		[ 'block transformations are missing', { blockToolbarButton: true }, true ],
+		[ 'toolbar button is missing', { blockTransformations: true }, true ],
+		[
+			'toolbar button is disabled',
+			{ blockTransformations: true, blockToolbarButton: false },
+			true,
+		],
 	] )(
 		'hides the toolbar button when %s',
 		( _label, features: Record< string, boolean >, enabled: boolean ) => {
@@ -147,6 +166,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 			setChatCompactMode,
 		};
 
+		enableToolbarButton();
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
 
@@ -162,6 +182,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 			setChatOpen,
 		};
 
+		enableToolbarButton();
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
 
@@ -174,6 +195,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 		const setChatCompactMode = jest.fn();
 		const addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
 
+		enableToolbarButton();
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
 
@@ -212,6 +234,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 			setChatInput,
 		};
 
+		enableToolbarButton();
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask Jetpack AI' } ) );
 

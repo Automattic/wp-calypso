@@ -4,7 +4,10 @@ import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { isBlockTransformationsEnabled } from '../utils/preview-features';
+import {
+	isBlockToolbarButtonEnabled,
+	isBlockTransformationsEnabled,
+} from '../utils/preview-features';
 
 type BlockEditProps = {
 	name: string;
@@ -65,7 +68,7 @@ export function openJetpackAiSidebarChat(): void {
 export const withJetpackAiToolbarButton = createHigherOrderComponent(
 	( BlockEdit: React.ComponentType< BlockEditProps > ) => {
 		const JetpackAiToolbarButtonInner = ( props: BlockEditProps ) => {
-			if ( ! isBlockTransformationsEnabled() ) {
+			if ( ! isBlockTransformationsEnabled() || ! isBlockToolbarButtonEnabled() ) {
 				return <BlockEdit { ...props } />;
 			}
 

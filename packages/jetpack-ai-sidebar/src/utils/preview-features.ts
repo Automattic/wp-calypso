@@ -2,6 +2,7 @@ type SidebarFeature =
 	| 'aiEditorialReview'
 	| 'generateFeedback'
 	| 'blockTransformations'
+	| 'blockToolbarButton'
 	| 'optimizeTitleSuggestion';
 
 function getAgentsManagerData() {
@@ -34,4 +35,8 @@ export function isBlockTransformationsEnabled(): boolean {
 
 export function isGenerateFeedbackEnabled(): boolean {
 	return isSidebarFeatureEnabled( 'generateFeedback', false );
+}
+
+export function isBlockToolbarButtonEnabled(): boolean {
+	return isSidebarFeatureEnabled( 'blockToolbarButton', false );
 }
