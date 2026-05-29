@@ -58,6 +58,16 @@
 
 	.reader-onboarding-modal__footer {
 		border-top-color: var( --color-border-subtle );
+
+		.components-button.is-tertiary:not( :disabled, [aria-disabled='true'] ) {
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-text );
+			}
+		}
 	}
 
 	.popover.is-top .popover__arrow::before,
