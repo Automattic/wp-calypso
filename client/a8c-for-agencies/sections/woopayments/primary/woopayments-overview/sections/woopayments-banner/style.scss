@@ -13,6 +13,16 @@
 		color: var(--color-text-inverted);
 	}
 
+	// Hide the decorative image column on mobile to keep the banner compact;
+	// restore at small+.
+	.page-section-column.is-align-center {
+		display: none;
+
+		@include break-small {
+			display: flex;
+		}
+	}
+
 	&.is-compact {
 		padding-block: 0;
 		max-height: 0;

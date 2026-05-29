@@ -16,7 +16,7 @@
 	&.page-section-wrapper {
 		padding-inline: 16px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include break-small {
 			padding-inline: 64px;
 		}
 
@@ -28,6 +28,16 @@
 	.page-section__header-title,
 	.page-section__header-description {
 		color: var(--color-text-inverted);
+	}
+
+	// Hide the decorative migration-incentive icon on mobile to keep the
+	// banner compact; restore at small+.
+	.pressable-premium-plan-migration__icon {
+		display: none;
+
+		@include break-small {
+			display: block;
+		}
 	}
 
 	&.is-compact {

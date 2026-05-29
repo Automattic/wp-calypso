@@ -710,13 +710,76 @@ html {
 		z-index: 100;
 	}
 
+	// Breadcrumb hidden on mobile (burger menu provides navigation), shown
+	// from the small breakpoint upward.
 	.hosting-dashboard-layout__header-breadcrumb {
 		color: var(--color-text-white);
 		fill: var(--color-text-white);
+		display: none;
 
 		a {
 			color: var(--color-text-white);
 		}
+
+		@include break-small {
+			display: block;
+		}
+	}
+
+	// The layout adds `gap: 16px` to the header at smaller widths. With the
+	// breadcrumb hidden on mobile, the empty `__header-main` flex item still
+	// triggers that gap and pushes the actions away from the left edge, so
+	// the burger menu no longer lines up with the banner heading. Hide the
+	// empty wrapper on mobile; restore from small upward.
+	.hosting-dashboard-layout__header-main {
+		display: none;
+
+		@include break-small {
+			display: block;
+		}
+	}
+
+	// Keep the header on a single row on mobile; restore wrapping at small+.
+	.hosting-dashboard-layout__header {
+		flex-wrap: nowrap;
+
+		@include break-small {
+			flex-wrap: wrap;
+		}
+	}
+
+	// Stack the burger menu above the CTA on mobile, each filling the row;
+	// fall back to a row layout at small+.
+	.hosting-dashboard-layout__header-actions {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: normal;
+		gap: 8px;
+
+		@include break-small {
+			flex-direction: row;
+			align-items: center;
+			gap: 0;
+		}
+	}
+
+	// The mobile burger menu sits on the dark-teal header here, so drop the
+	// default white surface and use light text/icons. The burger itself is
+	// hidden at >660px by the sidebar-navigation styles, so these rules only
+	// have visible effect on mobile.
+	.current-section button {
+		background: transparent;
+		border-bottom: none;
+		color: var(--color-text-white);
+
+		svg {
+			fill: var(--color-text-white);
+		}
+	}
+
+	.current-section .gridicons-menu,
+	h1.current-section__site-title {
+		color: var(--color-text-white);
 	}
 
 	.hosting-dashboard-layout__body {
