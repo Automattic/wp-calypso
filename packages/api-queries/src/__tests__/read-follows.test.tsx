@@ -130,6 +130,60 @@ describe( 'follow selectors and cache helpers', () => {
 		expect( data?.pages[ 0 ].totalCount ).toBe( 1 );
 	} );
 
+	it( 'clears stale errors when patching a successful follow', () => {
+		const client = newClient();
+		client.setQueryData(
+			getFollowsQueryKey(),
+			makeData( [
+				makeFollow( {
+					error: { message: 'Unable to follow' },
+				} ),
+			] )
+		);
+
+		patchFollow( client, {
+			requestedFeedUrl: 'https://example.com/feed/',
+			follow: makeFollow( {
+				name: 'Example',
+			} ),
+		} );
+
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		expect( cachedFollow?.error ).toBeUndefined();
+		expect( getFollowsFromData( getCachedData( client ) ) ).toEqual( [
+			expect.objectContaining( { name: 'Example' } ),
+		] );
+	} );
+
+	it( 'preserves existing notification delivery state when patching a successful follow', () => {
+		const client = newClient();
+		client.setQueryData(
+			getFollowsQueryKey(),
+			makeData( [
+				makeFollow( {
+					delivery_methods: {
+						email: { send_posts: false },
+						notification: { send_posts: false },
+					},
+				} ),
+			] )
+		);
+
+		patchFollow( client, {
+			requestedFeedUrl: 'https://example.com/feed/',
+			follow: makeFollow( {
+				delivery_methods: {
+					email: { send_posts: true },
+					notification: { send_posts: true },
+				},
+			} ),
+		} );
+
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		expect( cachedFollow?.delivery_methods?.email?.send_posts ).toBe( true );
+		expect( cachedFollow?.delivery_methods?.notification?.send_posts ).toBe( false );
+	} );
+
 	it( 'derives count and blog/feed lookups from cached data', () => {
 		const alpha = makeFollow( {
 			URL: 'https://alpha.example/feed/',
@@ -163,6 +217,49 @@ describe( 'follow selectors and cache helpers', () => {
 		expect( getFollowByFeedIdFromData( data, 101 ) ).toBe( alpha );
 		expect( getFollowedSitesFromData( data, null ) ).toEqual( [ alpha ] );
 		expect( getOrganizationFollowsFromData( data, 7 ) ).toEqual( [ beta ] );
+	} );
+
+	it( 'includes zero, null, and missing organization ids in personal follows', () => {
+		const zeroOrganization = makeFollow( {
+			URL: 'https://zero.example/feed/',
+			feed_URL: 'https://zero.example/feed/',
+			feed_ID: 100,
+			organization_id: 0,
+		} );
+		const nullOrganization = makeFollow( {
+			URL: 'https://null.example/feed/',
+			feed_URL: 'https://null.example/feed/',
+			feed_ID: 101,
+			organization_id: null,
+		} );
+		const missingOrganization = makeFollow( {
+			URL: 'https://missing.example/feed/',
+			feed_URL: 'https://missing.example/feed/',
+			feed_ID: 102,
+		} );
+		const organizationFollow = makeFollow( {
+			URL: 'https://organization.example/feed/',
+			feed_URL: 'https://organization.example/feed/',
+			feed_ID: 103,
+			organization_id: 7,
+		} );
+		const data = makeData( [
+			zeroOrganization,
+			nullOrganization,
+			missingOrganization,
+			organizationFollow,
+		] );
+
+		expect( getFollowedSitesFromData( data, 0 ) ).toEqual( [
+			zeroOrganization,
+			nullOrganization,
+			missingOrganization,
+		] );
+		expect( getFollowedSitesFromData( data, null ) ).toEqual( [
+			zeroOrganization,
+			nullOrganization,
+			missingOrganization,
+		] );
 	} );
 
 	it( 'marks a URL or alias unfollowed and disables post notifications', () => {

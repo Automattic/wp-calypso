@@ -180,9 +180,21 @@ export const getFollowedSitesFromData = (
 	noOrganizationId: number | null
 ): FollowItem[] =>
 	getFollowsFromData( data )
-		.filter(
-			( follow ) => follow.is_following && ( follow.organization_id ?? null ) === noOrganizationId
-		)
+		.filter( ( follow ) => {
+			if ( ! follow.is_following ) {
+				return false;
+			}
+
+			if ( noOrganizationId === 0 || noOrganizationId === null ) {
+				return (
+					follow.organization_id === 0 ||
+					follow.organization_id === null ||
+					typeof follow.organization_id === 'undefined'
+				);
+			}
+
+			return follow.organization_id === noOrganizationId;
+		} )
 		.sort( sortFollowsByLastUpdated );
 
 export const getOrganizationFollowsFromData = (
@@ -229,6 +241,13 @@ const mergeFollow = ( existingFollow: FollowItem, follow: FollowItem ): FollowIt
 	).filter(
 		( alias ) => prepareComparableUrl( alias ) !== prepareComparableUrl( follow.feed_URL )
 	);
+	const deliveryMethods = {
+		...existingFollow.delivery_methods,
+		...follow.delivery_methods,
+		...( existingFollow.delivery_methods?.notification
+			? { notification: existingFollow.delivery_methods.notification }
+			: {} ),
+	};
 
 	return {
 		...existingFollow,
@@ -236,6 +255,8 @@ const mergeFollow = ( existingFollow: FollowItem, follow: FollowItem ): FollowIt
 		...( aliasFeedUrls.length
 			? { alias_feed_URLs: aliasFeedUrls }
 			: { alias_feed_URLs: undefined } ),
+		delivery_methods: Object.keys( deliveryMethods ).length ? deliveryMethods : undefined,
+		error: undefined,
 	};
 };
 
