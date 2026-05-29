@@ -16,6 +16,8 @@
 // - Transitions are disabled on the customize overrides so there's no
 //   trailing blue "ease-out" when the cursor leaves a row.
 // - Drag-time hover suppression on every row (plugin v0.1.6, l.329-347).
+// - Solid drop-zone hints stay visible throughout customization
+//   (WordPress/wp-admin-sidebar#81).
 //
 // @see WordPress/wp-admin-sidebar v0.1.6 src/customizer/customizer.css
 
@@ -259,6 +261,15 @@ body.is-admin-sidebar-customize-mode {
 			background-color: transparent !important;
 			color: var( --color-sidebar-text ) !important;
 		}
+		.sidebar > li:not( .admin-sidebar-drop-indicator )::before,
+		.sidebar .wp-admin-sidebar-group__children > li:not( .admin-sidebar-drop-indicator )::before,
+		.sidebar > li:not( .admin-sidebar-drop-indicator ):last-child::after,
+		.sidebar
+			.wp-admin-sidebar-group__children
+			> li:not( .admin-sidebar-drop-indicator ):last-child::after {
+			opacity: 0;
+			transform: scaleX( 0.7 );
+		}
 	}
 
 	// Disable Calypso's fold-sidebar control during customize.
@@ -270,6 +281,44 @@ body.is-admin-sidebar-customize-mode {
 			cursor: not-allowed;
 		}
 	}
+
+	.sidebar > li:not( .admin-sidebar-drop-indicator ),
+	.sidebar .wp-admin-sidebar-group__children > li:not( .admin-sidebar-drop-indicator ) {
+		position: relative;
+	}
+
+	.sidebar > li:not( .admin-sidebar-drop-indicator )::before,
+	.sidebar .wp-admin-sidebar-group__children > li:not( .admin-sidebar-drop-indicator )::before,
+	.sidebar > li:not( .admin-sidebar-drop-indicator ):last-child::after,
+	.sidebar
+		.wp-admin-sidebar-group__children
+		> li:not( .admin-sidebar-drop-indicator ):last-child::after {
+		content: '';
+		position: absolute;
+		z-index: 1;
+		left: 10px;
+		right: 10px;
+		height: 0;
+		border-top: 1px dashed var( --wp-admin-sidebar-customizer-theme, #2271b1 );
+		opacity: 0.42;
+		pointer-events: none;
+		transform: scaleX( 1 );
+		transform-origin: center;
+		transition: opacity 160ms ease, transform 160ms ease;
+	}
+
+	.sidebar > li:not( .admin-sidebar-drop-indicator )::before,
+	.sidebar .wp-admin-sidebar-group__children > li:not( .admin-sidebar-drop-indicator )::before {
+		top: 0;
+	}
+
+	.sidebar > li:not( .admin-sidebar-drop-indicator ):last-child::after,
+	.sidebar
+		.wp-admin-sidebar-group__children
+		> li:not( .admin-sidebar-drop-indicator ):last-child::after {
+		bottom: 0;
+	}
+
 }
 
 // Source row fades while the ghost follows the cursor (Phase 2 row 17 visual).

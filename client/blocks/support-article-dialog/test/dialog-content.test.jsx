@@ -35,11 +35,6 @@ jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/components/data/query-reader-site', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="query-reader-site" />,
-} ) );
-
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 const makeStore = ( queryClient ) =>

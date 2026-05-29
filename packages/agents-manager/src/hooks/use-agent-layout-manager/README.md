@@ -75,6 +75,7 @@ The hook automatically manages these CSS classes based on the chat state:
 - `agents-manager-sidebar-container--sidebar-open` is added when the sidebar is open
 - `agents-manager-sidebar-container--closing` is added during the close transition and removed once complete
 - `agents-manager-chat--docked` or `agents-manager-chat--undocked` based on mode
+- `is-split-screen` is toggled on the container when the `isSplitScreen` option is `true`, letting consumer SCSS opt into a wider docked layout
 
 **SCSS Example:**
 
@@ -138,6 +139,8 @@ The hook accepts a single options object. All properties are optional.
 - **`onDock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to docked (sidebar) mode.
 
 - **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
+
+- **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
 
 ### Return Value
 

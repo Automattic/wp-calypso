@@ -40,7 +40,7 @@
 		"@babel/runtime": "^7.27.1",
 		"@wordpress/base-styles": "^8.0.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/react-i18n": "^4.46.0"
 	},
 	"peerDependencies": {

@@ -19,23 +19,30 @@
 			grid-template-columns: 1fr 1fr;
 		}
 
+		// `has-hero-card` opts the two-card layout out of the 2-up grid and
+		// into the same stacked layout the three-card scenario uses: first
+		// card full-width on top, supporting card alone in its own row
+		// beneath it. Used whenever A4A is one of two active cards so the
+		// agency-context hero never has to compete with a single supporting
+		// card for shoulder-to-shoulder layout space. Both rows center their
+		// bullet list as a block (see the `__card-bullets` centering override
+		// below) so a card that has the row to itself reads as a deliberate
+		// hero block rather than a left-anchored list.
+		.connect-screen-features-section.has-2-card.has-hero-card & {
+			grid-template-columns: 1fr;
+		}
+
 		// Three cards stack the highest-priority family (A4A) full-width on
 		// top, with the remaining two (Woo + Jetpack) sharing the row below
 		// — matches the two-card layout the no-A4A scenario already uses.
-		// The full-width card centers its bullets so the wider column reads
-		// as a deliberate hero block rather than a left-anchored list. See
-		// the bullet-text override below for why the text span also needs
-		// a `max-width` cap and `text-align: center` to keep the centering
-		// readable when bullets wrap.
+		// The full-width card centers its bullet list as a block so the wider
+		// column reads as a deliberate hero block rather than a left-anchored
+		// list (see the `__card-bullets` centering override below).
 		.connect-screen-features-section.has-3-card & {
 			grid-template-columns: 1fr 1fr;
 
 			.connect-screen-features-section__card:first-child {
 				grid-column: 1 / -1;
-
-				.connect-screen-features-section__card-bullet {
-					justify-content: center;
-				}
 			}
 		}
 	}
@@ -90,39 +97,32 @@
 	color: var( --color-text, #1e1e1e );
 }
 
-// A solo card has no siblings to anchor its alignment against, so center
-// the bullets in the column the same way the full-width A4A hero does in
-// the 3-card layout. Applies at every viewport — there's no row context
-// to preserve on mobile here.
-.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet {
-	justify-content: center;
-}
-
-// `justify-content: center` on the bullet row only has visible effect
-// when the row contents are narrower than the row. As soon as a bullet
-// wraps, the text span swells to fill the remaining row width and the
-// centering collapses — the bullet looks left-anchored. Capping the
-// text span at a comfortable reading width keeps the icon + text unit
-// narrow enough to leave slack for the row-level centering to work,
-// and `text-align: center` then centers each wrapped line within the
-// span itself. The cap is generous enough that almost every English
-// bullet still fits on one line; longer translated copy will wrap into
-// a tidy centered block instead of stranding to the left.
+// Center the bullet list as a block under the logo while keeping each
+// bullet left-aligned with its checkmark. Centering the *list* (capped
+// width + auto inline margins) instead of each bullet row keeps the
+// checkmark glued to the first line of text no matter how many lines a
+// bullet wraps into. The previous approach centered each row and capped
+// the text span at `38ch`: once a bullet wrapped, the span sat at its
+// full cap width with the text centered inside it, stranding the
+// left-anchored checkmark far to the left of the visible text.
 //
-// Applied to the same surfaces that opt into row-level centering above:
-// every card in `has-1-card`, and the full-width A4A hero in
-// `has-3-card`. The shared positional `> span:last-child` selector
-// targets the bullet's text wrapper (the icon wrapper carries
-// `aria-hidden`, the text wrapper is the second/last span).
-.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet > span:last-child,
-.connect-screen-features-section.has-3-card .connect-screen-features-section__card:first-child .connect-screen-features-section__card-bullet > span:last-child {
+// Applied to the surfaces that read as a deliberate hero block: the solo
+// card in `has-1-card`, both full-width rows in `has-2-card.has-hero-card`,
+// and the full-width A4A hero in `has-3-card`. The `38ch` cap keeps long
+// or translated copy in a comfortable reading column rather than
+// stretching across the full hero width.
+.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullets,
+.connect-screen-features-section.has-2-card.has-hero-card .connect-screen-features-section__card-bullets,
+.connect-screen-features-section.has-3-card .connect-screen-features-section__card:first-child .connect-screen-features-section__card-bullets {
+	width: fit-content;
+
 	// `ch` is the right unit semantically (character-count cap, not a
 	// font-size derivative) but is off the project's allowed list — the
 	// existing `28ch` / `30ch` / `55ch` overrides elsewhere in the
 	// codebase follow the same per-line escape hatch.
 	// stylelint-disable-next-line unit-allowed-list
 	max-width: 38ch;
-	text-align: center;
+	margin-inline: auto;
 }
 
 .connect-screen-features-section__card-bullet-icon {

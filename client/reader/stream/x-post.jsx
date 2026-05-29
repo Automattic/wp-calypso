@@ -9,11 +9,10 @@ import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
@@ -150,9 +149,7 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, postKey, translate, currentRoute, hasOrganization, isWPForTeamsItem } =
-			this.props;
-		const { blogId: siteId } = postKey;
+		const { post, translate, currentRoute, hasOrganization, isWPForTeamsItem } = this.props;
 
 		let isSeen = false;
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
@@ -194,7 +191,6 @@ class CrossPost extends PureComponent {
 					) }
 					{ post.author && this.getDescription( post.author.first_name ) }
 				</div>
-				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			</Card>
 		);
 	}
@@ -204,26 +200,23 @@ class CrossPost extends PureComponent {
 const ConnectedCrossPost = connect( ( state, ownProps ) => {
 	const { feedId, blogId } = ownProps.postKey;
 	const feed = ownProps.feed;
-	let site;
-	if ( feedId ) {
-		site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
-	} else {
-		site = getSite( state, blogId );
-	}
+	const site = ownProps.site;
 	return {
 		currentRoute: getCurrentRoute( state ),
 		isWPForTeamsItem:
 			isSiteWPForTeams( state, blogId ) ||
-			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
+			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ) ||
+			( site?.ID ? isSiteWPForTeams( state, site.ID ) : false ),
 		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
-		feed,
-		site,
 	};
 } )( localize( CrossPost ) );
 
 export default function CrossPostContainer( props ) {
-	const { feedId } = props.postKey;
-	const { data: feed } = useFeedQuery( feedId );
-
-	return <ConnectedCrossPost { ...props } feed={ feed } />;
+	const { feedId, blogId } = props.postKey || {};
+	const { data: feedFromKey } = useFeedQuery( feedId );
+	const siteId = blogId || ( feedFromKey?.blog_ID !== 0 ? feedFromKey?.blog_ID : undefined );
+	const { site } = useSite( siteId );
+	const resolvedFeedId = feedId || site?.feed_ID;
+	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
+	return <ConnectedCrossPost { ...props } site={ site } feed={ feedFromKey || feedFromSite } />;
 }

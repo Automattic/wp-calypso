@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -15,7 +15,6 @@ import FeedStreamSidebar from 'calypso/reader/stream/site-feed-sidebar';
 import { useSelector } from 'calypso/state';
 import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
 import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import EmptyContent from './empty';
 
 const emptyContent = () => <EmptyContent />;
@@ -23,7 +22,7 @@ const emptyContent = () => <EmptyContent />;
 const SiteStream = ( props ) => {
 	const { className = 'is-site-stream', siteId } = props;
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const { site, siteError } = useSite( siteId );
 	const { data: feed, isError: isFeedError } = useFeedQuery( site?.feed_ID );
 	const isBlocked = useSelector( ( state ) => isSiteBlocked( state, siteId ) );
 	const postCount = useSelector(
@@ -45,7 +44,7 @@ const SiteStream = ( props ) => {
 		return <SiteBlocked title={ title } siteId={ siteId } />;
 	}
 
-	if ( ( site && site.is_error ) || isFeedError ) {
+	if ( siteError || ( site && site.is_error ) || isFeedError || ( feed && feed.is_error ) ) {
 		return <FeedError sidebarTitle={ title } />;
 	}
 
@@ -82,7 +81,6 @@ const SiteStream = ( props ) => {
 			/>
 			<ReaderFeedHeader site={ site } feed={ feed } streamKey={ props.streamKey } />
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
-			{ ! site && <QueryReaderSite siteId={ siteId } /> }
 		</Stream>
 	);
 };

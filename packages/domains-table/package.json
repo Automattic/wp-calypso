@@ -72,7 +72,7 @@
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
 		"@wordpress/data": "^10.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

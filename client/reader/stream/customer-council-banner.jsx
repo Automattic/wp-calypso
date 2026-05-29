@@ -1,4 +1,4 @@
-import { readFeedSiteQuery, readTeamsQuery } from '@automattic/api-queries';
+import { readSiteQuery, readTeamsQuery } from '@automattic/api-queries';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import Banner from 'calypso/components/banner';
@@ -16,7 +16,7 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 		data: p2,
 		isFetched: checkedAlreadySubscribed,
 		isFetching: checkingAlreadySubscribed,
-	} = useQuery( readFeedSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) ) );
+	} = useQuery( readSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) ) );
 	const alreadySubscribed = p2?.is_following;
 
 	const { data: teamsData } = useQuery( readTeamsQuery() );
