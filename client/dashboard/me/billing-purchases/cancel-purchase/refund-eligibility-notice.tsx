@@ -29,7 +29,7 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 				variant="info"
 				actions={
 					<RouterLinkButton
-						variant="primary"
+						variant="secondary"
 						__next40pxDefaultSize
 						to={ cancelPurchaseRoute.fullPath }
 						params={ { purchaseId: String( purchase.ID ) } }
