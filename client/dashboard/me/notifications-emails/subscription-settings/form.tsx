@@ -55,14 +55,12 @@ const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
 	} );
 
 const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string ) => {
-	if ( isUtcFallback || ! timezone ) {
-		return __( "We couldn't detect your time zone, so these times are shown in UTC." );
-	}
-
 	return sprintf(
-		// translators: %(timezone)s is the timezone E.g. America/New_York
-		__( 'Times are shown in your local time zone (%(timezone)s).' ),
-		{ timezone }
+		// translators: %(timezone)s is the timezone E.g. America/New_York, or UTC when the device time zone is unknown.
+		__( 'Timezone: %(timezone)s' ),
+		{
+			timezone: isUtcFallback || ! timezone ? 'UTC' : timezone,
+		}
 	);
 };
 
