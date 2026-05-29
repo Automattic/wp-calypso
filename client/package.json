@@ -256,7 +256,7 @@
 		"@types/redux-mock-store": "1.5.0",
 		"autoprefixer": "^10.4.21",
 		"component-query": "^0.0.3",
-		"html-loader": "^0.5.5",
+		"html-loader": "^5.1.0",
 		"ignore-loader": "^0.1.2",
 		"pkg-dir": "^5.0.0",
 		"react-router": "^6.23.1",
