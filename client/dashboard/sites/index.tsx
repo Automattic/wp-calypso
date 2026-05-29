@@ -254,7 +254,7 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ userHasSites ? (
+				{ userHasSites || isFilteringDeletedSites ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
