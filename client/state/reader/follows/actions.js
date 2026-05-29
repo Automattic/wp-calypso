@@ -17,6 +17,7 @@ import {
 	READER_FOLLOWS_MARK_AS_STALE,
 } from 'calypso/state/reader/action-types';
 import { ReaderFollowItem } from './selectors/types';
+import { prepareComparableUrl } from './utils';
 
 import 'calypso/state/data-layer/wpcom/read/following/mine';
 import 'calypso/state/data-layer/wpcom/read/following/mine/delete';
@@ -40,7 +41,7 @@ function updateCachedReadSiteFollowStatus( feedUrl, isFollowing ) {
 	for ( const [ queryKey, site ] of queryClient.getQueriesData( {
 		queryKey: [ 'read', 'sites' ],
 	} ) ) {
-		if ( site?.feed_URL === feedUrl ) {
+		if ( prepareComparableUrl( site?.feed_URL ) === prepareComparableUrl( feedUrl ) ) {
 			queryClient.setQueryData( queryKey, {
 				...site,
 				is_following: isFollowing,

@@ -82,6 +82,27 @@ describe( 'actions', () => {
 				is_following: false,
 			} );
 		} );
+
+		test( 'should mark a cached Reader site as unfollowed when the feed URL differs only by protocol or trailing slash', () => {
+			const queryKey = readSiteQuery( 123 ).queryKey;
+			const cachedSite = {
+				ID: 123,
+				feed_URL: 'https://discover.wordpress.com/feed/',
+				is_following: true,
+			};
+			const queryClient = {
+				getQueriesData: jest.fn( () => [ [ queryKey, cachedSite ] ] ),
+				setQueryData: jest.fn(),
+			};
+			getCalypsoQueryClient.mockReturnValue( queryClient );
+
+			unfollow( 'http://discover.wordpress.com/feed' );
+
+			expect( queryClient.setQueryData ).toHaveBeenCalledWith( queryKey, {
+				...cachedSite,
+				is_following: false,
+			} );
+		} );
 	} );
 
 	describe( '#recordFollowError', () => {
