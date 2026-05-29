@@ -798,7 +798,9 @@ export default function CheckoutMainContent( {
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
 								// Touch the fields so they display validation errors
-								shouldShowContactDetailsValidationErrors && touchContactFields();
+								if ( shouldShowContactDetailsValidationErrors ) {
+									touchContactFields();
+								}
 								const validationResponse = await validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
