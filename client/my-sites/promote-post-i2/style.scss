@@ -275,6 +275,12 @@ body.is-section-promote-post-i2 {
 		}
 	}
 
+	// wp-admin's global `dd, li { margin-bottom: 6px }` makes the section-nav
+	// tabs float above the underline. Zero it so the tab text sits on the line.
+	.section-nav-tab {
+		margin-bottom: 0;
+	}
+
 	&__promote-button.is-primary {
 		background-color: #E65054;
 		border-color: #E65054;
