@@ -10,6 +10,7 @@ import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
+	isDomainFlow,
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
@@ -49,6 +50,7 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { DomainFlowProgressStepper } from '../../../flows/domain/components/domain-flow-progress-stepper';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
@@ -736,6 +738,7 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
+								{ isDomainFlow( flowName ) && <DomainFlowProgressStepper currentStep="plans" /> }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle
