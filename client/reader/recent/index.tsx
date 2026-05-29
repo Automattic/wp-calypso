@@ -4,12 +4,13 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
+import { useFollows } from 'calypso/reader/data/follows';
 import { useCachedPosts } from 'calypso/reader/data/post/cache';
 import {
 	isPaddingStreamItem,
@@ -19,7 +20,6 @@ import {
 } from 'calypso/reader/data/stream';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import Skeleton from '../components/skeleton';
@@ -102,11 +102,15 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		[ postItems ]
 	);
 	const cachedPosts = useCachedPosts( postKeys );
-	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
+	const { follows } = useFollows();
+	const siteIconsByFeedId = useMemo( () => {
 		const items = streamItems;
 		if ( ! items ) {
 			return {};
 		}
+		const followsByFeedId = new Map(
+			follows.map( ( follow ) => [ Number( follow.feed_ID ), follow ] )
+		);
 
 		return items.reduce( ( acc: Record< number, unknown >, item: StreamListItem ) => {
 			if ( isPaddingStreamItem( item ) || item.feedId == null ) {
@@ -114,14 +118,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			}
 
 			const feedId = Number( item.feedId );
-			const feedSubscription = getReaderFollowForFeed( state, feedId );
+			const feedSubscription = followsByFeedId.get( feedId );
 			if ( feedSubscription?.site_icon ) {
 				acc[ feedId ] = feedSubscription.site_icon;
 			}
 
 			return acc;
 		}, {} );
-	}, shallowEqual );
+	}, [ follows, streamItems ] );
 
 	const posts = useMemo( () => {
 		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {

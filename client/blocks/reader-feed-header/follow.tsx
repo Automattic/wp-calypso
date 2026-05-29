@@ -7,13 +7,13 @@ import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notificat
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useHasFollowOrganization, useIsFollowing } from 'calypso/reader/data/follows';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl, getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -55,41 +55,33 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const resolvedFeed = feed ?? fetchedFeed;
 	const siteUrl = getSiteUrl( { feed: resolvedFeed, site } );
 	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } );
+	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID ?? 0;
+	const followFeedId = resolvedFeed?.feed_ID ?? 0;
+	const reduxFollowing = useIsFollowing( { feedUrl: followFeedUrl } );
+	const hasOrganization = useHasFollowOrganization( followFeedId, resolvedSiteId );
 	const {
 		isRecommended,
 		isUpdating: isRecommendationPending,
 		toggleRecommended,
 	} = useFeedRecommendationsMutation( feedId as number );
 
-	const {
-		following,
-		hasOrganization,
-		isEmailBlocked,
-		isWPForTeamsItem,
-		subscriptionId,
-		blogOwner,
-	} = useSelector( ( state: AppState ) => {
-		let _siteId = siteId ?? 0;
-		const _feedId = resolvedFeed?.feed_ID ?? 0;
-		const _feed: ReaderFeed | undefined = resolvedFeed;
-		const reduxFollowing = followFeedUrl ? isFollowing( state, { feedUrl: followFeedUrl } ) : false;
+	const { isEmailBlocked, isWPForTeamsItem, subscriptionId, blogOwner } = useSelector(
+		( state: AppState ) => {
+			const _feed: ReaderFeed | undefined = resolvedFeed;
 
-		if ( _feed && ! _siteId ) {
-			_siteId = _feed.blog_ID || 0;
-		}
-
-		return {
-			following: reduxFollowing || !! site?.is_following,
-			hasOrganization: Boolean( hasReaderFollowOrganization( state, _feedId, _siteId ) ),
-			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-			isWPForTeamsItem: Boolean(
-				isSiteWPForTeams( state, _siteId ) ||
-					( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false )
-			),
-			subscriptionId: _feed?.subscription_id,
-			blogOwner: _feed?.blog_owner,
-		};
-	}, shallowEqual );
+			return {
+				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
+				isWPForTeamsItem: Boolean(
+					isSiteWPForTeams( state, resolvedSiteId ) ||
+						( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false )
+				),
+				subscriptionId: _feed?.subscription_id,
+				blogOwner: _feed?.blog_owner,
+			};
+		},
+		shallowEqual
+	);
+	const following = reduxFollowing || !! site?.is_following;
 
 	const openSuggestedFollowsModal = ( followClicked: boolean ) => {
 		const displayName = site?.name || filterURLForDisplay( resolvedFeed?.feed_URL ?? '' );
