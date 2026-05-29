@@ -398,12 +398,35 @@ export interface UploadBlobResult {
 	blob: AtmosphereBlobRef;
 }
 
+export interface CreatePostInteractionSettings {
+	/**
+	 * Reply gating. Omit field entirely → backend writes no threadgate
+	 * (= anyone can reply). `{ kind: 'nobody' }` disables replies altogether.
+	 * `{ kind: 'combo', ... }` enables one or more of the follower / following /
+	 * mention rules.
+	 */
+	reply_allow?:
+		| { kind: 'nobody' }
+		| {
+				kind: 'combo';
+				follower?: boolean;
+				following?: boolean;
+				mention?: boolean;
+		  };
+	/**
+	 * Omit field → backend writes no postgate (= quotes allowed). Only `false`
+	 * is meaningful; the backend rejects an explicit `true`.
+	 */
+	allow_quotes?: false;
+}
+
 export interface CreatePostParams {
 	connectionId: number;
 	text: string;
 	reply?: { root: AtUriRef; parent: AtUriRef };
 	quote?: AtUriRef;
 	media?: { images: AtmosphereImageEmbed[] };
+	interaction_settings?: CreatePostInteractionSettings;
 }
 
 export interface CreatePostResult {

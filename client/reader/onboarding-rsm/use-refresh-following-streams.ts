@@ -1,8 +1,12 @@
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+	getStreamInfiniteQueryKeyPrefix,
+	invalidatePaginatedStream,
+} from 'calypso/reader/data/stream';
 import { getOnThisDayStreamKey } from 'calypso/reader/on-this-day/get-stream-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
@@ -20,6 +24,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
  */
 export const useRefreshFollowingStreams = () => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const queryArguments = useSelector( getCurrentQueryArguments );
 
 	return () => {
@@ -27,20 +32,14 @@ export const useRefreshFollowingStreams = () => {
 
 		const path = removeLocaleFromPathLocaleInFront( window.location.pathname );
 
-		const refreshStream = ( streamKey: string ) => {
-			dispatch( clearStream( { streamKey } ) );
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- stream actions payload typing
-			dispatch( requestPage( { streamKey } as any ) );
-		};
-
 		const isOnReaderFeed = path === '/reader';
 		if ( isOnReaderFeed ) {
-			refreshStream( 'following' );
+			queryClient.invalidateQueries( { queryKey: getStreamInfiniteQueryKeyPrefix( 'following' ) } );
 		}
 
 		const isOnThisDayRoute = path === '/reader/on-this-day';
 		if ( isOnThisDayRoute ) {
-			refreshStream( getOnThisDayStreamKey( queryArguments ) );
+			invalidatePaginatedStream( queryClient, getOnThisDayStreamKey( queryArguments ) );
 		}
 	};
 };

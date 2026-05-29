@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
-import { Icon, moreVertical, page, trash, warning } from '@wordpress/icons';
+import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
 import { useState } from 'react';
 import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
@@ -88,9 +88,33 @@ function DeliverablePreview( { output }: Props ) {
 		);
 	}
 
+	// Server-rendered preview URLs land directly on the output once the
+	// wpcom side pre-renders thumbnails. Until then social-campaign
+	// outputs show the placeholder icon — the deliverable detail page
+	// still composes the tiles live from the brief.
+	if ( output.previewUrls?.length ) {
+		return <PreviewUrlCollage urls={ output.previewUrls } />;
+	}
+
 	return (
 		<div className="a4a-agent-studio-deliverable-card__placeholder">
 			<Icon icon={ page } size={ 32 } />
+		</div>
+	);
+}
+
+function PreviewUrlCollage( { urls }: { urls: string[] } ) {
+	return (
+		<div className="a4a-agent-studio-deliverable-card__collage">
+			{ urls.slice( 0, 4 ).map( ( url ) => (
+				<div
+					key={ url }
+					className="a4a-agent-studio-deliverable-card__collage-tile"
+					style={ { aspectRatio: '1 / 1' } }
+				>
+					<img src={ url } alt="" />
+				</div>
+			) ) }
 		</div>
 	);
 }

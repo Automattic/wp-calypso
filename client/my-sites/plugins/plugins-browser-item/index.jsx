@@ -13,6 +13,7 @@ import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
+import { sparkleFilled } from 'calypso/my-sites/plugins/marketplace-ai-experience/sparkle-icon';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
@@ -249,9 +250,7 @@ const PluginsBrowserListElement = ( props ) => {
 				</div>
 				{ !! why && (
 					<div className="plugins-browser-item__why">
-						<span className="plugins-browser-item__why-icon" aria-hidden="true">
-							✦
-						</span>
+						<Icon className="plugins-browser-item__why-icon" icon={ sparkleFilled } size={ 18 } />
 						<div className="plugins-browser-item__why-body">
 							<span className="plugins-browser-item__why-label">
 								{ translate( 'Why this fits' ) }

@@ -946,7 +946,7 @@ export class RestAPIClient {
 					Authorization: await this.getAuthorizationHeader( 'bearer' ),
 					...data.getHeaders(),
 				},
-				body: data.getBuffer(),
+				body: Uint8Array.from( data.getBuffer() ),
 			};
 		}
 		if ( mediaURL ) {

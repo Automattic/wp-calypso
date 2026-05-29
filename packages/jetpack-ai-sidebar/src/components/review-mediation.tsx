@@ -1,7 +1,6 @@
 /**
  * ReviewMediation — renders the AI Editorial Review card. Mounted by
- * `getChatComponent('review-mediation')` from a `big_sky__show_component`
- * orchestrator response.
+ * `getChatComponent('review-mediation')` from a show-component response.
  */
 
 /**

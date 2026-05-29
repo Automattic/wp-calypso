@@ -130,6 +130,82 @@ describe( 'Mastodon NotificationsPanel', () => {
 		await waitFor( () => expect( screen.getByText( /interacted with you/i ) ).toBeVisible() );
 	} );
 
+	it( 'routes post-target rows to the in-app thread URL using the wire status_id', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, {
+				items: [
+					{
+						id: '13371340',
+						protocol_type: 'mention',
+						canonical_type: 'mention',
+						actor: {
+							handle: 'jane@mastodon.social',
+							display_name: 'Jane',
+							avatar_url: null,
+							profile_uri: 'https://mastodon.social/@jane',
+						},
+						// Wire format per the wpcom NotificationsNormalizer:
+						// `mastodon:<instance>:<status_id>`. The status id is the
+						// home-instance local id, exactly what the in-app thread
+						// route expects.
+						target: {
+							kind: 'post',
+							uri: 'mastodon:mastodon.social:200',
+							excerpt: '@me hi',
+						},
+						target_url: 'https://mastodon.social/@jane/200',
+						created_at: '2026-05-11T15:00:00Z',
+						is_read: false,
+					},
+				],
+				next_cursor: null,
+				seen_at: null,
+			} );
+		renderWithProvider( <NotificationsPanel connection={ connection } /> );
+		const link = await screen.findByRole( 'link', { name: /jane mentioned you/i } );
+		expect( link ).toHaveAttribute( 'href', '/reader/mastodon/101/thread/200' );
+		expect( link ).not.toHaveAttribute( 'target' );
+	} );
+
+	it( 'falls back to target_url when the wire target.uri does not match the expected shape', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, {
+				items: [
+					{
+						id: '13371341',
+						protocol_type: 'mention',
+						canonical_type: 'mention',
+						actor: {
+							handle: 'jane@mastodon.social',
+							display_name: 'Jane',
+							avatar_url: null,
+							profile_uri: 'https://mastodon.social/@jane',
+						},
+						// Malformed: status id is non-numeric. The resolver returns
+						// null and the row should render the external target_url.
+						target: {
+							kind: 'post',
+							uri: 'mastodon:mastodon.social:abc',
+							excerpt: '@me hi',
+						},
+						target_url: 'https://mastodon.social/@jane/abc',
+						created_at: '2026-05-11T15:30:00Z',
+						is_read: false,
+					},
+				],
+				next_cursor: null,
+				seen_at: null,
+			} );
+		renderWithProvider( <NotificationsPanel connection={ connection } /> );
+		const link = await screen.findByRole( 'link', { name: /jane mentioned you/i } );
+		expect( link ).toHaveAttribute( 'href', 'https://mastodon.social/@jane/abc' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
 	it( 'renders an empty state when no notifications', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )

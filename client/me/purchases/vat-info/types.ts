@@ -1,4 +1,4 @@
-import type { Field, NormalizedField } from '@wordpress/dataviews';
+import type { DataFormControlProps } from '@wordpress/dataviews';
 
 export interface VatFormData {
 	country: string;
@@ -7,22 +7,17 @@ export interface VatFormData {
 	address: string;
 }
 
-export type VatField = Field< VatFormData > & {
+/**
+ * Per-field configuration that the custom DataForm controls need but that is
+ * not part of the DataViews `Field` API. It is provided through React context
+ * because `@wordpress/dataviews` strips unknown properties when normalizing
+ * fields.
+ */
+export interface VatFieldConfig {
 	isDisabled?: boolean;
 	isVatAlreadySet?: boolean;
 	canUserEdit?: boolean;
 	taxName?: string;
-};
-
-export type VatNormalizedField = NormalizedField< VatFormData > & {
-	isDisabled?: boolean;
-	isVatAlreadySet?: boolean;
-	canUserEdit?: boolean;
-	taxName?: string;
-};
-
-export interface VatFormControlProps {
-	data: VatFormData;
-	field: VatNormalizedField;
-	onChange: ( edits: Partial< VatFormData > ) => void;
 }
+
+export type VatFormControlProps = DataFormControlProps< VatFormData >;

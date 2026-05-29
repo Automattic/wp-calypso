@@ -76,10 +76,10 @@ const SitesList = ( {
 									sprintf(
 										// translators: maxResults is the maximum number of list results.
 										__(
-											'Only displaying the first %(maxResults)d sites.<br />Use search to refine.'
+											'Only displaying the first %(maxResults)d sites.<br/>Use search to refine.'
 										),
 										{
-											maxResults,
+											maxResults: maxResults ?? 0,
 										}
 									),
 									{

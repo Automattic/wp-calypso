@@ -4,9 +4,14 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { mapStateToFullPostProps, withFullPostNavigation } from '../index';
+
+jest.mock( 'calypso/reader/data/comments', () => ( {
+	usePostCommentsApiDisabled: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/reader/data/post', () => ( {
 	usePost: jest.fn(),
@@ -41,7 +46,6 @@ const createMockStore = () => {
 const fullPostState = {
 	route: { path: { current: '/reader/blogs/100/posts/1' } },
 	ui: { appBanner: {}, section: {}, selectedSiteId: null },
-	comments: { apiDisabled: {} },
 	reader: {
 		feeds: { items: {} },
 		follows: { items: {} },
@@ -86,7 +90,6 @@ describe( 'mapStateToFullPostProps', () => {
 			...fullPostState,
 			reader: {
 				...fullPostState.reader,
-				feeds: { items: { 200: feed } },
 				follows: { items: { follow: { feed_ID: 200, site_icon: 'https://example.com/icon.png' } } },
 			},
 		};
@@ -95,6 +98,7 @@ describe( 'mapStateToFullPostProps', () => {
 			feedId: 200,
 			postId: 1,
 			post: { ID: 1, site_ID: 2, is_external: true },
+			feed,
 		} );
 
 		expect( props.feed ).toEqual( {
@@ -112,6 +116,7 @@ describe( 'mapStateToFullPostProps', () => {
 
 describe( 'withFullPostNavigation', () => {
 	beforeEach( () => {
+		usePostCommentsApiDisabled.mockReturnValue( false );
 		usePost.mockImplementation( ( postKey ) => ( {
 			data: postKey?.postId ? { ID: postKey.postId, site_ID: postKey.blogId } : undefined,
 		} ) );
@@ -144,12 +149,40 @@ describe( 'withFullPostNavigation', () => {
 		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 9 } );
 		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 1 } );
 		expect( usePost ).toHaveBeenCalledWith( { blogId: 100, postId: 3 } );
+		expect( usePostCommentsApiDisabled ).toHaveBeenCalledWith(
+			{ siteId: 100, postId: 2 },
+			{ enabled: true }
+		);
 		expect( WrappedComponent ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				post: { ID: 2, site_ID: 100 },
 				referralPost: { ID: 9, site_ID: 100 },
+				commentsApiDisabled: false,
 				previousPost: { ID: 1, site_ID: 100 },
 				nextPost: { ID: 3, site_ID: 100 },
+			} ),
+			{}
+		);
+	} );
+
+	it( 'passes the comments API disabled state from Reader comment queries', () => {
+		usePostCommentsApiDisabled.mockReturnValue( true );
+		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
+		const store = createStore( ( state = {} ) => state, {
+			readerUi: { currentStream: 'following' },
+			ui: { language: { localeSlug: 'en' } },
+		} );
+
+		render(
+			<Provider store={ store }>
+				<FullPostNavigation blogId="100" postId="2" />
+			</Provider>
+		);
+
+		expect( WrappedComponent ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				commentsApiDisabled: true,
 			} ),
 			{}
 		);

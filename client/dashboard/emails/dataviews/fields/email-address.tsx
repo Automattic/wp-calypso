@@ -36,7 +36,7 @@ export const emailAddressField: Field< Email > = {
 							{ sprintf(
 								/* translators: %s is the email messages will be forwarded to. */
 								__( 'forwards to %s' ),
-								item.forwardingTo
+								item.forwardingTo ?? ''
 							) }
 						</Text>
 					</VStack>

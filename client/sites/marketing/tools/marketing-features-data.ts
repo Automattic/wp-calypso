@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { hasTranslation } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
@@ -164,7 +165,10 @@ export const getMarketingFeaturesData = (
 			categories: [ 'seo', 'new' ],
 			imagePath: rocket,
 			imageAlt: translate( 'A rocketship' ),
-			buttonText: translate( 'Register now' ),
+			buttonText:
+				hasTranslation( 'Watch the course' ) || isEnglish
+					? translate( 'Watch the course' )
+					: translate( 'Register now' ),
 			buttonHref: localizeUrl( 'https://wordpress.com/support/courses/seo/' ),
 			buttonTarget: '_blank',
 			onClick: () => {

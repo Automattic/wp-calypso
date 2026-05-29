@@ -14,11 +14,7 @@
 
 /* Card */
 @mixin dashboard-dark-theme-card {
-	.components-surface.components-card {
-		background-color: var( --dashboard-surface__background-color );
-		color: var( --dashboard__text-color );
-		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
-	}
+	@include color-scheme-dark-theme-card;
 
 	.components-surface.components-card.dashboard-notice {
 		&.is-info {
@@ -65,15 +61,6 @@
 			}
 		}
 	}
-
-	.components-card__divider {
-		color: var( --dashboard-surface__border-color );
-		border-color: var( --dashboard-surface__border-color );
-	}
-
-	.components-card__header {
-		border-bottom-color: var( --dashboard-surface__border-color );
-	}
 }
 
 /* Panel */
@@ -110,84 +97,7 @@
 
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
-	.components-input-control__container {
-		color: var( --dashboard__text-color );
-	}
-
-	.components-radio-control__input[type='radio'] {
-		border-color: var( --dashboard-field__border-color );
-		background-color: transparent;
-	}
-
-	.components-radio-control__input[type='radio']:checked {
-		border: 1px solid var( --dashboard-field__border-color );
-		background-color: var( --wp-admin-theme-color );
-	}
-
-	.components-input-control__container:has( .components-input-control__input:disabled ) {
-		background-color: var( --dashboard-surface__background-color );
-		opacity: 0.72;
-	}
-
-	.components-input-control__backdrop,
-	.components-textarea-control__input {
-		border-color: var( --dashboard-field__border-color );
-	}
-
-	.components-input-control__backdrop {
-		background-color: transparent;
-	}
-
-	.components-input-control__container:has( .components-input-control__input:disabled )
-		.components-input-control__backdrop {
-		border-color: var( --dashboard-surface__border-color );
-	}
-
-	.components-input-control__input,
-	.components-textarea-control__input,
-	.components-base-control__label,
-	.components-input-control__label,
-	.components-checkbox-control__label,
-	.components-toggle-control__label:not( .is-disabled ) {
-		color: var( --dashboard__text-color );
-	}
-
-	.components-base-control__help,
-	.components-checkbox-control__help {
-		color: var( --dashboard__text-muted-color );
-	}
-
-	.components-input-control__container .components-input-control__input,
-	.components-input-control__input,
-	.components-textarea-control__input {
-		color: var( --dashboard__text-color );
-		caret-color: var( --dashboard__text-color );
-	}
-
-	.components-input-control__container .components-input-control__input:disabled,
-	.components-input-control__input:disabled {
-		color: var( --dashboard__text-muted-color );
-	}
-
-	.components-input-control__input::placeholder,
-	.components-textarea-control__input::placeholder {
-		color: var( --dashboard__text-muted-color );
-	}
-
-	.components-input-control__container .components-input-control__input::selection,
-	.components-input-control__input::selection,
-	.components-textarea-control__input::selection {
-		background-color: var( --wp-admin-theme-color );
-		color: #fff;
-		-webkit-text-fill-color: #fff;
-	}
-
-	.components-input-control__container .components-input-control__input::-moz-selection,
-	.components-input-control__input::-moz-selection,
-	.components-textarea-control__input::-moz-selection {
-		background-color: var( --wp-admin-theme-color );
-		color: #fff;
-	}
+	@include color-scheme-dark-theme-form-controls;
 
 	.components-input-control.has-error .components-input-control__backdrop,
 	.components-input-control.has-error
@@ -221,101 +131,6 @@
 		.components-validated-control__indicator-icon {
 		fill: var( --dashboard-danger__color-hover );
 	}
-
-	.components-form-token-field {
-		.components-form-token-field__label {
-			color: var( --dashboard__text-color );
-		}
-
-		.components-form-token-field__input-container {
-			background: transparent;
-			border-color: var( --dashboard-field__border-color );
-			color: var( --dashboard__text-color );
-
-			&:focus,
-			&.is-active {
-				border-color: var( --wp-admin-theme-color );
-				box-shadow: 0 0 0 0.5px var( --wp-admin-theme-color );
-			}
-
-			&.is-disabled {
-				background: var( --dashboard-surface__background-color );
-				border-color: var( --dashboard-surface__border-color );
-				opacity: 0.72;
-			}
-
-			input[type='text'].components-form-token-field__input {
-				color: var( --dashboard__text-color );
-				caret-color: var( --dashboard__text-color );
-
-				&::placeholder {
-					color: var( --dashboard__text-muted-color );
-				}
-			}
-		}
-
-		.components-form-token-field__help {
-			color: var( --dashboard__text-muted-color );
-		}
-
-		.components-form-token-field__token {
-			color: var( --dashboard__text-color );
-
-			&.is-validating .components-form-token-field__token-text,
-			&.is-validating .components-form-token-field__remove-token {
-				color: var( --dashboard__text-muted-color );
-			}
-
-			&.is-success .components-form-token-field__token-text,
-			&.is-success .components-form-token-field__remove-token {
-				background: var( --dashboard__foreground-color-success );
-				color: var( --wp-components-color-foreground-inverted );
-			}
-
-			&.is-error .components-form-token-field__token-text,
-			&.is-error .components-form-token-field__remove-token {
-				background: var( --dashboard__foreground-color-error );
-				color: var( --wp-components-color-foreground-inverted );
-			}
-		}
-
-		.components-form-token-field__token-text,
-		.components-form-token-field__remove-token.components-button {
-			background: var( --wp-components-color-gray-200 );
-			color: var( --dashboard__text-color );
-		}
-
-		.components-form-token-field__remove-token.components-button:hover:not( :disabled ) {
-			background: var( --wp-components-color-gray-300 );
-			color: var( --dashboard__text-color );
-		}
-
-		.components-form-token-field__suggestions-list {
-			background: var( --dashboard-surface__background-color );
-			box-shadow: inset 0 1px 0 0 var( --dashboard-field__border-color );
-		}
-
-		.components-form-token-field__suggestion {
-			color: var( --dashboard__text-color );
-
-			&.is-selected {
-				background: var( --dashboard-item-selected__background-color );
-				color: var( --dashboard__text-color );
-			}
-
-			&[aria-disabled='true'] {
-				color: var( --dashboard__text-muted-color );
-			}
-
-			&[aria-disabled='true'].is-selected {
-				background: color-mix(
-					in srgb,
-					var( --dashboard-surface__background-color ) 92%,
-					var( --wp-admin-theme-color )
-				);
-			}
-		}
-	}
 }
 
 /* Destructive Secondary Button */
@@ -348,54 +163,6 @@
 				var( --dashboard__text-muted-color ) 45%,
 				var( --dashboard__background-color )
 			);
-		}
-	}
-}
-
-/* Summary Buttons */
-@mixin dashboard-dark-theme-summary-button {
-	.summary-button.components-button {
-		color: var( --dashboard__text-color );
-
-		.summary-button-title {
-			color: var( --dashboard__text-color );
-		}
-
-		.summary-button-navigation-icon,
-		.summary-button-decoration,
-		.summary-button-decoration svg {
-			color: var( --dashboard__text-muted-color );
-			fill: var( --dashboard__text-muted-color );
-		}
-
-		&.has-density-low {
-			background-color: var( --dashboard-surface__background-color );
-			border-color: var( --dashboard-surface__border-color );
-		}
-
-		&.has-density-medium,
-		&.has-density-medium-low {
-			border-bottom-color: var( --dashboard-surface__border-color );
-		}
-
-		&:hover:not( :disabled, [aria-disabled='true'] ) {
-			background: color-mix(
-				in srgb,
-				var( --dashboard-surface__background-color ) 82%,
-				var( --wp-admin-theme-color )
-			);
-			color: var( --dashboard__text-color );
-
-			.summary-button-title {
-				color: var( --dashboard-menu-item-active__color );
-			}
-
-			.summary-button-navigation-icon,
-			.summary-button-decoration,
-			.summary-button-decoration svg {
-				color: var( --dashboard-menu-item-active__color );
-				fill: var( --dashboard-menu-item-active__color );
-			}
 		}
 	}
 }
@@ -457,116 +224,7 @@
 
 /* Data Views */
 @mixin dashboard-dark-theme-dataviews {
-	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
-
-	// Table
-	.dataviews-view-table {
-		// Match the upstream light-mode table default, where non-primary fields
-		// use `$gray-700` (`--dashboard__text-muted-color` in app-dotcom).
-		color: var( --dashboard__text-muted-color );
-
-		th {
-			color: var( --dashboard__text-color );
-		}
-
-		tr {
-			border-top-color: var( --dashboard-surface__border-color );
-		}
-
-		th.dataviews-view-table__actions-column--stuck::after,
-		td.dataviews-view-table__actions-column--stuck::after {
-			background-color: var( --dashboard-surface__border-color );
-		}
-
-		thead.dataviews-view-table__thead--stuck::after {
-			background-color: var( --dashboard-surface__background-color );
-		}
-
-		.dataviews-view-table-header-button:not( :hover ) {
-			color: var( --dashboard__text-color );
-		}
-
-		.dataviews-view-table__group-header-cell {
-			color: var( --dashboard__text-color );
-		}
-
-		// Selected rows (upstream mixes the admin color with hardcoded `#fff`,
-		// which produces a light tint against the dark surface).
-		tr.is-selected,
-		tr.is-selected .dataviews-view-table__actions-column--sticky,
-		&.has-bulk-actions tr.is-selected .dataviews-view-table__actions-column--sticky,
-		&.has-bulk-actions tr.is-selected:hover .dataviews-view-table__actions-column--sticky {
-			background-color: var( --dashboard-item-selected__background-color );
-		}
-
-		tr.is-selected {
-			color: var( --dashboard__text-color );
-
-			&,
-			& + tr {
-				border-top-color: var( --dashboard-item-selected__border-color );
-			}
-		}
-	}
-
-	// Title field (used as the row's primary link/label)
-	.dataviews-title-field,
-	.dataviews-title-field a,
-	.dataviews-title-field button.components-button.is-link,
-	.dataviews-title-field--clickable {
-		color: var( --dashboard__text-color );
-
-		&:hover {
-			color: var( --wp-admin-theme-color );
-		}
-	}
-
-	.dashboard-dataviews-empty-state__heading {
-		color: var( --dashboard__text-color );
-	}
-
-	// Grid
-	.dataviews-view-grid__media {
-		background-color: var( --dashboard-surface__background-color );
-
-		.dataviews-view-grid__media-placeholder {
-			background: var( --dashboard-surface__background-color );
-		}
-	}
-
-	.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button {
-		background-color: var( --dashboard-surface__background-color );
-	}
-
-	// List
-	.dataviews-view-list div[role='row'],
-	.dataviews-view-list div[role='article'] {
-		border-top-color: var( --dashboard-surface__border-color );
-	}
-
-	.dataviews-view-list div[role='row'].is-selected,
-	.dataviews-view-list div[role='article'].is-selected {
-		border-top-color: var( --dashboard-item-selected__border-color );
-
-		& + div[role='row'],
-		& + div[role='article'] {
-			border-top-color: var( --dashboard-item-selected__border-color );
-		}
-
-		.dataviews-view-list__item-wrapper {
-			background-color: var( --dashboard-item-selected__background-color );
-			color: var( --dashboard__text-color );
-
-			.dataviews-title-field,
-			.dataviews-view-list__field {
-				color: var( --dashboard__text-color );
-			}
-		}
-	}
-
-	.dataviews-view-list .dataviews-view-list__field {
-		color: var( --dashboard-subtle__color );
-	}
+	@include color-scheme-dark-theme-dataviews;
 
 	.dataviews-view-list__media-wrapper:has( .dashboard-backups__list-icon ) {
 		background-color: var( --wp-components-color-gray-200 );
@@ -590,40 +248,6 @@
 
 		&::after {
 			box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
-		}
-	}
-
-	// Filter summary chips (upstream hardcodes `$gray-100`/`$gray-200` and
-	// `$gray-800`/`$gray-900` which don't respond to the dark theme).
-	.dataviews-filters__summary-chip-container .dataviews-filters__summary-chip {
-		// This is hardcoded to #e0e0e0 in light-mode.
-		background: var( --wp-components-color-gray-200 );
-		color: var( --wp-components-color-gray-800 );
-
-		&:hover:not( &.is-not-clickable ),
-		&:focus-visible,
-		&[aria-expanded='true'] {
-			background: var( --wp-components-color-gray-300 );
-			color: var( --wp-components-color-gray-800 );
-		}
-	}
-
-	// Footer
-	.dataviews-footer {
-		border-top-color: var( --dashboard-surface__border-color );
-	}
-
-	// "N items" count in the footer (hardcoded to #1e1e1e upstream).
-	.dataviews-bulk-actions-footer__item-count {
-		color: var( --dashboard__text-color );
-	}
-
-	// URL field override from our local styles.scss
-	a.dataviews-url-field {
-		color: var( --dashboard-subtle__color );
-
-		&:hover {
-			color: var( --wp-admin-theme-color );
 		}
 	}
 }
@@ -828,5 +452,5 @@
 	@include dashboard-dark-theme-section-header;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-logs-badges;
-	@include dashboard-dark-theme-summary-button;
+	@include color-scheme-dark-theme-summary-button;
 }

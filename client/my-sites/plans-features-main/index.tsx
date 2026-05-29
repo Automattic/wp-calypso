@@ -182,6 +182,7 @@ export interface PlansFeaturesMainProps {
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
+	onReady?: () => void;
 
 	/*
 	 * Shows the free plan as a plain text anchor instead of a plan card.
@@ -241,6 +242,7 @@ const PlansFeaturesMain = ( {
 	coupon,
 	onPlanIntervalUpdate,
 	selectedThemeType,
+	onReady,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -742,6 +744,12 @@ const PlansFeaturesMain = ( {
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading;
+
+	useEffect( () => {
+		if ( isPlansGridReady ) {
+			onReady?.();
+		}
+	}, [ isPlansGridReady, onReady ] );
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;

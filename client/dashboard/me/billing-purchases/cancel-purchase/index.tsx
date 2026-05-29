@@ -208,6 +208,43 @@ const getDowngradePlanForPurchase = (
 	}
 };
 
+function getYearlyPlanSlug( plans: PlanProduct[], purchase: Purchase ): string {
+	if ( ! plans ) {
+		return '';
+	}
+	// Only for monthly plans
+	if ( purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
+		return '';
+	}
+
+	const plan = plans.find( ( p ) => p.product_id === purchase.product_id );
+	if ( ! plan ) {
+		return '';
+	}
+
+	// Strategy 1: downgrade_paths — look for annual billing period
+	const annualPath = plan.downgrade_paths.find(
+		( path ) => path.bill_period === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+	);
+	if ( annualPath ) {
+		return annualPath.product_slug;
+	}
+
+	// Strategy 2: product_tier_id match from full plans list
+	if ( plan.product_tier_id ) {
+		const annualPlan = plans.find(
+			( p ) =>
+				p.product_tier_id === plan.product_tier_id &&
+				p.bill_period === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+		);
+		if ( annualPlan ) {
+			return annualPlan.product_slug;
+		}
+	}
+
+	return '';
+}
+
 function getOfferDiscountBasedOnPurchasePrice(
 	purchase: Purchase,
 	cancellationOffer: CancellationOffer | undefined
@@ -520,6 +557,7 @@ function CancelPurchaseInner() {
 	let questionTwoOrder = [];
 
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, state.upsell );
+	const yearlyPlanSlug = getYearlyPlanSlug( plans, purchase );
 
 	const getActiveMarketplaceSubscriptions = (): Purchase[] => {
 		if ( ! purchase.is_plan || ! productsList ) {
@@ -539,7 +577,9 @@ function CancelPurchaseInner() {
 		cancellationOffer,
 		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
-		userHasCompletedCancelSurveyForPurchase,
+		userHasCompletedCancelSurveyForPurchase: isSplitCancelRemoveEnabled
+			? false
+			: userHasCompletedCancelSurveyForPurchase,
 	} );
 
 	const initSurveyState = () => {
@@ -855,9 +895,11 @@ function CancelPurchaseInner() {
 		const cancelActiveSubscriptions: Purchase[] = [];
 		const marketplaceSubscriptions = getActiveMarketplaceSubscriptions();
 		marketplaceSubscriptions.forEach( ( subscription ) => {
-			hasAmountAvailableToRefund( subscription )
-				? cancelAndRefundActiveSubscriptions.push( subscription )
-				: cancelActiveSubscriptions.push( subscription );
+			if ( hasAmountAvailableToRefund( subscription ) ) {
+				cancelAndRefundActiveSubscriptions.push( subscription );
+			} else {
+				cancelActiveSubscriptions.push( subscription );
+			}
 		} );
 		cancelAndRefundActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
 			cancelAndRefundMutation.mutate(
@@ -1197,7 +1239,7 @@ function CancelPurchaseInner() {
 					} );
 				},
 				onError: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1321,7 +1363,7 @@ function CancelPurchaseInner() {
 					} );
 				},
 				onError: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1402,7 +1444,7 @@ function CancelPurchaseInner() {
 			survey_responses: enrichedSurveyData( surveyData, purchase ),
 		} );
 
-		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW && ! isSplitCancelRemoveEnabled ) {
 			cancelPurchaseSurveyCompleted();
 		}
 
@@ -1693,6 +1735,7 @@ function CancelPurchaseInner() {
 			surveyStep={ state.surveyStep }
 			allSteps={ allSteps }
 			upsell={ state.upsell }
+			yearlyPlanSlug={ yearlyPlanSlug }
 		/>
 	);
 	return (
@@ -1769,7 +1812,9 @@ function CancelPurchaseInner() {
 									primaryButtonText={ __( 'Continue' ) }
 									removePlan={ handleMarketplaceDialogContinue }
 									/* Translators: %(plan)s is the name of the plan being cancelled */
-									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
+									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {
+										plan: planName ?? '',
+									} ) }
 								/>
 							) }
 						</VStack>

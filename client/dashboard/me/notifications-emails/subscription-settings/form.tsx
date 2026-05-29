@@ -97,10 +97,9 @@ const baseFields: Field< SettingsData >[] = [
 		label: __( 'Hour' ),
 		type: 'integer' as const,
 		description: sprintf(
-			// translators: %s is the timezone E.g. America/New_York
+			// translators: %(timezone)s is the timezone E.g. America/New_York
 			__( 'Timezone: %(timezone)s' ),
 			{
-				context: 'Timezone description',
 				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			}
 		),

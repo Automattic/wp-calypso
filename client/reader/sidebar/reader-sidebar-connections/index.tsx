@@ -4,8 +4,6 @@ import {
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
 import { Icon, people } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
@@ -237,12 +235,12 @@ function ReaderSidebarConnections( { path }: Props ) {
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
-				title={ translate( 'Social' ) }
+				title={ translate( 'Social Feeds' ) }
 				customIcon={ <Icon className="sidebar__menu-icon" icon={ people } /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
-				className={ ! isOpen ? 'sidebar__menu--selected' : undefined }
+				className={ ! isOpen && isOnConnections ? 'sidebar__menu--selected' : undefined }
 				count={ undefined }
 				icon={ null }
 				materialIcon={ null }
@@ -282,13 +280,6 @@ function ReaderSidebarConnections( { path }: Props ) {
 					href={ NEW_CONNECTION_PATH }
 					onClick={ recordAddAccountClick }
 				/>
-				{ showEmptyHint && (
-					<li className="sidebar-connections__empty">
-						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/reader/social/' ) }>
-							{ translate( 'Learn more about your social accounts in the Reader' ) }
-						</ExternalLink>
-					</li>
-				) }
 			</ExpandableSidebarMenu>
 		</li>
 	);

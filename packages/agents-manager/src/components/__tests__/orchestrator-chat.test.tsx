@@ -61,18 +61,27 @@ jest.mock( '../../utils/persist-last-activity', () => ( {
 } ) );
 jest.mock( '../agent-chat', () => ( {
 	__esModule: true,
-	default: ( { onSuggestionClick }: { onSuggestionClick: ( suggestion: Suggestion ) => void } ) => (
-		<button
-			onClick={ () =>
-				onSuggestionClick( {
-					id: 'simplify-text',
-					label: 'Simplify text',
-					prompt: 'Simplify this text to make it easier to read',
-				} )
-			}
-		>
-			Click suggestion
-		</button>
+	default: ( {
+		onSuggestionClick,
+	}: {
+		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
+	} ) => (
+		<>
+			<button
+				onClick={ () =>
+					onSuggestionClick( {
+						id: 'simplify-text',
+						label: 'Simplify text',
+						prompt: 'Simplify this text to make it easier to read',
+					} )
+				}
+			>
+				Click suggestion
+			</button>
+			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
+				Click string suggestion
+			</button>
+		</>
 	),
 } ) );
 
@@ -123,5 +132,78 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'dispatches the inline suggestion event when Agenttic passes a prompt string', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		fireEvent.click( screen.getByText( 'Click string suggestion' ) );
+
+		expect( listener ).toHaveBeenCalledTimes( 1 );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Check the grammar and spelling of this text',
+		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'passes the floating suggestion limit to external providers', () => {
+		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( useSuggestions ).toHaveBeenCalledWith( 3, { suggestionsVisible: true } );
+	} );
+
+	it( 'does not limit external provider suggestions while docked', () => {
+		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
 	} );
 } );

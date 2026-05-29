@@ -11,10 +11,12 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
+import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { DESCRIBE_ROUTE_PREFIX } from '../constants';
+import { sparkleFilled } from '../sparkle-icon';
 
 import './style.scss';
 
@@ -35,11 +37,9 @@ export default function MarketplaceAIBanner( {
 	if ( variant === 'slim' ) {
 		return (
 			<button type="button" className="marketplace-ai-banner is-slim" onClick={ handoff }>
-				<span className="marketplace-ai-banner__icon" aria-hidden="true">
-					✦
-				</span>
+				<Icon className="marketplace-ai-banner__icon" icon={ sparkleFilled } size={ 18 } />
 				<span className="marketplace-ai-banner__slim-text">
-					{ translate( 'Not sure what plugin you need? Describe it instead.' ) }
+					{ translate( 'Not sure which plugin you need? Describe it instead.' ) }
 				</span>
 				<span className="marketplace-ai-banner__slim-arrow" aria-hidden="true">
 					→
@@ -51,7 +51,7 @@ export default function MarketplaceAIBanner( {
 	return (
 		<Card className="marketplace-ai-banner is-hero">
 			<div className="marketplace-ai-banner__icon" aria-hidden="true">
-				✦
+				<Icon icon={ sparkleFilled } size={ 28 } />
 			</div>
 			<div className="marketplace-ai-banner__body">
 				<h3 className="marketplace-ai-banner__title">{ translate( 'Not sure which plugin?' ) }</h3>

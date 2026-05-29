@@ -10,6 +10,7 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { SiteHandoff, useHandoffMutation } from 'calypso/reader/social/site-handoff';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { buildParagraphBlocks } from './build-paragraph-blocks';
 import { useComposerConfig } from './composer-config';
 import { useComposer } from './composer-provider';
 import type { ActiveMode } from './composer-provider';
@@ -119,6 +120,8 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 		  }
 		: undefined;
 
+	const blockContent = buildParagraphBlocks( text );
+
 	return (
 		<section
 			className="social-composer__overflow-handoff"
@@ -139,14 +142,14 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 			{ preferredSite ? (
 				<PreferredSiteHandoff
 					site={ preferredSite }
-					content={ text }
+					content={ blockContent }
 					buttonLabel={ translate( 'Move to editor' ) as string }
 					tracks={ tracks }
 				/>
 			) : (
 				<SiteHandoff
 					sites={ sites }
-					content={ text }
+					content={ blockContent }
 					buttonLabel={ translate( 'Move to editor' ) as string }
 					tracks={ tracks }
 					caller="overflow_handoff"

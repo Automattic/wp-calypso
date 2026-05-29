@@ -622,7 +622,7 @@ export function OtherRenewablePurchasesNotice( {
 						__(
 							'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) is scheduled to renew, but you have <link>other upgrades</link> on this site that will expire %(earliestOtherExpiry)s unless you take action.'
 						),
-						{ purchaseName, earliestOtherExpiry }
+						{ purchaseName, earliestOtherExpiry, includedPurchaseName }
 					),
 					{ link, managePurchase }
 				);
@@ -691,9 +691,9 @@ export function OtherRenewablePurchasesNotice( {
 
 		if ( currentPurchase.payment_card_id ) {
 			const cardDetails = {
-				cardType: purchase.payment_card_type,
-				cardNumber: purchase.payment_card_id,
-				cardExpiry: purchase.payment_expiry,
+				cardType: purchase.payment_card_type ?? '',
+				cardNumber: Number( purchase.payment_card_id ) || 0,
+				cardExpiry: purchase.payment_expiry ?? '',
 			};
 
 			const translatedMessage = creditCardHasAlreadyExpired( purchase )
@@ -943,9 +943,9 @@ export function OtherRenewablePurchasesNotice( {
 
 		if ( currentPurchase.payment_card_id ) {
 			const cardDetails = {
-				cardType: purchase.payment_card_type,
-				cardNumber: purchase.payment_card_id,
-				cardExpiry: purchase.payment_expiry,
+				cardType: purchase.payment_card_type ?? '',
+				cardNumber: Number( purchase.payment_card_id ) || 0,
+				cardExpiry: purchase.payment_expiry ?? '',
 			};
 
 			const translatedMessage = creditCardHasAlreadyExpired( purchase )

@@ -149,7 +149,7 @@ const NewSiteAddressForm = ( {
 				{ sprintf(
 					/* translators: %s: site domain */
 					__( 'Once you change your site address, %s will no longer be available.' ),
-					wpcomDomain?.domain
+					wpcomDomain?.domain ?? ''
 				) }
 			</Text>
 			<form onSubmit={ handleSubmit }>

@@ -32,11 +32,11 @@ function toSeriesData( timeseries: ApmTimePoint[] ): SeriesData[] {
 	} ) );
 }
 
-function formatMsValue( value: number ): string {
+function formatMsValue( value: number, locale: string ): string {
 	return sprintf(
 		/* translators: %s is a formatted number of milliseconds, e.g. 2,500 */
 		__( '%s ms' ),
-		Math.round( value ).toLocaleString()
+		Math.round( value ).toLocaleString( locale )
 	);
 }
 
@@ -138,7 +138,7 @@ export default function ChartSlot( {
 														<Text style={ { whiteSpace: 'nowrap' } }>{ entry.key }</Text>
 													</HStack>
 													<Text weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
-														{ formatMsValue( value ) }
+														{ formatMsValue( value, locale ) }
 													</Text>
 												</HStack>
 											);
@@ -149,7 +149,7 @@ export default function ChartSlot( {
 						} }
 						options={ {
 							axis: {
-								y: { tickFormat: ( value ) => formatMsValue( value as number ) },
+								y: { tickFormat: ( value ) => formatMsValue( value as number, locale ) },
 							},
 						} }
 					/>

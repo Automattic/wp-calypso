@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { CustomizeProvider, useCustomizeContext } from '../index';
 import { MoveMenu } from '../move-menu';
+import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
 
 function renderInProvider( ui: JSX.Element, state: object = {} ) {
 	const store = configureStore()( {
@@ -57,7 +58,7 @@ describe( '<MoveMenu>', () => {
 		exposedCtx = null;
 	} );
 
-	it( 'offers group destinations for top-level items and commits the selected group move', () => {
+	it( 'does not offer group destinations for top-level items', () => {
 		const trigger = setupSidebar( 'top_level' );
 
 		renderInProvider(
@@ -67,26 +68,21 @@ describe( '<MoveMenu>', () => {
 			</CustomizeProvider>
 		);
 
-		expect( screen.getByRole( 'menuitem', { name: 'Move to My Plugins' } ) ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'menuitem', { name: 'Move to My Plugins' } )
+		).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'menuitem', { name: 'Move to top level' } )
 		).not.toBeInTheDocument();
-
-		fireEvent.click( screen.getByRole( 'menuitem', { name: 'Move to My Plugins' } ) );
-
-		expect( exposedCtx?.draft.workingDelta.overrides ).toEqual( [
-			{
-				itemId: 'stats',
-				position: { kind: 'in_group', group_id: 'plugins', index: 0 },
-			},
-		] );
+		expect( screen.getByRole( 'menuitem', { name: 'Reset to default' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'offers a top-level destination for grouped items', () => {
 		const trigger = setupSidebar( 'plugins' );
+		const saveLayoutImpl = jest.fn( () => new Promise< LayoutDelta >( () => {} ) );
 
 		renderInProvider(
-			<CustomizeProvider>
+			<CustomizeProvider saveLayoutImpl={ saveLayoutImpl }>
 				<ExposeContext />
 				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ jest.fn() } />
 			</CustomizeProvider>
@@ -105,5 +101,26 @@ describe( '<MoveMenu>', () => {
 				position: { kind: 'top_level', index: 0 },
 			},
 		] );
+	} );
+
+	it( 'closes on pointerdown outside the menu and trigger', () => {
+		const trigger = setupSidebar( 'plugins' );
+		const onClose = jest.fn();
+
+		renderInProvider(
+			<CustomizeProvider>
+				<ExposeContext />
+				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ onClose } />
+			</CustomizeProvider>
+		);
+
+		fireEvent.pointerDown( screen.getByRole( 'menu' ) );
+		fireEvent.pointerDown( trigger );
+
+		expect( onClose ).not.toHaveBeenCalled();
+
+		fireEvent.pointerDown( document.body );
+
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

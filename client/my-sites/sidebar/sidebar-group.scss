@@ -38,12 +38,19 @@
 		padding: 0;
 		margin: 0;
 		cursor: pointer;
-		// Literal #71aee2 (wp-admin dashicons-alternative blue). Calypso's
-		// `--color-sidebar-text-alternative` is overridden to a gray in
-		// client/my-sites/sidebar/style.scss, which would win over the var
-		// fallback. Anchor to the literal so the group header reads as
-		// "MY PLUGINS" in blue, matching the public plugin 1:1.
-		color: #71aee2;
+		color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
+		font-family: var(
+			--wp-admin-sidebar-font,
+			-apple-system,
+			BlinkMacSystemFont,
+			"Segoe UI",
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			"Helvetica Neue",
+			sans-serif
+		);
 		font-size: 11px;
 		font-weight: 600;
 		line-height: 20px;
@@ -52,7 +59,7 @@
 		text-align: left;
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent, #3858e9);
+			outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
 			outline-offset: 2px;
 		}
 	}
@@ -97,14 +104,14 @@
 	 * Uses the public plugin's outline-chevron SVG (icons/chevron-down.svg)
 	 * vendored inline as a data-URI so this file has no asset-pipeline deps.
 	 * `background: currentColor` + CSS mask keeps the icon tinted to the
-	 * label color (literal #71aee2, see &__toggle above).
+	 * label color.
 	 */
 	&__chevron {
 		flex: 0 0 auto;
 		margin-left: 4px;
 		width: 20px;
 			height: 20px;
-			color: #71aee2;
+			color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
 			background: currentColor;
 			/* stylelint-disable function-url-quotes */
 			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.5 11.6004L12 16.0004L6.5 11.6004L7.4 10.4004L12 14.0004L16.5 10.4004L17.5 11.6004Z'/%3E%3C/svg%3E") no-repeat center / 150%;
@@ -143,28 +150,27 @@
 		border: 0;
 		padding: 0;
 		cursor: pointer;
-		color: #71aee2;
+		color: var(--wp-admin-sidebar-group-label-fg, #2271b1);
 		opacity: 0.7;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 
-		// Lucas's list-view icon (Figma 3505:74996) — public plugin's
-		// `src/browse-rail/icons/list-view.svg` vendored as an inline data-URI
-		// so this file has no asset-pipeline deps. `background: currentColor`
-		// + CSS mask keeps the icon tinted to the &__customize color above
-		// (literal #71aee2, matches the &__toggle color).
+		// Pencil icon from @wordpress/icons, matching public plugin issue #56.
+		// Vendored as an inline data-URI so this file has no asset-pipeline
+		// deps. `background: currentColor` + CSS mask keeps the icon tinted to
+		// the &__customize color above.
 		&::before {
 			content: "";
 			display: block;
-				width: 20px;
-				height: 20px;
-				background: currentColor;
-				/* stylelint-disable function-url-quotes */
-				mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 10.4167'%3E%3Cpath d='M0 0H9.16667V1.25H0V0ZM2.91667 4.58333H12.0833V5.83333H2.91667V4.58333ZM15 9.16667H5.83333V10.4167H15V9.16667Z'/%3E%3C/svg%3E") no-repeat center / contain;
-				-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 10.4167'%3E%3Cpath d='M0 0H9.16667V1.25H0V0ZM2.91667 4.58333H12.0833V5.83333H2.91667V4.58333ZM15 9.16667H5.83333V10.4167H15V9.16667Z'/%3E%3C/svg%3E") no-repeat center / contain;
-				/* stylelint-enable function-url-quotes */
-			}
+			width: 20px;
+			height: 20px;
+			background: currentColor;
+			/* stylelint-disable function-url-quotes */
+			mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
+			-webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m19 7-3-3-8.5 8.5-1 4 4-1L19 7Zm-7 11.5H5V20h7v-1.5Z'/%3E%3C/svg%3E") no-repeat center / contain;
+			/* stylelint-enable function-url-quotes */
+		}
 
 		&:hover:not(:disabled) {
 			opacity: 1;
@@ -176,7 +182,7 @@
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-accent, #3858e9);
+			outline: 2px solid var(--wp-admin-sidebar-customizer-theme, #2271b1);
 			outline-offset: 2px;
 		}
 
@@ -189,7 +195,8 @@
 			content: attr(data-tooltip);
 			position: absolute;
 			bottom: calc(100% + 6px);
-			right: 0;
+			left: 50%;
+			transform: translateX(-50%);
 			padding: 4px 8px;
 			background: #1d2327;
 			color: #f0f0f1;
