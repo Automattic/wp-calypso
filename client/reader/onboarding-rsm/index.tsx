@@ -86,8 +86,8 @@ const ReaderOnboardingRsm = ( {
 	// additions: discover-step recommendations exclude pre-session
 	// subscriptions (so in-session unfollows only target in-session adds),
 	// and interests-step pack subscribe never unfollows. The invariant is
-	// therefore `reduxFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
-	// so the max picks the live Redux value. If a future flow ever allows
+	// therefore `queryFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
+	// so the max picks the live follows-query value. If a future flow ever allows
 	// unfollowing a pre-session subscription from within onboarding, revisit
 	// this and gate on follows query hydration rather than blindly take the max.
 	const { follows } = useFollows();

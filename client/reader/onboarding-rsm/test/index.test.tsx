@@ -305,8 +305,8 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 describe( 'ReaderOnboardingRsm – subscription query invalidation on step close', () => {
 	// Site follows during onboarding (discover-step `ReaderFollowButton` and
-	// interests-step pack subscriptions) go through the legacy Redux follow
-	// path, which doesn't touch the SubscriptionManager TanStack Query caches.
+	// interests-step pack subscriptions) update the follows query, while
+	// SubscriptionManager owns separate TanStack Query caches.
 	// The component invalidates those caches whenever the interests or discover
 	// step closes so the next mount of `useSiteSubscriptions` (here or elsewhere
 	// in Reader) reflects the user's real post-onboarding follow counts instead
@@ -352,7 +352,7 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 
 	it( 'invalidates the subscription queries when Continue is clicked on the interests step', async () => {
 		// Pack subscriptions in the interests step can follow blogs via the
-		// legacy Redux follow path, so closing this step must also kick a
+		// follows query path, so closing this step must also kick a
 		// fresh fetch of the subscription queries.
 		const user = userEvent.setup();
 		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
@@ -973,8 +973,8 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		} ) );
 
 		// Flip the completion preference to true once the user clicks Finish so
-		// `meetsEligibility` also remains false after this point — mirrors the
-		// real Redux roundtrip without coupling to dispatch timing.
+		// `meetsEligibility` also remains false after this point without coupling
+		// to dispatch timing.
 		const getPreference = getPreferenceMock();
 		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? false : null

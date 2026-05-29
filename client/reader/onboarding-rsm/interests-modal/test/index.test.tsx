@@ -116,8 +116,8 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 // Mock as a thunk action creator so `dispatch( recordReaderTracksEvent(...) )`
-// still works against the real Redux store inside `renderWithProvider`, while
-// letting tests assert on the call arguments.
+// still works inside `renderWithProvider`, while letting tests assert on the
+// call arguments.
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: jest.fn(
 		( name: string, properties: Record< string, unknown > ) => () => ( {

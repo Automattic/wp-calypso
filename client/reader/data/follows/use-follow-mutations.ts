@@ -31,7 +31,10 @@ export {
 	patchReadSiteFollowStatusByBlogId,
 };
 
-export const getFollowingSource = () => config( 'readerFollowingSource' );
+export const getFollowingSource = (): string | undefined => {
+	const source = config( 'readerFollowingSource' );
+	return typeof source === 'string' ? source : undefined;
+};
 
 const withFollowingSource = < TParams extends FollowSiteParams | UnfollowSiteParams >(
 	params: TParams

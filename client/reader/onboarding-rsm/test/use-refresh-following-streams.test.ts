@@ -25,7 +25,7 @@ const setPathname = ( pathname: string ) => {
 	window.history.replaceState( null, '', pathname );
 };
 
-const getInvalidatedQueryKeyCalls = ( queryKeys: readonly unknown[][] ) =>
+const getInvalidatedQueryKeyCalls = ( queryKeys: readonly ( readonly unknown[] )[] ) =>
 	queryKeys.map( ( queryKey ) => [ { queryKey } ] );
 
 let locationHrefBeforeTest: string;

@@ -32,7 +32,7 @@ function interleaveByTag< T >( perTagLists: T[][] ): T[] {
  * Canonical feed URL for de-duping follows vs recommendations when `feed_ID`
  * drifts (same subscription, new feed row) or when matching across sources.
  *
- * Delegates to `prepareComparableUrl` so keys match how the reader follows slice
+ * Delegates to `prepareComparableUrl` so keys match how the follows query
  * indexes subscriptions (scheme stripped, trailing slash trimmed, lowercased).
  */
 function normalizeReaderFeedUrlForSubscriptionMatch(
@@ -139,7 +139,7 @@ interface Card {
 export interface UseSubscribeRecommendationsResult {
 	/** Combined + sorted + filtered recommendations (max 18), after follow de-dupe by ID/URL and `readFeedQuery` URL enrichment. */
 	combinedRecommendations: CardData[];
-	/** Stable list: only items whose feed loaded in Redux without feed/site errors. */
+	/** Stable list: only items whose feed loaded without feed/site errors. */
 	recommendations: CardData[];
 	isLoading: boolean;
 	/** API returned candidates but none are validated yet (feeds still loading). */
@@ -149,7 +149,7 @@ export interface UseSubscribeRecommendationsResult {
 	/**
 	 * Record that the user followed a feed *during this modal session*. Pinned
 	 * cards whose feed_ID was marked here are kept visible (showing their
-	 * "Subscribed" state) even after the follows slice catches up; pinned cards
+	 * "Subscribed" state) even after the follows query catches up; pinned cards
 	 * that turn out to have already been followed before the modal opened are
 	 * pruned instead. Wire this into the `onFollowToggle` of any follow button
 	 * the modal renders.
@@ -396,7 +396,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		sessionFollowedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
-	// Prune pinned cards once the follows slice reveals they were already
+	// Prune pinned cards once the follows query reveals they were already
 	// subscribed before this modal session — unless the user followed them in
 	// this session (which is the "keep visible after follow" UX). Runs whenever
 	// `followedSubscriptions` changes (e.g. a paginated follows page lands).

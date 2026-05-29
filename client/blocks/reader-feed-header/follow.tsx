@@ -54,7 +54,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const { data: fetchedFeed } = useFeedQuery( feedId );
 	const resolvedFeed = feed ?? fetchedFeed;
 	const siteUrl = getSiteUrl( { feed: resolvedFeed, site } );
-	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } );
+	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } ) || undefined;
 	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID ?? 0;
 	const followFeedId = resolvedFeed?.feed_ID ?? 0;
 	const reduxFollowing = useIsFollowing( { feedUrl: followFeedUrl } );

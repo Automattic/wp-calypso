@@ -670,7 +670,7 @@ describe( 'useSubscribeRecommendations', () => {
 			expect( result.current.hasNoRecommendations ).toBe( false );
 		} );
 
-		it( 'keeps a session-followed pinned card visible after the follows slice catches up', async () => {
+		it( 'keeps a session-followed pinned card visible after the follows query catches up', async () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
 			const state = buildFollowsFixture();
 
