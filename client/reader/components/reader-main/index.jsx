@@ -1,6 +1,6 @@
 import { Component } from 'react';
-import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import Main from 'calypso/components/main';
+import { useFollows } from 'calypso/reader/data/follows';
 import { ReaderPendingActionHandler } from './pending-action-handler';
 import './style.scss';
 
@@ -25,6 +25,11 @@ const setIsReaderPage = ( add ) => {
 	}
 };
 
+function SyncFollowsQuery() {
+	useFollows();
+	return null;
+}
+
 /**
  * A specialization of `Main` that adds a class to the body of the document
  *
@@ -47,7 +52,7 @@ export default class ReaderMain extends Component {
 		return (
 			<div ref={ forwardRef }>
 				<Main { ...props }>
-					<SyncReaderFollows key="syncReaderFollows" />
+					<SyncFollowsQuery key="syncFollows" />
 					<ReaderPendingActionHandler />
 					{ children }
 				</Main>
