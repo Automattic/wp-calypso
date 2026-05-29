@@ -12,10 +12,14 @@ import {
 	useState,
 } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import { A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
-import { useDispatch } from 'calypso/state';
+import {
+	A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME,
+	A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID,
+} from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { ONBOARDING_TOUR_HASH } from '../hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import OnboardingTourModalMobileNavigation from './mobile-navigation';
 import OnboardingTourModalSection, {
@@ -36,6 +40,10 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	useMinimizeHelpCenterOnMount();
+
+	const hasCompletedTour = useSelector( ( state ) =>
+		Boolean( getPreference( state, A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME ) )
+	);
 
 	const sections: ReactElement< OnboardingTourModalSectionProps >[] = Children.toArray(
 		children
@@ -102,11 +110,15 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 			);
 			// Once the user navigates past the welcome section, mark the tour
 			// as completed so the welcome is hidden on subsequent opens.
-			if ( currentSection.props.id !== 'overview' ) {
+			if (
+				currentSection.props.id !== A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID &&
+				! hasCompletedTour
+			) {
+				dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_completed' ) );
 				dispatch( savePreference( A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME, true ) );
 			}
 		}
-	}, [ currentSection, dispatch ] );
+	}, [ currentSection, dispatch, hasCompletedTour ] );
 
 	return (
 		<Modal

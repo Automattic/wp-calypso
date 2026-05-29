@@ -2,7 +2,10 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
+import {
+	A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME,
+	A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID,
+} from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
 import { A4A_REPORTS_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import OnboardingTourBannerAgencyTiers from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-agency-tiers.svg';
@@ -67,7 +70,7 @@ export default function useOnboardingTourSections() {
 
 		const sections = [
 			{
-				id: 'overview',
+				id: A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID,
 				title: translate( 'Welcome' ),
 				bannerImage: OnboardingTourBannerWelcome,
 				isDarkBanner: true,
@@ -467,7 +470,7 @@ export default function useOnboardingTourSections() {
 		];
 
 		return hasCompletedTour
-			? sections.filter( ( section ) => section.id !== 'overview' )
+			? sections.filter( ( section ) => section.id !== A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID )
 			: sections;
 	}, [ dispatch, hasCompletedTour, saveCurrentSection, translate ] );
 }
