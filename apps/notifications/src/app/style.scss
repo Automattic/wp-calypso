@@ -22,6 +22,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 @include break-small {
 	.components-popover:has(.wpnc-app) .components-popover__content {
 		max-width: 448px;
+		margin-inline: 8px;
 	}
 }
 

@@ -112,9 +112,11 @@ export default function Notifications( {
 	return (
 		<Dropdown
 			popoverProps={ {
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
+				flip: false,
+				shift: true,
 				...( anchorEl && { anchor: anchorEl } ),
 				...( isEnabled( 'dashboard/omnibar' ) && {
 					onFocusOutside: () => {

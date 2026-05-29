@@ -73,9 +73,11 @@ export default function Notifications( { user, className }: { user: User; classN
 	return (
 		<Dropdown
 			popoverProps={ {
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
+				flip: false,
+				shift: true,
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
