@@ -3,7 +3,7 @@ import { domainsQuery, siteLaunchMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState, type ComponentType, type ReactElement } from 'react';
+import { useMemo, useState, type ComponentType, type ReactElement } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { getCurrentDashboard } from '../../app/routing';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
@@ -67,7 +67,7 @@ export function useSiteLaunch(
 		meta: {
 			snackbar: {
 				success: __( 'Your site has been launched; now you can share it with the world!' ),
-				error: __( 'Failed to launch site' ),
+				error: __( 'Failed to launch site.' ),
 			},
 		},
 	} );
@@ -82,7 +82,7 @@ export function useSiteLaunch(
 	const shouldImmediatelyLaunch =
 		isSitePlanPaidWithDomains || isSitePlanHostingTrial || site.is_wpcom_staging_site;
 
-	const getLaunchUrl = () => {
+	const launchUrl = useMemo( () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
 			return addQueryArgs( wpcomLink( '/setup/ai-site-builder/domains' ), {
 				siteId: site.ID,
@@ -102,7 +102,7 @@ export function useSiteLaunch(
 				: redirectToDashboardLink( { supportBackport: true } ),
 			dashboard: getCurrentDashboard(),
 		} );
-	};
+	}, [ site, backTo ] );
 
 	const track = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
@@ -169,10 +169,8 @@ export function useSiteLaunch(
 		return {
 			...baseResult,
 			isHidden: false,
-			onClick: () => {
-				track();
-				window.location.assign( getLaunchUrl() );
-			},
+			href: launchUrl,
+			onClick: track,
 		};
 	}
 
@@ -203,7 +201,7 @@ export function useSiteLaunch(
 	return {
 		...baseResult,
 		isHidden: false,
-		href: getLaunchUrl(),
+		href: launchUrl,
 		onClick: track,
 	};
 }

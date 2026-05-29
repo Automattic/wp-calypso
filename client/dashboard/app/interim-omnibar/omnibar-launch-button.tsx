@@ -30,16 +30,6 @@ export function OmnibarLaunchButton( { site }: { site: Site } ) {
 		return null;
 	}
 
-	// The masterbar `Item` forwards `url` to `Button`, but `@wordpress/components`
-	// Button uses `href`, so a url-only path wouldn't navigate. Collapse both
-	// cases into a single onClick that navigates when the hook returned an href.
-	const handleClick = () => {
-		onClick();
-		if ( href ) {
-			window.location.assign( href );
-		}
-	};
-
 	return (
 		<>
 			<Item
@@ -47,12 +37,13 @@ export function OmnibarLaunchButton( { site }: { site: Site } ) {
 				asProps={ {
 					variant: 'primary',
 					isBusy,
+					href,
 				} }
 				disabled={ isLoading || isExperimentLoading || isDisabled || isBusy }
 				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
 				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 				icon={ <LaunchRocketIcon /> }
-				onClick={ handleClick }
+				onClick={ onClick }
 			>
 				{ __( 'Launch site' ) }
 			</Item>
