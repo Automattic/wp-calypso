@@ -1,6 +1,7 @@
 import { Card, FormLabel } from '@automattic/components';
 import {
 	applyDeliveryWindowEdit,
+	getDeliveryHourPickerHours,
 	getDisplayDeliveryWindow,
 	getNumericFirstDayOfWeek,
 	useDeliveryWindowTimezone,
@@ -313,18 +314,14 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
 								value={ String( this.getDisplayDeliveryWindow().hour ) }
 							>
-								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
-								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
-								<option value="4">{ this.getDeliveryHourLabel( 4 ) }</option>
-								<option value="6">{ this.getDeliveryHourLabel( 6 ) }</option>
-								<option value="8">{ this.getDeliveryHourLabel( 8 ) }</option>
-								<option value="10">{ this.getDeliveryHourLabel( 10 ) }</option>
-								<option value="12">{ this.getDeliveryHourLabel( 12 ) }</option>
-								<option value="14">{ this.getDeliveryHourLabel( 14 ) }</option>
-								<option value="16">{ this.getDeliveryHourLabel( 16 ) }</option>
-								<option value="18">{ this.getDeliveryHourLabel( 18 ) }</option>
-								<option value="20">{ this.getDeliveryHourLabel( 20 ) }</option>
-								<option value="22">{ this.getDeliveryHourLabel( 22 ) }</option>
+								{ getDeliveryHourPickerHours(
+									this.getDisplayDeliveryWindow().hour,
+									this.props.deliveryWindowIsUtcFallback
+								).map( ( hour ) => (
+									<option key={ hour } value={ hour }>
+										{ this.getDeliveryHourLabel( hour ) }
+									</option>
+								) ) }
 							</FormSelect>
 
 							<FormSettingExplanation>

@@ -321,8 +321,9 @@ describe( 'SubscriptionSettings', () => {
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
-		// The hour dropdown only lists even buckets; an odd stored UTC hour (5) may
-		// not match an <option>, but changing only the day must not alter it on save.
+		expect( await hourSelect() ).toHaveValue( '5' );
+		expect( screen.getByRole( 'option', { name: '05:00 - 07:00 UTC' } ) ).toBeInTheDocument();
+
 		expect( await daySelect() ).toHaveValue( '1' );
 
 		await userEvent.selectOptions( await daySelect(), '2' );

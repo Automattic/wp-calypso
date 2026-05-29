@@ -3,6 +3,7 @@ import { FormLabel } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import {
 	applyDeliveryWindowEdit,
+	getDeliveryHourPickerHours,
 	getDisplayDeliveryWindow,
 	useDeliveryWindowTimezone,
 } from '@automattic/i18n-utils';
@@ -128,7 +129,7 @@ const DeliveryWindowInput = ( {
 					onChange={ handleHourChange }
 					value={ displayWindow.hour }
 				>
-					{ [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 ].map( ( hour ) => (
+					{ getDeliveryHourPickerHours( displayWindow.hour, isUtcFallback ).map( ( hour ) => (
 						<option key={ hour } value={ hour }>
 							{ getLabel( hour ) }
 						</option>

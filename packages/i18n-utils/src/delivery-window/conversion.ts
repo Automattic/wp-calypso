@@ -12,6 +12,16 @@ export type DeliveryWindow = {
 const DAYS_IN_WEEK = 7;
 const HOURS_IN_DAY = 24;
 
+/** Even-hour buckets (0, 2, … 22) shown in the delivery-window picker in local-time mode. */
+export const STANDARD_DELIVERY_HOUR_BUCKETS = Array.from(
+	{ length: HOURS_IN_DAY / 2 },
+	( _, index ) => index * 2
+);
+
+function normalizeDeliveryHour( hour: number ): number {
+	return ( ( hour % HOURS_IN_DAY ) + HOURS_IN_DAY ) % HOURS_IN_DAY;
+}
+
 function normalizeDay( day: number ): number {
 	return ( ( day % DAYS_IN_WEEK ) + DAYS_IN_WEEK ) % DAYS_IN_WEEK;
 }
@@ -185,4 +195,27 @@ export function applyDeliveryWindowEdit(
 		day: edit.day ?? display.day,
 	};
 	return toUtcDeliveryWindow( local, offsetHours );
+}
+
+/**
+ * Hour values to render in the delivery-window `<select>`, so the control can
+ * always represent the current setting.
+ *
+ * - **UTC fallback** (`utcFallback: true`): every whole hour 0–23, since the UI
+ *   shows the raw stored UTC hour (which may be odd after prior saves).
+ * - **Local-time mode**: the standard even 2-hour buckets, plus the current
+ *   `displayHour` when it is not already listed (defensive; normally snapped to even).
+ */
+export function getDeliveryHourPickerHours( displayHour: number, utcFallback: boolean ): number[] {
+	const normalizedDisplayHour = normalizeDeliveryHour( displayHour );
+
+	if ( utcFallback ) {
+		return Array.from( { length: HOURS_IN_DAY }, ( _, hour ) => hour );
+	}
+
+	if ( STANDARD_DELIVERY_HOUR_BUCKETS.includes( normalizedDisplayHour ) ) {
+		return STANDARD_DELIVERY_HOUR_BUCKETS;
+	}
+
+	return [ ...STANDARD_DELIVERY_HOUR_BUCKETS, normalizedDisplayHour ].sort( ( a, b ) => a - b );
 }

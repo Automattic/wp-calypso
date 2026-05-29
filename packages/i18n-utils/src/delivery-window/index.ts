@@ -4,6 +4,8 @@ export {
 	toUtcDeliveryWindow,
 	getDisplayDeliveryWindow,
 	applyDeliveryWindowEdit,
+	getDeliveryHourPickerHours,
+	STANDARD_DELIVERY_HOUR_BUCKETS,
 } from './conversion';
 export type { DeliveryWindow } from './conversion';
 export { default as useDeliveryWindowTimezone } from './use-delivery-window-timezone';

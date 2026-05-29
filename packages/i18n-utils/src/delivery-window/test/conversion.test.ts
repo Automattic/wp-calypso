@@ -1,8 +1,10 @@
 import {
 	applyDeliveryWindowEdit,
 	fromUtcDeliveryWindow,
+	getDeliveryHourPickerHours,
 	getDeliveryWindowOffsetHours,
 	getDisplayDeliveryWindow,
+	STANDARD_DELIVERY_HOUR_BUCKETS,
 	toUtcDeliveryWindow,
 	type DeliveryWindow,
 } from '../conversion';
@@ -146,6 +148,29 @@ describe( 'delivery-window conversion', () => {
 				hour: 5,
 				day: 2,
 			} );
+		} );
+	} );
+
+	describe( 'getDeliveryHourPickerHours', () => {
+		it( 'returns every whole hour in UTC-fallback mode', () => {
+			expect( getDeliveryHourPickerHours( 5, true ) ).toEqual(
+				Array.from( { length: 24 }, ( _, hour ) => hour )
+			);
+		} );
+
+		it( 'returns standard even buckets when the display hour is already a bucket', () => {
+			expect( getDeliveryHourPickerHours( 8, false ) ).toEqual( STANDARD_DELIVERY_HOUR_BUCKETS );
+		} );
+
+		it( 'includes a non-bucket display hour in local-time mode', () => {
+			expect( getDeliveryHourPickerHours( 5, false ) ).toEqual( [
+				0, 2, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22,
+			] );
+		} );
+
+		it( 'normalizes display hours before matching options', () => {
+			expect( getDeliveryHourPickerHours( 26, false ) ).toEqual( STANDARD_DELIVERY_HOUR_BUCKETS );
+			expect( getDeliveryHourPickerHours( 25, true ) ).toContain( 1 );
 		} );
 	} );
 } );

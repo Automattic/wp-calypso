@@ -1,6 +1,7 @@
 import { UserSettings } from '@automattic/api-core';
 import {
 	applyDeliveryWindowEdit,
+	getDeliveryHourPickerHours,
 	getDeliveryWindowOffsetHours,
 	getDisplayDeliveryWindow,
 	guessTimezone,
@@ -33,9 +34,8 @@ const padHour = ( hour: number ) => String( hour % 24 ).padStart( 2, '0' );
 // The delivery hour buckets are stored/sent as UTC. We display them in the
 // device's local time, falling back to clearly labeled UTC when the time zone
 // can't be detected.
-const buildDeliveryHourElements = ( isUtcFallback: boolean ) =>
-	Array.from( { length: 12 }, ( _, i ) => {
-		const startHour = i * 2;
+const buildDeliveryHourElements = ( isUtcFallback: boolean, displayHour: number ) =>
+	getDeliveryHourPickerHours( displayHour, isUtcFallback ).map( ( startHour ) => {
 		const endHour = startHour + 2;
 
 		if ( isUtcFallback ) {
@@ -83,7 +83,8 @@ function getDeliveryWindowDisplayDefaults(): DeliveryWindowDisplay {
 
 function applyDeliveryWindowToHourField(
 	fields: Field< SettingsData >[],
-	delivery: DeliveryWindowDisplay
+	delivery: DeliveryWindowDisplay,
+	displayHour: number
 ): Field< SettingsData >[] {
 	return fields.map( ( field ) => {
 		if ( field.id !== 'subscription_delivery_hour' ) {
@@ -93,7 +94,7 @@ function applyDeliveryWindowToHourField(
 		return {
 			...field,
 			description: buildDeliveryHourDescription( delivery.isUtcFallback, delivery.timezone ),
-			elements: buildDeliveryHourElements( delivery.isUtcFallback ),
+			elements: buildDeliveryHourElements( delivery.isUtcFallback, displayHour ),
 		};
 	} );
 }
@@ -224,7 +225,8 @@ const baseFieldsWithoutDeliveryWindow: Field< SettingsData >[] = [
 
 const baseFields = applyDeliveryWindowToHourField(
 	baseFieldsWithoutDeliveryWindow,
-	getDeliveryWindowDisplayDefaults()
+	getDeliveryWindowDisplayDefaults(),
+	0
 );
 
 const automatticianFields = [ 'p2_disable_autofollow_on_comment' ];
@@ -236,10 +238,11 @@ export interface DeliveryWindowDisplay {
 
 export const getFields = (
 	includeAutomatticianFields: boolean,
-	deliveryWindow?: DeliveryWindowDisplay
+	deliveryWindow?: DeliveryWindowDisplay,
+	displayHour = 0
 ): Field< SettingsData >[] => {
 	const delivery = deliveryWindow ?? getDeliveryWindowDisplayDefaults();
-	const fields = applyDeliveryWindowToHourField( baseFields, delivery );
+	const fields = applyDeliveryWindowToHourField( baseFields, delivery, displayHour );
 
 	if ( includeAutomatticianFields ) {
 		return fields;
@@ -327,8 +330,13 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 	);
 
 	const fields = useMemo(
-		() => getFields( isAutomattician, { isUtcFallback, timezone } ),
-		[ isAutomattician, isUtcFallback, timezone ]
+		() =>
+			getFields(
+				isAutomattician,
+				{ isUtcFallback, timezone },
+				Number( localData.subscription_delivery_hour ?? 0 )
+			),
+		[ isAutomattician, isUtcFallback, timezone, localData.subscription_delivery_hour ]
 	);
 	const form: Form = {
 		layout: { type: 'regular' as const },
