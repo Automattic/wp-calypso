@@ -178,6 +178,14 @@ describe( 'useAgentChat', () => {
 			expect( result ).toBeNull();
 		} );
 
+		it( 'drops a message that has no parts', () => {
+			// Nothing to render, so the message is dropped rather than left as
+			// an empty entry in the list.
+			expect(
+				transformClientMessageToUI( buildMessage( [] ) )
+			).toBeNull();
+		} );
+
 		it( 'preserves `component` + `componentProps` data parts', () => {
 			const Component = () => null;
 			const componentProps = { foo: 'bar' };
