@@ -38,6 +38,3 @@ packages/calypso-color-schemes/root-only
 /client/server/bundler/assets.json
 /cached-requests.json
 /yarn-json-output.json
-
-# Local dev docs (design specs, implementation plans)
-docs/superpowers/
