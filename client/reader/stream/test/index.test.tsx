@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { getFollowsQueryKey, type FollowsInfiniteData } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -11,10 +12,11 @@ import { thunk as thunkMiddleware } from 'redux-thunk';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import Stream from '../index';
+import type { FollowItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
-	const ReactLib = require( 'react' ) as typeof import('react');
+	const ReactLib = jest.requireActual< typeof import('react') >( 'react' );
 	return class PostLifecycle extends ReactLib.Component< {
 		postKey: { postId: number };
 		isSelected: boolean;
@@ -70,7 +72,7 @@ jest.mock(
 );
 jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
 jest.mock( 'calypso/components/infinite-list', () => {
-	const ReactLib = require( 'react' ) as typeof import('react');
+	const ReactLib = jest.requireActual< typeof import('react') >( 'react' );
 	return class InfiniteList extends ReactLib.Component< {
 		items: Array< { postId: number } >;
 		fetchingNextPage?: boolean;
@@ -159,6 +161,23 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
 
+function makeFollowsData(
+	follows: FollowItem[],
+	totalCount = follows.length
+): FollowsInfiniteData {
+	return {
+		pages: [
+			{
+				follows,
+				totalCount,
+				page: 1,
+				number: 200,
+			},
+		],
+		pageParams: [ 1 ],
+	};
+}
+
 const baseState = {
 	ui: { language: { localeSlug: 'en' }, isNotificationsOpen: false },
 	documentHead: { unreadCount: 0 },
@@ -179,6 +198,27 @@ const followedFeedState = {
 	items: { 1: { feed_ID: 1, is_following: true } },
 };
 
+function seedFollowsQuery(
+	queryClient: QueryClient,
+	state: {
+		reader: { follows: { items?: Record< string, Partial< FollowItem > >; itemsCount?: number } };
+	}
+) {
+	const items = Object.values( state.reader.follows.items ?? {} ).map(
+		( item ) =>
+			( {
+				...item,
+				URL: item.URL ?? '',
+				feed_URL: item.feed_URL ?? '',
+				is_following: Boolean( item.is_following ),
+			} ) as FollowItem
+	);
+	queryClient.setQueryData(
+		getFollowsQueryKey(),
+		makeFollowsData( items, state.reader.follows.itemsCount ?? items.length )
+	);
+}
+
 function renderStream(
 	extraProps: Record< string, unknown > = {},
 	initialStateOverride = {},
@@ -190,6 +230,7 @@ function renderStream(
 		return next( action );
 	};
 	const seedState = { ...baseState, ...initialStateOverride };
+	seedFollowsQuery( queryClient, seedState );
 	// `<Stream>` keeps post selection in the React Query cache (see
 	// `useStreamPostKeySelection`); only thunks like `likePost` need to dispatch
 	// against the store, so a passthrough reducer is enough.

@@ -1,31 +1,13 @@
+import { prepareComparableUrl, type FollowItem } from '@automattic/api-core';
 import { readSiteQuery } from '@automattic/api-queries';
-import { createSelector } from '@automattic/state-utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
-import { reject } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { useFeedQueries } from 'calypso/reader/data/feed';
+import { useFollows } from 'calypso/reader/data/follows';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
-import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
-import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
-import { AppState } from 'calypso/types';
-
-const getReaderFollowingItemsRaw = createSelector(
-	( state: AppState ): ReaderFollowItem[] => {
-		const items = state.reader?.follows?.items;
-		if ( ! items ) {
-			return [];
-		}
-		const list = reject( Object.values( items ), 'error' ) as ( ReaderFollowItem | null )[];
-		return list.filter(
-			( item ): item is ReaderFollowItem => item != null && !! item.is_following
-		);
-	},
-	( state: AppState ) => [ state.reader?.follows?.items ]
-);
 
 /**
  * Round-robin interleave of N lists: `[ a[0], b[0], c[0], a[1], b[1], c[1], ... ]`. Lists that
@@ -73,9 +55,7 @@ type FollowedSubscriptions = {
 	feedUrls: Set< string >;
 };
 
-function buildFollowedSubscriptions(
-	rawFollowingItems: ReaderFollowItem[]
-): FollowedSubscriptions {
+function buildFollowedSubscriptions( rawFollowingItems: FollowItem[] ): FollowedSubscriptions {
 	const feedIds = new Set< number >();
 	const blogIds = new Set< number >();
 	const feedUrls = new Set< string >();
@@ -184,7 +164,8 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		[ followedTags ]
 	);
 
-	const rawFollowingItems = useSelector( getReaderFollowingItemsRaw );
+	const { follows } = useFollows();
+	const rawFollowingItems = follows.filter( ( item ) => item.is_following );
 	const currentLocale = getLocaleSlug();
 
 	/**

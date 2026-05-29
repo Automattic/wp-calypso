@@ -9,28 +9,13 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { useFollowedSites } from 'calypso/reader/data/follows';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
 import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
-
-// Not complete, just useful fields for now
-type Site = {
-	ID: number;
-	URL: string;
-	feed_URL: string;
-	feed_ID: number;
-	last_updated: number;
-	is_owner: boolean;
-	organization_id: number;
-	name: string;
-	unseen_count: number;
-	site_icon: string | null;
-	is_following: boolean;
-};
 
 type Props = {
 	isOpen: boolean;
@@ -51,7 +36,7 @@ const ReaderSidebarRecent = ( {
 	className,
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
-	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
+	const sites = useFollowedSites();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -131,12 +116,12 @@ const ReaderSidebarRecent = ( {
 						<MenuItemLink
 							href={ `/reader/recent/${ site.feed_ID }` }
 							className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-							onClick={ () => trackMenuClick( site.feed_ID ) }
+							onClick={ () => trackMenuClick( site.feed_ID ?? null ) }
 						>
 							<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 							<span title={ site.name } className="sidebar__menu-item-sitename">
 								<span>{ site.name }</span>
-								{ site.last_updated > 0 && (
+								{ typeof site.last_updated === 'number' && site.last_updated > 0 && (
 									<span className="sidebar__menu-item-last-updated">
 										{ moment( new Date( site.last_updated ) ).fromNow() }
 									</span>

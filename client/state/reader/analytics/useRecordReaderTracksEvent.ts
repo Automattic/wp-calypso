@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { getReaderFollowsCount } from '../follows/selectors';
+import { useDispatch } from 'react-redux';
+import { useFollows } from 'calypso/reader/data/follows';
 import {
 	ReaderTrackEventOptions,
 	ReaderTrackEventProps,
@@ -11,7 +11,7 @@ import {
  */
 export const useRecordReaderTracksEvent = () => {
 	const dispatch = useDispatch();
-	const followsCount = useSelector( getReaderFollowsCount );
+	const { count: followsCount } = useFollows();
 
 	return (
 		name: string,

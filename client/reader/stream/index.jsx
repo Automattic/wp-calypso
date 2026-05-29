@@ -19,6 +19,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useFollows } from 'calypso/reader/data/follows';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import {
@@ -36,7 +37,6 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -844,6 +844,7 @@ function getStreamKey( state, streamKey ) {
 
 const withStreamPosts = ( WrappedComponent ) =>
 	function StreamPostsContainer( props ) {
+		const { count: followsCount } = useFollows();
 		const streamPostsQuery = useInfiniteStream( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
@@ -871,17 +872,12 @@ const withStreamPosts = ( WrappedComponent ) =>
 					? injectRecommendations(
 							streamPostsQuery.items,
 							recsStreamPostsQuery.items,
-							getDistanceBetweenRecs( props.followsCount )
+							getDistanceBetweenRecs( followsCount )
 					  )
 					: streamPostsQuery.items;
 
-			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( props.followsCount ) );
-		}, [
-			props.followsCount,
-			props.recsStreamKey,
-			recsStreamPostsQuery.items,
-			streamPostsQuery.items,
-		] );
+			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( followsCount ) );
+		}, [ followsCount, props.recsStreamKey, recsStreamPostsQuery.items, streamPostsQuery.items ] );
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
@@ -953,6 +949,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 				{ ...props }
 				items={ items }
 				lastPage={ streamPostsQuery.lastPage }
+				followsCount={ followsCount }
 				isRequesting={
 					streamPostsQuery.isLoading ||
 					streamPostsQuery.isFetchingNextPage ||
@@ -989,7 +986,6 @@ export default connect(
 			notificationsOpen: isNotificationsOpen( state ),
 			streamKey,
 			selectedFeedId: getSelectedRecentFeedId( state ),
-			followsCount: getReaderFollowsCount( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,

@@ -56,6 +56,16 @@ export const useOrganizationFollows = ( organizationId: number ) => {
 	return getOrganizationFollowsFromData( data, organizationId );
 };
 
+export const useOrganizationFeedsInfo = ( organizationId: number ) => {
+	const sites = useOrganizationFollows( organizationId );
+
+	return {
+		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
+		feedIds: sites.map( ( item ) => item.feed_ID ).filter( Boolean ),
+		feedUrls: sites.map( ( item ) => item.feed_URL ).filter( Boolean ),
+	};
+};
+
 export const useHasFollowOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {
 	const { data } = useFollows();
 	const feedFollow = hasId( feedId ) ? getFollowByFeedIdFromData( data, feedId ) : undefined;

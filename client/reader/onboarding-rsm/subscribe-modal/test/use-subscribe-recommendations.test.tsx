@@ -6,12 +6,14 @@ import { act, waitFor } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
+import { useFollows } from 'calypso/reader/data/follows';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	useSubscribeRecommendations,
 	type CardData,
 	type RecommendedBlogsApiSite,
 } from '../use-subscribe-recommendations';
+import type { FollowItem } from '@automattic/api-core';
 
 /** Controls `readFeedQuery` mock behavior (see `jest.mock( '@automattic/api-queries' )` below). */
 const readFeedQueryTestHarness = {
@@ -30,6 +32,10 @@ jest.mock( 'calypso/lib/wp', () => ( {
 
 jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 	useFollowedReaderTags: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/reader/data/follows', () => ( {
+	useFollows: jest.fn(),
 } ) );
 
 jest.mock( 'i18n-calypso', () => {
@@ -138,6 +144,7 @@ jest.mock( '@automattic/api-queries', () => {
 const mockUseFollowedReaderTags = useFollowedReaderTags as jest.MockedFunction<
 	typeof useFollowedReaderTags
 >;
+const mockUseFollows = useFollows as jest.MockedFunction< typeof useFollows >;
 const mockGetLocaleSlug = getLocaleSlug as jest.MockedFunction< typeof getLocaleSlug >;
 const mockGet = jest.mocked( wpcom.req.get );
 
@@ -183,29 +190,21 @@ const buildReaderState = ( overrides: Partial< ReaderState[ 'reader' ] > = {} ):
 	},
 } );
 
-// Test-only action used by the pin-stability test to simulate a follow happening
-// from inside the modal (e.g. the user clicking Subscribe on a pinned card) by
-// rewriting `state.reader.follows.items`.
-const SET_FOLLOWS = '@@TEST/SET_FOLLOWS';
+const followItemsFromState = ( state: ReaderState ): FollowItem[] =>
+	Object.values( state.reader.follows.items ).map(
+		( item ) =>
+			( {
+				...item,
+				URL: item.feed_URL ?? '',
+				feed_URL: item.feed_URL ?? '',
+				is_following: Boolean( item.is_following ),
+			} ) as FollowItem
+	);
 
-interface SetFollowsAction {
-	type: typeof SET_FOLLOWS;
-	payload: ReaderState[ 'reader' ][ 'follows' ][ 'items' ];
-}
-
-// The Redux root reducer's `combineReducers` strips state for keys without a
-// registered reducer, so we register a minimal `reader` reducer that survives
-// the initial state and lets the pin-stability test mutate the follows slice.
-const readerReducers = {
-	reader: (
-		state: ReaderState[ 'reader' ] | undefined = buildReaderState().reader,
-		action: SetFollowsAction | { type: string }
-	): ReaderState[ 'reader' ] => {
-		if ( action.type === SET_FOLLOWS ) {
-			return { ...state, follows: { items: ( action as SetFollowsAction ).payload } };
-		}
-		return state;
-	},
+const setMockFollows = ( items: ReaderState[ 'reader' ][ 'follows' ][ 'items' ] ) => {
+	mockUseFollows.mockReturnValue( {
+		follows: followItemsFromState( buildReaderState( { follows: { items } } ) ),
+	} as unknown as ReturnType< typeof useFollows > );
 };
 
 const renderHook = (
@@ -213,10 +212,10 @@ const renderHook = (
 	feedByFeedId: FeedQueryItems = {}
 ) => {
 	readFeedQueryTestHarness.feedByFeedId = feedByFeedId;
-	return renderHookWithProvider( () => useSubscribeRecommendations(), {
-		initialState,
-		reducers: readerReducers,
-	} );
+	mockUseFollows.mockReturnValue( {
+		follows: followItemsFromState( initialState ),
+	} as unknown as ReturnType< typeof useFollows > );
+	return renderHookWithProvider( () => useSubscribeRecommendations() );
 };
 
 beforeEach( () => {
@@ -226,6 +225,9 @@ beforeEach( () => {
 	readFeedQueryTestHarness.enrichmentByFeedId = {};
 	mockGetLocaleSlug.mockReturnValue( 'en' );
 	mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );
+	mockUseFollows.mockReturnValue( {
+		follows: [],
+	} as unknown as ReturnType< typeof useFollows > );
 	mockGet.mockResolvedValue( cardsResponse( [] ) );
 	mockReadSiteResponses.clear();
 } );
@@ -641,7 +643,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// empty state while feed 201 is still genuinely pending.
 			const state = buildReaderState();
 
-			const { result, store } = renderHook( state, {
+			const { result, rerender } = renderHook( state, {
 				100: { feed_ID: 100, is_error: true },
 				200: { feed_ID: 200, is_error: true },
 				// 101 and 201 intentionally absent — still pending.
@@ -650,26 +652,24 @@ describe( 'useSubscribeRecommendations', () => {
 			await waitFor( () => expect( result.current.isValidating ).toBe( true ) );
 
 			act( () => {
-				store.dispatch( {
-					type: SET_FOLLOWS,
-					payload: {
-						'https://food1.example': {
-							feed_ID: 100,
-							blog_ID: null,
-							is_following: true,
-						},
-						'https://food2.example': {
-							feed_ID: 101,
-							blog_ID: null,
-							is_following: true,
-						},
-						'https://drinks1.example': {
-							feed_ID: 200,
-							blog_ID: null,
-							is_following: true,
-						},
+				setMockFollows( {
+					'https://food1.example': {
+						feed_ID: 100,
+						blog_ID: null,
+						is_following: true,
+					},
+					'https://food2.example': {
+						feed_ID: 101,
+						blog_ID: null,
+						is_following: true,
+					},
+					'https://drinks1.example': {
+						feed_ID: 200,
+						blog_ID: null,
+						is_following: true,
 					},
 				} );
+				rerender();
 			} );
 
 			await waitFor( () =>
@@ -688,7 +688,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
 			const state = buildReaderState();
 
-			const { result, store } = renderHook( state, { 100: { feed_ID: 100 } } );
+			const { result, rerender } = renderHook( state, { 100: { feed_ID: 100 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -702,20 +702,18 @@ describe( 'useSubscribeRecommendations', () => {
 				result.current.markSessionFollow( 100 );
 			} );
 
-			// And the follows slice updates as a result. `combinedRecommendations`
+			// And the follows query updates as a result. `combinedRecommendations`
 			// recomputes to exclude 100, but because 100 was followed in-session
 			// the pinned buffer keeps the card rendered with its "Subscribed" state.
 			act( () => {
-				store.dispatch( {
-					type: SET_FOLLOWS,
-					payload: {
-						'https://food1.example': {
-							feed_ID: 100,
-							blog_ID: null,
-							is_following: true,
-						},
+				setMockFollows( {
+					'https://food1.example': {
+						feed_ID: 100,
+						blog_ID: null,
+						is_following: true,
 					},
 				} );
+				rerender();
 			} );
 
 			await waitFor( () =>
@@ -733,7 +731,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// recommending blogs the user already follows.
 			const state = buildReaderState();
 
-			const { result, store } = renderHook( state, { 100: { feed_ID: 100 } } );
+			const { result, rerender } = renderHook( state, { 100: { feed_ID: 100 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -744,16 +742,14 @@ describe( 'useSubscribeRecommendations', () => {
 			// Paginated follows arrive with feed 100 in them — but the user did
 			// NOT follow it inside the modal, so it should be pruned.
 			act( () => {
-				store.dispatch( {
-					type: SET_FOLLOWS,
-					payload: {
-						'https://food1.example': {
-							feed_ID: 100,
-							blog_ID: null,
-							is_following: true,
-						},
+				setMockFollows( {
+					'https://food1.example': {
+						feed_ID: 100,
+						blog_ID: null,
+						is_following: true,
 					},
 				} );
+				rerender();
 			} );
 
 			await waitFor( () =>
@@ -769,7 +765,7 @@ describe( 'useSubscribeRecommendations', () => {
 			mockReadSiteResponses.set( 1001, 'success' );
 			const state = buildReaderState();
 
-			const { result, store } = renderHook( state, { 101: { feed_ID: 101 } } );
+			const { result, rerender } = renderHook( state, { 101: { feed_ID: 101 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -778,16 +774,14 @@ describe( 'useSubscribeRecommendations', () => {
 			);
 
 			act( () => {
-				store.dispatch( {
-					type: SET_FOLLOWS,
-					payload: {
-						'https://food2.example': {
-							feed_ID: null,
-							blog_ID: 1001,
-							is_following: true,
-						},
+				setMockFollows( {
+					'https://food2.example': {
+						feed_ID: null,
+						blog_ID: 1001,
+						is_following: true,
 					},
 				} );
+				rerender();
 			} );
 
 			await waitFor( () =>
