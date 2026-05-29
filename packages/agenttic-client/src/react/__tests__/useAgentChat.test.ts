@@ -158,8 +158,10 @@ describe( 'useAgentChat', () => {
 			expect( toolResult ).toBeNull();
 		} );
 
-		it( 'drops unknown `data` parts instead of rendering them as text', () => {
-			// Router/classifier output is internal metadata and must never reach the UI as text.
+		it( 'drops the entire message when only unknown `data` parts remain', () => {
+			// Internal metadata must never reach the UI. With nothing left to
+			// show, the whole message is dropped so it doesn't add an empty
+			// entry or throw off message counts.
 			const result = transformClientMessageToUI(
 				buildMessage( [
 					{
@@ -173,7 +175,7 @@ describe( 'useAgentChat', () => {
 				] )
 			);
 
-			expect( result?.content ).toEqual( [] );
+			expect( result ).toBeNull();
 		} );
 
 		it( 'preserves `component` + `componentProps` data parts', () => {

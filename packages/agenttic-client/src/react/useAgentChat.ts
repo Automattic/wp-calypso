@@ -222,9 +222,9 @@ export const transformClientMessageToUI = (
 						data,
 					};
 				}
-				// Unknown `data` shapes are internal metadata. Drop them so they
-				// don't leak into the chat as raw JSON. To render a new shape,
-				// add a handler above.
+				// Unknown `data` shapes are internal metadata. Drop them so
+				// they don't show up as raw JSON. Add a handler above to
+				// render a new shape.
 				logger( 'Dropping unrecognized data part', data );
 				return null;
 			}
@@ -237,6 +237,12 @@ export const transformClientMessageToUI = (
 		.filter(
 			( item ): item is NonNullable< typeof item > => item !== null
 		);
+
+	// Drop messages with nothing to show. Keeping them would add empty
+	// entries to the list and throw off message counts.
+	if ( content.length === 0 ) {
+		return null;
+	}
 
 	// Extract timestamp from message metadata or use current time as fallback
 	const timestamp =
