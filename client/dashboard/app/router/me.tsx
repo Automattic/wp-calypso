@@ -512,14 +512,13 @@ export const siteActionsRoute = createRoute( {
 
 		if ( purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1 ) {
 			if ( action === 'renew' ) {
-				window.location.href = getRenewUrlForPurchases( [ purchase ] );
-				await new Promise( () => {} ); // block component render while browser navigates
+				throw dashboardRedirect( { href: getRenewUrlForPurchases( [ purchase ] ) } );
 			}
 
 			let intent: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
 			if ( action === 'remove' ) {
 				intent = 'remove';
-			} else if ( action === 'disable-auto-renew' ) {
+			} else if ( action === 'auto-renew' ) {
 				intent = 'auto-renew';
 			}
 			throw dashboardRedirect( {

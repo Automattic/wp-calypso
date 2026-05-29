@@ -59,7 +59,7 @@ function getDescription( action: SiteAction, siteName: string, productName: stri
 				siteName,
 				productName
 			);
-		case 'disable-auto-renew':
+		case 'auto-renew':
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
@@ -84,7 +84,7 @@ function getCancelIntent(
 	if ( action === 'remove' ) {
 		return 'remove';
 	}
-	if ( action === 'disable-auto-renew' ) {
+	if ( action === 'auto-renew' ) {
 		return 'auto-renew';
 	}
 	return 'cancel';
@@ -262,7 +262,7 @@ export default function SiteLevelActions() {
 						{ __( 'Continue to remove' ) }
 					</Button>
 				);
-			case 'disable-auto-renew':
+			case 'auto-renew':
 				return (
 					<Button variant="primary" isDestructive onClick={ handleContinue }>
 						{ __( 'Continue' ) }
