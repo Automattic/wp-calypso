@@ -708,7 +708,7 @@ function getFields( {
 						if ( isInExpirationGracePeriod( purchase ) ) {
 							return __( 'Pending renewal' );
 						}
-						// translators: date is a formatted date string
+						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						} );
@@ -719,13 +719,13 @@ function getFields( {
 						} );
 						if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 							return sprintf(
-								// translators: date is a formatted expiry date
+								// translators: %(date)s is a formatted expiry date
 								__( 'Expired on %(date)s.' ),
 								{ date }
 							);
 						}
 						return sprintf(
-							// translators: date is a formatted expiry date
+							// translators: %(date)s is a formatted expiry date
 							__( 'Expires on %(date)s.' ),
 							{ date }
 						);
@@ -897,7 +897,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	}
 	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
 	const offerText = isOffer
-		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		? /* translators: %(regularPrice)s is a monetary amount that the customer will be charged after this offer ends */
 		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
 				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
 					isSmallestUnit: true,
@@ -1008,12 +1008,12 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
 							),
 							{
-								numberOfIncludedPages: tier0.maximum_units,
+								numberOfIncludedPages: String( tier0.maximum_units ),
 							}
 					  ) }{ ' ' }
 				{ extraPageCount > 0 &&
 					sprintf(
-						// translators: numberofPages is a number of pages
+						// translators: %(numberOfPages)d is a number of pages
 						_n(
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
@@ -1272,7 +1272,7 @@ function PurchaseSecondSubtitle( {
 				<Text variant="muted">
 					{ description }{ ' ' }
 					{ sprintf(
-						// translators: numberOfMailboxes is a number and domain is a domain name
+						// translators: %(numberOfMailboxes)d is a number of mailboxes and %(domain)s is a domain name
 						_n(
 							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
 							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
@@ -1280,7 +1280,7 @@ function PurchaseSecondSubtitle( {
 						),
 						{
 							numberOfMailboxes: purchase.renewal_price_tier_usage_quantity,
-							domain: purchase.meta,
+							domain: purchase.meta ?? '',
 						}
 					) }
 				</Text>
@@ -1309,7 +1309,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return (
 			<MetadataItem
 				title={ sprintf(
-					// translators: subtitle is the type of purchase (e.g. "Host Managed Plan"), partnerName is the name of the business partner
+					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"), %(partnerName)s is the name of the business partner
 					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
 					{ subtitle, partnerName: purchase.partner_name }
 				) }

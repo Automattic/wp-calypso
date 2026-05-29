@@ -117,6 +117,7 @@ export * from './site-migration-status';
 export * from './site-owner-transfer';
 export * from './site-php-version';
 export * from './site-plans';
+export * from './site-post-by-email';
 export * from './site-plugins';
 export * from './site-performance';
 export * from './site-preview-links';

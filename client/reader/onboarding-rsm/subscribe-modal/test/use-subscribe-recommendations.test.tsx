@@ -15,7 +15,8 @@ import {
 
 /** Controls `readFeedQuery` mock behavior (see `jest.mock( '@automattic/api-queries' )` below). */
 const readFeedQueryTestHarness = {
-	mode: 'off' as 'off' | 'enrich',
+	mode: 'state' as 'state' | 'enrich',
+	feedByFeedId: {} as Record< number, { feed_ID: number; blog_ID?: number; is_error?: boolean } >,
 	enrichmentByFeedId: {} as Record< number, { feed_URL: string } >,
 };
 
@@ -78,10 +79,9 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 	},
 } ) );
 
-// `readFeedQuery` is consumed by `useQueries` to fetch feed metadata and bridge
-// it back into Redux. The pinning logic in the hook reads that bridged state
-// (or our preloaded `initialState`) to decide whether a card is "validated".
-// By default we disable queries so tests that preload Redux stay fast. The
+// `readFeedQuery` is consumed by `useFeedQueries` to fetch feed metadata. The
+// pinning logic reads React Query state directly, so this mock feeds query
+// success/error data without relying on the removed Redux feeds slice. The
 // `enrich` harness enables targeted `readFeedQuery` responses (see feed_URL test).
 jest.mock( '@automattic/api-queries', () => {
 	const actual = jest.requireActual( '@automattic/api-queries' );
@@ -89,18 +89,20 @@ jest.mock( '@automattic/api-queries', () => {
 		...actual,
 		readFeedQuery: ( feedId: number ) => {
 			const base = actual.readFeedQuery( feedId );
-			if ( readFeedQueryTestHarness.mode === 'off' ) {
-				return {
-					...base,
-					queryFn: jest.fn().mockResolvedValue( null ),
-					enabled: false,
-				};
-			}
-			const enrichment = readFeedQueryTestHarness.enrichmentByFeedId[ feedId ];
+			const feed =
+				readFeedQueryTestHarness.mode === 'state'
+					? readFeedQueryTestHarness.feedByFeedId[ feedId ]
+					: readFeedQueryTestHarness.enrichmentByFeedId[ feedId ];
 			return {
 				...base,
-				queryFn: () => Promise.resolve( enrichment != null ? { ...enrichment } : null ),
-				enabled: Boolean( enrichment ),
+				retry: false,
+				queryFn: () => {
+					if ( feed && 'is_error' in feed && feed.is_error ) {
+						return Promise.reject( new Error( 'Feed failed' ) );
+					}
+					return Promise.resolve( feed != null ? { ...feed } : null );
+				},
+				enabled: Boolean( feed ),
 			};
 		},
 	};
@@ -130,7 +132,6 @@ const cardsResponse = ( sites: RecommendedBlogsApiSite[] ) => ( {
 
 interface ReaderState {
 	reader: {
-		feeds: { items: Record< number, { feed_ID: number; is_error?: boolean } > };
 		sites: { items: Record< number, { ID: number; is_error?: boolean } > };
 		follows: {
 			items: Record<
@@ -147,9 +148,10 @@ interface ReaderState {
 	};
 }
 
+type FeedQueryItems = Record< number, { feed_ID: number; blog_ID?: number; is_error?: boolean } >;
+
 const buildReaderState = ( overrides: Partial< ReaderState[ 'reader' ] > = {} ): ReaderState => ( {
 	reader: {
-		feeds: { items: {} },
 		sites: { items: {} },
 		follows: { items: {} },
 		...overrides,
@@ -181,15 +183,21 @@ const readerReducers = {
 	},
 };
 
-const renderHook = ( initialState: ReaderState = buildReaderState() ) =>
-	renderHookWithProvider( () => useSubscribeRecommendations(), {
+const renderHook = (
+	initialState: ReaderState = buildReaderState(),
+	feedByFeedId: FeedQueryItems = {}
+) => {
+	readFeedQueryTestHarness.feedByFeedId = feedByFeedId;
+	return renderHookWithProvider( () => useSubscribeRecommendations(), {
 		initialState,
 		reducers: readerReducers,
 	} );
+};
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	readFeedQueryTestHarness.mode = 'off';
+	readFeedQueryTestHarness.mode = 'state';
+	readFeedQueryTestHarness.feedByFeedId = {};
 	readFeedQueryTestHarness.enrichmentByFeedId = {};
 	mockGetLocaleSlug.mockReturnValue( 'en' );
 	mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );
@@ -449,11 +457,9 @@ describe( 'useSubscribeRecommendations', () => {
 		const flushEffects = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		it( 'pins a card with site_ID === 0 once feed metadata is loaded', async () => {
-			const state = buildReaderState( {
-				feeds: { items: { 100: { feed_ID: 100 } } },
-			} );
+			const state = buildReaderState();
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, { 100: { feed_ID: 100 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -466,12 +472,9 @@ describe( 'useSubscribeRecommendations', () => {
 			// Regression for Copilot review: previously a missing site record was
 			// treated as "OK" and the card was pinned before the site had a chance
 			// to resolve to an error.
-			const state = buildReaderState( {
-				feeds: { items: { 101: { feed_ID: 101 } } },
-				// Note: no entry for site_ID 1001 yet.
-			} );
+			const state = buildReaderState();
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
 			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 			await flushEffects();
@@ -483,11 +486,10 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'pins a card with site_ID > 0 once both feed AND site are loaded', async () => {
 			const state = buildReaderState( {
-				feeds: { items: { 101: { feed_ID: 101 } } },
 				sites: { items: { 1001: { ID: 1001 } } },
 			} );
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -497,11 +499,9 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'excludes a card whose feed loaded with an error', async () => {
-			const state = buildReaderState( {
-				feeds: { items: { 100: { feed_ID: 100, is_error: true } } },
-			} );
+			const state = buildReaderState();
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, { 100: { feed_ID: 100, is_error: true } } );
 
 			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 			await flushEffects();
@@ -513,11 +513,10 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'excludes a card whose site loaded with an error', async () => {
 			const state = buildReaderState( {
-				feeds: { items: { 101: { feed_ID: 101 } } },
 				sites: { items: { 1001: { ID: 1001, is_error: true } } },
 			} );
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, { 101: { feed_ID: 101 } } );
 
 			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 			await flushEffects();
@@ -531,18 +530,14 @@ describe( 'useSubscribeRecommendations', () => {
 			// All four candidates load with feed errors. Without the rejected-set
 			// tracking, `pinnedSites` would stay empty, `isValidating` would be
 			// stuck `true`, and the loading placeholder would render forever.
-			const state = buildReaderState( {
-				feeds: {
-					items: {
-						100: { feed_ID: 100, is_error: true },
-						101: { feed_ID: 101, is_error: true },
-						200: { feed_ID: 200, is_error: true },
-						201: { feed_ID: 201, is_error: true },
-					},
-				},
-			} );
+			const state = buildReaderState();
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, {
+				100: { feed_ID: 100, is_error: true },
+				101: { feed_ID: 101, is_error: true },
+				200: { feed_ID: 200, is_error: true },
+				201: { feed_ID: 201, is_error: true },
+			} );
 
 			await waitFor( () => expect( result.current.hasNoRecommendations ).toBe( true ) );
 			expect( result.current.isValidating ).toBe( false );
@@ -554,14 +549,6 @@ describe( 'useSubscribeRecommendations', () => {
 			// step, site_ID > 0 candidates fail at the site step. Either way the
 			// hook should treat all four as settled and surface the empty state.
 			const state = buildReaderState( {
-				feeds: {
-					items: {
-						100: { feed_ID: 100, is_error: true },
-						101: { feed_ID: 101 },
-						200: { feed_ID: 200, is_error: true },
-						201: { feed_ID: 201 },
-					},
-				},
 				sites: {
 					items: {
 						1001: { ID: 1001, is_error: true },
@@ -570,7 +557,12 @@ describe( 'useSubscribeRecommendations', () => {
 				},
 			} );
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, {
+				100: { feed_ID: 100, is_error: true },
+				101: { feed_ID: 101 },
+				200: { feed_ID: 200, is_error: true },
+				201: { feed_ID: 201 },
+			} );
 
 			await waitFor( () => expect( result.current.hasNoRecommendations ).toBe( true ) );
 			expect( result.current.isValidating ).toBe( false );
@@ -580,18 +572,14 @@ describe( 'useSubscribeRecommendations', () => {
 			// Three feeds error, one is missing entirely (still pending). We
 			// should remain in the validating state rather than collapsing to
 			// the empty state prematurely.
-			const state = buildReaderState( {
-				feeds: {
-					items: {
-						100: { feed_ID: 100, is_error: true },
-						200: { feed_ID: 200, is_error: true },
-						201: { feed_ID: 201, is_error: true },
-						// 101 intentionally absent.
-					},
-				},
-			} );
+			const state = buildReaderState();
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, {
+				100: { feed_ID: 100, is_error: true },
+				200: { feed_ID: 200, is_error: true },
+				201: { feed_ID: 201, is_error: true },
+				// 101 intentionally absent.
+			} );
 
 			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 			// Allow the rejection effect to flush.
@@ -603,18 +591,14 @@ describe( 'useSubscribeRecommendations', () => {
 			// 100 pins (feed loaded, site_ID 0), the other three error out. We
 			// should expose the pin in `recommendations` and not flip into the
 			// empty state.
-			const state = buildReaderState( {
-				feeds: {
-					items: {
-						100: { feed_ID: 100 },
-						101: { feed_ID: 101, is_error: true },
-						200: { feed_ID: 200, is_error: true },
-						201: { feed_ID: 201, is_error: true },
-					},
-				},
-			} );
+			const state = buildReaderState();
 
-			const { result } = renderHook( state );
+			const { result } = renderHook( state, {
+				100: { feed_ID: 100 },
+				101: { feed_ID: 101, is_error: true },
+				200: { feed_ID: 200, is_error: true },
+				201: { feed_ID: 201, is_error: true },
+			} );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toEqual( [
@@ -627,8 +611,8 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'does not prematurely settle when stale rejections drop out of the candidate set', async () => {
 			// Regression test for an over-eager `allCandidatesSettled`:
-			//   1. Mount with feed errors for 100 and 200; 101 and 201 are still
-			//      pending (no Redux feed entry yet). All four are candidates.
+			//   1. Mount with feed query errors for 100 and 200; 101 and 201 are still
+			//      pending (no query result yet). All four are candidates.
 			//   2. Paginated follows arrive marking 100, 101, and 200 as already
 			//      followed, so `combinedRecommendations` shrinks to just [201].
 			//
@@ -636,17 +620,13 @@ describe( 'useSubscribeRecommendations', () => {
 			// `allCandidatesSettled` true here (rejectedFeedIds.size === 2 >=
 			// combinedRecommendations.length === 1), incorrectly surfacing the
 			// empty state while feed 201 is still genuinely pending.
-			const state = buildReaderState( {
-				feeds: {
-					items: {
-						100: { feed_ID: 100, is_error: true },
-						200: { feed_ID: 200, is_error: true },
-						// 101 and 201 intentionally absent — still pending.
-					},
-				},
-			} );
+			const state = buildReaderState();
 
-			const { result, store } = renderHook( state );
+			const { result, store } = renderHook( state, {
+				100: { feed_ID: 100, is_error: true },
+				200: { feed_ID: 200, is_error: true },
+				// 101 and 201 intentionally absent — still pending.
+			} );
 
 			await waitFor( () => expect( result.current.isValidating ).toBe( true ) );
 
@@ -687,11 +667,9 @@ describe( 'useSubscribeRecommendations', () => {
 
 		it( 'keeps a session-followed pinned card visible after the follows slice catches up', async () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
-			const state = buildReaderState( {
-				feeds: { items: { 100: { feed_ID: 100 } } },
-			} );
+			const state = buildReaderState();
 
-			const { result, store } = renderHook( state );
+			const { result, store } = renderHook( state, { 100: { feed_ID: 100 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -734,11 +712,9 @@ describe( 'useSubscribeRecommendations', () => {
 			// status is known would persist as a "recommendation" with a misleading
 			// "Subscribed" badge — which directly contradicts the PR's goal of not
 			// recommending blogs the user already follows.
-			const state = buildReaderState( {
-				feeds: { items: { 100: { feed_ID: 100 } } },
-			} );
+			const state = buildReaderState();
 
-			const { result, store } = renderHook( state );
+			const { result, store } = renderHook( state, { 100: { feed_ID: 100 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
@@ -772,11 +748,10 @@ describe( 'useSubscribeRecommendations', () => {
 			// Same regression as above but discovered via blog_ID/site_ID match
 			// rather than feed_ID. Feed 101 has site_ID 1001 in our fixtures.
 			const state = buildReaderState( {
-				feeds: { items: { 101: { feed_ID: 101 } } },
 				sites: { items: { 1001: { ID: 1001 } } },
 			} );
 
-			const { result, store } = renderHook( state );
+			const { result, store } = renderHook( state, { 101: { feed_ID: 101 } } );
 
 			await waitFor( () =>
 				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(

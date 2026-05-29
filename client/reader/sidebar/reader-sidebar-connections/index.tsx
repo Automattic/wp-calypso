@@ -235,7 +235,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
-				title={ translate( 'Social' ) }
+				title={ translate( 'Social Feeds' ) }
 				customIcon={ <Icon className="sidebar__menu-icon" icon={ people } /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }

@@ -5,6 +5,11 @@ import { READER_SEEN_MARK_AS_UNSEEN_REQUEST } from 'calypso/state/reader/action-
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { receiveMarkAsUnseen } from 'calypso/state/reader/seen-posts/actions';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import {
+	applyFeedSeenOptimisticUpdate,
+	keepFeedSeenOptimisticUpdate,
+	rollbackFeedSeenOptimisticUpdate,
+} from '../../feed-cache';
 
 const toApi = ( action ) => {
 	return {
@@ -15,6 +20,12 @@ const toApi = ( action ) => {
 };
 
 export function fetch( action ) {
+	applyFeedSeenOptimisticUpdate( action, {
+		feedIds: [ action.feedId ],
+		feedUrls: [ action.feedUrl ],
+		delta: action.globalIds?.length ?? 0,
+	} );
+
 	return http(
 		{
 			method: 'POST',
@@ -28,17 +39,21 @@ export function fetch( action ) {
 
 export const onSuccess = ( action, response ) => ( dispatch ) => {
 	if ( response.status ) {
+		keepFeedSeenOptimisticUpdate( action );
 		const { feedId, feedUrl, globalIds } = action;
 		// re-request unseen status and followed feeds
 		dispatch( requestUnseenStatus() );
 		dispatch( requestFollows() );
 
 		dispatch( receiveMarkAsUnseen( { feedId, feedUrl, globalIds } ) );
+	} else {
+		rollbackFeedSeenOptimisticUpdate( action );
 	}
 };
 
-export function onError() {
+export function onError( action ) {
 	// don't do much
+	rollbackFeedSeenOptimisticUpdate( action );
 	return [];
 }
 

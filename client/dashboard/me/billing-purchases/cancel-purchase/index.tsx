@@ -895,9 +895,11 @@ function CancelPurchaseInner() {
 		const cancelActiveSubscriptions: Purchase[] = [];
 		const marketplaceSubscriptions = getActiveMarketplaceSubscriptions();
 		marketplaceSubscriptions.forEach( ( subscription ) => {
-			hasAmountAvailableToRefund( subscription )
-				? cancelAndRefundActiveSubscriptions.push( subscription )
-				: cancelActiveSubscriptions.push( subscription );
+			if ( hasAmountAvailableToRefund( subscription ) ) {
+				cancelAndRefundActiveSubscriptions.push( subscription );
+			} else {
+				cancelActiveSubscriptions.push( subscription );
+			}
 		} );
 		cancelAndRefundActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
 			cancelAndRefundMutation.mutate(
@@ -1237,7 +1239,7 @@ function CancelPurchaseInner() {
 					} );
 				},
 				onError: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1361,7 +1363,7 @@ function CancelPurchaseInner() {
 					} );
 				},
 				onError: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1810,7 +1812,9 @@ function CancelPurchaseInner() {
 									primaryButtonText={ __( 'Continue' ) }
 									removePlan={ handleMarketplaceDialogContinue }
 									/* Translators: %(plan)s is the name of the plan being cancelled */
-									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
+									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), {
+										plan: planName ?? '',
+									} ) }
 								/>
 							) }
 						</VStack>
