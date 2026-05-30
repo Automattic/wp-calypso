@@ -5,6 +5,7 @@ import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
 	makeLayout,
+	notFound,
 	redirectLoggedOut,
 	redirectLoggedOutToSignup,
 	render as clientRender,
@@ -276,6 +277,9 @@ export default async function (): Promise< void > {
 	);
 
 	setupReaderRedirects();
+
+	// Catch-all: show 404 for any unrecognized /reader/* path instead of hanging.
+	page( '/reader/*', notFound, makeLayout, clientRender );
 }
 
 /**
