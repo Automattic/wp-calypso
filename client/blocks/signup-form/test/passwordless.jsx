@@ -25,6 +25,20 @@ describe( 'createAccountError', () => {
 		expect( document.querySelector( '.connect-screen-action-buttons' ) ).toBeInTheDocument();
 	} );
 
+	it( 'applies core input styles when enabled', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm hasCoreInputStyles />
+			</Provider>
+		);
+
+		expect( screen.getByRole( 'textbox', { name: /email/i } ) ).toHaveClass(
+			'form-text-input-core-styles'
+		);
+	} );
+
 	const renderFormAndSubmit = async () => {
 		const onCreateAccountError = jest.fn();
 		const store = mockStore( {} );

@@ -788,6 +788,7 @@ class SignupForm extends Component {
 						onCreateAccountError={ this.handleCreateAccountError }
 						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
 						useConnectScreenActions={ this.props.useConnectScreenActions }
+						hasCoreInputStyles={ this.props.isWoo }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
@@ -814,6 +815,7 @@ class SignupForm extends Component {
 							onCreateAccountError={ this.handleCreateAccountError }
 							onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
 							useConnectScreenActions={ this.props.useConnectScreenActions }
+							hasCoreInputStyles={ this.props.isWoo }
 							{ ...formProps }
 						>
 							{ emailErrorMessage && (
