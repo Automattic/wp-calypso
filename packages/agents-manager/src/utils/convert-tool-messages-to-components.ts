@@ -13,6 +13,29 @@ interface Options {
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
+function getDisplayMessageFromToolData( data: unknown ): string | undefined {
+	if ( typeof data !== 'object' || data === null ) {
+		return undefined;
+	}
+
+	const toolData = data as {
+		summary?: unknown;
+		result?: {
+			message?: unknown;
+		};
+	};
+
+	if ( typeof toolData.summary === 'string' && toolData.summary.trim() ) {
+		return toolData.summary.trim();
+	}
+
+	if ( typeof toolData.result?.message === 'string' && toolData.result.message.trim() ) {
+		return toolData.result.message.trim();
+	}
+
+	return undefined;
+}
+
 /**
  * Converts tool-related messages to component messages.
  */
@@ -77,7 +100,14 @@ export default function convertToolMessagesToComponents( {
 				];
 			}
 
-			const { type: contentType, props, followUpTasks, isCurrent, postId } = textData.data ?? {};
+			const {
+				type: contentType,
+				props,
+				followUpTasks,
+				isCurrent,
+				postId,
+				summary,
+			} = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
@@ -100,7 +130,11 @@ export default function convertToolMessagesToComponents( {
 					{
 						type: 'component' as const,
 						component: Component,
-						componentProps: { ...props, contentType },
+						componentProps: {
+							...props,
+							...( typeof summary === 'string' && { summary } ),
+							contentType,
+						},
 					},
 				],
 				disabled: isStale,
@@ -130,18 +164,23 @@ export default function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle `apply-block-edits` tool message
+		// Handle agent-facing Big Sky tool result summaries.
 		if (
-			textData.tool_id === 'big_sky__apply_block_edits' &&
-			typeof textData.data?.summary === 'string'
+			textData.tool_id === 'big_sky__apply_block_edits' ||
+			textData.tool_id === 'big_sky__apply_update_theme'
 		) {
+			const summary = getDisplayMessageFromToolData( textData.data );
+			if ( ! summary ) {
+				return [];
+			}
+
 			return [
 				{
 					...message,
 					content: [
 						{
 							type: 'text' as const,
-							text: textData.data.summary.trim(),
+							text: summary,
 						},
 					],
 				},
