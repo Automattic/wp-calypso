@@ -74,6 +74,7 @@ describe( 'AgentsManager', () => {
 				sectionName: 'site-editor',
 				currentUser: mockUser,
 				site: mockSite,
+				currentSiteId: 999,
 				currentRoute: '/sites/fulltest.com',
 				siteKey: '999',
 			} )

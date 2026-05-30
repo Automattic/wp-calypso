@@ -12,6 +12,7 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
+import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
@@ -31,6 +32,10 @@ describe( 'createAgentConfig', () => {
 	afterEach( () => {
 		delete ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 			.agentsManagerData;
+		delete ( window as unknown as { JP_CONNECTION_INITIAL_STATE?: unknown } )
+			.JP_CONNECTION_INITIAL_STATE;
+		document.body.className = '';
+		clearSiteEditorActions();
 	} );
 
 	it( 'does not add reader page context for regular agents', async () => {
@@ -95,5 +100,115 @@ describe( 'createAgentConfig', () => {
 		const context = config.contextProvider?.getClientContext();
 
 		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 247750866 } ) );
+	} );
+
+	it( 'uses Jetpack connection data as a selectedSiteId fallback', async () => {
+		(
+			window as unknown as {
+				JP_CONNECTION_INITIAL_STATE?: {
+					userConnectionData?: { currentUser?: { blogId?: number } };
+				};
+			}
+		 ).JP_CONNECTION_INITIAL_STATE = {
+			userConnectionData: { currentUser: { blogId: 12345 } },
+		};
+
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'dolly',
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 12345 } ) );
+	} );
+
+	it( 'adds site editor constructor arguments from the host environment', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'dolly',
+			environment: 'site-editor',
+			version: '1.2.3',
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual(
+			expect.objectContaining( {
+				constructorArguments: {
+					client: 'site-editor',
+					version: '1.2.3',
+				},
+			} )
+		);
+	} );
+
+	it( 'adds site editor constructor arguments when the route is site-editor.php', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'dolly',
+			currentRoute: '/wp-admin/site-editor.php',
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual(
+			expect.objectContaining( {
+				constructorArguments: {
+					client: 'site-editor',
+				},
+			} )
+		);
+	} );
+
+	it( 'merges site editor actions into default client context', async () => {
+		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
+
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'dolly',
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual(
+			expect.objectContaining( {
+				siteEditorActions: {
+					colorPickerItemSelected: 'Ruby',
+				},
+			} )
+		);
+	} );
+
+	it( 'merges selected site, constructor args, and site editor actions into provider context', async () => {
+		setSiteEditorAction( 'fontPickerItemSelected', 'Serif' );
+
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			siteId: 987,
+			agentId: 'dolly',
+			environment: 'site-editor',
+			contextProvider: {
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/site-editor.php',
+					pathname: '/wp-admin/site-editor.php',
+					search: '',
+					environment: 'gutenberg',
+					constructorArguments: {
+						version: 'provider-version',
+					},
+				} ),
+			},
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual(
+			expect.objectContaining( {
+				selectedSiteId: 987,
+				siteEditorActions: {
+					fontPickerItemSelected: 'Serif',
+				},
+				constructorArguments: {
+					version: 'provider-version',
+					client: 'site-editor',
+				},
+			} )
+		);
 	} );
 } );

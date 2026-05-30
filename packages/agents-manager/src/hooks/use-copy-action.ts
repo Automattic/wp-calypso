@@ -4,6 +4,29 @@ import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client'
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
+function getToolMessageText( data: unknown ): string | undefined {
+	if ( typeof data !== 'object' || data === null ) {
+		return undefined;
+	}
+
+	const toolData = data as {
+		summary?: unknown;
+		result?: {
+			message?: unknown;
+		};
+	};
+
+	if ( typeof toolData.summary === 'string' && toolData.summary.trim() ) {
+		return toolData.summary.trim();
+	}
+
+	if ( typeof toolData.result?.message === 'string' && toolData.result.message.trim() ) {
+		return toolData.result.message.trim();
+	}
+
+	return undefined;
+}
+
 /**
  * Extracts copyable text from a message. For tool messages, only known tools with
  * displayable content are included. Returns an empty string if nothing is copyable.
@@ -30,10 +53,13 @@ function getCopyableText( message: UIMessage ): string {
 				) {
 					copyableTexts.push( parsed.data.trim() );
 				} else if (
-					parsed.tool_id === 'big_sky__apply_block_edits' &&
-					typeof parsed.data?.summary === 'string'
+					parsed.tool_id === 'big_sky__apply_block_edits' ||
+					parsed.tool_id === 'big_sky__apply_update_theme'
 				) {
-					copyableTexts.push( parsed.data.summary.trim() );
+					const toolMessageText = getToolMessageText( parsed.data );
+					if ( toolMessageText ) {
+						copyableTexts.push( toolMessageText );
+					}
 				}
 				// Other tools: skip (not copyable).
 				continue;

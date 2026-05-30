@@ -10,6 +10,7 @@ import {
 	setExternalContextEntry,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { setSiteEditorAction } from '../../utils/site-editor-context';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 // Action keys this hook owns on `window.__agentsManagerActions`. Cleanup
@@ -28,6 +29,7 @@ const OWNED_ACTION_KEYS: ReadonlyArray< keyof AgentsManagerActions > = [
 	'removeContextEntry',
 	'setContextCard',
 	'removeContextCard',
+	'setSiteEditorAction',
 	'chatNavigate',
 	'isReady',
 ];
@@ -169,6 +171,7 @@ export default function useSetupCustomActions( {
 			removeContextEntry: removeExternalContextEntry,
 			setContextCard: setExternalContextCard,
 			removeContextCard: removeExternalContextCard,
+			setSiteEditorAction,
 			chatNavigate: navigate,
 			isReady: true,
 		};

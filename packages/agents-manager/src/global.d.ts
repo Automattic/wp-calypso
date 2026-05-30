@@ -14,6 +14,10 @@ declare const agentsManagerData:
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
+			siteId?: number | string;
+			site?: {
+				ID?: number | string;
+			};
 			helpCenterUrl?: string;
 			jetpackAiSidebarPreview?: {
 				enabled: boolean;
@@ -112,6 +116,7 @@ interface AgentsManagerActions {
 	removeContextEntry: ( id: string ) => void;
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
+	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;

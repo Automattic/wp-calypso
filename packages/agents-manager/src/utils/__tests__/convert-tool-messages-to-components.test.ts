@@ -77,6 +77,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			props: { name: 'test' },
+			summary: 'Choose one of these options.',
 			isCurrent: true,
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
@@ -90,7 +91,11 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
 			component: MockComponent,
-			componentProps: { name: 'test', contentType: 'my-component' },
+			componentProps: {
+				name: 'test',
+				summary: 'Choose one of these options.',
+				contentType: 'my-component',
+			},
 		} );
 	} );
 
@@ -219,6 +224,47 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'text',
 			text: summaryText,
+		} );
+	} );
+
+	it( 'renders apply-block-edits structured result message as plain text', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			result: {
+				success: true,
+				message: 'Updated the header and footer.',
+				details: {
+					changes: { added: [], removed: [], modified: [] },
+				},
+			},
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'Updated the header and footer.',
+		} );
+	} );
+
+	it( 'renders update-theme structured result message as plain text', () => {
+		const message = createToolMessage( 'big_sky__apply_update_theme', {
+			result: {
+				success: true,
+				message: 'Updated the color palette.',
+			},
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'Updated the color palette.',
 		} );
 	} );
 
