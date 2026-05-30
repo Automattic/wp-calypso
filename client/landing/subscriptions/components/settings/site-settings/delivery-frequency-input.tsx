@@ -77,7 +77,7 @@ const DeliveryFrequencyInput = ( {
 						className="delivery-frequency-input__spinner"
 						role="status"
 						aria-live="polite"
-						aria-label={ translate( 'Saving delivery frequency' ) }
+						aria-label={ translate( 'Saving…' ) }
 					>
 						<Spinner />
 					</span>
