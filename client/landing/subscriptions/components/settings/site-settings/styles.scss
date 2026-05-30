@@ -29,6 +29,15 @@
 		.delivery-frequency-input__control {
 			flex: 1;
 			min-width: 0;
+
+			&.is-loading {
+				opacity: 1;
+			}
+
+			&:disabled {
+				color: var(--color-text);
+				-webkit-text-fill-color: var(--color-text);
+			}
 		}
 
 		.delivery-frequency-input__spinner {
