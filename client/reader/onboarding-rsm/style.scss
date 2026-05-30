@@ -25,6 +25,18 @@ $actions-height: 64px;
 	order: -1;
 }
 
+// User-agent buttons default to `cursor: default`, which makes the modal's
+// header (Back / Close), footer (Do it later / Pick your topics / Continue /
+// Finish), and inline action buttons (See more topics, Load more
+// recommendations, per-row Subscribe) feel non-interactive on hover. Restore
+// the pointer cursor for any enabled control inside the modal.
+.reader-onboarding-rsm-modal {
+	button:not( :disabled ):not( [aria-disabled='true'] ),
+	a {
+		cursor: pointer;
+	}
+}
+
 // Match Calypso keyboard-mode focus (`accessible-focus` on `<html>` from
 // `@automattic/accessible-focus`): hide focus rings on pointer use, show a
 // consistent outline when the user is navigating by keyboard.

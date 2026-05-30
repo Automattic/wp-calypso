@@ -1,3 +1,4 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -5,6 +6,7 @@ import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-p
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViews } from 'calypso/components/dataviews';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -47,6 +49,7 @@ const AddWooPaymentsToSiteTable = ( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		fields: [ 'site' ],
+		layout: { density: 'compact' },
 	} );
 
 	const onSelectSite = useCallback(
@@ -102,7 +105,13 @@ const AddWooPaymentsToSiteTable = ( {
 						setDataViewsState: setDataViewsState,
 						defaultLayouts: { table: {} },
 					} }
-				/>
+				>
+					<HStack className="dataviews__view-actions" justify="start">
+						<DataViews.Search />
+					</HStack>
+					<DataViews.Layout />
+					<DataViews.Footer />
+				</ItemsDataViews>
 			) }
 		</div>
 	);

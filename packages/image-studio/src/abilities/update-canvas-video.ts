@@ -32,7 +32,7 @@ import { trackImageStudioImageGenerated } from '../utils/tracking';
  * REST call (with rest_base lookup + manual cache hydration).
  */
 async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
-	const editor = select( 'core/editor' ) as
+	const editor = select( 'core/editor' ) as unknown as
 		| { getCurrentPostId: () => number | null; getCurrentPostType: () => string | null }
 		| undefined;
 

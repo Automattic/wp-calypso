@@ -41,6 +41,7 @@ object ToSAcceptanceTracking: BuildType ({
 
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
+		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")

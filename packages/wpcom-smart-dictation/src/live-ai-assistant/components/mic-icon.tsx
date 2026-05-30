@@ -38,28 +38,28 @@ export function MicIcon( {
 							values="-120%;120%;120%"
 							keyTimes="0;0.18;1"
 							dur="5s"
-							repeatCount="indefinite"
+							repeatCount="3"
 						/>
 						<animate
 							attributeName="x2"
 							values="-20%;220%;220%"
 							keyTimes="0;0.18;1"
 							dur="5s"
-							repeatCount="indefinite"
+							repeatCount="3"
 						/>
 						<animate
 							attributeName="y1"
 							values="120%;-120%;-120%"
 							keyTimes="0;0.18;1"
 							dur="5s"
-							repeatCount="indefinite"
+							repeatCount="3"
 						/>
 						<animate
 							attributeName="y2"
 							values="20%;-220%;-220%"
 							keyTimes="0;0.18;1"
 							dur="5s"
-							repeatCount="indefinite"
+							repeatCount="3"
 						/>
 					</linearGradient>
 				) }

@@ -4,8 +4,8 @@
 // so the dock survives navigation between marketplace sub-routes.
 
 import { isEnabled } from '@automattic/calypso-config';
-import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useEffect, useState } from '@wordpress/element';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -14,14 +14,8 @@ import {
 } from 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store';
 import { useStore } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-
-const PLUGIN_COMPASS_AGENT_ID = 'wpcom-workflow-plugin_compass';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 const importAgentsManager = () =>
 	import(
@@ -33,24 +27,10 @@ const importAgentProvider = () =>
 		/* webpackChunkName: "plugin-compass" */ 'calypso/my-sites/plugins/marketplace-ai-experience/agent-provider'
 	);
 
+const PLUGIN_COMPASS_AGENT_ID = 'wpcom-workflow-plugin_compass';
+
 // Module-scoped so the provider object's identity is stable across re-renders.
 let cachedProvider: { toolProvider: object } | null = null;
-
-function registerInlineProvider( provider: object ): void {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
-
-	type AMData = { agentProviders?: ( string | object )[] };
-	const w = window as unknown as { agentsManagerData?: AMData };
-	w.agentsManagerData = w.agentsManagerData || {};
-
-	const existing = w.agentsManagerData.agentProviders;
-	const providers = Array.isArray( existing ) ? existing : [];
-	if ( ! providers.includes( provider ) ) {
-		w.agentsManagerData.agentProviders = [ ...providers, provider ];
-	}
-}
 
 export default function PluginCompassAgentLoader( {
 	sectionName,
@@ -69,12 +49,9 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 	const store = useStore();
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const canInstallPlugins = useSelector( ( state ) =>
-		selectedSiteId ? siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PLUGINS ) : false
-	);
 
-	const gatesPassed = !! selectedSite && canInstallPlugins;
+	// AM supports site-less mode; install actions defer to ManageSites.
+	const gatesPassed = !! user;
 
 	const [ ready, setReady ] = useState( cachedProvider !== null );
 
@@ -84,12 +61,14 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 	// rendering under site B. Clear on every site change.
 	useEffect( () => {
 		setPicks( [] );
-	}, [ selectedSiteId ] );
+	}, [ selectedSite?.ID ] );
 
 	useEffect( () => {
 		if ( ! gatesPassed ) {
 			return;
 		}
+
+		applyEmbeddedHostOverrides();
 
 		if ( cachedProvider ) {
 			registerInlineProvider( cachedProvider );
@@ -117,7 +96,7 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 		};
 	}, [ gatesPassed, store ] );
 
-	if ( ! gatesPassed || ! ready || ! selectedSite ) {
+	if ( ! gatesPassed || ! ready ) {
 		return null;
 	}
 
@@ -128,8 +107,73 @@ function PluginCompassAgentLoaderInner(): JSX.Element | null {
 			agentId={ PLUGIN_COMPASS_AGENT_ID }
 			currentUser={ user }
 			sectionName="plugins"
-			site={ selectedSite }
-			currentSiteId={ selectedSite.ID }
+			site={ selectedSite ?? null }
+			currentSiteId={ selectedSite?.ID }
 		/>
 	);
+}
+
+function registerInlineProvider( provider: object ): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	type AMData = { agentProviders?: ( string | object )[] };
+	const w = window as unknown as { agentsManagerData?: AMData };
+	w.agentsManagerData = w.agentsManagerData || {};
+
+	const existing = w.agentsManagerData.agentProviders;
+	const providers = Array.isArray( existing ) ? existing : [];
+	if ( ! providers.includes( provider ) ) {
+		w.agentsManagerData.agentProviders = [ ...providers, provider ];
+	}
+}
+
+// Set the host customizations (greeting, help text, suggestion chips)
+// once before the AsyncLoad mounts AgentsManager so the empty view
+// reads Plugin Compass copy instead of the Orchestrator defaults.
+function applyEmbeddedHostOverrides(): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	type AMData = {
+		agentId?: string;
+		emptyViewHeading?: string;
+		emptyViewHelp?: string;
+		compassSuggestions?: Suggestion[];
+	};
+	const w = window as unknown as { agentsManagerData?: AMData };
+	w.agentsManagerData = w.agentsManagerData || {};
+
+	// Idempotent: once we've stamped our agentId, skip re-running translate()
+	// and reassigning globals on every effect fire.
+	if ( w.agentsManagerData.agentId === PLUGIN_COMPASS_AGENT_ID ) {
+		return;
+	}
+
+	w.agentsManagerData.agentId = PLUGIN_COMPASS_AGENT_ID;
+	w.agentsManagerData.emptyViewHeading = String(
+		translate( 'Howdy! What plugin features are you looking for today?' )
+	);
+
+	w.agentsManagerData.emptyViewHelp = String( translate( 'Have a specific request? Ask away.' ) );
+
+	w.agentsManagerData.compassSuggestions = [
+		{
+			id: 'plugin-compass-seo',
+			label: String( translate( 'Rank higher in search results' ) ),
+			prompt: String( translate( 'Help me rank higher in Google search results.' ) ),
+		},
+		{
+			id: 'plugin-compass-analytics',
+			label: String( translate( 'Track visitor analytics' ) ),
+			prompt: String( translate( 'I want to track visitor analytics on my site.' ) ),
+		},
+		{
+			id: 'plugin-compass-commerce',
+			label: String( translate( 'Sell products online' ) ),
+			prompt: String( translate( 'I want to sell physical products through my site.' ) ),
+		},
+	];
 }

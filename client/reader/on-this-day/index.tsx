@@ -4,18 +4,22 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useCachedPosts } from 'calypso/reader/data/post/cache';
+import {
+	isPaddingStreamItem,
+	usePaginatedStream,
+	type StreamItem,
+	type StreamListItem,
+} from 'calypso/reader/data/stream';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import Skeleton from '../components/skeleton';
@@ -29,43 +33,30 @@ const loadReaderFullPost = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
 	);
 
-interface ReaderPost {
-	site_name: string;
-	postId: number;
-	feedId?: number;
-	blogId?: number;
-}
-
 interface PostItem {
-	title: string;
-	featured_image: string;
+	title?: string;
+	excerpt?: string;
+	content?: string;
+	featured_image?: string;
 	site_icon: {
 		img: string;
 	};
 	author: {
 		avatar_URL: string;
 	};
-	site_name: string;
-	site_ID: number;
+	site_name?: string;
+	site_ID?: number;
+	date?: string;
 }
 
-interface PaddingItem {
-	isPadding: true;
-	postId: string;
-}
-
-function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
-	return 'isPadding' in item;
-}
-
-function postKeyForItem( item: ReaderPost ) {
+function postKeyForItem( item: StreamItem ) {
 	if ( item.feedId ) {
 		return { feedId: item.feedId, postId: item.postId };
 	}
 	return { blogId: item.blogId, postId: item.postId };
 }
 
-function itemKeyString( item: ReaderPost ) {
+function itemKeyString( item: StreamItem ) {
 	if ( item.feedId ) {
 		return `${ item.feedId }-${ item.postId }`;
 	}
@@ -77,12 +68,13 @@ interface OnThisDayProps {
 	streamKey: string;
 }
 
+const postIdString = ( item: StreamListItem ) => item.postId?.toString() ?? '';
+
 export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	const query = useSelector( getCurrentQueryArguments );
-	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
-	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
+	const dispatch = useDispatch();
+	const [ selectedItem, setSelectedItem ] = useState< StreamItem | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
-	const [ isLoading, setIsLoading ] = useState( false );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
 	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
 	const focusedIndexRef = useRef< string | null >( null );
@@ -102,39 +94,85 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 		showMedia: true,
 	} );
 
-	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
-	const posts = useSelector( ( state: AppState ) => {
-		const items = data?.items;
+	const data = usePaginatedStream( {
+		streamKey,
+		page: view.page ?? 1,
+		perPage: view.perPage ?? 15,
+	} );
+	const streamItems = data.items;
+	const isLoading = data.isRequesting;
+
+	const postItems = useMemo(
+		() => streamItems.filter( ( item ) => ! isPaddingStreamItem( item ) ) as StreamItem[],
+		[ streamItems ]
+	);
+	const postKeys = useMemo( () => postItems.map( postKeyForItem ), [ postItems ] );
+	const cachedPosts = useCachedPosts( postKeys );
+	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
+		const items = streamItems;
 		if ( ! items ) {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
-			if ( isPaddingItem( item ) ) {
+		return items.reduce( ( acc: Record< number, unknown >, item: StreamListItem ) => {
+			if ( isPaddingStreamItem( item ) ) {
 				return acc;
 			}
 
-			const post = getPostByKey( state, postKeyForItem( item ) );
-			if ( ! post ) {
-				return acc;
+			if ( item.feedId ) {
+				const feedId = Number( item.feedId );
+				const feedSubscription = getReaderFollowForFeed( state, feedId );
+				if ( feedSubscription?.site_icon ) {
+					acc[ feedId ] = feedSubscription.site_icon;
+				}
 			}
-
-			if ( ! post.site_icon && item.feedId ) {
-				const feedSubscription = getReaderFollowForFeed( state, item.feedId );
-				post.site_icon = feedSubscription?.site_icon;
-			}
-
-			acc[ itemKeyString( item ) ] = post;
 
 			return acc;
 		}, {} );
 	}, shallowEqual );
 
+	const posts = useMemo( () => {
+		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {
+			const post = cachedPosts[ index ];
+			if ( ! post ) {
+				return acc;
+			}
+
+			acc[ itemKeyString( item ) ] = {
+				...post,
+				site_icon:
+					post.site_icon ??
+					( item.feedId ? siteIconsByFeedId[ Number( item.feedId ) ] : undefined ),
+			} as PostItem;
+
+			return acc;
+		}, {} );
+	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
+
 	const getPostFromItem = useCallback(
-		( item: ReaderPost ) => {
+		( item: StreamItem ) => {
 			return posts[ itemKeyString( item ) ];
 		},
 		[ posts ]
+	);
+
+	const selectItem = useCallback( ( item: StreamItem ) => {
+		setSelectedItem( item );
+		setTimeout( () => {
+			postColumnRef.current?.focus();
+		}, 0 );
+	}, [] );
+
+	const handlePostFieldKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement >, item: StreamItem ) => {
+			if ( event.key !== 'Enter' && event.key !== ' ' ) {
+				return;
+			}
+			event.preventDefault();
+			event.stopPropagation();
+			selectItem( item );
+		},
+		[ selectItem ]
 	);
 
 	const fields = useMemo(
@@ -142,8 +180,8 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
-					if ( isPaddingItem( item ) ) {
+				render: ( { item }: { item: StreamListItem } ) => {
+					if ( isPaddingStreamItem( item ) ) {
 						return <Skeleton height="24px" width="24px" shape="circle" />;
 					}
 					const post = getPostFromItem( item );
@@ -156,12 +194,12 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
-					isPaddingItem( item )
+				getValue: ( { item }: { item: StreamListItem } ) =>
+					isPaddingStreamItem( item )
 						? ''
 						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
-					if ( isPaddingItem( item ) ) {
+				render: ( { item }: { item: StreamListItem } ) => {
+					if ( isPaddingStreamItem( item ) ) {
 						return (
 							<>
 								<Skeleton height="10px" width="100%" style={ { marginBottom: '8px' } } />
@@ -170,12 +208,14 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 						);
 					}
 					return (
-						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
+						<div onFocus={ () => handleItemFocus( postIdString( item ) ) }>
 							<OnThisDayPostField
 								ref={ ( el: HTMLDivElement | null ) => {
-									itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+									itemRefs.current[ postIdString( item ) ] = el;
 								} }
 								post={ getPostFromItem( item ) }
+								onClick={ () => selectItem( item ) }
+								onKeyDown={ ( event ) => handlePostFieldKeyDown( event, item ) }
 							/>
 						</div>
 					);
@@ -185,21 +225,14 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem, handleItemFocus ]
+		[ getPostFromItem, handleItemFocus, handlePostFieldKeyDown, selectItem ]
 	);
 
 	const fetchData = useCallback( () => {
 		const pathForView =
 			typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
 		dispatch( viewStream( streamKey, pathForView ) as UnknownAction );
-		dispatch(
-			requestPaginatedStream( {
-				streamKey,
-				page: view.page,
-				perPage: view.perPage,
-			} )
-		);
-	}, [ dispatch, view, streamKey ] );
+	}, [ dispatch, streamKey ] );
 
 	const defaultPaginationInfo = useMemo( () => {
 		return {
@@ -209,25 +242,23 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	}, [ data?.pagination ] );
 
 	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data?.items ?? [], view, fields );
-	}, [ data?.items, view, fields ] );
+		return filterSortAndPaginate( streamItems, view, fields );
+	}, [ streamItems, view, fields ] );
 
 	useEffect( () => {
 		fetchData();
 	}, [ fetchData ] );
 
 	useEffect( () => {
-		if ( isWide && data?.items?.length > 0 ) {
+		if ( isWide && streamItems.length > 0 ) {
 			if ( view.page && view.perPage ) {
-				const selectedPost = data?.items?.[ ( view.page - 1 ) * view.perPage ];
-				setSelectedItem( selectedPost || null );
+				const selectedPost = streamItems[ ( view.page - 1 ) * view.perPage ];
+				setSelectedItem(
+					selectedPost && ! isPaddingStreamItem( selectedPost ) ? selectedPost : null
+				);
 			}
 		}
-	}, [ isWide, data?.items, view ] );
-
-	useLayoutEffect( () => {
-		setIsLoading( data?.isRequesting );
-	}, [ data?.isRequesting ] );
+	}, [ isWide, streamItems, view ] );
 
 	const handleKeyDown = useCallback(
 		( event: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -235,7 +266,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				const focusedItem = shownData.find(
 					( item ) => item.postId?.toString() === focusedIndexRef.current
 				);
-				if ( focusedItem && ! isPaddingItem( focusedItem ) ) {
+				if ( focusedItem && ! isPaddingStreamItem( focusedItem ) ) {
 					setSelectedItem( focusedItem );
 					setTimeout( () => {
 						postColumnRef.current?.focus();
@@ -258,9 +289,9 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 					</NavigationHeader>
 				</div>
 				<aside className="on-this-day__list-column-content">
-					<DataViews< ReaderPost | PaddingItem >
+					<DataViews< StreamListItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
-						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
+						getItemId={ ( item: StreamListItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
 						view={ view }
@@ -270,15 +301,16 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
-						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
+						selection={ selectedItem ? [ postIdString( selectedItem ) ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
-							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+							const selectedPost = streamItems.find(
+								( item: StreamListItem ) => item.postId?.toString() === newSelection[ 0 ]
 							);
-							setSelectedItem( selectedPost || null );
-							setTimeout( () => {
-								postColumnRef.current?.focus();
-							}, 0 );
+							if ( selectedPost && ! isPaddingStreamItem( selectedPost ) ) {
+								selectItem( selectedPost );
+							} else {
+								setSelectedItem( null );
+							}
 						} }
 					/>
 				</aside>
@@ -292,8 +324,8 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<OnThisDayPostSkeleton />
 				) }
-				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent view="on-this-day" /> }
-				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+				{ ! isLoading && streamItems.length === 0 && <FollowingEmptyContent view="on-this-day" /> }
+				{ streamItems.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<AsyncLoad
 						require={ loadReaderFullPost }
 						feedId={ selectedItem.feedId }

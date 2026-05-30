@@ -458,18 +458,13 @@ export function AuthorProfilePanel( {
 
 	const renderHeaderError = ( error: AtmosphereError ) => {
 		const noRetry = new Set< AtmosphereError[ 'kind' ] >( [
-			'auth_required',
-			'auth_failed',
 			'not_found',
 			'connection_not_found',
 			'bad_request',
-			'invalid_handle',
-			'invalid_credentials',
 		] );
 		const showRetry = ! noRetry.has( error.kind );
 		const titleByKind: Partial< Record< AtmosphereError[ 'kind' ], TranslateResult > > = {
 			not_found: translate( 'Profile not found' ),
-			auth_required: translate( 'Reconnect needed' ),
 			rate_limited: translate( 'Slow down' ),
 			upstream_unavailable: translate( 'Bluesky unreachable' ),
 		};
@@ -553,6 +548,10 @@ export function AuthorProfilePanel( {
 							protocolLabel="Bluesky"
 							protocolHomeURL="/reader/atmosphere"
 							protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+							authRequiredCopy={ {
+								title: String( translate( "Couldn't load posts" ) ),
+								line: String( translate( 'Something went wrong with your Bluesky connection.' ) ),
+							} }
 						/>
 					</VStack>
 				</RepostProvider>

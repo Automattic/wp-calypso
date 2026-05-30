@@ -324,16 +324,16 @@ class ManagePurchase extends Component<
 
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
-		const options = redirectTo ? { redirectTo } : undefined;
-		const isSitelessRenewal =
-			purchase &&
-			( isAkismetHoldingSitePurchase( purchase ) ||
-				isMarketplaceHoldingSitePurchase( purchase ) ||
-				isA4AHoldingSitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
 		}
+
+		const options = redirectTo ? { redirectTo } : undefined;
+		const isSitelessRenewal =
+			isAkismetHoldingSitePurchase( purchase ) ||
+			isMarketplaceHoldingSitePurchase( purchase ) ||
+			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
 		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
@@ -786,11 +786,11 @@ class ManagePurchase extends Component<
 
 		// Visibility:
 		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → show when the subscription is already off (auto-renew off,
-		//              expired), OR when auto-renew is still on and a refund is
-		//              available (the new dual-button case alongside Cancel).
+		//   On flag  → Remove only when auto-renew is already off. The refund-eligible
+		//              case is surfaced inside the cancel flow via
+		//              RefundEligibilityNotice instead of a parallel Remove CTA.
 		if ( isSplitEnabled ) {
-			if ( autoRenewOn && ! canRefund ) {
+			if ( autoRenewOn ) {
 				return null;
 			}
 		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {

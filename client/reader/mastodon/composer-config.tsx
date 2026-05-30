@@ -1,6 +1,8 @@
-import { createMastodonPostMutation } from '@automattic/api-queries';
+import { createMastodonPostMutation, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { getThreadUrl } from './route';
 import { useMastodonComposerExtras } from './use-mastodon-composer-extras';
 import { useMastodonComposerLimit } from './use-mastodon-composer-limit';
@@ -13,6 +15,15 @@ import type {
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
+export function useMastodonAuthorHandle( connectionId: number | null ): string | null {
+	const { data } = useMastodonConnectionsQuery( { enabled: connectionId !== null } );
+	if ( connectionId === null ) {
+		return null;
+	}
+	const connection = data?.connections?.find( ( c ) => c.id === connectionId );
+	return connection?.handle ? normalizeHandle( connection.handle ) : null;
+}
+
 export const mastodonComposerConfig: ComposerConfig<
 	MastodonError,
 	MastodonCreatePostMutationParams,
@@ -22,6 +33,8 @@ export const mastodonComposerConfig: ComposerConfig<
 	// configuration via `useMastodonInstanceConfigQuery` and falls back to
 	// 500 (stock Mastodon default) when the query is pending or errors.
 	useLimit: useMastodonComposerLimit,
+	useAuthorHandle: useMastodonAuthorHandle,
+	headerIcon: <ReaderMastodonIcon />,
 	protocolLabel: 'Mastodon',
 	// Quote mode uses Mastodon 4.5+'s native `quoted_status_id` with a
 	// text-based fallback (permalink appended to status) for older
@@ -159,7 +172,7 @@ export const mastodonComposerConfig: ComposerConfig<
 		} ),
 	},
 	copy: {
-		title: ( mode, translate ) => titleForMode( mode, translate ),
+		title: ( mode, translate, handle ) => titleForMode( mode, translate, handle ),
 		placeholder: ( mode, translate, handle ) => placeholderForMode( mode, translate, handle ),
 	},
 	logBadRequest: ( mode, error ) => {
@@ -182,7 +195,15 @@ export const mastodonComposerConfig: ComposerConfig<
 	useProtocolExtras: useMastodonComposerExtras,
 };
 
-function titleForMode( mode: ActiveMode, t: Translate ): string {
+function titleForMode( mode: ActiveMode, t: Translate, handle?: string | null ): string {
+	const base = baseTitleForMode( mode, t );
+	// "@handle" and the middle-dot separator are unlocalized — the handle is
+	// a fixed `user@instance` identifier and the dot is the same in every
+	// locale we ship. Mirrors the atmosphere title format.
+	return handle ? `${ base } · @${ handle }` : base;
+}
+
+function baseTitleForMode( mode: ActiveMode, t: Translate ): string {
 	if ( mode.kind === 'reply' ) {
 		return t( 'Reply' ) as string;
 	}

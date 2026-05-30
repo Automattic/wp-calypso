@@ -1,3 +1,4 @@
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_FOLLOW,
 	READER_FOLLOW_ERROR,
@@ -16,6 +17,7 @@ import {
 	READER_FOLLOWS_MARK_AS_STALE,
 } from 'calypso/state/reader/action-types';
 import { ReaderFollowItem } from './selectors/types';
+import { prepareComparableUrl } from './utils';
 
 import 'calypso/state/data-layer/wpcom/read/following/mine';
 import 'calypso/state/data-layer/wpcom/read/following/mine/delete';
@@ -29,6 +31,24 @@ import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/del
 import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/new';
 
 import 'calypso/state/reader/init';
+
+function updateCachedReadSiteFollowStatus( feedUrl, isFollowing ) {
+	const queryClient = getCalypsoQueryClient();
+	if ( ! queryClient || ! feedUrl ) {
+		return;
+	}
+
+	for ( const [ queryKey, site ] of queryClient.getQueriesData( {
+		queryKey: [ 'read', 'sites' ],
+	} ) ) {
+		if ( prepareComparableUrl( site?.feed_URL ) === prepareComparableUrl( feedUrl ) ) {
+			queryClient.setQueryData( queryKey, {
+				...site,
+				is_following: isFollowing,
+			} );
+		}
+	}
+}
 
 /**
  * @typedef {Object} RecommendedSiteInfo
@@ -45,6 +65,8 @@ import 'calypso/state/reader/init';
  * @returns {Object} The action.
  */
 export function follow( feedUrl, followInfo, recommendedSiteInfo ) {
+	updateCachedReadSiteFollowStatus( feedUrl, true );
+
 	const action = {
 		type: READER_FOLLOW,
 		payload: {
@@ -65,6 +87,8 @@ export function requestFollowCompleted( feedUrl ) {
 }
 
 export function unfollow( feedUrl ) {
+	updateCachedReadSiteFollowStatus( feedUrl, false );
+
 	return {
 		type: READER_UNFOLLOW,
 		payload: { feedUrl },

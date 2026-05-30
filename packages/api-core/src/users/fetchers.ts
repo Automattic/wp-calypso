@@ -2,9 +2,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
 import type { UserResponse } from './types';
 
-interface FetchUserParams {
+type FetchUserParams = {
 	find_by_id?: boolean;
-}
+};
 
 export const fetchUserProfile = (
 	userIdOrLogin: string | number,

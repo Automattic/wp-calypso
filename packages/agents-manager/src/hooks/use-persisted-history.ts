@@ -7,6 +7,7 @@ import { select as storeSelect, useSelect } from '@wordpress/data';
 import { useState, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
 import { Action, Location } from 'history';
 import { AGENTS_MANAGER_STORE } from '../stores';
+import { generateUUID } from '../utils/generate-uuid';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
 
 const DEFAULT_INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
@@ -133,7 +134,7 @@ class MemoryHistory {
 			search: search ? `?${ search }` : '',
 			hash: hash ? `#${ hash }` : '',
 			state,
-			key: crypto.randomUUID(),
+			key: generateUUID(),
 		};
 	}
 
@@ -149,14 +150,15 @@ class MemoryHistory {
  * Read the full router history map from the store (synchronous, outside React).
  */
 function getFullRouterHistory(): PerSiteRouterHistory | undefined {
-	return ( storeSelect( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState()
-		.routerHistory;
+	return (
+		storeSelect( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect
+	 ).getAgentsManagerState().routerHistory;
 }
 
 export const usePersistedHistory = ( siteKey: string ) => {
 	const { persistedHistory, lastActive } = useSelect(
 		( select ) => {
-			const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
+			const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
 			return {
 				persistedHistory: store.getRouterHistory( siteKey ),
 				lastActive: store.getLastActivity( siteKey ),

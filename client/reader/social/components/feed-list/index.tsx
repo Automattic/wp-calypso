@@ -27,6 +27,7 @@ interface SocialFeedListProps< T > {
 	protocolLabel: string;
 	protocolHomeURL: string;
 	protocolHomeLabel: string;
+	authRequiredCopy?: { title: string; line: string };
 }
 
 export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
@@ -48,6 +49,7 @@ export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
 		protocolLabel,
 		protocolHomeURL,
 		protocolHomeLabel,
+		authRequiredCopy,
 	} = props;
 
 	const translate = useTranslate();
@@ -73,6 +75,7 @@ export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
 				protocolLabel={ protocolLabel }
 				protocolHomeURL={ protocolHomeURL }
 				protocolHomeLabel={ protocolHomeLabel }
+				authRequiredCopy={ authRequiredCopy }
 			/>
 		);
 	}

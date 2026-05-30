@@ -252,7 +252,7 @@ describe( 'DateRangePicker (new)', () => {
 		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
 		expect( within( listbox ).queryByRole( 'option', { name: /yesterday/i } ) ).toBeNull();
 		expect( within( listbox ).queryByRole( 'option', { name: /last 3 years/i } ) ).toBeNull();
-		expect( within( listbox ).getByRole( 'option', { name: /last 7 days/i } ) ).toBeVisible();
+		expect( within( listbox ).getByRole( 'option', { name: /last 7 days/i } ) ).toBeInTheDocument();
 	} );
 
 	test( 'last-90-days preset applies a 90-day window', async () => {

@@ -151,7 +151,7 @@ export function getDateTimeLabel( {
 	gmtOffset?: number;
 	isLargeScreen: boolean;
 } ) {
-	let dateTimeLabel = __( 'Date & time' );
+	let dateTimeLabel: string = __( 'Date & time' );
 
 	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
 	const dateTimeWithTz = __( 'Date & time (%s)' );

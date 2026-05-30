@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
+import { Button as WPButton } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -202,8 +203,8 @@ export default function AddNewSiteButton( {
 			</div>
 			<div className="site-selector-and-importer__popover-column">
 				{ menuItem( {
-					icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
-					heading: translate( 'Start Building for Free' ),
+					icon: <img src={ devSiteBanner } alt={ translate( 'Start building for free' ) } />,
+					heading: translate( 'Start building for free' ),
 					description: translate(
 						'Develop up to 5 WordPress.com sites at{{nbsp/}}once with free development licenses.{{br/}}Only pay when you launch!',
 						{
@@ -255,7 +256,7 @@ export default function AddNewSiteButton( {
 
 	return (
 		<>
-			<Button
+			<WPButton
 				className="site-selector-and-importer__button"
 				ref={ popoverMenuContext }
 				onClick={ toggleMenu }
@@ -267,8 +268,9 @@ export default function AddNewSiteButton( {
 						{ mobile: ! showMainButtonLabel }
 					) }
 					icon={ showMainButtonLabel ? 'chevron-down' : 'plus' }
+					size={ 18 }
 				/>
-			</Button>
+			</WPButton>
 			<Popover
 				className="site-selector-and-importer__popover dev-sites-enabled"
 				context={ popoverMenuContext?.current }

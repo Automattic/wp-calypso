@@ -36,7 +36,7 @@ export const getNotificationTabs = () =>
 const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const notificationTabs = getNotificationTabs();
 	const { params, goTo } = useNavigator();
-	const { filterName = 'all' } = params;
+	const { filterName = 'all' } = params as { filterName?: string };
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 
 	const handleSelect = useCallback(
@@ -123,7 +123,11 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 					</Tabs>
 				</VStack>
 			</CardHeader>
-			<NoteList filterName={ filterName as FilterName } />
+			{ /* Key by `filterName` so switching tabs remounts the list. The tab
+			   filter is applied outside the DataViews `view`, so DataViews'
+			   infinite-scroll row accumulation would otherwise carry stale
+			   notes from the previously selected tab. */ }
+			<NoteList key={ filterName } filterName={ filterName as FilterName } />
 		</>
 	);
 };

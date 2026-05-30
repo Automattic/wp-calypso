@@ -3,11 +3,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { useLocale } from '../../../../app/locale';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
-import type { ApmTimePoint } from '@automattic/api-core';
+import type { ApmSummary, ApmTimePoint } from '@automattic/api-core';
 
 import '@automattic/charts/style.css';
 
@@ -31,20 +32,38 @@ function toSeriesData( timeseries: ApmTimePoint[] ): SeriesData[] {
 	} ) );
 }
 
-function getAverageTotal( timeseries: ApmTimePoint[] ): number {
-	if ( ! timeseries.length ) {
-		return 0;
-	}
-	const total = timeseries.reduce(
-		( sum, point ) => sum + point.db + point.wp_core + point.plugins + point.external + point.cache,
-		0
+function formatMsValue( value: number, locale: string ): string {
+	return sprintf(
+		/* translators: %s is a formatted number of milliseconds, e.g. 2,500 */
+		__( '%s ms' ),
+		Math.round( value ).toLocaleString( locale )
 	);
-	return Math.round( total / timeseries.length );
 }
 
-export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] } ) {
+function formatTooltipDate( date: Date, locale: string ): string {
+	return date.toLocaleDateString( locale, {
+		weekday: 'short',
+		month: 'short',
+		day: 'numeric',
+	} );
+}
+
+function formatTooltipTime( date: Date, locale: string ): string {
+	return date.toLocaleTimeString( locale, {
+		hour: '2-digit',
+		minute: '2-digit',
+	} );
+}
+
+export default function ChartSlot( {
+	timeseries,
+	summary,
+}: {
+	timeseries: ApmTimePoint[];
+	summary: ApmSummary;
+} ) {
+	const locale = useLocale();
 	const data = toSeriesData( timeseries );
-	const averageTotal = getAverageTotal( timeseries );
 
 	return (
 		<Card>
@@ -55,7 +74,7 @@ export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] 
 							{ __( 'Response time breakdown' ) }
 						</Text>
 						<Text size={ 32 } weight={ 500 } lineHeight="40px">
-							{ formatMs( averageTotal ) }
+							{ formatMs( summary.avg_response_ms ) }
 						</Text>
 						<Text variant="muted">
 							{ __(
@@ -76,6 +95,63 @@ export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] 
 						showLegend
 						legend={ { interactive: true } }
 						withTooltips
+						renderTooltip={ ( { tooltipData, colorScale } ) => {
+							const date = tooltipData?.nearestDatum?.datum?.date;
+							if ( ! date ) {
+								return null;
+							}
+							const series = Object.values( tooltipData?.datumByKey ?? {} );
+							return (
+								<VStack spacing={ 3 } style={ { padding: '4px 2px', minWidth: 240 } }>
+									<HStack spacing={ 2 } expanded={ false } justify="flex-start">
+										<Text weight={ 600 }>{ formatTooltipDate( date, locale ) }</Text>
+										<span
+											aria-hidden
+											style={ {
+												flex: '0 0 auto',
+												width: 3,
+												height: 3,
+												borderRadius: '50%',
+												background: 'currentColor',
+												opacity: 0.4,
+											} }
+										/>
+										<Text variant="muted">{ formatTooltipTime( date, locale ) }</Text>
+									</HStack>
+									<VStack spacing={ 1 }>
+										{ series.map( ( entry ) => {
+											const value = ( entry.datum as { value?: number } ).value ?? 0;
+											return (
+												<HStack key={ entry.key } justify="space-between" spacing={ 3 }>
+													<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+														<span
+															aria-hidden
+															style={ {
+																display: 'inline-block',
+																flex: '0 0 auto',
+																width: 8,
+																height: 8,
+																borderRadius: 2,
+																background: colorScale ? colorScale( entry.key ) : 'currentColor',
+															} }
+														/>
+														<Text style={ { whiteSpace: 'nowrap' } }>{ entry.key }</Text>
+													</HStack>
+													<Text weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
+														{ formatMsValue( value, locale ) }
+													</Text>
+												</HStack>
+											);
+										} ) }
+									</VStack>
+								</VStack>
+							);
+						} }
+						options={ {
+							axis: {
+								y: { tickFormat: ( value ) => formatMsValue( value as number, locale ) },
+							},
+						} }
 					/>
 				</GlobalChartsProvider>
 			</CardBody>

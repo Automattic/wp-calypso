@@ -345,7 +345,9 @@ describe( '<RepostButton>', () => {
 				expect.objectContaining( { error_kind: 'auth_required', direction: 'unrepost' } )
 			)
 		);
-		expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Reconnect your Bluesky account to repost.' );
+		expect( errorNoticeSpy ).toHaveBeenCalledWith(
+			'Something went wrong with your Bluesky connection. Try again.'
+		);
 	} );
 
 	it( 'leaves "Quote post" disabled when no onQuoteClick is wired in the analytics context', async () => {

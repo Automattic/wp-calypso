@@ -123,6 +123,73 @@ describe( 'AuthorProfileView', () => {
 		expect( await screen.findByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
 	} );
 
+	it( 'seeds the compose FAB with @handle when the actor is a handle', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections' )
+			.reply( 200, {
+				connections: [
+					{
+						id: 42,
+						did: 'did:plc:viewer',
+						handle: 'viewer.bsky.social',
+						display_name: 'Viewer',
+						avatar: null,
+					},
+				],
+			} );
+		// Delay the profile query so the FAB sees `profile.data === undefined`
+		// at click time and exercises the URL-actor fallback.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+			.delay( 5000 )
+			.reply( 200, {} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
+			.delay( 5000 )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );
+
+		const fab = await screen.findByRole( 'button', { name: /compose/i } );
+		await user.click( fab );
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social ' );
+	} );
+
+	it( 'opens the compose FAB empty when the actor is a DID and the profile is still loading', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections' )
+			.reply( 200, {
+				connections: [
+					{
+						id: 42,
+						did: 'did:plc:viewer',
+						handle: 'viewer.bsky.social',
+						display_name: 'Viewer',
+						avatar: null,
+					},
+				],
+			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/did%3Aplc%3Aabc' )
+			.delay( 5000 )
+			.reply( 200, {} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/did%3Aplc%3Aabc/feed' )
+			.delay( 5000 )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="did:plc:abc" /> );
+
+		const fab = await screen.findByRole( 'button', { name: /compose/i } );
+		await user.click( fab );
+
+		// DID actor should NOT flash through to the textarea.
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '' );
+	} );
+
 	it( 'renders the back-to-timeline button above the panel', async () => {
 		const user = userEvent.setup();
 		// Force history.length === 1 so BackButton routes via page() instead of history.back().

@@ -3,6 +3,7 @@
  * Session IDs are written to `localStorage` by `agenttic-client` and expire after 24 hours.
  */
 import { ORCHESTRATOR_AGENT_ID } from '../constants';
+import { generateUUID } from './generate-uuid';
 
 export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -114,15 +115,7 @@ export function getOrCreateSessionId( isNewChat: boolean, agentId?: string ): st
 		return existing;
 	}
 	try {
-		const newId =
-			typeof crypto !== 'undefined' && crypto.randomUUID
-				? crypto.randomUUID()
-				: // Fallback for older browsers.
-				  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, ( c ) => {
-						const r = ( Math.random() * 16 ) | 0;
-						const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
-						return v.toString( 16 );
-				  } );
+		const newId = generateUUID();
 		localStorage.setItem(
 			getSessionStorageKey( agentId ),
 			JSON.stringify( { sessionId: newId, timestamp: Date.now() } )

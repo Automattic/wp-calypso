@@ -1,21 +1,15 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { siteApmTransactionsQuery } from '../mock-data';
-import SlowList, { type SlowListItem } from '../slow-list';
-import type { ApmTransaction, Site } from '@automattic/api-core';
+import SlowList from '../slow-list';
+import { routesToSlowListItems } from '../utils';
+import type { MergedAggregate } from '../aggregate';
 
-function toItems( transactions: ApmTransaction[] ): SlowListItem[] {
-	return transactions.map( ( transaction ) => ( {
-		id: `${ transaction.method } ${ transaction.url }`,
-		label: `${ transaction.method } ${ transaction.url }`,
-		avg_ms: transaction.avg_ms,
-		max_ms: transaction.max_ms,
-	} ) );
-}
-
-export default function Transactions( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmTransactionsQuery( site.ID ) );
-
+export default function Transactions( {
+	merged,
+	siteSlug,
+}: {
+	merged: MergedAggregate;
+	siteSlug: string;
+} ) {
 	return (
 		<SlowList
 			title={ __( 'Slowest transactions' ) }
@@ -25,7 +19,7 @@ export default function Transactions( { site }: { site: Site } ) {
 			maxDescription={ __(
 				'Slowest single transaction observed on each route in the selected period.'
 			) }
-			items={ toItems( data ) }
+			items={ routesToSlowListItems( merged.slowest.routes, siteSlug ) }
 		/>
 	);
 }

@@ -36,6 +36,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
+import { loadDashboardLocaleData } from 'calypso/server/dashboard-i18n';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -66,6 +67,10 @@ import { registerCspReportRoute } from './csp-report';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
+const WOO_MOBILE_LOGIN_FALLBACK_URL = 'https://woocommerce.com/mobilelogin/';
+const WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL = 'https://woocommerce.test/mobilelogin/';
+const WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY = 'wpcom_auth';
+const WOO_MOBILE_LOGIN_RETURN_TO_QUERY = 'return_to';
 
 let branchName;
 function getCurrentBranchName() {
@@ -106,6 +111,87 @@ function setupLoggedInContext( req, res, next ) {
 	};
 
 	next();
+}
+
+function isWooCommerceQrLoginRequest( req ) {
+	return req.path === '/me/security/qr-login' && req.query?.origin === 'woocommerce';
+}
+
+function getAllowedWooMobileLoginHosts() {
+	const hosts = [ 'woocommerce.com' ];
+
+	if ( [ 'development', 'test' ].includes( calypsoEnv ) ) {
+		hosts.push( 'woocommerce.test' );
+	}
+
+	return hosts;
+}
+
+function addWooMobileLoginAuthMissingQuery( url ) {
+	url.search = '';
+	url.searchParams.set( WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY, 'missing' );
+	return url.toString();
+}
+
+function getDefaultWooMobileLoginFallbackUrl() {
+	const fallbackUrl =
+		calypsoEnv === 'development'
+			? WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL
+			: WOO_MOBILE_LOGIN_FALLBACK_URL;
+
+	return addWooMobileLoginAuthMissingQuery( new URL( fallbackUrl ) );
+}
+
+function getWooMobileLoginFallbackUrl( req ) {
+	const returnTo = req.query?.[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
+
+	if ( typeof returnTo !== 'string' ) {
+		return getDefaultWooMobileLoginFallbackUrl();
+	}
+
+	try {
+		const url = new URL( returnTo );
+		const pathname = url.pathname.endsWith( '/' ) ? url.pathname : `${ url.pathname }/`;
+
+		if (
+			url.protocol !== 'https:' ||
+			url.port !== '' ||
+			pathname !== '/mobilelogin/' ||
+			! getAllowedWooMobileLoginHosts().includes( url.hostname )
+		) {
+			return getDefaultWooMobileLoginFallbackUrl();
+		}
+
+		url.pathname = '/mobilelogin/';
+		return addWooMobileLoginAuthMissingQuery( url );
+	} catch {
+		return getDefaultWooMobileLoginFallbackUrl();
+	}
+}
+
+function maybeRedirectWooMobileLoginFallback( req, res ) {
+	if ( ! isWooCommerceQrLoginRequest( req ) ) {
+		return false;
+	}
+
+	res.redirect( getWooMobileLoginFallbackUrl( req ) );
+	return true;
+}
+
+function maybeRedirectWooMobileLoginCleanUrl( req, res ) {
+	if (
+		! isWooCommerceQrLoginRequest( req ) ||
+		typeof req.query?.[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ] !== 'string'
+	) {
+		return false;
+	}
+
+	const cleanQuery = { ...req.query };
+	delete cleanQuery[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
+
+	const queryString = stringify( cleanQuery );
+	res.redirect( queryString ? `${ req.path }?${ queryString }` : req.path );
+	return true;
 }
 
 function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
@@ -396,6 +482,10 @@ function setUpLoggedInRoute( req, res, next ) {
 		} );
 
 		if ( ! req.context.isLoggedIn ) {
+			if ( maybeRedirectWooMobileLoginFallback( req, res ) ) {
+				return;
+			}
+
 			debug( 'User not logged in. Redirecting to %s', redirectUrl );
 			res.redirect( redirectUrl );
 			return;
@@ -462,6 +552,9 @@ function setUpLoggedInRoute( req, res, next ) {
 						httpOnly: true,
 						domain: '.wordpress.com',
 					} );
+					if ( maybeRedirectWooMobileLoginFallback( req, res ) ) {
+						throw error;
+					}
 					res.redirect( redirectUrl );
 				} else {
 					performanceMark( req.context, 'err_user_bootstrap', true );
@@ -484,6 +577,13 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	Promise.all( setupRequests )
 		.then( () => {
+			if (
+				config.isEnabled( 'wpcom-user-bootstrap' ) &&
+				maybeRedirectWooMobileLoginCleanUrl( req, res )
+			) {
+				return;
+			}
+
 			performanceMark( req.context, 'finish_logged_in_setup' );
 			next();
 		} )
@@ -727,6 +827,10 @@ function setUpRoute( req, res, next ) {
 	}
 	// Prevents function from being called twice.
 	req.context.isRouteSetup = true;
+
+	if ( ! req.context.isLoggedIn && maybeRedirectWooMobileLoginFallback( req, res ) ) {
+		return;
+	}
 
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
@@ -1087,7 +1191,7 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
+	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
@@ -1107,6 +1211,7 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
+			...( extraMiddleware ? [ extraMiddleware ] : [] ),
 			serverRender
 		);
 	}
@@ -1129,7 +1234,8 @@ export default function pages() {
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-dotcom',
-				( req ) => isAllowedDotcomDashboardHostname( req.hostname )
+				( req ) => isAllowedDotcomDashboardHostname( req.hostname ),
+				loadDashboardLocaleData
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
@@ -1137,14 +1243,16 @@ export default function pages() {
 				CIAB_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-ciab',
-				( req ) => isAllowedCiabDashboardHostname( req.hostname )
+				( req ) => isAllowedCiabDashboardHostname( req.hostname ),
+				loadDashboardLocaleData
 			);
 		} );
 		handleSectionPath(
 			CIAB_DASHBOARD_SECTION_DEFINITION,
 			'/start-store',
 			'entry-dashboard-ciab',
-			( req ) => isAllowedCiabDashboardHostname( req.hostname )
+			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
+			loadDashboardLocaleData
 		);
 	}
 

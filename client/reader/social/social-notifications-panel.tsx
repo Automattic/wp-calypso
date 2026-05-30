@@ -3,7 +3,10 @@ import { useDispatch } from 'react-redux';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { SocialNotificationsList } from './components/notifications-list';
 import type { ChipFilter } from './components/notifications-list/filter';
-import type { SocialNotification } from './components/notifications-list/notification-item';
+import type {
+	NotificationInAppUrlResolver,
+	SocialNotification,
+} from './components/notifications-list/notification-item';
 import type { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -26,6 +29,15 @@ interface Props< TItem extends SocialNotification > {
 	connectionId: number;
 	source: SocialNotificationsSource;
 	useNotificationsInfiniteQuery: UseSocialNotificationsInfiniteQuery< TItem >;
+	/**
+	 * Resolver mapping a notification to an in-app URL (typically the Reader's
+	 * own thread view for that protocol). When the resolver returns `null`,
+	 * the row falls back to the external `target_url`. Per-protocol panels
+	 * supply this so mentions / replies / quotes open inside the Reader
+	 * instead of bouncing the user to bsky.app or their home Mastodon
+	 * instance.
+	 */
+	getInAppUrl?: NotificationInAppUrlResolver;
 }
 
 /**
@@ -41,6 +53,7 @@ export function SocialNotificationsPanel< TItem extends SocialNotification >( {
 	connectionId,
 	source,
 	useNotificationsInfiniteQuery,
+	getInAppUrl,
 }: Props< TItem > ) {
 	const [ filter, setFilter ] = useState< ChipFilter >( 'all' );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -72,6 +85,7 @@ export function SocialNotificationsPanel< TItem extends SocialNotification >( {
 					} )
 				);
 			} }
+			getInAppUrl={ getInAppUrl }
 			onStackExpandedChange={ ( expanded, member_count ) => {
 				dispatch(
 					recordReaderTracksEvent(

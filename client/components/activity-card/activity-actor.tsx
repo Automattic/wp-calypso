@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import { sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -98,7 +98,11 @@ const ActivityActor: FunctionComponent< Props > = ( {
 	let mcpIndicator = null;
 	if ( actorIsMcpAgent ) {
 		mcpIndicator = actorMcpClient
-			? sprintf( translate( 'via %s (MCP)' ), actorMcpClient )
+			? sprintf(
+					/* translators: %s is the MCP client name and version */
+					__( 'via %s (MCP)' ),
+					actorMcpClient
+			  )
 			: translate( 'via MCP' );
 	}
 

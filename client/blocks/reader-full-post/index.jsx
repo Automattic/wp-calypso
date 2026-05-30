@@ -18,10 +18,7 @@ import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { withPostLikes } from 'calypso/components/data/post-likes';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -30,8 +27,14 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { usePost } from 'calypso/reader/data/post';
+import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { withSite } from 'calypso/reader/data/site';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
@@ -42,24 +45,16 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import { requestPostComments } from 'calypso/state/comments/actions';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
 	hasReaderFollowOrganization,
 } from 'calypso/state/reader/follows/selectors';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -68,7 +63,6 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
@@ -131,9 +125,6 @@ export class FullPostView extends Component {
 			this.scrollToComments();
 		}
 
-		// Ensure we check comments API availability for this post
-		this.checkCommentsApiAvailability();
-
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
@@ -175,9 +166,6 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
-
-			// Check comments API availability when post changes
-			this.checkCommentsApiAvailability();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -464,6 +452,10 @@ export class FullPostView extends Component {
 			return;
 		}
 
+		if ( this.props.isLikePending || this.props.isUnlikePending ) {
+			return;
+		}
+
 		const { site_ID: siteId, ID: postId } = this.props.post;
 		let liked = this.props.liked;
 
@@ -544,7 +536,7 @@ export class FullPostView extends Component {
 			! site.is_error &&
 			! this.hasSentPageView
 		) {
-			this.props.markPostSeen( post, site );
+			markPostSeen( post, site );
 			this.hasSentPageView = true;
 
 			// mark post as currently viewing
@@ -662,19 +654,6 @@ export class FullPostView extends Component {
 		}
 	};
 
-	checkCommentsApiAvailability = () => {
-		const { post, commentsApiDisabled } = this.props;
-
-		// Only check if we don't already know the API is disabled
-		// and if we have a valid post with a site ID
-		if ( ! commentsApiDisabled && post?.site_ID && post?.ID && ! post.is_external ) {
-			this.props.requestPostComments( {
-				siteId: post.site_ID,
-				postId: post.ID,
-			} );
-		}
-	};
-
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
 		return (
@@ -698,8 +677,6 @@ export class FullPostView extends Component {
 			site,
 			feed,
 			referralPost,
-			referral,
-			postKey,
 			hasOrganization,
 			isWPForTeamsItem,
 			commentsApiDisabled,
@@ -754,7 +731,6 @@ export class FullPostView extends Component {
 			// add extra div wrapper for consistent content frame layout/styling for reader.
 			<div style={ { position: 'relative' } }>
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
-					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
@@ -762,24 +738,6 @@ export class FullPostView extends Component {
 							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
 						/>
 					) }
-					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-					{ post && ! post.is_external && post.site_ID && (
-						<QueryReaderSite siteId={ +post.site_ID } />
-					) }
-					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
-					<QueryReaderPost postKey={ postKey } />
-					{ ! isLoading &&
-						post &&
-						! post.is_error &&
-						this.props.previousPostKey &&
-						! this.props.previousPost && (
-							<QueryReaderPost postKey={ this.props.previousPostKey } />
-						) }
-					{ ! isLoading &&
-						post &&
-						! post.is_error &&
-						this.props.nextPostKey &&
-						! this.props.nextPost && <QueryReaderPost postKey={ this.props.nextPostKey } /> }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -943,64 +901,57 @@ export class FullPostView extends Component {
 	}
 }
 
-const ConnectedFullPostView = connect(
-	( state, ownProps ) => {
-		const { feedId, blogId, postId } = ownProps;
-		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
-		const currentPath = state.route.path.current;
+export const mapStateToFullPostProps = ( state, ownProps ) => {
+	const { feedId, blogId, postId } = ownProps;
+	const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
+	const post = ownProps.post || { _state: 'pending' };
+	const currentPath = state.route.path.current;
+	const feed = ownProps.feed;
 
-		const { site_ID: siteId, is_external: isExternal } = post;
+	const { site_ID: siteId } = post;
 
-		const props = {
-			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
-			notificationsOpen: isNotificationsOpen( state ),
-			hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
-			post,
-			liked: isLikedPost( state, siteId, post.ID ),
-			postKey,
-			currentPath,
-			referralStream: getPreviousPath( state ),
-			previousRoute: getPreviousRoute( state ),
-			commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
-		};
+	const props = {
+		siteId,
+		isWPForTeamsItem:
+			isSiteWPForTeams( state, blogId ) ||
+			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
+		notificationsOpen: isNotificationsOpen( state ),
+		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
+		post,
+		postKey,
+		currentPath,
+		referralStream: getPreviousPath( state ),
+		previousRoute: getPreviousRoute( state ),
+	};
 
-		if ( ! isExternal && siteId ) {
-			props.site = getSite( state, siteId );
-		}
-		if ( feedId ) {
-			props.feed = getFeed( state, feedId );
-
-			// Add site icon to feed object so have icon for external feeds
-			if ( props.feed ) {
-				const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-				props.feed.site_icon = follow?.site_icon;
-			}
-		}
-		if ( ownProps.referral ) {
-			props.referralPost = getPostByKey( state, ownProps.referral );
-		}
-
-		return props;
-	},
-	{
-		disableAppBanner,
-		enableAppBanner,
-		markPostSeen,
-		setViewingFullPostKey,
-		unsetViewingFullPostKey,
-		likePost,
-		unlikePost,
-		requestMarkAsSeen,
-		requestMarkAsUnseen,
-		requestMarkAsSeenBlog,
-		requestMarkAsUnseenBlog,
-		showSelectedPost,
-		requestPostComments,
+	if ( feedId && feed ) {
+		// Add site icon to feed object so have icon for external feeds
+		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+		props.feed = { ...feed, site_icon: follow?.site_icon };
 	}
-)( FullPostView );
+	if ( ownProps.referral ) {
+		props.referralPost = ownProps.referralPost;
+	}
 
-const withFullPostNavigation = ( WrappedComponent ) =>
+	return props;
+};
+
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
+
+const ConnectedFullPostView = connect( mapStateToFullPostProps, {
+	disableAppBanner,
+	enableAppBanner,
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+	showSelectedPost,
+} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
+
+export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
 		const currentStreamKey = useSelector( getCurrentStream );
 		const rawLocale = useSelector( getCurrentLocaleSlug );
@@ -1012,18 +963,23 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
+		const { data: post } = usePost( Object.keys( currentPostKey ).length ? currentPostKey : null );
+		const { data: referralPost } = usePost( props.referral );
+		const commentsApiDisabled = usePostCommentsApiDisabled(
+			{
+				siteId: post?.site_ID,
+				postId: post?.ID,
+			},
+			{ enabled: ! post?.is_external }
+		);
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
-		const previousPost = useSelector( ( state ) =>
-			previousPostKey ? getPostByKey( state, previousPostKey ) : null
-		);
-		const nextPost = useSelector( ( state ) =>
-			nextPostKey ? getPostByKey( state, nextPostKey ) : null
-		);
+		const { data: previousPost } = usePost( previousPostKey );
+		const { data: nextPost } = usePost( nextPostKey );
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1043,6 +999,9 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 				{ ...props }
 				previousPostKey={ previousPostKey }
 				nextPostKey={ nextPostKey }
+				post={ post }
+				referralPost={ referralPost }
+				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
 				previousPostUrl={ previousPostUrl }
@@ -1081,4 +1040,9 @@ function navigationUrlFor( post, postKey ) {
 	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
 }
 
-export default withFullPostNavigation( ConnectedFullPostView );
+const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
+
+export default function FullPostContainer( props ) {
+	const { data: feed } = useFeedQuery( props.feedId );
+	return <FullPostWithNavigation { ...props } feed={ feed } />;
+}

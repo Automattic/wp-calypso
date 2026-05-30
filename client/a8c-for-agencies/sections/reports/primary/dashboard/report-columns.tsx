@@ -1,7 +1,8 @@
-import { type BadgeType, Gridicon, Tooltip } from '@automattic/components';
+import { type BadgeType, Tooltip } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { getTimeframeText } from 'calypso/a8c-for-agencies/sections/reports/lib/timeframes';
 import FormattedDate from 'calypso/components/formatted-date';
@@ -35,7 +36,7 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 	const config = statusConfig[ status ];
 
 	if ( ! config ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	return <StatusBadge statusProps={ { children: config.text, type: config.type as BadgeType } } />;
@@ -43,7 +44,7 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 
 export const ReportDateColumn = ( { date }: { date: number | null } ) => {
 	if ( ! date ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	const dateObj = new Date( date * 1000 );
@@ -99,7 +100,7 @@ export const ReportClientEmailsColumn = ( { emails }: { emails: string[] } ) => 
 	const translate = useTranslate();
 
 	if ( ! emails || emails.length === 0 ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	if ( emails.length === 1 ) {

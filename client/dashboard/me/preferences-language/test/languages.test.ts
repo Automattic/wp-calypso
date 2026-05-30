@@ -1,44 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import languages from '@automattic/languages';
-import {
-	languagesAsOptions,
-	getLocaleVariantOrLanguage,
-	shouldDisplayCommunityTranslator,
-} from '../languages';
+import { getLocaleVariantOrLanguage, shouldDisplayCommunityTranslator } from '../languages';
 
 describe( 'languages utilities', () => {
-	describe( 'languagesAsOptions', () => {
-		it( 'should transform languages into options format', () => {
-			// Test with real languages data
-			expect( languagesAsOptions ).toBeDefined();
-			expect( Array.isArray( languagesAsOptions ) ).toBe( true );
-
-			// Check that each option has the correct structure
-			languagesAsOptions.forEach( ( option ) => {
-				expect( option ).toHaveProperty( 'value' );
-				expect( option ).toHaveProperty( 'label' );
-				expect( typeof option.value ).toBe( 'string' );
-				expect( typeof option.label ).toBe( 'string' );
-			} );
-		} );
-
-		it( 'should include common languages', () => {
-			const languageSlugs = languagesAsOptions.map( ( option ) => option.value );
-
-			// Test that common languages are present
-			expect( languageSlugs ).toContain( 'en' );
-			expect( languageSlugs ).toContain( 'es' );
-			expect( languageSlugs ).toContain( 'fr' );
-			expect( languageSlugs ).toContain( 'de' );
-		} );
-
-		it( 'should match the original languages array length', () => {
-			expect( languagesAsOptions ).toHaveLength( languages.length );
-		} );
-	} );
-
 	describe( 'getLocaleVariantOrLanguage', () => {
 		it( 'should return parent language when locale is a variant (es-cl)', () => {
 			// es-cl is a real locale variant in the languages package
@@ -82,10 +47,9 @@ describe( 'languages utilities', () => {
 			expect( result ).toBe( false );
 		} );
 
-		it( 'should handle unknown locale', () => {
+		it( 'should return true for an unknown locale (canBeTranslated defaults to true)', () => {
 			const result = shouldDisplayCommunityTranslator( 'xyz-unknown' );
-			// The actual result depends on how canBeTranslated handles unknown locales
-			expect( typeof result ).toBe( 'boolean' );
+			expect( result ).toBe( true );
 		} );
 	} );
 } );

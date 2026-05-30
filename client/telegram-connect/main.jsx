@@ -20,6 +20,10 @@ import './style.scss';
 
 const DEVELOPER_PATH = '/me/developer';
 
+function getTelegramBotUrl( bot ) {
+	return bot ? `https://t.me/${ encodeURIComponent( bot ) }` : null;
+}
+
 function TelegramConnectMessageLayout( { documentTitle, title, children } ) {
 	return (
 		<>
@@ -32,7 +36,7 @@ function TelegramConnectMessageLayout( { documentTitle, title, children } ) {
 	);
 }
 
-export default function TelegramConnectPage( { telegramId, token, ts } ) {
+export default function TelegramConnectPage( { telegramId, token, ts, bot } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const displayName = useSelector( getCurrentUserDisplayName );
@@ -48,6 +52,7 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 	const [ hasStarted, setHasStarted ] = useState( false );
 
 	const showProgress = status === 'loading' || status === 'success';
+	const telegramBotUrl = getTelegramBotUrl( bot );
 
 	useInterval(
 		() => setTick( ( t ) => t + 1 ),
@@ -68,7 +73,12 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 		wpcom.req
 			.post(
 				{ path: '/telegram-bot/connect-via-token', apiNamespace: 'wpcom/v2' },
-				{ telegram_id: telegramId, token, ts }
+				{
+					telegram_id: telegramId,
+					token,
+					ts,
+					...( bot ? { bot } : {} ),
+				}
 			)
 			.then( () => {
 				recordTracksEvent( 'calypso_telegram_connect_via_token_success', {
@@ -80,8 +90,11 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 						TELEGRAM_TRANSIENT_NOTICE
 					)
 				);
-				setStatus( 'success' );
-				page.redirect( DEVELOPER_PATH );
+				if ( bot ) {
+					setStatus( 'success' );
+				} else {
+					page.redirect( DEVELOPER_PATH );
+				}
 			} )
 			.catch( ( err ) => {
 				recordTracksEvent( 'calypso_telegram_connect_via_token_error', {
@@ -96,7 +109,7 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 				);
 				setStatus( 'error' );
 			} );
-	}, [ telegramId, token, ts, dispatch, translate ] );
+	}, [ telegramId, token, ts, bot, dispatch, translate ] );
 
 	if ( status === 'confirm' ) {
 		const title = username
@@ -139,6 +152,27 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 					{ translate( 'Go to Developer Features' ) }
 				</Button>
 			</TelegramConnectMessageLayout>
+		);
+	}
+
+	if ( status === 'success' ) {
+		const title = translate( 'Telegram connected successfully.' );
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<EmptyContent
+					title={ title }
+					action={
+						telegramBotUrl ? (
+							<Button primary className="empty-content__action" href={ telegramBotUrl }>
+								{ translate( 'Return to Telegram' ) }
+							</Button>
+						) : null
+					}
+					secondaryAction={ translate( 'Go to Developer Features' ) }
+					secondaryActionURL={ DEVELOPER_PATH }
+				/>
+			</>
 		);
 	}
 

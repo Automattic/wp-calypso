@@ -338,11 +338,15 @@ export default class EmbedContainer extends PureComponent {
 	}
 	componentWillUnmount() {
 		// Unmark the contents as done because they may not be on the following re-render.
-		ReactDom.findDOMNode( this )
-			.querySelectorAll( '[data-wpcom-embed-processed]' )
-			.forEach( ( node ) => {
-				node.removeAttribute( 'data-wpcom-embed-processed' );
-			} );
+		// findDOMNode can return null when the DOM has already been detached (e.g. during
+		// route transitions), so guard before calling querySelectorAll.
+		const domNode = ReactDom.findDOMNode( this );
+		if ( ! domNode ) {
+			return;
+		}
+		domNode.querySelectorAll( '[data-wpcom-embed-processed]' ).forEach( ( node ) => {
+			node.removeAttribute( 'data-wpcom-embed-processed' );
+		} );
 	}
 	render() {
 		return this.props.children;

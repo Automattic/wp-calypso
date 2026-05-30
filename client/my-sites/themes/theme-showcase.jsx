@@ -25,6 +25,7 @@ import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcas
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -52,6 +53,7 @@ import {
 	localizeThemesPath,
 	isStaticFilter,
 	constructThemeShowcaseUrl,
+	shouldEnableThemesColorScheme,
 } from './helpers';
 import SearchResultsModern from './search-results-modern';
 import RecommendedSections from './sections-modern/recommended-sections';
@@ -112,6 +114,7 @@ class ThemeShowcase extends Component {
 		isSiteECommerceFreeTrial: PropTypes.bool,
 		isSiteWooExpress: PropTypes.bool,
 		isSiteWooExpressOrEcomFreeTrial: PropTypes.bool,
+		isThemesColorSchemeEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -877,15 +880,17 @@ class ThemeShowcase extends Component {
 
 		return withColorScheme( showcase, {
 			bodyClass: 'is-themes-dark-mode',
-			enabled: ! this.props.isSiteRoute && isLoggedIn,
+			enabled: this.props.isThemesColorSchemeEnabled,
 			Provider: ClassicColorSchemeProvider,
 		} );
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter } ) => {
+const mapStateToProps = ( state, { siteId, filter, isSiteRoute } ) => {
+	const isLoggedIn = isUserLoggedIn( state );
+
 	return {
-		isLoggedIn: isUserLoggedIn( state ),
+		isLoggedIn,
 		isAtomicSite: isAtomicSite( state, siteId ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		site: getSite( state, siteId ),
@@ -906,6 +911,11 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		themeTiers: getThemeTiers( state ),
+		isThemesColorSchemeEnabled: shouldEnableThemesColorScheme( {
+			isSiteRoute,
+			isLoggedIn,
+			dashboardOptIn: hasDashboardOptIn( state ),
+		} ),
 	};
 };
 
