@@ -62,4 +62,33 @@ describe( 'Site Settings', () => {
 			);
 		} );
 	} );
+
+	it( 'shows delivery frequency saving feedback while updating', async () => {
+		render(
+			<SiteSettingsPopover
+				notifyMeOfNewPosts={ false }
+				onNotifyMeOfNewPostsChange={ () => undefined }
+				updatingNotifyMeOfNewPosts={ false }
+				emailMeNewPosts
+				onEmailMeNewPostsChange={ () => undefined }
+				updatingEmailMeNewPosts={ false }
+				deliveryFrequency={ Reader.EmailDeliveryFrequency.Instantly }
+				onDeliveryFrequencyChange={ () => undefined }
+				updatingFrequency
+				emailMeNewComments={ false }
+				onEmailMeNewCommentsChange={ () => undefined }
+				updatingEmailMeNewComments={ false }
+				onUnsubscribe={ () => undefined }
+				unsubscribing={ false }
+				blogId={ 123456789 }
+				feedId={ 123456789 }
+			/>,
+			{ wrapper: Wrapper }
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+
+		expect( screen.getByRole( 'combobox' ) ).toBeDisabled();
+		expect( document.querySelector( '.components-spinner' ) ).toBeVisible();
+	} );
 } );

@@ -1,4 +1,5 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useMemo } from 'react';
@@ -54,21 +55,25 @@ const DeliveryFrequencyInput = ( {
 			{ ! isLoggedIn && (
 				<p className="setting-item__label">{ translate( 'Email me new posts' ) }</p>
 			) }
-			<FormSelect
-				className={ clsx( 'delivery-frequency-input__control', {
-					'is-loading': isUpdating,
-				} ) }
-				value={ selectedFrequency?.value }
-				onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
-					onChange( event.target.value as Reader.EmailDeliveryFrequency )
-				}
-			>
-				{ availableFrequencies.map( ( option ) => (
-					<option key={ option.value } value={ option.value }>
-						{ option.label }
-					</option>
-				) ) }
-			</FormSelect>
+			<div className="delivery-frequency-input__control-wrapper">
+				<FormSelect
+					className={ clsx( 'delivery-frequency-input__control', {
+						'is-loading': isUpdating,
+					} ) }
+					value={ selectedFrequency?.value }
+					onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
+						onChange( event.target.value as Reader.EmailDeliveryFrequency )
+					}
+					disabled={ isUpdating }
+				>
+					{ availableFrequencies.map( ( option ) => (
+						<option key={ option.value } value={ option.value }>
+							{ option.label }
+						</option>
+					) ) }
+				</FormSelect>
+				{ isUpdating && <Spinner className="delivery-frequency-input__spinner" /> }
+			</div>
 		</div>
 	);
 };
