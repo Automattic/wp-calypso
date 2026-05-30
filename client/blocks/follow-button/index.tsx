@@ -30,13 +30,28 @@ interface FollowButtonContainerProps {
 	onFollowToggle: ( following: boolean ) => void;
 }
 
-function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element {
+function FollowButtonContainer( {
+	siteUrl,
+	feedId,
+	siteId,
+	iconSize,
+	tagName,
+	disabled,
+	followLabel,
+	followingLabel,
+	className,
+	followIcon,
+	followingIcon,
+	hasButtonStyle,
+	isButtonOnly,
+	onFollowToggle,
+}: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const following = useIsFollowing( {
-		feedUrl: props.siteUrl,
-		feedId: props.feedId,
-		blogId: props.siteId,
+		feedUrl: siteUrl,
+		feedId,
+		blogId: siteId,
 	} );
 	const followSite = useFollowSite();
 	const unfollowSite = useUnfollowSite();
@@ -48,8 +63,8 @@ function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element
 	const handleFollowToggle = ( followingSite: boolean ) => {
 		const followData = omitBy(
 			{
-				feed_ID: props.feedId,
-				blog_ID: props.siteId,
+				feed_ID: feedId,
+				blog_ID: siteId,
 			},
 			( data ) => typeof data === 'undefined'
 		);
@@ -58,7 +73,7 @@ function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element
 			return dispatch(
 				registerLastActionRequiresLogin( {
 					type: 'follow-site',
-					siteUrl: props.siteUrl,
+					siteUrl,
 					followData,
 				} )
 			);
@@ -77,28 +92,28 @@ function FollowButtonContainer( props: FollowButtonContainerProps ): JSX.Element
 		}
 
 		if ( following ) {
-			unfollowSite.mutate( { feedUrl: props.siteUrl, source: getFollowingSource() } );
+			unfollowSite.mutate( { feedUrl: siteUrl, source: getFollowingSource() } );
 		} else {
-			followSite.mutate( { feedUrl: props.siteUrl, source: getFollowingSource() } );
+			followSite.mutate( { feedUrl: siteUrl, source: getFollowingSource() } );
 		}
 
-		props.onFollowToggle( followingSite );
+		onFollowToggle( followingSite );
 	};
 
 	return (
 		<FollowButton
 			following={ following }
 			onFollowToggle={ handleFollowToggle }
-			iconSize={ props.iconSize }
-			tagName={ props.tagName }
-			disabled={ props.disabled || followSite.isPending || unfollowSite.isPending }
-			followLabel={ props.followLabel }
-			followingLabel={ props.followingLabel }
-			className={ props.className }
-			followIcon={ props.followIcon }
-			followingIcon={ props.followingIcon }
-			hasButtonStyle={ props.hasButtonStyle }
-			isButtonOnly={ props.isButtonOnly }
+			iconSize={ iconSize }
+			tagName={ tagName }
+			disabled={ disabled || followSite.isPending || unfollowSite.isPending }
+			followLabel={ followLabel }
+			followingLabel={ followingLabel }
+			className={ className }
+			followIcon={ followIcon }
+			followingIcon={ followingIcon }
+			hasButtonStyle={ hasButtonStyle }
+			isButtonOnly={ isButtonOnly }
 		/>
 	);
 }
