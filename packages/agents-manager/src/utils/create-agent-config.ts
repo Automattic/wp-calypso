@@ -57,6 +57,16 @@ export function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[]
 	} );
 }
 
+function getContextSiteEditorActions(
+	siteEditorActions: unknown
+): Record< string, string | number | boolean | null > {
+	if ( typeof siteEditorActions !== 'object' || siteEditorActions === null ) {
+		return {};
+	}
+
+	return siteEditorActions as Record< string, string | number | boolean | null >;
+}
+
 /**
  * Wrap a tool provider to filter out null annotation values.
  *
@@ -119,6 +129,10 @@ async function createWrappedContextProvider(
 
 			const externalEntries = getExternalContextEntries();
 			const siteEditorActions = getSiteEditorActions();
+			const mergedSiteEditorActions = {
+				...getContextSiteEditorActions( resolvedContext.siteEditorActions ),
+				...siteEditorActions,
+			};
 			if ( externalEntries.length ) {
 				resolvedContext = {
 					...resolvedContext,
@@ -137,7 +151,9 @@ async function createWrappedContextProvider(
 				},
 				...( resolvedSiteId &&
 					! resolvedContext.selectedSiteId && { selectedSiteId: resolvedSiteId } ),
-				...( Object.keys( siteEditorActions ).length > 0 && { siteEditorActions } ),
+				...( Object.keys( mergedSiteEditorActions ).length > 0 && {
+					siteEditorActions: mergedSiteEditorActions,
+				} ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),

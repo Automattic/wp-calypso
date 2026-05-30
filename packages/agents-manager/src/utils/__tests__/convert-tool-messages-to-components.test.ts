@@ -89,6 +89,10 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'Choose one of these options.',
+		} );
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
 			type: 'component',
 			component: MockComponent,
 			componentProps: {
