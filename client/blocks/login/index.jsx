@@ -12,7 +12,6 @@ import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
-	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
@@ -574,8 +573,6 @@ class Login extends Component {
 					'is-akismet': isFromAkismet,
 					'is-jetpack': isJetpack,
 					'is-passport': isFromPassport,
-					// TODO: Confirm if `is-jetpack-cloud` is needed
-					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 					// TODO: Confirm if `is-a4a` is needed
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
