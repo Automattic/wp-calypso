@@ -89,6 +89,7 @@ describe( 'Site Settings', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
 		expect( screen.getByRole( 'combobox' ) ).toBeDisabled();
+		expect( screen.getByRole( 'status', { name: 'Saving delivery frequency' } ) ).toBeVisible();
 		expect( document.querySelector( '.components-spinner' ) ).toBeVisible();
 	} );
 } );

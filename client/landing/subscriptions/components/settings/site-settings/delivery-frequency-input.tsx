@@ -72,7 +72,16 @@ const DeliveryFrequencyInput = ( {
 						</option>
 					) ) }
 				</FormSelect>
-				{ isUpdating && <Spinner className="delivery-frequency-input__spinner" /> }
+				{ isUpdating && (
+					<span
+						className="delivery-frequency-input__spinner"
+						role="status"
+						aria-live="polite"
+						aria-label={ translate( 'Saving delivery frequency' ) }
+					>
+						<Spinner />
+					</span>
+				) }
 			</div>
 		</div>
 	);
