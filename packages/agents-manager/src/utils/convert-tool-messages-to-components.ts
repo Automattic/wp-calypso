@@ -115,6 +115,9 @@ export default function convertToolMessagesToComponents( {
 				return [];
 			}
 
+			const summaryText =
+				typeof summary === 'string' && summary.trim() ? summary.trim() : undefined;
+
 			// Whether this is the last message in the array.
 			const isLastMessage = index === array.length - 1;
 
@@ -127,12 +130,20 @@ export default function convertToolMessagesToComponents( {
 			const componentMessage = {
 				...message,
 				content: [
+					...( summaryText
+						? [
+								{
+									type: 'text' as const,
+									text: summaryText,
+								},
+						  ]
+						: [] ),
 					{
 						type: 'component' as const,
 						component: Component,
 						componentProps: {
 							...props,
-							...( typeof summary === 'string' && { summary } ),
+							...( summaryText && { summary: summaryText } ),
 							contentType,
 						},
 					},

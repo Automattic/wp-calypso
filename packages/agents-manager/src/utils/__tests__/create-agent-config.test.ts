@@ -190,6 +190,9 @@ describe( 'createAgentConfig', () => {
 					pathname: '/wp-admin/site-editor.php',
 					search: '',
 					environment: 'gutenberg',
+					siteEditorActions: {
+						colorPickerItemSelected: 'Ruby',
+					},
 					constructorArguments: {
 						version: 'provider-version',
 					},
@@ -202,6 +205,7 @@ describe( 'createAgentConfig', () => {
 			expect.objectContaining( {
 				selectedSiteId: 987,
 				siteEditorActions: {
+					colorPickerItemSelected: 'Ruby',
 					fontPickerItemSelected: 'Serif',
 				},
 				constructorArguments: {
