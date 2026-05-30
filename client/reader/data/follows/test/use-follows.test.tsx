@@ -4,18 +4,36 @@
 import { patchFollow, getFollowsQueryKey, type FollowsInfiniteData } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import * as selectors from '../use-follow-selectors';
 import { useFollowForBlog, useFollowForFeed, useIsFollowing } from '../use-follow-selectors';
 import { useFollows } from '../use-follows';
 import type { FollowItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
+const BASE = 'https://public-api.wordpress.com';
+
+type TestState = {
+	currentUser: {
+		id: number | null;
+	};
+};
+
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-const makeWrapper = ( client: QueryClient ) =>
-	function Wrapper( { children }: { children: ReactNode } ) {
-		return <QueryClientProvider client={ client }>{ children }</QueryClientProvider>;
+const makeWrapper = ( client: QueryClient, state: TestState = { currentUser: { id: 1 } } ) => {
+	const store = createStore( ( currentState = state ) => currentState );
+
+	return function Wrapper( { children }: { children: ReactNode } ) {
+		return (
+			<Provider store={ store }>
+				<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
+			</Provider>
+		);
 	};
+};
 
 const makeData = (
 	follows: FollowItem[] = [],
@@ -42,6 +60,8 @@ const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 } );
 
 describe( 'follows hooks', () => {
+	afterEach( () => nock.cleanAll() );
+
 	it( 'useFollows derives follows and count from the query cache', async () => {
 		const queryClient = makeQueryClient();
 		const follow = makeFollow();
@@ -55,6 +75,28 @@ describe( 'follows hooks', () => {
 
 		expect( result.current.follows ).toEqual( [ follow ] );
 		expect( result.current.count ).toBe( 7 );
+	} );
+
+	it( 'does not fetch follows while the current user is logged out', async () => {
+		const queryClient = makeQueryClient();
+		const scope = nock( BASE ).get( '/rest/v1.2/read/following/mine' ).query( true ).reply( 200, {
+			subscriptions: [],
+			total_subscriptions: 0,
+			page: 1,
+			number: 200,
+		} );
+
+		const { result } = renderHook( () => useFollows(), {
+			wrapper: makeWrapper( queryClient, { currentUser: { id: null } } ),
+		} );
+
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		} );
+
+		expect( result.current.follows ).toEqual( [] );
+		expect( result.current.count ).toBe( 0 );
+		expect( scope.isDone() ).toBe( false );
 	} );
 
 	it( 'selector hooks react when a follow is patched into the query cache', async () => {
