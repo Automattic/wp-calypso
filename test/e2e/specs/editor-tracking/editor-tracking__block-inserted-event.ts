@@ -177,8 +177,7 @@ describe(
 						.getByRole( 'option' )
 						.first();
 
-					const pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
-					await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
+					await editorPage.selectTemplate( firstPattern, { timeout: 15 * 1000 } );
 				} );
 
 				it( '"wpcom_block_inserted" event fires with "from_template_selector" set to true', async function () {
