@@ -1,5 +1,4 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
 	useQueryClient,
@@ -20,6 +19,7 @@ import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DarkModeAnnouncement } from '../components/dark-mode-announcement';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
+import InlineSupportLink from '../components/inline-support-link';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -271,15 +271,7 @@ export default function Sites() {
 											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
 										),
 										{
-											learnLink: (
-												<a
-													href={ localizeUrl(
-														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
-													) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
+											learnLink: <InlineSupportLink supportContext="restore-site" />,
 										}
 									) }
 									isBorderless
