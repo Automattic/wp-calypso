@@ -14,6 +14,7 @@ interface InterimOmnibarContainerProps {
 interface InterimOmnibarData {
 	user: User | null;
 	site: Site | null;
+	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
 }
@@ -66,6 +67,7 @@ function useInterimOmnibarData( {
 		return {
 			user: initialUser,
 			site: null,
+			currentRoute: window.location.pathname,
 			onToggleMenu,
 			onToggleNotifications,
 		};
@@ -74,6 +76,7 @@ function useInterimOmnibarData( {
 	return {
 		user: user ?? null,
 		site,
+		currentRoute: window.location.pathname,
 		onToggleMenu,
 		onToggleNotifications,
 	};
