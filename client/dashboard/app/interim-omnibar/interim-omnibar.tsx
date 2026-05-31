@@ -31,6 +31,7 @@ const emptyUser = {
 interface Props {
 	user: User | null;
 	site: Site | null;
+	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
 }
@@ -38,6 +39,7 @@ interface Props {
 export function InterimOmnibar( {
 	user: userProp,
 	site,
+	currentRoute,
 	onToggleMenu,
 	onToggleNotifications,
 }: Props ) {
@@ -112,11 +114,7 @@ export function InterimOmnibar( {
 					section=""
 					sectionGroup=""
 					currentLayoutFocus={ null }
-					// `currentRoute` is only read by the masterbar when
-					// `domainOnlySite && ! dashboardOptIn`; we always pass
-					// `dashboardOptIn`, so it's unused here. Keep it empty to stay
-					// SSR-safe (no `window`) and avoid a hydration mismatch.
-					currentRoute=""
+					currentRoute={ currentRoute }
 					previousPath=""
 					newPostUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php` : '' }
 					newPageUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php?post_type=page` : '' }
