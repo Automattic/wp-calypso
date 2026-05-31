@@ -31,7 +31,6 @@ const emptyUser = {
 interface Props {
 	user: User | null;
 	site: Site | null;
-	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
 }
@@ -39,7 +38,6 @@ interface Props {
 export function InterimOmnibar( {
 	user: userProp,
 	site,
-	currentRoute,
 	onToggleMenu,
 	onToggleNotifications,
 }: Props ) {
@@ -48,15 +46,11 @@ export function InterimOmnibar( {
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
 
-	// Only surface the launch button when the user is on a per-site route:
-	// /sites/{slug} or any nested route under it. Outside this scope the
-	// "current site" is ambiguous, so we don't show it.
-	const isOnSiteRoute =
-		!! siteSlug &&
-		( currentRoute === `/sites/${ siteSlug }` ||
-			currentRoute.startsWith( `/sites/${ siteSlug }/` ) );
-	const isUnlaunchedSite =
-		isOnSiteRoute && !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
+	// Surface the launch button whenever the omnibar's selected site is
+	// unlaunched. The selected site comes from `omnibarSiteIdQuery`, which the
+	// dashboard keeps pointed at the most relevant site (route → recent →
+	// primary), so it mirrors the rest of the omnibar's site display.
+	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
 
 	const store = useMemo(
 		() => createOmnibarStore( onToggleNotifications ),
@@ -123,7 +117,11 @@ export function InterimOmnibar( {
 					section=""
 					sectionGroup=""
 					currentLayoutFocus={ null }
-					currentRoute={ currentRoute }
+					// `currentRoute` is only read by the masterbar when
+					// `domainOnlySite && ! dashboardOptIn`; we always pass
+					// `dashboardOptIn`, so it's unused here. Keep it empty to stay
+					// SSR-safe (no `window`) and avoid a hydration mismatch.
+					currentRoute=""
 					previousPath=""
 					newPostUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php` : '' }
 					newPageUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php?post_type=page` : '' }
