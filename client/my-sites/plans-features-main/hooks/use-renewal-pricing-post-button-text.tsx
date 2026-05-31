@@ -63,9 +63,10 @@ export default function useRenewalPricingPostButtonText( {
 
 	const { originalPrice, introOffer } = pricing;
 
-	// For monthly plans, show the savings message
+	// For monthly plans without renewal pricing, show the savings message
 	if (
 		isMonthlyPlan &&
+		! showBillingDescriptionForIncreasedRenewalPrice &&
 		originalPrice?.monthly &&
 		yearlyVariantPricing &&
 		( ! introOffer || introOffer.isOfferComplete )
