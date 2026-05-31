@@ -45,11 +45,6 @@ export function InterimOmnibar( {
 	const siteId = user.primary_blog ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
-
-	// Surface the launch button whenever the omnibar's selected site is
-	// unlaunched. The selected site comes from `omnibarSiteIdQuery`, which the
-	// dashboard keeps pointed at the most relevant site (route → recent →
-	// primary), so it mirrors the rest of the omnibar's site display.
 	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
 
 	const store = useMemo(
