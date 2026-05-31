@@ -21,14 +21,15 @@ export function SiteLaunchButton( {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
-	const { isLoading, isHidden, isDisabled, isBusy, href, onClick, modal } = useSiteLaunch( site, {
-		tracksContext,
-		backTo,
-		a4aLaunchUrl: launchUrl,
-		a4aLaunchModal: LaunchModal,
-		domainsOptions: queries.domainsQuery(),
-		recordTracksEvent,
-	} );
+	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
+		useSiteLaunch( site, {
+			tracksContext,
+			backTo,
+			a4aLaunchUrl: launchUrl,
+			a4aLaunchModal: LaunchModal,
+			domainsOptions: queries.domainsQuery(),
+			recordTracksEvent,
+		} );
 
 	if ( isLoading || isHidden ) {
 		return null;
@@ -39,7 +40,7 @@ export function SiteLaunchButton( {
 			<Button
 				size="compact"
 				variant="primary"
-				disabled={ isDisabled }
+				disabled={ isDisabled || isExperimentLoading }
 				isBusy={ isBusy }
 				href={ href }
 				onClick={ onClick }
