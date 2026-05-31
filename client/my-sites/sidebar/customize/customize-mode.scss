@@ -457,7 +457,7 @@ li.admin-sidebar-drop-indicator {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 22px;
+	width: 0;
 	height: 28px;
 	margin-left: 8px;
 	color: inherit;
@@ -466,6 +466,22 @@ li.admin-sidebar-drop-indicator {
 	line-height: 1;
 	background: transparent;
 	border: 0;
+	opacity: 0;
+	overflow: hidden;
+	pointer-events: none;
+	position: relative;
+	transition: opacity 120ms ease;
+	z-index: 2;
+
+	.sidebar__menu-item-parent:hover &,
+	.sidebar__menu-item-parent:focus-within &,
+	.sidebar__heading:hover &,
+	.sidebar__heading:focus-within &,
+	&[aria-expanded='true'] {
+		width: 22px;
+		opacity: 1;
+		pointer-events: auto;
+	}
 
 	&:focus-visible {
 		outline: 2px solid var( --wp-admin-sidebar-customizer-theme, #2271b1 );
