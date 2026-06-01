@@ -53,8 +53,8 @@ function FollowButtonContainer( {
 		feedId,
 		blogId: siteId,
 	} );
-	const followSite = useFollowSite();
-	const unfollowSite = useUnfollowSite();
+	const { mutate: followSite, isPending: isFollowingPending } = useFollowSite();
+	const { mutate: unfollowSite, isPending: isUnfollowingPending } = useUnfollowSite();
 
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
@@ -92,9 +92,9 @@ function FollowButtonContainer( {
 		}
 
 		if ( following ) {
-			unfollowSite.mutate( { feedUrl: siteUrl, source: getFollowingSource() } );
+			unfollowSite( { feedUrl: siteUrl, source: getFollowingSource() } );
 		} else {
-			followSite.mutate( { feedUrl: siteUrl, source: getFollowingSource() } );
+			followSite( { feedUrl: siteUrl, source: getFollowingSource() } );
 		}
 
 		onFollowToggle( followingSite );
@@ -106,7 +106,7 @@ function FollowButtonContainer( {
 			onFollowToggle={ handleFollowToggle }
 			iconSize={ iconSize }
 			tagName={ tagName }
-			disabled={ disabled || followSite.isPending || unfollowSite.isPending }
+			disabled={ disabled || isFollowingPending || isUnfollowingPending }
 			followLabel={ followLabel }
 			followingLabel={ followingLabel }
 			className={ className }
