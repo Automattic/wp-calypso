@@ -89,7 +89,15 @@ export async function removePurchase( purchaseId: number ): Promise< void > {
 export async function cancelAndRefundPurchase(
 	purchaseId: number,
 	options: PurchaseCancelOptions | PurchaseDowngradeOptions
-): Promise< { status: string; message: string } > {
+): Promise< {
+	status: string;
+	message: string;
+	/**
+	 * The ID of the newly created subscription. Returned by the backend only
+	 * for a successful `downgrade` migration.
+	 */
+	new_subscription_id?: number;
+} > {
 	return wpcom.req.post( {
 		path: `/upgrades/${ purchaseId }/cancel`,
 		body: options,

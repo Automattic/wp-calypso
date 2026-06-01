@@ -11,9 +11,11 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
+import { isRefundable } from 'calypso/lib/purchases';
 import { isExternal } from 'calypso/lib/url';
-import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { performPlanSwitch } from './perform-plan-switch';
 import type { SiteSelect } from '@automattic/data-stores';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
@@ -151,151 +153,59 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		);
 		const currentPlan = Plans.useCurrentPlan( { siteId: site?.ID } );
 		const currentPlanSlug = currentPlan?.planSlug;
+		// Loaded into Redux by the step's QueryUserPurchases; used to quote the
+		// refund amount in the downgrade success notice.
+		const switchPurchase = useSelector( ( state ) =>
+			purchaseId ? getByPurchaseId( state, parseInt( purchaseId, 10 ) ) : undefined
+		);
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
 				case STEPS.UNIFIED_PLANS.slug: {
-					// User selected plan, go directly to checkout
 					if ( providedDependencies?.cartItems && providedDependencies.cartItems.length > 0 ) {
 						const selectedPlan = providedDependencies.cartItems[ 0 ]?.product_slug;
 						if ( selectedPlan && siteSlug ) {
-							// Detect downgrade: selected plan's availableFor doesn't include current plan
+							// Detect a downgrade: the selected plan isn't available as a purchase
+							// from the current plan. Downgrades are processed inline via a mutation
+							// rather than sent to checkout.
 							const selectedPlanObj = getPlan( selectedPlan );
+							const targetProductId = selectedPlanObj?.getProductId();
 							const isDowngrade = Boolean(
 								selectedPlanObj &&
 									currentPlanSlug &&
 									purchaseId &&
+									targetProductId &&
 									! selectedPlanObj.availableFor?.( currentPlanSlug )
 							);
 
-							if ( isDowngrade ) {
-								const targetProductId = selectedPlanObj?.getProductId();
-								if ( targetProductId && purchaseId ) {
-									const fallbackDestination = redirectTo || dashboardLink( '/sites' );
-									const planTitle = String( selectedPlanObj?.getTitle() ?? '' );
+							if ( isDowngrade && targetProductId && purchaseId ) {
+								const matchingRefund =
+									switchPurchase &&
+									isRefundable( switchPurchase ) &&
+									Array.isArray( switchPurchase.refundOptions )
+										? switchPurchase.refundOptions.find(
+												( option ) => option.to_product_id === targetProductId
+										  )
+										: null;
 
-									// Downgrade: fetch old purchase for refund info, fire mutation,
-									// then fetch fresh purchases to find the new subscription and redirect.
-									( async () => {
-										const isFromDashboard = redirectTo
-											? dashboardOrigins().some( ( origin ) => redirectTo.startsWith( origin ) )
-											: false;
-										try {
-											// Step 1: Fetch old purchase for refund info
-											const purchases: Array< {
-												ID: number | string;
-												blog_id: number;
-												product_id: number;
-												is_refundable: boolean;
-												refund_options: Array< {
-													to_product_id: number;
-													refund_amount: number;
-													refund_currency_symbol: string;
-												} > | null;
-											} > = await wpcom.req.get( {
-												path: '/me/purchases',
-												apiVersion: '1.1',
-											} );
-
-											const oldPurchase = purchases.find(
-												( p ) => String( p.ID ) === String( purchaseId )
-											);
-											const matchingRefund =
-												oldPurchase?.is_refundable && Array.isArray( oldPurchase.refund_options )
-													? oldPurchase.refund_options.find(
-															( o ) => o.to_product_id === targetProductId
-													  )
-													: null;
-
-											// Step 2: Fire the downgrade mutation
-											const response = await cancelAndRefundPurchaseAsync(
-												parseInt( purchaseId, 10 ),
-												{
-													type: 'downgrade' as const,
-													to_product_id: targetProductId,
-												}
-											);
-
-											// Step 3: Build success params
-											const params: Record< string, string > = {
-												downgraded: 'true',
-												plan: planTitle,
-											};
-											if ( matchingRefund && matchingRefund.refund_amount > 0 ) {
-												params.refund = String( matchingRefund.refund_amount );
-												params.currency = matchingRefund.refund_currency_symbol;
-											}
-
-											// Step 4: Read the new subscription ID straight from the mutation response.
-											const newSubscriptionId = (
-												response as { new_subscription_id?: string | number }
-											 )?.new_subscription_id;
-
-											// Step 5: Redirect to the appropriate surface.
-											if ( newSubscriptionId ) {
-												if ( ! isFromDashboard && siteSlug ) {
-													// Legacy: verify the new subscription is visible in the
-													// v1.2 endpoint before navigating, to avoid the
-													// manage-purchase page bouncing to /me/purchases (the list)
-													// when getByPurchaseId returns undefined.
-													for ( let attempt = 1; attempt <= 3; attempt++ ) {
-														const freshPurchases: Array< {
-															ID: number | string;
-														} > = await wpcom.req.get( {
-															path: '/me/purchases',
-															apiVersion: '1.2',
-														} );
-														const found = freshPurchases.some(
-															( p ) => String( p.ID ) === String( newSubscriptionId )
-														);
-
-														if ( found ) {
-															break;
-														}
-														if ( attempt < 3 ) {
-															await new Promise( ( r ) => setTimeout( r, 500 ) );
-														}
-													}
-
-													const targetUrl = addQueryArgs(
-														'/me/purchases/' +
-															encodeURIComponent( siteSlug ) +
-															'/' +
-															String( newSubscriptionId ),
-														params
-													);
-													window.location.assign( targetUrl );
-												} else {
-													const targetUrl = addQueryArgs(
-														dashboardLink( '/me/billing/purchases/' + String( newSubscriptionId ) ),
-														params
-													);
-													window.location.assign( targetUrl );
-												}
-											} else {
-												// Fallback: API didn't return new_subscription_id.
-												const fallbackUrl = addQueryArgs( fallbackDestination, params );
-												window.location.assign( fallbackUrl );
-											}
-										} catch ( error ) {
-											// Redirect back to the old plan's purchase settings with
-											// an error notice so the user can retry or contact support.
-											const errorUrl = isFromDashboard
-												? dashboardLink( '/me/billing/purchases/' + purchaseId )
-												: '/me/purchases/' + encodeURIComponent( siteSlug ) + '/' + purchaseId;
-											window.location.assign(
-												addQueryArgs( errorUrl, {
-													downgrade_failed: 'true',
-												} )
-											);
-										}
-									} )();
-									return;
-								}
+								performPlanSwitch( {
+									purchaseId: parseInt( purchaseId, 10 ),
+									targetProductId,
+									siteSlug,
+									redirectTo,
+									refund: matchingRefund
+										? {
+												amount: matchingRefund.refund_amount,
+												currencySymbol: matchingRefund.refund_currency_symbol,
+										  }
+										: null,
+								} );
+								return;
 							}
 
+							// Otherwise this is an upgrade — send the user to checkout.
 							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
 							const currentPath = window.location.href.replace( window.location.origin, '' );
 

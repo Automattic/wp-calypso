@@ -575,12 +575,12 @@ function UnifiedPlansStep( {
 
 			if ( hasCredit && hasRefund ) {
 				return translate(
-					'Find a plan that fits where your site is heading. We\u2019ll apply your remaining credit at checkout, and refund the difference.'
+					'Find a plan that fits where your site is heading. We’ll apply your remaining credit at checkout, and refund the difference.'
 				);
 			}
 			if ( hasCredit ) {
 				return translate(
-					'Find a plan that fits where your site is heading. We\u2019ll apply your remaining credit at checkout.'
+					'Find a plan that fits where your site is heading. We’ll apply your remaining credit at checkout.'
 				);
 			}
 			return translate( 'Find a plan that fits where your site is heading.' );

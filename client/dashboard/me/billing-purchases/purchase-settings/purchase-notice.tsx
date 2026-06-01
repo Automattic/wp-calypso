@@ -82,13 +82,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		if ( downgraded ) {
 			navigate( {
 				search: ( prev: Record< string, unknown > ) => {
-					const {
-						downgraded: _downgraded,
-						plan: _plan,
-						refund: _refund,
-						currency: _currency,
-						...rest
-					} = prev;
+					const { downgraded: _downgraded, refund: _refund, currency: _currency, ...rest } = prev;
 					return rest;
 				},
 				replace: true,
@@ -170,7 +164,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			<Notice variant="error" onClose={ () => setShowDowngradeFailedNotice( false ) }>
 				{ createInterpolateElement(
 					__(
-						'We couldn\u2019t switch your plan. Please try again, or <button>contact support</button> if the issue continues.'
+						'We couldn’t switch your plan. Please try again, or <button>contact support</button> if the issue continues.'
 					),
 					{
 						button: (
@@ -190,7 +184,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( showDowngradedNotice ) {
-		let downgradedMessage = __( 'We\u2019ve switched your plan.' );
+		let downgradedMessage: string = __( 'We’ve switched your plan.' );
 		if ( downgradedRefund && downgradedCurrency ) {
 			downgradedMessage +=
 				' ' +

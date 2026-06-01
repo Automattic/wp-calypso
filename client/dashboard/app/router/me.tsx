@@ -295,7 +295,6 @@ export const purchaseSettingsRoute = createRoute( {
 		downgraded?: true;
 		intent?: 'auto-renew';
 		downgrade_failed?: true;
-		plan?: string;
 		refund?: string;
 		currency?: string;
 	} => {
@@ -313,7 +312,6 @@ export const purchaseSettingsRoute = createRoute( {
 			...( isDowngraded ? { downgraded: true } : {} ),
 			...( intent ? { intent } : {} ),
 			...( isDowngradeFailed ? { downgrade_failed: true } : {} ),
-			...( typeof search.plan === 'string' ? { plan: search.plan } : {} ),
 			...( typeof search.refund === 'string' ? { refund: search.refund } : {} ),
 			...( typeof search.currency === 'string' ? { currency: search.currency } : {} ),
 		};

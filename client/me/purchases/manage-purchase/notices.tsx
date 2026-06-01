@@ -139,7 +139,6 @@ class PurchaseNotice extends Component<
 			cancelledIntent: params?.get( 'intent' ) ?? null,
 			showDowngradedRedirectNotice: params?.get( 'downgraded' ) === 'true',
 			showDowngradeFailedNotice: params?.get( 'downgrade_failed' ) === 'true',
-			downgradedPlan: params?.get( 'plan' ) || '',
 			downgradedRefund: params?.get( 'refund' ) || '',
 			downgradedCurrency: params?.get( 'currency' ) || '',
 		};
@@ -158,7 +157,6 @@ class PurchaseNotice extends Component<
 		}
 		if ( params.get( 'downgraded' ) === 'true' ) {
 			params.delete( 'downgraded' );
-			params.delete( 'plan' );
 			params.delete( 'refund' );
 			params.delete( 'currency' );
 			changed = true;

@@ -50,6 +50,9 @@ const PlanButton = ( {
 			className={ className }
 			onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 				onClick();
+				// After a mouse click (detail > 0) drop focus so the button doesn't
+				// keep a lingering focus ring. Keyboard activation reports detail === 0,
+				// so keyboard focus is preserved for accessibility.
 				if ( e.detail > 0 ) {
 					( e.currentTarget as HTMLElement ).blur();
 				}
