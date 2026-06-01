@@ -2,6 +2,10 @@
 	display: flex;
 	justify-content: center;
 	padding: 8px 0;
+	// Ensure the stepper paints above the sticky checkout sidebar, which is positioned
+	// and would otherwise overlap the heading row at the same stacking level.
+	position: relative;
+	z-index: 1;
 }
 
 .step {
