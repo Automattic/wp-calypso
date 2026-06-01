@@ -25,8 +25,8 @@ const mockUseExperiment = useExperiment as jest.Mock;
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUseQuery = useQuery as jest.Mock;
 
-const renderHookForFlow = ( flow = 'onboarding' ) =>
-	renderHook( () => useMobileLayoutExperiment( { flow } ) );
+const renderHookForFlow = ( flow = 'onboarding', isPartnerFlow = false ) =>
+	renderHook( () => useMobileLayoutExperiment( { flow, isPartnerFlow } ) );
 
 describe( 'useMobileLayoutExperiment', () => {
 	beforeEach( () => {
@@ -65,6 +65,17 @@ describe( 'useMobileLayoutExperiment', () => {
 		mockUseExperiment.mockReturnValue( [ false, { variationName: 'treatment_tos_top' } ] );
 
 		const { result } = renderHookForFlow();
+
+		expect( result.current.isEligible ).toBe( false );
+		expect( result.current.variationName ).toBe( 'control' );
+		expect( result.current.isMobileTreatment ).toBe( false );
+		expect( result.current.isMobileTreatmentTosTop ).toBe( false );
+	} );
+
+	it( 'excludes partner-branded flows from the experiment', () => {
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'treatment_tos_top' } ] );
+
+		const { result } = renderHookForFlow( 'onboarding', true );
 
 		expect( result.current.isEligible ).toBe( false );
 		expect( result.current.variationName ).toBe( 'control' );

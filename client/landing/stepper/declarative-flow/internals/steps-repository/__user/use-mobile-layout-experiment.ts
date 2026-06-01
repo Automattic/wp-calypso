@@ -23,20 +23,27 @@ type MobileLayoutExperimentResult = {
 
 interface UseMobileLayoutExperimentParams {
 	flow: string;
+	// True when usePartnerBranding resolves a partnerConfig (Woo-branded OAuth2
+	// client, from=woo, redirect_to hostname match, etc.). Broader than the
+	// isWooReferrer ref-param check, so it must be passed in explicitly.
+	isPartnerFlow: boolean;
 }
 
 // The mobile-layout experiment is only eligible on mobile viewports so desktop
 // users never consume an ExPlat slot. Woo-referrer users keep their permanent
-// email-first treatment from PR #110118 and are excluded.
+// email-first treatment from PR #110118 and are excluded. Partner-branded flows
+// are also excluded so the treatment never overrides their SSO providers, ToS,
+// or heading copy — partner branding always wins (see index.tsx).
 function useMobileLayoutExperiment( {
 	flow,
+	isPartnerFlow,
 }: UseMobileLayoutExperimentParams ): MobileLayoutExperimentResult {
 	const queryArgs = useQuery();
 	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
-	const isEligible = isStepContainerV2 && isMobileViewport && ! isWooReferrer;
+	const isEligible = isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! isPartnerFlow;
 	const [ isLoading, assignment ] = useExperiment( MOBILE_LAYOUT_EXPERIMENT_NAME, {
 		isEligible,
 	} );

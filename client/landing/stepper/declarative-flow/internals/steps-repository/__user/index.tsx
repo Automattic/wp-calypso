@@ -123,7 +123,7 @@ const UserStepComponent: StepType = function UserStep( {
 		isEligible: isMobileLayoutExperimentEligible,
 		isMobileTreatment,
 		isMobileTreatmentTosTop,
-	} = useMobileLayoutExperiment( { flow } );
+	} = useMobileLayoutExperiment( { flow, isPartnerFlow: !! partnerConfig } );
 	const shouldDeferMobileReveal =
 		isMobileLayoutExperimentEligible && isMobileLayoutExperimentLoading;
 
