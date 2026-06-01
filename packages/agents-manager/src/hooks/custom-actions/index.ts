@@ -13,16 +13,20 @@ import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
- * Publish a slice of `window.__agentsManagerActions`. Cleanup only removes
- * keys whose value is still ours, so two callers can co-own the global
- * without overwriting each other. See `README.md` for usage rules.
+ * Publish actions onto `window.__agentsManagerActions`. Cleanup removes only
+ * keys whose value is still ours, so callers can co-own the global. See
+ * `README.md` for usage rules.
  */
 export function useRegisterCustomActions( actions: Partial< AgentsManagerActions > ): void {
+	// No deps array: re-sync every commit so the global stays correct even when
+	// the set of keys changes (a computed deps array must keep a fixed length).
 	useEffect( () => {
 		const current = ( window.__agentsManagerActions ??= {} as AgentsManagerActions );
 		Object.assign( current, actions );
 
 		return () => {
+			// Re-read the global rather than reusing `current`: a consumer may have
+			// replaced it since we published, and we must clean up the live object.
 			const latest = window.__agentsManagerActions;
 			if ( ! latest ) {
 				return;
@@ -33,9 +37,7 @@ export function useRegisterCustomActions( actions: Partial< AgentsManagerActions
 				}
 			} );
 		};
-		// Re-run when any registered action's identity changes.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, Object.values( actions ) );
+	} );
 }
 
 interface SetupProps {

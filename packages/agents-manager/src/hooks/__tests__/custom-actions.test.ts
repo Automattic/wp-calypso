@@ -10,14 +10,15 @@ let mockContext = {
 	getActiveSessionId: jest.fn( () => 'session-123' ),
 	agentConfig: { agentId: 'reader-chat' },
 };
+let mockSelectState = {
+	hasLoaded: true,
+	isOpen: false,
+	isDocked: false,
+	floatingPosition: '',
+};
 
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( () => ( {
-		hasLoaded: true,
-		isOpen: false,
-		isDocked: false,
-		floatingPosition: '',
-	} ) ),
+	useSelect: jest.fn( () => mockSelectState ),
 	useDispatch: jest.fn( () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
@@ -55,6 +56,7 @@ describe( 'useSetupCustomActions', () => {
 			getActiveSessionId: jest.fn( () => 'session-123' ),
 			agentConfig: { agentId: 'reader-chat' },
 		};
+		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {
@@ -155,6 +157,23 @@ describe( 'useSetupCustomActions', () => {
 			floatingPosition: '',
 		} );
 	} );
+
+	it( 'resolves a pending `getChatState` once the store finishes loading', async () => {
+		mockSelectState = { hasLoaded: false, isOpen: true, isDocked: false, floatingPosition: 'br' };
+		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+
+		// Called before the store loads: the promise must stay pending.
+		const pending = window.__agentsManagerActions!.getChatState();
+
+		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: 'br' };
+		rerender();
+
+		await expect( pending ).resolves.toEqual( {
+			isOpen: true,
+			isDocked: false,
+			floatingPosition: 'br',
+		} );
+	} );
 } );
 
 describe( 'useRegisterCustomActions', () => {
@@ -222,5 +241,24 @@ describe( 'useRegisterCustomActions', () => {
 		rerender( { fn: second } );
 
 		expect( window.__agentsManagerActions?.setChatInput ).toBe( second );
+	} );
+
+	it( 'adapts when the set of registered keys changes between renders', () => {
+		const setChatInput = jest.fn();
+		const submitChatMessage = jest.fn( async () => undefined );
+
+		const { rerender } = renderHook< void, { actions: Partial< AgentsManagerActions > } >(
+			( { actions } ) => useRegisterCustomActions( actions ),
+			{ initialProps: { actions: { setChatInput } } }
+		);
+
+		expect( window.__agentsManagerActions?.setChatInput ).toBe( setChatInput );
+
+		// Drop `setChatInput`, add `submitChatMessage`: a key removed on re-render
+		// (not just on unmount) must disappear, and a newly added key must publish.
+		rerender( { actions: { submitChatMessage } } );
+
+		expect( window.__agentsManagerActions?.setChatInput ).toBeUndefined();
+		expect( window.__agentsManagerActions?.submitChatMessage ).toBe( submitChatMessage );
 	} );
 } );

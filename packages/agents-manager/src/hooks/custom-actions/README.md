@@ -141,8 +141,7 @@ function MyComponent() {
 ### Rules
 
 - **One owner per key.** Two components registering the same key is a bug — the later write wins and silently shadows the earlier one.
-- **Fixed key shape across renders.** The hook's effect dependencies come from `Object.values( actions )`. Conditional keys change the array's length; gate the whole component instead.
-- **Stable references.** Wrap actions in `useCallback` (or hoist them to module scope). Every identity change re-registers all the hook's keys.
+- **Stable references (recommended).** Wrap actions in `useCallback` (or hoist them to module scope) so the published functions keep a steady identity. Not required — the hook re-syncs on every commit — but it avoids needless churn and keeps any consumer-cached reference valid.
 - **Cleanup is value-aware.** When someone else rewrites your key, your cleanup leaves it alone. This keeps the global consistent across overlapping mounts.
 
 ### Caveats
