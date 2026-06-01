@@ -171,7 +171,7 @@ export default function DropdownGroup( {
 		return;
 	};
 
-	// I have to optimize this callback so it doesn't do unnecesary updates
+	// I have to optimize this callback so it doesn't do unnecessary updates
 	const interceptionCallback = useCallback(
 		( index: number, entries: IntersectionObserverEntry[] ) => {
 			const entry = entries[ 0 ];
