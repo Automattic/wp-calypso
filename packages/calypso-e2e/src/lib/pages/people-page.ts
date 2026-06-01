@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { Page, Locator } from 'playwright';
 import { clickNavTab } from '../../element-helper';
 
@@ -92,19 +91,32 @@ export class PeoplePage {
 	async waitForInvitation( emailaddress: string, timeout = 60000 ): Promise< void > {
 		await this.ensureFullInvitesList();
 		const invitationLocator = this.invitationLink( emailaddress );
+		const deadline = Date.now() + timeout;
 
-		await expect
-			.poll(
-				async () => {
-					if ( await invitationLocator.isVisible() ) {
-						return true;
-					}
-					await this.page.reload();
-					return false;
-				},
-				{ timeout, intervals: [ 1000, 2000, 5000 ] }
-			)
-			.toBe( true );
+		// Poll-and-reload until the backend surfaces the pending invite. Each
+		// iteration gives the freshly loaded page a bounded grace window (so we
+		// don't hammer reloads on a single-shot visibility check), and the
+		// per-attempt wait is capped by the time left so the method honours its
+		// overall `timeout` contract.
+		for (;;) {
+			const remaining = deadline - Date.now();
+			if ( remaining <= 0 ) {
+				// Out of budget: one final bounded wait that throws a real
+				// Playwright "not visible" error if the invite never appeared.
+				await invitationLocator.waitFor( { state: 'visible', timeout: 5000 } );
+				return;
+			}
+			try {
+				await invitationLocator.waitFor( {
+					state: 'visible',
+					timeout: Math.min( 5000, remaining ),
+				} );
+				return;
+			} catch {
+				await this.page.reload();
+				await this.page.waitForLoadState( 'domcontentloaded' );
+			}
+		}
 	}
 
 	/**

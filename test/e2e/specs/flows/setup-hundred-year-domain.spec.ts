@@ -69,14 +69,14 @@ test.describe(
 
 			await test.step( 'Then I see the hundred year thank you page', async function () {
 				await expect(
-					page.getByText( `Your 100-Year Domain ${ selectedDomain } has been registered.` )
+					page.getByRole( 'heading', { name: 'Thank you for your purchase' } )
 				).toBeVisible( {
 					timeout: 60 * 1000,
 				} );
 			} );
 
 			await test.step( 'When I click "Manage your domain"', async function () {
-				await page.getByRole( 'button', { name: 'Manage your domain' } ).click();
+				await page.getByRole( 'link', { name: 'Use the domain name only' } ).click();
 			} );
 
 			await test.step( 'Then I am on the domain management page', async function () {

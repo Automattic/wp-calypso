@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
@@ -47,29 +46,46 @@ export class EditorSidebarBlockInserterComponent {
 			selectors.closeBlockInserterButton
 		);
 
-		// The mobile inserter has three failure modes that all need handling:
-		//   1. The sidebar auto-closes itself in some Gutenberg states (22.4.0+),
-		//      so the close button may never appear.
-		//   2. The sidebar can auto-detach between observation and the click
-		//      landing, leaving the button non-actionable.
-		//   3. On slow CI the click occasionally no-ops and the panel stays
-		//      attached for the full action timeout.
-		//
-		// `expect.toPass` retries the whole click+assert pair, which covers
-		// (3) (the load-bearing case that a single web-first assertion cannot
-		// fix, since `click()` resolves on dispatch, not on resulting state).
-		// The early count check skips the click entirely for (1); a click
-		// failure in (2) is caught by toPass and the next iteration sees the
-		// sidebar gone and exits.
-		await expect( async () => {
-			if ( ( await sidebarLocator.count() ) === 0 ) {
+		// Gutenberg 22.4.0+ auto-closes the sidebar after insertion in some cases,
+		// so the button may never appear. Race the two terminal states.
+		await Promise.any( [
+			closeBlockInserterButtonLocator.waitFor(),
+			sidebarLocator.waitFor( { state: 'detached' } ),
+		] );
+
+		// If the sidebar is already gone, nothing to do.
+		if ( ( await sidebarLocator.count() ) === 0 ) {
+			return;
+		}
+
+		// On mobile, the button can pass actionability checks but detach
+		// mid-animation while the click is in-flight, hanging the click until
+		// the action timeout. Bound each attempt with `timeout`, use
+		// `noWaitAfter` to skip post-click navigation heuristics, and treat
+		// sidebar detachment as success regardless of which attempt landed it.
+		const maxAttempts = 3;
+		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+			try {
+				await closeBlockInserterButtonLocator.click( {
+					timeout: 5000,
+					noWaitAfter: true,
+				} );
+			} catch {
+				// The button may have detached between the race above and the
+				// click. That is the success case here.
+			}
+
+			try {
+				await sidebarLocator.waitFor( { state: 'detached', timeout: 5000 } );
 				return;
+			} catch {
+				if ( attempt === maxAttempts ) {
+					throw new Error(
+						`Block inserter sidebar did not close after ${ maxAttempts } click attempts.`
+					);
+				}
 			}
-			if ( await closeBlockInserterButtonLocator.isVisible() ) {
-				await closeBlockInserterButtonLocator.click( { timeout: 5 * 1000 } );
-			}
-			await expect( sidebarLocator ).toHaveCount( 0 );
-		} ).toPass( { timeout: 30 * 1000, intervals: [ 500, 1000, 2000 ] } );
+		}
 	}
 
 	/**

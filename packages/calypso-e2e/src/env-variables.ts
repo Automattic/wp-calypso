@@ -1,4 +1,4 @@
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 import path from 'path';
 import { getMag16Locales, getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
@@ -209,7 +209,7 @@ class EnvVariables implements SupportedEnvVariables {
 		try {
 			// eslint-disable-next-line no-new
 			new URL( url as string );
-		} catch ( error ) {
+		} catch {
 			throw new Error( `Invalid ${ envVarName } value: ${ url }.\nYou must provide a valid URL.` );
 		}
 		return url as string;
@@ -286,7 +286,7 @@ class EnvVariables implements SupportedEnvVariables {
 			const envVarName = property as keyof SupportedEnvVariables;
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
-			this[ envVarName ];
+			void this[ envVarName ];
 		}
 	}
 }

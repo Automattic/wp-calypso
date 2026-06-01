@@ -113,7 +113,7 @@ export class FullSiteEditorPage {
 		let parsedUrl: URL;
 		try {
 			parsedUrl = new URL( siteHostWithProtocol );
-		} catch ( error ) {
+		} catch {
 			throw new Error(
 				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
 			);
