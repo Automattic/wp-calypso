@@ -18,8 +18,14 @@ import {
 	patchReadSiteFollowStatus,
 	patchReadSiteFollowStatusByBlogId,
 	useFollowSite,
+	useUnfollowSite,
 } from '../use-follow-mutations';
-import type { ReadSiteRecommendationsResponse, ReadSiteResponse } from '@automattic/api-core';
+import type {
+	FollowItem,
+	ReadSiteRecommendationsResponse,
+	ReadSiteResponse,
+} from '@automattic/api-core';
+import type { FollowsInfiniteData } from '@automattic/api-queries';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -68,6 +74,35 @@ const makeRecommendedSite = ( blogId: number, feedId: number ) => ( {
 	name: `Site ${ blogId }`,
 	URL: `https://site-${ blogId }.example.com`,
 } );
+
+const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
+	ID: 1,
+	URL: 'https://example.com',
+	feed_URL: 'https://example.com/feed',
+	blog_ID: 1,
+	feed_ID: 10,
+	is_following: true,
+	...overrides,
+} );
+
+const seedFollowsCache = ( queryClient: QueryClient, follows: FollowItem[] ) => {
+	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), {
+		pageParams: [ 1 ],
+		pages: [
+			{
+				follows,
+				totalCount: follows.length,
+				page: 1,
+				number: 200,
+			},
+		],
+	} );
+};
+
+const getCachedFollows = ( queryClient: QueryClient ) =>
+	queryClient
+		.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() )
+		?.pages.flatMap( ( page ) => page.follows ) ?? [];
 
 const getRecommendedSiteQueryKey = () =>
 	getReadSiteRecommendationsInfiniteQueryKey( {
@@ -199,6 +234,99 @@ describe( 'follow mutation cache helpers', () => {
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		await waitFor( () => expect( getCachedRecommendedSiteIds( queryClient ) ).toEqual( [ 321 ] ) );
+	} );
+
+	it( 'useFollowSite optimistically marks the requested feed as following', async () => {
+		const queryClient = makeQueryClient();
+		nock( BASE ).post( '/rest/v1.1/read/following/mine/new' ).delay( 100 ).reply( 500, {
+			error: 'follow_failed',
+		} );
+
+		const { result } = renderHook( () => useFollowSite(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( { feedUrl: 'https://example.com/feed' } );
+		} );
+
+		await waitFor( () =>
+			expect( getCachedFollows( queryClient ) ).toMatchObject( [
+				{
+					feed_URL: 'https://example.com/feed',
+					is_following: true,
+				},
+			] )
+		);
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+	} );
+
+	it( 'useFollowSite rolls back the optimistic follow when the request fails', async () => {
+		const queryClient = makeQueryClient();
+		nock( BASE ).post( '/rest/v1.1/read/following/mine/new' ).reply( 500, {
+			error: 'follow_failed',
+		} );
+
+		const { result } = renderHook( () => useFollowSite(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( { feedUrl: 'https://example.com/feed' } );
+		} );
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+		expect( getCachedFollows( queryClient ) ).toEqual( [] );
+	} );
+
+	it( 'useUnfollowSite optimistically marks the requested feed as not following', async () => {
+		const queryClient = makeQueryClient();
+		seedFollowsCache( queryClient, [ makeFollow() ] );
+		nock( BASE ).post( '/rest/v1.1/read/following/mine/delete' ).delay( 100 ).reply( 500, {
+			error: 'unfollow_failed',
+		} );
+
+		const { result } = renderHook( () => useUnfollowSite(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( { feedUrl: 'https://example.com/feed' } );
+		} );
+
+		await waitFor( () =>
+			expect( getCachedFollows( queryClient )[ 0 ] ).toMatchObject( {
+				feed_URL: 'https://example.com/feed',
+				is_following: false,
+			} )
+		);
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+	} );
+
+	it( 'useUnfollowSite rolls back the optimistic unfollow when the request fails', async () => {
+		const queryClient = makeQueryClient();
+		seedFollowsCache( queryClient, [ makeFollow() ] );
+		nock( BASE ).post( '/rest/v1.1/read/following/mine/delete' ).reply( 500, {
+			error: 'unfollow_failed',
+		} );
+
+		const { result } = renderHook( () => useUnfollowSite(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( { feedUrl: 'https://example.com/feed' } );
+		} );
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+		expect( getCachedFollows( queryClient )[ 0 ] ).toMatchObject( {
+			feed_URL: 'https://example.com/feed',
+			is_following: true,
+		} );
 	} );
 
 	it( 'useFollowSite keeps a recommended site in the cache when the follow fails', async () => {
