@@ -32,7 +32,11 @@ export function useStepRegistration< T extends { value: string } >() {
 				return prev;
 			}
 			const existing = prev[ idx ];
-			const keys = Object.keys( meta ) as ( keyof T )[];
+			// Union keys from both objects so fields present in existing but
+			// absent from meta are not silently ignored.
+			const keys = [
+				...new Set( [ ...Object.keys( existing ), ...Object.keys( meta ) ] ),
+			] as ( keyof T )[];
 			if ( keys.every( ( k ) => existing[ k ] === meta[ k ] ) ) {
 				return prev;
 			}
