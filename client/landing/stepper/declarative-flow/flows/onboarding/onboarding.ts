@@ -309,6 +309,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									redirect_to: redirectTo,
 									signup: 1,
+									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,

@@ -10,7 +10,6 @@ import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
-	isDomainFlow,
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
@@ -738,7 +737,7 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
-								{ isDomainFlow( flowName ) && <DomainFlowProgressStepper currentStep="plans" /> }
+								{ isOnboardingFlow( flowName ) && <DomainFlowProgressStepper currentStep="plans" /> }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle

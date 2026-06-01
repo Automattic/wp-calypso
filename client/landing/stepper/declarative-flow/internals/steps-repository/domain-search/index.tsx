@@ -497,7 +497,7 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ isDomainFlow( flow ) && <DomainFlowProgressStepper currentStep="domains" /> }
+						{ isOnboardingFlow( flow ) && <DomainFlowProgressStepper currentStep="domains" /> }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }

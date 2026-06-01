@@ -24,7 +24,7 @@ import {
 	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
-import { DOMAIN_FLOW, Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -433,7 +433,7 @@ export default function CheckoutMainContent( {
 	);
 
 	const searchParams = new URLSearchParams( window.location.search );
-	const isDomainFlowCheckout = searchParams.get( 'flow' ) === DOMAIN_FLOW;
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 	// The flow that redirected to checkout may pass a step indicator via the
@@ -1015,7 +1015,7 @@ export default function CheckoutMainContent( {
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
 					heading={
-						isDomainFlowCheckout && isLargeViewport ? (
+						isOnboardingFlowCheckout && isLargeViewport ? (
 							<DomainFlowProgressStepper currentStep="checkout" />
 						) : undefined
 					}
