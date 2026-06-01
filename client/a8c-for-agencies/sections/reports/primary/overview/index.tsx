@@ -6,18 +6,19 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import useBannerParallax from 'calypso/a8c-for-agencies/hooks/use-banner-parallax';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.webp';
 import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.webp';
-import heroImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.webp';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
+	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { A4A_REPORTS_BUILD_LINK } from '../../constants';
+import { A4A_REPORTS_BUILD_LINK, A4A_REPORTS_LINK } from '../../constants';
 import ExampleReportModal from '../../example-report-modal';
+import ReportsBanner from './sections/reports-banner';
 
 import './style.scss';
 
@@ -26,6 +27,7 @@ export default function ReportsOverview() {
 	const dispatch = useDispatch();
 	const title = translate( 'Client Reports' );
 	const [ showExampleModal, setShowExampleModal ] = useState( false );
+	const { onScroll } = useBannerParallax();
 
 	const benefitsList1 = useMemo(
 		() => [
@@ -80,54 +82,34 @@ export default function ReportsOverview() {
 		);
 	}, [ translate, handleBuildNewReport ] );
 
+	const bannerCtas = (
+		<div className="reports-overview__buttons-container">
+			{ buildNewReportButton }
+			<Button __next40pxDefaultSize variant="secondary" onClick={ handleViewExampleReport }>
+				{ translate( 'View example report' ) }
+			</Button>
+		</div>
+	);
+
 	return (
-		<Layout className="reports-overview" title={ title } wide>
+		<Layout className="reports-overview" title={ title } onScroll={ onScroll } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title }</Title>
+					<Breadcrumb
+						items={ [
+							{ label: translate( 'Reports' ), href: A4A_REPORTS_LINK },
+							{ label: translate( 'Overview' ) },
+						] }
+					/>
 					<Actions>
 						<MobileSidebarNavigation />
 						{ buildNewReportButton }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
+			<ReportsBanner ctas={ bannerCtas } />
 			<LayoutBody>
 				<PageSectionColumns>
-					<PageSectionColumns.Column>
-						<div className="reports-overview__content">
-							<div>
-								<div className="reports-overview__heading">
-									{ translate( 'Create professional reports for your clients' ) }
-								</div>
-								<div className="reports-overview__description">
-									{ translate(
-										"Prove your agency's impact with polished, easy-to-read reports. Highlight key traffic stats (more data types coming soon) and send monthly snapshots that keep clients informed, impressed, and confident in your work."
-									) }
-								</div>
-							</div>
-							<div className="reports-overview__buttons-container">
-								{ buildNewReportButton }
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									onClick={ handleViewExampleReport }
-								>
-									{ translate( 'View example report' ) }
-								</Button>
-							</div>
-						</div>
-					</PageSectionColumns.Column>
-					<PageSectionColumns.Column alignCenter>
-						<img src={ heroImage } alt="" />
-					</PageSectionColumns.Column>
-				</PageSectionColumns>
-
-				<PageSectionColumns
-					background={ {
-						isDarkBackground: true,
-						color: '#185683',
-					} }
-				>
 					<PageSectionColumns.Column heading={ translate( 'Why share reports?' ) }>
 						<div className="reports-overview__description">
 							{ translate(

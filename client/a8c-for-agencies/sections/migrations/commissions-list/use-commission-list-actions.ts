@@ -30,7 +30,10 @@ export default function useCommissionListActions( {
 				id: 'request-another-verification',
 				label: translate( 'Request another verification' ),
 				isEligible( item: TaggedSite ) {
-					return isRequestVerificationEnabled && item.incentive_status === 'rejected';
+					return (
+						isRequestVerificationEnabled &&
+						( item.incentive_status === 'rejected' || item.incentive_status === 'ineligible' )
+					);
 				},
 				callback( items: TaggedSite[] ) {
 					onRequestReview( items[ 0 ] );
