@@ -12,7 +12,8 @@ import SimpleList from '../simple-list';
 import './style.scss';
 
 const PRESSABLE_Q2_2026_DEADLINE = new Date( '2026-06-30T23:59:59.999Z' );
-const CONTACT_SALES_MAILTO = 'mailto:partnerships@automattic.com';
+const CONTACT_SALES_MAILTO =
+	'mailto:partnerships@automattic.com?subject=Pressable%20Summer%202026%20Promo';
 const FULL_TERMS_URL =
 	'https://pressable.com/legal/summer-2026-migration-bonus-terms-and-conditions/';
 

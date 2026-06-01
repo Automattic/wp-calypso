@@ -93,7 +93,7 @@ export const useUpcomingEvents = () => {
 								{
 									variant: 'primary',
 									label: translate( 'Contact sales to claim this offer' ),
-									url: 'mailto:partnerships@automattic.com',
+									url: 'mailto:partnerships@automattic.com?subject=Pressable%20Summer%202026%20Promo',
 									trackEventName:
 										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q2_2026_contact_sales_click',
 								},
@@ -107,7 +107,7 @@ export const useUpcomingEvents = () => {
 								},
 							],
 							logoUrl: PressableLogo,
-							dateClassName: 'a4a-event__date--pressable',
+							dateClassName: 'a4a-event__date--a4a',
 						},
 				  ]
 				: [] ),
