@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { adaptFollow } from './adapters';
 import type {
+	FollowDeliveryResponse,
 	FollowDeliveryParams,
 	FollowItem,
 	FollowSiteParams,
@@ -27,6 +28,22 @@ function assertDeliveryFrequency(
 		throw new Error( 'deliveryFrequency must be one of instantly, daily, or weekly' );
 	}
 }
+
+const assertSubscribedResponse = (
+	response: FollowDeliveryResponse,
+	expectedSubscribed: boolean,
+	message: string
+) => {
+	if ( response?.subscribed !== expectedSubscribed ) {
+		throw new Error( message );
+	}
+};
+
+const assertSuccessfulResponse = ( response: FollowDeliveryResponse, message: string ) => {
+	if ( response?.success !== true ) {
+		throw new Error( message );
+	}
+};
 
 const isValidId = ( id?: number | string ): id is number | string => {
 	if ( typeof id === 'number' ) {
@@ -109,11 +126,14 @@ export const updateSitePostEmailSubscription = async ( {
 }: FollowDeliveryParams ) => {
 	assertBoolean( sendPosts, 'sendPosts' );
 
-	return wpcom.req.post( {
+	const response: FollowDeliveryResponse = await wpcom.req.post( {
 		path: `/read/site/${ blogId }/post_email_subscriptions/${ sendPosts ? 'new' : 'delete' }`,
 		apiVersion: '1.2',
 		body: sendPosts ? buildDeliveryFrequencyBody( deliveryFrequency ) : {},
 	} );
+	assertSubscribedResponse( response, sendPosts, 'Post email subscription request failed' );
+
+	return response;
 };
 
 export const updateSiteCommentEmailSubscription = async ( {
@@ -122,11 +142,14 @@ export const updateSiteCommentEmailSubscription = async ( {
 }: FollowDeliveryParams ) => {
 	assertBoolean( sendComments, 'sendComments' );
 
-	return wpcom.req.post( {
+	const response: FollowDeliveryResponse = await wpcom.req.post( {
 		path: `/read/site/${ blogId }/comment_email_subscriptions/${ sendComments ? 'new' : 'delete' }`,
 		apiVersion: '1.2',
 		body: {},
 	} );
+	assertSubscribedResponse( response, sendComments, 'Comment email subscription request failed' );
+
+	return response;
 };
 
 export const updateSitePostEmailDeliveryFrequency = async ( {
@@ -135,11 +158,14 @@ export const updateSitePostEmailDeliveryFrequency = async ( {
 }: FollowDeliveryParams ) => {
 	assertDeliveryFrequency( deliveryFrequency );
 
-	return wpcom.req.post( {
+	const response: FollowDeliveryResponse = await wpcom.req.post( {
 		path: `/read/site/${ blogId }/post_email_subscriptions/update`,
 		apiVersion: '1.2',
 		body: buildDeliveryFrequencyBody( deliveryFrequency ),
 	} );
+	assertSuccessfulResponse( response, 'Post email delivery frequency request failed' );
+
+	return response;
 };
 
 export const updateSitePostNotificationSubscription = async ( {
@@ -148,9 +174,12 @@ export const updateSitePostNotificationSubscription = async ( {
 }: FollowDeliveryParams ) => {
 	assertBoolean( sendPosts, 'sendPosts' );
 
-	return wpcom.req.post( {
+	const response: FollowDeliveryResponse = await wpcom.req.post( {
 		path: `/read/sites/${ blogId }/notification-subscriptions/${ sendPosts ? 'new' : 'delete' }`,
 		apiNamespace: 'wpcom/v2',
 		body: {},
 	} );
+	assertSubscribedResponse( response, sendPosts, 'Post notification subscription request failed' );
+
+	return response;
 };

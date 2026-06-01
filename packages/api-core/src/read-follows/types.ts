@@ -109,3 +109,8 @@ export interface FollowDeliveryParams {
 	sendComments?: boolean;
 	deliveryFrequency?: string;
 }
+
+export interface FollowDeliveryResponse {
+	subscribed?: boolean;
+	success?: boolean;
+}

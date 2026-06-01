@@ -381,26 +381,118 @@ export const unfollowSiteMutation = ( queryClient: QueryClient ) =>
 const invalidateFollows = ( queryClient: QueryClient ) =>
 	queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
 
+type FollowDeliveryMutationContext = {
+	previousData?: FollowsInfiniteData;
+};
+
+type FollowDeliveryPatchKind = 'post-email' | 'comment-email' | 'email-frequency' | 'notification';
+
+const patchFollowDeliveryMethods = (
+	queryClient: QueryClient,
+	params: FollowDeliveryParams,
+	kind: FollowDeliveryPatchKind
+) => {
+	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), ( data ) => {
+		if ( ! data ) {
+			return data;
+		}
+
+		return {
+			...data,
+			pages: data.pages.map( ( page ) => ( {
+				...page,
+				follows: page.follows.map( ( follow ) => {
+					if ( Number( follow.blog_ID ) !== Number( params.blogId ) ) {
+						return follow;
+					}
+
+					const email = {
+						...follow.delivery_methods?.email,
+						...( kind === 'post-email' && typeof params.sendPosts === 'boolean'
+							? { send_posts: params.sendPosts }
+							: {} ),
+						...( kind === 'comment-email' && typeof params.sendComments === 'boolean'
+							? { send_comments: params.sendComments }
+							: {} ),
+						...( ( kind === 'post-email' || kind === 'email-frequency' ) && params.deliveryFrequency
+							? { post_delivery_frequency: params.deliveryFrequency }
+							: {} ),
+					};
+					const notification = {
+						...follow.delivery_methods?.notification,
+						...( kind === 'notification' && typeof params.sendPosts === 'boolean'
+							? { send_posts: params.sendPosts }
+							: {} ),
+					};
+
+					return {
+						...follow,
+						delivery_methods: {
+							...follow.delivery_methods,
+							...( kind === 'post-email' || kind === 'comment-email' || kind === 'email-frequency'
+								? { email }
+								: {} ),
+							...( kind === 'notification' ? { notification } : {} ),
+						},
+					};
+				} ),
+			} ) ),
+		};
+	} );
+};
+
+const withOptimisticDeliveryPatch = (
+	queryClient: QueryClient,
+	params: FollowDeliveryParams,
+	kind: FollowDeliveryPatchKind
+): FollowDeliveryMutationContext => {
+	const previousData = queryClient.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() );
+	patchFollowDeliveryMethods( queryClient, params, kind );
+
+	return { previousData };
+};
+
+const rollbackOptimisticDeliveryPatch = (
+	queryClient: QueryClient,
+	context?: FollowDeliveryMutationContext
+) => {
+	if ( context?.previousData ) {
+		queryClient.setQueryData( getFollowsQueryKey(), context.previousData );
+	}
+};
+
 export const updateSitePostEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams >( {
+	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
 		mutationFn: ( params ) => updateSitePostEmailSubscription( params ),
+		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'post-email' ),
+		onError: ( _error, _params, context ) =>
+			rollbackOptimisticDeliveryPatch( queryClient, context ),
 		onSettled: () => invalidateFollows( queryClient ),
 	} );
 
 export const updateSiteCommentEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams >( {
+	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
 		mutationFn: ( params ) => updateSiteCommentEmailSubscription( params ),
+		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'comment-email' ),
+		onError: ( _error, _params, context ) =>
+			rollbackOptimisticDeliveryPatch( queryClient, context ),
 		onSettled: () => invalidateFollows( queryClient ),
 	} );
 
 export const updateSitePostEmailDeliveryFrequencyMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams >( {
+	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
 		mutationFn: ( params ) => updateSitePostEmailDeliveryFrequency( params ),
+		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'email-frequency' ),
+		onError: ( _error, _params, context ) =>
+			rollbackOptimisticDeliveryPatch( queryClient, context ),
 		onSettled: () => invalidateFollows( queryClient ),
 	} );
 
 export const updateSitePostNotificationSubscriptionMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams >( {
+	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
 		mutationFn: ( params ) => updateSitePostNotificationSubscription( params ),
+		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'notification' ),
+		onError: ( _error, _params, context ) =>
+			rollbackOptimisticDeliveryPatch( queryClient, context ),
 		onSettled: () => invalidateFollows( queryClient ),
 	} );

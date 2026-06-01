@@ -400,7 +400,7 @@ describe( 'delivery mutations', () => {
 					.post( '/rest/v1.2/read/site/123/post_email_subscriptions/new', {
 						delivery_frequency: 'daily',
 					} )
-					.reply( 200, { success: true } ),
+					.reply( 200, { subscribed: true } ),
 		},
 		{
 			name: 'comment email subscription',
@@ -409,7 +409,7 @@ describe( 'delivery mutations', () => {
 			scope: () =>
 				nock( BASE )
 					.post( '/rest/v1.2/read/site/123/comment_email_subscriptions/new', {} )
-					.reply( 200, { success: true } ),
+					.reply( 200, { subscribed: true } ),
 		},
 		{
 			name: 'post email delivery frequency',
@@ -429,7 +429,7 @@ describe( 'delivery mutations', () => {
 			scope: () =>
 				nock( BASE )
 					.post( '/wpcom/v2/read/sites/123/notification-subscriptions/new', {} )
-					.reply( 200, { success: true } ),
+					.reply( 200, { subscribed: true } ),
 		},
 	] )( 'invalidates follows on settle for $name', async ( { factory, params, scope } ) => {
 		const request = scope();
@@ -477,5 +477,85 @@ describe( 'delivery mutations', () => {
 				message
 			);
 		}
+	} );
+
+	it( 'optimistically patches delivery methods in the follows cache', async () => {
+		const request = nock( BASE )
+			.post( '/rest/v1.2/read/site/123/post_email_subscriptions/new', {
+				delivery_frequency: 'daily',
+			} )
+			.delay( 50 )
+			.reply( 200, { subscribed: true } );
+		const client = newClient();
+		client.setQueryData(
+			getFollowsQueryKey(),
+			makeData( [
+				makeFollow( {
+					blog_ID: 123,
+					delivery_methods: {
+						email: { send_posts: false, post_delivery_frequency: 'weekly' },
+					},
+				} ),
+			] )
+		);
+
+		const { result } = renderHook(
+			() => useMutation( updateSitePostEmailSubscriptionMutation( client ) ),
+			{
+				wrapper: makeWrapper( client ),
+			}
+		);
+
+		act( () => {
+			result.current.mutate( { blogId: 123, sendPosts: true, deliveryFrequency: 'daily' } );
+		} );
+
+		await waitFor( () =>
+			expect(
+				getCachedData( client )?.pages[ 0 ].follows[ 0 ].delivery_methods?.email
+			).toMatchObject( {
+				send_posts: true,
+				post_delivery_frequency: 'daily',
+			} )
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( request.isDone() ).toBe( true );
+	} );
+
+	it( 'rolls back optimistic delivery changes when the mutation fails', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/read/sites/123/notification-subscriptions/delete', {} )
+			.reply( 500, { error: 'subscription_failed' } );
+		const client = newClient();
+		client.setQueryData(
+			getFollowsQueryKey(),
+			makeData( [
+				makeFollow( {
+					blog_ID: 123,
+					delivery_methods: {
+						notification: { send_posts: true },
+					},
+				} ),
+			] )
+		);
+
+		const { result } = renderHook(
+			() => useMutation( updateSitePostNotificationSubscriptionMutation( client ) ),
+			{
+				wrapper: makeWrapper( client ),
+			}
+		);
+
+		act( () => {
+			result.current.mutate( { blogId: 123, sendPosts: false } );
+		} );
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+		expect(
+			getCachedData( client )?.pages[ 0 ].follows[ 0 ].delivery_methods?.notification
+		).toEqual( {
+			send_posts: true,
+		} );
 	} );
 } );

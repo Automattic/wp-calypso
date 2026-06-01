@@ -178,6 +178,22 @@ describe( 'read follows mutators', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'throws when post email subscription response does not confirm the requested state', async () => {
+			nock( BASE )
+				.post( '/rest/v1.2/read/site/123/post_email_subscriptions/new', {
+					delivery_frequency: 'daily',
+				} )
+				.reply( 200, { subscribed: false } );
+
+			await expect(
+				updateSitePostEmailSubscription( {
+					blogId: 123,
+					sendPosts: true,
+					deliveryFrequency: 'daily',
+				} )
+			).rejects.toThrow( 'Post email subscription request failed' );
+		} );
+
 		it( 'rejects post email subscription updates without a post delivery flag', async () => {
 			await expect( updateSitePostEmailSubscription( { blogId: 123 } ) ).rejects.toThrow(
 				'sendPosts must be a boolean'
@@ -195,6 +211,16 @@ describe( 'read follows mutators', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'throws when comment email subscription response does not confirm the requested state', async () => {
+			nock( BASE )
+				.post( '/rest/v1.2/read/site/123/comment_email_subscriptions/delete', {} )
+				.reply( 200, { subscribed: true } );
+
+			await expect(
+				updateSiteCommentEmailSubscription( { blogId: 123, sendComments: false } )
+			).rejects.toThrow( 'Comment email subscription request failed' );
+		} );
+
 		it( 'rejects comment email subscription updates without a comment delivery flag', async () => {
 			await expect( updateSiteCommentEmailSubscription( { blogId: 123 } ) ).rejects.toThrow(
 				'sendComments must be a boolean'
@@ -207,7 +233,7 @@ describe( 'read follows mutators', () => {
 				.post( '/rest/v1.2/read/site/123/post_email_subscriptions/update', {
 					delivery_frequency: 'weekly',
 				} )
-				.reply( 200, { subscribed: true } );
+				.reply( 200, { success: true } );
 
 			await updateSitePostEmailDeliveryFrequency( {
 				blogId: 123,
@@ -215,6 +241,21 @@ describe( 'read follows mutators', () => {
 			} );
 
 			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'throws when post email delivery frequency response does not confirm success', async () => {
+			nock( BASE )
+				.post( '/rest/v1.2/read/site/123/post_email_subscriptions/update', {
+					delivery_frequency: 'weekly',
+				} )
+				.reply( 200, { success: false } );
+
+			await expect(
+				updateSitePostEmailDeliveryFrequency( {
+					blogId: 123,
+					deliveryFrequency: 'weekly',
+				} )
+			).rejects.toThrow( 'Post email delivery frequency request failed' );
 		} );
 
 		it( 'rejects post email delivery frequency updates without a valid frequency', async () => {
@@ -232,6 +273,16 @@ describe( 'read follows mutators', () => {
 			await updateSitePostNotificationSubscription( { blogId: 123, sendPosts: true } );
 
 			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'throws when post notification subscription response does not confirm the requested state', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/read/sites/123/notification-subscriptions/new', {} )
+				.reply( 200, { subscribed: false } );
+
+			await expect(
+				updateSitePostNotificationSubscription( { blogId: 123, sendPosts: true } )
+			).rejects.toThrow( 'Post notification subscription request failed' );
 		} );
 
 		it( 'rejects post notification subscription updates without a post delivery flag', async () => {
