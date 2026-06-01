@@ -433,6 +433,7 @@ class CancelPurchaseForm extends Component {
 						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 						purchase={ purchase }
 						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
+						recordEvent={ this.recordEvent }
 						refundAmount={ this.getRefundAmount() }
 						site={ site }
 					/>

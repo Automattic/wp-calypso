@@ -4,7 +4,6 @@ import {
 	__experimentalHeading as Heading,
 	CardHeader,
 	Icon,
-	useNavigator,
 	privateApis,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
@@ -17,8 +16,7 @@ import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
 import NotePanelActions from './actions';
-
-type FilterName = keyof ReturnType< typeof getFilters >;
+import type { FilterName } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -33,17 +31,35 @@ export const getNotificationTabs = () =>
 		title: label,
 	} ) );
 
-const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
+type NotePanelProps = {
+	isDismissible?: boolean;
+	filterName: FilterName;
+	setFilterName: ( filterName: FilterName ) => void;
+	selectedNoteId: string | undefined;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
+};
+
+const NotePanel = ( {
+	isDismissible,
+	filterName,
+	setFilterName,
+	selectedNoteId,
+	setSelectedNoteId,
+}: NotePanelProps ) => {
 	const notificationTabs = getNotificationTabs();
-	const { params, goTo } = useNavigator();
-	const { filterName = 'all' } = params as { filterName?: string };
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 
 	const handleSelect = useCallback(
-		( tabId: string ) => {
-			goTo( `/${ tabId }`, { replace: true, skipFocus: true } );
+		( tabId: string | null | undefined ) => {
+			if ( tabId ) {
+				setFilterName( tabId as FilterName );
+				// Clear the selection — a note from the previous filter would
+				// otherwise stay rendered in the detail pane while the list
+				// switches to the new filter's notes.
+				setSelectedNoteId( undefined );
+			}
 		},
-		[ goTo ]
+		[ setFilterName, setSelectedNoteId ]
 	);
 
 	useEffect( () => {
@@ -127,7 +143,12 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			   filter is applied outside the DataViews `view`, so DataViews'
 			   infinite-scroll row accumulation would otherwise carry stale
 			   notes from the previously selected tab. */ }
-			<NoteList key={ filterName } filterName={ filterName as FilterName } />
+			<NoteList
+				key={ filterName }
+				filterName={ filterName }
+				selectedNoteId={ selectedNoteId }
+				setSelectedNoteId={ setSelectedNoteId }
+			/>
 		</>
 	);
 };

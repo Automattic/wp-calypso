@@ -34,8 +34,8 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 
 	const submit = useSubmitOnePagerBrief( agent );
 
-	// At least one image is required so June has a cover to design around.
-	const canSubmit = !! brief.trim() && !! title.trim() && images.length > 0 && ! submit.isPending;
+	// A primary logo is required for the cover; images are optional.
+	const canSubmit = !! brief.trim() && !! title.trim() && !! logoFile && ! submit.isPending;
 
 	const onSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
@@ -99,7 +99,7 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 					</VStack>
 
 					<VStack spacing={ 2 }>
-						<Text weight={ 600 }>{ __( 'Logos (optional)' ) }</Text>
+						<Text weight={ 600 }>{ __( 'Logos' ) }</Text>
 						<Text variant="muted">
 							{ __( 'Add a primary brand logo and an optional partner logo for the cover.' ) }
 						</Text>
@@ -135,8 +135,8 @@ export default function OnePagerBriefForm( { agent }: Props ) {
 
 					<ImageUploadField
 						agentId={ agent.id }
-						label={ __( 'Images' ) }
-						help={ __( 'Add at least one image and I’ll place them in the design.' ) }
+						label={ __( 'Images (optional)' ) }
+						help={ __( 'Add images and I’ll place them in the design.' ) }
 						images={ images }
 						onChange={ setImages }
 						disabled={ submit.isPending }

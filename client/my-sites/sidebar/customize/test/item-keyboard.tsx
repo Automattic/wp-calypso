@@ -57,11 +57,43 @@ describe( '<MySitesSidebarUnifiedItem> customize keyboard behaviour', () => {
 		const link = container.querySelector( 'a.sidebar__menu-link' ) as HTMLAnchorElement;
 		expect( link ).toHaveAttribute( 'tabindex', '-1' );
 		expect( screen.getByRole( 'button', { name: 'Reorder Stats' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toHaveTextContent( '⋮' );
 
 		fireEvent.click( link );
 
 		expect( trackClickEvent ).not.toHaveBeenCalled();
 		expect( window.scrollTo ).not.toHaveBeenCalled();
+	} );
+
+	it( 'hides the more-options trigger from focus after click-close', () => {
+		const { container } = renderInProvider(
+			<CustomizeProvider>
+				<EnterButton />
+				<MySitesSidebarUnifiedItem
+					title="Stats"
+					slug="stats"
+					url="https://example.com/stats"
+					icon="stats"
+					inlineIcon={ null }
+					itemId="stats"
+					reassignable
+					shouldOpenExternalLinksInCurrentTab
+				/>
+			</CustomizeProvider>
+		);
+
+		act( () => {
+			screen.getByRole( 'button', { name: 'Enter' } ).click();
+		} );
+
+		const trigger = screen.getByRole( 'button', { name: 'More options' } );
+		trigger.focus();
+		fireEvent.click( trigger );
+		expect( trigger ).toHaveAttribute( 'aria-expanded', 'true' );
+
+		fireEvent.click( trigger );
+
+		expect( trigger ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( container.ownerDocument.activeElement ).not.toBe( trigger );
 	} );
 } );
