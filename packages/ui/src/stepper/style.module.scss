@@ -172,13 +172,11 @@ $indicator-size-sm: 16px; // bullet completed + current
 // ---------------------------------------------------------------------------
 
 .title {
-	font-size: variables.$font-size-medium;
 	font-weight: inherit;
 	color: theme.$components-color-foreground;
 }
 
 .description {
-	font-size: variables.$font-size-small;
 	color: theme.$components-color-gray-600;
 
 	@include ui-mixins.when-dark-theme {
