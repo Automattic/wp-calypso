@@ -10,7 +10,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Other block-related events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
@@ -38,7 +38,7 @@ test.describe.fixme(
 			} );
 
 			await test.step( 'When I add two blocks', async () => {
-				await pageEditor.addBlockFromSidebar( 'Heading', '[aria-label="Block: Heading"]' );
+				await pageEditor.addBlockFromSidebar( 'Heading', '[aria-label^="Block: Heading"]' );
 				await pageEditor.addBlockFromSidebar( 'Markdown', '[aria-label="Block: Markdown"]' );
 			} );
 
@@ -65,6 +65,13 @@ test.describe.fixme(
 		} );
 
 		test( '"wpcom_block_deleted" event fires', async ( { page } ) => {
+			// The site editor navigation sidebar cannot be closed on mobile
+			// (FullSiteEditorPage.closeNavSidebar throws), so this flow is desktop-only.
+			test.skip(
+				envVariables.VIEWPORT_NAME === 'mobile',
+				'Site editor navigation sidebar cannot be closed on mobile'
+			);
+
 			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
@@ -94,7 +101,7 @@ test.describe.fixme(
 			} );
 
 			await test.step( 'When I delete the Pullquote block from the block toolbar', async () => {
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Remove Pullquote' );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Delete' );
 			} );
 
 			await test.step( 'Then "wpcom_block_deleted" event fires', async () => {

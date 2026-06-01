@@ -27,7 +27,10 @@ import { expect, tags, test } from '../../lib/pw-base';
 // "Thanks!" page but no follow-up email is delivered to Mailosaur. Needs
 // product-side investigation; reproducing the working flow likely requires an
 // authenticated WP.com session for the subscriber, which the test does not
-// set up. See TESTOPS-49.
+// set up. Re-confirmed this round: the run hangs through the subscribe/confirm
+// flow (the Subscribe block never transitions past the filled form and no
+// "Confirm your subscription" email reaches Mailosaur) until the test timeout.
+// See TESTOPS-49.
 test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },

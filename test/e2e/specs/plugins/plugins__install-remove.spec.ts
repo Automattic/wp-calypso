@@ -9,6 +9,15 @@ import {
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
 
+// .fixme: after clicking Install on the Jetpack remote site, the flow no longer
+// lands on the Calypso "Congrats on your site's new superpowers!" confirmation
+// page. Instead it redirects to the remote site's wp-login.php (Jetpack SSO)
+// with redirect_to=wp-admin/plugins.php?activate=true, so
+// validateConfirmationPagePostInstall times out on that heading. The install is
+// being completed/activated through the remote site's wp-admin rather than the
+// Calypso-managed confirmation surface. Re-enabling needs the current
+// Jetpack-remote-site plugin install/activate flow re-mapped (and confirmation
+// the SSO wall is expected); this is more than a selector refresh. See TESTOPS-49.
 test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Jetpack: Plugin' ),
 	{ tag: [ tags.JETPACK_REMOTE_SITE ] },

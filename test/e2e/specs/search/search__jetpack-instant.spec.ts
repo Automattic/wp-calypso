@@ -15,6 +15,15 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
+// .fixme: against the locally-resolved test site the Jetpack Instant Search
+// module is not active — the post renders a plain core/search block and none of
+// the jetpack-search/instant-search JS is enqueued, so the
+// `jp-search.chunk-main-payload.js` wait times out and the modal never exists.
+// This is a site/env provisioning dependency (the default feature account is a
+// simple site without the Search product), not selector drift. Re-enabling needs
+// the test run against an env/site where Jetpack Instant Search is provisioned
+// (e.g. the atomic matrix leg) and confirmation the chunk path is current.
+// See TESTOPS-49.
 test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Jetpack Instant Search' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },

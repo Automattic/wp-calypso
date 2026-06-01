@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
@@ -35,46 +35,47 @@ test.describe.fixme(
 				await pageEditor.waitUntilLoaded();
 			} );
 
-			// From the sidebar inserter
-			const sidebarPatternName = 'Simple Two Column Layout';
-			const sidebarPatternNameInEventProperty = 'a8c/simple-two-column-layout';
+			// Both inserters use the same a8c pattern; "pattern_name" in the
+			// Tracks event is the pattern slug. The inline inserter relies on the
+			// empty-canvas "Add block" appender, so it must run before the sidebar
+			// insert fills the canvas.
+			const patternName = 'About: Profile';
+			const patternNameInEventProperty = 'a8c/about-profile';
 
-			await test.step( `When I add pattern "${ sidebarPatternName }" from sidebar inserter`, async () => {
-				await pageEditor.addPatternFromSidebar( sidebarPatternName );
+			// From the inline inserter
+			await test.step( `When I add pattern "${ patternName }" from inline inserter`, async () => {
+				const editorCanvas = await pageEditor.getEditorCanvas();
+				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' );
+				await pageEditor.addPatternInline( patternName, inserterLocator );
 			} );
 
-			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ sidebarPatternNameInEventProperty }"`, async () => {
+			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
 				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_pattern_inserted',
 					{
 						matchingProperties: {
-							pattern_name: sidebarPatternNameInEventProperty,
+							pattern_name: patternNameInEventProperty,
 						},
 					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			// From the inline inserter
-			const inlinePatternName = 'About Me Card';
-			const inlinePatternNameInEventProperty = 'a8c/about-me-card';
-
 			await test.step( 'When I clear event stack for clean slate', async () => {
 				await editorTracksEventManager!.clearEvents();
 			} );
 
-			await test.step( `When I add pattern "${ inlinePatternName }" from inline inserter`, async () => {
-				const editorCanvas = await pageEditor.getEditorCanvas();
-				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' );
-				await pageEditor.addPatternInline( inlinePatternName, inserterLocator );
+			// From the sidebar inserter
+			await test.step( `When I add pattern "${ patternName }" from sidebar inserter`, async () => {
+				await pageEditor.addPatternFromSidebar( patternName );
 			} );
 
-			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ inlinePatternNameInEventProperty }"`, async () => {
+			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
 				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_pattern_inserted',
 					{
 						matchingProperties: {
-							pattern_name: inlinePatternNameInEventProperty,
+							pattern_name: patternNameInEventProperty,
 						},
 					}
 				);

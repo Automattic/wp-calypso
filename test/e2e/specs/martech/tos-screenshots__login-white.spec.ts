@@ -21,7 +21,7 @@ const magnificientNonEnLocales = [
 	'sv',
 ];
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ),
 	{ tag: [ tags.LEGAL ] },
 	() => {

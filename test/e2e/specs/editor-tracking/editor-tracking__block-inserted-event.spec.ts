@@ -79,11 +79,14 @@ test.describe(
 			} );
 		} );
 
-		// .fixme: the new-page template selector modal no longer auto-opens in
-		// current Gutenberg, so the listbox the test waits for never appears.
-		// Reproducing the wpcom_block_inserted "from_template_selector" event
-		// would require explicitly opening the pattern picker, but the listbox
-		// shape has changed too. Needs revisit. See TESTOPS-49.
+		// .fixme: confirmed this round — on a freshly created page there is no
+		// auto-opening template/pattern selector at all (no `listbox`, no
+		// "Choose a pattern"/template trigger button on the page), so the
+		// wpcom_block_inserted "from_template_selector" path cannot be exercised as
+		// written. The page-start pattern modal this relied on is no longer present
+		// for this theme/account; reproducing the event needs a new trigger (and
+		// confirmation the product still emits from_template_selector at all).
+		// Needs revisit. See TESTOPS-49.
 		test.fixme(
 			'In the page editor: block inserted event fires from template selector',
 			async ( { page, pageEditor } ) => {
@@ -144,13 +147,17 @@ test.describe(
 				}
 			} );
 
-			// .fixme: getting back to a green run requires the inline "Add block" button
-			// inside a freshly-created Template Part to be visible. In current
-			// Gutenberg the button has either been renamed or moved out of the
-			// template-part block container, so TemplatePartBlock.clickAddBlockButton
-			// times out. Closing the nav sidebar and asserting the first event now
-			// works (see updated FullSiteEditorPage.closeNavSidebar), but the
-			// downstream Page List insertion still fails. Needs revisit.
+			// .fixme: closing the nav sidebar, the first template-part insertion event,
+			// and the afterEach deleteTemplateParts cleanup all work now (the
+			// nav-sidebar/DataViews helpers were updated under TESTOPS-49). Two blockers
+			// remain, the same ones that keep the fse-template "convert/detach" suite
+			// deferred: (1) the inline "Add block" button inside a freshly-created
+			// Template Part is no longer where TemplatePartBlock.clickAddBlockButton
+			// looks, so the Page List insertion times out; (2) the final assertion
+			// hardcodes a `pub/twentytwentytwo//...` template_part_id, which is
+			// theme-specific and likely wrong for the current site theme. Needs the
+			// add-block-in-template-part flow re-targeted and a theme-agnostic
+			// template_part_id assertion. See TESTOPS-49.
 			test.fixme( 'block inserted event fires with entity_context', async ( { page } ) => {
 				const siteEditorAccountName = getTestAccountByFeature( {
 					...features,

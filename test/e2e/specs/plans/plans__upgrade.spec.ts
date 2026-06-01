@@ -21,6 +21,16 @@ import { apiDeleteSite } from '../shared';
 
 const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
 
+// .fixme: two setup-side blockers found this round. (1) createSite was rejected
+// with "blog_name_invalid" for the raw generated blog name — fixed below by
+// passing find_available_url: true (matching apiCreateFreeSiteForUser). (2) With
+// that fix, createSite now returns "user_get_blocked: The user is blocked from
+// creating a new site" for the simpleSiteFreePlanUser account, which did not
+// clear after waiting. That account appears to be at its free-site limit (likely
+// from accumulated, uncleaned E2E sites); it needs account-side cleanup/
+// provisioning before the upgrade flow can be exercised. The find_available_url
+// fix is kept so that, once the account can create sites again, only the UI flow
+// needs re-validation. See TESTOPS-49.
 test.describe.fixme(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade existing WordPress.com Free site to WordPress.com Premium'
@@ -58,6 +68,9 @@ test.describe.fixme(
 				newSiteDetails = await restAPIClient.createSite( {
 					name: blogName,
 					title: blogName,
+					// Let the API resolve a valid, available URL. Without this the raw
+					// generated blog name is rejected with "blog_name_invalid".
+					find_available_url: true,
 				} );
 				console.info( `New site created: ${ newSiteDetails.blog_details.url }` );
 				siteCreatedFlag = true;

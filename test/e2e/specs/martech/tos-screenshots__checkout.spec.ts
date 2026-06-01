@@ -11,7 +11,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 
 const EXTENDED_TIMEOUT = 20 * 1000;
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ),
 	{ tag: [ tags.LEGAL ] },
 	() => {

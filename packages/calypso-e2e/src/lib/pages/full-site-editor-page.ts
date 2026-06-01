@@ -502,8 +502,6 @@ export class FullSiteEditorPage {
 		{ closeWelcomeGuide }: { closeWelcomeGuide: boolean } = { closeWelcomeGuide: true }
 	): Promise< void > {
 		if ( ! ( await this.editorSiteStylesComponent.siteStylesIsOpen() ) ) {
-			await this.editorToolbarComponent.openMoreOptionsMenu();
-
 			if ( closeWelcomeGuide ) {
 				// The unawaited promise and no-op catch are both intentional here!
 				// We want to close the welcome guide if it opens, but not slow down the test if it doesn't.
@@ -515,7 +513,14 @@ export class FullSiteEditorPage {
 					} );
 				safelyWatchForWelcomeGuide();
 			}
-			await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
+			// The global styles panel is opened from the dedicated "Styles" toggle in
+			// the editor header (the More-Options menu no longer hosts this item).
+			// Match on the `aria-label="Styles"` attribute specifically: the nav
+			// sidebar also has a "Styles" item, but it carries no aria-label, so this
+			// CSS selector targets only the header toggle. Do not switch to
+			// getByRole({ name: 'Styles' }) — that matches both controls.
+			const editorParent = await this.editor.parent();
+			await editorParent.locator( 'button[aria-label="Styles"]' ).first().click();
 		}
 	}
 

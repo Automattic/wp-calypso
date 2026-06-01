@@ -17,13 +17,18 @@ test.describe(
 
 		// .fixme: the legacy "Show template details" dropdown the test clicks is
 		// no longer present in current Gutenberg — the title button now opens
-		// the command palette (`⌘K`). The product-side tracking selectors
+		// the command palette (`⌘K`). Confirmed this round: openDocumentActionsDropdown
+		// times out on `button[aria-label="Show template details"]`, which no longer
+		// exists. The product-side tracking
+		// (apps/wpcom-block-editor/src/wpcom/features/tracking/wpcom-site-editor-document-actions-dropdown-click.js)
+		// still binds click handlers to the removed selectors
 		// (`.edit-site-document-actions__get-info`,
 		// `.edit-site-template-details__template-areas`,
 		// `.edit-site-template-details__revert`,
-		// `.edit-site-template-details__show-all-button`) no longer match.
-		// All four cases in this file need to be re-targeted at the new UI.
-		// See TESTOPS-49.
+		// `.edit-site-template-details__show-all-button`), so these four events no
+		// longer fire at all. Re-enabling requires the feature/tracking to be
+		// re-pointed at the new UI product-side (out of scope here), not just a
+		// test selector refresh. See TESTOPS-49.
 		test.fixme(
 			'"wpcom_site_editor_document_actions_dropdown_open" event fires',
 			async ( { page } ) => {

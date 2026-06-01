@@ -21,13 +21,12 @@ test.describe(
 	() => {
 		const features = envToFeatureKey( envVariables );
 
-		// .fixme: site-editor flow has changed enough that the supporting
-		// helpers (closeNavSidebar, deleteTemplateParts via the nav sidebar
-		// `button[id="/wp_template_part"]`, TemplatePartBlock action buttons)
-		// no longer reach the right targets. The same drift breaks the
-		// global-styles and document-actions tracking tests. Needs a
-		// site-editor-helpers refresh before re-enabling. See TESTOPS-49.
-		test.describe.fixme( '"wpcom_block_editor_create_template_part" event fires', () => {
+		// The template-parts manager moved under the "Patterns" nav screen and now
+		// renders as a DataViews grid; the shared helpers (navigateToTemplatePartsManager
+		// and TemplatePartListComponent.deleteTemplatePart) were updated for that,
+		// which re-enables this test. The other two suites below still resist; see
+		// their leading comments.
+		test.describe( '"wpcom_block_editor_create_template_part" event fires', () => {
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -41,6 +40,13 @@ test.describe(
 			} );
 
 			test( 'event fires after creating a template part', async ( { page } ) => {
+				// Site editor nav sidebar cannot be closed on mobile
+				// (FullSiteEditorPage.closeNavSidebar throws), so this flow is desktop-only.
+				test.skip(
+					envVariables.VIEWPORT_NAME === 'mobile',
+					'Site editor navigation sidebar cannot be closed on mobile'
+				);
+
 				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
 				await test.step( 'Given I am authenticated', async () => {
@@ -82,6 +88,16 @@ test.describe(
 			} );
 		} );
 
+		// Symptom: after adding a Header block, TemplatePartBlock.clickChoose times
+		// out waiting for the in-block `button:has-text("Choose")` placeholder.
+		// The inserted Header block no longer renders the Choose/placeholder state,
+		// and the flow depends on theme-specific named template parts
+		// ("Header (Dark, small)" / "Header (Dark, large)") that the current site
+		// theme does not provide. Re-enabling needs the choose-existing flow and the
+		// template-part names reworked against the current theme. The shared
+		// nav-sidebar/DataViews helper fixes (used by the create_template_part test
+		// above) are already in; this is a separate, block-placeholder + theme-data
+		// drift. See TESTOPS-49.
 		test.fixme(
 			'"wpcom_block_editor_template_part_choose_existing" and "replace" events fire correctly',
 			async ( { page } ) => {
@@ -161,6 +177,17 @@ test.describe(
 			}
 		);
 
+		// Symptom: the convert flow opens a DIFFERENT modal than the start-blank one
+		// used above. Its primary button is "Add" (not "Create", which the
+		// start-blank modal still uses) and it exposes an area selector, so
+		// TemplatePartModalComponent.clickCreate misses it. After clicking "Add" the
+		// "wpcom_block_editor_convert_to_template_part" event still did not fire in a
+		// probe, so there may be an additional product-side tracking gap. The detach
+		// assertion also hardcodes a `pub/twentytwentytwo//...` template_part_id,
+		// which is theme-specific and likely wrong for the current site theme.
+		// Re-enabling needs a convert-modal handler, confirmation the convert/detach
+		// events still fire, and a theme-agnostic template_part_id assertion. See
+		// TESTOPS-49.
 		test.describe.fixme(
 			'"wpcom_block_editor_convert_to_template_part" and "detach_blocks" events fire correctly',
 			() => {

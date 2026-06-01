@@ -15,13 +15,25 @@ test.describe(
 	() => {
 		const features = envToFeatureKey( envVariables );
 
-		// .fixme: in current Gutenberg the global-styles panel is no longer
-		// opened from the More-Options menu's "Styles" item — that toggle
-		// controls a different setting and doesn't dispatch the panel-toggle
-		// tracking event. The actual styles surface is reached from the new
-		// site-editor "Design > Styles" navigation. Helpers in
-		// FullSiteEditorPage / EditorSiteStylesComponent need to be reworked
-		// before these tests can be re-enabled. See TESTOPS-49.
+		// .fixme: the helpers were reworked this round — openSiteStyles now uses the
+		// header "Styles" toggle (button[aria-label="Styles"]) and the styles sidebar
+		// selectors were updated for the renamed `.editor-global-styles-sidebar`
+		// container / "Close Styles" control, so opening and closing the panel works
+		// again. What still blocks these tests is product-side tracking that was not
+		// updated for the edit-site -> editor rename:
+		//   - panel_toggle: the OPEN event fires (id-based enableComplementaryArea),
+		//     but the CLOSE event does not — trackDisableComplementaryArea only fires
+		//     for scope === 'core/edit-site', while the panel now disables under
+		//     'core/editor'.
+		//   - menu_selected: dead. wpcom-block-editor-global-styles-menu-selected.js
+		//     keys its delegated click selector and its isAtTopLevel guard on the old
+		//     '.edit-site-global-styles-sidebar' class, which no longer exists.
+		//   - update / save: rely on the same global-styles surface and were not
+		//     re-verified once the above two proved dead.
+		// Re-enabling needs the wpcom tracking (apps/wpcom-block-editor) re-pointed at
+		// the new editor scope/classes; that is product code, out of scope here. The
+		// helper fixes are kept so this only needs the product tracking once fixed.
+		// See TESTOPS-49.
 		test.fixme(
 			'"wpcom_block_editor_global_styles_panel_toggle" event fires on open and close',
 			async ( { page } ) => {

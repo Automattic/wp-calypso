@@ -21,7 +21,7 @@ const magnificientNonEnLocales = [
 	'sv',
 ];
 
-test.describe.fixme( 'ToS acceptance tracking screenshots', { tag: [ tags.LEGAL ] }, () => {
+test.describe( 'ToS acceptance tracking screenshots', { tag: [ tags.LEGAL ] }, () => {
 	test( 'Screenshot white background signup page in en and Mag-16 locales and upload', async ( {
 		page,
 	} ) => {
