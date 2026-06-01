@@ -1,6 +1,7 @@
 // packages/ui/src/stepper/indicator.tsx
 import { check } from '@wordpress/icons';
 import { Path, SVG } from '@wordpress/primitives';
+import { VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { Icon } from '../icon';
 import { useStepContext, useStepperContext } from './context';
@@ -58,7 +59,7 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 			} ) }
 		>
 			{ /* Visually hidden accessible label — always present */ }
-			<span className={ styles[ 'visually-hidden' ] }>{ accessibleLabel }</span>
+			<VisuallyHidden render={ <span /> }>{ accessibleLabel }</VisuallyHidden>
 
 			{ /* Visual content */ }
 			{ children ? <span aria-hidden="true">{ children }</span> : indicator }
