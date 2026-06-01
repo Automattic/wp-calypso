@@ -10,8 +10,6 @@ import './style.scss';
 
 export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode } ) {
 	const { __ } = useI18n();
-	// Map each mode to an InlineSupportLink context so the doc opens inside the
-	// Help Center (inline) instead of a new browser tab. See DOTSUP-459.
 	const supportContext = {
 		[ modeType.SUGGESTED ]: 'map-domain-change-name-servers',
 		[ modeType.ADVANCED ]: 'map-domain-update-a-records',
