@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
@@ -10,16 +9,13 @@ import './style.scss';
 
 type Props = {
 	cta: ReactNode;
-	isCompact?: boolean;
 };
 
-export default function WooPaymentsBanner( { cta, isCompact }: Props ) {
+export default function WooPaymentsBanner( { cta }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<PageSectionColumns
-			className={ clsx( 'woopayments-banner__section', { 'is-compact': isCompact } ) }
-		>
+		<PageSectionColumns className="woopayments-banner__section">
 			<PageSectionColumns.Column>
 				<div className="woopayments-banner__content">
 					<img className="woopayments-banner__logo" src={ wooPaymentsLogo } alt="WooPayments" />

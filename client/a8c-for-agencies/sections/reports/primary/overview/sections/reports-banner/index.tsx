@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
@@ -8,16 +7,13 @@ import './style.scss';
 
 type Props = {
 	ctas: ReactNode;
-	isCompact?: boolean;
 };
 
-export default function ReportsBanner( { ctas, isCompact }: Props ) {
+export default function ReportsBanner( { ctas }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<PageSectionColumns
-			className={ clsx( 'reports-banner__section', { 'is-compact': isCompact } ) }
-		>
+		<PageSectionColumns className="reports-banner__section">
 			<PageSectionColumns.Column>
 				<div className="reports-banner__content">
 					<div>

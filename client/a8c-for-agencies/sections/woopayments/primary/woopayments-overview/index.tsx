@@ -14,7 +14,7 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
-import useCompactOnScroll from 'calypso/a8c-for-agencies/hooks/use-compact-on-scroll';
+import useBannerParallax from 'calypso/a8c-for-agencies/hooks/use-banner-parallax';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { formatCurrencyCompact } from 'calypso/a8c-for-agencies/lib/currency';
 import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
@@ -40,7 +40,7 @@ const WooPaymentsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
-	const { onScroll, isCompact } = useCompactOnScroll();
+	const { onScroll } = useBannerParallax();
 
 	const title = translate( 'WooPayments commissions' );
 
@@ -275,8 +275,8 @@ const WooPaymentsOverview = () => {
 						{ addWooPaymentsToSite }
 					</Actions>
 				</LayoutHeader>
-				<WooPaymentsBanner cta={ addWooPaymentsToSite } isCompact={ isCompact } />
 			</LayoutTop>
+			<WooPaymentsBanner cta={ addWooPaymentsToSite } />
 			<LayoutBody>
 				<PageSectionColumns
 					heading={ translate( 'Earn more from every project' ) }

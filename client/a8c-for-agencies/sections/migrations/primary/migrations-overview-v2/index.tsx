@@ -3,7 +3,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useCompactOnScroll from 'calypso/a8c-for-agencies/hooks/use-compact-on-scroll';
+import useBannerParallax from 'calypso/a8c-for-agencies/hooks/use-banner-parallax';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -23,7 +23,7 @@ import './style.scss';
 
 export default function MigrationsOverviewV2() {
 	const translate = useTranslate();
-	const { onScroll, isCompact } = useCompactOnScroll();
+	const { onScroll } = useBannerParallax();
 
 	const title = translate( 'Migrations' );
 
@@ -42,8 +42,8 @@ export default function MigrationsOverviewV2() {
 						<MigrateSiteButton />
 					</Actions>
 				</LayoutHeader>
-				<MigrationsBanner isCompact={ isCompact } />
 			</LayoutTop>
+			<MigrationsBanner />
 
 			<LayoutBody>
 				<div className="migrations-overview-v2__content-wrapper">

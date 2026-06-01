@@ -782,20 +782,22 @@ html {
 		color: var(--color-text-white);
 	}
 
+	// The body slides up over the sticky banner as the user scrolls, so it
+	// needs a stacking context above the banner and a solid background to
+	// cover it.
 	.hosting-dashboard-layout__body {
+		position: relative;
+		z-index: 1;
 		background: var(--color-surface);
 	}
 
-	// Shift scrolling from the body to the container so the page-level
-	// `onScroll` handler (used by the collapse-on-scroll banner) fires.
-	// `overflow-anchor: none` stops the browser from dragging scrollTop back to
-	// 0 when the banner collapses (the sticky header above the body shrinks,
-	// and the default scroll anchoring would otherwise fight the animation
-	// and re-expand the banner).
+	// Scroll the container, not the body, so the banner — rendered as a
+	// sibling between the sticky `__top-wrapper` (breadcrumb) and the body —
+	// scrolls naturally with the page content instead of being trapped in a
+	// nested scroll context.
 	.hosting-dashboard-layout__container {
 		height: auto;
 		overflow-y: auto;
-		overflow-anchor: none;
 		display: block;
 	}
 }
