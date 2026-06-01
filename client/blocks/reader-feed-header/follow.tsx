@@ -55,8 +55,8 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const resolvedFeed = feed ?? fetchedFeed;
 	const siteUrl = getSiteUrl( { feed: resolvedFeed, site } );
 	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } ) || undefined;
-	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID ?? 0;
-	const followFeedId = resolvedFeed?.feed_ID ?? 0;
+	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID;
+	const followFeedId = resolvedFeed?.feed_ID;
 	const reduxFollowing = useIsFollowing( { feedUrl: followFeedUrl } );
 	const hasOrganization = useHasFollowOrganization( followFeedId, resolvedSiteId );
 	const {
@@ -72,7 +72,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 			return {
 				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 				isWPForTeamsItem: Boolean(
-					isSiteWPForTeams( state, resolvedSiteId ) ||
+					( resolvedSiteId ? isSiteWPForTeams( state, resolvedSiteId ) : false ) ||
 						( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false )
 				),
 				subscriptionId: _feed?.subscription_id,

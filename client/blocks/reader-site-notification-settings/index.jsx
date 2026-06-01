@@ -30,7 +30,7 @@ function SiteNotificationSettings( {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const iconRef = useRef( null );
 	const spanRef = useRef( null );
-	const { follows } = useFollows();
+	const { follows } = useFollows( { fetchAllPages: showPopover } );
 	const follow = follows.find( ( item ) => item.blog_ID === siteId );
 	const deliveryMethodsEmail = get( follow, [ 'delivery_methods', 'email' ], {} );
 	const sendNewCommentsByEmail = !! deliveryMethodsEmail.send_comments;

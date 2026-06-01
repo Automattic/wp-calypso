@@ -99,6 +99,108 @@ describe( 'follows hooks', () => {
 		expect( scope.isDone() ).toBe( false );
 	} );
 
+	it( 'does not fetch additional follows pages by default', async () => {
+		const queryClient = makeQueryClient();
+		const firstPage = Array.from( { length: 200 }, ( _value, index ) =>
+			makeFollow( {
+				ID: index + 1,
+				feed_ID: index + 1,
+				feed_URL: `https://example.com/feed-${ index + 1 }/`,
+				URL: `https://example.com/feed-${ index + 1 }/`,
+			} )
+		);
+		const firstPageScope = nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( ( query ) => query.page === '1' )
+			.reply( 200, {
+				subscriptions: firstPage.map( ( follow ) => ( {
+					ID: follow.ID,
+					URL: follow.URL,
+					feed_URL: follow.feed_URL,
+					feed_ID: follow.feed_ID,
+				} ) ),
+				total_subscriptions: 201,
+				page: 1,
+				number: 200,
+			} );
+		const secondPageScope = nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( ( query ) => query.page === '2' )
+			.reply( 200, {
+				subscriptions: [
+					{
+						ID: 201,
+						URL: 'https://example.com/feed-201/',
+						feed_URL: 'https://example.com/feed-201/',
+						feed_ID: 201,
+					},
+				],
+				total_subscriptions: 201,
+				page: 2,
+				number: 200,
+			} );
+
+		renderHook( () => useFollows(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( firstPageScope.isDone() ).toBe( true ) );
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		} );
+
+		expect( secondPageScope.isDone() ).toBe( false );
+	} );
+
+	it( 'fetches additional follows pages when requested explicitly', async () => {
+		const queryClient = makeQueryClient();
+		const firstPage = Array.from( { length: 200 }, ( _value, index ) =>
+			makeFollow( {
+				ID: index + 1,
+				feed_ID: index + 1,
+				feed_URL: `https://example.com/feed-${ index + 1 }/`,
+				URL: `https://example.com/feed-${ index + 1 }/`,
+			} )
+		);
+		const firstPageScope = nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( ( query ) => query.page === '1' )
+			.reply( 200, {
+				subscriptions: firstPage.map( ( follow ) => ( {
+					ID: follow.ID,
+					URL: follow.URL,
+					feed_URL: follow.feed_URL,
+					feed_ID: follow.feed_ID,
+				} ) ),
+				total_subscriptions: 201,
+				page: 1,
+				number: 200,
+			} );
+		const secondPageScope = nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( ( query ) => query.page === '2' )
+			.reply( 200, {
+				subscriptions: [
+					{
+						ID: 201,
+						URL: 'https://example.com/feed-201/',
+						feed_URL: 'https://example.com/feed-201/',
+						feed_ID: 201,
+					},
+				],
+				total_subscriptions: 201,
+				page: 2,
+				number: 200,
+			} );
+
+		renderHook( () => useFollows( { fetchAllPages: true } ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( firstPageScope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( secondPageScope.isDone() ).toBe( true ) );
+	} );
+
 	it( 'selector hooks react when a follow is patched into the query cache', async () => {
 		const queryClient = makeQueryClient();
 		queryClient.setQueryData( getFollowsQueryKey(), makeData() );

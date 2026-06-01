@@ -52,7 +52,7 @@ export const getReadSiteRecommendationsInfiniteQueryKey = ( {
 const getNextRecommendationPageParam = (
 	lastPage: ReadSiteRecommendationsResponse,
 	lastPageParam: number,
-	number: number
+	pageSize: number
 ) => {
 	const nextPage = Number( lastPage.meta?.next_page );
 
@@ -60,7 +60,7 @@ const getNextRecommendationPageParam = (
 		return nextPage;
 	}
 
-	return lastPage.sites.length > 0 ? lastPageParam + number : undefined;
+	return lastPage.sites.length > 0 ? lastPageParam + pageSize : undefined;
 };
 
 export const readSiteRecommendationsInfiniteQuery = ( {

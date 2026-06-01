@@ -4,22 +4,26 @@ import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-export const useFollows = () => {
+interface UseFollowsOptions {
+	fetchAllPages?: boolean;
+}
+
+export const useFollows = ( { fetchAllPages = false }: UseFollowsOptions = {} ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const query = useInfiniteQuery( {
 		...followsQuery(),
 		enabled: isLoggedIn,
 	} );
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = query;
 
 	useEffect( () => {
-		if ( isLoggedIn && query.hasNextPage && ! query.isFetchingNextPage ) {
-			query.fetchNextPage( { cancelRefetch: false } );
+		if ( fetchAllPages && isLoggedIn && hasNextPage && ! isFetchingNextPage ) {
+			fetchNextPage( { cancelRefetch: false } );
 		}
-	}, [ isLoggedIn, query.hasNextPage, query.isFetchingNextPage, query.fetchNextPage ] );
+	}, [ fetchAllPages, isLoggedIn, hasNextPage, isFetchingNextPage, fetchNextPage ] );
 
-	return {
-		...query,
-		follows: getFollowsFromData( query.data ),
-		count: getFollowsCountFromData( query.data ),
-	};
+	return Object.assign( {}, query, {
+		follows: getFollowsFromData( data ),
+		count: getFollowsCountFromData( data ),
+	} );
 };

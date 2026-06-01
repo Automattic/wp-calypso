@@ -11,7 +11,7 @@ export default function SubscriptionItemAdder( { list, listItems, owner } ) {
 	const translate = useTranslate();
 	const [ renderAllFollows, setRenderAllFollows ] = useState( false );
 
-	const { follows: allFollows } = useFollows();
+	const { follows: allFollows } = useFollows( { fetchAllPages: renderAllFollows } );
 
 	// Continue showing the subscriptions list if we have showed it once in this session.
 	useEffect( () => {
