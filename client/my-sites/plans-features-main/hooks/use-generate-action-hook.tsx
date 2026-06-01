@@ -575,9 +575,9 @@ function getLoggedInPlansAction( {
 		);
 	}
 
-	// Expired plan: show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
+	// Show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
 	if (
-		isPlanExpired &&
+		availableForPurchase &&
 		sitePlanSlug &&
 		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
 	) {

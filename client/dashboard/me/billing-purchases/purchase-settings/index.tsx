@@ -142,7 +142,7 @@ function getExpiredNewPlanUrl( purchase: Purchase, isDowngrade = false ): string
 				1095: '3yearly',
 			};
 			return addQueryArgs( url, {
-				expired_downgrade: 'true',
+				change_plan: 'true',
 				intervalType: intervalMap[ purchase.bill_period_days ] ?? 'yearly',
 				redirect_to: dashboardLink( '/me/billing/purchases/:purchaseId?plan_changed=true' ),
 			} );
@@ -449,6 +449,17 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
+function isChangePlanEligible( purchase: Purchase, isMigrating: boolean ): boolean {
+	if ( ! isEnabled( 'plans/expired-plan-downgrade' ) ) {
+		return false;
+	}
+	if ( ! purchase.is_plan || isMigrating ) {
+		return false;
+	}
+	// Premium, Business, Ecommerce (all billing terms). Personal excluded — lowest tier.
+	return /^(value_bundle|business-bundle|ecommerce-bundle)/.test( purchase.product_slug );
+}
+
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	if ( ! purchase.is_upgradable ) {
@@ -459,6 +470,15 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	// ("Change plan" or "Pick another plan") — hide the standalone upgrade
 	// button to avoid showing two entry points.
 	if ( ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) && purchase.is_plan ) {
+		return null;
+	}
+
+	// Active downgrade-eligible plans also use ReSubscribeActionButton's
+	// "Change plan" entry point — hide upgrade to avoid a duplicate.
+	if (
+		isEnabled( 'plans/expired-plan-downgrade' ) &&
+		/^(value_bundle|business-bundle|ecommerce-bundle)/.test( purchase.product_slug )
+	) {
 		return null;
 	}
 
@@ -498,10 +518,6 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const isPurchaseExpiredOrGracePeriod =
 		isExpired( purchase ) || isInExpirationGracePeriod( purchase );
 
-	if ( ! isPurchaseExpiredOrGracePeriod ) {
-		return null;
-	}
-
 	// Exclude sites with a pending migration — checkout fails for these.
 	const migrationStatus = site?.site_migration?.migration_status ?? '';
 	const isMigrating =
@@ -509,20 +525,23 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 		migrationStatus.startsWith( 'migration-started' ) ||
 		migrationStatus.startsWith( 'migration-in-progress' );
 
-	// Match the wpcom plan slugs: Premium (value_bundle), Business, Ecommerce.
-	// Personal is excluded — it's the lowest tier, nothing to downgrade to.
-	// Includes monthly, 2y, 3y variants.
-	const isDowngradeEligiblePlan = /^(value_bundle|business-bundle|ecommerce-bundle)/.test(
-		purchase.product_slug
-	);
+	const isActiveChangePlanEligible =
+		! isPurchaseExpiredOrGracePeriod && isChangePlanEligible( purchase, isMigrating );
 
-	const isEligibleForDowngrade =
-		isEnabled( 'plans/expired-plan-downgrade' ) &&
-		purchase.is_plan &&
-		! isMigrating &&
-		isDowngradeEligiblePlan;
+	if ( ! isPurchaseExpiredOrGracePeriod && ! isActiveChangePlanEligible ) {
+		return null;
+	}
 
-	if ( isEligibleForDowngrade ) {
+	if (
+		isActiveChangePlanEligible ||
+		( isPurchaseExpiredOrGracePeriod && isChangePlanEligible( purchase, isMigrating ) )
+	) {
+		const url = isPurchaseExpiredOrGracePeriod
+			? getExpiredNewPlanUrl( purchase, true )
+			: addQueryArgs( getWpcomPlanGridUrl( purchase.site_slug ), {
+					change_plan: 'true',
+			  } );
+
 		return (
 			<ActionList.ActionItem
 				title={ __( 'Change plan' ) }
@@ -534,8 +553,9 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 						onClick={ () => {
 							recordTracksEvent( 'calypso_expired_plan_change_plan_click', {
 								current_plan: purchase.product_slug,
+								status: isPurchaseExpiredOrGracePeriod ? 'expired' : 'active',
 							} );
-							window.location.href = getExpiredNewPlanUrl( purchase, true );
+							window.location.href = url;
 						} }
 					>
 						{ __( 'See plans' ) }

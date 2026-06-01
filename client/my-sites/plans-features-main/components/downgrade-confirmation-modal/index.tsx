@@ -95,7 +95,7 @@ const DowngradeConfirmationModal = ( {
 				{
 					...( redirectTo && { redirect_to: redirectTo } ),
 					cancel_to: cancelTo,
-					expired_downgrade: 'true',
+					change_plan: 'true',
 				},
 				checkoutUrl
 			);

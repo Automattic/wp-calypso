@@ -65,7 +65,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const query = useQuery();
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
-		const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
+		const isChangePlan = query.get( 'change_plan' ) === 'true';
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
@@ -86,13 +86,13 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
 
-				// For expired-plan downgrades, hide plans that aren't eligible targets
-				// and show a helpful subtitle.
-				hideFreePlan: isExpiredDowngrade || undefined,
-				hideEnterprisePlan: isExpiredDowngrade || undefined,
-				hidePlanTypeSelector: isExpiredDowngrade || undefined,
-				headerText: isExpiredDowngrade ? __( 'Find your best fit' ) : undefined,
-				fallbackSubHeaderText: isExpiredDowngrade
+				// For plan changes (expired downgrades and active tier changes),
+				// hide plans that aren't eligible targets and show a helpful subtitle.
+				hideFreePlan: isChangePlan || undefined,
+				hideEnterprisePlan: isChangePlan || undefined,
+				hidePlanTypeSelector: isChangePlan || undefined,
+				headerText: isChangePlan ? __( 'Find your best fit' ) : undefined,
+				fallbackSubHeaderText: isChangePlan
 					? __( 'Compare plans and pick the one that works for where your site is headed.' )
 					: undefined,
 
@@ -129,11 +129,11 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 							// Checkout validates redirect_to to prevent open redirects
 							const postCheckoutUrl = redirectTo || dashboardLink( '/sites' );
 
-							const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
+							const isChangePlan = query.get( 'change_plan' ) === 'true';
 							const finalUrl = addQueryArgs( checkoutUrl, {
 								redirect_to: postCheckoutUrl,
 								cancel_to: currentPath,
-								...( isExpiredDowngrade && { expired_downgrade: 'true' } ),
+								...( isChangePlan && { change_plan: 'true' } ),
 							} );
 
 							window.location.assign( finalUrl );

@@ -626,7 +626,7 @@ class ManagePurchase extends Component<
 				{
 					siteSlug,
 					cancel_to: cancelTo,
-					expired_downgrade: 'true',
+					change_plan: 'true',
 					intervalType: intervalMap[ purchase.billPeriodDays ] ?? 'yearly',
 					redirect_to: redirectTo,
 				},

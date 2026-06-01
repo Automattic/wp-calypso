@@ -77,9 +77,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
-			// For expired-plan downgrades, use an intent that shows all paid tiers
-			// (Free/Commerce/Enterprise are hidden via props instead).
-			if ( search.has( 'expired_downgrade' ) ) {
+			// For plan changes (expired downgrades and active tier changes), use an
+			// intent that shows all paid tiers (Free/Enterprise hidden via props).
+			if ( search.has( 'change_plan' ) ) {
 				return 'plans-new-hosted-site';
 			}
 			return 'plans-upgrade';
