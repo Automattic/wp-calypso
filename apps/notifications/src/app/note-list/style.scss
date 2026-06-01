@@ -4,8 +4,16 @@
 
 .wpnc__note-list {
 	flex: 1;
+	min-height: 0;
 	margin-top: -1px; // Make border collapsed
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+
+	> .dataviews-wrapper {
+		flex: 1;
+		min-height: 0;
+	}
 
 	.wpnc__note-list-item {
 		.wpnc__subject,
