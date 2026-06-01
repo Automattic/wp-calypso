@@ -1,0 +1,46 @@
+.education-student-validation {
+	width: 100%;
+
+	.education-student-validation__form {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		width: 100%;
+	}
+
+	.education-student-validation__field {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.form-label {
+		color: var(--studio-gray-60);
+		margin-bottom: 8px;
+	}
+
+	input[type="text"] {
+		border-color: var(--studio-gray-10);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 0.875rem;
+		height: 44px;
+		padding: 0.875rem 1rem;
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
+	}
+
+	.step-container-v2__primary-button {
+		justify-content: center;
+		width: 100%;
+	}
+
+	.form-input-validation {
+		margin-top: 8px;
+		padding-bottom: 0;
+	}
+}
