@@ -25,8 +25,8 @@ export function OmnibarSiteNode( {
 
 	return [
 		<OmnibarMenu key={ siteNode.id } node={ siteNode } style={ { minWidth: 0 } } />,
-		pluginNodes && <OmnibarSitePluginsNode nodes={ pluginNodes } />,
-		siteActionNodes && <OmnibarSiteActionsNode nodes={ siteActionNodes } />,
+		pluginNodes && <OmnibarSitePluginsNode key="plugins" nodes={ pluginNodes } />,
+		siteActionNodes && <OmnibarSiteActionsNode key="actions" nodes={ siteActionNodes } />,
 	].filter( Boolean );
 }
 

@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
+import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -27,7 +27,6 @@ import {
 } from 'calypso/state/reader/seen-posts/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
@@ -394,12 +393,16 @@ class ReaderPostEllipsisMenu extends Component {
 	}
 }
 export default connect(
-	( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+	( state, { feed, post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
 			{ currentRoute: getCurrentRoute( state ) },
-			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
+			{
+				isWPForTeamsItem:
+					isSiteWPForTeams( state, siteId ) ||
+					( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
+			},
 			{ isLoggedIn: isUserLoggedIn( state ) },
 			{
 				hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),

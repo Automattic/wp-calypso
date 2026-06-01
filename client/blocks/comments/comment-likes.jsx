@@ -1,13 +1,12 @@
 import { translate } from 'i18n-calypso';
-import { get, pick } from 'lodash';
+import { flowRight, get, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
+import { useCommentLikeMutations } from 'calypso/reader/data/comments';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
-import { getCommentLike } from 'calypso/state/comments/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -20,8 +19,12 @@ class CommentLikeButtonContainer extends Component {
 
 	handleLikeToggle( liked ) {
 		if ( ! this.props.isLoggedIn ) {
+			if ( ! liked ) {
+				return;
+			}
+
 			return this.props.registerLastActionRequiresLogin( {
-				type: liked ? 'comment-like' : 'comment-unlike',
+				type: 'comment-like',
 				siteId: this.props.siteId,
 				postId: this.props.postId,
 				commentId: this.props.commentId,
@@ -31,12 +34,24 @@ class CommentLikeButtonContainer extends Component {
 	}
 
 	recordLikeToggle = ( liked ) => {
+		if ( this.props.isLikePending || this.props.isUnlikePending ) {
+			return;
+		}
+
 		this.props.onLikeToggle( liked );
 
 		if ( liked ) {
-			this.props.likeComment( this.props.siteId, this.props.postId, this.props.commentId );
+			this.props.likeComment( {
+				siteId: this.props.siteId,
+				postId: this.props.postId,
+				commentId: this.props.commentId,
+			} );
 		} else {
-			this.props.unlikeComment( this.props.siteId, this.props.postId, this.props.commentId );
+			this.props.unlikeComment( {
+				siteId: this.props.siteId,
+				postId: this.props.postId,
+				commentId: this.props.commentId,
+			} );
 		}
 
 		recordAction( liked ? 'liked_comment' : 'unliked_comment' );
@@ -55,8 +70,8 @@ class CommentLikeButtonContainer extends Component {
 
 	render() {
 		const props = pick( this.props, [ 'showZeroCount', 'tagName' ] );
-		const likeCount = get( this.props.commentLike, 'like_count' );
-		const iLike = get( this.props.commentLike, 'i_like' );
+		const likeCount = get( this.props.comment, 'like_count' );
+		const iLike = get( this.props.comment, 'i_like' );
 		const likedLabel = translate( 'Liked' );
 
 		const likeIcon = ReaderLikeIcon( {
@@ -82,22 +97,40 @@ class CommentLikeButtonContainer extends Component {
 CommentLikeButtonContainer.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	postId: PropTypes.number.isRequired,
-	commentId: PropTypes.number.isRequired,
+	commentId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
+	comment: PropTypes.object.isRequired,
 	showZeroCount: PropTypes.bool,
 	tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	railcar: PropTypes.object,
 
 	// connected props:
-	commentLike: PropTypes.object,
 	likeComment: PropTypes.func.isRequired,
 	unlikeComment: PropTypes.func.isRequired,
 	onLikeToggle: PropTypes.func.isRequired,
+	isLikePending: PropTypes.bool,
+	isUnlikePending: PropTypes.bool,
 };
 
-export default connect(
-	( state, props ) => ( {
-		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
-		isLoggedIn: isUserLoggedIn( state ),
-	} ),
-	{ likeComment, recordReaderTracksEvent, unlikeComment, registerLastActionRequiresLogin }
+const withCommentLikeMutations = ( WrappedComponent ) => {
+	const WithCommentLikeMutations = ( props ) => {
+		const commentLikeMutations = useCommentLikeMutations( props.comment );
+
+		return <WrappedComponent { ...props } { ...commentLikeMutations } />;
+	};
+
+	WithCommentLikeMutations.displayName = `withCommentLikeMutations(${
+		WrappedComponent.displayName || WrappedComponent.name || 'Component'
+	})`;
+
+	return WithCommentLikeMutations;
+};
+
+export default flowRight(
+	connect(
+		( state ) => ( {
+			isLoggedIn: isUserLoggedIn( state ),
+		} ),
+		{ recordReaderTracksEvent, registerLastActionRequiresLogin }
+	),
+	withCommentLikeMutations
 )( CommentLikeButtonContainer );

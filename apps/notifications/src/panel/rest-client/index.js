@@ -11,7 +11,10 @@ const settings = {
 	max_refresh_ms: 180000,
 	refresh_ms: 30000,
 	initial_limit: 10,
-	increment_limit: 10,
+	// Matches NOTES_PER_PAGE in the DataViews note list: DataViews advances its
+	// infinite-scroll window by `perPage` rows per scroll, so each loadMore()
+	// must fetch at least that many or the window outruns the loaded notes.
+	increment_limit: 20,
 	max_limit: 100,
 };
 
@@ -471,6 +474,17 @@ function loadMore() {
 	this.getNotes();
 }
 
+// Whether the server may still have notes beyond those already loaded.
+// A fully-filled request (`notes.length >= noteRequestLimit`) means the
+// server had at least that many, so requesting more could yield more;
+// a short response means the server is exhausted. The window-driven note
+// list uses this to keep its optimistic `totalItems` ahead of the scroll
+// window so DataViews keeps advancing it.
+function hasMoreNotes() {
+	const notes = getAllNotes( store.getState() );
+	return notes.length >= this.noteRequestLimit && this.noteRequestLimit < settings.max_limit;
+}
+
 function setVisibility( { isShowing, isVisible } ) {
 	if ( this.isShowing === isShowing && this.isVisible === isVisible ) {
 		return;
@@ -498,6 +512,7 @@ Client.prototype.getNotes = getNotes;
 Client.prototype.getNotesList = getNotesList;
 Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;
+Client.prototype.hasMoreNotes = hasMoreNotes;
 Client.prototype.refreshNotes = refreshNotes;
 Client.prototype.setVisibility = setVisibility;
 

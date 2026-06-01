@@ -543,7 +543,9 @@ function getIntroductoryOfferIntervalDisplay( {
 	context: string;
 	remainingRenewalsUsingOffer: number;
 } ): string {
-	let text = isPriceIncrease ? __( 'First billing period' ) : __( 'Discount for first period' );
+	let text: string = isPriceIncrease
+		? __( 'First billing period' )
+		: __( 'Discount for first period' );
 
 	if ( isFreeTrial ) {
 		if ( intervalUnit === 'month' ) {

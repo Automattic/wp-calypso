@@ -1,6 +1,6 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
 import clsx from 'clsx';
-import { isValidElement, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, useLayoutEffect, useRef, type ReactElement, type ReactNode } from 'react';
 import { useStepContainerV2Context } from '../../contexts/StepContainerV2Context';
 
 import './style.scss';
@@ -37,6 +37,42 @@ export const TopBar = ( {
 	hideLogo = false,
 }: TopBarProps ) => {
 	const context = useStepContainerV2Context();
+	const topBarRef = useRef< HTMLDivElement >( null );
+
+	// Publish the rendered height to `:root --masterbar-height` so consumers that
+	// expect "the current route's top bar height" (e.g. the Help Center mobile
+	// sheet, layout sidebars) get the right value. Without this, routes that
+	// render `Step.TopBar` but also force `<EmptyMasterbar />` (e.g. checkout
+	// invoked from a stepper-v2 flow) report `--masterbar-height: 0`, leaving the
+	// overlay misaligned. Uses `!important` to beat EmptyMasterbar's stylesheet,
+	// and runs before paint so first-frame consumers don't see the stale value.
+	useLayoutEffect( () => {
+		const element = topBarRef.current;
+
+		if ( ! element ) {
+			return;
+		}
+
+		const root = document.documentElement;
+
+		const publishHeight = () => {
+			const height = Math.round( element.getBoundingClientRect().height );
+			root.style.setProperty( '--masterbar-height', `${ height }px`, 'important' );
+		};
+
+		publishHeight();
+
+		let observer: ResizeObserver | undefined;
+		if ( typeof ResizeObserver !== 'undefined' ) {
+			observer = new ResizeObserver( publishHeight );
+			observer.observe( element );
+		}
+
+		return () => {
+			observer?.disconnect();
+			root.style.removeProperty( '--masterbar-height' );
+		};
+	}, [] );
 
 	// Context logo takes precedence over default WordPress logo.
 	// The `logo` prop provides an explicit override for both.
@@ -62,7 +98,7 @@ export const TopBar = ( {
 	const resolvedLogo = logo ?? context.logo ?? defaultWordPressLogo;
 
 	return (
-		<div className="step-container-v2__top-bar">
+		<div ref={ topBarRef } className="step-container-v2__top-bar">
 			{ ! hideLogo && resolvedLogo }
 
 			{ leftElement && (

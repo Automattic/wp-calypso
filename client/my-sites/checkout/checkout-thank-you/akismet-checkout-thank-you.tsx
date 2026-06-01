@@ -67,7 +67,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 					'Thanks for your purchase. We have sent you an email with your receipt and further instructions on how to activate <strong>%s</strong>.',
 					'akismet-thank-you'
 				),
-				productName
+				productName ?? ''
 			),
 			{ strong: <strong /> }
 		);
@@ -87,7 +87,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 						'Thanks for your purchase. We have sent you an email with your receipt for <strong>%s</strong>.',
 						'akismet-thank-you'
 					),
-					productName
+					productName ?? ''
 				),
 				{ strong: <strong /> }
 			);

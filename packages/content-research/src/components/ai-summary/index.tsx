@@ -2,7 +2,14 @@ import { Button, Icon, Spinner } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft, pencil, check, chevronDown, chevronUp, warning } from '@wordpress/icons';
+import {
+	arrowLeft,
+	pencil,
+	check,
+	chevronDown,
+	chevronUp,
+	cautionFilled as warning,
+} from '@wordpress/icons';
 import SourceIcon from '../source-icon';
 import type { ResearchResult, ResearchSummary, SuggestedAngle } from '../../types';
 

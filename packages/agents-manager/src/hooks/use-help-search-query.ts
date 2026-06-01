@@ -6,8 +6,6 @@ import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useAgentsManagerContext } from '../contexts';
 
-type ApiFetchOptions = Parameters< typeof apiFetch >[ 0 ] & { global?: boolean };
-
 interface HelpSearchRailcar {
 	railcar?: string;
 	fetch_algo?: string;
@@ -46,7 +44,7 @@ const fetchArticlesAPI = async (
 		: await apiFetch< HelpSearchResult[] >( {
 				global: true,
 				path: `/help-center/search?${ queryString }`,
-		  } as ApiFetchOptions );
+		  } as { path: string; global: boolean } );
 
 	const results = Array.isArray( searchResults ) ? searchResults : [];
 

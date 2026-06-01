@@ -1,0 +1,4 @@
+name: CodeQL JavaScript client my-sites
+
+paths:
+  - client/my-sites

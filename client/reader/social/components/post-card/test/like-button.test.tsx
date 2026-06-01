@@ -212,7 +212,7 @@ describe( '<LikeButton>', () => {
 			)
 		);
 		expect( errorNoticeSpy ).toHaveBeenCalledWith(
-			'Reconnect your Bluesky account to like posts.'
+			'Something went wrong with your Bluesky connection. Try again.'
 		);
 	} );
 

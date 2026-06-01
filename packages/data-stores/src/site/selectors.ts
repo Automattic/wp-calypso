@@ -38,16 +38,16 @@ export const getSite: ( state: State, siteId: number | string ) => SiteDetails |
 };
 
 export const getSiteIdBySlug: ( _: State, slug: string ) => number | undefined = ( _, slug ) => {
-	return ( select( STORE_KEY ) as SiteSelect ).getSite( slug )?.ID;
+	return ( select( STORE_KEY ) as unknown as SiteSelect ).getSite( slug )?.ID;
 };
 
 export const getSiteTitle: ( _: State, siteId: number ) => string | undefined = ( _, siteId ) =>
-	( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.name;
+	( select( STORE_KEY ) as unknown as SiteSelect ).getSite( siteId )?.name;
 
 export const getSiteVerticalId: ( _: State, siteId: number ) => string | null | undefined = (
 	_,
 	siteId
-) => ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.site_vertical_id;
+) => ( select( STORE_KEY ) as unknown as SiteSelect ).getSite( siteId )?.options?.site_vertical_id;
 
 // @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunched = ( state: State, siteId: number ) => {
@@ -60,7 +60,10 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 };
 
 export const isSiteAtomic: ( _: State, siteId: number | string ) => boolean = ( state, siteId ) => {
-	return ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.is_wpcom_atomic === true;
+	return (
+		( select( STORE_KEY ) as unknown as SiteSelect ).getSite( siteId )?.options?.is_wpcom_atomic ===
+		true
+	);
 };
 
 export const isSiteWPForTeams: ( _: State, siteId: number | string ) => boolean = (
@@ -68,7 +71,8 @@ export const isSiteWPForTeams: ( _: State, siteId: number | string ) => boolean 
 	siteId
 ) => {
 	return (
-		( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.is_wpforteams_site === true
+		( select( STORE_KEY ) as unknown as SiteSelect ).getSite( siteId )?.options
+			?.is_wpforteams_site === true
 	);
 };
 
@@ -104,12 +108,12 @@ export const getPrimarySiteDomain: ( _: State, siteId: number ) => Domain | unde
 	_,
 	siteId
 ) =>
-	( select( STORE_KEY ) as SiteSelect )
+	( select( STORE_KEY ) as unknown as SiteSelect )
 		.getSiteDomains( siteId )
 		?.find( ( domain: Domain ) => domain.primary_domain );
 
 export const getSiteSubdomain: ( _: State, siteId: number ) => Domain | undefined = ( _, siteId ) =>
-	( select( STORE_KEY ) as SiteSelect )
+	( select( STORE_KEY ) as unknown as SiteSelect )
 		.getSiteDomains( siteId )
 		?.find( ( domain: Domain ) => domain.is_subdomain );
 
@@ -144,7 +148,7 @@ export const siteHasFeature = (
 ): boolean => {
 	return Boolean(
 		siteId &&
-			( select( STORE_KEY ) as SiteSelect )
+			( select( STORE_KEY ) as unknown as SiteSelect )
 				.getSite( siteId )
 				?.plan?.features.active.includes( featureKey )
 	);
@@ -155,11 +159,15 @@ export const requiresUpgrade: ( state: State, siteId: number | null ) => boolean
 	state,
 	siteId
 ) => {
-	return siteId && ! ( select( STORE_KEY ) as SiteSelect ).siteHasFeature( siteId, 'woop' );
+	return (
+		siteId && ! ( select( STORE_KEY ) as unknown as SiteSelect ).siteHasFeature( siteId, 'woop' )
+	);
 };
 
 export function isJetpackSite( state: State, siteId?: number ): boolean {
-	return Boolean( siteId && ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.jetpack );
+	return Boolean(
+		siteId && ( select( STORE_KEY ) as unknown as SiteSelect ).getSite( siteId )?.jetpack
+	);
 }
 
 export const getBundledPluginSlug = ( state: State, siteSlug: string ) =>

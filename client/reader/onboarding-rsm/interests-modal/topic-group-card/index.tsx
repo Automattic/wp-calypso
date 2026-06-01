@@ -108,8 +108,8 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 		  )
 		: '';
 	const meta = [ tagSummary, blogSummary ].filter( Boolean ).join( ' · ' );
-	let subscribeLabel = __( 'Subscribe' );
-	let subscribeAriaLabel = sprintf(
+	let subscribeLabel: string = __( 'Subscribe' );
+	let subscribeAriaLabel: string = sprintf(
 		/* translators: %s is the topic pack title. */
 		__( 'Subscribe to %s' ),
 		title

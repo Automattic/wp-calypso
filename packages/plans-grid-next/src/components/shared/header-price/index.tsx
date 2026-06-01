@@ -112,7 +112,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		if (
 			isGridPlanOneTimeDiscounted ||
 			isGridPlanOnIntroOffer ||
-			( enableTermSavingsPriceDisplay && savings )
+			( enableTermSavingsPriceDisplay && savings ) ||
+			( showBillingDescriptionForIncreasedRenewalPrice && !! termVariantPricing )
 		) {
 			setIsAnyPlanPriceDiscounted( true );
 		}
@@ -122,6 +123,8 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		isGridPlanOneTimeDiscounted,
 		savings,
 		setIsAnyPlanPriceDiscounted,
+		showBillingDescriptionForIncreasedRenewalPrice,
+		termVariantPricing,
 	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
@@ -175,6 +178,57 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						original
 					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ monthlyPrice }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						discounted
+					/>
+				</div>
+			</div>
+		);
+	}
+
+	// Handle cases where a plan is ineligible for intro offer, but we still
+	// want to show the crossed-out monthly price.
+	if ( showBillingDescriptionForIncreasedRenewalPrice && termVariantPricing ) {
+		const compareToMonthlyPrice = termVariantPricing.originalPrice.monthly ?? 0;
+		const monthlyPrice =
+			typeof discountedPrice.monthly === 'number'
+				? discountedPrice.monthly
+				: originalPrice.monthly ?? 0;
+		return (
+			<div className="plans-grid-next-header-price">
+				{ ! current &&
+					( savings > 0 ? (
+						<div className={ pricingBadgeClassName }>
+							{ translate( 'Save %(savings)d%%', {
+								args: { savings },
+								comment: 'Example: Save 35%',
+							} ) }
+						</div>
+					) : (
+						<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
+					) ) }
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
+					{ compareToMonthlyPrice > monthlyPrice && (
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ compareToMonthlyPrice }
+							displayPerMonthNotation={ false }
+							isLargeCurrency={ isLargeCurrency }
+							isSmallestUnit
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+							original
+						/>
+					) }
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }

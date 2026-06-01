@@ -1,28 +1,17 @@
-import { readFeedQuery } from '@automattic/api-queries';
+import { readSiteQuery } from '@automattic/api-queries';
 import { createSelector } from '@automattic/state-utils';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import { reject } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
+import { useFeedQueries } from 'calypso/reader/data/feed';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
-import {
-	receiveReaderFeedRequestFailure,
-	receiveReaderFeedRequestSuccess,
-} from 'calypso/state/reader/feeds/actions';
 import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
 import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 import { AppState } from 'calypso/types';
-
-/**
- * Narrow shape of `state.reader.feeds.items` and `state.reader.sites.items` used in this hook.
- * The reader feeds/sites slices are JS modules with no exported TS types, and `AppState` is a
- * permissive `any` alias in this codebase, so we declare exactly the fields we read here. This
- * keeps the validation gate honest if the underlying shape ever changes.
- */
-type ReaderItemMap = Record< number, { is_error?: boolean } | undefined >;
 
 const getReaderFollowingItemsRaw = createSelector(
 	( state: AppState ): ReaderFollowItem[] => {
@@ -196,7 +185,6 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	);
 
 	const rawFollowingItems = useSelector( getReaderFollowingItemsRaw );
-	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
 
 	/**
@@ -204,7 +192,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 * URLs cover cases where the same subscription gets a new `feed_ID` over time.
 	 * Reactive: updates as the paginated follows API fills in. Safe to use in the
 	 * memo deps below because `getReaderFollowingItemsRaw` only depends on
-	 * `state.reader.follows.items`, not `feeds.items`, so the feed bridge below
+	 * `state.reader.follows.items`, not feed query results, so the feed queries below
 	 * can't cause a render storm via this selector.
 	 */
 	const followedSubscriptions = useMemo(
@@ -250,8 +238,16 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	// Candidate list before enriching `feed_URL` from `readFeedQuery` results
 	// (the `/read/tags/cards` payload sometimes omits `feed_URL` on API rows).
+	// We gate only on `tagsLoading` here (not the full `isLoading`): curated
+	// blogs for the user's followed tags are static bundle data and can be
+	// surfaced immediately once we know those slugs, without waiting for the
+	// `/read/tags/cards` API response. API results flow in when ready and are
+	// merged by the same memo recomputing (because `apiRecommendedSites` is a
+	// dep). `isLoading` still governs the exported flag and guards
+	// `hasNoRecommendations` from firing prematurely for non-English users or
+	// users whose tags have no curated data.
 	const baseCombinedRecommendations = useMemo( () => {
-		if ( isLoading ) {
+		if ( tagsLoading ) {
 			return [];
 		}
 
@@ -299,14 +295,17 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		);
 
 		return unsubscribedRecommendations.slice( 0, 18 );
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, followedSubscriptions ] );
+	}, [ followedTagSlugs, apiRecommendedSites, tagsLoading, currentLocale, followedSubscriptions ] );
 
-	// Fetch feed metadata via React Query and bridge into Redux (replaces deprecated QueryReaderFeed).
-	const feedQueries = useQueries( {
-		queries: baseCombinedRecommendations.map( ( site ) => ( {
-			...readFeedQuery( site.feed_ID ),
-		} ) ),
-	} );
+	const feedQueries = useFeedQueries( baseCombinedRecommendations.map( ( site ) => site.feed_ID ) );
+	const feedQueriesStateKey = feedQueries
+		.map(
+			( q ) =>
+				`${ q.status }:${ q.fetchStatus }:${ q.dataUpdatedAt }:${ q.isError }:${
+					q.data?.feed_URL ?? ''
+				}`
+		)
+		.join( '|' );
 
 	const combinedRecommendations = useMemo( () => {
 		const enriched = baseCombinedRecommendations.map( ( site, index ) => {
@@ -323,52 +322,52 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		// Re-check after `readFeedQuery` enriches `feed_URL` so API rows that omitted
 		// the URL in `/read/tags/cards` still match follows keyed by URL when `feed_ID` differs.
 		return enriched.filter( ( site ) => ! isFollowedSubscription( site, followedSubscriptions ) );
-	}, [ baseCombinedRecommendations, feedQueries, followedSubscriptions ] );
+		// feedQueries is read from the latest render; feedQueriesStateKey bumps when feed query
+		// status or URL data changes without depending on the unstable useQueries array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ baseCombinedRecommendations, feedQueriesStateKey, followedSubscriptions ] );
 
-	const feedQueriesStateKey = useMemo(
+	const feedQueryById = useMemo(
 		() =>
-			feedQueries
-				.map( ( q ) => `${ q.status }:${ q.fetchStatus }:${ q.dataUpdatedAt }:${ q.isError }` )
-				.join( '|' ),
-		[ feedQueries ]
+			new Map(
+				baseCombinedRecommendations.map( ( site, index ) => [ site.feed_ID, feedQueries[ index ] ] )
+			),
+		// feedQueries is read from the latest render; feedQueriesStateKey bumps when query state changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ baseCombinedRecommendations, feedQueriesStateKey ]
 	);
 
-	const bridgedFeedIdsRef = useRef< Set< number > >( new Set() );
-	const failedFeedIdsRef = useRef< Set< number > >( new Set() );
-
-	useEffect( () => {
-		feedQueries.forEach( ( query, index ) => {
-			const feedId = baseCombinedRecommendations[ index ]?.feed_ID;
-			if ( feedId == null ) {
+	// Site validation is sourced from React Query. One query per recommendation
+	// that carries a real `site_ID`; we surface only the pieces the validation
+	// gate below needs.
+	const siteIdsForValidation = useMemo(
+		() => combinedRecommendations.filter( ( s ) => s.site_ID > 0 ).map( ( s ) => s.site_ID ),
+		[ combinedRecommendations ]
+	);
+	const siteQueries = useQueries( {
+		queries: siteIdsForValidation.map( ( siteId ) => ( { ...readSiteQuery( siteId ) } ) ),
+	} );
+	const siteQueriesStateKey = siteQueries.map( ( q ) => `${ q.status }` ).join( '|' );
+	const siteValidationBySiteId = useMemo( () => {
+		const map: Record< number, 'pending' | 'success' | 'error' > = {};
+		siteIdsForValidation.forEach( ( siteId, idx ) => {
+			const q = siteQueries[ idx ];
+			if ( ! q ) {
 				return;
 			}
-			if ( query.isSuccess && query.data ) {
-				if ( bridgedFeedIdsRef.current.has( feedId ) ) {
-					return;
-				}
-				bridgedFeedIdsRef.current.add( feedId );
-				dispatch( receiveReaderFeedRequestSuccess( query.data ) );
-			} else if ( query.isError ) {
-				// Feeds reducer returns a fresh object on each `receiveReaderFeedRequestFailure`,
-				// so re-dispatching for the same feed id every time this effect runs causes
-				// avoidable Redux churn. Gate by feed id, mirroring `bridgedFeedIdsRef`.
-				if ( failedFeedIdsRef.current.has( feedId ) ) {
-					return;
-				}
-				failedFeedIdsRef.current.add( feedId );
-				dispatch( receiveReaderFeedRequestFailure( feedId, query.error ) );
+			if ( q.isSuccess ) {
+				map[ siteId ] = 'success';
+			} else if ( q.isError ) {
+				map[ siteId ] = 'error';
+			} else {
+				map[ siteId ] = 'pending';
 			}
 		} );
-		// feedQueries is read from the latest render; feedQueriesStateKey bumps when any query status changes.
+		return map;
+		// `siteQueries` is rebuilt each render but its statuses drive validation;
+		// stringify status keys to keep the memo stable when nothing changed.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ baseCombinedRecommendations, dispatch, feedQueriesStateKey ] );
-
-	const readerFeedItems = useSelector(
-		( state: AppState ): ReaderItemMap => state.reader?.feeds?.items ?? {}
-	);
-	const readerSiteItems = useSelector(
-		( state: AppState ): ReaderItemMap => state.reader?.sites?.items ?? {}
-	);
+	}, [ siteIdsForValidation, siteQueriesStateKey ] );
 
 	/**
 	 * Cards captured (in encounter order) once their feed/site metadata has loaded successfully.
@@ -412,8 +411,6 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	// fundamentally changes (followed tags swap). Anything that should "start
 	// over" for a fresh tag selection belongs here.
 	useEffect( () => {
-		bridgedFeedIdsRef.current = new Set();
-		failedFeedIdsRef.current = new Set();
 		setPinnedSites( [] );
 		setRejectedFeedIds( new Set() );
 		sessionFollowedFeedIdsRef.current = new Set();
@@ -444,52 +441,65 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		if ( combinedRecommendations.length === 0 ) {
 			return;
 		}
-		const newlyValidated: CardData[] = [];
+		// Candidates whose feed/site metadata has loaded successfully this run.
+		// De-dup against existing `pinnedSites` is intentionally deferred to the
+		// `setPinnedSites` functional updater below. This prevents a race where
+		// multiple renders (triggered by the 18+ concurrent feed queries resolving)
+		// each compute `newlyValidated` from the same stale closure-captured
+		// `pinnedSites` and then queue duplicate appends before any single update
+		// is committed. By checking inside `prev => ...`, every queued call sees
+		// the actual latest state and correctly skips already-pinned items.
+		const candidatesToPin: CardData[] = [];
 		const newlyRejected: number[] = [];
-		// Local dedup set — seeded from pinned state and mutated as we add to
-		// `newlyValidated` so a duplicate within the same loop iteration is
-		// only pinned once. Cheap to rebuild each run (≤18 entries) and avoids
-		// the dual source of truth a parallel `useRef< Set >` would create.
-		const alreadyPinned = new Set( pinnedSites.map( ( s ) => s.feed_ID ) );
+		// Dedup within this single run to guard against any duplicates in the
+		// `combinedRecommendations` list itself.
+		const seenInThisRun = new Set< number >();
 		for ( const site of combinedRecommendations ) {
-			if ( alreadyPinned.has( site.feed_ID ) ) {
+			if ( seenInThisRun.has( site.feed_ID ) ) {
 				continue;
 			}
 			if ( rejectedFeedIds.has( site.feed_ID ) ) {
 				continue;
 			}
-			const feed = readerFeedItems[ site.feed_ID ];
-			if ( ! feed ) {
+			const feedQuery = feedQueryById.get( site.feed_ID );
+			if ( ! feedQuery ) {
 				// Feed metadata hasn't loaded yet — keep waiting (could still pin or reject).
 				continue;
 			}
-			if ( feed.is_error ) {
+			if ( feedQuery.isError ) {
 				newlyRejected.push( site.feed_ID );
+				continue;
+			}
+			if ( ! feedQuery.isSuccess || ! feedQuery.data ) {
 				continue;
 			}
 			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds like
 			// `design-milk.com`) have no associated WP.com site and never produce a
-			// `readerSiteItems` entry — pinning those on feed alone is correct.
+			// site query — pinning those on feed alone is correct.
 			// For cards with a real `site_ID`, wait until the site request lands so a
 			// late-arriving site error (e.g. 404/410) reliably excludes the card,
 			// rather than letting it stay pinned because the site hadn't loaded yet.
 			const requiresSite = site.site_ID > 0;
 			if ( requiresSite ) {
-				const reduxSite = readerSiteItems[ site.site_ID ];
-				if ( ! reduxSite ) {
+				const status = siteValidationBySiteId[ site.site_ID ];
+				if ( ! status || status === 'pending' ) {
 					// Site hasn't loaded yet — keep waiting.
 					continue;
 				}
-				if ( reduxSite.is_error ) {
+				if ( status === 'error' ) {
 					newlyRejected.push( site.feed_ID );
 					continue;
 				}
 			}
-			alreadyPinned.add( site.feed_ID );
-			newlyValidated.push( site );
+			seenInThisRun.add( site.feed_ID );
+			candidatesToPin.push( site );
 		}
-		if ( newlyValidated.length > 0 ) {
-			setPinnedSites( ( prev ) => [ ...prev, ...newlyValidated ] );
+		if ( candidatesToPin.length > 0 ) {
+			setPinnedSites( ( prev ) => {
+				const alreadyPinned = new Set( prev.map( ( s ) => s.feed_ID ) );
+				const trulyNew = candidatesToPin.filter( ( s ) => ! alreadyPinned.has( s.feed_ID ) );
+				return trulyNew.length > 0 ? [ ...prev, ...trulyNew ] : prev;
+			} );
 		}
 		if ( newlyRejected.length > 0 ) {
 			setRejectedFeedIds( ( prev ) => {
@@ -500,7 +510,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				return next;
 			} );
 		}
-	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds, pinnedSites ] );
+	}, [ combinedRecommendations, feedQueryById, siteValidationBySiteId, rejectedFeedIds ] );
 
 	const recommendations = pinnedSites;
 

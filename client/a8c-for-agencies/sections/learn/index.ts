@@ -5,7 +5,6 @@ import {
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
-	A4A_AGENT_STUDIO_PROJECTS_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
@@ -16,7 +15,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	agentStudioBriefContext,
 	agentStudioContext,
-	agentStudioProjectContext,
+	agentStudioOutputContext,
 } from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
@@ -53,9 +52,9 @@ export default function () {
 			clientRender
 		);
 		page(
-			`${ A4A_AGENT_STUDIO_PROJECTS_LINK }/:projectId`,
+			`${ A4A_AGENT_STUDIO_LINK }/outputs/:outputId`,
 			requireAccessContext,
-			agentStudioProjectContext,
+			agentStudioOutputContext,
 			makeLayout,
 			clientRender
 		);

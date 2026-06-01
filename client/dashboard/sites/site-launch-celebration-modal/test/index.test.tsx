@@ -48,10 +48,6 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		mockDomainsApi( [] );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	describe( 'Modal Display', () => {
 		test( 'renders modal with proper structure when conditions are met', async () => {
 			setupCelebrateLaunchUrl();
@@ -95,17 +91,15 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
 			const customDomain = createMockDomain( 'example.com', true );
-			navigator.clipboard.writeText = jest.fn();
 
 			nock.cleanAll();
 			mockDomainsApi( [ customDomain ] );
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			await screen.findByText( 'example.com' );
-			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
-			await user.click( copyButton );
+			await user.click( screen.getByRole( 'button', { name: 'Copy URL' } ) );
 
-			expect( navigator.clipboard.writeText ).toHaveBeenCalledWith( 'example.com' );
+			expect( await navigator.clipboard.readText() ).toBe( 'example.com' );
 		} );
 
 		test( 'copies first domain when multiple domains exist', async () => {
@@ -114,18 +108,16 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const mockSite = createMockSite();
 			const domain1 = createMockDomain( 'first.com', true );
 			const domain2 = createMockDomain( 'second.com', true );
-			navigator.clipboard.writeText = jest.fn();
 
 			nock.cleanAll();
 			mockDomainsApi( [ domain1, domain2 ] );
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			await screen.findByText( 'first.com' );
-			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
-			await user.click( copyButton );
+			await user.click( screen.getByRole( 'button', { name: 'Copy URL' } ) );
 
 			// Should copy first domain, not second
-			expect( navigator.clipboard.writeText ).toHaveBeenCalledWith( 'first.com' );
+			expect( await navigator.clipboard.readText() ).toBe( 'first.com' );
 		} );
 
 		test( 'skips domains without active subscription', async () => {
@@ -134,18 +126,16 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const mockSite = createMockSite();
 			const unsubscribedDomain = createMockDomain( 'unsubscribed.com', false );
 			const activeDomain = createMockDomain( 'active.com', true );
-			navigator.clipboard.writeText = jest.fn();
 
 			nock.cleanAll();
 			mockDomainsApi( [ unsubscribedDomain, activeDomain ] );
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			await screen.findByText( 'active.com' );
-			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
-			await user.click( copyButton );
+			await user.click( screen.getByRole( 'button', { name: 'Copy URL' } ) );
 
 			// Should skip unsubscribed domain and use the active one
-			expect( navigator.clipboard.writeText ).toHaveBeenCalledWith( 'active.com' );
+			expect( await navigator.clipboard.readText() ).toBe( 'active.com' );
 		} );
 	} );
 
@@ -174,7 +164,6 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			setupCelebrateLaunchUrl();
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
-			navigator.clipboard.writeText = jest.fn();
 
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
@@ -186,8 +175,8 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			// Click button
 			await user.click( copyButton );
 
-			// Verify clipboard was called
-			expect( navigator.clipboard.writeText ).toHaveBeenCalled();
+			// Verify clipboard was written to
+			expect( await navigator.clipboard.readText() ).toBe( mockSite.slug );
 
 			// After click, title should change to "Copied!"
 			expect( copyButton ).toHaveAttribute( 'title', 'Copied!' );
@@ -224,7 +213,17 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	describe( 'Upsell Display Logic', () => {
 		test( 'shows upsell when no custom domain exists and plan is free', async () => {
 			setupCelebrateLaunchUrl();
-			const mockSite = createMockSite( { plan: { is_free: true } as any } );
+			const mockSite = createMockSite( {
+				plan: {
+					product_id: 1,
+					product_slug: 'free_plan',
+					product_name_short: 'Free',
+					product_name_en: 'WordPress.com Free',
+					expired: false,
+					is_free: true,
+					features: { active: [] },
+				},
+			} );
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			// Wait for modal to render first
@@ -240,7 +239,17 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 		test( 'does not show upsell when custom domain exists', async () => {
 			setupCelebrateLaunchUrl();
-			const mockSite = createMockSite( { plan: { is_free: true } as any } );
+			const mockSite = createMockSite( {
+				plan: {
+					product_id: 1,
+					product_slug: 'free_plan',
+					product_name_short: 'Free',
+					product_name_en: 'WordPress.com Free',
+					expired: false,
+					is_free: true,
+					features: { active: [] },
+				},
+			} );
 			const customDomain = createMockDomain( 'example.com', true );
 
 			nock.cleanAll();
@@ -272,7 +281,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			);
 		} );
 
-		test( 'tracks event with undefined product_slug when plan is missing', async () => {
+		test( 'still fires modal view event when site has no plan', async () => {
 			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite( { plan: undefined } );
 			const { recordTracksEvent } = render( <SiteLaunchCelebrationModal site={ mockSite } /> );

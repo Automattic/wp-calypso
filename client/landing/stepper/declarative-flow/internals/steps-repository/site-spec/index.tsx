@@ -4,10 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { Experiment } from 'calypso/lib/explat';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import { getCiabSiteSpecConfig, type SiteSpecConfig } from 'calypso/lib/site-spec/utils';
-import { VEGA_EXPERIMENT_NAME, getVegaSiteSpecConfig } from 'calypso/lib/site-spec/vega';
+import { getVegaSiteSpecConfig } from 'calypso/lib/site-spec/vega';
 import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
@@ -99,19 +98,7 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	const treatmentConfig = useMemo< SiteSpecConfig >( () => {
-		const vegaConfig = getVegaSiteSpecConfig();
-		return {
-			...vegaConfig,
-			tracking: vegaConfig.tracking && {
-				...vegaConfig.tracking,
-				getOverrides: ( event: string ) => ( {
-					...vegaConfig.tracking?.getOverrides?.( event ),
-					experiment_variation: 'treatment',
-				} ),
-			},
-		};
-	}, [] );
+	const vegaConfig = useMemo( () => getVegaSiteSpecConfig(), [] );
 
 	return (
 		<>
@@ -123,12 +110,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					onSpecConfirm={ handleCiabSpecConfirm }
 				/>
 			) : (
-				<Experiment
-					name={ VEGA_EXPERIMENT_NAME }
-					loadingExperience={ null }
-					defaultExperience={ <SiteSpecContainer /> }
-					treatmentExperience={ <SiteSpecContainer siteSpecConfig={ treatmentConfig } /> }
-				/>
+				<SiteSpecContainer siteSpecConfig={ vegaConfig } />
 			) }
 		</>
 	);

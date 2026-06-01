@@ -177,6 +177,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		min-height: 40px;
 		color: var( --color-neutral-20 );
 
+		@include ui-mixins.when-dark-theme {
+			background: transparent;
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus {
+				border-color: var( --color-link );
+				color: var( --color-link );
+			}
+		}
+
 		&:hover {
 			border-color: var( --color-neutral-20 );
 		}
@@ -200,10 +212,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.follow-button {
 		background: transparent;
-
-		@include ui-mixins.when-dark-theme {
-			border-color: var( --color-neutral-20 );
-		}
 
 		svg,
 		.gridicon,
@@ -354,6 +362,20 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 		.post-edit-button__label {
 			color: var( --color-link );
+		}
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.comment-button.is-active,
+		.comment-button:hover,
+		.comment-button:focus,
+		.like-button:hover,
+		.like-button:focus,
+		.like-button.is-active,
+		.like-button.is-liked,
+		.post-edit-button:hover,
+		.post-edit-button:focus {
+			border-color: var( --color-link );
 		}
 	}
 }

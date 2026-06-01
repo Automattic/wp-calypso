@@ -123,7 +123,14 @@ function getReaderConfig( options = {} ) {
 		},
 		module: {
 			...webpackConfig.module,
-			rules: [ ...( webpackConfig.module?.rules || [] ) ],
+			rules: [
+				...( webpackConfig.module?.rules || [] ),
+				{
+					// P2/O2 expects window._ to remain Underscore.
+					resource: require.resolve( 'lodash/lodash.js' ),
+					use: path.join( __dirname, 'disable-lodash-amd-loader.js' ),
+				},
+			],
 		},
 		resolve: {
 			...webpackConfig.resolve,

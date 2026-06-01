@@ -4,7 +4,6 @@ export type RealtimeStatus =
 	| 'requesting-mic'
 	| 'connecting'
 	| 'active'
-	| 'ending'
 	| 'error';
 
 export type RealtimeErrorIntent = 'error' | 'warning';
@@ -42,13 +41,14 @@ export interface UseRealtimeSessionResult {
 	errorIntent: RealtimeErrorIntent;
 	sessionTimeLimitMs: number | null;
 	sessionTimeRemainingMs: number | null;
+	canUpgrade: boolean;
 	isMuted: boolean;
 	localStream: MediaStream | null;
 	transcript: RealtimeTranscriptEntry[];
 	toolEvents: RealtimeToolEvent[];
 	imagePickerState: import('../image-picker-modal').ImagePickerState;
 	start: () => Promise< void >;
-	stop: () => void;
+	stop: ( reason?: string ) => void;
 	toggleMute: () => void;
 	sendText: ( text: string ) => Promise< void >;
 	sendEvent: ( eventName: string, details?: string ) => void;

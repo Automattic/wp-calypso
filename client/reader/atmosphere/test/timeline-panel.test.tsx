@@ -836,7 +836,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 			status: 401,
 			code: 'atmosphere_auth_required',
 			kind: 'auth_required',
-			copy: /reconnected/i,
+			copy: /Bluesky connection/i,
 		},
 		{
 			status: 429,
@@ -902,7 +902,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 		}
 	);
 
-	it( 'auth_required Reconnect link opens in a new tab with rel=noopener', async () => {
+	it( 'auth_required surfaces a connection-error message with no reconnect link', async () => {
 		const queryClient = makeQueryClient();
 		queryClient.setQueryData(
 			readerAtmosphereKeys.timeline( 42 ),
@@ -931,9 +931,8 @@ describe( 'TimelinePanel — reply composer errors', () => {
 		await user.type( screen.getByRole( 'textbox' ), 'hi' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
-		const reconnect = await screen.findByRole( 'link', { name: /reconnect/i } );
-		expect( reconnect ).toHaveAttribute( 'target', '_blank' );
-		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );
+		expect( await screen.findByText( /Bluesky connection/i ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /reconnect/i } ) ).toBeNull();
 	} );
 } );
 

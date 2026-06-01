@@ -9,10 +9,11 @@ export const requestAdminMenu = function requestAdminMenu( siteId ) {
 	};
 };
 
-export const receiveAdminMenu = function receiveAdminMenu( siteId, menu ) {
+export const receiveAdminMenu = function receiveAdminMenu( siteId, menu, groups = [] ) {
 	return {
 		type: ADMIN_MENU_RECEIVE,
 		siteId,
 		menu,
+		groups,
 	};
 };

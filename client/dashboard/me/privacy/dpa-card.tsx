@@ -19,7 +19,10 @@ export default function DpaCard() {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'We’ve sent you our DPA via email.' ), {
-					icon: <Icon icon={ envelope } style={ { fill: 'currentcolor' } } />,
+					// @wordpress/notices types `icon` as `string | null`, but the runtime (and the Dashboard snackbar) accepts a ReactNode.
+					icon: (
+						<Icon icon={ envelope } style={ { fill: 'currentcolor' } } />
+					 ) as unknown as string,
 					type: 'snackbar',
 				} );
 			},

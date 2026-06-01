@@ -155,6 +155,11 @@
 	}
 }
 
+.live-ai-assistant__intro-learn-more {
+	display: inline-block;
+	margin-block-start: 8px;
+}
+
 .live-ai-assistant__intro-artwork {
 	display: block;
 	width: 100%;
@@ -655,4 +660,11 @@
 	white-space: nowrap;
 	border: 0;
 	opacity: 0.01;
+}
+
+// Fix the collision with the Agents Manager sidebar FAB
+body:has( .agents-manager-sidebar-fab ):not( .agents-manager-sidebar-container--sidebar-open ) {
+	.live-ai-assistant__footer {
+		margin-bottom: 40px;
+	}
 }

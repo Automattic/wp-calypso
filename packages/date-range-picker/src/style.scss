@@ -1,3 +1,4 @@
+@use "@wordpress/base-styles/colors" as colors;
 @use "@wordpress/base-styles/variables" as v;
 
 /* Popover sizing */
@@ -20,15 +21,15 @@
 			padding: v.$grid-unit-05 v.$grid-unit-05 v.$grid-unit-05 v.$grid-unit-10;
 			box-shadow: none;
 			border-radius: v.$radius-small;
-			border: 1px solid var(--dashboard-field__border-color, #{v.$gray-600});
+			border: 1px solid var(--dashboard-field__border-color, #{colors.$gray-600});
 		}
 		svg {
-			color: var(--dashboard__text-color, #{v.$gray-900});
+			color: var(--dashboard__text-color, #{colors.$gray-900});
 			padding: v.$grid-unit-05;
 		}
 	}
 	&__text {
-		color: var(--dashboard__text-color, #{v.$gray-900});
+		color: var(--dashboard__text-color, #{colors.$gray-900});
 		padding: 0 v.$grid-unit-05;
 	}
 }

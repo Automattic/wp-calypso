@@ -1,7 +1,13 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Icon, moreHorizontalMobile, tag, file, chevronDown } from '@wordpress/icons';
+import {
+	Icon,
+	moreHorizontal as moreHorizontalMobile,
+	tag,
+	file,
+	chevronDown,
+} from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
