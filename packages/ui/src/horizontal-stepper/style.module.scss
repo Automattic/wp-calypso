@@ -64,7 +64,7 @@
 			transform: translateY( -50% );
 			inset-inline-start: calc( 50% + 21px );
 			inset-inline-end: calc( -50% + 21px );
-			height: 1px;
+			height: var( --wpds-border-width-xs, 1px );
 			background-color: theme.$components-color-gray-400;
 		}
 	}
