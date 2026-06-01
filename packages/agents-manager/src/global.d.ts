@@ -14,10 +14,6 @@ declare const agentsManagerData:
 			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
-			siteId?: number | string;
-			site?: {
-				ID?: number | string;
-			};
 			helpCenterUrl?: string;
 			jetpackAiSidebarPreview?: {
 				enabled: boolean;
