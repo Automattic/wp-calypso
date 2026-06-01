@@ -651,6 +651,7 @@ function setUpCSP( req, res, next ) {
 			'www.redditstatic.com', // Reddit tracking pixel
 			'https://analytics.tiktok.com', // TikTok tracking pixel
 			'https://bzrcdn.openai.com/', // OpenAI tracking pixel
+			'https://bzr.openai.com/', // OpenAI tracking pixel
 			'https://a.quora.com', // Quora tracking pixel.
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
