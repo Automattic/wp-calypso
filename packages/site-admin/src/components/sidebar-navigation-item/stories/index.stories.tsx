@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { fn } from '@storybook/test';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import * as allIconComponents from '@wordpress/icons';
+import { fn } from 'storybook/test';
 /*
  * Internal dependencies
  */

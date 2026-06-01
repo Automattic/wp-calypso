@@ -29,7 +29,7 @@ interface MoveMenuProps {
 	itemId: string;
 	itemLabel: string;
 	triggerEl: HTMLElement | null;
-	onClose: () => void;
+	onClose: ( options?: { blurTrigger?: boolean } ) => void;
 }
 
 interface MenuChoice {
@@ -182,7 +182,7 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 			if ( triggerEl?.contains( target ) ) {
 				return;
 			}
-			onClose();
+			onClose( { blurTrigger: true } );
 		};
 		const handleClickAway = ( ev: MouseEvent ) => {
 			const target = ev.target instanceof Element ? ev.target : null;
@@ -195,7 +195,7 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 			if ( triggerEl?.contains( target ) ) {
 				return;
 			}
-			onClose();
+			onClose( { blurTrigger: true } );
 		};
 		const handleKey = ( ev: KeyboardEvent ) => {
 			if ( ev.key === 'Escape' ) {

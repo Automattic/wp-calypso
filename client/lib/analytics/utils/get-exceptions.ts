@@ -14,6 +14,7 @@ const getExceptions = (): Partial< Record< AdTracker, boolean > > => {
 		facebook: region === 'california' && countryCode === 'us',
 		tiktok: region === 'california' && countryCode === 'us',
 		quora: region === 'california' && countryCode === 'us',
+		openai: region === 'california' && countryCode === 'us',
 	};
 };
 

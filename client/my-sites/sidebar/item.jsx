@@ -78,9 +78,19 @@ export const MySitesSidebarUnifiedItem = ( {
 	const handleMoreClick = useCallback( ( ev ) => {
 		ev.preventDefault();
 		ev.stopPropagation();
-		setMoveMenuOpen( ( open ) => ! open );
+		setMoveMenuOpen( ( open ) => {
+			if ( open && typeof moreRef.current?.blur === 'function' ) {
+				moreRef.current.blur();
+			}
+			return ! open;
+		} );
 	}, [] );
-	const handleMoveMenuClose = useCallback( () => setMoveMenuOpen( false ), [] );
+	const handleMoveMenuClose = useCallback( ( options = {} ) => {
+		setMoveMenuOpen( false );
+		if ( options.blurTrigger && typeof moreRef.current?.blur === 'function' ) {
+			moreRef.current.blur();
+		}
+	}, [] );
 
 	const onNavigate = () => {
 		if ( typeof trackClickEvent === 'function' ) {
@@ -157,7 +167,7 @@ export const MySitesSidebarUnifiedItem = ( {
 						}
 					} }
 				>
-					⋯
+					⋮
 				</span>
 			) }
 			{ showCustomizeDecorations && moveMenuOpen && (
