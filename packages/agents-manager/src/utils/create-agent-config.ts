@@ -12,12 +12,7 @@ import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
-import {
-	getClientConstructorArguments,
-	getSelectedSiteIdFromGlobals,
-	getSiteEditorActions,
-	normalizeSiteId,
-} from './site-editor-context';
+import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -103,6 +98,11 @@ async function canAccessZendeskForAgent( agentId?: string ): Promise< boolean > 
 	return canConnectToZendesk();
 }
 
+function normalizeSiteId( siteId: unknown ): number | undefined {
+	const numericSiteId = Number( siteId );
+	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
@@ -117,7 +117,7 @@ async function createWrappedContextProvider(
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
-			const resolvedSiteId = normalizeSiteId( siteId ) ?? getSelectedSiteIdFromGlobals();
+			const resolvedSiteId = normalizeSiteId( siteId );
 			const pluginContext = contextProvider.getClientContext();
 
 			let resolvedContext = pluginContext.contextEntries?.length
@@ -186,8 +186,7 @@ async function createDefaultContextProvider(
 				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 						.agentsManagerData ?? {}
 				: {};
-			const resolvedSiteId =
-				normalizeSiteId( siteId ?? hostData.siteId ) ?? getSelectedSiteIdFromGlobals();
+			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
 			const siteEditorActions = getSiteEditorActions();
 
 			const externalEntries = getExternalContextEntries();

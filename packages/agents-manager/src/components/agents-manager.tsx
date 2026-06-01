@@ -68,7 +68,7 @@ export default function AgentsManager( {
 
 	return (
 		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, currentSiteId, siteKey, currentRoute } }
+			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
 		>
 			<QueryClientProvider client={ queryClient }>
 				<PersistentRouter siteKey={ siteKey }>
@@ -87,7 +87,7 @@ function AgentSetup( {
 	agentId?: string;
 	useImageUpload?: ImageUploadHook;
 } ): JSX.Element | null {
-	const { site, currentSiteId, sectionName, currentRoute, agentConfig, setAgentConfig } =
+	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
@@ -144,7 +144,7 @@ function AgentSetup( {
 				loadedProvidersRef.current = providers;
 			}
 
-			const siteId = currentSiteId ?? ( typeof site?.ID === 'number' ? site.ID : undefined );
+			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
 
 			const config = await createAgentConfig( {
 				sessionId,
@@ -168,7 +168,6 @@ function AgentSetup( {
 		isNewChat,
 		navigate,
 		sessionId,
-		currentSiteId,
 		sectionName,
 		setAgentConfig,
 		site?.ID,

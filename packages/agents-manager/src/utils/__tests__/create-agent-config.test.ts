@@ -32,8 +32,6 @@ describe( 'createAgentConfig', () => {
 	afterEach( () => {
 		delete ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 			.agentsManagerData;
-		delete ( window as unknown as { JP_CONNECTION_INITIAL_STATE?: unknown } )
-			.JP_CONNECTION_INITIAL_STATE;
 		document.body.className = '';
 		clearSiteEditorActions();
 	} );
@@ -100,26 +98,6 @@ describe( 'createAgentConfig', () => {
 		const context = config.contextProvider?.getClientContext();
 
 		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 247750866 } ) );
-	} );
-
-	it( 'uses Jetpack connection data as a selectedSiteId fallback', async () => {
-		(
-			window as unknown as {
-				JP_CONNECTION_INITIAL_STATE?: {
-					userConnectionData?: { currentUser?: { blogId?: number } };
-				};
-			}
-		 ).JP_CONNECTION_INITIAL_STATE = {
-			userConnectionData: { currentUser: { blogId: 12345 } },
-		};
-
-		const config = await createAgentConfig( {
-			sessionId: 'session-1',
-			agentId: 'dolly',
-		} );
-		const context = config.contextProvider?.getClientContext();
-
-		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 12345 } ) );
 	} );
 
 	it( 'adds site editor constructor arguments from the host environment', async () => {
