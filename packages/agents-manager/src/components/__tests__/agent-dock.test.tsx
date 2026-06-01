@@ -13,6 +13,15 @@ const mockUseAgentLayoutManager = jest.fn();
 let mockShouldUseUnifiedAgent = false;
 let mockContext: Partial< AgentsManagerContextType > = {};
 
+type AgentsManagerTestGlobal = typeof globalThis & {
+	agentsManagerData?: {
+		jetpackAiSidebarPreview?: {
+			enabled: boolean;
+			features?: Record< string, boolean >;
+		};
+	};
+};
+
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
@@ -108,6 +117,15 @@ function renderAgentDock( initialEntry = '/chat' ) {
 	);
 }
 
+function installJetpackAiSidebarPreviewData( features: Record< string, boolean > ) {
+	( globalThis as AgentsManagerTestGlobal ).agentsManagerData = {
+		jetpackAiSidebarPreview: {
+			enabled: true,
+			features,
+		},
+	};
+}
+
 describe( 'AgentDock', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -119,6 +137,10 @@ describe( 'AgentDock', () => {
 				agentId: 'reader-chat',
 			},
 		} as Partial< AgentsManagerContextType >;
+	} );
+
+	afterEach( () => {
+		delete ( globalThis as AgentsManagerTestGlobal ).agentsManagerData;
 	} );
 
 	it( 'does not expose Zendesk chat for Reader Chat when Unified Chat is enabled', async () => {
@@ -149,6 +171,63 @@ describe( 'AgentDock', () => {
 		renderAgentDock();
 
 		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).toContain( 'New Zendesk chat' );
+	} );
+
+	it( 'hides support guides when Jetpack AI Sidebar Preview disables them', async () => {
+		installJetpackAiSidebarPreviewData( { supportGuides: false } );
+		mockContext = {
+			siteKey: 'site-1',
+			sectionName: 'wp-admin',
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+			},
+		} as Partial< AgentsManagerContextType >;
+
+		renderAgentDock();
+
+		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).not.toContain(
+			'Support guides'
+		);
+
+		renderAgentDock( '/support-guides' );
+
+		await waitFor( () => expect( screen.queryByTestId( 'support-guides' ) ).toBeNull() );
+	} );
+
+	it( 'hides history route when Jetpack AI Sidebar Preview disables chat history', async () => {
+		installJetpackAiSidebarPreviewData( { chatHistory: false } );
+		mockContext = {
+			siteKey: 'site-1',
+			sectionName: 'wp-admin',
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+			},
+		} as Partial< AgentsManagerContextType >;
+
+		renderAgentDock( '/history' );
+
+		await waitFor( () => expect( screen.queryByTestId( 'agent-history' ) ).toBeNull() );
+	} );
+
+	it( 'treats missing Jetpack AI Sidebar Preview features as disabled', async () => {
+		installJetpackAiSidebarPreviewData( {} );
+		mockContext = {
+			siteKey: 'site-1',
+			sectionName: 'wp-admin',
+			agentConfig: {
+				agentId: 'wp-orchestrator',
+			},
+		} as Partial< AgentsManagerContextType >;
+
+		renderAgentDock();
+
+		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).not.toContain(
+			'Support guides'
+		);
+
+		renderAgentDock( '/history' );
+
+		await waitFor( () => expect( screen.queryByTestId( 'agent-history' ) ).toBeNull() );
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {

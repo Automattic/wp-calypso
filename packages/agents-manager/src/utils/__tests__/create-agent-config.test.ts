@@ -12,8 +12,10 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
+import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
+const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =
@@ -23,6 +25,7 @@ function setAgentsManagerData( data: Record< string, unknown > ) {
 describe( 'createAgentConfig', () => {
 	beforeEach( () => {
 		mockCanConnectToZendesk.mockClear();
+		mockCreateCalypsoAuthProvider.mockClear();
 	} );
 
 	afterEach( () => {
@@ -44,6 +47,9 @@ describe( 'createAgentConfig', () => {
 		const context = config.contextProvider?.getClientContext();
 
 		expect( mockCanConnectToZendesk ).toHaveBeenCalledTimes( 1 );
+		expect( mockCreateCalypsoAuthProvider ).toHaveBeenCalledWith( undefined, {
+			logWpcomJwtFailure: true,
+		} );
 		expect( context ).not.toHaveProperty( 'currentPost' );
 		expect( context ).not.toHaveProperty( 'siteName' );
 		expect( context ).not.toHaveProperty( 'siteUrl' );
@@ -64,6 +70,9 @@ describe( 'createAgentConfig', () => {
 		const context = config.contextProvider?.getClientContext();
 
 		expect( mockCanConnectToZendesk ).not.toHaveBeenCalled();
+		expect( mockCreateCalypsoAuthProvider ).toHaveBeenCalledWith( undefined, {
+			logWpcomJwtFailure: false,
+		} );
 		expect( context ).toEqual( expect.objectContaining( { can_access_zendesk: false } ) );
 		expect( context ).toEqual(
 			expect.objectContaining( {

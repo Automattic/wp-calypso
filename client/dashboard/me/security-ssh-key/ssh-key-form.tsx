@@ -176,7 +176,10 @@ export default function SshKeyForm( {
 								<DataForm< SshKeyFormData >
 									data={ formData }
 									fields={ fields }
-									form={ { layout: { type: 'regular' as const }, fields } }
+									form={ {
+										layout: { type: 'regular' as const },
+										fields: fields.map( ( field ) => field.id ),
+									} }
 									onChange={ ( edits: Partial< SshKeyFormData > ) => {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }

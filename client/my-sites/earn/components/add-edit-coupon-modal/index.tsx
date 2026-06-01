@@ -142,7 +142,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		coupon?.duration ?? COUPON_DURATION_FOREVER
 	);
 	const [ editedUseDuration, setEditedUseDuration ] = useState(
-		coupon?.use_duration ?? editedDuration !== COUPON_DURATION_FOREVER ?? false
+		coupon?.use_duration ?? editedDuration !== COUPON_DURATION_FOREVER
 	);
 	const [ editedUseEmailAllowList, setEditedUseEmailAllowList ] = useState(
 		coupon?.email_allow_list?.length && coupon?.email_allow_list?.length > 0

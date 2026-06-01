@@ -1,4 +1,4 @@
-import { Icon, edit } from '@wordpress/icons';
+import { Icon, pencil as edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { getEditURL } from 'calypso/state/posts/utils';

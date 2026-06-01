@@ -100,7 +100,7 @@ export async function validatePageTranslations( page: Page, locale: string ): Pr
 		}
 
 		if ( params ) {
-			translation = sprintf( translation, ...JSON.parse( params ) );
+			translation = sprintf( translation, JSON.parse( params ) );
 		}
 
 		await page.waitForFunction(

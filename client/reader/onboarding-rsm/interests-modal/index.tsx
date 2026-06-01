@@ -23,7 +23,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { getPackBlogs } from './get-pack-blogs';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
 import InterestsVerificationNudge from './verificationNudge';
@@ -41,6 +40,17 @@ interface InterestsModalProps {
 	// Back; the relaxed Continue gate must still apply on return.
 	hasFollowed: boolean;
 	onFollowed: () => void;
+	// Pre-computed blog map owned by the parent so the random blog selection
+	// stays stable when the user navigates away from this step and returns.
+	// In production always provided by ReaderOnboardingRsm; optional here
+	// only so tests that don't care about packs can skip the boilerplate.
+	packBlogsById?: Map< string, CuratedBlog[] >;
+	// Tracks which packs have been explicitly subscribed in-session. Owned by
+	// the parent so it survives remounts of this component (e.g. user
+	// subscribes to a pack, advances to discover, then clicks Back).
+	// Optional for the same test-ergonomics reason as packBlogsById.
+	relaxedPackCriteria?: Set< string >;
+	onPackSubscribed?: ( packId: string ) => void;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
@@ -55,6 +65,9 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	promptVerification,
 	hasFollowed,
 	onFollowed,
+	packBlogsById = new Map(),
+	relaxedPackCriteria = new Set(),
+	onPackSubscribed = () => {},
 } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
@@ -68,7 +81,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
-	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
@@ -94,20 +106,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	}, [ followedTags ] );
 
 	const topicGroups = getTopicGroups();
-
-	// Resolve each topic group's blog list once per mounted component instance.
-	// Random blog picks remain stable while mounted, but translated group labels
-	// can still update if locale changes.
-	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
-	if ( ! packBlogsByIdRef.current ) {
-		packBlogsByIdRef.current = new Map(
-			topicGroups.map( ( group ) => [
-				group.id,
-				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
-			] )
-		);
-	}
-	const packBlogsById = packBlogsByIdRef.current;
 
 	const packs = topicGroups
 		.map( ( group ) => ( {
@@ -245,7 +243,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				}
 			}
 
-			setRelaxedPackCriteria( ( current ) => new Set( current ).add( pack.id ) );
+			onPackSubscribed( pack.id );
 
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,

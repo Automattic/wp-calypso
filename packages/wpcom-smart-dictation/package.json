@@ -42,11 +42,12 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@wordpress/api-fetch": "^7.46.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/icons": "^10.23.0",
-		"@wordpress/ui": "^0.9.0",
+		"@wordpress/data": "^10.46.0",
+		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/icons": "^13.2.0",
+		"@wordpress/ui": "^0.13.0",
 		"clsx": "^2.1.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -54,10 +55,10 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.3"
+		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
-		"@wordpress/element": "^6.23.0",
+		"@wordpress/element": "^6.46.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

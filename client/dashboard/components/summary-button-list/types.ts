@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 type ChildType = ReactElement< { density?: string } > | null;
@@ -18,6 +18,10 @@ export interface SummaryButtonListProps {
 	 * @default 'medium'
 	 */
 	density?: Density;
+	/**
+	 * Optional contextual controls placed in the section header, such as a spinner or action buttons.
+	 */
+	actions?: ReactNode;
 	/**
 	 * The child components should be either SummaryButton instances or components that
 	 * wrap SummaryButton internally and pass the `density` prop to them. This is because

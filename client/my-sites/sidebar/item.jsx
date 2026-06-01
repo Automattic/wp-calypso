@@ -65,11 +65,8 @@ export const MySitesSidebarUnifiedItem = ( {
 	// customize mode, AND this item carries a compound itemId marked as
 	// reassignable by the classifier. The data attribute below is what
 	// drag-drop.ts reads, so non-reassignable rows must not receive it.
-	const showCustomizeDecorations = canCustomizeSidebarItem(
-		customizeCtx?.isCustomizing,
-		itemId,
-		reassignable
-	);
+	const showCustomizeDecorations =
+		canCustomizeSidebarItem( customizeCtx?.isCustomizing, itemId, reassignable ) && ! isSubItem;
 	const isCustomizing = customizeCtx?.isCustomizing === true;
 	const gripLabel = title
 		? translate( 'Reorder %(label)s', { args: { label: title } } )
@@ -81,9 +78,19 @@ export const MySitesSidebarUnifiedItem = ( {
 	const handleMoreClick = useCallback( ( ev ) => {
 		ev.preventDefault();
 		ev.stopPropagation();
-		setMoveMenuOpen( ( open ) => ! open );
+		setMoveMenuOpen( ( open ) => {
+			if ( open && typeof moreRef.current?.blur === 'function' ) {
+				moreRef.current.blur();
+			}
+			return ! open;
+		} );
 	}, [] );
-	const handleMoveMenuClose = useCallback( () => setMoveMenuOpen( false ), [] );
+	const handleMoveMenuClose = useCallback( ( options = {} ) => {
+		setMoveMenuOpen( false );
+		if ( options.blurTrigger && typeof moreRef.current?.blur === 'function' ) {
+			moreRef.current.blur();
+		}
+	}, [] );
 
 	const onNavigate = () => {
 		if ( typeof trackClickEvent === 'function' ) {
@@ -160,7 +167,7 @@ export const MySitesSidebarUnifiedItem = ( {
 						}
 					} }
 				>
-					⋯
+					⋮
 				</span>
 			) }
 			{ showCustomizeDecorations && moveMenuOpen && (

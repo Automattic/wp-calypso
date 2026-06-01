@@ -95,7 +95,7 @@ export default function useSitesWalkthroughTour() {
 					<br />
 					<br />
 					{ translate(
-						'Use the tabs to navigate between site speed, backups, uptime monitor, activity trends, and plugins.'
+						'Use the tabs to navigate between site speed, backups, Uptime Monitor, activity trends, and plugins.'
 					) }
 				</>
 			),

@@ -13,12 +13,33 @@ import type { SocialPost } from '../../types';
 
 const ICON_SIZE = 18;
 
+/**
+ * Per-action gate for the engagement row. Each key defaults to `true`,
+ * preserving the historical "always render" behaviour for callers that
+ * omit the prop. A caller can suppress an affordance entirely by passing
+ * `false` — used today by the Reader Fediverse surface (CM-771) while
+ * the per-protocol write endpoints are still in flight (CM-764 / CM-766 /
+ * CM-770). Flip the matching key to `true` per protocol as each slice
+ * lands. Hiding the affordance also drops the count display for that
+ * slot from this row; the stats row (prominent-timestamp surface) is
+ * unaffected.
+ */
+export interface PostCardReactionsConfig {
+	like?: boolean;
+	repost?: boolean;
+	reply?: boolean;
+}
+
 interface PostCardCountsProps {
 	post: SocialPost;
 	prominentTimestamp?: boolean;
+	reactions?: PostCardReactionsConfig;
 }
 
-export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProps ) {
+export function PostCardCounts( { post, prominentTimestamp, reactions }: PostCardCountsProps ) {
+	const showLike = reactions?.like !== false;
+	const showRepost = reactions?.repost !== false;
+	const showReply = reactions?.reply !== false;
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const counts = post.counts;
@@ -190,9 +211,9 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 					'social-post-card-counts--prominent-timestamp': prominentTimestamp,
 				} ) }
 			>
-				{ renderRepliesNode() }
-				<RepostButton post={ post } hideCount={ hideCount } />
-				<LikeButton post={ post } hideCount={ hideCount } />
+				{ showReply && renderRepliesNode() }
+				{ showRepost && <RepostButton post={ post } hideCount={ hideCount } /> }
+				{ showLike && <LikeButton post={ post } hideCount={ hideCount } /> }
 				<BlogAboutButton post={ post } />
 			</HStack>
 		</>

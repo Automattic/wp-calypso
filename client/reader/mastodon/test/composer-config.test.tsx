@@ -5,7 +5,7 @@ import { readerMastodonKeys } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
-import { mastodonComposerConfig } from '../composer-config';
+import { mastodonComposerConfig, useMastodonAuthorHandle } from '../composer-config';
 import type { MastodonError } from '@automattic/api-core';
 import type { ActiveMode, Translate } from 'calypso/reader/social/composer';
 
@@ -282,20 +282,93 @@ describe( 'mastodonComposerConfig', () => {
 	} );
 
 	describe( 'copy', () => {
-		it( 'reply title is "Reply"', () => {
+		it( 'reply title is "Reply" with no handle', () => {
 			const t = getTranslate();
 			expect( mastodonComposerConfig.copy.title( replyMode, t ) ).toBe( 'Reply' );
 		} );
 
-		it( 'standalone title is "New post"', () => {
+		it( 'quote title is "Quote post" with no handle', () => {
+			const t = getTranslate();
+			expect( mastodonComposerConfig.copy.title( quoteMode, t ) ).toBe( 'Quote post' );
+		} );
+
+		it( 'standalone title is "New post" with no handle', () => {
 			const t = getTranslate();
 			expect( mastodonComposerConfig.copy.title( standaloneMode, t ) ).toBe( 'New post' );
+		} );
+
+		it( 'appends "· @handle" to the title when a handle is supplied', () => {
+			const t = getTranslate();
+			expect(
+				mastodonComposerConfig.copy.title( standaloneMode, t, 'alice@mastodon.social' )
+			).toBe( 'New post · @alice@mastodon.social' );
+			expect( mastodonComposerConfig.copy.title( replyMode, t, 'alice@mastodon.social' ) ).toBe(
+				'Reply · @alice@mastodon.social'
+			);
+			expect( mastodonComposerConfig.copy.title( quoteMode, t, 'alice@mastodon.social' ) ).toBe(
+				'Quote post · @alice@mastodon.social'
+			);
 		} );
 
 		it( 'reply placeholder mentions the handle', () => {
 			const t = getTranslate();
 			const placeholder = mastodonComposerConfig.copy.placeholder( replyMode, t, 'alice' );
 			expect( placeholder ).toContain( 'alice' );
+		} );
+	} );
+
+	describe( 'useMastodonAuthorHandle', () => {
+		function wrapperFor( client: QueryClient ) {
+			return function Wrapper( { children }: { children: React.ReactNode } ) {
+				return <QueryClientProvider client={ client }>{ children }</QueryClientProvider>;
+			};
+		}
+
+		const baseConnection = {
+			id: 42,
+			handle: '@alice@mastodon.social',
+			instance: 'mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+		};
+
+		it( 'returns null when connectionId is null (skips the query)', () => {
+			const client = new QueryClient();
+			const { result } = renderHook( () => useMastodonAuthorHandle( null ), {
+				wrapper: wrapperFor( client ),
+			} );
+			expect( result.current ).toBeNull();
+		} );
+
+		it( 'returns the normalized handle for the matching connection', () => {
+			const client = new QueryClient();
+			client.setQueryData( readerMastodonKeys.connections(), { connections: [ baseConnection ] } );
+			const { result } = renderHook( () => useMastodonAuthorHandle( 42 ), {
+				wrapper: wrapperFor( client ),
+			} );
+			// `normalizeHandle` strips leading `@`s so the modal's `@%(handle)s`
+			// template doesn't double up.
+			expect( result.current ).toBe( 'alice@mastodon.social' );
+		} );
+
+		it( 'returns null when no connection matches the connectionId', () => {
+			const client = new QueryClient();
+			client.setQueryData( readerMastodonKeys.connections(), { connections: [ baseConnection ] } );
+			const { result } = renderHook( () => useMastodonAuthorHandle( 999 ), {
+				wrapper: wrapperFor( client ),
+			} );
+			expect( result.current ).toBeNull();
+		} );
+
+		it( 'returns null when the matching connection has no handle', () => {
+			const client = new QueryClient();
+			client.setQueryData( readerMastodonKeys.connections(), {
+				connections: [ { ...baseConnection, handle: '' } ],
+			} );
+			const { result } = renderHook( () => useMastodonAuthorHandle( 42 ), {
+				wrapper: wrapperFor( client ),
+			} );
+			expect( result.current ).toBeNull();
 		} );
 	} );
 } );

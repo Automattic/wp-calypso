@@ -60,7 +60,9 @@ export function applyLayoutDelta(
 	const byId = new Map< ItemId, AdminMenuItem >();
 	for ( const item of menu ) {
 		const itemId =
-			item && typeof ( item as AdminMenuItem & { itemId?: unknown } ).itemId === 'string'
+			item &&
+			item.reassignable === true &&
+			typeof ( item as AdminMenuItem & { itemId?: unknown } ).itemId === 'string'
 				? ( ( item as AdminMenuItem & { itemId: string } ).itemId as ItemId )
 				: null;
 		if ( itemId ) {

@@ -1,10 +1,6 @@
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and
@@ -17,44 +13,43 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
  * @returns {Object} wrapped component that hands down feed/site to its child
  */
 const connectSite = ( Component ) => {
-	class connectSiteFetcher extends PureComponent {
-		static propTypes = {
-			feed: PropTypes.object,
-			site: PropTypes.object,
-		};
+	const ConnectSiteFetcher = ( props ) => {
+		const { site: initialSite } = useSite( props.siteId );
+		const siteFromPropsOrQuery = props.site ?? initialSite;
+		const feedIdFromSite = siteFromPropsOrQuery?.feed_ID;
+		const queryFeedId = props.feedId ?? feedIdFromSite;
+		const { data: fetchedFeed, isLoading, isError, error } = useFeedQuery( queryFeedId );
+		const feed = props.feed ?? fetchedFeed;
+		const siteId = props.siteId ?? ( feed && feed.blog_ID !== 0 ? feed.blog_ID : undefined );
+		const { site: fetchedSite } = useSite( siteId );
+		const site = props.site ?? fetchedSite;
+		const feedId = queryFeedId ?? site?.feed_ID;
 
-		render() {
-			return (
-				<>
-					{ !! this.props.feedId && <QueryReaderFeed feedId={ this.props.feedId } /> }
-					{ !! this.props.siteId && <QueryReaderSite siteId={ this.props.siteId } /> }
-					<Component { ...this.props } />
-				</>
-			);
-		}
-	}
+		return (
+			<Component
+				{ ...props }
+				feed={ feed }
+				site={ site }
+				siteId={ siteId }
+				feedId={ feedId }
+				isFeedLoading={ isLoading }
+				isFeedError={ isError }
+				feedError={ error }
+			/>
+		);
+	};
 
-	return connect( ( state, ownProps ) => {
-		let { feedId, siteId } = ownProps;
-		let feed = feedId ? getFeed( state, feedId ) : undefined;
-		let site = siteId ? getSite( state, siteId ) : undefined;
+	ConnectSiteFetcher.propTypes = {
+		feed: PropTypes.object,
+		feedId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		site: PropTypes.object,
+		siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+	};
 
-		if ( feed && ! siteId ) {
-			siteId = feed.blog_ID !== 0 ? feed.blog_ID : undefined;
-			site = siteId ? getSite( state, feed.blog_ID ) : undefined;
-		}
-		if ( site && ! feedId ) {
-			feedId = site.feed_ID;
-			feed = feedId ? getFeed( state, site.feed_ID ) : undefined;
-		}
-
-		return {
-			feed,
-			site,
-			siteId,
-			feedId,
-		};
-	} )( connectSiteFetcher );
+	ConnectSiteFetcher.displayName = `connectSite(${
+		Component.displayName || Component.name || 'Component'
+	})`;
+	return ConnectSiteFetcher;
 };
 
 export default connectSite;

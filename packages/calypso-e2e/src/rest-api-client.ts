@@ -234,6 +234,11 @@ export class RestAPIClient {
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
 			blog_name: newSiteParams.name,
 			blog_title: newSiteParams.title,
+			...( newSiteParams.public !== undefined && { public: newSiteParams.public } ),
+			...( newSiteParams.find_available_url !== undefined && {
+				find_available_url: newSiteParams.find_available_url,
+			} ),
+			...( newSiteParams.options && { options: newSiteParams.options } ),
 		};
 
 		const params: RequestParams = {
@@ -941,7 +946,7 @@ export class RestAPIClient {
 					Authorization: await this.getAuthorizationHeader( 'bearer' ),
 					...data.getHeaders(),
 				},
-				body: data.getBuffer(),
+				body: Uint8Array.from( data.getBuffer() ),
 			};
 		}
 		if ( mediaURL ) {

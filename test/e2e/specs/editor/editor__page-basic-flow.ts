@@ -40,7 +40,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 	let editorPage: EditorPage;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
-	let pageTemplateToSelect: string;
 	let pageTemplateFirstTextContent: string;
 
 	beforeAll( async () => {
@@ -90,8 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 				.textContent() ) || '';
 
 		pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
-		pageTemplateToSelect = ( await selectedPatternLocator.getAttribute( 'aria-label' ) ) ?? '';
-		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
+		await editorPage.selectTemplate( selectedPatternLocator, { timeout: 15 * 1000 } );
 	} );
 
 	it( 'Template content loads into editor', async function () {

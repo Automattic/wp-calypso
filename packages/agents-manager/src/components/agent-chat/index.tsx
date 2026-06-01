@@ -15,6 +15,7 @@ import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -59,6 +60,11 @@ interface Props {
 	onExpand: () => void;
 	/** Called to clear the suggestions. */
 	clearSuggestions?: () => void;
+	/** Called when a suggestion is clicked. */
+	onSuggestionClick?: (
+		selectedSuggestion: Suggestion | string,
+		availableSuggestions?: Suggestion[]
+	) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -101,16 +107,22 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Read a string override from `window.agentsManagerData[key]`. Reader-chat
- * hosts can customize the empty-view greeting/help copy by setting these
- * keys before AgentsManager mounts.
+ * Read a string override from `window.agentsManagerData[key]`. Embedded
+ * hosts (reader-chat on blog frontends, Plugin Compass on Calypso's plugins
+ * marketplace) can customize the empty-view greeting/help copy by setting
+ * these keys before AgentsManager mounts.
  */
 function readAgentsManagerDataString(
 	key: 'emptyViewHeading' | 'emptyViewHelp'
 ): string | undefined {
-	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
+	if ( typeof window === 'undefined' ) {
 		return undefined;
 	}
+
+	if ( ! isReaderChatHost() && ! isPluginCompassHost() ) {
+		return undefined;
+	}
+
 	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 		.agentsManagerData;
 	const value = data?.[ key ];
@@ -161,6 +173,7 @@ export default function AgentChat( {
 	onClose,
 	onExpand,
 	clearSuggestions,
+	onSuggestionClick,
 	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -220,6 +233,7 @@ export default function AgentChat( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
+			onSuggestionClick={ onSuggestionClick }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
@@ -238,6 +252,7 @@ export default function AgentChat( {
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						onSuggestionClick={ onSuggestionClick }
 						icon={ <AI size={ 32 } /> }
 					/>
 				)

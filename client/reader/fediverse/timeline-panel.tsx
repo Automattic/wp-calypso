@@ -14,6 +14,7 @@ import {
 import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectFediverseError } from './error-projection';
+import { FEDIVERSE_REACTIONS } from './reactions-config';
 import { getProfileUrl, hostFromUrl } from './route';
 import type { FediverseConnection, FediverseFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
@@ -118,7 +119,13 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		// providers aren't mounted on this surface, so passing it would only
 		// trigger the static-cell fallback path. Re-introduce the prop when
 		// the Fediverse like / repost adapters land.
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
+		//
+		// `reactions` hides the Like / Repost / Reply affordances entirely
+		// while their write endpoints are still in flight (CM-771). Flip the
+		// matching key in `reactions-config.ts` as each slice ships.
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } variant="default" reactions={ FEDIVERSE_REACTIONS } />
+		),
 		[]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );

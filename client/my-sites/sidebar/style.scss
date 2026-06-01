@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/colors';
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
@@ -160,6 +161,11 @@ $font-size: rem(14px);
 
 	// client/layout/sidebar/style.scss
 	.sidebar {
+		--wp-admin-sidebar-group-label-fg: var(--wp-admin-theme-color, var(--color-accent, #2271b1));
+		--wp-admin-sidebar-customizer-theme: var(--wp-admin-theme-color, var(--color-accent, #2271b1));
+		--wp-admin-sidebar-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
 		position: relative;
 		background-color: var(--color-sidebar-background);
 		padding-bottom: 12px;

@@ -160,22 +160,22 @@ export default function CoreMetricsChart( {
 		const unit = getDisplayUnit( metric );
 		if ( valuation === 'good' ) {
 			return sprintf( '(0–%(to)s%(unit)s)', {
-				to: getFormattedValue( metric, good ),
+				to: String( getFormattedValue( metric, good ) ),
 				unit,
 			} );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
 			return sprintf( '(%(from)s–%(to)s%(unit)s)', {
-				from: getFormattedValue( metric, good ),
-				to: getFormattedValue( metric, needsImprovement ),
+				from: String( getFormattedValue( metric, good ) ),
+				to: String( getFormattedValue( metric, needsImprovement ) ),
 				unit,
 			} );
 		}
 
 		if ( valuation === 'bad' ) {
 			return sprintf( '(Over %(from)s%(unit)s)', {
-				from: getFormattedValue( metric, needsImprovement ),
+				from: String( getFormattedValue( metric, needsImprovement ) ),
 				unit,
 			} );
 		}

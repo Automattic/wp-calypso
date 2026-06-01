@@ -4,10 +4,10 @@
  * Calypso-side mirror of the public plugin's `move-menu.js`
  * (`WordPress/wp-admin-sidebar` v0.1.6 `src/customizer/move-menu.js`).
  *
- * Renders a popup with "Move up / Move down / Reset to default" (and, when
- * the layout has multiple destinations, "Move to <group>" / "Move to top
- * level") for the row whose 3-dot trigger was clicked. Commits via the
- * customize controller; the working delta is the source of truth.
+ * Renders a popup with "Move up / Move down / Move to top level" (when the
+ * row is inside a group) and "Reset to default" for the row whose 3-dot
+ * trigger was clicked. Commits via the customize controller; the working
+ * delta is the source of truth.
  *
  * Identical-behaviour anchors:
  * - Position relative to trigger with flip + clamp into viewport (plugin
@@ -21,6 +21,7 @@
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { layoutIndexOf, layoutRowsForContainer } from './dom-layout';
 import { useCustomizeContext } from './index';
 import type { LayoutPosition } from 'calypso/state/admin-sidebar/layout/types';
 
@@ -28,7 +29,7 @@ interface MoveMenuProps {
 	itemId: string;
 	itemLabel: string;
 	triggerEl: HTMLElement | null;
-	onClose: () => void;
+	onClose: ( options?: { blurTrigger?: boolean } ) => void;
 }
 
 interface MenuChoice {
@@ -40,7 +41,7 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 	const customizeCtx = useCustomizeContext();
 	const menuRef = useRef< HTMLUListElement >( null );
 	const [ position, setPosition ] = useState< { top: number; left: number } | null >( null );
-	const destinations = getMoveDestinations( itemId );
+	const isInGroup = getMoveDestinations( itemId ).isInGroup;
 
 	// Compute one-step move directions from the rendered DOM so the menu
 	// crosses group / top-level boundaries naturally (matches plugin's
@@ -59,20 +60,24 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 				return;
 			}
 			const target = rows[ targetIdx ];
+			const previousPosition = positionForElement( li );
 			const nextPosition = positionForMoveTarget( li, target, direction );
 			if ( ! nextPosition ) {
 				return;
 			}
-			customizeCtx.commitMove( itemId, nextPosition );
-			customizeCtx.announce(
-				translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
-					args: {
-						label: itemLabel,
-						index: targetIdx + 1,
-						total: rows.length,
-					},
-				} ) as string
-			);
+			if (
+				customizeCtx.commitMove( itemId, nextPosition, { previousPosition, label: itemLabel } )
+			) {
+				customizeCtx.announce(
+					translate( 'Moved %(label)s to position %(index)d of %(total)d.', {
+						args: {
+							label: itemLabel,
+							index: targetIdx + 1,
+							total: rows.length,
+						},
+					} ) as string
+				);
+			}
 		},
 		[ itemId, itemLabel, customizeCtx ]
 	);
@@ -81,58 +86,51 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		if ( ! customizeCtx ) {
 			return;
 		}
-		customizeCtx.resetItem( itemId );
-		customizeCtx.announce(
-			translate( 'Reset %(label)s to default position.', {
-				args: { label: itemLabel },
-			} ) as string
-		);
-	}, [ itemId, itemLabel, customizeCtx ] );
-
-	const moveToGroup = useCallback(
-		( groupId: string, groupLabel: string ) => {
-			if ( ! customizeCtx ) {
-				return;
-			}
-			customizeCtx.commitMove( itemId, {
-				kind: 'in_group',
-				group_id: groupId,
-				index: 0,
-			} );
+		const li = document.querySelector( itemSelector( itemId ) ) as HTMLLIElement | null;
+		const previousPosition = li ? positionForElement( li ) : undefined;
+		if ( customizeCtx.resetItem( itemId, { previousPosition, label: itemLabel } ) ) {
 			customizeCtx.announce(
-				translate( 'Moved %(label)s to %(destination)s.', {
-					args: {
-						label: itemLabel,
-						destination: groupLabel,
-					},
+				translate( 'Reset %(label)s to default position.', {
+					args: { label: itemLabel },
 				} ) as string
 			);
-		},
-		[ itemId, itemLabel, customizeCtx ]
-	);
+		} else {
+			customizeCtx.announce(
+				translate( '%(label)s is already at the default position.', {
+					args: { label: itemLabel },
+				} ) as string
+			);
+		}
+	}, [ itemId, itemLabel, customizeCtx ] );
 
 	const moveToTopLevel = useCallback( () => {
 		if ( ! customizeCtx ) {
 			return;
 		}
-		customizeCtx.commitMove( itemId, { kind: 'top_level', index: 0 } );
-		customizeCtx.announce(
-			translate( 'Moved %(label)s to top level.', {
-				args: { label: itemLabel },
-			} ) as string
-		);
+		const li = document.querySelector( itemSelector( itemId ) ) as HTMLLIElement | null;
+		const previousPosition = li ? positionForElement( li ) : undefined;
+		if (
+			customizeCtx.commitMove(
+				itemId,
+				{ kind: 'top_level', index: 0 },
+				{
+					previousPosition,
+					label: itemLabel,
+				}
+			)
+		) {
+			customizeCtx.announce(
+				translate( 'Moved %(label)s to top level.', {
+					args: { label: itemLabel },
+				} ) as string
+			);
+		}
 	}, [ itemId, itemLabel, customizeCtx ] );
 
 	const choices: MenuChoice[] = [
 		{ label: translate( 'Move up' ) as string, action: () => moveByDirection( -1 ) },
 		{ label: translate( 'Move down' ) as string, action: () => moveByDirection( 1 ) },
-		...destinations.groups.map( ( group ) => ( {
-			label: translate( 'Move to %(destination)s', {
-				args: { destination: group.label },
-			} ) as string,
-			action: () => moveToGroup( group.id, group.label ),
-		} ) ),
-		...( destinations.isInGroup
+		...( isInGroup
 			? [ { label: translate( 'Move to top level' ) as string, action: moveToTopLevel } ]
 			: [] ),
 		{ label: translate( 'Reset to default' ) as string, action: resetToDefault },
@@ -173,6 +171,19 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 
 	// Close on click-outside, scroll, resize, ESC.
 	useEffect( () => {
+		const handlePointerDown = ( ev: PointerEvent ) => {
+			const target = ev.target instanceof Element ? ev.target : null;
+			if ( ! target ) {
+				return;
+			}
+			if ( menuRef.current?.contains( target ) ) {
+				return;
+			}
+			if ( triggerEl?.contains( target ) ) {
+				return;
+			}
+			onClose( { blurTrigger: true } );
+		};
 		const handleClickAway = ( ev: MouseEvent ) => {
 			const target = ev.target instanceof Element ? ev.target : null;
 			if ( ! target ) {
@@ -184,10 +195,12 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 			if ( triggerEl?.contains( target ) ) {
 				return;
 			}
-			onClose();
+			onClose( { blurTrigger: true } );
 		};
 		const handleKey = ( ev: KeyboardEvent ) => {
 			if ( ev.key === 'Escape' ) {
+				ev.preventDefault();
+				ev.stopPropagation();
 				onClose();
 				triggerEl?.focus();
 			}
@@ -197,11 +210,13 @@ export const MoveMenu = ( { itemId, itemLabel, triggerEl, onClose }: MoveMenuPro
 		const timer = window.setTimeout( () => {
 			document.addEventListener( 'click', handleClickAway, true );
 		}, 0 );
+		document.addEventListener( 'pointerdown', handlePointerDown, true );
 		document.addEventListener( 'keydown', handleKey );
 		window.addEventListener( 'scroll', handleScrollResize, { passive: true } );
 		window.addEventListener( 'resize', handleScrollResize, { passive: true } );
 		return () => {
 			window.clearTimeout( timer );
+			document.removeEventListener( 'pointerdown', handlePointerDown, true );
 			document.removeEventListener( 'click', handleClickAway, true );
 			document.removeEventListener( 'keydown', handleKey );
 			window.removeEventListener( 'scroll', handleScrollResize );
@@ -259,46 +274,31 @@ function itemSelector( itemId: string ): string {
 	return `li[data-wp-admin-sidebar-item-id="${ escapeSelectorValue( itemId ) }"]`;
 }
 
-interface GroupDestination {
-	id: string;
-	label: string;
+function positionForElement( li: HTMLElement ): LayoutPosition {
+	const container = li.parentElement;
+	const groupContainer = container?.closest( 'li.wp-admin-sidebar-group' ) ?? null;
+	const index = container ? Math.max( 0, layoutIndexOf( container, li ) ) : 0;
+	if ( groupContainer ) {
+		return {
+			kind: 'in_group',
+			group_id: groupContainer.getAttribute( 'data-group' ) || '',
+			index,
+		};
+	}
+	return { kind: 'top_level', index };
 }
 
 function getMoveDestinations( itemId: string ): {
-	groups: GroupDestination[];
 	isInGroup: boolean;
 } {
 	if ( typeof document === 'undefined' ) {
-		return { groups: [], isInGroup: false };
+		return { isInGroup: false };
 	}
 	const li = document.querySelector( itemSelector( itemId ) ) as HTMLElement | null;
-	const sidebar =
-		( li?.closest( 'ul.sidebar' ) as HTMLElement | null ) ||
-		( document.querySelector( 'ul.sidebar' ) as HTMLElement | null );
 	const currentGroupId = li
 		? li.parentElement?.closest( 'li.wp-admin-sidebar-group' )?.getAttribute( 'data-group' ) ?? null
 		: null;
-	if ( ! sidebar ) {
-		return { groups: [], isInGroup: currentGroupId !== null };
-	}
-	const groups = Array.from(
-		sidebar.querySelectorAll( ':scope > li.wp-admin-sidebar-group[data-group]' )
-	)
-		.map( ( groupEl ) => {
-			const id = groupEl.getAttribute( 'data-group' );
-			if ( ! id || id === currentGroupId ) {
-				return null;
-			}
-			const label =
-				groupEl
-					.querySelector(
-						':scope > .wp-admin-sidebar-group__header .wp-admin-sidebar-group__label'
-					)
-					?.textContent?.trim() || id;
-			return { id, label };
-		} )
-		.filter( ( group ): group is GroupDestination => group !== null );
-	return { groups, isInGroup: currentGroupId !== null };
+	return { isInGroup: currentGroupId !== null };
 }
 
 function positionForMoveTarget(
@@ -320,7 +320,7 @@ function positionForMoveTarget(
 		}
 		return {
 			kind: 'top_level',
-			index: Array.prototype.indexOf.call( parent.children, target ),
+			index: layoutRowsForContainer( parent ).length,
 		};
 	}
 
@@ -328,10 +328,13 @@ function positionForMoveTarget(
 	if ( ! container ) {
 		return null;
 	}
-	const targetIndex = Array.prototype.indexOf.call( container.children, target );
+	const targetIndex = layoutIndexOf( container, target );
+	if ( targetIndex === -1 ) {
+		return null;
+	}
 	let slot = direction > 0 ? targetIndex + 1 : targetIndex;
 	if ( source.parentElement === container ) {
-		const sourceIndex = Array.prototype.indexOf.call( container.children, source );
+		const sourceIndex = layoutIndexOf( container, source );
 		if ( sourceIndex !== -1 && sourceIndex < slot ) {
 			slot -= 1;
 		}
@@ -366,6 +369,13 @@ function collectRows( source?: HTMLElement ): HTMLLIElement[] {
 	const walkChildren = ( parent: Element ) => {
 		for ( const child of Array.from( parent.children ) ) {
 			if ( child.tagName !== 'LI' ) {
+				continue;
+			}
+			if (
+				child.classList.contains( 'admin-sidebar-drop-indicator' ) ||
+				child.classList.contains( 'sidebar__region' ) ||
+				child.classList.contains( 'collapse-sidebar__toggle' )
+			) {
 				continue;
 			}
 			rows.push( child as HTMLLIElement );

@@ -143,7 +143,7 @@ export default function PurchasesList() {
 						fields={ purchasesDataFields }
 						view={ view }
 						onChangeView={ updateView }
-						onResetView={ resetView }
+						onReset={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }
 						getItemId={ getItemId }

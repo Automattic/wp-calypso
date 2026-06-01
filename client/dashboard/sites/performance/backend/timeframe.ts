@@ -1,10 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
-import type { ApmAggregateParams } from '@automattic/api-core';
 
 export type Timeframe = 'last-15-min' | 'last-hour' | 'last-6-hours' | 'last-24-hours';
 
-const TIMEFRAME_SECONDS: Record< Timeframe, number > = {
+export const TIMEFRAME_SECONDS: Record< Timeframe, number > = {
 	'last-15-min': 15 * 60,
 	'last-hour': 60 * 60,
 	'last-6-hours': 6 * 60 * 60,
@@ -19,6 +18,21 @@ export const TIMEFRAME_OPTIONS: Array< { value: Timeframe; label: string } > = [
 	{ value: 'last-6-hours', label: __( 'Last 6 hours' ) },
 	{ value: 'last-24-hours', label: __( 'Last 24 hours' ) },
 ];
+
+// Lower-case timeframe labels for use mid-sentence (e.g. "No data in the last hour").
+// Translated separately so locales that handle casing differently can override.
+export function getLowercaseTimeframeLabel( timeframe: Timeframe ): string {
+	switch ( timeframe ) {
+		case 'last-15-min':
+			return __( 'last 15 minutes' );
+		case 'last-hour':
+			return __( 'last hour' );
+		case 'last-6-hours':
+			return __( 'last 6 hours' );
+		case 'last-24-hours':
+			return __( 'last 24 hours' );
+	}
+}
 
 const TIMEFRAME_STORAGE_KEY = 'dashboard-apm-backend-timeframe';
 
@@ -57,22 +71,6 @@ function writeStoredTimeframe( timeframe: Timeframe ): void {
 	} catch {
 		// Ignore — quota exceeded or storage disabled.
 	}
-}
-
-/**
- * Convert a Timeframe preset into Unix-seconds start/end params for the
- * aggregate endpoint. Presets always end at the current time ("rolling
- * window"). The end is snapped down to the nearest minute so adjacent
- * calls within the same minute return identical params, sharing the
- * React Query cache instead of triggering a fresh fetch per render.
- * The aggregate data is per-minute anyway, so the snap matches the
- * natural granularity of the response.
- */
-export function timeframeToParams( timeframe: Timeframe ): Required< ApmAggregateParams > {
-	const nowSec = Math.floor( Date.now() / 1000 );
-	const end = nowSec - ( nowSec % 60 );
-	const start = end - TIMEFRAME_SECONDS[ timeframe ];
-	return { start, end };
 }
 
 // Whether the timeframe's end is "now" (a rolling window) vs. a fixed

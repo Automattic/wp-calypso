@@ -1072,13 +1072,15 @@ export class JetpackAuthorize extends Component {
 
 			// Non-admin secondary connections show no cards — SSO is the
 			// sole benefit and the subtitle already communicates it.
-			const cards =
-				isSecondary && ! isAdmin
-					? []
-					: ( isSecondary
-							? getSecondaryAdminFeatureCards( authQuery.plugins )
-							: getConnectorFeatureCards( authQuery.plugins )
-					  ).cards;
+			let featureCardsResult;
+			if ( isSecondary && ! isAdmin ) {
+				featureCardsResult = { cards: [], heroFirstCard: false };
+			} else if ( isSecondary ) {
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins );
+			} else {
+				featureCardsResult = getConnectorFeatureCards( authQuery.plugins );
+			}
+			const { cards, heroFirstCard } = featureCardsResult;
 
 			return (
 				<>
@@ -1092,7 +1094,9 @@ export class JetpackAuthorize extends Component {
 					/>
 					{ this.renderUseDifferentAccountLink() }
 
-					{ cards.length > 0 && <FeaturesSection cards={ cards } /> }
+					{ cards.length > 0 && (
+						<FeaturesSection cards={ cards } heroFirstCard={ heroFirstCard } />
+					) }
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>

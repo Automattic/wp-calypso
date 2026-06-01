@@ -17,6 +17,7 @@ import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-age
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -108,6 +109,10 @@ export default function AgentDock( {
 	// don't apply and avoid persisting open/close state through the logged-in
 	// Agents Manager REST state endpoint.
 	const isReaderChat = isReaderChatAgent( agentId );
+	const showChatHistory =
+		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
+	const showSupportGuides =
+		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
 		[ isReaderChat, setIsOpen ]
@@ -129,7 +134,11 @@ export default function AgentDock( {
 		sectionName,
 		maybeOpenChat: () => {
 			if ( ! isPersistedOpen ) {
-				isDocked ? openSidebar() : setOpenState( true );
+				if ( isDocked ) {
+					openSidebar();
+				} else {
+					setOpenState( true );
+				}
 			}
 		},
 		navigate,
@@ -146,23 +155,6 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	// Reflect split-screen state on the sidebar container element. The
-	// container class is added by `useAgentLayoutManager` when docked; we
-	// only toggle the extra `is-split-screen` modifier on it so the CSS
-	// override in `agent-dock/style.scss` (`--am-sidebar-width: 50vw`)
-	// wins at runtime. No-op if the sidebar isn't mounted (floating or
-	// closed), and auto-clears on unmount to avoid leaking the class.
-	useEffect( () => {
-		const container = document.querySelector( '.agents-manager-sidebar-container' );
-		if ( ! container ) {
-			return;
-		}
-		container.classList.toggle( 'is-split-screen', !! isSplitScreen );
-		return () => {
-			container.classList.remove( 'is-split-screen' );
-		};
-	}, [ isSplitScreen, isDocked, isPersistedOpen ] );
-
 	const handleAbort = useCallback( () => {
 		const agentManager = getAgentManager();
 
@@ -171,7 +163,10 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
-	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat;
+	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
+	// so Zendesk escalation is disabled until routing is in place.
+	const isWooAiAdmin = sectionName === 'wooai-admin';
+	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
 
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
@@ -257,8 +252,7 @@ export default function AgentDock( {
 					navigate( '/zendesk' );
 				},
 			},
-			// TODO: For testing. Remove before release.
-			! isReaderChat && {
+			showSupportGuides && {
 				icon: help,
 				title: __( 'Support guides', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/support-guides',
@@ -274,9 +268,6 @@ export default function AgentDock( {
 					onClick: () => {
 						undock();
 						setIsDocked( false );
-						// Split screen only makes sense while docked; clear the
-						// flag so the option returns cleanly when re-docked.
-						setIsSplitScreen( false );
 					},
 				},
 			! isReaderChat &&
@@ -378,10 +369,10 @@ export default function AgentDock( {
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
 				<Route path="/chat" element={ OrchestratorChatRoute } />
-				{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
+				{ showSupportGuides && <Route path="/post" element={ SupportGuideRoute } /> }
 				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
-				{ ! isReaderChat && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
-				{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
+				{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+				{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
 		)

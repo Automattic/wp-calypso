@@ -1,4 +1,4 @@
-import { getFeatureCardData } from '../family-features';
+import { getFeatureCardData, getSecondaryFeatureCardData } from '../family-features';
 import type { FeatureCardKey } from '../family-features';
 
 const ALL_KEYS: FeatureCardKey[] = [
@@ -37,5 +37,25 @@ describe( 'getFeatureCardData', () => {
 		expect( getFeatureCardData( 'jetpack-social' ).title ).toBe( 'Jetpack Social' );
 		expect( getFeatureCardData( 'jetpack-videopress' ).title ).toBe( 'Jetpack VideoPress' );
 		expect( getFeatureCardData( 'other' ).title ).toBe( 'Your active plugins' );
+	} );
+} );
+
+describe( 'getSecondaryFeatureCardData', () => {
+	test( 'returns exactly one bullet for every card key', () => {
+		// Secondary cards are single-bullet by design — SSO is intentionally
+		// dropped (only the full Jetpack plugin ships it) so the row scans
+		// uniformly regardless of which families are present.
+		for ( const key of ALL_KEYS ) {
+			const data = getSecondaryFeatureCardData( key );
+			expect( data.bullets ).toHaveLength( 1 );
+			expect( data.bullets[ 0 ].length ).toBeGreaterThan( 0 );
+		}
+	} );
+
+	test( 'never surfaces SSO in any bullet', () => {
+		for ( const key of ALL_KEYS ) {
+			const data = getSecondaryFeatureCardData( key );
+			expect( data.bullets.join( ' ' ) ).not.toContain( 'SSO' );
+		}
 	} );
 } );

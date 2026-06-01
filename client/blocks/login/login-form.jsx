@@ -4,6 +4,7 @@ import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/comp
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
@@ -19,7 +20,6 @@ import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import Notice from 'calypso/dashboard/components/notice';
 import {
 	getSignupUrl,
@@ -136,6 +136,14 @@ export class LoginForm extends Component {
 			url.searchParams.delete( 'username_only' );
 			window.history.replaceState( {}, document.title, url );
 		}
+
+		// Impression event for the password login method. Fires on every mount
+		// (not only when last-used=password) so we record an impression for
+		// the password method whenever the login form renders, with
+		// `badge_view` reflecting whether the "Last used" pill is shown. The
+		// social-button variant fires its own impression from
+		// <LoginMethodImpression> in social.jsx for each method shown.
+		this.recordPasswordMethodImpression();
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -143,6 +151,17 @@ export class LoginForm extends Component {
 
 		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
 			handleUsernameChange( this.state.usernameOrEmail );
+		}
+
+		// Re-fire the password impression with badge_view=true when the
+		// "Last used" pill appears mid-session (e.g. social-link flow flips
+		// lastUsedAuthenticationMethod to 'password').
+		const wasPasswordBadge =
+			this.props.isSocialFirst && prevState.lastUsedAuthenticationMethod === 'password';
+		const isPasswordBadge =
+			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
+		if ( isPasswordBadge && ! wasPasswordBadge ) {
+			this.recordPasswordMethodImpression();
 		}
 
 		if ( prevProps.requestError || ! requestError ) {
@@ -272,9 +291,31 @@ export class LoginForm extends Component {
 		this.props.resetAuthAccountType();
 	};
 
+	recordPasswordMethodImpression() {
+		const isLastUsedPassword =
+			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
+
+		this.props.recordTracksEvent( 'calypso_login_method_impression', {
+			path: this.props.currentRoute,
+			from: this.props.currentQuery?.from,
+			method: 'password',
+			badge_view: isLastUsedPassword,
+		} );
+	}
+
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo, domain } = this.props;
+
+		const isLastUsedPassword =
+			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
+
+		this.props.recordTracksEvent( 'calypso_login_method_click', {
+			path: this.props.currentRoute,
+			from: this.props.currentQuery?.from,
+			method: 'password',
+			badge_view: isLastUsedPassword,
+		} );
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 		this.props
@@ -602,8 +643,19 @@ export class LoginForm extends Component {
 	trackLoginAndRememberRedirect = ( event, isLastUsedAuthenticationMethod = false ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
 
+		// Legacy click event. Kept firing as the funnel #61428 bridge: it
+		// carries the only signal the pre-badge UI also recorded, so it's the
+		// before/after comparison anchor for social methods.
 		this.recordSocialLoginEvent( 'calypso_login_social_button_click', service, {
 			is_last_used_authentication_method: isLastUsedAuthenticationMethod,
+		} );
+
+		// Standardized click event used across every login method.
+		this.props.recordTracksEvent( 'calypso_login_method_click', {
+			path: this.props.currentRoute,
+			from: this.props.currentQuery?.from,
+			method: service,
+			badge_view: isLastUsedAuthenticationMethod,
 		} );
 
 		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
@@ -619,6 +671,11 @@ export class LoginForm extends Component {
 
 	getLastUsedAuthenticationMethod() {
 		if ( typeof document !== 'undefined' && this.props.currentQuery?.username_only !== 'true' ) {
+			// Dev-only override: ?last_used=<method> for testing where the
+			// cookie can't be set naturally (e.g. Calypso Live, OAuth fails).
+			if ( config( 'env_id' ) !== 'production' && this.props.currentQuery?.last_used ) {
+				return this.props.currentQuery.last_used;
+			}
 			const cookies = cookie.parse( document.cookie );
 			return cookies.last_used_authentication_method ?? '';
 		}
@@ -636,33 +693,21 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isWoo,
 			isSendingEmail,
-			isSocialFirst,
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
+			isSocialFirst,
 		} = this.props;
-		const { lastUsedAuthenticationMethod } = this.state;
+
+		const isLastUsedPassword =
+			isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
 		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxSubmitBlocked;
-		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
-
-		if ( lastUsedAuthenticationMethod === 'qr-code' ) {
-			loginUrl = this.getQrLoginLink();
-		} else if ( lastUsedAuthenticationMethod === 'magic-login' ) {
-			loginUrl = this.getMagicLoginPageLink();
-		}
-
-		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod !== 'password' &&
-			lastUsedAuthenticationMethod !== 'magic-login' &&
-			isSocialFirst &&
-			! linkingSocialUser;
 
 		const signUpUrlWithEmail = addQueryArgs(
 			{
@@ -718,158 +763,152 @@ export class LoginForm extends Component {
 
 		return (
 			<Card className="login__form">
-				{ showLastUsedAuthenticationMethod ? (
-					<>
-						<span className="last-used-authentication-method">
-							{ this.props.translate( 'Previously used' ) }
-						</span>
-						<LastUsedSocialButton
-							lastUsedAuthenticationMethod={ this.state.lastUsedAuthenticationMethod }
-							handleLogin={ this.handleSocialLogin }
-							loginUrl={ loginUrl }
-							onClick={ ( event ) => this.trackLoginAndRememberRedirect( event, true ) }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					</>
-				) : (
-					<>
-						{ isWoo && <ErrorNotice /> }
+				{ isWoo && <ErrorNotice /> }
 
-						<div className="login__form-userdata">
-							{ linkingSocialUser && renderSocialLinkingNotice() }
+				<div className="login__form-userdata">
+					{ linkingSocialUser && renderSocialLinkingNotice() }
 
-							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
-								{ this.renderUsernameorEmailLabel() }
-							</FormLabel>
+					<FormLabel
+						htmlFor="usernameOrEmail"
+						hasCoreStylesNoCaps
+						className={ clsx( {
+							'has-last-used-badge': isLastUsedPassword,
+						} ) }
+					>
+						{ this.renderUsernameorEmailLabel() }
+						{ isLastUsedPassword && (
+							<Badge intent="informational" className="login__form-last-used-badge">
+								{ this.props.translate( 'Last used' ) }
+							</Badge>
+						) }
+					</FormLabel>
 
-							<FormTextInput
-								autoCapitalize="off"
-								autoCorrect="off"
-								spellCheck="false"
-								autoComplete="username"
-								className={ clsx( {
-									'is-error': requestError && requestError.field === 'usernameOrEmail',
-								} ) }
-								onChange={ this.onChangeUsernameOrEmailField }
-								id="usernameOrEmail"
-								name="usernameOrEmail"
-								ref={ this.saveUsernameOrEmailRef }
-								value={ this.state.usernameOrEmail }
-								disabled={ isEmailOrUsernameInputDisabled }
-								hasCoreStyles
-							/>
+					<FormTextInput
+						autoCapitalize="off"
+						autoCorrect="off"
+						spellCheck="false"
+						autoComplete="username"
+						className={ clsx( {
+							'is-error': requestError && requestError.field === 'usernameOrEmail',
+						} ) }
+						onChange={ this.onChangeUsernameOrEmailField }
+						id="usernameOrEmail"
+						name="usernameOrEmail"
+						ref={ this.saveUsernameOrEmailRef }
+						value={ this.state.usernameOrEmail }
+						disabled={ isEmailOrUsernameInputDisabled }
+						hasCoreStyles
+					/>
 
-							{ requestError && requestError.field === 'usernameOrEmail' && (
-								<FormInputValidation isError text={ requestError.message }>
-									{ requestError.code === 'unknown_user' &&
-										this.props.translate(
-											' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-											{
-												components: {
-													newAccountLink: (
-														<a
-															onClick={ ( e ) => {
-																e.preventDefault();
-																window.location.href = signUpUrlWithEmail;
-															} }
-															href={ signUpUrlWithEmail }
-														/>
-													),
-												},
-											}
-										) }
-								</FormInputValidation>
-							) }
-
-							{ ! requestError && this.state.emailSuggestionError && (
-								<FormInputValidation
-									isError
-									text={ this.props.translate(
-										'User does not exist. Did you mean {{suggestedEmail/}}, or would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-										{
-											components: {
-												newAccountLink: (
-													<a
-														href={ addQueryArgs(
-															{
-																user_email: this.state.usernameOrEmail,
-															},
-															signupUrl
-														) }
-													/>
-												),
-												suggestedEmail: (
-													<span
-														className="login__form-suggested-email"
-														onKeyDown={ ( e ) => {
-															if ( e.key === 'Enter' ) {
-																this.handleAcceptEmailSuggestion();
-															}
-														} }
-														onClick={ () => {
-															this.handleAcceptEmailSuggestion();
-														} }
-														role="button"
-														tabIndex="0"
-													>
-														{ this.state.emailSuggestion }
-													</span>
-												),
-											},
-										}
-									) }
-								/>
-							) }
-
-							<div
-								className={ clsx( 'login__form-password', {
-									'is-hidden': isPasswordHidden,
-								} ) }
-								aria-hidden={ isPasswordHidden }
-							>
-								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
-									{ this.props.translate( 'Password' ) }
-								</FormLabel>
-
-								<FormPasswordInput
-									autoCapitalize="off"
-									autoComplete="current-password"
-									className={ clsx( {
-										'is-error': requestError && requestError.field === 'password',
-									} ) }
-									onChange={ this.onChangeField }
-									id="password"
-									name="password"
-									ref={ this.savePasswordRef }
-									value={ this.state.password }
-									disabled={ isFormDisabled }
-									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
-									hasCoreStyles
-									isHidden={ isPasswordHidden }
-								/>
-
-								{ requestError && requestError.field === 'password' && (
-									<FormInputValidation isError text={ this.renderPasswordValidationError() } />
+					{ requestError && requestError.field === 'usernameOrEmail' && (
+						<FormInputValidation isError text={ requestError.message }>
+							{ requestError.code === 'unknown_user' &&
+								this.props.translate(
+									' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+									{
+										components: {
+											newAccountLink: (
+												<a
+													onClick={ ( e ) => {
+														e.preventDefault();
+														window.location.href = signUpUrlWithEmail;
+													} }
+													href={ signUpUrlWithEmail }
+												/>
+											),
+										},
+									}
 								) }
-							</div>
-						</div>
+						</FormInputValidation>
+					) }
 
-						{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
+					{ ! requestError && this.state.emailSuggestionError && (
+						<FormInputValidation
+							isError
+							text={ this.props.translate(
+								'User does not exist. Did you mean {{suggestedEmail/}}, or would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+								{
+									components: {
+										newAccountLink: (
+											<a
+												href={ addQueryArgs(
+													{
+														user_email: this.state.usernameOrEmail,
+													},
+													signupUrl
+												) }
+											/>
+										),
+										suggestedEmail: (
+											<span
+												className="login__form-suggested-email"
+												onKeyDown={ ( e ) => {
+													if ( e.key === 'Enter' ) {
+														this.handleAcceptEmailSuggestion();
+													}
+												} }
+												onClick={ () => {
+													this.handleAcceptEmailSuggestion();
+												} }
+												role="button"
+												tabIndex="0"
+											>
+												{ this.state.emailSuggestion }
+											</span>
+										),
+									},
+								}
+							) }
+						/>
+					) }
 
-						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+					<div
+						className={ clsx( 'login__form-password', {
+							'is-hidden': isPasswordHidden,
+						} ) }
+						aria-hidden={ isPasswordHidden }
+					>
+						<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+							{ this.props.translate( 'Password' ) }
+						</FormLabel>
 
-						<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
+						<FormPasswordInput
+							autoCapitalize="off"
+							autoComplete="current-password"
+							className={ clsx( {
+								'is-error': requestError && requestError.field === 'password',
+							} ) }
+							onChange={ this.onChangeField }
+							id="password"
+							name="password"
+							ref={ this.savePasswordRef }
+							value={ this.state.password }
+							disabled={ isFormDisabled }
+							tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+							hasCoreStyles
+							isHidden={ isPasswordHidden }
+						/>
 
-						<div className="login__form-action">
-							<LoginSubmitButton
-								isWoo={ isWoo }
-								isSendingEmail={ isSendingEmail }
-								isDisabled={ isSubmitButtonDisabled }
-								buttonText={ this.getLoginButtonText() }
-							/>
-						</div>
-					</>
-				) }
+						{ requestError && requestError.field === 'password' && (
+							<FormInputValidation isError text={ this.renderPasswordValidationError() } />
+						) }
+					</div>
+				</div>
+
+				{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
+
+				{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
+				<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
+
+				<div className="login__form-action">
+					<LoginSubmitButton
+						isWoo={ isWoo }
+						isSendingEmail={ isSendingEmail }
+						isDisabled={ isSubmitButtonDisabled }
+						buttonText={ this.getLoginButtonText() }
+					/>
+				</div>
 			</Card>
 		);
 	}
@@ -892,11 +931,7 @@ export class LoginForm extends Component {
 			oauth2Client
 		);
 
-		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod !== 'password' &&
-			lastUsedAuthenticationMethod !== 'magic-login' &&
-			isSocialFirst;
+		const showLastUsedAuthenticationMethod = lastUsedAuthenticationMethod && isSocialFirst;
 
 		const shouldShowSocialLoginForm =
 			config.isEnabled( 'signup/social' ) &&
@@ -924,6 +959,10 @@ export class LoginForm extends Component {
 							qrLoginLink={ this.getQrLoginLink() }
 							isJetpack={ isJetpack }
 							allowedSocialServices={ this.props.allowedSocialServices }
+							oauth2Client={ this.props.oauth2Client }
+							isWoo={ this.props.isWoo }
+							currentRoute={ this.props.currentRoute }
+							from={ this.props.currentQuery?.from }
 						/>
 					</Fragment>
 				) }

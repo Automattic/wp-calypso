@@ -97,7 +97,7 @@ function Domains() {
 							data={ filteredData || [] }
 							fields={ fields }
 							onChangeView={ updateView }
-							onResetView={ resetView }
+							onReset={ resetView }
 							view={ view }
 							actions={ actions }
 							search

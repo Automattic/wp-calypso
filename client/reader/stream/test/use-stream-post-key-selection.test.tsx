@@ -3,10 +3,10 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { createStreamItemFromPost } from 'calypso/state/reader/streams/normalize';
+import { createStreamItemFromPost } from 'calypso/reader/data/stream';
 import { useStreamPostKeySelection } from '../use-stream-post-key-selection';
 import streamResponse from './fixtures/following-stream-response.json';
-import type { PostKey } from '../use-stream-posts';
+import type { StreamItem } from 'calypso/reader/data/stream';
 import type { ReactNode } from 'react';
 
 function makeQueryClient() {
@@ -19,7 +19,7 @@ function makeWrapper( queryClient: QueryClient ) {
 	};
 }
 
-const items: PostKey[] = streamResponse.posts.map( ( post ) =>
+const items: StreamItem[] = streamResponse.posts.map( ( post ) =>
 	createStreamItemFromPost( post, 'date' )
 );
 
@@ -142,7 +142,7 @@ describe( 'useStreamPostKeySelection', () => {
 	it( 'uses a controlled currentPostKey for prev/next without replacing the cached selection', async () => {
 		const queryClient = makeQueryClient();
 		const { result, rerender } = renderHook(
-			( { currentPostKey }: { currentPostKey?: PostKey } ) =>
+			( { currentPostKey }: { currentPostKey?: StreamItem } ) =>
 				useStreamPostKeySelection( {
 					streamKey: 'following',
 					items,

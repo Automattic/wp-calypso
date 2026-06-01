@@ -55,10 +55,12 @@ const ReaderOnboarding = ( {
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-	}
+	useEffect( () => {
+		if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
+			dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+		}
+	}, [ dispatch, hasCompletedOnboarding, hasFollowedTags, hasFollowedSites, profileCompleted ] );
 
 	const meetsEligibility =
 		preferencesLoaded &&

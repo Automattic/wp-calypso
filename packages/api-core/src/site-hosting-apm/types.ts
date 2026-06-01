@@ -17,8 +17,6 @@ export interface ApmSlowRequest {
 	timestamp: number;
 }
 
-export type ApmRequestDetail = ApmSlowRequest;
-
 export interface ApmSummary {
 	avg_response_ms: number;
 	transaction_count: number;
@@ -221,4 +219,81 @@ export interface ApmAggregateBucket {
 
 export interface ApmAggregateResponse {
 	aggregates: ApmAggregateBucket[];
+}
+
+export interface ApmDetailParams {
+	method: string;
+	route: string;
+	start?: number;
+	end?: number;
+}
+
+export interface ApmDetailMetric {
+	sum: number;
+	max: number;
+}
+
+export interface ApmDetailSpanPrunedChildren {
+	count: number;
+	self_sum_ms: number;
+	total_sum_ms: number;
+}
+
+export interface ApmDetailSpanPluginInfo {
+	plugin?: string;
+	action?: string;
+	callback_source?: string;
+}
+
+export interface ApmDetailSpan {
+	id: string;
+	parent_id: string | null;
+	name: string;
+	category: string;
+	method?: string;
+	route?: string;
+	action?: string;
+	// Category-specific payload. The API nests context under a key that
+	// matches the span category (e.g. `plugins` for category="plugins").
+	plugins?: ApmDetailSpanPluginInfo;
+	pruned_children?: ApmDetailSpanPrunedChildren;
+	count: number;
+	tx_count: number;
+	self_ms: ApmDetailMetric;
+	total_ms: ApmDetailMetric;
+}
+
+export interface ApmDetailRequestInfo {
+	method: string;
+	route: string;
+	hostname?: string;
+}
+
+export interface ApmDetailPruned {
+	node_count: number;
+	self_sum_ms: number;
+}
+
+export interface ApmDetailExtra {
+	bucket_minute: string;
+	request: ApmDetailRequestInfo;
+	transactions_in_bucket: number;
+	spans: ApmDetailSpan[];
+	pruned?: ApmDetailPruned;
+}
+
+export interface ApmDetailEntry {
+	feature: string;
+	atomic_site_id: number;
+	blog_id: number;
+	properties?: {
+		bucket_minute: string;
+		method: string;
+		route: string;
+	};
+	extra: ApmDetailExtra;
+}
+
+export interface ApmDetailResponse {
+	details: ApmDetailEntry[];
 }

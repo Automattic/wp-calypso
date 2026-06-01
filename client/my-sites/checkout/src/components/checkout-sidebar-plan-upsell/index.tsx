@@ -38,10 +38,10 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 function getUpsellTextForVariant(
 	upsellVariant: WPCOMProductVariant,
 	percentSavings: number,
-	__: any
+	__: typeof import('@wordpress/i18n').__
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		const cardTitle = __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
 		return {
 			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
@@ -53,7 +53,7 @@ function getUpsellTextForVariant(
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 24 ) {
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		const cardTitle = __(
 			'<strong>Save %(percentSavings)d%% extra</strong> by paying for two years'
 		);
@@ -67,7 +67,7 @@ function getUpsellTextForVariant(
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 36 ) {
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		const cardTitle = __(
 			'<strong>Save %(percentSavings)d%% extra</strong> by paying for three years'
 		);
@@ -177,26 +177,19 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const currentInfo = fromVariantPriceData( currentVariant );
 	const upsellInfo = fromVariantPriceData( upsellVariant );
-	const compareToPriceForVariantTerm = getPlanPriceForDuration(
+	const currentPlanPrice = currentVariant.priceInteger;
+	const currentPlanPriceAtUpsellTerm = getPlanPriceForDuration(
 		currentInfo,
 		upsellInfo.termMonths
 	);
+	const upsellPlanPrice = getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths );
 	const percentSavings =
-		calculateDiscountPercentage(
-			compareToPriceForVariantTerm,
-			getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths )
-		) ?? 0;
+		calculateDiscountPercentage( currentPlanPriceAtUpsellTerm, upsellPlanPrice ) ?? 0;
 
 	if ( percentSavings <= 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
 	}
-
-	const isComparisonWithIntroOffer =
-		upsellVariant.introductoryInterval === 2 &&
-		upsellVariant.introductoryTerm === 'year' &&
-		currentVariant.introductoryInterval === 1 &&
-		currentVariant.introductoryTerm === 'year';
 
 	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
 
@@ -214,23 +207,18 @@ export function CheckoutSidebarPlanUpsell() {
 						{ currentVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ formatCurrency(
-							currentVariant.priceInteger +
-								( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
-							currentVariant.currency,
-							{
-								stripZeros: true,
-								isSmallestUnit: true,
-							}
-						) }
+						{ formatCurrency( currentPlanPrice, currentVariant.currency, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ upsellVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ compareToPriceForVariantTerm && (
+						{ currentPlanPriceAtUpsellTerm && (
 							<del className="checkout-sidebar-plan-upsell__do-not-pay">
-								{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+								{ formatCurrency( currentPlanPriceAtUpsellTerm, currentVariant.currency, {
 									stripZeros: true,
 									isSmallestUnit: true,
 								} ) }

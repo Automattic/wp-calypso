@@ -39,12 +39,12 @@ import {
 } from 'calypso/reader/get-helpers';
 import { getStreamUrl } from 'calypso/reader/route';
 import { Feed } from 'calypso/state/data-layer/wpcom/read/feed/types';
-import { Site } from 'calypso/state/data-layer/wpcom/read/sites/types';
 import { follow } from 'calypso/state/reader/follows/actions';
 import isReaderFollowFeedLoading from 'calypso/state/reader/follows/selectors/is-reader-follow-feed-loading';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
 import { RecommendedSitePlaceholder } from './placeholder';
 import { seed as recommendedSitesSeed } from './recommended-sites';
+import type { ReadSiteResponse as Site } from '@automattic/api-core';
 
 /**
  * This hook invalidates the cache for site subscriptions when the "subscribe" mutation is completed.
