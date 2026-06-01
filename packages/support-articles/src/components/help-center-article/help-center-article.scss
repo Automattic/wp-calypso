@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/colors';
@@ -110,6 +112,16 @@
 					ol {
 						margin-left: 1em;
 					}
+				}
+			}
+
+			p a:not( .button ):not( .wp-block-button__link ),
+			li:not( .wp-block-a8c-support-table-of-contents li )
+				a:not( .button ):not( .wp-block-button__link ) {
+				@include ui-mixins.when-dark-theme {
+					color: var( --wp-admin-theme-color-darker-20 );
+					text-decoration: underline;
+					text-underline-offset: 0.12em;
 				}
 			}
 

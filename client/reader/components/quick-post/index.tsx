@@ -34,7 +34,7 @@ import './style.scss';
 
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
-loadTextFormatting( [ heading.name ] );
+loadTextFormatting();
 
 // Add API middleware for embeds.
 // This redirects `/wp-json/oembed/1.0/proxy` requests to the WordPress.com embed API.

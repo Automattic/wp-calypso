@@ -284,7 +284,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					onRequestClose={ () =>
 						setDuplicateAgencyFields( { agencyName: false, agencyUrl: false } )
 					}
-					title={ translate( 'Duplicate Agency' ) }
+					title={ translate( 'Duplicate agency' ) }
 				>
 					<VStack spacing={ 8 }>
 						{ duplicateAgencyFields.agencyName ? (

@@ -10,7 +10,7 @@ import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/com
 import { createBlock, serialize, type Block } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import React, { useState, useCallback } from '@wordpress/element';
+import React, { useState, useCallback, useMemo } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { safeParse } from '../utils';
@@ -48,6 +48,12 @@ export const Editor: FC< EditorProps > = ( {
 		initialContent !== '' ? safeParse( initialContent ) : [ createBlock( 'core/paragraph' ) ]
 	) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
+
+	// Memoize settings so the `__unstableResolvedAssets` object identity is stable
+	// across renders. Block-editor 15.x keys the iframe's blob `src` off that
+	// reference via a WeakMap; without memoization the iframe reloads on every
+	// keystroke (the body unmounts and the editor flickers).
+	const settings = useMemo( () => editorSettings( isRTL ), [ isRTL ] );
 
 	/**
 	 * This prevents the editor from copying the theme styles inside the iframe. We don't want to copy the styles inside.
@@ -96,7 +102,7 @@ export const Editor: FC< EditorProps > = ( {
 				} }
 			>
 				<BlockEditorProvider
-					settings={ editorSettings( isRTL ) }
+					settings={ settings }
 					value={ editorContent }
 					// This allows multiple editors to be used on the same page (namely inside QueryLoop).
 					useSubRegistry

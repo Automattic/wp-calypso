@@ -1,6 +1,7 @@
-import { Badge, Gravatar, Gridicon } from '@automattic/components';
+import { Badge, Gravatar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { OWNER_ROLE } from '../../constants';
 import { TeamMember } from '../../types';
@@ -73,6 +74,6 @@ export const DateColumn = ( { date }: { date?: string } ): ReactNode => {
 	return formattedDate ? (
 		moment.unix( formattedDate ).format( 'MMMM D, YYYY' )
 	) : (
-		<Gridicon icon="minus" />
+		<EmptyValueIndicator />
 	);
 };

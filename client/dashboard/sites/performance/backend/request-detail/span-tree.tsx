@@ -99,11 +99,11 @@ function SpanRowContent( { node, rootMaxMs }: { node: SpanNode; rootMaxMs: numbe
 	const fraction = rootMaxMs > 0 ? totalMs / rootMaxMs : 0;
 	const intent = CATEGORY_INTENT[ node.category ] ?? 'default';
 	const subtitleParts: string[] = [];
-	if ( node.plugin ) {
-		subtitleParts.push( node.plugin );
+	if ( node.plugins?.plugin ) {
+		subtitleParts.push( node.plugins.plugin );
 	}
-	if ( node.callback_source ) {
-		subtitleParts.push( node.callback_source );
+	if ( node.plugins?.callback_source ) {
+		subtitleParts.push( node.plugins.callback_source );
 	}
 	const showSelf = selfMs > 0 && selfMs < totalMs;
 	const callsPerTx = node.count / Math.max( 1, node.tx_count );

@@ -73,7 +73,7 @@ export default function CIABSites() {
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No stores found' ) : __( 'No stores' );
 
-	let emptyDescription = __( 'Get started by creating a new store.' );
+	let emptyDescription: string = __( 'Get started by creating a new store.' );
 	if ( view.search ) {
 		emptyDescription = sprintf(
 			// Translators: %s is the search term used when looking for stores by title or domain name.

@@ -115,8 +115,7 @@ test.describe(
 						name: 'Block patterns',
 					} );
 					const firstPattern = inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
-					const pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
-					await pageEditor.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
+					await pageEditor.selectTemplate( firstPattern, { timeout: 15 * 1000 } );
 				} );
 
 				await test.step( 'Then "wpcom_block_inserted" event fires with "from_template_selector" set to true', async () => {

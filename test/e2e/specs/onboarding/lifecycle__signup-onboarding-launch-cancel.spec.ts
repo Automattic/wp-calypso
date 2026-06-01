@@ -11,6 +11,7 @@ import {
 	NewSiteResponse,
 	NewUserResponse,
 	NoticeComponent,
+	PostCheckoutSetupSitePage,
 	PurchasesPage,
 	RestAPIClient,
 	SecretsManager,
@@ -132,8 +133,11 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Then I land on goal selection step', async () => {
-				await page.waitForURL( /home\/.*ref=onboarding/, { timeout: 60 * 1000 } );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async () => {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// instead of the goal-selection step.
+				const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
+				await postCheckoutSetupSitePage.waitUntilLoaded();
 			} );
 
 			await test.step( 'When I select "Sell services or digital goods" goal', async () => {

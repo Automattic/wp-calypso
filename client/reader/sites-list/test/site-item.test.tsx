@@ -3,15 +3,21 @@
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
+import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSite, ReaderSiteItem } from '../site-item';
 
-jest.mock( 'calypso/components/data/query-reader-site', () => ( {
-	__esModule: true,
-	default: () => null,
+jest.mock( 'calypso/reader/data/site', () => ( {
+	useSite: jest.fn( () => ( {
+		site: undefined,
+		siteError: undefined,
+		isLoading: false,
+		isError: false,
+		isSuccess: false,
+	} ) ),
 } ) );
 
 jest.mock( 'calypso/components/data/query-sites', () => ( {
@@ -62,15 +68,18 @@ describe( 'RecommendedFeedItem', () => {
 	const renderComponent = (
 		props = defaultProps,
 		siteData?: object
-	): ReturnType< typeof renderWithProvider > =>
-		renderWithProvider( <ReaderSiteItem { ...props } />, {
-			initialState: {
-				reader: {
-					sites: { items: siteData ? { 456: siteData } : {} },
-				},
-			},
+	): ReturnType< typeof renderWithProvider > => {
+		jest.mocked( useSite ).mockReturnValue( {
+			site: siteData as ReturnType< typeof useSite >[ 'site' ],
+			siteError: undefined,
+			isLoading: false,
+			isError: false,
+			isSuccess: !! siteData,
+		} );
+		return renderWithProvider( <ReaderSiteItem { ...props } />, {
 			reducers: { reader: readerReducer },
 		} );
+	};
 
 	beforeAll( () => {
 		// Mock IntersectionObserver for SiteIcon's lazy loading

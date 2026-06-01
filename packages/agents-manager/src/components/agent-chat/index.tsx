@@ -62,8 +62,8 @@ interface Props {
 	clearSuggestions?: () => void;
 	/** Called when a suggestion is clicked. */
 	onSuggestionClick?: (
-		selectedSuggestion: Suggestion,
-		availableSuggestions: Suggestion[]
+		selectedSuggestion: Suggestion | string,
+		availableSuggestions?: Suggestion[]
 	) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
@@ -252,6 +252,7 @@ export default function AgentChat( {
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						onSuggestionClick={ onSuggestionClick }
 						icon={ <AI size={ 32 } /> }
 					/>
 				)

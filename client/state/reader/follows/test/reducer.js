@@ -3,7 +3,7 @@ import {
 	READER_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
 	READER_FOLLOW_ERROR,
-	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import {
@@ -642,7 +642,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
+				type: READER_SITE_RECEIVE,
 				payload: incomingSite,
 			} );
 
@@ -692,7 +692,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
+				type: READER_SITE_RECEIVE,
 				payload: incomingSite,
 			} );
 
@@ -722,7 +722,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
+				type: READER_SITE_RECEIVE,
 				payload: incomingSite,
 			} );
 

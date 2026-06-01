@@ -49,11 +49,14 @@ jest.mock(
 
 // Provide a minimal JetpackReaderChatConfig so the module-level readerConfig
 // is safe to read (no currentPost by default — exercises the no-post branch).
+let getElementByIdSpy;
+const getElementById = document.getElementById.bind( document );
+
 beforeAll( () => {
 	globalThis.window.JetpackReaderChatConfig = {};
 	// Suppress the top-level DOM mount — the container lookup returns null so
 	// the `if ( container )` branch is skipped entirely.
-	jest.spyOn( document, 'getElementById' ).mockReturnValue( null );
+	getElementByIdSpy = jest.spyOn( document, 'getElementById' ).mockReturnValue( null );
 } );
 
 // Import after mocks are registered.
@@ -72,7 +75,57 @@ const {
 	normalizeSuggestions,
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
+	injectScopedReset,
 } = require( '../reader-chat' );
+
+// ---------------------------------------------------------------------------
+// injectScopedReset
+// ---------------------------------------------------------------------------
+
+describe( 'injectScopedReset', () => {
+	beforeEach( () => {
+		document.head.querySelector( '#jetpack-reader-chat-reset' )?.remove();
+		getElementByIdSpy.mockImplementation( getElementById );
+	} );
+
+	afterEach( () => {
+		getElementByIdSpy.mockReturnValue( null );
+	} );
+
+	it( 'pins widget typography and resets leaked theme button styles', () => {
+		injectScopedReset();
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-reset' ).textContent;
+
+		expect( css ).toContain( 'font-size: 16px !important;' );
+		expect( css ).toContain( '--base-font-size: 16px !important;' );
+		expect( css ).toContain( '.agents-manager-chat .components-button.has-icon' );
+		expect( css ).toContain(
+			'.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon'
+		);
+		expect( css ).toContain( 'text-transform: none !important;' );
+		expect( css ).toContain( 'letter-spacing: inherit !important;' );
+		expect( css ).toContain( 'background: transparent !important;' );
+		expect( css ).toContain( 'color: var( --color-foreground, #1e1e1e ) !important;' );
+		expect( css ).toContain(
+			'background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;'
+		);
+		expect( css ).toContain( ':not([aria-disabled="true"])' );
+		expect( css ).toContain( '.agents-manager-chat-header__menu-popover' );
+		expect( css ).toContain(
+			'.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"]'
+		);
+		expect( css ).toContain( 'cursor: default !important;' );
+		expect( css ).toContain( 'opacity: 0.5 !important;' );
+	} );
+
+	it( 'does not inject duplicate reset styles', () => {
+		injectScopedReset();
+		injectScopedReset();
+
+		expect( document.head.querySelectorAll( '#jetpack-reader-chat-reset' ) ).toHaveLength( 1 );
+	} );
+} );
 
 // ---------------------------------------------------------------------------
 // parseAgentSseResponse

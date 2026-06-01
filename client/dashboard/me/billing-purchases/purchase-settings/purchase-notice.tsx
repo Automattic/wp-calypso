@@ -450,7 +450,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 					daysToExpiry
 				),
 				{
-					expiry: daysToExpiry,
+					expiry: String( daysToExpiry ),
 					productType: productType as string,
 				}
 		  )
@@ -509,9 +509,9 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	const cardDetails = {
-		cardType: purchase.payment_card_type,
-		cardNumber: purchase.payment_card_id,
-		cardExpiry: purchase.payment_expiry,
+		cardType: purchase.payment_card_type ?? '',
+		cardNumber: Number( purchase.payment_card_id ) || 0,
+		cardExpiry: purchase.payment_expiry ?? '',
 	};
 
 	const linkComponent = {

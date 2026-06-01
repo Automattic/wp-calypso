@@ -1,6 +1,8 @@
-import { createPostMutation } from '@automattic/api-queries';
+import { createPostMutation, useConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { useAtmosphereInteractionSettings } from './interaction-settings';
 import { getThreadUrl } from './route';
 import { useAtmosphereComposerMedia } from './use-atmosphere-composer-media';
@@ -16,12 +18,23 @@ import type { ReactNode } from 'react';
 const LIMIT = 300;
 const useAtmosphereComposerLimit = (): number => LIMIT;
 
+function useAtmosphereAuthorHandle( connectionId: number | null ): string | null {
+	const { data } = useConnectionsQuery( { enabled: connectionId !== null } );
+	if ( connectionId === null ) {
+		return null;
+	}
+	const connection = data?.connections?.find( ( c ) => c.id === connectionId );
+	return connection?.handle ? normalizeHandle( connection.handle ) : null;
+}
+
 export const atmosphereComposerConfig: ComposerConfig<
 	AtmosphereError,
 	CreatePostParams,
 	CreatePostResult
 > = {
 	useLimit: useAtmosphereComposerLimit,
+	useAuthorHandle: useAtmosphereAuthorHandle,
+	headerIcon: <ReaderBlueskyIcon filled />,
 	protocolLabel: 'Bluesky',
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: createPostMutation,
@@ -133,7 +146,7 @@ export const atmosphereComposerConfig: ComposerConfig<
 		} ),
 	},
 	copy: {
-		title: ( mode, translate ) => titleForMode( mode, translate ),
+		title: ( mode, translate, handle ) => titleForMode( mode, translate, handle ),
 		placeholder: ( mode, translate, handle ) => placeholderForMode( mode, translate, handle ),
 	},
 	logBadRequest: ( mode, error ) => {
@@ -158,7 +171,16 @@ export const atmosphereComposerConfig: ComposerConfig<
 	useProtocolExtras: useAtmosphereInteractionSettings,
 };
 
-function titleForMode( mode: ActiveMode, t: Translate ): string {
+function titleForMode( mode: ActiveMode, t: Translate, handle?: string | null ): string {
+	const base = baseTitleForMode( mode, t );
+	// "@handle" and the middle-dot separator are unlocalized — the handle is a
+	// fixed ATProto identifier and the dot is the same in every locale we
+	// ship. Composing here keeps the protocol-specific title format inside
+	// the protocol-specific config.
+	return handle ? `${ base } · @${ handle }` : base;
+}
+
+function baseTitleForMode( mode: ActiveMode, t: Translate ): string {
 	if ( mode.kind === 'reply' ) {
 		return t( 'Reply' ) as string;
 	}

@@ -29,7 +29,6 @@ test.describe(
 		} ) => {
 			let pagesPage: PagesPage;
 			let publishedUrl: URL;
-			let pageTemplateToSelect: string;
 			let pageTemplateFirstTextContent: string;
 			let siteSlug: string;
 
@@ -70,8 +69,7 @@ test.describe(
 						.first()
 						.textContent() ) || '';
 				pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
-				pageTemplateToSelect = ( await selectedPatternLocator.getAttribute( 'aria-label' ) ) ?? '';
-				await pageEditor.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
+				await pageEditor.selectTemplate( selectedPatternLocator, { timeout: 15 * 1000 } );
 			} );
 
 			await test.step( 'Then template content loads into editor', async () => {

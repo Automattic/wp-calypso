@@ -36,12 +36,19 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import {
+	SITE_ACTION_TITLES,
+	getEligiblePurchases,
+	isSiteAction,
+	type SiteAction,
+} from '../../me/billing-purchases/site-level-actions/constants';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
+	getRenewUrlForPurchases,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
@@ -433,12 +440,17 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent } => {
-		return search.intent === 'cancel' ||
+	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+		return {
+			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
 			search.intent === 'auto-renew'
-			? { intent: search.intent }
-			: {};
+				? { intent: search.intent }
+				: {} ),
+			...( typeof search.additionalPurchaseIds === 'string'
+				? { additionalPurchaseIds: search.additionalPurchaseIds }
+				: {} ),
+		};
 	},
 	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
 	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
@@ -463,6 +475,64 @@ export const cancelPurchaseRoute = createRoute( {
 		createLazyRoute( 'cancel-purchase' )( {
 			component: d.default,
 		} )
+	)
+);
+
+export const siteActionsRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: isSiteAction( params.action ) ? SITE_ACTION_TITLES[ params.action ] : '',
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'site-actions/$action',
+	parseParams: ( { action } ): { action: SiteAction } => ( {
+		action: action as SiteAction,
+	} ),
+	stringifyParams: ( { action } ) => ( { action } ),
+	beforeLoad: ( { params } ) => {
+		if ( ! isSiteAction( params.action ) ) {
+			throw dashboardRedirect( {
+				to: purchaseSettingsRoute.fullPath,
+				params: { purchaseId: params.purchaseId },
+			} );
+		}
+	},
+	loader: async ( { parentMatchPromise, params: { action } } ) => {
+		const parentMatch = await parentMatchPromise;
+		const purchase = parentMatch.loaderData?.purchase;
+		if ( ! purchase ) {
+			throw dashboardRedirect( { to: purchasesRoute.fullPath } );
+		}
+
+		const allPurchases = await queryClient.ensureQueryData( userPurchasesQuery() );
+		const eligiblePurchases = getEligiblePurchases( allPurchases, purchase, action as SiteAction );
+
+		if ( purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1 ) {
+			if ( action === 'renew' ) {
+				throw dashboardRedirect( { href: getRenewUrlForPurchases( [ purchase ] ) } );
+			}
+
+			let intent: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+			if ( action === 'remove' ) {
+				intent = 'remove';
+			} else if ( action === 'auto-renew' ) {
+				intent = 'auto-renew';
+			}
+			throw dashboardRedirect( {
+				to: cancelPurchaseRoute.fullPath,
+				params: { purchaseId: String( purchase.ID ) },
+				search: { intent },
+			} );
+		}
+
+		return { action };
+	},
+} ).lazy( () =>
+	import( '../../me/billing-purchases/site-level-actions' ).then( ( d ) =>
+		createLazyRoute( 'site-level-actions' )( { component: d.default } )
 	)
 );
 
@@ -1221,6 +1291,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
+					siteActionsRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

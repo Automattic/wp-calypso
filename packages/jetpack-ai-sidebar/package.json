@@ -48,7 +48,7 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/i18n": "^5.23.0"
+		"@wordpress/i18n": "^6.19.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

@@ -15,5 +15,21 @@ import AgentsManagerWithProvider from './agents-manager-with-provider';
 
 const container = document.createElement( 'div' );
 container.id = 'agents-manager-root';
-document.body.appendChild( container );
-createRoot( container ).render( <AgentsManagerWithProvider useImageUpload={ useImageUpload } /> );
+
+const renderAssistant = () => {
+	createRoot( container ).render( <AgentsManagerWithProvider useImageUpload={ useImageUpload } /> );
+};
+
+if ( document.body ) {
+	document.body.appendChild( container );
+	renderAssistant();
+} else {
+	const observer = new window.MutationObserver( ( _, obs ) => {
+		if ( document.body ) {
+			document.body.appendChild( container );
+			renderAssistant();
+			obs.disconnect();
+		}
+	} );
+	observer.observe( document.documentElement, { childList: true } );
+}

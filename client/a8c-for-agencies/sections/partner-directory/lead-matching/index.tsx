@@ -686,7 +686,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				</FormSection>
 
 				<FormSection
-					title={ __( 'Hosting and Platforms' ) }
+					title={ __( 'Hosting and platforms' ) }
 					className="partner-directory-lead-matching__form-section"
 				>
 					<FormField

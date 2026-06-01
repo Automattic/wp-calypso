@@ -62,8 +62,8 @@ export function ScanHistoryDataViews( {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
 	const NoArchivedThreatsFound = () => {
-		let title = __( 'No history yet' );
-		let description = __( 'So far, there are no archived threats on your site.' );
+		let title: string = __( 'No history yet' );
+		let description: string = __( 'So far, there are no archived threats on your site.' );
 
 		if ( view.search || view.filters ) {
 			title = __( 'No history found' );
