@@ -39,9 +39,9 @@ export const MY_FLOW = 'my-flow';
 
 // client/landing/stepper/declarative-flow/flows/my-flow/my-flow.ts
 import { MY_FLOW } from '@automattic/onboarding';
-import { STEPS } from '../../internals/steps';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { useFlowState } from '../../internals/state-manager/store';
+import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 
@@ -330,15 +330,17 @@ Use the `useCreateSite()` hook + `setPendingAction()` so that `STEPS.PROCESSING`
 it and shows a progress bar:
 
 ```ts
-case 'plans':
-    set( 'plans', providedDependencies );
-    setPendingAction( () =>
-        createSite( {
-            siteIntent: Onboard.SiteIntent.Build,
-            theme: 'pub/blockbase',
-        } )
-    );
-    return navigate( 'processing' );
+switch ( slug ) {
+	case 'plans':
+		set( 'plans', providedDependencies );
+		setPendingAction( () =>
+			createSite( {
+				siteIntent: Onboard.SiteIntent.Build,
+				theme: 'pub/blockbase',
+			} )
+		);
+		return navigate( 'processing' );
+}
 ```
 
 The `STEPS.PROCESSING` step submits `{ processingResult, siteId, siteSlug, goToCheckout, goToHome }`.
@@ -365,59 +367,73 @@ function initialize() {
 
 ```ts
 function initialize() {
-    return stepsWithRequiredLogin( [
-        STEPS.DOMAIN_SEARCH,
-        STEPS.USE_MY_DOMAIN,
-        STEPS.UNIFIED_PLANS,
-        STEPS.PROCESSING,
-        STEPS.LAUNCHPAD,
-        STEPS.ERROR,
-    ] );
+	return stepsWithRequiredLogin( [
+		STEPS.DOMAIN_SEARCH,
+		STEPS.USE_MY_DOMAIN,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+		STEPS.LAUNCHPAD,
+		STEPS.ERROR,
+	] );
 }
 // In useStepNavigation:
-case 'domains':
-    if ( providedDependencies?.shouldUseTheDomainForSite ) {
-        return navigate( `use-my-domain?${ new URLSearchParams( { siteSlug: providedDependencies.siteSlug } ) }` );
-    }
-    return navigate( 'plans' );
+switch ( slug ) {
+	case 'domains':
+		if ( providedDependencies?.shouldUseTheDomainForSite ) {
+			return navigate(
+				`use-my-domain?${ new URLSearchParams( { siteSlug: providedDependencies.siteSlug } ) }`
+			);
+		}
+		return navigate( 'plans' );
+}
 ```
 
 ### Gating access (agency-only, etc.)
 
 ```ts
 async function initialize() {
-    const hasAccess = await checkAccess();
-    if ( ! hasAccess ) {
-        window.location.replace( '/home' );
-        return false;   // halts Stepper immediately
-    }
-    return stepsWithRequiredLogin( [ ... ] );
+	const hasAccess = await checkAccess();
+	if ( ! hasAccess ) {
+		window.location.replace( '/home' );
+		return false; // halts Stepper immediately
+	}
+	return stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH ] );
 }
 ```
 
 ## How to add a new flow (four touchpoints)
 
-1. **Add flow constant** — `packages/onboarding/src/utils/flows.ts`:
+### 1. Add flow constant
 
-   ```ts
-   export const MY_FLOW = 'my-flow';
-   ```
+Add the flow constant in `packages/onboarding/src/utils/flows.ts`:
 
-2. **Create the flow folder** — `client/landing/stepper/declarative-flow/flows/my-flow/`:
+```ts
+export const MY_FLOW = 'my-flow';
+```
 
-   - `my-flow.ts` — flow definition (see pattern above)
-   - `README.md` — description + testing steps + owner + context link
-   - `style.scss` — flow-specific styles (import from the flow file if needed)
+### 2. Create the flow folder
 
-3. **Register the flow** — `client/landing/stepper/declarative-flow/registered-flows.ts`:
+Create `client/landing/stepper/declarative-flow/flows/my-flow/` with:
 
-   ```ts
-   import { MY_FLOW } from '@automattic/onboarding';
-   // ...
-   [ MY_FLOW ]: () => import( /* webpackChunkName: "my-flow" */ './flows/my-flow/my-flow' ),
-   ```
+- `my-flow.ts` — flow definition (see pattern above)
+- `README.md` — description + testing steps + owner + context link
+- `style.scss` — flow-specific styles (import from the flow file if needed)
 
-4. **Flow is accessible** at `/setup/my-flow` after deployment.
+### 3. Register the flow
+
+Register it in `client/landing/stepper/declarative-flow/registered-flows.ts`:
+
+```ts
+import { MY_FLOW } from '@automattic/onboarding';
+
+const registeredFlows = {
+	[ MY_FLOW ]: () => import( /* webpackChunkName: "my-flow" */ './flows/my-flow/my-flow' ),
+};
+```
+
+### 4. Verify the route
+
+The flow is accessible at `/setup/my-flow` after deployment.
 
 ## Common pitfalls
 
@@ -442,12 +458,7 @@ async function initialize() {
 
 7. **Forgetting `as const`** — If `initialize` returns a plain array (not using
    `stepsWithRequiredLogin`), add `as const` at the end so TypeScript infers the
-   literal step slugs:
-
-   ```ts
-   return [ STEPS.GOALS, STEPS.PROCESSING ] as const;
-   ```
-
+   literal step slugs, like `return [ STEPS.GOALS, STEPS.PROCESSING ] as const;`.
    `stepsWithRequiredLogin()` handles this for you.
 
 8. **Not registering in `registered-flows.ts`** — The flow won't exist. The URL
@@ -462,7 +473,7 @@ async function initialize() {
 
 ## README template for new flows
 
-```md
+```text
 # <Flow name>
 
 <One sentence: what this flow does and who it's for.>
