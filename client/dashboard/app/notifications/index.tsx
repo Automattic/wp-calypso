@@ -112,10 +112,11 @@ export default function Notifications( {
 	return (
 		<Dropdown
 			popoverProps={ {
-				className: 'dashboard-notifications',
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
+				flip: false,
+				shift: true,
 				...( anchorEl && { anchor: anchorEl } ),
 				...( isEnabled( 'dashboard/omnibar' ) && {
 					onFocusOutside: () => {
@@ -149,24 +150,14 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<div
-					style={ {
-						width: '100vw',
-						height: '100vh',
-						maxWidth: ! isMobileViewport ? '448px' : undefined,
-						maxHeight: 'inherit',
-						margin: '-8px',
-					} }
-				>
-					<Suspense fallback={ null }>
-						<AsyncNotificationApp
-							locale={ locale }
-							isDismissible={ isMobileViewport }
-							actionHandlers={ actionHandlers }
-							wpcom={ wpcom }
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={ null }>
+					<AsyncNotificationApp
+						locale={ locale }
+						isDismissible={ isMobileViewport }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
 			) }
 		/>
 	);

@@ -1,7 +1,7 @@
-import { fn } from '@storybook/test';
 import { Button, Tooltip, Slot, Fill, SlotFillProvider } from '@wordpress/components';
 import { wordpress, more, link } from '@wordpress/icons';
 import { useState } from 'react';
+import { fn } from 'storybook/test';
 import { Tabs } from '..';
 import { Icon } from '../../icon';
 import type { Meta, StoryFn } from '@storybook/react';

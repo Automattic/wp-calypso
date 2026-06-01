@@ -1,7 +1,7 @@
 import {
 	recordTrainTracksRender,
 	recordTrainTracksInteract,
-	Railcar,
+	type Railcar,
 } from '@automattic/calypso-analytics';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
@@ -31,6 +31,7 @@ import {
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import connectSite from 'calypso/lib/reader-connect-site';
+import { useDismissRecommendedSite } from 'calypso/reader/data/recommended-sites';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -39,12 +40,26 @@ import {
 } from 'calypso/reader/get-helpers';
 import { getStreamUrl } from 'calypso/reader/route';
 import { Feed } from 'calypso/state/data-layer/wpcom/read/feed/types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
 import isReaderFollowFeedLoading from 'calypso/state/reader/follows/selectors/is-reader-follow-feed-loading';
-import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
-import { RecommendedSitePlaceholder } from './placeholder';
-import { seed as recommendedSitesSeed } from './recommended-sites';
+import { seed as recommendedSitesSeed } from '../constants';
+import { RecommendedSitePlaceholder } from '../placeholder';
 import type { ReadSiteResponse as Site } from '@automattic/api-core';
+
+type RecommendedSiteRailcar = Partial< Railcar >;
+
+const hasTrainTracksRailcarId = (
+	railcar: RecommendedSiteRailcar | undefined
+): railcar is RecommendedSiteRailcar & { railcar: string } =>
+	typeof railcar?.railcar === 'string' && railcar.railcar.length > 0;
+
+const hasTrainTracksRenderRailcar = (
+	railcar: RecommendedSiteRailcar | undefined
+): railcar is RecommendedSiteRailcar & { railcar: string; fetch_algo: string } =>
+	hasTrainTracksRailcarId( railcar ) &&
+	typeof railcar.fetch_algo === 'string' &&
+	railcar.fetch_algo.length > 0;
 
 /**
  * This hook invalidates the cache for site subscriptions when the "subscribe" mutation is completed.
@@ -75,7 +90,7 @@ type RecommendedSiteProps = {
 	streamUrl?: string;
 	siteIcon?: string;
 	feedIcon?: string;
-	railcar?: Railcar; // Used for train-tracks
+	railcar?: RecommendedSiteRailcar; // Used for train-tracks
 	uiPosition?: number; // Used for train-tracks
 };
 
@@ -98,11 +113,13 @@ const RecommendedSite = ( {
 	const isSubscribeLoading: boolean = useSelector( ( state ) =>
 		isReaderFollowFeedLoading( state, siteUrl )
 	);
+	const { mutate: dismissRecommendedSite, isPending: isDismissSitePending } =
+		useDismissRecommendedSite( { seed: recommendedSitesSeed } );
 
 	useInvalidateSiteSubscriptionsCache( isSubscribeLoading );
 
 	useEffect( () => {
-		if ( railcar ) {
+		if ( hasTrainTracksRenderRailcar( railcar ) ) {
 			// reader: railcar, ui_algo: following_manage_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
 			// subscriptions: railcar, ui_algo: subscriptions_recommended_site, ui_position, fetch_algo, fetch_position, rec_blog_id
 			recordTrainTracksRender( {
@@ -141,7 +158,7 @@ const RecommendedSite = ( {
 			source: 'recommended-site-dismiss-button',
 		} );
 
-		if ( railcar ) {
+		if ( hasTrainTracksRailcarId( railcar ) ) {
 			// reader: action, ui_algo, ui_position (incorrect: only railcar & action accepted)
 			// subscriptions: railcar, action
 			recordTrainTracksInteract( {
@@ -156,7 +173,23 @@ const RecommendedSite = ( {
 			bumpStat( 'reader_actions', 'dismissed_recommended_site' );
 		}
 
-		dispatch( dismissSite( { siteId, seed: recommendedSitesSeed } ) );
+		dismissRecommendedSite(
+			{ siteId },
+			{
+				onSuccess: () => {
+					dispatch(
+						successNotice( translate( "We won't recommend this site to you again." ), {
+							duration: 5000,
+						} )
+					);
+				},
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'Sorry, there was a problem dismissing that site.' ) )
+					);
+				},
+			}
+		);
 	};
 
 	const handleSubscribeButtonOnClick = () => {
@@ -168,7 +201,7 @@ const RecommendedSite = ( {
 			source: 'recommended-site-subscribe-button',
 		} );
 
-		if ( railcar ) {
+		if ( hasTrainTracksRailcarId( railcar ) ) {
 			// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang,rec_blog_id, (incorrect: only railcar & action accepted)
 			// subscriptions: action: recommended_site_subscribed, railcar
 			recordTrainTracksInteract( {
@@ -212,6 +245,7 @@ const RecommendedSite = ( {
 					icon={ close }
 					iconSize={ 20 }
 					title={ translate( 'Dismiss this recommendation' ) }
+					disabled={ isDismissSitePending }
 					onClick={ handleDismissButtonOnClick }
 				/>
 			</Flex>
@@ -257,7 +291,7 @@ type ConnectSiteComponentProps = {
 	feedId?: number; // Used for train-tracks
 	site?: Site;
 	feed?: Feed;
-	railcar?: Railcar; // Used for train-tracks
+	railcar?: RecommendedSiteRailcar; // Used for train-tracks
 	uiPosition?: number; // Used for train-tracks
 };
 
