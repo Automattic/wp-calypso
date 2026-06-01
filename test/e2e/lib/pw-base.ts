@@ -90,6 +90,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 import { apiCloseAccount } from '../specs/shared';
+import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { getAccount } from './get-account';
 
 export type CustomOptions = {
@@ -357,7 +358,7 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
-	page: async ( { page, viewportName }, use ) => {
+	page: async ( { page, viewportName }, use, testInfo ) => {
 		// Set process.env.VIEWPORT_NAME so page objects/components can access it via envVariables.
 		process.env.VIEWPORT_NAME = viewportName;
 		await page.context().addCookies( [
@@ -368,6 +369,10 @@ export const test = base.extend<
 				path: '/',
 			},
 		] );
+
+		if ( testInfo.project.name === 'authentication' ) {
+			await useBlackboxTestKeyForCollect( page );
+		}
 
 		await use( page );
 	},
