@@ -241,6 +241,11 @@ test.describe(
 				test( '"wpcom_block_inserted" event does NOT fire when choosing an existing template part', async ( {
 					page,
 				} ) => {
+					const siteEditorAccountName = getTestAccountByFeature( {
+						...features,
+						variant: 'siteEditor',
+					} );
+
 					await test.step( 'Given I am authenticated', async () => {
 						testAccount = new TestAccount( siteEditorAccountName );
 						await testAccount.authenticate( page );

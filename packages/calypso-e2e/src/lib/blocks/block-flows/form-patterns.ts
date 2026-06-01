@@ -110,8 +110,9 @@ export class FormPatternsFlow implements BlockFlow {
 			.first();
 		// Wait for the dialog to settle before clicking; the patterns load in via an
 		// iframe and a `block-editor-block-preview__container` overlay intercepts
-		// pointer events while previews hydrate.
-		await firstOption.waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		// pointer events while previews hydrate. The remote pattern library can be
+		// slow to load on loaded CI agents, so allow a generous timeout here.
+		await firstOption.waitFor( { state: 'visible', timeout: 40 * 1000 } );
 		// Force the click: on slower CI agents the preview container occasionally
 		// continues to intercept pointer events even after the option reports as
 		// visible, enabled and stable. The option still carries the selection
