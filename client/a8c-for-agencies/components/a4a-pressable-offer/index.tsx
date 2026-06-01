@@ -34,7 +34,7 @@ const PressableOffer = () => {
 	const onToggleView = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_pressable_promo_offer_q2_2026_toggle_view', {
-				event_type: ! isExpanded ? 'collapse' : 'expand',
+				event_type: isExpanded ? 'collapse' : 'expand',
 			} )
 		);
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
@@ -71,7 +71,8 @@ const PressableOffer = () => {
 			role="button"
 			tabIndex={ 0 }
 			onKeyDown={ ( event ) => {
-				if ( event.key === 'Enter' ) {
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					event.preventDefault();
 					onToggleView();
 				}
 			} }
