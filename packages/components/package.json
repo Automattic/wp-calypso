@@ -85,7 +85,7 @@
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
-		"@ariakit/test": "0.4.7",
+		"@ariakit/test": "0.4.15",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",

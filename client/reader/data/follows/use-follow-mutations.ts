@@ -9,9 +9,9 @@ import {
 import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { removeRecommendedSiteFromCache } from 'calypso/reader/data/recommended-sites';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { followedRecommendedSite } from 'calypso/state/reader/recommended-sites/actions';
 import {
 	invalidateFollowSensitiveCaches,
 	patchReadSiteFollowStatus,
@@ -72,12 +72,10 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 			await invalidateFollowSensitiveCaches( queryClient );
 
 			if ( recommendedSiteInfo ) {
-				dispatch(
-					followedRecommendedSite( {
-						siteId: recommendedSiteInfo.siteId,
-						seed: recommendedSiteInfo.seed,
-					} )
-				);
+				removeRecommendedSiteFromCache( queryClient, {
+					siteId: recommendedSiteInfo.siteId,
+					seed: recommendedSiteInfo.seed,
+				} );
 				dispatch(
 					successNotice(
 						translate( "Success! You're now subscribed to %s.", {

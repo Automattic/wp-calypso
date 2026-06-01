@@ -36,13 +36,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/core@npm:0.4.14":
-  version: 0.4.14
-  resolution: "@ariakit/core@npm:0.4.14"
-  checksum: 7faf79069d25b9a869143fc8d25f87ce02be3fbc87183055a5cb93abf6a7989281155493cf1fe18b5d8144f6fab5a60063699d6d53b7e3d3de253e8afd0c33c2
-  languageName: node
-  linkType: hard
-
 "@ariakit/core@npm:0.4.20":
   version: 0.4.20
   resolution: "@ariakit/core@npm:0.4.20"
@@ -76,11 +69,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/test@npm:0.4.7":
-  version: 0.4.7
-  resolution: "@ariakit/test@npm:0.4.7"
+"@ariakit/test@npm:0.4.15":
+  version: 0.4.15
+  resolution: "@ariakit/test@npm:0.4.15"
   dependencies:
-    "@ariakit/core": "npm:0.4.14"
+    "@ariakit/core": "npm:0.4.20"
     "@testing-library/dom": "npm:^8.0.0 || ^9.0.0 || ^10.0.0"
   peerDependencies:
     "@playwright/test": ^1.27.0
@@ -93,7 +86,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 47d29ac8285b91762b640a881d51aa2515ebf381716b27bd781bc3b78f75e404f89c1537c4b07e76ed8bc9db0b1f3d126d6bc7577a3a3c60714b6681f2e96403
+  checksum: c1cc6cc49f3db9b66e9f1c35cef4f32ddbbf105e36b14c538d67f607007c7dc08857890b511582c07585759a8ea88e909e4ae67b49dbf275711f6c91217beb1e
   languageName: node
   linkType: hard
 
@@ -860,7 +853,7 @@ __metadata:
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
-    "@ariakit/test": "npm:0.4.7"
+    "@ariakit/test": "npm:0.4.15"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
@@ -1716,7 +1709,7 @@ __metadata:
     "@wordpress/url": "npm:^4.46.0"
     clsx: "npm:^2.1.1"
     msw: "npm:^2.1.7"
-    msw-storybook-addon: "npm:2.0.4"
+    msw-storybook-addon: "npm:2.0.7"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -2050,7 +2043,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     i18n-calypso: "workspace:^"
     msw: "npm:^2.2.14"
-    msw-storybook-addon: "npm:^2.0.4"
+    msw-storybook-addon: "npm:^2.0.7"
     react-intersection-observer: "npm:^9.4.3"
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
@@ -24752,14 +24745,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw-storybook-addon@npm:2.0.4, msw-storybook-addon@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "msw-storybook-addon@npm:2.0.4"
+"msw-storybook-addon@npm:2.0.7, msw-storybook-addon@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "msw-storybook-addon@npm:2.0.7"
   dependencies:
     is-node-process: "npm:^1.0.1"
   peerDependencies:
     msw: ^2.0.0
-  checksum: 91cd85b0d6e3bdf8cc4f519b29da644d4df324a3fc6753a98b472488986aee888dfe4fc6a216a41057b01d10899e1e3a16ad253f63d7ae06f3dc3560fe5e561d
+  checksum: 0df84f0212de1d224daa422e10174c7f079fab959b4e2bb449a5bd875dc65ec78f2f211d64588af08c947142b37e478f049906eaf60d1898667e3158cc0bcec1
   languageName: node
   linkType: hard
 
