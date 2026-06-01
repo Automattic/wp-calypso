@@ -1,3 +1,4 @@
+const path = require( 'path' );
 const sharedConfig = require( '../config/_shared.json' );
 const devConfig = require( '../config/development.json' );
 const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
@@ -12,6 +13,8 @@ const storybookConfig = storybookDefaultConfig( {
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
 		'../packages/domains-table/src/**/*.stories.{js,jsx,ts,tsx}',
 	],
+	webpackAliases: { calypso: path.join( __dirname, '../client' ) },
+	sassPrelude: `@use 'calypso/assets/stylesheets/shared/_utils.scss' as *;`,
 } );
 
 const configData = { ...sharedConfig, ...devConfig };
