@@ -81,12 +81,6 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 				"[Stepper] Stepper requires either 'aria-label' or 'aria-labelledby' for accessibility."
 			);
 		}
-	}, [ ariaLabel, ariaLabelledBy ] );
-
-	useEffect( () => {
-		if ( process.env.NODE_ENV === 'production' ) {
-			return;
-		}
 		const seen = new Set< string >();
 		for ( const s of steps ) {
 			if ( seen.has( s.value ) ) {
@@ -103,7 +97,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 				`[Stepper] No step found with value '${ value }'. Falling back to the first step.`
 			);
 		}
-	}, [ steps, value ] );
+	}, [ ariaLabel, ariaLabelledBy, steps, value ] );
 
 	const ctx = useMemo< StepperContextValue >(
 		() => ( {
