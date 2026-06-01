@@ -320,8 +320,8 @@ function renderAkismetTransactionQuantitySummary(
 ) {
 	if ( isRenewal ) {
 		return translate(
-			'Renewal for %(quantity)d 500 API call license',
-			'Renewal for %(quantity)d 500 API call licenses',
+			'Renewal for %(quantity)d 8K API call license',
+			'Renewal for %(quantity)d 8K API call licenses',
 			{
 				args: { quantity: licensed_quantity },
 				count: licensed_quantity,
@@ -330,8 +330,8 @@ function renderAkismetTransactionQuantitySummary(
 	}
 
 	return translate(
-		'Purchase of %(quantity)d 500 API call license',
-		'Purchase of %(quantity)d 500 API call licenses',
+		'Purchase of %(quantity)d 8K API call license',
+		'Purchase of %(quantity)d 8K API call licenses',
 		{
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,

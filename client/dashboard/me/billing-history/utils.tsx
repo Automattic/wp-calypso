@@ -190,10 +190,10 @@ function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: b
 function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
-			/* translators: %d: number of 500 API call licenses */
+			/* translators: %d: number of 8K API call licenses */
 			_n(
-				'Renewal for %d 500 API call license',
-				'Renewal for %d 500 API call licenses',
+				'Renewal for %d 8K API call license',
+				'Renewal for %d 8K API call licenses',
 				licensedQuantity
 			),
 			licensedQuantity
@@ -201,10 +201,10 @@ function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRe
 	}
 
 	return sprintf(
-		/* translators: %d: number of 500 API call licenses */
+		/* translators: %d: number of 8K API call licenses */
 		_n(
-			'Purchase of %d 500 API call license',
-			'Purchase of %d 500 API call licenses',
+			'Purchase of %d 8K API call license',
+			'Purchase of %d 8K API call licenses',
 			licensedQuantity
 		),
 		licensedQuantity

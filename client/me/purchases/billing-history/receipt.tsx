@@ -1,4 +1,9 @@
-import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
+import {
+	isAkismetPro500,
+	getAkismetPro500ProductDisplayName,
+	isAkismetBusiness5k,
+	getAkismetBusiness5kProductDisplayName,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -580,9 +585,15 @@ function ReceiptLineItem( {
 			<tr>
 				<td className="billing-history__receipt-item-name">
 					<span>
-						{ isAkismetPro500( { product_slug: item.wpcom_product_slug } )
-							? getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity )
-							: item.variation }
+						{ ( () => {
+							if ( isAkismetPro500( { product_slug: item.wpcom_product_slug } ) ) {
+								return getAkismetPro500ProductDisplayName( item.variation, item.licensed_quantity );
+							}
+							if ( isAkismetBusiness5k( { product_slug: item.wpcom_product_slug } ) ) {
+								return getAkismetBusiness5kProductDisplayName( item.variation );
+							}
+							return item.variation;
+						} )() }
 					</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }

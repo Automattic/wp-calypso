@@ -27,6 +27,8 @@ import {
 	isJetpackStatsPaidProductSlug,
 	isAkismetPro500,
 	getAkismetPro500ProductDisplayName,
+	isAkismetBusiness5k,
+	getAkismetBusiness5kProductDisplayName,
 	isAkismetFreeProduct,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -310,6 +312,10 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( isAkismetPro500( purchase ) ) {
 		return getAkismetPro500ProductDisplayName( productName, purchaseRenewalQuantity );
+	}
+
+	if ( isAkismetBusiness5k( purchase ) ) {
+		return getAkismetBusiness5kProductDisplayName( productName );
 	}
 
 	return getName( purchase );
