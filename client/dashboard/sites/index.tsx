@@ -47,17 +47,8 @@ type SiteListQueryOptions = {
 	isAutomattician: boolean;
 };
 
-// A filter on `is_deleted=true` can arrive in multiple shapes: from the DataViews UI
-// (boolean `true` with the `is` operator) or from the URL (string `'true'` wrapped in
-// an array via `queryParamFilterFields`'s `isAny` operator). Treat all as active.
 function isDeletedFilterActive( filters: Filter[] ): boolean {
-	return filters.some( ( { field, value } ) => {
-		if ( field !== 'is_deleted' ) {
-			return false;
-		}
-		const values = Array.isArray( value ) ? value : [ value ];
-		return values.includes( true ) || values.includes( 'true' );
-	} );
+	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
 const getFetchPaginatedSitesOptions = (

@@ -177,6 +177,31 @@ describe( 'usePersistentView', () => {
 				} );
 			} );
 		} );
+
+		it( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { is_deleted: 'true' };
+			const queryParamFilterFields = [ 'is_deleted' ];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'is_deleted', operator: 'is', value: true },
+				] );
+			} );
+		} );
 	} );
 
 	describe( 'updateView', () => {
