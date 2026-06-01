@@ -6,13 +6,17 @@
 
 $padding-standard: 16px;
 
-body.is-section-subscribers,
+// Prevent layout shift when the DataViews actions dropdown opens.
+// Ariakit's modal dropdown sets overflow:hidden on the body to lock
+// scrolling, which hides the viewport scrollbar and jerks the content.
+// This page uses a fixed viewport height with internal scrolling,
+// so body-level scrolling is unnecessary.
+//
+// Scoped with :not( .is-global ) so the rule only applies to the
+// subscribers data-view page; the global site picker at /subscribers
+// keeps default body scrolling, since its list can exceed the viewport.
+body.is-section-subscribers:not( .is-global ),
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers {
-	// Prevent layout shift when the DataViews actions dropdown opens.
-	// Ariakit's modal dropdown sets overflow:hidden on the body to lock
-	// scrolling, which hides the viewport scrollbar and jerks the content.
-	// This page uses a fixed viewport height with internal scrolling,
-	// so body-level scrolling is unnecessary.
 	overflow: hidden;
 
 	.layout:not( .has-no-sidebar ),
