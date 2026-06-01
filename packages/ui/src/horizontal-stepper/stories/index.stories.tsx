@@ -3,6 +3,7 @@ import { useState } from '@wordpress/element';
 import { HorizontalStepper } from '..';
 import type { IndicatorVariant } from '../../stepper/types';
 import type { Meta, StoryObj } from '@storybook/react';
+import type { ComponentType } from 'react';
 
 type StoryArgs = {
 	'aria-label'?: string;
@@ -12,7 +13,7 @@ type StoryArgs = {
 };
 
 const meta: Meta< StoryArgs > = {
-	component: HorizontalStepper,
+	component: HorizontalStepper as unknown as ComponentType< StoryArgs >,
 	title: 'UI/Stepper/Horizontal',
 	parameters: {
 		docs: {
