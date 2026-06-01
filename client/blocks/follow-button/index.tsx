@@ -91,10 +91,10 @@ function FollowButtonContainer( {
 			);
 		}
 
-		if ( following ) {
-			unfollowSite( { feedUrl: siteUrl, source: getFollowingSource() } );
-		} else {
+		if ( followingSite ) {
 			followSite( { feedUrl: siteUrl, source: getFollowingSource() } );
+		} else {
+			unfollowSite( { feedUrl: siteUrl, source: getFollowingSource() } );
 		}
 
 		onFollowToggle( followingSite );
