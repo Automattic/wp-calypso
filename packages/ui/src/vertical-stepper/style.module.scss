@@ -1,5 +1,4 @@
 // packages/ui/src/vertical-stepper/style.module.scss
-@use '@wordpress/base-styles/variables';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
@@ -34,8 +33,8 @@
 .trigger {
 	display: flex;
 	align-items: center;
-	gap: variables.$grid-unit-10;
-	padding-block: variables.$grid-unit-10;
+	gap: var( --wpds-dimension-gap-sm, 8px );
+	padding-block: var( --wpds-dimension-padding-sm, 8px );
 	background: none;
 	border: none;
 	cursor: pointer;
@@ -70,6 +69,6 @@
 }
 
 .panel-content {
-	padding-inline-start: calc( 24px + #{variables.$grid-unit-10} );
-	padding-block-end: variables.$grid-unit-20;
+	padding-inline-start: calc( 24px + var( --wpds-dimension-gap-sm, 8px ) );
+	padding-block-end: var( --wpds-dimension-padding-lg, 16px );
 }

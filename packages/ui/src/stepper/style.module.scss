@@ -118,7 +118,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 .trigger {
 	display: flex;
 	align-items: flex-start;
-	gap: variables.$grid-unit-10;
+	gap: var( --wpds-dimension-gap-sm, 8px );
 	background: none;
 	border: none;
 	padding: 0;
