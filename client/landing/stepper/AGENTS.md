@@ -47,53 +47,53 @@ import type { FlowV2, SubmitHandler } from '../../internals/types';
 
 // 1. Define steps BEFORE the flow object (required for TypeScript inference).
 function initialize() {
-    return stepsWithRequiredLogin( [
-        STEPS.GOALS,
-        STEPS.DOMAIN_SEARCH,
-        STEPS.UNIFIED_PLANS,
-        STEPS.PROCESSING,
-        STEPS.LAUNCHPAD,
-        STEPS.ERROR,
-    ] );
+	return stepsWithRequiredLogin( [
+		STEPS.GOALS,
+		STEPS.DOMAIN_SEARCH,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+		STEPS.LAUNCHPAD,
+		STEPS.ERROR,
+	] );
 }
 
 // 2. The flow object.
 const myFlow: FlowV2< typeof initialize > = {
-    name: MY_FLOW,           // must match the constant value exactly
-    isSignupFlow: true,      // true = fires calypso_signup_start Tracks event
-    __experimentalUseSessions: true,   // required when using useFlowState
-    __experimentalUseBuiltinAuth: true, // optional: keep user inside Stepper for login
-    initialize,
+	name: MY_FLOW, // must match the constant value exactly
+	isSignupFlow: true, // true = fires calypso_signup_start Tracks event
+	__experimentalUseSessions: true, // required when using useFlowState
+	__experimentalUseBuiltinAuth: true, // optional: keep user inside Stepper for login
+	initialize,
 
-    useStepNavigation( _currentStep, navigate ) {
-        const { get, set } = useFlowState();
-        const { setPendingAction } = useDispatch( ONBOARD_STORE );
-        const createSite = useCreateSite();
+	useStepNavigation( _currentStep, navigate ) {
+		const { get, set } = useFlowState();
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const createSite = useCreateSite();
 
-        const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
-            const { slug, providedDependencies } = submittedStep;
-            switch ( slug ) {
-                case 'goals':
-                    set( 'goals', providedDependencies );
-                    return navigate( 'domains' );
-                case 'domains':
-                    set( 'domains', providedDependencies );
-                    return navigate( 'plans' );
-                case 'plans':
-                    set( 'plans', providedDependencies );
-                    setPendingAction( () => createSite() );
-                    return navigate( 'processing' );
-                case 'processing':
-                    if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS ) {
-                        const site = get( 'site' );
-                        return navigate( 'launchpad' );
-                    }
-                    return navigate( 'error' );
-            }
-        };
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
+				case 'goals':
+					set( 'goals', providedDependencies );
+					return navigate( 'domains' );
+				case 'domains':
+					set( 'domains', providedDependencies );
+					return navigate( 'plans' );
+				case 'plans':
+					set( 'plans', providedDependencies );
+					setPendingAction( () => createSite() );
+					return navigate( 'processing' );
+				case 'processing':
+					if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS ) {
+						const site = get( 'site' );
+						return navigate( 'launchpad' );
+					}
+					return navigate( 'error' );
+			}
+		};
 
-        return { submit };
-    },
+		return { submit };
+	},
 };
 
 export default myFlow;
@@ -103,98 +103,98 @@ export default myFlow;
 
 ### Signup / onboarding steps
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `GOALS` | `goals` | Ask user what they want to build (blog, store, portfolio, etc.) |
-| `INTENT_STEP` | `intent` | Alternative intent/goal selector |
-| `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
-| `DESIGN_CHOICES` | `design-choices` | Choose between design options |
-| `DESIGN_SETUP` | `design-setup` | Select a theme / design |
-| `SITE_OPTIONS` | `options` | Set site title, tagline, icon |
-| `SETUP_BLOG` | `setup-blog` | Blog-specific setup step |
-| `BLOGGER_STARTING_POINT` | `bloggerStartingPoint` | Starting point for bloggers |
-| `BUSINESS_INFO` | `businessInfo` | Business details (name, category) |
-| `STORE_ADDRESS` | `storeAddress` | WooCommerce store address |
-| `SITE_SPEC` | `site-spec` | AI-assisted site specification |
+| `STEPS.*` constant       | slug                   | Purpose                                                         |
+| ------------------------ | ---------------------- | --------------------------------------------------------------- |
+| `GOALS`                  | `goals`                | Ask user what they want to build (blog, store, portfolio, etc.) |
+| `INTENT_STEP`            | `intent`               | Alternative intent/goal selector                                |
+| `SEGMENTATION_SURVEY`    | `segmentation-survey`  | Survey to segment user by use case                              |
+| `DESIGN_CHOICES`         | `design-choices`       | Choose between design options                                   |
+| `DESIGN_SETUP`           | `design-setup`         | Select a theme / design                                         |
+| `SITE_OPTIONS`           | `options`              | Set site title, tagline, icon                                   |
+| `SETUP_BLOG`             | `setup-blog`           | Blog-specific setup step                                        |
+| `BLOGGER_STARTING_POINT` | `bloggerStartingPoint` | Starting point for bloggers                                     |
+| `BUSINESS_INFO`          | `businessInfo`         | Business details (name, category)                               |
+| `STORE_ADDRESS`          | `storeAddress`         | WooCommerce store address                                       |
+| `SITE_SPEC`              | `site-spec`            | AI-assisted site specification                                  |
 
 ### Domain steps
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `DOMAIN_SEARCH` | `domains` | Search and pick a domain |
-| `USE_MY_DOMAIN` | `use-my-domain` | Connect an existing domain |
+| `STEPS.*` constant    | slug                  | Purpose                                       |
+| --------------------- | --------------------- | --------------------------------------------- |
+| `DOMAIN_SEARCH`       | `domains`             | Search and pick a domain                      |
+| `USE_MY_DOMAIN`       | `use-my-domain`       | Connect an existing domain                    |
 | `DOMAIN_CONTACT_INFO` | `domain-contact-info` | ICANN contact details for domain registration |
 
 ### Plan / payment steps
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `UNIFIED_PLANS` | `plans` | **Preferred** plan selector — use this for new flows |
-| `PLANS` | `plans` | Legacy plan selector (deprecated; prefer `UNIFIED_PLANS`) |
+| `STEPS.*` constant | slug    | Purpose                                                   |
+| ------------------ | ------- | --------------------------------------------------------- |
+| `UNIFIED_PLANS`    | `plans` | **Preferred** plan selector — use this for new flows      |
+| `PLANS`            | `plans` | Legacy plan selector (deprecated; prefer `UNIFIED_PLANS`) |
 
 ### Site creation & processing
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `PROCESSING` | `processing` | Runs `setPendingAction`, shows progress bar, then submits result |
-| `SITE_CREATION_STEP` | `create-site` | Creates the site explicitly (use when you need a separate step) |
-| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant |
-| `SITE_LAUNCH` | `site-launch` | Launches (un-privatizes) an existing site |
+| `STEPS.*` constant   | slug                 | Purpose                                                          |
+| -------------------- | -------------------- | ---------------------------------------------------------------- |
+| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result |
+| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)  |
+| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                   |
+| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                        |
 
 ### Post-signup
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `LAUNCHPAD` | `launchpad` | Post-creation checklist / dashboard |
-| `CELEBRATION_STEP` | `celebration-step` | Congratulations screen |
-| `SUBSCRIBERS` | `subscribers` | Add newsletter subscribers |
-| `POST_CHECKOUT_ONBOARDING` | `post-checkout-onboarding` | Onboarding after checkout |
+| `STEPS.*` constant         | slug                       | Purpose                             |
+| -------------------------- | -------------------------- | ----------------------------------- |
+| `LAUNCHPAD`                | `launchpad`                | Post-creation checklist / dashboard |
+| `CELEBRATION_STEP`         | `celebration-step`         | Congratulations screen              |
+| `SUBSCRIBERS`              | `subscribers`              | Add newsletter subscribers          |
+| `POST_CHECKOUT_ONBOARDING` | `post-checkout-onboarding` | Onboarding after checkout           |
 
 ### Newsletter-specific
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `NEWSLETTER_SETUP` | `newsletterSetup` | Newsletter name, description |
+| `STEPS.*` constant | slug              | Purpose                       |
+| ------------------ | ----------------- | ----------------------------- |
+| `NEWSLETTER_SETUP` | `newsletterSetup` | Newsletter name, description  |
 | `NEWSLETTER_GOALS` | `newsletterGoals` | Newsletter monetization goals |
-| `FREE_POST_SETUP` | `freePostSetup` | Free newsletter post setup |
+| `FREE_POST_SETUP`  | `freePostSetup`   | Free newsletter post setup    |
 
 ### Site picker / utility
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
+| `STEPS.*` constant     | slug                   | Purpose                                     |
+| ---------------------- | ---------------------- | ------------------------------------------- |
 | `NEW_OR_EXISTING_SITE` | `new-or-existing-site` | Ask user to create new or use existing site |
-| `SITES_CHECKER` | `check-sites` | Check whether user has existing sites |
-| `PICK_SITE` | `site-picker` | Pick from a list of existing sites |
-| `SITE_PICKER` | `sitePicker` | Single site picker variant |
-| `TRIAL_ACKNOWLEDGE` | `trialAcknowledge` | User acknowledges trial conditions |
+| `SITES_CHECKER`        | `check-sites`          | Check whether user has existing sites       |
+| `PICK_SITE`            | `site-picker`          | Pick from a list of existing sites          |
+| `SITE_PICKER`          | `sitePicker`           | Single site picker variant                  |
+| `TRIAL_ACKNOWLEDGE`    | `trialAcknowledge`     | User acknowledges trial conditions          |
 
 ### Error / system
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `ERROR` | `error` | Display an error message — always include in flows that can fail |
-| `PROCESSING_COPY_SITE` | `processing-copy` | Processing variant for site copy flows |
+| `STEPS.*` constant     | slug              | Purpose                                                          |
+| ---------------------- | ----------------- | ---------------------------------------------------------------- |
+| `ERROR`                | `error`           | Display an error message — always include in flows that can fail |
+| `PROCESSING_COPY_SITE` | `processing-copy` | Processing variant for site copy flows                           |
 
 ### Import steps (migration flows)
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `IMPORT` | `import` | Entry point for site import |
-| `IMPORTER_WORDPRESS` | `importerWordpress` | WordPress.org import |
-| `IMPORTER_BLOGGER` | `importerBlogger` | Blogger import |
-| `IMPORTER_MEDIUM` | `importerMedium` | Medium import |
-| `IMPORTER_SQUARESPACE` | `importerSquarespace` | Squarespace import |
-| `IMPORTER_SUBSTACK` | `importerSubstack` | Substack import |
-| `IMPORTER_WIX` | `importerWix` | Wix import |
+| `STEPS.*` constant     | slug                  | Purpose                     |
+| ---------------------- | --------------------- | --------------------------- |
+| `IMPORT`               | `import`              | Entry point for site import |
+| `IMPORTER_WORDPRESS`   | `importerWordpress`   | WordPress.org import        |
+| `IMPORTER_BLOGGER`     | `importerBlogger`     | Blogger import              |
+| `IMPORTER_MEDIUM`      | `importerMedium`      | Medium import               |
+| `IMPORTER_SQUARESPACE` | `importerSquarespace` | Squarespace import          |
+| `IMPORTER_SUBSTACK`    | `importerSubstack`    | Substack import             |
+| `IMPORTER_WIX`         | `importerWix`         | Wix import                  |
 
 ### AI / other
 
-| `STEPS.*` constant | slug | Purpose |
-|---|---|---|
-| `LAUNCH_BIG_SKY` | `launch-big-sky` | BigSky AI site builder |
-| `SETUP_YOUR_SITE_AI` | `setup-your-site-ai` | AI-assisted site setup |
-| `BLUEPRINT` | `blueprint` | Blueprint template selection |
-| `READYMADE_TEMPLATE_GENERATE_CONTENT` | `generateContent` | Generate content from template |
+| `STEPS.*` constant                    | slug                 | Purpose                        |
+| ------------------------------------- | -------------------- | ------------------------------ |
+| `LAUNCH_BIG_SKY`                      | `launch-big-sky`     | BigSky AI site builder         |
+| `SETUP_YOUR_SITE_AI`                  | `setup-your-site-ai` | AI-assisted site setup         |
+| `BLUEPRINT`                           | `blueprint`          | Blueprint template selection   |
+| `READYMADE_TEMPLATE_GENERATE_CONTENT` | `generateContent`    | Generate content from template |
 
 ## Step customization — what the flow can change without touching step code
 
@@ -205,15 +205,15 @@ enforces which props each step accepts — you cannot pass props a step doesn't 
 
 ```ts
 const myFlow: FlowV2< typeof initialize > = {
-    // ...
-    useStepsProps() {
-        return {
-            [ STEPS.UNIFIED_PLANS.slug ]: {
-                displayedIntervals: [ 'yearly', '2yearly' ],
-                isInSignup: true,
-            },
-        };
-    },
+	// ...
+	useStepsProps() {
+		return {
+			[ STEPS.UNIFIED_PLANS.slug ]: {
+				displayedIntervals: [ 'yearly', '2yearly' ],
+				isInSignup: true,
+			},
+		};
+	},
 };
 ```
 
@@ -224,14 +224,14 @@ type defined. Every other step listed here has none — changes require Engineer
 
 #### `STEPS.UNIFIED_PLANS` (slug: `'plans'`)
 
-| Prop | Type | What it does |
-|---|---|---|
-| `isInSignup` | `boolean` | `true` = signup pricing (free plan shown); `false` = upgrade pricing |
-| `isStepperUpgradeFlow` | `boolean` | Enables upgrade-specific behavior in PlansFeaturesMain |
-| `selectedFeature` | `string` | Highlights a plan that includes this feature slug |
-| `displayedIntervals` | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown |
-| `wrapperProps.hideBack` | `boolean` | Hides the back button |
-| `wrapperProps.goBack` | `() => void` | Custom back button handler |
+| Prop                    | Type                                            | What it does                                                         |
+| ----------------------- | ----------------------------------------------- | -------------------------------------------------------------------- |
+| `isInSignup`            | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing |
+| `isStepperUpgradeFlow`  | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain               |
+| `selectedFeature`       | `string`                                        | Highlights a plan that includes this feature slug                    |
+| `displayedIntervals`    | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                             |
+| `wrapperProps.hideBack` | `boolean`                                       | Hides the back button                                                |
+| `wrapperProps.goBack`   | `() => void`                                    | Custom back button handler                                           |
 
 Note: `hideFreePlan` and `headerText` exist on the underlying component but are **not**
 exposed via `accepts` — they cannot be set from the flow without an Engineering PR.
@@ -241,14 +241,14 @@ exposed via `accepts` — they cannot be set from the flow without an Engineerin
 These affect step appearance without requiring `accepts:` props on the step.
 Call them via `dispatch( ONBOARD_STORE )` inside `initialize()`.
 
-| Call | Effect |
-|---|---|
-| `setHidePlansFeatureComparison( true )` | Hides the plan feature comparison table in `STEPS.UNIFIED_PLANS` |
-| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps (site-options, etc.) |
-| `setIntent( Onboard.SiteIntent.Build )` | Generic "build a site" intent |
-| `setIntent( Onboard.SiteIntent.Sell )` | Store intent — changes site-options labels |
-| `setIntent( Onboard.SiteIntent.Write )` | Blog intent |
-| `clearSignupDestinationCookie()` | Ensures a fresh signup start (no redirect leftovers) |
+| Call                                         | Effect                                                           |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| `setHidePlansFeatureComparison( true )`      | Hides the plan feature comparison table in `STEPS.UNIFIED_PLANS` |
+| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps (site-options, etc.)         |
+| `setIntent( Onboard.SiteIntent.Build )`      | Generic "build a site" intent                                    |
+| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent — changes site-options labels                       |
+| `setIntent( Onboard.SiteIntent.Write )`      | Blog intent                                                      |
+| `clearSignupDestinationCookie()`             | Ensures a fresh signup start (no redirect leftovers)             |
 
 ```ts
 // Example: newsletter-style flow with plan comparison hidden
@@ -258,19 +258,19 @@ import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../../../stores';
 
 function initialize() {
-    const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
-    setHidePlansFeatureComparison( true );
-    setIntent( Onboard.SiteIntent.Newsletter );
-    clearSignupDestinationCookie();
+	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
+	setHidePlansFeatureComparison( true );
+	setIntent( Onboard.SiteIntent.Newsletter );
+	clearSignupDestinationCookie();
 
-    return stepsWithRequiredLogin( [
-        STEPS.NEWSLETTER_SETUP,
-        STEPS.DOMAIN_SEARCH,
-        STEPS.UNIFIED_PLANS,
-        STEPS.PROCESSING,
-        STEPS.LAUNCHPAD,
-        STEPS.ERROR,
-    ] );
+	return stepsWithRequiredLogin( [
+		STEPS.NEWSLETTER_SETUP,
+		STEPS.DOMAIN_SEARCH,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+		STEPS.LAUNCHPAD,
+		STEPS.ERROR,
+	] );
 }
 ```
 
@@ -295,15 +295,20 @@ injects the user registration/login step automatically — you don't build it yo
 ```ts
 // Gate ALL steps (most signup flows)
 function initialize() {
-    return stepsWithRequiredLogin( [ STEPS.GOALS, STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] );
+	return stepsWithRequiredLogin( [
+		STEPS.GOALS,
+		STEPS.DOMAIN_SEARCH,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+	] );
 }
 
 // Gate SOME steps (allow browsing before login)
 function initialize() {
-    return [
-        STEPS.GOALS,
-        ...stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
-    ] as const;
+	return [
+		STEPS.GOALS,
+		...stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
+	] as const;
 }
 ```
 
@@ -313,8 +318,8 @@ Use `useFlowState()` inside `useStepNavigation`. Requires `__experimentalUseSess
 
 ```ts
 const { get, set } = useFlowState();
-set( 'domains', providedDependencies );   // persist submitted data by step slug
-const domains = get( 'domains' );         // retrieve it later
+set( 'domains', providedDependencies ); // persist submitted data by step slug
+const domains = get( 'domains' ); // retrieve it later
 ```
 
 Types are inferred from the step's `submits:` type definition — no manual typing needed.
@@ -345,14 +350,14 @@ If `goToCheckout` is true, redirect to `/checkout/<siteSlug>?redirect_to=<destin
 
 ```ts
 function initialize() {
-    return stepsWithRequiredLogin( [
-        STEPS.GOALS,
-        STEPS.DOMAIN_SEARCH,
-        STEPS.UNIFIED_PLANS,
-        STEPS.PROCESSING,
-        STEPS.LAUNCHPAD,
-        STEPS.ERROR,
-    ] );
+	return stepsWithRequiredLogin( [
+		STEPS.GOALS,
+		STEPS.DOMAIN_SEARCH,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+		STEPS.LAUNCHPAD,
+		STEPS.ERROR,
+	] );
 }
 ```
 
@@ -393,16 +398,19 @@ async function initialize() {
 ## How to add a new flow (four touchpoints)
 
 1. **Add flow constant** — `packages/onboarding/src/utils/flows.ts`:
+
    ```ts
    export const MY_FLOW = 'my-flow';
    ```
 
 2. **Create the flow folder** — `client/landing/stepper/declarative-flow/flows/my-flow/`:
+
    - `my-flow.ts` — flow definition (see pattern above)
    - `README.md` — description + testing steps + owner + context link
    - `style.scss` — flow-specific styles (import from the flow file if needed)
 
 3. **Register the flow** — `client/landing/stepper/declarative-flow/registered-flows.ts`:
+
    ```ts
    import { MY_FLOW } from '@automattic/onboarding';
    // ...
@@ -435,9 +443,11 @@ async function initialize() {
 7. **Forgetting `as const`** — If `initialize` returns a plain array (not using
    `stepsWithRequiredLogin`), add `as const` at the end so TypeScript infers the
    literal step slugs:
+
    ```ts
    return [ STEPS.GOALS, STEPS.PROCESSING ] as const;
    ```
+
    `stepsWithRequiredLogin()` handles this for you.
 
 8. **Not registering in `registered-flows.ts`** — The flow won't exist. The URL

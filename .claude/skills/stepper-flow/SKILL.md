@@ -195,6 +195,7 @@ Write all files in one pass. Do not ask for permission for each one — write th
 File: `packages/onboarding/src/utils/flows.ts`
 
 Append (do not replace existing entries):
+
 ```ts
 export const <SCREAMING_SNAKE_FLOW_NAME> = '<kebab-flow-name>';
 ```
@@ -204,6 +205,7 @@ export const <SCREAMING_SNAKE_FLOW_NAME> = '<kebab-flow-name>';
 File: `client/landing/stepper/declarative-flow/flows/<flow-name>/<flow-name>.ts`
 
 Use the FlowV2 pattern from AGENTS.md exactly. Rules:
+
 - Import the constant from `@automattic/onboarding`.
 - `initialize` must be a plain function (not an arrow function) so TypeScript infers `typeof initialize` correctly.
 - Always use `stepsWithRequiredLogin()` unless the user explicitly asked for pre-auth steps.
@@ -214,6 +216,7 @@ Use the FlowV2 pattern from AGENTS.md exactly. Rules:
 - Use `window.location.replace()` (not `.href`) to avoid a back-button loop after checkout or /home redirects.
 
 **If the flow uses `setPendingAction( () => createSite(...) )`** (any flow that creates a site via `STEPS.PROCESSING`):
+
 - Set `__experimentalUseSessions: true` on the flow object.
 - Import `useFlowState` and call `set( 'plans', providedDependencies )` in the `case 'plans'` branch of `submit` **before** calling `setPendingAction`.
 - This is non-optional: `useCreateSite()` reads `planCartItems` from `useFlowState().get('plans')` internally. Without these two changes, the site is created with no plan in the cart, and the processing step's `goToCheckout` will be `false` — silently breaking the checkout redirect.
@@ -251,6 +254,7 @@ File: `client/landing/stepper/declarative-flow/flows/<flow-name>/style.scss`
 File: `client/landing/stepper/declarative-flow/registered-flows.ts`
 
 Add an import at the top and an entry in the `availableFlows` object:
+
 ```ts
 import { <CONSTANT> } from '@automattic/onboarding';
 // ...
@@ -287,10 +291,13 @@ drive a real browser against the local dev server and validate the flow end-to-e
 #### 6a. Prerequisites
 
 Check the dev server is reachable:
+
 ```
 GET http://calypso.localhost:3000/setup/<flow-name>
 ```
+
 If it returns a connection error, tell the user:
+
 > The local dev server doesn't appear to be running. Start it with `yarn start` and
 > try again, or skip browser testing and go straight to the PR.
 
@@ -302,9 +309,11 @@ health check happens in 6c after the page renders.
 #### 6b. Generate a test email
 
 Construct a throwaway email for signup:
+
 ```
 test-<8-random-hex-chars>@example.com
 ```
+
 Example: `test-a3f9c21b@example.com`
 
 Using `@example.com` is safe — the domain is reserved for documentation and
@@ -348,6 +357,7 @@ or `use-my-domain` vs. `domains` fork), you MUST walk **each** branch and
 screenshot the divergence point + each step after it. A single happy-path run is
 not enough — the branches share early steps but differ at the decision point, and
 that difference is the most likely place for regressions. Common forks to cover:
+
 - Free plan vs. paid plan on `STEPS.UNIFIED_PLANS` (when `isInSignup: true` and
   free is not hidden) — paid-plan run only needs to reach the `/checkout/<siteSlug>`
   URL; do not complete a real purchase.
@@ -381,6 +391,7 @@ When an issue is detected:
 #### 6e. Write the test report
 
 Write a Markdown report to:
+
 ```
 client/landing/stepper/declarative-flow/flows/<flow-name>/TEST-REPORT.md
 ```
@@ -398,6 +409,7 @@ Use this structure:
 ## Build health
 
 State one of:
+
 - **Clean** — no `Build failed` overlay, no webpack errors in console.
 - **Pre-existing webpack error (unrelated)** — list the failing module path and the
   missing import verbatim. State explicitly that it does not touch the flow's
@@ -411,15 +423,16 @@ For flows with a single linear path, use one table. For flows with multiple
 terminal branches, use one table per branch under a `### Branch: <name>` heading
 (e.g. `### Branch: free plan`, `### Branch: paid plan`).
 
-| Step | Slug | Result | Notes |
-|------|------|--------|-------|
-| Goals | goals | ✅ | Rendered and submitted correctly |
-| Domain search | domains | ✅ | Free domain selected |
-| … | … | … | … |
+| Step          | Slug    | Result | Notes                            |
+| ------------- | ------- | ------ | -------------------------------- |
+| Goals         | goals   | ✅     | Rendered and submitted correctly |
+| Domain search | domains | ✅     | Free domain selected             |
+| …             | …       | …      | …                                |
 
 ## Screenshots
 
 ### Step: <step-name>
+
 ![<step-name>](./<step-name>.png)
 
 …
@@ -427,6 +440,7 @@ terminal branches, use one table per branch under a `### Branch: <name>` heading
 ## Issues found and fixed
 
 ### Issue 1 — <short title>
+
 **Step:** <slug>
 **Symptom:** <what was observed>
 **Fix applied:** <what was changed in the flow file>
