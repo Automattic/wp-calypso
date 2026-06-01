@@ -147,7 +147,9 @@ describe( 'Standalone compose end-to-end', () => {
 		const fab = await screen.findByRole( 'button', { name: 'Compose' } );
 		await user.click( fab );
 
-		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'dialog', { name: 'New post · @a.bsky.social' } )
+		).toBeVisible();
 
 		await user.type( screen.getByRole( 'textbox' ), 'hello world' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
@@ -213,7 +215,9 @@ describe( 'Standalone compose end-to-end', () => {
 		const pill = await screen.findByRole( 'button', { name: /what['’]s up/i } );
 		await user.click( pill );
 
-		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'dialog', { name: 'New post · @a.bsky.social' } )
+		).toBeVisible();
 
 		// _compose_opened fires with the pill's entry_point dimension.
 		await waitFor( () =>

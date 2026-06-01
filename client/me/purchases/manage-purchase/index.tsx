@@ -324,16 +324,16 @@ class ManagePurchase extends Component<
 
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
-		const options = redirectTo ? { redirectTo } : undefined;
-		const isSitelessRenewal =
-			purchase &&
-			( isAkismetHoldingSitePurchase( purchase ) ||
-				isMarketplaceHoldingSitePurchase( purchase ) ||
-				isA4AHoldingSitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
 		}
+
+		const options = redirectTo ? { redirectTo } : undefined;
+		const isSitelessRenewal =
+			isAkismetHoldingSitePurchase( purchase ) ||
+			isMarketplaceHoldingSitePurchase( purchase ) ||
+			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
 		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );

@@ -128,7 +128,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 	const description = sprintf(
 		/* translators: %s: the site plan name */
 		__( 'Included with your %s plan.' ),
-		productionSite?.plan?.product_name_short
+		productionSite?.plan?.product_name_short ?? ''
 	);
 
 	return (

@@ -116,7 +116,7 @@ export default function useOnboardingTours() {
 								);
 							},
 							id: 'boost_agency_visibility',
-							title: translate( "Boost your agency's visibilty across our partner directories" ),
+							title: translate( "Boost your agency's visibilty across our Partner Directories" ),
 							useCalypsoPath: true,
 						},
 				  ]

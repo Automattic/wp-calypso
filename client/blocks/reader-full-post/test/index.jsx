@@ -90,7 +90,6 @@ describe( 'mapStateToFullPostProps', () => {
 			...fullPostState,
 			reader: {
 				...fullPostState.reader,
-				feeds: { items: { 200: feed } },
 				follows: { items: { follow: { feed_ID: 200, site_icon: 'https://example.com/icon.png' } } },
 			},
 		};
@@ -99,6 +98,7 @@ describe( 'mapStateToFullPostProps', () => {
 			feedId: 200,
 			postId: 1,
 			post: { ID: 1, site_ID: 2, is_external: true },
+			feed,
 		} );
 
 		expect( props.feed ).toEqual( {

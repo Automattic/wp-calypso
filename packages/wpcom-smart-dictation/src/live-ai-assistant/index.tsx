@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
@@ -17,6 +17,10 @@ import './style.scss';
 type TimelineRow =
 	| { kind: 'message'; timestamp: number; entry: RealtimeTranscriptEntry }
 	| { kind: 'tool'; timestamp: number; evt: RealtimeToolEvent };
+
+const DICTATION_UPGRADE_URL = `https://wordpress.com/checkout/${ encodeURIComponent(
+	window.location.host
+) }/premium?redirect_to=${ encodeURIComponent( window.location.href ) }`;
 
 function buildTimelineRows(
 	transcript: RealtimeTranscriptEntry[],
@@ -129,8 +133,6 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 			return __( 'Connecting…' );
 		case 'active':
 			return __( 'Listening' );
-		case 'ending':
-			return __( 'Stopping…' );
 		case 'error':
 			return __( 'Something went wrong' );
 		case 'idle':
@@ -149,6 +151,10 @@ function formatRemainingTime( remainingMs: number ): string {
 
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
+	const smartDictationSupportUrl = useMemo(
+		() => localizeUrl( 'https://wordpress.com/support/wordpress-editor/smart-dictation/', locale ),
+		[ locale ]
+	);
 	const instructions = useMemo(
 		() => buildInstructions( locale, contextualInstructions ),
 		[ locale, contextualInstructions ]
@@ -160,6 +166,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 		errorIntent,
 		sessionTimeLimitMs,
 		sessionTimeRemainingMs,
+		canUpgrade,
 		isMuted,
 		localStream,
 		transcript,
@@ -192,23 +199,33 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 
 	const isSessionActive = status === 'active';
 	const isSessionBusy =
-		status === 'requesting-token' ||
-		status === 'requesting-mic' ||
-		status === 'connecting' ||
-		status === 'ending';
+		status === 'requesting-token' || status === 'requesting-mic' || status === 'connecting';
 	const sessionTimeLimit = sessionTimeLimitMs ?? 0;
 	const sessionTimeRemaining = sessionTimeRemainingMs ?? 0;
 	const hasSessionTimeRemaining = sessionTimeLimit > 0;
+	const hasKnownSessionTimeRemaining = sessionTimeRemainingMs !== null;
 	const sessionTimeProgress = hasSessionTimeRemaining
 		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
 		: 0;
+	const hasExhaustedQuota = hasKnownSessionTimeRemaining && sessionTimeRemaining <= 0;
+	const showQuotaLimitNotice = hasExhaustedQuota && ! isSessionActive;
+	const showUpgradeButton = canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
+	const showQuotaReachedButton =
+		! canUpgrade && hasExhaustedQuota && ! isSessionActive && ! isSessionBusy;
 
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
 			stop();
+		} else if ( hasExhaustedQuota ) {
+			return;
 		} else {
 			start();
 		}
+	};
+	const handleUpgradeClick = () => {
+		recordTracksEvent( 'calypso_smart_dictation_upgrade_clicked', {
+			source: 'quota_exhausted',
+		} );
 	};
 	const statusContent = isSessionActive ? (
 		<>
@@ -225,6 +242,48 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	);
 	const showSubtitle =
 		isSessionActive || isSessionBusy || timelineRows.length > 0 || status === 'error';
+	let primaryAction;
+	if ( showUpgradeButton ) {
+		primaryAction = (
+			<Button
+				variant="primary"
+				className="live-ai-assistant__call-button"
+				href={ DICTATION_UPGRADE_URL }
+				onClick={ handleUpgradeClick }
+			>
+				<span>{ __( 'Upgrade to premium' ) }</span>
+			</Button>
+		);
+	} else if ( showQuotaReachedButton ) {
+		primaryAction = (
+			<Button variant="primary" className="live-ai-assistant__call-button" disabled>
+				<span>{ __( 'Quota reached' ) }</span>
+			</Button>
+		);
+	} else {
+		primaryAction = (
+			<Button
+				variant="primary"
+				className={ clsx( 'live-ai-assistant__call-button', {
+					'is-hangup': isSessionActive || isSessionBusy,
+				} ) }
+				onClick={ handleSessionToggle }
+				isBusy={ isSessionBusy }
+			>
+				{ isSessionActive || isSessionBusy ? (
+					<>
+						<StopIcon />
+						<span>{ __( 'Stop dictation' ) }</span>
+					</>
+				) : (
+					<>
+						<MicIcon />
+						<span>{ __( 'Start dictation' ) }</span>
+					</>
+				) }
+			</Button>
+		);
+	}
 
 	return (
 		<>
@@ -245,7 +304,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 							</div>
 						) }
 
-						{ status === 'idle' && timelineRows.length === 0 && (
+						{ status === 'idle' && timelineRows.length === 0 && ! hasExhaustedQuota && (
 							<div className="live-ai-assistant__intro">
 								<video
 									className="live-ai-assistant__intro-artwork"
@@ -263,6 +322,12 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
 								</p>
+								<ExternalLink
+									className="live-ai-assistant__intro-learn-more"
+									href={ smartDictationSupportUrl }
+								>
+									{ __( 'Learn more' ) }
+								</ExternalLink>
 							</div>
 						) }
 
@@ -272,6 +337,17 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 									{ errorIntent === 'warning' ? __( 'Notice' ) : __( 'Error' ) }
 								</Notice.Title>
 								<Notice.Description>{ error }</Notice.Description>
+							</Notice.Root>
+						) }
+
+						{ showQuotaLimitNotice && (
+							<Notice.Root intent="info">
+								<Notice.Title>{ __( 'Daily quota limit reached' ) }</Notice.Title>
+								<Notice.Description>
+									{ canUpgrade
+										? __( 'It will reset at midnight. Upgrade to keep writing by voice.' )
+										: __( 'It will reset at midnight.' ) }
+								</Notice.Description>
 							</Notice.Root>
 						) }
 
@@ -335,26 +411,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								<MicIcon muted={ isMuted } />
 								<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
 							</Button>
-							<Button
-								variant="primary"
-								className={ clsx( 'live-ai-assistant__call-button', {
-									'is-hangup': isSessionActive || isSessionBusy,
-								} ) }
-								onClick={ handleSessionToggle }
-								isBusy={ isSessionBusy }
-							>
-								{ isSessionActive || isSessionBusy ? (
-									<>
-										<StopIcon />
-										<span>{ __( 'Stop dictation' ) }</span>
-									</>
-								) : (
-									<>
-										<MicIcon />
-										<span>{ __( 'Start dictation' ) }</span>
-									</>
-								) }
-							</Button>
+							{ primaryAction }
 						</div>
 						{ hasSessionTimeRemaining && (
 							<div className="live-ai-assistant__time">

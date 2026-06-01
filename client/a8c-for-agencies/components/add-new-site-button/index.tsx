@@ -203,8 +203,8 @@ export default function AddNewSiteButton( {
 			</div>
 			<div className="site-selector-and-importer__popover-column">
 				{ menuItem( {
-					icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
-					heading: translate( 'Start Building for Free' ),
+					icon: <img src={ devSiteBanner } alt={ translate( 'Start building for free' ) } />,
+					heading: translate( 'Start building for free' ),
 					description: translate(
 						'Develop up to 5 WordPress.com sites at{{nbsp/}}once with free development licenses.{{br/}}Only pay when you launch!',
 						{

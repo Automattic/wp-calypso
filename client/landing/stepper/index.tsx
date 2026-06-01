@@ -26,7 +26,6 @@ import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
-import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
@@ -34,13 +33,12 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
-import { createReduxStore, useSelector } from 'calypso/state';
+import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
@@ -125,21 +123,6 @@ function LazyHelpCenter( { currentUser }: { currentUser: UserStore.CurrentUser }
 	return <AsyncHelpCenterApp currentUser={ currentUser } sectionName="stepper" />;
 }
 
-// Matches the stepper user (account-creation) step, including the optional
-// locale segment from FlowRenderer's route (e.g. `/setup/onboarding/user/es`).
-// useSyncRoute keeps the Redux `currentRoute` in sync with react-router
-// navigation, so the FAB can live outside <BrowserRouter> (mounting it inside
-// would nest the Help Center panel's own <Router> and crash).
-const USER_STEP_PATH = /^\/setup\/[^/]+\/user(?:\/[^/]+)?\/?$/;
-
-function StepperUserStepFab() {
-	const currentRoute = useSelector( getCurrentRoute );
-	if ( ! USER_STEP_PATH.test( currentRoute ) ) {
-		return null;
-	}
-	return <AsyncHelpCenterFab sectionName="stepper" />;
-}
-
 async function main() {
 	const { pathname, search } = window.location;
 
@@ -164,7 +147,11 @@ async function main() {
 
 			return new Promise< T >( ( resolve, reject ) => {
 				const cb = ( error: Error, response: T ) => {
-					error ? reject( error ) : resolve( response );
+					if ( error ) {
+						reject( error );
+					} else {
+						resolve( response );
+					}
 				};
 				if ( method && ( method as string ).toUpperCase() !== 'GET' ) {
 					wpcom.req.post( { ...rest, method }, queryObj, body, cb );
@@ -308,14 +295,6 @@ async function main() {
 									sectionName={ flowName }
 									loadAgentsManager
 								/>
-								{ /* The stepper has no masterbar or help button, so logged-out visitors
-								   on the account-creation step need this FAB to summon the Help Center.
-								   It reads its route gate from Redux (kept in sync by useSyncRoute) so
-								   it can live outside <BrowserRouter> — mounting it inside would nest
-								   the Help Center panel's own <Router> and crash. */ }
-								{ ! user && config.isEnabled( 'help-center/logged-out-fab' ) && (
-									<StepperUserStepFab />
-								) }
 							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (

@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
@@ -77,9 +77,12 @@ export default function ConfigureRepository() {
 							initialValues={ initialValues }
 							submitText={ __( 'Update Connection' ) }
 							successMessage={ __( 'Repository settings updated successfully.' ) }
-							errorMessage={
-								// translators: "reason" is why updating the repository failed.
-								__( 'Failed to update repository: %(reason)s' )
+							errorMessage={ ( reason ) =>
+								sprintf(
+									// translators: %(reason)s: why updating the repository failed.
+									__( 'Failed to update repository: %(reason)s' ),
+									{ reason }
+								)
 							}
 							navigateFrom={ navigateFrom }
 						/>

@@ -45,11 +45,11 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",
 		"@wordpress/api-fetch": "^7.46.0",
-		"@wordpress/block-editor": "^15.5.0",
+		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
 		"@wordpress/core-data": "^7.46.0",
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"nanoid": "^3.3.11"
 	},
 	"devDependencies": {

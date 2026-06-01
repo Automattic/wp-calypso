@@ -26,12 +26,12 @@ export function CancellationOfferNotice( {
 					( isAkismet ? akismetHeadline : jetpackHeadline ) +
 					' ' +
 					sprintf(
-						/* Translators: %(percentDiscount)d%% should be a percentage like 15% or 20% */
+						/* Translators: %(percentDiscount)d%% should be a percentage like 15% or 20%, %(productName)s is the name of the product the discount applies to */
 						__(
 							'Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
 						),
 						{
-							percentDiscount: purchase.cancellation_offer_notice_discount_percentage,
+							percentDiscount: purchase.cancellation_offer_notice_discount_percentage ?? 0,
 							productName: purchase.product_name,
 						}
 					)

@@ -35,9 +35,9 @@ export default function MigrationsCommissionsListMobileView( {
 								</div>
 							</ListItemCardContent>
 							{
-								// FIXME: This should be "Migrated on" instead of "Date Added"
+								// FIXME: This should be "Migrated on" instead of "Date added"
 								// We will change this when the MC tool is implemented and we have the migration date
-								<ListItemCardContent title={ translate( 'Date Added' ) }>
+								<ListItemCardContent title={ translate( 'Date added' ) }>
 									<div className="migrations-commissions-list-mobile-view__column">
 										<MigratedOnColumn migratedOn={ commission.created_at } />
 									</div>

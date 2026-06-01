@@ -10,6 +10,7 @@ import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscri
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resemblesUrl } from 'calypso/lib/url';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -22,7 +23,6 @@ import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -35,6 +35,7 @@ function ReaderSubscriptionListItem( {
 	feed,
 	siteId,
 	site,
+	hasFeedError,
 	className = '',
 	followSource,
 	showNotificationSettings,
@@ -58,7 +59,7 @@ function ReaderSubscriptionListItem( {
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
-	const hasSiteError = site?.is_error || feed?.is_error;
+	const hasSiteError = site?.is_error || hasFeedError;
 
 	const recordEvent = useCallback(
 		( name ) => {
@@ -257,27 +258,27 @@ function ReaderSubscriptionListItem( {
 	);
 }
 
-export default compose(
+const ConnectedReaderSubscriptionListItem = compose(
 	connect(
 		( state, ownProps ) => {
-			const feed = getFeed( state, ownProps.feedId );
+			let feed = ownProps.feed;
 
 			if ( feed ) {
 				const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
 
 				if ( follow ) {
-					// Add site icon to feed object so have icon for external feeds when not set
-					if ( feed.site_icon === undefined ) {
-						feed.site_icon = follow.site_icon;
-					}
-					// Add date_subscribed timestamp to feed object when not set
-					if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
-						feed.date_subscribed = follow.date_subscribed;
-					}
-					// Add last_update timestamp to feed object when not set
-					if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
-						feed.last_update = follow.last_updated;
-					}
+					feed = {
+						...feed,
+						site_icon: feed.site_icon ?? follow.site_icon,
+						date_subscribed:
+							feed.date_subscribed === undefined || isNaN( feed.date_subscribed )
+								? follow.date_subscribed
+								: feed.date_subscribed,
+						last_update:
+							feed.last_update === undefined || isNaN( feed.last_update )
+								? follow.last_updated
+								: feed.last_update,
+					};
 				}
 			}
 
@@ -291,3 +292,11 @@ export default compose(
 	localize,
 	withLocalizedMoment
 )( ReaderSubscriptionListItem );
+
+export default function ReaderSubscriptionListItemContainer( props ) {
+	const { data: feed, isError: hasFeedError } = useFeedQuery( props.feedId );
+
+	return (
+		<ConnectedReaderSubscriptionListItem { ...props } feed={ feed } hasFeedError={ hasFeedError } />
+	);
+}

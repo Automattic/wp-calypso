@@ -13,15 +13,15 @@ Agents Manager (AM) provider for the Jetpack AI sidebar in Gutenberg. Bridges th
 
 This package exports the **AM provider contract** — a set of functions the Agents Manager calls to wire up a sidebar provider:
 
-| Export                    | Role                                                        |
-| ------------------------- | ----------------------------------------------------------- |
-| `useAbilitiesSetup`       | Captures AM's `addMessage`/`clearSuggestions` callbacks     |
-| `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM           |
-| `contextProvider`         | Sends Gutenberg editor state to the orchestrator            |
-| `getChatComponent`        | Maps `type` strings → React components for show-component   |
-| `useCheckpoint`           | Post-title snapshots for AM's native Undo action            |
-| `getEmptyViewSuggestions` | Static suggestions shown before conversation starts         |
-| `useSuggestions`          | Block-aware dynamic suggestions during conversation         |
+| Export                    | Role                                                      |
+| ------------------------- | --------------------------------------------------------- |
+| `useAbilitiesSetup`       | Captures AM's `addMessage`/`clearSuggestions` callbacks   |
+| `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM         |
+| `contextProvider`         | Sends Gutenberg editor state to the orchestrator          |
+| `getChatComponent`        | Maps `type` strings → React components for show-component |
+| `useCheckpoint`           | Post-title snapshots for AM's native Undo action          |
+| `getEmptyViewSuggestions` | Static suggestions shown before conversation starts       |
+| `useSuggestions`          | Block-aware dynamic suggestions during conversation       |
 
 All exports live in `src/index.ts`. This is intentionally a single-file provider — keep it that way unless the file exceeds ~800 lines.
 
@@ -36,14 +36,15 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                    | UI Component             | Description                                          |
-| ---------------------------- | -------------------------- | ------------------------ | ---------------------------------------------------- |
-| `big_sky__show_component`    | `handleShowComponent`      | via `getChatComponent`   | Renders interactive pickers (currently title-picker) |
-| `wpcom/update-block-content` | `handleUpdateBlockContent` | _(chat text)_            | Updates block content with shimmer effect            |
+| Tool ID                      | Handler                     | UI Component           | Description                                              |
+| ---------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
+| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
+| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
+| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
 
 ### Show-component pattern
 
-Used for any interactive picker (title, font, color, etc.). The wpcom ability returns an `Input_Required_Result` with `tool_id: 'big_sky__show_component'` and a data envelope shaped like:
+Used for Jetpack AI interactive components. The wpcom ability returns an `Input_Required_Result` with `tool_id: 'jetpack_ai__show_component'` and a data envelope shaped like:
 
 ```
 {
@@ -51,7 +52,7 @@ Used for any interactive picker (title, font, color, etc.). The wpcom ability re
   props: { ... },
   calypsoCheckpointId: '<id>',
   isCurrent: true,
-  hideZoomAction: <optional boolean>
+  hideZoomAction: true
 }
 ```
 
@@ -62,13 +63,15 @@ On the client, `handleShowComponent`:
 3. Returns `{ agentMessage: JSON.stringify({ tool_id, data }) }`. agenttic-client re-emits this as an `{ role: 'agent', parts: [text] }` message.
 4. AM's `convert-tool-messages-to-components` matches the tool_id, calls `getChatComponent(data.type)`, and replaces the text content with a component render. Because the original message had text content, AgentChat renders its action bar (thumbs, Undo) on the resulting bubble.
 
-`hideZoomAction: true` opts out of AM's zoom action button — set it for component types that don't edit block content (e.g. title-picker, which edits the post title).
+Jetpack show-component messages currently set `hideZoomAction: true` so AM's zoom action button stays hidden for these chat components.
 
-### Adding a new picker type
+The provider temporarily accepts legacy `big_sky__show_component` executions for Jetpack-owned component types during the migration, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
+
+### Adding a new component type
 
 1. Add a case in `getChatComponent()` mapping your `type` string to a React component.
 2. Create the component under `src/components/` with a `scss` sibling.
-3. Update the wpcom ability (or add a new one) to return `tool_id: 'big_sky__show_component'` with `data: { type: '<your-type>', props: { ... } }`.
+3. Update the wpcom ability (or add a new one) to return `tool_id: 'jetpack_ai__show_component'` with `data: { type: '<your-type>', props: { ... } }`.
 4. No changes to `toolProvider`, `useCheckpoint`, or the action bar wiring.
 
 ### Adding a non-rendering client tool

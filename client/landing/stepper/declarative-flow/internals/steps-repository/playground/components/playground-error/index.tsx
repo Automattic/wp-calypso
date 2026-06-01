@@ -14,7 +14,7 @@ export function PlaygroundError( { createNewPlayground }: { createNewPlayground:
 		__(
 			'The playground you are trying to access (ID: %s) does not exist or is no longer available in this browser.'
 		),
-		playgroundId
+		playgroundId ?? ''
 	);
 
 	useEffect( () => {

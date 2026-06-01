@@ -41,10 +41,10 @@
 	"types": "dist",
 	"dependencies": {
 		"@wordpress/base-styles": "8.0.0",
-		"@wordpress/compose": "7.23.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/icons": "^10.23.0",
+		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/primitives": "^4.46.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
@@ -57,7 +57,7 @@
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@microsoft/api-extractor": "^7.52.8",
+		"@microsoft/api-extractor": "^7.58.7",
 		"@storybook/addon-actions": "^8.6.14",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
