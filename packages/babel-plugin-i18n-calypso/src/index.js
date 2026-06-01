@@ -127,7 +127,7 @@ function getExtractedComment( path, _originalNodeLine ) {
 
 /**
  * Given an argument node (or recursed node), attempts to return a string
- * represenation of that node's value.
+ * representation of that node's value.
  * @param {Object} node AST node.
  * @returns {string} String value.
  */
@@ -154,7 +154,7 @@ function getNodeAsString( node ) {
 }
 
 /**
- * Returns true if the specified funciton name is valid translate function name
+ * Returns true if the specified function name is valid translate function name
  * @param {string} name Function name to test.
  * @returns {boolean} Whether function name is valid translate function name.
  */
