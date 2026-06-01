@@ -6,29 +6,8 @@
 }
 
 .backup-contents-page {
-	// BACKUP-392: the #109899 fixed-primary layout clamps `.main` to the
-	// viewport height while `.layout__content` hides overflow, so a long file
-	// list was clipped off-screen with no scrollbar. Turn the page into a
-	// constrained flex column (.main -> .card -> .__body) so the file list
-	// scrolls internally instead of overflowing.
-	&.main {
-		display: flex;
-		flex-direction: column;
-		min-height: 0;
-	}
-
 	.card {
 		padding: 24px 22px;
-		// Fill the height left below the back-button and host the flex
-		// context for the (fixed) status header + the scrollable body.
-		flex: 1 1 auto;
-		min-height: 0;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		// Neutralise the base Card's auto inline margins, which would
-		// otherwise center and shrink the card once it becomes a flex item.
-		margin-inline: 0;
 	}
 
 	&__back-button.components-button.is-link {
@@ -79,8 +58,8 @@
 	}
 
 	&__header {
-		// Keep the status card at its natural height; only the body scrolls.
-		flex: 0 0 auto;
+		// TODO: migrate this page to the admin-ui <Page>.
+		background: var(--color-surface);
 		padding-left: 2px;
 		padding-right: 2px;
 
@@ -97,11 +76,6 @@
 	&__body {
 		overflow-x: auto;
 		padding-bottom: 14px;
-		// Fill the remaining card height and scroll the file list vertically
-		// (the core of the BACKUP-392 fix).
-		flex: 1 1 auto;
-		min-height: 0;
-		overflow-y: auto;
 	}
 
 	.file-browser-node {

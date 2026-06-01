@@ -12,22 +12,8 @@
 	}
 }
 
-// BACKUP-394: same #109899 fixed-primary regression as the contents page —
-// the clone flow renders in `<Main className="clone-flow">` with no internal
-// scroll container, so Step 2's clone-point list was clipped with no
-// scrollbar. Make `.main` a flex column and let `.clone-flow__content` absorb
-// the remaining height and scroll vertically.
-.clone-flow.main {
-	display: flex;
-	flex-direction: column;
-	min-height: 0;
-}
-
 .clone-flow__content {
 	margin-top: 16px;
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
 }
 
 .clone-flow__title {
