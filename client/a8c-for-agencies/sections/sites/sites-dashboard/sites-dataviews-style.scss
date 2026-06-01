@@ -13,6 +13,13 @@
 
 .sites-dataviews__site-favicon {
 	margin-right: 16px;
+
+	// Back loaded site icons with the white surface so logos with transparent
+	// backgrounds read as a clean card instead of showing the gray base tile.
+	// The fallback tiles (is-blank / is-primary) keep their own backgrounds.
+	.site-icon:not(.is-blank):not(.is-primary) {
+		background: var(--color-surface);
+	}
 }
 
 .sites-dataviews__site-name {
