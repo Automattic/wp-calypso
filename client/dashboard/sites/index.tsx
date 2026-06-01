@@ -263,7 +263,7 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							isFilteringDeletedSites && ! view.search ? (
+							isFilteringDeletedSites ? (
 								<DataViewsEmptyStateLayout
 									title={ __( 'You have no deleted sites' ) }
 									description={ createInterpolateElement(
