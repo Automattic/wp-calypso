@@ -71,6 +71,7 @@ import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hook
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -275,7 +276,12 @@ const PlansFeaturesMain = ( {
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	const sitePurchases = useSelector( ( state: IAppState ) =>
+		siteId ? getSitePurchases( state, siteId ) : []
+	);
 	const sitePlanSlug = currentPlan?.productSlug;
+	const currentPlanPurchase =
+		sitePurchases?.find( ( p ) => p.productSlug === sitePlanSlug ) ?? null;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -429,9 +435,9 @@ const PlansFeaturesMain = ( {
 
 	// TODO: We should move the modal logic into a data store
 	const showModalAndExit = ( planSlug: PlanSlug ): boolean => {
-		// Expired-plan downgrade confirmation
+		// Downgrade confirmation (expired plans → checkout, active plans → cancel API)
 		if (
-			isPlanExpired &&
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 			sitePlanSlug &&
 			getPlanClass( sitePlanSlug ) !== getPlanClass( planSlug ) &&
 			( PLAN_TIER_ORDER[ getPlanClass( planSlug ) ] ?? 0 ) <
@@ -972,6 +978,8 @@ const PlansFeaturesMain = ( {
 					siteId={ siteId }
 					redirectTo={ redirectTo }
 					onClose={ () => setPendingDowngradePlanSlug( null ) }
+					purchase={ currentPlanPurchase }
+					isPlanExpired={ isPlanExpired }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
 					<PlanNotice

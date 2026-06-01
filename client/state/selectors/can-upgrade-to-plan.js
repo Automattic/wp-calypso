@@ -59,15 +59,21 @@ export default function ( state, siteId, planKey ) {
 		return false;
 	}
 
-	// When the current plan is expired, allow purchasing lower-tier plans through normal checkout.
+	// When the flag is on, allow purchasing lower-tier plans.
+	// For expired plans this routes through checkout; for active plans through the cancel API.
 	if ( isEnabled( 'plans/expired-plan-downgrade' ) && purchase ) {
 		const isExpiredPurchase =
 			purchase.expiryStatus === 'expired' ||
 			( purchase.expiryDate && new Date( purchase.expiryDate ) < new Date() );
 
+		// Pass expiryDate only for expired plans (triggers monthly delay check).
+		// For active plans, expiryDate is null — no delay needed.
 		if (
-			isExpiredPurchase &&
-			isLowerPlanPurchasableForExpiredSite( currentPlanSlug, planKey, purchase.expiryDate )
+			isLowerPlanPurchasableForExpiredSite(
+				currentPlanSlug,
+				planKey,
+				isExpiredPurchase ? purchase.expiryDate : null
+			)
 		) {
 			return true;
 		}

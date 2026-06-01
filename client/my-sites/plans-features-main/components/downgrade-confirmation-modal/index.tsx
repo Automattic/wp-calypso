@@ -6,12 +6,20 @@ import {
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { isRefundable } from 'calypso/lib/purchases';
+import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useSelector } from 'calypso/state';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useDispatch, useSelector } from 'calypso/state';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -22,6 +30,8 @@ interface DowngradeConfirmationModalProps {
 	siteId: number | null | undefined;
 	redirectTo?: string;
 	onClose: () => void;
+	purchase: Purchase | null;
+	isPlanExpired: boolean;
 }
 
 const DowngradeConfirmationModal = ( {
@@ -31,9 +41,13 @@ const DowngradeConfirmationModal = ( {
 	siteId,
 	redirectTo,
 	onClose,
+	purchase,
+	isPlanExpired,
 }: DowngradeConfirmationModalProps ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const [ isDowngrading, setIsDowngrading ] = useState( false );
+	const dispatch = useDispatch();
 
 	const lostFeatures = useMemo( () => {
 		if ( ! targetPlanSlug ) {
@@ -49,6 +63,18 @@ const DowngradeConfirmationModal = ( {
 			.filter( ( feature ): feature is NonNullable< typeof feature > => !! feature );
 	}, [ targetPlanSlug, currentPlanSlug ] );
 
+	const refundAmount = useMemo( () => {
+		if ( ! purchase || isPlanExpired || ! targetPlanSlug ) {
+			return null;
+		}
+		const targetProductId = getPlan( targetPlanSlug )?.getProductId();
+		if ( ! isRefundable( purchase ) || ! Array.isArray( purchase.refundOptions ) ) {
+			return null;
+		}
+		const match = purchase.refundOptions.find( ( opt ) => opt.to_product_id === targetProductId );
+		return match ? { amount: match.refund_amount, currency: purchase.currencyCode } : null;
+	}, [ purchase, isPlanExpired, targetPlanSlug ] );
+
 	if ( ! targetPlanSlug || ! isOpen ) {
 		return null;
 	}
@@ -56,33 +82,69 @@ const DowngradeConfirmationModal = ( {
 	const currentPlanTitle = getPlan( currentPlanSlug )?.getTitle() ?? '';
 	const targetPlanTitle = getPlan( targetPlanSlug )?.getTitle() ?? '';
 
-	const handleConfirm = () => {
-		const planPath = getPlanPath( targetPlanSlug );
-		if ( ! planPath || ! siteSlug ) {
+	const handleConfirm = async () => {
+		if ( isPlanExpired ) {
+			// Expired plan: route to checkout
+			const planPath = getPlanPath( targetPlanSlug );
+			if ( ! planPath || ! siteSlug ) {
+				return;
+			}
+			const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ planPath }`;
+			const cancelTo = window.location.href.replace( window.location.origin, '' );
+			const finalUrl = addQueryArgs(
+				{
+					...( redirectTo && { redirect_to: redirectTo } ),
+					cancel_to: cancelTo,
+					expired_downgrade: 'true',
+				},
+				checkoutUrl
+			);
+			window.location.assign( finalUrl );
 			return;
 		}
-		const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ planPath }`;
-		const cancelTo = window.location.href.replace( window.location.origin, '' );
-		const finalUrl = addQueryArgs(
-			{
-				...( redirectTo && { redirect_to: redirectTo } ),
-				cancel_to: cancelTo,
-				expired_downgrade: 'true',
-			},
-			checkoutUrl
-		);
-		window.location.assign( finalUrl );
+
+		// Active plan: use cancel API
+		if ( ! purchase || isDowngrading ) {
+			return;
+		}
+
+		const currentPlan = getPlan( currentPlanSlug );
+		const targetPlan = getPlan( targetPlanSlug );
+		if ( ! currentPlan?.getProductId() || ! targetPlan?.getProductId() ) {
+			return;
+		}
+
+		setIsDowngrading( true );
+		try {
+			const response = await cancelAndRefundPurchaseAsync( purchase.id, {
+				product_id: currentPlan.getProductId(),
+				type: 'downgrade',
+				to_product_id: targetPlan.getProductId(),
+			} );
+			await Promise.all( [
+				siteId ? dispatch( refreshSitePlans( siteId ) ) : Promise.resolve(),
+				dispatch( clearPurchases() ),
+			] );
+			dispatch( successNotice( response.message, { duration: 5000 } ) );
+			await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
+			window.location.href = getPurchaseListUrlFor( siteSlug ?? '' );
+		} catch ( error ) {
+			dispatch(
+				errorNotice(
+					error instanceof Error ? error.message : translate( 'An unknown error occurred' ),
+					{ duration: 5000 }
+				)
+			);
+		} finally {
+			setIsDowngrading( false );
+		}
 	};
 
-	return (
-		<Modal
-			title={ String( translate( 'Confirm downgrade' ) ) }
-			onRequestClose={ onClose }
-			className="downgrade-confirmation-modal"
-			size="medium"
-		>
-			{ lostFeatures.length > 0 ? (
-				<>
+	const renderDescription = () => {
+		if ( isPlanExpired ) {
+			// Expired plan: show "what you'll lose" copy
+			if ( lostFeatures.length > 0 ) {
+				return (
 					<p className="downgrade-confirmation-modal__description">
 						{ translate(
 							"When you change from %(currentPlan)s to %(targetPlan)s, here's what you'll lose:",
@@ -96,22 +158,9 @@ const DowngradeConfirmationModal = ( {
 							}
 						) }
 					</p>
-					<ul className="downgrade-confirmation-modal__feature-list">
-						{ lostFeatures.map( ( feature ) => (
-							<li key={ feature.getSlug() } className="downgrade-confirmation-modal__feature-item">
-								<Gridicon
-									icon="cross-small"
-									size={ 24 }
-									className="downgrade-confirmation-modal__feature-icon"
-								/>
-								<span className="downgrade-confirmation-modal__feature-text">
-									{ feature.getTitle() }
-								</span>
-							</li>
-						) ) }
-					</ul>
-				</>
-			) : (
+				);
+			}
+			return (
 				<p className="downgrade-confirmation-modal__description">
 					{ translate(
 						'When you change from %(currentPlan)s to %(targetPlan)s, your features will stay the same.',
@@ -124,6 +173,73 @@ const DowngradeConfirmationModal = ( {
 						}
 					) }
 				</p>
+			);
+		}
+
+		// Active plan: show refund info or immediate change message
+		return (
+			<>
+				<p className="downgrade-confirmation-modal__description">
+					{ refundAmount
+						? translate(
+								"When you downgrade from %(currentPlan)s to %(targetPlan)s, you'll receive a refund of %(amount)s to your original payment method.",
+								{
+									args: {
+										currentPlan: currentPlanTitle,
+										targetPlan: targetPlanTitle,
+										amount: formatCurrency( refundAmount.amount, refundAmount.currency ),
+									},
+									comment: 'Message shown when downgrading an active plan with a refund available',
+								}
+						  )
+						: translate(
+								'Your plan will change immediately from %(currentPlan)s to %(targetPlan)s.',
+								{
+									args: {
+										currentPlan: currentPlanTitle,
+										targetPlan: targetPlanTitle,
+									},
+									comment: 'Message shown when downgrading an active plan with no refund available',
+								}
+						  ) }
+				</p>
+				{ lostFeatures.length > 0 && (
+					<p className="downgrade-confirmation-modal__description">
+						{ translate(
+							'These features will no longer be available on your site when your plan changes:',
+							{
+								comment: 'Subheading before the list of features that will be lost on downgrade',
+							}
+						) }
+					</p>
+				) }
+			</>
+		);
+	};
+
+	return (
+		<Modal
+			title={ String( translate( 'Confirm downgrade' ) ) }
+			onRequestClose={ onClose }
+			className="downgrade-confirmation-modal"
+			size="medium"
+		>
+			{ renderDescription() }
+			{ lostFeatures.length > 0 && (
+				<ul className="downgrade-confirmation-modal__feature-list">
+					{ lostFeatures.map( ( feature ) => (
+						<li key={ feature.getSlug() } className="downgrade-confirmation-modal__feature-item">
+							<Gridicon
+								icon="cross-small"
+								size={ 24 }
+								className="downgrade-confirmation-modal__feature-icon"
+							/>
+							<span className="downgrade-confirmation-modal__feature-text">
+								{ feature.getTitle() }
+							</span>
+						</li>
+					) ) }
+				</ul>
 			) }
 			<HStack spacing={ 3 } justify="flex-end" className="downgrade-confirmation-modal__buttons">
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
@@ -132,7 +248,13 @@ const DowngradeConfirmationModal = ( {
 						comment: 'Button label to dismiss the downgrade modal and keep the current plan',
 					} ) }
 				</Button>
-				<Button __next40pxDefaultSize variant="primary" onClick={ handleConfirm }>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					onClick={ handleConfirm }
+					isBusy={ isDowngrading }
+					disabled={ isDowngrading }
+				>
 					{ translate( 'Downgrade to %(planName)s', {
 						args: { planName: targetPlanTitle },
 						comment: 'Button label to confirm downgrading to a lower-tier plan',
