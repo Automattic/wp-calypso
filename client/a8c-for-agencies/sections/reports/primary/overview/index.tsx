@@ -6,7 +6,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
-import useCompactOnScroll from 'calypso/a8c-for-agencies/hooks/use-compact-on-scroll';
+import useBannerParallax from 'calypso/a8c-for-agencies/hooks/use-banner-parallax';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.webp';
 import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.webp';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -27,7 +27,7 @@ export default function ReportsOverview() {
 	const dispatch = useDispatch();
 	const title = translate( 'Client Reports' );
 	const [ showExampleModal, setShowExampleModal ] = useState( false );
-	const { onScroll, isCompact } = useCompactOnScroll();
+	const { onScroll } = useBannerParallax();
 
 	const benefitsList1 = useMemo(
 		() => [
@@ -106,8 +106,8 @@ export default function ReportsOverview() {
 						{ buildNewReportButton }
 					</Actions>
 				</LayoutHeader>
-				<ReportsBanner ctas={ bannerCtas } isCompact={ isCompact } />
 			</LayoutTop>
+			<ReportsBanner ctas={ bannerCtas } />
 			<LayoutBody>
 				<PageSectionColumns>
 					<PageSectionColumns.Column heading={ translate( 'Why share reports?' ) }>

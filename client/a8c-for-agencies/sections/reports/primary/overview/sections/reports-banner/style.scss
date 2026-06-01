@@ -2,11 +2,23 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-// Dark teal banner needs light text for readability.
 .reports-banner__section {
-	overflow: hidden;
-	transition: max-height 0.25s ease-out, padding 0.25s ease-out;
-	max-height: 1000px;
+	// Sit behind the body's stacking context (z-index: 1) so the body slides
+	// up over the banner as the user scrolls.
+	position: relative;
+	z-index: 0;
+
+	// `useBannerParallax` writes `--banner-translate-y` on the scroll container
+	// per frame; the value cascades down to here. Translating down at a
+	// fraction of scroll speed makes the banner scroll up slower than the
+	// body, so the body catches up and covers it — a classic parallax effect.
+	transform: translateY(var(--banner-translate-y, 0));
+	will-change: transform;
+
+	// The banner sits between the sticky breadcrumb and the body, so it carries
+	// its own dark-teal surface (the `__top-wrapper` background no longer
+	// reaches it).
+	background: var(--color-overview-header-background);
 
 	.reports-banner__heading,
 	.reports-banner__description {
@@ -21,11 +33,6 @@
 		@include break-small {
 			display: flex;
 		}
-	}
-
-	&.is-compact {
-		padding-block: 0;
-		max-height: 0;
 	}
 }
 
