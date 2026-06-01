@@ -47,10 +47,11 @@ const assertSuccessfulResponse = ( response: FollowDeliveryResponse, message: st
 
 const isValidId = ( id?: number | string ): id is number | string => {
 	if ( typeof id === 'number' ) {
-		return Number.isInteger( id ) && id >= 0;
+		return Number.isInteger( id ) && id > 0;
 	}
 	if ( typeof id === 'string' ) {
-		return /^[0-9]+$/.test( id ) && Number.isInteger( Number( id ) );
+		const numericId = Number( id );
+		return /^[0-9]+$/.test( id ) && Number.isInteger( numericId ) && numericId > 0;
 	}
 	return false;
 };

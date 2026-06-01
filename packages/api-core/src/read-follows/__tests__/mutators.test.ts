@@ -64,6 +64,52 @@ describe( 'read follows mutators', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'follows a URL when the numeric subscription ID is zero', async () => {
+			const scope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/new', {
+					source: 'calypso',
+					url: 'https://example.com/feed/',
+				} )
+				.reply( 200, {
+					subscribed: true,
+					subscription: {
+						ID: '123',
+						URL: 'https://example.com/feed/',
+					},
+				} );
+
+			await followSite( {
+				feedUrl: 'https://example.com/feed/',
+				source: 'calypso',
+				subscriptionId: 0,
+			} );
+
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'follows a URL when the string subscription ID is zero', async () => {
+			const scope = nock( BASE )
+				.post( '/rest/v1.1/read/following/mine/new', {
+					source: 'calypso',
+					url: 'https://example.com/feed/',
+				} )
+				.reply( 200, {
+					subscribed: true,
+					subscription: {
+						ID: '123',
+						URL: 'https://example.com/feed/',
+					},
+				} );
+
+			await followSite( {
+				feedUrl: 'https://example.com/feed/',
+				source: 'calypso',
+				subscriptionId: '0',
+			} );
+
+			expect( scope.isDone() ).toBe( true );
+		} );
+
 		it( 'throws before requesting when no subscription ID or URL is provided', async () => {
 			await expect( followSite( {} ) ).rejects.toThrow(
 				'Subscription ID or URL is required to follow'
@@ -130,6 +176,13 @@ describe( 'read follows mutators', () => {
 			await expect( unfollowSite( { subscriptionId: 'invalid' } ) ).rejects.toThrow(
 				'Subscription ID or URL is required to unfollow'
 			);
+		} );
+
+		it( 'throws before requesting when the subscription ID is zero and no URL is provided', async () => {
+			await expect( unfollowSite( { subscriptionId: 0 } ) ).rejects.toThrow(
+				'Subscription ID or URL is required to unfollow'
+			);
+			expect( nock.pendingMocks() ).toEqual( [] );
 		} );
 
 		it( 'throws when the response is still subscribed', async () => {
