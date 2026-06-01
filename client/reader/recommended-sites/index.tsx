@@ -1,36 +1,23 @@
-import { Railcar } from '@automattic/calypso-analytics';
 import { DotPager } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Dispatch } from 'redux';
+import { useSelector } from 'react-redux';
+import {
+	selectVisibleRecommendedSites,
+	useRecommendedSites,
+} from 'calypso/reader/data/recommended-sites';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import {
-	RecommendedSitesRequestAction,
-	requestRecommendedSites,
-} from 'calypso/state/reader/recommended-sites/actions';
-import {
-	getReaderRecommendedSites,
-	getReaderRecommendedSitesPagingOffset,
-} from 'calypso/state/reader/recommended-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { RecommendedSitePlaceholder } from './placeholder';
-import RecommendedSite from './recommended-site';
+import { seed } from './constants';
+import { RecommendedSitesPlaceholder } from './placeholder';
+import RecommendedSite from './site';
 import './style.scss';
 
 const displayRecommendedSitesTotal = 2;
 
-export const seed = Math.floor( Math.random() * 10001 );
-
-type RecommendedSiteType = {
-	blogId: number;
-	feedId?: number;
-	railcar: Railcar;
-	title: string;
-	url: string;
-};
+export { seed };
 
 const RecommendedSitesResponsiveContainer: React.FC< { children: React.ReactNode } > = ( {
 	children,
@@ -46,45 +33,49 @@ const RecommendedSitesResponsiveContainer: React.FC< { children: React.ReactNode
 	);
 };
 
-const RecommendedSitesPlaceholder = ( { count }: { count: number } ) => {
-	const items = [];
-
-	for ( let i = 0; i < count; i++ ) {
-		items.push( <RecommendedSitePlaceholder key={ i } /> );
-	}
-
-	return <>{ items }</>;
-};
-
 const RecommendedSites = () => {
 	const translate = useTranslate();
-	const dispatch = useDispatch< Dispatch< RecommendedSitesRequestAction > >();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const amountOfPlaceHolders = useBreakpoint( '<1040px' ) ? 1 : 2;
-
-	const recommendedSites = useSelector(
-		( state ) => getReaderRecommendedSites( state, seed ) as RecommendedSiteType[]
-	);
-
-	const offset = useSelector( ( state ) => getReaderRecommendedSitesPagingOffset( state, seed ) );
 	const blockedSites = useSelector( getBlockedSites );
+	const {
+		data: recommendedSites = [],
+		fetchNextPage,
+		hasNextPage,
+		isFetchNextPageError,
+		isFetchingNextPage,
+	} = useRecommendedSites( {
+		seed,
+		number: 4,
+		enabled: isEmailVerified,
+	} );
 
 	const filteredRecommendedSites = useMemo( () => {
-		if ( ! Array.isArray( recommendedSites ) || ! recommendedSites.length ) {
-			return [];
-		}
-		return recommendedSites
-			.filter( ( { blogId } ) => {
-				return ! blockedSites.includes( blogId );
-			} )
-			.slice( 0, displayRecommendedSitesTotal );
+		return selectVisibleRecommendedSites(
+			recommendedSites,
+			blockedSites,
+			displayRecommendedSitesTotal
+		);
 	}, [ recommendedSites, blockedSites ] );
 
 	useEffect( () => {
-		if ( filteredRecommendedSites.length <= 4 ) {
-			dispatch( requestRecommendedSites( { seed, offset } ) );
+		if (
+			isEmailVerified &&
+			filteredRecommendedSites.length < displayRecommendedSitesTotal &&
+			hasNextPage &&
+			! isFetchNextPageError &&
+			! isFetchingNextPage
+		) {
+			fetchNextPage();
 		}
-	}, [ dispatch, filteredRecommendedSites.length, offset ] );
+	}, [
+		isEmailVerified,
+		filteredRecommendedSites.length,
+		hasNextPage,
+		isFetchNextPageError,
+		isFetchingNextPage,
+		fetchNextPage,
+	] );
 
 	if ( ! isEmailVerified ) {
 		return null;
@@ -114,4 +105,5 @@ const RecommendedSites = () => {
 	);
 };
 
+export { RecommendedSites };
 export default RecommendedSites;

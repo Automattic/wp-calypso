@@ -69,7 +69,6 @@ export default function MigrationsCommissions() {
 					items={ taggedSites }
 					fetchMigratedSites={ fetchMigratedSites }
 					migrationTags={ migrationTags }
-					canTagSitesForCommission={ canTagSitesForCommission }
 				/>
 			</div>
 		);
