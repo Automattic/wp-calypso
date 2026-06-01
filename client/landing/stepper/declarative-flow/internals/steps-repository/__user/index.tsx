@@ -128,9 +128,13 @@ const UserStepComponent: StepType = function UserStep( {
 		isMobileLayoutExperimentEligible && isMobileLayoutExperimentLoading;
 
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
-	const allowedSocialServices = isMobileTreatment
-		? MOBILE_SOCIAL_SERVICES
-		: partnerConfig?.ssoProviders;
+	// Partner branding always wins over the experiment. useMobileLayoutExperiment
+	// already excludes partner flows from eligibility (so isMobileTreatment is
+	// false whenever partnerConfig is set), making the ! partnerConfig check
+	// belt-and-suspenders: it keeps the "partners never get the treatment SSO set"
+	// invariant local to this line and safe if eligibility is ever refactored.
+	const allowedSocialServices =
+		isMobileTreatment && ! partnerConfig ? MOBILE_SOCIAL_SERVICES : partnerConfig?.ssoProviders;
 	// customTosElement is reserved for partner branding (legal); the form's
 	// mobile-compact branch renders MobileCompactTosNotice as its own fallback
 	// when no customTosElement is provided. Routing the notice through
