@@ -20,7 +20,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 	border-radius: 50%;
 	border: 2px solid theme.$components-color-gray-700;
 	flex-shrink: 0;
-	font-size: variables.$font-size-small;
+	font-size: var( --wpds-typography-font-size-sm, 12px );
 	font-weight: 400;
 	color: theme.$components-color-gray-700;
 	background: theme.$components-color-background;
