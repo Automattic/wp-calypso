@@ -107,4 +107,25 @@ describe( 'ReaderFeedItem', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeVisible();
 	} );
+
+	it( 'does not invalidate site subscriptions when subscribed items are hidden', () => {
+		mockSubscribeMutate.mockImplementation( () => {} );
+
+		renderWithProvider(
+			<ReaderFeedItem
+				feed={ makeFeedItem() }
+				source="reader-new-subscription"
+				shouldHideOnSubscribedState
+			/>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+		expect( mockSubscribeMutate ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				doNotInvalidateSiteSubscriptions: true,
+			} ),
+			expect.any( Object )
+		);
+	} );
 } );

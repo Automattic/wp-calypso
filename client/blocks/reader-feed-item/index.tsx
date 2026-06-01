@@ -151,6 +151,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			onSubscribe(
 				{
 					blog_id: blogId ?? undefined,
+					doNotInvalidateSiteSubscriptions: shouldHideOnSubscribedState,
 					feed_id: feedId,
 					url: subscribeUrl,
 				},
