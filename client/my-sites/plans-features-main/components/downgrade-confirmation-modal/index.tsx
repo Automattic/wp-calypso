@@ -113,35 +113,45 @@ const DowngradeConfirmationModal = ( {
 
 		setIsDowngrading( true );
 		try {
-			await cancelAndRefundPurchaseAsync( purchase.id, {
+			const result = await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: currentPlan.getProductId(),
 				type: 'downgrade',
 				to_product_id: targetPlan.getProductId(),
 			} );
 
-			// Navigate to the purchase list in the originating interface.
-			// cancel_to points to the entry page (e.g. /me/purchases/slug/123
-			// or http://my.localhost:3000/me/billing/purchases/slug/123 for dashboard).
-			// Strip the last path segment (purchaseId) to get the list URL.
+			// Redirect to the new plan's purchase settings page.
+			// cancel_to points to the old purchase (e.g. /me/purchases/slug/123
+			// or http://my.localhost:3000/me/billing/purchases/slug/123).
+			// Replace the old purchaseId with the new subscription ID.
+			const newPurchaseId = result?.new_subscription_id;
 			const cancelTo = new URLSearchParams( window.location.search ).get( 'cancel_to' );
-			let listUrl: string;
-			if ( cancelTo ) {
+			let targetUrl: string;
+			if ( cancelTo && newPurchaseId ) {
 				if ( cancelTo.startsWith( 'http' ) ) {
-					// Dashboard: full URL — preserve the origin so we redirect
-					// back to the dashboard, not to calypso.
+					// Dashboard: full URL — replace the purchaseId segment.
+					const url = new URL( cancelTo );
+					url.pathname = url.pathname.replace( /\/[^/]+$/, `/${ newPurchaseId }` );
+					url.search = '';
+					targetUrl = url.href;
+				} else {
+					// Classic calypso: relative path.
+					targetUrl = cancelTo.split( '?' )[ 0 ].replace( /\/[^/]+$/, `/${ newPurchaseId }` );
+				}
+			} else if ( cancelTo ) {
+				// No new_subscription_id — fall back to purchases list.
+				if ( cancelTo.startsWith( 'http' ) ) {
 					const url = new URL( cancelTo );
 					url.pathname = url.pathname.replace( /\/[^/]+$/, '' );
 					url.search = '';
-					listUrl = url.href;
+					targetUrl = url.href;
 				} else {
-					// Classic calypso: relative path.
-					listUrl = cancelTo.split( '?' )[ 0 ].replace( /\/[^/]+$/, '' );
+					targetUrl = cancelTo.split( '?' )[ 0 ].replace( /\/[^/]+$/, '' );
 				}
 			} else {
-				listUrl = `/purchases/subscriptions/${ siteSlug ?? '' }`;
+				targetUrl = `/purchases/subscriptions/${ siteSlug ?? '' }`;
 			}
 			// Full-page navigation clears all stale Redux state naturally.
-			window.location.href = listUrl + '?plan_changed=true';
+			window.location.href = targetUrl + '?plan_changed=true';
 		} catch ( error ) {
 			dispatch(
 				errorNotice(
