@@ -634,6 +634,39 @@ class ManagePurchase extends Component<
 			);
 		}
 
+		// For active plans eligible for self-serve downgrade, use the same plan-upgrade flow.
+		if (
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			purchase &&
+			! isExpired( purchase ) &&
+			! isInExpirationGracePeriod( purchase ) &&
+			isPlan( purchase ) &&
+			( isPremium( purchase ) || isBusiness( purchase ) || isEcommerce( purchase ) )
+		) {
+			const cancelTo = this.props.isSiteLevel
+				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
+				: `/me/purchases/${ siteSlug }/${ purchase.id }`;
+			const intervalMap: Record< number, string > = {
+				31: 'monthly',
+				365: 'yearly',
+				730: '2yearly',
+				1095: '3yearly',
+			};
+			const redirectTo = this.props.isSiteLevel
+				? `/purchases/subscriptions/${ siteSlug }/:purchaseId?plan_changed=true`
+				: `/me/purchases/${ siteSlug }/:purchaseId?plan_changed=true`;
+			return addQueryArgs(
+				{
+					siteSlug,
+					cancel_to: cancelTo,
+					change_plan: 'true',
+					intervalType: intervalMap[ purchase.billPeriodDays ] ?? 'yearly',
+					redirect_to: redirectTo,
+				},
+				'/setup/plan-upgrade'
+			);
+		}
+
 		return `/plans/${ siteSlug }`;
 	}
 
@@ -661,7 +694,7 @@ class ManagePurchase extends Component<
 		 ).includes( purchase.productSlug );
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
-		const isDowngradeEligible =
+		const isExpiredDowngradeEligible =
 			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
 			isPlan( purchase ) &&
 			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
@@ -669,6 +702,15 @@ class ManagePurchase extends Component<
 				isPremium( purchase ) ||
 				isBusiness( purchase ) ||
 				isEcommerce( purchase ) );
+
+		const isActiveDowngradeEligible =
+			! isExpired( purchase ) &&
+			! isInExpirationGracePeriod( purchase ) &&
+			isPlan( purchase ) &&
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			( isPremium( purchase ) || isBusiness( purchase ) || isEcommerce( purchase ) );
+
+		const isDowngradeEligible = isExpiredDowngradeEligible || isActiveDowngradeEligible;
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct && ! isDowngradeEligible ) {
 			return null;

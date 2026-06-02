@@ -13,11 +13,8 @@ import { useMemo, useState } from 'react';
 import { isRefundable } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useDispatch, useSelector } from 'calypso/state';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { clearPurchases } from 'calypso/state/purchases/actions';
-import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -116,18 +113,35 @@ const DowngradeConfirmationModal = ( {
 
 		setIsDowngrading( true );
 		try {
-			const response = await cancelAndRefundPurchaseAsync( purchase.id, {
+			await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: currentPlan.getProductId(),
 				type: 'downgrade',
 				to_product_id: targetPlan.getProductId(),
 			} );
-			await Promise.all( [
-				siteId ? dispatch( refreshSitePlans( siteId ) ) : Promise.resolve(),
-				dispatch( clearPurchases() ),
-			] );
-			dispatch( successNotice( response.message, { duration: 5000 } ) );
-			await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
-			window.location.href = getPurchaseListUrlFor( siteSlug ?? '' );
+
+			// Navigate to the purchase list in the originating interface.
+			// cancel_to points to the entry page (e.g. /me/purchases/slug/123
+			// or http://my.localhost:3000/me/billing/purchases/slug/123 for dashboard).
+			// Strip the last path segment (purchaseId) to get the list URL.
+			const cancelTo = new URLSearchParams( window.location.search ).get( 'cancel_to' );
+			let listUrl: string;
+			if ( cancelTo ) {
+				if ( cancelTo.startsWith( 'http' ) ) {
+					// Dashboard: full URL — preserve the origin so we redirect
+					// back to the dashboard, not to calypso.
+					const url = new URL( cancelTo );
+					url.pathname = url.pathname.replace( /\/[^/]+$/, '' );
+					url.search = '';
+					listUrl = url.href;
+				} else {
+					// Classic calypso: relative path.
+					listUrl = cancelTo.split( '?' )[ 0 ].replace( /\/[^/]+$/, '' );
+				}
+			} else {
+				listUrl = `/purchases/subscriptions/${ siteSlug ?? '' }`;
+			}
+			// Full-page navigation clears all stale Redux state naturally.
+			window.location.href = listUrl + '?plan_changed=true';
 		} catch ( error ) {
 			dispatch(
 				errorNotice(
@@ -135,7 +149,6 @@ const DowngradeConfirmationModal = ( {
 					{ duration: 5000 }
 				)
 			);
-		} finally {
 			setIsDowngrading( false );
 		}
 	};
