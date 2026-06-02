@@ -14,7 +14,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
-import { isAkismetBusiness5kPlan, isAkismetPro500Plan } from './akismet';
+import { getAkismetProductDisplayName } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
@@ -314,36 +314,11 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		return purchase.meta;
 	}
 
-	if (
-		isAkismetPro500Plan( purchase.product_slug ) &&
-		purchase.renewal_price_tier_usage_quantity &&
-		purchase.renewal_price_tier_usage_quantity >= 1
-	) {
-		// "Pro 500" is legacy naming retained for backend product-slug stability
-		// (ak_pro5h_*). The per-quantity allotment is now 8000 requests/month.
-		const AKISMET_PRO_REQUESTS_PER_QUANTITY = 8000;
-		const requestsInThousands =
-			( AKISMET_PRO_REQUESTS_PER_QUANTITY * purchase.renewal_price_tier_usage_quantity ) / 1000;
-		/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
-		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
-			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-			requestsK: requestsInThousands,
-		} );
-	}
-
-	if ( isAkismetBusiness5kPlan( purchase.product_slug ) ) {
-		// "Business 5k" is legacy naming retained for backend product-slug stability
-		// (ak_bus5k_*). The allotment is now 80000 requests/month.
-		const AKISMET_BUSINESS_REQUESTS_PER_MONTH = 80000;
-		const requestsInThousands = AKISMET_BUSINESS_REQUESTS_PER_MONTH / 1000;
-		/* translators: %(productName)s is the product name (e.g. "Akismet Business"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "80K"). */
-		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
-			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-			requestsK: requestsInThousands,
-		} );
-	}
-
-	return purchase.product_name;
+	return getAkismetProductDisplayName(
+		purchase.product_name,
+		purchase.product_slug,
+		purchase.renewal_price_tier_usage_quantity ?? 0
+	);
 }
 
 export function getTitleForListDisplay( purchase: Purchase ): string {

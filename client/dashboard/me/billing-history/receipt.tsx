@@ -25,7 +25,7 @@ import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { isAkismetPro500Plan } from '../../utils/akismet';
+import { getAkismetProductDisplayName } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
@@ -367,15 +367,11 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 
 function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Receipt } ) {
 	const termLabel = getTransactionTermLabel( item );
-	const isAkismet = item.licensed_quantity && isAkismetPro500Plan( item.wpcom_product_slug );
-	const variationDisplay = isAkismet
-		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
-				item.variation.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( item.licensed_quantity ) )
-		  )
-		: item.variation;
+	const variationDisplay = getAkismetProductDisplayName(
+		item.variation,
+		item.wpcom_product_slug,
+		item.licensed_quantity ?? 0
+	);
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
 	const subtotalInteger = shouldShowDiscount
 		? getReceiptItemOriginalCost( item )

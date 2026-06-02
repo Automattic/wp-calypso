@@ -1,9 +1,4 @@
-import {
-	isAkismetPro500,
-	getAkismetPro500ProductDisplayName,
-	isAkismetBusiness5k,
-	getAkismetBusiness5kProductDisplayName,
-} from '@automattic/calypso-products';
+import { getAkismetProductDisplayName } from '@automattic/calypso-products';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -25,18 +20,13 @@ function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
 	translate: ReturnType< typeof useTranslate >
 ) {
-	const getPlanName = () => {
-		if ( isAkismetPro500( { product_slug: transaction.wpcom_product_slug } ) ) {
-			return String(
-				getAkismetPro500ProductDisplayName( transaction.variation, transaction.licensed_quantity )
-			);
-		}
-		if ( isAkismetBusiness5k( { product_slug: transaction.wpcom_product_slug } ) ) {
-			return String( getAkismetBusiness5kProductDisplayName( transaction.variation ) );
-		}
-		return transaction.variation;
-	};
-	const plan = capitalPDangit( getPlanName() );
+	const plan = capitalPDangit(
+		getAkismetProductDisplayName(
+			{ product_slug: transaction.wpcom_product_slug },
+			transaction.variation,
+			transaction.licensed_quantity
+		)
+	);
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
 	return (
@@ -176,21 +166,12 @@ export function getFieldDefinitions(
 				if ( transactionItem.product === transactionItem.variation ) {
 					return String( transactionItem.product );
 				}
-				const getName = () => {
-					if ( isAkismetPro500( { product_slug: transactionItem.wpcom_product_slug } ) ) {
-						return String(
-							getAkismetPro500ProductDisplayName(
-								transactionItem.variation,
-								transactionItem.licensed_quantity
-							)
-						);
-					}
-					if ( isAkismetBusiness5k( { product_slug: transactionItem.wpcom_product_slug } ) ) {
-						return String( getAkismetBusiness5kProductDisplayName( transactionItem.variation ) );
-					}
-					return transactionItem.variation;
-				};
-				return capitalPDangit( getName() );
+				const name = getAkismetProductDisplayName(
+					{ product_slug: transactionItem.wpcom_product_slug },
+					transactionItem.variation,
+					transactionItem.licensed_quantity
+				);
+				return capitalPDangit( name );
 			},
 		},
 		{

@@ -12,3 +12,4 @@ export * from './is-multi-year-domain-product';
 export * from './get-storage-addon-display-name';
 export * from './get-akismet-pro-500-product-display-name';
 export * from './get-akismet-business-5k-product-display-name';
+export * from './get-akismet-product-display-name';
