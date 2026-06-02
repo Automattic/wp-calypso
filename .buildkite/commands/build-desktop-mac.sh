@@ -29,16 +29,9 @@ cd desktop
 corepack enable
 yarn install --immutable --inline-builds
 
-# Pull the macOS Developer ID cert into the keychain via fastlane match.
-# Reads `MATCH_S3_ACCESS_KEY`, `MATCH_S3_SECRET_ACCESS_KEY`, and
-# `MATCH_PASSWORD` from the agent environment hook.
 bundle install
 bundle exec fastlane configure_code_signing
 
 yarn run ci:build-mac
 
-# Submit the produced `.app` and `.dmg` to Apple's notary service so
-# Gatekeeper accepts the install without "unidentified developer"
-# friction. Reads `APP_STORE_CONNECT_API_KEY_*` from the agent
-# environment hook.
 bundle exec fastlane notarize_app
