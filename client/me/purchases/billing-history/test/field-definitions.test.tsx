@@ -3,6 +3,7 @@
  */
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { type ComponentType } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createTestReduxStore } from 'calypso/my-sites/checkout/src/test/util';
 import { getFieldDefinitions } from '../field-definitions';
@@ -73,12 +74,13 @@ function renderServiceCell( visibleFields: string[] ) {
 	const translate = ( ( text: string ) => text ) as never;
 	const fields = getFieldDefinitions( [ transaction ], translate, () => '/r/1', visibleFields );
 	const serviceField = fields.find( ( field ) => field.id === 'service' )!;
+	const ServiceCell = serviceField.render as ComponentType< { item: BillingTransaction } >;
 	const queryClient = new QueryClient();
 	const store = createTestReduxStore();
 	return render(
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				{ serviceField.render!( { item: transaction, field: serviceField } as never ) }
+				<ServiceCell item={ transaction } />
 			</QueryClientProvider>
 		</ReduxProvider>
 	);

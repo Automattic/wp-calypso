@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { type ComponentType } from 'react';
 import { render } from '../../../test-utils';
 import { getFields } from '../dataviews';
 import type { Receipt } from '@automattic/api-core';
@@ -62,7 +63,8 @@ const receipt = {
 function renderServiceCell( visibleFields: string[] ) {
 	const fields = getFields( [ receipt ], [], visibleFields );
 	const serviceField = fields.find( ( field ) => field.id === 'service' )!;
-	return render( <>{ serviceField.render!( { item: receipt, field: serviceField } as never ) }</> );
+	const ServiceCell = serviceField.render as ComponentType< { item: Receipt } >;
+	return render( <ServiceCell item={ receipt } /> );
 }
 
 describe( '<BillingHistory>', () => {
