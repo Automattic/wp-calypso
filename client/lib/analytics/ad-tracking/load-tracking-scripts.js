@@ -187,10 +187,6 @@ function initLoadedTrackingScripts() {
 		window.oaiq( 'init', {
 			pixelId: TRACKING_IDS.openAIPixelId,
 		} );
-		// Track the first page view after accepting the cookie banner.
-		window.oaiq( 'measure', 'page_viewed', {
-			type: 'contents',
-		} );
 	}
 	if ( mayWeTrackByTracker( 'quora' ) ) {
 		// We've initialized the pixel in setupQuoraGlobal, it's safe to track the page view now.
