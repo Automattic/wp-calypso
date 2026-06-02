@@ -238,6 +238,8 @@ export const usePlanTypesWithIntent = ( {
 
 			break;
 		case 'plans-switch':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-default-wpcom':
 			planTypes = [
 				TYPE_FREE,
