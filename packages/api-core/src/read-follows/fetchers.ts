@@ -3,7 +3,7 @@ import { wpcom } from '../wpcom-fetcher';
 import { adaptSiteSubscriptionsResponse } from './adapters';
 import type { SiteSubscriptionsApiResponse, SiteSubscriptionsPage } from './types';
 
-export const fetchReadSiteSubscriptions = ( {
+export const fetchReadFollows = ( {
 	page = 1,
 	number = 200,
 	meta = '',

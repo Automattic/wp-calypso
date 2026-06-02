@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { fetchReadSiteSubscriptions } from '../fetchers';
+import { fetchReadFollows } from '../fetchers';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -24,7 +24,7 @@ describe( 'read follows fetchers', () => {
 				number: 10,
 			} );
 
-		const page = await fetchReadSiteSubscriptions( { page: 2, number: 10, meta: 'site' } );
+		const page = await fetchReadFollows( { page: 2, number: 10, meta: 'site' } );
 
 		expect( scope.isDone() ).toBe( true );
 		expect( page ).toMatchObject( {
