@@ -89,22 +89,27 @@ function renderServiceCell( visibleFields: string[] ) {
 describe( 'billing history service cell inline fields', () => {
 	it( 'shows Type and Amount inline when those columns are hidden', () => {
 		renderServiceCell( [ 'date', 'service' ] );
-		expect( screen.getByText( /Type:/ ) ).toBeVisible();
-		expect( screen.getByText( /Amount:/ ) ).toBeVisible();
-		expect( screen.queryByText( /Date:/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Type' ) ).toBeVisible();
+		expect( screen.getByText( 'Refund' ) ).toBeVisible();
+		expect( screen.getByText( 'Amount' ) ).toBeVisible();
+		expect( screen.getByText( '$96' ) ).toBeVisible();
+		expect( screen.queryByText( 'Date' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows Date inline when only the App column is visible', () => {
 		renderServiceCell( [ 'service' ] );
-		expect( screen.getByText( /Date:/ ) ).toBeVisible();
-		expect( screen.getByText( /Type:/ ) ).toBeVisible();
-		expect( screen.getByText( /Amount:/ ) ).toBeVisible();
+		expect( screen.getByText( 'Date' ) ).toBeVisible();
+		expect( screen.getByText( 'May 21, 2026' ) ).toBeVisible();
+		expect( screen.getByText( 'Type' ) ).toBeVisible();
+		expect( screen.getByText( 'Refund' ) ).toBeVisible();
+		expect( screen.getByText( 'Amount' ) ).toBeVisible();
+		expect( screen.getByText( '$96' ) ).toBeVisible();
 	} );
 
 	it( 'shows no inline lines when all columns are visible', () => {
 		renderServiceCell( [ 'date', 'service', 'type', 'amount' ] );
-		expect( screen.queryByText( /Type:/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Amount:/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Date:/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Amount' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Date' ) ).not.toBeInTheDocument();
 	} );
 } );

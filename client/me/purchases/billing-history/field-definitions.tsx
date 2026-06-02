@@ -116,6 +116,15 @@ function getUniqueTransactionTypes(
 		} ) );
 }
 
+function renderInlineHiddenField( key: string, label: string, value: string ) {
+	return (
+		<span key={ key } className="billing-history__item-meta">
+			<span className="billing-history__item-meta-label">{ label }</span>
+			<span className="billing-history__item-meta-value">{ value }</span>
+		</span>
+	);
+}
+
 function renderInlineHiddenFields(
 	transaction: BillingTransaction,
 	translate: ReturnType< typeof useTranslate >,
@@ -126,37 +135,32 @@ function renderInlineHiddenFields(
 
 	if ( ! visibleFields.includes( 'date' ) ) {
 		lines.push(
-			<small key="date">
-				{ translate( 'Date: %s', {
-					args: [ formatDisplayDate( new Date( transaction.date ) ) ],
-					comment: '%s is a formatted date, like May 21, 2026',
-				} ) }
-			</small>
+			renderInlineHiddenField(
+				'date',
+				translate( 'Date' ),
+				formatDisplayDate( new Date( transaction.date ) )
+			)
 		);
 	}
 	if ( ! visibleFields.includes( 'type' ) ) {
 		lines.push(
-			<small key="type">
-				{ translate( 'Type: %s', {
-					args: [ transactionItem.type_localized || transactionItem.type ],
-					comment: '%s is a receipt type, like Refund or New purchase',
-				} ) }
-			</small>
+			renderInlineHiddenField(
+				'type',
+				translate( 'Type' ),
+				transactionItem.type_localized || transactionItem.type
+			)
 		);
 	}
 	if ( ! visibleFields.includes( 'amount' ) ) {
 		lines.push(
-			<small key="amount">
-				{ translate( 'Amount: %s', {
-					args: [
-						formatCurrency( transaction.amount_integer, transaction.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					],
-					comment: '%s is a formatted price, like $96',
-				} ) }
-			</small>
+			renderInlineHiddenField(
+				'amount',
+				translate( 'Amount' ),
+				formatCurrency( transaction.amount_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} )
+			)
 		);
 	}
 	return lines;

@@ -70,24 +70,29 @@ function renderServiceCell( visibleFields: string[] ) {
 describe( '<BillingHistory>', () => {
 	test( 'shows Type and Amount inline when those columns are hidden', async () => {
 		renderServiceCell( [ 'date', 'service' ] );
-		expect( await screen.findByText( 'Type: Refund' ) ).toBeVisible();
-		expect( screen.getByText( 'Amount: $96' ) ).toBeVisible();
-		expect( screen.queryByText( /Date:/ ) ).not.toBeInTheDocument();
+		expect( await screen.findByText( 'Type' ) ).toBeVisible();
+		expect( screen.getByText( 'Refund' ) ).toBeVisible();
+		expect( screen.getByText( 'Amount' ) ).toBeVisible();
+		expect( screen.getByText( '$96' ) ).toBeVisible();
+		expect( screen.queryByText( 'Date' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows Date inline when only the App column is visible', async () => {
 		renderServiceCell( [ 'service' ] );
-		expect( await screen.findByText( 'Date: May 21, 2026' ) ).toBeVisible();
-		expect( screen.getByText( 'Type: Refund' ) ).toBeVisible();
-		expect( screen.getByText( 'Amount: $96' ) ).toBeVisible();
+		expect( await screen.findByText( 'Date' ) ).toBeVisible();
+		expect( screen.getByText( 'May 21, 2026' ) ).toBeVisible();
+		expect( screen.getByText( 'Type' ) ).toBeVisible();
+		expect( screen.getByText( 'Refund' ) ).toBeVisible();
+		expect( screen.getByText( 'Amount' ) ).toBeVisible();
+		expect( screen.getByText( '$96' ) ).toBeVisible();
 	} );
 
 	test( 'shows no inline lines when all columns are visible', async () => {
 		renderServiceCell( [ 'date', 'service', 'type', 'amount' ] );
 		// Wait for the App cell's receipt link to render before asserting absence.
 		expect( await screen.findByRole( 'link' ) ).toBeVisible();
-		expect( screen.queryByText( /Type:/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Amount:/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Date:/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Amount' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Date' ) ).not.toBeInTheDocument();
 	} );
 } );

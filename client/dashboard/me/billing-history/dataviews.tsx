@@ -363,40 +363,29 @@ function renderServiceNameDescription( receipt: Receipt ) {
 	);
 }
 
+function renderInlineHiddenField( key: string, label: string, value: string ) {
+	return (
+		<Text key={ key } isBlock variant="muted" size="12" className="billing-history-receipt-meta">
+			<span className="billing-history-receipt-meta-label">{ label }</span>
+			<span className="billing-history-receipt-meta-value">{ value }</span>
+		</Text>
+	);
+}
+
 function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[] ) {
 	const lines: JSX.Element[] = [];
 
 	if ( ! visibleFields.includes( 'date' ) ) {
-		lines.push(
-			<Text key="date" isBlock variant="muted" size="12">
-				{ sprintf(
-					/* translators: %s is a formatted date, like May 21, 2026 */
-					__( 'Date: %s' ),
-					formatReceiptDate( receipt )
-				) }
-			</Text>
-		);
+		lines.push( renderInlineHiddenField( 'date', __( 'Date' ), formatReceiptDate( receipt ) ) );
 	}
 	if ( ! visibleFields.includes( 'type' ) ) {
 		lines.push(
-			<Text key="type" isBlock variant="muted" size="12">
-				{ sprintf(
-					/* translators: %s is a receipt type, like Refund or New purchase */
-					__( 'Type: %s' ),
-					getReceiptItemTypeForDisplay( receipt )
-				) }
-			</Text>
+			renderInlineHiddenField( 'type', __( 'Type' ), getReceiptItemTypeForDisplay( receipt ) )
 		);
 	}
 	if ( ! visibleFields.includes( 'amount' ) ) {
 		lines.push(
-			<Text key="amount" isBlock variant="muted" size="12">
-				{ sprintf(
-					/* translators: %s is a formatted price, like $96 */
-					__( 'Amount: %s' ),
-					formatReceiptAmount( receipt )
-				) }
-			</Text>
+			renderInlineHiddenField( 'amount', __( 'Amount' ), formatReceiptAmount( receipt ) )
 		);
 	}
 	return lines;
