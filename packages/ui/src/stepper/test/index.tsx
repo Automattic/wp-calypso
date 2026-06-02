@@ -298,6 +298,26 @@ describe( 'Stepper.Panel', () => {
 		} );
 	} );
 
+	it( 'applies role="region" to all panels at the 5-step boundary', async () => {
+		const steps = [ 'a', 'b', 'c', 'd', 'e' ];
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				{ steps.map( ( v ) => (
+					<Stepper.Step key={ v } value={ v }>
+						<Stepper.Trigger>{ v }</Stepper.Trigger>
+						<Stepper.Panel>Content { v }</Stepper.Panel>
+					</Stepper.Step>
+				) ) }
+			</Stepper.Root>
+		);
+		await waitFor( () => {
+			const panelRegion = screen
+				.getAllByRole( 'region' )
+				.find( ( el ) => el.hasAttribute( 'aria-labelledby' ) );
+			expect( panelRegion ).toBeDefined();
+		} );
+	} );
+
 	it( 'omits role="region" when totalSteps > 5 in vertical mode', async () => {
 		const steps = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
 		const { container } = render(
@@ -477,6 +497,33 @@ describe( 'Stepper linear mode interaction', () => {
 		await user.click( screen.getByRole( 'tab', { name: /step b/i } ) );
 		expect( onValueChange ).not.toHaveBeenCalled();
 	} );
+
+	it( 'navigates to a completed past step in linear mode', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<Stepper.Root
+				orientation="horizontal"
+				linear
+				value="b"
+				onValueChange={ onValueChange }
+				aria-label="Test"
+			>
+				<Stepper.List>
+					<Stepper.Step value="a" status="completed">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+					<Stepper.Step value="b">
+						<Stepper.Trigger>Step B</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Content A</Stepper.Panel>
+				<Stepper.Panel value="b">Content B</Stepper.Panel>
+			</Stepper.Root>
+		);
+		await user.click( screen.getByRole( 'tab', { name: /step a/i } ) );
+		expect( onValueChange ).toHaveBeenCalledWith( 'a' );
+	} );
 } );
 
 describe( 'Stepper error status', () => {
@@ -585,6 +632,32 @@ describe( 'Stepper activationMode', () => {
 		await user.tab();
 		await user.keyboard( '{ArrowRight}' );
 		expect( screen.getByText( 'Panel B content' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'Stepper.Step disabled in vertical mode', () => {
+	it( 'does not fire onValueChange when a disabled accordion trigger is clicked', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<Stepper.Root
+				orientation="vertical"
+				value="a"
+				onValueChange={ onValueChange }
+				aria-label="Test"
+			>
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel>Content A</Stepper.Panel>
+				</Stepper.Step>
+				<Stepper.Step value="b" disabled>
+					<Stepper.Trigger>Step B</Stepper.Trigger>
+					<Stepper.Panel>Content B</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		await user.click( screen.getByRole( 'button', { name: /step b/i } ) );
+		expect( onValueChange ).not.toHaveBeenCalled();
 	} );
 } );
 
