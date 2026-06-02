@@ -12,7 +12,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resemblesUrl } from 'calypso/lib/url';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useSiteSubscriptionForFeed } from 'calypso/reader/data/follows';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,

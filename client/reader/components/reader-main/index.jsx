@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Main from 'calypso/components/main';
-import { useSiteSubscriptions } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { ReaderPendingActionHandler } from './pending-action-handler';
 import './style.scss';
 

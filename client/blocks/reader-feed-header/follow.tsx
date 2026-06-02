@@ -7,7 +7,10 @@ import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-se
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useHasSiteSubscriptionOrganization, useIsSubscribed } from 'calypso/reader/data/follows';
+import {
+	useHasSiteSubscriptionOrganization,
+	useIsSubscribed,
+} from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl, getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';

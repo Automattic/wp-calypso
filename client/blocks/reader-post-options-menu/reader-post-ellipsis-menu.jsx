@@ -9,7 +9,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/follows';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';

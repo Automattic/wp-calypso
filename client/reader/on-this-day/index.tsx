@@ -10,8 +10,8 @@ import { UnknownAction } from 'redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useSiteSubscriptions } from 'calypso/reader/data/follows';
 import { useCachedPosts } from 'calypso/reader/data/post/cache';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import {
 	isPaddingStreamItem,
 	usePaginatedStream,

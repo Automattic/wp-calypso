@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { useFeedQueries } from 'calypso/reader/data/feed';
-import { useSiteSubscriptions } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 
 /**

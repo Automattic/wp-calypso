@@ -33,7 +33,7 @@ Site subscriptions are fully on React Query:
 
 - Endpoint contracts and adapters live in `packages/api-core/src/read-follows/`.
 - Query keys, selectors, mutation factories, and cache patch helpers live in `packages/api-queries/src/read-follows.ts`.
-- Calypso consumers should use `calypso/reader/data/follows` for hooks such as `useSiteSubscriptions()`, follow/unfollow mutations, delivery-setting mutations, site-subscription selectors, and organization feed info.
+- Calypso consumers should use `calypso/reader/data/site-subscriptions` for hooks such as `useSiteSubscriptions()`, follow/unfollow mutations, delivery-setting mutations, site-subscription selectors, and organization feed info.
 - Do not reintroduce `state.reader.follows`, `calypso/state/reader/follows`, `SyncReaderFollows`, or `/read/following/mine*` data-layer handlers. For cross-feature refreshes, invalidate `getSiteSubscriptionsQueryKey()` on the active `QueryClient`.
 
 For Reader post data specifically, see [`client/reader/data/post/README.md`](./data/post/README.md).

@@ -5,7 +5,7 @@ import {
 	useFollowSite,
 	useIsSubscribed,
 	useUnfollowSite,
-} from 'calypso/reader/data/follows';
+} from 'calypso/reader/data/site-subscriptions';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';

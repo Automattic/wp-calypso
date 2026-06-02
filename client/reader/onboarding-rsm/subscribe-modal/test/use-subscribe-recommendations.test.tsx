@@ -6,7 +6,7 @@ import { act, waitFor } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
-import { useSiteSubscriptions } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	useSubscribeRecommendations,
@@ -34,7 +34,7 @@ jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 	useFollowedReaderTags: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/data/follows', () => ( {
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn(),
 } ) );
 

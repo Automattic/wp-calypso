@@ -18,7 +18,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useAliasedSiteSubscriptionFeedUrl } from 'calypso/reader/data/follows';
+import { useAliasedSiteSubscriptionFeedUrl } from 'calypso/reader/data/site-subscriptions';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordAction } from 'calypso/reader/stats';

@@ -93,7 +93,7 @@ jest.mock( '../verificationNudge', () => ( {
 
 // ── State hooks ──────────────────────────────────────────────────────────────
 
-jest.mock( 'calypso/reader/data/follows', () => ( {
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	getFollowingSource: jest.fn( () => 'test-source' ),
 	useFollowSite: jest.fn( () => ( {
 		mutate: mockFollowMutate,

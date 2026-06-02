@@ -2,8 +2,8 @@ import { Component } from 'react';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useSiteSubscriptionForFeed } from 'calypso/reader/data/follows';
 import { withSite } from 'calypso/reader/data/site';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 
 class ReaderPostCardAdapter extends Component {

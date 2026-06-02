@@ -27,8 +27,8 @@ import {
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import connectSite from 'calypso/lib/reader-connect-site';
-import { getFollowingSource, useFollowSite } from 'calypso/reader/data/follows';
 import { useDismissRecommendedSite } from 'calypso/reader/data/recommended-sites';
+import { getFollowingSource, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import {
 	getSiteName,
 	getSiteDescription,

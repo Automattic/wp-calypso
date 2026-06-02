@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,

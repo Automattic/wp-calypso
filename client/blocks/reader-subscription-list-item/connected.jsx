@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import connectSite from 'calypso/lib/reader-connect-site';
-import { useIsSubscribed } from 'calypso/reader/data/follows';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '.';
 
 const noop = () => {};

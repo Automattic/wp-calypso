@@ -16,7 +16,7 @@ import {
 	getFollowingSource,
 	useSiteSubscriptions,
 	useFollowSite,
-} from 'calypso/reader/data/follows';
+} from 'calypso/reader/data/site-subscriptions';
 import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,

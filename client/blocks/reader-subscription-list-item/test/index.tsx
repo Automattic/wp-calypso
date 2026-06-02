@@ -6,14 +6,14 @@ import { ComponentProps } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useSiteSubscriptionForFeed } from 'calypso/reader/data/follows';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '..';
 
 jest.mock( 'calypso/reader/data/feed', () => ( {
 	useFeedQuery: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/data/follows', () => ( {
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	getFollowingSource: jest.fn(),
 	useSiteSubscriptionForFeed: jest.fn(),
 	useFollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),

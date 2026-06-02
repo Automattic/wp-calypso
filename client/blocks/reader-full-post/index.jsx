@@ -29,13 +29,13 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import {
-	useSiteSubscriptionForFeed,
-	useHasSiteSubscriptionOrganization,
-} from 'calypso/reader/data/follows';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSite } from 'calypso/reader/data/site';
+import {
+	useSiteSubscriptionForFeed,
+	useHasSiteSubscriptionOrganization,
+} from 'calypso/reader/data/site-subscriptions';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';

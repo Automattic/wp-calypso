@@ -9,7 +9,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { useSubscribedSites } from 'calypso/reader/data/follows';
+import { useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';

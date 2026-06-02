@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { useOrganizationFeedsInfo } from 'calypso/reader/data/follows';
+import { useOrganizationFeedsInfo } from 'calypso/reader/data/site-subscriptions';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';

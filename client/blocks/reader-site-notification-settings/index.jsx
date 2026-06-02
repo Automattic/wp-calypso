@@ -14,7 +14,10 @@ import EmailMeNewCommentsToggle from 'calypso/landing/subscriptions/components/s
 import EmailMeNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/notify-me-of-new-posts-toggle';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
-import { useFollowDeliveryMutations, useSiteSubscriptions } from 'calypso/reader/data/follows';
+import {
+	useFollowDeliveryMutations,
+	useSiteSubscriptions,
+} from 'calypso/reader/data/site-subscriptions';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';

@@ -2,8 +2,8 @@ import { followReadTagMutation, likeSiteCommentMutation } from '@automattic/api-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { getFollowingSource, useFollowSite } from 'calypso/reader/data/follows';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
+import { getFollowingSource, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';

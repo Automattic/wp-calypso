@@ -163,7 +163,7 @@ jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 	useFollowedReaderTags: jest.fn( () => ( { data: [], isPending: false } ) ),
 } ) );
 
-jest.mock( 'calypso/reader/data/follows', () => ( {
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
 } ) );
 
@@ -196,7 +196,7 @@ beforeEach( () => {
 		useFollowedReaderTags: jest.Mock;
 	};
 	const { useSiteSubscriptions: useCachedSiteSubscriptions } = jest.requireMock(
-		'calypso/reader/data/follows'
+		'calypso/reader/data/site-subscriptions'
 	) as {
 		useSiteSubscriptions: jest.Mock;
 	};
@@ -613,7 +613,9 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
-		const { useSiteSubscriptions } = jest.requireMock( 'calypso/reader/data/follows' ) as {
+		const { useSiteSubscriptions } = jest.requireMock(
+			'calypso/reader/data/site-subscriptions'
+		) as {
 			useSiteSubscriptions: jest.Mock;
 		};
 		// Mix of active non-self, stale (unfollowed), and self-owned to verify

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import SearchInput from 'calypso/components/search';
-import { useSiteSubscriptions } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import ListItem from './list-item';
 
 export default function ItemAdder( props ) {

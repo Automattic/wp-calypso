@@ -16,7 +16,7 @@ import { ReaderPendingActionHandler } from '../pending-action-handler';
 const BASE = 'https://public-api.wordpress.com';
 const mockFollowMutate = jest.fn();
 
-jest.mock( 'calypso/reader/data/follows', () => ( {
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	getFollowingSource: jest.fn( () => 'test-source' ),
 	useFollowSite: jest.fn( () => ( {
 		mutate: mockFollowMutate,

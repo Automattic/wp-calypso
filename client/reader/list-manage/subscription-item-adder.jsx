@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { useSiteSubscriptions } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import ListItem from './list-item';
 
 // This is different than the item adder as this simply shows followed subscriptions to recommended
