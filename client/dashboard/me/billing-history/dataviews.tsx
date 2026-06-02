@@ -54,7 +54,7 @@ export const DEFAULT_VIEW: View = {
 
 export function useActions() {
 	const navigate = useNavigate();
-	const sendEmailMutation = useMutation( {
+	const { mutate: sendEmail } = useMutation( {
 		...sendReceiptEmailMutation(),
 		meta: {
 			snackbar: {
@@ -87,17 +87,18 @@ export function useActions() {
 				isEligible: ( item: Receipt ) => Boolean( item.id ),
 				callback: ( items: Receipt[] ) => {
 					const item = items[ 0 ];
-					sendEmailMutation.mutate( String( item.id ) );
+					sendEmail( String( item.id ) );
 				},
 			},
 		],
-		[ navigate, sendEmailMutation ]
+		[ navigate, sendEmail ]
 	);
 }
 
 export function getFields(
 	receipts: Receipt[],
-	countryList: CountryListItem[] = []
+	countryList: CountryListItem[] = [],
+	visibleFields: string[] = WIDE_FIELDS
 ): Fields< Receipt > {
 	return [
 		{
@@ -154,14 +155,17 @@ export function getFields(
 			},
 			render: ( { item }: { item: Receipt } ) => {
 				return (
-					<Link
-						to={ receiptRoute.fullPath }
-						params={ { receiptId: item.id } }
-						title={ __( 'View receipt' ) }
-						className="receipts-link-to-receipt"
-					>
-						{ renderServiceNameDescription( item ) }
-					</Link>
+					<VStack spacing={ 1 }>
+						<Link
+							to={ receiptRoute.fullPath }
+							params={ { receiptId: item.id } }
+							title={ __( 'View receipt' ) }
+							className="receipts-link-to-receipt"
+						>
+							{ renderServiceNameDescription( item ) }
+						</Link>
+						{ renderInlineHiddenFields( item, visibleFields ) }
+					</VStack>
 				);
 			},
 		},
@@ -357,6 +361,49 @@ function renderServiceNameDescription( receipt: Receipt ) {
 			) }
 		</VStack>
 	);
+}
+
+function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[] ) {
+	const lines: JSX.Element[] = [];
+
+	if ( ! visibleFields.includes( 'date' ) ) {
+		lines.push(
+			<Text key="date" isBlock variant="muted" size="12">
+				{ sprintf(
+					/* translators: %s is a formatted date, like May 21, 2026 */
+					__( 'Date: %s' ),
+					new Date( receipt.date ).toLocaleDateString( undefined, {
+						year: 'numeric',
+						month: 'short',
+						day: 'numeric',
+					} )
+				) }
+			</Text>
+		);
+	}
+	if ( ! visibleFields.includes( 'type' ) ) {
+		lines.push(
+			<Text key="type" isBlock variant="muted" size="12">
+				{ sprintf(
+					/* translators: %s is a receipt type, like Refund or New purchase */
+					__( 'Type: %s' ),
+					getReceiptItemTypeForDisplay( receipt )
+				) }
+			</Text>
+		);
+	}
+	if ( ! visibleFields.includes( 'amount' ) ) {
+		lines.push(
+			<Text key="amount" isBlock variant="muted" size="12">
+				{ sprintf(
+					/* translators: %s is a formatted price, like $96 */
+					__( 'Amount: %s' ),
+					formatReceiptAmount( receipt )
+				) }
+			</Text>
+		);
+	}
+	return lines;
 }
 
 function getReceiptItemTypesForFiltering(
