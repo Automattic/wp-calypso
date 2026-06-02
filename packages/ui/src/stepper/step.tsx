@@ -36,9 +36,10 @@ export const StepperStep = forwardRef< HTMLDivElement, StepperStepProps >( funct
 	const isCurrent = value === activeValue;
 	const index = steps.findIndex( ( s ) => s.value === value );
 
-	// Linear flow: a step is navigable only if it's current or completed.
+	// Linear flow: a step is navigable only if it's current, completed, or
+	// has an error (so users can navigate back to fix a validation failure).
 	// Explicit disabled always takes priority.
-	const isLinearDisabled = linear && ! isCurrent && status !== 'completed';
+	const isLinearDisabled = linear && ! isCurrent && status !== 'completed' && status !== 'error';
 	const isDisabled = disabledProp || isLinearDisabled;
 
 	// Register on mount with real metadata; deregister on unmount.
