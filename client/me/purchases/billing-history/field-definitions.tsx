@@ -1,4 +1,5 @@
 import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/number-formatters';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -114,10 +115,57 @@ function getUniqueTransactionTypes(
 		} ) );
 }
 
+function renderInlineHiddenFields(
+	transaction: BillingTransaction,
+	translate: ReturnType< typeof useTranslate >,
+	visibleFields: string[]
+) {
+	const [ transactionItem ] = groupDomainProducts( transaction.items, translate );
+	const lines: JSX.Element[] = [];
+
+	if ( ! visibleFields.includes( 'date' ) ) {
+		lines.push(
+			<small key="date">
+				{ translate( 'Date: %s', {
+					args: [ formatDisplayDate( new Date( transaction.date ) ) ],
+					comment: '%s is a formatted date, like May 21, 2026',
+				} ) }
+			</small>
+		);
+	}
+	if ( ! visibleFields.includes( 'type' ) ) {
+		lines.push(
+			<small key="type">
+				{ translate( 'Type: %s', {
+					args: [ transactionItem.type_localized || transactionItem.type ],
+					comment: '%s is a receipt type, like Refund or New purchase',
+				} ) }
+			</small>
+		);
+	}
+	if ( ! visibleFields.includes( 'amount' ) ) {
+		lines.push(
+			<small key="amount">
+				{ translate( 'Amount: %s', {
+					args: [
+						formatCurrency( transaction.amount_integer, transaction.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					],
+					comment: '%s is a formatted price, like $96',
+				} ) }
+			</small>
+		);
+	}
+	return lines;
+}
+
 export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
 	translate: ReturnType< typeof useTranslate >,
-	getReceiptUrlFor: ( receiptId: string ) => string
+	getReceiptUrlFor: ( receiptId: string ) => string,
+	visibleFields: string[] = [ 'date', 'service', 'type', 'amount' ]
 ): Fields< BillingTransaction > {
 	return [
 		{
@@ -158,6 +206,7 @@ export function getFieldDefinitions(
 						>
 							{ renderServiceName( item, translate ) }
 						</a>
+						{ renderInlineHiddenFields( item, translate, visibleFields ) }
 					</div>
 				);
 			},
