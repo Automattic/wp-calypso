@@ -370,14 +370,8 @@ describe( 'initial-state', () => {
 				expect( state._timestamp ).toBeUndefined();
 			} );
 
-			test( 'builds initial state using saved state', () => {
-				expect( state.follows.items ).toEqual( {
-					'https://saved.example/feed': {
-						URL: 'https://saved.example',
-						feed_URL: 'https://saved.example/feed',
-						is_following: true,
-					},
-				} );
+			test( 'does not restore removed follows state from saved state', () => {
+				expect( state.follows ).toBeUndefined();
 			} );
 		} );
 
@@ -426,14 +420,8 @@ describe( 'initial-state', () => {
 				expect( state._timestamp ).toBeUndefined();
 			} );
 
-			test( 'builds initial state using server state', () => {
-				expect( state.follows.items ).toEqual( {
-					'https://server.example/feed': {
-						URL: 'https://server.example',
-						feed_URL: 'https://server.example/feed',
-						is_following: true,
-					},
-				} );
+			test( 'does not restore removed follows state from server state', () => {
+				expect( state.follows ).toBeUndefined();
 			} );
 		} );
 
@@ -498,14 +486,8 @@ describe( 'initial-state', () => {
 				expect( state._timestamp ).toBeUndefined();
 			} );
 
-			test( 'builds initial state using server state', () => {
-				expect( state.follows.items ).toEqual( {
-					'https://server.example/feed': {
-						URL: 'https://server.example',
-						feed_URL: 'https://server.example/feed',
-						is_following: true,
-					},
-				} );
+			test( 'does not restore removed follows state from server state', () => {
+				expect( state.follows ).toBeUndefined();
 			} );
 		} );
 
@@ -570,14 +552,8 @@ describe( 'initial-state', () => {
 				expect( state._timestamp ).toBeUndefined();
 			} );
 
-			test( 'builds initial state using saved state', () => {
-				expect( state.follows.items ).toEqual( {
-					'https://saved.example/feed': {
-						URL: 'https://saved.example',
-						feed_URL: 'https://saved.example/feed',
-						is_following: true,
-					},
-				} );
+			test( 'does not restore removed follows state from saved state', () => {
+				expect( state.follows ).toBeUndefined();
 			} );
 		} );
 
