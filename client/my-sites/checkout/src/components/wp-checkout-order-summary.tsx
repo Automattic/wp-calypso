@@ -36,7 +36,6 @@ import {
 import { css, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -52,13 +51,12 @@ import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckIcon } from './check-icon';
 import CheckoutPayButtonFooter from './checkout-pay-button-footer';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { LineItemType, ManagedContactDetails, VatDetails } from '@automattic/wpcom-checkout';
+import type { LineItemType } from '@automattic/wpcom-checkout';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -157,10 +155,7 @@ function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
-	const vatDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
-	const taxDisplayCart = getCartWithBusinessUseTaxLocation( responseCart, contactInfo, vatDetails );
-	const taxLineItems = getTaxBreakdownLineItemsFromCart( taxDisplayCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
@@ -262,72 +257,6 @@ function CheckoutSummaryPriceList() {
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
-}
-
-function getCartWithBusinessUseTaxLocation(
-	responseCart: ResponseCart,
-	contactInfo: ManagedContactDetails,
-	vatDetails: VatDetails
-): ResponseCart {
-	if ( ! vatDetails.isForBusiness ) {
-		return responseCart;
-	}
-
-	const subdivisionCode = getBusinessUseSubdivisionCode( responseCart, contactInfo, vatDetails );
-
-	if ( ! subdivisionCode ) {
-		return responseCart;
-	}
-
-	return {
-		...responseCart,
-		tax: {
-			...responseCart.tax,
-			location: {
-				...responseCart.tax.location,
-				subdivision_code: subdivisionCode,
-				is_for_business: true,
-			},
-		},
-	};
-}
-
-function getBusinessUseSubdivisionCode(
-	responseCart: ResponseCart,
-	contactInfo: ManagedContactDetails,
-	vatDetails: VatDetails
-): string | undefined {
-	return (
-		responseCart.tax.location.subdivision_code ||
-		contactInfo.state?.value ||
-		getBusinessUseStateFromPostalCode(
-			vatDetails.country ??
-				contactInfo.countryCode?.value ??
-				responseCart.tax.location.country_code,
-			contactInfo.postalCode?.value ?? responseCart.tax.location.postal_code
-		)
-	);
-}
-
-function getBusinessUseStateFromPostalCode(
-	countryCode: string | null | undefined,
-	postalCode: string | undefined
-): string | undefined {
-	if ( countryCode !== 'US' ) {
-		return undefined;
-	}
-
-	const zipCode = parseInt( postalCode ?? '0', 10 );
-
-	if ( zipCode >= 43000 && zipCode <= 45999 ) {
-		return 'OH';
-	}
-
-	if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
-		return 'CT';
-	}
-
-	return undefined;
 }
 
 function CheckoutSummaryLineItemLabel( { lineItem }: { lineItem: LineItemType } ) {

@@ -178,6 +178,32 @@ describe( 'getTaxLineItemFromCart', function () {
 
 		expect( getTaxLineItemFromCart( cartWithBusinessUseTaxes ) ).toStrictEqual( expected );
 	} );
+
+	it( 'derives business use tax state from the cart postal code', () => {
+		const cartWithBusinessUseTaxes = {
+			...cart,
+			total_tax_integer: 0,
+			tax: {
+				...cart.tax,
+				display_taxes: false,
+				location: {
+					...cart.tax.location,
+					country_code: 'US',
+					postal_code: '43215',
+					is_for_business: true,
+				},
+			},
+		};
+		const expected: LineItemType = {
+			id: 'tax-line-item',
+			type: 'tax',
+			label: 'Tax (OH business use)',
+			labelSuffix: 'OH business use',
+			formattedAmount: '¥0',
+		};
+
+		expect( getTaxLineItemFromCart( cartWithBusinessUseTaxes ) ).toStrictEqual( expected );
+	} );
 } );
 
 describe( 'getTaxBreakdownLineItemsFromCart', function () {

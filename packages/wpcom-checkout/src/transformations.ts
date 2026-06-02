@@ -63,19 +63,49 @@ function getBusinessTaxSuffix( responseCart: ResponseCart ): string {
 }
 
 function getBusinessTaxSuffixLabel( responseCart: ResponseCart ): string {
-	const { is_for_business, subdivision_code } = responseCart.tax?.location ?? {};
+	const { is_for_business } = responseCart.tax?.location ?? {};
+	const subdivisionCode = getBusinessTaxSubdivisionCode( responseCart );
 
-	if ( ! is_for_business || ! subdivision_code ) {
+	if ( ! is_for_business || ! subdivisionCode ) {
 		return '';
 	}
 
 	return String(
 		translate( '%(state)s business use', {
-			args: { state: subdivision_code },
+			args: { state: subdivisionCode },
 			comment:
 				'Label indicating a state-level business use tax. %(state)s is a US state code like "CT".',
 		} )
 	);
+}
+
+function getBusinessTaxSubdivisionCode( responseCart: ResponseCart ): string {
+	const { country_code, postal_code, subdivision_code } = responseCart.tax?.location ?? {};
+
+	return (
+		subdivision_code || getBusinessTaxSubdivisionCodeFromPostalCode( country_code, postal_code )
+	);
+}
+
+function getBusinessTaxSubdivisionCodeFromPostalCode(
+	countryCode: string | undefined,
+	postalCode: string | undefined
+): string {
+	if ( countryCode !== 'US' ) {
+		return '';
+	}
+
+	const zipCode = parseInt( postalCode ?? '0', 10 );
+
+	if ( zipCode >= 43000 && zipCode <= 45999 ) {
+		return 'OH';
+	}
+
+	if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
+		return 'CT';
+	}
+
+	return '';
 }
 
 function shouldDisplayTaxLineItems( responseCart: ResponseCart ): boolean {

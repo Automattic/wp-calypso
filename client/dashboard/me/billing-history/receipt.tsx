@@ -7,7 +7,7 @@ import {
 	userReceiptsQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
@@ -64,7 +64,7 @@ export default function Receipt() {
 	const params = receiptRoute.useParams();
 	const receiptId = parseInt( params.receiptId );
 	const { data: receipt } = useSuspenseQuery( receiptQuery( receiptId ) );
-	const { data: receipts } = useSuspenseQuery( userReceiptsQuery() );
+	const { data: receipts = [] } = useQuery( userReceiptsQuery() );
 	const historyReceipt = receipts.find( ( item ) => String( item.id ) === String( receiptId ) );
 	const displayReceipt: Receipt = {
 		...historyReceipt,
