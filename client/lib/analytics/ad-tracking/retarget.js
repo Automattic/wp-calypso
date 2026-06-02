@@ -95,6 +95,11 @@ export async function retarget( urlPath ) {
 		// see https://developers.openai.com/ads/measurement-pixel
 		window.oaiq( 'measure', 'page_viewed', {
 			type: 'contents',
+			contents: [
+				{
+					id: urlPath,
+				},
+			],
 		} );
 		debug( 'retarget: [OpenAI]' );
 	}

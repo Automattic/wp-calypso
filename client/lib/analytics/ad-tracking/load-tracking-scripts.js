@@ -188,10 +188,6 @@ function initLoadedTrackingScripts() {
 			pixelId: TRACKING_IDS.openAIPixelId,
 			debug: true,
 		} );
-		// see https://developers.openai.com/ads/measurement-pixel
-		window.oaiq( 'measure', 'page_viewed', {
-			type: 'contents',
-		} );
 	}
 	if ( mayWeTrackByTracker( 'quora' ) ) {
 		// We've initialized the pixel in setupQuoraGlobal, it's safe to track the page view now.
