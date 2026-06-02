@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
 	useQueryClient,
@@ -262,7 +263,14 @@ export default function Sites() {
 											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
 										),
 										{
-											learnLink: <InlineSupportLink supportContext="restore-site" />,
+											learnLink: (
+												<InlineSupportLink
+													supportLink={ localizeUrl(
+														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
+													) }
+													supportPostId={ 14411 }
+												/>
+											),
 										}
 									) }
 									isBorderless
