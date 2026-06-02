@@ -42,6 +42,10 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 	// children/indicator here does not cause an infinite re-render loop.
 	useEffect( () => {
 		updateStep( props );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// `children` and `indicator` are intentionally excluded: they are ReactNode values
+		// (new reference each render) that would cause an infinite update loop if included.
+		// updateStep has a stable identity (useCallback with no deps), so it is safe to omit.
 	}, [
 		updateStep,
 		props.value,
@@ -52,8 +56,6 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 		props.disabled,
 		props.forceMount,
 		props.className,
-		props.children,
-		props.indicator,
 	] );
 
 	return null;

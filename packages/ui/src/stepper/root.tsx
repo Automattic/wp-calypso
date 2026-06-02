@@ -10,7 +10,6 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import clsx from 'clsx';
 import { StepperContext, defaultFormatStepLabel } from './context';
 import { useStepRegistration } from './use-step-registration';
 import type { StepMeta, StepperContextValue, StepperRef, StepperRootProps } from './types';
@@ -146,7 +145,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 							handleValueChange( next );
 						}
 					} }
-					className={ clsx( className ) }
+					className={ className }
 					style={ style }
 					aria-label={ ariaLabel }
 					aria-labelledby={ ariaLabelledBy }
@@ -162,7 +161,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 							handleValueChange( String( next ) );
 						}
 					} }
-					className={ clsx( className ) }
+					className={ className }
 					style={ style }
 					aria-label={ ariaLabel }
 					aria-labelledby={ ariaLabelledBy }

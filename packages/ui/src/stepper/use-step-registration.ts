@@ -13,7 +13,7 @@ export function useStepRegistration< T extends { value: string } >() {
 
 	const registerStep = useCallback( ( meta: T ) => {
 		setSteps( ( prev ) => {
-			// Avoid duplicate registration (React StrictMode double-invocation)
+			// Avoid duplicate registration (e.g. from concurrent remounts or late renders)
 			if ( prev.some( ( s ) => s.value === meta.value ) ) {
 				return prev;
 			}

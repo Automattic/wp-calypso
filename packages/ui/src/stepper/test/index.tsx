@@ -524,6 +524,33 @@ describe( 'Stepper linear mode interaction', () => {
 		await user.click( screen.getByRole( 'tab', { name: /step a/i } ) );
 		expect( onValueChange ).toHaveBeenCalledWith( 'a' );
 	} );
+
+	it( 'navigates to an error-status step in linear mode', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<Stepper.Root
+				orientation="horizontal"
+				linear
+				value="a"
+				onValueChange={ onValueChange }
+				aria-label="Test"
+			>
+				<Stepper.List>
+					<Stepper.Step value="a" status="completed">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+					<Stepper.Step value="b" status="error">
+						<Stepper.Trigger>Step B</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel value="a">Content A</Stepper.Panel>
+				<Stepper.Panel value="b">Content B</Stepper.Panel>
+			</Stepper.Root>
+		);
+		await user.click( screen.getByRole( 'tab', { name: /step b/i } ) );
+		expect( onValueChange ).toHaveBeenCalledWith( 'b' );
+	} );
 } );
 
 describe( 'Stepper error status', () => {
@@ -567,6 +594,25 @@ describe( 'Stepper dynamic step removal', () => {
 		await user.click( screen.getByRole( 'button', { name: /remove/i } ) );
 		// After removing step A, step B becomes "Step 1 of 1"
 		await waitFor( () => expect( screen.getByText( 'Step 1 of 1' ) ).toBeInTheDocument() );
+	} );
+} );
+
+describe( 'Stepper dev warnings', () => {
+	it( 'warns when value does not match any step', async () => {
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		render(
+			<Stepper.Root orientation="vertical" value="z" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Indicator />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		await waitFor( () => {
+			expect( spy ).toHaveBeenCalledWith(
+				expect.stringContaining( "No step found with value 'z'" )
+			);
+		} );
+		spy.mockRestore();
 	} );
 } );
 

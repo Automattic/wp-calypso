@@ -86,4 +86,51 @@ describe( 'HorizontalStepper', () => {
 		);
 		await waitFor( () => expect( screen.getByText( 'Panel B' ) ).toBeVisible() );
 	} );
+
+	it( 'renders a description when provided', () => {
+		render(
+			<HorizontalStepper value="a" aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A" description="Do the first thing">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		expect( screen.getByText( 'Do the first thing' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'HorizontalStepper linear mode', () => {
+	it( 'does not navigate to a non-completed step', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<HorizontalStepper value="a" linear onValueChange={ onValueChange } aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+				<HorizontalStepper.Step value="b" title="Step B">
+					<p>Panel B</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		await user.click( screen.getByRole( 'tab', { name: /step b/i } ) );
+		expect( onValueChange ).not.toHaveBeenCalled();
+	} );
+
+	it( 'navigates to a completed past-step', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<HorizontalStepper value="b" linear onValueChange={ onValueChange } aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A" status="completed">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+				<HorizontalStepper.Step value="b" title="Step B">
+					<p>Panel B</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		await user.click( screen.getByRole( 'tab', { name: /step a/i } ) );
+		expect( onValueChange ).toHaveBeenCalledWith( 'a' );
+	} );
 } );
