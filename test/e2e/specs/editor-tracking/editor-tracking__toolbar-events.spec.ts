@@ -29,77 +29,77 @@ test.describe(
 		// belongs in that tracking file (out of scope here: product code, not
 		// test/e2e or calypso-e2e). The undo/redo test below is unaffected.
 		// See TESTOPS-49.
-		test.fixme(
-			'"wpcom_block_editor_list_view_toggle" and "wpcom_block_editor_list_view_select" events fire',
-			async ( { page, pageEditor } ) => {
-				test.skip(
-					envVariables.VIEWPORT_NAME === 'mobile',
-					'Toolbar actions not available on mobile'
+		test( '"wpcom_block_editor_list_view_toggle" and "wpcom_block_editor_list_view_select" events fire', async ( {
+			page,
+			pageEditor,
+		} ) => {
+			test.skip(
+				envVariables.VIEWPORT_NAME === 'mobile',
+				'Toolbar actions not available on mobile'
+			);
+
+			const accountName = getTestAccountByFeature( features );
+			let editorTracksEventManager: EditorTracksEventManager;
+			let siteSlug: string;
+
+			await test.step( 'Given I am authenticated', async () => {
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
+				editorTracksEventManager = new EditorTracksEventManager( page );
+			} );
+
+			await test.step( 'When I start a new post', async () => {
+				await pageEditor.visit( 'post', { siteSlug } );
+				await pageEditor.waitUntilLoaded();
+			} );
+
+			await test.step( 'When I enter some text', async () => {
+				await pageEditor.enterText( 'The actual text does not matter for this test.' );
+			} );
+
+			await test.step( 'When I toggle open the list view', async () => {
+				await pageEditor.openListView();
+			} );
+
+			await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires with "is_open" === true', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_list_view_toggle',
+					{
+						matchingProperties: { is_open: true },
+					}
 				);
+				expect( eventDidFire ).toBe( true );
+			} );
 
-				const accountName = getTestAccountByFeature( features );
-				let editorTracksEventManager: EditorTracksEventManager;
-				let siteSlug: string;
+			await test.step( 'When I select paragraph block in list view', async () => {
+				await pageEditor.clickFirstListViewEntryByType( 'Paragraph' );
+			} );
 
-				await test.step( 'Given I am authenticated', async () => {
-					const testAccount = new TestAccount( accountName );
-					await testAccount.authenticate( page );
-					siteSlug = testAccount.getSiteURL( { protocol: false } );
-					editorTracksEventManager = new EditorTracksEventManager( page );
-				} );
+			await test.step( 'Then "wpcom_block_editor_list_view_select" event fires with correct "block_name"', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_list_view_select',
+					{
+						matchingProperties: { block_name: 'core/paragraph' },
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
 
-				await test.step( 'When I start a new post', async () => {
-					await pageEditor.visit( 'post', { siteSlug } );
-					await pageEditor.waitUntilLoaded();
-				} );
+			await test.step( 'When I close the list view', async () => {
+				await pageEditor.closeListView();
+			} );
 
-				await test.step( 'When I enter some text', async () => {
-					await pageEditor.enterText( 'The actual text does not matter for this test.' );
-				} );
-
-				await test.step( 'When I toggle open the list view', async () => {
-					await pageEditor.openListView();
-				} );
-
-				await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires with "is_open" === true', async () => {
-					const eventDidFire = await editorTracksEventManager!.didEventFire(
-						'wpcom_block_editor_list_view_toggle',
-						{
-							matchingProperties: { is_open: true },
-						}
-					);
-					expect( eventDidFire ).toBe( true );
-				} );
-
-				await test.step( 'When I select paragraph block in list view', async () => {
-					await pageEditor.clickFirstListViewEntryByType( 'Paragraph' );
-				} );
-
-				await test.step( 'Then "wpcom_block_editor_list_view_select" event fires with correct "block_name"', async () => {
-					const eventDidFire = await editorTracksEventManager!.didEventFire(
-						'wpcom_block_editor_list_view_select',
-						{
-							matchingProperties: { block_name: 'core/paragraph' },
-						}
-					);
-					expect( eventDidFire ).toBe( true );
-				} );
-
-				await test.step( 'When I close the list view', async () => {
-					await pageEditor.closeListView();
-				} );
-
-				await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires again with "is_open" === false', async () => {
-					const eventDidFire = await editorTracksEventManager!.didEventFire(
-						'wpcom_block_editor_list_view_toggle',
-						{
-							matchingProperties: { is_open: false },
-						}
-					);
-					expect( eventDidFire ).toBe( true );
-				} );
-			}
-		);
+			await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires again with "is_open" === false', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_list_view_toggle',
+					{
+						matchingProperties: { is_open: false },
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
+		} );
 
 		test( '"wpcom_block_editor_undo_performed" and "wpcom_block_editor_redo_performed" events fire', async ( {
 			page,

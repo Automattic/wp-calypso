@@ -18,7 +18,7 @@ import { tags, test } from '../../lib/pw-base';
 // Calypso-managed confirmation surface. Re-enabling needs the current
 // Jetpack-remote-site plugin install/activate flow re-mapped (and confirmation
 // the SSO wall is expected); this is more than a selector refresh. See TESTOPS-49.
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack: Plugin' ),
 	{ tag: [ tags.JETPACK_REMOTE_SITE ] },
 	() => {

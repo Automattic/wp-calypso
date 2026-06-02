@@ -31,7 +31,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 // flow (the Subscribe block never transitions past the filled form and no
 // "Confirm your subscription" email reaches Mailosaur) until the test timeout.
 // See TESTOPS-49.
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {

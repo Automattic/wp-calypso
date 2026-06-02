@@ -24,7 +24,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 // the test run against an env/site where Jetpack Instant Search is provisioned
 // (e.g. the atomic matrix leg) and confirmation the chunk path is current.
 // See TESTOPS-49.
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack Instant Search' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {

@@ -31,7 +31,7 @@ const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase()
 // provisioning before the upgrade flow can be exercised. The find_available_url
 // fix is kept so that, once the account can create sites again, only the UI flow
 // needs re-validation. See TESTOPS-49.
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade existing WordPress.com Free site to WordPress.com Premium'
 	),
