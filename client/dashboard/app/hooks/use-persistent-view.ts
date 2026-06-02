@@ -92,14 +92,17 @@ export function useBasePersistentView( {
 		( field ) => queryParams && queryParams[ field ] !== undefined
 	);
 
-	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( [] );
+	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
+		queryParamFilterFields
+			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
+			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+	);
 
 	useEffect( () => {
 		setTransientFilters(
 			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
 		);
 
-		// Set transient filters once on initial page load.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ JSON.stringify( transientFilterFields ) ] );
 
