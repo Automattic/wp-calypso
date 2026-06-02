@@ -36,7 +36,9 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 	const { formatStepLabel, indicatorVariant } = useStepperContext();
 
 	const stepNumber = index + 1;
-	const accessibleLabel = formatStepLabel( stepNumber, totalSteps, status );
+	// totalSteps is 0 on the initial render before step registration fires.
+	// Guard to avoid announcing "Step 1 of 0" to screen readers.
+	const accessibleLabel = totalSteps > 0 ? formatStepLabel( stepNumber, totalSteps, status ) : null;
 
 	let indicator: ReactNode =
 		indicatorVariant === 'number' ? <span aria-hidden="true">{ stepNumber }</span> : null;
@@ -58,8 +60,9 @@ export function StepperIndicator( { children, className }: StepperIndicatorProps
 				[ styles[ 'is-disabled' ] ]: isDisabled,
 			} ) }
 		>
-			{ /* Visually hidden accessible label — always present */ }
-			<VisuallyHidden render={ <span /> }>{ accessibleLabel }</VisuallyHidden>
+			{ accessibleLabel && (
+				<VisuallyHidden render={ <span /> }>{ accessibleLabel }</VisuallyHidden>
+			) }
 
 			{ /* Visual content */ }
 			{ children ? <span aria-hidden="true">{ children }</span> : indicator }

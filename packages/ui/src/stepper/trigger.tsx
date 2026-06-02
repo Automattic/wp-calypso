@@ -49,6 +49,16 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 						aria-current={ isCurrent ? 'step' : undefined }
 						className={ clsx( styles[ 'trigger' ], className ) }
 						{ ...props }
+						onClick={ ( e ) => {
+							// Prevent accordion from toggling closed when the active step trigger
+							// is clicked. Without this, BaseUI fires onValueChange([]) which our
+							// bridge ignores — but the accordion may start a collapse animation
+							// before the controlled value is re-applied.
+							if ( isCurrent ) {
+								e.preventDefault();
+							}
+							props.onClick?.( e );
+						} }
 					>
 						{ children }
 					</Accordion.Trigger>
