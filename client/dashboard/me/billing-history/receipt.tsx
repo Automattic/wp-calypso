@@ -20,7 +20,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
@@ -215,20 +215,31 @@ function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
 		return null;
 	}
 
-	const taxDetails = [
-		receipt.tax_country_code && {
+	const taxDetails: ReceiptTaxDetail[] = [];
+
+	if ( receipt.tax_country_code ) {
+		taxDetails.push( {
+			key: 'country',
 			label: __( 'Country' ),
 			value: countryName,
-		},
-		receipt.tax_state && {
+		} );
+	}
+
+	if ( receipt.tax_state ) {
+		taxDetails.push( {
+			key: 'state',
 			label: __( 'State/Province' ),
 			value: receipt.tax_state,
-		},
-		typeof receipt.tax_is_for_business === 'boolean' && {
+		} );
+	}
+
+	if ( typeof receipt.tax_is_for_business === 'boolean' ) {
+		taxDetails.push( {
+			key: 'business-use',
 			label: __( 'Business use' ),
 			value: receipt.tax_is_for_business ? __( 'Yes' ) : __( 'No' ),
-		},
-	].filter( ( detail ): detail is { label: string; value: string } => Boolean( detail ) );
+		} );
+	}
 
 	return (
 		<VStack spacing={ 1 } alignment="flex-start">
@@ -236,8 +247,8 @@ function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
 				{ __( 'Tax details' ) }
 			</Text>
 			<VStack spacing={ 0.5 } alignment="flex-start">
-				{ taxDetails.map( ( { label, value } ) => (
-					<div key={ label }>
+				{ taxDetails.map( ( { key, label, value } ) => (
+					<div key={ key }>
 						<strong>{ label }</strong> { value }
 					</div>
 				) ) }
@@ -245,6 +256,12 @@ function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
 		</VStack>
 	);
 }
+
+type ReceiptTaxDetail = {
+	key: string;
+	label: ReactNode;
+	value: ReactNode;
+};
 
 function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
