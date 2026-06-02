@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
@@ -62,12 +62,26 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		agencyUrl: false,
 	} );
 
-	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
+	// Track the phone input's country code so step 2 can auto-populate the
+	// agency location when the user supplies a phone number.
+	const [ phoneCountryCode, setPhoneCountryCode ] = useState( '' );
+
+	const handlePhoneInputChange = ( data: {
+		phoneNumber: string;
+		phoneNumberFull: string;
+		countryData?: { code: string };
+	} ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
 			phoneNumber: data.phoneNumberFull,
 		} ) );
+		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
 	};
+
+	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
+		() => ( phoneCountryCode ? { ...formData, country: phoneCountryCode } : formData ),
+		[ formData, phoneCountryCode ]
+	);
 
 	const handleInputChange =
 		( field: keyof AgencyDetailsSignupPayload ) =>
@@ -101,7 +115,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				} );
 
 				if ( ! duplicateAgencyName && ! duplicateURL ) {
-					onContinue( formData );
+					onContinue( dataToContinue );
 				} else {
 					// Fire track event to track the view of the duplicate agency warning dialog
 					dispatch(
@@ -116,12 +130,12 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				}
 			} catch ( error ) {
 				// In case the verification fails, we just let the user continue with the form submission.
-				onContinue( formData );
+				onContinue( dataToContinue );
 			} finally {
 				setIsProceeding( false );
 			}
 		},
-		[ validate, formData, onContinue, dispatch ]
+		[ validate, formData, dataToContinue, onContinue, dispatch ]
 	);
 
 	const closeDuplicateAgencyWarning = () => {
@@ -323,7 +337,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 							<Button
 								variant="primary"
 								onClick={ () => {
-									onContinue( formData );
+									onContinue( dataToContinue );
 									closeDuplicateAgencyWarning();
 								} }
 							>
