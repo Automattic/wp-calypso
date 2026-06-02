@@ -37,9 +37,6 @@ describe( 'following/mine/delete', () => {
 			const dispatch = jest.fn();
 			const getState = () => ( {
 				reader: {
-					sites: {
-						items: {},
-					},
 					feeds: {
 						items: {},
 					},

@@ -1,5 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import { TermPricingContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.webp';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
@@ -15,11 +18,20 @@ type Props = {
 export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
+	const { termPricing } = useContext( TermPricingContext );
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+
+	// Unlike the legacy system, BD monthly plans do not include a free domain, so hide that benefit.
+	const showFreeDomain = ! ( isTermPricingEnabled && termPricing === 'monthly' );
+
 	return (
 		<div className="standard-agency-hosting">
 			<WPCOMPlanSection onSelect={ onAddToCart } />
 
-			<HostingFeatures heading={ translate( 'Included with every WordPress.com site' ) } />
+			<HostingFeatures
+				heading={ translate( 'Included with every WordPress.com site' ) }
+				showFreeDomain={ showFreeDomain }
+			/>
 
 			<HostingTestimonialsSection
 				heading={ translate( 'Love for WordPress.com hosting' ) }

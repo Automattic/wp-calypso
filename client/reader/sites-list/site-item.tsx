@@ -2,13 +2,11 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import type { SiteDetails } from '@automattic/data-stores';
 
 interface ReaderSiteItemProps {
 	site: ReaderSite;
@@ -36,7 +34,7 @@ export function ReaderSiteItem( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { image, name, feedUrl = '', siteId, feedId } = site;
-	const siteDetails = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
+	const { site: siteDetails } = useSite( siteId );
 	const siteIcon = siteDetails?.icon?.img || siteDetails?.icon?.ico || image;
 	const isCompactView = variant === 'compact';
 	const linkUrl = getStreamUrl( feedId, siteId ) ?? feedUrl;
@@ -56,14 +54,6 @@ export function ReaderSiteItem( {
 
 	return (
 		<li className="reader-site-item">
-			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
-				One example being mapped domains: initial follows state may list by wpcom subdomain, and
-				the url here might be of a mapped domain. The site request success also updates follows
-				state, and can bridge the gap to appropriately determine if a site from this list is
-				followed.
-			*/ }
-			<QueryReaderSite siteId={ siteId } />
-
 			<a
 				className="reader-site-item__link"
 				href={ linkUrl }

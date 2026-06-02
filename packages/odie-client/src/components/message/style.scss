@@ -453,7 +453,7 @@ $feedback-button-size: 28px;
 $custom-border-corner-size: 16px;
 
 .odie-gradient-to-white {
-	background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50% );
+	background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 0%, var( --color-surface, #fff ) 50% );
 	display: flex;
 	align-items: center;
 	gap: 8px;

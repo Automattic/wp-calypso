@@ -303,10 +303,10 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
-		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
+		// translators: %(productName)s is the name of the product and %(quantity)s is a number (GB stands for GigaBytes)
 		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
 			productName: purchase.product_name,
-			quantity: purchase.renewal_price_tier_usage_quantity,
+			quantity: String( purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
@@ -319,7 +319,7 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		purchase.renewal_price_tier_usage_quantity &&
 		purchase.renewal_price_tier_usage_quantity > 1
 	) {
-		/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
+		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)d is a number of requests/month */
 		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 			requests: 500 * purchase.renewal_price_tier_usage_quantity,
@@ -391,7 +391,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 
 	if ( purchase.is_google_workspace_product && purchase.meta ) {
 		return sprintf(
-			// translators: The domain is the domain name of the site
+			// translators: %(domain)s is the domain name of the site
 			__( 'Mailboxes and Productivity Tools at %(domain)s' ),
 			{
 				domain: purchase.meta,
@@ -401,7 +401,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 
 	if ( purchase.is_titan_mail_product && purchase.meta ) {
 		return sprintf(
-			// translators: The domain is the domain name of the site
+			// translators: %(domain)s is the domain name of the site
 			__( 'Mailboxes at %(domain)s' ),
 			{
 				domain: purchase.meta,

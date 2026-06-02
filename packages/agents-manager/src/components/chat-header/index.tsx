@@ -40,6 +40,10 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
+					// Body-level popovers need a stable anchor for public host style isolation.
+					popoverProps={ {
+						className: 'agents-manager-chat-header__menu-popover',
+					} }
 					toggleProps={ { size: 'small' } }
 				/>
 				{ /*

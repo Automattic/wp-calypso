@@ -36,7 +36,7 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@jest/globals": "^29.7.0",
 		"@types/node": "^24.12.2",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"asana-phrase": "^0.0.8",
 		"nock": "^14.0.10",
 		"typescript": "^5.9.3"

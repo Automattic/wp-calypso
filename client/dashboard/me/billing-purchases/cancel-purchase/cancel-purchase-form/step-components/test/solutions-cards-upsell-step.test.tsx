@@ -71,6 +71,72 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );
 
+	test( 'fires view event on mount with visible card IDs', () => {
+		const recordEvent = jest.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="noLongerNeedSite"
+				purchase={ purchase }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+				recordEvent={ recordEvent }
+			/>
+		);
+
+		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+			solution_ids: 'change-plan,speak-with-support',
+			cancellation_reason: 'noLongerNeedSite',
+		} );
+		expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'fires click event when a solution card is clicked', async () => {
+		const user = userEvent.setup();
+		const recordEvent = jest.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="noLongerNeedSite"
+				purchase={ purchase }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+				recordEvent={ recordEvent }
+			/>
+		);
+
+		const supportCard = await screen.findByRole( 'button', {
+			name: /Speak with our support team/,
+		} );
+		await user.click( supportCard );
+
+		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+			solution_id: 'speak-with-support',
+			cancellation_reason: 'noLongerNeedSite',
+		} );
+	} );
+
+	test( 'does not throw when recordEvent is not provided', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="noLongerNeedSite"
+				purchase={ purchase }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		const supportCard = await screen.findByRole( 'button', {
+			name: /Speak with our support team/,
+		} );
+		await user.click( supportCard );
+
+		// No error thrown — graceful degradation when recordEvent is omitted
+		expect( mockSetNewMessagingChat ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'speak-with-support opens Odie fallback when not Zendesk eligible', async () => {
 		mockCanConnectToZendesk = false;
 		const user = userEvent.setup();

@@ -1,9 +1,4 @@
-/**
- * Real wpcom `AgentStudioService`. Falls back to the mock for project
- * CRUD (no backend yet).
- */
 import wpcom from 'calypso/lib/wp';
-import { mockAgentStudioService } from './mock-agent-studio-service';
 import type { AgentStudioOutput, AgentStudioService, CreateAgentStudioOutputInput } from '../types';
 
 interface OutputsResponse {
@@ -22,6 +17,20 @@ interface CreateRunResponse {
 }
 
 const DEFAULT_ONE_PAGER_RECIPE = 'compose-one-pager-ela-v2';
+const SOCIAL_CAMPAIGN_RECIPE = 'compose-social-campaign-v1';
+
+// `deliverableType` on the agent definition is a translated display
+// label ("Social assets", "PDF"). The server-side projection on the
+// outputs endpoint returns slugs ("social-assets", "one-pager"). The
+// deliverable-page router branches on those slugs, so the optimistic
+// output we return at submit time has to use the slug too — otherwise
+// `output-detail-content.tsx` picks the wrong renderer between submit
+// and the next outputs refetch, and the social deliverable flashes
+// "No preview is available" until the user refreshes the page.
+const AGENT_ID_TO_DELIVERABLE_SLUG: Record< string, string > = {
+	'one-pager': 'one-pager',
+	'social-assets': 'social-assets',
+};
 
 const requireAgencyId = ( agencyId: number | undefined, method: string ): number => {
 	if ( ! agencyId ) {
@@ -45,30 +54,9 @@ const normalizeOutput = ( output: AgentStudioOutput ): AgentStudioOutput => ( {
 } );
 
 export const wpcomAgentStudioService: AgentStudioService = {
-	listProjects() {
-		return mockAgentStudioService.listProjects();
-	},
-
-	getProject( projectId: string ) {
-		return mockAgentStudioService.getProject( projectId );
-	},
-
-	createProject( input ) {
-		return mockAgentStudioService.createProject( input );
-	},
-
-	deleteProject( projectId: string ) {
-		return mockAgentStudioService.deleteProject( projectId );
-	},
-
-	async listProjectOutputs( projectId: string ) {
-		const outputs = await this.listOutputs();
-		return outputs.filter( ( output ) => output.projectId === projectId );
-	},
-
 	async listOutputs( agencyId?: number ): Promise< AgentStudioOutput[] > {
 		const id = requireAgencyId( agencyId, 'listOutputs' );
-		const response: OutputsResponse = await wpcom.req.get( {
+		const response = await wpcom.req.get< OutputsResponse >( {
 			apiNamespace: 'wpcom/v2',
 			path: `/agency/${ id }/a4a/outputs`,
 		} );
@@ -79,37 +67,50 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		input: CreateAgentStudioOutputInput,
 		agencyId?: number
 	): Promise< AgentStudioOutput > {
-		if ( input.agentId !== 'one-pager' ) {
-			return mockAgentStudioService.createOutput( input );
-		}
-
 		const id = requireAgencyId( agencyId, 'createOutput' );
-		const title = input.title ?? '';
-		const text = title ? `${ title }\n\n${ input.brief ?? '' }` : input.brief ?? '';
 
-		// `brand` and `project_id` are omitted on purpose. The recipe's
-		// abilities disagree on `brand`'s type so the only value that
-		// satisfies all three is null. `project_id` would fail the
-		// persist step's integer validation; the runs endpoint
-		// auto-injects the agency default when it's missing.
-		const recipeInput: Record< string, unknown > = {
-			title,
-			text,
-			blurb: input.blurb ?? input.description,
-			page_count: 2,
-			seed: Math.floor( Math.random() * 1_000_000_000 ),
-			image_urls: input.imageUrls ?? [],
-			...( input.logoUrl && { logo_url: input.logoUrl } ),
-			...( input.partnerLogoUrl && { partner_logo_url: input.partnerLogoUrl } ),
-			...( input.partnerLogoOrder && { partner_logo_order: input.partnerLogoOrder } ),
-			...( input.heroUrl && { hero_url: input.heroUrl } ),
-		};
+		let recipe: string;
+		let recipeInput: Record< string, unknown >;
+
+		if ( input.agentId === 'social-assets' ) {
+			recipe = input.recipe || SOCIAL_CAMPAIGN_RECIPE;
+			recipeInput = {
+				headline: input.headline ?? input.title ?? '',
+				stat: input.stat ?? '',
+				stat_context: input.statContext ?? '',
+				image_urls: input.socialImageUrls ?? [],
+				...( input.socialLogoUrl && { logo_url: input.socialLogoUrl } ),
+				...( input.socialLogoLightUrl && { logo_light_url: input.socialLogoLightUrl } ),
+			};
+		} else {
+			const title = input.title ?? '';
+			const text = title ? `${ title }\n\n${ input.brief ?? '' }` : input.brief ?? '';
+
+			// `brand` and `project_id` are omitted on purpose. The recipe's
+			// abilities disagree on `brand`'s type so the only value that
+			// satisfies all three is null. `project_id` would fail the
+			// persist step's integer validation; the runs endpoint
+			// auto-injects the agency default when it's missing.
+			recipe = input.recipe || DEFAULT_ONE_PAGER_RECIPE;
+			recipeInput = {
+				title,
+				text,
+				blurb: input.blurb ?? input.description,
+				page_count: 2,
+				seed: Math.floor( Math.random() * 1_000_000_000 ),
+				image_urls: input.imageUrls ?? [],
+				...( input.logoUrl && { logo_url: input.logoUrl } ),
+				...( input.partnerLogoUrl && { partner_logo_url: input.partnerLogoUrl } ),
+				...( input.partnerLogoOrder && { partner_logo_order: input.partnerLogoOrder } ),
+				...( input.heroUrl && { hero_url: input.heroUrl } ),
+			};
+		}
 
 		const response: CreateRunResponse = await wpcom.req.post( {
 			apiNamespace: 'wpcom/v2',
 			path: `/agency/${ id }/a4a/runs`,
 			body: {
-				recipe: input.recipe || DEFAULT_ONE_PAGER_RECIPE,
+				recipe,
 				input: recipeInput,
 			},
 		} );
@@ -117,11 +118,10 @@ export const wpcomAgentStudioService: AgentStudioService = {
 		const now = new Date().toISOString();
 		return {
 			id: String( response.run_id ),
-			projectId: input.projectId ?? '',
 			title: input.title,
 			description: input.description,
 			agentName: input.agentName,
-			deliverableType: input.deliverableType,
+			deliverableType: AGENT_ID_TO_DELIVERABLE_SLUG[ input.agentId ] ?? input.deliverableType,
 			status: 'generating',
 			createdAt: now,
 			updatedAt: now,

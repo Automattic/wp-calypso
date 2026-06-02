@@ -237,7 +237,7 @@ export default function ReferHostingForm( {
 				/>
 
 				<TextField
-					label={ translate( 'State/Province (optional)' ) }
+					label={ translate( 'State/province (optional)' ) }
 					name="state"
 					error={ validationError.state }
 					value={ formData.state }
@@ -331,7 +331,7 @@ export default function ReferHostingForm( {
 						placeholder={ translate( 'Select lead type' ) }
 						options={ [
 							{ value: 'Media', label: translate( 'Media' ) },
-							{ value: 'Public Sector', label: translate( 'Public Sector' ) },
+							{ value: 'Public Sector', label: translate( 'Public sector' ) },
 							{ value: 'Other', label: translate( 'Other' ) },
 						] }
 					/>

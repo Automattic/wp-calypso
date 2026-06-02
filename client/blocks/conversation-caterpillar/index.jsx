@@ -2,14 +2,10 @@ import { localize } from 'i18n-calypso';
 import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import { isAncestor } from 'calypso/blocks/comments/utils';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { expandComments } from 'calypso/state/comments/actions';
-import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
-import { getPostCommentsTree, getDateSortedPostComments } from 'calypso/state/comments/selectors';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 import './style.scss';
 
@@ -24,6 +20,8 @@ class ConversationCaterpillarComponent extends Component {
 		comments: PropTypes.array.isRequired,
 		commentsToShow: PropTypes.object,
 		parentCommentId: PropTypes.number,
+		expandComments: PropTypes.func.isRequired,
+		recordReaderTracksEvent: PropTypes.func.isRequired,
 	};
 
 	getExpandableComments = () => {
@@ -92,17 +90,18 @@ class ConversationCaterpillarComponent extends Component {
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
 					title={
-						commentCount > 0 &&
-						translate(
-							'View %(count)s comment for this post',
-							'View %(count)s comments for this post',
-							{
-								count: +commentCount,
-								args: {
-									count: commentCount,
-								},
-							}
-						)
+						commentCount > 0
+							? translate(
+									'View %(count)s comment for this post',
+									'View %(count)s comments for this post',
+									{
+										count: +commentCount,
+										args: {
+											count: commentCount,
+										},
+									}
+							  )
+							: undefined
 					}
 				>
 					{ commentCount > 1 &&
@@ -135,15 +134,4 @@ class ConversationCaterpillarComponent extends Component {
 
 export const ConversationCaterpillar = localize( ConversationCaterpillarComponent );
 
-const ConnectedConversationCaterpillar = connect(
-	( state, ownProps ) => {
-		const { blogId, postId } = ownProps;
-		return {
-			comments: getDateSortedPostComments( state, blogId, postId ),
-			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
-		};
-	},
-	{ expandComments, recordReaderTracksEvent }
-)( ConversationCaterpillar );
-
-export default ConnectedConversationCaterpillar;
+export default ConversationCaterpillar;

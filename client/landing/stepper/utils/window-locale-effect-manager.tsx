@@ -8,7 +8,7 @@ export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 	const locale = useLocale();
 
 	// Some languages may need to set an html lang attribute that is different from their slug
-	let lang = __( 'html_lang_attribute' );
+	let lang: string = __( 'html_lang_attribute' );
 
 	// Some languages don't have the translation for html_lang_attribute
 	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug

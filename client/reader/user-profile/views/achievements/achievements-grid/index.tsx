@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import { deduplicateAchievementsById, deduplicateAchievementsBySlug } from '../utils';
 import AnniversaryAchievement from './anniversary-achievement';
+import DailyPostStreakCard from './daily-post-streak-card';
 import GenericAchievement from './generic-achievement';
 import LockedAchievementCard from './locked-achievement-card';
 import SecretAchievementCard from './secret-achievement-card';
@@ -23,6 +24,7 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 		achievements,
 		lockedAchievements,
 		yearsOfService,
+		dailyPostStreaks,
 		isLoading,
 		isError,
 		hasNextPage,
@@ -44,7 +46,12 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 		);
 	}
 
-	if ( ! achievements.length && ! lockedAchievements.length && ! yearsOfService ) {
+	if (
+		! achievements.length &&
+		! lockedAchievements.length &&
+		! yearsOfService &&
+		! dailyPostStreaks.length
+	) {
 		return <p className="achievements-grid__empty">{ translate( 'No achievements yet.' ) }</p>;
 	}
 
@@ -77,9 +84,10 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 	);
 
 	const showYearsOfService = !! yearsOfService;
+	const showStreakCards = isOwnProfile && ( dailyPostStreaks?.length ?? 0 ) > 0;
 	const showCelebratory = isOwnProfile && earned.length > 0 && lockedAchievements.length === 0;
 	const showLockedSection = isOwnProfile && sortedLocked.length > 0;
-	const showEarnedGrid = sortedEarned.length > 0 || showYearsOfService;
+	const showEarnedGrid = sortedEarned.length > 0 || showYearsOfService || showStreakCards;
 
 	return (
 		<>
@@ -88,6 +96,10 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 					{ showYearsOfService && (
 						<YearsOfServiceAchievementCard yearsOfService={ yearsOfService } />
 					) }
+					{ showStreakCards &&
+						dailyPostStreaks.map( ( streak ) => (
+							<DailyPostStreakCard key={ streak.blog_id } streak={ streak } />
+						) ) }
 					{ sortedEarned.map( ( a ) => {
 						if ( a.is_redacted ) {
 							return (

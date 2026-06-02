@@ -36,12 +36,15 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 >;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
+let mockBlocksByClientId: Record< string, any > = {};
+const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
+const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
-		Panel: ( { children }: any ) => React.createElement( 'div', null, children ),
-		PanelBody: ( { children }: any ) => React.createElement( 'section', null, children ),
+		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
+		PanelBody: ( { children }: any ) => react.createElement( 'section', null, children ),
 	};
 } );
 
@@ -61,6 +64,7 @@ jest.mock( '@wordpress/data', () => ( {
 			if ( store === 'core/block-editor' ) {
 				return {
 					getSelectedBlock: () => mockSelectedBlock,
+					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 					getBlocks: () => [],
 				};
 			}
@@ -118,6 +122,7 @@ function installPostTypeMock( postType?: string ) {
 				if ( store === 'core/block-editor' ) {
 					return {
 						getSelectedBlock: () => mockSelectedBlock,
+						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
 					};
 				}
@@ -144,12 +149,24 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 	};
 }
 
-function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
-	const { suggestions } = useSuggestions();
+function SuggestionsProbe( {
+	onSuggestions,
+	maxSuggestions,
+	suggestionsVisible = true,
+}: {
+	onSuggestions: ( suggestions: any[] ) => void;
+	maxSuggestions?: number;
+	suggestionsVisible?: boolean;
+} ) {
+	const { suggestions } = useSuggestions( maxSuggestions, { suggestionsVisible } );
 	React.useEffect( () => {
 		onSuggestions( suggestions );
 	}, [ onSuggestions, suggestions ] );
 	return null;
+}
+
+function getTracksCalls( eventName: string ) {
+	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
 describe( 'getChatComponent', () => {
@@ -190,10 +207,6 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
 	} );
 
 	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
@@ -256,6 +269,7 @@ describe( 'getEmptyViewSuggestions', () => {
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
 		mockSelectedBlock = null;
+		mockBlocksByClientId = {};
 		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
 		mockedRecordTracksEvent.mockClear();
@@ -265,6 +279,26 @@ describe( 'useSuggestions', () => {
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+	} );
+
+	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'appends AI Editorial Review to block-specific suggestions', () => {
@@ -282,6 +316,143 @@ describe( 'useSuggestions', () => {
 			'Check grammar',
 			'Simplify text',
 			'AI Editorial Review',
+		] );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_rendered',
+			{}
+		);
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'simplify-text',
+					suggestion_type: 'text',
+					block_type: 'core/paragraph',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'keeps AI Editorial Review visible when block suggestions are limited', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
+		const onSuggestions = jest.fn();
+
+		render(
+			React.createElement( SuggestionsProbe, {
+				onSuggestions,
+				maxSuggestions: 3,
+			} )
+		);
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Check grammar',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+		] );
+	} );
+
+	it( 'shows post-level suggestions after the selected-block chip is cleared', () => {
+		installAiEditorialReviewData();
+		const block = { clientId: 'b-clear', name: 'core/paragraph' };
+		mockSelectedBlock = block;
+		mockBlocksByClientId[ block.clientId ] = block;
+		const onSuggestions = jest.fn();
+
+		const { rerender } = render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		let latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toContain(
+			'Translate content'
+		);
+
+		mockSelectedBlock = null;
+		act( () => {
+			window.dispatchEvent( new Event( 'agents-manager-selected-block-cleared' ) );
+		} );
+		rerender( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'AI Editorial Review',
+		] );
+	} );
+
+	it( 'tracks rendered image block transformation suggestions', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b2', name: 'core/image' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate alt text',
+			'AI Editorial Review',
+		] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'generate-alt-text',
+					suggestion_type: 'image',
+					block_type: 'core/image',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
 		] );
 	} );
 
@@ -341,6 +512,108 @@ describe( 'useSuggestions', () => {
 			'jetpack_ai_editorial_review_suggestion_click',
 			{}
 		);
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
+	} );
+
+	it( 'tracks block transformation suggestion clicks', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b3', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Simplify this text to make it easier to read' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'simplify-text',
+				suggestion_type: 'text',
+				block_type: 'core/heading',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'tracks block transformation suggestion clicks by label', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b4', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check grammar' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'tracks block transformation suggestion clicks after block selection is cleared', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b5', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+		mockSelectedBlock = null;
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
+	it( 'does not track block transformation clicks for unknown prompt values', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b6', name: 'core/heading' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Write an unrelated prompt' },
+				} )
+			);
+		} );
+
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
@@ -478,21 +751,77 @@ describe( 'toolProvider', () => {
 	} );
 
 	describe( 'getAbilities', () => {
-		it( 'includes update-block-content and big_sky__show_component', async () => {
+		it( 'includes update-block-content and show-component abilities', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( 'big_sky__show_component' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
 			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === 'big_sky__show_component' );
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_TOOL_ID );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
 			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
+			expect( typeof legacyShowComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
+			const args = {
+				type: 'color-picker',
+				props: { colors: [] },
+			};
+			const executeAbility = jest.fn().mockResolvedValue( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [] ),
+				executeAbility,
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
+			const result = await legacyShowComponent.callback( args );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
+			expect( result ).toEqual( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'empty', '' ],
+			[ 'whitespace-only', '   ' ],
+		] )( 'does not delegate %s legacy show-component callbacks', async ( _label, type ) => {
+			const executeAbility = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [] ),
+				executeAbility,
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
+			const result = await legacyShowComponent.callback( {
+				type,
+				props: {},
+			} );
+
+			expect( executeAbility ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {
@@ -502,23 +831,24 @@ describe( 'toolProvider', () => {
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).not.toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( 'big_sky__show_component' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 	} );
 
-	describe( 'executeAbility for big_sky__show_component', () => {
+	describe( 'executeAbility for show-component tools', () => {
 		beforeEach( () => {
 			installWpDataMock( 'Original Title' );
 		} );
 
 		it( 'returns an error when type is missing', async () => {
-			const { result } = await toolProvider.executeAbility( 'big_sky__show_component', {} );
+			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
 			expect( result ).toMatchObject( { success: false } );
 			expect( ( result as any ).error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
-			const { result } = await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
@@ -533,7 +863,7 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 3', explanation: 'c' },
 			];
 			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				'big_sky__show_component',
+				SHOW_COMPONENT_TOOL_ID,
 				{
 					type: 'title-picker',
 					props: { titles },
@@ -546,7 +876,7 @@ describe( 'toolProvider', () => {
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.tool_id ).toBe( 'big_sky__show_component' );
+			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
 			expect( parsed.data.type ).toBe( 'title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
 			expect( parsed.data.postId ).toBeUndefined();
@@ -555,8 +885,62 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );
 
+		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {
+			const { result } = ( await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+		} );
+
+		it( 'delegates non-Jetpack legacy show-component calls to Big Sky', async () => {
+			const args = {
+				type: 'color-picker',
+				props: { colors: [] },
+			};
+			const executeAbility = jest.fn().mockResolvedValue( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+			( window as any ).wp.abilities = { executeAbility };
+
+			const result = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, args );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
+			expect( result ).toEqual( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'empty', '' ],
+			[ 'whitespace-only', '   ' ],
+		] )( 'does not delegate %s legacy show-component calls to Big Sky', async ( _label, type ) => {
+			const executeAbility = jest.fn();
+			( window as any ).wp.abilities = { executeAbility };
+
+			const { result } = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props: {},
+			} );
+
+			expect( executeAbility ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /missing type/ );
+		} );
+
 		it( 'does not attach a title checkpoint to review-mediation components', async () => {
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'review-mediation',
 				props: {
 					summary: 'Summary.',
@@ -580,7 +964,7 @@ describe( 'toolProvider', () => {
 		it( 'does not stamp review-mediation components without a saved editor post ID', async () => {
 			installWpDataMock( 'Original Title', 0 );
 
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'review-mediation',
 				props: {
 					summary: 'Summary.',
@@ -598,7 +982,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'title-picker',
 				props: { titles: [ { title: 'x' } ] },
 			} ) ) as any;

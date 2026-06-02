@@ -23,12 +23,10 @@ export default function MigrationsCommissionsList( {
 	items,
 	fetchMigratedSites,
 	migrationTags,
-	canTagSitesForCommission,
 }: {
 	items: TaggedSite[];
 	fetchMigratedSites: () => void;
 	migrationTags: string[];
-	canTagSitesForCommission: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -79,9 +77,9 @@ export default function MigrationsCommissionsList( {
 			},
 			{
 				id: 'migratedOn',
-				// FIXME: This should be "Migrated on" instead of "Date Added"
+				// FIXME: This should be "Migrated on" instead of "Date added"
 				// We will change this when the MC tool is implemented and we have the migration date
-				label: translate( 'Date Added' ).toUpperCase(),
+				label: translate( 'Date added' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
 				enableHiding: false,
@@ -96,7 +94,6 @@ export default function MigrationsCommissionsList( {
 						<ReviewStatusColumn
 							reviewStatus={ item.incentive_status }
 							rejectionReason={ item.incentive_rejection_reason }
-							canTagSitesForCommission={ canTagSitesForCommission }
 						/>
 					);
 				},
@@ -104,7 +101,7 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[ translate, canTagSitesForCommission ]
+		[ translate ]
 	);
 
 	return (
@@ -136,11 +133,7 @@ export default function MigrationsCommissionsList( {
 					</ItemsDataViews>
 				</div>
 			) : (
-				<MigrationsCommissionsListMobileView
-					commissions={ items }
-					actions={ actions }
-					canTagSitesForCommission={ canTagSitesForCommission }
-				/>
+				<MigrationsCommissionsListMobileView commissions={ items } actions={ actions } />
 			) }
 
 			{ activeModal?.kind === 'untag' && (

@@ -1,6 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
@@ -36,7 +35,6 @@ import {
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import untrailingslashit from 'calypso/lib/route/untrailingslashit';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
@@ -85,13 +83,11 @@ const loadSupportArticleDialog = () =>
 const HELP_CENTER_FAB_SECTIONS = [
 	'accept-invite',
 	'checkout',
-	'login',
 	'mailing-lists',
 	'patterns',
 	'performance-profiler',
 	'plugins',
 	'reader',
-	'signup',
 	'site-profiler',
 	'theme',
 	'themes',
@@ -99,43 +95,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 
 // Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
 const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
-
-// Within the `signup` section the FAB is scoped to the account-creation step
-// (`user-social` or `user`) so it appears on `/start/account/user-social` but
-// not on flow-specific steps like `/start/domain/domain-only`. The `<flow>`
-// segment is optional because the default signup flow omits it, producing
-// URLs like `/start/user` and `/start/user/<stepSection>/<lang>`. Matches up
-// to two trailing segments (`:stepSectionName` and/or `:lang`).
-const SIGNUP_ACCOUNT_STEP_PATH = /^\/start\/(?:[^/]+\/)?(?:user|user-social)(?:\/[^/]+){0,2}\/?$/;
-
-// /log-in briefly carries social-handoff tokens before the login controller strips
-// them (?access_token / ?id_token in query, #id_token / #client_id in hash).
-// Suppress the FAB during that window so window.location.href doesn't reach Zendesk.
-const WPCOM_LOGIN_FAB_PATHNAMES = new Set( [
-	'/log-in',
-	'/log-in/lostpassword',
-	...getLanguageSlugs().flatMap( ( slug ) => [
-		`/log-in/${ slug }`,
-		`/log-in/lostpassword/${ slug }`,
-	] ),
-] );
-
-const TOKEN_BEARING_LOGIN_QUERY_KEYS = [ 'access_token', 'id_token' ];
-
-const isFabSafeLoginUrl = () => {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-	const { pathname, search, hash } = window.location;
-	if ( ! WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) || hash ) {
-		return false;
-	}
-	if ( ! search ) {
-		return true;
-	}
-	const params = new URLSearchParams( search );
-	return ! TOKEN_BEARING_LOGIN_QUERY_KEYS.some( ( key ) => params.has( key ) );
-};
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -212,21 +171,7 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
-	// OAuth client logins (Gravatar, WPJobManager, Woo, etc.) and /log-in/jetpack
-	// have their own branding and support paths.
-	const isWpcomLogin =
-		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
-
-	// OAuth client signups (Woo, BlazePro, Gravatar, WPJobManager, etc.) run under
-	// their own brand. For plain WPCOM signup we only show the FAB on the
-	// account-creation step, not on flow-specific steps like `domain-only`.
-	const isWpcomSignup =
-		sectionName === 'signup' && ! useOAuth2Layout && SIGNUP_ACCOUNT_STEP_PATH.test( currentRoute );
-
-	const isEligibleSection =
-		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
-		( sectionName !== 'login' || isWpcomLogin ) &&
-		( sectionName !== 'signup' || isWpcomSignup );
+	const isEligibleSection = HELP_CENTER_FAB_SECTIONS.includes( sectionName );
 
 	// Logged-in users use the masterbar control instead.
 	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
