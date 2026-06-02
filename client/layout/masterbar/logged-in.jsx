@@ -61,7 +61,6 @@ import Item from './item';
 import Masterbar from './masterbar';
 import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
-import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
 const loadCheckout = () =>
@@ -517,7 +516,7 @@ class MasterbarLoggedIn extends Component {
 		if ( isClassicView ) {
 			menuItems.push( { label: translate( 'Dashboard' ), url: siteAdminUrl } );
 		} else {
-			menuItems.push( { label: translate( 'My Home' ), url: siteHomeUrl } );
+			menuItems.push( { label: translate( 'Dashboard' ), url: siteHomeUrl } );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -553,7 +552,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				className="masterbar__item-my-site"
 				url={ siteUrl }
-				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				icon={ <span className="dashicons-before dashicons-dashboard" /> }
 				tipTarget="visit-site"
 				subItems={ [ menuItems ] }
 			>
@@ -635,16 +634,6 @@ class MasterbarLoggedIn extends Component {
 				{ translate( 'New', { context: 'admin bar menu group label' } ) }
 			</Item>
 		);
-	}
-
-	renderLaunchButton() {
-		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled } = this.props;
-
-		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
-			return null;
-		}
-
-		return <MasterbarLaunchButton siteId={ siteId } />;
 	}
 
 	renderProfileMenu() {
@@ -863,7 +852,6 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
-					{ this.renderLaunchButton() }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }

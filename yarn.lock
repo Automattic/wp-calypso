@@ -190,6 +190,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/agenttic-client@npm:^0.1.55":
+  version: 0.1.63
+  resolution: "@automattic/agenttic-client@npm:0.1.63"
+  dependencies:
+    "@types/react": "npm:^18.0.0"
+    marked: "npm:^16.2.1"
+    react: "npm:^18.0.0"
+  peerDependencies:
+    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
+    react: ^18.0.0
+  dependenciesMeta:
+    marked:
+      optional: true
+  peerDependenciesMeta:
+    "@wordpress/api-fetch":
+      optional: true
+  checksum: 86f06946f9bf0c34df67766520ef3c2804cfbb19de83185268610e38f16b27156a2bc5f424b363198f97fd2c7e614778b0a7331425f5eb59fd08c5b3ba81b9ee
+  languageName: node
+  linkType: hard
+
 "@automattic/agenttic-client@npm:^0.1.58":
   version: 0.1.58
   resolution: "@automattic/agenttic-client@npm:0.1.58"
@@ -13948,6 +13968,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/agenttic-client": "npm:^0.1.55"
     "@automattic/agenttic-ui": "npm:^0.1.58"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"

@@ -1,0 +1,261 @@
+.home-wizard.components-modal__frame {
+	max-width: 640px;
+	width: 100%;
+	z-index: 1000010;
+}
+
+// Lift the modal's screen overlay above Calypso's masterbar and sidebar so the
+// page behind the wizard is uniformly dimmed.
+body.is-home-wizard-open {
+	.components-modal__screen-overlay {
+		z-index: 1000000;
+	}
+
+	.masterbar,
+	.sidebar,
+	.sidebar-v2,
+	.layout__secondary {
+		pointer-events: none;
+	}
+
+	// --- Sidebar: hide everything except the selected menu item; render
+	// skeleton rows for every other <li>. Covers leaf items, expandable
+	// sections (Comments, Plugins), special links (Hosting, Stats), and
+	// extras like the upgrade banner / "Collapse menu" button.
+	.sidebar,
+	.sidebar-v2 {
+		* {
+			visibility: hidden !important;
+		}
+
+		.sidebar__menu--selected,
+		.sidebar__menu--selected * {
+			visibility: visible !important;
+		}
+
+		li:not(.sidebar__menu--selected) {
+			// Force a uniform row height so expandable sections (which include
+			// hidden submenu markup) don't paint a taller skeleton than leaf
+			// items.
+			height: 32px !important;
+			min-height: 32px !important;
+			max-height: 32px !important;
+			padding: 0 !important;
+			margin: 0 !important;
+			overflow: hidden !important;
+			position: relative;
+
+			&::before,
+			&::after {
+				visibility: visible !important;
+				content: '';
+				position: absolute;
+				top: 50%;
+				background: rgba(255, 255, 255, 0.1);
+				border-radius: 4px;
+				transform: translateY(-50%);
+				pointer-events: none;
+			}
+
+			&::before {
+				left: 18px;
+				width: 20px;
+				height: 20px;
+			}
+
+			&::after {
+				left: 50px;
+				width: 90px;
+				height: 8px;
+			}
+		}
+
+		// Don't paint skeletons on an <li> that wraps the selected child.
+		li:has(.sidebar__menu--selected)::before,
+		li:has(.sidebar__menu--selected)::after {
+			content: none;
+		}
+
+		// Don't paint skeletons on nested <li> (submenu children) — we only
+		// want one skeleton row per top-level menu item.
+		li li::before,
+		li li::after {
+			content: none !important;
+		}
+
+		// Hide expandable submenu containers entirely so collapsed sections
+		// don't reserve vertical space behind the skeletons.
+		.sidebar__expandable-content,
+		ul ul {
+			display: none !important;
+		}
+	}
+
+	// --- Masterbar: hide all items except the WP / site-title chip on the left ---
+	.masterbar > * {
+		visibility: hidden !important;
+	}
+	.masterbar .masterbar__section--left,
+	.masterbar .masterbar__item-logo,
+	.masterbar .masterbar__item-my-site,
+	.masterbar .masterbar__item-my-sites {
+		visibility: visible !important;
+
+		// Re-show the chip's children too (counteracts the blanket hide above).
+		* {
+			visibility: visible !important;
+		}
+	}
+	// But hide the badge counts / submenus that hang off the site chip.
+	.masterbar .masterbar__item-my-site .masterbar__info-badges,
+	.masterbar .masterbar__item-my-site .masterbar__site-info-label {
+		visibility: hidden !important;
+	}
+
+	.layout__primary > .main {
+		background: transparent;
+	}
+}
+
+.home-wizard {
+	.components-modal__content {
+		padding: 32px 32px 24px;
+	}
+}
+
+.home-wizard__progress {
+	width: 80px;
+	height: 4px;
+	background: #f0f0f0;
+	border-radius: 2px;
+	overflow: hidden;
+	margin-bottom: 24px;
+}
+
+.home-wizard__progress-bar {
+	height: 100%;
+	background: var(--wp-admin-theme-color, #3858e9);
+	transition: width 200ms ease;
+}
+
+.home-wizard__cards {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+
+	@media (max-width: 600px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.home-wizard__card {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 120ms ease, box-shadow 120ms ease;
+
+	&:hover {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+	}
+
+	svg {
+		flex-shrink: 0;
+		margin-top: 2px;
+		fill: currentColor;
+	}
+}
+
+.home-wizard__card-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.home-wizard__card-title {
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.home-wizard__card-description {
+	font-size: 12px;
+	color: #50575e;
+	line-height: 1.4;
+	// Balance the short two-line copy so a single word never orphans onto its
+	// own last line (e.g. "expertise.", "goods."). See feedback: widows & orphans.
+	text-wrap: balance;
+}
+
+.home-wizard__chips {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+
+	@media (max-width: 600px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.home-wizard__chip {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 14px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	transition: border-color 120ms ease, background 120ms ease;
+
+	&:hover {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		background: rgba(56, 88, 233, 0.06);
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
+.home-wizard__footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 24px;
+}
+
+.home-wizard__footer-right {
+	display: flex;
+	gap: 8px;
+}

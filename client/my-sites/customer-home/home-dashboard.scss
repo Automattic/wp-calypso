@@ -1,0 +1,298 @@
+// Lock the page to the viewport — the AI Launchpad is a one-screen canvas,
+// no scroll. Paired with the dashboard filling exactly that canvas below.
+body.is-section-home {
+	overflow: hidden;
+}
+
+// Paint Calypso's content chrome white in the home section so the dashboard
+// has a seamless full-bleed canvas — no grey strip between layout__content's
+// padding (79px top for the masterbar, 32px bottom) and layout__primary.
+body.is-section-home .layout__content {
+	background: var(--wpds-color-bg-surface-neutral-strong, #fff);
+}
+
+// Dashboard fills exactly the available canvas (viewport minus
+// layout__content padding). Using `height` (not `min-height`) plus the
+// body's `overflow: hidden` above means the content can never push a
+// scrollbar onto the page. Tablet padding (71/24) handled in the breakpoint.
+.home-dashboard {
+	background: var(--wpds-color-bg-surface-neutral-strong, #fff);
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 79px - 32px);
+
+	@media (max-width: 959px) {
+		height: calc(100vh - 71px - 24px);
+	}
+}
+
+// Horizontally centered; vertically anchored to a FIXED top offset rather
+// than dynamically centered. True centering (justify-content: center) pins
+// the block's midpoint to the canvas, so when the skeleton (short) is
+// replaced by the loaded checklist (taller), the midpoint re-centers and the
+// whole block jumps upward. A fixed top offset keeps the top edge at the same
+// Y for both states — no jump — while the offset preserves the airy, composed
+// feel of the original centered design (Launchpad is the only thing on this
+// page). The offset scales gently with viewport height but is clamped so it
+// never jams under the header or eats the space tall checklists need.
+.home-dashboard__main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 24px;
+	padding: 24px;
+	padding-top: clamp(24px, 10vh, 120px);
+	box-sizing: border-box;
+}
+
+// --- Site Setup ("Get the most out of WordPress") ---------------------------
+
+// Content width — the launchpad column absorbs the extra space alongside
+// the fixed 320px theme card (resolves to ~680px wide at the max).
+.site-setup {
+	width: 100%;
+	max-width: 1024px;
+}
+
+.site-setup__heading h2 {
+	margin: 0;
+}
+
+.site-setup__progress {
+	color: var(--wpds-color-fg-content-neutral-weak, #707070);
+}
+
+.site-setup__grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	gap: var(--wpds-dimension-gap-2xl, 24px);
+	// Stretch (default) so the theme preview card matches the launchpad
+	// column's height — the iframe inside fills whatever shape it ends up.
+
+	@media (max-width: 880px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.site-setup__launchpad {
+	min-width: 0;
+}
+
+// The theme preview: a @wordpress/ui Card containing a sandboxed iframe of
+// the site (same pattern as the /sites grid view's SitePreviewCard). The
+// iframe is virtually 1200px wide and scaled via CSS transform to fit the
+// card. FullBleed cancels horizontal padding; the negative margin-block
+// extends it vertically so the preview fills edge to edge. The bleed
+// wrapper is `position: relative` so useResizeObserver inside it measures
+// the right element.
+// Constrain the card to its 320px grid track regardless of what's inside.
+// The iframe at 1200px intrinsic width would otherwise force the column
+// wider via grid items' default `min-width: auto`. Explicit pixel height
+// (rather than aspect-ratio or 100% cascade) because @wordpress/ui Card
+// internals were overriding both — the bleed couldn't resolve a height
+// against an ambiguous Card.Content.
+// Wrapper holds the preview card + the name/URL caption below it. It is the
+// grid child now (not the card), so the caption stays in the 320px track.
+.site-setup__theme-wrap {
+	align-self: start;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-sm, 8px);
+}
+
+.site-setup__theme {
+	overflow: hidden;
+	min-width: 0;
+	height: 300px;
+	// Positioning context for the hover overlay.
+	position: relative;
+}
+
+// Dimmed overlay revealed on hover/focus, centering the "Edit site" CTA over
+// the preview. Hidden (and click-through) at rest so it never blocks the
+// preview; pointer-events flip on only while revealed.
+.site-setup__theme-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.45);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.15s ease-in-out;
+}
+
+.site-setup__theme:hover .site-setup__theme-overlay,
+.site-setup__theme:focus-within .site-setup__theme-overlay {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+// Caption under the thumbnail: site name (emphasized) over its URL (muted,
+// truncated to one line so a long host doesn't wrap the column).
+.site-setup__theme-caption {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	padding-inline: var(--wpds-dimension-gap-2xs, 4px);
+}
+
+// Site title at WPDS font-size-lg (15px). Scoped under the caption so it wins
+// over the @wordpress/ui Text variant's own size.
+.site-setup__theme-caption .site-setup__theme-name {
+	font-size: var(--wpds-typography-font-size-lg, 15px);
+	font-weight: 600;
+}
+
+// The URL is an external link to the live site (opens in a new tab). WPDS
+// font-size-md (13px) and a neutral interactive tone — stays neutral (no
+// brand blue); the trailing external-link arrow + underline-on-hover carry
+// the affordance.
+.site-setup__theme-caption .site-setup__theme-url {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--wpds-dimension-gap-2xs, 4px);
+	max-width: 100%;
+	font-size: var(--wpds-typography-font-size-md, 13px);
+	color: var(--wpds-color-fg-interactive-neutral-weak, #6d6d6d);
+	text-decoration: none;
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: var(--wpds-color-fg-interactive-neutral-active, #1e1e1e);
+
+		.site-setup__theme-url-text {
+			text-decoration: underline;
+		}
+	}
+}
+
+.site-setup__theme-url-text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.site-setup__theme-content {
+	height: 100%;
+}
+
+// FullBleed cancels the card's horizontal padding; the negative margin-block
+// + 100% + 2× padding height makes it span vertically edge-to-edge too. The
+// bleed is the positioned container the iframe wrapper sizes against.
+.site-setup__theme-bleed {
+	position: relative;
+	overflow: hidden;
+	margin-block: calc(-1 * var(--wp-ui-card-padding));
+	height: calc(100% + 2 * var(--wp-ui-card-padding));
+}
+
+// Absolutely-positioned wrapper around the iframe — same pattern as the
+// /sites grid's SitePreviewCard. Takes the 1200px-wide iframe out of normal
+// flow so it can't grow the parent. The `top` offset (which crops the
+// "Get this theme on WordPress.com" promo banner on theme-demo URLs) is set
+// inline in home-dashboard.tsx — 0 for a live site (no banner), -34px for a
+// demo — and the iframe height is grown to match so it always fills to bottom.
+.site-setup__theme-iframe {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+
+	// Defeat Calypso's global `iframe { max-width: 100% }` so the iframe
+	// keeps its 1200px intrinsic width — the transform: scale() does the fit.
+	iframe {
+		max-width: none;
+	}
+}
+
+.home-dashboard__wizard-fab {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 100000;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	background: #1e1e1e;
+	color: #fff;
+	border: 0;
+	border-radius: 24px;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+	transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+
+	&:hover {
+		background: #000;
+		transform: translateY(-1px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.home-dashboard__site-setup-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.home-dashboard__site-setup-skeleton-rows {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.home-dashboard__site-setup-skeleton-row {
+	height: 44px;
+	border-radius: 4px;
+	background: linear-gradient(
+		90deg,
+		var(--wpds-color-background-shade, #f0f0f0) 0%,
+		var(--wpds-color-background, #f7f7f7) 50%,
+		var(--wpds-color-background-shade, #f0f0f0) 100%
+	);
+	background-size: 200% 100%;
+	animation: home-dashboard-skeleton-pulse 1.4s ease-in-out infinite;
+
+	&:nth-child(2) { animation-delay: 0.1s; }
+	&:nth-child(3) { animation-delay: 0.2s; }
+	&:nth-child(4) { animation-delay: 0.3s; }
+	&:nth-child(5) { animation-delay: 0.4s; }
+}
+
+@keyframes home-dashboard-skeleton-pulse {
+	0% { background-position: 100% 0; }
+	100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.home-dashboard__site-setup-skeleton-row {
+		animation: none;
+	}
+}

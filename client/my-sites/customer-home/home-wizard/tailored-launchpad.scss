@@ -1,0 +1,209 @@
+// The accordion container: a soft surface that holds the task cards. The
+// cards themselves are @wordpress/ui Card / CollapsibleCard components and
+// bring their own border, radius, and background. 8px padding all around
+// matches the 8px gap between cards, so the grey surface frames the stack
+// evenly instead of letting the cards bleed to the container edges.
+.tailored-launchpad {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-sm, 8px);
+	padding: var(--wpds-dimension-gap-sm, 8px);
+	background: var(--wpds-color-bg-surface-neutral-weak, #f4f4f4);
+	border-radius: var(--wpds-border-radius-lg, 8px);
+}
+
+// Tighten the card padding from the @wordpress/ui default (24px) down to
+// the design's 20px — done through the component's own custom property
+// rather than overriding its internals.
+.tailored-launchpad__card {
+	--wp-ui-card-padding: var(--wpds-dimension-padding-xl, 20px);
+}
+
+// Dolly's verb-led description, shown above the call to action.
+.tailored-launchpad__subtitle {
+	color: var(--wpds-color-fg-content-neutral-weak, #707070);
+}
+
+// Status icon next to each task title:
+//   - active (dashed circle): neutral-weak fg, hints "todo, not started"
+//   - done   (filled-stroke circle + check): neutral fg — a completed/skipped
+//     task reads as quietly resolved, not as a loud accent.
+// @wordpress/ui's Icon puts the className on the <svg> itself, so this
+// targets the SVG directly — `color` cascades into `currentColor` on the
+// inline strokes/fills.
+.tailored-launchpad__icon {
+	color: var(--wpds-color-fg-content-neutral-weak, #707070);
+	flex-shrink: 0;
+
+	&.is-done {
+		color: var(--wpds-color-fg-content-neutral-weak, #707070);
+	}
+}
+
+// Strikethrough + softer fg on a completed task's title.
+.tailored-launchpad__title.is-done {
+	text-decoration: line-through;
+	color: var(--wpds-color-fg-content-neutral-weak, #707070);
+}
+
+// ─── Theme picker (client-side recommendations in a modal) ─────────────
+//
+// The picker UI lives entirely inside a @wordpress/ui Dialog popup,
+// portal-rendered into <body>. Styles here scope under the popup's own
+// class so they apply regardless of where the trigger sits.
+.theme-picker__dialog .theme-picker {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-lg, 16px);
+	// Dialog.Header / Dialog.Footer have their own padding; the body div in
+	// between doesn't, so the grid would otherwise run flush to the modal's
+	// left/right edges (beyond the header/footer chrome). Match the standard
+	// dialog gutter so the grid stays inside the same rails as the title.
+	padding: 0 var(--wpds-dimension-gap-2xl, 24px) var(--wpds-dimension-gap-2xl, 24px);
+}
+
+// Confirmation banner shown after a theme activates in place. Subtle success
+// tone (informational green-ish surface) so it reads as "done", not an alert.
+.theme-picker__activated {
+	padding: var(--wpds-dimension-gap-md, 12px) var(--wpds-dimension-gap-lg, 16px);
+	border-radius: 8px;
+	background: var(--wpds-color-bg-component-emphasis-stable-subtle, #edf7ed);
+	border: 1px solid var(--wpds-color-border-stable, #b8e0b8);
+}
+
+.theme-picker__activated-text {
+	color: var(--wpds-color-fg-content-neutral-strong, #1e1e1e);
+}
+
+// Inline error banner when activation fails (e.g. premium theme on a free
+// plan). Subtle alert tone so it informs without alarming.
+.theme-picker__failed {
+	padding: var(--wpds-dimension-gap-md, 12px) var(--wpds-dimension-gap-lg, 16px);
+	border-radius: 8px;
+	background: var(--wpds-color-bg-component-emphasis-alert-subtle, #fcf0f1);
+	border: 1px solid var(--wpds-color-border-alert, #f0b8bb);
+}
+
+.theme-picker__failed-text {
+	color: var(--wpds-color-fg-content-neutral-strong, #1e1e1e);
+}
+
+// 3×2 on desktop, 2×3 on tablet, 1×6 on mobile.
+.theme-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--wpds-dimension-gap-2xl, 24px);
+
+	@media (max-width: 880px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	@media (max-width: 560px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.theme-picker__card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-sm, 8px);
+	min-width: 0; // let children shrink inside the grid track
+
+	// The Activate button sits at the bottom of each card so all three
+	// rows of buttons line up across the grid even when "why" text wraps
+	// to different line counts.
+	> :last-child {
+		margin-top: auto;
+	}
+}
+
+// MShots screenshots are delivered at the vpw/vph aspect we request (3:2),
+// so the card is also 3:2 to fill cleanly with no letterboxing. The grey
+// background is only visible while the shot is still being generated server-
+// side — once loaded, the image covers the whole frame.
+.theme-picker__preview {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 3 / 2;
+	overflow: hidden;
+	border-radius: var(--wpds-border-radius-md, 4px);
+	background: var(--wpds-color-bg-surface-neutral-weak, #f4f4f4);
+	border: 1px solid var(--wpds-color-stroke-content-neutral-weak, #dcdcde);
+
+	// MShotsImage renders either an <img> (loaded) or an empty <div>
+	// (loading placeholder). Cover the whole frame in either case so the
+	// 3:2 image fills edge-to-edge.
+	img,
+	.mshots-image__container {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top center;
+	}
+
+	// While mshots is still generating the screenshot it returns a 400×300
+	// "Generating Preview…" placeholder with a WordPress logo. Hide that —
+	// it's loud and doesn't read as "loading" — and let our own pulsing
+	// skeleton (the `::after` below, gated by `:has()`) carry the wait state.
+	img.mshots-image__loader {
+		opacity: 0;
+	}
+
+	// Pulsing grey skeleton overlay shown while the mshots image hasn't
+	// resolved yet. Class flips to `mshots-image-visible` once the real
+	// screenshot loads, at which point this rule no longer matches and the
+	// overlay disappears, revealing the image.
+	&:has(img.mshots-image__loader)::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: var(--wpds-color-bg-surface-neutral, #ebebeb);
+		animation: theme-picker-pulse 1.6s ease-in-out infinite;
+		pointer-events: none;
+	}
+}
+
+@keyframes theme-picker-pulse {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+.theme-picker__meta {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-xs, 4px);
+}
+
+.theme-picker__why {
+	color: var(--wpds-color-fg-content-neutral-weak, #707070);
+}
+
+// Skeleton lines used while Dolly is generating recommendations.
+.theme-picker__skeleton-line {
+	height: 12px;
+	width: 90%;
+	border-radius: var(--wpds-border-radius-sm, 2px);
+	background: var(--wpds-color-bg-surface-neutral-weak, #f4f4f4);
+
+	&.is-title {
+		height: 16px;
+		width: 60%;
+	}
+	&.is-short {
+		width: 40%;
+	}
+}
+
+@keyframes theme-picker-shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}

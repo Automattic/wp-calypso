@@ -1,4 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Icon, border } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
@@ -126,7 +129,53 @@ const useSiteMenuItems = ( layoutDeltaOverride, transformBaseMenu ) => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	const baseMenu = menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	const isMyHomeItem = ( item ) =>
+		item.slug === 'home' ||
+		item.icon === 'dashicons-admin-home' ||
+		( typeof item.url === 'string' && /\/home\/[^/]+\/?$/.test( item.url ) );
+
+	// The prototype repurposes the My Home route (/home) as the AI "Site Setup"
+	// surface, and brings back the real wp-admin Dashboard (index-php) as its
+	// own item directly beneath it. Order is forced: Site Setup first, then
+	// Dashboard, then the rest of the admin menu (unchanged).
+	// WPDS "border" icon (a framed square) for the Site Setup item — passed as a
+	// React element, which SidebarCustomIcon renders directly. Sized to 24px to
+	// match the dashicon glyphs on the other menu items.
+	const SITE_SETUP_ICON = createElement( Icon, {
+		icon: border,
+		size: 24,
+		className: 'sidebar__menu-icon',
+	} );
+	const transformDashboardItem = ( items ) => {
+		if ( ! items ) {
+			return items;
+		}
+		const mapped = items.map( ( item ) => {
+			if ( isMyHomeItem( item ) ) {
+				return { ...item, icon: SITE_SETUP_ICON, title: translate( 'Site Setup' ) };
+			}
+			// Restore the real wp-admin Dashboard (was filtered out so /home could
+			// stand in as "Dashboard"). Keep its dashboard icon + label.
+			if ( item.slug === 'index-php' ) {
+				return { ...item, icon: 'dashicons-dashboard', title: translate( 'Dashboard' ) };
+			}
+			return item;
+		} );
+		const siteSetup = mapped.find( isMyHomeItem );
+		const dashboard = mapped.find( ( item ) => item.slug === 'index-php' );
+		const rest = mapped.filter( ( item ) => ! isMyHomeItem( item ) && item.slug !== 'index-php' );
+		return [
+			...( siteSetup ? [ siteSetup ] : [] ),
+			...( dashboard ? [ dashboard ] : [] ),
+			...rest,
+		];
+	};
+
+	// Prototype: rename /home → "Site Setup" + restore the wp-admin Dashboard,
+	// then feed the result through trunk's sidebar-customization pipeline
+	// (transformBaseMenu → host-link normalize → user layout-delta).
+	const baseMenu =
+		transformDashboardItem( menuItems ) ?? buildFallbackResponse( fallbackDataOverrides );
 	const transformedBaseMenu =
 		typeof transformBaseMenu === 'function' ? transformBaseMenu( baseMenu ) : baseMenu;
 	const normalizedBaseMenu = normalizeWpcomAdminSidebarHostLinks( transformedBaseMenu );

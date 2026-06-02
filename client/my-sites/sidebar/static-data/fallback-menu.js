@@ -1,4 +1,6 @@
+import { Icon, border } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
+import { createElement } from 'react';
 /* eslint-disable jsdoc/require-param */
 /**
  * Fallback nav menu items.
@@ -56,9 +58,14 @@ export default function buildFallbackResponse( {
 
 	const fallbackResponse = [
 		{
-			icon: 'dashicons-admin-home',
+			// /home is the AI "Site Setup" surface in this prototype. The real
+			// wp-admin Dashboard (index-php) only exists in the dynamic API menu,
+			// so it isn't added here — it appears once the admin menu loads.
+			// WPDS "border" icon as a React element (matches SITE_SETUP_ICON in
+			// use-site-menu-items.js).
+			icon: createElement( Icon, { icon: border, size: 24, className: 'sidebar__menu-icon' } ),
 			slug: 'home',
-			title: translate( 'My Home' ),
+			title: translate( 'Site Setup' ),
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 		},
