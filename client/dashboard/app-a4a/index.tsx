@@ -36,6 +36,8 @@ boot( {
 		siteOverview: {
 			preview: false,
 		},
+		colorScheme: false,
+		darkMode: false,
 	},
 	optIn: false,
 	components: {
