@@ -191,7 +191,7 @@ function OwnerInfo( {
 			{ createInterpolateElement(
 				// translators: domain is a domain name
 				__(
-					'This license was activated on <domain /> by another user. If you haven’t given the license to them on purpose, <link>contact our support team</link> for more assistance.'
+					'This license was activated on <domain/> by another user. If you haven’t given the license to them on purpose, <link>contact our support team</link> for more assistance.'
 				),
 				{
 					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
@@ -363,27 +363,27 @@ export function getFields( {
 			elements: [
 				{
 					value: '7',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 7 } ),
 				},
 				{
 					value: '14',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 14 } ),
 				},
 				{
 					value: '30',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 30 } ),
 				},
 				{
 					value: '60',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 60 } ),
 				},
 				{
 					value: '365',
-					// translators: %s: number of days
+					// translators: %(days)d is a number of days
 					label: sprintf( __( 'Expires in %(days)d days' ), { days: 365 } ),
 				},
 			],

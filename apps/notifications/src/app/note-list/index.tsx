@@ -3,7 +3,6 @@ import {
 	__experimentalText as Text,
 	ExternalLink,
 	Spinner,
-	useNavigator,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -18,7 +17,7 @@ import {
 	useNoteListFocusToLastSelectedNote,
 	useNoteListNavigationKeyboardShortcuts,
 } from './hooks';
-import type { Note } from '../types';
+import type { FilterName, Note } from '../types';
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -34,8 +33,13 @@ const DEFAULT_LAYOUTS = {
 // so the window never advances past the notes already fetched.
 const NOTES_PER_PAGE = 20;
 
-const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
-	const { goTo } = useNavigator();
+type NoteListProps = {
+	filterName: FilterName;
+	selectedNoteId: string | undefined;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
+};
+
+const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	const notes = allNotes.filter( ( note ) => filter.filter( note ) );
@@ -61,7 +65,8 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
-		goTo( `/${ filterName }/notes/${ noteId }` );
+		// Toggle off when selecting the same note.
+		setSelectedNoteId( noteId !== selectedNoteId ? noteId : undefined );
 	};
 
 	const [ initialView, setView ] = useState< View >( {
@@ -151,6 +156,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 						</VStack>
 					}
 					getItemId={ ( item ) => item.id.toString() }
+					selection={ selectedNoteId ? [ selectedNoteId ] : [] }
 					onChangeView={ handleChangeView }
 					onChangeSelection={ onChangeSelection }
 				>

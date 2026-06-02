@@ -119,6 +119,17 @@ export interface EngagementStreak {
 	days?: EngagementStreakDay[];
 }
 
+/**
+ * A per-site daily-post streak: a contiguous run of days on which the user
+ * published at least one post on the given blog. The endpoint returns only
+ * currently-active streaks. Self-reads only.
+ */
+export interface DailyPostStreak {
+	blog_id: number;
+	url: string;
+	current_streak: number;
+}
+
 export interface AchievementsResponse {
 	found: number;
 	achievements: EarnedAchievementEntry[];
@@ -127,4 +138,6 @@ export interface AchievementsResponse {
 	years_of_service?: number;
 	/** Activity streak data. */
 	engagement_streak?: EngagementStreak;
+	/** Self-reads only. Per-site daily-post streaks. Not paginated. */
+	daily_post_streak?: DailyPostStreak[];
 }

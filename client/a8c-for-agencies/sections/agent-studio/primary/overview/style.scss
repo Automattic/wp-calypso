@@ -89,3 +89,39 @@
 .a4a-agent-studio-deliverable-card__placeholder svg path {
 	fill: currentColor;
 }
+
+.a4a-agent-studio-deliverable-card__collage {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 3%;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 160px;
+	padding: 6%;
+	background: var( --color-neutral-90 );
+	aspect-ratio: 1200 / 630;
+	overflow: hidden;
+}
+
+.a4a-agent-studio-deliverable-card__collage-tile {
+	display: block;
+	flex-shrink: 0;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 2px;
+	background: var( --color-surface );
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.25 ), 0 10px 24px -8px rgba( 0, 0, 0, 0.45 );
+}
+
+.a4a-agent-studio-deliverable-card__collage-tile img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.a4a-agent-studio-deliverable-card__collage-tile > div {
+	width: 100%;
+	height: 100%;
+}

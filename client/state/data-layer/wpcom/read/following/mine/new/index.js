@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { removeRecommendedSiteFromCache } from 'calypso/reader/data/recommended-sites';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { subscriptionFromApi } from 'calypso/state/data-layer/wpcom/read/following/mine/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_FOLLOW } from 'calypso/state/reader/action-types';
 import {
 	follow,
@@ -13,7 +15,6 @@ import {
 	recordFollowError,
 	requestFollowCompleted,
 } from 'calypso/state/reader/follows/actions';
-import { followedRecommendedSite } from 'calypso/state/reader/recommended-sites/actions';
 
 export function requestFollow( action ) {
 	const feedUrl = action.payload?.feedUrl;
@@ -39,8 +40,11 @@ function getRecommendedSiteFollowSuccessActions( recommendedSiteInfo ) {
 
 	const { siteId, seed, siteTitle } = recommendedSiteInfo;
 
+	if ( typeof seed === 'number' && typeof siteId === 'number' ) {
+		removeRecommendedSiteFromCache( getCalypsoQueryClient(), { seed, siteId } );
+	}
+
 	return [
-		followedRecommendedSite( { siteId, seed } ),
 		successNotice( translate( "Success! You're now subscribed to %s.", { args: siteTitle } ), {
 			duration: 5000,
 		} ),

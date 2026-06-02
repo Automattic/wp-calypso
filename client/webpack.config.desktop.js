@@ -21,6 +21,14 @@ module.exports = {
 	mode: isDevelopment ? 'development' : 'production',
 	module: {
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				use: {

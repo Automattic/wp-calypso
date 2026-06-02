@@ -92,7 +92,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert, flowType } = this.props;
+		const {
+			purchase,
+			skipRemovePlanSurvey,
+			willAtomicSiteRevert,
+			flowType,
+			isSplitCancelRemoveEnabled,
+		} = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
 		if (
@@ -108,7 +114,11 @@ class CancelPurchaseForm extends Component {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
 
-		if ( willAtomicSiteRevert && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if (
+			willAtomicSiteRevert &&
+			flowType === CANCEL_FLOW_TYPE.REMOVE &&
+			! isSplitCancelRemoveEnabled
+		) {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 
@@ -423,6 +433,7 @@ class CancelPurchaseForm extends Component {
 						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 						purchase={ purchase }
 						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
+						recordEvent={ this.recordEvent }
 						refundAmount={ this.getRefundAmount() }
 						site={ site }
 					/>
@@ -632,7 +643,7 @@ class CancelPurchaseForm extends Component {
 					>
 						{ intent === 'remove' ? translate( 'Continue removal' ) : translate( 'Continue' ) }
 					</GutenbergButton>
-					{ intent === 'cancel' && (
+					{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
 						<GutenbergButton
 							isTertiary
 							isBusy={ isCancelling }
@@ -708,9 +719,11 @@ class CancelPurchaseForm extends Component {
 					disabled={ ! this.canGoNext() }
 					onClick={ this.onSubmit }
 				>
-					{ intent === 'cancel' ? translate( 'Complete' ) : translate( 'Submit' ) }
+					{ intent === 'cancel' || intent === 'auto-renew'
+						? translate( 'Complete' )
+						: translate( 'Submit' ) }
 				</GutenbergButton>
-				{ intent === 'cancel' && (
+				{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
 					<GutenbergButton
 						isTertiary
 						isBusy={ isCancelling }

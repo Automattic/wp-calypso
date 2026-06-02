@@ -22,6 +22,7 @@ import {
 	REDDIT_TRACKING_SCRIPT_URL,
 	TIKTOK_SCRIPT_URL,
 	WPCOM_REDDIT_PIXEL_ID,
+	OPENAI_SCRIPT_URL,
 } from './constants';
 import { circularReferenceSafeJSONStringify } from './debug';
 import { setup } from './setup';
@@ -127,6 +128,10 @@ function getTrackingScriptsToLoad() {
 	// The pixel must be loaded with the ID in the URL.
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
 		scripts.push( TIKTOK_SCRIPT_URL + TRACKING_IDS.tiktokPixelId );
+	}
+
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		scripts.push( OPENAI_SCRIPT_URL );
 	}
 
 	return scripts;

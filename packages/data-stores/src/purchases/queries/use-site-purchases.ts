@@ -21,7 +21,7 @@ export function getUseSitePurchasesOptions(
 		queryFn: async (): Promise< PurchasesIndex > => {
 			const purchases: RawPurchase[] = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
-				apiVersion: '1.1',
+				apiVersion: '1.2',
 			} );
 
 			return Object.fromEntries(

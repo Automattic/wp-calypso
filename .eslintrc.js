@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+const wpI18nConfig = require( '@wordpress/eslint-plugin/eslintrc' ).configs.i18n;
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
@@ -18,7 +19,6 @@ module.exports = {
 		'plugin:prettier/recommended',
 		'plugin:@tanstack/eslint-plugin-query/recommended',
 		'plugin:md/prettier',
-		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
 		{
@@ -146,7 +146,7 @@ module.exports = {
 							'ts-nocheck': 'allow-with-description',
 						},
 					],
-					'@typescript-eslint/ban-types': [
+					'@typescript-eslint/no-restricted-types': [
 						'error',
 						{
 							types: {
@@ -167,13 +167,15 @@ module.exports = {
 										"It's deprecated, so we don't want new uses. Prefer types like ReactElement, string, or number instead. If the type should be nullable, use ReactNode.",
 								},
 							},
-							extendDefaults: true,
 						},
 					],
 					'@typescript-eslint/no-explicit-any': 'warn',
 					'@typescript-eslint/explicit-function-return-type': 'off',
 					'@typescript-eslint/explicit-member-accessibility': 'off',
-					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+					'@typescript-eslint/no-unused-vars': [
+						'error',
+						{ ignoreRestSiblings: true, caughtErrors: 'none' },
+					],
 					'@typescript-eslint/no-use-before-define': [
 						'error',
 						{ functions: false, typedefs: false },
@@ -328,7 +330,12 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'import', 'you-dont-need-lodash-underscore', '@tanstack/query' ],
+	plugins: [
+		'import',
+		'you-dont-need-lodash-underscore',
+		'@tanstack/query',
+		...wpI18nConfig.plugins,
+	],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -339,6 +346,7 @@ module.exports = {
 		'import/internal-regex': '^calypso/',
 	},
 	rules: {
+		...wpI18nConfig.rules,
 		// REST API objects include underscores
 		camelcase: 'off',
 

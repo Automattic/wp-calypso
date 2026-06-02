@@ -24,7 +24,6 @@ export const TYPE_FLEXIBLE = 'TYPE_FLEXIBLE';
 export const TYPE_PRO = 'TYPE_PRO';
 export const TYPE_STARTER = 'TYPE_STARTER';
 export const TYPE_GOLDEN_TOKEN = 'TYPE_GOLDEN_TOKEN';
-export const TYPE_CHOOSE = 'TYPE_CHOOSE';
 
 export const TYPES_LIST = < const >[
 	TYPE_FREE,
@@ -53,5 +52,4 @@ export const TYPES_LIST = < const >[
 	TYPE_JETPACK_STARTER,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
-	TYPE_CHOOSE,
 ];

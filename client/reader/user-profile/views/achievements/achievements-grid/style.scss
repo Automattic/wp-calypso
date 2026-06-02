@@ -169,15 +169,19 @@
 		}
 	}
 
-	.achievement-card__icon--lock {
+	.achievement-card__icon--site,
+	.achievement-card__icon--lock,
+	.achievement-card__icon--site-fallback {
+		border-radius: 50%;
+	}
+
+	.achievement-card__icon--lock,
+	.achievement-card__icon--site-fallback {
 		align-items: center;
 		background: var( --studio-gray-5 );
-		border-radius: 50%;
 		color: var( --studio-gray-40 );
 		display: flex;
-		height: 60px;
 		justify-content: center;
-		width: 60px;
 
 		svg,
 		path {

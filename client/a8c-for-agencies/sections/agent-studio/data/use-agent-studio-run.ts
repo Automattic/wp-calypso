@@ -32,6 +32,15 @@ export const getAgentStudioRunQueryKey = ( agencyId: number | undefined, runId: 
 	runId,
 ];
 
+// Server-side run statuses that aren't yet terminal. As long as the
+// run is in one of these, the deliverable view needs to keep polling
+// the runs endpoint so it can pick up the brief once the persist
+// ability finishes — otherwise the page would settle on the first
+// (empty-payload) response and never recover without a reload.
+export const NON_TERMINAL_RUN_STATUSES = new Set( [ 'a4a_pending', 'a4a_running' ] );
+
+const RUN_POLL_INTERVAL_MS = 2000;
+
 export default function useAgentStudioRun( runId: string | undefined ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -45,5 +54,12 @@ export default function useAgentStudioRun( runId: string | undefined ) {
 			} ),
 		enabled: !! agencyId && !! runId,
 		refetchOnWindowFocus: false,
+		refetchInterval: ( query ) => {
+			const status = query.state.data?.status;
+			if ( status && NON_TERMINAL_RUN_STATUSES.has( status ) ) {
+				return RUN_POLL_INTERVAL_MS;
+			}
+			return false;
+		},
 	} );
 }

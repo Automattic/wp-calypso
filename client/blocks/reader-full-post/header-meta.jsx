@@ -1,17 +1,16 @@
 import { TimeSince } from '@automattic/components';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
+import { useFeedQuery } from 'calypso/reader/data/feed';
 import { getStreamUrl } from 'calypso/reader/route';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const feed = useSelector( ( state ) => getFeed( state, feedId ) );
+	const { data: feed } = useFeedQuery( feedId );
 	const hasAuthorName = author?.name;
 	const hasMatchingAuthorAndSiteNames =
 		hasAuthorName &&

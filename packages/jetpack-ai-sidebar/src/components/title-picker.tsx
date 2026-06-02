@@ -1,8 +1,8 @@
 /**
  * TitlePicker — renders title suggestions in the chat sidebar.
  *
- * Displayed when the orchestrator renders a show-component response via
- * 'big_sky__show_component' with data.type set to 'title-picker'.
+ * Displayed when the orchestrator renders a show-component response with
+ * data.type set to 'title-picker'.
  * Clicking a title card applies it to the post immediately. The picker
  * stays visible so users can try different titles in real time; the
  * currently-applied option is highlighted.

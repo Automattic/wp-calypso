@@ -155,6 +155,40 @@ describe( 'JetpackAuthorize', () => {
 		expect(
 			screen.getByText( 'Real-time backups, security scanning, and downtime monitoring.' )
 		).toBeInTheDocument();
+		// No A4A in the plugin set, so the hero layout is NOT applied —
+		// Woo + Jetpack share the default 2-up grid.
+		expect(
+			container.querySelector( '.connect-screen-features-section.has-hero-card' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'features section gives A4A its own row with Woo standing alone beneath when only those two plugins are active', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'automattic-for-agencies-client', 'woocommerce' ],
+				} }
+			/>
+		);
+
+		// 2-card-with-A4A scenario: both cards render, but the wrapper opts
+		// into the hero layout so A4A claims the top row full-width and
+		// Woo stands alone in the row below.
+		expect(
+			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		const section = container.querySelector(
+			'.connect-screen-features-section.has-2-card.has-hero-card'
+		);
+		expect( section ).toBeInTheDocument();
+		const cards = section.querySelectorAll( '.connect-screen-features-section__card' );
+		expect( cards.length ).toBe( 2 );
+		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
+		expect( cards[ 1 ] ).toHaveAttribute( 'aria-label', 'WooCommerce' );
 	} );
 
 	test( 'features section stacks A4A on top with Woo + Jetpack underneath when all three families are present', () => {
@@ -177,8 +211,12 @@ describe( 'JetpackAuthorize', () => {
 		).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		// `has-hero-card` is set whenever A4A leads the cards, even though
+		// the existing `has-3-card` CSS already produces the hero look in
+		// the 3-card scenario. The class stays harmless here and keeps the
+		// "A4A is the lead" signal explicit.
 		const cards = container.querySelectorAll(
-			'.connect-screen-features-section.has-3-card .connect-screen-features-section__card'
+			'.connect-screen-features-section.has-3-card.has-hero-card .connect-screen-features-section__card'
 		);
 		expect( cards.length ).toBe( 3 );
 		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
@@ -217,9 +255,12 @@ describe( 'JetpackAuthorize', () => {
 				/>
 			);
 
-			// Secondary admin card with SSO bullet is rendered.
+			// Secondary admin card renders with its single management-voice bullet.
+			// The "/track every change/" substring is unique to the card bullet —
+			// the secondary subtitle also mentions "activity log", so a looser
+			// regex would match two elements.
 			expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
-			expect( screen.getByText( /SSO/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /track every change/ ) ).toBeInTheDocument();
 
 			// The blocking "already connected by other user" notice is NOT shown.
 			expect(
