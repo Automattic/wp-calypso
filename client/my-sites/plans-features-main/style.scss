@@ -227,3 +227,20 @@ body.is-section-signup {
 		}
 	}
 }
+
+.plans-features-main__group.is-plans-switch {
+	.plans-grid-next-features-grid__feature-group-row.is-reduced-feature-group-spacing
+		> .plan-features-2023-grid__table-item {
+		padding-top: 12px;
+	}
+
+	.plans-grid-next-features-grid__feature-group-row.is-first-feature-group-row.is-reduced-feature-group-spacing
+		> .plan-features-2023-grid__table-item {
+		padding-top: 0;
+	}
+
+	.plans-grid-next-features-grid__feature-group-row:last-of-type
+		> .plan-features-2023-grid__table-item {
+		padding-bottom: 20px;
+	}
+}

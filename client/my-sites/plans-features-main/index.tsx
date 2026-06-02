@@ -954,6 +954,7 @@ const PlansFeaturesMain = ( {
 								'is-plan-type-selector-visible': ! hidePlanSelector,
 								'is-visual-split-layout':
 									intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting',
+								'is-plans-switch': intent === 'plans-switch',
 							} ) }
 							data-e2e-plans="wpcom"
 						>
