@@ -139,7 +139,6 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
-
 	const signupFlow = get( currentQuery, 'signup_flow' );
 	if ( signupFlow ) {
 		if ( redirectTo ) {
