@@ -1,4 +1,4 @@
-import { prepareComparableUrl, type FollowItem } from '@automattic/api-core';
+import { prepareComparableUrl, type SiteSubscriptionItem } from '@automattic/api-core';
 import { readSiteQuery } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { useFeedQueries } from 'calypso/reader/data/feed';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/follows';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 
 /**
@@ -55,7 +55,9 @@ type FollowedSubscriptions = {
 	feedUrls: Set< string >;
 };
 
-function buildFollowedSubscriptions( rawFollowingItems: FollowItem[] ): FollowedSubscriptions {
+function buildFollowedSubscriptions(
+	rawFollowingItems: SiteSubscriptionItem[]
+): FollowedSubscriptions {
 	const feedIds = new Set< number >();
 	const blogIds = new Set< number >();
 	const feedUrls = new Set< string >();
@@ -164,8 +166,8 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		[ followedTags ]
 	);
 
-	const { follows } = useFollows();
-	const rawFollowingItems = follows.filter( ( item ) => item.is_following );
+	const { subscriptions } = useSiteSubscriptions();
+	const rawFollowingItems = subscriptions.filter( ( item ) => item.is_following );
 	const currentLocale = getLocaleSlug();
 
 	/**

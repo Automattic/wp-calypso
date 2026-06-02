@@ -1,4 +1,4 @@
-import { getFollowsQueryKey, readFeedQuery } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey, readFeedQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { getCachedFeed } from 'calypso/reader/data/feed';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -77,6 +77,8 @@ describe( 'seen-posts mark-as-unseen data layer', () => {
 			{ status: true }
 		)( jest.fn() );
 
-		expect( invalidateQueries ).toHaveBeenCalledWith( { queryKey: getFollowsQueryKey() } );
+		expect( invalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: getSiteSubscriptionsQueryKey(),
+		} );
 	} );
 } );

@@ -1,16 +1,20 @@
 /**
  * @jest-environment jsdom
  */
-import { patchFollow, getFollowsQueryKey, type FollowsInfiniteData } from '@automattic/api-queries';
+import {
+	getSiteSubscriptionsQueryKey,
+	patchSiteSubscription,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import * as selectors from '../use-follow-selectors';
-import { useFollowForBlog, useFollowForFeed, useIsFollowing } from '../use-follow-selectors';
-import { useFollows } from '../use-follows';
-import type { FollowItem } from '@automattic/api-core';
+import { useSiteSubscriptionForFeed, useIsSubscribed } from '../use-follow-selectors';
+import { useSiteSubscriptions } from '../use-site-subscriptions';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -36,12 +40,12 @@ const makeWrapper = ( client: QueryClient, state: TestState = { currentUser: { i
 };
 
 const makeData = (
-	follows: FollowItem[] = [],
-	totalCount = follows.length
-): FollowsInfiniteData => ( {
+	subscriptions: SiteSubscriptionItem[] = [],
+	totalCount = subscriptions.length
+): SiteSubscriptionsInfiniteData => ( {
 	pages: [
 		{
-			follows,
+			subscriptions,
 			totalCount,
 			page: 1,
 			number: 200,
@@ -50,7 +54,7 @@ const makeData = (
 	pageParams: [ 1 ],
 } );
 
-const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
+const makeFollow = ( overrides: Partial< SiteSubscriptionItem > = {} ): SiteSubscriptionItem => ( {
 	URL: 'https://example.com/feed/',
 	feed_URL: 'https://example.com/feed/',
 	blog_ID: 123,
@@ -59,25 +63,25 @@ const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 	...overrides,
 } );
 
-describe( 'follows hooks', () => {
+describe( 'subscriptions hooks', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'useFollows derives follows and count from the query cache', async () => {
+	it( 'useSiteSubscriptions derives subscriptions and count from the query cache', async () => {
 		const queryClient = makeQueryClient();
 		const follow = makeFollow();
-		queryClient.setQueryData( getFollowsQueryKey(), makeData( [ follow ], 7 ) );
+		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ follow ], 7 ) );
 
-		const { result } = renderHook( () => useFollows(), {
+		const { result } = renderHook( () => useSiteSubscriptions(), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-		expect( result.current.follows ).toEqual( [ follow ] );
+		expect( result.current.subscriptions ).toEqual( [ follow ] );
 		expect( result.current.count ).toBe( 7 );
 	} );
 
-	it( 'does not fetch follows while the current user is logged out', async () => {
+	it( 'does not fetch subscriptions while the current user is logged out', async () => {
 		const queryClient = makeQueryClient();
 		const scope = nock( BASE ).get( '/rest/v1.2/read/following/mine' ).query( true ).reply( 200, {
 			subscriptions: [],
@@ -86,7 +90,7 @@ describe( 'follows hooks', () => {
 			number: 200,
 		} );
 
-		const { result } = renderHook( () => useFollows(), {
+		const { result } = renderHook( () => useSiteSubscriptions(), {
 			wrapper: makeWrapper( queryClient, { currentUser: { id: null } } ),
 		} );
 
@@ -94,12 +98,12 @@ describe( 'follows hooks', () => {
 			await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		} );
 
-		expect( result.current.follows ).toEqual( [] );
+		expect( result.current.subscriptions ).toEqual( [] );
 		expect( result.current.count ).toBe( 0 );
 		expect( scope.isDone() ).toBe( false );
 	} );
 
-	it( 'does not fetch additional follows pages by default', async () => {
+	it( 'does not fetch additional subscriptions pages by default', async () => {
 		const queryClient = makeQueryClient();
 		const firstPage = Array.from( { length: 200 }, ( _value, index ) =>
 			makeFollow( {
@@ -140,7 +144,7 @@ describe( 'follows hooks', () => {
 				number: 200,
 			} );
 
-		renderHook( () => useFollows(), {
+		renderHook( () => useSiteSubscriptions(), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 
@@ -152,7 +156,7 @@ describe( 'follows hooks', () => {
 		expect( secondPageScope.isDone() ).toBe( false );
 	} );
 
-	it( 'fetches additional follows pages when requested explicitly', async () => {
+	it( 'fetches additional subscriptions pages when requested explicitly', async () => {
 		const queryClient = makeQueryClient();
 		const firstPage = Array.from( { length: 200 }, ( _value, index ) =>
 			makeFollow( {
@@ -193,7 +197,7 @@ describe( 'follows hooks', () => {
 				number: 200,
 			} );
 
-		renderHook( () => useFollows( { fetchAllPages: true } ), {
+		renderHook( () => useSiteSubscriptions( { fetchAllPages: true } ), {
 			wrapper: makeWrapper( queryClient ),
 		} );
 
@@ -203,34 +207,31 @@ describe( 'follows hooks', () => {
 
 	it( 'selector hooks react when a follow is patched into the query cache', async () => {
 		const queryClient = makeQueryClient();
-		queryClient.setQueryData( getFollowsQueryKey(), makeData() );
+		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), makeData() );
 
 		const { result } = renderHook(
 			() => ( {
-				isFollowing: useIsFollowing( {
+				isFollowing: useIsSubscribed( {
 					feedUrl: 'https://example.com/rss',
 					feedId: '456',
 					blogId: '123',
 				} ),
-				blogFollow: useFollowForBlog( '123' ),
-				feedFollow: useFollowForFeed( '456' ),
+				feedFollow: useSiteSubscriptionForFeed( '456' ),
 			} ),
 			{ wrapper: makeWrapper( queryClient ) }
 		);
 
 		await waitFor( () => expect( result.current.isFollowing ).toBe( false ) );
-		expect( result.current.blogFollow ).toBeUndefined();
 		expect( result.current.feedFollow ).toBeUndefined();
 
 		act( () => {
-			patchFollow( queryClient, {
+			patchSiteSubscription( queryClient, {
 				requestedFeedUrl: 'https://example.com/rss',
-				follow: makeFollow(),
+				subscription: makeFollow(),
 			} );
 		} );
 
 		await waitFor( () => expect( result.current.isFollowing ).toBe( true ) );
-		expect( result.current.blogFollow ).toMatchObject( { blog_ID: 123 } );
 		expect( result.current.feedFollow ).toMatchObject( { feed_ID: 456 } );
 	} );
 

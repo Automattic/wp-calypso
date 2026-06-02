@@ -1,18 +1,18 @@
 import {
 	commonFeedExtensions,
-	fetchFollowsPage,
+	fetchSiteSubscriptionsPage,
 	followSite,
 	prepareComparableUrl,
-	sortFollowsByLastUpdated,
+	sortSiteSubscriptionsByLastUpdated,
 	unfollowSite,
 	updateSiteCommentEmailSubscription,
 	updateSitePostEmailDeliveryFrequency,
 	updateSitePostEmailSubscription,
 	updateSitePostNotificationSubscription,
 	type FollowDeliveryParams,
-	type FollowItem,
+	type SiteSubscriptionItem,
 	type FollowSiteParams,
-	type FollowsPage,
+	type SiteSubscriptionsPage,
 	type UnfollowSiteParams,
 } from '@automattic/api-core';
 import {
@@ -26,33 +26,35 @@ const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
 const STALE_TIME = 60 * 60 * 1000;
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
-const SITE_SUBSCRIPTIONS_QUERY_KEY = [ 'read', 'site-subscriptions' ] as const;
 
-export type FollowsInfiniteData = InfiniteData< FollowsPage, number >;
+export type SiteSubscriptionsInfiniteData = InfiniteData< SiteSubscriptionsPage, number >;
 
-export const getFollowsQueryKey = () => [ 'read', 'follows' ] as const;
+export const getSiteSubscriptionsQueryKey = () => [ 'read', 'site-subscriptions' ] as const;
 
-export const followsQuery = () =>
+export const siteSubscriptionsQuery = () =>
 	infiniteQueryOptions<
-		FollowsPage,
+		SiteSubscriptionsPage,
 		Error,
-		FollowsInfiniteData,
-		ReturnType< typeof getFollowsQueryKey >,
+		SiteSubscriptionsInfiniteData,
+		ReturnType< typeof getSiteSubscriptionsQueryKey >,
 		number
 	>( {
-		queryKey: getFollowsQueryKey(),
+		queryKey: getSiteSubscriptionsQueryKey(),
 		queryFn: ( { pageParam } ) =>
-			fetchFollowsPage( { page: pageParam, number: ITEMS_PER_PAGE, meta: '' } ),
+			fetchSiteSubscriptionsPage( { page: pageParam, number: ITEMS_PER_PAGE, meta: '' } ),
 		initialPageParam: 1,
 		getNextPageParam: ( lastPage, allPages ) => {
-			const fetchedItems = allPages.reduce( ( count, page ) => count + page.follows.length, 0 );
+			const fetchedItems = allPages.reduce(
+				( count, page ) => count + page.subscriptions.length,
+				0
+			);
 			const totalCount = allPages.find( ( page ) => typeof page.totalCount === 'number' )
 				?.totalCount;
 
 			if ( allPages.length >= MAX_PAGES_TO_FETCH ) {
 				return undefined;
 			}
-			if ( lastPage.follows.length < ITEMS_PER_PAGE ) {
+			if ( lastPage.subscriptions.length < ITEMS_PER_PAGE ) {
 				return undefined;
 			}
 			if ( typeof totalCount === 'number' && fetchedItems >= Math.min( totalCount, MAX_ITEMS ) ) {
@@ -65,30 +67,38 @@ export const followsQuery = () =>
 		meta: { persist: true },
 	} );
 
-export const getFollowsFromData = ( data?: FollowsInfiniteData ): FollowItem[] =>
-	data?.pages.flatMap( ( page ) => page.follows ).filter( ( item ) => ! item.error ) ?? [];
+export const getSiteSubscriptionsFromData = (
+	data?: SiteSubscriptionsInfiniteData
+): SiteSubscriptionItem[] =>
+	data?.pages.flatMap( ( page ) => page.subscriptions ).filter( ( item ) => ! item.error ) ?? [];
 
-export const getFollowsCountFromData = ( data?: FollowsInfiniteData ): number => {
+export const getSiteSubscriptionsCountFromData = (
+	data?: SiteSubscriptionsInfiniteData
+): number => {
 	const totalCount =
 		data?.pages.find( ( page ) => typeof page.totalCount === 'number' )?.totalCount ?? 0;
-	const followingCount = getFollowsFromData( data ).filter(
-		( follow ) => follow.is_following
+	const followingCount = getSiteSubscriptionsFromData( data ).filter(
+		( subscription ) => subscription.is_following
 	).length;
 
 	return Math.max( totalCount, followingCount );
 };
 
-export const getFollowByBlogIdFromData = (
-	data: FollowsInfiniteData | undefined,
+export const getSiteSubscriptionByBlogIdFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
 	blogId: number | string
-): FollowItem | undefined =>
-	getFollowsFromData( data ).find( ( follow ) => Number( follow.blog_ID ) === Number( blogId ) );
+): SiteSubscriptionItem | undefined =>
+	getSiteSubscriptionsFromData( data ).find(
+		( subscription ) => Number( subscription.blog_ID ) === Number( blogId )
+	);
 
-export const getFollowByFeedIdFromData = (
-	data: FollowsInfiniteData | undefined,
+export const getSiteSubscriptionByFeedIdFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
 	feedId: number | string
-): FollowItem | undefined =>
-	getFollowsFromData( data ).find( ( follow ) => Number( follow.feed_ID ) === Number( feedId ) );
+): SiteSubscriptionItem | undefined =>
+	getSiteSubscriptionsFromData( data ).find(
+		( subscription ) => Number( subscription.feed_ID ) === Number( feedId )
+	);
 
 const commonFeedExtensionsByLength = [ ...commonFeedExtensions ].sort(
 	( a, b ) => b.length - a.length
@@ -115,31 +125,36 @@ const areCommonFeedAliases = ( left?: string, right?: string ): boolean => {
 	return strippedLeft === strippedRight && ( strippedLeft !== left || strippedRight !== right );
 };
 
-const followMatchesFeedUrl = ( follow: FollowItem, feedUrl?: string | null ): boolean => {
+const subscriptionMatchesFeedUrl = (
+	subscription: SiteSubscriptionItem,
+	feedUrl?: string | null
+): boolean => {
 	const comparableFeedUrl = prepareComparableUrl( feedUrl );
 	if ( ! comparableFeedUrl ) {
 		return false;
 	}
 
-	const followUrls = [ follow.feed_URL, ...( follow.alias_feed_URLs ?? [] ) ]
+	const subscriptionUrls = [ subscription.feed_URL, ...( subscription.alias_feed_URLs ?? [] ) ]
 		.map( ( url ) => prepareComparableUrl( url ) )
 		.filter( ( url ): url is string => !! url );
 
-	return followUrls.some(
-		( followUrl ) =>
-			followUrl === comparableFeedUrl || areCommonFeedAliases( followUrl, comparableFeedUrl )
+	return subscriptionUrls.some(
+		( subscriptionUrl ) =>
+			subscriptionUrl === comparableFeedUrl ||
+			areCommonFeedAliases( subscriptionUrl, comparableFeedUrl )
 	);
 };
 
-export const getAliasedFollowFeedUrl = (
-	data: FollowsInfiniteData | undefined,
+export const getAliasedSiteSubscriptionFeedUrl = (
+	data: SiteSubscriptionsInfiniteData | undefined,
 	feedUrl: string
 ): string | undefined =>
-	getFollowsFromData( data ).find( ( follow ) => followMatchesFeedUrl( follow, feedUrl ) )
-		?.feed_URL;
+	getSiteSubscriptionsFromData( data ).find( ( subscription ) =>
+		subscriptionMatchesFeedUrl( subscription, feedUrl )
+	)?.feed_URL;
 
-export const getIsFollowingFromData = (
-	data: FollowsInfiniteData | undefined,
+export const getIsSubscribedFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
 	{
 		feedUrl,
 		feedId,
@@ -150,24 +165,24 @@ export const getIsFollowingFromData = (
 		blogId?: number | string | null;
 	}
 ): boolean =>
-	getFollowsFromData( data ).some( ( follow ) => {
-		if ( ! follow.is_following ) {
+	getSiteSubscriptionsFromData( data ).some( ( subscription ) => {
+		if ( ! subscription.is_following ) {
 			return false;
 		}
-		if ( feedUrl && followMatchesFeedUrl( follow, feedUrl ) ) {
+		if ( feedUrl && subscriptionMatchesFeedUrl( subscription, feedUrl ) ) {
 			return true;
 		}
 		if (
 			typeof feedId !== 'undefined' &&
 			feedId !== null &&
-			Number( follow.feed_ID ) === Number( feedId )
+			Number( subscription.feed_ID ) === Number( feedId )
 		) {
 			return true;
 		}
 		if (
 			typeof blogId !== 'undefined' &&
 			blogId !== null &&
-			Number( follow.blog_ID ) === Number( blogId )
+			Number( subscription.blog_ID ) === Number( blogId )
 		) {
 			return true;
 		}
@@ -175,35 +190,38 @@ export const getIsFollowingFromData = (
 		return false;
 	} );
 
-export const getFollowedSitesFromData = (
-	data: FollowsInfiniteData | undefined,
+export const getSubscribedSitesFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
 	noOrganizationId: number | null
-): FollowItem[] =>
-	getFollowsFromData( data )
-		.filter( ( follow ) => {
-			if ( ! follow.is_following ) {
+): SiteSubscriptionItem[] =>
+	getSiteSubscriptionsFromData( data )
+		.filter( ( subscription ) => {
+			if ( ! subscription.is_following ) {
 				return false;
 			}
 
 			if ( noOrganizationId === 0 || noOrganizationId === null ) {
 				return (
-					follow.organization_id === 0 ||
-					follow.organization_id === null ||
-					typeof follow.organization_id === 'undefined'
+					subscription.organization_id === 0 ||
+					subscription.organization_id === null ||
+					typeof subscription.organization_id === 'undefined'
 				);
 			}
 
-			return follow.organization_id === noOrganizationId;
+			return subscription.organization_id === noOrganizationId;
 		} )
-		.sort( sortFollowsByLastUpdated );
+		.sort( sortSiteSubscriptionsByLastUpdated );
 
-export const getOrganizationFollowsFromData = (
-	data: FollowsInfiniteData | undefined,
+export const getOrganizationSiteSubscriptionsFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
 	organizationId: number
-): FollowItem[] =>
-	getFollowsFromData( data )
-		.filter( ( follow ) => follow.is_following && follow.organization_id === organizationId )
-		.sort( sortFollowsByLastUpdated );
+): SiteSubscriptionItem[] =>
+	getSiteSubscriptionsFromData( data )
+		.filter(
+			( subscription ) =>
+				subscription.is_following && subscription.organization_id === organizationId
+		)
+		.sort( sortSiteSubscriptionsByLastUpdated );
 
 const mergeAliasFeedUrls = ( ...aliasGroups: Array< Array< string | undefined > | undefined > ) => {
 	const aliases = new Set< string >();
@@ -219,39 +237,45 @@ const mergeAliasFeedUrls = ( ...aliasGroups: Array< Array< string | undefined > 
 	return [ ...aliases ];
 };
 
-const addRequestedAlias = ( follow: FollowItem, requestedFeedUrl?: string ): FollowItem => {
+const addRequestedAlias = (
+	subscription: SiteSubscriptionItem,
+	requestedFeedUrl?: string
+): SiteSubscriptionItem => {
 	if (
 		! requestedFeedUrl ||
-		prepareComparableUrl( requestedFeedUrl ) === prepareComparableUrl( follow.feed_URL )
+		prepareComparableUrl( requestedFeedUrl ) === prepareComparableUrl( subscription.feed_URL )
 	) {
-		return follow;
+		return subscription;
 	}
 
-	const aliasFeedUrls = mergeAliasFeedUrls( follow.alias_feed_URLs, [ requestedFeedUrl ] );
+	const aliasFeedUrls = mergeAliasFeedUrls( subscription.alias_feed_URLs, [ requestedFeedUrl ] );
 	return {
-		...follow,
+		...subscription,
 		alias_feed_URLs: aliasFeedUrls,
 	};
 };
 
-const mergeFollow = ( existingFollow: FollowItem, follow: FollowItem ): FollowItem => {
+const mergeSiteSubscription = (
+	existingSubscription: SiteSubscriptionItem,
+	subscription: SiteSubscriptionItem
+): SiteSubscriptionItem => {
 	const aliasFeedUrls = mergeAliasFeedUrls(
-		existingFollow.alias_feed_URLs,
-		follow.alias_feed_URLs
+		existingSubscription.alias_feed_URLs,
+		subscription.alias_feed_URLs
 	).filter(
-		( alias ) => prepareComparableUrl( alias ) !== prepareComparableUrl( follow.feed_URL )
+		( alias ) => prepareComparableUrl( alias ) !== prepareComparableUrl( subscription.feed_URL )
 	);
 	const deliveryMethods = {
-		...existingFollow.delivery_methods,
-		...follow.delivery_methods,
-		...( existingFollow.delivery_methods?.notification
-			? { notification: existingFollow.delivery_methods.notification }
+		...existingSubscription.delivery_methods,
+		...subscription.delivery_methods,
+		...( existingSubscription.delivery_methods?.notification
+			? { notification: existingSubscription.delivery_methods.notification }
 			: {} ),
 	};
 
 	return {
-		...existingFollow,
-		...follow,
+		...existingSubscription,
+		...subscription,
 		...( aliasFeedUrls.length
 			? { alias_feed_URLs: aliasFeedUrls }
 			: { alias_feed_URLs: undefined } ),
@@ -260,107 +284,116 @@ const mergeFollow = ( existingFollow: FollowItem, follow: FollowItem ): FollowIt
 	};
 };
 
-const createEmptyFollowsData = (): FollowsInfiniteData => ( {
-	pages: [ { follows: [], totalCount: 0, page: 1, number: ITEMS_PER_PAGE } ],
+const createEmptySiteSubscriptionsData = (): SiteSubscriptionsInfiniteData => ( {
+	pages: [ { subscriptions: [], totalCount: 0, page: 1, number: ITEMS_PER_PAGE } ],
 	pageParams: [ 1 ],
 } );
 
-export const patchFollow = (
+export const patchSiteSubscription = (
 	queryClient: QueryClient,
 	{
 		requestedFeedUrl,
-		follow,
+		subscription,
 	}: {
 		requestedFeedUrl?: string;
-		follow: FollowItem;
+		subscription: SiteSubscriptionItem;
 	}
 ) => {
-	const followWithAlias = addRequestedAlias( follow, requestedFeedUrl );
+	const subscriptionWithAlias = addRequestedAlias( subscription, requestedFeedUrl );
 
-	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), ( data ) => {
-		const currentData = data ?? createEmptyFollowsData();
-		const hasPages = currentData.pages.length > 0;
-		const pages = ( hasPages ? currentData.pages : createEmptyFollowsData().pages ).map(
-			( page ) => ( {
-				...page,
-				follows: [ ...page.follows ],
-			} )
-		);
-		let found = false;
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey(),
+		( data ) => {
+			const currentData = data ?? createEmptySiteSubscriptionsData();
+			const hasPages = currentData.pages.length > 0;
+			const pages = ( hasPages ? currentData.pages : createEmptySiteSubscriptionsData().pages ).map(
+				( page ) => ( {
+					...page,
+					subscriptions: [ ...page.subscriptions ],
+				} )
+			);
+			let found = false;
 
-		for ( const page of pages ) {
-			page.follows = page.follows.map( ( existingFollow ) => {
-				if (
-					followMatchesFeedUrl( existingFollow, followWithAlias.feed_URL ) ||
-					followWithAlias.alias_feed_URLs?.some( ( alias ) =>
-						followMatchesFeedUrl( existingFollow, alias )
-					)
-				) {
-					found = true;
-					return mergeFollow( existingFollow, followWithAlias );
-				}
-
-				return existingFollow;
-			} );
-		}
-
-		if ( ! found ) {
-			pages[ 0 ] = {
-				...pages[ 0 ],
-				follows: [ followWithAlias, ...pages[ 0 ].follows ],
-				totalCount:
-					typeof pages[ 0 ].totalCount === 'number'
-						? pages[ 0 ].totalCount + 1
-						: pages[ 0 ].totalCount,
-			};
-		}
-
-		return {
-			...currentData,
-			pages,
-			pageParams: hasPages ? currentData.pageParams : [ 1 ],
-		};
-	} );
-};
-
-export const markFollowUnfollowed = ( queryClient: QueryClient, feedUrl: string ) => {
-	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), ( data ) => {
-		if ( ! data ) {
-			return data;
-		}
-
-		return {
-			...data,
-			pages: data.pages.map( ( page ) => ( {
-				...page,
-				follows: page.follows.map( ( follow ) => {
-					if ( ! followMatchesFeedUrl( follow, feedUrl ) ) {
-						return follow;
+			for ( const page of pages ) {
+				page.subscriptions = page.subscriptions.map( ( existingSubscription ) => {
+					if (
+						subscriptionMatchesFeedUrl( existingSubscription, subscriptionWithAlias.feed_URL ) ||
+						subscriptionWithAlias.alias_feed_URLs?.some( ( alias ) =>
+							subscriptionMatchesFeedUrl( existingSubscription, alias )
+						)
+					) {
+						found = true;
+						return mergeSiteSubscription( existingSubscription, subscriptionWithAlias );
 					}
 
-					return {
-						...follow,
-						is_following: false,
-						delivery_methods: {
-							...follow.delivery_methods,
-							notification: {
-								...follow.delivery_methods?.notification,
-								send_posts: false,
+					return existingSubscription;
+				} );
+			}
+
+			if ( ! found ) {
+				pages[ 0 ] = {
+					...pages[ 0 ],
+					subscriptions: [ subscriptionWithAlias, ...pages[ 0 ].subscriptions ],
+					totalCount:
+						typeof pages[ 0 ].totalCount === 'number'
+							? pages[ 0 ].totalCount + 1
+							: pages[ 0 ].totalCount,
+				};
+			}
+
+			return {
+				...currentData,
+				pages,
+				pageParams: hasPages ? currentData.pageParams : [ 1 ],
+			};
+		}
+	);
+};
+
+export const markSiteSubscriptionUnfollowed = ( queryClient: QueryClient, feedUrl: string ) => {
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey(),
+		( data ) => {
+			if ( ! data ) {
+				return data;
+			}
+
+			return {
+				...data,
+				pages: data.pages.map( ( page ) => ( {
+					...page,
+					subscriptions: page.subscriptions.map( ( subscription ) => {
+						if ( ! subscriptionMatchesFeedUrl( subscription, feedUrl ) ) {
+							return subscription;
+						}
+
+						return {
+							...subscription,
+							is_following: false,
+							delivery_methods: {
+								...subscription.delivery_methods,
+								notification: {
+									...subscription.delivery_methods?.notification,
+									send_posts: false,
+								},
 							},
-						},
-					};
-				} ),
-			} ) ),
-		};
-	} );
+						};
+					} ),
+				} ) ),
+			};
+		}
+	);
 };
 
 export const followSiteMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< FollowItem, Error, FollowSiteParams >( {
+	mutationOptions< SiteSubscriptionItem, Error, FollowSiteParams >( {
 		mutationFn: ( params ) => followSite( params ),
-		onSuccess: ( follow, params ) => {
-			patchFollow( queryClient, { requestedFeedUrl: params.feedUrl, follow } );
-			return queryClient.invalidateQueries( { queryKey: SITE_SUBSCRIPTIONS_QUERY_KEY } );
+		onSuccess: ( subscription, params ) => {
+			patchSiteSubscription( queryClient, {
+				requestedFeedUrl: params.feedUrl,
+				subscription,
+			} );
+			return queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );
 
@@ -369,130 +402,148 @@ export const unfollowSiteMutation = ( queryClient: QueryClient ) =>
 		mutationFn: ( params ) => unfollowSite( params ),
 		onSuccess: async ( _response, params ) => {
 			if ( params.feedUrl ) {
-				markFollowUnfollowed( queryClient, params.feedUrl );
+				markSiteSubscriptionUnfollowed( queryClient, params.feedUrl );
 			} else {
-				await queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+				await queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 			}
 
-			await queryClient.invalidateQueries( { queryKey: SITE_SUBSCRIPTIONS_QUERY_KEY } );
+			await queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );
 
-const invalidateFollows = ( queryClient: QueryClient ) =>
-	queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+const invalidateSiteSubscriptions = ( queryClient: QueryClient ) =>
+	queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 
-type FollowDeliveryMutationContext = {
-	previousData?: FollowsInfiniteData;
+type SiteSubscriptionDeliveryMutationContext = {
+	previousData?: SiteSubscriptionsInfiniteData;
 };
 
-type FollowDeliveryPatchKind = 'post-email' | 'comment-email' | 'email-frequency' | 'notification';
+type SiteSubscriptionDeliveryPatchKind =
+	| 'post-email'
+	| 'comment-email'
+	| 'email-frequency'
+	| 'notification';
 
-const patchFollowDeliveryMethods = (
+const patchSiteSubscriptionDeliveryMethods = (
 	queryClient: QueryClient,
 	params: FollowDeliveryParams,
-	kind: FollowDeliveryPatchKind
+	kind: SiteSubscriptionDeliveryPatchKind
 ) => {
-	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), ( data ) => {
-		if ( ! data ) {
-			return data;
-		}
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey(),
+		( data ) => {
+			if ( ! data ) {
+				return data;
+			}
 
-		return {
-			...data,
-			pages: data.pages.map( ( page ) => ( {
-				...page,
-				follows: page.follows.map( ( follow ) => {
-					if ( Number( follow.blog_ID ) !== Number( params.blogId ) ) {
-						return follow;
-					}
+			return {
+				...data,
+				pages: data.pages.map( ( page ) => ( {
+					...page,
+					subscriptions: page.subscriptions.map( ( subscription ) => {
+						if ( Number( subscription.blog_ID ) !== Number( params.blogId ) ) {
+							return subscription;
+						}
 
-					const email = {
-						...follow.delivery_methods?.email,
-						...( kind === 'post-email' && typeof params.sendPosts === 'boolean'
-							? { send_posts: params.sendPosts }
-							: {} ),
-						...( kind === 'comment-email' && typeof params.sendComments === 'boolean'
-							? { send_comments: params.sendComments }
-							: {} ),
-						...( ( kind === 'post-email' || kind === 'email-frequency' ) && params.deliveryFrequency
-							? { post_delivery_frequency: params.deliveryFrequency }
-							: {} ),
-					};
-					const notification = {
-						...follow.delivery_methods?.notification,
-						...( kind === 'notification' && typeof params.sendPosts === 'boolean'
-							? { send_posts: params.sendPosts }
-							: {} ),
-					};
-
-					return {
-						...follow,
-						delivery_methods: {
-							...follow.delivery_methods,
-							...( kind === 'post-email' || kind === 'comment-email' || kind === 'email-frequency'
-								? { email }
+						const email = {
+							...subscription.delivery_methods?.email,
+							...( kind === 'post-email' && typeof params.sendPosts === 'boolean'
+								? { send_posts: params.sendPosts }
 								: {} ),
-							...( kind === 'notification' ? { notification } : {} ),
-						},
-					};
-				} ),
-			} ) ),
-		};
-	} );
+							...( kind === 'comment-email' && typeof params.sendComments === 'boolean'
+								? { send_comments: params.sendComments }
+								: {} ),
+							...( ( kind === 'post-email' || kind === 'email-frequency' ) &&
+							params.deliveryFrequency
+								? { post_delivery_frequency: params.deliveryFrequency }
+								: {} ),
+						};
+						const notification = {
+							...subscription.delivery_methods?.notification,
+							...( kind === 'notification' && typeof params.sendPosts === 'boolean'
+								? { send_posts: params.sendPosts }
+								: {} ),
+						};
+
+						return {
+							...subscription,
+							delivery_methods: {
+								...subscription.delivery_methods,
+								...( kind === 'post-email' || kind === 'comment-email' || kind === 'email-frequency'
+									? { email }
+									: {} ),
+								...( kind === 'notification' ? { notification } : {} ),
+							},
+						};
+					} ),
+				} ) ),
+			};
+		}
+	);
 };
 
 const withOptimisticDeliveryPatch = (
 	queryClient: QueryClient,
 	params: FollowDeliveryParams,
-	kind: FollowDeliveryPatchKind
-): FollowDeliveryMutationContext => {
-	const previousData = queryClient.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() );
-	patchFollowDeliveryMethods( queryClient, params, kind );
+	kind: SiteSubscriptionDeliveryPatchKind
+): SiteSubscriptionDeliveryMutationContext => {
+	const previousData = queryClient.getQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey()
+	);
+	patchSiteSubscriptionDeliveryMethods( queryClient, params, kind );
 
 	return { previousData };
 };
 
 const rollbackOptimisticDeliveryPatch = (
 	queryClient: QueryClient,
-	context?: FollowDeliveryMutationContext
+	context?: SiteSubscriptionDeliveryMutationContext
 ) => {
 	if ( context?.previousData ) {
-		queryClient.setQueryData( getFollowsQueryKey(), context.previousData );
+		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), context.previousData );
 	}
 };
 
 export const updateSitePostEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
-		mutationFn: ( params ) => updateSitePostEmailSubscription( params ),
-		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'post-email' ),
-		onError: ( _error, _params, context ) =>
-			rollbackOptimisticDeliveryPatch( queryClient, context ),
-		onSettled: () => invalidateFollows( queryClient ),
-	} );
+	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
+		{
+			mutationFn: ( params ) => updateSitePostEmailSubscription( params ),
+			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'post-email' ),
+			onError: ( _error, _params, context ) =>
+				rollbackOptimisticDeliveryPatch( queryClient, context ),
+			onSettled: () => invalidateSiteSubscriptions( queryClient ),
+		}
+	);
 
 export const updateSiteCommentEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
-		mutationFn: ( params ) => updateSiteCommentEmailSubscription( params ),
-		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'comment-email' ),
-		onError: ( _error, _params, context ) =>
-			rollbackOptimisticDeliveryPatch( queryClient, context ),
-		onSettled: () => invalidateFollows( queryClient ),
-	} );
+	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
+		{
+			mutationFn: ( params ) => updateSiteCommentEmailSubscription( params ),
+			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'comment-email' ),
+			onError: ( _error, _params, context ) =>
+				rollbackOptimisticDeliveryPatch( queryClient, context ),
+			onSettled: () => invalidateSiteSubscriptions( queryClient ),
+		}
+	);
 
 export const updateSitePostEmailDeliveryFrequencyMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
-		mutationFn: ( params ) => updateSitePostEmailDeliveryFrequency( params ),
-		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'email-frequency' ),
-		onError: ( _error, _params, context ) =>
-			rollbackOptimisticDeliveryPatch( queryClient, context ),
-		onSettled: () => invalidateFollows( queryClient ),
-	} );
+	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
+		{
+			mutationFn: ( params ) => updateSitePostEmailDeliveryFrequency( params ),
+			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'email-frequency' ),
+			onError: ( _error, _params, context ) =>
+				rollbackOptimisticDeliveryPatch( queryClient, context ),
+			onSettled: () => invalidateSiteSubscriptions( queryClient ),
+		}
+	);
 
 export const updateSitePostNotificationSubscriptionMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< unknown, Error, FollowDeliveryParams, FollowDeliveryMutationContext >( {
-		mutationFn: ( params ) => updateSitePostNotificationSubscription( params ),
-		onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'notification' ),
-		onError: ( _error, _params, context ) =>
-			rollbackOptimisticDeliveryPatch( queryClient, context ),
-		onSettled: () => invalidateFollows( queryClient ),
-	} );
+	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
+		{
+			mutationFn: ( params ) => updateSitePostNotificationSubscription( params ),
+			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'notification' ),
+			onError: ( _error, _params, context ) =>
+				rollbackOptimisticDeliveryPatch( queryClient, context ),
+			onSettled: () => invalidateSiteSubscriptions( queryClient ),
+		}
+	);

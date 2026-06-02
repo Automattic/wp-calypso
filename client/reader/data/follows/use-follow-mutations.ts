@@ -1,14 +1,14 @@
 import {
 	followSiteMutation,
-	getFollowsQueryKey,
-	markFollowUnfollowed,
-	patchFollow,
+	getSiteSubscriptionsQueryKey,
+	markSiteSubscriptionUnfollowed,
+	patchSiteSubscription,
 	unfollowSiteMutation,
 	updateSiteCommentEmailSubscriptionMutation,
 	updateSitePostEmailDeliveryFrequencyMutation,
 	updateSitePostEmailSubscriptionMutation,
 	updateSitePostNotificationSubscriptionMutation,
-	type FollowsInfiniteData,
+	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -21,7 +21,11 @@ import {
 	patchReadSiteFollowStatus,
 	patchReadSiteFollowStatusByBlogId,
 } from './cache';
-import type { FollowItem, FollowSiteParams, UnfollowSiteParams } from '@automattic/api-core';
+import type {
+	SiteSubscriptionItem,
+	FollowSiteParams,
+	UnfollowSiteParams,
+} from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
 interface RecommendedSiteInfo {
@@ -31,7 +35,7 @@ interface RecommendedSiteInfo {
 }
 
 type FollowMutationContext = {
-	previousFollowsData?: FollowsInfiniteData;
+	previousSiteSubscriptionsData?: SiteSubscriptionsInfiniteData;
 };
 
 export {
@@ -62,7 +66,9 @@ const getPositiveNumber = ( id?: number | string ): number | undefined => {
 		: undefined;
 };
 
-const createOptimisticFollow = ( params: FollowSiteParams & { feedUrl: string } ): FollowItem => ( {
+const createOptimisticFollow = (
+	params: FollowSiteParams & { feedUrl: string }
+): SiteSubscriptionItem => ( {
 	URL: params.feedUrl,
 	feed_URL: params.feedUrl,
 	blog_ID: getPositiveNumber( params.blogId ),
@@ -70,16 +76,21 @@ const createOptimisticFollow = ( params: FollowSiteParams & { feedUrl: string } 
 } );
 
 const getFollowMutationContext = ( queryClient: QueryClient ): FollowMutationContext => ( {
-	previousFollowsData: queryClient.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() ),
+	previousSiteSubscriptionsData: queryClient.getQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey()
+	),
 } );
 
-const rollbackFollows = ( queryClient: QueryClient, context?: FollowMutationContext ) => {
-	if ( context?.previousFollowsData ) {
-		queryClient.setQueryData( getFollowsQueryKey(), context.previousFollowsData );
+const rollbackSiteSubscriptions = ( queryClient: QueryClient, context?: FollowMutationContext ) => {
+	if ( context?.previousSiteSubscriptionsData ) {
+		queryClient.setQueryData(
+			getSiteSubscriptionsQueryKey(),
+			context.previousSiteSubscriptionsData
+		);
 		return;
 	}
 
-	queryClient.removeQueries( { queryKey: getFollowsQueryKey(), exact: true } );
+	queryClient.removeQueries( { queryKey: getSiteSubscriptionsQueryKey(), exact: true } );
 };
 
 export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
@@ -100,9 +111,9 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 
 			if ( params.feedUrl ) {
 				patchReadSiteFollowStatus( queryClient, params.feedUrl, true );
-				patchFollow( queryClient, {
+				patchSiteSubscription( queryClient, {
 					requestedFeedUrl: params.feedUrl,
-					follow: createOptimisticFollow( { ...params, feedUrl: params.feedUrl } ),
+					subscription: createOptimisticFollow( { ...params, feedUrl: params.feedUrl } ),
 				} );
 			}
 
@@ -133,7 +144,7 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 		},
 		onError: ( error, params, context ) => {
 			baseMutation.onError?.( error, withFollowingSource( params ), context );
-			rollbackFollows( queryClient, context );
+			rollbackSiteSubscriptions( queryClient, context );
 			if ( params.feedUrl ) {
 				patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
 			}
@@ -167,7 +178,7 @@ export const useUnfollowSite = () => {
 
 			if ( params.feedUrl ) {
 				patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
-				markFollowUnfollowed( queryClient, params.feedUrl );
+				markSiteSubscriptionUnfollowed( queryClient, params.feedUrl );
 			}
 
 			return context;
@@ -178,7 +189,7 @@ export const useUnfollowSite = () => {
 		},
 		onError: ( error, params, context ) => {
 			baseMutation.onError?.( error, withFollowingSource( params ), context );
-			rollbackFollows( queryClient, context );
+			rollbackSiteSubscriptions( queryClient, context );
 			if ( params.feedUrl ) {
 				patchReadSiteFollowStatus( queryClient, params.feedUrl, true );
 			}

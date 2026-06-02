@@ -101,8 +101,8 @@ jest.mock( 'calypso/reader/data/follows', () => ( {
 		isPending: false,
 	} ) ),
 	useUnfollowSite: jest.fn(),
-	useIsFollowing: jest.fn( () => false ),
-	useFollows: jest.fn( () => ( { follows: [], refetch: jest.fn() } ) ),
+	useIsSubscribed: jest.fn( () => false ),
+	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [], refetch: jest.fn() } ) ),
 } ) );
 
 jest.mock( 'calypso/state/notices/actions', () => ( {

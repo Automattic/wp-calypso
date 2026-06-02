@@ -164,7 +164,7 @@ jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 } ) );
 
 jest.mock( 'calypso/reader/data/follows', () => ( {
-	useFollows: jest.fn( () => ( { follows: [] } ) ),
+	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
 } ) );
 
 jest.mock( '../../following/use-site-subscriptions', () => ( {
@@ -195,8 +195,10 @@ beforeEach( () => {
 	const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
 		useFollowedReaderTags: jest.Mock;
 	};
-	const { useFollows } = jest.requireMock( 'calypso/reader/data/follows' ) as {
-		useFollows: jest.Mock;
+	const { useSiteSubscriptions: useCachedSiteSubscriptions } = jest.requireMock(
+		'calypso/reader/data/follows'
+	) as {
+		useSiteSubscriptions: jest.Mock;
 	};
 	const { useSiteSubscriptions } = jest.requireMock( '../../following/use-site-subscriptions' ) as {
 		useSiteSubscriptions: jest.Mock;
@@ -205,7 +207,7 @@ beforeEach( () => {
 		getCurrentUserDate: jest.Mock;
 	};
 	useFollowedReaderTags.mockImplementation( () => ( { data: [], isPending: false } ) );
-	useFollows.mockReturnValue( { follows: [] } );
+	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
 	useSiteSubscriptions.mockImplementation( () => ( {
 		isLoading: false,
 		hasNonSelfSubscriptions: false,
@@ -611,16 +613,16 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
-		const { useFollows } = jest.requireMock( 'calypso/reader/data/follows' ) as {
-			useFollows: jest.Mock;
+		const { useSiteSubscriptions } = jest.requireMock( 'calypso/reader/data/follows' ) as {
+			useSiteSubscriptions: jest.Mock;
 		};
 		// Mix of active non-self, stale (unfollowed), and self-owned to verify
 		// the filter — only the two active non-self entries should be counted.
 		// `nonSelfSubscriptionsCount` defaults to 0 here (per beforeEach), so
 		// the reported count comes from the follows query, not the
 		// SubscriptionManager query baseline.
-		useFollows.mockReturnValue( {
-			follows: [
+		useSiteSubscriptions.mockReturnValue( {
+			subscriptions: [
 				{ is_following: true, is_owner: false },
 				{ is_following: true, is_owner: false },
 				{ is_following: false, is_owner: false },

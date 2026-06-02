@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Main from 'calypso/components/main';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/follows';
 import { ReaderPendingActionHandler } from './pending-action-handler';
 import './style.scss';
 
@@ -25,8 +25,8 @@ const setIsReaderPage = ( add ) => {
 	}
 };
 
-function SyncFollowsQuery() {
-	useFollows();
+function SyncSiteSubscriptionsQuery() {
+	useSiteSubscriptions();
 	return null;
 }
 
@@ -52,7 +52,7 @@ export default class ReaderMain extends Component {
 		return (
 			<div ref={ forwardRef }>
 				<Main { ...props }>
-					<SyncFollowsQuery key="syncFollows" />
+					<SyncSiteSubscriptionsQuery key="syncSiteSubscriptions" />
 					<ReaderPendingActionHandler />
 					{ children }
 				</Main>

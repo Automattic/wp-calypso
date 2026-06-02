@@ -1,9 +1,9 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import { adaptFollowsResponse } from './adapters';
-import type { FollowsApiResponse, FollowsPage } from './types';
+import { adaptSiteSubscriptionsResponse } from './adapters';
+import type { SiteSubscriptionsApiResponse, SiteSubscriptionsPage } from './types';
 
-export const fetchFollowsPage = ( {
+export const fetchSiteSubscriptionsPage = ( {
 	page = 1,
 	number = 200,
 	meta = '',
@@ -11,11 +11,13 @@ export const fetchFollowsPage = ( {
 	page?: number;
 	number?: number;
 	meta?: string;
-} = {} ): Promise< FollowsPage > =>
+} = {} ): Promise< SiteSubscriptionsPage > =>
 	wpcom.req
 		.get( {
 			path: addQueryArgs( '/read/following/mine', { page, number, meta } ),
 			apiVersion: '1.2',
 			method: 'GET',
 		} )
-		.then( ( response: FollowsApiResponse ) => adaptFollowsResponse( response ) );
+		.then( ( response: SiteSubscriptionsApiResponse ) =>
+			adaptSiteSubscriptionsResponse( response )
+		);

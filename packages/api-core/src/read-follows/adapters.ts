@@ -2,9 +2,9 @@ import type {
 	FollowApiDeliveryMethods,
 	FollowApiSubscription,
 	FollowDeliveryMethods,
-	FollowItem,
-	FollowsApiResponse,
-	FollowsPage,
+	SiteSubscriptionItem,
+	SiteSubscriptionsApiResponse,
+	SiteSubscriptionsPage,
 } from './types';
 
 export const commonFeedExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.xml', 'atom' ];
@@ -50,8 +50,10 @@ export const prepareComparableUrl = ( url?: string | null ): string | undefined 
 	return preparedUrl?.replace( /^https?:\/\//i, '' ).toLowerCase();
 };
 
-export const adaptFollow = ( subscription: FollowApiSubscription ): FollowItem => ( {
-	ID: toValidId( subscription.ID ) ?? subscription.ID ?? '',
+export const adaptSiteSubscription = (
+	subscription: FollowApiSubscription
+): SiteSubscriptionItem => ( {
+	ID: toValidId( subscription.ID ) ?? undefined,
 	URL: subscription.URL,
 	feed_URL: subscription.URL,
 	blog_ID: toValidId( subscription.blog_ID ) ?? null,
@@ -80,17 +82,21 @@ export const adaptFollow = ( subscription: FollowApiSubscription ): FollowItem =
 	resubscribed: false,
 } );
 
-export const adaptFollowsResponse = ( response: FollowsApiResponse ): FollowsPage => ( {
-	follows: Array.isArray( response.subscriptions ) ? response.subscriptions.map( adaptFollow ) : [],
+export const adaptSiteSubscriptionsResponse = (
+	response: SiteSubscriptionsApiResponse
+): SiteSubscriptionsPage => ( {
+	subscriptions: Array.isArray( response.subscriptions )
+		? response.subscriptions.map( adaptSiteSubscription )
+		: [],
 	totalCount:
 		response.page === 1 || response.number > 0 ? response.total_subscriptions ?? null : null,
 	page: response.page,
 	number: response.number,
 } );
 
-export const sortFollowsByLastUpdated = (
-	a: Pick< FollowItem, 'last_updated' | 'name' >,
-	b: Pick< FollowItem, 'last_updated' | 'name' >
+export const sortSiteSubscriptionsByLastUpdated = (
+	a: Pick< SiteSubscriptionItem, 'last_updated' | 'name' >,
+	b: Pick< SiteSubscriptionItem, 'last_updated' | 'name' >
 ): number => {
 	const updatedA =
 		a.last_updated instanceof Date && ! isNaN( a.last_updated.valueOf() )

@@ -1,17 +1,23 @@
-import { followsQuery, getFollowsCountFromData, getFollowsFromData } from '@automattic/api-queries';
+import {
+	siteSubscriptionsQuery,
+	getSiteSubscriptionsCountFromData,
+	getSiteSubscriptionsFromData,
+} from '@automattic/api-queries';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-interface UseFollowsOptions {
+interface UseSiteSubscriptionsOptions {
 	fetchAllPages?: boolean;
 }
 
-export const useFollows = ( { fetchAllPages = false }: UseFollowsOptions = {} ) => {
+export const useSiteSubscriptions = ( {
+	fetchAllPages = false,
+}: UseSiteSubscriptionsOptions = {} ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const query = useInfiniteQuery( {
-		...followsQuery(),
+		...siteSubscriptionsQuery(),
 		enabled: isLoggedIn,
 	} );
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = query;
@@ -23,7 +29,7 @@ export const useFollows = ( { fetchAllPages = false }: UseFollowsOptions = {} ) 
 	}, [ fetchAllPages, isLoggedIn, hasNextPage, isFetchingNextPage, fetchNextPage ] );
 
 	return Object.assign( {}, query, {
-		follows: getFollowsFromData( data ),
-		count: getFollowsCountFromData( data ),
+		subscriptions: getSiteSubscriptionsFromData( data ),
+		count: getSiteSubscriptionsCountFromData( data ),
 	} );
 };

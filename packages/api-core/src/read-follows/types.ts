@@ -52,7 +52,7 @@ export interface FollowApiSubscription {
 	comp_id?: number;
 }
 
-export interface FollowItem {
+export interface SiteSubscriptionItem {
 	ID?: number | string;
 	URL: string;
 	feed_URL: string;
@@ -79,15 +79,15 @@ export interface FollowItem {
 	resubscribed?: boolean;
 }
 
-export interface FollowsApiResponse {
+export interface SiteSubscriptionsApiResponse {
 	subscriptions: FollowApiSubscription[];
 	total_subscriptions: number;
 	page: number;
 	number: number;
 }
 
-export interface FollowsPage {
-	follows: FollowItem[];
+export interface SiteSubscriptionsPage {
+	subscriptions: SiteSubscriptionItem[];
 	totalCount: number | null;
 	page: number;
 	number: number;

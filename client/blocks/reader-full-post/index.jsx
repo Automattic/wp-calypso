@@ -29,7 +29,10 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useFollowForFeed, useHasFollowOrganization } from 'calypso/reader/data/follows';
+import {
+	useSiteSubscriptionForFeed,
+	useHasSiteSubscriptionOrganization,
+} from 'calypso/reader/data/follows';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSite } from 'calypso/reader/data/site';
@@ -1038,8 +1041,8 @@ const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
 
 export default function FullPostContainer( props ) {
 	const { data: feed } = useFeedQuery( props.feedId );
-	const follow = useFollowForFeed( props.feedId );
-	const hasOrganization = useHasFollowOrganization( props.feedId, props.blogId );
+	const follow = useSiteSubscriptionForFeed( props.feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
 	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
 
 	return (

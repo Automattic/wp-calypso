@@ -8,26 +8,26 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	followSiteMutation,
-	followsQuery,
-	getAliasedFollowFeedUrl,
-	getFollowByBlogIdFromData,
-	getFollowByFeedIdFromData,
-	getFollowedSitesFromData,
-	getFollowsCountFromData,
-	getFollowsFromData,
-	getFollowsQueryKey,
-	getIsFollowingFromData,
-	getOrganizationFollowsFromData,
-	markFollowUnfollowed,
-	patchFollow,
+	siteSubscriptionsQuery,
+	getAliasedSiteSubscriptionFeedUrl,
+	getSiteSubscriptionByBlogIdFromData,
+	getSiteSubscriptionByFeedIdFromData,
+	getSubscribedSitesFromData,
+	getSiteSubscriptionsCountFromData,
+	getSiteSubscriptionsFromData,
+	getSiteSubscriptionsQueryKey,
+	getIsSubscribedFromData,
+	getOrganizationSiteSubscriptionsFromData,
+	markSiteSubscriptionUnfollowed,
+	patchSiteSubscription,
 	unfollowSiteMutation,
 	updateSiteCommentEmailSubscriptionMutation,
 	updateSitePostEmailDeliveryFrequencyMutation,
 	updateSitePostEmailSubscriptionMutation,
 	updateSitePostNotificationSubscriptionMutation,
-	type FollowsInfiniteData,
+	type SiteSubscriptionsInfiniteData,
 } from '../read-follows';
-import type { FollowItem, FollowDeliveryParams } from '@automattic/api-core';
+import type { SiteSubscriptionItem, FollowDeliveryParams } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -39,7 +39,7 @@ const makeWrapper = ( client: QueryClient ) =>
 
 const newClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
+const makeFollow = ( overrides: Partial< SiteSubscriptionItem > = {} ): SiteSubscriptionItem => ( {
 	URL: 'https://example.com/feed/',
 	feed_URL: 'https://example.com/feed/',
 	blog_ID: 1,
@@ -48,10 +48,13 @@ const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 	...overrides,
 } );
 
-const makeData = ( follows: FollowItem[], totalCount: number | null = follows.length ) => ( {
+const makeData = (
+	subscriptions: SiteSubscriptionItem[],
+	totalCount: number | null = subscriptions.length
+) => ( {
 	pages: [
 		{
-			follows,
+			subscriptions,
 			totalCount,
 			page: 1,
 			number: 200,
@@ -61,9 +64,9 @@ const makeData = ( follows: FollowItem[], totalCount: number | null = follows.le
 } );
 
 const getCachedData = ( client: QueryClient ) =>
-	client.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() );
+	client.getQueryData< SiteSubscriptionsInfiniteData >( getSiteSubscriptionsQueryKey() );
 
-describe( 'followsQuery', () => {
+describe( 'siteSubscriptionsQuery', () => {
 	afterEach( () => nock.cleanAll() );
 
 	it( 'fetches follows with the canonical key and legacy paging args', async () => {
@@ -85,16 +88,16 @@ describe( 'followsQuery', () => {
 			} );
 
 		const client = newClient();
-		const options = followsQuery();
+		const options = siteSubscriptionsQuery();
 		const { result } = renderHook( () => useInfiniteQuery( options ), {
 			wrapper: makeWrapper( client ),
 		} );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-		expect( options.queryKey ).toEqual( [ 'read', 'follows' ] );
+		expect( options.queryKey ).toEqual( [ 'read', 'site-subscriptions' ] );
 		expect( scope.isDone() ).toBe( true );
-		expect( result.current.data?.pages[ 0 ].follows[ 0 ] ).toMatchObject( {
+		expect( result.current.data?.pages[ 0 ].subscriptions[ 0 ] ).toMatchObject( {
 			ID: 123,
 			URL: 'https://example.com/feed/',
 			feed_URL: 'https://example.com/feed/',
@@ -113,27 +116,27 @@ describe( 'follow selectors and cache helpers', () => {
 			feed_URL: 'https://example.com/feed/',
 		} );
 
-		patchFollow( client, {
+		patchSiteSubscription( client, {
 			requestedFeedUrl: 'https://example.com/rss',
-			follow,
+			subscription: follow,
 		} );
 
 		const data = getCachedData( client );
 
-		expect( data?.pages[ 0 ].follows[ 0 ].alias_feed_URLs ).toEqual( [
+		expect( data?.pages[ 0 ].subscriptions[ 0 ].alias_feed_URLs ).toEqual( [
 			'https://example.com/rss',
 		] );
-		expect( getAliasedFollowFeedUrl( data, 'https://example.com/rss' ) ).toBe(
+		expect( getAliasedSiteSubscriptionFeedUrl( data, 'https://example.com/rss' ) ).toBe(
 			'https://example.com/feed/'
 		);
-		expect( getIsFollowingFromData( data, { feedUrl: 'https://example.com/rss' } ) ).toBe( true );
+		expect( getIsSubscribedFromData( data, { feedUrl: 'https://example.com/rss' } ) ).toBe( true );
 		expect( data?.pages[ 0 ].totalCount ).toBe( 1 );
 	} );
 
 	it( 'clears stale errors when patching a successful follow', () => {
 		const client = newClient();
 		client.setQueryData(
-			getFollowsQueryKey(),
+			getSiteSubscriptionsQueryKey(),
 			makeData( [
 				makeFollow( {
 					error: { message: 'Unable to follow' },
@@ -141,16 +144,16 @@ describe( 'follow selectors and cache helpers', () => {
 			] )
 		);
 
-		patchFollow( client, {
+		patchSiteSubscription( client, {
 			requestedFeedUrl: 'https://example.com/feed/',
-			follow: makeFollow( {
+			subscription: makeFollow( {
 				name: 'Example',
 			} ),
 		} );
 
-		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ];
 		expect( cachedFollow?.error ).toBeUndefined();
-		expect( getFollowsFromData( getCachedData( client ) ) ).toEqual( [
+		expect( getSiteSubscriptionsFromData( getCachedData( client ) ) ).toEqual( [
 			expect.objectContaining( { name: 'Example' } ),
 		] );
 	} );
@@ -158,7 +161,7 @@ describe( 'follow selectors and cache helpers', () => {
 	it( 'preserves existing notification delivery state when patching a successful follow', () => {
 		const client = newClient();
 		client.setQueryData(
-			getFollowsQueryKey(),
+			getSiteSubscriptionsQueryKey(),
 			makeData( [
 				makeFollow( {
 					delivery_methods: {
@@ -169,9 +172,9 @@ describe( 'follow selectors and cache helpers', () => {
 			] )
 		);
 
-		patchFollow( client, {
+		patchSiteSubscription( client, {
 			requestedFeedUrl: 'https://example.com/feed/',
-			follow: makeFollow( {
+			subscription: makeFollow( {
 				delivery_methods: {
 					email: { send_posts: true },
 					notification: { send_posts: true },
@@ -179,7 +182,7 @@ describe( 'follow selectors and cache helpers', () => {
 			} ),
 		} );
 
-		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ];
 		expect( cachedFollow?.delivery_methods?.email?.send_posts ).toBe( true );
 		expect( cachedFollow?.delivery_methods?.notification?.send_posts ).toBe( false );
 	} );
@@ -211,12 +214,12 @@ describe( 'follow selectors and cache helpers', () => {
 		} );
 		const data = makeData( [ alpha, beta, errored ], 1 );
 
-		expect( getFollowsFromData( data ) ).toEqual( [ alpha, beta ] );
-		expect( getFollowsCountFromData( data ) ).toBe( 2 );
-		expect( getFollowByBlogIdFromData( data, 22 ) ).toBe( beta );
-		expect( getFollowByFeedIdFromData( data, 101 ) ).toBe( alpha );
-		expect( getFollowedSitesFromData( data, null ) ).toEqual( [ alpha ] );
-		expect( getOrganizationFollowsFromData( data, 7 ) ).toEqual( [ beta ] );
+		expect( getSiteSubscriptionsFromData( data ) ).toEqual( [ alpha, beta ] );
+		expect( getSiteSubscriptionsCountFromData( data ) ).toBe( 2 );
+		expect( getSiteSubscriptionByBlogIdFromData( data, 22 ) ).toBe( beta );
+		expect( getSiteSubscriptionByFeedIdFromData( data, 101 ) ).toBe( alpha );
+		expect( getSubscribedSitesFromData( data, null ) ).toEqual( [ alpha ] );
+		expect( getOrganizationSiteSubscriptionsFromData( data, 7 ) ).toEqual( [ beta ] );
 	} );
 
 	it( 'includes zero, null, and missing organization ids in personal follows', () => {
@@ -250,12 +253,12 @@ describe( 'follow selectors and cache helpers', () => {
 			organizationFollow,
 		] );
 
-		expect( getFollowedSitesFromData( data, 0 ) ).toEqual( [
+		expect( getSubscribedSitesFromData( data, 0 ) ).toEqual( [
 			zeroOrganization,
 			nullOrganization,
 			missingOrganization,
 		] );
-		expect( getFollowedSitesFromData( data, null ) ).toEqual( [
+		expect( getSubscribedSitesFromData( data, null ) ).toEqual( [
 			zeroOrganization,
 			nullOrganization,
 			missingOrganization,
@@ -273,16 +276,16 @@ describe( 'follow selectors and cache helpers', () => {
 				notification: { send_posts: true },
 			},
 		} );
-		client.setQueryData( getFollowsQueryKey(), makeData( [ follow ] ) );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ follow ] ) );
 
-		markFollowUnfollowed( client, 'https://example.com/rss' );
+		markSiteSubscriptionUnfollowed( client, 'https://example.com/rss' );
 
-		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ];
 		expect( cachedFollow?.is_following ).toBe( false );
 		expect( cachedFollow?.delivery_methods?.email?.send_posts ).toBe( true );
 		expect( cachedFollow?.delivery_methods?.notification?.send_posts ).toBe( false );
 		expect(
-			getIsFollowingFromData( getCachedData( client ), { feedUrl: 'https://example.com/feed/' } )
+			getIsSubscribedFromData( getCachedData( client ), { feedUrl: 'https://example.com/feed/' } )
 		).toBe( false );
 	} );
 } );
@@ -306,7 +309,6 @@ describe( 'follow mutations', () => {
 				},
 			} );
 		const client = newClient();
-		client.setQueryData( [ 'read', 'site-subscriptions' ], [] );
 
 		const { result } = renderHook( () => useMutation( followSiteMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -321,9 +323,9 @@ describe( 'follow mutations', () => {
 
 		expect( scope.isDone() ).toBe( true );
 		expect(
-			getIsFollowingFromData( getCachedData( client ), { feedUrl: 'https://example.com/rss' } )
+			getIsSubscribedFromData( getCachedData( client ), { feedUrl: 'https://example.com/rss' } )
 		).toBe( true );
-		expect( client.getQueryState( [ 'read', 'site-subscriptions' ] )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
 	} );
 
 	it( 'supports subscription identifiers when unfollowing and invalidates follows when no URL can be patched', async () => {
@@ -331,8 +333,7 @@ describe( 'follow mutations', () => {
 			.post( '/rest/v1.1/read/following/mine/delete', { sub_id: 1234 } )
 			.reply( 200, { subscribed: false } );
 		const client = newClient();
-		client.setQueryData( getFollowsQueryKey(), makeData( [ makeFollow() ] ) );
-		client.setQueryData( [ 'read', 'site-subscriptions' ], [] );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ makeFollow() ] ) );
 
 		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -343,8 +344,8 @@ describe( 'follow mutations', () => {
 		} );
 
 		expect( scope.isDone() ).toBe( true );
-		expect( client.getQueryState( getFollowsQueryKey() )?.isInvalidated ).toBe( true );
-		expect( client.getQueryState( [ 'read', 'site-subscriptions' ] )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
 	} );
 
 	it( 'patches cached follows and invalidates site subscriptions after unfollowing a URL', async () => {
@@ -356,7 +357,7 @@ describe( 'follow mutations', () => {
 			.reply( 200, { subscribed: false } );
 		const client = newClient();
 		client.setQueryData(
-			getFollowsQueryKey(),
+			getSiteSubscriptionsQueryKey(),
 			makeData( [
 				makeFollow( {
 					feed_URL: 'https://example.com/feed/',
@@ -366,7 +367,6 @@ describe( 'follow mutations', () => {
 				} ),
 			] )
 		);
-		client.setQueryData( [ 'read', 'site-subscriptions' ], [] );
 
 		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -379,11 +379,11 @@ describe( 'follow mutations', () => {
 			} );
 		} );
 
-		const cachedFollow = getCachedData( client )?.pages[ 0 ].follows[ 0 ];
+		const cachedFollow = getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ];
 		expect( scope.isDone() ).toBe( true );
 		expect( cachedFollow?.is_following ).toBe( false );
 		expect( cachedFollow?.delivery_methods?.notification?.send_posts ).toBe( false );
-		expect( client.getQueryState( [ 'read', 'site-subscriptions' ] )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
 	} );
 } );
 
@@ -434,7 +434,7 @@ describe( 'delivery mutations', () => {
 	] )( 'invalidates follows on settle for $name', async ( { factory, params, scope } ) => {
 		const request = scope();
 		const client = newClient();
-		client.setQueryData( getFollowsQueryKey(), makeData( [ makeFollow() ] ) );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ makeFollow() ] ) );
 
 		const { result } = renderHook( () => useMutation( factory( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -445,7 +445,7 @@ describe( 'delivery mutations', () => {
 		} );
 
 		expect( request.isDone() ).toBe( true );
-		expect( client.getQueryState( getFollowsQueryKey() )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
 	} );
 
 	it( 'lets api-core reject omitted delivery booleans and frequency', async () => {
@@ -488,7 +488,7 @@ describe( 'delivery mutations', () => {
 			.reply( 200, { subscribed: true } );
 		const client = newClient();
 		client.setQueryData(
-			getFollowsQueryKey(),
+			getSiteSubscriptionsQueryKey(),
 			makeData( [
 				makeFollow( {
 					blog_ID: 123,
@@ -512,7 +512,7 @@ describe( 'delivery mutations', () => {
 
 		await waitFor( () =>
 			expect(
-				getCachedData( client )?.pages[ 0 ].follows[ 0 ].delivery_methods?.email
+				getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ].delivery_methods?.email
 			).toMatchObject( {
 				send_posts: true,
 				post_delivery_frequency: 'daily',
@@ -528,7 +528,7 @@ describe( 'delivery mutations', () => {
 			.reply( 500, { error: 'subscription_failed' } );
 		const client = newClient();
 		client.setQueryData(
-			getFollowsQueryKey(),
+			getSiteSubscriptionsQueryKey(),
 			makeData( [
 				makeFollow( {
 					blog_ID: 123,
@@ -553,7 +553,7 @@ describe( 'delivery mutations', () => {
 		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 
 		expect(
-			getCachedData( client )?.pages[ 0 ].follows[ 0 ].delivery_methods?.notification
+			getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ].delivery_methods?.notification
 		).toEqual( {
 			send_posts: true,
 		} );

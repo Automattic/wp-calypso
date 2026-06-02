@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen } from '@testing-library/react';
@@ -116,7 +116,9 @@ describe( 'AddSubscriptionForm', () => {
 
 			act( () => capturedOnChangeSubscribe() );
 
-			expect( invalidateQueries ).not.toHaveBeenCalledWith( { queryKey: getFollowsQueryKey() } );
+			expect( invalidateQueries ).not.toHaveBeenCalledWith( {
+				queryKey: getSiteSubscriptionsQueryKey(),
+			} );
 		} );
 
 		it( 'hides the subscriptions list when a feed preview becomes active', () => {
@@ -149,7 +151,9 @@ describe( 'AddSubscriptionForm', () => {
 
 			act( () => capturedOnChangeSubscribe() );
 
-			expect( invalidateQueries ).toHaveBeenCalledWith( { queryKey: getFollowsQueryKey() } );
+			expect( invalidateQueries ).toHaveBeenCalledWith( {
+				queryKey: getSiteSubscriptionsQueryKey(),
+			} );
 		} );
 
 		it( 'hides instructions when a feed preview becomes active', () => {

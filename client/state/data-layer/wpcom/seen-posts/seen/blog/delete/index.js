@@ -1,4 +1,4 @@
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -44,7 +44,7 @@ export const onSuccess = ( action, response ) => ( dispatch ) => {
 		const { feedId, feedUrl, globalIds } = action;
 		// re-request unseen status and followed feeds
 		dispatch( requestUnseenStatus() );
-		getCalypsoQueryClient()?.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+		getCalypsoQueryClient()?.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 
 		dispatch( receiveMarkAsUnseen( { feedId, feedUrl, globalIds } ) );
 	} else {

@@ -12,7 +12,11 @@ import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { getFollowingSource, useFollows, useFollowSite } from 'calypso/reader/data/follows';
+import {
+	getFollowingSource,
+	useSiteSubscriptions,
+	useFollowSite,
+} from 'calypso/reader/data/follows';
 import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
@@ -74,7 +78,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const followedTagsRef = useRef< string[] >( [] );
 	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
-	const { follows } = useFollows();
+	const { subscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
@@ -117,10 +121,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
-		follows.some(
-			( f ) =>
-				( blog.feed_ID && f.feed_ID === blog.feed_ID ) ||
-				( blog.site_ID && f.blog_ID === blog.site_ID )
+		subscriptions.some(
+			( subscription ) =>
+				( blog.feed_ID && subscription.feed_ID === blog.feed_ID ) ||
+				( blog.site_ID && subscription.blog_ID === blog.site_ID )
 		);
 
 	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {

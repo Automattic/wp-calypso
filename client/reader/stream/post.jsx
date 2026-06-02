@@ -2,7 +2,7 @@ import { Component } from 'react';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useFollowForFeed } from 'calypso/reader/data/follows';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/follows';
 import { withSite } from 'calypso/reader/data/site';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 
@@ -66,7 +66,7 @@ export default function ReaderPostCardAdapterContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
 	const commentsApiDisabled = useCommentsApiDisabled( siteId );
 	const { data: feed } = useFeedQuery( feedId );
-	const follow = useFollowForFeed( feedId );
+	const follow = useSiteSubscriptionForFeed( feedId );
 	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
 
 	return (

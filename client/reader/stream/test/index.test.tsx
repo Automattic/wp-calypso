@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { getFollowsQueryKey, type FollowsInfiniteData } from '@automattic/api-queries';
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -12,7 +15,7 @@ import { thunk as thunkMiddleware } from 'redux-thunk';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import Stream from '../index';
-import type { FollowItem } from '@automattic/api-core';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
@@ -161,14 +164,14 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
 
-function makeFollowsData(
-	follows: FollowItem[],
-	totalCount = follows.length
-): FollowsInfiniteData {
+function makeSiteSubscriptionsData(
+	subscriptions: SiteSubscriptionItem[],
+	totalCount = subscriptions.length
+): SiteSubscriptionsInfiniteData {
 	return {
 		pages: [
 			{
-				follows,
+				subscriptions,
 				totalCount,
 				page: 1,
 				number: 200,
@@ -192,9 +195,12 @@ const baseState = {
 	},
 };
 
-const followedFollows = [ { feed_ID: 1, is_following: true } ];
+const subscribedSites = [ { feed_ID: 1, is_following: true } ];
 
-function seedFollowsQuery( queryClient: QueryClient, followItems: Partial< FollowItem >[] = [] ) {
+function seedSiteSubscriptionsQuery(
+	queryClient: QueryClient,
+	followItems: Partial< SiteSubscriptionItem >[] = []
+) {
 	const items = followItems.map(
 		( item ) =>
 			( {
@@ -202,16 +208,16 @@ function seedFollowsQuery( queryClient: QueryClient, followItems: Partial< Follo
 				URL: item.URL ?? '',
 				feed_URL: item.feed_URL ?? '',
 				is_following: Boolean( item.is_following ),
-			} ) as FollowItem
+			} ) as SiteSubscriptionItem
 	);
-	queryClient.setQueryData( getFollowsQueryKey(), makeFollowsData( items ) );
+	queryClient.setQueryData( getSiteSubscriptionsQueryKey(), makeSiteSubscriptionsData( items ) );
 }
 
 function renderStream(
 	extraProps: Record< string, unknown > = {},
 	initialStateOverride = {},
 	queryClient = makeQueryClient(),
-	followItems: Partial< FollowItem >[] = []
+	followItems: Partial< SiteSubscriptionItem >[] = []
 ) {
 	const actions: unknown[] = [];
 	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
@@ -219,7 +225,7 @@ function renderStream(
 		return next( action );
 	};
 	const seedState = { ...baseState, ...initialStateOverride };
-	seedFollowsQuery( queryClient, followItems );
+	seedSiteSubscriptionsQuery( queryClient, followItems );
 	// `<Stream>` keeps post selection in the React Query cache (see
 	// `useStreamPostKeySelection`); only thunks like `likePost` need to dispatch
 	// against the store, so a passthrough reducer is enough.
@@ -365,7 +371,7 @@ describe( 'Stream — render states', () => {
 
 	it( 'injects prompt blocks into long streams', async () => {
 		mockLikesEndpoint( Array.from( { length: 11 }, ( _, index ) => apiPost( index + 1 ) ) );
-		renderStream( {}, {}, undefined, followedFollows );
+		renderStream( {}, {}, undefined, subscribedSites );
 
 		await waitFor( () => expect( screen.getByTestId( 'post-11' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'prompt-block' ) ).toBeVisible();
@@ -384,7 +390,7 @@ describe( 'Stream — render states', () => {
 			{ recsStreamKey: 'custom_recs_posts_with_images' },
 			{},
 			undefined,
-			followedFollows
+			subscribedSites
 		);
 
 		await waitFor( () => expect( screen.getByTestId( 'recommendation-block' ) ).toBeVisible() );

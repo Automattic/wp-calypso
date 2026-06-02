@@ -1,12 +1,11 @@
 import { prepareComparableUrl, type ReadSiteResponse } from '@automattic/api-core';
-import { getFollowsQueryKey, readSiteQuery } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey, readSiteQuery } from '@automattic/api-queries';
 import type { QueryClient } from '@tanstack/react-query';
 
 const FOLLOW_SENSITIVE_QUERY_KEYS = [
-	getFollowsQueryKey(),
+	getSiteSubscriptionsQueryKey(),
 	[ 'read', 'stream', 'following' ],
 	[ 'read', 'stream', 'infinite', 'following' ],
-	[ 'read', 'site-subscriptions' ],
 	[ 'read', 'subscriptions-count' ],
 ] as const;
 

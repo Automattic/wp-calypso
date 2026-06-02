@@ -1,4 +1,4 @@
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -27,7 +27,7 @@ export const useRefreshFollowingStreams = () => {
 	const queryArguments = useSelector( getCurrentQueryArguments );
 
 	return () => {
-		queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+		queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 
 		const path = removeLocaleFromPathLocaleInFront( window.location.pathname );
 

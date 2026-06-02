@@ -10,7 +10,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useHasFollowOrganization } from 'calypso/reader/data/follows';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/follows';
 import { useSite } from 'calypso/reader/data/site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -217,7 +217,7 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
-	const hasOrganization = useHasFollowOrganization( feedId, blogId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 	return (
 		<ConnectedCrossPost
 			{ ...props }

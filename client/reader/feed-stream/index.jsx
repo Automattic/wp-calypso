@@ -5,7 +5,7 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useFollowForFeed } from 'calypso/reader/data/follows';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/follows';
 import { useSite } from 'calypso/reader/data/site';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount, getSiteName } from 'calypso/reader/get-helpers';
@@ -28,7 +28,7 @@ const FeedStream = ( props ) => {
 	const { data: fetchedFeed, isError: isFeedError } = useFeedQuery( feedId );
 	let feed = fetchedFeed;
 	const siteId = getReaderSiteId( feed );
-	const followForFeed = useFollowForFeed( feedId );
+	const followForFeed = useSiteSubscriptionForFeed( feedId );
 	const isBlocked = useSelector( ( state ) => siteId && isSiteBlocked( state, siteId ) );
 	const postCount = useSelector(
 		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )

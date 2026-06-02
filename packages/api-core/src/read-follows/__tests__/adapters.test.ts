@@ -1,4 +1,4 @@
-import { adaptFollow, prepareComparableUrl } from '../adapters';
+import { adaptSiteSubscription, prepareComparableUrl } from '../adapters';
 
 describe( 'read follows adapters', () => {
 	it( 'prepares comparable URLs by stripping protocol, lowercasing, and removing one trailing slash', () => {
@@ -7,7 +7,7 @@ describe( 'read follows adapters', () => {
 	} );
 
 	it( 'preserves subscription classification fields', () => {
-		const follow = adaptFollow( {
+		const follow = adaptSiteSubscription( {
 			ID: '123',
 			URL: 'https://example.com/feed/',
 			is_paid_subscription: true,
@@ -39,7 +39,7 @@ describe( 'read follows adapters', () => {
 	} );
 
 	it( 'does not adapt malformed IDs to NaN', () => {
-		const follow = adaptFollow( {
+		const follow = adaptSiteSubscription( {
 			ID: 'not-a-number',
 			URL: 'https://example.com/feed/',
 		} );

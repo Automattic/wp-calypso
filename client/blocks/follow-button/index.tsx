@@ -3,7 +3,7 @@ import { omitBy } from 'lodash';
 import {
 	getFollowingSource,
 	useFollowSite,
-	useIsFollowing,
+	useIsSubscribed,
 	useUnfollowSite,
 } from 'calypso/reader/data/follows';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -48,7 +48,7 @@ function FollowButtonContainer( {
 }: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const following = useIsFollowing( {
+	const following = useIsSubscribed( {
 		feedUrl: siteUrl,
 		feedId,
 		blogId: siteId,

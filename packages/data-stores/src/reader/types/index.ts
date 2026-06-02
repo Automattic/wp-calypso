@@ -1,8 +1,7 @@
 import { EmailDeliveryFrequency } from '../constants';
-import type { FollowItem } from '@automattic/api-core';
 import type { Railcar } from '@automattic/calypso-analytics';
 
-export type { FollowItem } from '@automattic/api-core';
+export type { SiteSubscriptionItem } from '@automattic/api-core';
 
 export type EmailFormatType = 'html' | 'text';
 
@@ -42,23 +41,6 @@ export type SiteSubscriptionDeliveryMethods = {
 		send_posts: boolean;
 		send_comments?: boolean;
 	};
-};
-
-export type PagedQueryResult< TDataType, TKey extends string > = {
-	pages: {
-		[ K in TKey ]: TDataType[];
-	}[];
-	pageParams: number;
-};
-
-export type SiteSubscriptionPage = {
-	subscriptions: FollowItem[];
-	total_subscriptions: number;
-};
-
-export type SiteSubscriptionsPages = {
-	pageParams: [];
-	pages: SiteSubscriptionPage[];
 };
 
 export type PostSubscription = {

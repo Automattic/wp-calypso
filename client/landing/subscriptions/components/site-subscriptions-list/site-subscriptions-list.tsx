@@ -7,7 +7,7 @@ import { Notice, NoticeType } from '../notice';
 import { VirtualizedList } from '../virtualized-list';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
-import type { FollowItem } from '@automattic/data-stores/src/reader';
+import type { SiteSubscriptionItem } from '@automattic/data-stores/src/reader';
 
 type SiteSubscriptionsListProps = {
 	emptyComponent?: React.ComponentType;
@@ -128,7 +128,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 
-			<VirtualizedList< FollowItem > items={ filteredSubscriptions }>
+			<VirtualizedList< SiteSubscriptionItem > items={ filteredSubscriptions }>
 				{ ( { item, key, style, registerChild } ) => (
 					<SiteSubscriptionRow
 						{ ...item }

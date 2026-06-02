@@ -3,7 +3,7 @@
  */
 import {
 	readSiteQuery,
-	getFollowsQueryKey,
+	getSiteSubscriptionsQueryKey,
 	getReadSiteRecommendationsInfiniteQueryKey,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -21,11 +21,11 @@ import {
 	useUnfollowSite,
 } from '../use-follow-mutations';
 import type {
-	FollowItem,
+	SiteSubscriptionItem,
 	ReadSiteRecommendationsResponse,
 	ReadSiteResponse,
 } from '@automattic/api-core';
-import type { FollowsInfiniteData } from '@automattic/api-queries';
+import type { SiteSubscriptionsInfiniteData } from '@automattic/api-queries';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -75,7 +75,7 @@ const makeRecommendedSite = ( blogId: number, feedId: number ) => ( {
 	URL: `https://site-${ blogId }.example.com`,
 } );
 
-const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
+const makeFollow = ( overrides: Partial< SiteSubscriptionItem > = {} ): SiteSubscriptionItem => ( {
 	ID: 1,
 	URL: 'https://example.com',
 	feed_URL: 'https://example.com/feed',
@@ -85,13 +85,16 @@ const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 	...overrides,
 } );
 
-const seedFollowsCache = ( queryClient: QueryClient, follows: FollowItem[] ) => {
-	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), {
+const seedSiteSubscriptionsCache = (
+	queryClient: QueryClient,
+	subscriptions: SiteSubscriptionItem[]
+) => {
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >( getSiteSubscriptionsQueryKey(), {
 		pageParams: [ 1 ],
 		pages: [
 			{
-				follows,
-				totalCount: follows.length,
+				subscriptions,
+				totalCount: subscriptions.length,
 				page: 1,
 				number: 200,
 			},
@@ -99,10 +102,10 @@ const seedFollowsCache = ( queryClient: QueryClient, follows: FollowItem[] ) => 
 	} );
 };
 
-const getCachedFollows = ( queryClient: QueryClient ) =>
+const getCachedSiteSubscriptions = ( queryClient: QueryClient ) =>
 	queryClient
-		.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() )
-		?.pages.flatMap( ( page ) => page.follows ) ?? [];
+		.getQueryData< SiteSubscriptionsInfiniteData >( getSiteSubscriptionsQueryKey() )
+		?.pages.flatMap( ( page ) => page.subscriptions ) ?? [];
 
 const getRecommendedSiteQueryKey = () =>
 	getReadSiteRecommendationsInfiniteQueryKey( {
@@ -177,10 +180,9 @@ describe( 'follow mutation cache helpers', () => {
 	it( 'invalidateFollowSensitiveCaches invalidates follows and follow-sensitive read caches', async () => {
 		const queryClient = makeQueryClient();
 		const queryKeys = [
-			getFollowsQueryKey(),
+			getSiteSubscriptionsQueryKey(),
 			[ 'read', 'stream', 'following' ],
 			[ 'read', 'stream', 'infinite', 'following' ],
-			[ 'read', 'site-subscriptions' ],
 			[ 'read', 'subscriptions-count' ],
 		] as const;
 
@@ -251,7 +253,7 @@ describe( 'follow mutation cache helpers', () => {
 		} );
 
 		await waitFor( () =>
-			expect( getCachedFollows( queryClient ) ).toMatchObject( [
+			expect( getCachedSiteSubscriptions( queryClient ) ).toMatchObject( [
 				{
 					feed_URL: 'https://example.com/feed',
 					is_following: true,
@@ -278,12 +280,12 @@ describe( 'follow mutation cache helpers', () => {
 
 		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 
-		expect( getCachedFollows( queryClient ) ).toEqual( [] );
+		expect( getCachedSiteSubscriptions( queryClient ) ).toEqual( [] );
 	} );
 
 	it( 'useUnfollowSite optimistically marks the requested feed as not following', async () => {
 		const queryClient = makeQueryClient();
-		seedFollowsCache( queryClient, [ makeFollow() ] );
+		seedSiteSubscriptionsCache( queryClient, [ makeFollow() ] );
 		nock( BASE ).post( '/rest/v1.1/read/following/mine/delete' ).delay( 100 ).reply( 500, {
 			error: 'unfollow_failed',
 		} );
@@ -297,7 +299,7 @@ describe( 'follow mutation cache helpers', () => {
 		} );
 
 		await waitFor( () =>
-			expect( getCachedFollows( queryClient )[ 0 ] ).toMatchObject( {
+			expect( getCachedSiteSubscriptions( queryClient )[ 0 ] ).toMatchObject( {
 				feed_URL: 'https://example.com/feed',
 				is_following: false,
 			} )
@@ -308,7 +310,7 @@ describe( 'follow mutation cache helpers', () => {
 
 	it( 'useUnfollowSite rolls back the optimistic unfollow when the request fails', async () => {
 		const queryClient = makeQueryClient();
-		seedFollowsCache( queryClient, [ makeFollow() ] );
+		seedSiteSubscriptionsCache( queryClient, [ makeFollow() ] );
 		nock( BASE ).post( '/rest/v1.1/read/following/mine/delete' ).reply( 500, {
 			error: 'unfollow_failed',
 		} );
@@ -323,7 +325,7 @@ describe( 'follow mutation cache helpers', () => {
 
 		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 
-		expect( getCachedFollows( queryClient )[ 0 ] ).toMatchObject( {
+		expect( getCachedSiteSubscriptions( queryClient )[ 0 ] ).toMatchObject( {
 			feed_URL: 'https://example.com/feed',
 			is_following: true,
 		} );

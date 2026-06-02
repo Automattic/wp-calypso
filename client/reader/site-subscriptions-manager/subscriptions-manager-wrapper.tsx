@@ -1,4 +1,4 @@
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
@@ -17,11 +17,11 @@ import {
 import { SubscriptionsEllipsisMenu } from 'calypso/landing/subscriptions/components/subscriptions-ellipsis-menu';
 import './style.scss';
 
-const useInvalidateFollowsOnUnmount = () => {
+const useInvalidateSiteSubscriptionsOnUnmount = () => {
 	const queryClient = useQueryClient();
 	useEffect( () => {
 		return () => {
-			queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+			queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		};
 	}, [ queryClient ] );
 };
@@ -55,11 +55,11 @@ const SubscriptionsManagerWrapper = ( {
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const selectedTab = getSelectedTab( page.current );
 
-	// Invalidate follows on unmount to ensure that the shared query
+	// Invalidate site subscriptions on unmount to ensure that the shared query
 	// cache is in a consistent state when the user navigates.
 	// This is necessary because the subscription manager does not
-	// sync its subscriptions state with the follows query cache.
-	useInvalidateFollowsOnUnmount();
+	// sync its subscriptions state with the shared site-subscriptions query cache.
+	useInvalidateSiteSubscriptionsOnUnmount();
 
 	const selectedTabText = useMemo( () => {
 		switch ( selectedTab ) {

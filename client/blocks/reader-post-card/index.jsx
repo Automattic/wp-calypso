@@ -12,7 +12,7 @@ import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useHasFollowOrganization } from 'calypso/reader/data/follows';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/follows';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
@@ -322,7 +322,7 @@ export default function ReaderPostCardContainer( props ) {
 	const feedId = props.postKey?.feedId ?? props.post?.feed_ID;
 	const blogId = props.postKey?.blogId ?? props.post?.site_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
-	const hasOrganization = useHasFollowOrganization( feedId, blogId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 
 	return (
 		<ConnectedReaderPostCard

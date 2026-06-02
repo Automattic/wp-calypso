@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/follows';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
@@ -90,9 +90,9 @@ const ReaderOnboardingRsm = ( {
 	// so the max picks the live follows-query value. If a future flow ever allows
 	// unfollowing a pre-session subscription from within onboarding, revisit
 	// this and gate on follows query hydration rather than blindly take the max.
-	const { follows } = useFollows();
-	const queryFollowedNonSelfSitesCount = follows.filter(
-		( follow ) => follow.is_following && ! follow.is_owner
+	const { subscriptions } = useCachedSiteSubscriptions();
+	const queryFollowedNonSelfSitesCount = subscriptions.filter(
+		( subscription ) => subscription.is_following && ! subscription.is_owner
 	).length;
 	const followedNonSelfSitesCount = Math.max(
 		nonSelfSubscriptionsCount,

@@ -1,7 +1,7 @@
 import {
-	getFollowsCountFromData,
-	getFollowsQueryKey,
-	type FollowsInfiniteData,
+	getSiteSubscriptionsCountFromData,
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { useDispatch } from 'react-redux';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -24,8 +24,10 @@ export const useRecordReaderTracksEvent = () => {
 	): void => {
 		const queryClient = getCalypsoQueryClient();
 		const followsCount = queryClient
-			? getFollowsCountFromData(
-					queryClient.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() )
+			? getSiteSubscriptionsCountFromData(
+					queryClient.getQueryData< SiteSubscriptionsInfiniteData >(
+						getSiteSubscriptionsQueryKey()
+					)
 			  )
 			: 0;
 

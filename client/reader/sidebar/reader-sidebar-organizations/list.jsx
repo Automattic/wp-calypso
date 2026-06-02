@@ -10,7 +10,7 @@ import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
-import { useOrganizationFollows } from 'calypso/reader/data/follows';
+import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/follows';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
@@ -110,7 +110,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 }
 
 function OrganizationsListWithFollows( props ) {
-	const sites = useOrganizationFollows( props.organization.id );
+	const sites = useOrganizationSiteSubscriptions( props.organization.id );
 	return <ReaderSidebarOrganizationsList { ...props } sites={ sites } />;
 }
 

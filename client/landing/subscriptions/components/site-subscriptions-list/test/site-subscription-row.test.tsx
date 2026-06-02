@@ -2,7 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { getFollowsQueryKey, type FollowsInfiniteData } from '@automattic/api-queries';
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { Reader } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -13,7 +16,7 @@ import {
 	SubscriptionsPortal,
 } from '../../subscription-manager-context';
 import SiteSubscriptionRow from '../site-subscription-row';
-import type { FollowItem } from '@automattic/api-core';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 const mockUnsubscribe = jest.fn();
@@ -81,7 +84,7 @@ jest.mock( '../../settings', () => ( {
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
+const makeFollow = ( overrides: Partial< SiteSubscriptionItem > = {} ): SiteSubscriptionItem => ( {
 	ID: 1,
 	URL: 'https://example.com',
 	feed_URL: 'https://example.com/feed',
@@ -120,13 +123,16 @@ const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 	...overrides,
 } );
 
-const seedFollowsCache = ( queryClient: QueryClient, follows: FollowItem[] ) => {
-	queryClient.setQueryData< FollowsInfiniteData >( getFollowsQueryKey(), {
+const seedSiteSubscriptionsCache = (
+	queryClient: QueryClient,
+	subscriptions: SiteSubscriptionItem[]
+) => {
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >( getSiteSubscriptionsQueryKey(), {
 		pageParams: [ 1 ],
 		pages: [
 			{
-				follows,
-				totalCount: follows.length,
+				subscriptions,
+				totalCount: subscriptions.length,
 				page: 1,
 				number: 200,
 			},
@@ -135,9 +141,12 @@ const seedFollowsCache = ( queryClient: QueryClient, follows: FollowItem[] ) => 
 };
 
 const getCachedFollow = ( queryClient: QueryClient ) =>
-	queryClient.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() )?.pages[ 0 ]?.follows[ 0 ];
+	queryClient.getQueryData< SiteSubscriptionsInfiniteData >( getSiteSubscriptionsQueryKey() )
+		?.pages[ 0 ]?.subscriptions[ 0 ];
 
-const makeSiteSubscription = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
+const makeSiteSubscription = (
+	overrides: Partial< SiteSubscriptionItem > = {}
+): SiteSubscriptionItem => ( {
 	ID: '1',
 	URL: 'https://example.com',
 	blog_ID: '123',
@@ -198,7 +207,7 @@ describe( 'SiteSubscriptionRow', () => {
 
 	it( 'updates the follows cache after unsubscribing', () => {
 		const queryClient = makeQueryClient();
-		seedFollowsCache( queryClient, [ makeFollow() ] );
+		seedSiteSubscriptionsCache( queryClient, [ makeFollow() ] );
 
 		renderRow( queryClient );
 

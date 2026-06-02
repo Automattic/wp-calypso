@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import connectSite from 'calypso/lib/reader-connect-site';
-import { useIsFollowing } from 'calypso/reader/data/follows';
+import { useIsSubscribed } from 'calypso/reader/data/follows';
 import ReaderSubscriptionListItem from '.';
 
 const noop = () => {};
@@ -113,7 +113,7 @@ const ConnectedWithSite = compose(
 )( ConnectedSubscriptionListItem );
 
 export default function SubscriptionListItemContainer( props ) {
-	const isFollowing = useIsFollowing( {
+	const isFollowing = useIsSubscribed( {
 		feedId: props.feedId ?? null,
 		blogId: props.siteId ?? null,
 	} );

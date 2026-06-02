@@ -1,4 +1,4 @@
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { getCachedPost } from 'calypso/reader/data/post/cache';
 import { getCachedStreamItems } from 'calypso/reader/data/stream';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -49,7 +49,7 @@ export const onSuccess = ( action, response ) => ( dispatch ) => {
 
 		// get stream post identifier
 		const queryClient = getCalypsoQueryClient();
-		queryClient?.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+		queryClient?.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		const globalIds = queryClient
 			? getCachedStreamItems( queryClient, { streamKey: identifier } ).reduce( ( acc, item ) => {
 					const post = getCachedPost( queryClient, item );

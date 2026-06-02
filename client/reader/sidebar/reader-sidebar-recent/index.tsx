@@ -9,7 +9,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { useFollowedSites } from 'calypso/reader/data/follows';
+import { useSubscribedSites } from 'calypso/reader/data/follows';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -30,7 +30,7 @@ type Props = {
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
-type ReaderSidebarSite = Pick< ReturnType< typeof useFollowedSites >[ number ], 'name' | 'URL' >;
+type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ], 'name' | 'URL' >;
 
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
@@ -60,7 +60,7 @@ const ReaderSidebarRecent = ( {
 	className,
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
-	const sites = useFollowedSites();
+	const sites = useSubscribedSites();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();

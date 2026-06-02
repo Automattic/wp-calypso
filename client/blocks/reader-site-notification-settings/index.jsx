@@ -14,7 +14,7 @@ import EmailMeNewCommentsToggle from 'calypso/landing/subscriptions/components/s
 import EmailMeNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/notify-me-of-new-posts-toggle';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
-import { useFollowDeliveryMutations, useFollows } from 'calypso/reader/data/follows';
+import { useFollowDeliveryMutations, useSiteSubscriptions } from 'calypso/reader/data/follows';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -30,14 +30,14 @@ function SiteNotificationSettings( {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const iconRef = useRef( null );
 	const spanRef = useRef( null );
-	const { follows } = useFollows( { fetchAllPages: showPopover } );
-	const follow = follows.find( ( item ) => item.blog_ID === siteId );
-	const deliveryMethodsEmail = get( follow, [ 'delivery_methods', 'email' ], {} );
+	const { subscriptions } = useSiteSubscriptions( { fetchAllPages: showPopover } );
+	const subscription = subscriptions.find( ( item ) => item.blog_ID === siteId );
+	const deliveryMethodsEmail = get( subscription, [ 'delivery_methods', 'email' ], {} );
 	const sendNewCommentsByEmail = !! deliveryMethodsEmail.send_comments;
 	const sendNewPostsByEmail = !! deliveryMethodsEmail.send_posts;
 	const emailDeliveryFrequency = deliveryMethodsEmail.post_delivery_frequency;
 	const sendNewPostsByNotification = get(
-		follow,
+		subscription,
 		[ 'delivery_methods', 'notification', 'send_posts' ],
 		false
 	);

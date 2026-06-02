@@ -1,13 +1,13 @@
 import {
-	getAliasedFollowFeedUrl,
-	getFollowByBlogIdFromData,
-	getFollowByFeedIdFromData,
-	getFollowedSitesFromData,
-	getIsFollowingFromData,
-	getOrganizationFollowsFromData,
+	getAliasedSiteSubscriptionFeedUrl,
+	getIsSubscribedFromData,
+	getSiteSubscriptionByBlogIdFromData,
+	getSiteSubscriptionByFeedIdFromData,
+	getSubscribedSitesFromData,
+	getOrganizationSiteSubscriptionsFromData,
 } from '@automattic/api-queries';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import { useFollows } from './use-follows';
+import { useSiteSubscriptions } from './use-site-subscriptions';
 
 type FollowId = number | string;
 
@@ -20,44 +20,38 @@ type IsFollowingArgs = {
 const hasId = ( id: FollowId | null | undefined ): id is FollowId =>
 	typeof id !== 'undefined' && id !== null;
 
-export const useFollowForBlog = ( blogId?: FollowId ) => {
-	const { data } = useFollows();
+export const useSiteSubscriptionForFeed = ( feedId?: FollowId ) => {
+	const { data } = useSiteSubscriptions();
 
-	return hasId( blogId ) ? getFollowByBlogIdFromData( data, blogId ) : undefined;
+	return hasId( feedId ) ? getSiteSubscriptionByFeedIdFromData( data, feedId ) : undefined;
 };
 
-export const useFollowForFeed = ( feedId?: FollowId ) => {
-	const { data } = useFollows();
+export const useIsSubscribed = ( args: IsFollowingArgs ) => {
+	const { data } = useSiteSubscriptions();
 
-	return hasId( feedId ) ? getFollowByFeedIdFromData( data, feedId ) : undefined;
+	return getIsSubscribedFromData( data, args );
 };
 
-export const useIsFollowing = ( args: IsFollowingArgs ) => {
-	const { data } = useFollows();
+export const useAliasedSiteSubscriptionFeedUrl = ( feedUrl: string ) => {
+	const { data } = useSiteSubscriptions();
 
-	return getIsFollowingFromData( data, args );
+	return getAliasedSiteSubscriptionFeedUrl( data, feedUrl ) ?? feedUrl;
 };
 
-export const useAliasedFollowFeedUrl = ( feedUrl: string ) => {
-	const { data } = useFollows();
+export const useSubscribedSites = () => {
+	const { data } = useSiteSubscriptions();
 
-	return getAliasedFollowFeedUrl( data, feedUrl ) ?? feedUrl;
+	return getSubscribedSitesFromData( data, NO_ORG_ID );
 };
 
-export const useFollowedSites = () => {
-	const { data } = useFollows();
+export const useOrganizationSiteSubscriptions = ( organizationId: number ) => {
+	const { data } = useSiteSubscriptions();
 
-	return getFollowedSitesFromData( data, NO_ORG_ID );
-};
-
-export const useOrganizationFollows = ( organizationId: number ) => {
-	const { data } = useFollows();
-
-	return getOrganizationFollowsFromData( data, organizationId );
+	return getOrganizationSiteSubscriptionsFromData( data, organizationId );
 };
 
 export const useOrganizationFeedsInfo = ( organizationId: number ) => {
-	const sites = useOrganizationFollows( organizationId );
+	const sites = useOrganizationSiteSubscriptions( organizationId );
 
 	return {
 		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
@@ -66,11 +60,14 @@ export const useOrganizationFeedsInfo = ( organizationId: number ) => {
 	};
 };
 
-export const useHasFollowOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {
-	const { data } = useFollows();
-	const feedFollow = hasId( feedId ) ? getFollowByFeedIdFromData( data, feedId ) : undefined;
+export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {
+	const { data } = useSiteSubscriptions();
+	const feedFollow = hasId( feedId )
+		? getSiteSubscriptionByFeedIdFromData( data, feedId )
+		: undefined;
 	const follow =
-		feedFollow ?? ( hasId( blogId ) ? getFollowByBlogIdFromData( data, blogId ) : undefined );
+		feedFollow ??
+		( hasId( blogId ) ? getSiteSubscriptionByBlogIdFromData( data, blogId ) : undefined );
 
 	return !! follow?.organization_id;
 };

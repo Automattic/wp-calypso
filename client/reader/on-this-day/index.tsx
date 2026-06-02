@@ -10,7 +10,7 @@ import { UnknownAction } from 'redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/follows';
 import { useCachedPosts } from 'calypso/reader/data/post/cache';
 import {
 	isPaddingStreamItem,
@@ -107,14 +107,14 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	);
 	const postKeys = useMemo( () => postItems.map( postKeyForItem ), [ postItems ] );
 	const cachedPosts = useCachedPosts( postKeys );
-	const { follows } = useFollows();
+	const { subscriptions } = useSiteSubscriptions();
 	const siteIconsByFeedId = useMemo( () => {
 		const items = streamItems;
 		if ( ! items ) {
 			return {};
 		}
-		const followsByFeedId = new Map(
-			follows.map( ( follow ) => [ Number( follow.feed_ID ), follow ] )
+		const subscriptionsByFeedId = new Map(
+			subscriptions.map( ( subscription ) => [ Number( subscription.feed_ID ), subscription ] )
 		);
 
 		return items.reduce( ( acc: Record< number, unknown >, item: StreamListItem ) => {
@@ -124,7 +124,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 
 			if ( item.feedId ) {
 				const feedId = Number( item.feedId );
-				const feedSubscription = followsByFeedId.get( feedId );
+				const feedSubscription = subscriptionsByFeedId.get( feedId );
 				if ( feedSubscription?.site_icon ) {
 					acc[ feedId ] = feedSubscription.site_icon;
 				}
@@ -132,7 +132,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 
 			return acc;
 		}, {} );
-	}, [ follows, streamItems ] );
+	}, [ subscriptions, streamItems ] );
 
 	const posts = useMemo( () => {
 		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {

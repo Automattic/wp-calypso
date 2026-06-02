@@ -12,7 +12,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resemblesUrl } from 'calypso/lib/url';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useFollowForFeed } from 'calypso/reader/data/follows';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/follows';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -271,7 +271,7 @@ const ConnectedReaderSubscriptionListItem = compose(
 
 export default function ReaderSubscriptionListItemContainer( props ) {
 	const { data: feed, isError: hasFeedError } = useFeedQuery( props.feedId );
-	const follow = useFollowForFeed( props.feedId );
+	const follow = useSiteSubscriptionForFeed( props.feedId );
 	let feedWithFollowData = feed;
 
 	if ( feed && follow ) {

@@ -19,7 +19,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/follows';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import {
@@ -844,7 +844,7 @@ function getStreamKey( state, streamKey ) {
 
 const withStreamPosts = ( WrappedComponent ) =>
 	function StreamPostsContainer( props ) {
-		const { count: followsCount } = useFollows();
+		const { count: followsCount } = useSiteSubscriptions();
 		const streamPostsQuery = useInfiniteStream( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,

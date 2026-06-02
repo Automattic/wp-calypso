@@ -9,7 +9,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import { useHasFollowOrganization } from 'calypso/reader/data/follows';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/follows';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -419,7 +419,7 @@ const ConnectedPostEllipsisMenu = connect(
 
 export default function PostEllipsisMenuContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
-	const hasOrganization = useHasFollowOrganization( feedId, isExternal ? null : siteId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, isExternal ? null : siteId );
 
 	return <ConnectedPostEllipsisMenu { ...props } hasOrganization={ hasOrganization } />;
 }

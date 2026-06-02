@@ -1,4 +1,4 @@
-import { getFollowsQueryKey, readFeedQuery } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey, readFeedQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { getCachedFeed } from 'calypso/reader/data/feed';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
@@ -105,7 +105,9 @@ describe( 'seen-posts mark-all-as-seen data layer', () => {
 		)( dispatch );
 
 		expect( dispatch ).toHaveBeenCalledWith( requestUnseenStatus() );
-		expect( invalidateQueries ).toHaveBeenCalledWith( { queryKey: getFollowsQueryKey() } );
+		expect( invalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: getSiteSubscriptionsQueryKey(),
+		} );
 		expect( dispatch ).toHaveBeenCalledWith(
 			receiveMarkAllAsSeen( {
 				feedIds: [ 200 ],

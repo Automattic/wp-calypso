@@ -1,9 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import { adaptFollow } from './adapters';
+import { adaptSiteSubscription } from './adapters';
 import type {
 	FollowDeliveryResponse,
 	FollowDeliveryParams,
-	FollowItem,
+	SiteSubscriptionItem,
 	FollowSiteParams,
 	FollowSiteResponse,
 	UnfollowSiteParams,
@@ -79,7 +79,7 @@ export const followSite = async ( {
 	subscriptionId,
 	emailId,
 	blogId,
-}: FollowSiteParams ): Promise< FollowItem > => {
+}: FollowSiteParams ): Promise< SiteSubscriptionItem > => {
 	const response: FollowSiteResponse = await wpcom.req.post( {
 		path: '/read/following/mine/new',
 		apiVersion: '1.1',
@@ -96,7 +96,7 @@ export const followSite = async ( {
 		throw error;
 	}
 
-	return adaptFollow( response.subscription );
+	return adaptSiteSubscription( response.subscription );
 };
 
 export const unfollowSite = async ( {

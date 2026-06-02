@@ -1,5 +1,5 @@
 import './style.scss';
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -45,7 +45,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 
 		// Do not refresh if we are on "Add New" tab. We show subscriptions list on that tab which takes care of the refresh.
 		if ( ! isAddNewTab ) {
-			queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+			queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		}
 	}, [ isAddNewTab, queryClient ] );
 

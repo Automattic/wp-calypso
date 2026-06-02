@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getFollowsQueryKey } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useRefreshFollowingStreams } from '../use-refresh-following-streams';
 
@@ -50,7 +50,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
-				queryKey: getFollowsQueryKey(),
+				queryKey: getSiteSubscriptionsQueryKey(),
 			} );
 		} );
 
@@ -59,7 +59,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
-				queryKey: getFollowsQueryKey(),
+				queryKey: getSiteSubscriptionsQueryKey(),
 			} );
 		} );
 
@@ -68,7 +68,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
-				queryKey: getFollowsQueryKey(),
+				queryKey: getSiteSubscriptionsQueryKey(),
 			} );
 		} );
 	} );
@@ -79,7 +79,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
-				getInvalidatedQueryKeyCalls( [ getFollowsQueryKey() ] )
+				getInvalidatedQueryKeyCalls( [ getSiteSubscriptionsQueryKey() ] )
 			);
 		} );
 	} );
@@ -91,7 +91,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
 				getInvalidatedQueryKeyCalls( [
-					getFollowsQueryKey(),
+					getSiteSubscriptionsQueryKey(),
 					[ 'read', 'stream', 'infinite', 'following' ],
 				] )
 			);
@@ -103,7 +103,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
 				getInvalidatedQueryKeyCalls( [
-					getFollowsQueryKey(),
+					getSiteSubscriptionsQueryKey(),
 					[ 'read', 'stream', 'infinite', 'following' ],
 				] )
 			);
@@ -114,7 +114,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
-				getInvalidatedQueryKeyCalls( [ getFollowsQueryKey() ] )
+				getInvalidatedQueryKeyCalls( [ getSiteSubscriptionsQueryKey() ] )
 			);
 		} );
 	} );
@@ -126,7 +126,10 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
-				getInvalidatedQueryKeyCalls( [ getFollowsQueryKey(), [ 'read', 'stream', 'on_this_day' ] ] )
+				getInvalidatedQueryKeyCalls( [
+					getSiteSubscriptionsQueryKey(),
+					[ 'read', 'stream', 'on_this_day' ],
+				] )
 			);
 		} );
 
@@ -137,7 +140,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
 				getInvalidatedQueryKeyCalls( [
-					getFollowsQueryKey(),
+					getSiteSubscriptionsQueryKey(),
 					[ 'read', 'stream', 'on_this_day:3:14' ],
 				] )
 			);
@@ -150,7 +153,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
 				getInvalidatedQueryKeyCalls( [
-					getFollowsQueryKey(),
+					getSiteSubscriptionsQueryKey(),
 					[ 'read', 'stream', 'on_this_day:3:14' ],
 				] )
 			);
@@ -162,7 +165,10 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
-				getInvalidatedQueryKeyCalls( [ getFollowsQueryKey(), [ 'read', 'stream', 'on_this_day' ] ] )
+				getInvalidatedQueryKeyCalls( [
+					getSiteSubscriptionsQueryKey(),
+					[ 'read', 'stream', 'on_this_day' ],
+				] )
 			);
 		} );
 
@@ -172,7 +178,7 @@ describe( 'useRefreshFollowingStreams', () => {
 			const { result } = renderHookWithProvider( () => useRefreshFollowingStreams() );
 			result.current();
 			expect( mockInvalidateQueries.mock.calls ).toEqual(
-				getInvalidatedQueryKeyCalls( [ getFollowsQueryKey() ] )
+				getInvalidatedQueryKeyCalls( [ getSiteSubscriptionsQueryKey() ] )
 			);
 		} );
 	} );

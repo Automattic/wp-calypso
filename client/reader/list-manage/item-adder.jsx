@@ -5,13 +5,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import SearchInput from 'calypso/components/search';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions } from 'calypso/reader/data/follows';
 import ListItem from './list-item';
 
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
 	const [ query, updateQuery ] = useState( '' );
-	useFollows();
+	useSiteSubscriptions();
 	const { data, isFetching } = useQuery(
 		readFeedSearchQuery( {
 			query,

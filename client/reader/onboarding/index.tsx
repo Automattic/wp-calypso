@@ -6,7 +6,7 @@ import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { useFollows } from 'calypso/reader/data/follows';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/follows';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -40,7 +40,7 @@ const ReaderOnboarding = ( {
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
 	const { data: followedTags } = useFollowedReaderTags();
-	const { follows } = useFollows();
+	const { subscriptions } = useCachedSiteSubscriptions();
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const hasUserGravatar = useSelector( hasGravatar );
 
@@ -52,7 +52,8 @@ const ReaderOnboarding = ( {
 	);
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
-	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
+	const hasFollowedSites =
+		subscriptions?.filter( ( subscription ) => ! subscription.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.
 	useEffect( () => {

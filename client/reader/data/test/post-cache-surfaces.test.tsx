@@ -85,7 +85,7 @@ jest.mock( 'calypso/components/navigation-header', () => ( {
 jest.mock( 'calypso/reader/stream/empty', () => () => <div data-testid="empty-stream" /> );
 
 jest.mock( 'calypso/reader/data/follows', () => ( {
-	useFollows: () => ( { follows: [] } ),
+	useSiteSubscriptions: () => ( { subscriptions: [] } ),
 } ) );
 
 jest.mock( 'calypso/state/reader-ui/actions', () => ( {

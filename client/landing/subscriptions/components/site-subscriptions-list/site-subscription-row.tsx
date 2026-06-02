@@ -1,4 +1,7 @@
-import { getFollowsQueryKey, markFollowUnfollowed } from '@automattic/api-queries';
+import {
+	getSiteSubscriptionsQueryKey,
+	markSiteSubscriptionUnfollowed,
+} from '@automattic/api-queries';
 import { ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -71,7 +74,7 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.FollowItem & {
+type SiteRowProps = Reader.SiteSubscriptionItem & {
 	layout?: 'full' | 'compact';
 	style?: React.CSSProperties;
 	forwardedRef?: React.Ref< HTMLDivElement >;
@@ -208,9 +211,9 @@ const SiteSubscriptionRow = ( {
 			doNotInvalidateSiteSubscriptions: true,
 			onSuccess: () => {
 				if ( url ) {
-					markFollowUnfollowed( queryClient, url );
+					markSiteSubscriptionUnfollowed( queryClient, url );
 				} else {
-					queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+					queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 				}
 				unsubscribeInProgress.current = false;
 
