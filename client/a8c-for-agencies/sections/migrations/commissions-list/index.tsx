@@ -23,12 +23,10 @@ export default function MigrationsCommissionsList( {
 	items,
 	fetchMigratedSites,
 	migrationTags,
-	canTagSitesForCommission,
 }: {
 	items: TaggedSite[];
 	fetchMigratedSites: () => void;
 	migrationTags: string[];
-	canTagSitesForCommission: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -96,7 +94,6 @@ export default function MigrationsCommissionsList( {
 						<ReviewStatusColumn
 							reviewStatus={ item.incentive_status }
 							rejectionReason={ item.incentive_rejection_reason }
-							canTagSitesForCommission={ canTagSitesForCommission }
 						/>
 					);
 				},
@@ -104,7 +101,7 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[ translate, canTagSitesForCommission ]
+		[ translate ]
 	);
 
 	return (
@@ -136,11 +133,7 @@ export default function MigrationsCommissionsList( {
 					</ItemsDataViews>
 				</div>
 			) : (
-				<MigrationsCommissionsListMobileView
-					commissions={ items }
-					actions={ actions }
-					canTagSitesForCommission={ canTagSitesForCommission }
-				/>
+				<MigrationsCommissionsListMobileView commissions={ items } actions={ actions } />
 			) }
 
 			{ activeModal?.kind === 'untag' && (

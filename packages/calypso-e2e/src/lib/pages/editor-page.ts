@@ -35,6 +35,7 @@ const selectors = {
 
 	// Within the editor body.
 	blockWarning: '.block-editor-warning',
+	editorBlock: '.block-editor-block-list__block',
 
 	// Toast
 	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
@@ -236,14 +237,18 @@ export class EditorPage {
 	/**
 	 * Select a template from the grid of options.
 	 *
-	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param {string|Locator} template Template label or already-located template option.
 	 * @param param1 Keyed object parameter.
 	 * @param {number} param1.timeout Timeout to apply.
 	 */
 	async selectTemplate(
-		label: string,
+		template: string | Locator,
 		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
 	) {
+		if ( typeof template !== 'string' ) {
+			return await template.click( { timeout } );
+		}
+
 		const editor = await this.getEditorParent();
 		const inserterSelector = await editor.getByRole( 'listbox', { name: 'All' } );
 		const modalSelector = await editor.getByRole( 'listbox', {
@@ -251,7 +256,7 @@ export class EditorPage {
 		} );
 		return await inserterSelector
 			.or( modalSelector )
-			.getByRole( 'option', { name: label, exact: true } )
+			.getByRole( 'option', { name: template, exact: true } )
 			.first()
 			.click( { timeout: timeout } );
 	}
@@ -284,7 +289,7 @@ export class EditorPage {
 		const enteredText = await this.editorGutenbergComponent.getText();
 
 		if ( text !== enteredText ) {
-			`Failed to verify entered text: got ${ enteredText }, expected ${ text }`;
+			throw new Error( `Failed to verify entered text: got ${ enteredText }, expected ${ text }` );
 		}
 	}
 
@@ -431,7 +436,7 @@ export class EditorPage {
 			// If it is not present, exit early.
 			try {
 				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
-			} catch ( e ) {
+			} catch {
 				// Probably doesn't exist. That's ok.
 			}
 
@@ -510,6 +515,8 @@ export class EditorPage {
 		exactMatch = true
 	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
+		const editorCanvas = await this.editor.canvas();
+		const editorBlockCountBefore = await editorCanvas.locator( selectors.editorBlock ).count();
 
 		await inserter.searchBlockInserter( patternName );
 		const locator = await inserter.selectBlockInserterResult( patternName, {
@@ -526,7 +533,21 @@ export class EditorPage {
 		const insertConfirmationToastLocator = editorParent.locator(
 			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
 		);
-		await insertConfirmationToastLocator.waitFor();
+		const insertedBlockLocator = editorCanvas
+			.locator( selectors.editorBlock )
+			.nth( editorBlockCountBefore );
+
+		try {
+			await Promise.any( [
+				insertConfirmationToastLocator.waitFor( { timeout: 15 * 1000 } ),
+				insertedBlockLocator.waitFor( { timeout: 15 * 1000 } ),
+			] );
+		} catch ( error ) {
+			throw new Error(
+				`Timed out waiting for pattern "${ actualPatternName }" to finish inserting.`,
+				{ cause: error }
+			);
+		}
 		return locator;
 	}
 

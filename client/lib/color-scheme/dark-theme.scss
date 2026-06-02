@@ -195,6 +195,46 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
+@mixin color-scheme-dark-theme-secondary-tertiary-and-link-buttons {
+	// Calypso's default WP button overrides set action tokens on the button
+	// itself, so root-level dark theme tokens do not reach these variants.
+	.components-button:is( .is-secondary, .is-tertiary, .is-link ):not(
+			:disabled,
+			[aria-disabled='true'],
+			.is-destructive,
+			.is-pressed,
+			[aria-pressed='true']
+		) {
+		--wp-components-color-accent: var( --color-link );
+		--wp-components-color-accent-darker-10: var( --color-link-dark );
+		--wp-components-color-accent-darker-20: var( --color-link );
+
+		color: var( --wp-components-color-accent );
+
+		&:hover,
+		&:active {
+			color: var( --wp-components-color-accent-darker-20 );
+		}
+	}
+
+	.components-button.is-secondary:not(
+			:disabled,
+			[aria-disabled='true'],
+			.is-destructive,
+			.is-pressed,
+			[aria-pressed='true']
+		):not( :focus ) {
+		border-color: var( --wp-components-color-accent );
+		box-shadow: inset 0 0 0 1px var( --wp-components-color-accent ), 0 0 0 currentColor;
+
+		&:hover {
+			border-color: var( --wp-components-color-accent-darker-20 );
+			box-shadow: inset 0 0 0 1px var( --wp-components-color-accent-darker-20 ),
+				0 0 0 currentColor;
+		}
+	}
+}
+
 @mixin color-scheme-dark-theme-calypso-tokens {
 	@include color-scheme-dark-theme-tokens;
 	@include color-scheme-dark-theme-palettes;
@@ -641,6 +681,36 @@ This mixin generates alias variables for a color palette. For example, the
 			background: var( --wp-components-color-gray-300 );
 			color: var( --wp-components-color-gray-800 );
 		}
+
+		&.has-values {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 85%,
+				var( --wp-components-color-accent-darker-20 )
+			);
+			color: var( --wp-components-color-accent-darker-20 );
+
+			&:hover,
+			&:focus-visible,
+			&[aria-expanded='true'] {
+				background: color-mix(
+					in srgb,
+					var( --dashboard-surface__background-color ) 75%,
+					var( --wp-components-color-accent-darker-20 )
+				);
+				color: var( --wp-components-color-accent-darker-20 );
+			}
+		}
+	}
+
+	.dataviews-filters__container-visibility-toggle .dataviews-filters-toggle__count {
+		background: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 70%,
+			var( --wp-components-color-accent-darker-20 )
+		);
+		color: var( --dashboard__text-color );
+		outline-color: var( --dashboard-surface__background-color );
 	}
 
 	.dataviews-footer {
@@ -747,6 +817,7 @@ This mixin generates alias variables for a color palette. For example, the
 	@include color-scheme-dark-theme-modal;
 	@include color-scheme-dark-theme-site-icon;
 	@include color-scheme-dark-theme-primary-button;
+	@include color-scheme-dark-theme-secondary-tertiary-and-link-buttons;
 	@include color-scheme-dark-theme-agenttic;
 }
 

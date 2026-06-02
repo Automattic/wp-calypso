@@ -1,9 +1,14 @@
 import { Button, DropdownMenu } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { close, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
+import { close, lineSolid, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
+import { ADMIN_BAR_BUTTON_ID } from '../../hooks/use-admin-bar-integration';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
+import type { AgentsManagerSelect } from '@automattic/data-stores';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -18,8 +23,19 @@ interface Props {
 
 export default function ChatHeader( { onClose, options, title, onBack }: Props ) {
 	const navigate = useNavigate();
+	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
+	const isDocked = useSelect(
+		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getIsDocked(),
+		[]
+	);
+	const [ hasAdminBarTrigger ] = useState(
+		() => !! document.getElementById( ADMIN_BAR_BUTTON_ID )
+	);
+
 	const showChatHistory =
 		! isReaderChatHost() && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
+	// Minimize only applies to the floating chat reachable from the WP admin bar.
+	const showMinimize = hasAdminBarTrigger && ! isDocked;
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -58,6 +74,15 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 						icon={ backup }
 						onClick={ () => navigate( '/history' ) }
 						label={ __( 'View history', '__i18n_text_domain__' ) }
+						size="small"
+					/>
+				) }
+				{ showMinimize && (
+					<Button
+						className="agents-manager-chat-header__minimize-btn"
+						icon={ lineSolid }
+						onClick={ () => setIsMinimized( true ) }
+						label={ __( 'Minimize', '__i18n_text_domain__' ) }
 						size="small"
 					/>
 				) }

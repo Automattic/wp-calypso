@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -288,20 +289,7 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useEffect( () => {
-		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
-		window.__agentsManagerActions.setChatInput = setChatInput;
-		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
-
-		return () => {
-			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
-				delete window.__agentsManagerActions.setChatInput;
-			}
-			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
-				delete window.__agentsManagerActions.submitChatMessage;
-			}
-		};
-	}, [ setChatInput, submitChatMessage ] );
+	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
