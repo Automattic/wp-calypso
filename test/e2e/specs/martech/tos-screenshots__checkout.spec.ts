@@ -13,7 +13,12 @@ const EXTENDED_TIMEOUT = 20 * 1000;
 
 test.describe(
 	DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ),
-	{ tag: [ tags.LEGAL ] },
+	// Desktop-only: the original (pre-migration) test ran in a single desktop
+	// context and validates the payment form before resizing for the per-viewport
+	// screenshots. On the mobile project the mobile UA auto-selects Google Pay,
+	// which collapses the payment step and hides the new-card form. The
+	// desktop/mobile/tablet screenshots are still captured here via setViewportSize.
+	{ tag: [ tags.LEGAL, tags.DESKTOP_ONLY ] },
 	() => {
 		test( 'Screenshot checkout page for all Mag-16 locales and upload', async ( { page } ) => {
 			test.setTimeout( 1800000 );
@@ -50,9 +55,8 @@ test.describe(
 					await restAPIClient.setMySettings( { language: locale } );
 					await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 
+					await page.setViewportSize( { width: 1280, height: 720 } );
 					await cartCheckoutPage.validatePaymentForm();
-
-					page.setViewportSize( { width: 1280, height: 720 } );
 					await page.screenshot( {
 						path: `tos_checkout_desktop_${ locale }.png`,
 						fullPage: true,
