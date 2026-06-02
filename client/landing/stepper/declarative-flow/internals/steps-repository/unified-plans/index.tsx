@@ -102,6 +102,9 @@ const PlansStepAdaptor: StepType< {
 		isInSignup?: boolean;
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
+		siteId?: number | null;
+		intervalType?: string;
+		isRefundable?: boolean;
 		displayedIntervals?: SupportedIntervalTypes[];
 		headerText?: string;
 		fallbackSubHeaderText?: string;
@@ -125,6 +128,9 @@ const PlansStepAdaptor: StepType< {
 		isInSignup,
 		isStepperUpgradeFlow,
 		selectedFeature,
+		siteId: siteIdFromFlow,
+		intervalType: intervalTypeFromFlow,
+		isRefundable,
 		hideEcommercePlan: hideEcommercePlanProp,
 		hideEnterprisePlan: hideEnterprisePlanProp,
 		hidePlansFeatureComparison: hidePlansFeatureComparisonProp,
@@ -180,6 +186,8 @@ const PlansStepAdaptor: StepType< {
 		domainCart: domainItems,
 		selectedThemeType,
 		siteUrl,
+		siteId: siteIdFromFlow,
+		isRefundable,
 	};
 
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
@@ -225,7 +233,10 @@ const PlansStepAdaptor: StepType< {
 	const isUsingStepContainerV2 =
 		shouldUseStepContainerV2( props.flow ) || props.flow === DOMAIN_FLOW;
 
-	if ( isLoadingSelectedTheme ) {
+	const isChangePlanWaitingForTerm =
+		useQuery().get( 'change_plan' ) === 'true' && ! intervalTypeFromFlow;
+
+	if ( isLoadingSelectedTheme || isChangePlanWaitingForTerm ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
@@ -262,7 +273,7 @@ const PlansStepAdaptor: StepType< {
 			intent={ plansIntent ?? undefined }
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
-			intervalType={ planInterval }
+			intervalType={ intervalTypeFromFlow ?? planInterval }
 			displayedIntervals={ displayedIntervals }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,

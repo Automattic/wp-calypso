@@ -143,6 +143,7 @@ function getExpiredNewPlanUrl( purchase: Purchase, isDowngrade = false ): string
 			};
 			return addQueryArgs( url, {
 				change_plan: 'true',
+				purchaseId: String( purchase.ID ),
 				intervalType: intervalMap[ purchase.bill_period_days ] ?? 'yearly',
 				redirect_to: dashboardLink( '/me/billing/purchases/:purchaseId?plan_changed=true' ),
 			} );
@@ -540,6 +541,7 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 			? getExpiredNewPlanUrl( purchase, true )
 			: addQueryArgs( getWpcomPlanGridUrl( purchase.site_slug ), {
 					change_plan: 'true',
+					purchaseId: String( purchase.ID ),
 			  } );
 
 		return (

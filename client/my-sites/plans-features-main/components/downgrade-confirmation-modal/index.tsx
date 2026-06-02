@@ -214,6 +214,9 @@ const DowngradeConfirmationModal = ( {
 							comment: 'Message shown when downgrading an active plan with a refund available',
 						}
 					) }
+					{ lostFeatures.length > 0 && ' ' }
+					{ lostFeatures.length > 0 &&
+						translate( 'Your site will lose access to these features:' ) }
 				</p>
 			);
 		}

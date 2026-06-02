@@ -116,6 +116,7 @@ export interface UnifiedPlansStepProps {
 		username?: string | null;
 		coupon?: string | null;
 		selectedThemeType?: string;
+		isRefundable?: boolean;
 	};
 	onPlanIntervalUpdate: ( path: string ) => void;
 
@@ -304,7 +305,8 @@ function UnifiedPlansStep( {
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const { domainItem, siteTitle, username, coupon, selectedThemeType } = signupDependencies;
+	const { domainItem, siteTitle, username, coupon, selectedThemeType, isRefundable } =
+		signupDependencies;
 
 	const { domainCartItem, siteUrl: onboardingStoreSiteUrl } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -585,8 +587,8 @@ function UnifiedPlansStep( {
 		: false;
 
 	const fallbackSubHeaderText = ( () => {
-		// Change-plan flow with an active plan: mention refunds.
-		if ( fallbackSubHeaderTextFromProps && ! isPlanExpired ) {
+		// Change-plan flow with a refundable active plan: mention refunds.
+		if ( fallbackSubHeaderTextFromProps && ! isPlanExpired && isRefundable ) {
 			return translate(
 				'Pick the plan that fits where your site is headed. If you switch to a lower plan, we’ll refund the difference.'
 			);
@@ -656,7 +658,7 @@ function UnifiedPlansStep( {
 				freeSubdomain={ freeWPComSubdomain }
 				siteTitle={ siteTitle ?? undefined }
 				signupFlowUserName={ username ?? undefined }
-				siteId={ selectedSite?.ID }
+				siteId={ siteId ?? undefined }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup={ isInSignup }

@@ -1,5 +1,11 @@
-import { getPlanPath } from '@automattic/calypso-products';
+import { purchaseQuery } from '@automattic/api-queries';
+import {
+	getPlanPath,
+	getIntervalTypeForTerm,
+	getTermFromDuration,
+} from '@automattic/calypso-products';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -44,7 +50,12 @@ async function checkUserHasAccess(): Promise< boolean > {
 }
 
 async function initialize() {
-	const hasAccess = await checkUserHasAccess();
+	const isChangePlan = getCurrentQueryParams().get( 'change_plan' ) === 'true';
+	// The change-plan entry point has already established site ownership (the user
+	// is on their own purchase-settings page), and checkout enforces auth — so the
+	// SITE_STORE access probe is redundant. It also returns null for Atomic sites
+	// on *.wpcomstaging.com slugs, which would wrongly redirect the owner away.
+	const hasAccess = isChangePlan ? true : await checkUserHasAccess();
 
 	if ( ! hasAccess ) {
 		window.location.assign( '/' );
@@ -67,6 +78,26 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
 		const isChangePlan = query.get( 'change_plan' ) === 'true';
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
+		const purchaseId = query.get( 'purchaseId' );
+
+		// Resolve the user's current billing term and blog_id from the purchase
+		// (user-scoped GET /upgrades/{id}) rather than a site-scoped query — the
+		// latter errors with "Unknown blog" for Atomic *.wpcomstaging.com slugs.
+		const changePlanPurchaseQuery = useReactQuery( {
+			...purchaseQuery( Number( purchaseId ) ),
+			enabled: isChangePlan && Boolean( purchaseId ),
+		} );
+		const currentTerm = changePlanPurchaseQuery.data
+			? getTermFromDuration( changePlanPurchaseQuery.data.bill_period_days )
+			: undefined;
+		const currentIntervalType = currentTerm
+			? ( getIntervalTypeForTerm( currentTerm ) as
+					| 'monthly'
+					| 'yearly'
+					| '2yearly'
+					| '3yearly'
+					| null )
+			: null;
 
 		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
 		const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
@@ -88,9 +119,21 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 				// For plan changes (expired downgrades and active tier changes),
 				// hide plans that aren't eligible targets and show a helpful subtitle.
-				hideFreePlan: isChangePlan || undefined,
-				hideEnterprisePlan: isChangePlan || undefined,
-				hidePlanTypeSelector: isChangePlan || undefined,
+				...( isChangePlan && {
+					hideFreePlan: true,
+					hideEnterprisePlan: true,
+					hidePlanTypeSelector: true,
+					// The plans grid resolves the current plan from a numeric siteId. The
+					// site object is null for Atomic *.wpcomstaging.com slugs, so feed the
+					// purchase's blog_id through.
+					siteId: changePlanPurchaseQuery.data?.blog_id,
+					isRefundable: changePlanPurchaseQuery.data?.is_refundable ?? false,
+				} ),
+				...( isChangePlan &&
+					currentIntervalType && {
+						intervalType: currentIntervalType,
+						displayedIntervals: [ currentIntervalType ],
+					} ),
 				headerText: isChangePlan ? __( 'Find your best fit' ) : undefined,
 				fallbackSubHeaderText: isChangePlan
 					? __( 'Compare plans and pick the one that works for where your site is headed.' )
