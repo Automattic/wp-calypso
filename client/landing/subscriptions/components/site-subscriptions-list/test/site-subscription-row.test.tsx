@@ -8,7 +8,8 @@ import {
 } from '@automattic/api-queries';
 import { Reader } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import {
@@ -205,13 +206,14 @@ describe( 'SiteSubscriptionRow', () => {
 		mockUnsubscribe.mockImplementation( ( params ) => params.onSuccess?.() );
 	} );
 
-	it( 'updates the follows cache after unsubscribing', () => {
+	it( 'updates the follows cache after unsubscribing', async () => {
+		const user = userEvent.setup();
 		const queryClient = makeQueryClient();
 		seedSiteSubscriptionsCache( queryClient, [ makeFollow() ] );
 
 		renderRow( queryClient );
 
-		fireEvent.click( screen.getByTitle( 'Unsubscribe' ) );
+		await user.click( screen.getByTitle( 'Unsubscribe' ) );
 
 		expect( getCachedFollow( queryClient )?.is_following ).toBe( false );
 	} );

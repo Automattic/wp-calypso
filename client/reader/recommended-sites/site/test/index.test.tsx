@@ -3,7 +3,8 @@
  */
 import { getReadSiteRecommendationsInfiniteQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -170,6 +171,7 @@ describe( 'RecommendedSite', () => {
 	afterEach( () => nock.cleanAll() );
 
 	it( 'dismisses the recommendation through React Query and removes it from the cache', async () => {
+		const user = userEvent.setup();
 		const scope = nock( BASE )
 			.post( '/rest/v1.1/me/dismiss/sites/123/new' )
 			.reply( 200, { success: true } );
@@ -185,7 +187,7 @@ describe( 'RecommendedSite', () => {
 			queryClient
 		);
 
-		fireEvent.click( screen.getByTitle( 'Dismiss this recommendation' ) );
+		await user.click( screen.getByTitle( 'Dismiss this recommendation' ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 
@@ -200,6 +202,7 @@ describe( 'RecommendedSite', () => {
 	} );
 
 	it( 'keeps the recommendation in the cache when dismissing fails', async () => {
+		const user = userEvent.setup();
 		nock( BASE ).post( '/rest/v1.1/me/dismiss/sites/123/new' ).reply( 500, {
 			error: 'dismiss_failed',
 		} );
@@ -215,7 +218,7 @@ describe( 'RecommendedSite', () => {
 			queryClient
 		);
 
-		fireEvent.click( screen.getByTitle( 'Dismiss this recommendation' ) );
+		await user.click( screen.getByTitle( 'Dismiss this recommendation' ) );
 
 		await waitFor( () =>
 			expect( actions ).toContainEqual(
@@ -230,6 +233,7 @@ describe( 'RecommendedSite', () => {
 	} );
 
 	it( 'subscribes through React Query and removes the recommendation from the cache', async () => {
+		const user = userEvent.setup();
 		const scope = nock( BASE )
 			.post( '/rest/v1.1/read/following/mine/new' )
 			.reply( 200, {
@@ -254,7 +258,7 @@ describe( 'RecommendedSite', () => {
 			queryClient
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		await waitFor( () => expect( getCachedRecommendedSiteIds( queryClient ) ).toEqual( [] ) );

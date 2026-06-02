@@ -2,19 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { useQuery } from '@tanstack/react-query';
-import { fireEvent, screen } from '@testing-library/react';
+import { readFeedQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderFeedItem from '../index';
 import type { Reader } from '@automattic/data-stores';
 
 const mockSubscribeMutate = jest.fn();
 const mockUnsubscribeMutate = jest.fn();
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
-} ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTrainTracksInteract: jest.fn(),
@@ -52,8 +49,6 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isCurrentUserEmailVerified: jest.fn( () => true ),
 } ) );
 
-const mockUseQuery = jest.mocked( useQuery );
-
 const makeFeedItem = ( overrides: Partial< Reader.FeedItem > = {} ): Reader.FeedItem => ( {
 	ID: '10',
 	URL: 'https://example.com',
@@ -76,20 +71,24 @@ const makeFeedItem = ( overrides: Partial< Reader.FeedItem > = {} ): Reader.Feed
 	...overrides,
 } );
 
+const makeQueryClient = () => {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	queryClient.setQueryData( readFeedQuery( 10 ).queryKey, {
+		description: 'Example description',
+		image: '',
+		name: 'Example Feed',
+		subscription_id: undefined,
+	} );
+	return queryClient;
+};
+
 describe( 'ReaderFeedItem', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseQuery.mockReturnValue( {
-			data: {
-				description: 'Example description',
-				name: 'Example Feed',
-				subscription_id: undefined,
-			},
-			isLoading: false,
-		} as ReturnType< typeof useQuery > );
 	} );
 
-	it( 'marks a feed as subscribed after a successful subscribe mutation', () => {
+	it( 'marks a feed as subscribed after a successful subscribe mutation', async () => {
+		const user = userEvent.setup();
 		mockSubscribeMutate.mockImplementation( ( _params, options ) => {
 			options.onSuccess( {
 				subscribed: true,
@@ -100,15 +99,17 @@ describe( 'ReaderFeedItem', () => {
 		} );
 
 		renderWithProvider(
-			<ReaderFeedItem feed={ makeFeedItem() } source="reader-new-subscription" />
+			<ReaderFeedItem feed={ makeFeedItem() } source="reader-new-subscription" />,
+			{ queryClient: makeQueryClient() }
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeVisible();
 	} );
 
-	it( 'does not invalidate site subscriptions when subscribed items are hidden', () => {
+	it( 'does not invalidate site subscriptions when subscribed items are hidden', async () => {
+		const user = userEvent.setup();
 		mockSubscribeMutate.mockImplementation( () => {} );
 
 		renderWithProvider(
@@ -116,10 +117,11 @@ describe( 'ReaderFeedItem', () => {
 				feed={ makeFeedItem() }
 				source="reader-new-subscription"
 				shouldHideOnSubscribedState
-			/>
+			/>,
+			{ queryClient: makeQueryClient() }
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 		expect( mockSubscribeMutate ).toHaveBeenCalledWith(
 			expect.objectContaining( {

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { postLikesQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -14,19 +15,21 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { ReaderPendingActionHandler } from '../pending-action-handler';
 
 const BASE = 'https://public-api.wordpress.com';
-const mockFollowMutate = jest.fn();
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
-	getFollowingSource: jest.fn( () => 'test-source' ),
-	useFollowSite: jest.fn( () => ( {
-		mutate: mockFollowMutate,
-		mutateAsync: mockFollowMutate,
-		isPending: false,
-	} ) ),
-	useUnfollowSite: jest.fn(),
-	useIsSubscribed: jest.fn( () => false ),
-	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [], refetch: jest.fn() } ) ),
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	const mockConfig = Object.assign( jest.fn(), {
+		isEnabled: actual.isEnabled ?? jest.fn( () => false ),
+	} );
+
+	return {
+		__esModule: true,
+		...actual,
+		default: mockConfig,
+	};
+} );
+
+const mockConfig = config as jest.MockedFunction< typeof config >;
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -76,10 +79,16 @@ const renderWithProviders = (
 };
 
 describe( 'ReaderPendingActionHandler', () => {
+	beforeEach( () => {
+		mockConfig.mockImplementation( ( key ) =>
+			key === 'readerFollowingSource' ? 'test-source' : undefined
+		);
+	} );
+
 	afterEach( () => {
 		jest.useRealTimers();
 		nock.cleanAll();
-		mockFollowMutate.mockClear();
+		mockConfig.mockReset();
 	} );
 
 	it( 'replays a pending unlike through the Reader post like adapter', async () => {
@@ -262,10 +271,25 @@ describe( 'ReaderPendingActionHandler', () => {
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
 	} );
 
-	it( 'replays a pending site follow through the follows mutation', () => {
+	it( 'replays a pending site follow through the follows mutation', async () => {
 		jest.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
+		const followScope = nock( BASE )
+			.post( '/rest/v1.1/read/following/mine/new', {
+				url: 'https://example.com/feed',
+				source: 'test-source',
+			} )
+			.reply( 200, {
+				subscribed: true,
+				subscription: {
+					ID: '1',
+					URL: 'https://example.com',
+					feed_URL: 'https://example.com/feed',
+					blog_ID: '100',
+					feed_ID: '123',
+				},
+			} );
 
 		renderWithProviders(
 			queryClient,
@@ -288,10 +312,9 @@ describe( 'ReaderPendingActionHandler', () => {
 			jest.advanceTimersByTime( 2000 );
 		} );
 
-		expect( mockFollowMutate ).toHaveBeenCalledWith( {
-			feedUrl: 'https://example.com/feed',
-			source: 'test-source',
-		} );
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
+
+		jest.useRealTimers();
+		await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
 	} );
 } );
