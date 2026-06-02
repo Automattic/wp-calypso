@@ -89,12 +89,14 @@ export async function retarget( urlPath ) {
 		debug( 'retarget: [TikTok]' );
 		window.ttq.page();
 	}
+
+	// OpenAI
 	if ( mayWeTrackByTracker( 'openai' ) ) {
-		debug( 'retarget: [OpenAI]' );
-		window.oaiq( 'init', {
-			pixelId: TRACKING_IDS.openAIPixelId,
-			debug: true,
+		// see https://developers.openai.com/ads/measurement-pixel
+		window.oaiq( 'measure', 'page_viewed', {
+			type: 'contents',
 		} );
+		debug( 'retarget: [OpenAI]' );
 	}
 	// Rate limited retargeting (secondary trackers)
 
