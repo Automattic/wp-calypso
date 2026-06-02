@@ -66,7 +66,9 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 		createAgentPortal: ( children: React.ReactNode ) => children,
 	};
 } );
-jest.mock( '../../hooks/use-setup-custom-actions', () => () => {} );
+jest.mock( '../../hooks/custom-actions', () => ( {
+	useSetupCustomActions: () => {},
+} ) );
 jest.mock( '../../hooks/use-should-use-unified-agent', () => ( {
 	useShouldUseUnifiedAgent: () => mockShouldUseUnifiedAgent,
 } ) );
