@@ -1,6 +1,6 @@
 import {
 	commonFeedExtensions,
-	fetchSiteSubscriptionsPage,
+	fetchReadSiteSubscriptions,
 	followSite,
 	prepareComparableUrl,
 	sortSiteSubscriptionsByLastUpdated,
@@ -41,7 +41,7 @@ export const siteSubscriptionsQuery = () =>
 	>( {
 		queryKey: getSiteSubscriptionsQueryKey(),
 		queryFn: ( { pageParam } ) =>
-			fetchSiteSubscriptionsPage( { page: pageParam, number: ITEMS_PER_PAGE, meta: '' } ),
+			fetchReadSiteSubscriptions( { page: pageParam, number: ITEMS_PER_PAGE, meta: '' } ),
 		initialPageParam: 1,
 		getNextPageParam: ( lastPage, allPages ) => {
 			const fetchedItems = allPages.reduce(
