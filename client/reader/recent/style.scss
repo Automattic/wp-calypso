@@ -168,7 +168,6 @@ body.is-reader-full-post {
 					}
 
 					&__title-text {
-						// READ-128: clamp long titles to two lines.
 						font-weight: 700;
 						font-size: rem( 13px );
 						display: -webkit-box;
