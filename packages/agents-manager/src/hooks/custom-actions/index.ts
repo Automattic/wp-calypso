@@ -12,27 +12,35 @@ import {
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
-// Action keys this hook owns on `window.__agentsManagerActions`. Cleanup
-// only removes these so other consumers writing to the same object (for
-// example `OrchestratorChat`'s `setChatInput`/`submitChatMessage`) survive
-// re-runs of this effect's deps.
-const OWNED_ACTION_KEYS: ReadonlyArray< keyof AgentsManagerActions > = [
-	'getChatState',
-	'getSessionId',
-	'setChatOpen',
-	'setChatDocked',
-	'setChatEnabled',
-	'setChatCompactMode',
-	'setChatDesktopMediaQuery',
-	'setContextEntry',
-	'removeContextEntry',
-	'setContextCard',
-	'removeContextCard',
-	'chatNavigate',
-	'isReady',
-];
+/**
+ * Publish actions onto `window.__agentsManagerActions`. Cleanup removes only
+ * keys whose value is still ours, so callers can co-own the global. See
+ * `README.md` for usage rules.
+ */
+export function useRegisterCustomActions( actions: Partial< AgentsManagerActions > ): void {
+	// No deps array: re-sync every commit so the global stays correct even when
+	// the set of keys changes (a computed deps array must keep a fixed length).
+	useEffect( () => {
+		const current = ( window.__agentsManagerActions ??= {} as AgentsManagerActions );
+		Object.assign( current, actions );
 
-interface Props {
+		return () => {
+			// Re-read the global rather than reusing `current`: a consumer may have
+			// replaced it since we published, and we must clean up the live object.
+			const latest = window.__agentsManagerActions;
+			if ( ! latest ) {
+				return;
+			}
+			( Object.keys( actions ) as ( keyof AgentsManagerActions )[] ).forEach( ( key ) => {
+				if ( latest[ key ] === actions[ key ] ) {
+					delete latest[ key ];
+				}
+			} );
+		};
+	} );
+}
+
+interface SetupProps {
 	dock: () => void;
 	undock: () => void;
 	openSidebar: () => void;
@@ -43,7 +51,12 @@ interface Props {
 	setDesktopMediaQuery: ( query: string ) => void;
 }
 
-export default function useSetupCustomActions( {
+/**
+ * Wire up the built-in actions on `window.__agentsManagerActions` and
+ * dispatch `agents-manager-ready` once they're available. Mounted with
+ * the agent dock.
+ */
+export function useSetupCustomActions( {
 	dock,
 	undock,
 	openSidebar,
@@ -52,7 +65,7 @@ export default function useSetupCustomActions( {
 	setIsCompactMode,
 	setShouldRenderChat,
 	setDesktopMediaQuery,
-}: Props ) {
+}: SetupProps ): void {
 	const { hasLoaded, isOpen, isDocked, floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -61,7 +74,6 @@ export default function useSetupCustomActions( {
 	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
-	const hasFiredReadyRef = useRef( false );
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
 	const setChatOpen = useCallback(
@@ -135,72 +147,50 @@ export default function useSetupCustomActions( {
 		[ setDesktopMediaQuery ]
 	);
 
-	useEffect( () => {
-		const state = {
-			isOpen: !! isOpen,
-			isDocked: !! isDocked,
-			floatingPosition: floatingPosition || '',
-		};
+	const getChatState = useCallback( (): Promise< AgentsManagerChatState > => {
+		if ( hasLoaded ) {
+			return Promise.resolve( {
+				isOpen: !! isOpen,
+				isDocked: !! isDocked,
+				floatingPosition: floatingPosition || '',
+			} );
+		}
 
-		// Resolve any pending `getChatState()` call with the latest state.
+		return new Promise( ( resolve ) => {
+			resolveRef.current = resolve;
+		} );
+	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
+
+	// Resolve any pending `getChatState()` call once the store has loaded.
+	useEffect( () => {
 		if ( hasLoaded && resolveRef.current ) {
-			resolveRef.current( state );
+			resolveRef.current( {
+				isOpen: !! isOpen,
+				isDocked: !! isDocked,
+				floatingPosition: floatingPosition || '',
+			} );
 			resolveRef.current = null;
 		}
+	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-		window.__agentsManagerActions = {
-			...window.__agentsManagerActions,
-			// Declared inline to capture the fresh `state` from this effect.
-			getChatState: () => {
-				if ( hasLoaded ) {
-					return Promise.resolve( state );
-				}
-				return new Promise( ( resolve ) => {
-					resolveRef.current = resolve;
-				} );
-			},
-			getSessionId: getActiveSessionId,
-			setChatOpen,
-			setChatDocked,
-			setChatEnabled,
-			setChatCompactMode,
-			setChatDesktopMediaQuery,
-			setContextEntry: setExternalContextEntry,
-			removeContextEntry: removeExternalContextEntry,
-			setContextCard: setExternalContextCard,
-			removeContextCard: removeExternalContextCard,
-			chatNavigate: navigate,
-			isReady: true,
-		};
-
-		// Fire the ready event exactly once per mount, after the global has
-		// been fully populated. Hosts (e.g. CIAB) listen for this to safely
-		// invoke actions like `setChatOpen` without polling.
-		if ( ! hasFiredReadyRef.current ) {
-			hasFiredReadyRef.current = true;
-			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
-		}
-
-		return () => {
-			const actions = window.__agentsManagerActions;
-			if ( ! actions ) {
-				return;
-			}
-			OWNED_ACTION_KEYS.forEach( ( key ) => {
-				delete actions[ key ];
-			} );
-		};
-	}, [
-		hasLoaded,
-		isOpen,
-		isDocked,
-		floatingPosition,
+	useRegisterCustomActions( {
+		getChatState,
+		getSessionId: getActiveSessionId,
 		setChatOpen,
 		setChatDocked,
 		setChatEnabled,
 		setChatCompactMode,
 		setChatDesktopMediaQuery,
-		getActiveSessionId,
-		navigate,
-	] );
+		setContextEntry: setExternalContextEntry,
+		removeContextEntry: removeExternalContextEntry,
+		setContextCard: setExternalContextCard,
+		removeContextCard: removeExternalContextCard,
+		chatNavigate: navigate,
+		isReady: true,
+	} );
+
+	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.
+	useEffect( () => {
+		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+	}, [] );
 }

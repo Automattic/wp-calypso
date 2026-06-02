@@ -10,6 +10,8 @@ import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useFollowedSites } from 'calypso/reader/data/follows';
+import { getSiteDomain } from 'calypso/reader/get-helpers';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -27,6 +29,28 @@ type Props = {
 
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
+
+type ReaderSidebarSite = Pick< ReturnType< typeof useFollowedSites >[ number ], 'name' | 'URL' >;
+
+const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
+
+/**
+ * Best label for a followed site in the Reader sidebar. Untitled sites are
+ * named after their free WordPress.com subdomain (with a trailing slash), so
+ * prefer the real domain from `URL` in that case.
+ */
+export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
+	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	const siteName = site.name ?? '';
+	// `name` may be URL-shaped, so normalize before the subdomain check.
+	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
+
+	if ( ( ! siteName || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
+		return siteDomain;
+	}
+
+	return siteName;
+}
 
 const ReaderSidebarRecent = ( {
 	translate,
@@ -107,30 +131,34 @@ const ReaderSidebarRecent = ( {
 				</MenuItemLink>
 			</MenuItem>
 
-			{ sitesToShow.map( ( site ) => (
-				<MenuItem
-					key={ site.ID }
-					selected={ isRecentStream && site.feed_ID === selectedSiteFeedId }
-				>
-					<AutoDirection>
-						<MenuItemLink
-							href={ `/reader/recent/${ site.feed_ID }` }
-							className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-							onClick={ () => trackMenuClick( site.feed_ID ?? null ) }
-						>
-							<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
-							<span title={ site.name } className="sidebar__menu-item-sitename">
-								<span>{ site.name }</span>
-								{ typeof site.last_updated === 'number' && site.last_updated > 0 && (
-									<span className="sidebar__menu-item-last-updated">
-										{ moment( new Date( site.last_updated ) ).fromNow() }
-									</span>
-								) }
-							</span>
-						</MenuItemLink>
-					</AutoDirection>
-				</MenuItem>
-			) ) }
+			{ sitesToShow.map( ( site ) => {
+				const displayName = getReaderSidebarSiteName( site );
+
+				return (
+					<MenuItem
+						key={ site.ID }
+						selected={ isRecentStream && site.feed_ID === selectedSiteFeedId }
+					>
+						<AutoDirection>
+							<MenuItemLink
+								href={ `/reader/recent/${ site.feed_ID }` }
+								className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
+								onClick={ () => trackMenuClick( site.feed_ID ?? null ) }
+							>
+								<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
+								<span title={ displayName } className="sidebar__menu-item-sitename">
+									<span>{ displayName }</span>
+									{ typeof site.last_updated === 'number' && site.last_updated > 0 && (
+										<span className="sidebar__menu-item-last-updated">
+											{ moment( new Date( site.last_updated ) ).fromNow() }
+										</span>
+									) }
+								</span>
+							</MenuItemLink>
+						</AutoDirection>
+					</MenuItem>
+				);
+			} ) }
 			{ shouldShowViewMoreButton && (
 				<MenuItem selected={ showAllSites }>
 					<MenuItemLink className="view-more-link" onClick={ toggleShowAllSites }>
