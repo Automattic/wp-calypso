@@ -218,7 +218,11 @@ const PlansStepAdaptor: StepType< {
 	const isUsingStepContainerV2 =
 		shouldUseStepContainerV2( props.flow ) || props.flow === DOMAIN_FLOW;
 
-	if ( isLoadingSelectedTheme ) {
+	// Defer render until the user's term resolves; a cross-term selection breaks the downgrade path.
+	const isSwitchPlanWaitingForTerm =
+		useQuery().get( 'switch_plan' ) === 'true' && ! intervalTypeFromFlow;
+
+	if ( isLoadingSelectedTheme || isSwitchPlanWaitingForTerm ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 

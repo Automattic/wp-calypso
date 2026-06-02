@@ -114,15 +114,16 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
 
-				// When switching plans from the cancel flow, hide Free and Enterprise tiers
-				// and lock the grid to the user's current billing period.
+				// When switching plans from the cancel flow, hide Free and Enterprise
+				// tiers and always hide the term picker — the grid is locked to the
+				// user's current billing period (set below once it's resolved).
 				...( isSwitchPlan && {
 					hideFreePlan: true,
 					hideEnterprisePlan: true,
+					hidePlanTypeSelector: true,
 				} ),
 				...( isSwitchPlan &&
 					currentIntervalType && {
-						hidePlanTypeSelector: true,
 						intervalType: currentIntervalType,
 						displayedIntervals: [ currentIntervalType ],
 					} ),
