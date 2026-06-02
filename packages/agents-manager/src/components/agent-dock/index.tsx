@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { columns, comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
+import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
@@ -114,29 +115,23 @@ export default function AgentDock( {
 		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
 	const showSupportGuides =
 		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
+	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
+	// so Zendesk escalation is disabled until routing is in place.
+	const isWooAiAdmin = sectionName === 'wooai-admin';
+	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
 		[ isReaderChat, setIsOpen ]
 	);
-
-	const goToActiveChat = () => {
-		// Keep a live conversation (orchestrator or Zendesk) as-is.
-		if ( pathname === '/chat' || pathname === '/zendesk' ) {
-			return;
-		}
-		// Resume the active session — `/chat` alone would start a new chat.
-		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
-	};
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			defaultDocked: isReaderChat ? false : isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => {
-				setOpenState( true );
-				goToActiveChat();
-			},
+			// Only open the sidebar; keep the current route. Admin-bar items
+			// set their own route (e.g. history) before opening it.
+			onOpenSidebar: () => setOpenState( true ),
 			onCloseSidebar: () => setOpenState( false ),
 			isSplitScreen,
 		} );
@@ -171,6 +166,8 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
+	useReaderChatPersistence( agentId );
+
 	const handleAbort = useCallback( () => {
 		const agentManager = getAgentManager();
 
@@ -178,11 +175,6 @@ export default function AgentDock( {
 			agentManager.abortCurrentRequest( agentId );
 		}
 	}, [ agentId ] );
-
-	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
-	// so Zendesk escalation is disabled until routing is in place.
-	const isWooAiAdmin = sectionName === 'wooai-admin';
-	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
 
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
@@ -196,7 +188,12 @@ export default function AgentDock( {
 			setIsMinimized( false );
 		}
 		setOpenState( true );
-		goToActiveChat();
+
+		// Return to the active chat, resuming its session — unless already
+		// on a live chat/Zendesk view.
+		if ( pathname !== '/chat' && pathname !== '/zendesk' ) {
+			navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+		}
 	};
 
 	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
@@ -213,40 +210,6 @@ export default function AgentDock( {
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
-
-	// Persist reader-chat open/closed state across page navigations via
-	// localStorage — the AGENTS_MANAGER_STORE is in-memory only, so a fresh
-	// page load resets isOpen to false by default. Read the stored flag on
-	// mount and restore; write it on every toggle.
-	const OPEN_STORAGE_KEY = `jetpack-reader-chat-open-${ agentId }`;
-	useEffect( () => {
-		if ( ! isReaderChat ) {
-			return;
-		}
-		try {
-			if ( localStorage.getItem( OPEN_STORAGE_KEY ) === '1' && ! isPersistedOpen ) {
-				setOpenState( true );
-			}
-		} catch {
-			// ignore
-		}
-		// Only restore on first mount.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
-	useEffect( () => {
-		if ( ! isReaderChat ) {
-			return;
-		}
-		try {
-			if ( isPersistedOpen ) {
-				localStorage.setItem( OPEN_STORAGE_KEY, '1' );
-			} else {
-				localStorage.removeItem( OPEN_STORAGE_KEY );
-			}
-		} catch {
-			// ignore
-		}
-	}, [ isPersistedOpen, isReaderChat, OPEN_STORAGE_KEY ] );
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		return [

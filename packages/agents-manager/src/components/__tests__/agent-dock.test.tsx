@@ -256,16 +256,16 @@ describe( 'AgentDock', () => {
 		expect( location.dataset.sessionId ).toBe( 'session-123' );
 	} );
 
-	it( 'resumes the active session when opening the docked sidebar', () => {
+	it( 'keeps the current route when opening the docked sidebar', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
 		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
 		act( () => onOpenSidebar() );
 
-		const location = screen.getByTestId( 'location' );
-		expect( location.textContent ).toBe( '/chat' );
-		expect( location.dataset.sessionId ).toBe( 'session-123' );
+		// Opening the docked sidebar must not override a route chosen from the
+		// WP admin bar (e.g. Chat history / Support guides).
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
 	it( 'resumes the active session when expanding from the support guides view', () => {
