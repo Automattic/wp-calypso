@@ -53,29 +53,40 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 }
 
 function getBusinessTaxSuffix( responseCart: ResponseCart ): string {
-	if ( ! responseCart.tax?.location ) {
-		return '';
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( responseCart );
+
+	if ( businessTaxSuffixLabel ) {
+		return ` (${ businessTaxSuffixLabel })`;
 	}
-	const { is_for_business, subdivision_code } = responseCart.tax.location;
-	if ( is_for_business && subdivision_code ) {
-		return (
-			' ' +
-			String(
-				translate( '(%(state)s business tax use)', {
-					args: { state: subdivision_code },
-					comment:
-						'Label indicating a state-level business use tax. %(state)s is a US state code like "CA".',
-				} )
-			)
-		);
-	}
+
 	return '';
 }
 
+function getBusinessTaxSuffixLabel( responseCart: ResponseCart ): string {
+	const { is_for_business, subdivision_code } = responseCart.tax?.location ?? {};
+
+	if ( ! is_for_business || ! subdivision_code ) {
+		return '';
+	}
+
+	return String(
+		translate( '%(state)s business use', {
+			args: { state: subdivision_code },
+			comment:
+				'Label indicating a state-level business use tax. %(state)s is a US state code like "CT".',
+		} )
+	);
+}
+
+function shouldDisplayTaxLineItems( responseCart: ResponseCart ): boolean {
+	return responseCart.tax.display_taxes || Boolean( getBusinessTaxSuffixLabel( responseCart ) );
+}
+
 export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
-	if ( ! responseCart.tax.display_taxes ) {
+	if ( ! shouldDisplayTaxLineItems( responseCart ) ) {
 		return null;
 	}
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( responseCart );
 	return {
 		id: 'tax-line-item',
 		// translators: The label of the taxes line item in checkout
@@ -85,6 +96,7 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 					context: "Shortened form of 'Sales Tax', not a country-specific tax name",
 				} )
 			) + getBusinessTaxSuffix( responseCart ),
+		...( businessTaxSuffixLabel ? { labelSuffix: businessTaxSuffixLabel } : undefined ),
 		type: 'tax',
 		formattedAmount: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 			isSmallestUnit: true,
@@ -94,7 +106,7 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 }
 
 export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): LineItemType[] {
-	if ( ! responseCart.tax.display_taxes ) {
+	if ( ! shouldDisplayTaxLineItems( responseCart ) ) {
 		return [];
 	}
 	if (
@@ -105,6 +117,7 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 		return lineItem ? [ lineItem ] : [];
 	}
 	const businessTaxSuffix = getBusinessTaxSuffix( responseCart );
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( responseCart );
 	return responseCart.total_tax_breakdown.map(
 		( taxBreakdownItem: TaxBreakdownItem ): LineItemType => {
 			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
@@ -118,6 +131,7 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 			return {
 				id,
 				label: label + businessTaxSuffix,
+				...( businessTaxSuffixLabel ? { labelSuffix: businessTaxSuffixLabel } : undefined ),
 				type: 'tax',
 				formattedAmount: formatCurrency(
 					taxBreakdownItem.tax_collected_integer,
