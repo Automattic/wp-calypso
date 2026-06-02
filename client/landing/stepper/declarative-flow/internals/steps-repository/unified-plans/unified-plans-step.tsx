@@ -579,7 +579,20 @@ function UnifiedPlansStep( {
 	};
 
 	const fallbackHeaderText = fallbackHeaderTextFromProps || getHeaderText();
-	const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || getSubheaderText();
+	const currentPlanExpiryDate = Plans.useCurrentPlanExpiryDate( { siteId } );
+	const isPlanExpired = currentPlanExpiryDate
+		? currentPlanExpiryDate.getTime() < Date.now()
+		: false;
+
+	const fallbackSubHeaderText = ( () => {
+		// Change-plan flow with an active plan: mention refunds.
+		if ( fallbackSubHeaderTextFromProps && ! isPlanExpired ) {
+			return translate(
+				'Pick the plan that fits where your site is headed. If you switch to a lower plan, we’ll refund the difference.'
+			);
+		}
+		return fallbackSubHeaderTextFromProps || getSubheaderText();
+	} )();
 
 	let backUrl;
 	let backLabelText;

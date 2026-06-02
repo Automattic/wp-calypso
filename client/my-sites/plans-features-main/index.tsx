@@ -57,6 +57,7 @@ import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -280,6 +281,7 @@ const PlansFeaturesMain = ( {
 	const sitePurchases = useSelector( ( state: IAppState ) =>
 		siteId ? getSitePurchases( state, siteId ) : []
 	);
+	useQuerySitePurchases( siteId );
 	const sitePlanSlug = currentPlan?.productSlug;
 	const currentPlanPurchase =
 		sitePurchases?.find( ( p ) => p.productSlug === sitePlanSlug ) ?? null;
