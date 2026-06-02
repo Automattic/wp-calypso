@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from '../../../test-utils';
 import { getFields } from '../dataviews';
 import type { Receipt } from '@automattic/api-core';
 
@@ -58,51 +59,31 @@ const receipt = {
 	],
 } as unknown as Receipt;
 
-jest.mock( '@tanstack/react-router', () => ( {
-	Link: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
-	useNavigate: () => () => {},
-	createLink:
-		() =>
-		( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
-	createRoute: () => ( {
-		lazy: () => ( {} ),
-		fullPath: '/me/billing',
-	} ),
-	createLazyRoute: () => () => ( {} ),
-	createRootRoute: () => ( {} ),
-	createRouter: () => ( {} ),
-	RouterProvider: () => null,
-} ) );
-
-jest.mock( '../../../app/router/me', () => ( {
-	receiptRoute: {
-		fullPath: '/me/billing/receipts/$receiptId',
-	},
-} ) );
-
 function renderServiceCell( visibleFields: string[] ) {
 	const fields = getFields( [ receipt ], [], visibleFields );
 	const serviceField = fields.find( ( field ) => field.id === 'service' )!;
 	return render( <>{ serviceField.render!( { item: receipt, field: serviceField } as never ) }</> );
 }
 
-describe( 'dashboard billing history service cell inline fields', () => {
-	it( 'shows Type and Amount inline when those columns are hidden', () => {
+describe( '<BillingHistory>', () => {
+	test( 'shows Type and Amount inline when those columns are hidden', async () => {
 		renderServiceCell( [ 'date', 'service' ] );
-		expect( screen.getByText( /Type:/ ) ).toBeVisible();
-		expect( screen.getByText( /Amount:/ ) ).toBeVisible();
+		expect( await screen.findByText( 'Type: Refund' ) ).toBeVisible();
+		expect( screen.getByText( 'Amount: $96' ) ).toBeVisible();
 		expect( screen.queryByText( /Date:/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows Date inline when only the App column is visible', () => {
+	test( 'shows Date inline when only the App column is visible', async () => {
 		renderServiceCell( [ 'service' ] );
-		expect( screen.getByText( /Date:/ ) ).toBeVisible();
-		expect( screen.getByText( /Type:/ ) ).toBeVisible();
-		expect( screen.getByText( /Amount:/ ) ).toBeVisible();
+		expect( await screen.findByText( 'Date: May 21, 2026' ) ).toBeVisible();
+		expect( screen.getByText( 'Type: Refund' ) ).toBeVisible();
+		expect( screen.getByText( 'Amount: $96' ) ).toBeVisible();
 	} );
 
-	it( 'shows no inline lines when all columns are visible', () => {
+	test( 'shows no inline lines when all columns are visible', async () => {
 		renderServiceCell( [ 'date', 'service', 'type', 'amount' ] );
+		// Wait for the App cell's receipt link to render before asserting absence.
+		expect( await screen.findByRole( 'link' ) ).toBeVisible();
 		expect( screen.queryByText( /Type:/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Amount:/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Date:/ ) ).not.toBeInTheDocument();

@@ -121,15 +121,7 @@ export function getFields(
 				return getDateForFiltering( item );
 			},
 			render: ( { item }: { item: Receipt } ) => {
-				return (
-					<time>
-						{ new Date( item.date ).toLocaleDateString( undefined, {
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric',
-						} ) }
-					</time>
-				);
+				return <time>{ formatReceiptDate( item ) }</time>;
 			},
 		},
 		{
@@ -304,6 +296,14 @@ function getDateForFiltering( receipt: Receipt ): string {
 	} );
 }
 
+function formatReceiptDate( receipt: Receipt ): string {
+	return new Date( receipt.date ).toLocaleDateString( undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	} );
+}
+
 function getServicesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {
 	return [ ...new Set( receipts.map( getServiceForFiltering ) ) ].sort().map( ( service ) => ( {
 		value: service,
@@ -372,11 +372,7 @@ function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[] ) {
 				{ sprintf(
 					/* translators: %s is a formatted date, like May 21, 2026 */
 					__( 'Date: %s' ),
-					new Date( receipt.date ).toLocaleDateString( undefined, {
-						year: 'numeric',
-						month: 'short',
-						day: 'numeric',
-					} )
+					formatReceiptDate( receipt )
 				) }
 			</Text>
 		);

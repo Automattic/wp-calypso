@@ -50,7 +50,7 @@ export default function BillingHistory() {
 	} );
 
 	const fields = useMemo(
-		() => getFields( receipts, countryList, ( view.fields as string[] ) ?? WIDE_FIELDS ),
+		() => getFields( receipts, countryList, view.fields ?? WIDE_FIELDS ),
 		[ receipts, countryList, view.fields ]
 	);
 
