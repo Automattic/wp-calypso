@@ -200,43 +200,52 @@ const DowngradeConfirmationModal = ( {
 		}
 
 		// Active plan: show refund info or immediate change message
-		return (
-			<>
+		if ( refundAmount ) {
+			return (
 				<p className="downgrade-confirmation-modal__description">
-					{ refundAmount
-						? translate(
-								"When you downgrade from %(currentPlan)s to %(targetPlan)s, you'll receive a refund of %(amount)s to your original payment method.",
-								{
-									args: {
-										currentPlan: currentPlanTitle,
-										targetPlan: targetPlanTitle,
-										amount: formatCurrency( refundAmount.amount, refundAmount.currency ),
-									},
-									comment: 'Message shown when downgrading an active plan with a refund available',
-								}
-						  )
-						: translate(
-								'Your plan will change immediately from %(currentPlan)s to %(targetPlan)s.',
-								{
-									args: {
-										currentPlan: currentPlanTitle,
-										targetPlan: targetPlanTitle,
-									},
-									comment: 'Message shown when downgrading an active plan with no refund available',
-								}
-						  ) }
+					{ translate(
+						"When you downgrade from %(currentPlan)s to %(targetPlan)s, you'll receive a refund of %(amount)s to your original payment method.",
+						{
+							args: {
+								currentPlan: currentPlanTitle,
+								targetPlan: targetPlanTitle,
+								amount: formatCurrency( refundAmount.amount, refundAmount.currency ),
+							},
+							comment: 'Message shown when downgrading an active plan with a refund available',
+						}
+					) }
 				</p>
-				{ lostFeatures.length > 0 && (
-					<p className="downgrade-confirmation-modal__description">
-						{ translate(
-							'These features will no longer be available on your site when your plan changes:',
-							{
-								comment: 'Subheading before the list of features that will be lost on downgrade',
-							}
-						) }
-					</p>
-				) }
-			</>
+			);
+		}
+
+		if ( lostFeatures.length > 0 ) {
+			return (
+				<p className="downgrade-confirmation-modal__description">
+					{ translate(
+						'Your plan will change immediately from %(currentPlan)s to %(targetPlan)s. These features will no longer be available on your site when your plan changes:',
+						{
+							args: {
+								currentPlan: currentPlanTitle,
+								targetPlan: targetPlanTitle,
+							},
+							comment:
+								'Message shown when downgrading an active plan, followed by the list of features that will be lost',
+						}
+					) }
+				</p>
+			);
+		}
+
+		return (
+			<p className="downgrade-confirmation-modal__description">
+				{ translate( 'Your plan will change immediately from %(currentPlan)s to %(targetPlan)s.', {
+					args: {
+						currentPlan: currentPlanTitle,
+						targetPlan: targetPlanTitle,
+					},
+					comment: 'Message shown when downgrading an active plan with no refund available',
+				} ) }
+			</p>
 		);
 	};
 
