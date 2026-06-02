@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/variables";
 
 .site-trial-ended__title {
-	font-family: Recoleta, sans-serif;
+	font-family: Recoleta, Georgia, "Times New Roman", Times, serif;
 	font-size: $font-size-2x-large;
 	font-weight: $font-weight-regular;
 	line-height: $font-line-height-2x-large;
@@ -22,7 +22,7 @@
 	}
 
 	.plan-price__integer {
-		font-family: Recoleta, sans-serif;
+		font-family: Recoleta, Georgia, "Times New Roman", Times, serif;
 		font-size: $font-size-2x-large;
 		font-weight: $font-weight-regular;
 		line-height: $font-line-height-x-large;
