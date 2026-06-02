@@ -1,5 +1,4 @@
 import { receiptQuery } from '@automattic/api-queries';
-import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -197,10 +196,6 @@ function useRedirectOnTransactionSuccess( {
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
 	const productName = firstItem?.variation || firstItem?.product || '';
-	const isPlanAndDomainPurchase =
-		( receipt?.items.some( ( item ) => isPlan( item ) ) &&
-			receipt?.items.some( ( item ) => isDomainRegistration( item ) ) ) ??
-		false;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -324,7 +319,6 @@ function useRedirectOnTransactionSuccess( {
 		triggerPostRedirectNotices( {
 			redirectInstructions,
 			isRenewal,
-			isPlanAndDomainPurchase,
 			productName,
 			translate,
 			reduxDispatch,
@@ -348,7 +342,6 @@ function useRedirectOnTransactionSuccess( {
 		finalReceiptId,
 		isReceiptLoaded,
 		isRenewal,
-		isPlanAndDomainPurchase,
 		blogId,
 		orderId,
 		productName,
@@ -375,14 +368,12 @@ function isTransactionSuccessful(
 function triggerPostRedirectNotices( {
 	redirectInstructions,
 	isRenewal,
-	isPlanAndDomainPurchase,
 	productName,
 	translate,
 	reduxDispatch,
 }: {
 	redirectInstructions: RedirectInstructions;
 	isRenewal: boolean;
-	isPlanAndDomainPurchase: boolean;
 	productName: string;
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
@@ -415,20 +406,6 @@ function triggerPostRedirectNotices( {
 			translate,
 			reduxDispatch,
 		} );
-		return;
-	}
-
-	if ( isPlanAndDomainPurchase ) {
-		// The `domain-and-plan` flow sets `redirect_to=/home/<site>`, sending users
-		// to their site home instead of the thank-you page. Surface a success toast
-		// there so the purchase is acknowledged.
-		reduxDispatch(
-			successNotice( translate( 'Your plan and domain are ready!' ), {
-				id: 'plan-and-domain-purchase-success',
-				displayOnNextPage: true,
-				duration: 10000,
-			} )
-		);
 		return;
 	}
 }
