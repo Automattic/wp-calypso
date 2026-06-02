@@ -23,6 +23,7 @@ import {
 	isWooHostedPlan,
 	isWooHostedFreePlan,
 	PLAN_TIER_ORDER,
+	getIntervalTypeForTerm,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -347,10 +348,19 @@ const PlansFeaturesMain = ( {
 		! isWooHostedFreePlan( sitePlanSlug )
 			? getPlan( sitePlanSlug )?.term
 			: null;
-	const compatibleIntervalType = useMemo(
-		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
-		[ currentPlanTerm, intervalType ]
-	);
+	const compatibleIntervalType = useMemo( () => {
+		// When the plan type selector is hidden (change-plan flow) and there's a
+		// paid plan, lock the interval to the current plan's billing term. The
+		// backend downgrade paths only map same-term transitions, so showing a
+		// different term would cause "Unsupported Downgrade" errors.
+		if ( hidePlanTypeSelector && currentPlanTerm ) {
+			const locked = getIntervalTypeForTerm( currentPlanTerm );
+			if ( locked ) {
+				return locked as typeof intervalType;
+			}
+		}
+		return ensureCompatibleIntervalType( currentPlanTerm, intervalType );
+	}, [ hidePlanTypeSelector, currentPlanTerm, intervalType ] );
 
 	const term = usePlanBillingPeriod( {
 		intervalType: compatibleIntervalType,

@@ -459,8 +459,9 @@ function getLoggedInPlansAction( {
 	// This allows monthly/yearly versions of the same plan to be considered "current"
 	const isUpgradeFlow =
 		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
+	const isChangePlanFlow = plansIntent === 'plans-new-hosted-site';
 	const current =
-		isUpgradeFlow && sitePlanSlug
+		( isUpgradeFlow || isChangePlanFlow ) && sitePlanSlug
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
 			: sitePlanSlug === planSlug;
 	const isTrialPlan =
@@ -519,6 +520,18 @@ function getLoggedInPlansAction( {
 		if ( domainFromHomeUpsellFlow ) {
 			return createLoggedInPlansAction( translate( 'Keep my plan', { context: 'verb' } ) );
 		}
+		// Change-plan flow: current plan shows "Renew" (both expired and active).
+		// The user entered to explore alternatives — let them renew if they decide
+		// against changing.
+		if ( canUserManageCurrentPlan && isChangePlanFlow ) {
+			return createLoggedInPlansAction(
+				translate( 'Renew %(plan)s', {
+					textOnly: true,
+					args: { plan: planTitle ?? '' },
+				} )
+			);
+		}
+
 		if ( canUserManageCurrentPlan && isPlanExpired ) {
 			return createLoggedInPlansAction(
 				translate( 'Renew %(plan)s', {
