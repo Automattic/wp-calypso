@@ -89,7 +89,13 @@ export async function retarget( urlPath ) {
 		debug( 'retarget: [TikTok]' );
 		window.ttq.page();
 	}
-
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		debug( 'retarget: [OpenAI]' );
+		window.oaiq( 'init', {
+			pixelId: TRACKING_IDS.openAIPixelId,
+			debug: true,
+		} );
+	}
 	// Rate limited retargeting (secondary trackers)
 
 	const nowTimestamp = Date.now() / 1000;
