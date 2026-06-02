@@ -10,6 +10,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
@@ -44,25 +45,19 @@ type Props = {
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
-// Matches a free WordPress.com subdomain such as "example.wordpress.com".
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
 /**
- * Pick the best label for a followed site in the Reader sidebar.
- *
- * For sites without a title, the subscriptions API falls back to the free
- * WordPress.com subdomain (e.g. `example.wordpress.com`) as the site `name`.
- * When the site actually uses a mapped custom domain, prefer that domain over
- * the free subdomain.
+ * Best label for a followed site in the Reader sidebar. Untitled sites are
+ * named after their free WordPress.com subdomain (with a trailing slash), so
+ * prefer the real domain from `URL` in that case.
  */
 export function getReaderSidebarSiteName( site: Pick< Site, 'name' | 'URL' > ): string {
 	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	// `name` may be URL-shaped, so normalize before the subdomain check.
+	const normalizedName = formatUrlForDisplay( site.name ) || site.name;
 
-	if (
-		( ! site.name || isFreeWpcomSubdomain( site.name ) ) &&
-		siteDomain &&
-		! isFreeWpcomSubdomain( siteDomain )
-	) {
+	if ( ( ! site.name || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
 		return siteDomain;
 	}
 

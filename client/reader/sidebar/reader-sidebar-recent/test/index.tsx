@@ -1,39 +1,50 @@
 import { getReaderSidebarSiteName } from '../index';
 
+// Untitled sites come back from the API URL-shaped with a trailing slash,
+// e.g. "example.wordpress.com/".
 describe( 'getReaderSidebarSiteName', () => {
-	test( 'shows the mapped custom domain when the name is only the free *.wordpress.com subdomain', () => {
+	test( 'shows the mapped custom domain when the name is the free subdomain (with trailing slash)', () => {
 		expect(
 			getReaderSidebarSiteName( {
-				name: 'lookingforthelight.wordpress.com',
-				URL: 'https://lookingforthelight.blog',
+				name: 'exampleblog.wordpress.com/',
+				URL: 'https://example.com',
 			} )
-		).toBe( 'lookingforthelight.blog' );
+		).toBe( 'example.com' );
+	} );
+
+	test( 'handles a name with protocol and trailing slash', () => {
+		expect(
+			getReaderSidebarSiteName( {
+				name: 'https://exampleblog.wordpress.com/',
+				URL: 'https://example.org',
+			} )
+		).toBe( 'example.org' );
 	} );
 
 	test( 'shows the mapped custom domain when the site has no name at all', () => {
-		expect( getReaderSidebarSiteName( { name: '', URL: 'https://tyreanstales.com' } ) ).toBe(
-			'tyreanstales.com'
+		expect( getReaderSidebarSiteName( { name: '', URL: 'https://example.net' } ) ).toBe(
+			'example.net'
 		);
 	} );
 
 	test( 'keeps a real site title untouched', () => {
 		expect(
-			getReaderSidebarSiteName( { name: 'My Lovely Blog', URL: 'https://myblog.example' } )
-		).toBe( 'My Lovely Blog' );
+			getReaderSidebarSiteName( { name: 'Example Site Title', URL: 'https://example.com' } )
+		).toBe( 'Example Site Title' );
 	} );
 
-	test( 'keeps the free subdomain when the site has no mapped custom domain', () => {
+	test( 'shows the clean subdomain (no trailing slash) when the site has no custom domain', () => {
 		expect(
 			getReaderSidebarSiteName( {
-				name: 'plainblog.wordpress.com',
-				URL: 'https://plainblog.wordpress.com',
+				name: 'exampleblog.wordpress.com/',
+				URL: 'https://exampleblog.wordpress.com',
 			} )
-		).toBe( 'plainblog.wordpress.com' );
+		).toBe( 'exampleblog.wordpress.com' );
 	} );
 
-	test( 'falls back to the name when there is no URL to derive a domain from', () => {
-		expect( getReaderSidebarSiteName( { name: 'somesite.wordpress.com', URL: '' } ) ).toBe(
-			'somesite.wordpress.com'
+	test( 'falls back to the raw name when there is no URL to derive a domain from', () => {
+		expect( getReaderSidebarSiteName( { name: 'Example Site Title', URL: '' } ) ).toBe(
+			'Example Site Title'
 		);
 	} );
 } );
