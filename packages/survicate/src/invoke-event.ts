@@ -8,7 +8,7 @@ const HELP_CENTER_STORE = 'automattic/help-center';
  * `@wordpress/data` store. Returns `false` if the store is not registered
  * (e.g. in contexts where the Help Center is not loaded).
  */
-function isHelpCenterOpen(): boolean {
+export function isHelpCenterOpen(): boolean {
 	try {
 		const store = select( HELP_CENTER_STORE ) as { isHelpCenterShown?: () => boolean } | undefined;
 		return !! store?.isHelpCenterShown?.();
