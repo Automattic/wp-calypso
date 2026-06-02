@@ -350,6 +350,7 @@ export default function AgentDock( {
 		<SupportGuide
 			onAbort={ handleAbort }
 			onClose={ handleClose }
+			onExpand={ handleExpand }
 			isDocked={ isDocked }
 			isOpen={ chatIsOpen }
 			chatHeaderOptions={ chatHeaderOptions }
@@ -360,6 +361,7 @@ export default function AgentDock( {
 		<SupportGuides
 			onAbort={ handleAbort }
 			onClose={ handleClose }
+			onExpand={ handleExpand }
 			isDocked={ isDocked }
 			isOpen={ chatIsOpen }
 			chatHeaderOptions={ chatHeaderOptions }

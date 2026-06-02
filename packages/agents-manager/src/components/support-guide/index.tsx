@@ -22,6 +22,8 @@ interface SupportGuideProps {
 	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
+	/** Called when the chat is expanded (floating mode). */
+	onExpand: () => void;
 }
 
 export default function SupportGuide( {
@@ -30,6 +32,7 @@ export default function SupportGuide( {
 	isDocked,
 	onAbort,
 	onClose,
+	onExpand,
 }: SupportGuideProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
@@ -65,6 +68,7 @@ export default function SupportGuide( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
 			onClose={ onClose }
+			onExpand={ onExpand }
 			onStop={ onAbort }
 			expandOnHover={ false }
 		>

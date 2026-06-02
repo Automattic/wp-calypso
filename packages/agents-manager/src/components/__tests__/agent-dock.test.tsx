@@ -125,7 +125,12 @@ jest.mock( '../support-guide', () => ( {
 } ) );
 jest.mock( '../support-guides', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="support-guides">Support guides</div>,
+	default: ( { onExpand }: { onExpand: () => void } ) => (
+		<div data-testid="support-guides">
+			Support guides
+			<button onClick={ onExpand }>Expand guides</button>
+		</div>
+	),
 } ) );
 
 import AgentDock from '../agent-dock';
@@ -257,6 +262,20 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/history' );
 		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
 		act( () => onOpenSidebar() );
+
+		const location = screen.getByTestId( 'location' );
+		expect( location.textContent ).toBe( '/chat' );
+		expect( location.dataset.sessionId ).toBe( 'session-123' );
+	} );
+
+	it( 'resumes the active session when expanding from the support guides view', () => {
+		installJetpackAiSidebarPreviewData( { supportGuides: true } );
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		renderAgentDock( '/support-guides' );
+		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
 		const location = screen.getByTestId( 'location' );
 		expect( location.textContent ).toBe( '/chat' );
