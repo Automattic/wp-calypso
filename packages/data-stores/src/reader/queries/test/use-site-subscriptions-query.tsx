@@ -103,6 +103,33 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		expect( result.current.data.totalCount ).toBe( 2 );
 	} );
 
+	it( 'reuses fresh cached subscriptions when remounted', async () => {
+		( callApi as jest.Mock ).mockResolvedValue( {
+			subscriptions: [ { id: '1', name: 'Site 1', URL: 'https://site1.example.com' } ],
+			page: 1,
+			total_subscriptions: 1,
+		} );
+
+		const firstRender = renderHook( () => useSiteSubscriptionsQuery(), {
+			wrapper,
+		} );
+
+		await waitFor( () => expect( firstRender.result.current.isLoading ).toBe( false ) );
+		expect( callApi ).toHaveBeenCalledTimes( 1 );
+
+		firstRender.unmount();
+
+		const secondRender = renderHook( () => useSiteSubscriptionsQuery(), {
+			wrapper,
+		} );
+
+		await waitFor( () =>
+			expect( secondRender.result.current.data.subscriptions ).toHaveLength( 1 )
+		);
+
+		expect( callApi ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it.each( [
 		{
 			sortTerm: SiteSubscriptionsSortBy.SiteName,

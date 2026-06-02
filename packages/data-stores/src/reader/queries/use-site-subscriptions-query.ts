@@ -8,6 +8,8 @@ import type { SiteSubscriptionsResponseItem } from '../types';
 
 export const siteSubscriptionsQueryKeyPrefix = [ 'read', 'site-subscriptions' ];
 
+const SITE_SUBSCRIPTIONS_STALE_TIME = 60 * 60 * 1000;
+
 type SubscriptionManagerSiteSubscriptions = {
 	subscriptions: SiteSubscriptionsResponseItem[];
 	page: number;
@@ -81,6 +83,7 @@ const useSiteSubscriptionsQuery = ( {
 			getNextPageParam: ( lastPage, pages ) => {
 				return lastPage.page * number < lastPage.total_subscriptions ? pages.length + 1 : undefined;
 			},
+			staleTime: SITE_SUBSCRIPTIONS_STALE_TIME,
 			refetchOnWindowFocus: false,
 		} );
 
