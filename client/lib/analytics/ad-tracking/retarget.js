@@ -93,15 +93,18 @@ export async function retarget( urlPath ) {
 	// OpenAI
 	if ( mayWeTrackByTracker( 'openai' ) ) {
 		// see https://developers.openai.com/ads/measurement-pixel
-		window.oaiq( 'measure', 'page_viewed', {
+		const eventProps = {
 			type: 'contents',
 			contents: [
 				{
 					id: urlPath,
+					name: document.title,
+					content_type: 'page',
 				},
 			],
-		} );
-		debug( 'retarget: [OpenAI]' );
+		};
+		window.oaiq( 'measure', 'page_viewed', eventProps );
+		debug( 'retarget: [OpenAI]', eventProps );
 	}
 	// Rate limited retargeting (secondary trackers)
 
