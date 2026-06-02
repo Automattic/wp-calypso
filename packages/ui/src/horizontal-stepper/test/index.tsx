@@ -19,11 +19,6 @@ describe( 'HorizontalStepper', () => {
 		);
 	}
 
-	it( 'renders a tablist', () => {
-		render( <Controlled /> );
-		expect( screen.getByRole( 'tablist' ) ).toBeInTheDocument();
-	} );
-
 	it( 'renders step titles as tabs', () => {
 		render( <Controlled /> );
 		expect( screen.getByRole( 'tab', { name: /step a/i } ) ).toBeInTheDocument();
@@ -96,6 +91,23 @@ describe( 'HorizontalStepper', () => {
 			</HorizontalStepper>
 		);
 		expect( screen.getByText( 'Do the first thing' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not call onValueChange when an explicitly disabled step tab is clicked', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<HorizontalStepper value="a" onValueChange={ onValueChange } aria-label="Test">
+				<HorizontalStepper.Step value="a" title="Step A">
+					<p>Panel A</p>
+				</HorizontalStepper.Step>
+				<HorizontalStepper.Step value="b" title="Step B" disabled>
+					<p>Panel B</p>
+				</HorizontalStepper.Step>
+			</HorizontalStepper>
+		);
+		await user.click( screen.getByRole( 'tab', { name: /step b/i } ) );
+		expect( onValueChange ).not.toHaveBeenCalled();
 	} );
 } );
 

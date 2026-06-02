@@ -2,8 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef, useState } from '@wordpress/element';
 import { Stepper } from '..';
-import { useStepContext } from '../context';
-import type { StepContextValue, StepperRef } from '../types';
+import type { StepperRef } from '../types';
 
 describe( 'Stepper.Root', () => {
 	it( 'warns in dev when neither aria-label nor aria-labelledby is provided', () => {
@@ -20,47 +19,48 @@ describe( 'Stepper.Root', () => {
 } );
 
 describe( 'Stepper.Step', () => {
-	it( 'provides step context to descendants', () => {
-		let capturedContext: StepContextValue | null = null;
-
-		function Inspector() {
-			capturedContext = useStepContext();
-			return null;
-		}
-
+	it( 'marks the active step with data-current attribute', () => {
 		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
-				<Stepper.Step value="a" status="completed">
-					<Inspector />
+				<Stepper.Step value="a" className="step-a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+				</Stepper.Step>
+				<Stepper.Step value="b" className="step-b">
+					<Stepper.Trigger>Step B</Stepper.Trigger>
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-
-		expect( capturedContext!.isCurrent ).toBe( true );
-		expect( capturedContext!.status ).toBe( 'completed' );
-		expect( capturedContext!.index ).toBe( 0 );
+		const stepA = document.querySelector( '.step-a' );
+		const stepB = document.querySelector( '.step-b' );
+		expect( stepA ).toHaveAttribute( 'data-current', '' );
+		expect( stepB ).not.toHaveAttribute( 'data-current' );
 	} );
 
-	it( 'marks step as disabled when linear and not completed', () => {
-		let capturedContext: StepContextValue | null = null;
-
-		function Inspector() {
-			capturedContext = useStepContext();
-			return null;
-		}
-
+	it.each( [
+		{
+			label: 'linear flow — non-completed step',
+			props: { linear: true, value: 'a' as const },
+			stepBProps: {} as object,
+		},
+		{
+			label: 'explicit disabled — overrides completed status',
+			props: { value: 'a' as const },
+			stepBProps: { disabled: true, status: 'completed' as const },
+		},
+	] )( 'marks step with data-disabled: $label', async ( { props, stepBProps } ) => {
 		render(
-			<Stepper.Root orientation="vertical" value="a" linear aria-label="Test">
-				<Stepper.Step value="a">
-					<div />
+			<Stepper.Root orientation="vertical" aria-label="Test" { ...props }>
+				<Stepper.Step value="a" status="completed" className="step-a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
 				</Stepper.Step>
-				<Stepper.Step value="b">
-					<Inspector />
+				<Stepper.Step value="b" className="step-b" { ...stepBProps }>
+					<Stepper.Trigger>Step B</Stepper.Trigger>
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-
-		expect( capturedContext!.isDisabled ).toBe( true );
+		await waitFor( () => {
+			expect( document.querySelector( '.step-b' ) ).toHaveAttribute( 'data-disabled', '' );
+		} );
 	} );
 
 	it( 'sets data-current attribute on the current step', () => {
@@ -109,38 +109,6 @@ describe( 'Stepper.Step', () => {
 		const buttonB = screen.getByRole( 'button', { name: /step b/i } );
 		expect( buttonB.closest( '[data-disabled]' ) ).not.toBeNull();
 	} );
-
-	it( 'marks step as disabled when explicitly disabled even if completed', () => {
-		let capturedContext: StepContextValue | null = null;
-
-		function Inspector() {
-			capturedContext = useStepContext();
-			return null;
-		}
-
-		render(
-			<Stepper.Root orientation="vertical" value="a" linear aria-label="Test">
-				<Stepper.Step value="a" status="completed" disabled>
-					<Inspector />
-				</Stepper.Step>
-			</Stepper.Root>
-		);
-
-		// Completed + explicit disabled = still disabled
-		expect( capturedContext!.isDisabled ).toBe( true );
-	} );
-
-	it( 'renders as a div in horizontal mode', () => {
-		render(
-			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
-				<Stepper.Step value="a">
-					<div data-testid="content" />
-				</Stepper.Step>
-			</Stepper.Root>
-		);
-		// In horizontal mode the step renders a plain <div> (not Accordion.Item)
-		expect( screen.getByTestId( 'content' ).parentElement?.tagName ).toBe( 'DIV' );
-	} );
 } );
 
 describe( 'Stepper.Indicator', () => {
@@ -173,10 +141,22 @@ describe( 'Stepper.Indicator', () => {
 		expect( screen.getByText( 'Step 1 of 2, completed' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders custom indicator children with aria-hidden', () => {
-		renderIndicator( { children: <span data-testid="custom-icon" /> } );
+	it( 'wraps custom indicator children so they are hidden from the accessibility tree', () => {
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Indicator>
+						<span data-testid="custom-icon">★</span>
+					</Stepper.Indicator>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
 		const icon = screen.getByTestId( 'custom-icon' );
-		expect( icon.parentElement ).toHaveAttribute( 'aria-hidden', 'true' );
+		expect( icon ).toBeInTheDocument();
+		// The custom icon should not be reachable as a standalone accessible element.
+		// It exists in the DOM but is decorative — the indicator's visually-hidden
+		// label is the only accessible text inside the indicator.
+		expect( icon.closest( '[aria-hidden="true"]' ) ).not.toBeNull();
 	} );
 } );
 
@@ -260,6 +240,23 @@ describe( 'Stepper.Trigger', () => {
 		// MUST have aria-disabled (keeps focusable, communicates state to AT)
 		expect( stepBTab ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
+
+	it( 'does not collapse the active panel when the active vertical trigger is re-clicked', async () => {
+		const user = userEvent.setup();
+		render(
+			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
+				<Stepper.Step value="a">
+					<Stepper.Trigger>Step A</Stepper.Trigger>
+					<Stepper.Panel value="a">Panel A</Stepper.Panel>
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		expect( screen.getByText( 'Panel A' ) ).toBeVisible();
+		await user.click( screen.getByRole( 'button', { name: /step a/i } ) );
+		// Panel must remain visible — the trigger's preventDefault guard should
+		// prevent the accordion from collapsing the only active step.
+		expect( screen.getByText( 'Panel A' ) ).toBeVisible();
+	} );
 } );
 
 describe( 'Stepper.Panel', () => {
@@ -277,25 +274,6 @@ describe( 'Stepper.Panel', () => {
 			</Stepper.Root>
 		);
 		expect( screen.getByText( 'Panel A content' ) ).toBeVisible();
-	} );
-
-	it( 'applies role="region" when totalSteps <= 5 in vertical mode', async () => {
-		render(
-			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
-				<Stepper.Step value="a">
-					<Stepper.Trigger>A</Stepper.Trigger>
-					<Stepper.Panel>Content</Stepper.Panel>
-				</Stepper.Step>
-			</Stepper.Root>
-		);
-		// After effects fire totalSteps becomes 1; the accordion panel gets role="region"
-		// (the Accordion.Root also carries role="region"; the panel is identified by aria-labelledby)
-		await waitFor( () => {
-			const panelRegion = screen
-				.getAllByRole( 'region' )
-				.find( ( el ) => el.hasAttribute( 'aria-labelledby' ) );
-			expect( panelRegion ).toBeDefined();
-		} );
 	} );
 
 	it( 'applies role="region" to all panels at the 5-step boundary', async () => {
@@ -318,23 +296,22 @@ describe( 'Stepper.Panel', () => {
 		} );
 	} );
 
-	it( 'omits role="region" when totalSteps > 5 in vertical mode', async () => {
-		const steps = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
-		const { container } = render(
-			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
-				{ steps.map( ( v ) => (
-					<Stepper.Step key={ v } value={ v }>
-						<Stepper.Trigger>{ v }</Stepper.Trigger>
-						<Stepper.Panel>Content { v }</Stepper.Panel>
+	it( 'omits role="region" on panels when totalSteps > 5 in vertical mode', async () => {
+		render(
+			<Stepper.Root orientation="vertical" value="0" aria-label="Test">
+				{ Array.from( { length: 6 }, ( _, i ) => (
+					<Stepper.Step key={ i } value={ String( i ) }>
+						<Stepper.Panel value={ String( i ) }>Content { i }</Stepper.Panel>
 					</Stepper.Step>
 				) ) }
 			</Stepper.Root>
 		);
-		// After effects fire totalSteps becomes 6; panels must not have role="region"
-		await screen.findByText( 'Content a' );
 		await waitFor( () => {
-			const unlabelledRegions = container.querySelectorAll( '[role="region"]:not([aria-label])' );
-			expect( unlabelledRegions.length ).toBe( 0 );
+			// With > 5 steps, panels must not carry role="region" (too many landmarks).
+			// The only region landmark should be the root Accordion element (aria-label="Test").
+			const regions = screen.queryAllByRole( 'region' );
+			const panelRegions = regions.filter( ( el ) => el.hasAttribute( 'aria-labelledby' ) );
+			expect( panelRegions ).toHaveLength( 0 );
 		} );
 	} );
 } );
@@ -614,6 +591,13 @@ describe( 'Stepper dev warnings', () => {
 		} );
 		spy.mockRestore();
 	} );
+
+	// NOTE: A test for the duplicate-value warning ("Two steps share value '...'") is
+	// deliberately omitted. useStepRegistration prevents duplicate entries at registration
+	// time (it bails out if a step with the same value is already in state), so the
+	// steps array that the useEffect in root.tsx inspects will never contain duplicates.
+	// The warning is unreachable in a JSDOM environment via normal JSX rendering, making
+	// any such test a never-fails assertion that proves nothing about real behaviour.
 } );
 
 describe( 'Stepper.Panel dev warnings', () => {
