@@ -121,7 +121,7 @@ export default function SupportGuides( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
 			onClose={ onClose }
 			onStop={ onAbort }
 			expandOnHover={ false }

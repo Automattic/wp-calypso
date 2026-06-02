@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { columns, comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
+import { columns, comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
@@ -76,7 +76,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, sectionName, agentConfig } = useAgentsManagerContext();
+	const { siteKey, sectionName, agentConfig, getActiveSessionId } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -88,11 +88,12 @@ export default function AgentDock( {
 		window.__agentsManagerActions?.desktopMediaQuery
 	);
 	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
-	const [ isZendeskChatEmpty, setIsZendeskChatEmpty ] = useState( true );
-	const { setIsOpen, setIsDocked, setIsSplitScreen } = useDispatch( AGENTS_MANAGER_STORE );
+	const { setIsOpen, setIsDocked, setIsMinimized, setIsSplitScreen } =
+		useDispatch( AGENTS_MANAGER_STORE );
 	const {
 		isOpen: isPersistedOpen = false,
 		isDocked: isPersistedDocked = false,
+		isMinimized = false,
 		isSplitScreen = false,
 	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -118,21 +119,36 @@ export default function AgentDock( {
 		[ isReaderChat, setIsOpen ]
 	);
 
+	const goToActiveChat = () => {
+		// Keep a live conversation (orchestrator or Zendesk) as-is.
+		if ( pathname === '/chat' || pathname === '/zendesk' ) {
+			return;
+		}
+		// Resume the active session — `/chat` alone would start a new chat.
+		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+	};
+
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			defaultDocked: isReaderChat ? false : isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => setOpenState( true ),
+			onOpenSidebar: () => {
+				setOpenState( true );
+				goToActiveChat();
+			},
 			onCloseSidebar: () => setOpenState( false ),
 			isSplitScreen,
 		} );
 
-	// Handle WordPress admin bar integration
-	useAdminBarIntegration( {
+	// WP admin bar integration. Returns whether a trigger button can reopen the chat.
+	const hasAdminBarTrigger = useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
 		maybeOpenChat: () => {
+			if ( isMinimized ) {
+				setIsMinimized( false );
+			}
 			if ( ! isPersistedOpen ) {
 				if ( isDocked ) {
 					openSidebar();
@@ -172,18 +188,15 @@ export default function AgentDock( {
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
 		[]
 	);
-	const handleZendeskHasMessagesChange = useCallback(
-		( hasMessages: boolean ) => setIsZendeskChatEmpty( ! hasMessages ),
-		[]
-	);
 
 	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
 
 	const handleExpand = () => {
-		setOpenState( true );
-		if ( pathname === '/history' ) {
-			navigate( '/' );
+		if ( isMinimized ) {
+			setIsMinimized( false );
 		}
+		setOpenState( true );
+		goToActiveChat();
 	};
 
 	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
@@ -243,21 +256,6 @@ export default function AgentDock( {
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => navigate( '/' ),
 			},
-			shouldShowUnifiedSupport && {
-				icon: lifesaver,
-				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
-				onClick: () => {
-					handleAbort();
-					navigate( '/zendesk' );
-				},
-			},
-			showSupportGuides && {
-				icon: help,
-				title: __( 'Support guides', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/support-guides',
-				onClick: () => navigate( '/support-guides' ),
-			},
 			// Sidebar docking only makes sense in wp-admin where a block-editor
 			// sidebar slot exists. On public reader-chat frontends there's no
 			// sidebar to dock into — the click does nothing, so hide the option.
@@ -296,11 +294,17 @@ export default function AgentDock( {
 
 	const chatHeaderOptions = getChatHeaderOptions();
 
+	// The WP admin bar trigger can reopen the chat, so it gates two behaviors:
+	// hide it on close, and minimize it to the bar.
+	const isChatVisible = isPersistedOpen || ! hasAdminBarTrigger;
+	const isMinimizedActive = hasAdminBarTrigger && isMinimized;
+	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
+
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
 			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
+			isOpen={ chatIsOpen }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			chatHeaderOptions={ chatHeaderOptions }
@@ -321,13 +325,12 @@ export default function AgentDock( {
 	const ZendeskChatRoute = (
 		<ZendeskChat
 			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
+			isOpen={ chatIsOpen }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onHasMessagesChange={ handleZendeskHasMessagesChange }
 		/>
 	);
 
@@ -335,7 +338,7 @@ export default function AgentDock( {
 		<AgentHistory
 			chatHeaderOptions={ chatHeaderOptions }
 			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
+			isOpen={ chatIsOpen }
 			onAbort={ handleAbort }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
@@ -346,9 +349,9 @@ export default function AgentDock( {
 	const SupportGuideRoute = (
 		<SupportGuide
 			onAbort={ handleAbort }
-			onClose={ closeSidebar }
+			onClose={ handleClose }
 			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
+			isOpen={ chatIsOpen }
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
@@ -356,15 +359,16 @@ export default function AgentDock( {
 	const SupportGuidesRoute = (
 		<SupportGuides
 			onAbort={ handleAbort }
-			onClose={ closeSidebar }
+			onClose={ handleClose }
 			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
+			isOpen={ chatIsOpen }
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
 
 	return (
 		shouldRenderChat &&
+		isChatVisible &&
 		createAgentPortal(
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
