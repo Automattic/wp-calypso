@@ -8,6 +8,7 @@ import {
 	emptyDelta,
 	endDrag,
 	moveItem,
+	resetAll,
 	recomputeDirty,
 	resetItem,
 	restoreWorking,
@@ -132,6 +133,24 @@ describe( 'customize draft-state', () => {
 			expect( a.isDirty ).toBe( true );
 			const b = resetItem( a, 'x' );
 			expect( b.isDirty ).toBe( false );
+		} );
+	} );
+
+	describe( 'resetAll', () => {
+		it( 'drops every override and marks dirty against a customized saved delta', () => {
+			const saved: LayoutDelta = {
+				version: 1,
+				updated_at: 100,
+				overrides: [
+					{ itemId: 'a', position: { ...samplePosition } },
+					{ itemId: 'b', position: { kind: 'top_level', index: 2 } },
+				],
+			};
+			const state = createDraftState( saved );
+			const next = resetAll( state );
+			expect( next.workingDelta.overrides ).toEqual( [] );
+			expect( next.savedDelta.overrides ).toEqual( saved.overrides );
+			expect( next.isDirty ).toBe( true );
 		} );
 	} );
 

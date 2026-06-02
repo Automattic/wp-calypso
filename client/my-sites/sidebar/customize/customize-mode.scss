@@ -341,7 +341,9 @@ body.is-admin-sidebar-customize-mode {
 		pointer-events: none;
 		transform: scaleX( 1 );
 		transform-origin: center;
-		transition: opacity 160ms ease, transform 160ms ease;
+		transition:
+			opacity 160ms ease,
+			transform 160ms ease;
 	}
 
 	.sidebar > li:not( .admin-sidebar-drop-indicator )::before,
@@ -355,7 +357,6 @@ body.is-admin-sidebar-customize-mode {
 		> li:not( .admin-sidebar-drop-indicator ):last-child::after {
 		bottom: 0;
 	}
-
 }
 
 // Source row fades while the ghost follows the cursor (Phase 2 row 17 visual).
@@ -409,7 +410,7 @@ li.admin-sidebar-drop-indicator {
 }
 
 // Customize-mode footer. Docked at the bottom of the sidebar surface with
-// auto-save status plus compact controls.
+// Reset all plus compact Undo / Retry / Done controls.
 .admin-sidebar-customize-footer {
 	display: flex;
 	flex-direction: column;
@@ -420,10 +421,35 @@ li.admin-sidebar-drop-indicator {
 	box-shadow: 0 -8px 12px -8px rgba( 0, 0, 0, 0.5 );
 	margin-top: auto;
 
-	&__status {
+	&__reset-all {
+		flex: 0 0 auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 6px 12px;
+		border: 0;
+		border-radius: 3px;
+		background: transparent;
 		color: rgba( 240, 240, 241, 0.75 );
-		font-size: 12px;
-		line-height: 1.4;
+		font-size: 13px;
+		cursor: pointer;
+	}
+
+	&__reset-all:hover:not( [disabled] ),
+	&__reset-all:focus-visible:not( [disabled] ) {
+		color: #fff;
+		background: rgba( 240, 240, 241, 0.08 );
+	}
+
+	&__reset-all[disabled] {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	&__reset-all-icon {
+		flex: 0 0 auto;
+		display: block;
 	}
 
 	&__undo,
@@ -455,6 +481,13 @@ li.admin-sidebar-drop-indicator {
 		opacity: 0.55;
 		cursor: not-allowed;
 	}
+}
+
+.admin-sidebar-reset-all-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 16px;
+	margin-top: 24px;
 }
 
 // Drag handle (grip). Rendered inside reassignable items during customize
