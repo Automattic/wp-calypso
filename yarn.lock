@@ -755,6 +755,47 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/charts@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@automattic/charts@npm:1.5.0"
+  dependencies:
+    "@automattic/number-formatters": "npm:^1.2.0"
+    "@babel/runtime": "npm:7.29.2"
+    "@react-spring/web": "npm:9.7.5"
+    "@visx/annotation": "npm:^3.12.0"
+    "@visx/axis": "npm:^3.12.0"
+    "@visx/curve": "npm:^3.12.0"
+    "@visx/event": "npm:^3.12.0"
+    "@visx/gradient": "npm:^3.12.0"
+    "@visx/grid": "npm:^3.12.0"
+    "@visx/group": "npm:^3.12.0"
+    "@visx/legend": "npm:^3.12.0"
+    "@visx/pattern": "npm:^3.12.0"
+    "@visx/responsive": "npm:^3.12.0"
+    "@visx/scale": "npm:^3.12.0"
+    "@visx/shape": "npm:^3.12.0"
+    "@visx/text": "npm:^3.12.0"
+    "@visx/tooltip": "npm:^3.12.0"
+    "@visx/vendor": "npm:^3.12.0"
+    "@visx/xychart": "npm:^3.12.0"
+    "@wordpress/i18n": "npm:^6.0.0"
+    "@wordpress/icons": "npm:^13.0.0"
+    "@wordpress/theme": "npm:0.13.0"
+    "@wordpress/ui": "npm:0.13.0"
+    clsx: "npm:2.1.1"
+    date-fns: "npm:^4.1.0"
+    deepmerge: "npm:4.3.1"
+    dompurify: "npm:^3.3.3"
+    fast-deep-equal: "npm:3.1.3"
+    react-google-charts: "npm:^5.2.1"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 6d9c1df1717fb4bdeec4a4f7c5c5ff6054679ea3fefbbbcfe9da1b7ee7fd59b723a5c092f3507049d7978bcff1d14f4e873e151c5712c045bffd3e5ddc6d6ec8
+  languageName: node
+  linkType: hard
+
 "@automattic/charts@npm:>=0.58.0 <1.0.0":
   version: 0.58.0
   resolution: "@automattic/charts@npm:0.58.0"
@@ -795,9 +836,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/charts@npm:^1.4.3":
-  version: 1.4.3
-  resolution: "@automattic/charts@npm:1.4.3"
+"@automattic/charts@patch:@automattic/charts@npm%3A1.5.0#~/.yarn/patches/@automattic-charts-npm-1.5.0-228f6cf856.patch":
+  version: 1.5.0
+  resolution: "@automattic/charts@patch:@automattic/charts@npm%3A1.5.0#~/.yarn/patches/@automattic-charts-npm-1.5.0-228f6cf856.patch::version=1.5.0&hash=dd4773"
   dependencies:
     "@automattic/number-formatters": "npm:^1.2.0"
     "@babel/runtime": "npm:7.29.2"
@@ -819,9 +860,9 @@ __metadata:
     "@visx/vendor": "npm:^3.12.0"
     "@visx/xychart": "npm:^3.12.0"
     "@wordpress/i18n": "npm:^6.0.0"
-    "@wordpress/icons": "npm:^12.0.0"
+    "@wordpress/icons": "npm:^13.0.0"
     "@wordpress/theme": "npm:0.13.0"
-    "@wordpress/ui": "npm:0.11.0"
+    "@wordpress/ui": "npm:0.13.0"
     clsx: "npm:2.1.1"
     date-fns: "npm:^4.1.0"
     deepmerge: "npm:4.3.1"
@@ -832,7 +873,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 3fcfcaaed2dd1f2472f6194a664ae5ebc65a798bf3b343be9348fd54632027c85119a27833b1461bba0461c32a5630cf042c1dec6edebfbee2db5b120a11dfae
+  checksum: 91960bb64f6db4e19af96ea926ec386062df7594433744ca0283dde5fe487b2afc40e090e1d64e9a1f0334794728cc351c079244eaf0d2c5d3e62df4024f6277
   languageName: node
   linkType: hard
 
@@ -13967,7 +14008,7 @@ __metadata:
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/charts": "npm:^1.4.3"
+    "@automattic/charts": "patch:@automattic/charts@npm%3A1.5.0#~/.yarn/patches/@automattic-charts-npm-1.5.0-228f6cf856.patch"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -33217,7 +33258,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^1.4.3"
+    "@automattic/charts": "patch:@automattic/charts@npm%3A1.5.0#~/.yarn/patches/@automattic-charts-npm-1.5.0-228f6cf856.patch"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"

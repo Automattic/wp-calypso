@@ -1,0 +1,128 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index b5ebdf1ba32203b929872b33d49c2a154303f854..877568c221607b50477a811a59725ff17cb07465 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -4707,6 +4707,16 @@ var AreaChartInternal = /* @__PURE__ */ _react.forwardRef.call(void 0, ({
+         contentHeight
+       }) => {
+         const chartHeight = contentHeight > 0 ? contentHeight : height;
++        const __zoomClipMargin = { ...defaultMargin, ...margin };
++        const __zoomClipLeft = __zoomClipMargin.left ?? 0;
++        const __zoomClipTop = __zoomClipMargin.top ?? 0;
++        const __zoomClipRight = __zoomClipMargin.right ?? 0;
++        const __zoomClipBottom = __zoomClipMargin.bottom ?? 0;
++        const __zoomClipWidth = Math.max(0, (width ?? 0) - __zoomClipLeft - __zoomClipRight);
++        const __zoomClipHeight = Math.max(0, chartHeight - __zoomClipTop - __zoomClipBottom);
++        const __zoomClipId = `area-zoom-clip-${String(chartId).replace(/[^a-zA-Z0-9_-]/g, "-")}`;
++        const __zoomClipActive = zoomable && Boolean(zoom.domain) && Number.isFinite(width) && __zoomClipWidth > 0 && __zoomClipHeight > 0;
++        const __zoomClipPath = __zoomClipActive ? `url(#${__zoomClipId})` : void 0;
+         return /* @__PURE__ */ _jsxruntime.jsx.call(void 0, "div", {
+           role: "grid",
+           "aria-label": _i18n.__.call(void 0, "Area chart", "jetpack-charts"),
+@@ -4736,7 +4746,17 @@ var AreaChartInternal = /* @__PURE__ */ _react.forwardRef.call(void 0, ({
+               onPointerMove: zoom.handlers.onPointerMove,
+               onPointerOut,
+               pointerEventsDataKey: "nearest",
+-              children: [gridVisibility !== "none" && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, _xychart.Grid, {
++              children: [__zoomClipActive && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, "defs", {
++                children: /* @__PURE__ */ _jsxruntime.jsx.call(void 0, "clipPath", {
++                  id: __zoomClipId,
++                  children: /* @__PURE__ */ _jsxruntime.jsx.call(void 0, "rect", {
++                    x: __zoomClipLeft,
++                    y: __zoomClipTop,
++                    width: __zoomClipWidth,
++                    height: __zoomClipHeight
++                  })
++                })
++              }), gridVisibility !== "none" && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, _xychart.Grid, {
+                 columns: false,
+                 numTicks: 4
+               }), chartOptions.axis.x.display && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, _xychart.Axis, {
+@@ -4749,12 +4769,18 @@ var AreaChartInternal = /* @__PURE__ */ _react.forwardRef.call(void 0, ({
+                 width,
+                 height: chartHeight,
+                 children: _i18n.__.call(void 0, "All series are hidden. Click legend items to show data.", "jetpack-charts")
+-              }) : null, !allSeriesHidden && stacked && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, _xychart.AnimatedAreaStack, {
+-                curve,
+-                offset: stackOffset,
+-                renderLine: resolvedWithStroke,
++              }) : null, !allSeriesHidden && stacked && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, "g", {
++                clipPath: __zoomClipPath,
++                children: /* @__PURE__ */ _jsxruntime.jsx.call(void 0, _xychart.AnimatedAreaStack, {
++                  curve,
++                  offset: stackOffset,
++                  renderLine: resolvedWithStroke,
++                  children: seriesWithVisibility.map(renderSeries)
++                })
++              }), !allSeriesHidden && !stacked && /* @__PURE__ */ _jsxruntime.jsx.call(void 0, "g", {
++                clipPath: __zoomClipPath,
+                 children: seriesWithVisibility.map(renderSeries)
+-              }), !allSeriesHidden && !stacked && seriesWithVisibility.map(renderSeries), withTooltips && /* @__PURE__ */ _jsxruntime.jsxs.call(void 0, _jsxruntime.Fragment, {
++              }), withTooltips && /* @__PURE__ */ _jsxruntime.jsxs.call(void 0, _jsxruntime.Fragment, {
+                 children: [/* @__PURE__ */ _jsxruntime.jsx.call(void 0, AccessibleTooltip, {
+                   detectBounds: true,
+                   snapTooltipToDatumX: true,
+diff --git a/dist/index.js b/dist/index.js
+index fecc6b073e8470deaeae828f36646562cfe604de..4cd33085c8ea625ebafbfe68d4eeae8d151d460c 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -4707,6 +4707,16 @@ var AreaChartInternal = /* @__PURE__ */ forwardRef5(({
+         contentHeight
+       }) => {
+         const chartHeight = contentHeight > 0 ? contentHeight : height;
++        const __zoomClipMargin = { ...defaultMargin, ...margin };
++        const __zoomClipLeft = __zoomClipMargin.left ?? 0;
++        const __zoomClipTop = __zoomClipMargin.top ?? 0;
++        const __zoomClipRight = __zoomClipMargin.right ?? 0;
++        const __zoomClipBottom = __zoomClipMargin.bottom ?? 0;
++        const __zoomClipWidth = Math.max(0, (width ?? 0) - __zoomClipLeft - __zoomClipRight);
++        const __zoomClipHeight = Math.max(0, chartHeight - __zoomClipTop - __zoomClipBottom);
++        const __zoomClipId = `area-zoom-clip-${String(chartId).replace(/[^a-zA-Z0-9_-]/g, "-")}`;
++        const __zoomClipActive = zoomable && Boolean(zoom.domain) && Number.isFinite(width) && __zoomClipWidth > 0 && __zoomClipHeight > 0;
++        const __zoomClipPath = __zoomClipActive ? `url(#${__zoomClipId})` : void 0;
+         return /* @__PURE__ */ _jsx18("div", {
+           role: "grid",
+           "aria-label": __5("Area chart", "jetpack-charts"),
+@@ -4736,7 +4746,17 @@ var AreaChartInternal = /* @__PURE__ */ forwardRef5(({
+               onPointerMove: zoom.handlers.onPointerMove,
+               onPointerOut,
+               pointerEventsDataKey: "nearest",
+-              children: [gridVisibility !== "none" && /* @__PURE__ */ _jsx18(Grid2, {
++              children: [__zoomClipActive && /* @__PURE__ */ _jsx18("defs", {
++                children: /* @__PURE__ */ _jsx18("clipPath", {
++                  id: __zoomClipId,
++                  children: /* @__PURE__ */ _jsx18("rect", {
++                    x: __zoomClipLeft,
++                    y: __zoomClipTop,
++                    width: __zoomClipWidth,
++                    height: __zoomClipHeight
++                  })
++                })
++              }), gridVisibility !== "none" && /* @__PURE__ */ _jsx18(Grid2, {
+                 columns: false,
+                 numTicks: 4
+               }), chartOptions.axis.x.display && /* @__PURE__ */ _jsx18(Axis2, {
+@@ -4749,12 +4769,18 @@ var AreaChartInternal = /* @__PURE__ */ forwardRef5(({
+                 width,
+                 height: chartHeight,
+                 children: __5("All series are hidden. Click legend items to show data.", "jetpack-charts")
+-              }) : null, !allSeriesHidden && stacked && /* @__PURE__ */ _jsx18(AnimatedAreaStack, {
+-                curve,
+-                offset: stackOffset,
+-                renderLine: resolvedWithStroke,
++              }) : null, !allSeriesHidden && stacked && /* @__PURE__ */ _jsx18("g", {
++                clipPath: __zoomClipPath,
++                children: /* @__PURE__ */ _jsx18(AnimatedAreaStack, {
++                  curve,
++                  offset: stackOffset,
++                  renderLine: resolvedWithStroke,
++                  children: seriesWithVisibility.map(renderSeries)
++                })
++              }), !allSeriesHidden && !stacked && /* @__PURE__ */ _jsx18("g", {
++                clipPath: __zoomClipPath,
+                 children: seriesWithVisibility.map(renderSeries)
+-              }), !allSeriesHidden && !stacked && seriesWithVisibility.map(renderSeries), withTooltips && /* @__PURE__ */ _jsxs8(_Fragment4, {
++              }), withTooltips && /* @__PURE__ */ _jsxs8(_Fragment4, {
+                 children: [/* @__PURE__ */ _jsx18(AccessibleTooltip, {
+                   detectBounds: true,
+                   snapTooltipToDatumX: true,
