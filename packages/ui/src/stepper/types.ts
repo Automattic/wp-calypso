@@ -94,6 +94,11 @@ export type StepperBaseProps = {
 	 * @default 'manual'
 	 */
 	activationMode?: 'auto' | 'manual';
+	/**
+	 * Custom label formatter for the visually-hidden step indicator text.
+	 * Stabilise with `useCallback` to avoid re-rendering all step children
+	 * on every parent render.
+	 */
 	formatStepLabel?: ( step: number, total: number, status?: StepStatus ) => string;
 	/**
 	 * Controls whether steps show a numeric label or a plain bullet circle.
@@ -117,6 +122,14 @@ export type StepperRootProps = Omit< StepperBaseProps, 'ref' > &
 		orientation: 'vertical' | 'horizontal';
 	};
 
+/**
+ * Step registration record for Tier-1 wrappers (VerticalStepper.Step,
+ * HorizontalStepper.Step).
+ *
+ * Note: this is distinct from Stepper.Step props — the headless primitive
+ * accepts only value/status/optional/disabled/children (no title/description/
+ * indicator/forceMount).
+ */
 export type StepProps = {
 	value: string;
 	title: string;
