@@ -1,4 +1,5 @@
 import { loadScript } from '@automattic/load-script';
+import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { isHelpCenterOpen } from './invoke-event';
 
@@ -23,10 +24,8 @@ export function loadSurvicateScript( workspaceId: string ): Promise< void > {
 				debug( 'Survicate survey displayed' );
 
 				if ( isHelpCenterOpen() ) {
-					debug( 'Survicate event suppressed (Help Center is open)' );
-					if ( typeof window._sva !== 'undefined' && window._sva.closeSurvey ) {
-						window._sva.closeSurvey();
-					}
+					debug( 'Survicate survey suppressed (Help Center is open)' );
+					closeSurvicateSurvey();
 				}
 			} );
 		},

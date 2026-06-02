@@ -1,4 +1,5 @@
 import { select } from '@wordpress/data';
+import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
@@ -29,9 +30,7 @@ export function isHelpCenterOpen(): boolean {
 export function invokeSurvicateEvent( eventName: string ): () => void {
 	if ( isHelpCenterOpen() ) {
 		debug( 'Survicate event "%s" suppressed (Help Center is open)', eventName );
-		if ( typeof window._sva !== 'undefined' && window._sva.closeSurvey ) {
-			window._sva.closeSurvey();
-		}
+		closeSurvicateSurvey();
 		return () => {};
 	}
 
