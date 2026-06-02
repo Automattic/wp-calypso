@@ -1,7 +1,8 @@
-import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { purchaseQuery } from '@automattic/api-queries';
+import { getPlan, getIntervalTypeForTerm, getTermFromDuration } from '@automattic/calypso-products';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
-import { resolveSelect, useSelect } from '@wordpress/data';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
+import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
@@ -16,7 +17,6 @@ import { isExternal } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { performPlanSwitch } from './perform-plan-switch';
-import type { SiteSelect } from '@automattic/data-stores';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
 
@@ -44,13 +44,19 @@ async function checkUserHasAccess(): Promise< boolean > {
 
 		// Check if user can manage the site using the capabilities from the site object
 		return site.capabilities?.manage_options === true;
-	} catch ( error ) {
+	} catch {
 		return false;
 	}
 }
 
 async function initialize() {
-	const hasAccess = await checkUserHasAccess();
+	const isSwitchPlan = getCurrentQueryParams().get( 'switch_plan' ) === 'true';
+	// The cancellation flow that opens switch-plan has already established site
+	// ownership server-side, and both the downgrade mutation and checkout enforce
+	// auth — so the SITE_STORE access probe is redundant here. It also returns null
+	// for Atomic sites on *.wpcomstaging.com slugs, which would wrongly redirect the
+	// owner away. Skip it for switch-plan; other plan-upgrade entry points keep it.
+	const hasAccess = isSwitchPlan ? true : await checkUserHasAccess();
 
 	if ( ! hasAccess ) {
 		window.location.assign( '/' );
@@ -79,19 +85,22 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 			backTo && ( ! isExternal( backTo ) || isValidBackTo ) ? backTo : dashboardLink( '/sites' );
 
 		const isSwitchPlan = query.get( 'switch_plan' ) === 'true';
+		const purchaseId = query.get( 'purchaseId' );
 
 		// Resolve the user's current billing term so we can lock the grid to same-period plans.
-		const siteIdOrSlug = query.get( 'siteSlug' ) || query.get( 'siteId' );
-		const site = useSelect(
-			( select ) => {
-				if ( ! siteIdOrSlug ) {
-					return null;
-				}
-				return ( select( SITE_STORE ) as SiteSelect ).getSite( siteIdOrSlug );
-			},
-			[ siteIdOrSlug ]
-		);
-		const currentTerm = Plans.useCurrentPlanTerm( { siteId: site?.ID } );
+		// Read it from the purchase itself (user-scoped GET /upgrades/{id}) rather than a
+		// site-scoped plans query: the latter errors with "Unknown blog" for Atomic sites
+		// addressed by their *.wpcomstaging.com slug. The purchase's bill_period_days maps
+		// directly to a term via getTermFromDuration and works for every site type. Running
+		// it here (flow level) also avoids a deadlock — the step that would otherwise load
+		// purchases is hidden behind the term-gate this value unblocks.
+		const switchPurchaseQuery = useReactQuery( {
+			...purchaseQuery( Number( purchaseId ) ),
+			enabled: Boolean( purchaseId ),
+		} );
+		const currentTerm = switchPurchaseQuery.data
+			? getTermFromDuration( switchPurchaseQuery.data.bill_period_days )
+			: undefined;
 		const currentIntervalType = currentTerm
 			? ( getIntervalTypeForTerm( currentTerm ) as
 					| 'monthly'
@@ -121,6 +130,11 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 					hideFreePlan: true,
 					hideEnterprisePlan: true,
 					hidePlanTypeSelector: true,
+					// The plans grid resolves the current plan from a numeric siteId. The
+					// site object is null for Atomic *.wpcomstaging.com slugs, so feed the
+					// purchase's blog_id through — without it the grid can't mark the current
+					// plan or surface downgrade options.
+					siteId: switchPurchaseQuery.data?.blog_id,
 				} ),
 				...( isSwitchPlan &&
 					currentIntervalType && {
@@ -143,17 +157,15 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
 		const purchaseId = query.get( 'purchaseId' );
-		const site = useSelect(
-			( select ) => {
-				if ( ! siteSlug ) {
-					return null;
-				}
-				return ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug );
-			},
-			[ siteSlug ]
-		);
-		const currentPlan = Plans.useCurrentPlan( { siteId: site?.ID } );
-		const currentPlanSlug = currentPlan?.planSlug;
+		// Current plan slug drives the downgrade detection below. Read it from the purchase
+		// (user-scoped) rather than a site-scoped plans query, which errors with "Unknown
+		// blog" for Atomic *.wpcomstaging.com slugs. Same query key as useStepsProps, so the
+		// cache is shared — no extra request.
+		const switchPurchaseQuery = useReactQuery( {
+			...purchaseQuery( Number( purchaseId ) ),
+			enabled: Boolean( purchaseId ),
+		} );
+		const currentPlanSlug = switchPurchaseQuery.data?.product_slug;
 		// Loaded into Redux by the step's QueryUserPurchases; used to quote the
 		// refund amount in the downgrade success notice.
 		const switchPurchase = useSelector( ( state ) =>

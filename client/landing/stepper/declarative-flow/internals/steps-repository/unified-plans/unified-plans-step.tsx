@@ -649,7 +649,7 @@ function UnifiedPlansStep( {
 				freeSubdomain={ freeWPComSubdomain }
 				siteTitle={ siteTitle ?? undefined }
 				signupFlowUserName={ username ?? undefined }
-				siteId={ selectedSite?.ID }
+				siteId={ siteId ?? undefined }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup={ isInSignup }

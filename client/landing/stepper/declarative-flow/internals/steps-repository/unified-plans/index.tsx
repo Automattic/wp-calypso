@@ -105,6 +105,7 @@ const PlansStepAdaptor: StepType< {
 		selectedFeature?: string;
 		intervalType?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
+		siteId?: number | null;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -122,6 +123,7 @@ const PlansStepAdaptor: StepType< {
 		isInSignup,
 		isStepperUpgradeFlow,
 		selectedFeature,
+		siteId: siteIdFromFlow,
 		wrapperProps,
 	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
@@ -165,6 +167,7 @@ const PlansStepAdaptor: StepType< {
 	);
 
 	const signupDependencies = {
+		siteId: siteIdFromFlow,
 		siteSlug,
 		siteTitle,
 		username,
