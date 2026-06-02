@@ -172,9 +172,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 	const activeHistory = useMemo( () => {
 		// Staleness only blocks restoration of an old chat. Other routes
 		// (/history, /post, etc.) restore normally even when stale.
-		const entries = persistedHistory?.entries;
-		const lastPath =
-			entries && entries.length ? entries[ persistedHistory.index ]?.pathname : undefined;
+		const lastPath = persistedHistory?.entries?.[ persistedHistory.index ]?.pathname;
 		if ( isStale && lastPath === '/chat' ) {
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Active chat expired for site key "${ siteKey }"` );
