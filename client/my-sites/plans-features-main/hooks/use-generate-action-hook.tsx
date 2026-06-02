@@ -509,6 +509,10 @@ function getLoggedInPlansAction( {
 
 	// All actions for the current plan
 	if ( current ) {
+		// In the cancel-flow Switch-plan grid, the current plan offers Renew instead of a dead "Your plan" indicator.
+		if ( isSwitchPlan ) {
+			return createLoggedInPlansAction( translate( 'Renew plan' ) );
+		}
 		// For the plans-upgrade intent, show "Your plan" as a non-clickable indicator
 		if ( isUpgradeFlow ) {
 			return {
@@ -516,7 +520,7 @@ function getLoggedInPlansAction( {
 					callback: () => {},
 					status: 'disabled',
 					text: translate( 'Your plan' ),
-					variant: isSwitchPlan ? 'primary' : 'secondary',
+					variant: 'secondary',
 				},
 			};
 		}
