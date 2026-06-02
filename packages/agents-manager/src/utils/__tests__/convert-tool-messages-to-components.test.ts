@@ -302,6 +302,100 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
+	it( 'drops a plain-text agent message that duplicates a following show-component summary', () => {
+		const summary = 'Ooooh, rising from the typographic beyond.';
+		const prose = createMessage( {
+			id: 'prose-1',
+			content: [ { type: 'text', text: summary } ],
+		} );
+		const toolMessage = createToolMessage(
+			SHOW_COMPONENT_TOOL_ID,
+			{ type: 'font-picker', summary, isCurrent: true },
+			{ id: 'tool-1' }
+		);
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ prose, toolMessage ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'tool-1' );
+	} );
+
+	it( 'drops a plain-text agent message that duplicates a preceding tool summary', () => {
+		const summary = 'Condensed from the beyond — your paragraph is now shorter.';
+		const toolMessage = createToolMessage(
+			'big_sky__apply_update_theme',
+			{ result: { success: true, message: summary } },
+			{ id: 'tool-1' }
+		);
+		const prose = createMessage( {
+			id: 'prose-1',
+			content: [ { type: 'text', text: summary } ],
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, prose ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( 'tool-1' );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: summary,
+		} );
+	} );
+
+	it( 'keeps a plain-text agent message that does not match any adjacent tool summary', () => {
+		const prose = createMessage( {
+			id: 'prose-1',
+			content: [ { type: 'text', text: 'Different prose entirely.' } ],
+		} );
+		const toolMessage = createToolMessage(
+			'big_sky__apply_block_edits',
+			{ result: { success: true, message: 'Updated the header.' } },
+			{ id: 'tool-1' }
+		);
+
+		const result = convertWithDefaults( {
+			messages: [ prose, toolMessage ],
+		} );
+
+		expect( result ).toHaveLength( 2 );
+		expect( result[ 0 ].id ).toBe( 'prose-1' );
+	} );
+
+	it( 'keeps a plain-text agent message when the matching tool is not adjacent', () => {
+		const summary = 'Ooooh, rising from the typographic beyond.';
+		const toolMessage = createToolMessage(
+			SHOW_COMPONENT_TOOL_ID,
+			{ type: 'font-picker', summary, isCurrent: true },
+			{ id: 'tool-1' }
+		);
+		const userMessage = createMessage( {
+			id: 'user-1',
+			role: 'user',
+			content: [ { type: 'text', text: 'make this shorter' } ],
+		} );
+		const prose = createMessage( {
+			id: 'prose-1',
+			content: [ { type: 'text', text: summary } ],
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, userMessage, prose ],
+			getChatComponent,
+		} );
+
+		// A user message sits between the tool and the prose, so the prose
+		// isn't adjacent and shouldn't be dropped.
+		expect( result ).toHaveLength( 3 );
+		expect( result.map( ( m ) => m.id ) ).toEqual( [ 'tool-1', 'user-1', 'prose-1' ] );
+	} );
+
 	it( 'disables component when `isCurrent` is false', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
