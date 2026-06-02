@@ -186,7 +186,10 @@ function initLoadedTrackingScripts() {
 	if ( mayWeTrackByTracker( 'openai' ) ) {
 		window.oaiq( 'init', {
 			pixelId: TRACKING_IDS.openAIPixelId,
-			debug: true,
+		} );
+		// Track the first page view after accepting the cookie banner.
+		window.oaiq( 'measure', 'page_viewed', {
+			type: 'contents',
 		} );
 	}
 	if ( mayWeTrackByTracker( 'quora' ) ) {
