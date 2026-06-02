@@ -7,17 +7,35 @@ import SidebarDemo from './SidebarDemo';
 
 const App: React.FC = () => {
 	const [ currentDemo, setCurrentDemo ] = useState<
-		'embedded' | 'floating' | 'floating-compact' | 'site-spec' | 'sidebar'
+		| 'embedded'
+		| 'floating'
+		| 'floating-minimized'
+		| 'floating-compact'
+		| 'site-spec'
+		| 'sidebar'
 	>( () => {
 		// Get saved demo from localStorage or default to 'embedded'
 		const saved = localStorage.getItem( 'selectedDemo' );
-		if ( saved === 'floating' || saved === 'floating-compact' || saved === 'site-spec' || saved === 'sidebar' ) {
-			return saved as 'floating' | 'floating-compact' | 'site-spec' | 'sidebar';
+		if (
+			saved === 'floating' ||
+			saved === 'floating-minimized' ||
+			saved === 'floating-compact' ||
+			saved === 'site-spec' ||
+			saved === 'sidebar'
+		) {
+			return saved as
+				| 'floating'
+				| 'floating-minimized'
+				| 'floating-compact'
+				| 'site-spec'
+				| 'sidebar';
 		}
 		return 'embedded';
 	} );
 
-	const [ currentTheme, setCurrentTheme ] = useState<'light' | 'dark'>( 'light' );
+	const [ currentTheme, setCurrentTheme ] = useState< 'light' | 'dark' >(
+		'light'
+	);
 
 	// Save to localStorage whenever demo changes
 	useEffect( () => {
@@ -64,6 +82,26 @@ const App: React.FC = () => {
 					} }
 				>
 					Floating
+				</button>
+				<button
+					onClick={ () => setCurrentDemo( 'floating-minimized' ) }
+					style={ {
+						padding: '8px 10px',
+						background:
+							currentDemo === 'floating-minimized'
+								? '#000'
+								: 'white',
+						color:
+							currentDemo === 'floating-minimized'
+								? 'white'
+								: '#000',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Minimized
 				</button>
 				<button
 					onClick={ () => setCurrentDemo( 'floating-compact' ) }
@@ -121,13 +159,8 @@ const App: React.FC = () => {
 						style={ {
 							padding: '8px 10px',
 							background:
-								currentTheme === 'dark'
-									? '#000'
-									: 'white',
-							color:
-								currentTheme === 'dark'
-									? 'white'
-									: '#000',
+								currentTheme === 'dark' ? '#000' : 'white',
+							color: currentTheme === 'dark' ? 'white' : '#000',
 							cursor: 'pointer',
 							fontSize: '12px',
 							fontFamily: 'monospace',
@@ -141,13 +174,8 @@ const App: React.FC = () => {
 						style={ {
 							padding: '8px 10px',
 							background:
-								currentTheme === 'light'
-									? '#000'
-									: 'white',
-							color:
-								currentTheme === 'light'
-									? 'white'
-									: '#000',
+								currentTheme === 'light' ? '#000' : 'white',
+							color: currentTheme === 'light' ? 'white' : '#000',
 							cursor: 'pointer',
 							fontSize: '12px',
 							fontFamily: 'monospace',
@@ -158,10 +186,25 @@ const App: React.FC = () => {
 					</button>
 				</div>
 			</div>
-			{ currentDemo === 'embedded' && <EmbeddedDemo currentTheme={ currentTheme } /> }
-			{ currentDemo === 'floating' && <FloatingDemo currentTheme={ currentTheme }  /> }
-			{ currentDemo === 'floating-compact' && <FloatingCompactDemo currentTheme={ currentTheme } /> }
-			{ currentDemo === 'site-spec' && <SiteSpecDemo currentTheme={ currentTheme } /> }
+			{ currentDemo === 'embedded' && (
+				<EmbeddedDemo currentTheme={ currentTheme } />
+			) }
+			{ currentDemo === 'floating' && (
+				<FloatingDemo currentTheme={ currentTheme } />
+			) }
+			{ currentDemo === 'floating-minimized' && (
+				<FloatingDemo
+					currentTheme={ currentTheme }
+					floatingChatState="minimized"
+					triggerTitle="Ask AI"
+				/>
+			) }
+			{ currentDemo === 'floating-compact' && (
+				<FloatingCompactDemo currentTheme={ currentTheme } />
+			) }
+			{ currentDemo === 'site-spec' && (
+				<SiteSpecDemo currentTheme={ currentTheme } />
+			) }
 			{ currentDemo === 'sidebar' && <SidebarDemo /> }
 		</>
 	);

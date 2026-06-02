@@ -26,6 +26,7 @@ import {
 } from '../context/AgentUIContext';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
+import { MinimizedView } from './views/MinimizedView';
 import styles from './chat/Chat.module.css';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -62,6 +63,7 @@ export function AgentUIContainer( {
 	onSubmit,
 	variant = 'floating',
 	triggerIcon,
+	triggerTitle,
 	placeholder,
 	notice,
 	onOpen,
@@ -286,7 +288,7 @@ export function AgentUIContainer( {
 
 	const getHeightForState = useCallback(
 		( state: string ) => {
-			if ( state === 'collapsed' ) {
+			if ( state === 'collapsed' || state === 'minimized' ) {
 				return STYLE_CONSTANTS.COLLAPSED_SIZE;
 			}
 			if ( state === 'compact' ) {
@@ -316,7 +318,7 @@ export function AgentUIContainer( {
 				timeoutRefs.current.add( timeoutId );
 			}
 		}
-	}, [ chat, shouldAutoCollapse ] );
+	}, [ chat, shouldAutoCollapse, expandOnHover ] );
 
 	// Handle auto-collapse - return to initial state if no input value and not focused
 	const handleAutoCollapse = useCallback( () => {
@@ -392,7 +394,11 @@ export function AgentUIContainer( {
 				targetSide === 'left'
 					? constraintBox.left
 					: constraintBox.right - STYLE_CONSTANTS.COMPACT_WIDTH;
-			const targetY = constraintBox.bottom - currentHeight;
+			// The minimized bar docks to the viewport bottom, so it ignores the inset.
+			const targetY =
+				chat.state === 'minimized'
+					? window.innerHeight - currentHeight
+					: constraintBox.bottom - currentHeight;
 
 			return {
 				x: targetX - baseX,
@@ -660,10 +666,18 @@ export function AgentUIContainer( {
 				onDragStart={ handleDragStart }
 				onDragEnd={ handleDragEnd }
 				onPointerDown={ handlePointerDown }
+				// Glide the dock offset between states; `initial={ false }` skips it on mount.
+				initial={ false }
+				animate={ {
+					bottom:
+						chat.state === 'minimized'
+							? 0
+							: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+				} }
+				transition={ morphSpring }
 				style={ {
 					x,
 					y,
-					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
 					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
 					cursor: draggableStates.includes( chat.state )
 						? 'grab'
@@ -686,6 +700,14 @@ export function AgentUIContainer( {
 								? STYLE_CONSTANTS.COMPACT_WIDTH -
 								  STYLE_CONSTANTS.COLLAPSED_SIZE
 								: 0,
+						borderBottomLeftRadius:
+							chat.state === 'minimized'
+								? 0
+								: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderBottomRightRadius:
+							chat.state === 'minimized'
+								? 0
+								: STYLE_CONSTANTS.BORDER_RADIUS,
 						transition: input.value.trim()
 							? { duration: 0 }
 							: morphSpring,
@@ -693,7 +715,8 @@ export function AgentUIContainer( {
 					onAnimationStart={ () => setIsAnimating( true ) }
 					onAnimationComplete={ () => setIsAnimating( false ) }
 					style={ {
-						borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderTopLeftRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderTopRightRadius: STYLE_CONSTANTS.BORDER_RADIUS,
 					} }
 				>
 					<AnimatePresence mode="wait">
@@ -703,6 +726,15 @@ export function AgentUIContainer( {
 								icon={ triggerIcon }
 								onClick={ handleOpen }
 								onHover={ handleHover }
+								focusOnMount={ wasClickedToClose.current }
+							/>
+						) }
+						{ chat.state === 'minimized' && (
+							<MinimizedView
+								key="minimized"
+								icon={ triggerIcon }
+								title={ triggerTitle }
+								onClick={ handleOpen }
 								focusOnMount={ wasClickedToClose.current }
 							/>
 						) }

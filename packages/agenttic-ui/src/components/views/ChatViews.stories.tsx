@@ -30,6 +30,7 @@ const mockMessages: Message[] = [
 ];
 
 const mockOnSubmit = ( message: string ) => {
+	// eslint-disable-next-line no-console
 	console.log( 'Message submitted:', message );
 };
 
@@ -52,7 +53,7 @@ const meta = {
 		},
 		floatingChatState: {
 			control: 'select',
-			options: [ 'collapsed', 'compact', 'expanded' ],
+			options: [ 'collapsed', 'minimized', 'compact', 'expanded' ],
 		},
 		placeholder: {
 			control: 'text',
@@ -79,6 +80,27 @@ export const CollapsedView: Story = {
 		docs: {
 			description: {
 				story: 'The collapsed state shows as a floating button, typically used as the initial state for floating chat interfaces.',
+			},
+		},
+	},
+};
+
+export const MinimizedView: Story = {
+	name: 'Minimized',
+	args: {
+		messages: mockMessages,
+		isProcessing: false,
+		error: null,
+		onSubmit: mockOnSubmit,
+		variant: 'floating',
+		floatingChatState: 'minimized',
+		triggerTitle: 'Ask AI',
+		placeholder: 'Ask me anything...',
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'The minimized state shows a bar with an icon and a developer-defined title (via `triggerTitle`). Clicking it opens the full conversation.',
 			},
 		},
 	},

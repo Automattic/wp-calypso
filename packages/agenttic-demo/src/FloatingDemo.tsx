@@ -16,6 +16,7 @@ import {
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 } from '@automattic/agenttic-ui';
+import type { ChatState } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
 	getClientTools,
@@ -25,9 +26,11 @@ import {
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 import MessageTester from './MessageTester';
 
-const FloatingDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
-	currentTheme,
-} ) => {
+const FloatingDemo: React.FC< {
+	currentTheme: 'light' | 'dark';
+	floatingChatState?: ChatState;
+	triggerTitle?: string;
+} > = ( { currentTheme, floatingChatState, triggerTitle } ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
 		getClientContext,
 	} ) );
@@ -265,6 +268,8 @@ const FloatingDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				onSubmit={ handleSubmit }
 				onStop={ abortCurrentRequest }
 				variant="floating"
+				floatingChatState={ floatingChatState }
+				triggerTitle={ triggerTitle }
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }
 				messageRenderer={ messageRenderer }

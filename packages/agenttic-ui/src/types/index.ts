@@ -69,6 +69,7 @@ export interface AgentUIProps {
 	style?: React.CSSProperties;
 	variant?: 'floating' | 'embedded';
 	triggerIcon?: React.ReactNode;
+	triggerTitle?: string; // Title shown next to the icon in the 'minimized' state (defaults to 'Ask AI')
 	placeholder?: string | string[];
 	notice?: NoticeConfig;
 	onOpen?: () => void;
@@ -130,7 +131,7 @@ export interface ChatProps extends AgentUIProps {
 	floatingChatState?: ChatState;
 }
 
-export type ChatState = 'collapsed' | 'compact' | 'expanded';
+export type ChatState = 'collapsed' | 'minimized' | 'compact' | 'expanded';
 
 // Hook Types
 export interface UseChatReturn {

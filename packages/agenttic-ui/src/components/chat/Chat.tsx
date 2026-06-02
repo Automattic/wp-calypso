@@ -18,6 +18,7 @@ import { morphSpring } from '../animations';
 import { CollapsedView } from '../views/CollapsedView';
 import { CompactView } from '../views/CompactView';
 import { ConversationView } from '../views/ConversationView';
+import { MinimizedView } from '../views/MinimizedView';
 import styles from './Chat.module.css';
 
 export function Chat( {
@@ -27,6 +28,7 @@ export function Chat( {
 	onSubmit,
 	variant = 'floating',
 	triggerIcon,
+	triggerTitle,
 	placeholder = __( 'Ask anything', 'a8c-agenttic' ),
 	notice,
 	onOpen,
@@ -129,7 +131,7 @@ export function Chat( {
 	}, [ inputValue, chatRef ] );
 
 	const getHeightForState = ( state: string ) => {
-		if ( state === 'collapsed' ) {
+		if ( state === 'collapsed' || state === 'minimized' ) {
 			return STYLE_CONSTANTS.COLLAPSED_SIZE;
 		}
 		if ( state === 'compact' ) {
@@ -232,15 +234,18 @@ export function Chat( {
 				targetSide === 'left'
 					? constraintBox.left
 					: constraintBox.right - STYLE_CONSTANTS.COMPACT_WIDTH;
+			// The minimized bar docks to the viewport bottom, so it ignores the inset.
 			const targetY =
-				constraintBox.bottom - STYLE_CONSTANTS.EXPANDED_HEIGHT;
+				chat.state === 'minimized'
+					? window.innerHeight - STYLE_CONSTANTS.COLLAPSED_SIZE
+					: constraintBox.bottom - STYLE_CONSTANTS.EXPANDED_HEIGHT;
 
 			return {
 				x: targetX - baseX,
 				y: targetY - baseY,
 			};
 		},
-		[ currentSide ]
+		[ currentSide, chat.state ]
 	);
 
 	// Handle pointer down to control drag initiation
@@ -407,10 +412,18 @@ export function Chat( {
 				dragTransition={ { power: 0.1, timeConstant: 100 } }
 				onDragEnd={ handleDragEnd }
 				onPointerDown={ handlePointerDown }
+				// Glide the dock offset between states; `initial={ false }` skips it on mount.
+				initial={ false }
+				animate={ {
+					bottom:
+						chat.state === 'minimized'
+							? 0
+							: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+				} }
+				transition={ morphSpring }
 				style={ {
 					x,
 					y,
-					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
 					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
 				} }
 			>
@@ -430,6 +443,14 @@ export function Chat( {
 								? STYLE_CONSTANTS.COMPACT_WIDTH -
 								  STYLE_CONSTANTS.COLLAPSED_SIZE
 								: 0,
+						borderBottomLeftRadius:
+							chat.state === 'minimized'
+								? 0
+								: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderBottomRightRadius:
+							chat.state === 'minimized'
+								? 0
+								: STYLE_CONSTANTS.BORDER_RADIUS,
 						transition: input.value.trim()
 							? { duration: 0 }
 							: morphSpring,
@@ -437,7 +458,8 @@ export function Chat( {
 					onAnimationStart={ () => setIsAnimating( true ) }
 					onAnimationComplete={ () => setIsAnimating( false ) }
 					style={ {
-						borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderTopLeftRadius: STYLE_CONSTANTS.BORDER_RADIUS,
+						borderTopRightRadius: STYLE_CONSTANTS.BORDER_RADIUS,
 					} }
 				>
 					<AnimatePresence mode="wait">
@@ -447,6 +469,15 @@ export function Chat( {
 								icon={ triggerIcon }
 								onClick={ handleOpen }
 								onHover={ handleHover }
+								focusOnMount={ wasClickedToClose.current }
+							/>
+						) }
+						{ chat.state === 'minimized' && (
+							<MinimizedView
+								key="minimized"
+								icon={ triggerIcon }
+								title={ triggerTitle }
+								onClick={ handleOpen }
 								focusOnMount={ wasClickedToClose.current }
 							/>
 						) }
