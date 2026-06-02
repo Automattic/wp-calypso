@@ -1,4 +1,11 @@
-import type { FollowApiSubscription, FollowItem, FollowsApiResponse, FollowsPage } from './types';
+import type {
+	FollowApiDeliveryMethods,
+	FollowApiSubscription,
+	FollowDeliveryMethods,
+	FollowItem,
+	FollowsApiResponse,
+	FollowsPage,
+} from './types';
 
 export const commonFeedExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.xml', 'atom' ];
 
@@ -12,34 +19,65 @@ const toValidId = ( id: string | number | null | undefined ): number | null | un
 	return Number.isFinite( numeric ) && numeric > 0 ? numeric : null;
 };
 
+const toDate = ( date?: string ): Date => {
+	const timestamp = date ? Date.parse( date ) : NaN;
+	return Number.isNaN( timestamp ) ? new Date( 0 ) : new Date( timestamp );
+};
+
+const normalizeDeliveryMethods = (
+	deliveryMethods?: FollowApiDeliveryMethods
+): FollowDeliveryMethods => ( {
+	...( deliveryMethods?.email
+		? {
+				email: {
+					...deliveryMethods.email,
+					date_subscribed: deliveryMethods.email.date_subscribed
+						? toDate( deliveryMethods.email.date_subscribed )
+						: undefined,
+					send_posts: deliveryMethods.email.send_posts ?? false,
+				},
+		  }
+		: {} ),
+	...( deliveryMethods?.notification
+		? {
+				notification: deliveryMethods.notification,
+		  }
+		: {} ),
+} );
+
 export const prepareComparableUrl = ( url?: string | null ): string | undefined => {
 	const preparedUrl = url ? untrailingslashit( url ) : url;
 	return preparedUrl?.replace( /^https?:\/\//i, '' ).toLowerCase();
 };
 
 export const adaptFollow = ( subscription: FollowApiSubscription ): FollowItem => ( {
-	ID: toValidId( subscription.ID ) ?? undefined,
+	ID: toValidId( subscription.ID ) ?? subscription.ID ?? '',
 	URL: subscription.URL,
 	feed_URL: subscription.URL,
-	blog_ID: toValidId( subscription.blog_ID ),
-	feed_ID: toValidId( subscription.feed_ID ),
-	date_subscribed: subscription.date_subscribed
-		? Date.parse( subscription.date_subscribed )
-		: undefined,
-	last_updated: subscription.last_updated ? Date.parse( subscription.last_updated ) : undefined,
-	delivery_methods: subscription.delivery_methods,
-	is_owner: subscription.is_owner,
-	organization_id: subscription.organization_id,
-	name: subscription.name,
-	unseen_count: subscription.unseen_count,
-	site_icon: subscription.site_icon,
+	blog_ID: toValidId( subscription.blog_ID ) ?? null,
+	feed_ID: toValidId( subscription.feed_ID ) ?? null,
+	date_subscribed: toDate( subscription.date_subscribed ),
+	last_updated: toDate( subscription.last_updated ),
+	delivery_methods: normalizeDeliveryMethods( subscription.delivery_methods ),
+	is_owner: subscription.is_owner ?? false,
+	organization_id: subscription.organization_id ?? null,
+	name: subscription.name ?? '',
+	unseen_count: subscription.unseen_count ?? 0,
+	site_icon: subscription.site_icon ?? '',
 	is_following: true,
-	is_paid_subscription: subscription.is_paid_subscription,
-	is_wpforteams_site: subscription.is_wpforteams_site,
-	is_rss: subscription.is_rss,
-	meta: subscription.meta,
-	is_comp: subscription.is_comp,
+	is_paid_subscription: subscription.is_paid_subscription ?? false,
+	is_wpforteams_site: subscription.is_wpforteams_site ?? false,
+	is_rss: subscription.is_rss ?? false,
+	meta: subscription.meta ?? {
+		links: {
+			site: '',
+			feed: '',
+		},
+	},
+	is_comp: subscription.is_comp ?? false,
 	comp_id: subscription.comp_id,
+	isDeleted: false,
+	resubscribed: false,
 } );
 
 export const adaptFollowsResponse = ( response: FollowsApiResponse ): FollowsPage => ( {
@@ -55,9 +93,13 @@ export const sortFollowsByLastUpdated = (
 	b: Pick< FollowItem, 'last_updated' | 'name' >
 ): number => {
 	const updatedA =
-		typeof a.last_updated === 'number' && ! isNaN( a.last_updated ) ? a.last_updated : 0;
+		a.last_updated instanceof Date && ! isNaN( a.last_updated.valueOf() )
+			? a.last_updated.valueOf()
+			: 0;
 	const updatedB =
-		typeof b.last_updated === 'number' && ! isNaN( b.last_updated ) ? b.last_updated : 0;
+		b.last_updated instanceof Date && ! isNaN( b.last_updated.valueOf() )
+			? b.last_updated.valueOf()
+			: 0;
 	if ( updatedA < updatedB ) {
 		return 1;
 	}

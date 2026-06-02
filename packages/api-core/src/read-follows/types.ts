@@ -1,4 +1,4 @@
-export interface FollowDeliveryMethods {
+export interface FollowApiDeliveryMethods {
 	email?: {
 		date_subscribed?: string;
 		post_delivery_frequency?: string;
@@ -6,14 +6,28 @@ export interface FollowDeliveryMethods {
 		send_posts?: boolean;
 	};
 	notification?: {
+		send_comments?: boolean;
+		send_posts?: boolean;
+	};
+}
+
+export interface FollowDeliveryMethods {
+	email?: {
+		date_subscribed?: Date;
+		post_delivery_frequency?: string;
+		send_comments?: boolean;
+		send_posts?: boolean;
+	};
+	notification?: {
+		send_comments?: boolean;
 		send_posts?: boolean;
 	};
 }
 
 export interface FollowSubscriptionMeta {
-	links?: {
-		site?: string;
-		feed?: string;
+	links: {
+		site: string;
+		feed: string;
 	};
 }
 
@@ -24,7 +38,7 @@ export interface FollowApiSubscription {
 	feed_ID?: string | number | null;
 	date_subscribed?: string;
 	last_updated?: string;
-	delivery_methods?: FollowDeliveryMethods;
+	delivery_methods?: FollowApiDeliveryMethods;
 	is_owner?: boolean;
 	organization_id?: number | null;
 	name?: string;
@@ -39,13 +53,13 @@ export interface FollowApiSubscription {
 }
 
 export interface FollowItem {
-	ID?: number;
+	ID?: number | string;
 	URL: string;
 	feed_URL: string;
-	blog_ID?: number | null;
-	feed_ID?: number | null;
-	date_subscribed?: number;
-	last_updated?: number;
+	blog_ID?: number | string | null;
+	feed_ID?: number | string | null;
+	date_subscribed?: Date;
+	last_updated?: Date;
 	delivery_methods?: FollowDeliveryMethods;
 	is_owner?: boolean;
 	organization_id?: number | null;
@@ -61,6 +75,8 @@ export interface FollowItem {
 	meta?: FollowSubscriptionMeta;
 	is_comp?: boolean;
 	comp_id?: number;
+	isDeleted?: boolean;
+	resubscribed?: boolean;
 }
 
 export interface FollowsApiResponse {

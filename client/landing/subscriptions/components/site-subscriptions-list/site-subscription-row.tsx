@@ -71,7 +71,7 @@ const SelectedNewPostDeliveryMethods = ( {
 	return <>{ selectedNewPostDeliveryMethods }</>;
 };
 
-type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
+type SiteRowProps = Reader.FollowItem & {
 	layout?: 'full' | 'compact';
 	style?: React.CSSProperties;
 	forwardedRef?: React.Ref< HTMLDivElement >;
@@ -88,19 +88,19 @@ const scrollToFirstRow = () => {
 const siteUnsubscribedNoticeId = 'site-unsubscribed';
 
 const SiteSubscriptionRow = ( {
-	ID: subscriptionId,
+	ID: subscriptionId = '',
 	blog_ID: blog_id,
 	feed_ID: feed_id,
-	name,
-	site_icon,
+	name = '',
+	site_icon = '',
 	URL: url,
-	date_subscribed,
-	delivery_methods,
-	is_wpforteams_site,
-	is_paid_subscription,
-	is_comp,
-	is_rss,
-	resubscribed,
+	date_subscribed = new Date( 0 ),
+	delivery_methods = {},
+	is_wpforteams_site = false,
+	is_paid_subscription = false,
+	is_comp = false,
+	is_rss = false,
+	resubscribed = false,
 	layout = 'full',
 	style,
 	forwardedRef,
@@ -109,9 +109,18 @@ const SiteSubscriptionRow = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const currentUserName = useSelector( getCurrentUserName );
+	const blogId = blog_id ?? undefined;
+	const feedId = feed_id ?? undefined;
+	const blogIdForMutation = blogId ?? '';
+	const blogIdForTracking =
+		blog_id === null || typeof blog_id === 'undefined' ? null : String( blog_id );
+	const feedIdForTracking =
+		feed_id === null || typeof feed_id === 'undefined' ? undefined : String( feed_id );
 
 	// Use custom hook for recommended site functionality
-	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( Number( feed_id ) );
+	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation(
+		Number( feedId ?? 0 )
+	);
 
 	const isCompactLayout = layout === 'compact';
 
@@ -128,9 +137,9 @@ const SiteSubscriptionRow = ( {
 	}, [ url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
-		delivery_methods.email?.post_delivery_frequency
+		delivery_methods.email?.post_delivery_frequency as Reader.EmailDeliveryFrequency | undefined
 	);
-	const sanitizedBlogId = Reader.isValidId( blog_id ) ? Number( blog_id ) : undefined;
+	const sanitizedBlogId = Reader.isValidId( blogId ) ? Number( blogId ) : undefined;
 
 	const { mutate: updateNotifyMeOfNewPosts, isPending: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
@@ -157,7 +166,11 @@ const SiteSubscriptionRow = ( {
 	const recordRecommendToggle = useRecordRecommendToggle();
 
 	const unsubscribeCallback = () => {
-		recordSiteUnsubscribed( { blog_id, url, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+		recordSiteUnsubscribed( {
+			blog_id: blogIdForTracking,
+			url,
+			source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+		} );
 		dispatch(
 			successNotice(
 				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
@@ -169,12 +182,12 @@ const SiteSubscriptionRow = ( {
 						if ( unsubscribeInProgress.current ) {
 							resubscribePending.current = true;
 						} else {
-							resubscribe( { blog_id, url, resubscribed: true } );
+							resubscribe( { blog_id: blogId, url, resubscribed: true } );
 							dispatch( removeNotice( siteUnsubscribedNoticeId ) );
 							scrollToFirstRow();
 
 							recordSiteResubscribed( {
-								blog_id,
+								blog_id: blogIdForTracking,
 								url,
 								source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 							} );
@@ -189,7 +202,7 @@ const SiteSubscriptionRow = ( {
 		unsubscribeInProgress.current = true;
 		unsubscribeCallback();
 		unsubscribe( {
-			blog_id,
+			blog_id: blogId,
 			subscriptionId: Number( subscriptionId ),
 			url,
 			doNotInvalidateSiteSubscriptions: true,
@@ -204,13 +217,13 @@ const SiteSubscriptionRow = ( {
 				if ( resubscribePending.current ) {
 					resubscribePending.current = false;
 					resubscribe( {
-						blog_id,
+						blog_id: blogId,
 						url,
 						doNotInvalidateSiteSubscriptions: true,
 						resubscribed: true,
 					} );
 					recordSiteResubscribed( {
-						blog_id,
+						blog_id: blogIdForTracking,
 						url,
 						source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 					} );
@@ -233,59 +246,67 @@ const SiteSubscriptionRow = ( {
 		if ( isReaderPortal ) {
 			if ( resubscribed ) {
 				// If the site was resubscribed, the id of the optmistic update is not the same as the id of the new subscription
-				return `/reader/site/subscription/${ blog_id }`;
+				return `/reader/site/subscription/${ blogId }`;
 			}
 
 			return `/reader/subscriptions/${ subscriptionId }`;
 		}
 
 		if ( isSubscriptionsPortal ) {
-			if ( ! Reader.isValidId( blog_id ) ) {
+			if ( ! Reader.isValidId( blogId ) ) {
 				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
-				return `/reader/feeds/${ feed_id }`;
+				return `/reader/feeds/${ feedId }`;
 			}
-			return `/subscriptions/site/${ blog_id }`;
+			return `/subscriptions/site/${ blogId }`;
 		}
-	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, resubscribed, subscriptionId ] );
+	}, [ blogId, feedId, isReaderPortal, isSubscriptionsPortal, resubscribed, subscriptionId ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
-		updateNotifyMeOfNewPosts( { blog_id, send_posts, subscriptionId: Number( subscriptionId ) } );
+		updateNotifyMeOfNewPosts( {
+			blog_id: blogIdForMutation,
+			send_posts,
+			subscriptionId: Number( subscriptionId ),
+		} );
 
 		// Record tracks event
-		recordNotificationsToggle( send_posts, { blog_id } );
+		recordNotificationsToggle( send_posts, { blog_id: blogIdForTracking } );
 	};
 
 	const handleEmailMeNewPostsChange = ( send_posts: boolean ) => {
 		// Update post emails settings
-		updateEmailMeNewPosts( { blog_id, send_posts, subscriptionId: Number( subscriptionId ) } );
+		updateEmailMeNewPosts( {
+			blog_id: blogIdForMutation,
+			send_posts,
+			subscriptionId: Number( subscriptionId ),
+		} );
 
 		// Record tracks event
-		recordPostEmailsToggle( send_posts, { blog_id } );
+		recordPostEmailsToggle( send_posts, { blog_id: blogIdForTracking } );
 	};
 
 	const handleEmailMeNewCommentsChange = ( send_comments: boolean ) => {
 		// Update comment emails settings
 		updateEmailMeNewComments( {
-			blog_id,
+			blog_id: blogIdForMutation,
 			send_comments,
 			subscriptionId: Number( subscriptionId ),
 		} );
 
 		// Record tracks event
-		recordCommentEmailsToggle( send_comments, { blog_id } );
+		recordCommentEmailsToggle( send_comments, { blog_id: blogIdForTracking } );
 	};
 
 	const handleDeliveryFrequencyChange = ( delivery_frequency: Reader.EmailDeliveryFrequency ) => {
 		// Update post emails delivery frequency
 		updateDeliveryFrequency( {
-			blog_id,
+			blog_id: blogIdForMutation,
 			delivery_frequency,
 			subscriptionId: Number( subscriptionId ),
 		} );
 
 		// Record tracks event
-		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
+		recordPostEmailsSetFrequency( { blog_id: blogIdForTracking, delivery_frequency } );
 	};
 
 	const handleRecommendToggle = () => {
@@ -293,7 +314,7 @@ const SiteSubscriptionRow = ( {
 		toggleRecommended();
 
 		// Record tracks event
-		recordRecommendToggle( newRecommendedState, { blog_id } );
+		recordRecommendToggle( newRecommendedState, { blog_id: blogIdForTracking } );
 	};
 
 	return (
@@ -309,7 +330,11 @@ const SiteSubscriptionRow = ( {
 					className="title-icon"
 					href={ siteTitleUrl }
 					onClick={ () => {
-						recordSiteIconClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+						recordSiteIconClicked( {
+							blog_id: blogIdForTracking,
+							feed_id: feedIdForTracking,
+							source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+						} );
 					} }
 				>
 					<SiteIcon lazy iconUrl={ site_icon } size={ 40 } alt={ name } />
@@ -320,8 +345,8 @@ const SiteSubscriptionRow = ( {
 						href={ siteTitleUrl }
 						onClick={ () => {
 							recordSiteTitleClicked( {
-								blog_id,
-								feed_id,
+								blog_id: blogIdForTracking,
+								feed_id: feedIdForTracking,
 								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
 							} );
 						} }
@@ -352,7 +377,11 @@ const SiteSubscriptionRow = ( {
 						{ ...( url && { href: url } ) }
 						target="_blank"
 						onClick={ () => {
-							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );
+							recordSiteUrlClicked( {
+								blog_id: blogIdForTracking,
+								feed_id: feedIdForTracking,
+								source: SOURCE_SUBSCRIPTIONS_SITE_LIST,
+							} );
 						} }
 					>
 						{ hostname }
@@ -404,7 +433,7 @@ const SiteSubscriptionRow = ( {
 				<div className="recommend-cell" role="cell">
 					<FormToggle
 						aria-label={ translate( 'Recommend this site to other users.' ) }
-						id={ `recommend-toggle-${ blog_id }` }
+						id={ `recommend-toggle-${ blogId ?? 'unknown' }` }
 						checked={ isRecommended }
 						onChange={ handleRecommendToggle }
 						disabled={ ! currentUserName || typeof currentUserName !== 'string' }
@@ -428,8 +457,8 @@ const SiteSubscriptionRow = ( {
 					onEmailMeNewPostsChange={ handleEmailMeNewPostsChange }
 					// DeliveryFrequency
 					deliveryFrequency={
-						delivery_methods.email?.post_delivery_frequency ??
-						Reader.EmailDeliveryFrequency.Instantly
+						( delivery_methods.email?.post_delivery_frequency ??
+							Reader.EmailDeliveryFrequency.Instantly ) as Reader.EmailDeliveryFrequency
 					}
 					onDeliveryFrequencyChange={ handleDeliveryFrequencyChange }
 					updatingFrequency={ updatingFrequency }
@@ -440,7 +469,7 @@ const SiteSubscriptionRow = ( {
 					onUnsubscribe={ onUnsubscribe }
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
-					feedId={ Number( feed_id ) }
+					feedId={ Number( feedId ) }
 					subscriptionId={ Number( subscriptionId ) }
 				/>
 			</div>

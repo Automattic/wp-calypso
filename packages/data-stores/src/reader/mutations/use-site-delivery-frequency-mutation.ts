@@ -6,11 +6,7 @@ import {
 	invalidateSiteSubscriptionDetails,
 } from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
-import type {
-	PagedQueryResult,
-	SiteSubscriptionsResponseItem,
-	SiteSubscriptionDetails,
-} from '../types';
+import type { FollowItem, PagedQueryResult, SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: EmailDeliveryFrequency;
@@ -72,30 +68,30 @@ const useSiteDeliveryFrequencyMutation = () => {
 			await queryClient.cancelQueries( { queryKey: siteSubscriptionsCacheKey } );
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData<
-					PagedQueryResult< SiteSubscriptionsResponseItem, 'subscriptions' >
-				>( siteSubscriptionsCacheKey );
-			const mutatedSiteSubscriptions = applyCallbackToPages<
-				'subscriptions',
-				SiteSubscriptionsResponseItem
-			>( previousSiteSubscriptions, ( page ) => ( {
-				...page,
-				subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-					if ( siteSubscription.blog_ID === blog_id ) {
-						return {
-							...siteSubscription,
-							delivery_methods: {
-								...siteSubscription.delivery_methods,
-								email: {
-									...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
-									post_delivery_frequency: delivery_frequency,
+				queryClient.getQueryData< PagedQueryResult< FollowItem, 'subscriptions' > >(
+					siteSubscriptionsCacheKey
+				);
+			const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', FollowItem >(
+				previousSiteSubscriptions,
+				( page ) => ( {
+					...page,
+					subscriptions: page.subscriptions.map( ( siteSubscription ) => {
+						if ( siteSubscription.blog_ID === blog_id ) {
+							return {
+								...siteSubscription,
+								delivery_methods: {
+									...siteSubscription.delivery_methods,
+									email: {
+										...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
+										post_delivery_frequency: delivery_frequency,
+									},
 								},
-							},
-						};
-					}
-					return siteSubscription;
-				} ),
-			} ) );
+							};
+						}
+						return siteSubscription;
+					} ),
+				} )
+			);
 			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
 			const previousSiteSubscriptionDetails = await alterSiteSubscriptionDetails(

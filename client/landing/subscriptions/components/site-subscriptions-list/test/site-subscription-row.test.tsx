@@ -14,7 +14,6 @@ import {
 } from '../../subscription-manager-context';
 import SiteSubscriptionRow from '../site-subscription-row';
 import type { FollowItem } from '@automattic/api-core';
-import type { SiteSubscriptionsResponseItem } from '@automattic/data-stores/src/reader';
 import type { ReactNode } from 'react';
 
 const mockUnsubscribe = jest.fn();
@@ -87,8 +86,37 @@ const makeFollow = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 	URL: 'https://example.com',
 	feed_URL: 'https://example.com/feed',
 	blog_ID: 123,
+	comp_id: undefined,
+	date_subscribed: new Date( '2024-01-01T00:00:00Z' ),
+	delivery_methods: {
+		email: {
+			post_delivery_frequency: Reader.EmailDeliveryFrequency.Instantly,
+			send_posts: true,
+		},
+		notification: {
+			send_posts: true,
+		},
+	},
 	feed_ID: 456,
+	is_comp: false,
 	is_following: true,
+	is_owner: false,
+	is_paid_subscription: false,
+	is_rss: false,
+	is_wpforteams_site: false,
+	isDeleted: false,
+	last_updated: new Date( '2024-01-02T00:00:00Z' ),
+	meta: {
+		links: {
+			feed: 'https://example.com/feed',
+			site: 'https://example.com',
+		},
+	},
+	name: 'Example Site',
+	organization_id: 0,
+	resubscribed: false,
+	site_icon: '',
+	unseen_count: 0,
 	...overrides,
 } );
 
@@ -109,9 +137,7 @@ const seedFollowsCache = ( queryClient: QueryClient, follows: FollowItem[] ) => 
 const getCachedFollow = ( queryClient: QueryClient ) =>
 	queryClient.getQueryData< FollowsInfiniteData >( getFollowsQueryKey() )?.pages[ 0 ]?.follows[ 0 ];
 
-const makeSiteSubscription = (
-	overrides: Partial< SiteSubscriptionsResponseItem > = {}
-): SiteSubscriptionsResponseItem => ( {
+const makeSiteSubscription = ( overrides: Partial< FollowItem > = {} ): FollowItem => ( {
 	ID: '1',
 	URL: 'https://example.com',
 	blog_ID: '123',
@@ -127,8 +153,10 @@ const makeSiteSubscription = (
 		},
 	},
 	feed_ID: '456',
+	feed_URL: 'https://example.com/feed',
 	isDeleted: false,
 	is_comp: false,
+	is_following: true,
 	is_owner: false,
 	is_paid_subscription: false,
 	is_rss: false,

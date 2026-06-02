@@ -4,14 +4,14 @@ import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../constants
 import { useSiteSubscriptionsQueryProps } from '../contexts';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import type { SiteSubscriptionsResponseItem } from '../types';
+import type { FollowItem } from '../types';
 
 export const siteSubscriptionsQueryKeyPrefix = [ 'read', 'site-subscriptions' ];
 
 const SITE_SUBSCRIPTIONS_STALE_TIME = 60 * 60 * 1000;
 
 type SubscriptionManagerSiteSubscriptions = {
-	subscriptions: SiteSubscriptionsResponseItem[];
+	subscriptions: FollowItem[];
 	page: number;
 	total_subscriptions: number;
 };
@@ -20,21 +20,18 @@ type SubscriptionManagerSiteSubscriptionsQueryProps = {
 	number?: number;
 };
 
-const sortByDateSubscribed = (
-	a: SiteSubscriptionsResponseItem,
-	b: SiteSubscriptionsResponseItem
-) =>
+const sortByDateSubscribed = ( a: FollowItem, b: FollowItem ) =>
 	a.date_subscribed instanceof Date && b.date_subscribed instanceof Date
 		? b.date_subscribed.getTime() - a.date_subscribed.getTime()
 		: 0;
 
-const sortByLastUpdated = ( a: SiteSubscriptionsResponseItem, b: SiteSubscriptionsResponseItem ) =>
+const sortByLastUpdated = ( a: FollowItem, b: FollowItem ) =>
 	a.last_updated instanceof Date && b.last_updated instanceof Date
 		? b.last_updated.getTime() - a.last_updated.getTime()
 		: 0;
 
-const sortBySiteName = ( a: SiteSubscriptionsResponseItem, b: SiteSubscriptionsResponseItem ) =>
-	a.name.localeCompare( b.name );
+const sortBySiteName = ( a: FollowItem, b: FollowItem ) =>
+	( a.name ?? '' ).localeCompare( b.name ?? '' );
 
 const getSortFunction = ( sortTerm: SiteSubscriptionsSortBy ) => {
 	switch ( sortTerm ) {
@@ -57,35 +54,51 @@ const useSiteSubscriptionsQuery = ( {
 	const cacheKey = useCacheKey( siteSubscriptionsQueryKeyPrefix );
 	const { searchTerm, filterOption, sortTerm } = useSiteSubscriptionsQueryProps();
 
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
-		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >( {
-			queryKey: cacheKey,
-			queryFn: async ( { pageParam } ) => {
-				const data = await callApi< SubscriptionManagerSiteSubscriptions >( {
-					path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
-					isLoggedIn,
-					apiVersion: '1.2',
-				} );
+	// This key must stay aligned with buildQueryKey( [ 'read', 'site-subscriptions' ], ... )
+	// because legacy SubscriptionManager mutations optimistically update that cache directly.
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps
+	const siteSubscriptionsQuery = useInfiniteQuery< SubscriptionManagerSiteSubscriptions >( {
+		queryKey: cacheKey,
+		queryFn: async ( { pageParam } ) => {
+			const data = await callApi< SubscriptionManagerSiteSubscriptions >( {
+				path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
+				isLoggedIn,
+				apiVersion: '1.2',
+			} );
 
-				return {
-					...data,
-					subscriptions: data.subscriptions
-						? data.subscriptions.map( ( subscription ) => ( {
-								...subscription,
-								last_updated: new Date( subscription.last_updated ),
-								date_subscribed: new Date( subscription.date_subscribed ),
-						  } ) )
-						: [],
-				};
-			},
-			enabled,
-			initialPageParam: 1,
-			getNextPageParam: ( lastPage, pages ) => {
-				return lastPage.page * number < lastPage.total_subscriptions ? pages.length + 1 : undefined;
-			},
-			staleTime: SITE_SUBSCRIPTIONS_STALE_TIME,
-			refetchOnWindowFocus: false,
-		} );
+			return {
+				...data,
+				subscriptions: data.subscriptions
+					? data.subscriptions.map( ( subscription ) => ( {
+							...subscription,
+							last_updated: subscription.last_updated
+								? new Date( subscription.last_updated )
+								: new Date( 0 ),
+							date_subscribed: subscription.date_subscribed
+								? new Date( subscription.date_subscribed )
+								: new Date( 0 ),
+					  } ) )
+					: [],
+			};
+		},
+		enabled,
+		initialPageParam: 1,
+		getNextPageParam: ( lastPage, pages ) => {
+			return lastPage.page * number < lastPage.total_subscriptions ? pages.length + 1 : undefined;
+		},
+		staleTime: SITE_SUBSCRIPTIONS_STALE_TIME,
+		refetchOnWindowFocus: false,
+	} );
+	const {
+		data,
+		error,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isFetching,
+		isLoading,
+		refetch,
+	} = siteSubscriptionsQuery;
 
 	const nextPage = hasNextPage && ! isFetching && data ? data.pages.length + 1 : null;
 
@@ -96,7 +109,7 @@ const useSiteSubscriptionsQuery = ( {
 	}, [ nextPage, fetchNextPage ] );
 
 	const filterFunction = useCallback(
-		( item: SiteSubscriptionsResponseItem ) => {
+		( item: FollowItem ) => {
 			switch ( filterOption ) {
 				case SiteSubscriptionsFilterBy.Paid:
 					return item.is_paid_subscription;
@@ -117,7 +130,7 @@ const useSiteSubscriptionsQuery = ( {
 		const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
 
 		const searchTermLowerCase = searchTerm.toLowerCase();
-		const searchFilter = ( item: SiteSubscriptionsResponseItem ) => {
+		const searchFilter = ( item: FollowItem ) => {
 			if ( searchTerm === '' ) {
 				return true;
 			}
@@ -141,10 +154,12 @@ const useSiteSubscriptionsQuery = ( {
 
 	return {
 		data: resultData,
+		error,
 		isFetchingNextPage,
 		isFetching,
 		hasNextPage,
-		...rest,
+		isLoading,
+		refetch,
 	};
 };
 

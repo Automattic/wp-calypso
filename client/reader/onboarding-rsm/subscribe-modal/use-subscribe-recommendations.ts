@@ -61,10 +61,10 @@ function buildFollowedSubscriptions( rawFollowingItems: FollowItem[] ): Followed
 	const feedUrls = new Set< string >();
 	for ( const f of rawFollowingItems ) {
 		if ( f.feed_ID != null ) {
-			feedIds.add( f.feed_ID );
+			feedIds.add( Number( f.feed_ID ) );
 		}
-		if ( f.blog_ID != null && f.blog_ID !== 0 ) {
-			blogIds.add( f.blog_ID );
+		if ( f.blog_ID != null && Number( f.blog_ID ) !== 0 ) {
+			blogIds.add( Number( f.blog_ID ) );
 		}
 		const urlCandidates = [ f.feed_URL, ...( f.alias_feed_URLs ?? [] ) ];
 		for ( const url of urlCandidates ) {

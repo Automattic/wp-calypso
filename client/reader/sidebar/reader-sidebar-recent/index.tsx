@@ -143,7 +143,9 @@ const ReaderSidebarRecent = ( {
 							<MenuItemLink
 								href={ `/reader/recent/${ site.feed_ID }` }
 								className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-								onClick={ () => trackMenuClick( site.feed_ID ?? null ) }
+								onClick={ () =>
+									trackMenuClick( site.feed_ID == null ? null : Number( site.feed_ID ) )
+								}
 							>
 								<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 								<span title={ displayName } className="sidebar__menu-item-sitename">

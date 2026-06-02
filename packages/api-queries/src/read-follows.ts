@@ -255,7 +255,7 @@ const mergeFollow = ( existingFollow: FollowItem, follow: FollowItem ): FollowIt
 		...( aliasFeedUrls.length
 			? { alias_feed_URLs: aliasFeedUrls }
 			: { alias_feed_URLs: undefined } ),
-		delivery_methods: Object.keys( deliveryMethods ).length ? deliveryMethods : undefined,
+		delivery_methods: deliveryMethods,
 		error: undefined,
 	};
 };
