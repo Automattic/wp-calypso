@@ -1,6 +1,8 @@
+import { getFollowsQueryKey, markFollowUnfollowed } from '@automattic/api-queries';
 import { ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack, FormToggle } from '@wordpress/components';
 import { closeSmall, Icon, trash, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -105,6 +107,7 @@ const SiteSubscriptionRow = ( {
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const currentUserName = useSelector( getCurrentUserName );
 
 	// Use custom hook for recommended site functionality
@@ -191,6 +194,11 @@ const SiteSubscriptionRow = ( {
 			url,
 			doNotInvalidateSiteSubscriptions: true,
 			onSuccess: () => {
+				if ( url ) {
+					markFollowUnfollowed( queryClient, url );
+				} else {
+					queryClient.invalidateQueries( { queryKey: getFollowsQueryKey() } );
+				}
 				unsubscribeInProgress.current = false;
 
 				if ( resubscribePending.current ) {
