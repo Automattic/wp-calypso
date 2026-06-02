@@ -104,7 +104,7 @@ export function tokenFieldRules() {
 /**
  * Returns a validation ruleset to use for the given payment type
  * @param {Object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card|paypal|p24|netbanking|token|stripe|ebanx
+ * @param {string} paymentType credit-card|paypal|p24|token|stripe|ebanx
  * @returns {Object | null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
@@ -120,8 +120,6 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails )
 			);
-		case 'netbanking':
-			return countrySpecificFieldRules( 'IN' );
 		case 'token':
 			return tokenFieldRules();
 		case 'stripe':
@@ -308,7 +306,7 @@ validators.validStreetNumber = {
  * with keys that are the field names of those errors.  The value of each
  * property of that object is an array of error strings.
  * @param {Object.<string, string>} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card|paypal|p24|netbanking|token|stripe|ebanx
+ * @param {string} paymentType credit-card|paypal|p24|token|stripe|ebanx
  * @returns {{errors:Object.<string, string[]>}} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType ) {

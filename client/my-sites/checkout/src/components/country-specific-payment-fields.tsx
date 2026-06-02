@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InfoPopover from 'calypso/components/info-popover';
-import { paymentMethodName } from 'calypso/lib/cart-values';
 import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';
@@ -271,11 +270,8 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 	};
 
 	const getPanNumberPopover = () => {
-		const popoverText = translate( 'Paying with %(indiaPaymentMethods)s requires a PAN number.', {
-			comment: 'indiaPaymentMethods are local payment methods in India.',
-			args: {
-				indiaPaymentMethods: paymentMethodName( 'netbanking' ),
-			},
+		const popoverText = translate( 'Paying in India requires a PAN number.', {
+			comment: 'PAN is the tax identification number required for payments in India.',
 		} );
 		return (
 			<InfoPopover position="right" className="checkout__pan-number-popover">
