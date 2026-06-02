@@ -70,7 +70,7 @@ const SubscriptionsManagerWrapper = ( {
 			default:
 				return translate( 'Sites' );
 		}
-	}, [ selectedTab ] );
+	}, [ selectedTab, translate ] );
 
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
