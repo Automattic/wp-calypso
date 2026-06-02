@@ -166,6 +166,7 @@ interface AgentUIProps {
 	variant?: 'floating' | 'embedded';
 	placeholder?: string | string[];
 	triggerIcon?: React.ReactNode;
+	triggerTitle?: string; // Title shown next to the icon in the `minimized` state (defaults to `Ask AI`)
 	notice?: NoticeConfig;
 	emptyView?: React.ReactNode;
 
@@ -363,6 +364,17 @@ const [ chatState, setChatState ] = useState< ChatState >( 'collapsed' );
 />;
 ```
 
+The `minimized` state docks a bar to the bottom edge showing the trigger icon
+and a title (`triggerTitle`, defaults to `Ask AI`); clicking it expands the chat:
+
+```tsx
+<AgentUI
+	variant="floating"
+	floatingChatState="minimized"
+	triggerTitle="Ask AI"
+/>;
+```
+
 ## Hooks
 
 ### useChat
@@ -371,7 +383,7 @@ Manages floating chat state:
 
 ```tsx
 const {
-	state, // 'collapsed' | 'compact' | 'expanded'
+	state, // 'collapsed' | 'minimized' | 'compact' | 'expanded'
 	setState,
 	isOpen, // boolean
 	open, // () => void
@@ -443,7 +455,7 @@ interface NoticeConfig {
 	onDismiss?: () => void;
 }
 
-type ChatState = 'collapsed' | 'compact' | 'expanded';
+type ChatState = 'collapsed' | 'minimized' | 'compact' | 'expanded';
 ```
 
 ## Styling

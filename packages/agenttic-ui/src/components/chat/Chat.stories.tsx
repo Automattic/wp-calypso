@@ -59,7 +59,7 @@ const meta = {
 		},
 		floatingChatState: {
 			control: 'select',
-			options: [ 'collapsed', 'compact', 'expanded' ],
+			options: [ 'collapsed', 'minimized', 'compact', 'expanded' ],
 		},
 	},
 	// Decorators removed - stories use direct props
