@@ -35,6 +35,12 @@ export default function BillingHistoryListDataView( {
 	);
 	const fields = useFieldDefinitions( transactions, getReceiptUrlFor, visibleFields );
 	const viewState = useViewStateUpdate( fields );
+	// `visibleFields` cannot be derived directly from `viewState.view.fields`:
+	// `viewState` depends on `fields`, which depends on `visibleFields`, so reading
+	// the view here would be a declaration cycle. Instead we mirror the view's
+	// fields into state after each update. The field ids passed to
+	// `useViewStateUpdate` are stable regardless of visibility, so this does not
+	// loop.
 	useEffect( () => {
 		const nextFields = ( viewState.view.fields as string[] ) ?? [];
 		setVisibleFields( ( current ) =>

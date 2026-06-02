@@ -3,6 +3,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
+import { wideFields } from './constants';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -165,7 +166,7 @@ export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
 	translate: ReturnType< typeof useTranslate >,
 	getReceiptUrlFor: ( receiptId: string ) => string,
-	visibleFields: string[] = [ 'date', 'service', 'type', 'amount' ]
+	visibleFields: string[] = wideFields
 ): Fields< BillingTransaction > {
 	return [
 		{
