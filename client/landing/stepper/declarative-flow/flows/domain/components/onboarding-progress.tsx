@@ -6,7 +6,7 @@ type Props = {
 	currentStep: 'domains' | 'plans' | 'checkout';
 };
 
-export function DomainFlowProgressStepper( { currentStep }: Props ) {
+export function OnboardingProgress( { currentStep }: Props ) {
 	const { __ } = useI18n();
 
 	const domainsStepStatus = currentStep !== 'domains' ? ( 'completed' as const ) : undefined;

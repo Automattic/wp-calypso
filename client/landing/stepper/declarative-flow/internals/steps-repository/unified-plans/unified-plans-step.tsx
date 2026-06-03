@@ -49,7 +49,7 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import { DomainFlowProgressStepper } from '../../../flows/domain/components/domain-flow-progress-stepper';
+import { OnboardingProgress } from '../../../flows/domain/components/onboarding-progress';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
@@ -737,7 +737,7 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
-								{ isOnboardingFlow( flowName ) && <DomainFlowProgressStepper currentStep="plans" /> }
+								{ isOnboardingFlow( flowName ) && <OnboardingProgress currentStep="plans" /> }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle

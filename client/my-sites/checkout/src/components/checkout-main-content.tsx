@@ -43,7 +43,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
-import { DomainFlowProgressStepper } from 'calypso/landing/stepper/declarative-flow/flows/domain/components/domain-flow-progress-stepper';
+import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/flows/domain/components/onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -1016,7 +1016,7 @@ export default function CheckoutMainContent( {
 					secondColumnWidth={ 4 }
 					heading={
 						isOnboardingFlowCheckout && isLargeViewport ? (
-							<DomainFlowProgressStepper currentStep="checkout" />
+							<OnboardingProgress currentStep="checkout" />
 						) : undefined
 					}
 					topBar={ ( { isLargeViewport } ) => {
