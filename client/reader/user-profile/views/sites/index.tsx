@@ -20,7 +20,12 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const { ID: userId, user_login: userLogin } = user;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
+	const isOwnProfile = currentUser?.username === userLogin;
 	const { isLoading, data, error } = useQuery( userSitesQuery( userId ) );
+
+	// Defense in depth: the public endpoint already excludes hidden sites for non-owners, but
+	// never render a site the owner has hidden.
+	const visibleSites = ( data?.sites ?? [] ).filter( ( site ) => isOwnProfile || ! site.is_hidden );
 
 	if ( isLoading ) {
 		return (
@@ -40,8 +45,8 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 		);
 	}
 
-	if ( ! data?.sites?.length ) {
-		const action = currentUser?.username === userLogin && (
+	if ( ! visibleSites.length ) {
+		const action = isOwnProfile && (
 			<a
 				className="empty-content__action button is-primary"
 				href="/start?source=reader&ref=user-profile-page"
@@ -60,7 +65,7 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 		);
 	}
 
-	const sitesList = data.sites.map( ( site ): ReaderSite => {
+	const sitesList = visibleSites.map( ( site ): ReaderSite => {
 		return {
 			siteId: site.ID ? String( site.ID ) : '',
 			feedId: site.feed_ID ? String( site.feed_ID ) : '',
