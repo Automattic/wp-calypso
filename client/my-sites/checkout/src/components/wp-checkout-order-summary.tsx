@@ -688,16 +688,20 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 	margin-top: 16px;
 
 	/*
-	 * The real submit button renders here via a React portal (see submit-button-slot.ts).
-	 * Each payment method provides its own button element, so we style the slot to give
-	 * them a consistent full-width look in the sidebar.
+	 * The submit button renders here via a React portal (see submit-button-slot.ts).
+	 * Each payment method provides its own button element, and a "Continue" button
+	 * renders here while steps are incomplete, so normalize every button in the slot
+	 * to a consistent full-width, 50px-tall look in the sidebar regardless of which
+	 * one is showing (Pay, Continue, PayPal, etc.).
 	 */
 	.checkout-submit-button {
 		width: 100%;
 	}
 
-	.checkout-submit-button button {
+	button {
 		width: 100%;
+		height: 50px;
+		box-sizing: border-box;
 	}
 `;
 const CheckoutSummaryFeatures = styled.div`
