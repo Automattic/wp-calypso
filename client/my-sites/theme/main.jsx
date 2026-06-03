@@ -85,7 +85,6 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -769,33 +768,12 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const {
-			isPremium,
-			isFreePlan,
-			isThemePurchased,
-			themeTier,
-			shouldLimitGlobalStyles,
-			styleVariations,
-			isExternallyManagedTheme,
-			isBundledSoftwareSet,
-		} = this.props;
-
-		const isGlobalStylesOnPersonal = this.props.isGlobalStylesOnPersonal;
+		const { isFreePlan, themeTier, shouldLimitGlobalStyles, styleVariations } = this.props;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
-		const hasLimitedFeatures =
-			! isExternallyManagedTheme &&
-			! isBundledSoftwareSet &&
-			! isThemePurchased &&
-			! isGlobalStylesOnPersonal &&
-			! isPremium &&
-			shouldLimitGlobalStyles;
+		const shouldSplitDefaultVariation = isFreeTier;
 
-		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
-
-		const needsUpgrade = isGlobalStylesOnPersonal
-			? isFreePlan || shouldLimitGlobalStyles
-			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
+		const needsUpgrade = isFreePlan || shouldLimitGlobalStyles;
 
 		return (
 			styleVariations.length > 0 && (
@@ -1160,7 +1138,7 @@ class ThemeSheet extends Component {
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		const upgradeToPlan = this.props.isGlobalStylesOnPersonal ? 'personal' : 'premium';
+		const upgradeToPlan = 'personal';
 
 		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
 	};
@@ -1593,8 +1571,6 @@ export default connect(
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(
-		withSiteGlobalStylesStatus(
-			withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) )
-		)
+		withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) )
 	)
 );
