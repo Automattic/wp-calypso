@@ -49,9 +49,9 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import { OnboardingProgress } from '../../../flows/domain/components/onboarding-progress';
-import { useShowOnboardingProgress } from '../../../flows/domain/components/use-show-onboarding-progress';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
+import { OnboardingProgress } from '../components/onboarding-progress';
+import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';

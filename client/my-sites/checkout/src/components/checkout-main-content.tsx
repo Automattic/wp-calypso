@@ -43,8 +43,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
-import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/flows/domain/components/onboarding-progress';
-import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/flows/domain/components/use-show-onboarding-progress';
+import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
+import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {

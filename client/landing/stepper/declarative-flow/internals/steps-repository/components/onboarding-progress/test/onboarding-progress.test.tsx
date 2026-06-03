@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { OnboardingProgress } from '../onboarding-progress';
+import { OnboardingProgress } from '..';
 
 describe( 'OnboardingProgress', () => {
 	it( 'calls onStepSelect with the clicked previous step on checkout', async () => {
