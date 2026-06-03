@@ -54,11 +54,12 @@ export function CompactView( {
 	expandOnClick = false,
 }: CompactViewProps ) {
 	const [ suggestionsVisible, setSuggestionsVisible ] = useState( false );
+	const [ dropdownOpen, setDropdownOpen ] = useState( false );
 
 	// Use our custom timeout hook for proper cleanup
 	const { setNamedTimeout, clearAllTimeouts } = useMultiTimeout();
 
-	const hideSuggestionsAfterTimeout = useCallback( () => {
+	const scheduleSuggestionsHide = useCallback( () => {
 		setNamedTimeout(
 			'hide-suggestions',
 			() => {
@@ -67,6 +68,29 @@ export function CompactView( {
 			SUGGESTIONS_AUTO_HIDE_DELAY
 		);
 	}, [ setNamedTimeout ] );
+
+	const hideSuggestionsAfterTimeout = useCallback( () => {
+		if ( ! dropdownOpen ) {
+			scheduleSuggestionsHide();
+		}
+	}, [ dropdownOpen, scheduleSuggestionsHide ] );
+
+	const showSuggestions = useCallback( () => {
+		clearAllTimeouts();
+		setSuggestionsVisible( true );
+	}, [ clearAllTimeouts ] );
+
+	const handleDropdownOpenChange = useCallback(
+		( nextOpen: boolean ) => {
+			setDropdownOpen( nextOpen );
+			if ( nextOpen ) {
+				showSuggestions();
+			} else {
+				scheduleSuggestionsHide();
+			}
+		},
+		[ scheduleSuggestionsHide, showSuggestions ]
+	);
 
 	// Handle click event for expandOnClick functionality
 	const handleClick = useCallback( () => {
@@ -92,17 +116,23 @@ export function CompactView( {
 			return;
 		}
 
+		// Keep suggestions mounted while a dropdown is open, including when the
+		// dropdown is portaled outside the suggestions row.
+		if ( dropdownOpen ) {
+			setSuggestionsVisible( true );
+			return;
+		}
+
 		// Case 3: Input empty + suggestions available - show with auto-hide
 		setSuggestionsVisible( true );
 
-		hideSuggestionsAfterTimeout();
+		scheduleSuggestionsHide();
 	}, [
 		value,
 		suggestions,
+		dropdownOpen,
 		clearAllTimeouts,
-		setNamedTimeout,
-		clearSuggestions,
-		hideSuggestionsAfterTimeout,
+		scheduleSuggestionsHide,
 	] );
 
 	return (
@@ -125,10 +155,7 @@ export function CompactView( {
 				actionOrder={ actionOrder }
 				onStop={ onStop }
 				expandOnClick={ expandOnClick }
-				onMouseEnter={ () => {
-					clearAllTimeouts();
-					setSuggestionsVisible( true );
-				} }
+				onMouseEnter={ showSuggestions }
 				onMouseLeave={ () => hideSuggestionsAfterTimeout() }
 			/>
 			{ ! value && (
@@ -137,11 +164,9 @@ export function CompactView( {
 					onSubmit={ handleSuggestionSubmit }
 					layout="floating"
 					visible={ suggestionsVisible }
-					onMouseEnter={ () => {
-						clearAllTimeouts();
-						setSuggestionsVisible( true );
-					} }
+					onMouseEnter={ showSuggestions }
 					onMouseLeave={ () => hideSuggestionsAfterTimeout() }
+					onDropdownOpenChange={ handleDropdownOpenChange }
 				/>
 			) }
 		</>

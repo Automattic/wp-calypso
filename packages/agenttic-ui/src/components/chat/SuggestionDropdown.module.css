@@ -1,0 +1,62 @@
+.container {
+	position: relative;
+}
+
+.chevron {
+	margin-left: var(--spacing-0\.5);
+	transition: transform 150ms ease;
+	flex-shrink: 0;
+}
+
+.chevronOpen {
+	transform: rotate(180deg);
+}
+
+.dropdown {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-background);
+	border-radius: var(--radius-sm);
+	padding: var(--spacing-2);
+	/* 1000 matches the floating-layer convention used by AgentUIInputToolbar — */
+	/* puts the portaled dropdown above chat content and above host-page UI. */
+	z-index: 1000;
+	box-shadow: var(--shadow-lg);
+}
+
+:global(.agenttic.dark) .dropdown {
+	border: 1px solid var(--color-muted);
+}
+
+.option {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: var(--spacing-2);
+	background: none;
+	border: none;
+	border-radius: var(--radius-sm);
+	color: var(--color-foreground);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-medium);
+	font-family: inherit;
+	cursor: pointer;
+	text-align: start;
+	white-space: nowrap;
+}
+
+.option:hover {
+	background-color: color-mix(in srgb, var(--color-background) 50%, var(--color-muted));
+}
+
+/* Suppress the UA-default focus outline that shows on programmatic focus */
+/* (e.g. when Radix auto-focuses the first option on open); */
+/* :focus-visible below still renders the ring for real keyboard nav. */
+.option:focus {
+	outline: none;
+}
+
+.option:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: -2px;
+}

@@ -62,8 +62,17 @@ const SidebarDemo: React.FC = () => {
 		() => [
 			{ id: '1', label: 'Customize colors', prompt: 'Customize colors' },
 			{ id: '2', label: 'Change page layout', prompt: 'Change page layout' },
-			{ id: '3', label: 'Choose new fonts', prompt: 'Choose new fonts' },
-			{ id: '4', label: 'Add new page', prompt: 'Add new page' },
+			{
+				id: '3',
+				label: 'Change tone to',
+				prompt: 'Change the tone of this page to ',
+				options: [
+					{ id: 'tone-formal', label: 'Formal', value: 'formal' },
+					{ id: 'tone-casual', label: 'Casual', value: 'casual' },
+					{ id: 'tone-friendly', label: 'Friendly', value: 'friendly' },
+					{ id: 'tone-funny', label: 'Funny', value: 'funny' },
+				],
+			},
 			{ id: '5', label: 'What else can you do?', prompt: 'What else can you do?' },
 		],
 		[]

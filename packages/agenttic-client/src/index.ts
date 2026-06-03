@@ -77,6 +77,7 @@ export type {
 	UseAgentChatReturn,
 	UIMessage,
 	Suggestion,
+	SuggestionOption,
 	SubmitOptions,
 } from './react/useAgentChat';
 

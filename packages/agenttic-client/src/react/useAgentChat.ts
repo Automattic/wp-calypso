@@ -40,11 +40,18 @@ const createImageComponent = ( url: string, maxWidth = '40%' ) => ( {
 } );
 
 // Re-export types that will be used by consumers
+export interface SuggestionOption {
+	id: string;
+	label: string;
+	value: string; // Appended to the parent suggestion's prompt with boundary whitespace normalized
+}
+
 export interface Suggestion {
 	id: string;
 	label: string;
 	prompt?: string;
 	action?: () => boolean | Promise< boolean >;
+	options?: SuggestionOption[]; // When present, renders as a dropdown picker
 }
 
 // Image data with optional metadata (e.g., WordPress attachment ID)

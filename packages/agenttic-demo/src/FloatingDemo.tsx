@@ -79,12 +79,22 @@ const FloatingDemo: React.FC< {
 				id: '1',
 				label: 'Edit link',
 				prompt: 'Change the button link to:',
+				options: [
+					{ id: 'color-blue', label: 'Blue', value: 'blue' },
+					{ id: 'color-red', label: 'Red', value: 'red' },
+					{ id: 'color-green', label: 'Green', value: 'green' },
+				],
 			},
 			{ id: '2', label: 'Remove button', prompt: 'Remove this button' },
 			{
 				id: '3',
 				label: 'Change color',
-				prompt: 'Change the button color to blue',
+				prompt: 'Change the button color to ',
+				options: [
+					{ id: 'color-blue', label: 'Blue', value: 'blue' },
+					{ id: 'color-red', label: 'Red', value: 'red' },
+					{ id: 'color-green', label: 'Green', value: 'green' },
+				],
 			},
 		],
 		[]

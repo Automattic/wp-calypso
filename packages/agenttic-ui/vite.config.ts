@@ -19,7 +19,7 @@ export default defineConfig( {
 				'react/jsx-runtime',
 				'@automattic/agenttic-client',
 				'@automattic/charts',
-				'@floating-ui/react-dom',
+				'@radix-ui/react-popover',
 				'@radix-ui/react-scroll-area',
 				'@radix-ui/react-slot',
 				'@visx/xychart',

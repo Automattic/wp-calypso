@@ -4,6 +4,7 @@ import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import type { Suggestion } from '../../types';
 import { cn } from '../../utils/classNames';
 import { Button } from '../ui/button';
+import { SuggestionDropdown } from './SuggestionDropdown';
 import { fastSpringWithDelay } from '../animations';
 import styles from './Suggestions.module.css';
 
@@ -18,6 +19,7 @@ export interface SuggestionsProps {
 	visible?: boolean;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
+	onDropdownOpenChange?: ( open: boolean ) => void;
 	translateY?: string | number;
 }
 
@@ -29,6 +31,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	visible = true,
 	onMouseEnter,
 	onMouseLeave,
+	onDropdownOpenChange,
 	translateY = '-100%',
 } ) => {
 	const { variant } = useAgentUIContext();
@@ -91,19 +94,33 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 									delay: index * 0.05,
 								} }
 							>
-								<Button
-									onClick={ ( e ) => {
-										e.stopPropagation();
-										handleSuggestionClick(
-											suggestion,
+								{ suggestion.options &&
+								suggestion.options.length > 0 ? (
+									<SuggestionDropdown
+										suggestion={ suggestion }
+										onSelect={ handleSuggestionClick }
+										availableSuggestions={
 											internalSuggestions
-										);
-									} }
-									variant="outline"
-									className={ styles.button }
-								>
-									{ suggestion.label }
-								</Button>
+										}
+										onOpenChange={
+											onDropdownOpenChange
+										}
+									/>
+								) : (
+									<Button
+										onClick={ ( e ) => {
+											e.stopPropagation();
+											handleSuggestionClick(
+												suggestion,
+												internalSuggestions
+											);
+										} }
+										variant="outline"
+										className={ styles.button }
+									>
+										{ suggestion.label }
+									</Button>
+								) }
 							</motion.div>
 						)
 					) }

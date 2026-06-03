@@ -3,12 +3,19 @@ import type { ComponentType } from 'react';
 import type { ChatPosition } from '../utils/chatStorage';
 
 // Define UI-specific types locally
+export interface SuggestionOption {
+	id: string;
+	label: string;
+	value: string; // Appended to the parent suggestion's prompt with boundary whitespace normalized
+}
+
 export interface Suggestion {
 	id: string;
 	label: string;
 	prompt?: string;
 	action?: () => boolean | Promise< boolean >;
 	autoSubmit?: boolean; // When true, clicking the suggestion automatically submits it to the LLM
+	options?: SuggestionOption[]; // When present, renders as a dropdown picker
 }
 
 export interface Message {
