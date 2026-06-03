@@ -91,8 +91,7 @@ Steps 6-7 are the ones agents miss — without slug mapping the method never app
 
 The inverse of the above — used when the backend retires a processor (or a single
 method on a still-active processor). Reference template: PR #110710 (SHILL-1968,
-Razorpay). The backend playbook is the wpcom retired-processors readme
-(`wp-content/lib/billingdaddy/src/retired-processors/readme.md`); this section covers
+Razorpay). The backend instructions are in the wpcom retired-processors readme; this section covers
 only the Calypso checkout side.
 
 Two surfaces with opposite fates:
