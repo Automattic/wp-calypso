@@ -22,6 +22,6 @@ describe( 'OnboardingProgress', () => {
 		render( <OnboardingProgress currentStep="checkout" onStepSelect={ onStepSelect } /> );
 
 		await userEvent.click( screen.getByRole( 'tab', { name: /Complete payment/ } ) );
-		expect( onStepSelect ).not.toHaveBeenCalledWith( 'checkout' );
+		expect( onStepSelect ).not.toHaveBeenCalled();
 	} );
 } );
