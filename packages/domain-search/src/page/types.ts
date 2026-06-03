@@ -1,5 +1,6 @@
 import {
 	availableTldsQuery,
+	bundleSuggestionQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
@@ -86,6 +87,12 @@ export interface DomainSearchConfig {
 	allowedTlds: string[];
 	includeOwnedDomainInSuggestions: boolean;
 	numberOfDomainsResultsPerPage: number;
+	/**
+	 * Show domain bundle suggestions in the search flow. Frontend dev/Storybook
+	 * gate, set from the `domain-bundling` feature flag at the app layer. Default
+	 * false, so bundles stay hidden unless a consumer opts in.
+	 */
+	showBundleSuggestions: boolean;
 }
 
 export interface DomainSearchProps {
@@ -124,6 +131,7 @@ export interface DomainSearchContextType
 		) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
+		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
 	};
 	config: DomainSearchConfig;
 }

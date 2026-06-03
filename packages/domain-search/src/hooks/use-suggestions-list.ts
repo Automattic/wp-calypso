@@ -49,6 +49,14 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable && ! isFqdnQuery,
 	} );
 
+	// Bundle suggestions are gated behind the frontend `domain-bundling` flag
+	// (surfaced as config.showBundleSuggestions). When off, the query never runs
+	// and bundleSuggestion stays undefined, leaving the rest of the flow unchanged.
+	const { data: bundleSuggestion } = useQuery( {
+		...queries.bundleSuggestion( query ),
+		enabled: config.showBundleSuggestions,
+	} );
+
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: isFqdnQuery,
@@ -123,5 +131,6 @@ export const useSuggestionsList = () => {
 		isLoading,
 		featuredSuggestions,
 		regularSuggestions,
+		bundleSuggestion,
 	};
 };
