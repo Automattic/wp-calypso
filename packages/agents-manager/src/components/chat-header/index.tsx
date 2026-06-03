@@ -49,7 +49,12 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 					<Icon icon={ chevronLeft } />
 				</Button>
 			) }
-			{ title && <div className="agents-manager-chat-header__title">{ title }</div> }
+			{ title && (
+				// Show the full title on hover when it's truncated.
+				<div className="agents-manager-chat-header__title" title={ title }>
+					{ title }
+				</div>
+			) }
 			<div className="agents-manager-chat-header__actions">
 				<DropdownMenu
 					className="agents-manager-chat-header__more-options"
