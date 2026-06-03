@@ -97,7 +97,7 @@ export async function retarget( urlPath ) {
 			type: 'contents',
 		};
 		if (
-			typeof url === 'string' &&
+			typeof urlPath === 'string' &&
 			urlPath.trim().length > 0 &&
 			document.title.trim().length > 0
 		) {
