@@ -993,9 +993,9 @@ describe( 'Checkout', () => {
 
 	describe( 'with expressPaymentMethodIds', function () {
 		const steps = createMockStepObjects();
-		// steps[0] = summary (no step number)
-		// steps[1] = numbered, complete (isCompleteCallback () => true)
-		// steps[3] = numbered, incomplete (isCompleteCallback () => false)
+		// steps[0] = custom-summary-step    (no step number)
+		// steps[1] = custom-contact-step    (numbered, isCompleteCallback () => true)
+		// steps[3] = custom-incomplete-step (numbered, isCompleteCallback () => false)
 
 		const cardMethod = {
 			...createMockMethod( { submitButton: <MockSubmitButton content="Pay with Card" /> } ),
@@ -1050,7 +1050,7 @@ describe( 'Checkout', () => {
 			const submitArea = getSubmitArea( container );
 			// card is active (first available); apple-pay is express but not active.
 			const applePayButton = getByTextInNode( submitArea, 'Apple Pay' );
-			expect( applePayButton ).toBeInTheDocument();
+			expect( applePayButton ).toBeVisible();
 			expect( applePayButton ).not.toBeDisabled();
 			expect( applePayButton.closest( '.checkout-submit-button' ) ).toHaveClass(
 				'checkout-submit-button--active'
@@ -1098,6 +1098,118 @@ describe( 'Checkout', () => {
 			expect( applePayButton?.closest( '.checkout-submit-button' ) ).toHaveClass(
 				'checkout-submit-button--inactive'
 			);
+		} );
+
+		it( 'renders the active method exactly once when it is also in expressPaymentMethodIds', () => {
+			// card is the active (first) method AND in expressIds — it must not be
+			// duplicated; the wrapper should appear exactly once.
+			const { container } = render(
+				<ExpressCheckout expressIds={ [ 'card' ] } checkoutSteps={ [ steps[ 0 ], steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const wrappers = Array.from(
+				submitArea.querySelectorAll( '.checkout-submit-button' )
+			) as HTMLElement[];
+			const cardWrapperCount = wrappers.filter(
+				( w ) => w.textContent?.includes( 'Pay with Card' )
+			).length;
+			expect( cardWrapperCount ).toBe( 1 );
+		} );
+
+		it( 'clicking an express button invokes its own processor, not the active method processor', async () => {
+			// Build methods with DISTINCT processor ids so we can assert which one fires.
+			const cardProcessor = jest
+				.fn()
+				.mockResolvedValue( { type: PaymentProcessorResponseType.SUCCESS, payload: true } );
+			const applePayProcessor = jest
+				.fn()
+				.mockResolvedValue( { type: PaymentProcessorResponseType.SUCCESS, payload: true } );
+
+			// Submit button components that call usePaymentProcessor with their own
+			// processor id (not the shared 'mock' key used by MockSubmitButton).
+			function CardSubmitButton( { disabled }: { disabled?: boolean } ) {
+				const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
+				const process = usePaymentProcessor( 'card-processor' );
+				const onClick = () => {
+					setTransactionPending();
+					process( true ).then( ( result ) => setTransactionComplete( result ) );
+				};
+				return (
+					<button disabled={ disabled } onClick={ onClick }>
+						Pay with Card
+					</button>
+				);
+			}
+
+			function ApplePaySubmitButton( { disabled }: { disabled?: boolean } ) {
+				const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
+				const process = usePaymentProcessor( 'apple-pay-processor' );
+				const onClick = () => {
+					setTransactionPending();
+					process( true ).then( ( result ) => setTransactionComplete( result ) );
+				};
+				return (
+					<button disabled={ disabled } onClick={ onClick }>
+						Apple Pay
+					</button>
+				);
+			}
+
+			const cardMethodDistinct = {
+				...createMockMethod( { submitButton: <CardSubmitButton /> } ),
+				id: 'card',
+				paymentProcessorId: 'card-processor',
+			};
+			const applePayMethodDistinct = {
+				...createMockMethod( { submitButton: <ApplePaySubmitButton /> } ),
+				id: 'apple-pay',
+				paymentProcessorId: 'apple-pay-processor',
+			};
+
+			function ExpressCheckoutWithDistinctProcessors() {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				// Use only steps[0] + steps[1] so all steps are complete and Pay buttons show.
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( [ steps[ 0 ], steps[ 1 ] ] );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							paymentMethods={ [ cardMethodDistinct, applePayMethodDistinct ] }
+							paymentProcessors={ {
+								'card-processor': cardProcessor,
+								'apple-pay-processor': applePayProcessor,
+							} }
+							selectFirstAvailablePaymentMethod
+						>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit
+									continueToNextIncompleteStep
+									expressPaymentMethodIds={ [ 'apple-pay' ] }
+								/>
+							</CheckoutStepGroup>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			}
+
+			const { container } = render( <ExpressCheckoutWithDistinctProcessors /> );
+			const submitArea = getSubmitArea( container );
+
+			// card is the active method; apple-pay is express but NOT active.
+			// Clicking the Apple Pay button should invoke applePayProcessor only.
+			const applePayButton = getByTextInNode( submitArea, 'Apple Pay' );
+			expect( applePayButton ).toBeVisible();
+
+			const user = userEvent.setup();
+			await user.click( applePayButton );
+
+			await waitFor( () => {
+				expect( applePayProcessor ).toHaveBeenCalledTimes( 1 );
+			} );
+			expect( cardProcessor ).not.toHaveBeenCalled();
 		} );
 	} );
 
