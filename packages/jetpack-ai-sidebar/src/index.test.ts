@@ -10,6 +10,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, render } from '@testing-library/react';
 import React from 'react';
+import PostFeedback from './components/post-feedback';
 import ReviewMediation from './components/review-mediation';
 import TitlePicker from './components/title-picker';
 import { undoBlockEdit } from './utils/block-actions';
@@ -44,7 +45,13 @@ jest.mock( '@wordpress/components', () => {
 	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
-		PanelBody: ( { children }: any ) => react.createElement( 'section', null, children ),
+		PanelBody: ( { children, initialOpen, title }: any ) =>
+			react.createElement(
+				'section',
+				{ 'data-initial-open': initialOpen ? 'true' : 'false' },
+				react.createElement( 'h3', null, title ),
+				children
+			),
 	};
 } );
 
@@ -70,6 +77,7 @@ jest.mock( '@wordpress/data', () => ( {
 			}
 			if ( store === 'core/editor' ) {
 				return {
+					getCurrentPostId: () => 123,
 					getCurrentPostType: () => mockCurrentPostType,
 				};
 			}
@@ -110,12 +118,13 @@ function installWpDataMock( initialTitle: string, postId = 123 ) {
 	return state;
 }
 
-function installPostTypeMock( postType?: string ) {
+function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
+						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
 					};
 				}
@@ -130,6 +139,39 @@ function installPostTypeMock( postType?: string ) {
 			},
 		},
 	};
+}
+
+function installContextProviderMock( postType = 'post', postId: number | null = 123 ) {
+	const blocks = [
+		{
+			name: 'core/paragraph',
+			clientId: 'context-block',
+			attributes: { content: 'Unsaved editor text' },
+			innerBlocks: [],
+		},
+	];
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						getCurrentPostId: () => postId,
+						getCurrentPostType: () => postType,
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						getSelectedBlock: () => null,
+						getBlock: ( clientId: string ) =>
+							blocks.find( ( block ) => block.clientId === clientId ),
+						getBlocks: () => blocks,
+					};
+				}
+				return undefined;
+			},
+		},
+	};
+	return blocks;
 }
 
 function installAiEditorialReviewData( features: Record< string, boolean > = {} ) {
@@ -178,10 +220,102 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'review-mediation' ) ).toBe( ReviewMediation );
 	} );
 
+	it( 'returns PostFeedback for type "post-feedback"', () => {
+		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
+	} );
+
 	it( 'returns null for an unknown type', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+	} );
+} );
+
+describe( 'PostFeedback', () => {
+	it( 'renders backend flat feedback items', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'The post needs a clearer activity line before publishing.',
+				postId: 123,
+				items: [
+					{
+						title: 'Fix duplicated punctuation',
+						feedback: 'The activity sentence has duplicated punctuation.',
+						action: 'Replace the sentence with cleaner wording.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be activities for children.',
+					},
+					{
+						title: 'Add missing event details',
+						feedback: 'The announcement would be more useful with confirmed event details.',
+						action: 'Add the time, venue, and registration details once confirmed.',
+						block_index: null,
+						requires_manual: true,
+						manual_reason: 'Needs confirmed event details from the author.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'The post needs a clearer activity line' );
+		expect( container.textContent ).toContain( 'Feedback' );
+		expect( container.textContent ).toContain( 'Fix duplicated punctuation' );
+		expect( container.textContent ).toContain( 'Suggested rewrite' );
+		expect( container.textContent ).toContain(
+			'Needs manual edit: Needs confirmed event details from the author.'
+		);
+		const manualReasons = container.querySelectorAll( '.jetpack-ai-post-feedback__manual-reason' );
+		const acceptButtons = container.querySelectorAll(
+			'.jetpack-ai-post-feedback__action-button.is-primary'
+		);
+		expect( acceptButtons[ 1 ].hasAttribute( 'disabled' ) ).toBe( true );
+		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
+			manualReasons[ 1 ]?.getAttribute( 'id' )
+		);
+	} );
+
+	it( 'opens every section by default when sectioned feedback is provided', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				sections: [
+					{
+						title: 'First section',
+						items: [
+							{
+								title: 'First item',
+								feedback: 'Feedback.',
+								action: 'Action.',
+								block_index: null,
+								requires_manual: true,
+								manual_reason: 'Needs manual edit.',
+							},
+						],
+					},
+					{
+						title: 'Second section',
+						items: [
+							{
+								title: 'Second item',
+								feedback: 'Feedback.',
+								action: 'Action.',
+								block_index: null,
+								requires_manual: true,
+								manual_reason: 'Needs manual edit.',
+							},
+						],
+					},
+				],
+			} )
+		);
+
+		expect(
+			Array.from( container.querySelectorAll( 'section' ) ).map( ( section ) =>
+				section.getAttribute( 'data-initial-open' )
+			)
+		).toEqual( [ 'true', 'true' ] );
 	} );
 } );
 
@@ -237,6 +371,16 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
+	it( 'hides Generate Feedback until the post has a saved post ID', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post', null );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'AI Editorial Review' );
 	} );
 
 	it( 'hides Optimize Title when the preview feature disables it', () => {
@@ -295,6 +439,7 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
@@ -315,6 +460,7 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
@@ -377,7 +523,7 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Translate content',
-			'Check grammar',
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
@@ -385,15 +531,6 @@ describe( 'useSuggestions', () => {
 				'jetpack_ai_block_transformation_suggestion_rendered',
 				{
 					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
 					suggestion_type: 'text',
 					block_type: 'core/heading',
 					surface: 'jetpack_ai_sidebar',
@@ -426,6 +563,7 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 	} );
@@ -441,6 +579,7 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
@@ -466,6 +605,7 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 	} );
@@ -486,8 +626,37 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
+	} );
+
+	it( 'keeps Generate Feedback on the backend path when clicked', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		const addMessage = jest.fn();
+		const clearSuggestions = jest.fn();
+		const feedbackPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-feedback'
+		)?.prompt;
+
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions,
+		} as any );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: feedbackPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( clearSuggestions ).toHaveBeenCalled();
+		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
@@ -664,6 +833,7 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
+			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 	} );
@@ -725,6 +895,7 @@ describe( 'useSuggestions', () => {
 
 describe( 'contextProvider', () => {
 	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
 
@@ -735,6 +906,27 @@ describe( 'contextProvider', () => {
 			url: window.location.href,
 			postType: 'post',
 		} );
+	} );
+
+	it( 'suppresses full page content for the next Generate Feedback chip request', () => {
+		installAiEditorialReviewData();
+		installContextProviderMock();
+		const feedbackPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-feedback'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: feedbackPrompt },
+				} )
+			);
+		} );
+
+		expect( contextProvider.getClientContext().currentPageContent ).toEqual( [] );
+		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 	} );
 } );
 
@@ -959,6 +1151,42 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 			expect( parsed.data.postId ).toBe( 123 );
 			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'stamps post-feedback components with the current post ID', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'post-feedback',
+				props: {
+					summary: 'Summary.',
+					items: [],
+				},
+				toolCallId: 'call_post_feedback_123',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'post-feedback' );
+			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
+			expect( parsed.data.isCurrent ).toBe( true );
+			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.postId ).toBe( 123 );
+			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'preserves the reviewed post ID on post-feedback components', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'post-feedback',
+				props: {
+					summary: 'Summary.',
+					items: [],
+					postId: 77,
+				},
+				toolCallId: 'call_post_feedback_456',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'post-feedback' );
+			expect( parsed.data.postId ).toBe( 77 );
+			expect( parsed.data.props.postId ).toBe( 77 );
 		} );
 
 		it( 'does not stamp review-mediation components without a saved editor post ID', async () => {

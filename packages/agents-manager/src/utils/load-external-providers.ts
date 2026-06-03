@@ -153,6 +153,7 @@ export interface LoadedProviders {
 	contextProvider?: ContextProvider;
 	/** Function to get empty view suggestions. Called when component is ready. */
 	getEmptyViewSuggestions?: () => Suggestion[];
+	isProviderReady?: () => boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
@@ -250,6 +251,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allProviderReadyChecks: ( () => boolean )[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
@@ -294,6 +296,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
+		}
+		if ( module.isProviderReady ) {
+			allProviderReadyChecks.push( module.isProviderReady );
 		}
 
 		// First-write-wins for singleton exports.
@@ -418,7 +423,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			const combined: Suggestion[] = [];
 			const seenIds = new Set< string >();
 			for ( const fn of allGetEmptyViewSuggestions ) {
-				for ( const s of fn() ) {
+				for ( const s of fn() ?? [] ) {
 					if ( ! seenIds.has( s.id ) ) {
 						seenIds.add( s.id );
 						combined.push( s );
@@ -428,6 +433,18 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			return combined;
 		};
 	}
+
+	const mergedIsProviderReady =
+		allProviderReadyChecks.length > 0
+			? () =>
+					allProviderReadyChecks.every( ( fn ) => {
+						try {
+							return fn();
+						} catch {
+							return false;
+						}
+					} )
+			: undefined;
 
 	return {
 		toolProvider: mergedToolProvider,
@@ -442,6 +459,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
+		isProviderReady: mergedIsProviderReady,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 	};

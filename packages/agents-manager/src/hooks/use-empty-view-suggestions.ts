@@ -19,6 +19,7 @@ const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
 	'add-new-page',
 	'what-else-can-i-do',
 ] );
+const PROVIDER_READY_EVENT = 'jetpack-ai-sidebar-provider-ready';
 
 /**
  * Hook to manage empty view suggestions, handling Big Sky's theme-dependent suggestions
@@ -186,6 +187,7 @@ export function useEmptyViewSuggestions( {
 
 	// Compute empty view suggestions once when store is ready
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
+	const [ providerReadyVersion, setProviderReadyVersion ] = useState( 0 );
 
 	// Signal that bumps whenever the host dispatches
 	// `reader-chat-suggestions-updated`. Reader chat fires this after async
@@ -202,6 +204,37 @@ export function useEmptyViewSuggestions( {
 			window.removeEventListener( 'reader-chat-suggestions-updated', handler );
 		};
 	}, [ isReaderChat ] );
+
+	useEffect( () => {
+		if (
+			typeof window === 'undefined' ||
+			! loadedProviders?.isProviderReady ||
+			loadedProviders.isProviderReady()
+		) {
+			return;
+		}
+
+		let didMarkReady = false;
+		const intervalIdRef = { current: 0 };
+		const markReady = () => {
+			if ( didMarkReady ) {
+				return;
+			}
+			if ( loadedProviders.isProviderReady?.() ) {
+				didMarkReady = true;
+				window.clearInterval( intervalIdRef.current );
+				window.removeEventListener( PROVIDER_READY_EVENT, markReady );
+				setProviderReadyVersion( ( version ) => version + 1 );
+			}
+		};
+		intervalIdRef.current = window.setInterval( markReady, 100 );
+		window.addEventListener( PROVIDER_READY_EVENT, markReady );
+
+		return () => {
+			window.clearInterval( intervalIdRef.current );
+			window.removeEventListener( PROVIDER_READY_EVENT, markReady );
+		};
+	}, [ loadedProviders ] );
 
 	useEffect( () => {
 		// Re-read override before the core-store readiness gate. Reader-chat
@@ -222,6 +255,10 @@ export function useEmptyViewSuggestions( {
 			return;
 		}
 
+		if ( loadedProviders.isProviderReady && ! loadedProviders.isProviderReady() ) {
+			return;
+		}
+
 		if ( emptyViewSuggestions !== null ) {
 			return;
 		}
@@ -231,7 +268,12 @@ export function useEmptyViewSuggestions( {
 			setEmptyViewSuggestions( defaultSuggestions );
 		} else {
 			// Big Sky provides suggestions and store is ready - get filtered suggestions
-			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
+			let providerSuggestions: Suggestion[] = [];
+			try {
+				providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
+			} catch {
+				// Provider suggestions are optional; rendering the chat is not.
+			}
 			const suggestions = filterEmptyViewSuggestions(
 				providerSuggestions,
 				shouldShowSiteEditorSuggestions
@@ -258,6 +300,7 @@ export function useEmptyViewSuggestions( {
 		defaultSuggestions,
 		emptyViewSuggestions,
 		overrideVersion,
+		providerReadyVersion,
 		shouldShowSiteEditorSuggestions,
 	] );
 
