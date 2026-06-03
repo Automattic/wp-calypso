@@ -122,6 +122,7 @@ import {
 	canExplicitRenew,
 	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
+import { getActiveDowngradeVariant } from 'calypso/lib/purchases/active-downgrade-variant';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -611,7 +612,7 @@ class ManagePurchase extends Component<
 				isBusiness( purchase ) ||
 				isEcommerce( purchase ) );
 		const isActiveDowngradeEligible =
-			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			getActiveDowngradeVariant() === 'instant' &&
 			purchase &&
 			! isExpired( purchase ) &&
 			! isInExpirationGracePeriod( purchase ) &&
@@ -684,7 +685,7 @@ class ManagePurchase extends Component<
 			! isExpired( purchase ) &&
 			! isInExpirationGracePeriod( purchase ) &&
 			isPlan( purchase ) &&
-			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			getActiveDowngradeVariant() === 'instant' &&
 			( isPremium( purchase ) || isBusiness( purchase ) || isEcommerce( purchase ) );
 
 		const isDowngradeEligible = isExpiredDowngradeEligible || isActiveDowngradeEligible;

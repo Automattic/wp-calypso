@@ -62,6 +62,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getActiveDowngradeVariant } from 'calypso/lib/purchases/active-downgrade-variant';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import {
@@ -448,8 +449,11 @@ const PlansFeaturesMain = ( {
 	// TODO: We should move the modal logic into a data store
 	const showModalAndExit = ( planSlug: PlanSlug ): boolean => {
 		// Downgrade confirmation (expired plans → checkout, active plans → cancel API)
+		const isDowngradeGateOpen = isPlanExpired
+			? config.isEnabled( 'plans/expired-plan-downgrade' )
+			: getActiveDowngradeVariant() === 'instant';
 		if (
-			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			isDowngradeGateOpen &&
 			sitePlanSlug &&
 			getPlanClass( sitePlanSlug ) !== getPlanClass( planSlug ) &&
 			( PLAN_TIER_ORDER[ getPlanClass( planSlug ) ] ?? 0 ) <

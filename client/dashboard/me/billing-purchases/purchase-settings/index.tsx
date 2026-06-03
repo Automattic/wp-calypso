@@ -451,10 +451,26 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function isChangePlanEligible( purchase: Purchase, isMigrating: boolean ): boolean {
-	if ( ! isEnabled( 'plans/expired-plan-downgrade' ) ) {
+	if ( ! purchase.is_plan || isMigrating ) {
 		return false;
 	}
-	if ( ! purchase.is_plan || isMigrating ) {
+
+	const purchaseIsExpiredOrGrace = isExpired( purchase ) || isInExpirationGracePeriod( purchase );
+
+	// Expired/grace-period plans: gated by `plans/expired-plan-downgrade`.
+	if ( purchaseIsExpiredOrGrace ) {
+		if ( ! isEnabled( 'plans/expired-plan-downgrade' ) ) {
+			return false;
+		}
+		return /^(value_bundle|business-bundle|ecommerce-bundle)/.test( purchase.product_slug );
+	}
+
+	// Active plans: gated by the active-downgrade flags (instant arm only for now).
+	// Mirrors getActiveDowngradeVariant() === 'instant' from calypso/lib/purchases/active-downgrade-variant.
+	if (
+		isEnabled( 'plans/scheduled-plan-downgrade' ) ||
+		! isEnabled( 'plans/active-plan-downgrade-instant' )
+	) {
 		return false;
 	}
 	// Premium, Business, Ecommerce (all billing terms). Personal excluded — lowest tier.
