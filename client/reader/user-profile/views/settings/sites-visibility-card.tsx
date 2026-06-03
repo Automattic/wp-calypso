@@ -4,6 +4,7 @@ import {
 	Card,
 	CardHeader,
 	CardBody,
+	Button,
 	ToggleControl,
 	Notice,
 	Spinner,
@@ -30,9 +31,12 @@ export default function SitesVisibilityCard( {
 	const { data: hiddenSites = [] } = useQuery(
 		userPreferenceQuery( 'reader-profile-hidden-sites' )
 	);
-	const { setSiteHidden, pendingSiteId } = useSetHiddenSites( hiddenSites );
+	const { setSiteHidden, setAllHidden, pendingSiteId, isPending } =
+		useSetHiddenSites( hiddenSites );
 
 	const sites = sitesData?.sites ?? [];
+	const allSiteIds = sites.map( ( site ) => site.ID );
+	const allVisible = allSiteIds.every( ( id ) => ! hiddenSites.includes( id ) );
 
 	if ( ! isLoading && sites.length === 0 ) {
 		return null;
@@ -42,6 +46,15 @@ export default function SitesVisibilityCard( {
 		<Card>
 			<CardHeader>
 				<h2 className="user-profile-settings__card-title">{ translate( 'Sites' ) }</h2>
+				{ sites.length >= 3 && (
+					<Button
+						variant="link"
+						disabled={ ! sitesEnabled || isPending }
+						onClick={ () => setAllHidden( allVisible, allSiteIds ) }
+					>
+						{ allVisible ? translate( 'Deselect all' ) : translate( 'Select all' ) }
+					</Button>
+				) }
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 4 }>
@@ -67,7 +80,7 @@ export default function SitesVisibilityCard( {
 										<ToggleControl
 											__nextHasNoMarginBottom
 											checked={ ! isHidden }
-											disabled={ ! sitesEnabled || pendingSiteId !== null }
+											disabled={ ! sitesEnabled || isPending }
 											onChange={ ( checked ) => setSiteHidden( site.ID, ! checked ) }
 											label={ translate( 'Visible on profile' ) }
 										/>
