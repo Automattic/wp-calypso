@@ -42,6 +42,7 @@ declare global {
 		uetq: any[];
 		rdt: any[] & { ( ...args: any[] ): void };
 		ttq: any;
+		oaiq: any;
 	}
 }
 
