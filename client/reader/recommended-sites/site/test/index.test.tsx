@@ -82,13 +82,7 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( {
 
 const makeStore = () => {
 	const actions: unknown[] = [];
-	const state = {
-		reader: {
-			follows: {
-				followFeedLoading: [],
-			},
-		},
-	};
+	const state = {};
 	const store = createStore( ( currentState = state, action ) => {
 		actions.push( action );
 		return currentState;

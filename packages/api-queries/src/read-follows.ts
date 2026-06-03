@@ -403,8 +403,6 @@ export const unfollowSiteMutation = ( queryClient: QueryClient ) =>
 		onSuccess: async ( _response, params ) => {
 			if ( params.feedUrl ) {
 				markSiteSubscriptionUnfollowed( queryClient, params.feedUrl );
-			} else {
-				await queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 			}
 
 			await queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );

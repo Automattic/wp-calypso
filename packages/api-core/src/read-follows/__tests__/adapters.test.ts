@@ -1,4 +1,8 @@
-import { adaptSiteSubscription, prepareComparableUrl } from '../adapters';
+import {
+	adaptSiteSubscription,
+	adaptSiteSubscriptionsResponse,
+	prepareComparableUrl,
+} from '../adapters';
 
 describe( 'read follows adapters', () => {
 	it( 'prepares comparable URLs by stripping protocol, lowercasing, and removing one trailing slash', () => {
@@ -46,5 +50,14 @@ describe( 'read follows adapters', () => {
 
 		expect( follow.ID ).toBeUndefined();
 		expect( follow ).not.toHaveProperty( 'ID', NaN );
+	} );
+
+	it( 'adapts a partial response to an empty page', () => {
+		expect( adaptSiteSubscriptionsResponse( { page: 1, number: 200 } ) ).toEqual( {
+			subscriptions: [],
+			totalCount: null,
+			page: 1,
+			number: 200,
+		} );
 	} );
 } );

@@ -333,6 +333,7 @@ describe( 'follow mutations', () => {
 			.post( '/rest/v1.1/read/following/mine/delete', { sub_id: 1234 } )
 			.reply( 200, { subscribed: false } );
 		const client = newClient();
+		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ makeFollow() ] ) );
 
 		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
@@ -345,7 +346,7 @@ describe( 'follow mutations', () => {
 
 		expect( scope.isDone() ).toBe( true );
 		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
-		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
+		expect( invalidateQueries ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'patches cached follows and invalidates site subscriptions after unfollowing a URL', async () => {
@@ -367,6 +368,7 @@ describe( 'follow mutations', () => {
 				} ),
 			] )
 		);
+		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 
 		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -384,6 +386,7 @@ describe( 'follow mutations', () => {
 		expect( cachedFollow?.is_following ).toBe( false );
 		expect( cachedFollow?.delivery_methods?.notification?.send_posts ).toBe( false );
 		expect( client.getQueryState( getSiteSubscriptionsQueryKey() )?.isInvalidated ).toBe( true );
+		expect( invalidateQueries ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 

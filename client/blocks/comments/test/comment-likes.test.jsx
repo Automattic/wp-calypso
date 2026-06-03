@@ -25,7 +25,6 @@ const renderWithRedux = ( element, { state, onAction = () => {}, queryClient } =
 		currentState = state ?? {
 			currentUser: { id: 1 },
 			comments: { items: { '100-1': [] } },
-			reader: { follows: { items: {}, itemsCount: 0 } },
 		},
 		action
 	) => {

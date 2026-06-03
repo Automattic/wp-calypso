@@ -48,7 +48,6 @@ const fullPostState = {
 	ui: { appBanner: {}, section: {}, selectedSiteId: null },
 	reader: {
 		feeds: { items: {} },
-		follows: { items: {} },
 		sites: { items: {} },
 	},
 };

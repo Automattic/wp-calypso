@@ -22,9 +22,6 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 } ) );
 
 const defaultStoreState = {
-	reader: {
-		follows: { items: {} },
-	},
 	currentUser: { id: 123 },
 };
 

@@ -155,6 +155,35 @@ describe( 'site subscription mutations', () => {
 		} );
 	} );
 
+	it( 'does not decrement total count when unsubscribe cannot match a cached subscription', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			getSiteSubscriptionsQueryKey(),
+			makeSiteSubscriptionsData( [ makeSubscription( { ID: 456, blog_ID: 456 } ) ], 1 )
+		);
+		( callApi as jest.Mock ).mockResolvedValue( { subscribed: false } );
+
+		const { result } = renderHook( () => useSiteUnsubscribeMutation(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( {
+				subscriptionId: 123,
+				blog_id: 123,
+				doNotInvalidateSiteSubscriptions: true,
+			} );
+		} );
+
+		await waitFor( () => expect( callApi ).toHaveBeenCalled() );
+		const page = getCachedSubscriptions( queryClient );
+		expect( page?.totalCount ).toBe( 1 );
+		expect( page?.subscriptions[ 0 ] ).toMatchObject( {
+			is_following: true,
+			isDeleted: false,
+		} );
+	} );
+
 	it( 'rolls back site subscription delete when unsubscribe fails', async () => {
 		const queryClient = makeQueryClient();
 		const previousData = makeSiteSubscriptionsData( [ makeSubscription() ], 1 );

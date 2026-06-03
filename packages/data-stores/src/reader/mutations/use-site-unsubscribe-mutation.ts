@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { buildQueryKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
 import { SubscriptionManagerSubscriptionsCount, SiteSubscriptionDetails } from '../types';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 type UnsubscribeParams = {
 	subscriptionId: number;
@@ -100,14 +101,20 @@ const useSiteUnsubscribeMutation = () => {
 				queryClient.setQueryData( siteSubscriptionsQueryKey, {
 					...previousSiteSubscriptions,
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						const isTargetSubscription = ( siteSubscription: SiteSubscriptionItem ) =>
+							Number( siteSubscription.ID ) === params.subscriptionId ||
+							( isValidId( params.blog_id ) &&
+								Number( siteSubscription.blog_ID ) === Number( params.blog_id ) );
+						const shouldDecrementTotalCount = page.subscriptions.some( isTargetSubscription );
+
 						return {
 							...page,
 							totalCount:
-								typeof page.totalCount === 'number' ? page.totalCount - 1 : page.totalCount,
+								typeof page.totalCount === 'number' && shouldDecrementTotalCount
+									? page.totalCount - 1
+									: page.totalCount,
 							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
-								Number( siteSubscription.ID ) === params.subscriptionId ||
-								( isValidId( params.blog_id ) &&
-									Number( siteSubscription.blog_ID ) === Number( params.blog_id ) ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
+								isTargetSubscription( siteSubscription )
 									? {
 											...siteSubscription,
 											is_following: false,

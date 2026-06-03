@@ -80,8 +80,8 @@ export interface SiteSubscriptionItem {
 }
 
 export interface SiteSubscriptionsApiResponse {
-	subscriptions: FollowApiSubscription[];
-	total_subscriptions: number;
+	subscriptions?: FollowApiSubscription[];
+	total_subscriptions?: number;
 	page: number;
 	number: number;
 }
