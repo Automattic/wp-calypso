@@ -7,6 +7,41 @@ import type { Suggestion } from '@automattic/agenttic-ui';
 
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
+const mockAgentChat = jest.fn(
+	( {
+		onSuggestionClick,
+		onSubmit,
+		emptyViewSuggestions = [],
+	}: {
+		messages?: unknown[];
+		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
+		onSubmit: ( message: string ) => void;
+		emptyViewSuggestions?: Suggestion[];
+	} ) => (
+		<>
+			<button
+				onClick={ () =>
+					onSuggestionClick( {
+						id: 'simplify-text',
+						label: 'Simplify text',
+						prompt: 'Simplify this text to make it easier to read',
+					} )
+				}
+			>
+				Click suggestion
+			</button>
+			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
+				Click string suggestion
+			</button>
+			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit with images</button>
+			<ul data-testid="empty-view-suggestions">
+				{ emptyViewSuggestions.map( ( suggestion ) => (
+					<li key={ suggestion.id }>{ suggestion.label }</li>
+				) ) }
+			</ul>
+		</>
+	)
+);
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -73,38 +108,7 @@ jest.mock( '../../utils/persist-last-activity', () => ( {
 } ) );
 jest.mock( '../agent-chat', () => ( {
 	__esModule: true,
-	default: ( {
-		onSuggestionClick,
-		onSubmit,
-		emptyViewSuggestions = [],
-	}: {
-		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
-		onSubmit: ( message: string ) => void;
-		emptyViewSuggestions?: Suggestion[];
-	} ) => (
-		<>
-			<button
-				onClick={ () =>
-					onSuggestionClick( {
-						id: 'simplify-text',
-						label: 'Simplify text',
-						prompt: 'Simplify this text to make it easier to read',
-					} )
-				}
-			>
-				Click suggestion
-			</button>
-			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
-				Click string suggestion
-			</button>
-			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit with images</button>
-			<ul data-testid="empty-view-suggestions">
-				{ emptyViewSuggestions.map( ( suggestion ) => (
-					<li key={ suggestion.id }>{ suggestion.label }</li>
-				) ) }
-			</ul>
-		</>
-	),
+	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
 } ) );
 
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -387,6 +391,92 @@ describe( 'OrchestratorChat', () => {
 
 		expect( mockUseRegenerateAction ).toHaveBeenCalledWith(
 			expect.objectContaining( { enabled: true } )
+		);
+	} );
+
+	it( 'disables stale regenerate actions on older agent messages before render', () => {
+		const onRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [
+				{
+					id: 'agent-1',
+					role: 'agent',
+					content: [ { type: 'text', text: 'First response' } ],
+					timestamp: 1,
+					archived: false,
+					showIcon: true,
+					actions: [
+						{
+							id: 'regenerate',
+							label: 'Regenerate',
+							onClick: onRegenerate,
+							disabled: false,
+						},
+					],
+				},
+				{
+					id: 'agent-2',
+					role: 'agent',
+					content: [ { type: 'text', text: 'Second response' } ],
+					timestamp: 2,
+					archived: false,
+					showIcon: true,
+					actions: [
+						{
+							id: 'regenerate',
+							label: 'Regenerate',
+							onClick: onRegenerate,
+							disabled: false,
+						},
+					],
+				},
+			],
+			suggestions: [],
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			unregisterMessageActions: jest.fn(),
+			getRegenerateHandler: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				capabilities={ { supportsRegenerateAction: true } }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+			actions: Array< { id: string; disabled?: boolean } >;
+		} >;
+
+		expect( messages[ 0 ].actions[ 0 ] ).toEqual(
+			expect.objectContaining( {
+				id: 'regenerate',
+				disabled: true,
+			} )
+		);
+		expect( messages[ 1 ].actions[ 0 ] ).toEqual(
+			expect.objectContaining( {
+				id: 'regenerate',
+				disabled: false,
+			} )
 		);
 	} );
 } );

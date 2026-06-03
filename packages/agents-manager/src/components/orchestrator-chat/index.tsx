@@ -50,6 +50,49 @@ import type {
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
+import type { UIMessageAction } from '@automattic/agenttic-client';
+
+const REGENERATE_ACTION_ID = 'regenerate';
+
+function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'agent' ) {
+			return messages[ index ].id;
+		}
+	}
+
+	return null;
+}
+
+function disableRegenerateActionForOlderAgentMessages( messages: UIMessage[] ): UIMessage[] {
+	const latestAgentMessageId = getLatestAgentMessageId( messages );
+
+	return messages.map( ( message ) => {
+		if ( message.role !== 'agent' || ! message.actions?.length ) {
+			return message;
+		}
+
+		const shouldDisableRegenerate = message.id !== latestAgentMessageId;
+		let changed = false;
+		const actions = message.actions.map( ( action: UIMessageAction ) => {
+			if ( action.id !== REGENERATE_ACTION_ID || action.type === 'component' ) {
+				return action;
+			}
+
+			if ( action.disabled === shouldDisableRegenerate ) {
+				return action;
+			}
+
+			changed = true;
+			return {
+				...action,
+				disabled: shouldDisableRegenerate,
+			};
+		} );
+
+		return changed ? { ...message, actions } : message;
+	} );
+}
 
 /**
  * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
@@ -680,6 +723,8 @@ export default function OrchestratorChat( {
 				),
 			};
 		} );
+
+		currentMessages = disableRegenerateActionForOlderAgentMessages( currentMessages );
 
 		return currentMessages;
 	}, [
