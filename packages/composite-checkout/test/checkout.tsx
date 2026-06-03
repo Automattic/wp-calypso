@@ -934,6 +934,61 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeDisabled();
 			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
 		} );
+
+		it( 'renders the submit button (not Continue) when all steps are complete even if the active step is not the last', async () => {
+			// Mirrors a returning purchaser: all steps get auto-completed (via
+			// completeAllSteps), but the active step can remain an earlier step. The
+			// summary CTA should be the real Pay button, not Continue.
+			function CompleteAllStepsButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			function GoBackToFirstStepButton( { stepId } ) {
+				const makeStepActive = useMakeStepActive();
+				return <button onClick={ () => makeStepActive( stepId ) }>Go back to first step</button>;
+			}
+			const completableSteps = [
+				steps[ 0 ],
+				{ ...steps[ 1 ], id: 'returning-step-a', className: 'returning-step-a' },
+				{ ...steps[ 1 ], id: 'returning-step-b', className: 'returning-step-b' },
+				{ ...steps[ 1 ], id: 'returning-step-c', className: 'returning-step-c' },
+			];
+			function ReturningPurchaserCheckout() {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( completableSteps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ getMockPaymentProcessors() }
+							selectFirstAvailablePaymentMethod
+						>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CompleteAllStepsButton />
+								<GoBackToFirstStepButton stepId="returning-step-a" />
+								<CheckoutFormSubmit continueToNextIncompleteStep />
+							</CheckoutStepGroup>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			}
+			const { container, getByText } = render( <ReturningPurchaserCheckout /> );
+			const user = userEvent.setup();
+			// Complete every step (advances the active step to the last one), then go
+			// back to the first step so all steps are complete but the active step is
+			// not the last — the state a returning purchaser lands in.
+			await user.click( getByText( 'Complete all steps' ) );
+			await user.click( getByText( 'Go back to first step' ) );
+			const submitArea = getSubmitArea( container );
+			await waitFor( () => {
+				expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeInTheDocument();
+			} );
+			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'submitting the form', function () {

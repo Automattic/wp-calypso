@@ -794,9 +794,15 @@ export function CheckoutFormSubmit( {
 	} )();
 
 	// Show "Continue" only when the submit button would otherwise be disabled
-	// because there is another numbered step after the active one.
+	// because there is another numbered step after the active one AND there is
+	// actually an incomplete step to go to. The latter guard matters for returning
+	// purchasers whose steps are all auto-completed while the active step is still
+	// an earlier step: there is nothing to continue to, so show the Pay button.
 	const showContinueToNextIncompleteStep =
-		!! continueToNextIncompleteStep && ! disableSubmitButton && isThereAnotherNumberedStep;
+		!! continueToNextIncompleteStep &&
+		! disableSubmitButton &&
+		isThereAnotherNumberedStep &&
+		!! nextIncompleteStepId;
 
 	const goToNextIncompleteStep = async () => {
 		// Prefer the next incomplete step; otherwise just advance one step so the
