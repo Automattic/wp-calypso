@@ -85,6 +85,7 @@ export async function recordOrder(
 	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInReddit( orderId, wpcomJetpackCartInfo );
 	recordOrderInTikTok( orderId, wpcomJetpackCartInfo );
+	recordOrderInOpenAI( orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -679,6 +680,7 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 	loadParselyTracker()
 		.then( () => {
 			debug( `loadParselyTracker: Loaded Parsely tracker ${ TRACKING_IDS.parselyTracker }` );
+			//eslint-disable-next-line @typescript-eslint/no-unused-expressions
 			window.PARSELY && window.PARSELY.conversions.trackPurchase( cartContents );
 		} )
 		.then( () => {
@@ -741,6 +743,30 @@ function recordOrderInTikTok(
 	};
 	debug( 'recordOrderInTikTok:', 'track', params );
 	window.ttq.track( 'Purchase', params );
+}
+
+function recordOrderInOpenAI(
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( ! mayWeTrackByTracker( 'openai' ) ) {
+		return;
+	}
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+	const params = {
+		contents: wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
+			id: product.product_slug,
+			name: product.product_name_en,
+			content_type: 'product',
+			quantity: 1,
+		} ) ),
+		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		currency: 'USD',
+	};
+	debug( 'recordOrderInOpenAI:', 'track', params );
+	window.oaiq( 'measure', 'order_created', params );
 }
 
 /**

@@ -126,6 +126,15 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		window.ttq.track( 'CompleteRegistration', params );
 	}
 
+	// OpenAI ads
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		window.oaiq( 'measure', 'registration_completed', {
+			type: 'customer_action',
+			amount: usdCost,
+			currency: 'USD',
+		} );
+	}
+
 	if ( mayWeTrackByTracker( 'quora' ) ) {
 		const params = { value: 0 };
 		debug( 'recordSignup: [Quora]', params );
