@@ -8,6 +8,33 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+// Local agenttic override (dev only). Point the bundle at locally-built copies
+// of the agenttic packages instead of the published versions, so agenttic
+// changes can be tested without publishing. Check the agenttic repo out (or
+// symlink it) into the gitignored `packages/agenttic` folder beside this config
+// — the same layout big-sky uses — so the built packages live at:
+//   packages/agenttic/packages/agenttic-client/dist/index.js
+//   packages/agenttic/packages/agenttic-ui/dist/index.js
+// Enable with LOCAL_AGENTTIC=true (both) or LOCAL_AGENTTIC_CLIENT / _UI=true.
+const useLocalAgenttic = process.env.LOCAL_AGENTTIC === 'true';
+const useLocalAgentticClient = useLocalAgenttic || process.env.LOCAL_AGENTTIC_CLIENT === 'true';
+const useLocalAgentticUI = useLocalAgenttic || process.env.LOCAL_AGENTTIC_UI === 'true';
+
+const localAgentticAlias = {
+	...( useLocalAgentticClient && {
+		'@automattic/agenttic-client$': path.join(
+			__dirname,
+			'packages/agenttic/packages/agenttic-client/dist/index.js'
+		),
+	} ),
+	...( useLocalAgentticUI && {
+		'@automattic/agenttic-ui$': path.join(
+			__dirname,
+			'packages/agenttic/packages/agenttic-ui/dist/index.js'
+		),
+	} ),
+};
+
 function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
 
@@ -47,6 +74,13 @@ function getIndividualConfig( options = {} ) {
 					},
 				},
 			],
+		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				...localAgentticAlias,
+			},
 		},
 		optimization: {
 			...webpackConfig.optimization,
@@ -136,6 +170,7 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
+				...localAgentticAlias,
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
