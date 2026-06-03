@@ -5,7 +5,7 @@ import { __experimentalText as Text, __experimentalVStack as VStack } from '@wor
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { receiptRoute } from '../../app/router/me';
-import { getAkismetProductDisplayName } from '../../utils/akismet';
+import { getAkismetProductDisplayName, isAkismetProOrBusinessPlan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
@@ -324,11 +324,13 @@ function renderServiceNameDescription( receipt: Receipt ) {
 
 	const receiptItem = receiptItems[ 0 ];
 	const termLabel = getTransactionTermLabel( receiptItem );
-	const displayLabel = getAkismetProductDisplayName(
-		label,
-		receiptItem.wpcom_product_slug,
-		receiptItem.licensed_quantity ?? 0
-	);
+	const displayLabel = isAkismetProOrBusinessPlan( receiptItem.wpcom_product_slug )
+		? getAkismetProductDisplayName(
+				label,
+				receiptItem.wpcom_product_slug,
+				receiptItem.licensed_quantity ?? 0
+		  )
+		: label;
 
 	return (
 		<VStack spacing={ 1 }>

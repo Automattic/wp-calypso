@@ -14,7 +14,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
-import { getAkismetProductDisplayName } from './akismet';
+import { getAkismetProductDisplayName, isAkismetProOrBusinessPlan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
@@ -314,11 +314,15 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		return purchase.meta;
 	}
 
-	return getAkismetProductDisplayName(
-		purchase.product_name,
-		purchase.product_slug,
-		purchase.renewal_price_tier_usage_quantity ?? 0
-	);
+	if ( isAkismetProOrBusinessPlan( purchase.product_slug ) ) {
+		return getAkismetProductDisplayName(
+			purchase.product_name,
+			purchase.product_slug,
+			purchase.renewal_price_tier_usage_quantity ?? 0
+		);
+	}
+
+	return purchase.product_name;
 }
 
 export function getTitleForListDisplay( purchase: Purchase ): string {

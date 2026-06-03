@@ -38,9 +38,21 @@ export function isAkismetBusiness5kPlan( productSlug: string ): boolean {
 }
 
 /**
+ * Determines whether the specified product slug is for an Akismet plan that has a
+ * synthesized display name (Akismet Pro 500 or Business 5k).
+ * @param {string} productSlug - slug of the product
+ * @returns {boolean} true if the slug refers to such a plan, false otherwise
+ */
+export function isAkismetProOrBusinessPlan( productSlug: string ): boolean {
+	return isAkismetPro500Plan( productSlug ) || isAkismetBusiness5kPlan( productSlug );
+}
+
+/**
  * Returns the display name for an Akismet Pro or Business product, appending the
  * current monthly request allotment (e.g. "Akismet Pro (8K requests/month)").
- * For any other product, the given product name is returned unchanged.
+ *
+ * Assumes the product is an Akismet Pro 500 or Business 5k plan; guard calls with
+ * {@link isAkismetProOrBusinessPlan}.
  * @param {string} productName - the product name to format
  * @param {string} productSlug - slug of the product
  * @param {number} quantity - the licensed/renewal quantity (Pro scales with this)
@@ -53,7 +65,12 @@ export function getAkismetProductDisplayName(
 ): string {
 	const baseName = productName.replace( /\s*\(.*$/, '' ).trim();
 
-	if ( isAkismetPro500Plan( productSlug ) && quantity >= 1 ) {
+	if ( isAkismetPro500Plan( productSlug ) ) {
+		// The Pro allotment scales with quantity; a quantity below 1 has no
+		// meaningful allotment, so fall back to the bare product name.
+		if ( quantity < 1 ) {
+			return baseName;
+		}
 		const requestsInThousands = ( AKISMET_PRO_REQUESTS_PER_QUANTITY * quantity ) / 1000;
 		/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
 		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
@@ -62,14 +79,11 @@ export function getAkismetProductDisplayName(
 		} );
 	}
 
-	if ( isAkismetBusiness5kPlan( productSlug ) ) {
-		const requestsInThousands = AKISMET_BUSINESS_REQUESTS_PER_MONTH / 1000;
-		/* translators: %(productName)s is the product name (e.g. "Akismet Business"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "80K"). */
-		return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
-			productName: baseName,
-			requestsK: requestsInThousands,
-		} );
-	}
-
-	return productName;
+	// Akismet Business 5k — a flat monthly allotment.
+	const requestsInThousands = AKISMET_BUSINESS_REQUESTS_PER_MONTH / 1000;
+	/* translators: %(productName)s is the product name (e.g. "Akismet Business"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "80K"). */
+	return sprintf( __( '%(productName)s (%(requestsK)dK requests/month)' ), {
+		productName: baseName,
+		requestsK: requestsInThousands,
+	} );
 }
