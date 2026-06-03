@@ -209,6 +209,7 @@ class NotificationSubscriptions extends Component {
 	render() {
 		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
+		const displayWindow = this.getDisplayDeliveryWindow();
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
@@ -301,7 +302,7 @@ class NotificationSubscriptions extends Component {
 								name="subscription_delivery_day"
 								onChange={ this.handleDeliveryWindowChange( 'day' ) }
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
-								value={ String( this.getDisplayDeliveryWindow().day ) }
+								value={ String( displayWindow.day ) }
 							>
 								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
@@ -312,10 +313,10 @@ class NotificationSubscriptions extends Component {
 								name="subscription_delivery_hour"
 								onChange={ this.handleDeliveryWindowChange( 'hour' ) }
 								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
-								value={ String( this.getDisplayDeliveryWindow().hour ) }
+								value={ String( displayWindow.hour ) }
 							>
 								{ getDeliveryHourPickerHours(
-									this.getDisplayDeliveryWindow().hour,
+									displayWindow.hour,
 									this.props.deliveryWindowIsUtcFallback
 								).map( ( hour ) => (
 									<option key={ hour } value={ hour }>
