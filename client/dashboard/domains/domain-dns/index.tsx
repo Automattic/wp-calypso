@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import {
 	domainQuery,
 	domainDnsMutation,
@@ -366,7 +367,8 @@ export default function DomainDns() {
 					</DataViews>
 				) }
 			</DataViewsCard>
-			{ domain.has_wpcom_nameservers && <EmailSetup /> }
+			{ ( domain.has_wpcom_nameservers ||
+				domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) && <EmailSetup /> }
 			<RestoreDefaultARecords
 				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
