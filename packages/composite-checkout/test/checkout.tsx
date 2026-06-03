@@ -23,7 +23,11 @@ import {
 	makeErrorResponse,
 	useMakeStepActive,
 } from '../src/public-api';
-import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
+import {
+	PaymentProcessorFunction,
+	PaymentProcessorResponseType,
+	ProcessPayment,
+} from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
 const myContext = createContext( undefined );
@@ -1125,31 +1129,33 @@ describe( 'Checkout', () => {
 				.fn()
 				.mockResolvedValue( { type: PaymentProcessorResponseType.SUCCESS, payload: true } );
 
-			// Submit button components that call usePaymentProcessor with their own
-			// processor id (not the shared 'mock' key used by MockSubmitButton).
-			function CardSubmitButton( { disabled }: { disabled?: boolean } ) {
-				const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
-				const process = usePaymentProcessor( 'card-processor' );
-				const onClick = () => {
-					setTransactionPending();
-					process( true ).then( ( result ) => setTransactionComplete( result ) );
-				};
+			// Submit buttons that use the INJECTED onClick prop (the cloned
+			// onClickWithValidation from CheckoutSubmitButton), exactly like
+			// MockSubmitButtonSimple. This exercises the real isShown guard in
+			// production code instead of bypassing it.
+			function CardSubmitButton( {
+				disabled,
+				onClick,
+			}: {
+				disabled?: boolean;
+				onClick?: ProcessPayment;
+			} ) {
 				return (
-					<button disabled={ disabled } onClick={ onClick }>
+					<button disabled={ disabled } onClick={ () => onClick?.( {} ) }>
 						Pay with Card
 					</button>
 				);
 			}
 
-			function ApplePaySubmitButton( { disabled }: { disabled?: boolean } ) {
-				const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
-				const process = usePaymentProcessor( 'apple-pay-processor' );
-				const onClick = () => {
-					setTransactionPending();
-					process( true ).then( ( result ) => setTransactionComplete( result ) );
-				};
+			function ApplePaySubmitButton( {
+				disabled,
+				onClick,
+			}: {
+				disabled?: boolean;
+				onClick?: ProcessPayment;
+			} ) {
 				return (
-					<button disabled={ disabled } onClick={ onClick }>
+					<button disabled={ disabled } onClick={ () => onClick?.( {} ) }>
 						Apple Pay
 					</button>
 				);
