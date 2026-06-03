@@ -19,7 +19,7 @@ import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
