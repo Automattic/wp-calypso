@@ -44,6 +44,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { OnboardingProgress } from '../../../flows/domain/components/onboarding-progress';
+import { useShowOnboardingProgress } from '../../../flows/domain/components/use-show-onboarding-progress';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
@@ -97,6 +98,7 @@ const DomainSearchStep: StepType< {
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
@@ -392,6 +394,10 @@ const DomainSearchStep: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const getTopBarLeftElement = () => {
+			if ( showProgress ) {
+				return;
+			}
+
 			if ( isNewHostedSiteCreationFlow( flow ) ) {
 				return;
 			}
@@ -497,7 +503,7 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ isOnboardingFlow( flow ) && <OnboardingProgress currentStep="domains" /> }
+						{ showProgress && <OnboardingProgress currentStep="domains" /> }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }
