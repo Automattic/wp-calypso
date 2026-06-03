@@ -90,6 +90,8 @@ export interface Receipt {
 	tax_integer: number;
 	amount_integer: number;
 	tax_country_code: string;
+	tax_state?: string;
+	tax_is_for_business?: boolean | null;
 	date: string;
 	desc: string;
 	org: string;

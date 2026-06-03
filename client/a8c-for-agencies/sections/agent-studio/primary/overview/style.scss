@@ -17,29 +17,57 @@
 }
 
 .a4a-agent-studio-deliverable-card.components-card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.a4a-agent-studio-deliverable-card.is-clickable {
+	cursor: pointer;
+	transition: box-shadow 120ms ease;
+}
+
+.a4a-agent-studio-deliverable-card.is-clickable:hover,
+.a4a-agent-studio-deliverable-card.is-clickable:focus-within {
+	box-shadow: 0 4px 16px rgba( 0, 0, 0, 0.12 );
+}
+
+// Card-wide link overlay — covers the card so a click anywhere opens the
+// deliverable.
+.a4a-agent-studio-deliverable-card__link {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+// Lift the actions menu above the link overlay so its button stays clickable.
+.a4a-agent-studio-deliverable-card__menu {
+	position: relative;
+	z-index: 2;
 }
 
 .a4a-agent-studio-deliverable-card__media.components-card__media {
 	display: flex;
 	align-items: center;
+	min-width: 0;
 	min-height: 160px;
+	overflow: hidden;
 	background: var( --color-neutral-80 );
 }
 
-// Stretch the body to fill the (equal-height) card and keep the delete
-// action pinned to the bottom, so the buttons line up across the row.
 .a4a-agent-studio-deliverable-card__body.components-card__body {
 	display: flex;
-	flex: 1;
 	flex-direction: column;
-	gap: 16px;
 }
 
+// Let the title block take the row's width so the actions menu sits flush
+// against the card's trailing edge.
 .a4a-agent-studio-deliverable-card__info {
 	flex: 1;
+	min-width: 0;
 }
 
 // Clamp long titles to two lines so cards in a row stay the same height.
@@ -49,20 +77,6 @@
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
-}
-
-.a4a-agent-studio-deliverable-card__strip {
-	display: flex;
-	gap: 8px;
-	padding: 16px;
-	overflow: hidden;
-}
-
-.a4a-agent-studio-deliverable-card__strip img {
-	flex-shrink: 0;
-	height: 128px;
-	width: auto;
-	border-radius: 4px;
 }
 
 .a4a-agent-studio-deliverable-card__state {
@@ -88,40 +102,4 @@
 .a4a-agent-studio-deliverable-card__placeholder svg,
 .a4a-agent-studio-deliverable-card__placeholder svg path {
 	fill: currentColor;
-}
-
-.a4a-agent-studio-deliverable-card__collage {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 3%;
-	box-sizing: border-box;
-	width: 100%;
-	min-height: 160px;
-	padding: 6%;
-	background: var( --color-neutral-90 );
-	aspect-ratio: 1200 / 630;
-	overflow: hidden;
-}
-
-.a4a-agent-studio-deliverable-card__collage-tile {
-	display: block;
-	flex-shrink: 0;
-	height: 100%;
-	overflow: hidden;
-	border-radius: 2px;
-	background: var( --color-surface );
-	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.25 ), 0 10px 24px -8px rgba( 0, 0, 0, 0.45 );
-}
-
-.a4a-agent-studio-deliverable-card__collage-tile img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.a4a-agent-studio-deliverable-card__collage-tile > div {
-	width: 100%;
-	height: 100%;
 }

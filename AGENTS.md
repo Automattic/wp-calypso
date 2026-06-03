@@ -25,6 +25,7 @@
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 - **Block Notes** (`packages/block-notes`) — AI-powered block commenting system for WordPress
+- **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps
 

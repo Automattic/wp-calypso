@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
@@ -31,6 +31,20 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
+
+	// The masterbar remounts the bell when the unseen count changes, detaching any
+	// cached node. Resolve the live bell at measurement time so the popover stays
+	// anchored, falling back to the captured node while it is still connected.
+	const popoverAnchor = useMemo(
+		() => ( {
+			getBoundingClientRect: () =>
+				( anchorEl?.isConnected
+					? anchorEl
+					: document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' )
+				)?.getBoundingClientRect() ?? new DOMRect(),
+		} ),
+		[ anchorEl ]
+	);
 
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
@@ -117,7 +131,7 @@ export default function Notifications( {
 				focusOnMount: true,
 				flip: false,
 				shift: true,
-				...( anchorEl && { anchor: anchorEl } ),
+				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
 				...( isEnabled( 'dashboard/omnibar' ) && {
 					onFocusOutside: () => {
 						// When focus moves to the omnibar (e.g. clicking the

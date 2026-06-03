@@ -531,10 +531,6 @@ import {
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import {
-	isGlobalStylesOnPersonalEnabled,
-	isGlobalStylesGridChangesVariation,
-} from './is-global-styles-on-personal-enabled';
-import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
 	getPlanPersonalTitle,
@@ -886,7 +882,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_JETPACK_ESSENTIAL,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_FREE_THEMES,
-				isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
+				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_6GB_STORAGE,
 				FEATURE_NO_ADS,
 				FEATURE_MEMBERSHIPS,
@@ -894,17 +890,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			].filter( ( feature ) => feature !== null )
 		),
-	getSignupFeatures: () => {
-		const baseFeatures = [
-			FEATURE_FREE_DOMAIN,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			FEATURE_FREE_THEMES,
-		];
-
-		return isGlobalStylesOnPersonalEnabled()
-			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
-			: baseFeatures;
-	},
+	getSignupFeatures: () => [
+		FEATURE_FREE_DOMAIN,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		FEATURE_FREE_THEMES,
+		FEATURE_STYLE_CUSTOMIZATION,
+	],
 	getBlogSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -915,43 +906,25 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_ALL_FREE_FEATURES,
 	],
-	getSignupCompareAvailableFeatures: () => {
-		const baseFeatures = [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_HOSTING,
-			FEATURE_NO_ADS,
-			FEATURE_COLLECT_PAYMENTS_V2,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		];
-
-		return isGlobalStylesOnPersonalEnabled()
-			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
-			: baseFeatures;
-	},
-	get2023PricingGridSignupWpcomFeatures: () => {
-		const baseFeatures = [
-			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
-			FEATURE_UNLIMITED_ENTITIES,
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_AD_FREE_EXPERIENCE,
-			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-			FEATURE_SUPPORT_FROM_EXPERTS,
-			FEATURE_STATS_BASIC_20250206,
-			FEATURE_UPLOAD_PLUGINS,
-		];
-
-		let features = baseFeatures;
-
-		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		if ( isGlobalStylesOnPersonalEnabled() ) {
-			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
-		}
-
-		return features;
-	},
+	getSignupCompareAvailableFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_HOSTING,
+		FEATURE_NO_ADS,
+		FEATURE_COLLECT_PAYMENTS_V2,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		FEATURE_STYLE_CUSTOMIZATION,
+	],
+	get2023PricingGridSignupWpcomFeatures: () => [
+		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+		FEATURE_STATS_BASIC_20250206,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_STYLE_CUSTOMIZATION,
+	],
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
@@ -965,52 +938,32 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_PLUGINS,
 	],
 
-	get2023PlanComparisonFeatureOverride: () => {
-		const baseFeatures = [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_AD_FREE_EXPERIENCE,
-			FEATURE_FAST_DNS,
-			FEATURE_PAYMENT_TRANSACTION_FEES_8,
-			FEATURE_PREMIUM_THEMES,
-			FEATURE_SUPPORT,
-			FEATURE_ISOLATED_INFRA,
-			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_PLUGINS_THEMES,
-		];
-
-		let features = baseFeatures;
-
-		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		return features;
-	},
+	get2023PlanComparisonFeatureOverride: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_SUPPORT,
+		FEATURE_ISOLATED_INFRA,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_PLUGINS_THEMES,
+	],
 	// Comparison grid when plans pricing differentiators experiment is active (non-control).
-	get2023PlanComparisonFeatureOverrideForExperiment: () => {
-		const baseFeatures = [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_AD_FREE_EXPERIENCE,
-			FEATURE_FAST_DNS,
-			FEATURE_PAYMENT_TRANSACTION_FEES_8,
-			FEATURE_PREMIUM_THEMES,
-			FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
-			FEATURE_ISOLATED_INFRA,
-			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
-			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_AI_ASSISTANT,
-			FEATURE_WORDPRESS_STUDIO_SYNC,
-			FEATURE_PLUGINS_THEMES,
-		];
-
-		let features = baseFeatures;
-
-		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		return features;
-	},
+	get2023PlanComparisonFeatureOverrideForExperiment: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_DNS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
+		FEATURE_ISOLATED_INFRA,
+		FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_AI_ASSISTANT,
+		FEATURE_WORDPRESS_STUDIO_SYNC,
+		FEATURE_PLUGINS_THEMES,
+	],
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
 	},
@@ -1171,8 +1124,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_ALL_BUSINESS_FEATURES,
 	],
-	getSignupCompareAvailableFeatures: () => {
-		const baseFeatures = [
+	getSignupCompareAvailableFeatures: () =>
+		compact( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
@@ -1189,35 +1142,21 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ACCEPT_PAYMENTS,
 			FEATURE_SHIPPING_CARRIERS,
 			PREMIUM_DESIGN_FOR_STORES,
-		].filter( isValueTruthy );
-
-		return isGlobalStylesGridChangesVariation()
-			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_0 ]
-			: baseFeatures;
-	},
-	get2023PricingGridSignupWpcomFeatures: () => {
-		let features = [
-			FEATURE_UNLIMITED_ENTITIES,
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_AD_FREE_EXPERIENCE,
-			FEATURE_THEMES_PREMIUM_AND_STORE,
-			FEATURE_PRIORITY_24_7_SUPPORT,
-			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_CONNECT_ANALYTICS,
-			FEATURE_UPLOAD_VIDEO,
-			FEATURE_STATS_ADVANCED_20250206,
-			FEATURE_UPLOAD_PLUGINS,
-			FEATURE_DEV_TOOLS,
-			FEATURE_WOOCOMMERCE_HOSTING,
-		];
-
-		// When the global styles grid variation is active, surface the payments fee for Commerce
-		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_0 ];
-		}
-
-		return features;
-	},
+		] ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_THEMES_PREMIUM_AND_STORE,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_CONNECT_ANALYTICS,
+		FEATURE_UPLOAD_VIDEO,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_DEV_TOOLS,
+		FEATURE_WOOCOMMERCE_HOSTING,
+	],
 	getVar42NoAiSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
@@ -1785,8 +1724,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		].filter( isValueTruthy ),
-	getSignupCompareAvailableFeatures: () => {
-		const baseFeatures = [
+	getSignupCompareAvailableFeatures: () =>
+		compact( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
@@ -1796,36 +1735,20 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
-		].filter( isValueTruthy );
-
-		return isGlobalStylesGridChangesVariation()
-			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_4 ]
-			: baseFeatures;
-	},
-	get2023PricingGridSignupWpcomFeatures: () => {
-		const baseFeatures = [
-			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
-			FEATURE_UNLIMITED_ENTITIES,
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_AD_FREE_EXPERIENCE,
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_CONNECT_ANALYTICS,
-			FEATURE_UPLOAD_VIDEO,
-			FEATURE_STATS_ADVANCED_20250206,
-			FEATURE_UPLOAD_PLUGINS,
-		];
-
-		let features = baseFeatures;
-
-		// When the global styles grid variation is active, surface the payments fee for Premium
-		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_4 ];
-		}
-
-		return features;
-	},
+		] ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_CONNECT_ANALYTICS,
+		FEATURE_UPLOAD_VIDEO,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_UPLOAD_PLUGINS,
+	],
 	getVar42NoAiSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
@@ -2050,8 +1973,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
-	getSignupCompareAvailableFeatures: () => {
-		const baseFeatures = [
+	getSignupCompareAvailableFeatures: () =>
+		compact( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
@@ -2065,35 +1988,21 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE,
-		].filter( isValueTruthy );
-
-		return isGlobalStylesGridChangesVariation()
-			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_2 ]
-			: baseFeatures;
-	},
-	get2023PricingGridSignupWpcomFeatures: () => {
-		let features = [
-			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
-			FEATURE_UNLIMITED_ENTITIES,
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_AD_FREE_EXPERIENCE,
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-			FEATURE_PRIORITY_24_7_SUPPORT,
-			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_CONNECT_ANALYTICS,
-			FEATURE_UPLOAD_VIDEO,
-			FEATURE_STATS_ADVANCED_20250206,
-			FEATURE_UPLOAD_PLUGINS,
-			FEATURE_DEV_TOOLS,
-		];
-
-		// When the global styles grid variation is active, surface the payments fee for Business
-		if ( isGlobalStylesGridChangesVariation() ) {
-			features = [ ...features, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_2 ];
-		}
-
-		return features;
-	},
+		] ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_CONNECT_ANALYTICS,
+		FEATURE_UPLOAD_VIDEO,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_DEV_TOOLS,
+	],
 	getVar42NoAiSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
@@ -4409,7 +4318,7 @@ PLANS_LIST[ PLAN_PERSONAL_TRIAL_MONTHLY ] = {
 				FEATURE_JETPACK_ESSENTIAL,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_FREE_THEMES,
-				isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
+				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_6GB_STORAGE,
 				FEATURE_NO_ADS,
 				FEATURE_MEMBERSHIPS,

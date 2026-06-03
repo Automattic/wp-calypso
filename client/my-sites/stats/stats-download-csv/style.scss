@@ -1,7 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .calypso-navigation-header,
-.admin-ui-page__header-actions {
+// admin-ui 2.x header has no stable class; the header is the first child of
+// the Page root (`.admin-ui-page`, restored via the Page `className` prop).
+.admin-ui-page > :first-child {
 	.stats-download-csv {
 		gap: 4px;
 
