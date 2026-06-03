@@ -4,24 +4,21 @@ import {
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
+import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
-import type { Note } from '../types';
+import type { Note, Subject } from '../types';
 import type { CSSProperties } from 'react';
 
-type HeaderBlock = NonNullable< Note[ 'header' ] >[ number ];
-
-// Resolve the link used to wrap the header avatar / subject text. When the
-// first range is a user whose id differs from the site id, prefer the Reader
-// profile URL; otherwise fall back to the range's url. Mirrors the legacy
-// `SummaryInSingle` behaviour.
-const getHeaderLink = ( block: HeaderBlock ): string | undefined => {
-	const range = block.ranges?.[ 0 ] as
-		| { id?: number | string; site_id?: number; url?: string }
-		| undefined;
+// Resolve the link used to wrap the header avatar / subject text. A user range
+// whose id differs from the site id links to the Reader profile (some site
+// notifications populate id with the siteId); anything else falls back to the
+// range's own url. Mirrors the legacy `SummaryInSingle` behaviour.
+const getHeaderLink = ( block: Subject ): string | undefined => {
+	const range = block.ranges?.[ 0 ];
 	if ( ! range ) {
 		return undefined;
 	}
-	if ( range.id && range.id !== range.site_id ) {
+	if ( range.type === 'user' && range.id && range.id !== range.site_id ) {
 		return `https://wordpress.com/reader/users/id/${ range.id }`;
 	}
 	return range.url;
@@ -38,6 +35,37 @@ const NoteSummaryIcon = ( { iconUrl, link }: { iconUrl?: string; link?: string }
 		<a href={ link } style={ iconWrapStyle } target="_blank" rel="noopener noreferrer">
 			{ content }
 		</a>
+	);
+};
+
+// Title row of the detail header. When the header block references multiple
+// entities (e.g. "You on Post Title"), render it through `html()` so each
+// range keeps its own link, matching the legacy `UserHeader`; otherwise the
+// whole title links to the first range's target.
+const NoteSummaryTitle = ( { block, link }: { block: Subject; link?: string } ) => {
+	if ( ( block.ranges?.length ?? 0 ) > 1 ) {
+		return (
+			<Text className="wpnc__user-title" weight={ 500 }>
+				<span
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: html( block ) } }
+				/>
+			</Text>
+		);
+	}
+
+	if ( link ) {
+		return (
+			<a className="wpnc__user-title" href={ link } target="_blank" rel="noreferrer">
+				<Text weight={ 500 }>{ block.text }</Text>
+			</a>
+		);
+	}
+
+	return (
+		<Text className="wpnc__user-title" weight={ 500 }>
+			{ block.text }
+		</Text>
 	);
 };
 
@@ -68,15 +96,7 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 		<HStack className="wpnc__user" justify="flex-start" spacing={ 4 } alignment="top">
 			<NoteSummaryIcon iconUrl={ avatarUrl } link={ subjectLink } />
 			<VStack className="wpnc__text-summary" spacing={ 0 }>
-				{ subjectLink ? (
-					<a className="wpnc__user-title" href={ subjectLink } target="_blank" rel="noreferrer">
-						<Text weight={ 500 }>{ subject.text }</Text>
-					</a>
-				) : (
-					<Text className="wpnc__user-title" weight={ 500 }>
-						{ subject.text }
-					</Text>
-				) }
+				<NoteSummaryTitle block={ subject } link={ subjectLink } />
 				{ snippet && <ExternalLink href={ note.url }>{ snippet.text }</ExternalLink> }
 			</VStack>
 		</HStack>
