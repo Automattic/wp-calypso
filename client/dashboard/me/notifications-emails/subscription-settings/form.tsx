@@ -2,9 +2,7 @@ import { UserSettings } from '@automattic/api-core';
 import {
 	applyDeliveryWindowEdit,
 	getDeliveryHourPickerHours,
-	getDeliveryWindowOffsetHours,
 	getDisplayDeliveryWindow,
-	guessTimezone,
 	useDeliveryWindowTimezone,
 } from '@automattic/i18n-utils';
 import { CheckboxControl, SelectControl } from '@wordpress/components';
@@ -71,16 +69,6 @@ const buildDeliveryHourDescription = ( isUtcFallback: boolean, timezone?: string
 	);
 };
 
-function getDeliveryWindowDisplayDefaults(): DeliveryWindowDisplay {
-	const timezone = guessTimezone();
-	const offsetHours = getDeliveryWindowOffsetHours( timezone );
-
-	return {
-		timezone,
-		isUtcFallback: offsetHours === null,
-	};
-}
-
 function applyDeliveryWindowToHourField(
 	fields: Field< SettingsData >[],
 	delivery: DeliveryWindowDisplay,
@@ -132,7 +120,7 @@ const CustomSelectControl = ( { field, data, onChange }: DataFormControlProps< S
 	);
 };
 
-const baseFieldsWithoutDeliveryWindow: Field< SettingsData >[] = [
+const baseFields: Field< SettingsData >[] = [
 	{
 		id: 'subscription_delivery_email_default',
 		label: __( 'Default email delivery' ),
@@ -223,12 +211,6 @@ const baseFieldsWithoutDeliveryWindow: Field< SettingsData >[] = [
 	},
 ];
 
-const baseFields = applyDeliveryWindowToHourField(
-	baseFieldsWithoutDeliveryWindow,
-	getDeliveryWindowDisplayDefaults(),
-	0
-);
-
 const automatticianFields = [ 'p2_disable_autofollow_on_comment' ];
 
 export interface DeliveryWindowDisplay {
@@ -238,11 +220,10 @@ export interface DeliveryWindowDisplay {
 
 export const getFields = (
 	includeAutomatticianFields: boolean,
-	deliveryWindow?: DeliveryWindowDisplay,
-	displayHour = 0
+	deliveryWindow: DeliveryWindowDisplay,
+	displayHour: number
 ): Field< SettingsData >[] => {
-	const delivery = deliveryWindow ?? getDeliveryWindowDisplayDefaults();
-	const fields = applyDeliveryWindowToHourField( baseFields, delivery, displayHour );
+	const fields = applyDeliveryWindowToHourField( baseFields, deliveryWindow, displayHour );
 
 	if ( includeAutomatticianFields ) {
 		return fields;
