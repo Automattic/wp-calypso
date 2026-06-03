@@ -96,7 +96,11 @@ export async function retarget( urlPath ) {
 		let eventProps = {
 			type: 'contents',
 		};
-		if ( urlPath.trim().length > 0 && document.title.trim().length > 0 ) {
+		if (
+			typeof url === 'string' &&
+			urlPath.trim().length > 0 &&
+			document.title.trim().length > 0
+		) {
 			eventProps = {
 				type: 'contents',
 				contents: [
