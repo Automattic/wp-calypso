@@ -19,7 +19,7 @@ import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
@@ -34,6 +34,19 @@ import type {
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import './style.scss';
+
+/**
+ * Query param key + value that mark a redirect URL as needing a post-purchase
+ * success toast. Read by `client/my-sites/customer-home/main.tsx` (and possibly
+ * other destinations) on mount, which dispatches the toast and strips the param.
+ */
+export const PURCHASE_NOTICE_QUERY_KEY = 'notice';
+export const PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE = 'plan-and-domain';
+
+function appendNoticeQueryParam( url: string, value: string ): string {
+	const separator = url.includes( '?' ) ? '&' : '?';
+	return `${ url }${ separator }${ PURCHASE_NOTICE_QUERY_KEY }=${ value }`;
+}
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
@@ -334,7 +347,6 @@ function useRedirectOnTransactionSuccess( {
 		triggerPostRedirectNotices( {
 			redirectInstructions,
 			isRenewal,
-			isPlanAndDomainPurchase,
 			productName,
 			translate,
 			reduxDispatch,
@@ -346,7 +358,22 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
-		notifyAndPerformRedirect( siteSlug, redirectInstructions );
+		// For plan + domain purchases the `domain-and-plan` flow sends the user to
+		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
+		// a `notice` query param so the destination can dispatch a success toast on
+		// arrival - we cannot dispatch from here because the global notice renderer
+		// has no concept of "show only on the next page".
+		const finalRedirectInstructions = isPlanAndDomainPurchase
+			? {
+					...redirectInstructions,
+					url: appendNoticeQueryParam(
+						redirectInstructions.url,
+						PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE
+					),
+			  }
+			: redirectInstructions;
+
+		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,
@@ -385,14 +412,12 @@ function isTransactionSuccessful(
 function triggerPostRedirectNotices( {
 	redirectInstructions,
 	isRenewal,
-	isPlanAndDomainPurchase,
 	productName,
 	translate,
 	reduxDispatch,
 }: {
 	redirectInstructions: RedirectInstructions;
 	isRenewal: boolean;
-	isPlanAndDomainPurchase: boolean;
 	productName: string;
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
@@ -425,21 +450,6 @@ function triggerPostRedirectNotices( {
 			translate,
 			reduxDispatch,
 		} );
-		return;
-	}
-
-	if ( isPlanAndDomainPurchase ) {
-		// `displayOnNextPage: true` keeps the notice through the single route
-		// change between this dispatch and `notifyAndPerformRedirect` below, so the
-		// user sees it on the destination (e.g. `/home/<site>`), not the pending
-		// loading screen.
-		reduxDispatch(
-			successNotice( translate( 'Your plan and domain are ready!' ), {
-				id: 'plan-and-domain-purchase-success',
-				displayOnNextPage: true,
-				duration: 10000,
-			} )
-		);
 		return;
 	}
 }
