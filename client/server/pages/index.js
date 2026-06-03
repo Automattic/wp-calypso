@@ -798,6 +798,7 @@ function setUpCSP( req, res, next ) {
 			'wss://*.zendesk.com', // Zendesk WebSocket connections
 			'https://ekr.zdassets.com', // Zendesk composer
 			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
+			'https://bzr.openai.com', // OpenAI Ads tracking pixel
 		],
 		'report-uri': [ '/cspreport' ],
 	};

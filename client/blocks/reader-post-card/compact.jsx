@@ -40,7 +40,7 @@ const CompactPost = ( props ) => {
 
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( true );
-	const [ showExcerpt, setShowExcerpt ] = useState( ! isExpanded ?? true );
+	const [ showExcerpt, setShowExcerpt ] = useState( ! isExpanded );
 	const imagePostWithoutExcerpt = ( post.canonical_media && ! hasExcerpt ) || ! showExcerpt;
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'

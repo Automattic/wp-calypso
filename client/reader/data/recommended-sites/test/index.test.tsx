@@ -314,6 +314,31 @@ describe( 'recommended-sites Reader data helpers', () => {
 		expect( nock.isDone() ).toBe( true );
 	} );
 
+	it( 'does not share removed recommendations across query clients with the same seed', () => {
+		const firstClient = makeClient();
+		const secondClient = makeClient();
+		appendRecommendedSitesToCache( firstClient, { seed: 29, number: 2 }, [
+			recommendedSite( 1, 10 ),
+			recommendedSite( 2, 20 ),
+		] );
+		appendRecommendedSitesToCache( secondClient, { seed: 29, number: 2 }, [
+			recommendedSite( 1, 10 ),
+			recommendedSite( 2, 20 ),
+		] );
+
+		removeRecommendedSiteFromCache( firstClient, { seed: 29, siteId: 1 } );
+
+		const firstResult = renderHook( () => useRecommendedSites( { seed: 29, number: 2 } ), {
+			wrapper: makeWrapper( firstClient ),
+		} );
+		const secondResult = renderHook( () => useRecommendedSites( { seed: 29, number: 2 } ), {
+			wrapper: makeWrapper( secondClient ),
+		} );
+
+		expect( firstResult.result.current.data?.map( ( site ) => site.blogId ) ).toEqual( [ 2 ] );
+		expect( secondResult.result.current.data?.map( ( site ) => site.blogId ) ).toEqual( [ 1, 2 ] );
+	} );
+
 	it( 'filters blocked sites before applying the visible display count', () => {
 		const visible = selectVisibleRecommendedSites(
 			[

@@ -6,6 +6,7 @@ import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount, getSiteName } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -13,7 +14,6 @@ import Stream from 'calypso/reader/stream';
 import FeedStreamSidebar from 'calypso/reader/stream/site-feed-sidebar';
 import { useSelector } from 'calypso/state';
 import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
 import EmptyContent from './empty';
 
@@ -28,9 +28,7 @@ const FeedStream = ( props ) => {
 	const { data: fetchedFeed, isError: isFeedError } = useFeedQuery( feedId );
 	let feed = fetchedFeed;
 	const siteId = getReaderSiteId( feed );
-	const followForFeed = useSelector( ( state ) =>
-		getReaderFollowForFeed( state, parseInt( feedId ) )
-	);
+	const followForFeed = useSiteSubscriptionForFeed( feedId );
 	const isBlocked = useSelector( ( state ) => siteId && isSiteBlocked( state, siteId ) );
 	const postCount = useSelector(
 		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )
