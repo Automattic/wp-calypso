@@ -44,6 +44,13 @@ describe( 'useShowOnboardingProgress', () => {
 		expect( result.current ).toBe( false );
 	} );
 
+	it( 'hides while the experiment assignment is still loading', () => {
+		mockViewport.mockReturnValue( true );
+		mockExperiment.mockReturnValue( [ true, null ] );
+		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
+		expect( result.current ).toBe( false );
+	} );
+
 	it( 'hides for the treatment assignment (future live state)', () => {
 		mockViewport.mockReturnValue( true );
 		mockExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
