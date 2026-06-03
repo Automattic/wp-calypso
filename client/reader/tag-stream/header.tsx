@@ -13,6 +13,8 @@ import { recordAction } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface TagStreamHeaderProps {
 	encodedTagSlug: string;
 	description?: string;

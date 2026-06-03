@@ -6,6 +6,8 @@ import illustrationUrl from './logs-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 export function getLogsCalloutProps() {
 	return {
 		feature: HostingFeatures.LOGS,

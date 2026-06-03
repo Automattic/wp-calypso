@@ -15,6 +15,8 @@ import useBannerSubtitle from './use-banner-subtitle';
 import type { JSX } from 'react';
 import './style.scss';
 
+import type { JSX } from 'react';
+
 interface TrialBannerProps {
 	callToAction?: JSX.Element | null;
 	isWooExpressTrial?: boolean;

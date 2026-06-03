@@ -14,6 +14,8 @@ import { useResendEmailVerification } from '../../landing/stepper/hooks/use-rese
 import FollowButton from './button';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface FollowButtonContainerProps {
 	siteUrl: string;
 	feedId?: number;

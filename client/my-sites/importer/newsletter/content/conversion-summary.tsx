@@ -11,6 +11,8 @@ import { startMappingAuthors, cancelImport } from 'calypso/state/imports/actions
 import { SummaryStat } from '../components';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface UnsupportedFilesType {
 	[ key: string ]: number;
 }

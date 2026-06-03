@@ -1,6 +1,8 @@
 import { TranslateResult } from 'i18n-calypso';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 export interface Props {
 	header: string;
 	navItems: FoldableNavItem[];

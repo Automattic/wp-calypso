@@ -5,6 +5,8 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
+import type { JSX } from 'react';
+
 export interface UserCardUser {
 	displayName: string;
 	email: string;

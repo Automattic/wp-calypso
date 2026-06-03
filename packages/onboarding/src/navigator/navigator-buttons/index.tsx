@@ -10,6 +10,8 @@ import clsx from 'clsx';
 import type { JSX } from 'react';
 import './style.scss';
 
+import type { JSX } from 'react';
+
 interface NavigatorItemProps {
 	className?: string;
 	icon?: JSX.Element;

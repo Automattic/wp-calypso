@@ -2,6 +2,8 @@ import { commentAuthorAvatar, search, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 /**
  * Intervals
  */

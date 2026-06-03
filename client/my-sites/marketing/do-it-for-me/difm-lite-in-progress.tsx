@@ -27,6 +27,8 @@ import type { JSX } from 'react';
 
 import './difm-lite-in-progress.scss';
 
+import type { JSX } from 'react';
+
 type DIFMLiteInProgressProps = {
 	siteId: number;
 };

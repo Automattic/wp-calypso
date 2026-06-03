@@ -25,6 +25,8 @@ import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRe
 import type { AppState } from 'calypso/types';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface ReaderListHeaderProps {
 	list?: ReaderList;
 	view: 'posts' | 'sites';

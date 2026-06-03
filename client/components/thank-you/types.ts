@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Theme } from 'calypso/types';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 export type ThankYouNextStepProps = {
 	stepCta?: React.ReactNode;
 	stepSection?: TranslateResult;

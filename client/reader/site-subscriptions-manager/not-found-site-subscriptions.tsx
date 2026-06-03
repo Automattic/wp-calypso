@@ -6,6 +6,8 @@ import { useMemo, type JSX } from 'react';
 
 const { useSiteSubscriptionsQuery, useSiteSubscriptionsQueryProps } = SubscriptionManager;
 
+import type { JSX } from 'react';
+
 const NotFoundSiteSubscriptions = (): JSX.Element => {
 	const translate = useTranslate();
 	const { searchTerm } = useSiteSubscriptionsQueryProps();

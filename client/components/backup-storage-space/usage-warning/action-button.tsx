@@ -6,6 +6,8 @@ import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import useStorageStatusText from './use-storage-status-text';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 type OwnProps = {
 	className?: string;
 	usageLevel: StorageUsageLevelName;

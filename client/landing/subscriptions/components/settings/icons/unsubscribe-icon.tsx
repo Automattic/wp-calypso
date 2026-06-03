@@ -1,6 +1,8 @@
 import { Icon, close } from '@wordpress/icons';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface UnsubscribeIconProps {
 	className?: string;
 	iconSize?: number;

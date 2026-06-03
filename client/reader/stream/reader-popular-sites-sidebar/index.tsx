@@ -3,6 +3,8 @@ import { useInfiniteStream } from 'calypso/reader/data/stream';
 import type { JSX } from 'react';
 import '../style.scss';
 
+import type { JSX } from 'react';
+
 interface PopularSitesSidebarProps {
 	followSource: string;
 	items: PopularSiteItemProp[];

@@ -4,6 +4,8 @@ import type { JSX } from 'react';
 
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
+import type { JSX } from 'react';
+
 interface PostTrackbackProps {
 	commentId: number;
 	commentsTree: Record< number, PostComment >;

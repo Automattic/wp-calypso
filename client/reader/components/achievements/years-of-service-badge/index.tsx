@@ -5,6 +5,8 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
+import type { JSX } from 'react';
+
 interface YearsOfServiceBadgeProps {
 	size: 'large' | 'achievement-card' | 'medium' | 'small';
 	yearsOfService: number;

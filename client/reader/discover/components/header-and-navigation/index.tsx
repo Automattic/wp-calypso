@@ -10,6 +10,8 @@ import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import { RECOMMENDED_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../../helper';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
 	selectedTag?: string;

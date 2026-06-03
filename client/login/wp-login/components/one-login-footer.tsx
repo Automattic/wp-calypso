@@ -5,6 +5,8 @@ import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link'
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import './one-login-footer.scss';
 
+import type { JSX } from 'react';
+
 interface OneLoginFooterProps {
 	/**
 	 * When `isLoginView` is true, this is the "lost password" link.

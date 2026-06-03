@@ -19,6 +19,8 @@ import type {
 } from 'calypso/state/billing-transactions/types';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
 	translate: ReturnType< typeof useTranslate >

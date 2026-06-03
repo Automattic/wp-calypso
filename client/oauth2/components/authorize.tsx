@@ -17,6 +17,8 @@ import { getPermissionIcon } from '../utils/permission-icons';
 import SuccessMessage from './success-message';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 export interface AuthorizeActionsRenderProps {
 	onApprove: () => void;
 	onDeny: () => void;

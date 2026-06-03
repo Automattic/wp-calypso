@@ -6,6 +6,8 @@ import type { BadgeType } from '../badge';
 import type { JSX } from 'react';
 import './style.scss';
 
+import type { JSX } from 'react';
+
 interface FlowQuestionProps {
 	icon?: JSX.Element;
 	onClick: () => void;

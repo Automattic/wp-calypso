@@ -16,6 +16,8 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
 
+import type { JSX } from 'react';
+
 export const ensureHeadingProvided = (
 	heading: TranslateResult | null | undefined
 ): TranslateResult | null => {

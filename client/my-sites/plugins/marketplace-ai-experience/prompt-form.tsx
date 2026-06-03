@@ -10,6 +10,8 @@ import type { JSX, RefObject } from 'react';
 
 import './prompt-form.scss';
 
+import type { JSX } from 'react';
+
 interface PromptFormProps {
 	onSubmit: ( prompt: string ) => void;
 	mode?: 'initial' | 'followup';

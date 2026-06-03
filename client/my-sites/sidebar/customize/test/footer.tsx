@@ -9,6 +9,8 @@ import { CustomizeFooter } from '../footer';
 import { CustomizeProvider, useCustomizeContext } from '../index';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 function renderInProvider( ui: JSX.Element, state: object = {} ) {
 	const store = configureStore()( {
 		ui: { selectedSiteId: 12345 },

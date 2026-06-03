@@ -37,6 +37,8 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
+import type { JSX } from 'react';
+
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;

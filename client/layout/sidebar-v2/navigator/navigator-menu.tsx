@@ -8,6 +8,8 @@ import {
 
 import './style.scss';
 
+import type { JSX } from 'react';
+
 interface Props {
 	title?: React.ReactNode;
 	description?: string;

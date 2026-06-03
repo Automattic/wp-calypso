@@ -10,6 +10,8 @@ import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
+import type { JSX } from 'react';
+
 const ICON_SIZE = 24;
 
 interface Props {

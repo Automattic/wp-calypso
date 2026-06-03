@@ -2,6 +2,8 @@ import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { hasMultipleProductTypes } from './utils';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 export function MarketplaceGoBackSection( {
 	pluginSlugs,
 	themeSlugs,

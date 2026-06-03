@@ -13,6 +13,8 @@ import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import type { JSX } from 'react';
 import './help-center-chat.scss';
 
+import type { JSX } from 'react';
+
 export function HelpCenterChat( {
 	isLoadingStatus,
 	isUserEligibleForPaidSupport,

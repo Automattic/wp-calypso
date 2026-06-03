@@ -1,6 +1,8 @@
 import { Icon, published } from '@wordpress/icons';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface ReaderFollowingFeedIconProps {
 	iconSize: number;
 }

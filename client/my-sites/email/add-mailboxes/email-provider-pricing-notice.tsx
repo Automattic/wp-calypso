@@ -17,6 +17,8 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { JSX } from 'react';
 
+import type { JSX } from 'react';
+
 interface EmailProviderPricingNoticeProps {
 	emailProduct: ProductListItem | null;
 	provider: EmailProvider;
