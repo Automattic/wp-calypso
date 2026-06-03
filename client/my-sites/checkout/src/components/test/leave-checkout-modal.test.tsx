@@ -321,4 +321,54 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 			} )
 		);
 	} );
+
+	it( 'does not leak the step-back URL into a later plain close', async () => {
+		// Regression: clicking a step opens the modal and stores the step-back
+		// URL. If the user dismisses that modal (no navigation) and later hits
+		// the plain close button, the close must use the default back URL — not
+		// the stale step-back URL from the earlier `clickStepBack`.
+		const { getCart, setCart } = createFakeCartBackend( {
+			[ NEW_SITE_CART_KEY ]: [ domainProduct, planProduct ],
+		} );
+		const client = createShoppingCartManagerClient( { getCart, setCart } );
+		const Wrapper = buildWrapper( client );
+
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () =>
+			expect(
+				client.forCartKey( NEW_SITE_CART_KEY ).getState().responseCart.products
+			).toHaveLength( 2 )
+		);
+
+		// Step back to domains opens the modal and records the step URL.
+		act( () => {
+			result.current.clickStepBack( 'https://mynewsite.wordpress.com/setup/onboarding/domains' );
+		} );
+		expect( result.current.isModalVisible ).toBe( true );
+
+		// User dismisses the modal without confirming (no navigation).
+		act( () => {
+			result.current.setIsModalVisible( false );
+		} );
+
+		// Plain close re-opens the modal; confirming must use the default back
+		// URL, not the stale domains step URL.
+		act( () => {
+			result.current.clickClose();
+		} );
+		expect( result.current.isModalVisible ).toBe( true );
+
+		await act( async () => {
+			result.current.closeAndLeave();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				forceCheckoutBackUrl: 'https://mynewsite.wordpress.com/setup/onboarding/plans',
+			} )
+		);
+	} );
 } );

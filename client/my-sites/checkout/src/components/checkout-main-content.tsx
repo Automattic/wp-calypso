@@ -1028,9 +1028,11 @@ export default function CheckoutMainContent( {
 								onStepSelect={ ( step ) => {
 									if ( step === 'domains' && forceCheckoutBackUrlDomains ) {
 										leaveModalProps.clickStepBack( forceCheckoutBackUrlDomains );
+									} else if ( step === 'plans' && forceCheckoutBackUrl ) {
+										leaveModalProps.clickStepBack( forceCheckoutBackUrl );
 									} else {
-										// step 'plans' (or domains without a valid URL): use the
-										// existing plans back URL via the standard close flow.
+										// No valid step URL available: fall back to the standard
+										// close flow.
 										leaveModalProps.clickClose();
 									}
 								} }

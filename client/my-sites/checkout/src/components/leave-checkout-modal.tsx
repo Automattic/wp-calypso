@@ -53,6 +53,9 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	);
 
 	const clickClose = () => {
+		// A plain close must use the default back URL, not a step-back URL left
+		// over from an earlier `clickStepBack` whose modal was dismissed.
+		setStepBackUrl( undefined );
 		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
 			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
 			setIsModalVisible( true );
