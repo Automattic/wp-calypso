@@ -1,5 +1,4 @@
 import {
-	Button,
 	Card,
 	CardBody,
 	CardMedia,
@@ -12,7 +11,9 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useState } from 'react';
+import useDeliverableTitle from '../../data/use-deliverable-title';
 import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
 import type { AgentStudioOutput } from '../../types';
@@ -25,39 +26,50 @@ interface Props {
 
 export default function DeliverableCard( { output }: Props ) {
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+	const title = useDeliverableTitle( output );
+	const isReady = output.status === 'ready';
 
 	return (
-		<Card size="small" className="a4a-agent-studio-deliverable-card">
+		<Card
+			size="small"
+			className={ clsx( 'a4a-agent-studio-deliverable-card', { 'is-clickable': isReady } ) }
+		>
 			<CardMedia className="a4a-agent-studio-deliverable-card__media">
 				<DeliverablePreview output={ output } />
 			</CardMedia>
 			<CardBody className="a4a-agent-studio-deliverable-card__body">
-				<VStack spacing={ 1 } className="a4a-agent-studio-deliverable-card__info">
-					<Text size={ 15 } weight={ 600 } className="a4a-agent-studio-deliverable-card__title">
-						{ output.title }
-					</Text>
-					<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
-					<Text variant="muted">{ getMetaLabel( output ) }</Text>
-				</VStack>
-				<HStack justify="space-between" alignment="center">
-					{ output.status === 'ready' && (
-						<Button variant="secondary" href={ getAgentStudioOutputPath( output.id ) }>
-							{ __( 'View' ) }
-						</Button>
-					) }
-					<DropdownMenu
-						icon={ moreVertical }
-						label={ __( 'Deliverable actions' ) }
-						controls={ [
-							{
-								title: __( 'Delete' ),
-								icon: trash,
-								onClick: () => setIsDeleteDialogOpen( true ),
-							},
-						] }
-					/>
+				<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
+					<VStack spacing={ 1 } className="a4a-agent-studio-deliverable-card__info">
+						<Text size={ 15 } weight={ 600 } className="a4a-agent-studio-deliverable-card__title">
+							{ title }
+						</Text>
+						<Text variant="muted">{ dateI18n( 'F j, Y', output.createdAt ) }</Text>
+					</VStack>
+					{ /* Sits above the card-wide link overlay so its clicks aren't swallowed. */ }
+					<div className="a4a-agent-studio-deliverable-card__menu">
+						<DropdownMenu
+							icon={ moreVertical }
+							label={ __( 'Deliverable actions' ) }
+							controls={ [
+								{
+									title: __( 'Delete' ),
+									icon: trash,
+									onClick: () => setIsDeleteDialogOpen( true ),
+								},
+							] }
+						/>
+					</div>
 				</HStack>
 			</CardBody>
+			{ /* Stretched link makes the whole card open the deliverable without
+			     nesting interactive elements inside one another. */ }
+			{ isReady && (
+				<a
+					className="a4a-agent-studio-deliverable-card__link"
+					href={ getAgentStudioOutputPath( output.id ) }
+					aria-label={ title }
+				/>
+			) }
 			{ isDeleteDialogOpen && (
 				<DeleteDeliverableDialog
 					output={ output }
@@ -88,45 +100,9 @@ function DeliverablePreview( { output }: Props ) {
 		);
 	}
 
-	// Server-rendered preview URLs land directly on the output once the
-	// wpcom side pre-renders thumbnails. Until then social-campaign
-	// outputs show the placeholder icon — the deliverable detail page
-	// still composes the tiles live from the brief.
-	if ( output.previewUrls?.length ) {
-		return <PreviewUrlCollage urls={ output.previewUrls } />;
-	}
-
 	return (
 		<div className="a4a-agent-studio-deliverable-card__placeholder">
 			<Icon icon={ page } size={ 32 } />
 		</div>
 	);
-}
-
-function PreviewUrlCollage( { urls }: { urls: string[] } ) {
-	return (
-		<div className="a4a-agent-studio-deliverable-card__collage">
-			{ urls.slice( 0, 4 ).map( ( url ) => (
-				<div
-					key={ url }
-					className="a4a-agent-studio-deliverable-card__collage-tile"
-					style={ { aspectRatio: '1 / 1' } }
-				>
-					<img src={ url } alt="" />
-				</div>
-			) ) }
-		</div>
-	);
-}
-
-function getMetaLabel( output: AgentStudioOutput ) {
-	if ( output.status === 'generating' ) {
-		return __( 'Generating…' );
-	}
-
-	if ( output.status === 'failed' ) {
-		return __( 'Generation failed' );
-	}
-
-	return output.deliverableType;
 }
