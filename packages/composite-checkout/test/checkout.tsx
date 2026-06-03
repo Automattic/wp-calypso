@@ -317,17 +317,17 @@ describe( 'Checkout', () => {
 			expect( content ).toHaveStyle( 'display: block' );
 			step = container.querySelector( '.' + steps[ 2 ].className );
 			content = step.querySelector( '.checkout-steps__step-complete-content' );
-			expect( content ).toBeNull;
+			expect( content ).toBeNull();
 			step = container.querySelector( '.' + steps[ 3 ].className );
 			content = step.querySelector( '.checkout-steps__step-complete-content' );
-			expect( content ).toBeNull;
+			expect( content ).toBeNull();
 		} );
 
 		it( 'does not render the completeStepContent when active', () => {
 			const { container } = render( <MyCheckout /> );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
 			const content = step.querySelector( '.checkout-steps__step-complete-content' );
-			expect( content ).toBeNull;
+			expect( content ).toBeNull();
 		} );
 
 		it( 'renders the continue button for the active step', () => {

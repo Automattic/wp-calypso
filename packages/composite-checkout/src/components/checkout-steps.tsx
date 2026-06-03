@@ -427,7 +427,9 @@ function CheckoutStepGroupWrapper( {
 			// context consumers get the modified store because its identity has
 			// changed.
 			setTimeout( () => {
-				isMounted.current && setContextValue( { ...store } );
+				if ( isMounted.current ) {
+					setContextValue( { ...store } );
+				}
 			}, 0 );
 		} );
 	}, [ store ] );
