@@ -76,9 +76,18 @@ export class Notifications extends PureComponent {
 		],
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		// Set up the client in componentDidMount (the commit phase), not the
+		// constructor. React can run the constructor/render phase many times
+		// before it commits a mount (concurrent rendering, Suspense retries),
+		// and `new RestClient()` immediately starts polling the notifications
+		// REST API. Creating the client in the constructor therefore fired a
+		// request on every discarded render attempt and flooded the endpoint.
+		// componentDidMount runs exactly once per mount.
+		isReady: false,
+	};
 
+	componentDidMount() {
 		const { customEnhancer, actionHandlers, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 
@@ -105,10 +114,13 @@ export class Notifications extends PureComponent {
 		store.dispatch( { type: SET_IS_SHOWING, isShowing } );
 
 		client.setVisibility( { isShowing, isVisible } );
-	}
 
-	componentDidMount() {
 		store.dispatch( { type: 'APP_IS_READY' } );
+
+		// The client is intentionally created here, in the commit phase; render
+		// one more time now that it exists so the panel can mount with it.
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { isReady: true } );
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -136,7 +148,7 @@ export class Notifications extends PureComponent {
 		}
 
 		if ( isShowing !== this.props.isShowing || isVisible !== this.props.isVisible ) {
-			client.setVisibility( { isShowing, isVisible } );
+			client?.setVisibility( { isShowing, isVisible } );
 		}
 	}
 
@@ -147,6 +159,13 @@ export class Notifications extends PureComponent {
 	}
 
 	render() {
+		// Nothing to render until componentDidMount has created the client and
+		// initialized the store. This also keeps the constructor/render phase
+		// free of the side effects that previously ran on every render attempt.
+		if ( ! this.state.isReady ) {
+			return null;
+		}
+
 		return (
 			<Provider store={ store }>
 				<RestClientContext.Provider value={ client }>

@@ -164,6 +164,9 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							: translate( 'Special Offer' ) }
 					</div>
 				) }
+				{ current && visibleGridPlans.length > 1 && (
+					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
+				) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -202,17 +205,17 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				: originalPrice.monthly ?? 0;
 		return (
 			<div className="plans-grid-next-header-price">
-				{ ! current &&
-					( savings > 0 ? (
-						<div className={ pricingBadgeClassName }>
-							{ translate( 'Save %(savings)d%%', {
-								args: { savings },
-								comment: 'Example: Save 35%',
-							} ) }
-						</div>
-					) : (
-						<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
-					) ) }
+				{ ! current && savings > 0 && (
+					<div className={ pricingBadgeClassName }>
+						{ translate( 'Save %(savings)d%%', {
+							args: { savings },
+							comment: 'Example: Save 35%',
+						} ) }
+					</div>
+				) }
+				{ ( ( ! current && savings <= 0 ) || ( current && visibleGridPlans.length > 1 ) ) && (
+					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
+				) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,

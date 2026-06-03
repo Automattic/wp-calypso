@@ -54,7 +54,7 @@ export const DEFAULT_VIEW: View = {
 
 export function useActions() {
 	const navigate = useNavigate();
-	const sendEmailMutation = useMutation( {
+	const { mutate: sendEmail } = useMutation( {
 		...sendReceiptEmailMutation(),
 		meta: {
 			snackbar: {
@@ -87,17 +87,18 @@ export function useActions() {
 				isEligible: ( item: Receipt ) => Boolean( item.id ),
 				callback: ( items: Receipt[] ) => {
 					const item = items[ 0 ];
-					sendEmailMutation.mutate( String( item.id ) );
+					sendEmail( String( item.id ) );
 				},
 			},
 		],
-		[ navigate, sendEmailMutation ]
+		[ navigate, sendEmail ]
 	);
 }
 
 export function getFields(
 	receipts: Receipt[],
-	countryList: CountryListItem[] = []
+	countryList: CountryListItem[] = [],
+	visibleFields: string[] = WIDE_FIELDS
 ): Fields< Receipt > {
 	return [
 		{
@@ -120,15 +121,7 @@ export function getFields(
 				return getDateForFiltering( item );
 			},
 			render: ( { item }: { item: Receipt } ) => {
-				return (
-					<time>
-						{ new Date( item.date ).toLocaleDateString( undefined, {
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric',
-						} ) }
-					</time>
-				);
+				return <time>{ formatReceiptDate( item ) }</time>;
 			},
 		},
 		{
@@ -154,14 +147,17 @@ export function getFields(
 			},
 			render: ( { item }: { item: Receipt } ) => {
 				return (
-					<Link
-						to={ receiptRoute.fullPath }
-						params={ { receiptId: item.id } }
-						title={ __( 'View receipt' ) }
-						className="receipts-link-to-receipt"
-					>
-						{ renderServiceNameDescription( item ) }
-					</Link>
+					<VStack spacing={ 1 }>
+						<Link
+							to={ receiptRoute.fullPath }
+							params={ { receiptId: item.id } }
+							title={ __( 'View receipt' ) }
+							className="receipts-link-to-receipt"
+						>
+							{ renderServiceNameDescription( item ) }
+						</Link>
+						{ renderInlineHiddenFields( item, visibleFields ) }
+					</VStack>
 				);
 			},
 		},
@@ -300,6 +296,14 @@ function getDateForFiltering( receipt: Receipt ): string {
 	} );
 }
 
+function formatReceiptDate( receipt: Receipt ): string {
+	return new Date( receipt.date ).toLocaleDateString( undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	} );
+}
+
 function getServicesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {
 	return [ ...new Set( receipts.map( getServiceForFiltering ) ) ].sort().map( ( service ) => ( {
 		value: service,
@@ -357,6 +361,34 @@ function renderServiceNameDescription( receipt: Receipt ) {
 			) }
 		</VStack>
 	);
+}
+
+function renderInlineHiddenField( key: string, label: string, value: string ) {
+	return (
+		<Text key={ key } isBlock variant="muted" size="12" className="billing-history-receipt-meta">
+			<span className="billing-history-receipt-meta-label">{ label }</span>
+			<span className="billing-history-receipt-meta-value">{ value }</span>
+		</Text>
+	);
+}
+
+function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[] ) {
+	const lines: JSX.Element[] = [];
+
+	if ( ! visibleFields.includes( 'date' ) ) {
+		lines.push( renderInlineHiddenField( 'date', __( 'Date' ), formatReceiptDate( receipt ) ) );
+	}
+	if ( ! visibleFields.includes( 'type' ) ) {
+		lines.push(
+			renderInlineHiddenField( 'type', __( 'Type' ), getReceiptItemTypeForDisplay( receipt ) )
+		);
+	}
+	if ( ! visibleFields.includes( 'amount' ) ) {
+		lines.push(
+			renderInlineHiddenField( 'amount', __( 'Amount' ), formatReceiptAmount( receipt ) )
+		);
+	}
+	return lines;
 }
 
 function getReceiptItemTypesForFiltering(

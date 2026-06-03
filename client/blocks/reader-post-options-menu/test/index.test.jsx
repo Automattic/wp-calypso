@@ -32,7 +32,7 @@ jest.mock( '../reader-post-ellipsis-menu', () => ( { site } ) => (
 	<div data-testid="ellipsis-site-id">{ site?.ID ?? 'none' }</div>
 ) );
 
-const store = createStore( ( state = { reader: { follows: { items: {} } } } ) => state );
+const store = createStore( ( state = {} ) => state );
 
 describe( 'ReaderPostOptionsMenu', () => {
 	test( 'passes the post site ID through withSite before rendering the menu', () => {

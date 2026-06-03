@@ -1,3 +1,4 @@
+import { getSiteSubscriptionsFromData } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -11,15 +12,15 @@ import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscript
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { fetchPaginatedStream, getStreamInfiniteQueryKeyPrefix } from 'calypso/reader/data/stream';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import SubscribeVerificationNudge from './verificationNudge';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -203,17 +204,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const follows = useSelector( getReaderFollows );
+	const { subscriptions, refetch: refetchSiteSubscriptions } = useSiteSubscriptions();
 
 	const handleFollowToggle = useCallback(
 		async ( site: CardData, following: boolean ) => {
-			const isFollowingSite = ( site: CardData ) =>
-				follows.some(
+			const isFollowingSite = ( site: CardData, followItems: SiteSubscriptionItem[] ) =>
+				followItems.some(
 					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
 				);
 
 			// Exit early if the follow state already matches what we want.
-			if ( following === isFollowingSite( site ) ) {
+			if ( following === isFollowingSite( site, subscriptions ) ) {
 				return;
 			}
 
@@ -222,17 +223,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
 				// Update the subscriptions list behind the modal.
-				await dispatch( requestFollows() );
+				const result = await refetchSiteSubscriptions();
 
 				// Delay the next attempt.
 				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
 
-				if ( following === isFollowingSite( site ) ) {
+				if ( following === isFollowingSite( site, getSiteSubscriptionsFromData( result.data ) ) ) {
 					return;
 				}
 			}
 		},
-		[ follows, dispatch ]
+		[ subscriptions, refetchSiteSubscriptions ]
 	);
 
 	const formatUrl = ( url: string ): string => {

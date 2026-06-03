@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import './style.scss';
 
 // Admin bar element selectors
-const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
+export const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
 const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
@@ -32,16 +32,21 @@ interface UseAdminBarIntegrationOptions {
  * - Menu panel toggle visibility
  * - Click outside to close menu
  * - Menu item click handlers with tracking
+ *
+ * Returns whether the WP admin bar trigger button is present on the page.
  */
 export default function useAdminBarIntegration( {
 	isOpen,
 	sectionName,
 	maybeOpenChat,
 	navigate,
-}: UseAdminBarIntegrationOptions ) {
+}: UseAdminBarIntegrationOptions ): boolean {
 	// Ref to avoid re-attaching DOM event listeners when the caller passes a new `maybeOpenChat` reference.
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
+
+	// Whether the WP admin bar trigger button is on the page.
+	const [ hasButton ] = useState( () => !! document.getElementById( ADMIN_BAR_BUTTON_ID ) );
 
 	// Update admin bar button active state based on isOpen
 	useEffect( () => {
@@ -135,4 +140,6 @@ export default function useAdminBarIntegration( {
 			guidesItem?.removeEventListener( 'click', handleGuidesClick );
 		};
 	}, [ navigate, sectionName ] );
+
+	return hasButton;
 }

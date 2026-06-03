@@ -19,6 +19,17 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 	return state;
 };
 
+export const isMinimized: Reducer< boolean | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_MINIMIZED':
+			return action.isMinimized;
+	}
+	return state;
+};
+
 const routerHistory: Reducer< PerSiteRouterHistory | undefined, AgentsManagerAction > = (
 	state,
 	action
@@ -84,6 +95,7 @@ export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = 
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
+	isMinimized,
 	routerHistory,
 	lastActivity,
 	isLoading,

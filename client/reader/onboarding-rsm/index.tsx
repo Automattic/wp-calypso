@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
@@ -32,7 +33,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
@@ -71,34 +71,32 @@ const ReaderOnboardingRsm = ( {
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
 	// Used in the `completed` event for an instant in-session site-follow
-	// count: legacy `READER_FOLLOW` (used by the discover step and interests
-	// pack subscribe) updates this slice synchronously, whereas
-	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` is a TanStack
-	// query that doesn't reflect in-session follows until its refetch resolves.
+	// count: follows mutations update this query cache, whereas
+	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` can lag until
+	// its refetch resolves.
 	//
-	// `getReaderFollows` retains stale rows (`is_following: false`) and
+	// The follows query retains stale rows (`is_following: false`) and
 	// self-owned subs (`is_owner: true`); we filter both out so the count
 	// matches the rest of the onboarding eligibility logic, which uses
 	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
 	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
-	// under-report follows before the Redux follows slice has hydrated.
+	// under-report follows before the follows query has hydrated.
 	//
 	// `Math.max` is safe in onboarding because the UI only nets follow
 	// additions: discover-step recommendations exclude pre-session
 	// subscriptions (so in-session unfollows only target in-session adds),
 	// and interests-step pack subscribe never unfollows. The invariant is
-	// therefore `reduxFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
-	// so the max picks the live Redux value. If a future flow ever allows
+	// therefore `queryFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
+	// so the max picks the live follows-query value. If a future flow ever allows
 	// unfollowing a pre-session subscription from within onboarding, revisit
-	// this — gate on Redux hydration (e.g. `getReaderFollowsLastSyncTime !==
-	// null`) rather than blindly take the max.
-	const reduxFollows = useSelector( getReaderFollows );
-	const reduxFollowedNonSelfSitesCount = reduxFollows.filter(
-		( f ) => f.is_following && ! f.is_owner
+	// this and gate on follows query hydration rather than blindly take the max.
+	const { subscriptions } = useCachedSiteSubscriptions();
+	const queryFollowedNonSelfSitesCount = subscriptions.filter(
+		( subscription ) => subscription.is_following && ! subscription.is_owner
 	).length;
 	const followedNonSelfSitesCount = Math.max(
 		nonSelfSubscriptionsCount,
-		reduxFollowedNonSelfSitesCount
+		queryFollowedNonSelfSitesCount
 	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
@@ -220,15 +218,11 @@ const ReaderOnboardingRsm = ( {
 		);
 	}
 
-	// Site follows inside the onboarding flow (discover-step `ReaderFollowButton`
-	// and interests-step pack subscriptions) go through the legacy Redux
-	// `READER_FOLLOW` action, which doesn't touch the SubscriptionManager
-	// TanStack Query caches. Invalidate them explicitly when leaving either
-	// step so the next mount of `useSiteSubscriptions` (here or anywhere else
-	// in Reader) sees the user's real, post-onboarding follow counts rather
-	// than the pre-onboarding cached snapshot. Without this, remounting
-	// onboarding-rsm right after a user clicks Finish can still surface
-	// `forceShow=true` against a stale `hasNonSelfSubscriptions=false`.
+	// Site follows inside the onboarding flow update the follows query, while
+	// SubscriptionManager owns separate TanStack Query caches. Invalidate those
+	// explicitly when leaving either step so the next mount of
+	// `useSiteSubscriptions` sees the user's real, post-onboarding follow
+	// counts rather than the pre-onboarding cached snapshot.
 	const invalidateSubscriptionQueries = () => {
 		queryClient.invalidateQueries( {
 			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,

@@ -9,6 +9,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -18,7 +19,6 @@ import * as stats from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
@@ -392,8 +392,9 @@ class ReaderPostEllipsisMenu extends Component {
 		);
 	}
 }
-export default connect(
-	( state, { feed, post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+
+const ConnectedPostEllipsisMenu = connect(
+	( state, { feed, post: { is_external, site_ID } = {} } ) => {
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
@@ -403,10 +404,7 @@ export default connect(
 					isSiteWPForTeams( state, siteId ) ||
 					( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 			},
-			{ isLoggedIn: isUserLoggedIn( state ) },
-			{
-				hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
-			}
+			{ isLoggedIn: isUserLoggedIn( state ) }
 		);
 	},
 	{
@@ -418,3 +416,10 @@ export default connect(
 		recordReaderTracksEvent,
 	}
 )( localize( ReaderPostEllipsisMenu ) );
+
+export default function PostEllipsisMenuContainer( props ) {
+	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, isExternal ? null : siteId );
+
+	return <ConnectedPostEllipsisMenu { ...props } hasOrganization={ hasOrganization } />;
+}

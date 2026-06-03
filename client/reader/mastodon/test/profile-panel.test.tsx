@@ -92,7 +92,7 @@ function mockConnectionDetails( avatar: string | null = null ) {
 
 describe( 'ProfilePanel', () => {
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
+		// recordReaderTracksEvent is a thunk that reads the follows query cache;
 		// the test store doesn't seed that slice. Replace with a no-op so
 		// dispatch() doesn't throw, while spies still observe arguments.
 		jest
