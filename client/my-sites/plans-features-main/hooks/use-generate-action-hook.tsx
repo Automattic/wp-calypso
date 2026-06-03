@@ -589,10 +589,10 @@ function getLoggedInPlansAction( {
 	}
 
 	// Show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
-	// Use isPlanExpired as fallback: availableForPurchase may be false for expired plans
-	// when the purchase object hasn't loaded (canUpgradeToPlan depends on it).
+	// Only in change-plan flow (active downgrades) or expired plans — not normal upgrades,
+	// which fall through to the sticky-price block below.
 	if (
-		( availableForPurchase || isPlanExpired ) &&
+		( isPlanExpired || isChangePlanFlow ) &&
 		sitePlanSlug &&
 		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
 	) {

@@ -26,6 +26,8 @@ jest.mock( '../hooks/use-renewal-price-experiment', () => ( {
 } ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
+	getSitePurchases: jest.fn( () => [] ),
+	isFetchingSitePurchases: jest.fn( () => false ),
 } ) );
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
