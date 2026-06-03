@@ -1,7 +1,6 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useState, useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import useSetProfileTabVisibility from '../../hooks/use-set-profile-tab-visibility';
@@ -23,18 +22,12 @@ export default function UserProfileSettings( {
 	const currentUser = useSelector( getCurrentUser );
 	const isOwnProfile = currentUser?.username === user.user_login;
 
-	const { data: savedPostsVisibility } = useQuery(
+	const { data: postsVisibility } = useQuery(
 		userPreferenceQuery( 'reader-profile-posts-visibility' )
 	);
-	const { data: savedSitesVisibility } = useQuery(
+	const { data: sitesVisibility } = useQuery(
 		userPreferenceQuery( 'reader-profile-sites-visibility' )
 	);
-
-	// Local state for immediate toggle feedback, synced from saved preferences on load.
-	const [ postsVisible, setPostsVisible ] = useState( true );
-	const [ sitesVisible, setSitesVisible ] = useState( true );
-	useEffect( () => setPostsVisible( savedPostsVisibility !== 'hidden' ), [ savedPostsVisibility ] );
-	useEffect( () => setSitesVisible( savedSitesVisibility !== 'hidden' ), [ savedSitesVisibility ] );
 
 	const { setVisibility } = useSetProfileTabVisibility();
 
@@ -44,12 +37,12 @@ export default function UserProfileSettings( {
 		return null;
 	}
 
+	// Derived straight from the preference cache. `setVisibility` patches that cache optimistically,
+	// so toggling updates these (and the profile nav tabs + top-sites strip) in real time.
+	const postsVisible = postsVisibility !== 'hidden';
+	const sitesVisible = sitesVisibility !== 'hidden';
+
 	const handleVisibilityChange = ( tab: ProfileTab, visible: boolean ) => {
-		if ( tab === 'posts' ) {
-			setPostsVisible( visible );
-		} else {
-			setSitesVisible( visible );
-		}
 		setVisibility( tab, visible ? 'public' : 'hidden' );
 	};
 

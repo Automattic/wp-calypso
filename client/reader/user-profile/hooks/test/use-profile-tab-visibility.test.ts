@@ -44,16 +44,36 @@ describe( 'useProfileTabVisibility', () => {
 		return scope.reply( 200, response );
 	}
 
-	test( 'returns all tabs visible for the profile owner without fetching', () => {
+	function nockPreferences( prefs: Record< string, unknown > ) {
+		return nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: prefs } );
+	}
+
+	test( "reflects the owner's own visibility preferences (not the public endpoint)", async () => {
 		useSelector.mockReturnValue( { username: 'me' } );
+		nockPreferences( {
+			'reader-profile-posts-visibility': 'public',
+			'reader-profile-sites-visibility': 'hidden',
+		} );
 
 		const { result } = renderHook( () => useProfileTabVisibility( 'me' ), { wrapper } );
 
 		expect( result.current.isOwnProfile ).toBe( true );
+		await waitFor( () => expect( result.current.showSites ).toBe( false ) );
+		expect( result.current.showPosts ).toBe( true );
+	} );
+
+	test( 'defaults the owner to all tabs visible while preferences load / when unset', () => {
+		useSelector.mockReturnValue( { username: 'me' } );
+		nockPreferences( {} );
+
+		const { result } = renderHook( () => useProfileTabVisibility( 'me' ), { wrapper } );
+
 		expect( result.current.showPosts ).toBe( true );
 		expect( result.current.showSites ).toBe( true );
-		expect( result.current.isLoading ).toBe( false );
-		expect( nock.pendingMocks() ).toHaveLength( 0 );
+		// The owner never hits the public profile-settings endpoint.
+		expect( nock.pendingMocks().some( ( m ) => m.includes( 'profile-settings' ) ) ).toBe( false );
 	} );
 
 	test( 'resolves public visibility from the settings endpoint', async () => {

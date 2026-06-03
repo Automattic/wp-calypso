@@ -33,18 +33,28 @@ export default function useSetProfileTabVisibility() {
 	const setVisibility = ( tab: ProfileTab, next: ProfileTabVisibility ) => {
 		const key = PREFERENCE_KEY[ tab ];
 		const mutation = tab === 'posts' ? postsMutation : sitesMutation;
+
+		// Patch the active (Calypso) client up front so the profile nav tabs and top-sites strip
+		// reflect the toggle immediately. `userPreferenceOptimisticMutation` only patches the
+		// `@automattic/api-queries` singleton, which this surface doesn't read from. Roll back on
+		// error.
+		const previous = queryClient.getQueryData< UserPreferences >(
+			rawUserPreferencesQuery().queryKey
+		);
+		queryClient.setQueryData< UserPreferences >(
+			rawUserPreferencesQuery().queryKey,
+			( oldData ) => ( { ...oldData, [ key ]: next } )
+		);
+
 		mutation.mutate( next, {
 			onSuccess() {
-				queryClient.setQueryData< UserPreferences >(
-					rawUserPreferencesQuery().queryKey,
-					( oldData ) => ( { ...oldData, [ key ]: next } )
-				);
 				recordReaderTracksEvent( 'calypso_reader_profile_visibility_toggled', {
 					tab,
 					visibility: next,
 				} );
 			},
 			onError() {
+				queryClient.setQueryData( rawUserPreferencesQuery().queryKey, previous );
 				dispatch(
 					errorNotice( translate( 'Failed to save your profile visibility settings.' ), {
 						duration: 4000,

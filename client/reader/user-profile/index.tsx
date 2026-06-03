@@ -52,9 +52,16 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 	useEffect( () => {
 		if ( user && ! isVisibilityLoading && isHiddenView ) {
-			page.replace( getUserProfileUrl( user.user_login ) );
+			// Redirect to the first visible tab. Lists is always available, so falling through to it
+			// avoids redirecting back to a hidden Posts/Sites view.
+			const profileUrl = getUserProfileUrl( user.user_login );
+			let fallbackPath = profileUrl; // Posts is the default view.
+			if ( ! showPosts ) {
+				fallbackPath = showSites ? `${ profileUrl }/sites` : `${ profileUrl }/lists`;
+			}
+			page.replace( fallbackPath );
 		}
-	}, [ user, isVisibilityLoading, isHiddenView ] );
+	}, [ user, isVisibilityLoading, isHiddenView, showPosts, showSites ] );
 
 	if ( isLoading ) {
 		return (
