@@ -4,9 +4,10 @@ import styles from './style.module.scss';
 
 type Props = {
 	currentStep: 'domains' | 'plans' | 'checkout';
+	onStepSelect?: ( step: 'domains' | 'plans' ) => void;
 };
 
-export function OnboardingProgress( { currentStep }: Props ) {
+export function OnboardingProgress( { currentStep, onStepSelect }: Props ) {
 	const { __ } = useI18n();
 
 	const domainsStepStatus = currentStep !== 'domains' ? ( 'completed' as const ) : undefined;
@@ -16,7 +17,11 @@ export function OnboardingProgress( { currentStep }: Props ) {
 		<UIStepper.Root
 			orientation="horizontal"
 			value={ currentStep }
-			onValueChange={ () => {} } // display-only: the flow drives navigation, not the stepper
+			onValueChange={ ( value ) => {
+				if ( value === 'domains' || value === 'plans' ) {
+					onStepSelect?.( value );
+				}
+			} }
 			aria-label={ __( 'Purchase steps' ) }
 			indicatorVariant="number"
 			linear
