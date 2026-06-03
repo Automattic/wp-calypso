@@ -1,14 +1,9 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import {
-	hasDomainRegistration,
-	hasEcommercePlan,
-	hasPlan,
-} from 'calypso/lib/cart-values/cart-items';
+import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -17,7 +12,6 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
@@ -202,22 +196,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
-			}
-
-			// When the cart includes both a plan and a domain registration, the user is
-			// typically redirected back to their site home (via `redirect_to`) instead of
-			// the thank-you page. Surface a success toast so the purchase is acknowledged
-			// wherever they land. `isPersistent: true` keeps the notice through the
-			// multiple route changes between here and the destination; `duration` makes
-			// it auto-dismiss.
-			if ( hasPlan( responseCart ) && hasDomainRegistration( responseCart ) ) {
-				reduxDispatch(
-					successNotice( translate( 'Your plan and domain are ready!' ), {
-						id: 'plan-and-domain-purchase-success',
-						isPersistent: true,
-						duration: 10000,
-					} )
-				);
 			}
 
 			if ( siteId ) {
