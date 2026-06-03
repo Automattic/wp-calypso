@@ -60,7 +60,7 @@ const UserStepComponent: StepType = function UserStep( {
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
-	// Everyone else is bucketed by calypso_account_step_improvement_202605_v2 (round 2):
+	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
 	//   - control                            -> default single-column signup
 	//   - treatment_email_slider_webp        -> open email + slider, email on top
 	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
