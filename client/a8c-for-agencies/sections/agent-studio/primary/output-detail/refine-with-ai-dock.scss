@@ -1,30 +1,67 @@
-@use '@wordpress/base-styles/colors' as colors;
-
 .a4a-refine-with-ai-dock {
+	// Calypso doesn't set border-box globally on this surface, so without
+	// this the header's width + horizontal padding overflows the dock and
+	// pushes the close button off the right edge.
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	position: fixed;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: min(380px, 100vw);
+	inset-block: 0;
+	inset-inline-end: 0;
+	width: min(400px, 100vw);
 	z-index: 100;
-	background: #fff;
-	border-left: 1px solid var(--wp-admin-theme-color, #1e1e1e);
+	background: var(--color-surface);
+	border-inline-start: 1px solid var(--color-border-subtle);
 	box-shadow: -2px 0 12px rgba(0, 0, 0, 0.08);
+}
 
-	&__header {
-		flex-shrink: 0;
-		padding: 12px 16px;
-		border-bottom: 1px solid #eee;
-		background: #fafafa;
-	}
+.a4a-refine-with-ai-dock__header {
+	box-sizing: border-box;
+	flex-shrink: 0;
+	padding-block: 12px;
+	padding-inline: 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
 
-	&__body {
+.a4a-refine-with-ai-dock__header strong {
+	font-size: 0.875rem;
+}
+
+.a4a-refine-with-ai-dock__body {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	// AgentUI's embedded variant lays itself out as a flex column; let it
+	// fill the dock so the input pins to the bottom and the transcript
+	// scrolls in the space above it.
+	.agenttic {
 		flex: 1 1 auto;
 		min-height: 0;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
+
+		// agenttic's embedded message list ships with no horizontal padding
+		// — it expects the embedding surface to supply it (the floating
+		// variant gets it from its own wrapper). Inset the transcript and
+		// input so bubbles and agent replies don't run edge to edge, and
+		// lift the input off the panel's bottom edge.
+		padding-inline: 16px;
+		padding-block-end: 16px;
 	}
+}
+
+.a4a-refine-with-ai-dock__empty {
+	max-width: 280px;
+	margin: auto;
+	padding-block: 24px;
+	padding-inline: 16px;
+}
+
+.a4a-refine-with-ai-dock__empty-icon {
+	fill: var(--color-neutral-40);
+}
+
+.a4a-refine-with-ai-dock__empty-hint {
+	line-height: 1.5;
 }

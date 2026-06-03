@@ -1,6 +1,6 @@
 import { useResizeObserver } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
-import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, chevronLeft, chevronRight, starFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
@@ -27,13 +27,21 @@ interface Props {
 	pages: PdfViewerPage[];
 	/** Hover-revealed chevrons over the cover page. */
 	coverNavigation?: CoverNavigation;
+	/**
+	 * Called when the user clicks a body page's hover-revealed "Edit this
+	 * page" button. The argument is the 1-based page number including the
+	 * cover (i.e. `index + 1`), matching what the refine endpoint expects.
+	 * Omit to hide the per-page edit affordance. The cover (page 1) never
+	 * shows it — the refine endpoint doesn't support editing the cover.
+	 */
+	onEditPage?: ( pageNumber: number ) => void;
 }
 
 // US Letter at 96dpi. The natural height only appears in CSS (see
 // `aspect-ratio: 816 / 1056` on the wrap).
 const PAGE_NATURAL_WIDTH = 816;
 
-export default function PdfViewer( { pages, coverNavigation }: Props ) {
+export default function PdfViewer( { pages, coverNavigation, onEditPage }: Props ) {
 	if ( pages.length === 0 ) {
 		return null;
 	}
@@ -52,6 +60,23 @@ export default function PdfViewer( { pages, coverNavigation }: Props ) {
 							srcDoc={ page.srcDoc }
 							title={ page.role === 'cover' ? __( 'Cover' ) : __( 'Page' ) }
 						/>
+						{ idx > 0 && onEditPage && (
+							<div className="a4a-one-pager-viewer__page-edit">
+								<button
+									type="button"
+									className="a4a-one-pager-viewer__page-edit-button"
+									onClick={ () => onEditPage( idx + 1 ) }
+									aria-label={ sprintf(
+										/* translators: %d is the 1-based page number, cover included. */
+										__( 'Edit page %d with AI' ),
+										idx + 1
+									) }
+								>
+									<Icon icon={ starFilled } size={ 18 } />
+									<span>{ __( 'Edit with AI' ) }</span>
+								</button>
+							</div>
+						) }
 						{ idx === 0 && coverNavigation && coverNavigation.count > 1 && (
 							<div className="a4a-one-pager-viewer__cover-nav">
 								<CircleButton

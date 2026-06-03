@@ -21,12 +21,19 @@
  * persists with the latest body_pages; the conversation about it
  * doesn't. See `~/Projects/wpcom-specs/one-pager-refinement-chat/`.
  */
+import '@automattic/agenttic-ui/index.css';
 import { AgentUI } from '@automattic/agenttic-ui';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
+import { close, comment } from '@wordpress/icons';
 import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
 import useAgentStudioRun from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
@@ -41,6 +48,19 @@ interface Props {
 	collateralPostId: number;
 	/** Total visible pages (cover + body pages). Used in the empty-state hint. */
 	totalPages: number;
+	/**
+	 * Text to seed the input with — set when the user opens the dock from a
+	 * page-scoped "Edit this page" affordance (e.g. "On page 3, make the
+	 * following edits: "). Empty string opens an empty input.
+	 */
+	seedText: string;
+	/**
+	 * Bumped every time a seed is requested. Re-seeding with the same text
+	 * (clicking the same page's Edit button twice) still needs to re-focus
+	 * and reset the input, which an identical `seedText` alone wouldn't
+	 * trigger.
+	 */
+	seedToken: number;
 	onClose: () => void;
 }
 
@@ -82,11 +102,39 @@ const agentMessage = ( text: string ): Message => ( {
 	showIcon: true,
 } );
 
-export default function RefineWithAiDock( { collateralPostId, totalPages, onClose }: Props ) {
+export default function RefineWithAiDock( {
+	collateralPostId,
+	totalPages,
+	seedText,
+	seedToken,
+	onClose,
+}: Props ) {
 	const [ messages, setMessages ] = useState< Message[] >( [] );
 	const [ activeRun, setActiveRun ] = useState< ActiveRun | null >( null );
+	const [ inputValue, setInputValue ] = useState( '' );
+	const rootRef = useRef< HTMLElement >( null );
 	const queryClient = useQueryClient();
 	const refine = useRefineCollateralPage();
+
+	// Seed the input when the dock opens from a page-scoped affordance, and
+	// re-seed when a new request comes in (tracked by `seedToken`). AgentUI's
+	// textarea is internal, so we reach it through the dock root to move the
+	// caret to the end after filling — the user picks up typing right where
+	// the prompt leaves off. `seedText` is intentionally excluded from the
+	// deps: the token is the trigger, so re-clicking the same page re-seeds.
+	useEffect( () => {
+		setInputValue( seedText );
+		const raf = requestAnimationFrame( () => {
+			const textarea = rootRef.current?.querySelector( 'textarea' );
+			if ( textarea ) {
+				textarea.focus();
+				const end = textarea.value.length;
+				textarea.setSelectionRange( end, end );
+			}
+		} );
+		return () => cancelAnimationFrame( raf );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ seedToken ] );
 
 	// Poll the active refine run. `useAgentStudioRun` is the existing
 	// runs poll hook; passing undefined keeps it idle.
@@ -168,6 +216,8 @@ export default function RefineWithAiDock( { collateralPostId, totalPages, onClos
 		if ( '' === trimmed || activeRun ) {
 			return;
 		}
+		// Input is controlled, so clear it ourselves once the message is sent.
+		setInputValue( '' );
 		setMessages( ( current ) => [ ...current, userMessage( trimmed ) ] );
 
 		try {
@@ -215,8 +265,26 @@ export default function RefineWithAiDock( { collateralPostId, totalPages, onClos
 		);
 	}, [ totalPages ] );
 
+	const emptyView = (
+		<VStack className="a4a-refine-with-ai-dock__empty" spacing={ 3 } alignment="center">
+			<Icon className="a4a-refine-with-ai-dock__empty-icon" icon={ comment } size={ 28 } />
+			<Text as="p" weight={ 500 } align="center">
+				{ __( 'Refine your one-pager' ) }
+			</Text>
+			<Text as="p" variant="muted" align="center" className="a4a-refine-with-ai-dock__empty-hint">
+				{ __(
+					'Point me at a page and tell me what to fix, like “page 3 is clipped” or “tighten the intro”. I’ll update that page in place and refresh the preview.'
+				) }
+			</Text>
+		</VStack>
+	);
+
 	return (
-		<aside className="a4a-refine-with-ai-dock" aria-label={ __( 'Refine with AI' ) }>
+		<aside
+			ref={ rootRef }
+			className="a4a-refine-with-ai-dock"
+			aria-label={ __( 'Refine with AI' ) }
+		>
 			<HStack className="a4a-refine-with-ai-dock__header" justify="space-between" spacing={ 2 }>
 				<strong>{ __( 'Refine with AI' ) }</strong>
 				<Button
@@ -233,6 +301,9 @@ export default function RefineWithAiDock( { collateralPostId, totalPages, onClos
 					isProcessing={ isProcessing }
 					thinkingMessage={ thinkingMessage }
 					placeholder={ placeholderHint }
+					emptyView={ emptyView }
+					inputValue={ inputValue }
+					onInputChange={ setInputValue }
 					onSubmit={ handleSubmit }
 				/>
 			</div>
