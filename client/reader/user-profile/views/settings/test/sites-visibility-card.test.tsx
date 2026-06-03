@@ -146,6 +146,16 @@ describe( 'SitesVisibilityCard', () => {
 		toggles.forEach( ( toggle ) => expect( toggle ).toBeDisabled() );
 	} );
 
+	test( 'falls back to the site URL when a site has no title', async () => {
+		const untitled = makeSite( 9, '' );
+		untitled.URL = 'https://untitled.wordpress.com';
+		nockSitesAndPrefs( [ untitled ], [] );
+
+		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
+
+		expect( await screen.findByText( 'untitled.wordpress.com' ) ).toBeVisible();
+	} );
+
 	test( 'does not show the select/deselect all link with fewer than 3 sites', async () => {
 		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
 

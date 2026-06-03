@@ -14,6 +14,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { withoutHttp } from 'calypso/lib/url';
 import useSetHiddenSites from '../../hooks/use-set-hidden-sites';
 
 interface SitesVisibilityCardProps {
@@ -69,11 +70,15 @@ export default function SitesVisibilityCard( {
 						sites.map( ( site ) => {
 							const isHidden = hiddenSites.includes( site.ID );
 							const image = site.icon?.img || site.icon?.ico;
+							// Fall back to the site URL when the site has no title.
+							const siteLabel = site.name?.trim()
+								? decodeEntities( site.name )
+								: withoutHttp( site.URL );
 							return (
 								<HStack key={ site.ID } justify="space-between" spacing={ 3 }>
 									<HStack justify="flex-start" spacing={ 3 } expanded={ false }>
 										<SiteIcon siteId={ site.ID } iconUrl={ image } size={ 24 } />
-										<span>{ decodeEntities( site.name ) }</span>
+										<span>{ siteLabel }</span>
 									</HStack>
 									<HStack justify="flex-end" spacing={ 2 } expanded={ false }>
 										{ pendingSiteId === site.ID && <Spinner /> }
