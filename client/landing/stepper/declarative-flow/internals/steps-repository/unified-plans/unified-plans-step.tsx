@@ -50,6 +50,7 @@ import {
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { OnboardingProgress } from '../../../flows/domain/components/onboarding-progress';
+import { useShowOnboardingProgress } from '../../../flows/domain/components/use-show-onboarding-progress';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
@@ -271,6 +272,7 @@ function UnifiedPlansStep( {
 	);
 	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -689,7 +691,7 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
-		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
 
 		return (
 			<>
@@ -737,7 +739,12 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
-								{ isOnboardingFlow( flowName ) && <OnboardingProgress currentStep="plans" /> }
+								{ showProgress && (
+									<OnboardingProgress
+										currentStep="plans"
+										onStepSelect={ () => wrapperProps.goBack?.() }
+									/>
+								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle
