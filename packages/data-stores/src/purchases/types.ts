@@ -195,6 +195,24 @@ export interface Purchase {
 
 	isJetpackPlanOrProduct: boolean;
 	isAttachedToHoldingSite: boolean;
+
+	/**
+	 * The product ID the subscription will downgrade to at its next renewal,
+	 * or null if no downgrade is scheduled.
+	 */
+	scheduledDowngradeProductId: number | null;
+
+	/**
+	 * The product slug the subscription will downgrade to at its next renewal,
+	 * or null if no downgrade is scheduled.
+	 */
+	scheduledDowngradeProductSlug: string | null;
+
+	/**
+	 * The date when the scheduled downgrade will take effect (the next renewal
+	 * date), or null if no downgrade is scheduled.
+	 */
+	scheduledDowngradeRenewalDate: string | null;
 }
 
 export interface PurchasePriceTier {

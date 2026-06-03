@@ -6,5 +6,5 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*", "**/test/*" ]
 }

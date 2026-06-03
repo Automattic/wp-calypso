@@ -351,6 +351,24 @@ export interface Purchase {
 	 */
 	is_auto_renew_enabled: boolean;
 
+	/**
+	 * The product ID the subscription will downgrade to at its next renewal,
+	 * or null if no downgrade is scheduled.
+	 */
+	scheduled_downgrade_product_id: number | null;
+
+	/**
+	 * The product slug the subscription will downgrade to at its next renewal,
+	 * or null if no downgrade is scheduled.
+	 */
+	scheduled_downgrade_product_slug: string | null;
+
+	/**
+	 * The date when the scheduled downgrade will take effect (the next renewal
+	 * date), or null if no downgrade is scheduled.
+	 */
+	scheduled_downgrade_renewal_date: string | null;
+
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;

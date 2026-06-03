@@ -35,6 +35,10 @@ export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
+export function hasScheduledDowngrade( purchase: Purchase ): boolean {
+	return !! purchase.scheduled_downgrade_product_id;
+}
+
 /**
  * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
  */

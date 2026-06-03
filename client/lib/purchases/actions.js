@@ -92,3 +92,20 @@ export function extendPurchaseWithFreeMonth( purchaseId ) {
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+export async function scheduleDowngradeAsync( purchaseId, targetProductId ) {
+	const data = await wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/schedule-downgrade`,
+		apiVersion: '1.1',
+		body: { target_product_id: targetProductId },
+	} );
+	return { success: data.success, upgrade: data.upgrade };
+}
+
+export async function cancelScheduledDowngradeAsync( purchaseId ) {
+	const data = await wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/cancel-scheduled-downgrade`,
+		apiVersion: '1.1',
+	} );
+	return { success: data.success, upgrade: data.upgrade };
+}

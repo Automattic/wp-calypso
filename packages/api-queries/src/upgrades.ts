@@ -10,6 +10,8 @@ import {
 	fetchUserTransferredPurchases,
 	fetchSitePurchases,
 	fetchCancellationFeatures,
+	scheduleDowngrade,
+	cancelScheduledDowngrade,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -98,6 +100,29 @@ export const cancelAndRefundPurchaseMutation = () =>
 export const extendPurchaseWithFreeMonthMutation = () =>
 	mutationOptions( {
 		mutationFn: ( purchaseId: number ) => extendPurchaseWithFreeMonth( purchaseId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
+		},
+	} );
+
+export const userScheduleDowngradeQuery = () =>
+	mutationOptions( {
+		mutationFn: ( {
+			purchaseId,
+			targetProductId,
+		}: {
+			purchaseId: number;
+			targetProductId: number;
+		} ) => scheduleDowngrade( purchaseId, targetProductId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
+		},
+	} );
+
+export const userCancelScheduledDowngradeQuery = () =>
+	mutationOptions( {
+		mutationFn: ( { purchaseId }: { purchaseId: number } ) =>
+			cancelScheduledDowngrade( purchaseId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
 		},

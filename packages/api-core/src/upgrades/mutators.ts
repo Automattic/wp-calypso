@@ -105,3 +105,31 @@ export async function extendPurchaseWithFreeMonth(
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+export async function scheduleDowngrade(
+	purchaseId: number,
+	targetProductId: number
+): Promise< { success: boolean; upgrade: Purchase } > {
+	const data = await wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/schedule-downgrade`,
+		apiVersion: '1.1',
+		body: { target_product_id: targetProductId },
+	} );
+	return {
+		success: data.success,
+		upgrade: normalizePurchase( data.upgrade ),
+	};
+}
+
+export async function cancelScheduledDowngrade(
+	purchaseId: number
+): Promise< { success: boolean; upgrade: Purchase } > {
+	const data = await wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/cancel-scheduled-downgrade`,
+		apiVersion: '1.1',
+	} );
+	return {
+		success: data.success,
+		upgrade: normalizePurchase( data.upgrade ),
+	};
+}

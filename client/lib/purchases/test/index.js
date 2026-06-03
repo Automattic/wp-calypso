@@ -11,6 +11,7 @@ import {
 	handleRenewNowClick,
 	handleRenewMultiplePurchasesClick,
 	shouldRenderMonthlyRenewalOption,
+	hasScheduledDowngrade,
 } from '../index';
 import data from './data';
 const {
@@ -419,6 +420,24 @@ describe( 'index', () => {
 					} )
 				).toBe( true );
 			} );
+		} );
+	} );
+
+	describe( '#hasScheduledDowngrade', () => {
+		test( 'returns true when scheduledDowngradeProductId is set', () => {
+			expect( hasScheduledDowngrade( { scheduledDowngradeProductId: 1003 } ) ).toBe( true );
+		} );
+
+		test( 'returns false when scheduledDowngradeProductId is null', () => {
+			expect( hasScheduledDowngrade( { scheduledDowngradeProductId: null } ) ).toBe( false );
+		} );
+
+		test( 'returns false when scheduledDowngradeProductId is 0', () => {
+			expect( hasScheduledDowngrade( { scheduledDowngradeProductId: 0 } ) ).toBe( false );
+		} );
+
+		test( 'returns false when scheduledDowngradeProductId is undefined', () => {
+			expect( hasScheduledDowngrade( {} ) ).toBe( false );
 		} );
 	} );
 } );

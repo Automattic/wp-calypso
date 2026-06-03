@@ -118,6 +118,9 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
+		scheduledDowngradeProductId: purchase.scheduled_downgrade_product_id ?? null,
+		scheduledDowngradeProductSlug: purchase.scheduled_downgrade_product_slug ?? null,
+		scheduledDowngradeRenewalDate: purchase.scheduled_downgrade_renewal_date ?? null,
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {
