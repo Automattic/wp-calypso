@@ -213,7 +213,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						} ) }
 					</div>
 				) }
-				{ ( current || savings <= 0 ) && visibleGridPlans.length > 1 && (
+				{ ( ( ! current && savings <= 0 ) || ( current && visibleGridPlans.length > 1 ) ) && (
 					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
 				) }
 				<div
