@@ -234,27 +234,13 @@ export class DomainSearchComponent {
 		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
 		await addToCartButton.waitFor();
 
-		const cartResponses: CartResponseDiagnostic[] = [];
-		const pendingCartResponseSummaries: Promise< void >[] = [];
+		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
 		const trackCartResponse = ( response: Response ) => {
 			if ( ! isShoppingCartResponse( response ) ) {
 				return;
 			}
 
-			const summary = summarizeCartResponse( response )
-				.then( ( diagnostic ) => {
-					cartResponses.push( diagnostic );
-				} )
-				.catch( ( error ) => {
-					cartResponses.push( {
-						method: response.request().method(),
-						status: response.status(),
-						ok: response.ok(),
-						url: response.url(),
-						responseError: formatError( error ),
-					} );
-				} );
-			pendingCartResponseSummaries.push( summary );
+			cartResponseSummaries.push( summarizeCartResponse( response ) );
 		};
 
 		this.page.on( 'response', trackCartResponse );
@@ -283,8 +269,7 @@ export class DomainSearchComponent {
 								row,
 								addToCartButton,
 								selectedDomain,
-								cartResponses,
-								pendingCartResponseSummaries,
+								cartResponseSummaries,
 								originalError: error,
 							} )
 						);
@@ -310,8 +295,7 @@ export class DomainSearchComponent {
 	 * @param {Locator} params.row Selected domain suggestion row.
 	 * @param {Locator} params.addToCartButton Add to cart button in the selected row.
 	 * @param {string} params.selectedDomain Domain name being selected.
-	 * @param {CartResponseDiagnostic[]} params.cartResponses Observed shopping cart responses.
-	 * @param {Promise<void>[]} params.pendingCartResponseSummaries Pending response summaries.
+	 * @param {Promise<CartResponseDiagnostic>[]} params.cartResponseSummaries Observed shopping cart responses.
 	 * @param {unknown} params.originalError Original Playwright error.
 	 * @returns {Promise<string>} Error message with selected domain, button state, and cart responses.
 	 */
@@ -319,18 +303,18 @@ export class DomainSearchComponent {
 		row,
 		addToCartButton,
 		selectedDomain,
-		cartResponses,
-		pendingCartResponseSummaries,
+		cartResponseSummaries,
 		originalError,
 	}: {
 		row: Locator;
 		addToCartButton: Locator;
 		selectedDomain: string;
-		cartResponses: CartResponseDiagnostic[];
-		pendingCartResponseSummaries: Promise< void >[];
+		cartResponseSummaries: Promise< CartResponseDiagnostic >[];
 		originalError: unknown;
 	} ): Promise< string > {
-		await Promise.allSettled( pendingCartResponseSummaries );
+		const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map( ( result ) =>
+			result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
+		);
 
 		const allAddToCartButtons = await this.getContainer()
 			.getByRole( 'button', { name: 'Add to cart' } )
