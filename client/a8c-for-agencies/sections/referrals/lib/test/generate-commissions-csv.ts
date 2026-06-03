@@ -44,6 +44,11 @@ describe( 'generateCommissionsCsv', () => {
 		expect( csv ).not.toContain( "'Pro Plan" );
 	} );
 
+	it( 'does not prefix a lone trigger character used as a placeholder', () => {
+		const csv = generateCommissionsCsv( [], [], payoutWithProductName( '-' ) );
+		expect( csv ).not.toContain( "'-" );
+	} );
+
 	it( 'still quotes and escapes fields containing commas and quotes', () => {
 		const csv = generateCommissionsCsv( [], [], payoutWithProductName( 'Plan "A", annual' ) );
 		expect( csv ).toContain( '"Plan ""A"", annual"' );

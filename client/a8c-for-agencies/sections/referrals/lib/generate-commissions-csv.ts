@@ -30,7 +30,9 @@ const FORMULA_TRIGGERS = [ '=', '+', '-', '@', '\t', '\r' ];
  */
 function csvEscape( value: unknown ): string {
 	let str = value == null ? '' : String( value );
-	if ( FORMULA_TRIGGERS.some( ( char ) => str.startsWith( char ) ) ) {
+	// A lone trigger character (e.g. the '-' placeholder used for missing values) is not a
+	// formula, so only neutralize when there is content after the trigger.
+	if ( str.length > 1 && FORMULA_TRIGGERS.some( ( char ) => str.startsWith( char ) ) ) {
 		str = `'${ str }`;
 	}
 	const needsQuotes = /[",\n]/.test( str );
