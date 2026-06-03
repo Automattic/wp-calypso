@@ -6,7 +6,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
 	PURCHASE_NOTICE_QUERY_KEY,
-} from 'calypso/my-sites/checkout/checkout-thank-you/pending';
+} from 'calypso/my-sites/checkout/checkout-thank-you/purchase-notice-constants';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import HomeContent from './components/home-content';

@@ -26,6 +26,10 @@ import getOrderTransactionError from 'calypso/state/selectors/get-order-transact
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import {
+	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
+	appendNoticeQueryParam,
+} from '../purchase-notice-constants';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
 	OrderTransaction,
@@ -34,19 +38,6 @@ import type {
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import './style.scss';
-
-/**
- * Query param key + value that mark a redirect URL as needing a post-purchase
- * success toast. Read by `client/my-sites/customer-home/main.tsx` (and possibly
- * other destinations) on mount, which dispatches the toast and strips the param.
- */
-export const PURCHASE_NOTICE_QUERY_KEY = 'notice';
-export const PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE = 'plan-and-domain';
-
-function appendNoticeQueryParam( url: string, value: string ): string {
-	const separator = url.includes( '?' ) ? '&' : '?';
-	return `${ url }${ separator }${ PURCHASE_NOTICE_QUERY_KEY }=${ value }`;
-}
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
