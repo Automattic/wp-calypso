@@ -14,8 +14,8 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useExperiment } from 'calypso/lib/explat';
 import { useShowOnboardingProgress } from '../use-show-onboarding-progress';
 
-const mockViewport = useViewportMatch as jest.Mock;
-const mockExperiment = useExperiment as jest.Mock;
+const mockViewport = useViewportMatch as unknown as jest.Mock;
+const mockExperiment = useExperiment as unknown as jest.Mock;
 
 describe( 'useShowOnboardingProgress', () => {
 	beforeEach( () => {
