@@ -44,7 +44,7 @@
 		"typecheck": "tsc --build --dry"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.58",
+		"@automattic/agenttic-client": "^0.1.65",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",

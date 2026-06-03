@@ -51,8 +51,8 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-client": "^0.1.58",
-		"@automattic/agenttic-ui": "^0.1.58",
+		"@automattic/agenttic-client": "^0.1.65",
+		"@automattic/agenttic-ui": "^0.1.65",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",

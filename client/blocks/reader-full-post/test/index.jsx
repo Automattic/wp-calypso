@@ -48,7 +48,6 @@ const fullPostState = {
 	ui: { appBanner: {}, section: {}, selectedSiteId: null },
 	reader: {
 		feeds: { items: {} },
-		follows: { items: {} },
 		sites: { items: {} },
 	},
 };
@@ -81,20 +80,13 @@ describe( 'mapStateToFullPostProps', () => {
 		expect( props.referralPost ).toBe( referralPost );
 	} );
 
-	it( 'adds follow site icon to feed props without mutating Redux state', () => {
+	it( 'passes feed props without mutating Redux state', () => {
 		const feed = {
 			feed_ID: 200,
 			name: 'External feed',
 		};
-		const state = {
-			...fullPostState,
-			reader: {
-				...fullPostState.reader,
-				follows: { items: { follow: { feed_ID: 200, site_icon: 'https://example.com/icon.png' } } },
-			},
-		};
 
-		const props = mapStateToFullPostProps( state, {
+		const props = mapStateToFullPostProps( fullPostState, {
 			feedId: 200,
 			postId: 1,
 			post: { ID: 1, site_ID: 2, is_external: true },
@@ -104,9 +96,8 @@ describe( 'mapStateToFullPostProps', () => {
 		expect( props.feed ).toEqual( {
 			feed_ID: 200,
 			name: 'External feed',
-			site_icon: 'https://example.com/icon.png',
 		} );
-		expect( props.feed ).not.toBe( feed );
+		expect( props.feed ).toBe( feed );
 		expect( feed ).toEqual( {
 			feed_ID: 200,
 			name: 'External feed',

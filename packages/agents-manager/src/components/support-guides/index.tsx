@@ -92,6 +92,8 @@ interface SupportGuidesProps {
 	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
+	/** Called when the chat is expanded (floating mode). */
+	onExpand: () => void;
 }
 
 export default function SupportGuides( {
@@ -100,6 +102,7 @@ export default function SupportGuides( {
 	isDocked,
 	onAbort,
 	onClose,
+	onExpand,
 }: SupportGuidesProps ) {
 	const { state } = useLocation();
 	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
@@ -121,8 +124,9 @@ export default function SupportGuides( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
 			onClose={ onClose }
+			onExpand={ onExpand }
 			onStop={ onAbort }
 			expandOnHover={ false }
 		>

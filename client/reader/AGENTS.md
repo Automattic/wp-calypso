@@ -29,6 +29,13 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
+Site subscriptions are fully on React Query:
+
+- Endpoint contracts and adapters live in `packages/api-core/src/read-follows/`.
+- Query keys, selectors, mutation factories, and cache patch helpers live in `packages/api-queries/src/read-follows.ts`.
+- Calypso consumers should use `calypso/reader/data/site-subscriptions` for hooks such as `useSiteSubscriptions()`, follow/unfollow mutations, delivery-setting mutations, site-subscription selectors, and organization feed info.
+- Do not reintroduce `state.reader.follows`, `calypso/state/reader/follows`, `SyncReaderFollows`, or `/read/following/mine*` data-layer handlers. For cross-feature refreshes, invalidate `getSiteSubscriptionsQueryKey()` on the active `QueryClient`.
+
 For Reader post data specifically, see [`client/reader/data/post/README.md`](./data/post/README.md).
 The short version: use `usePost()` for request-capable post reads, and use
 `useCachedPost()` / `useCachedPosts()` only when a cache-only read is

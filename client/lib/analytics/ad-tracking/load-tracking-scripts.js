@@ -183,6 +183,11 @@ function initLoadedTrackingScripts() {
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
 		initTikTok();
 	}
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		window.oaiq( 'init', {
+			pixelId: TRACKING_IDS.openAIPixelId,
+		} );
+	}
 	if ( mayWeTrackByTracker( 'quora' ) ) {
 		// We've initialized the pixel in setupQuoraGlobal, it's safe to track the page view now.
 		window.qp( 'track', 'ViewContent' );

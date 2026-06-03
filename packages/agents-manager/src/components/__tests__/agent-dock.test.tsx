@@ -2,16 +2,22 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import type { AgentsManagerContextType } from '../../contexts';
 
 const mockAbortCurrentRequest = jest.fn();
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
-let mockShouldUseUnifiedAgent = false;
 let mockContext: Partial< AgentsManagerContextType > = {};
+let mockAgentsManagerState: {
+	isOpen?: boolean;
+	isDocked?: boolean;
+	isMinimized?: boolean;
+} = { isOpen: true, isDocked: false };
+let mockHasAdminBar = false;
+let mockShouldUseUnifiedAgent = false;
 
 type AgentsManagerTestGlobal = typeof globalThis & {
 	agentsManagerData?: {
@@ -36,24 +42,25 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
+		setIsMinimized: jest.fn(),
 	} ),
-	useSelect: () => ( {
-		isOpen: true,
-		isDocked: false,
-	} ),
+	useSelect: () => mockAgentsManagerState,
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
+	columns: 'columns',
 	comment: 'comment',
 	drawerRight: 'drawerRight',
-	help: 'help',
+	lineSolid: 'lineSolid',
 	login: 'login',
-	lifesaver: 'lifesaver',
 } ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
 } ) );
-jest.mock( '../../hooks/use-admin-bar-integration', () => () => {} );
+jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
+	__esModule: true,
+	default: () => mockHasAdminBar,
+} ) );
 jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) => {
 	mockUseAgentLayoutManager( options );
 	return {
@@ -81,12 +88,14 @@ jest.mock( '../orchestrator-chat', () => ( {
 	__esModule: true,
 	default: ( {
 		chatHeaderOptions,
+		isOpen,
 		onExpand,
 	}: {
 		chatHeaderOptions: { title: string }[];
+		isOpen: boolean;
 		onExpand: () => void;
 	} ) => (
-		<div data-testid="orchestrator-chat">
+		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
 			{ chatHeaderOptions.map( ( option ) => option.title ).join( '|' ) }
 			<button onClick={ onExpand }>Expand chat</button>
 		</div>
@@ -94,11 +103,21 @@ jest.mock( '../orchestrator-chat', () => ( {
 } ) );
 jest.mock( '../zendesk-chat', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="zendesk-chat">Zendesk chat</div>,
+	default: ( { onExpand }: { onExpand: () => void } ) => (
+		<div data-testid="zendesk-chat">
+			Zendesk chat
+			<button onClick={ onExpand }>Expand Zendesk</button>
+		</div>
+	),
 } ) );
 jest.mock( '../agent-history', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="agent-history">History</div>,
+	default: ( { onExpand }: { onExpand: () => void } ) => (
+		<div data-testid="agent-history">
+			History
+			<button onClick={ onExpand }>Expand history</button>
+		</div>
+	),
 } ) );
 jest.mock( '../support-guide', () => ( {
 	__esModule: true,
@@ -106,15 +125,31 @@ jest.mock( '../support-guide', () => ( {
 } ) );
 jest.mock( '../support-guides', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="support-guides">Support guides</div>,
+	default: ( { onExpand }: { onExpand: () => void } ) => (
+		<div data-testid="support-guides">
+			Support guides
+			<button onClick={ onExpand }>Expand guides</button>
+		</div>
+	),
 } ) );
 
 import AgentDock from '../agent-dock';
+
+function LocationProbe() {
+	const { pathname, state } = useLocation();
+	const sessionId = ( state as { sessionId?: string } | null )?.sessionId ?? '';
+	return (
+		<div data-testid="location" data-session-id={ sessionId }>
+			{ pathname }
+		</div>
+	);
+}
 
 function renderAgentDock( initialEntry = '/chat' ) {
 	return render(
 		<MemoryRouter initialEntries={ [ initialEntry ] }>
 			<AgentDock />
+			<LocationProbe />
 		</MemoryRouter>
 	);
 }
@@ -128,16 +163,31 @@ function installJetpackAiSidebarPreviewData( features: Record< string, boolean >
 	};
 }
 
+// A regular (non-reader) agent running in wp-admin.
+function useWpAdminAgent() {
+	mockContext = {
+		siteKey: 'site-1',
+		sectionName: 'wp-admin',
+		agentConfig: {
+			agentId: 'wp-orchestrator',
+		},
+		getActiveSessionId: () => 'session-123',
+	} as Partial< AgentsManagerContextType >;
+}
+
 describe( 'AgentDock', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockHasAdminBar = false;
 		mockShouldUseUnifiedAgent = false;
+		mockAgentsManagerState = { isOpen: true, isDocked: false };
 		mockContext = {
 			siteKey: 'site-1',
 			sectionName: 'reader-chat',
 			agentConfig: {
 				agentId: 'reader-chat',
 			},
+			getActiveSessionId: () => 'session-123',
 		} as Partial< AgentsManagerContextType >;
 	} );
 
@@ -145,66 +195,108 @@ describe( 'AgentDock', () => {
 		delete ( globalThis as AgentsManagerTestGlobal ).agentsManagerData;
 	} );
 
-	it( 'does not expose Zendesk chat for Reader Chat when Unified Chat is enabled', async () => {
-		mockShouldUseUnifiedAgent = true;
+	it( 'hides the chat when closed if the WP admin bar trigger is present', () => {
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
 
 		renderAgentDock();
 
-		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).toContain( 'New chat' );
-		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).not.toContain(
-			'New Zendesk chat'
-		);
-
-		renderAgentDock( '/zendesk' );
-
-		await waitFor( () => expect( screen.queryByTestId( 'zendesk-chat' ) ).toBeNull() );
+		expect( screen.queryByTestId( 'orchestrator-chat' ) ).toBeNull();
 	} );
 
-	it( 'keeps Zendesk chat available for regular agents when Unified Chat is enabled', () => {
-		mockShouldUseUnifiedAgent = true;
-		mockContext = {
-			siteKey: 'site-1',
-			sectionName: 'wp-admin',
-			agentConfig: {
-				agentId: 'wp-orchestrator',
-			},
-		} as Partial< AgentsManagerContextType >;
+	it( 'shows the chat when open with the WP admin bar trigger present', () => {
+		// `beforeEach` already sets the open state.
+		useWpAdminAgent();
+		mockHasAdminBar = true;
 
 		renderAgentDock();
 
-		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).toContain( 'New Zendesk chat' );
+		expect( screen.getByTestId( 'orchestrator-chat' ) ).toBeTruthy();
 	} );
 
-	it( 'hides support guides when Jetpack AI Sidebar Preview disables them', async () => {
-		installJetpackAiSidebarPreviewData( { supportGuides: false } );
-		mockContext = {
-			siteKey: 'site-1',
-			sectionName: 'wp-admin',
-			agentConfig: {
-				agentId: 'wp-orchestrator',
-			},
-		} as Partial< AgentsManagerContextType >;
+	it( 'keeps the chat mounted when closed without the WP admin bar trigger', () => {
+		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: false, isDocked: false };
 
 		renderAgentDock();
 
-		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).not.toContain(
-			'Support guides'
-		);
+		expect( screen.getByTestId( 'orchestrator-chat' ) ).toBeTruthy();
+	} );
+
+	it( 'shows the minimized bar (chat not expanded) when minimized with the WP admin bar trigger', () => {
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		renderAgentDock();
+
+		expect( screen.getByTestId( 'orchestrator-chat' ).dataset.chatOpen ).toBe( 'false' );
+	} );
+
+	it( 'ignores the minimized state without the WP admin bar trigger', () => {
+		useWpAdminAgent();
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		renderAgentDock();
+
+		expect( screen.getByTestId( 'orchestrator-chat' ).dataset.chatOpen ).toBe( 'true' );
+	} );
+
+	it( 'resumes the active session when expanding from the minimized state', () => {
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		renderAgentDock( '/history' );
+		fireEvent.click( screen.getByText( 'Expand history' ) );
+
+		const location = screen.getByTestId( 'location' );
+		expect( location.textContent ).toBe( '/chat' );
+		expect( location.dataset.sessionId ).toBe( 'session-123' );
+	} );
+
+	it( 'keeps the current route when opening the docked sidebar', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/history' );
+		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		act( () => onOpenSidebar() );
+
+		// Opening the docked sidebar must not override a route chosen from the
+		// WP admin bar (e.g. Chat history / Support guides).
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
+	} );
+
+	it( 'resumes the active session when expanding from the support guides view', () => {
+		installJetpackAiSidebarPreviewData( { supportGuides: true } );
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
 		renderAgentDock( '/support-guides' );
+		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		await waitFor( () => expect( screen.queryByTestId( 'support-guides' ) ).toBeNull() );
+		const location = screen.getByTestId( 'location' );
+		expect( location.textContent ).toBe( '/chat' );
+		expect( location.dataset.sessionId ).toBe( 'session-123' );
+	} );
+
+	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
+		useWpAdminAgent();
+		mockShouldUseUnifiedAgent = true;
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		renderAgentDock( '/zendesk' );
+		fireEvent.click( screen.getByText( 'Expand Zendesk' ) );
+
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
 	} );
 
 	it( 'hides history route when Jetpack AI Sidebar Preview disables chat history', async () => {
 		installJetpackAiSidebarPreviewData( { chatHistory: false } );
-		mockContext = {
-			siteKey: 'site-1',
-			sectionName: 'wp-admin',
-			agentConfig: {
-				agentId: 'wp-orchestrator',
-			},
-		} as Partial< AgentsManagerContextType >;
+		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
 
@@ -213,19 +305,7 @@ describe( 'AgentDock', () => {
 
 	it( 'treats missing Jetpack AI Sidebar Preview features as disabled', async () => {
 		installJetpackAiSidebarPreviewData( {} );
-		mockContext = {
-			siteKey: 'site-1',
-			sectionName: 'wp-admin',
-			agentConfig: {
-				agentId: 'wp-orchestrator',
-			},
-		} as Partial< AgentsManagerContextType >;
-
-		renderAgentDock();
-
-		expect( screen.getByTestId( 'orchestrator-chat' ).textContent ).not.toContain(
-			'Support guides'
-		);
+		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
 
@@ -249,13 +329,7 @@ describe( 'AgentDock', () => {
 	} );
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {
-		mockContext = {
-			siteKey: 'site-1',
-			sectionName: 'wp-admin',
-			agentConfig: {
-				agentId: 'wp-orchestrator',
-			},
-		} as Partial< AgentsManagerContextType >;
+		useWpAdminAgent();
 
 		renderAgentDock();
 

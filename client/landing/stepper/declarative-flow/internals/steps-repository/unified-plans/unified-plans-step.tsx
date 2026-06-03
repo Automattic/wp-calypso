@@ -47,7 +47,6 @@ import {
 	saveSignupStep as saveSignupStepAction,
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
@@ -278,8 +277,6 @@ function UnifiedPlansStep( {
 
 		return dashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
-
-	useSiteGlobalStylesOnPersonal();
 
 	const customerType =
 		customerTypeFromProps ??

@@ -6,20 +6,27 @@ import { ComponentProps } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '..';
 
 jest.mock( 'calypso/reader/data/feed', () => ( {
 	useFeedQuery: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	getFollowingSource: jest.fn(),
+	useSiteSubscriptionForFeed: jest.fn(),
+	useFollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),
+	useIsSubscribed: jest.fn( () => false ),
+	useUnfollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),
+} ) );
+
 const defaultStoreState = {
-	reader: {
-		follows: { items: {} },
-	},
 	currentUser: { id: 123 },
 };
 
 const mockUseFeedQuery = useFeedQuery as jest.Mock;
+const mockUseFollowForFeed = useSiteSubscriptionForFeed as jest.Mock;
 
 const renderComponent = (
 	props: ComponentProps< typeof ReaderSubscriptionListItem > = {},
@@ -50,6 +57,7 @@ const getPlaceholder = () =>
 describe( 'ReaderSubscriptionListItem', () => {
 	beforeEach( () => {
 		mockUseFeedQuery.mockReturnValue( { data: undefined, isError: false } );
+		mockUseFollowForFeed.mockReturnValue( undefined );
 	} );
 
 	it( 'should render placeholder when no site, feed, or potential feed URL exists', () => {

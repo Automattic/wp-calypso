@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 type AgentsManagerTestGlobal = typeof globalThis & {
@@ -13,6 +13,9 @@ type AgentsManagerTestGlobal = typeof globalThis & {
 		};
 	};
 };
+
+let mockIsDocked = false;
+const mockSetIsMinimized = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -39,7 +42,17 @@ jest.mock( '@wordpress/icons', () => ( {
 	chevronLeft: 'chevronLeft',
 	close: 'close',
 	Icon: () => null,
+	lineSolid: 'lineSolid',
 	moreVertical: 'moreVertical',
+} ) );
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
+	useSelect: ( mapSelect: ( select: () => unknown ) => unknown ) =>
+		mapSelect( () => ( { getIsDocked: () => mockIsDocked } ) ),
+} ) );
+jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
+	ADMIN_BAR_BUTTON_ID: 'wp-admin-bar-agents-manager',
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
@@ -54,6 +67,12 @@ function installJetpackAiSidebarPreviewData( features: Record< string, boolean >
 	};
 }
 
+function installAdminBarTrigger() {
+	const el = document.createElement( 'div' );
+	el.id = 'wp-admin-bar-agents-manager';
+	document.body.appendChild( el );
+}
+
 function renderChatHeader() {
 	return render(
 		<MemoryRouter>
@@ -65,6 +84,9 @@ function renderChatHeader() {
 describe( 'ChatHeader', () => {
 	afterEach( () => {
 		delete ( globalThis as AgentsManagerTestGlobal ).agentsManagerData;
+		mockIsDocked = false;
+		mockSetIsMinimized.mockClear();
+		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
 	} );
 
 	it( 'shows the history button by default', () => {
@@ -87,5 +109,29 @@ describe( 'ChatHeader', () => {
 		renderChatHeader();
 
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
+	} );
+
+	it( 'minimizes the chat when the Minimize button is clicked', () => {
+		installAdminBarTrigger();
+
+		renderChatHeader();
+		fireEvent.click( screen.getByText( 'Minimize' ) );
+
+		expect( mockSetIsMinimized ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'hides the Minimize button without the WP admin bar trigger', () => {
+		renderChatHeader();
+
+		expect( screen.queryByText( 'Minimize' ) ).toBeNull();
+	} );
+
+	it( 'hides the Minimize button when docked', () => {
+		installAdminBarTrigger();
+		mockIsDocked = true;
+
+		renderChatHeader();
+
+		expect( screen.queryByText( 'Minimize' ) ).toBeNull();
 	} );
 } );

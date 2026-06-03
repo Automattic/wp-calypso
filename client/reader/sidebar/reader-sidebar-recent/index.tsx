@@ -9,30 +9,15 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
 import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
-
-// Not complete, just useful fields for now
-type Site = {
-	ID: number;
-	URL: string;
-	feed_URL: string;
-	feed_ID: number;
-	last_updated: number;
-	is_owner: boolean;
-	organization_id: number;
-	name: string;
-	unseen_count: number;
-	site_icon: string | null;
-	is_following: boolean;
-};
 
 type Props = {
 	isOpen: boolean;
@@ -45,6 +30,8 @@ type Props = {
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
+type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ], 'name' | 'URL' >;
+
 const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
 
 /**
@@ -52,16 +39,17 @@ const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test
  * named after their free WordPress.com subdomain (with a trailing slash), so
  * prefer the real domain from `URL` in that case.
  */
-export function getReaderSidebarSiteName( site: Pick< Site, 'name' | 'URL' > ): string {
+export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
 	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	const siteName = site.name ?? '';
 	// `name` may be URL-shaped, so normalize before the subdomain check.
-	const normalizedName = formatUrlForDisplay( site.name ) || site.name;
+	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
 
-	if ( ( ! site.name || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
+	if ( ( ! siteName || isFreeWpcomSubdomain( normalizedName ) ) && siteDomain ) {
 		return siteDomain;
 	}
 
-	return site.name;
+	return siteName;
 }
 
 const ReaderSidebarRecent = ( {
@@ -72,7 +60,7 @@ const ReaderSidebarRecent = ( {
 	className,
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
-	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
+	const sites = useSubscribedSites();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -155,12 +143,14 @@ const ReaderSidebarRecent = ( {
 							<MenuItemLink
 								href={ `/reader/recent/${ site.feed_ID }` }
 								className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-								onClick={ () => trackMenuClick( site.feed_ID ) }
+								onClick={ () =>
+									trackMenuClick( site.feed_ID == null ? null : Number( site.feed_ID ) )
+								}
 							>
 								<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 								<span title={ displayName } className="sidebar__menu-item-sitename">
 									<span>{ displayName }</span>
-									{ site.last_updated > 0 && (
+									{ typeof site.last_updated === 'number' && site.last_updated > 0 && (
 										<span className="sidebar__menu-item-last-updated">
 											{ moment( new Date( site.last_updated ) ).fromNow() }
 										</span>
