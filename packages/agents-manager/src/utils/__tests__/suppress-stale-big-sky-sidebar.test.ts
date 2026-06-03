@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import {
+	clearStaleBigSkySidebarSuppression,
 	shouldSuppressStaleBigSkySidebar,
 	suppressStaleBigSkySidebar,
 } from '../suppress-stale-big-sky-sidebar';
@@ -18,6 +19,7 @@ function installAgentsManagerData( data: unknown ) {
 
 describe( 'suppressStaleBigSkySidebar', () => {
 	beforeEach( () => {
+		jest.useRealTimers();
 		document.documentElement.className = '';
 		document.body.className = '';
 		document.head.innerHTML = '';
@@ -34,6 +36,7 @@ describe( 'suppressStaleBigSkySidebar', () => {
 	} );
 
 	afterEach( () => {
+		clearStaleBigSkySidebarSuppression();
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
@@ -65,6 +68,41 @@ describe( 'suppressStaleBigSkySidebar', () => {
 		);
 	} );
 
+	it( 'restores suppressed Big Sky chrome and layout classes on cleanup', () => {
+		document.body.innerHTML = `
+			<div class="block-editor__container big-sky-sidebar-container big-sky-sidebar-container--sidebar-open">
+				<div class="big-sky-sidebar" aria-hidden="false"></div>
+				<button class="big-sky-sidebar__fab"></button>
+			</div>
+		`;
+
+		expect( suppressStaleBigSkySidebar() ).toBe( true );
+
+		clearStaleBigSkySidebarSuppression();
+
+		expect( document.documentElement.classList ).not.toContain(
+			'agents-manager-suppress-stale-big-sky-sidebar'
+		);
+		expect(
+			document.getElementById( 'agents-manager-suppress-stale-big-sky-sidebar-style' )
+		).toBeNull();
+		expect( document.querySelector( '.big-sky-sidebar' ) ).not.toHaveAttribute( 'hidden' );
+		expect( document.querySelector( '.big-sky-sidebar' ) ).toHaveAttribute(
+			'aria-hidden',
+			'false'
+		);
+		expect( document.querySelector( '.big-sky-sidebar__fab' ) ).not.toHaveAttribute( 'hidden' );
+		expect( document.querySelector( '.big-sky-sidebar__fab' ) ).not.toHaveAttribute(
+			'aria-hidden'
+		);
+		expect( document.querySelector( '.block-editor__container' ) ).toHaveClass(
+			'big-sky-sidebar-container'
+		);
+		expect( document.querySelector( '.block-editor__container' ) ).toHaveClass(
+			'big-sky-sidebar-container--sidebar-open'
+		);
+	} );
+
 	it( 'does not suppress outside the post editor', () => {
 		mockSelect.mockReturnValue( { getCurrentPostType: () => 'page' } );
 		document.body.className = 'post-type-page';
@@ -74,6 +112,36 @@ describe( 'suppressStaleBigSkySidebar', () => {
 		expect( document.documentElement.classList ).not.toContain(
 			'agents-manager-suppress-stale-big-sky-sidebar'
 		);
+	} );
+
+	it( 'does not suppress when the Agents Manager section is missing', () => {
+		installAgentsManagerData( {
+			aiEditorialReviewEnabled: true,
+			jetpackAiSidebarPreview: {
+				enabled: true,
+				features: { aiEditorialReview: true },
+			},
+		} );
+
+		expect( shouldSuppressStaleBigSkySidebar() ).toBe( false );
+	} );
+
+	it( 'does not suppress on non-editor post screens when the editor store is unavailable', () => {
+		mockSelect.mockImplementation( () => {
+			throw new Error( 'store unavailable' );
+		} );
+		document.body.className = 'post-type-post edit-php';
+
+		expect( shouldSuppressStaleBigSkySidebar() ).toBe( false );
+	} );
+
+	it( 'suppresses on post editor body classes when the editor store is unavailable', () => {
+		mockSelect.mockImplementation( () => {
+			throw new Error( 'store unavailable' );
+		} );
+		document.body.className = 'post-type-post post-php block-editor-page';
+
+		expect( shouldSuppressStaleBigSkySidebar() ).toBe( true );
 	} );
 
 	it( 'does not suppress when Jetpack AI Sidebar preview is disabled', () => {
