@@ -76,6 +76,7 @@ export type {
 	UseAgentChatConfig,
 	UseAgentChatReturn,
 	UIMessage,
+	UIMessageAction,
 	Suggestion,
 	SuggestionOption,
 	SubmitOptions,

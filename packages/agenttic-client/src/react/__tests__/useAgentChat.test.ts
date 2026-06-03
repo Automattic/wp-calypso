@@ -1,16 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { transformClientMessageToUI } from '../useAgentChat';
+import {
+	filterUiOnlyMessages,
+	transformClientMessageToUI,
+} from '../useAgentChat';
 import type { UIMessage } from '../useAgentChat';
 import type { Message as ClientMessage, Part } from '../../client/types/index';
-
-function filterUiOnlyMessages(
-	uiMessages: UIMessage[],
-	clientMessageIds: Set< string >
-): UIMessage[] {
-	return uiMessages.filter(
-		( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
-	);
-}
 
 describe( 'useAgentChat', () => {
 	describe( 'UI-only message filtering', () => {

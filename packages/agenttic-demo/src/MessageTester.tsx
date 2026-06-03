@@ -1,11 +1,61 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { Message as ClientMessage } from '@automattic/agenttic-client';
 
 interface MessageTesterProps {
 	addMessage: ( message: any ) => void;
+	loadMessages?: ( messages: ClientMessage[] ) => void | Promise< void >;
 	onClear?: () => void;
 }
 
-const PRESETS: { label: string; role: 'user' | 'agent'; text: string }[] = [
+type Preset =
+	| { label: string; role: 'user' | 'agent'; text: string }
+	| { label: string; createMessages: () => ClientMessage[] };
+
+const createRegenerateExampleMessages = (): ClientMessage[] => {
+	const timestamp = Date.now();
+
+	return [
+		{
+			messageId: 'regenerate-demo-user',
+			role: 'user',
+			kind: 'message',
+			parts: [
+				{
+					type: 'text',
+					text: 'Generate five blog post title options about flowers.',
+				},
+			],
+			metadata: { timestamp },
+		},
+		{
+			messageId: 'regenerate-demo-agent',
+			role: 'agent',
+			kind: 'message',
+			parts: [
+				{
+					type: 'text',
+					text: [
+						'Here are some options:',
+						'',
+						'- Petals and Poetry: The Art of Floral Expression',
+						'- Blooming Wonders: Exploring the Magic of Flowers',
+						'- Flowers and Words: The Fun of Floral Art',
+						'- From Seed to Splendor: Understanding Flower Growth',
+						'- Colors of Nature: The Science Behind Flower Hues',
+					].join( '\n' ),
+				},
+			],
+			metadata: { timestamp: timestamp + 1 },
+		},
+	];
+};
+
+const REGENERATE_PRESET: Preset = {
+	label: 'Regenerate',
+	createMessages: createRegenerateExampleMessages,
+};
+
+const PRESETS: Preset[] = [
 	{
 		label: 'Chart',
 		role: 'agent',
@@ -75,14 +125,19 @@ const buttonStyle: React.CSSProperties = {
 	fontFamily: 'monospace',
 	textTransform: 'uppercase',
 	border: 'none',
-	marginInline: '10px'
+	marginInline: '10px',
 };
 
-const MessageTester: React.FC< MessageTesterProps > = ( { addMessage, onClear } ) => {
+const MessageTester: React.FC< MessageTesterProps > = ( {
+	addMessage,
+	loadMessages,
+	onClear,
+} ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ role, setRole ] = useState< 'user' | 'agent' >( 'agent' );
 	const [ text, setText ] = useState( '' );
 	const dropdownRef = useRef< HTMLDivElement >( null );
+	const presets = loadMessages ? [ REGENERATE_PRESET, ...PRESETS ] : PRESETS;
 
 	const injectMessage = useCallback(
 		( messageRole: 'user' | 'agent', messageText: string ) => {
@@ -107,11 +162,19 @@ const MessageTester: React.FC< MessageTesterProps > = ( { addMessage, onClear } 
 	}, [ role, text, injectMessage ] );
 
 	const handlePreset = useCallback(
-		( preset: ( typeof PRESETS )[ 0 ] ) => {
+		( preset: Preset ) => {
+			if ( 'createMessages' in preset ) {
+				if ( loadMessages ) {
+					void loadMessages( preset.createMessages() );
+				}
+				setIsOpen( false );
+				return;
+			}
+
 			injectMessage( preset.role, preset.text );
 			setIsOpen( false );
 		},
-		[ injectMessage ]
+		[ injectMessage, loadMessages ]
 	);
 
 	useEffect( () => {
@@ -178,9 +241,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( { addMessage, onClear } 
 						<select
 							value={ role }
 							onChange={ ( e ) =>
-								setRole(
-									e.target.value as 'user' | 'agent'
-								)
+								setRole( e.target.value as 'user' | 'agent' )
 							}
 							style={ {
 								padding: '4px 8px',
@@ -238,9 +299,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( { addMessage, onClear } 
 							style={ {
 								...buttonStyle,
 								opacity: text.trim() ? 1 : 0.5,
-								cursor: text.trim()
-									? 'pointer'
-									: 'not-allowed',
+								cursor: text.trim() ? 'pointer' : 'not-allowed',
 							} }
 						>
 							Send
@@ -272,7 +331,7 @@ const MessageTester: React.FC< MessageTesterProps > = ( { addMessage, onClear } 
 								flexWrap: 'wrap',
 							} }
 						>
-							{ PRESETS.map( ( preset ) => (
+							{ presets.map( ( preset ) => (
 								<button
 									key={ preset.label }
 									onClick={ () => handlePreset( preset ) }

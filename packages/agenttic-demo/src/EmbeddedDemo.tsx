@@ -13,6 +13,7 @@ import {
 	createMessageRenderer,
 	EmptyView,
 	ImageUploader,
+	RegenerateAltIcon,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 } from '@automattic/agenttic-ui';
@@ -64,6 +65,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		registerSuggestions,
 		clearSuggestions,
 		registerMessageActions,
+		getRegenerateHandler,
 		addMessage,
 		loadMessages,
 		abortCurrentRequest,
@@ -217,6 +219,29 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
 	}, [ registerMessageActions, handleFeedback ] );
+
+	useEffect( () => {
+		registerMessageActions( {
+			id: 'demo-regenerate',
+			actions: ( message: UIMessage ) => {
+				const onRegenerate = getRegenerateHandler( message );
+
+				return onRegenerate
+					? [
+							{
+								id: 'regenerate',
+								label: 'Regenerate',
+								tooltip: 'Regenerate response',
+								icon: <RegenerateAltIcon />,
+								order: 2,
+								onClick: onRegenerate,
+							},
+					  ]
+					: [];
+			},
+		} );
+	}, [ getRegenerateHandler, registerMessageActions ] );
+
 	const suggestionSets = useMemo(
 		() => ( {
 			button: [
@@ -391,6 +416,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 					</button>
 					<MessageTester
 						addMessage={ addMessage }
+						loadMessages={ loadMessages }
 						onClear={ () => loadMessages( [] ) }
 					/>
 					<button

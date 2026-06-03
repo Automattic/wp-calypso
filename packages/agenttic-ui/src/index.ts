@@ -66,6 +66,7 @@ export { ChevronUpIcon } from './components/icons/ChevronUpIcon';
 export { ZoomIcon } from './components/icons/ZoomIcon';
 export { ZoomIconFilled } from './components/icons/ZoomIconFilled';
 export { RegenerateIcon } from './components/icons/RegenerateIcon';
+export { RegenerateAltIcon } from './components/icons/RegenerateAltIcon';
 export { PlusIcon } from './components/icons/PlusIcon';
 export { AltIcon } from './components/icons/AltIcon';
 export { BlurIcon } from './components/icons/BlurIcon';
