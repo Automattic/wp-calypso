@@ -8,10 +8,13 @@ import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
+import useProfileTabVisibility from 'calypso/reader/user-profile/hooks/use-profile-tab-visibility';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserAchievements from 'calypso/reader/user-profile/views/achievements';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
+import UserProfileSettings from 'calypso/reader/user-profile/views/settings';
 import UserSites from 'calypso/reader/user-profile/views/sites';
 import ReaderMain from '../components/reader-main';
 
@@ -27,11 +30,31 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const { isLoading, data: user } = useQuery( userQuery( userLogin, userId ) );
 
+	const {
+		isOwnProfile,
+		showPosts,
+		showSites,
+		isLoading: isVisibilityLoading,
+	} = useProfileTabVisibility( userLogin );
+
+	// A view is hidden if the owner has hidden the tab (for public viewers) or it's the
+	// owner-only Settings view being visited by someone else.
+	const isHiddenView =
+		( view === 'settings' && ! isOwnProfile ) ||
+		( view === 'posts' && ! showPosts ) ||
+		( view === 'sites' && ! showSites );
+
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {
 			page.replace( `/reader/users/${ user.user_login }` );
 		}
 	}, [ path, user ] );
+
+	useEffect( () => {
+		if ( user && ! isVisibilityLoading && isHiddenView ) {
+			page.replace( getUserProfileUrl( user.user_login ) );
+		}
+	}, [ user, isVisibilityLoading, isHiddenView ] );
 
 	if ( isLoading ) {
 		return (
@@ -55,6 +78,15 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	}
 
 	const renderSelectedTabContent = (): React.ReactNode => {
+		// Avoid flashing hidden content before the redirect effect above runs.
+		if ( isVisibilityLoading || isHiddenView ) {
+			return (
+				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
+					<Spinner />
+				</div>
+			);
+		}
+
 		switch ( view ) {
 			case 'posts':
 				return <UserPosts user={ user } />;
@@ -66,6 +98,8 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 				return <UserRecommendedBlogs user={ user } />;
 			case 'achievements':
 				return <UserAchievements user={ user } />;
+			case 'settings':
+				return <UserProfileSettings user={ user } />;
 			default:
 				return null;
 		}

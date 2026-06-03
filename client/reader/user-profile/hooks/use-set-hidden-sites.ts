@@ -1,0 +1,59 @@
+import { rawUserPreferencesQuery, userPreferenceMutation } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import type { UserPreferences } from '@automattic/api-core';
+
+const PREFERENCE_KEY = 'reader-profile-hidden-sites';
+
+/**
+ * Writes the list of site IDs the current user has hidden from their public Reader profile.
+ *
+ * Writes are non-optimistic with a per-site pending indicator (the value is an array, so we avoid
+ * optimistic merge races). On success we mirror the new array into the active Calypso QueryClient
+ * (the mutation factory patches the `@automattic/api-queries` singleton, not this surface's client).
+ */
+export default function useSetHiddenSites( hiddenSites: number[] ) {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const queryClient = useQueryClient();
+	const [ pendingSiteId, setPendingSiteId ] = useState< number | null >( null );
+
+	const { mutate } = useMutation( userPreferenceMutation( PREFERENCE_KEY ) );
+
+	const setSiteHidden = ( siteId: number, hidden: boolean ) => {
+		const nextHiddenSites = hidden
+			? Array.from( new Set( [ ...hiddenSites, siteId ] ) )
+			: hiddenSites.filter( ( id ) => id !== siteId );
+
+		setPendingSiteId( siteId );
+		mutate( nextHiddenSites, {
+			onSuccess() {
+				queryClient.setQueryData< UserPreferences >(
+					rawUserPreferencesQuery().queryKey,
+					( oldData ) => ( { ...oldData, [ PREFERENCE_KEY ]: nextHiddenSites } )
+				);
+				recordReaderTracksEvent( 'calypso_reader_profile_site_visibility_toggled', {
+					site_id: siteId,
+					hidden: hidden ? 1 : 0,
+				} );
+			},
+			onError() {
+				dispatch(
+					errorNotice( translate( 'Failed to update which sites are visible on your profile.' ), {
+						duration: 4000,
+					} )
+				);
+			},
+			onSettled() {
+				setPendingSiteId( null );
+			},
+		} );
+	};
+
+	return { setSiteHidden, pendingSiteId };
+}

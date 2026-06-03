@@ -1,0 +1,83 @@
+import { userSitesQuery, userPreferenceQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	ToggleControl,
+	Notice,
+	Spinner,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { SiteIcon } from 'calypso/blocks/site-icon';
+import { decodeEntities } from 'calypso/lib/formatting';
+import useSetHiddenSites from '../../hooks/use-set-hidden-sites';
+
+interface SitesVisibilityCardProps {
+	userId: number;
+	sitesEnabled: boolean;
+}
+
+export default function SitesVisibilityCard( {
+	userId,
+	sitesEnabled,
+}: SitesVisibilityCardProps ): JSX.Element | null {
+	const translate = useTranslate();
+
+	const { data: sitesData, isLoading } = useQuery( userSitesQuery( userId, { owner: true } ) );
+	const { data: hiddenSites = [] } = useQuery(
+		userPreferenceQuery( 'reader-profile-hidden-sites' )
+	);
+	const { setSiteHidden, pendingSiteId } = useSetHiddenSites( hiddenSites );
+
+	const sites = sitesData?.sites ?? [];
+
+	if ( ! isLoading && sites.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<Card>
+			<CardHeader>
+				<h2 className="user-profile-settings__card-title">{ translate( 'Sites' ) }</h2>
+			</CardHeader>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					{ ! sitesEnabled && (
+						<Notice status="info" isDismissible={ false }>
+							{ translate( 'Turn on the Sites tab to choose which sites are visible.' ) }
+						</Notice>
+					) }
+					{ isLoading ? (
+						<Spinner />
+					) : (
+						sites.map( ( site ) => {
+							const isHidden = hiddenSites.includes( site.ID );
+							const image = site.icon?.img || site.icon?.ico;
+							return (
+								<HStack key={ site.ID } justify="space-between" spacing={ 3 }>
+									<HStack justify="flex-start" spacing={ 3 } expanded={ false }>
+										<SiteIcon siteId={ site.ID } iconUrl={ image } size={ 24 } />
+										<span>{ decodeEntities( site.name ) }</span>
+									</HStack>
+									<HStack justify="flex-end" spacing={ 2 } expanded={ false }>
+										{ pendingSiteId === site.ID && <Spinner /> }
+										<ToggleControl
+											__nextHasNoMarginBottom
+											checked={ ! isHidden }
+											disabled={ ! sitesEnabled || pendingSiteId !== null }
+											onChange={ ( checked ) => setSiteHidden( site.ID, ! checked ) }
+											label={ translate( 'Visible on profile' ) }
+										/>
+									</HStack>
+								</HStack>
+							);
+						} )
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}

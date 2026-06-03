@@ -24,13 +24,17 @@ export default function UserTopSites( {
 		);
 	}
 
-	if ( error?.message || ! data?.sites?.length ) {
+	// Defense in depth: the public endpoint already excludes hidden sites, but never surface a
+	// site flagged as hidden if one slips through.
+	const visibleSites = ( data?.sites ?? [] ).filter( ( site ) => ! site.is_hidden );
+
+	if ( error?.message || ! visibleSites.length ) {
 		return null; // Toast notification appears in case of error.
 	}
 
-	const sitesCount = data.sites.length;
-	const primarySite = data.sites[ 0 ]; // First site is primary site.
-	const top2SubscribedSites = data.sites
+	const sitesCount = visibleSites.length;
+	const primarySite = visibleSites[ 0 ]; // First site is primary site.
+	const top2SubscribedSites = visibleSites
 		.slice( 1 ) // Exclude primary site from the list.
 		.sort( ( a, b ) => b.subscribers_count - a.subscribers_count )
 		.slice( 0, 2 );
