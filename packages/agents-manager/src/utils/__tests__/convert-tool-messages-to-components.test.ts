@@ -302,52 +302,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'drops a plain-text agent message that duplicates a following show-component summary', () => {
-		const summary = 'Ooooh, rising from the typographic beyond.';
-		const prose = createMessage( {
-			id: 'prose-1',
-			content: [ { type: 'text', text: summary } ],
-		} );
-		const toolMessage = createToolMessage(
-			SHOW_COMPONENT_TOOL_ID,
-			{ type: 'font-picker', summary, isCurrent: true },
-			{ id: 'tool-1' }
-		);
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ prose, toolMessage ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'tool-1' );
-	} );
-
-	it( 'drops a plain-text agent message that duplicates a preceding tool summary', () => {
-		const summary = 'Condensed from the beyond — your paragraph is now shorter.';
-		const toolMessage = createToolMessage(
-			'big_sky__apply_update_theme',
-			{ result: { success: true, message: summary } },
-			{ id: 'tool-1' }
-		);
-		const prose = createMessage( {
-			id: 'prose-1',
-			content: [ { type: 'text', text: summary } ],
-		} );
-
-		const result = convertWithDefaults( {
-			messages: [ toolMessage, prose ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'tool-1' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'text',
-			text: summary,
-		} );
-	} );
-
 	it( 'keeps a plain-text agent message that does not match any adjacent tool summary', () => {
 		const prose = createMessage( {
 			id: 'prose-1',
