@@ -35,7 +35,8 @@ function getAgentsManagerData() {
 
 function getCurrentPostType(): string | undefined {
 	try {
-		return select( 'core/editor' )?.getCurrentPostType?.();
+		const postType = select( 'core/editor' )?.getCurrentPostType?.();
+		return typeof postType === 'string' ? postType : undefined;
 	} catch {
 		return undefined;
 	}
@@ -142,6 +143,10 @@ function stripBigSkyLayoutClasses(): void {
 }
 
 export function clearStaleBigSkySidebarSuppression(): void {
+	if ( typeof document === 'undefined' ) {
+		return;
+	}
+
 	document.documentElement.classList.remove( SUPPRESSION_CLASS );
 	document.getElementById( SUPPRESSION_STYLE_ID )?.remove();
 
