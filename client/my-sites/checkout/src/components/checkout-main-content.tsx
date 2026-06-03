@@ -100,6 +100,7 @@ import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
@@ -1025,17 +1026,14 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
-								onStepSelect={ ( step ) => {
-									if ( step === 'domains' && forceCheckoutBackUrlDomains ) {
-										leaveModalProps.clickStepBack( forceCheckoutBackUrlDomains );
-									} else if ( step === 'plans' && forceCheckoutBackUrl ) {
-										leaveModalProps.clickStepBack( forceCheckoutBackUrl );
-									} else {
-										// No valid step URL available: fall back to the standard
-										// close flow.
-										leaveModalProps.clickClose();
-									}
-								} }
+								onStepSelect={ ( step ) =>
+									handleProgressStepSelect( step, {
+										forceCheckoutBackUrlDomains,
+										forceCheckoutBackUrl,
+										clickStepBack: leaveModalProps.clickStepBack,
+										clickClose: leaveModalProps.clickClose,
+									} )
+								}
 							/>
 						) : undefined
 					}
