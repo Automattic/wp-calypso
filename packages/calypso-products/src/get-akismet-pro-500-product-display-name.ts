@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { formatAkismetDisplayName } from './format-akismet-display-name';
 
 // The "500" in this filename / function name is legacy naming retained for
 // backend product-slug stability (ak_pro5h_*). The actual per-quantity allotment
@@ -10,14 +10,8 @@ export function getAkismetPro500ProductDisplayName( productName: string, quantit
 		return productName;
 	}
 
-	const requestsInThousands = ( AKISMET_PRO_REQUESTS_PER_QUANTITY * quantity ) / 1000;
-
-	/* translators: %(productName)s is the product name (e.g. "Akismet Pro"); %(requestsK)d is the monthly request count in thousands, rendered as "NK" (e.g. "8K"). */
-	return translate( '%(productName)s (%(requestsK)dK requests/month)', {
-		args: {
-			productName: productName.replace( /\s*\(.*$/, '' ).trim(),
-			requestsK: requestsInThousands,
-		},
-		textOnly: true,
-	} );
+	return formatAkismetDisplayName(
+		productName,
+		( AKISMET_PRO_REQUESTS_PER_QUANTITY * quantity ) / 1000
+	);
 }
