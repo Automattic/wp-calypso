@@ -13,11 +13,34 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 } ) );
 
 const mockSetSiteHidden = jest.fn();
+const mockSetAllHidden = jest.fn();
 let mockPendingSiteId: number | null = null;
+let mockIsPending = false;
 jest.mock( '../../../hooks/use-set-hidden-sites', () => ( {
 	__esModule: true,
-	default: () => ( { setSiteHidden: mockSetSiteHidden, pendingSiteId: mockPendingSiteId } ),
+	default: () => ( {
+		setSiteHidden: mockSetSiteHidden,
+		setAllHidden: mockSetAllHidden,
+		pendingSiteId: mockPendingSiteId,
+		isPending: mockIsPending,
+	} ),
 } ) );
+
+function makeSite( id: number, name: string, isHidden = false ): UserSitesResponse[ 'sites' ][ 0 ] {
+	return {
+		ID: id,
+		name,
+		description: '',
+		feed_ID: 100 + id,
+		URL: `https://site${ id }.wordpress.com`,
+		icon: {},
+		is_following: false,
+		last_published: '2024-01-01',
+		posts_count: 10,
+		subscribers_count: 100,
+		is_hidden: isHidden,
+	};
+}
 
 describe( 'SitesVisibilityCard', () => {
 	const userId = 123;
@@ -55,22 +78,30 @@ describe( 'SitesVisibilityCard', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockPendingSiteId = null;
+		mockIsPending = false;
 		nock.disableNetConnect();
 		queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/users/${ userId }/sites` )
-			.query( true )
-			.reply( 200, { sites, total: 2, primary_site_id: 1 } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/preferences' )
-			.reply( 200, { calypso_preferences: { 'reader-profile-hidden-sites': [ 2 ] } } );
+		nockSitesAndPrefs( sites, [ 2 ] );
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
 	} );
+
+	function nockSitesAndPrefs( sitesList: UserSitesResponse[ 'sites' ], hiddenSiteIds: number[] ) {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/users/${ userId }/sites` )
+			.query( true )
+			.reply( 200, {
+				sites: sitesList,
+				total: sitesList.length,
+				primary_site_id: sitesList[ 0 ]?.ID ?? 0,
+			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: { 'reader-profile-hidden-sites': hiddenSiteIds } } );
+	}
 
 	function renderWithClient( ui: React.ReactNode ) {
 		return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
@@ -113,5 +144,61 @@ describe( 'SitesVisibilityCard', () => {
 
 		const toggles = await screen.findAllByRole( 'checkbox' );
 		toggles.forEach( ( toggle ) => expect( toggle ).toBeDisabled() );
+	} );
+
+	test( 'does not show the select/deselect all link with fewer than 3 sites', async () => {
+		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
+
+		await screen.findByText( 'Visible Site' );
+		expect(
+			screen.queryByRole( 'button', { name: /select all|deselect all/i } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows "Deselect all" when 3+ sites are all visible and hides all on click', async () => {
+		const user = userEvent.setup();
+		const threeSites = [
+			makeSite( 1, 'Site One' ),
+			makeSite( 2, 'Site Two' ),
+			makeSite( 3, 'Site Three' ),
+		];
+		nockSitesAndPrefs( threeSites, [] );
+
+		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
+
+		const link = await screen.findByRole( 'button', { name: 'Deselect all' } );
+		await user.click( link );
+
+		expect( mockSetAllHidden ).toHaveBeenCalledWith( true, [ 1, 2, 3 ] );
+	} );
+
+	test( 'shows "Select all" when not all sites are visible and shows all on click', async () => {
+		const user = userEvent.setup();
+		const threeSites = [
+			makeSite( 1, 'Site One' ),
+			makeSite( 2, 'Site Two', true ),
+			makeSite( 3, 'Site Three' ),
+		];
+		nockSitesAndPrefs( threeSites, [ 2 ] );
+
+		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled /> );
+
+		const link = await screen.findByRole( 'button', { name: 'Select all' } );
+		await user.click( link );
+
+		expect( mockSetAllHidden ).toHaveBeenCalledWith( false, [ 1, 2, 3 ] );
+	} );
+
+	test( 'disables the select/deselect all link when the Sites tab is off', async () => {
+		const threeSites = [
+			makeSite( 1, 'Site One' ),
+			makeSite( 2, 'Site Two' ),
+			makeSite( 3, 'Site Three' ),
+		];
+		nockSitesAndPrefs( threeSites, [] );
+
+		renderWithClient( <SitesVisibilityCard userId={ userId } sitesEnabled={ false } /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Deselect all' } ) ).toBeDisabled();
 	} );
 } );

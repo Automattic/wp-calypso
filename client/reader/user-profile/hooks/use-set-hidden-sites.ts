@@ -23,24 +23,19 @@ export default function useSetHiddenSites( hiddenSites: number[] ) {
 	const queryClient = useQueryClient();
 	const [ pendingSiteId, setPendingSiteId ] = useState< number | null >( null );
 
-	const { mutate } = useMutation( userPreferenceMutation( PREFERENCE_KEY ) );
+	const { mutate, isPending } = useMutation( userPreferenceMutation( PREFERENCE_KEY ) );
 
-	const setSiteHidden = ( siteId: number, hidden: boolean ) => {
-		const nextHiddenSites = hidden
-			? Array.from( new Set( [ ...hiddenSites, siteId ] ) )
-			: hiddenSites.filter( ( id ) => id !== siteId );
-
-		setPendingSiteId( siteId );
+	const commit = (
+		nextHiddenSites: number[],
+		{ onDone, track }: { onDone: () => void; track: () => void }
+	) => {
 		mutate( nextHiddenSites, {
 			onSuccess() {
 				queryClient.setQueryData< UserPreferences >(
 					rawUserPreferencesQuery().queryKey,
 					( oldData ) => ( { ...oldData, [ PREFERENCE_KEY ]: nextHiddenSites } )
 				);
-				recordReaderTracksEvent( 'calypso_reader_profile_site_visibility_toggled', {
-					site_id: siteId,
-					hidden: hidden ? 1 : 0,
-				} );
+				track();
 			},
 			onError() {
 				dispatch(
@@ -50,10 +45,37 @@ export default function useSetHiddenSites( hiddenSites: number[] ) {
 				);
 			},
 			onSettled() {
-				setPendingSiteId( null );
+				onDone();
 			},
 		} );
 	};
 
-	return { setSiteHidden, pendingSiteId };
+	const setSiteHidden = ( siteId: number, hidden: boolean ) => {
+		const nextHiddenSites = hidden
+			? Array.from( new Set( [ ...hiddenSites, siteId ] ) )
+			: hiddenSites.filter( ( id ) => id !== siteId );
+
+		setPendingSiteId( siteId );
+		commit( nextHiddenSites, {
+			onDone: () => setPendingSiteId( null ),
+			track: () =>
+				recordReaderTracksEvent( 'calypso_reader_profile_site_visibility_toggled', {
+					site_id: siteId,
+					hidden: hidden ? 1 : 0,
+				} ),
+		} );
+	};
+
+	// Hide every site (`hidden`) or show every site, in a single write.
+	const setAllHidden = ( hidden: boolean, allSiteIds: number[] ) => {
+		commit( hidden ? [ ...allSiteIds ] : [], {
+			onDone: () => {},
+			track: () =>
+				recordReaderTracksEvent( 'calypso_reader_profile_all_sites_visibility_toggled', {
+					hidden: hidden ? 1 : 0,
+				} ),
+		} );
+	};
+
+	return { setSiteHidden, setAllHidden, pendingSiteId, isPending };
 }
