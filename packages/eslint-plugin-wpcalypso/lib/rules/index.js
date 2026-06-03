@@ -1,17 +1,31 @@
+function adapt( rule ) {
+	if ( typeof rule !== 'function' ) {
+		return rule;
+	}
+	const meta = { ...( rule.meta || {} ) };
+	if ( rule.schema && meta.schema === undefined ) {
+		meta.schema = rule.schema;
+	}
+	if ( meta.fixable === true ) {
+		meta.fixable = 'code';
+	}
+	return { meta, create: rule };
+}
+
 module.exports = {
-	'i18n-ellipsis': require( './i18n-ellipsis' ),
-	'i18n-mismatched-placeholders': require( './i18n-mismatched-placeholders' ),
-	'i18n-named-placeholders': require( './i18n-named-placeholders' ),
-	'i18n-no-collapsible-whitespace': require( './i18n-no-collapsible-whitespace' ),
-	'i18n-no-placeholders-only': require( './i18n-no-placeholders-only' ),
-	'i18n-no-this-translate': require( './i18n-no-this-translate' ),
-	'i18n-no-variables': require( './i18n-no-variables' ),
-	'i18n-translate-identifier': require( './i18n-translate-identifier' ),
-	'i18n-unlocalized-url': require( './i18n-unlocalized-url' ),
-	'jsx-async-load-require-top-level': require( './jsx-async-load-require-top-level' ),
-	'jsx-classname-namespace': require( './jsx-classname-namespace' ),
-	'jsx-gridicon-size': require( './jsx-gridicon-size' ),
-	'post-message-no-wildcard-targets': require( './post-message-no-wildcard-targets' ),
-	'redux-no-bound-selectors': require( './redux-no-bound-selectors' ),
-	'no-unsafe-wp-apis': require( './no-unsafe-wp-apis' ),
+	'i18n-ellipsis': adapt( require( './i18n-ellipsis' ) ),
+	'i18n-mismatched-placeholders': adapt( require( './i18n-mismatched-placeholders' ) ),
+	'i18n-named-placeholders': adapt( require( './i18n-named-placeholders' ) ),
+	'i18n-no-collapsible-whitespace': adapt( require( './i18n-no-collapsible-whitespace' ) ),
+	'i18n-no-placeholders-only': adapt( require( './i18n-no-placeholders-only' ) ),
+	'i18n-no-this-translate': adapt( require( './i18n-no-this-translate' ) ),
+	'i18n-no-variables': adapt( require( './i18n-no-variables' ) ),
+	'i18n-translate-identifier': adapt( require( './i18n-translate-identifier' ) ),
+	'i18n-unlocalized-url': adapt( require( './i18n-unlocalized-url' ) ),
+	'jsx-async-load-require-top-level': adapt( require( './jsx-async-load-require-top-level' ) ),
+	'jsx-classname-namespace': adapt( require( './jsx-classname-namespace' ) ),
+	'jsx-gridicon-size': adapt( require( './jsx-gridicon-size' ) ),
+	'post-message-no-wildcard-targets': adapt( require( './post-message-no-wildcard-targets' ) ),
+	'redux-no-bound-selectors': adapt( require( './redux-no-bound-selectors' ) ),
+	'no-unsafe-wp-apis': adapt( require( './no-unsafe-wp-apis' ) ),
 };

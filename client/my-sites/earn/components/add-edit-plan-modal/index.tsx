@@ -1,6 +1,6 @@
 import { Dialog, FormInputValidation, FormLabel, FoldableCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { ToggleControl } from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
@@ -198,7 +198,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			// Set the current price if the value is a valid number or an empty string.
 			if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
 				const newPrice = Number( event.currentTarget.value );
-				isAnnualProduct ? setCurrentAnnualPrice( newPrice ) : setCurrentPrice( newPrice );
+				if ( isAnnualProduct ) {
+					setCurrentAnnualPrice( newPrice );
+				} else {
+					setCurrentPrice( newPrice );
+				}
 			}
 			setEditedPrice( true );
 		};
@@ -515,31 +519,34 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						hideSummary
 						className="memberships__dialog-advanced-options"
 					>
-						{ ! editedPostIsTier && (
-							<FormFieldset className="memberships__dialog-sections-type">
-								<ToggleControl
-									onChange={ ( newValue ) => {
-										setEditedPostPaidNewsletter( newValue );
-									} }
-									checked={ editedPostPaidNewsletter }
-									disabled={ !! product.ID || editedPostIsTier }
-									label={ translate( 'Add customers to newsletter mailing list' ) }
-								/>
-							</FormFieldset>
-						) }
 						<FormFieldset>
-							<ToggleControl
-								onChange={ handlePayWhatYouWant }
-								checked={ editedPayWhatYouWant }
-								label={ translate(
-									'Enable customers to pick their own amount (“Pay what you want”)'
+							<VStack>
+								{ ! editedPostIsTier && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										onChange={ ( newValue ) => {
+											setEditedPostPaidNewsletter( newValue );
+										} }
+										checked={ editedPostPaidNewsletter }
+										disabled={ !! product.ID || editedPostIsTier }
+										label={ translate( 'Add customers to newsletter mailing list' ) }
+									/>
 								) }
-							/>
-							<ToggleControl
-								onChange={ handleMultiplePerUser }
-								checked={ editedMultiplePerUser }
-								label={ translate( 'Enable customers to make the same purchase multiple times' ) }
-							/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									onChange={ handlePayWhatYouWant }
+									checked={ editedPayWhatYouWant }
+									label={ translate(
+										'Enable customers to pick their own amount (“Pay what you want”)'
+									) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									onChange={ handleMultiplePerUser }
+									checked={ editedMultiplePerUser }
+									label={ translate( 'Enable customers to make the same purchase multiple times' ) }
+								/>
+							</VStack>
 						</FormFieldset>
 					</FoldableCard>
 				) }

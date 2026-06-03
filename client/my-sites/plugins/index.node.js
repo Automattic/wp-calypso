@@ -11,6 +11,7 @@ import {
 	fetchPlugin,
 	validatePlugin,
 	skipIfLoggedIn,
+	setBrowsePluginsNoindex,
 } from './controller-logged-out';
 
 export default function ( router ) {
@@ -36,6 +37,7 @@ export default function ( router ) {
 		setupPreferences,
 		fetchCategoryPlugins,
 		setEnglishCanonicalUrl,
+		setBrowsePluginsNoindex,
 		browsePlugins,
 		makeLayout
 	);

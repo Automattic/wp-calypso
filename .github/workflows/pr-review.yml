@@ -7,9 +7,15 @@ on:
         description: 'Review area: dashboard | a4a | general'
         required: true
         type: string
+      model:
+        description: 'Claude model identifier; defaults to claude-opus-4-6'
+        required: false
+        type: string
     secrets:
       anthropic_api_key:
         required: true
+      ai_review_telemetry_token:
+        required: false
 
 jobs:
   guard:
@@ -119,6 +125,7 @@ jobs:
           persist-credentials: false
 
       - name: Run review (dashboard)
+        id: review_dashboard
         if: inputs.area == 'dashboard' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
@@ -183,11 +190,12 @@ jobs:
 
             Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
           claude_args: |
-            --model claude-opus-4-6
+            --model ${{ inputs.model || 'claude-opus-4-6' }}
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
       - name: Run review (a4a)
+        id: review_a4a
         if: inputs.area == 'a4a' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
@@ -250,11 +258,12 @@ jobs:
 
             Remember: A4A builds on Calypso client patterns. Prioritize performance, accessibility, and maintainability while following the A4A code style, layout, and typography guidance described in the referenced docs. We also use modern React patterns.
           claude_args: |
-            --model claude-opus-4-6
+            --model ${{ inputs.model || 'claude-opus-4-6' }}
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
       - name: Run review (general)
+        id: review_general
         if: inputs.area == 'general' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
@@ -348,6 +357,103 @@ jobs:
 
             Remember: Calypso is large and shared. Prioritize correctness, security, and cross-client blast radius over style. Flag intent, not taste.
           claude_args: |
-            --model claude-opus-4-6
+            --model ${{ inputs.model || 'claude-opus-4-6' }}
             --max-turns 100
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
+
+      - name: Send telemetry to wpcom
+        if: |
+          always() && (
+            steps.review_dashboard.outputs.execution_file != '' ||
+            steps.review_a4a.outputs.execution_file != '' ||
+            steps.review_general.outputs.execution_file != ''
+          )
+        continue-on-error: true
+        env:
+          TELEMETRY_TOKEN: ${{ secrets.ai_review_telemetry_token }}
+          EXECUTION_FILE: ${{ steps.review_dashboard.outputs.execution_file || steps.review_a4a.outputs.execution_file || steps.review_general.outputs.execution_file }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          T_REPO: ${{ github.repository }}
+          T_PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          T_PR_AUTHOR: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
+          T_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          T_MODEL: ${{ inputs.model || 'claude-opus-4-6' }}
+          T_BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          T_AREA: ${{ inputs.area }}
+        shell: bash
+        run: |
+          if [ ! -s "$EXECUTION_FILE" ]; then
+            echo "telemetry: execution_file missing or empty, skipping"
+            exit 0
+          fi
+
+          if ! RESULT=$(jq 'map(select(.type == "result")) | last' "$EXECUTION_FILE" 2>/dev/null); then
+            echo "telemetry: failed to parse execution_file, skipping"
+            exit 0
+          fi
+
+          if [ "$RESULT" = "null" ] || [ -z "$RESULT" ]; then
+            OUTCOME="no_result"
+            RESULT="null"
+          else
+            SUBTYPE=$(echo "$RESULT" | jq -r '.subtype')
+            case "$SUBTYPE" in
+              success)              OUTCOME="success" ;;
+              error_max_turns)      OUTCOME="error_max_turns" ;;
+              *)                    OUTCOME="is_error" ;;
+            esac
+          fi
+
+          # issue_comment payload is issue-shaped (no pull_request.head), so
+          # head sha is empty on comment-triggered runs. Fall back to gh CLI.
+          if [ -z "$T_PR_HEAD_SHA" ] && [ -n "$T_PR" ]; then
+            T_PR_HEAD_SHA=$(gh pr view "$T_PR" --repo "$T_REPO" --json headRefOid --jq .headRefOid 2>/dev/null || echo "")
+          fi
+
+          PAYLOAD=$(echo "$RESULT" | jq \
+            --arg source          "wp-calypso-$T_AREA" \
+            --arg outcome         "$OUTCOME" \
+            --arg repo            "$T_REPO" \
+            --arg pr              "$T_PR" \
+            --arg pr_author       "$T_PR_AUTHOR" \
+            --arg pr_head_sha     "$T_PR_HEAD_SHA" \
+            --arg model           "$T_MODEL" \
+            --arg build_url       "$T_BUILD_URL" \
+            --arg ci_provider     "github_actions" \
+            '{
+              source:          $source,
+              outcome:         $outcome,
+              repo:            $repo,
+              pr:              $pr,
+              pr_author:       $pr_author,
+              pr_head_sha:     $pr_head_sha,
+              model:           $model,
+              build_url:       $build_url,
+              ci_provider:     $ci_provider,
+              cost_usd:        (.total_cost_usd // 0),
+              duration:        ((.duration_ms // 0) / 1000),
+              api_duration_ms: (.duration_api_ms // 0),
+              num_turns:       (.num_turns // 0),
+              tokens_in:       (.usage.input_tokens // 0),
+              tokens_out:      (.usage.output_tokens // 0),
+              cache_read:      (.usage.cache_read_input_tokens // 0),
+              cache_creation:  (.usage.cache_creation_input_tokens // 0),
+              session_id:      (.session_id // ""),
+              ttft_ms:         (.ttft_ms // 0)
+            }')
+
+          if ! HTTP_STATUS=$(curl -s -o /tmp/telemetry_response -w "%{http_code}" -X POST \
+            "https://public-api.wordpress.com/wpcom/v2/ai-review/telemetry" \
+            -H "Content-Type: application/json" \
+            -H "X-AI-Review-Token: ${TELEMETRY_TOKEN}" \
+            -d "$PAYLOAD"); then
+            echo "::warning::Failed to send AI review telemetry (curl transport error)"
+            exit 0
+          fi
+
+          echo "telemetry: HTTP $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::warning::Failed to send AI review telemetry (HTTP $HTTP_STATUS)"
+            echo "telemetry response body:"
+            cat /tmp/telemetry_response || true
+          fi

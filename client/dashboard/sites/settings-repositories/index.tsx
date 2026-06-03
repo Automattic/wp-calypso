@@ -141,7 +141,7 @@ function RepositoriesList() {
 				fields={ fields }
 				view={ view }
 				onChangeView={ updateView }
-				onResetView={ resetView }
+				onReset={ resetView }
 				actions={ actions }
 				isLoading={ isLoadingDeployments || isLoadingInstallations }
 				defaultLayouts={ DEFAULT_LAYOUTS }

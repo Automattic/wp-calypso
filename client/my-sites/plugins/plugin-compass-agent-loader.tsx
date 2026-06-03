@@ -163,17 +163,17 @@ function applyEmbeddedHostOverrides(): void {
 		{
 			id: 'plugin-compass-seo',
 			label: String( translate( 'Rank higher in search results' ) ),
-			prompt: String( translate( 'Help me rank higher in search results.' ) ),
+			prompt: String( translate( 'Help me rank higher in Google search results.' ) ),
 		},
 		{
-			id: 'plugin-compass-sell',
+			id: 'plugin-compass-analytics',
+			label: String( translate( 'Track visitor analytics' ) ),
+			prompt: String( translate( 'I want to track visitor analytics on my site.' ) ),
+		},
+		{
+			id: 'plugin-compass-commerce',
 			label: String( translate( 'Sell products online' ) ),
-			prompt: String( translate( 'I want to sell products online.' ) ),
-		},
-		{
-			id: 'plugin-compass-marketing-emails',
-			label: String( translate( 'Send marketing emails' ) ),
-			prompt: String( translate( 'I want to send marketing emails to my customers.' ) ),
+			prompt: String( translate( 'I want to sell physical products through my site.' ) ),
 		},
 	];
 }

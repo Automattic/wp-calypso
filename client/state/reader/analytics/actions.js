@@ -1,5 +1,9 @@
+import {
+	getSiteSubscriptionsCountFromData,
+	getSiteSubscriptionsQueryKey,
+} from '@automattic/api-queries';
 import { buildRailcarEventProps, isRailcarEligibleForEvent } from 'calypso/reader/stats';
-import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { dispatchReaderTracksEvent } from './analytics.utils';
 
 /**
@@ -9,8 +13,13 @@ import { dispatchReaderTracksEvent } from './analytics.utils';
  */
 export const recordReaderTracksEvent =
 	( name, properties, { pathnameOverride, post, railcar: railcarOverride } = {} ) =>
-	( dispatch, getState ) => {
-		const followsCount = getReaderFollowsCount( getState() );
+	( dispatch ) => {
+		const queryClient = getCalypsoQueryClient();
+		const followsCount = queryClient
+			? getSiteSubscriptionsCountFromData(
+					queryClient.getQueryData( getSiteSubscriptionsQueryKey() )
+			  )
+			: 0;
 		const railcar = railcarOverride || post?.railcar;
 
 		if ( isRailcarEligibleForEvent( name ) && railcar ) {

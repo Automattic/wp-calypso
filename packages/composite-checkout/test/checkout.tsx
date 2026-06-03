@@ -317,17 +317,17 @@ describe( 'Checkout', () => {
 			expect( content ).toHaveStyle( 'display: block' );
 			step = container.querySelector( '.' + steps[ 2 ].className );
 			content = step.querySelector( '.checkout-steps__step-complete-content' );
-			expect( content ).toBeNull;
+			expect( content ).toBeNull();
 			step = container.querySelector( '.' + steps[ 3 ].className );
 			content = step.querySelector( '.checkout-steps__step-complete-content' );
-			expect( content ).toBeNull;
+			expect( content ).toBeNull();
 		} );
 
 		it( 'does not render the completeStepContent when active', () => {
 			const { container } = render( <MyCheckout /> );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
 			const content = step.querySelector( '.checkout-steps__step-complete-content' );
-			expect( content ).toBeNull;
+			expect( content ).toBeNull();
 		} );
 
 		it( 'renders the continue button for the active step', () => {
@@ -841,6 +841,153 @@ describe( 'Checkout', () => {
 			await waitFor( () => {
 				expect( firstStepCallback ).toHaveBeenCalledTimes( 2 );
 			} );
+		} );
+	} );
+
+	describe( 'with continueToNextIncompleteStep', function () {
+		const mockMethod = createMockMethod();
+		const steps = createMockStepObjects();
+
+		// steps[0] = summary (no step number)
+		// steps[1] = 'custom-contact-step'    (numbered, isCompleteCallback () => true)
+		// steps[3] = 'custom-incomplete-step' (numbered, isCompleteCallback () => false)
+
+		function ContinueCheckout( props ) {
+			const [ paymentData, setPaymentData ] = useState( {} );
+			const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+				createStepsFromStepObjects( props.steps || steps );
+			const createStepFromStepObject = createStepObjectConverter( paymentData );
+			return (
+				<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+					<CheckoutProvider
+						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
+						selectFirstAvailablePaymentMethod
+					>
+						<CheckoutStepGroup>
+							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+							{ props.withProp ? (
+								<CheckoutFormSubmit continueToNextIncompleteStep />
+							) : (
+								<CheckoutFormSubmit />
+							) }
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</myContext.Provider>
+			);
+		}
+
+		const getSubmitArea = ( container ) =>
+			container.querySelector( '.checkout-steps__submit-button-wrapper' );
+
+		it( 'renders an enabled Continue button instead of a disabled submit button when a later step exists', () => {
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
+			expect( getByTextInNode( submitArea, 'Continue' ) ).not.toBeDisabled();
+			// Has a distinct accessible name so screen readers don't announce a bare
+			// "Continue" twice (the active step renders its own inline Continue button).
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toHaveAttribute(
+				'aria-label',
+				'Continue to the next step'
+			);
+			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'smooth-scrolls to the next incomplete step when Continue is clicked', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( scrollIntoView ).toHaveBeenCalledWith( { behavior: 'smooth', block: 'start' } );
+			} );
+			// The active step (step 1) is the first incomplete step, so it is the scroll target.
+			expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+				'custom-contact-step'
+			);
+		} );
+
+		it( 'renders the payment method submit button when the last step is active', () => {
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeInTheDocument();
+			expect( getByTextInNode( submitArea, 'Pay Please' ) ).not.toBeDisabled();
+			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'leaves the disabled submit button unchanged when the prop is not set', () => {
+			const { container } = render(
+				<ContinueCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeDisabled();
+			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'renders the submit button (not Continue) when all steps are complete even if the active step is not the last', async () => {
+			// Mirrors a returning purchaser: all steps get auto-completed (via
+			// completeAllSteps), but the active step can remain an earlier step. The
+			// summary CTA should be the real Pay button, not Continue.
+			function CompleteAllStepsButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			function GoBackToFirstStepButton( { stepId } ) {
+				const makeStepActive = useMakeStepActive();
+				return <button onClick={ () => makeStepActive( stepId ) }>Go back to first step</button>;
+			}
+			const completableSteps = [
+				steps[ 0 ],
+				{ ...steps[ 1 ], id: 'returning-step-a', className: 'returning-step-a' },
+				{ ...steps[ 1 ], id: 'returning-step-b', className: 'returning-step-b' },
+				{ ...steps[ 1 ], id: 'returning-step-c', className: 'returning-step-c' },
+			];
+			function ReturningPurchaserCheckout() {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( completableSteps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ getMockPaymentProcessors() }
+							selectFirstAvailablePaymentMethod
+						>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CompleteAllStepsButton />
+								<GoBackToFirstStepButton stepId="returning-step-a" />
+								<CheckoutFormSubmit continueToNextIncompleteStep />
+							</CheckoutStepGroup>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			}
+			const { container, getByText } = render( <ReturningPurchaserCheckout /> );
+			const user = userEvent.setup();
+			// Complete every step (advances the active step to the last one), then go
+			// back to the first step so all steps are complete but the active step is
+			// not the last — the state a returning purchaser lands in.
+			await user.click( getByText( 'Complete all steps' ) );
+			await user.click( getByText( 'Go back to first step' ) );
+			const submitArea = getSubmitArea( container );
+			await waitFor( () => {
+				expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeInTheDocument();
+			} );
+			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

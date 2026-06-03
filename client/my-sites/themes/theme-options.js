@@ -1,7 +1,5 @@
 import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -11,7 +9,6 @@ import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
@@ -26,7 +23,6 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
@@ -76,7 +72,7 @@ function getPlanPathSlugForThemes( state, siteId, minimumPlan ) {
 	return mappedPlan?.getPathSlug();
 }
 
-function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal } ) {
+function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
 		label: translate( 'Purchase', {
 			context: 'verb',
@@ -98,21 +94,8 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			const themeTier = options.themeTier;
 
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
-			const isLockedStyleVariation =
-				options?.styleVariationSlug &&
-				! isDefaultGlobalStylesVariationSlug( options.styleVariationSlug );
 
-			// @TODO Cleanup once the test phase is over.
-			let minimumPlan;
-			if ( isGlobalStylesOnPersonal ) {
-				minimumPlan = tierMinimumUpsellPlan;
-			} else if ( tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation ) {
-				minimumPlan = PLAN_PREMIUM;
-			} else {
-				minimumPlan = tierMinimumUpsellPlan;
-			}
-
-			const planPathSlug = getPlanPathSlugForThemes( state, siteId, minimumPlan );
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, tierMinimumUpsellPlan );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -522,9 +505,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose(
-	localize,
-	withIsFSEActive,
-	withSiteGlobalStylesOnPersonal,
-	connectOptionsHoc
-);
+export const connectOptions = compose( localize, withIsFSEActive, connectOptionsHoc );

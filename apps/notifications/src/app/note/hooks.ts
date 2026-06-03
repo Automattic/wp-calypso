@@ -1,51 +1,58 @@
-import { useNavigator } from '@wordpress/components';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import getAllNotes from '../../panel/state/selectors/get-all-notes';
+import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
-import type { Note } from '../types';
+import type { FilterName, Note } from '../types';
 
 export function useNoteNavigationViaKeyboardShortcuts( {
-	visibleNotes,
-	note,
+	filterName,
+	selectedNoteId,
+	setSelectedNoteId,
 }: {
-	visibleNotes: Note[];
-	note?: Note;
+	filterName: FilterName;
+	selectedNoteId: string | undefined;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ) {
-	const { params, goTo } = useNavigator();
-	const { filterName } = params;
-
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
-
-	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
+	const isLoading = useSelector( getIsLoading );
+	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as Note[] );
+	const hiddenNoteIds = useSelector( getHiddenNoteIds );
 	const { client } = useAppContext();
+
+	const filter = getFilters()[ filterName ];
+	const visibleNotes = notes.filter(
+		( note ) => filter.filter( note ) && hiddenNoteIds[ note.id ] !== true
+	);
+	const selectedNote =
+		selectedNoteId !== undefined
+			? notes.find( ( note ) => String( note.id ) === selectedNoteId )
+			: undefined;
 
 	useEffect( () => {
 		if (
 			! isLoading &&
 			visibleNotes.length &&
-			visibleNotes[ visibleNotes.length - 1 ].id === note?.id
+			visibleNotes[ visibleNotes.length - 1 ].id === selectedNote?.id
 		) {
 			client?.loadMore();
 		}
-	}, [ isLoading, visibleNotes, note, client ] );
-
-	const goToNoteById = ( noteId: number ) => {
-		goTo( `/${ filterName }/notes/${ noteId }`, {
-			replace: true,
-		} );
-	};
+	}, [ isLoading, visibleNotes, selectedNote, client ] );
 
 	const goToNoteByDirection = ( direction: number ) => {
-		const isValidIndex = ( index: number ) => index >= 0 && index < visibleNotes.length;
+		if ( ! selectedNote ) {
+			return;
+		}
 
-		const noteIndex = visibleNotes.findIndex( ( currentNote ) => currentNote.id === note?.id );
+		const noteIndex = visibleNotes.findIndex( ( note ) => note.id === selectedNote.id );
 		const newIndex = noteIndex + direction;
 
-		if ( isValidIndex( newIndex ) ) {
-			goToNoteById( visibleNotes[ newIndex ].id );
+		if ( newIndex >= 0 && newIndex < visibleNotes.length ) {
+			setSelectedNoteId( String( visibleNotes[ newIndex ].id ) );
 		}
 	};
 
@@ -80,5 +87,5 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ areKeyboardShortcutsEnabled, note ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ areKeyboardShortcutsEnabled, selectedNote ] ); // eslint-disable-line react-hooks/exhaustive-deps
 }

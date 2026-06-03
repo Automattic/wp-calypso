@@ -1,20 +1,18 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
+import { useOrganizationFeedsInfo } from 'calypso/reader/data/site-subscriptions';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { SECTION_A8C_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 
 export default function A8CFollowing( props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const feedsInfo = useSelector( ( state ) =>
-		getReaderOrganizationFeedsInfo( state, AUTOMATTIC_ORG_ID )
-	);
+	const feedsInfo = useOrganizationFeedsInfo( AUTOMATTIC_ORG_ID );
 
 	const markAllAsSeen = () => {
 		const { feedIds, feedUrls } = feedsInfo;

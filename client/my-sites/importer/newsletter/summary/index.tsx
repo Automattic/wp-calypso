@@ -161,7 +161,7 @@ export default function Summary( {
 					{ sprintf(
 						// translators: %s the site name
 						__( 'Here’s a summary of the imported data to %s:' ),
-						selectedSite.name
+						selectedSite.name ?? ''
 					) }
 				</p>
 				<div className="summary__content">

@@ -209,11 +209,17 @@ describe( 'attachDragDrop', () => {
 		document.dispatchEvent( makePointerEvent( 'pointermove', 10, 130 ) );
 		document.dispatchEvent( makePointerEvent( 'pointerup', 10, 130 ) );
 
-		expect( controller.commitMove ).toHaveBeenCalledWith( 'stats', {
-			kind: 'in_group',
-			group_id: 'plugins',
-			index: 1,
-		} );
+		expect( controller.commitMove ).toHaveBeenCalledWith(
+			'stats',
+			{
+				kind: 'in_group',
+				group_id: 'plugins',
+				index: 1,
+			},
+			expect.objectContaining( {
+				previousPosition: expect.objectContaining( { kind: 'top_level' } ),
+			} )
+		);
 	} );
 
 	it( 'normalizes expandable inner rows before computing top-level slots', () => {
@@ -260,10 +266,16 @@ describe( 'attachDragDrop', () => {
 		document.dispatchEvent( makePointerEvent( 'pointermove', 10, 130 ) );
 		document.dispatchEvent( makePointerEvent( 'pointerup', 10, 130 ) );
 
-		expect( controller.commitMove ).toHaveBeenCalledWith( 'stats', {
-			kind: 'top_level',
-			index: 1,
-		} );
+		expect( controller.commitMove ).toHaveBeenCalledWith(
+			'stats',
+			{
+				kind: 'top_level',
+				index: 1,
+			},
+			expect.objectContaining( {
+				previousPosition: expect.objectContaining( { kind: 'top_level' } ),
+			} )
+		);
 	} );
 
 	it( 'normalizes expandable inner rows before computing group slots', () => {
@@ -316,11 +328,17 @@ describe( 'attachDragDrop', () => {
 		document.dispatchEvent( makePointerEvent( 'pointermove', 10, 130 ) );
 		document.dispatchEvent( makePointerEvent( 'pointerup', 10, 130 ) );
 
-		expect( controller.commitMove ).toHaveBeenCalledWith( 'stats', {
-			kind: 'in_group',
-			group_id: 'plugins',
-			index: 1,
-		} );
+		expect( controller.commitMove ).toHaveBeenCalledWith(
+			'stats',
+			{
+				kind: 'in_group',
+				group_id: 'plugins',
+				index: 1,
+			},
+			expect.objectContaining( {
+				previousPosition: expect.objectContaining( { kind: 'top_level' } ),
+			} )
+		);
 	} );
 
 	it( 'ignores Calypso chrome rows when computing a top-level drop slot', () => {
@@ -371,10 +389,16 @@ describe( 'attachDragDrop', () => {
 		document.dispatchEvent( makePointerEvent( 'pointermove', 10, 105 ) );
 		document.dispatchEvent( makePointerEvent( 'pointerup', 10, 105 ) );
 
-		expect( controller.commitMove ).toHaveBeenCalledWith( 'stats', {
-			kind: 'top_level',
-			index: 0,
-		} );
+		expect( controller.commitMove ).toHaveBeenCalledWith(
+			'stats',
+			{
+				kind: 'top_level',
+				index: 0,
+			},
+			expect.objectContaining( {
+				previousPosition: expect.objectContaining( { kind: 'top_level' } ),
+			} )
+		);
 	} );
 
 	it( 'drops into an expanded empty group from the group header', () => {
@@ -413,10 +437,16 @@ describe( 'attachDragDrop', () => {
 		document.dispatchEvent( makePointerEvent( 'pointermove', 10, 100 ) );
 		document.dispatchEvent( makePointerEvent( 'pointerup', 10, 100 ) );
 
-		expect( controller.commitMove ).toHaveBeenCalledWith( 'stats', {
-			kind: 'in_group',
-			group_id: 'plugins',
-			index: 0,
-		} );
+		expect( controller.commitMove ).toHaveBeenCalledWith(
+			'stats',
+			{
+				kind: 'in_group',
+				group_id: 'plugins',
+				index: 0,
+			},
+			expect.objectContaining( {
+				previousPosition: expect.objectContaining( { kind: 'top_level' } ),
+			} )
+		);
 	} );
 } );

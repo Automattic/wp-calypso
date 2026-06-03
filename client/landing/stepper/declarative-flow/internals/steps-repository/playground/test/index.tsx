@@ -33,7 +33,7 @@ const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on Wor
 
 describe( 'Playground', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		jest.clearAllMocks();
 		mockPlaygroundClientInstance = {
 			run: jest.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
 		};

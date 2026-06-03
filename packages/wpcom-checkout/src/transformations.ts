@@ -52,18 +52,81 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	};
 }
 
+function getBusinessTaxSuffix( responseCart: ResponseCart ): string {
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( responseCart );
+
+	if ( businessTaxSuffixLabel ) {
+		return ` (${ businessTaxSuffixLabel })`;
+	}
+
+	return '';
+}
+
+function getBusinessTaxSuffixLabel( responseCart: ResponseCart ): string {
+	const { is_for_business } = responseCart.tax?.location ?? {};
+	const subdivisionCode = getBusinessTaxSubdivisionCode( responseCart );
+
+	if ( ! is_for_business || ! subdivisionCode ) {
+		return '';
+	}
+
+	return String(
+		translate( '%(state)s business use', {
+			args: { state: subdivisionCode },
+			comment:
+				'Label indicating a state-level business use tax. %(state)s is a US state code like "CT".',
+		} )
+	);
+}
+
+function getBusinessTaxSubdivisionCode( responseCart: ResponseCart ): string {
+	const { country_code, postal_code, subdivision_code } = responseCart.tax?.location ?? {};
+
+	return (
+		subdivision_code || getBusinessTaxSubdivisionCodeFromPostalCode( country_code, postal_code )
+	);
+}
+
+function getBusinessTaxSubdivisionCodeFromPostalCode(
+	countryCode: string | undefined,
+	postalCode: string | undefined
+): string {
+	if ( countryCode !== 'US' ) {
+		return '';
+	}
+
+	const zipCode = parseInt( postalCode ?? '0', 10 );
+
+	if ( zipCode >= 43000 && zipCode <= 45999 ) {
+		return 'OH';
+	}
+
+	if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
+		return 'CT';
+	}
+
+	return '';
+}
+
+function shouldDisplayTaxLineItems( responseCart: ResponseCart ): boolean {
+	return responseCart.tax.display_taxes || Boolean( getBusinessTaxSuffixLabel( responseCart ) );
+}
+
 export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
-	if ( ! responseCart.tax.display_taxes ) {
+	if ( ! shouldDisplayTaxLineItems( responseCart ) ) {
 		return null;
 	}
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( responseCart );
 	return {
 		id: 'tax-line-item',
 		// translators: The label of the taxes line item in checkout
-		label: String(
-			translate( 'Tax', {
-				context: "Shortened form of 'Sales Tax', not a country-specific tax name",
-			} )
-		),
+		label:
+			String(
+				translate( 'Tax', {
+					context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+				} )
+			) + getBusinessTaxSuffix( responseCart ),
+		...( businessTaxSuffixLabel ? { labelSuffix: businessTaxSuffixLabel } : undefined ),
 		type: 'tax',
 		formattedAmount: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 			isSmallestUnit: true,
@@ -73,7 +136,7 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemTy
 }
 
 export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): LineItemType[] {
-	if ( ! responseCart.tax.display_taxes ) {
+	if ( ! shouldDisplayTaxLineItems( responseCart ) ) {
 		return [];
 	}
 	if (
@@ -83,6 +146,8 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 		const lineItem = getTaxLineItemFromCart( responseCart );
 		return lineItem ? [ lineItem ] : [];
 	}
+	const businessTaxSuffix = getBusinessTaxSuffix( responseCart );
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( responseCart );
 	return responseCart.total_tax_breakdown.map(
 		( taxBreakdownItem: TaxBreakdownItem ): LineItemType => {
 			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
@@ -95,7 +160,8 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 				  );
 			return {
 				id,
-				label,
+				label: label + businessTaxSuffix,
+				...( businessTaxSuffixLabel ? { labelSuffix: businessTaxSuffixLabel } : undefined ),
 				type: 'tax',
 				formattedAmount: formatCurrency(
 					taxBreakdownItem.tax_collected_integer,
@@ -281,7 +347,7 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 ): boolean {
 	if (
 		costOverrides?.some( ( costOverride ) => {
-			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
+			return ! isOverrideCodeIntroductoryOffer( costOverride.override_code );
 		} )
 	) {
 		return false;

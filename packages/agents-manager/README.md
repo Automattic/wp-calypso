@@ -20,7 +20,14 @@ import AgentsManager from '@automattic/agents-manager';
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
-	return <AgentsManager currentRoute="/dashboard" sectionName="dashboard" site={ site } currentSiteId={ site.ID } />;
+	return (
+		<AgentsManager
+			sectionName="dashboard"
+			site={ site }
+			currentSiteId={ site.ID }
+			currentRoute="/dashboard"
+		/>
+	);
 }
 ```
 
@@ -32,6 +39,8 @@ Use `HeadlessAgentInitializer` when you need to create the agent without renderi
 import { HeadlessAgentInitializer } from '@automattic/agents-manager';
 
 function MyApp() {
+	const site = { ID: 456, URL: 'https://example.com' };
+
 	return <HeadlessAgentInitializer site={ site } currentRoute="/media" />;
 }
 ```
@@ -76,13 +85,13 @@ See `src/hooks/use-setup-custom-actions/README.md` for details.
 ### AgentsManager Props
 
 | Prop            | Type                           | Description                                                                                                              |
-|-----------------|--------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| --------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | `sectionName`   | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
 | `currentUser`   | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
 | `site`          | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
 | `currentRoute`  | `string` (optional)            | The current route path.                                                                                                  |
 | `currentSiteId` | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `handleClose`   | `() => void` (optional)        | Called when the agent is closed.                                                                                         |
+| `agentId`       | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
 
 ### Exported Hooks and Utilities
 

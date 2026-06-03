@@ -155,7 +155,15 @@ export function buildStreamQueryParams( {
 		number = gap ? PER_GAP : fetchCount;
 	}
 	const lang = localeSlug || i18n.getLocaleSlug();
-	const commonQueryParams = { ...algorithm, feed_id: feedId };
+	// Omit `feed_id` when not set: the new `wpcom/v2/read/streams/*` endpoints
+	// validate it as an integer and reject the empty string the URL serializer
+	// would produce from `null`/`undefined`. The legacy `rest/v1.2/read/*`
+	// endpoints tolerated the empty value, which is why this only surfaced
+	// after the stream-data-layer migration (f3b2cddb32e).
+	const commonQueryParams = {
+		...algorithm,
+		...( feedId != null ? { feed_id: feedId } : {} ),
+	};
 
 	if ( isPoll ) {
 		if ( streamType === 'user' ) {

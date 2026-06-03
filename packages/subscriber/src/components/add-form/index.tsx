@@ -108,7 +108,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 * ↓ Fields
 	 */
 	const emailControlMaxNum = 6;
-	const emailControlPlaceholder = [
+	const emailControlPlaceholder: string[] = [
 		__( 'bestie@email.com' ),
 		__( 'chrisfromwork@email.com' ),
 		__( 'family@email.com' ),
@@ -172,9 +172,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	useEffect( () => {
 		if ( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) {
-			onChangeIsImportValid && onChangeIsImportValid( true );
+			onChangeIsImportValid?.( true );
 		} else {
-			onChangeIsImportValid && onChangeIsImportValid( false );
+			onChangeIsImportValid?.( false );
 		}
 	}, [ getValidEmails, isSelectedFileValid, selectedFile, onChangeIsImportValid ] );
 
@@ -192,16 +192,21 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		if ( manualListEmailInviting ) {
 			// add subscribers with invite email
-			validEmails.length && addSubscribers( siteId, validEmails );
+			if ( validEmails.length ) {
+				addSubscribers( siteId, validEmails );
+			}
 			// import subscribers providing only CSV list of emails
-			selectedFile && importCsvSubscribers( siteId, selectedFile );
-		} else {
+			if ( selectedFile ) {
+				importCsvSubscribers( siteId, selectedFile );
+			}
+		} else if ( selectedFile || validEmails.length ) {
 			// import subscribers proving CSV and manual list of emails
-			( selectedFile || validEmails.length ) &&
-				importCsvSubscribers( siteId, selectedFile, validEmails, selectedCategories );
+			importCsvSubscribers( siteId, selectedFile, validEmails, selectedCategories );
 		}
 
-		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
+		if ( ! validEmails.length && ! selectedFile && allowEmptyFormSubmit ) {
+			onImportFinished?.();
+		}
 	}
 
 	function onEmailChange( value: string, index: number ) {
@@ -246,7 +251,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const isValid = isValidExtension( file.name );
 
 		setIsSelectedFileValid( isValid );
-		isValid && setSelectedFile( file );
+		if ( isValid ) {
+			setSelectedFile( file );
+		}
 		importCsvSubscribersUpdate( undefined );
 	}
 
@@ -428,7 +435,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				<label className="add-subscriber__form-label-links">
 					{ createInterpolateElement(
 						sprintf(
-							/* translators: the first string variable shows a selected file name, Replace and Remove are links */
+							/* translators: %s is the selected file name, Replace and Remove are links */
 							__(
 								'<strong>%s</strong> <uploadBtn>Replace</uploadBtn> | <removeBtn>Remove</removeBtn>'
 							),

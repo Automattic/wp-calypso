@@ -1,16 +1,19 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { usePost } from 'calypso/reader/data/post';
+import { useDismissRecommendedSite } from 'calypso/reader/data/recommended-sites';
+import { removeStreamItemFromCache } from 'calypso/reader/data/stream';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
-import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-function dismissPostAnalytics( uiIndex, storeId, post ) {
+function dismissRecommendedPostAnalytics( uiIndex, storeId, post ) {
 	recordTrackForPost( 'calypso_reader_recommended_post_dismissed', post, {
 		recommendation_source: 'in-stream',
 		ui_position: uiIndex,
@@ -39,6 +42,7 @@ export class RecommendedPosts extends PureComponent {
 		index: PropTypes.number,
 		translate: PropTypes.func,
 		recommendations: PropTypes.array,
+		onDismissPost: PropTypes.func,
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace, wpcalypso/jsx-gridicon-size */
@@ -69,11 +73,9 @@ export class RecommendedPosts extends PureComponent {
 											borderless
 											title={ this.props.translate( 'Dismiss this recommendation' ) }
 											onClick={ () => {
-												dismissPostAnalytics( uiIndex, this.props.streamKey, post );
-												this.props.dismissPost( {
-													streamKey: this.props.streamKey,
-													postKey: keyForPost( post ),
-												} );
+												const postKey = keyForPost( post );
+												dismissRecommendedPostAnalytics( uiIndex, this.props.streamKey, post );
+												this.props.onDismissPost?.( postKey );
 											} }
 										>
 											<Gridicon icon="cross" size={ 14 } />
@@ -98,13 +100,43 @@ export class RecommendedPosts extends PureComponent {
 
 const RecommendedPostsWithPosts = ( props ) => {
 	const { recommendations = [] } = props;
+	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
+	const dismissRecommendedSite = useDismissRecommendedSite();
 	const { data: firstPost } = usePost( recommendations[ 0 ] );
 	const { data: secondPost } = usePost( recommendations[ 1 ] );
 	const posts = recommendations.slice( 0, 2 ).map( ( _recommendation, index ) => {
 		return index === 0 ? firstPost ?? null : secondPost ?? null;
 	} );
+	const onDismissPost = ( postKey ) => {
+		if ( ! postKey?.blogId ) {
+			return;
+		}
 
-	return <RecommendedPosts { ...props } posts={ posts } />;
+		dismissRecommendedSite.mutate(
+			{ siteId: postKey.blogId },
+			{
+				onSuccess: () => {
+					removeStreamItemFromCache( queryClient, {
+						streamKey: props.streamKey,
+						item: postKey,
+					} );
+					dispatch(
+						successNotice( props.translate( "We won't recommend this site to you again." ), {
+							duration: 5000,
+						} )
+					);
+				},
+				onError: () => {
+					dispatch(
+						errorNotice( props.translate( 'Sorry, there was a problem dismissing that site.' ) )
+					);
+				},
+			}
+		);
+	};
+
+	return <RecommendedPosts { ...props } posts={ posts } onDismissPost={ onDismissPost } />;
 };
 
-export default connect( null, { dismissPost } )( localize( RecommendedPostsWithPosts ) );
+export default localize( RecommendedPostsWithPosts );

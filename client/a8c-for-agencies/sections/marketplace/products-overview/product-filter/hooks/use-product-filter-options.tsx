@@ -102,7 +102,7 @@ export default function useProductFilterOptions() {
 			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) as string, icon: trendingUp },
 			{
 				key: PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT,
-				label: translate( 'Shipping, Delivery, and Fulfillment' ) as string,
+				label: translate( 'Shipping, delivery, and fulfillment' ) as string,
 				shortLabel: translate( 'Shipping' ) as string,
 				icon: shipping,
 			},
@@ -113,7 +113,7 @@ export default function useProductFilterOptions() {
 			},
 			{
 				key: PRODUCT_CATEGORY_CUSTOMER_SERVICE,
-				label: translate( 'Customer Service' ) as string,
+				label: translate( 'Customer service' ) as string,
 				icon: commentAuthorName,
 			},
 			{
@@ -123,13 +123,13 @@ export default function useProductFilterOptions() {
 			},
 			{
 				key: PRODUCT_CATEGORY_STORE_CONTENT,
-				label: translate( 'Store Content and Customization' ) as string,
+				label: translate( 'Store content and customization' ) as string,
 				shortLabel: translate( 'Store content' ) as string,
 				icon: postContent,
 			},
 			{
 				key: PRODUCT_CATEGORY_STORE_MANAGEMENT,
-				label: translate( 'Store Management' ) as string,
+				label: translate( 'Store management' ) as string,
 				icon: store,
 			},
 		],

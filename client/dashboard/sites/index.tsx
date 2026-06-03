@@ -255,7 +255,7 @@ export default function Sites() {
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
-						onResetView={ resetView }
+						onReset={ resetView }
 					/>
 				) : (
 					<DataViewsEmptyStateLayout

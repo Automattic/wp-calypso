@@ -6,6 +6,8 @@
 
 In order to prevent issues with the WP admin sidebar the hook will also use floating mode if the page height is less than that of the sidebar.
 
+On Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`), docking also requires fullscreen mode (`body.is-fullscreen-mode`) — without it, wp-admin's chrome leaves too little room for the editor alongside the chat. The gate is re-evaluated whenever the `body` class list changes, so toggling fullscreen at runtime switches the chat between docked and floating.
+
 ## Usage
 
 ### React Example
@@ -68,10 +70,12 @@ The hook manages the sidebar DOM structure and CSS classes. Customize the styles
 ```
 
 The hook automatically manages these CSS classes based on the chat state:
+
 - `agents-manager-sidebar-container` is added when docked on desktop
 - `agents-manager-sidebar-container--sidebar-open` is added when the sidebar is open
 - `agents-manager-sidebar-container--closing` is added during the close transition and removed once complete
 - `agents-manager-chat--docked` or `agents-manager-chat--undocked` based on mode
+- `is-split-screen` is toggled on the container when the `isSplitScreen` option is `true`, letting consumer SCSS opt into a wider docked layout
 
 **SCSS Example:**
 
@@ -136,13 +140,15 @@ The hook accepts a single options object. All properties are optional.
 
 - **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
 
+- **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
+
 ### Return Value
 
 The hook returns an object with the following properties:
 
-- **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. This requires both: the viewport is desktop-sized (matches `desktopMediaQuery`) AND docked mode is enabled AND there is enough vertical space. On mobile/tablet, this is always `false`.
+- **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. Requires `canDock` to be `true` AND docked mode to be enabled (via `defaultDocked` or `dock()`).
 
-- **`canDock`** (`boolean`) - `true` when docking is possible. This means the viewport is desktop-sized (matches `desktopMediaQuery`) AND there is enough vertical space to accommodate the docked sidebar. Use this to determine whether to show dock/undock UI controls.
+- **`canDock`** (`boolean`) - `true` when docking is possible. Requires a desktop viewport (matches `desktopMediaQuery`), enough vertical space for the docked sidebar, and — on Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`) — fullscreen mode (`body.is-fullscreen-mode`). Updates dynamically as these conditions change. Use this to show or hide dock/undock UI controls.
 
 - **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 

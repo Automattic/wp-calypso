@@ -14,18 +14,15 @@ import {
 } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
 
-const wpcomCartToDomainSearchCart = (
-	domain: ResponseCartProduct,
-	isFirstDomainFreeForFirstYear: boolean
-) => {
+const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct, isEffectivelyFree: boolean ) => {
 	const [ domainName, ...tld ] = domain.meta.split( '.' );
 
 	const hasPromotion =
-		isFirstDomainFreeForFirstYear ||
+		isEffectivelyFree ||
 		domain.cost_overrides?.some( ( override ) => ! override.does_override_original_cost );
 
 	const currentPrice = formatCurrency(
-		isFirstDomainFreeForFirstYear ? 0 : domain.item_subtotal_integer,
+		isEffectivelyFree ? 0 : domain.item_subtotal_integer,
 		domain.currency,
 		{
 			isSmallestUnit: true,
@@ -99,22 +96,29 @@ export const useWPCOMDomainSearchCart = ( {
 			? firstNonPremiumDomain?.meta
 			: undefined;
 
-		const total = formatCurrency(
-			domainItems.reduce(
-				( acc, item ) => acc + ( freeDomainName === item.meta ? 0 : item.item_subtotal_integer ),
-				0
-			),
-			responseCart.currency ?? 'USD',
-			{
-				isSmallestUnit: true,
-				stripZeros: true,
-			}
+		const rawTotal = domainItems.reduce(
+			( acc, item ) => acc + ( freeDomainName === item.meta ? 0 : item.item_subtotal_integer ),
+			0
 		);
+		const creditsInteger = responseCart.credits_integer ?? 0;
+		const totalAfterCredits = Math.max( 0, rawTotal - creditsInteger );
+
+		const total = formatCurrency( totalAfterCredits, responseCart.currency ?? 'USD', {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
 
 		const cart: ComponentProps< typeof DomainSearch >[ 'cart' ] = {
-			items: domainItems.map( ( domainItem ) =>
-				wpcomCartToDomainSearchCart( domainItem, freeDomainName === domainItem.meta )
-			),
+			items: domainItems.map( ( domainItem ) => {
+				const isCoveredByCredits =
+					! forceFirstNonPremiumDomainToBeFree &&
+					creditsInteger >= domainItem.item_subtotal_integer &&
+					domainItem.meta === firstNonPremiumDomain?.meta;
+				return wpcomCartToDomainSearchCart(
+					domainItem,
+					freeDomainName === domainItem.meta || isCoveredByCredits
+				);
+			} ),
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {

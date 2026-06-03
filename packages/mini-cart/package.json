@@ -47,12 +47,12 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/mini-cart#readme",
 	"dependencies": {
 		"@automattic/composite-checkout": "workspace:^",
-		"@automattic/number-formatters": "^1.1.9",
+		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/react-i18n": "^4.23.0",
+		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/react-i18n": "^4.46.0",
 		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^"
 	},
