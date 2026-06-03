@@ -599,8 +599,9 @@ class ManagePurchase extends Component<
 			return `/plans/storage/${ siteSlug }`;
 		}
 
-		// For expired plans eligible for self-serve downgrade, use the simpler plan-upgrade flow.
-		if (
+		// For plans eligible for self-serve downgrade, use the plan-upgrade flow.
+		// Expired: Personal/Premium/Business/Ecommerce. Active: Premium/Business/Ecommerce.
+		const isExpiredDowngradeEligible =
 			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 			purchase &&
 			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
@@ -608,51 +609,25 @@ class ManagePurchase extends Component<
 			( isPersonal( purchase ) ||
 				isPremium( purchase ) ||
 				isBusiness( purchase ) ||
-				isEcommerce( purchase ) )
-		) {
-			const cancelTo = this.props.isSiteLevel
-				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
-				: `/me/purchases/${ siteSlug }/${ purchase.id }`;
-			const intervalMap: Record< number, string > = {
-				31: 'monthly',
-				365: 'yearly',
-				730: '2yearly',
-				1095: '3yearly',
-			};
-			const redirectTo = this.props.isSiteLevel
-				? `/purchases/subscriptions/${ siteSlug }/:purchaseId?plan_changed=true`
-				: `/me/purchases/${ siteSlug }/:purchaseId?plan_changed=true`;
-			return addQueryArgs(
-				{
-					siteSlug,
-					cancel_to: cancelTo,
-					change_plan: 'true',
-					purchaseId: String( purchase.id ),
-					intervalType: intervalMap[ purchase.billPeriodDays ] ?? 'yearly',
-					redirect_to: redirectTo,
-				},
-				'/setup/plan-upgrade'
-			);
-		}
-
-		// For active plans eligible for self-serve downgrade, use the same plan-upgrade flow.
-		if (
+				isEcommerce( purchase ) );
+		const isActiveDowngradeEligible =
 			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 			purchase &&
 			! isExpired( purchase ) &&
 			! isInExpirationGracePeriod( purchase ) &&
 			isPlan( purchase ) &&
-			( isPremium( purchase ) || isBusiness( purchase ) || isEcommerce( purchase ) )
-		) {
-			const cancelTo = this.props.isSiteLevel
-				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
-				: `/me/purchases/${ siteSlug }/${ purchase.id }`;
+			( isPremium( purchase ) || isBusiness( purchase ) || isEcommerce( purchase ) );
+
+		if ( isExpiredDowngradeEligible || isActiveDowngradeEligible ) {
 			const intervalMap: Record< number, string > = {
 				31: 'monthly',
 				365: 'yearly',
 				730: '2yearly',
 				1095: '3yearly',
 			};
+			const cancelTo = this.props.isSiteLevel
+				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
+				: `/me/purchases/${ siteSlug }/${ purchase.id }`;
 			const redirectTo = this.props.isSiteLevel
 				? `/purchases/subscriptions/${ siteSlug }/:purchaseId?plan_changed=true`
 				: `/me/purchases/${ siteSlug }/:purchaseId?plan_changed=true`;

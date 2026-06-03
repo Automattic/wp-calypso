@@ -476,10 +476,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 	// Active downgrade-eligible plans also use ReSubscribeActionButton's
 	// "Change plan" entry point — hide upgrade to avoid a duplicate.
-	if (
-		isEnabled( 'plans/expired-plan-downgrade' ) &&
-		/^(value_bundle|business-bundle|ecommerce-bundle)/.test( purchase.product_slug )
-	) {
+	if ( isChangePlanEligible( purchase, false ) ) {
 		return null;
 	}
 

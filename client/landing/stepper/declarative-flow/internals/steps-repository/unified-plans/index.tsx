@@ -40,9 +40,6 @@ import './style.scss';
 /**
  * Copied from steps-repository/plans (which should be removed)
  */
-/**
- * Copied from steps-repository/plans (which should be removed)
- */
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
 	const search = new URLSearchParams( location.search );
 
