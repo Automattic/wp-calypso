@@ -991,6 +991,116 @@ describe( 'Checkout', () => {
 		} );
 	} );
 
+	describe( 'with expressPaymentMethodIds', function () {
+		const steps = createMockStepObjects();
+		// steps[0] = summary (no step number)
+		// steps[1] = numbered, complete (isCompleteCallback () => true)
+		// steps[3] = numbered, incomplete (isCompleteCallback () => false)
+
+		const cardMethod = {
+			...createMockMethod( { submitButton: <MockSubmitButton content="Pay with Card" /> } ),
+			id: 'card',
+		};
+		const applePayMethod = {
+			...createMockMethod( { submitButton: <MockSubmitButton content="Apple Pay" /> } ),
+			id: 'apple-pay',
+		};
+
+		function ExpressCheckout( {
+			expressIds,
+			checkoutSteps,
+		}: {
+			expressIds: string[];
+			checkoutSteps: ReturnType< typeof createMockStepObjects >;
+		} ) {
+			const [ paymentData, setPaymentData ] = useState( {} );
+			const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+				createStepsFromStepObjects( checkoutSteps );
+			const createStepFromStepObject = createStepObjectConverter( paymentData );
+			return (
+				<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+					<CheckoutProvider
+						paymentMethods={ [ cardMethod, applePayMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
+						selectFirstAvailablePaymentMethod
+					>
+						<CheckoutStepGroup>
+							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+							<CheckoutFormSubmit
+								continueToNextIncompleteStep
+								expressPaymentMethodIds={ expressIds }
+							/>
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</myContext.Provider>
+			);
+		}
+
+		const getSubmitArea = ( container: HTMLElement ) =>
+			container.querySelector( '.checkout-steps__submit-button-wrapper' ) as HTMLElement;
+
+		it( 'shows an express method submit button even when it is not the active method', () => {
+			const { container } = render(
+				<ExpressCheckout
+					expressIds={ [ 'apple-pay' ] }
+					checkoutSteps={ [ steps[ 0 ], steps[ 1 ] ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			// card is active (first available); apple-pay is express but not active.
+			const applePayButton = getByTextInNode( submitArea, 'Apple Pay' );
+			expect( applePayButton ).toBeInTheDocument();
+			expect( applePayButton ).not.toBeDisabled();
+			expect( applePayButton.closest( '.checkout-submit-button' ) ).toHaveClass(
+				'checkout-submit-button--active'
+			);
+		} );
+
+		it( 'renders express buttons before the active non-express button', () => {
+			const { container } = render(
+				<ExpressCheckout
+					expressIds={ [ 'apple-pay' ] }
+					checkoutSteps={ [ steps[ 0 ], steps[ 1 ] ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			const wrappers = Array.from(
+				submitArea.querySelectorAll( '.checkout-submit-button' )
+			) as HTMLElement[];
+			const applePayIndex = wrappers.findIndex( ( w ) => w.textContent?.includes( 'Apple Pay' ) );
+			const cardIndex = wrappers.findIndex( ( w ) => w.textContent?.includes( 'Pay with Card' ) );
+			expect( applePayIndex ).toBeGreaterThanOrEqual( 0 );
+			expect( cardIndex ).toBeGreaterThanOrEqual( 0 );
+			expect( applePayIndex ).toBeLessThan( cardIndex );
+		} );
+
+		it( 'does not show express buttons while a step is incomplete (Continue shows instead)', () => {
+			const { container } = render(
+				<ExpressCheckout
+					expressIds={ [ 'apple-pay' ] }
+					checkoutSteps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
+			expect( queryByTextInNode( submitArea, 'Apple Pay' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps a non-express inactive method hidden', () => {
+			const { container } = render(
+				<ExpressCheckout expressIds={ [] } checkoutSteps={ [ steps[ 0 ], steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			// card is active → shown; apple-pay is neither express nor active → hidden.
+			expect( getByTextInNode( submitArea, 'Pay with Card' ) ).toBeInTheDocument();
+			const applePayButton = queryByTextInNode( submitArea, 'Apple Pay' );
+			expect( applePayButton?.closest( '.checkout-submit-button' ) ).toHaveClass(
+				'checkout-submit-button--inactive'
+			);
+		} );
+	} );
+
 	describe( 'submitting the form', function () {
 		let MyCheckout;
 		const submitButtonComponent = <MockSubmitButtonSimple />;

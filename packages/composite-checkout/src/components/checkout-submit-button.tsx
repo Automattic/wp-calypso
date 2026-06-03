@@ -24,21 +24,35 @@ export default function CheckoutSubmitButton( {
 	className,
 	disabled,
 	onLoadError,
+	expressPaymentMethodIds = [],
 }: {
 	validateForm?: () => Promise< boolean >;
 	className?: string;
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
+	expressPaymentMethodIds?: string[];
 } ) {
 	const paymentMethods = useAllPaymentMethods();
 
+	const isExpress = ( paymentMethod: PaymentMethod ) =>
+		expressPaymentMethodIds.includes( paymentMethod.id );
+
+	// Render express-eligible methods first so they stack above the active
+	// method's button in the sidebar. Relative order within each group is
+	// preserved. When expressPaymentMethodIds is empty this is a no-op.
+	const orderedPaymentMethods = [
+		...paymentMethods.filter( isExpress ),
+		...paymentMethods.filter( ( paymentMethod ) => ! isExpress( paymentMethod ) ),
+	];
+
 	return (
 		<>
-			{ paymentMethods.map( ( paymentMethod ) => {
+			{ orderedPaymentMethods.map( ( paymentMethod ) => {
 				return (
 					<CheckoutSubmitButtonForPaymentMethod
 						key={ paymentMethod.id }
 						paymentMethod={ paymentMethod }
+						isExpress={ isExpress( paymentMethod ) }
 						validateForm={ validateForm }
 						className={ className }
 						disabled={ disabled }
@@ -52,12 +66,14 @@ export default function CheckoutSubmitButton( {
 
 function CheckoutSubmitButtonForPaymentMethod( {
 	paymentMethod,
+	isExpress,
 	validateForm,
 	className,
 	disabled,
 	onLoadError,
 }: {
 	paymentMethod: PaymentMethod;
+	isExpress: boolean;
 	validateForm?: () => Promise< boolean >;
 	className?: string;
 	disabled?: boolean;
@@ -66,14 +82,19 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = paymentMethod.id === activePaymentMethodId;
+	// Express methods are shown and clickable even when they are not the
+	// actively-selected method, so the sidebar can offer them as one-tap
+	// alternatives. Non-express methods only show when active (the others stay
+	// hidden via the --inactive class).
+	const isShown = isActive || isExpress;
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
-	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isActive;
+	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isShown;
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
 	const onClickWithValidation: ProcessPayment = async (
 		processorData: PaymentProcessorSubmitData
 	) => {
-		if ( ! isActive ) {
+		if ( ! isShown ) {
 			const rejection = Promise.resolve(
 				makeErrorResponse( __( 'This payment method is not currently available.' ) )
 			);
@@ -133,7 +154,7 @@ function CheckoutSubmitButtonForPaymentMethod( {
 				className={ joinClasses( [
 					className,
 					'checkout-submit-button',
-					isActive ? 'checkout-submit-button--active' : 'checkout-submit-button--inactive',
+					isShown ? 'checkout-submit-button--active' : 'checkout-submit-button--inactive',
 				] ) }
 			>
 				{ clonedSubmitButton }
