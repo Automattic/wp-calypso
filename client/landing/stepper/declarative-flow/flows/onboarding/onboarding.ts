@@ -92,9 +92,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
-		): Promise< [ string, string | null ] > => {
+		): Promise< [ string, string | null, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
 
 			if ( playgroundId || blueprint ) {
@@ -104,7 +104,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
-					return [ `/home/${ providedDependencies.siteSlug }`, null ];
+					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
 
 				const params: Record< string, string | number > = {
@@ -121,6 +121,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
+					null,
 				];
 			}
 
@@ -128,7 +129,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -269,10 +270,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						return;
 					}
 
-					const [ destination, backDestination ] = await getPostCheckoutDestination(
-						providedDependencies,
-						planCartItem
-					);
+					const [ destination, backDestination, backDestinationDomains ] =
+						await getPostCheckoutDestination( providedDependencies, planCartItem );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -311,6 +310,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									...( backDestinationDomains
+										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
+										: {} ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
