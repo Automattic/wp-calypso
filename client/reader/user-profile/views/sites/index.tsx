@@ -1,4 +1,4 @@
-import { userSitesQuery } from '@automattic/api-queries';
+import { userSitesQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { siteLogo, Icon } from '@wordpress/icons';
@@ -20,11 +20,18 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const isOwnProfile = currentUser?.username === userLogin;
-	const { isLoading, data, error } = useQuery( userSitesQuery( userId ) );
+	// The owner reads their full site list (shared with the settings card) and filters it by their
+	// hidden-sites preference, which updates in real time as they toggle sites in settings. Public
+	// viewers read the public list and rely on the server-set `is_hidden` flag.
+	const { isLoading, data, error } = useQuery( userSitesQuery( userId, { owner: isOwnProfile } ) );
+	const { data: hiddenSites = [] } = useQuery( {
+		...userPreferenceQuery( 'reader-profile-hidden-sites' ),
+		enabled: isOwnProfile,
+	} );
 
-	// Defense in depth: the public endpoint already excludes hidden sites for non-owners, but
-	// never render a site the owner has hidden.
-	const visibleSites = ( data?.sites ?? [] ).filter( ( site ) => isOwnProfile || ! site.is_hidden );
+	const visibleSites = ( data?.sites ?? [] ).filter( ( site ) =>
+		isOwnProfile ? ! hiddenSites.includes( site.ID ) : ! site.is_hidden
+	);
 
 	if ( isLoading ) {
 		return (
