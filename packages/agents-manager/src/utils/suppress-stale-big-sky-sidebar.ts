@@ -19,6 +19,16 @@ const BIG_SKY_LAYOUT_CLASSES = [
 	'big-sky-sidebar-container--sidebar-open',
 ];
 
+const RETRY_DELAYS_MS = [ 100, 500, 1500 ];
+
+type SuppressedSurfaceState = {
+	hidden: boolean;
+	ariaHidden: string | null;
+};
+
+const suppressedSurfaces = new Map< HTMLElement, SuppressedSurfaceState >();
+const strippedLayoutClasses = new Map< HTMLElement, Set< string > >();
+
 function getAgentsManagerData() {
 	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
 }
@@ -31,13 +41,27 @@ function getCurrentPostType(): string | undefined {
 	}
 }
 
+function isPostEditorScreen(): boolean {
+	const currentPostType = getCurrentPostType();
+	if ( currentPostType !== undefined ) {
+		return currentPostType === 'post';
+	}
+
+	return (
+		document.body.classList.contains( 'post-type-post' ) &&
+		document.body.classList.contains( 'block-editor-page' ) &&
+		( document.body.classList.contains( 'post-php' ) ||
+			document.body.classList.contains( 'post-new-php' ) )
+	);
+}
+
 export function shouldSuppressStaleBigSkySidebar(): boolean {
 	if ( typeof document === 'undefined' ) {
 		return false;
 	}
 
 	const data = getAgentsManagerData();
-	if ( data?.sectionName && data.sectionName !== 'gutenberg' ) {
+	if ( data?.sectionName !== 'gutenberg' ) {
 		return false;
 	}
 
@@ -55,7 +79,7 @@ export function shouldSuppressStaleBigSkySidebar(): boolean {
 		return false;
 	}
 
-	return getCurrentPostType() === 'post' || document.body.classList.contains( 'post-type-post' );
+	return isPostEditorScreen();
 }
 
 function ensureSuppressionStyle(): void {
@@ -71,13 +95,78 @@ function ensureSuppressionStyle(): void {
 			visibility: hidden !important;
 			pointer-events: none !important;
 		}
+
+		.${ SUPPRESSION_CLASS } .block-editor .big-sky-sidebar-container.big-sky-sidebar-container--sidebar-open .edit-post-layout {
+			border-radius: 0 !important;
+			margin: 0 !important;
+			overflow: visible !important;
+			width: 100% !important;
+		}
+
+		.${ SUPPRESSION_CLASS } .block-editor .big-sky-sidebar-container.big-sky-sidebar-container--sidebar-open .admin-ui-navigable-region.interface-interface-skeleton__actions,
+		.${ SUPPRESSION_CLASS } .block-editor .big-sky-sidebar-container.big-sky-sidebar-container--sidebar-open .editor-post-publish-panel,
+		.${ SUPPRESSION_CLASS } .block-editor .big-sky-sidebar-container.big-sky-sidebar-container--sidebar-open .interface-navigable-region.interface-interface-skeleton__actions {
+			border-radius: 0 !important;
+			left: auto !important;
+			margin: 0 !important;
+			overflow: visible !important;
+			right: 0 !important;
+		}
 	`;
 
 	document.head.appendChild( style );
 }
 
+function suppressSurface( el: HTMLElement ): void {
+	if ( ! suppressedSurfaces.has( el ) ) {
+		suppressedSurfaces.set( el, {
+			hidden: el.hidden,
+			ariaHidden: el.getAttribute( 'aria-hidden' ),
+		} );
+	}
+
+	el.hidden = true;
+	el.setAttribute( 'aria-hidden', 'true' );
+}
+
+function stripBigSkyLayoutClasses(): void {
+	for ( const className of BIG_SKY_LAYOUT_CLASSES ) {
+		document.querySelectorAll< HTMLElement >( `.${ className }` ).forEach( ( el ) => {
+			const strippedClasses = strippedLayoutClasses.get( el ) ?? new Set< string >();
+
+			strippedClasses.add( className );
+			strippedLayoutClasses.set( el, strippedClasses );
+			el.classList.remove( className );
+		} );
+	}
+}
+
+export function clearStaleBigSkySidebarSuppression(): void {
+	document.documentElement.classList.remove( SUPPRESSION_CLASS );
+	document.getElementById( SUPPRESSION_STYLE_ID )?.remove();
+
+	for ( const [ el, state ] of suppressedSurfaces ) {
+		el.hidden = state.hidden;
+
+		if ( state.ariaHidden === null ) {
+			el.removeAttribute( 'aria-hidden' );
+		} else {
+			el.setAttribute( 'aria-hidden', state.ariaHidden );
+		}
+	}
+
+	suppressedSurfaces.clear();
+
+	for ( const [ el, classNames ] of strippedLayoutClasses ) {
+		el.classList.add( ...classNames );
+	}
+
+	strippedLayoutClasses.clear();
+}
+
 export function suppressStaleBigSkySidebar(): boolean {
 	if ( ! shouldSuppressStaleBigSkySidebar() ) {
+		clearStaleBigSkySidebarSuppression();
 		return false;
 	}
 
@@ -87,16 +176,8 @@ export function suppressStaleBigSkySidebar(): boolean {
 
 	document
 		.querySelectorAll< HTMLElement >( BIG_SKY_SURFACE_SELECTORS.join( ',' ) )
-		.forEach( ( el ) => {
-			el.hidden = true;
-			el.setAttribute( 'aria-hidden', 'true' );
-		} );
-
-	for ( const className of BIG_SKY_LAYOUT_CLASSES ) {
-		document.querySelectorAll< HTMLElement >( `.${ className }` ).forEach( ( el ) => {
-			el.classList.remove( className );
-		} );
-	}
+		.forEach( suppressSurface );
+	stripBigSkyLayoutClasses();
 
 	return true;
 }
@@ -104,10 +185,11 @@ export function suppressStaleBigSkySidebar(): boolean {
 export function startSuppressingStaleBigSkySidebar(): () => void {
 	if ( typeof window === 'undefined' || typeof MutationObserver === 'undefined' ) {
 		suppressStaleBigSkySidebar();
-		return () => {};
+		return clearStaleBigSkySidebarSuppression;
 	}
 
 	if ( ! shouldSuppressStaleBigSkySidebar() ) {
+		clearStaleBigSkySidebarSuppression();
 		return () => {};
 	}
 
@@ -116,13 +198,18 @@ export function startSuppressingStaleBigSkySidebar(): () => void {
 	const observer = new MutationObserver( () => {
 		suppressStaleBigSkySidebar();
 	} );
+	const retryTimers = RETRY_DELAYS_MS.map( ( delay ) =>
+		window.setTimeout( suppressStaleBigSkySidebar, delay )
+	);
 
 	observer.observe( document.body, {
 		attributes: true,
 		attributeFilter: [ 'class' ],
-		childList: true,
-		subtree: true,
 	} );
 
-	return () => observer.disconnect();
+	return () => {
+		observer.disconnect();
+		retryTimers.forEach( window.clearTimeout );
+		clearStaleBigSkySidebarSuppression();
+	};
 }
