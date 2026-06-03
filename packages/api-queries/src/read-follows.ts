@@ -100,9 +100,9 @@ export const getSiteSubscriptionByFeedIdFromData = (
 		( subscription ) => Number( subscription.feed_ID ) === Number( feedId )
 	);
 
-const commonFeedExtensionsByLength = [ ...commonFeedExtensions ].sort(
-	( a, b ) => b.length - a.length
-);
+const commonFeedExtensionsByLength = Array.isArray( commonFeedExtensions )
+	? [ ...commonFeedExtensions ].sort( ( a, b ) => b.length - a.length )
+	: [];
 
 const stripCommonFeedExtension = ( url: string ): string => {
 	for ( const extension of commonFeedExtensionsByLength ) {
