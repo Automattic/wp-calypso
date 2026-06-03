@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isYearly,
 	isJetpackPurchasableItem,
@@ -341,6 +342,12 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+// Wallet payment methods promoted to stacked one-tap buttons in the summary
+// sidebar, above the main Pay/Continue button. Checkout only renders the ones
+// that are actually available (created and not filtered out). Order here is the
+// stacking order. paypal-js (PPCP) is intentionally excluded — it is legacy.
+const SIDEBAR_EXPRESS_PAYMENT_METHOD_IDS = [ 'apple-pay', 'google-pay', 'paypal-express' ];
+
 // Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
 // awareness) while portaling its output into the sidebar slot registered via
 // SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
@@ -354,8 +361,15 @@ function PortaledCheckoutFormSubmit( {
 	if ( ! slotEl ) {
 		return null;
 	}
+	const expressPaymentMethodIds = isEnabled( 'checkout/sidebar-express-payment-buttons' )
+		? SIDEBAR_EXPRESS_PAYMENT_METHOD_IDS
+		: [];
 	return createPortal(
-		<CheckoutFormSubmit validateForm={ validateForm } continueToNextIncompleteStep />,
+		<CheckoutFormSubmit
+			validateForm={ validateForm }
+			continueToNextIncompleteStep
+			expressPaymentMethodIds={ expressPaymentMethodIds }
+		/>,
 		slotEl
 	);
 }
