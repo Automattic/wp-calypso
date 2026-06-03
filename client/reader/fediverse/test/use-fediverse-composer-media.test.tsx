@@ -22,7 +22,7 @@ const configWithFediverseMedia: ComposerConfig< any, any, any > = {
 	useMedia: useFediverseComposerMedia,
 };
 
-// `recordReaderTracksEvent` is a thunk that reads `state.reader.follows`.
+// `recordReaderTracksEvent` is a thunk that reads the follows query cache.
 // The test store doesn't seed that branch, so dispatching the real thunk
 // throws on click. Stub at file scope so every test is isolated from
 // the analytics pipeline.

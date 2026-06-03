@@ -59,7 +59,7 @@ export default function AgentHistory( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }

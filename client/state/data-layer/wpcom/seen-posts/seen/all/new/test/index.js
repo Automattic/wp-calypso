@@ -1,10 +1,9 @@
-import { readFeedQuery } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey, readFeedQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { getCachedFeed } from 'calypso/reader/data/feed';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { getStreamInfiniteQueryKey } from 'calypso/reader/data/stream';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import { fetch, onError, onSuccess } from '..';
@@ -96,6 +95,7 @@ describe( 'seen-posts mark-all-as-seen data layer', () => {
 			}
 		);
 		getCalypsoQueryClient.mockReturnValue( queryClient );
+		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
 
 		const dispatch = jest.fn();
 
@@ -105,7 +105,9 @@ describe( 'seen-posts mark-all-as-seen data layer', () => {
 		)( dispatch );
 
 		expect( dispatch ).toHaveBeenCalledWith( requestUnseenStatus() );
-		expect( dispatch ).toHaveBeenCalledWith( requestFollows() );
+		expect( invalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: getSiteSubscriptionsQueryKey(),
+		} );
 		expect( dispatch ).toHaveBeenCalledWith(
 			receiveMarkAllAsSeen( {
 				feedIds: [ 200 ],

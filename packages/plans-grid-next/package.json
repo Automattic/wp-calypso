@@ -84,7 +84,7 @@
 		"msw": "^2.2.14",
 		"msw-storybook-addon": "^2.0.7",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^8.6.17",
+		"storybook": "^9.1.20",
 		"typescript": "^5.9.3",
 		"webpack": "^5.99.8"
 	},

@@ -280,7 +280,11 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Last scan' ) ).toBeVisible();
 		expect( await getCard( 'Development license' ) ).toBeVisible();
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
-		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+
+		// Dev-license sites don't render the domains card or its upsell.
+		await waitFor( () =>
+			expect( screen.queryByText( 'The perfect domain awaits' ) ).not.toBeInTheDocument()
+		);
 	} );
 
 	test( 'renders the overview of a site with Flex plan', async () => {
