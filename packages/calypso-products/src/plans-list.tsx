@@ -1724,8 +1724,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		].filter( isValueTruthy ),
-	getSignupCompareAvailableFeatures: () => {
-		const baseFeatures = [
+	getSignupCompareAvailableFeatures: () =>
+		compact( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
@@ -1735,10 +1735,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
-		].filter( isValueTruthy );
-
-		return baseFeatures;
-	},
+		] ),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 		FEATURE_UNLIMITED_ENTITIES,
@@ -1976,8 +1973,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
-	getSignupCompareAvailableFeatures: () => {
-		const baseFeatures = [
+	getSignupCompareAvailableFeatures: () =>
+		compact( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
@@ -1991,10 +1988,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE,
-		].filter( isValueTruthy );
-
-		return baseFeatures;
-	},
+		] ),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 		FEATURE_UNLIMITED_ENTITIES,
