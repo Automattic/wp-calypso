@@ -29,15 +29,22 @@ export default function useSetHiddenSites( hiddenSites: number[] ) {
 		nextHiddenSites: number[],
 		{ onDone, track }: { onDone: () => void; track: () => void }
 	) => {
+		// Patch the active (Calypso) client up front so the settings list, the Sites tab and the
+		// top-sites strip reflect the change immediately. Roll back on error.
+		const previous = queryClient.getQueryData< UserPreferences >(
+			rawUserPreferencesQuery().queryKey
+		);
+		queryClient.setQueryData< UserPreferences >(
+			rawUserPreferencesQuery().queryKey,
+			( oldData ) => ( { ...oldData, [ PREFERENCE_KEY ]: nextHiddenSites } )
+		);
+
 		mutate( nextHiddenSites, {
 			onSuccess() {
-				queryClient.setQueryData< UserPreferences >(
-					rawUserPreferencesQuery().queryKey,
-					( oldData ) => ( { ...oldData, [ PREFERENCE_KEY ]: nextHiddenSites } )
-				);
 				track();
 			},
 			onError() {
+				queryClient.setQueryData( rawUserPreferencesQuery().queryKey, previous );
 				dispatch(
 					errorNotice( translate( 'Failed to update which sites are visible on your profile.' ), {
 						duration: 4000,
