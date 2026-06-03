@@ -682,6 +682,7 @@ export function CheckoutFormSubmit( {
 	disableSubmitButton,
 	submitButton,
 	onPageLoadError,
+	continueToNextIncompleteStep,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
@@ -689,10 +690,18 @@ export function CheckoutFormSubmit( {
 	disableSubmitButton?: boolean;
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
+	continueToNextIncompleteStep?: boolean;
 } ) {
+	const { __ } = useI18n();
 	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps, stepCompleteStatus, stepSkipValidationOnSubmitMap } = state;
-	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
+	const {
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		stepIdMap,
+		stepSkipValidationOnSubmitMap,
+	} = state;
+	const { getStepCompleteCallback, setStepCompleteStatus, makeStepActive } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -764,15 +773,66 @@ export function CheckoutFormSubmit( {
 		}
 		return false;
 	} )();
+
+	const getStepIdFromNumber = ( stepNumber: number ): string | undefined =>
+		Object.entries( stepIdMap ).find( ( [ , num ] ) => num === stepNumber )?.[ 0 ];
+
+	// The next step the user needs to address: the first incomplete step at or
+	// after the active step, falling back to the lowest incomplete step overall.
+	const nextIncompleteStepId = ( () => {
+		for ( let step = Math.max( activeStepNumber, 1 ); step <= totalSteps; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				return getStepIdFromNumber( step );
+			}
+		}
+		for ( let step = 1; step <= totalSteps; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				return getStepIdFromNumber( step );
+			}
+		}
+		return undefined;
+	} )();
+
+	// Show "Continue" only when the submit button would otherwise be disabled
+	// because there is another numbered step after the active one.
+	const showContinueToNextIncompleteStep =
+		!! continueToNextIncompleteStep && ! disableSubmitButton && isThereAnotherNumberedStep;
+
+	const goToNextIncompleteStep = async () => {
+		// Prefer the next incomplete step; otherwise just advance one step so the
+		// user always moves forward (covers the rare all-complete-but-not-last case).
+		const targetStepId =
+			nextIncompleteStepId ?? getStepIdFromNumber( Math.min( activeStepNumber + 1, totalSteps ) );
+		if ( ! targetStepId ) {
+			return;
+		}
+		await makeStepActive( targetStepId );
+		document
+			.getElementById( targetStepId )
+			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+	};
+
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
-			{ submitButton || (
-				<CheckoutSubmitButton
-					validateForm={ wrappedValidateForm }
-					disabled={ isDisabled }
-					onLoadError={ onSubmitButtonLoadError }
-				/>
+			{ showContinueToNextIncompleteStep ? (
+				<Button
+					type="button"
+					buttonType="primary"
+					fullWidth
+					className="checkout-steps__continue-button"
+					onClick={ goToNextIncompleteStep }
+				>
+					{ __( 'Continue' ) }
+				</Button>
+			) : (
+				submitButton || (
+					<CheckoutSubmitButton
+						validateForm={ wrappedValidateForm }
+						disabled={ isDisabled }
+						onLoadError={ onSubmitButtonLoadError }
+					/>
+				)
 			) }
 			<div className="checkout-steps__submit-footer-wrapper">{ submitButtonFooter || null }</div>
 		</SubmitButtonWrapper>
