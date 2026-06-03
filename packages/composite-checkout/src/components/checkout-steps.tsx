@@ -821,6 +821,9 @@ export function CheckoutFormSubmit( {
 					buttonType="primary"
 					fullWidth
 					className="checkout-steps__continue-button"
+					// Distinguish this from the per-step inline "Continue" buttons for
+					// assistive technology, which would otherwise announce "Continue" twice.
+					aria-label={ __( 'Continue to the next step' ) }
 					onClick={ goToNextIncompleteStep }
 				>
 					{ __( 'Continue' ) }

@@ -888,6 +888,12 @@ describe( 'Checkout', () => {
 			const submitArea = getSubmitArea( container );
 			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
 			expect( getByTextInNode( submitArea, 'Continue' ) ).not.toBeDisabled();
+			// Has a distinct accessible name so screen readers don't announce a bare
+			// "Continue" twice (the active step renders its own inline Continue button).
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toHaveAttribute(
+				'aria-label',
+				'Continue to the next step'
+			);
 			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
 		} );
 
