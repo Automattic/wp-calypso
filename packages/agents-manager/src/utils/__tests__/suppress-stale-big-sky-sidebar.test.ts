@@ -144,6 +144,13 @@ describe( 'suppressStaleBigSkySidebar', () => {
 		expect( shouldSuppressStaleBigSkySidebar() ).toBe( true );
 	} );
 
+	it( 'falls back to post editor body classes when the editor store returns null', () => {
+		mockSelect.mockReturnValue( { getCurrentPostType: () => null } );
+		document.body.className = 'post-type-post post-php block-editor-page';
+
+		expect( shouldSuppressStaleBigSkySidebar() ).toBe( true );
+	} );
+
 	it( 'does not suppress when Jetpack AI Sidebar preview is disabled', () => {
 		installAgentsManagerData( {
 			sectionName: 'gutenberg',
