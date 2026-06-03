@@ -365,6 +365,10 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 			result.current.closeAndLeave();
 		} );
 
+		// Exactly one navigation must fire, with the default URL. Asserting the
+		// call count closes the loophole where an erroneous earlier leave with
+		// the stale step URL would still satisfy a bare `toHaveBeenCalledWith`.
+		expect( leaveCheckout ).toHaveBeenCalledTimes( 1 );
 		expect( leaveCheckout ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				forceCheckoutBackUrl: 'https://mynewsite.wordpress.com/setup/onboarding/plans',
