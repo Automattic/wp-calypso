@@ -36,7 +36,12 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDisplayName,
+	getCurrentUserEmail,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
@@ -131,6 +136,9 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const userAvatar = useSelector( ( state ) => getCurrentUser( state )?.avatar_URL );
+	const userName = useSelector( getCurrentUserDisplayName );
+	const userEmail = useSelector( getCurrentUserEmail );
 	const { partnerConfig } = usePartnerBranding();
 
 	const dashboard =
@@ -279,11 +287,14 @@ const LayoutLoggedOut = ( {
 				isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName ),
 		} );
 
+		const nav2026 = isEnabled( 'nav-redesign/2026' );
+
 		masterbar = (
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }
+				{ ...( nav2026 && { nav2026: true, userAvatar, userName, userEmail } ) }
 				{ ...( isEnabled( 'site-profiler/metrics' ) &&
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',

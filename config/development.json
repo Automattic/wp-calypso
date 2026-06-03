@@ -149,6 +149,7 @@
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
+		"nav-redesign/2026": false,
 		"oauth": false,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
