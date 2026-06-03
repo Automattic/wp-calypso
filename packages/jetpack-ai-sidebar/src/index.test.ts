@@ -37,12 +37,14 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
+const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
+const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
-		Panel: ( { children }: any ) => React.createElement( 'div', null, children ),
-		PanelBody: ( { children }: any ) => React.createElement( 'section', null, children ),
+		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
+		PanelBody: ( { children }: any ) => react.createElement( 'section', null, children ),
 	};
 } );
 
@@ -749,21 +751,77 @@ describe( 'toolProvider', () => {
 	} );
 
 	describe( 'getAbilities', () => {
-		it( 'includes update-block-content and big_sky__show_component', async () => {
+		it( 'includes update-block-content and show-component abilities', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( 'big_sky__show_component' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
 			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === 'big_sky__show_component' );
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_TOOL_ID );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
 			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
+			expect( typeof legacyShowComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
+			const args = {
+				type: 'color-picker',
+				props: { colors: [] },
+			};
+			const executeAbility = jest.fn().mockResolvedValue( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [] ),
+				executeAbility,
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
+			const result = await legacyShowComponent.callback( args );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
+			expect( result ).toEqual( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'empty', '' ],
+			[ 'whitespace-only', '   ' ],
+		] )( 'does not delegate %s legacy show-component callbacks', async ( _label, type ) => {
+			const executeAbility = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [] ),
+				executeAbility,
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+			);
+			const result = await legacyShowComponent.callback( {
+				type,
+				props: {},
+			} );
+
+			expect( executeAbility ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {
@@ -773,23 +831,24 @@ describe( 'toolProvider', () => {
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).not.toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( 'big_sky__show_component' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 	} );
 
-	describe( 'executeAbility for big_sky__show_component', () => {
+	describe( 'executeAbility for show-component tools', () => {
 		beforeEach( () => {
 			installWpDataMock( 'Original Title' );
 		} );
 
 		it( 'returns an error when type is missing', async () => {
-			const { result } = await toolProvider.executeAbility( 'big_sky__show_component', {} );
+			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
 			expect( result ).toMatchObject( { success: false } );
 			expect( ( result as any ).error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
-			const { result } = await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
@@ -804,7 +863,7 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 3', explanation: 'c' },
 			];
 			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				'big_sky__show_component',
+				SHOW_COMPONENT_TOOL_ID,
 				{
 					type: 'title-picker',
 					props: { titles },
@@ -817,7 +876,7 @@ describe( 'toolProvider', () => {
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.tool_id ).toBe( 'big_sky__show_component' );
+			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
 			expect( parsed.data.type ).toBe( 'title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
 			expect( parsed.data.postId ).toBeUndefined();
@@ -826,8 +885,62 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );
 
+		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {
+			const { result } = ( await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+		} );
+
+		it( 'delegates non-Jetpack legacy show-component calls to Big Sky', async () => {
+			const args = {
+				type: 'color-picker',
+				props: { colors: [] },
+			};
+			const executeAbility = jest.fn().mockResolvedValue( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+			( window as any ).wp.abilities = { executeAbility };
+
+			const result = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, args );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
+			expect( result ).toEqual( {
+				result: 'Big Sky component displayed successfully',
+				returnToAgent: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'empty', '' ],
+			[ 'whitespace-only', '   ' ],
+		] )( 'does not delegate %s legacy show-component calls to Big Sky', async ( _label, type ) => {
+			const executeAbility = jest.fn();
+			( window as any ).wp.abilities = { executeAbility };
+
+			const { result } = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props: {},
+			} );
+
+			expect( executeAbility ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /missing type/ );
+		} );
+
 		it( 'does not attach a title checkpoint to review-mediation components', async () => {
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'review-mediation',
 				props: {
 					summary: 'Summary.',
@@ -851,7 +964,7 @@ describe( 'toolProvider', () => {
 		it( 'does not stamp review-mediation components without a saved editor post ID', async () => {
 			installWpDataMock( 'Original Title', 0 );
 
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'review-mediation',
 				props: {
 					summary: 'Summary.',
@@ -869,7 +982,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {
-			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'title-picker',
 				props: { titles: [ { title: 'x' } ] },
 			} ) ) as any;

@@ -1,12 +1,11 @@
 import { Component } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { withSite } from 'calypso/reader/data/site';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 
 class ReaderPostCardAdapter extends Component {
 	static displayName = 'ReaderPostCardAdapter';
@@ -33,10 +32,6 @@ class ReaderPostCardAdapter extends Component {
 	// take what the stream hands to a card and adapt it
 	// for use by a ReaderPostCard
 	render() {
-		const { site_ID: siteId, is_external: isExternal } = this.props.post;
-
-		// only query the site if the feed id is missing. feed queries end up fetching site info
-		// via a meta query, so we don't need both.
 		return (
 			<ReaderPostCard
 				post={ this.props.post }
@@ -57,23 +52,16 @@ class ReaderPostCardAdapter extends Component {
 				commentsApiDisabled={ this.props.commentsApiDisabled }
 				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
 			>
-				<div ref={ this.props.postRef }>
-					{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
-				</div>
+				<div ref={ this.props.postRef } />
 			</ReaderPostCard>
 		);
 	}
 }
 
-const ConnectedReaderPostCardAdapter = connect( ( state, ownProps ) => {
-	const post = ownProps.post;
-	const siteId = post?.site_ID;
-	const isExternal = post?.is_external;
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
 
-	return {
-		site: isExternal ? null : getSite( state, siteId ),
-	};
-} )( ReaderPostCardAdapter );
+const ConnectedReaderPostCardAdapter = withSite( ReaderPostCardAdapter, getPostSiteId );
 
 export default function ReaderPostCardAdapterContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};

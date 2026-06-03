@@ -66,11 +66,6 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: () => null,
 } ) );
 
-jest.mock( 'calypso/components/data/query-reader-site', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
-
 jest.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
 	default: () => null,

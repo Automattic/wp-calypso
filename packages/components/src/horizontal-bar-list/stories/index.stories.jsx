@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions';
 import { Icon, external } from '@wordpress/icons';
+import { action } from 'storybook/actions';
 import HorizontalBarList from '../.';
 import HorizontalBarListItem from '../horizontal-bar-grid-item';
 import StatsCard from '../stats-card';

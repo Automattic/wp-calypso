@@ -3,23 +3,23 @@ import { Count } from '@automattic/components';
 import { get } from 'lodash';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import ReaderSidebarHelper from '../../sidebar/helper';
 
 const ReaderListFollowingItem = ( props ) => {
-	const { site, path, isUnseen, follow, siteId } = props;
+	const { path, isUnseen, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { site } = useSite( siteId );
 	const { data: feed } = useFeedQuery( follow?.feed_ID );
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
@@ -67,7 +67,6 @@ const ReaderListFollowingItem = ( props ) => {
 				onClick={ ( event ) => handleSidebarClick( event, streamLink ) }
 			>
 				<span className="reader-sidebar-site_siteicon">
-					{ ! siteIcon && ! feedIcon && ! site && <QueryReaderSite siteId={ siteId } /> }
 					<SiteIcon iconUrl={ siteIcon || feedIcon } size={ 32 } />
 				</span>
 				<span className="reader-sidebar-site_sitename">
@@ -92,11 +91,10 @@ const ReaderListFollowingItem = ( props ) => {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	( _state, ownProps ) => {
 		const siteId = get( ownProps.follow, 'blog_ID' );
 
 		return {
-			site: getSite( state, siteId ),
 			siteId: siteId,
 		};
 	},

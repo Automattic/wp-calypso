@@ -1,0 +1,18 @@
+name: CodeQL JavaScript remaining client code
+
+paths:
+  - client
+
+paths-ignore:
+  - client/a8c-for-agencies
+  - client/blocks
+  - client/components
+  - client/dashboard
+  - client/data
+  - client/jetpack-cloud
+  - client/landing
+  - client/layout
+  - client/lib
+  - client/my-sites
+  - client/reader
+  - client/state

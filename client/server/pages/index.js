@@ -650,6 +650,8 @@ function setUpCSP( req, res, next ) {
 			'https://snap.licdn.com', // LinkedIn analytics
 			'www.redditstatic.com', // Reddit tracking pixel
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://bzrcdn.openai.com/', // OpenAI tracking pixel
+			'https://bzr.openai.com/', // OpenAI tracking pixel
 			'https://a.quora.com', // Quora tracking pixel.
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
@@ -796,6 +798,7 @@ function setUpCSP( req, res, next ) {
 			'wss://*.zendesk.com', // Zendesk WebSocket connections
 			'https://ekr.zdassets.com', // Zendesk composer
 			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
+			'https://bzr.openai.com', // OpenAI Ads tracking pixel
 		],
 		'report-uri': [ '/cspreport' ],
 	};

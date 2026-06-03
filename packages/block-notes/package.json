@@ -41,7 +41,7 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-client": "^0.1.58",
+		"@automattic/agenttic-client": "^0.1.65",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",
 		"@wordpress/api-fetch": "^7.46.0",
@@ -49,7 +49,7 @@
 		"@wordpress/core-data": "^7.46.0",
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"nanoid": "^3.3.11"
 	},
 	"devDependencies": {

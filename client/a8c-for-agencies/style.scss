@@ -8,6 +8,7 @@
 	--a4a-corners-soft: 4px;
 
 	--color-surface-backdrop: #021a23;
+	--color-overview-header-background: #05374a;
 	--color-light-backdrop: var(--studio-white);
 
 	--color-border-light: var(--studio-white);
@@ -691,4 +692,112 @@ html {
 
 .is-opacity-50 {
 	opacity: 0.5;
+}
+
+// Shared dark-teal header treatment used by A4A overview pages.
+// `@include` it from a page-scoped block.
+@mixin a4a-overview-header {
+	// Match the host card background to the dark-teal header so the rounded
+	// corners don't expose the parent's default white background through
+	// anti-aliased clipping. The body re-asserts the surface color below.
+	background: var(--color-overview-header-background)!important;
+
+	.hosting-dashboard-layout__top-wrapper {
+		background: var(--color-overview-header-background);
+		border-block-end: none;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	// Breadcrumb hidden on mobile (burger menu provides navigation), shown
+	// from the small breakpoint upward.
+	.hosting-dashboard-layout__header-breadcrumb {
+		color: var(--color-text-white);
+		fill: var(--color-text-white);
+		display: none;
+
+		a {
+			color: var(--color-text-white);
+		}
+
+		@include break-small {
+			display: block;
+		}
+	}
+
+	// The layout adds `gap: 16px` to the header at smaller widths. With the
+	// breadcrumb hidden on mobile, the empty `__header-main` flex item still
+	// triggers that gap and pushes the actions away from the left edge, so
+	// the burger menu no longer lines up with the banner heading. Hide the
+	// empty wrapper on mobile; restore from small upward.
+	.hosting-dashboard-layout__header-main {
+		display: none;
+
+		@include break-small {
+			display: block;
+		}
+	}
+
+	// Keep the header on a single row on mobile; restore wrapping at small+.
+	.hosting-dashboard-layout__header {
+		flex-wrap: nowrap;
+
+		@include break-small {
+			flex-wrap: wrap;
+		}
+	}
+
+	// Stack the burger menu above the CTA on mobile, each filling the row;
+	// fall back to a row layout at small+.
+	.hosting-dashboard-layout__header-actions {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: normal;
+		gap: 8px;
+
+		@include break-small {
+			flex-direction: row;
+			align-items: center;
+			gap: 0;
+		}
+	}
+
+	// The mobile burger menu sits on the dark-teal header here, so drop the
+	// default white surface and use light text/icons. The burger itself is
+	// hidden at >660px by the sidebar-navigation styles, so these rules only
+	// have visible effect on mobile.
+	.current-section button {
+		background: transparent;
+		border-bottom: none;
+		color: var(--color-text-white);
+
+		svg {
+			fill: var(--color-text-white);
+		}
+	}
+
+	.current-section .gridicons-menu,
+	h1.current-section__site-title {
+		color: var(--color-text-white);
+	}
+
+	// The body slides up over the sticky banner as the user scrolls, so it
+	// needs a stacking context above the banner and a solid background to
+	// cover it.
+	.hosting-dashboard-layout__body {
+		position: relative;
+		z-index: 1;
+		background: var(--color-surface);
+	}
+
+	// Scroll the container, not the body, so the banner — rendered as a
+	// sibling between the sticky `__top-wrapper` (breadcrumb) and the body —
+	// scrolls naturally with the page content instead of being trapped in a
+	// nested scroll context.
+	.hosting-dashboard-layout__container {
+		height: auto;
+		overflow-y: auto;
+		display: block;
+	}
 }

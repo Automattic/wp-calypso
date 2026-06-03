@@ -8,7 +8,7 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getFeedUrl, getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -39,6 +39,8 @@ interface ReaderFeed {
 interface ReaderSite {
 	ID?: number;
 	feed_ID?: number;
+	feed_URL?: string;
+	is_following?: boolean;
 	name?: string;
 }
 
@@ -52,6 +54,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const { data: fetchedFeed } = useFeedQuery( feedId );
 	const resolvedFeed = feed ?? fetchedFeed;
 	const siteUrl = getSiteUrl( { feed: resolvedFeed, site } );
+	const followFeedUrl = getFeedUrl( { feed: resolvedFeed, site } );
 	const {
 		isRecommended,
 		isUpdating: isRecommendationPending,
@@ -69,13 +72,14 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		let _siteId = siteId ?? 0;
 		const _feedId = resolvedFeed?.feed_ID ?? 0;
 		const _feed: ReaderFeed | undefined = resolvedFeed;
+		const reduxFollowing = followFeedUrl ? isFollowing( state, { feedUrl: followFeedUrl } ) : false;
 
 		if ( _feed && ! _siteId ) {
 			_siteId = _feed.blog_ID || 0;
 		}
 
 		return {
-			following: Boolean( _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ) ),
+			following: reduxFollowing || !! site?.is_following,
 			hasOrganization: Boolean( hasReaderFollowOrganization( state, _feedId, _siteId ) ),
 			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 			isWPForTeamsItem: Boolean(

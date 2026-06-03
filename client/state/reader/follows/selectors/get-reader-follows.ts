@@ -1,12 +1,16 @@
 import 'calypso/state/reader/init';
 import { createSelector } from '@automattic/state-utils';
 import { reject } from 'lodash';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import { AppState } from 'calypso/types';
 import { ReaderFollowItem, ReaderFollowState } from './types';
 
 /*
  * Get all sites/feeds the user follows.
+ *
+ * The legacy implementation also stripped follows whose `getSite( blog_ID )`
+ * had `is_error: true && statusCode === 410`. Site data has moved to React
+ * Query and is no longer mirrored in Redux state, so 410 sites are no longer
+ * filtered here — they fall through and the consumer surfaces the error.
  */
 const getReaderFollows = createSelector(
 	( state: AppState ) => {
@@ -15,27 +19,9 @@ const getReaderFollows = createSelector(
 		const items: ReaderFollowItem[] = reject( Object.values( follows.items ), 'error' );
 
 		// this is important. don't mutate the original items.
-		const withSite = items.map( ( item ) => ( {
-			...item,
-			site: getSite( state, item.blog_ID ) as {
-				is_error?: boolean;
-				error?: { statusCode?: number };
-			},
-		} ) );
-
-		// remove subs where the site has a gone error
-		const withoutErrors = reject(
-			withSite,
-			( item ) => item.site && item.site.is_error && item.site.error?.statusCode === 410
-		) as typeof withSite;
-
-		return withoutErrors;
+		return items.map( ( item ) => ( { ...item } ) );
 	},
-	( state ) => [
-		state.reader.follows.items,
-		state.reader.sites.items,
-		state.currentUser.capabilities,
-	]
+	( state ) => [ state.reader.follows.items ]
 );
 
 export default getReaderFollows;

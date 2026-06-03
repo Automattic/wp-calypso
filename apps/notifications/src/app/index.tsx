@@ -1,5 +1,6 @@
-import { Navigator } from '@wordpress/components';
-import { useEffect, useState } from 'react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
+import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
@@ -13,7 +14,11 @@ import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { AppProvider } from './context';
 import Note from './note';
+import { useNoteNavigationViaKeyboardShortcuts } from './note/hooks';
 import NotePanel from './note-panel';
+import type { FilterName } from './types';
+
+import './style.scss';
 
 let client: any;
 
@@ -46,6 +51,68 @@ const defaultHandlers = {
 			client.refreshNotes.call( client );
 		},
 	],
+};
+
+const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) => {
+	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
+	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
+	const isDetailOpen = selectedNoteId !== undefined;
+
+	// Hold the last selected note id so it keeps rendering through the
+	// slide-out animation, then clear it on transitionend.
+	const [ exitingNoteId, setExitingNoteId ] = useState< string | undefined >( undefined );
+	useEffect( () => {
+		if ( selectedNoteId !== undefined ) {
+			setExitingNoteId( selectedNoteId );
+		}
+	}, [ selectedNoteId ] );
+	const displayedNoteId = selectedNoteId ?? exitingNoteId;
+
+	const handleDetailPaneTransitionEnd = ( event: TransitionEvent< HTMLDivElement > ) => {
+		if ( event.target !== event.currentTarget ) {
+			return;
+		}
+		if ( event.propertyName !== 'transform' ) {
+			return;
+		}
+		if ( ! isDetailOpen ) {
+			setExitingNoteId( undefined );
+		}
+	};
+
+	useNoteNavigationViaKeyboardShortcuts( { filterName, selectedNoteId, setSelectedNoteId } );
+
+	return (
+		<HStack className="wpnc-app" spacing={ 0 } alignment="stretch">
+			<div
+				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
+				onTransitionEnd={ handleDetailPaneTransitionEnd }
+				// Keep the pane interactive through the exit transition: it's
+				// still on-screen sliding out and `displayedNoteId` is still
+				// set. Flipping `inert` synchronously on `isDetailOpen` (the
+				// "should be open" intent) instead of `displayedNoteId` (what's
+				// actually showing) drops focus from the Back button mid-render
+				// and trips the host popover's focus-outside close on mobile.
+				// @ts-expect-error React 18 types don't include `inert`.
+				inert={ displayedNoteId === undefined ? '' : undefined }
+			>
+				<Note
+					isDismissible={ isDismissible }
+					noteId={ displayedNoteId }
+					setSelectedNoteId={ setSelectedNoteId }
+				/>
+			</div>
+			<div className="wpnc-app__list-pane">
+				<NotePanel
+					isDismissible={ isDismissible }
+					filterName={ filterName }
+					setFilterName={ setFilterName }
+					selectedNoteId={ selectedNoteId }
+					setSelectedNoteId={ setSelectedNoteId }
+				/>
+			</div>
+		</HStack>
+	);
 };
 
 const NotificationApp = ( {
@@ -149,20 +216,7 @@ const NotificationApp = ( {
 	return (
 		<Provider store={ store }>
 			<AppProvider client={ client } locale={ locale }>
-				<Navigator initialPath="/all" style={ { maxHeight: 'inherit', height: '100%' } }>
-					<Navigator.Screen
-						path="/:filterName"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
-						<NotePanel isDismissible={ isDismissible } />
-					</Navigator.Screen>
-					<Navigator.Screen
-						path="/:filterName/notes/:noteId"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
-						<Note isDismissible={ isDismissible } />
-					</Navigator.Screen>
-				</Navigator>
+				<NotificationContent isDismissible={ isDismissible } />
 			</AppProvider>
 		</Provider>
 	);

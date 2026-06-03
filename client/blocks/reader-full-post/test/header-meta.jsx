@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { readFeedQueryKey } from '@automattic/api-queries';
+import { readFeedQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -20,7 +20,7 @@ jest.mock( 'calypso/reader/components/achievements/author-achievement-badges', (
 const renderHeaderMeta = ( { post, author, siteName, feedId = 123, siteId, feed } = {} ) => {
 	const queryClient = new QueryClient();
 	if ( feed ) {
-		queryClient.setQueryData( readFeedQueryKey( feedId ), feed );
+		queryClient.setQueryData( readFeedQuery( feedId ).queryKey, feed );
 	}
 	return renderWithProvider(
 		<ReaderFullPostHeaderMeta

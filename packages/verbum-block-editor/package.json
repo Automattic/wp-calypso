@@ -50,7 +50,7 @@
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/element": "^6.46.0",
 		"@wordpress/format-library": "^5.47.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/keycodes": "^4.46.0",
 		"@wordpress/rich-text": "^7.46.0",
 		"@wordpress/url": "^4.46.0"
@@ -74,7 +74,7 @@
 		"@babel/core": "*",
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"debug": "^4.4.1",
 		"eslint": "*",
 		"postcss": "*",

@@ -3,6 +3,10 @@ import NextStepButton from '../../components/next-step-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
+import {
+	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
+	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
+} from '../show-component-tools';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 jest.mock(
@@ -17,6 +21,8 @@ jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
 const mockOnSubmit = jest.fn();
+const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;
+const LEGACY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_TOOL_ID;
 
 const convertWithDefaults = (
 	options: Omit< Parameters< typeof convertToolMessagesToComponents >[ 0 ], 'onSubmit' >
@@ -68,7 +74,28 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders tool messages as components', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { name: 'test' },
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: MockComponent,
+			componentProps: { name: 'test', contentType: 'my-component' },
+		} );
+	} );
+
+	it( 'renders legacy Big Sky show-component messages during migration', () => {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			props: { name: 'test' },
 			isCurrent: true,
@@ -89,7 +116,9 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'filters out unregistered components', () => {
-		const message = createToolMessage( 'big_sky__show_component', { type: 'unknown-component' } );
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'unknown-component',
+		} );
 		const getChatComponent = jest.fn().mockReturnValue( null );
 
 		const result = convertWithDefaults( {
@@ -109,8 +138,8 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertWithDefaults( {
 			messages: [
-				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1', actions } ),
-				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2', actions } ),
+				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
+				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
 			],
 			getChatComponent,
 		} );
@@ -129,7 +158,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
-		const message = createToolMessage( 'big_sky__show_component', { type: 'my-component' } );
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, { type: 'my-component' } );
 
 		const result = convertWithDefaults( {
 			messages: [ message ],
@@ -224,7 +253,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'disables component when `isCurrent` is false', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: false,
 		} );
@@ -240,7 +269,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not append `NextStepButton` when `isCurrent` is false', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			followUpTasks: true,
 			isCurrent: false,
@@ -259,7 +288,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'disables component when `postId` differs from `currentPostId`', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 			postId: 10,
@@ -277,7 +306,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not append `NextStepButton` when `postId` differs from `currentPostId`', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			followUpTasks: true,
 			isCurrent: true,
@@ -298,7 +327,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not disable component when `postId` matches `currentPostId`', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 			postId: 10,
@@ -316,7 +345,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not disable component when `postId` is missing from the tool message', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 		} );
@@ -333,7 +362,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not disable component when `currentPostId` is undefined', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			isCurrent: true,
 			postId: 10,

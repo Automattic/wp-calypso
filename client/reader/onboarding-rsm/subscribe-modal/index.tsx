@@ -7,11 +7,12 @@ import { Icon, check } from '@wordpress/icons';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import ReaderFollowButton from 'calypso/reader/follow-button';
+import { getFeedUrl } from 'calypso/reader/get-helpers';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
@@ -54,7 +55,6 @@ const SITES_PER_PAGE = 6;
 // (data refresh, analytics) that `handleClose` previously did inline.
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onFinish } ) => {
 	const {
-		combinedRecommendations,
 		recommendations,
 		isLoading,
 		isValidating,
@@ -66,12 +66,27 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const { data: selectedFeed } = useFeedQuery( selectedSite?.feed_ID );
+	// Pull the WP.com Reader site record once the React Query cache has it.
+	// Curated entries with `site_ID: 0` never trigger a fetch (the hook is
+	// disabled for non-positive ids). For WP.com sites the record exposes the
+	// canonical `feed_URL` which `getFeedUrl` prefers over the feed's own URL.
+	const { site: selectedReaderSite } = useSite(
+		selectedSite && selectedSite.site_ID > 0 ? selectedSite.site_ID : undefined
+	);
 	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
-	// From `CardData.feed_URL` (see `useSubscribeRecommendations`). That value usually prefers a
-	// real feed URL (curated backfill, cards payload, `readFeedQuery`) over subscribing by site
-	// alone, but the hook can still fall back to `site_URL` when no feed URL is resolved—so this
-	// is best-effort, not a guarantee that the string is always an RSS endpoint.
-	const selectedFollowUrl = selectedSite?.feed_URL ?? '';
+	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
+	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
+	// auto-discover a feed and not all sites resolve. Mirror the
+	// `getFeedUrl({ feed, site })` derivation that the list-item path uses internally
+	// (precedence: `site.feed_URL` → `feed.feed_URL || feed.URL` → bare `site_URL`)
+	// so both subscribe paths agree on the URL the follow API ends up with.
+	const selectedFollowUrl =
+		getFeedUrl( {
+			feed: selectedFeed ?? undefined,
+			site: selectedReaderSite ?? undefined,
+		} ) ||
+		selectedSite?.site_URL ||
+		'';
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
@@ -171,17 +186,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	return (
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
-			{ /* Site metadata is still loaded via the legacy data layer; feed metadata
-			     is fetched inside `useSubscribeRecommendations` with readFeedQuery.
-			     Curated entries for non-WP.com feeds carry `site_ID: 0` and have
-			     no associated WP.com site to prefetch — `QueryReaderSite` would
-			     short-circuit on the falsy ID, but each instance still mounts a
-			     Redux subscription and effect, so skip them up front. */ }
-			{ combinedRecommendations
-				.filter( ( site ) => site.site_ID > 0 )
-				.map( ( site ) => (
-					<QueryReaderSite key={ `prefetch-site-${ site.feed_ID }` } siteId={ site.site_ID } />
-				) ) }
+			{ /* Site + feed metadata are prefetched inside `useSubscribeRecommendations`
+			     via `useQueries( readSiteQuery / readFeedQuery )`; nothing else needed
+			     at this level. */ }
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">

@@ -1,5 +1,12 @@
 @import 'calypso/lib/color-scheme/dark-theme';
 
+/* Links */
+@mixin dashboard-dark-theme-links {
+	@at-root :where( & ) a {
+		color: var( --wp-admin-theme-color-darker-20 );
+	}
+}
+
 /* Callout */
 @mixin dashboard-dark-theme-callout {
 	.dashboard-callout__content > :first-child {
@@ -441,6 +448,7 @@
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-links;
 	@include color-scheme-dark-theme-modal;
 	@include dashboard-dark-theme-modal;
 	@include color-scheme-dark-theme-palettes;
