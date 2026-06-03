@@ -77,7 +77,8 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 			</h3>
 			<ItemGroup isSeparated isBordered isRounded>
 				{ data?.map( ( item ) => (
-					<Item key={ item.post_id }>
+					// `post_id` is optional, so fall back to keep keys unique and defined.
+					<Item key={ item.post_id ?? item.link ?? item.title }>
 						<Link
 							to={ `/post?link=${ encodeURIComponent( item.link ) }` }
 							state={ { searchQuery: trimmedInput } }
