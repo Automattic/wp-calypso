@@ -1,31 +1,12 @@
 import { useEffect } from '@wordpress/element';
 import CopyActionButton from '../components/copy-action-button';
+import {
+	getDisplayMessageFromToolData,
+	isDisplayableToolMessageTool,
+} from '../utils/tool-message-utils';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-
-function getToolMessageText( data: unknown ): string | undefined {
-	if ( typeof data !== 'object' || data === null ) {
-		return undefined;
-	}
-
-	const toolData = data as {
-		summary?: unknown;
-		result?: {
-			message?: unknown;
-		};
-	};
-
-	if ( typeof toolData.summary === 'string' && toolData.summary.trim() ) {
-		return toolData.summary.trim();
-	}
-
-	if ( typeof toolData.result?.message === 'string' && toolData.result.message.trim() ) {
-		return toolData.result.message.trim();
-	}
-
-	return undefined;
-}
 
 /**
  * Extracts copyable text from a message. For tool messages, only known tools with
@@ -52,11 +33,8 @@ function getCopyableText( message: UIMessage ): string {
 					typeof parsed.data === 'string'
 				) {
 					copyableTexts.push( parsed.data.trim() );
-				} else if (
-					parsed.tool_id === 'big_sky__apply_block_edits' ||
-					parsed.tool_id === 'big_sky__apply_update_theme'
-				) {
-					const toolMessageText = getToolMessageText( parsed.data );
+				} else if ( isDisplayableToolMessageTool( parsed.tool_id ) ) {
+					const toolMessageText = getDisplayMessageFromToolData( parsed.data );
 					if ( toolMessageText ) {
 						copyableTexts.push( toolMessageText );
 					}

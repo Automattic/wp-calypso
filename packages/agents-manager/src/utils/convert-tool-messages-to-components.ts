@@ -3,6 +3,7 @@ import NextStepButton from '../components/next-step-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
 import { isShowComponentTool } from './show-component-tools';
+import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
@@ -17,29 +18,6 @@ interface Options {
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
-}
-
-function getDisplayMessageFromToolData( data: unknown ): string | undefined {
-	if ( typeof data !== 'object' || data === null ) {
-		return undefined;
-	}
-
-	const toolData = data as {
-		summary?: unknown;
-		result?: {
-			message?: unknown;
-		};
-	};
-
-	if ( typeof toolData.summary === 'string' && toolData.summary.trim() ) {
-		return toolData.summary.trim();
-	}
-
-	if ( typeof toolData.result?.message === 'string' && toolData.result.message.trim() ) {
-		return toolData.result.message.trim();
-	}
-
-	return undefined;
 }
 
 /**
@@ -177,10 +155,7 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle agent-facing Big Sky tool result summaries.
-		if (
-			textData.tool_id === 'big_sky__apply_block_edits' ||
-			textData.tool_id === 'big_sky__apply_update_theme'
-		) {
+		if ( isDisplayableToolMessageTool( textData.tool_id ) ) {
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary ) {
 				return [];
