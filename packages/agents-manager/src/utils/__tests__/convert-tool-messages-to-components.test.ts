@@ -253,6 +253,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			followUpTasks: true,
+			summary: 'Updated the header and footer.',
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].suppressThinking ).toBe( true );
+	} );
+
 	it( 'renders update-theme structured result message as plain text', () => {
 		const message = createToolMessage( 'big_sky__apply_update_theme', {
 			result: {
