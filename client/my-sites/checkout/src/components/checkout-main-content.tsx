@@ -345,8 +345,13 @@ function CheckoutSidebarNudge( {
 // Wallet payment methods promoted to stacked one-tap buttons in the summary
 // sidebar, above the main Pay/Continue button. Checkout only renders the ones
 // that are actually available (created and not filtered out). Order here is the
-// stacking order. paypal-js (PPCP) is intentionally excluded — it is legacy.
-const SIDEBAR_EXPRESS_PAYMENT_METHOD_IDS = [ 'apple-pay', 'google-pay', 'paypal-express' ];
+// stacking order.
+//
+// PayPal is intentionally omitted: the current PayPal method (paypal-js) only
+// renders its button when it is the actively-selected method — it caches the
+// PayPal Buttons click handler, so it cannot be shown as an always-visible
+// express button without reworking that component. Tracked as a follow-up.
+const SIDEBAR_EXPRESS_PAYMENT_METHOD_IDS = [ 'apple-pay', 'google-pay' ];
 
 // Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
 // awareness) while portaling its output into the sidebar slot registered via
