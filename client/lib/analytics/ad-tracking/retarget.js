@@ -90,6 +90,22 @@ export async function retarget( urlPath ) {
 		window.ttq.page();
 	}
 
+	// OpenAI
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		// see https://developers.openai.com/ads/measurement-pixel
+		const eventProps = {
+			type: 'contents',
+			contents: [
+				{
+					id: urlPath,
+					name: document.title,
+					content_type: 'page',
+				},
+			],
+		};
+		window.oaiq( 'measure', 'page_viewed', eventProps );
+		debug( 'retarget: [OpenAI]', eventProps );
+	}
 	// Rate limited retargeting (secondary trackers)
 
 	const nowTimestamp = Date.now() / 1000;

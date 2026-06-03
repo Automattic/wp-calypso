@@ -176,6 +176,18 @@ export default ( router ) => {
 	);
 
 	router(
+		paths.siteActionInterstitial( ':site', ':purchaseId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/purchases/${ params.purchaseId }/site-level-actions`
+		),
+		sidebar,
+		controller.siteActionInterstitial,
+		makeLayout,
+		clientRender
+	);
+
+	router(
 		paths.downgradePurchase( ':site', ':purchaseId' ),
 		sidebar,
 		controller.downgradePurchase,

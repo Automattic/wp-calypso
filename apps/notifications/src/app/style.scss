@@ -1,0 +1,176 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$wpnc-pane-width: 448px;
+$wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
+$wpnc-pane-radius: 4px;
+$wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
+$wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
+
+// Size the host popover's content area directly (instead of styling an
+// inner wrapper) so apps/notifications owns its own popover layout and
+// consumers don't have to redeclare it. The popover's default 8px
+// padding is removed so the panel reaches the edges.
+.components-popover:has(.wpnc-app) .components-popover__content {
+	width: 100vw;
+	height: 100vh;
+	max-height: inherit;
+	padding: 0;
+}
+
+@include break-small {
+	.components-popover:has(.wpnc-app) .components-popover__content {
+		max-width: 448px;
+		margin-inline: 8px;
+	}
+}
+
+@include break-xlarge {
+	// At xlarge each pane carries its own chrome, so the popover goes
+	// transparent and lets the combined card show through. The popover
+	// is sized for both panes (896px) at all times; without this the
+	// 448px → 896px width jump on detail open makes floating-ui's `shift`
+	// middleware re-compute the popover's x, and framer-motion (used
+	// internally by `@wordpress/components` Popover) tweens that x
+	// change as a visible leftward skid. Pre-sizing keeps the popover
+	// position stable. To avoid the empty half becoming a click trap
+	// for Dropdown's outside-click detection, the popover wrapper is
+	// `pointer-events: none` and the panes re-enable pointer events on
+	// the area they actually cover.
+	.components-popover:has(.wpnc-app) {
+		will-change: auto;
+		pointer-events: none;
+		outline: none;
+
+		.components-popover__content {
+			background: transparent;
+			box-shadow: none;
+			border: none;
+			border-radius: 0;
+			overflow: visible;
+			max-width: 896px;
+		}
+	}
+}
+
+// Below small, the popover opens full-screen via `expandOnMobile`. Hide
+// the redundant popover header and let the content fill the height.
+.components-popover.is-expanded:has(.wpnc-app) {
+	.components-popover__header {
+		display: none;
+	}
+
+	.components-popover__content {
+		height: 100%;
+	}
+}
+
+.components-popover:has(.wpnc-app) .components-card__header {
+	@include ui-mixins.when-dark-theme {
+		color: var(--dashboard__text-color);
+
+		svg {
+			fill: var(--dashboard__text-color);
+		}
+	}
+}
+
+.wpnc-app {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+// Both panes use absolute positioning so they can overlap during the slide.
+.wpnc-app__list-pane,
+.wpnc-app__detail-pane {
+	position: absolute;
+	inset: 0;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--color-surface, #fff);
+	transition: transform 300ms $wpnc-slide-easing;
+}
+
+// DataViews list items use z-index: 1, so the detail needs ≥ 2 to cover them.
+.wpnc-app__list-pane {
+	z-index: 1;
+}
+
+.wpnc-app__detail-pane {
+	z-index: 2;
+	transform: translateX(100%);
+
+	[dir="rtl"] & {
+		transform: translateX(-100%);
+	}
+
+	&.is-open {
+		transform: translateX(0);
+	}
+
+	// Sticky header + action block sandwich the body. Make the body the
+	// scroll region so its content stays inside the pane.
+	> .components-card-body {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+	}
+}
+
+// Below xlarge: single column. List slides toward the inline-start edge
+// (left in LTR, right in RTL) while the detail slides in from inline-end.
+@media (max-width: #{$break-xlarge - 1px}) {
+	.wpnc-app__detail-pane.is-open ~ .wpnc-app__list-pane {
+		transform: translateX(-100%);
+
+		[dir="rtl"] & {
+			transform: translateX(100%);
+		}
+	}
+}
+
+// At xlarge: side-by-side. List pinned right, detail pinned left, sharing the
+// list's left border as the divider (so detail has no right border).
+@include break-xlarge {
+	.wpnc-app__list-pane {
+		inset-inline-start: auto;
+		width: $wpnc-pane-width;
+		z-index: 2;
+		border: $wpnc-pane-border;
+		border-radius: $wpnc-pane-radius;
+		box-shadow: $wpnc-pane-shadow;
+		pointer-events: auto;
+	}
+
+	.wpnc-app__detail-pane {
+		inset-inline-end: auto;
+		width: $wpnc-pane-width;
+		z-index: 1;
+		border-top: $wpnc-pane-border;
+		border-bottom: $wpnc-pane-border;
+		border-inline-start: $wpnc-pane-border;
+		border-start-start-radius: $wpnc-pane-radius;
+		border-end-start-radius: $wpnc-pane-radius;
+
+		&.is-open {
+			pointer-events: auto;
+		}
+	}
+
+	// When open, the wrapper carries the shared shadow so both panes look like
+	// a single card.
+	.wpnc-app:has(.wpnc-app__detail-pane.is-open) {
+		border-radius: $wpnc-pane-radius;
+		box-shadow: $wpnc-pane-shadow;
+
+		.wpnc-app__list-pane {
+			border-start-start-radius: 0;
+			border-end-start-radius: 0;
+			box-shadow: none;
+		}
+	}
+}

@@ -9,27 +9,30 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_WOOPAYMENTS_DASHBOARD_LINK,
+	A4A_WOOPAYMENTS_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import useBannerParallax from 'calypso/a8c-for-agencies/hooks/use-banner-parallax';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { formatCurrencyCompact } from 'calypso/a8c-for-agencies/lib/currency';
 import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
 import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.webp';
-import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.webp';
 import demoImage from 'calypso/assets/images/a8c-for-agencies/woopayments/demo.webp';
 import earnMoreImage from 'calypso/assets/images/a8c-for-agencies/woopayments/earn-more.webp';
 import iconStorePlus from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store-plus.webp';
 import iconStore from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store.webp';
-import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
-	LayoutHeaderTitle as Title,
+	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import WooPaymentsBanner from './sections/woopayments-banner';
 
 import './style.scss';
 
@@ -37,6 +40,7 @@ const WooPaymentsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
+	const { onScroll } = useBannerParallax();
 
 	const title = translate( 'WooPayments commissions' );
 
@@ -257,41 +261,23 @@ const WooPaymentsOverview = () => {
 	);
 
 	return (
-		<Layout className="woopayments-overview" title={ title } wide>
+		<Layout className="woopayments-overview" title={ title } onScroll={ onScroll } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title }</Title>
+					<Breadcrumb
+						items={ [
+							{ label: translate( 'WooPayments' ), href: A4A_WOOPAYMENTS_LINK },
+							{ label: translate( 'Overview' ) },
+						] }
+					/>
 					<Actions>
 						<MobileSidebarNavigation />
 						{ addWooPaymentsToSite }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
+			<WooPaymentsBanner cta={ addWooPaymentsToSite } />
 			<LayoutBody>
-				<PageSectionColumns>
-					<PageSectionColumns.Column>
-						<div className="woopayments-overview__content">
-							<img src={ wooPaymentsLogo } alt="WooPayments" />
-							<div>
-								<div className="woopayments-overview__heading">
-									{ translate( "Transform Your Clients' Success Into Real Agency Revenue" ) }
-								</div>
-								<div className="woopayments-overview__description">
-									{ preventWidows(
-										translate(
-											"As an Automattic for Agencies partner, every WooPayments transaction creates new earning potential for your business. Unlock exclusive, built-in commissions just for helping your clients grow—whether you're onboarding new stores or deepening relationships with those you already support."
-										)
-									) }
-								</div>
-							</div>
-							{ addWooPaymentsToSite }
-						</div>
-					</PageSectionColumns.Column>
-					<PageSectionColumns.Column alignCenter>
-						<img src={ ccImage } alt="WooPayments" />
-					</PageSectionColumns.Column>
-				</PageSectionColumns>
-
 				<PageSectionColumns
 					heading={ translate( 'Earn more from every project' ) }
 					background={ {

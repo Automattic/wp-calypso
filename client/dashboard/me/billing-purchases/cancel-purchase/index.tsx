@@ -1730,6 +1730,7 @@ function CancelPurchaseInner() {
 			onTextTwoChange={ onTextTwoChange }
 			plans={ plans }
 			purchase={ purchase }
+			recordEvent={ recordEvent }
 			questionOneOrder={ state.questionOneOrder }
 			questionOneRadio={ state.questionOneRadio }
 			questionOneText={ state.questionOneText }
