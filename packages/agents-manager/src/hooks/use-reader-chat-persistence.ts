@@ -15,7 +15,8 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  */
 export default function useReaderChatPersistence(): void {
 	const { agentConfig } = useAgentsManagerContext();
-	const { agentId } = agentConfig!;
+	// No-op until the agent config is ready; `isReaderChatAgent( '' )` is false.
+	const agentId = agentConfig?.agentId ?? '';
 
 	const isReaderChat = isReaderChatAgent( agentId );
 	const storageKey = `jetpack-reader-chat-open-${ agentId }`;
