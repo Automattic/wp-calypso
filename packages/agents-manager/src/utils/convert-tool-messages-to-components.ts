@@ -6,6 +6,12 @@ import { isShowComponentTool } from './show-component-tools';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
+export type AgentsManagerUIMessage = UIMessage & {
+	disabled?: boolean;
+	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
+	suppressThinking?: boolean;
+};
+
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
@@ -44,7 +50,7 @@ export default function convertToolMessagesToComponents( {
 	getChatComponent,
 	currentPostId,
 	onSubmit,
-}: Options ): UIMessage[] {
+}: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
@@ -100,14 +106,8 @@ export default function convertToolMessagesToComponents( {
 				];
 			}
 
-			const {
-				type: contentType,
-				props,
-				followUpTasks,
-				isCurrent,
-				postId,
-				summary,
-			} = textData.data ?? {};
+			const toolData = textData.data ?? {};
+			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
 			const Component = getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
@@ -127,7 +127,7 @@ export default function convertToolMessagesToComponents( {
 			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
 			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
 
-			const componentMessage = {
+			const componentMessage: AgentsManagerUIMessage = {
 				...message,
 				content: [
 					...( summaryText
@@ -149,6 +149,7 @@ export default function convertToolMessagesToComponents( {
 					},
 				],
 				disabled: isStale,
+				suppressThinking: true,
 			};
 
 			// Only show `next-step-button` when the component is active and has follow-up tasks.
@@ -188,6 +189,7 @@ export default function convertToolMessagesToComponents( {
 			return [
 				{
 					...message,
+					suppressThinking: true,
 					content: [
 						{
 							type: 'text' as const,
