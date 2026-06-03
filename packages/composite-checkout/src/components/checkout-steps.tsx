@@ -806,9 +806,17 @@ export function CheckoutFormSubmit( {
 		if ( ! targetStepId ) {
 			return;
 		}
-		await makeStepActive( targetStepId );
+		const didActivateTarget = await makeStepActive( targetStepId );
+		// If activation failed, makeStepActive stopped on an intervening step that
+		// did not validate and left it active. Scroll to whichever step actually
+		// ended up active (read from the live store) so the user lands on the step
+		// that needs attention rather than a step that stayed collapsed. Desktop
+		// does not auto-scroll on step changes, so we always scroll explicitly.
+		const stepIdToScrollTo = didActivateTarget
+			? targetStepId
+			: getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
 		document
-			.getElementById( targetStepId )
+			.getElementById( stepIdToScrollTo )
 			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
 	};
 
