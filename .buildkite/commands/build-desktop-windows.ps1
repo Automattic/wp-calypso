@@ -52,10 +52,9 @@ $env:PLAYWRIGHT_SKIP_DOWNLOAD = 'true'
 # Tells build-desktop-config.js to disable the in-app updater - the Store owns
 # updates for Store-distributed packages.
 $env:WINDOWS_STORE = '1'
-# `build:app` passes ${ELECTRON_BUILDER_ARGS} straight to electron-builder.
-# Point it at the appx config so it emits the Store package instead of NSIS.
-$env:ELECTRON_BUILDER_ARGS = '--config electron-builder-appx.json'
-Invoke-Checked { yarn run build }
+# Run build:main, then invoke electron-builder directly (Windows shells don't expand `${ELECTRON_BUILDER_ARGS:-}`).
+Invoke-Checked { yarn run build:main }
+Invoke-Checked { yarn electron-builder --config electron-builder-appx.json build --publish never }
 
 # The appx target also leaves unpacked `win-*-unpacked/` trees and electron-builder
 # bookkeeping files. Drop everything but the .appx packages so the artifact upload
