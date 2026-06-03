@@ -3,6 +3,7 @@ import './features/live-preview';
 import './features/deprecate-coblocks-buttons';
 import './features/fix-block-invalidation-errors';
 import './features/fix-coblocks-fonts';
+import './features/fix-query-loop-pattern-placeholder';
 import './features/reorder-block-categories';
 import './features/tracking';
 import { OnboardingNextStepAfterPublishingPost } from './features/onboarding-next-step-after-publishing-post';
