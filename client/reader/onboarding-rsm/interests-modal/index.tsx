@@ -13,17 +13,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
+	getFollowingSource,
+	useSiteSubscriptions,
+	useFollowSite,
+} from 'calypso/reader/data/site-subscriptions';
+import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { recordFollow } from 'calypso/reader/stats';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { getPackBlogs } from './get-pack-blogs';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
 import InterestsVerificationNudge from './verificationNudge';
@@ -41,6 +43,17 @@ interface InterestsModalProps {
 	// Back; the relaxed Continue gate must still apply on return.
 	hasFollowed: boolean;
 	onFollowed: () => void;
+	// Pre-computed blog map owned by the parent so the random blog selection
+	// stays stable when the user navigates away from this step and returns.
+	// In production always provided by ReaderOnboardingRsm; optional here
+	// only so tests that don't care about packs can skip the boilerplate.
+	packBlogsById?: Map< string, CuratedBlog[] >;
+	// Tracks which packs have been explicitly subscribed in-session. Owned by
+	// the parent so it survives remounts of this component (e.g. user
+	// subscribes to a pack, advances to discover, then clicks Back).
+	// Optional for the same test-ergonomics reason as packBlogsById.
+	relaxedPackCriteria?: Set< string >;
+	onPackSubscribed?: ( packId: string ) => void;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
@@ -55,6 +68,9 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	promptVerification,
 	hasFollowed,
 	onFollowed,
+	packBlogsById = new Map(),
+	relaxedPackCriteria = new Set(),
+	onPackSubscribed = () => {},
 } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
@@ -62,15 +78,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const followedTagsRef = useRef< string[] >( [] );
 	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
-	const reduxFollows = useSelector( getReaderFollows );
+	const { subscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
-	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
+	const followSite = useFollowSite();
 
 	// Sync the user's already-followed tags from server once on mount. The
 	// component only mounts while the step is active, so the previous
@@ -95,20 +111,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 
 	const topicGroups = getTopicGroups();
 
-	// Resolve each topic group's blog list once per mounted component instance.
-	// Random blog picks remain stable while mounted, but translated group labels
-	// can still update if locale changes.
-	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
-	if ( ! packBlogsByIdRef.current ) {
-		packBlogsByIdRef.current = new Map(
-			topicGroups.map( ( group ) => [
-				group.id,
-				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
-			] )
-		);
-	}
-	const packBlogsById = packBlogsByIdRef.current;
-
 	const packs = topicGroups
 		.map( ( group ) => ( {
 			...group,
@@ -119,10 +121,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
-		reduxFollows.some(
-			( f ) =>
-				( blog.feed_ID && f.feed_ID === blog.feed_ID ) ||
-				( blog.site_ID && f.blog_ID === blog.site_ID )
+		subscriptions.some(
+			( subscription ) =>
+				( blog.feed_ID && subscription.feed_ID === blog.feed_ID ) ||
+				( blog.site_ID && subscription.blog_ID === blog.site_ID )
 		);
 
 	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {
@@ -245,7 +247,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				}
 			}
 
-			setRelaxedPackCriteria( ( current ) => new Set( current ).add( pack.id ) );
+			onPackSubscribed( pack.id );
 
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
@@ -261,13 +263,12 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				if ( isBlogFollowed( blog ) ) {
 					continue;
 				}
-				const followData: { feed_ID: number; blog_ID?: number } = { feed_ID: blog.feed_ID };
-				if ( blog.site_ID && blog.site_ID > 0 ) {
-					followData.blog_ID = blog.site_ID;
-				}
 				// Best effort only: site-specific failures are handled by existing
-				// follow data-layer notices and should not block pack completion.
-				dispatch( follow( blog.feed_URL, followData, null ) );
+				// follow notices and should not block pack completion.
+				followSite.mutate( {
+					feedUrl: blog.feed_URL,
+					source: getFollowingSource(),
+				} );
 				// Mirror how the rest of Reader tracks site follows so pack-blog
 				// follows show up under the standard `calypso_reader_site_followed`
 				// event with a `reader-onboarding-modal` follow source.

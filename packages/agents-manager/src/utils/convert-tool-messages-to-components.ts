@@ -2,6 +2,7 @@ import { EscalationButton } from '../components/escalation-button';
 import NextStepButton from '../components/next-step-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
+import { isShowComponentTool } from './show-component-tools';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
@@ -59,7 +60,7 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle `show-component` tool message
-		if ( textData.tool_id === 'big_sky__show_component' ) {
+		if ( isShowComponentTool( textData.tool_id ) ) {
 			// If not on an editor page, show an unavailable tool message instead of the component
 			if ( ! isEditorPage() ) {
 				return [

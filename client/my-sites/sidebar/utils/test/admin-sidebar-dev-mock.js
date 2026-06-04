@@ -33,7 +33,7 @@ describe( 'buildAdminSidebarDevMock()', () => {
 		} );
 	} );
 
-	it( 'uses child-bearing non-core items as leaf mock rows', () => {
+	it( 'preserves child-bearing non-core items as grouped mock rows', () => {
 		const { menuItems } = buildAdminSidebarDevMock( [
 			{ slug: 'dashboard', title: 'Dashboard', type: 'menu-item' },
 			{
@@ -49,10 +49,40 @@ describe( 'buildAdminSidebarDevMock()', () => {
 		expect( groupedItems ).toHaveLength( 3 );
 		expect( groupedItems[ 0 ] ).toMatchObject( {
 			slug: 'jetpack',
-			children: undefined,
+			children: [ { slug: 'jetpack-backup', title: 'Backup' } ],
 			reassignable: true,
 		} );
 		expect( groupedItems[ 1 ].slug ).toBe( 'stats' );
 		expect( groupedItems[ 2 ].slug ).toBe( 'mock-plugin-forms' );
+	} );
+
+	it( 'keeps exempt host links ungrouped and non-reassignable', () => {
+		const { menuItems } = buildAdminSidebarDevMock( [
+			{
+				slug: 'plugins',
+				title: 'Plugins',
+				type: 'menu-item',
+				group_id: 'plugins',
+				reassignable: true,
+			},
+			{
+				slug: 'stats',
+				title: 'Stats',
+				type: 'menu-item',
+				group_id: 'plugins',
+				reassignable: true,
+			},
+		] );
+
+		expect( menuItems[ 0 ] ).toMatchObject( {
+			slug: 'plugins',
+			group_id: null,
+			reassignable: false,
+		} );
+		expect( menuItems[ 1 ] ).toMatchObject( {
+			slug: 'stats',
+			group_id: 'plugins',
+			reassignable: true,
+		} );
 	} );
 } );

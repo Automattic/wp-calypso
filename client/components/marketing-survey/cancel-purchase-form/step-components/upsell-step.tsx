@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { HelpCenter } from '@automattic/data-stores';
@@ -16,6 +15,7 @@ import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.webp';
 import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.webp';
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.webp';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { UpsellType } from '../get-upsell-type';
@@ -40,11 +40,12 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	const translate = useTranslate();
 	const declineButtonText = props.declineButtonText || translate( 'Cancel my current plan' );
 	const [ busyButton, setBusyButton ] = useState( '' );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<div className="cancel-purchase-form__upsell-content">
-				{ ! isEnabled( 'cancel-flow/solutions-cards-upsell' ) && (
+				{ ! isSplitCancelRemoveEnabled && (
 					<div className="cancel-purchase-form__upsell-subheader">
 						{ translate( 'Here is an idea' ) }
 					</div>

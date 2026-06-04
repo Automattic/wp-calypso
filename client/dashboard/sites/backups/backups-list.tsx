@@ -95,7 +95,7 @@ export function BackupsList( {
 				fields={ fields }
 				view={ view }
 				onChangeView={ updateView }
-				onResetView={ resetView }
+				onReset={ resetView }
 				isLoading={ isLoadingActivityLog }
 				defaultLayouts={ { list: {} } }
 				paginationInfo={ paginationInfo }

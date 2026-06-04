@@ -201,7 +201,7 @@ function DeploymentsList() {
 					fields={ fields }
 					view={ view }
 					onChangeView={ updateView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }

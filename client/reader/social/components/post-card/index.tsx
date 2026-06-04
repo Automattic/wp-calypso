@@ -7,7 +7,7 @@ import { useState, type ReactNode } from 'react';
 import { useSocialAnalytics } from './analytics-context';
 import { PostActionsMenu } from './post-actions-menu';
 import { PostCardBody } from './post-card-body';
-import { PostCardCounts } from './post-card-counts';
+import { PostCardCounts, type PostCardReactionsConfig } from './post-card-counts';
 import { PostCardEmbed } from './post-card-embed';
 import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
@@ -33,6 +33,9 @@ interface SocialPostCardProps {
 		rel?: string;
 		ariaLabel?: string;
 	};
+	// Per-action gate for the engagement row. Omit for the default
+	// "always render" behaviour. See `PostCardReactionsConfig`.
+	reactions?: PostCardReactionsConfig;
 }
 
 export function SocialPostCard( {
@@ -42,6 +45,7 @@ export function SocialPostCard( {
 	connectionId,
 	prominentTimestamp,
 	cardLink,
+	reactions,
 }: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
 	const showProminentTimestamp = ! isCompact && Boolean( prominentTimestamp );
@@ -116,7 +120,11 @@ export function SocialPostCard( {
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
 				{ ! isCompact && (
-					<PostCardCounts post={ post } prominentTimestamp={ showProminentTimestamp } />
+					<PostCardCounts
+						post={ post }
+						prominentTimestamp={ showProminentTimestamp }
+						reactions={ reactions }
+					/>
 				) }
 			</CardBody>
 		</Card>

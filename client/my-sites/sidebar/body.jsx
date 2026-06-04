@@ -86,12 +86,17 @@ function MySitesSidebarUnifiedBodyContent( {
 		() => ( isAdminSidebarDevMockActive() ? getAdminSidebarDevMockGroups() : groups ),
 		[ groups ]
 	);
+	const hasCustomizablePluginsGroup = useMemo(
+		() =>
+			Array.isArray( renderGroups ) && renderGroups.some( ( group ) => group?.id === 'plugins' ),
+		[ renderGroups ]
+	);
 	const { ungroupedItems, groupedSections } = useMemo(
 		() =>
 			groupMenuItems( menuItems ?? [], renderGroups, {
-				includeEmptyGroups: customizeCtx?.isCustomizing === true,
+				includeEmptyGroups: customizeCtx?.isCustomizing === true || hasCustomizablePluginsGroup,
 			} ),
-		[ menuItems, renderGroups, customizeCtx?.isCustomizing ]
+		[ menuItems, renderGroups, customizeCtx?.isCustomizing, hasCustomizablePluginsGroup ]
 	);
 
 	const renderItem = ( item, i ) => {

@@ -97,7 +97,7 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 			</div>
 
 			<!-- Search button -->
-			<?php if ( ! $should_show_search_navigation ) : ?>
+			<?php if ( $should_show_search_navigation ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">

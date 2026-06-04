@@ -139,11 +139,21 @@ function canUseItemAsMockSource( item ) {
 	return item?.type !== 'separator' && item?.type !== 'current-site' && ! isExemptItem( item );
 }
 
+function normalizeExemptItem( item ) {
+	if ( item?.group_id || item?.reassignable === true ) {
+		return {
+			...item,
+			group_id: null,
+			reassignable: false,
+		};
+	}
+	return item;
+}
+
 function buildMockItem( item, sourceId, index, count ) {
 	const slug = item.slug || `idx-${ sourceId }`;
 	return {
 		...item,
-		children: undefined,
 		group_id: MOCK_GROUP_ID,
 		itemId: `mock:menu:${ MOCK_GROUP_ID }:${ slug }`,
 		reassignable: true,
@@ -158,6 +168,10 @@ export function buildAdminSidebarDevMock( menuItems ) {
 
 	let picked = 0;
 	const mockedMenuItems = menuItems.map( ( item, index ) => {
+		if ( isExemptItem( item ) ) {
+			return normalizeExemptItem( item );
+		}
+
 		if ( picked >= MOCK_ITEM_TARGET_COUNT || ! canUseItemAsMockSource( item ) ) {
 			return item;
 		}

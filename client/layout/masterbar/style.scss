@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/colors';
 $autobar-height: 20px;
 $masterbar-font-size: 13px;
 $masterbar-mobile-font-size: 14px;
@@ -1212,17 +1213,18 @@ a.masterbar__quick-language-switcher {
 
 .masterbar__item-help {
 	@media only screen and (min-width: 782px) {
-		padding: 0 11px;
+		padding-left: 8px;
+		padding-right: 9px;
 	}
 
 	svg {
 		fill: var(--color-masterbar-icon);
-		width: 22px;
-		height: 22px;
+		width: 27px;
+		height: 27px;
 
 		@media only screen and (max-width: 781px) {
-			width: 30px;
-			height: 30px;
+			width: 37px;
+			height: 37px;
 		}
 	}
 }

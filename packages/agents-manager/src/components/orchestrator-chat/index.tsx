@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -27,7 +28,9 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
+import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -130,6 +133,9 @@ export default function OrchestratorChat( {
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
+	const chatError = isReaderChat
+		? getReaderChatErrorMessage( error )
+		: getOrchestratorErrorMessage( error );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
@@ -152,7 +158,10 @@ export default function OrchestratorChat( {
 	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const dynamicSuggestions = useSuggestions?.();
+	const maxDynamicSuggestions = isDocked ? undefined : 3;
+	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
+		suggestionsVisible: isOpen || isCompactMode,
+	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
@@ -280,20 +289,7 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useEffect( () => {
-		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
-		window.__agentsManagerActions.setChatInput = setChatInput;
-		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
-
-		return () => {
-			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
-				delete window.__agentsManagerActions.setChatInput;
-			}
-			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
-				delete window.__agentsManagerActions.submitChatMessage;
-			}
-		};
-	}, [ setChatInput, submitChatMessage ] );
+	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -340,7 +336,7 @@ export default function OrchestratorChat( {
 		pathname: window.location.pathname,
 	} );
 
-	// Listen for inline suggestion clicks dispatched by Big Sky's InlineSuggestions component.
+	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
 		const handleInlineSuggestionClick = ( event: Event ) => {
 			const { value } = ( event as CustomEvent ).detail;
@@ -365,6 +361,14 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
+	const handleSuggestionClick = useCallback( ( suggestion: Suggestion | string ) => {
+		const value =
+			typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
+		window.dispatchEvent(
+			new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+		);
+	}, [] );
+
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
@@ -387,6 +391,7 @@ export default function OrchestratorChat( {
 		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
+		isProcessing,
 		setIsThinking,
 		deleteMarkedMessages: ( msgs ) => {
 			setDeletedMessageIds(
@@ -463,7 +468,7 @@ export default function OrchestratorChat( {
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			thinkingMessage={ progressMessage }
-			error={ error }
+			error={ chatError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ abortCurrentRequest }
 			isLoadingConversation={ isLoadingConversation }
@@ -472,6 +477,7 @@ export default function OrchestratorChat( {
 			onClose={ onClose }
 			onExpand={ onExpand }
 			clearSuggestions={ clearSuggestions }
+			onSuggestionClick={ handleSuggestionClick }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }

@@ -286,8 +286,8 @@ const PartnerDirectoryDashboard = () => {
 			<div className="partner-directory-dashboard__completed-section">
 				<div className="partner-directory-dashboard__heading">
 					{ translate(
-						'Congratulations! Your agency is now listed in our partner directory.',
-						'Congratulations! Your agency is now listed in our partner directories.',
+						'Congratulations! Your agency is now listed in our Partner Directory.',
+						'Congratulations! Your agency is now listed in our Partner Directories.',
 						{
 							count: directoryApplicationStatuses.filter( ( { key } ) => key === 'approved' )
 								.length,
@@ -347,7 +347,7 @@ const PartnerDirectoryDashboard = () => {
 
 			<div className="partner-directory-dashboard__subtitle">
 				{ translate(
-					'List your agency in our partner directories. Showcase your skills, attract clients, and grow your business.'
+					'List your agency in our Partner Directories. Showcase your skills, attract clients, and grow your business.'
 				) }
 			</div>
 			<StepSection heading={ translate( 'How do I start?' ) }>
@@ -421,10 +421,10 @@ const PartnerDirectoryDashboard = () => {
 					description={
 						<>
 							{ translate(
-								'Your agency will appear in the partner directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
+								'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
 							) }
 							<br />
-							{ translate( 'These partner directories are launching soon.' ) }
+							{ translate( 'These Partner Directories are launching soon.' ) }
 						</>
 					}
 					buttonProps={ {

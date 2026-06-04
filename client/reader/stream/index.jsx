@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { usePostLikes } from 'calypso/components/data/post-likes';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -19,8 +19,16 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useReaderPostEntity } from 'calypso/reader/data/reader-post-entities';
-import { withReaderPostLikeActions } from 'calypso/reader/data/reader-post-likes';
+import { useCachedPost } from 'calypso/reader/data/post/cache';
+import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import {
+	analyticsForStream,
+	INITIAL_FETCH,
+	normalizeStreamPage,
+	PER_FETCH,
+	useInfiniteStream,
+} from 'calypso/reader/data/stream';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
@@ -29,10 +37,7 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -47,7 +52,6 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
-import { useStreamPosts } from './use-stream-posts';
 import {
 	getDistanceBetweenPrompts,
 	getDistanceBetweenRecs,
@@ -61,6 +65,37 @@ const GUESSED_POST_HEIGHT = 600;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+
+const useStreamRenderAnalytics = ( pages, streamKey ) => {
+	const dispatch = useDispatch();
+	const processedPages = React.useRef( new WeakSet() );
+	const streamType = getStreamType( streamKey ?? '' );
+
+	React.useEffect( () => {
+		processedPages.current = new WeakSet();
+	}, [ streamKey ] );
+
+	React.useEffect( () => {
+		if ( ! streamKey ) {
+			return;
+		}
+
+		for ( const page of pages ) {
+			if ( processedPages.current.has( page ) ) {
+				continue;
+			}
+			processedPages.current.add( page );
+			const { streamPosts } = normalizeStreamPage( page, streamType );
+			if ( streamPosts.length > 0 ) {
+				analyticsForStream( {
+					streamKey,
+					algorithm: page.algorithm,
+					items: streamPosts,
+				} ).forEach( ( action ) => dispatch( action ) );
+			}
+		}
+	}, [ pages, streamKey, streamType, dispatch ] );
+};
 
 class ReaderStream extends Component {
 	static propTypes = {
@@ -143,7 +178,7 @@ class ReaderStream extends Component {
 	componentDidUpdate( { selectedPostKey, streamKey, selectedFeedId } ) {
 		// Fetch new page if selected feed or stream is changed.
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
-			// `useStreamPosts` is keyed by `feedId`, so the cache rotates
+			// `useInfiniteStream` is keyed by `feedId`, so the cache rotates
 			// automatically — no manual purge needed. Selection lives under the
 			// new `streamKey`'s entry, which starts empty.
 			this.scrollFeedListToTop();
@@ -809,7 +844,8 @@ function getStreamKey( state, streamKey ) {
 
 const withStreamPosts = ( WrappedComponent ) =>
 	function StreamPostsContainer( props ) {
-		const streamPostsQuery = useStreamPosts( {
+		const { count: followsCount } = useSiteSubscriptions();
+		const streamPostsQuery = useInfiniteStream( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
 			localeSlug: props.localeSlug,
@@ -819,30 +855,29 @@ const withStreamPosts = ( WrappedComponent ) =>
 			},
 		} );
 
-		const recsStreamPostsQuery = useStreamPosts( {
+		const recsStreamPostsQuery = useInfiniteStream( {
 			streamKey: props.recsStreamKey,
 			localeSlug: props.localeSlug,
 			options: {
 				enabled: ! props.forcePlaceholders && streamPostsQuery.items.length > 0,
 			},
 		} );
+
+		useStreamRenderAnalytics( streamPostsQuery.pages, props.streamKey );
+		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
+
 		const items = React.useMemo( () => {
 			const withRecommendations =
 				props.recsStreamKey && recsStreamPostsQuery.items.length > 0
 					? injectRecommendations(
 							streamPostsQuery.items,
 							recsStreamPostsQuery.items,
-							getDistanceBetweenRecs( props.followsCount )
+							getDistanceBetweenRecs( followsCount )
 					  )
 					: streamPostsQuery.items;
 
-			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( props.followsCount ) );
-		}, [
-			props.followsCount,
-			props.recsStreamKey,
-			recsStreamPostsQuery.items,
-			streamPostsQuery.items,
-		] );
+			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( followsCount ) );
+		}, [ followsCount, props.recsStreamKey, recsStreamPostsQuery.items, streamPostsQuery.items ] );
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
@@ -902,13 +937,10 @@ const withStreamPosts = ( WrappedComponent ) =>
 		} );
 
 		// `<Stream>` reads the selected post body for keyboard actions from the
-		// canonical Reader entity cache, then uses the post likes query as the
+		// canonical Reader post cache, then uses the post likes query as the
 		// source of truth for the current liked state.
-		const canonicalSelectedPost = useReaderPostEntity( selectedPostKey );
-		const selectedPostFromRedux = useSelector( ( state ) =>
-			getPostByKey( state, selectedPostKey )
-		);
-		const selectedPost = canonicalSelectedPost ?? selectedPostFromRedux;
+		const canonicalSelectedPost = useCachedPost( selectedPostKey );
+		const selectedPost = canonicalSelectedPost;
 		const { postLikes } = usePostLikes( selectedPost?.site_ID, selectedPost?.ID );
 		const likedPost = selectedPost ? postLikes?.iLike ?? Boolean( selectedPost.i_like ) : null;
 
@@ -917,6 +949,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 				{ ...props }
 				items={ items }
 				lastPage={ streamPostsQuery.lastPage }
+				followsCount={ followsCount }
 				isRequesting={
 					streamPostsQuery.isLoading ||
 					streamPostsQuery.isFetchingNextPage ||
@@ -953,7 +986,6 @@ export default connect(
 			notificationsOpen: isNotificationsOpen( state ),
 			streamKey,
 			selectedFeedId: getSelectedRecentFeedId( state ),
-			followsCount: getReaderFollowsCount( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,
@@ -964,4 +996,4 @@ export default connect(
 		showSelectedPost,
 		viewStream,
 	}
-)( localize( withDimensions( withStreamPosts( withReaderPostLikeActions( ReaderStream ) ) ) ) );
+)( localize( withDimensions( withStreamPosts( withPostLikeActions( ReaderStream ) ) ) ) );

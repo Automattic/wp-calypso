@@ -10,8 +10,9 @@ import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
@@ -21,6 +22,8 @@ import {
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
+import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
+import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -30,10 +33,10 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
+import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import './style.scss';
 
 // All onboarding steps share a single <Modal> frame so transitions between
@@ -68,34 +71,32 @@ const ReaderOnboardingRsm = ( {
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
 	// Used in the `completed` event for an instant in-session site-follow
-	// count: legacy `READER_FOLLOW` (used by the discover step and interests
-	// pack subscribe) updates this slice synchronously, whereas
-	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` is a TanStack
-	// query that doesn't reflect in-session follows until its refetch resolves.
+	// count: follows mutations update this query cache, whereas
+	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` can lag until
+	// its refetch resolves.
 	//
-	// `getReaderFollows` retains stale rows (`is_following: false`) and
+	// The follows query retains stale rows (`is_following: false`) and
 	// self-owned subs (`is_owner: true`); we filter both out so the count
 	// matches the rest of the onboarding eligibility logic, which uses
 	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
 	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
-	// under-report follows before the Redux follows slice has hydrated.
+	// under-report follows before the follows query has hydrated.
 	//
 	// `Math.max` is safe in onboarding because the UI only nets follow
 	// additions: discover-step recommendations exclude pre-session
 	// subscriptions (so in-session unfollows only target in-session adds),
 	// and interests-step pack subscribe never unfollows. The invariant is
-	// therefore `reduxFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
-	// so the max picks the live Redux value. If a future flow ever allows
+	// therefore `queryFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
+	// so the max picks the live follows-query value. If a future flow ever allows
 	// unfollowing a pre-session subscription from within onboarding, revisit
-	// this — gate on Redux hydration (e.g. `getReaderFollowsLastSyncTime !==
-	// null`) rather than blindly take the max.
-	const reduxFollows = useSelector( getReaderFollows );
-	const reduxFollowedNonSelfSitesCount = reduxFollows.filter(
-		( f ) => f.is_following && ! f.is_owner
+	// this and gate on follows query hydration rather than blindly take the max.
+	const { subscriptions } = useCachedSiteSubscriptions();
+	const queryFollowedNonSelfSitesCount = subscriptions.filter(
+		( subscription ) => subscription.is_following && ! subscription.is_owner
 	).length;
 	const followedNonSelfSitesCount = Math.max(
 		nonSelfSubscriptionsCount,
-		reduxFollowedNonSelfSitesCount
+		queryFollowedNonSelfSitesCount
 	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
@@ -128,6 +129,23 @@ const ReaderOnboardingRsm = ( {
 	const [ hasFinished, setHasFinished ] = useState( false );
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
+
+	// Stable blog map for the interests step — initialized lazily the first
+	// time the onboarding modal is actually shown, so the random blog selection
+	// (getTopicGroups/getPackBlogs) does not run for users who never open the
+	// modal. Defined here (not inside InterestsModal) so the selection persists
+	// when the user navigates away from the step and returns — InterestsModal
+	// unmounts/remounts on each step transition.
+	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
+
+	// Tracks which packs the user has explicitly subscribed to this session.
+	// Owned here (not inside InterestsModal) so it persists when the user
+	// advances to the discover step and then clicks Back.
+	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >(
+		() => new Set()
+	);
+	const handlePackSubscribed = ( packId: string ) =>
+		setRelaxedPackCriteria( ( current ) => new Set( current ).add( packId ) );
 
 	// Snapshot the user's tag/site follow counts the first time all eligibility
 	// inputs are loaded. Eligibility is then evaluated against the snapshot so it
@@ -188,15 +206,23 @@ const ReaderOnboardingRsm = ( {
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
-	// Site follows inside the onboarding flow (discover-step `ReaderFollowButton`
-	// and interests-step pack subscriptions) go through the legacy Redux
-	// `READER_FOLLOW` action, which doesn't touch the SubscriptionManager
-	// TanStack Query caches. Invalidate them explicitly when leaving either
-	// step so the next mount of `useSiteSubscriptions` (here or anywhere else
-	// in Reader) sees the user's real, post-onboarding follow counts rather
-	// than the pre-onboarding cached snapshot. Without this, remounting
-	// onboarding-rsm right after a user clicks Finish can still surface
-	// `forceShow=true` against a stale `hasNonSelfSubscriptions=false`.
+	// Lazy-initialize the blog map now that we know the modal will be shown.
+	// Placing this after shouldRenderOnboarding means getTopicGroups /
+	// getPackBlogs never run for the common case where onboarding is not shown.
+	if ( shouldRenderOnboarding && ! packBlogsByIdRef.current ) {
+		packBlogsByIdRef.current = new Map(
+			getTopicGroups().map( ( group ) => [
+				group.id,
+				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
+			] )
+		);
+	}
+
+	// Site follows inside the onboarding flow update the follows query, while
+	// SubscriptionManager owns separate TanStack Query caches. Invalidate those
+	// explicitly when leaving either step so the next mount of
+	// `useSiteSubscriptions` sees the user's real, post-onboarding follow
+	// counts rather than the pre-onboarding cached snapshot.
 	const invalidateSubscriptionQueries = () => {
 		queryClient.invalidateQueries( {
 			queryKey: SubscriptionManager.subscriptionsCountQueryKeyPrefix,
@@ -441,6 +467,9 @@ const ReaderOnboardingRsm = ( {
 							promptVerification={ promptVerification }
 							hasFollowed={ hasFollowedInInterestsStep }
 							onFollowed={ markFollowedInInterestsStep }
+							packBlogsById={ packBlogsByIdRef.current! }
+							relaxedPackCriteria={ relaxedPackCriteria }
+							onPackSubscribed={ handlePackSubscribed }
 						/>
 					) }
 					{ currentStep === 'discover' && (

@@ -1,4 +1,5 @@
 import { addQueryArgs } from 'calypso/lib/url';
+import { normalizeWpcomAdminSidebarHostLinks } from 'calypso/my-sites/sidebar/utils/normalize-wpcom-admin-sidebar-host-links';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { receiveAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/actions';
@@ -88,13 +89,12 @@ export const handleSuccess =
 		const state = getState();
 		const wpAdminUrl = getSiteAdminUrl( state, siteId );
 		const siteSlug = getSiteSlug( state, siteId );
+		const sanitizedMenuItems = rawMenuItems.map( ( menuItem ) =>
+			sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl )
+		);
 
 		return dispatch(
-			receiveAdminMenu(
-				siteId,
-				rawMenuItems.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) ),
-				groups
-			)
+			receiveAdminMenu( siteId, normalizeWpcomAdminSidebarHostLinks( sanitizedMenuItems ), groups )
 		);
 	};
 

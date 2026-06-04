@@ -39,7 +39,7 @@ export default function WooPaymentsCustomDescription() {
 
 			<div className="woopayments-custom-description__section">
 				<h3 className="jetpack-product-info__section-title">
-					{ translate( 'Revenue Share Terms' ) }
+					{ translate( 'Revenue Share terms' ) }
 				</h3>
 				<p className="jetpack-product-info__description">
 					{ translate(

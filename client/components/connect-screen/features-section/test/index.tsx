@@ -111,4 +111,51 @@ describe( 'FeaturesSection', () => {
 			triple.container.querySelector( '.connect-screen-features-section.has-3-card' )
 		).toBeInTheDocument();
 	} );
+
+	describe( 'heroFirstCard prop', () => {
+		test( 'adds the has-hero-card modifier when set with multiple cards', () => {
+			const { container } = render( <FeaturesSection cards={ baseCards } heroFirstCard /> );
+			expect(
+				container.querySelector( '.connect-screen-features-section.has-2-card.has-hero-card' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'omits the modifier with a single card — there is no second row to stand alone in', () => {
+			const { container } = render(
+				<FeaturesSection cards={ [ baseCards[ 0 ] ] } heroFirstCard />
+			);
+			expect(
+				container.querySelector( '.connect-screen-features-section.has-hero-card' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'omits the modifier when the prop is false / unset', () => {
+			const { container } = render( <FeaturesSection cards={ baseCards } /> );
+			expect(
+				container.querySelector( '.connect-screen-features-section.has-hero-card' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'still applies on the 3-card layout (idempotent with the existing has-3-card hero CSS)', () => {
+			const triple = render(
+				<FeaturesSection
+					heroFirstCard
+					cards={ [
+						...baseCards,
+						{
+							id: 'jetpack',
+							logo: '/jetpack-logo.svg',
+							title: 'Jetpack',
+							bullets: [ 'Real-time backups' ],
+						},
+					] }
+				/>
+			);
+			expect(
+				triple.container.querySelector(
+					'.connect-screen-features-section.has-3-card.has-hero-card'
+				)
+			).toBeInTheDocument();
+		} );
+	} );
 } );

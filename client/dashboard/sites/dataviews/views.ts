@@ -54,10 +54,11 @@ export function getDefaultView( {
 } ): View {
 	const type = isRestoringAccount || siteCount > DEFAULT_PER_PAGE ? 'table' : 'grid';
 
+	const layout = DEFAULT_LAYOUTS[ type ];
 	const defaultView = {
 		type,
 		...DEFAULT_VIEW,
-		...DEFAULT_LAYOUTS[ type ],
+		...( typeof layout === 'object' ? layout : {} ),
 	} as View;
 
 	if ( isAutomattician ) {

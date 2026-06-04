@@ -60,6 +60,7 @@ import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-s
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import {
 	localizeThemesPath,
 	shouldEnableThemesColorScheme,
@@ -84,7 +85,6 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -108,6 +108,7 @@ import {
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
+	shouldShowActivationModal,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -218,6 +219,7 @@ class ThemeSheet extends Component {
 		isRedirectingToEditorWebPreview: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
+		isActivationModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
@@ -339,7 +341,20 @@ class ThemeSheet extends Component {
 		}
 
 		this.onBeforeOptionAction();
+
+		// Intercept activation so the user can preview the new theme and choose
+		// between a basic and a full setup, when applicable.
+		if ( this.props.defaultOption?.key === 'activate' && this.props.shouldShowActivationModal ) {
+			event?.preventDefault();
+			this.setState( { isActivationModalVisible: true } );
+			return;
+		}
+
 		this.props.defaultOption.action?.( this.props.themeId );
+	};
+
+	closeActivationModal = () => {
+		this.setState( { isActivationModalVisible: false } );
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -753,33 +768,12 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const {
-			isPremium,
-			isFreePlan,
-			isThemePurchased,
-			themeTier,
-			shouldLimitGlobalStyles,
-			styleVariations,
-			isExternallyManagedTheme,
-			isBundledSoftwareSet,
-		} = this.props;
-
-		const isGlobalStylesOnPersonal = this.props.isGlobalStylesOnPersonal;
+		const { isFreePlan, themeTier, shouldLimitGlobalStyles, styleVariations } = this.props;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
-		const hasLimitedFeatures =
-			! isExternallyManagedTheme &&
-			! isBundledSoftwareSet &&
-			! isThemePurchased &&
-			! isGlobalStylesOnPersonal &&
-			! isPremium &&
-			shouldLimitGlobalStyles;
+		const shouldSplitDefaultVariation = isFreeTier;
 
-		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
-
-		const needsUpgrade = isGlobalStylesOnPersonal
-			? isFreePlan || shouldLimitGlobalStyles
-			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
+		const needsUpgrade = isFreePlan || shouldLimitGlobalStyles;
 
 		return (
 			styleVariations.length > 0 && (
@@ -1144,7 +1138,7 @@ class ThemeSheet extends Component {
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		const upgradeToPlan = this.props.isGlobalStylesOnPersonal ? 'personal' : 'premium';
+		const upgradeToPlan = 'personal';
 
 		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
 	};
@@ -1327,6 +1321,15 @@ class ThemeSheet extends Component {
 					/>
 				) }
 				<EligibilityWarningModal />
+				{ this.state.isActivationModalVisible && (
+					<ActivationModal
+						themeId={ themeId }
+						siteId={ siteId }
+						source="details"
+						styleVariation={ this.getSelectedStyleVariation() }
+						onClose={ this.closeActivationModal }
+					/>
+				) }
 			</Main>
 		);
 	};
@@ -1497,6 +1500,7 @@ export default connect(
 		return {
 			...theme,
 			themeId,
+			shouldShowActivationModal: shouldShowActivationModal( state, siteId, themeId ),
 			error,
 			siteId,
 			siteSlug,
@@ -1567,8 +1571,6 @@ export default connect(
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(
-		withSiteGlobalStylesStatus(
-			withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) )
-		)
+		withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) )
 	)
 );

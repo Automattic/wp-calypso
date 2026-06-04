@@ -40,7 +40,13 @@ const getCurrentPlatform = async (): Promise< {
 		}
 
 		if ( platform === 'linux' ) {
-			return { platform: PlatformType.Linux, detectionFailed: false };
+			if ( architecture === 'arm64' ) {
+				return { platform: PlatformType.LinuxARM64, detectionFailed: false };
+			} else if ( architecture === 'x64' ) {
+				return { platform: PlatformType.LinuxX64, detectionFailed: false };
+			}
+			// Client Hints available but no architecture - fallback to x64
+			return { platform: PlatformType.LinuxX64, detectionFailed: true };
 		}
 	}
 
@@ -61,7 +67,8 @@ const getCurrentPlatform = async (): Promise< {
 		}
 
 		if ( platform === 'linux' ) {
-			return { platform: PlatformType.Linux, detectionFailed: false };
+			// Cannot detect Linux architecture - default to x64 (more common)
+			return { platform: PlatformType.LinuxX64, detectionFailed: true };
 		}
 	}
 
@@ -90,10 +97,21 @@ const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig 
 			} );
 	}, [] );
 
-	const currentPlatformConfig = useMemo(
-		() => ( platform ? appConfig.platforms[ platform ] : undefined ),
-		[ appConfig.platforms, platform ]
-	);
+	const currentPlatformConfig = useMemo( () => {
+		if ( ! platform ) {
+			return undefined;
+		}
+		const config = appConfig.platforms[ platform ];
+		if ( config ) {
+			return config;
+		}
+		// Apps without arch-specific Linux entries (e.g. the WordPress.com
+		// desktop app) fall back to the generic Linux entry.
+		if ( platform === PlatformType.LinuxX64 || platform === PlatformType.LinuxARM64 ) {
+			return appConfig.platforms[ PlatformType.Linux ];
+		}
+		return undefined;
+	}, [ appConfig.platforms, platform ] );
 
 	if ( isLoading ) {
 		return (

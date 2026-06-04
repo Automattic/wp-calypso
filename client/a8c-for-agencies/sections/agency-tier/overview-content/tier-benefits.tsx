@@ -26,6 +26,10 @@ import type { ComponentProps } from 'react';
 
 import './style.scss';
 
+// Local view-model: pairs each Benefit with the per-tier UI state that the
+// DataViews field renderers need access to via `item`.
+type BenefitItem = Benefit & { isLocked: boolean };
+
 export default function TierBenefits( {
 	currentAgencyTierId,
 }: {
@@ -73,14 +77,22 @@ export default function TierBenefits( {
 	// Combine all tiers in the desired order
 	const allTiersToShow = [ currentTier, ...lowerTiers, ...higherTiers ];
 
-	const fields: Field< Benefit >[] = [
+	const fields: Field< BenefitItem >[] = [
 		{
 			id: 'icon',
 			render: ( { item } ) =>
 				item.icon ? (
-					<div className="agency-tier-overview-revamped__icon-container">
-						<Icon icon={ item.icon } size={ 32 } />
-					</div>
+					<HStack
+						alignment="center"
+						justify="center"
+						style={ {
+							background: 'var(--color-gray-100)',
+							height: '100%',
+							opacity: item.isLocked ? 0.5 : undefined,
+						} }
+					>
+						<Icon icon={ item.icon } size={ 32 } fill="var(--color-gray-700)" />
+					</HStack>
 				) : null,
 		},
 		{
@@ -89,7 +101,9 @@ export default function TierBenefits( {
 			render: ( { item } ) => {
 				return (
 					<HStack spacing={ 2 } style={ { justifyContent: 'flex-start' } }>
-						<Text weight={ 500 }>{ item.title }</Text>
+						<Text weight={ 500 } variant={ item.isLocked ? 'muted' : undefined }>
+							{ item.title }
+						</Text>
 						{ item.status && <Badge intent="default" children={ item.status } /> }
 					</HStack>
 				);
@@ -98,12 +112,20 @@ export default function TierBenefits( {
 		{
 			id: 'description',
 			getValue: ( { item } ) => item.description,
+			render: ( { item } ) => {
+				return (
+					<Text size={ 12 } variant="muted">
+						{ item.description }
+					</Text>
+				);
+			},
 		},
 		{
 			id: 'actions',
 			getValue: ( { item } ) => item.actions,
 			render: ( { item } ) => {
-				if ( ! item.actions ) {
+				// Locked (higher) tiers don't expose actions yet.
+				if ( item.isLocked || ! item.actions ) {
 					return null;
 				}
 				const buttons = item.actions.map( ( action ) => {
@@ -210,16 +232,13 @@ export default function TierBenefits( {
 						<CardHeader isBorderless>
 							<SectionHeader title={ tierHeading } level={ 3 } />
 						</CardHeader>
-						<CardBody style={ { padding: '0', opacity: isHigherTier ? 0.5 : 1 } }>
-							<DataViews< Benefit >
-								data={ tier.benefits as Benefit[] }
-								fields={ fields.map( ( field ) => {
-									// Remove actions from higher tiers as they are not available yet
-									if ( isHigherTier && field.id === 'actions' ) {
-										return { ...field, render: () => null };
-									}
-									return field;
-								} ) }
+						<CardBody style={ { padding: '0' } }>
+							<DataViews< BenefitItem >
+								data={ tier.benefits.map( ( benefit ) => ( {
+									...benefit,
+									isLocked: isHigherTier,
+								} ) ) }
+								fields={ fields }
 								view={ view }
 								onChangeView={ () => {} }
 								getItemId={ ( item ) => item.title }

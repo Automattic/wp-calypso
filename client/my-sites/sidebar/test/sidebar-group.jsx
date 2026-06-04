@@ -4,7 +4,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { ADMIN_SIDEBAR_GROUP_SET_EXPANDED } from 'calypso/state/action-types';
+import { useCustomizeContext } from '../customize';
 import { MySitesSidebarUnifiedSidebarGroup } from '../sidebar-group';
+
+jest.mock( '../customize', () => ( {
+	useCustomizeContext: jest.fn(),
+} ) );
+
+const mockUseCustomizeContext = useCustomizeContext;
 
 const renderInProvider = ( ui, state = {} ) => {
 	const store = configureStore()( {
@@ -32,6 +40,10 @@ const addonsGroup = {
 };
 
 describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
+	beforeEach( () => {
+		mockUseCustomizeContext.mockReturnValue( null );
+	} );
+
 	it( 'renders the group label', () => {
 		renderInProvider(
 			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
@@ -103,8 +115,8 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 		);
 		const customize = container.querySelector( '.wp-admin-sidebar-group__customize' );
 		expect( customize ).toBeInTheDocument();
-		expect( customize ).toHaveAttribute( 'aria-label', 'Customize plugins' );
-		expect( customize ).toHaveAttribute( 'data-tooltip', 'Customize plugins' );
+		expect( customize ).toHaveAttribute( 'aria-label', 'Edit plugin order' );
+		expect( customize ).toHaveAttribute( 'data-tooltip', 'Edit plugin order' );
 		// Phase 1 keeps it disabled until Phase 2 wires the click handler.
 		expect( customize ).toBeDisabled();
 	} );
@@ -176,6 +188,81 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 			'data-expanded',
 			'false'
 		);
+	} );
+
+	it( 'defaults the plugins group to expanded on first encounter', () => {
+		const { container } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>
+		);
+		expect( container.querySelector( '.wp-admin-sidebar-group' ) ).toHaveAttribute(
+			'data-expanded',
+			'true'
+		);
+	} );
+
+	it( 'stores collapsed when toggling the default-expanded plugins group', () => {
+		const { store } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: /My Plugins/i } ) );
+
+		expect( store.getActions() ).toContainEqual( {
+			type: ADMIN_SIDEBAR_GROUP_SET_EXPANDED,
+			siteId: 12345,
+			groupId: 'plugins',
+			expanded: false,
+		} );
+	} );
+
+	it( 'honors stored collapsed state for the plugins group', () => {
+		const { container } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>,
+			{
+				adminSidebarExpandState: {
+					bySite: { 12345: { plugins: false } },
+				},
+			}
+		);
+		expect( container.querySelector( '.wp-admin-sidebar-group' ) ).toHaveAttribute(
+			'data-expanded',
+			'false'
+		);
+	} );
+
+	it( 'locks the plugins group expanded during customize mode', () => {
+		mockUseCustomizeContext.mockReturnValue( {
+			isCustomizing: true,
+			enter: jest.fn(),
+		} );
+		const { container, store } = renderInProvider(
+			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>
+				<li>child</li>
+			</MySitesSidebarUnifiedSidebarGroup>,
+			{
+				adminSidebarExpandState: {
+					bySite: { 12345: { plugins: false } },
+				},
+			}
+		);
+		const group = container.querySelector( '.wp-admin-sidebar-group' );
+		const toggle = container.querySelector( '.wp-admin-sidebar-group__toggle' );
+		const chevron = container.querySelector( '.wp-admin-sidebar-group__chevron' );
+
+		expect( group ).toHaveClass( 'wp-admin-sidebar-group--reorder-locked' );
+		expect( group ).toHaveAttribute( 'data-expanded', 'true' );
+		expect( toggle ).toBeDisabled();
+
+		fireEvent.click( chevron );
+
+		expect( store.getActions() ).toEqual( [] );
+		expect( group ).toHaveAttribute( 'data-expanded', 'true' );
 	} );
 
 	it( 'reads stored expand state from Redux when no prop is supplied', () => {

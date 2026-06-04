@@ -30,6 +30,34 @@ body:has(#wpcom-omnibar) #wpcom {
 		outline: none;
 	}
 
+	// The Launch button is a primary @wordpress/components Button, but the
+	// generic `.masterbar__item:hover` rules recolor its background, text and
+	// icon to the masterbar highlight. Re-assert the primary treatment so it
+	// behaves like the classic masterbar: white text/icon on a darker-blue
+	// background on hover. The dashboard doesn't load Calypso's color-scheme
+	// variables, so the darker-blue is hard-coded (the classic masterbar's
+	// `--color-accent-60`).
+	// The button renders as <button> while loading and <a> once enabled. The
+	// transparent rule above only matches the <button>, so the primary background
+	// would otherwise appear only after loading. Reassert it for both elements.
+	.masterbar__item-launch-site,
+	button.masterbar__item-launch-site {
+		background: var(--wp-components-color-accent, #3858e9);
+
+		&:hover,
+		&.is-open {
+			background: #2a46ce;
+
+			.masterbar__item-content {
+				color: var(--color-masterbar-text);
+			}
+
+			svg path {
+				fill: var(--color-masterbar-text);
+			}
+		}
+	}
+
 	.masterbar__item-subitems a:focus-visible,
 	.masterbar__item-subitems button:focus-visible {
 		outline: thin dotted;

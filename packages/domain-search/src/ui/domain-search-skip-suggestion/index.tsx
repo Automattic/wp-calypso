@@ -36,7 +36,7 @@ const DomainSearchSkipSuggestion = ( {
 
 	let title;
 	let subtitle;
-	let buttonText = __( 'Skip purchase' );
+	let buttonText: string = __( 'Skip purchase' );
 	let showButton = true;
 	let chevronOnMobile = false;
 
@@ -95,7 +95,7 @@ const DomainSearchSkipSuggestion = ( {
 	const skipLabel = sprintf(
 		// translators: %(domain)s is the domain name
 		__( 'Skip purchase and continue with %(domain)s' ),
-		{ domain }
+		{ domain: domain ?? '' }
 	);
 
 	const renderRight = () => {

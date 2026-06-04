@@ -274,8 +274,6 @@
 
 .plugins-browser-item__why-icon {
 	flex-shrink: 0;
-	font-size: 14px;
-	line-height: 1.4;
 	color: var(--studio-blue-50);
 }
 
@@ -323,13 +321,12 @@
 	}
 
 	@container (min-width: 560px) {
-		// Position the icon as a left column. The base card uses
-		// `margin-left` on text rows to clear the inline icon; on hero we
-		// pad the link to make room and absolute-position the icon, so the
-		// content below the title aligns too.
-		.plugins-browser-item__link {
+		// `.extended` bumps specificity to beat the
+		// `.full-width-section .extended` padding override above. Shorthand
+		// locks all 4 sides so the icon's `top: 24px` stays flush.
+		.plugins-browser-item.extended .plugins-browser-item__link {
 			position: relative;
-			padding-left: 124px; // base padding (24) + icon (80) + gap (20)
+			padding: 24px 24px 24px 124px; // 24 + icon (80) + gap (20)
 		}
 
 		// PluginIcon hardcodes `max-width / max-height: 48px` inline via the

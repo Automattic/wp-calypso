@@ -26,11 +26,17 @@ import { activateStyleVariation } from './activate-style-variation';
  * @param {string}  [options.source]     The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} [options.purchased]  Whether the theme has been purchased prior to activation
  * @param {boolean} [options.showSuccessNotice]  Whether the theme has been purchased prior to activation
+ * @param {'basic'|'full'} [options.setupChoice] The user's setup choice from the activation modal: `'full'` runs `/theme-headstart` after activation to add the theme's extra demo content; `'basic'` skips it. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
  * @returns {Function}        Action thunk
  */
 export function activateTheme( themeId, siteId, options = {} ) {
 	return ( dispatch, getState ) => {
-		const { source = 'unknown', purchased = false, showSuccessNotice = false } = options || {};
+		const {
+			source = 'unknown',
+			purchased = false,
+			showSuccessNotice = false,
+			setupChoice,
+		} = options || {};
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
 			themeOptions && themeOptions.themeId === themeId
@@ -42,6 +48,8 @@ export function activateTheme( themeId, siteId, options = {} ) {
 			themeId,
 			siteId,
 		} );
+
+		let fullSetupFailed = false;
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
@@ -60,14 +68,44 @@ export function activateTheme( themeId, siteId, options = {} ) {
 
 				return theme;
 			} )
+			.then( async ( theme ) => {
+				if ( setupChoice === 'full' ) {
+					try {
+						await wpcom.req.post( {
+							path: `/sites/${ siteId }/theme-headstart/?_locale=user`,
+							apiNamespace: 'wpcom/v2',
+						} );
+					} catch ( error ) {
+						fullSetupFailed = true;
+						dispatch(
+							errorNotice(
+								translate(
+									"Your theme was activated, but we couldn't complete the full setup. The theme's extra content wasn't added."
+								)
+							)
+						);
+					}
+				}
+				return theme;
+			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch(
-					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
+					themeActivated(
+						themeStylesheet,
+						siteId,
+						source,
+						purchased,
+						styleVariationSlug,
+						setupChoice
+					)
 				);
 
-				if ( showSuccessNotice ) {
+				// When the full-setup step failed, the partial-success error
+				// notice already conveys the outcome — skip the success notice
+				// so we don't show both at once.
+				if ( showSuccessNotice && ! fullSetupFailed ) {
 					dispatch(
 						successNotice(
 							translate( 'The %(themeName)s theme is activated successfully!', {

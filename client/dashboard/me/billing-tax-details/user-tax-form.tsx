@@ -18,27 +18,33 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, type DataFormControlProps, type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
-import type {
-	UserTaxDetails,
-	UserTaxField,
-	UserTaxFormData,
-	UserTaxNormalizedField,
-} from '@automattic/api-core';
+import type { UserTaxDetails, UserTaxFormData } from '@automattic/api-core';
 
-export interface UserTaxFormControlProps {
-	data: UserTaxFormData;
-	field: UserTaxNormalizedField;
-	onChange: ( edits: Partial< UserTaxFormData > ) => void;
+export type UserTaxFormControlProps = DataFormControlProps< UserTaxFormData >;
+
+/**
+ * Per-field configuration that the custom DataForm controls need but that is
+ * not part of the DataViews `Field` API. It is provided through React context
+ * because `@wordpress/dataviews` strips unknown properties when normalizing
+ * fields.
+ */
+export interface UserTaxFieldConfig {
+	isDisabled?: boolean;
+	isVatAlreadySet?: boolean;
+	canUserEdit?: boolean;
+	taxName?: string;
 }
+
+const UserTaxFieldContext = createContext< UserTaxFieldConfig >( {} );
 
 export interface UserTaxDetailsUpdateError {
 	message: string;
@@ -52,7 +58,8 @@ export interface UserTaxDetailsFetchError {
 const emptyUserTaxDetails = {};
 
 function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) {
-	const { elements, getValue, id, label, isDisabled, isVatAlreadySet, canUserEdit } = field;
+	const { isDisabled, isVatAlreadySet, canUserEdit } = useContext( UserTaxFieldContext );
+	const { elements, getValue, id, label } = field;
 
 	const options =
 		elements?.length === 0
@@ -74,7 +81,8 @@ function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) 
 function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const { getValue, id, isDisabled, isVatAlreadySet, canUserEdit, label, taxName } = field;
+	const { isDisabled, isVatAlreadySet, canUserEdit, taxName } = useContext( UserTaxFieldContext );
+	const { getValue, id, label } = field;
 	const { country } = data;
 
 	const vatIdHelp =
@@ -115,7 +123,8 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 }
 
 function VatInputControl( { data, field, onChange }: UserTaxFormControlProps ) {
-	const { getValue, id, label, isDisabled } = field;
+	const { isDisabled } = useContext( UserTaxFieldContext );
+	const { getValue, id, label } = field;
 
 	return (
 		<InputControl
@@ -213,36 +222,27 @@ export default function UserTaxForm() {
 	const isDisabled = query.isLoading || mutation.isPending;
 	const canUserEdit = userTaxDetails.can_user_edit ?? false;
 
-	const fields: UserTaxField[] = [
+	const fields: Field< UserTaxFormData >[] = [
 		{
 			Edit: VatSelectControl,
 			elements: countryCodes,
 			id: 'country',
-			isDisabled,
-			isVatAlreadySet,
-			canUserEdit,
 			label: __( 'Country' ),
 		},
 		{
 			Edit: VatIdControl,
 			id: 'id',
-			isDisabled,
-			isVatAlreadySet,
-			canUserEdit,
 			label: __( 'VAT ID' ),
-			taxName,
 		},
 		{
 			Edit: VatInputControl,
 			id: 'name',
-			isDisabled,
 			label: __( 'Name' ),
 			type: 'text',
 		},
 		{
 			Edit: VatInputControl,
 			id: 'address',
-			isDisabled,
 			label: __( 'Address' ),
 			type: 'text',
 		},
@@ -287,14 +287,18 @@ export default function UserTaxForm() {
 	return (
 		<form onSubmit={ onSubmit }>
 			<VStack spacing={ 4 }>
-				<DataForm
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits ) => {
-						setLocalData( ( current ) => ( { ...current, ...edits } ) );
-					} }
-				/>
+				<UserTaxFieldContext.Provider
+					value={ { isDisabled, isVatAlreadySet, canUserEdit, taxName } }
+				>
+					<DataForm
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits ) => {
+							setLocalData( ( current ) => ( { ...current, ...edits } ) );
+						} }
+					/>
+				</UserTaxFieldContext.Provider>
 
 				<Text variant="muted">
 					{ createInterpolateElement(

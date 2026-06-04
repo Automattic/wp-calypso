@@ -32,7 +32,9 @@
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/drag-drop.js
  */
 import { translate } from 'i18n-calypso';
+import { layoutIndexOf, layoutRowsForContainer } from './dom-layout';
 import { BODY_DRAGGING_CLASS } from './index';
+import type { CommitMoveDetails } from './index';
 import type { LayoutPosition } from 'calypso/state/admin-sidebar/layout/types';
 
 const GHOST_CLASS = 'admin-sidebar-drag-ghost';
@@ -40,18 +42,19 @@ const INDICATOR_CLASS = 'admin-sidebar-drop-indicator';
 const SOURCE_DRAGGING_CLASS = 'is-admin-sidebar-source-dragging';
 const REASSIGNABLE_SELECTOR = 'li[data-wp-admin-sidebar-item-id]';
 const GROUP_SELECTOR = 'li.wp-admin-sidebar-group';
+const CALYPSO_ROW_SELECTOR = '.wp-admin-sidebar-group__children > li, .sidebar > li';
 // Broad drop-target selector — mirrors the public plugin's
 // `li.menu-top, li.wp-admin-sidebar-group`. Any top-level Calypso item
 // (`.sidebar__menu-item-parent` for leaf items, bare `<li>` for expandable
 // items rendered via `<MySitesSidebarUnifiedMenu>`) is a valid drop
-// neighbour even if it's not itself reassignable. `.sidebar > li` is the
-// catch-all for the expandable wrappers that don't carry the
-// `sidebar__menu-item-parent` class.
+// neighbour even if it's not itself reassignable. `.sidebar > li` and
+// `.wp-admin-sidebar-group__children > li` are the catch-alls for expandable
+// wrappers that don't carry the `sidebar__menu-item-parent` class.
 const DROP_NEIGHBOUR_SELECTOR =
-	'li[data-wp-admin-sidebar-item-id], li.sidebar__menu-item-parent, li.wp-admin-sidebar-group, .sidebar > li';
+	'li[data-wp-admin-sidebar-item-id], li.sidebar__menu-item-parent, li.wp-admin-sidebar-group, .sidebar > li, .wp-admin-sidebar-group__children > li';
 
 export interface DragDropController {
-	commitMove: ( itemId: string, position: LayoutPosition ) => void;
+	commitMove: ( itemId: string, position: LayoutPosition, details?: CommitMoveDetails ) => boolean;
 	beginDrag: ( itemId: string, sourcePosition: LayoutPosition ) => void;
 	endDrag: () => void;
 	announce: ( msg: string ) => void;
@@ -146,17 +149,22 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 			return;
 		}
 		if ( lastTarget && lastTarget.position && lastTarget.container ) {
-			controller.commitMove( activeItem.itemId, lastTarget.position );
-			const label = ( activeItem.li.textContent || activeItem.itemId ).trim();
-			const indexLabel = lastTarget.position.index + 1;
-			controller.announce(
-				translate( 'Moved %(label)s to position %(index)d.', {
-					args: {
-						label,
-						index: indexLabel,
-					},
-				} ) as string
-			);
+			const label = labelForElement( activeItem.li, activeItem.itemId );
+			const moved = controller.commitMove( activeItem.itemId, lastTarget.position, {
+				previousPosition: activeItem.sourcePosition,
+				label,
+			} );
+			if ( moved ) {
+				const indexLabel = lastTarget.position.index + 1;
+				controller.announce(
+					translate( 'Moved %(label)s to position %(index)d.', {
+						args: {
+							label,
+							index: indexLabel,
+						},
+					} ) as string
+				);
+			}
 		}
 		cleanup();
 	}
@@ -197,7 +205,7 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 		// elements and find the actual sidebar row beneath the cursor.
 		const elements = document.elementsFromPoint( x, y );
 		for ( const el of elements ) {
-			const li = el.closest( DROP_NEIGHBOUR_SELECTOR );
+			const li = findDropNeighbour( el );
 			if ( ! li || li === activeItem?.li ) {
 				continue;
 			}
@@ -221,13 +229,14 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 				const isExpanded = li.getAttribute( 'data-expanded' ) === 'true';
 				const isEmpty = childList.querySelectorAll( ':scope > li' ).length === 0;
 				if ( ! isExpanded || isEmpty ) {
+					const slot = layoutRowsForContainer( childList ).length;
 					return {
 						container: childList,
 						beforeLi: null,
 						position: {
 							kind: 'in_group',
 							group_id: groupId,
-							index: childList.children.length,
+							index: slot,
 						},
 					};
 				}
@@ -243,14 +252,17 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 				continue;
 			}
 			const enclosingGroup = container.closest( GROUP_SELECTOR );
-			const baseIndex = Array.prototype.indexOf.call( container.children, li );
+			const baseIndex = layoutIndexOf( container, li );
+			if ( baseIndex === -1 ) {
+				continue;
+			}
 			let slot = above ? baseIndex : baseIndex + 1;
 			// Same-container -1 adjustment (Phase 2 row 27). When the source
 			// is in the same container at a lower index, dropping it later
 			// requires `-1` because removing the source shifts everything
 			// past its position up by one slot.
 			if ( activeItem?.li.parentElement === container ) {
-				const sourceIndex = Array.prototype.indexOf.call( container.children, activeItem.li );
+				const sourceIndex = layoutIndexOf( container, activeItem.li );
 				if ( sourceIndex !== -1 && sourceIndex < slot ) {
 					slot -= 1;
 				}
@@ -308,6 +320,13 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 	};
 }
 
+function findDropNeighbour( el: Element ): Element | null {
+	// Expandable Calypso rows contain an inner `<li>` inside
+	// `.sidebar__menu.is-togglable`. Hit-testing can land on that inner LI;
+	// slot math must use the real rendered sidebar row instead.
+	return el.closest( CALYPSO_ROW_SELECTOR ) || el.closest( DROP_NEIGHBOUR_SELECTOR );
+}
+
 /**
  * Build the floating ghost from the source LI. Width/height match the
  * source row (Phase 2 row 17). The ghost is a shallow clone of the link
@@ -343,9 +362,7 @@ function createGhost( li: HTMLElement, rect: DOMRect ): HTMLDivElement {
  */
 export function positionForElement( li: HTMLElement ): LayoutPosition {
 	const groupContainer = li.parentElement ? li.parentElement.closest( GROUP_SELECTOR ) : null;
-	const siblings = li.parentElement
-		? Array.prototype.indexOf.call( li.parentElement.children, li )
-		: 0;
+	const siblings = li.parentElement ? Math.max( 0, layoutIndexOf( li.parentElement, li ) ) : 0;
 	if ( groupContainer ) {
 		return {
 			kind: 'in_group',
@@ -354,4 +371,18 @@ export function positionForElement( li: HTMLElement ): LayoutPosition {
 		};
 	}
 	return { kind: 'top_level', index: siblings };
+}
+
+export function labelForElement( li: HTMLElement, fallback: string ): string {
+	const link = li.querySelector( ':scope > a, :scope a' );
+	if ( ! link ) {
+		return ( li.textContent || fallback ).trim();
+	}
+	const cloned = link.cloneNode( true ) as HTMLElement;
+	cloned
+		.querySelectorAll(
+			'.admin-sidebar-item__grip, .admin-sidebar-item__more, .wp-submenu, .wp-submenu-wrap'
+		)
+		.forEach( ( el ) => el.remove() );
+	return ( cloned.textContent || fallback ).trim();
 }

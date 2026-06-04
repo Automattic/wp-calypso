@@ -1,0 +1,46 @@
+// `--bar-fill-intensity` controls how saturated the bar fill renders. The
+// link wrapper sets it (and bumps it on hover/focus); the fill consumes it
+// via `var()`. Non-clickable bars don't have a link wrapper, so they fall
+// back to the default declared in the `var()` itself.
+
+.dashboard-apm-bar-list__bar {
+	background-color: color-mix(in srgb, var(--wp-admin-theme-color) 8%, transparent);
+}
+
+.dashboard-apm-bar-list__bar-fill {
+	background-color: color-mix(
+		in srgb,
+		var(--wp-admin-theme-color) var(--bar-fill-intensity, 32%),
+		transparent
+	);
+	transition: background-color 150ms ease-out;
+}
+
+.dashboard-apm-bar-list__link {
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	text-decoration: none;
+	color: inherit;
+	border-radius: 4px;
+	transition: transform 150ms ease-out;
+}
+
+.dashboard-apm-bar-list__link:hover,
+.dashboard-apm-bar-list__link:focus-visible {
+	--bar-fill-intensity: 56%;
+
+	transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dashboard-apm-bar-list__bar-fill,
+	.dashboard-apm-bar-list__link {
+		transition: none;
+	}
+
+	.dashboard-apm-bar-list__link:hover,
+	.dashboard-apm-bar-list__link:focus-visible {
+		transform: none;
+	}
+}
