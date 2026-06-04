@@ -27,7 +27,6 @@ export interface UseSiteLaunchOptions {
 	backTo?: string;
 	a4aLaunchUrl?: string;
 	a4aLaunchModal?: A4aLaunchModalComponent;
-	celebrateOnLaunch?: boolean;
 	domainsOptions?: ReturnType< typeof domainsQuery >;
 	recordTracksEvent: RecordTracksEvent;
 }
@@ -52,7 +51,6 @@ export function useSiteLaunch(
 		backTo,
 		a4aLaunchUrl,
 		a4aLaunchModal: A4aLaunchModal,
-		celebrateOnLaunch = false,
 		domainsOptions,
 		recordTracksEvent,
 	}: UseSiteLaunchOptions
@@ -108,17 +106,15 @@ export function useSiteLaunch(
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
-	const launchDirectly = ( { withCelebration }: { withCelebration: boolean } ) => {
+	const launchWithCelebration = () => {
 		launchMutation.mutate( undefined, {
-			onSuccess: withCelebration
-				? () => {
-						window.history.replaceState(
-							null,
-							'',
-							addQueryArgs( window.location.href, { celebrateLaunch: 'true' } )
-						);
-				  }
-				: undefined,
+			onSuccess: () => {
+				window.history.replaceState(
+					null,
+					'',
+					addQueryArgs( window.location.href, { celebrateLaunch: 'true' } )
+				);
+			},
 		} );
 	};
 
@@ -180,9 +176,8 @@ export function useSiteLaunch(
 			isHidden: false,
 			onClick: () => {
 				track();
-				// The ungated experiment has always triggered celebration; keep that
-				// behavior regardless of the celebrateOnLaunch option.
-				launchDirectly( { withCelebration: true } );
+				// The ungated experiment is the only path that triggers celebration.
+				launchWithCelebration();
 			},
 		};
 	}
@@ -193,7 +188,7 @@ export function useSiteLaunch(
 			isHidden: false,
 			onClick: () => {
 				track();
-				launchDirectly( { withCelebration: celebrateOnLaunch } );
+				launchMutation.mutate();
 			},
 		};
 	}

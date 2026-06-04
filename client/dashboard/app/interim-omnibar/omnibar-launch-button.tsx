@@ -22,7 +22,6 @@ export function OmnibarLaunchButton( { site }: { site: Site } ) {
 	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
 		useSiteLaunch( site, {
 			tracksContext: 'interim_omnibar',
-			celebrateOnLaunch: true,
 			recordTracksEvent,
 		} );
 
