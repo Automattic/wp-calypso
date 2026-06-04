@@ -158,7 +158,7 @@ export async function recordAddToCart( cartItem ) {
 	if ( mayWeTrackByTracker( 'openai' ) ) {
 		const params = {
 			type: 'contents',
-			amount: Math.round( Number( cartItem.cost ) * 100 ),
+			amount: cartItem.item_subtotal_integer,
 			currency: cartItem.currency,
 			contents: [
 				{
@@ -166,7 +166,7 @@ export async function recordAddToCart( cartItem ) {
 					name: cartItem.product_name,
 					content_type: 'product',
 					quantity: 1,
-					amount: Math.round( Number( cartItem.cost ) * 100 ),
+					amount: cartItem.item_subtotal_integer,
 					currency: cartItem.currency,
 				},
 			],
