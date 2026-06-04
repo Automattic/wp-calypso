@@ -13,6 +13,13 @@ type PressableAddonLicenseVisibility = {
 	hasActiveReferralPressablePlanLicense: boolean;
 };
 
+type PressableAddonMarketplaceVisibility = Pick<
+	PressableAddonLicenseVisibility,
+	'hasActiveAgencyPressablePlanLicense'
+> & {
+	isReferralMode: boolean;
+};
+
 export const DEFAULT_PRESSABLE_ADDON_VISIBILITY: PressableAddonLicenseVisibility = {
 	hasActiveAgencyPressablePlanLicense: false,
 	hasActiveReferralPressablePlanLicense: false,
@@ -45,6 +52,17 @@ export function getPressableAddonLicenseVisibility(
 		},
 		{ ...DEFAULT_PRESSABLE_ADDON_VISIBILITY }
 	);
+}
+
+export function canShowPressableAddonsInMarketplace( {
+	isReferralMode,
+	hasActiveAgencyPressablePlanLicense,
+}: PressableAddonMarketplaceVisibility ) {
+	if ( isReferralMode ) {
+		return true;
+	}
+
+	return hasActiveAgencyPressablePlanLicense;
 }
 
 export default function usePressableAddonVisibility() {

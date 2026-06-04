@@ -1,4 +1,7 @@
-import { getPressableAddonLicenseVisibility } from '../use-pressable-addon-visibility';
+import {
+	canShowPressableAddonsInMarketplace,
+	getPressableAddonLicenseVisibility,
+} from '../use-pressable-addon-visibility';
 import type { License } from 'calypso/state/partner-portal/types';
 
 const buildLicense = ( {
@@ -90,5 +93,34 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 			hasActiveAgencyPressablePlanLicense: false,
 			hasActiveReferralPressablePlanLicense: false,
 		} );
+	} );
+} );
+
+describe( 'canShowPressableAddonsInMarketplace', () => {
+	it( 'shows add-ons in referral mode without an agency Pressable plan license', () => {
+		expect(
+			canShowPressableAddonsInMarketplace( {
+				isReferralMode: true,
+				hasActiveAgencyPressablePlanLicense: false,
+			} )
+		).toBe( true );
+	} );
+
+	it( 'shows add-ons in regular mode with an agency Pressable plan license', () => {
+		expect(
+			canShowPressableAddonsInMarketplace( {
+				isReferralMode: false,
+				hasActiveAgencyPressablePlanLicense: true,
+			} )
+		).toBe( true );
+	} );
+
+	it( 'hides add-ons in regular mode without an agency Pressable plan license', () => {
+		expect(
+			canShowPressableAddonsInMarketplace( {
+				isReferralMode: false,
+				hasActiveAgencyPressablePlanLicense: false,
+			} )
+		).toBe( false );
 	} );
 } );
