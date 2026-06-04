@@ -59,6 +59,7 @@ export type SupportedSlugs =
 	| 'personal-bundle'
 	| 'personal-bundle-2y'
 	| 'personal-bundle-monthly'
+	| 'wp_bundle_student_yearly'
 	| 'value_bundle'
 	| 'value_bundle-2y'
 	| 'value_bundle-monthly'
@@ -167,7 +168,12 @@ export type SupportedSlugs =
 export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
 	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
-	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
+	'wpcom-personal': [
+		'personal-bundle',
+		'personal-bundle-2y',
+		'personal-bundle-monthly',
+		'wp_bundle_student_yearly',
+	],
 	'wpcom-premium': [
 		'value_bundle',
 		'value_bundle-2y',

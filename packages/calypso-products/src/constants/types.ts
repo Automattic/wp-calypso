@@ -1,6 +1,7 @@
 export const TYPE_FREE = 'TYPE_FREE';
 export const TYPE_BLOGGER = 'TYPE_BLOGGER';
 export const TYPE_PERSONAL = 'TYPE_PERSONAL';
+export const TYPE_STUDENT = 'TYPE_STUDENT';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 export const TYPE_100_YEAR = 'TYPE_100_YEAR';
@@ -29,6 +30,7 @@ export const TYPES_LIST = < const >[
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
+	TYPE_STUDENT,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_100_YEAR,
