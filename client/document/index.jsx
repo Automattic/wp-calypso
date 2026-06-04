@@ -23,6 +23,9 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
+import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -105,6 +108,11 @@ class Document extends Component {
 
 		const isRTL = isLocaleRtl( lang );
 
+		const isDashboardOmnibarPage =
+			( isDashboardEnv() || env === 'development' ) &&
+			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name );
+
 		let headTitle = head.title;
 		let headFaviconUrl;
 		let isWCCOM = false;
@@ -164,12 +172,12 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
+					{ isDashboardOmnibarPage && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
 							<InitialOmnibar user={ user } />
 						</div>
 					) }
-					{ dashboard &&
+					{ isDashboardOmnibarPage &&
 						config.isEnabled( 'dashboard/omnibar' ) &&
 						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
 							<div id="wpcom-omnibar">
