@@ -1,5 +1,4 @@
 import { receiptQuery } from '@automattic/api-queries';
-import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -21,7 +20,6 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
-import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
@@ -205,15 +203,11 @@ function useRedirectOnTransactionSuccess( {
 
 	// The `domain-and-plan` flow sets `redirect_to=/home/<site>`, so a successful
 	// plan + domain purchase lands the user on `/home/<site>` instead of the
-	// thank-you page. Detect that purchase shape here (via Redux receipts state,
-	// populated by the post-payment callback before redirect) so the pending page
-	// can dispatch a success toast right before the final navigation.
-	const purchases = useSelector(
-		( state ) => getReceiptById( state, finalReceiptId ).data?.purchases
-	);
+	// thank-you page. Detect that purchase shape from the receipt items so the
+	// destination can dispatch a success toast on arrival.
 	const isPlanAndDomainPurchase =
-		( purchases?.some( ( purchase ) => isPlan( purchase ) ) &&
-			purchases?.some( ( purchase ) => isDomainRegistration( purchase ) ) ) ??
+		( receipt?.items.some( ( item ) => item.is_plan ) &&
+			receipt?.items.some( ( item ) => item.is_domain_registration ) ) ??
 		false;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
