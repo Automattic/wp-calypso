@@ -10,10 +10,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -35,7 +34,7 @@ export default function TierCards( {
 
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
-	const isSmallViewport = useViewportMatch( 'wide', '<' );
+	const containerRef = useRef< HTMLDivElement >( null );
 
 	const [ showEarlyAccessModal, setShowEarlyAccessModal ] = useState( false );
 	const [ showTierProtectedModal, setShowTierProtectedModal ] = useState( false );
@@ -57,6 +56,7 @@ export default function TierCards( {
 		);
 		setShowTierProtectedModal( true );
 	};
+
 	const handleViewBenefits = ( tierId: string ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agency_tier_view_benefits_click', {
@@ -73,108 +73,137 @@ export default function TierCards( {
 	const isEarlyAccess = tierStatus === 'early_access';
 	const isTierProtected = tierStatus === 'tier_protected';
 
-	const content = (
-		<>
-			{ ALL_TIERS.map( ( tier ) => {
-				const hasLowerTier = currentTier && currentTier.level > tier.level;
-				const hasHigherTier = currentTier && currentTier.level < tier.level;
-				const isCurrentTier = currentTier === tier;
-				const isSecondary = hasLowerTier || hasHigherTier;
+	// Scroll so the current tier card is the first visible card on mount.
+	// Level 0 is already at the natural scroll start — only scroll for higher tiers.
+	useEffect( () => {
+		if ( ! containerRef.current || ! currentTier || currentTier.level === 0 ) {
+			return;
+		}
+		const currentCard = containerRef.current.querySelector< HTMLElement >(
+			'[data-is-current-tier="true"]'
+		);
+		if ( currentCard ) {
+			const containerRect = containerRef.current.getBoundingClientRect();
+			const cardRect = currentCard.getBoundingClientRect();
+			containerRef.current.scrollLeft += cardRect.left - containerRect.left;
+		}
+	}, [ currentTier ] );
 
-				return (
-					<Card
-						key={ tier.id }
-						style={ {
-							width: '100%',
-							height: '100%',
-							display: 'flex',
-							flexDirection: 'column',
-							...( isCurrentTier && {
-								boxShadow: '0 0 0 1px var(--color-primary-50)',
-							} ),
-						} }
-					>
-						<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-							<VStack spacing={ 1 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-								<HStack style={ { marginBlockEnd: '4px' } }>
-									<Heading level={ 3 } weight={ 500 }>
-										{ tier.name }
-									</Heading>
-									{ isCurrentTier && ! isEarlyAccess && (
-										<Badge
-											style={ { minWidth: 'fit-content' } }
-											intent="default"
-											children={ __( 'Your tier' ) }
-										/>
-									) }
-								</HStack>
-								{ isCurrentTier && isEarlyAccess && (
+	const cards = ALL_TIERS.map( ( tier ) => {
+		const hasLowerTier = currentTier && currentTier.level > tier.level;
+		const hasHigherTier = currentTier && currentTier.level < tier.level;
+		const isCurrentTier = currentTier === tier;
+		const isSecondary = hasLowerTier || hasHigherTier;
+
+		return (
+			<div
+				key={ tier.id }
+				className={ [ 'tier-card-wrapper', hasLowerTier ? 'is-lower-tier' : '' ]
+					.filter( Boolean )
+					.join( ' ' ) }
+				data-is-current-tier={ isCurrentTier ? 'true' : undefined }
+			>
+				<Card
+					style={ {
+						width: '100%',
+						height: '100%',
+						display: 'flex',
+						flexDirection: 'column',
+						...( isCurrentTier && {
+							boxShadow: 'inset 0 0 0 1px var(--color-primary-50)',
+						} ),
+					} }
+				>
+					<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
+						<VStack spacing={ 1 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+							<HStack style={ { marginBlockEnd: '4px' } }>
+								<Heading level={ 3 } weight={ 500 }>
+									{ tier.name }
+								</Heading>
+								{ isCurrentTier && ! isEarlyAccess && (
 									<Badge
-										style={ { width: 'fit-content' } }
+										style={ { minWidth: 'fit-content' } }
 										intent="default"
-										children={ __( 'Your tier — Early access' ) }
+										children={ __( 'Your tier' ) }
 									/>
 								) }
-								<Text color={ TEXT_COLOR }>{ tier.description }</Text>
-								{ isCurrentTier && isEarlyAccess && (
-									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
-										{ createInterpolateElement( __( 'You’re in early. <a>Learn more</a>' ), {
+							</HStack>
+							{ isCurrentTier && isEarlyAccess && (
+								<Badge
+									style={ { width: 'fit-content' } }
+									intent="default"
+									children={ __( 'Your tier — Early access' ) }
+								/>
+							) }
+							<Text color={ TEXT_COLOR }>{ tier.description }</Text>
+							{ isCurrentTier && isEarlyAccess && (
+								<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
+									{ createInterpolateElement( __( "You're in early. <a>Learn more</a>" ), {
+										a: (
+											<Button onClick={ handleViewEarlyAccessInfo } variant="link">
+												{ __( 'Learn more.' ) }
+											</Button>
+										),
+									} ) }
+								</Text>
+							) }
+							{ isCurrentTier && isTierProtected && (
+								<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
+									{ createInterpolateElement(
+										__( 'Your tier level is protected. <a>Learn more</a>' ),
+										{
 											a: (
-												<Button onClick={ handleViewEarlyAccessInfo } variant="link">
+												<Button onClick={ handleViewTierProtectedInfo } variant="link">
 													{ __( 'Learn more.' ) }
 												</Button>
 											),
-										} ) }
-									</Text>
-								) }
-								{ isCurrentTier && isTierProtected && (
-									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
-										{ createInterpolateElement(
-											__( 'Your tier level is protected. <a>Learn more</a>' ),
-											{
-												a: (
-													<Button onClick={ handleViewTierProtectedInfo } variant="link">
-														{ __( 'Learn more.' ) }
-													</Button>
-												),
-											}
-										) }
-									</Text>
-								) }
-							</VStack>
-							<VStack
-								spacing={ 1 }
-								style={ { flex: 1, justifyContent: 'flex-start', marginBlockStart: '8px' } }
-							>
-								<Text color={ TEXT_COLOR } weight={ 700 }>
-									{ tier.heading }
+										}
+									) }
 								</Text>
-								<Text color={ TEXT_COLOR }>{ tier.subheading }</Text>
-							</VStack>
-							<Button
-								onClick={ () => handleViewBenefits( tier.id as string ) }
-								variant={ isSecondary ? 'secondary' : 'primary' }
-								style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
-							>
-								{ hasHigherTier ? __( 'See what you’ll unlock' ) : __( 'View your benefits' ) }
-							</Button>
-						</CardBody>
-					</Card>
-				);
-			} ) }
+							) }
+						</VStack>
+						<VStack
+							spacing={ 1 }
+							style={ { flex: 1, justifyContent: 'flex-start', marginBlockStart: '8px' } }
+						>
+							<Text color={ TEXT_COLOR } weight={ 700 }>
+								{ tier.heading }
+							</Text>
+							<Text color={ TEXT_COLOR }>{ tier.subheading }</Text>
+						</VStack>
+						<Button
+							onClick={ () => handleViewBenefits( tier.id as string ) }
+							variant={ isSecondary ? 'secondary' : 'primary' }
+							style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
+						>
+							{ hasHigherTier ? __( "See what you'll unlock" ) : __( 'View your benefits' ) }
+						</Button>
+					</CardBody>
+				</Card>
+			</div>
+		);
+	} );
+
+	return (
+		<>
+			<div className="tier-cards-scroll-wrapper">
+				<div ref={ containerRef } className="tier-cards-container">
+					{ cards }
+				</div>
+			</div>
 			{ showEarlyAccessModal && currentTier && (
 				<Modal
 					isDismissible
 					size="medium"
 					onRequestClose={ () => setShowEarlyAccessModal( false ) }
-					title={ __( 'You’ve been granted early access' ) }
+					title={ __( "You've been granted early access" ) }
 				>
 					<VStack spacing={ 8 }>
 						<Text>
 							{ sprintf(
 								/* translators: %s is the tier name */
 								__(
-									'You’ve been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
+									"You've been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources."
 								),
 								currentTier.name
 							) }
@@ -220,7 +249,7 @@ export default function TierCards( {
 						</Text>
 						<Text>
 							{ __(
-								'You can still move up to a higher tier if your influenced revenue qualifies. However, if you do not meet the minimum requirements for this tier, any downgrade will only occur when the next year’s cycle begins in January. This protection ensures you can continue to enjoy your current tier benefits throughout the year.'
+								"You can still move up to a higher tier if your influenced revenue qualifies. However, if you do not meet the minimum requirements for this tier, any downgrade will only occur when the next year's cycle begins in January. This protection ensures you can continue to enjoy your current tier benefits throughout the year."
 							) }
 						</Text>
 						<ButtonStack justify="flex-end">
@@ -232,27 +261,5 @@ export default function TierCards( {
 				</Modal>
 			) }
 		</>
-	);
-
-	if ( isSmallViewport ) {
-		return (
-			<VStack spacing={ 6 } style={ { alignItems: 'center' } }>
-				{ content }
-			</VStack>
-		);
-	}
-
-	return (
-		<div
-			style={ {
-				display: 'grid',
-				gridTemplateColumns: 'repeat(3, 1fr)',
-				gridAutoRows: '1fr',
-				gap: '24px',
-				alignItems: 'stretch',
-			} }
-		>
-			{ content }
-		</div>
 	);
 }

@@ -1,8 +1,81 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/colors";
 
 :root {
 	--color-gray-100: #{$gray-100};
 	--color-gray-700: #{$gray-700};
+}
+
+// Wrapper provides the gradient fade — must sit outside the scroll container
+// because overflow clips pseudo-elements.
+.tier-cards-scroll-wrapper {
+	position: relative;
+	margin-inline-start: -4px;
+
+	// Gradient fade hinting there's more content to scroll
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 80px;
+		height: 100%;
+		background: linear-gradient( to right, transparent, #fff );
+		pointer-events: none;
+		z-index: 1;
+	}
+}
+
+// Tier cards horizontal scroll container
+.tier-cards-container {
+	display: flex;
+	flex-direction: row;
+	gap: 24px;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	// 4px block padding so box-shadows/borders aren't clipped top/bottom.
+	// 24px inline-start for left breathing room.
+	padding: 4px 0 4px 4px;
+	// Hide scrollbar visually but keep functionality
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+// Individual card wrappers — fixed width so cards never stack.
+// On small screens: 85vw shows the current card fully with the next peeking in.
+// On larger screens: dynamic ~30% width shows ~3 cards with a peek.
+.tier-card-wrapper {
+	width: 72vw;
+	min-width: 260px;
+	min-height: 250px;
+	flex-shrink: 0;
+
+	@media ( min-width: #{ $break-small } ) {
+		width: clamp( 260px, calc( 30% - 12px ), 340px );
+	}
+
+	// Right-edge breathing room for the last card's border/shadow
+	&:last-child {
+		margin-inline-end: 80px; // wider than gradient so border clears the fade
+	}
+
+	// Lower (already-passed) tiers are muted
+	&.is-lower-tier {
+		opacity: 0.45;
+		filter: grayscale( 0.25 );
+		transition: opacity 0.2s ease, filter 0.2s ease;
+
+		// On pointer devices (desktop), reveal on hover
+		@media ( hover: hover ) and ( pointer: fine ) {
+			&:hover {
+				opacity: 1;
+				filter: none;
+			}
+		}
+	}
 }
 
 .agency-tier-overview-revamped {

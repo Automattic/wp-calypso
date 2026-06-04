@@ -138,6 +138,7 @@ output/
 **/.claude/settings.local.json
 .claude/test-pr/
 .claude/worktrees/
+client/a8c-for-agencies/.claude/
 
 # husky's auto-generated init directory (not the committed pre-commit/pre-push scripts)
 .husky/_
