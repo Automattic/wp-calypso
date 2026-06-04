@@ -6,6 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
+import Snackbars from '../../snackbars';
 import { InterimOmnibar } from '../interim-omnibar';
 import type { Site, User } from '@automattic/api-core';
 
@@ -54,6 +55,7 @@ const site = {
 
 describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 	const originalLocation = window.location;
+	const originalScrollTo = window.scrollTo;
 	const assignMock = jest.fn();
 
 	beforeEach( () => {
@@ -63,6 +65,7 @@ describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 			assign: assignMock,
 		};
 		window.history.pushState( {}, '', '/me' );
+		window.scrollTo = jest.fn();
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/all-domains' )
@@ -77,6 +80,7 @@ describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 	afterEach( () => {
 		assignMock.mockReset();
 		( window as unknown as { location: Location } ).location = originalLocation;
+		window.scrollTo = originalScrollTo;
 		nock.cleanAll();
 	} );
 
@@ -95,5 +99,34 @@ describe( '<InterimOmnibar /> launch button on non-site routes', () => {
 				'/sites/test-site.wordpress.com?celebrateLaunch=true'
 			);
 		} );
+	} );
+
+	test( 'surfaces launch failures through dashboard snackbars', async () => {
+		nock.cleanAll();
+		const testUser = userEvent.setup();
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/all-domains' )
+			.query( true )
+			.reply( 200, { domains: [ { blog_id: 1, domain: 'test-site.wordpress.com' } ] } );
+
+		const launchScope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/1/launch' )
+			.reply( 500, { message: 'Launch failed.' } );
+
+		render(
+			<>
+				<Snackbars />
+				<InterimOmnibar user={ user } site={ site } currentRoute="/me" />
+			</>
+		);
+
+		const launchButton = await screen.findByRole( 'button', { name: /launch site/i } );
+
+		await waitFor( () => expect( launchButton ).toBeEnabled() );
+		await testUser.click( launchButton );
+
+		await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
+		expect( await screen.findAllByText( 'Failed to launch site.' ) ).not.toHaveLength( 0 );
 	} );
 } );

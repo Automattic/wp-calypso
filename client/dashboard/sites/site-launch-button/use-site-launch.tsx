@@ -30,6 +30,7 @@ export interface UseSiteLaunchOptions {
 	a4aLaunchModal?: A4aLaunchModalComponent;
 	domainsOptions?: ReturnType< typeof domainsQuery >;
 	recordTracksEvent: RecordTracksEvent;
+	onLaunchError?: () => void;
 }
 
 export interface UseSiteLaunchResult {
@@ -55,6 +56,7 @@ export function useSiteLaunch(
 		a4aLaunchModal: A4aLaunchModal,
 		domainsOptions,
 		recordTracksEvent,
+		onLaunchError,
 	}: UseSiteLaunchOptions
 ): UseSiteLaunchResult {
 	const { data: domains = [], isLoading: isDomainsLoading } = useQuery( {
@@ -129,12 +131,14 @@ export function useSiteLaunch(
 				// Add a query param to trigger the celebration modal in the parent.
 				redirectAfterLaunch( { celebrate: true } );
 			},
+			onError: onLaunchError,
 		} );
 	};
 
 	const launchForModal = () => {
 		track();
 		launchMutation.mutate( undefined, {
+			onError: onLaunchError,
 			onSettled: () => setIsModalOpen( false ),
 		} );
 	};
@@ -200,6 +204,7 @@ export function useSiteLaunch(
 				track();
 				launchMutation.mutate( undefined, {
 					onSuccess: () => redirectAfterLaunch(),
+					onError: onLaunchError,
 				} );
 			},
 		};

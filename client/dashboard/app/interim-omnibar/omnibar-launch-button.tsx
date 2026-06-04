@@ -1,6 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import clsx from 'clsx';
 import Item from 'calypso/layout/masterbar/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -21,12 +23,16 @@ const LaunchRocketIcon = () => (
 
 export function OmnibarLaunchButton( { site }: { site: Site } ) {
 	const siteOverviewUrl = `/sites/${ site.slug }`;
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
 		useSiteLaunch( site, {
 			tracksContext: 'interim_omnibar',
 			backTo: siteOverviewUrl,
 			postLaunchUrl: dashboardLinkWithBackport( siteOverviewUrl ),
 			recordTracksEvent,
+			onLaunchError: () => {
+				createErrorNotice( __( 'Failed to launch site.' ), { type: 'snackbar' } );
+			},
 		} );
 
 	if ( isHidden ) {
