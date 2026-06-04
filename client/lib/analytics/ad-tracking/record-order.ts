@@ -42,6 +42,7 @@ declare global {
 		uetq: any[];
 		rdt: any[] & { ( ...args: any[] ): void };
 		ttq: any;
+		oaiq: any;
 	}
 }
 
@@ -85,6 +86,7 @@ export async function recordOrder(
 	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInReddit( orderId, wpcomJetpackCartInfo );
 	recordOrderInTikTok( orderId, wpcomJetpackCartInfo );
+	recordOrderInOpenAI( orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -742,6 +744,31 @@ function recordOrderInTikTok(
 	};
 	debug( 'recordOrderInTikTok:', 'track', params );
 	window.ttq.track( 'Purchase', params );
+}
+
+function recordOrderInOpenAI(
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( ! mayWeTrackByTracker( 'openai' ) ) {
+		return;
+	}
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+	const params = {
+		type: 'contents',
+		contents: wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
+			id: product.product_slug,
+			name: product.product_name_en,
+			content_type: 'product',
+			quantity: 1,
+		} ) ),
+		amount: Math.round( Number( wpcomJetpackCartInfo.wpcomCostUSD ) * 100 ),
+		currency: 'USD',
+	};
+	debug( 'recordOrderInOpenAI:', 'track', params );
+	window.oaiq( 'measure', 'order_created', params );
 }
 
 /**
