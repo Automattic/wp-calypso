@@ -1,5 +1,6 @@
 import * as AddOns from './add-ons';
 import * as AgentsManager from './agents-manager';
+import * as AiSurfaceCoordinator from './ai-surface-coordinator';
 import * as HelpCenter from './help-center';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
@@ -37,6 +38,7 @@ const { SubscriptionManager } = Reader;
 export {
 	AddOns,
 	AgentsManager,
+	AiSurfaceCoordinator,
 	User,
 	HelpCenter,
 	Site,
