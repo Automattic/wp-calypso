@@ -2,6 +2,8 @@ const DISPLAYABLE_TOOL_MESSAGE_TOOL_IDS = new Set( [
 	'big_sky__apply_block_edits',
 	'big_sky__apply_update_theme',
 	'big_sky__edit_entity_record',
+	'big_sky__set_site_logo',
+	'big_sky__editor_navigate',
 ] );
 
 export function isDisplayableToolMessageTool( toolId: unknown ): toolId is string {
