@@ -1,8 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import {
-	Card,
-	CardBody,
 	Button,
 	Modal,
 	__experimentalText as Text,
@@ -14,25 +12,25 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
-import { ButtonStack } from 'calypso/dashboard/components/button-stack';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentAgencyTier from '../lib/get-current-agency-tier';
+import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import { ALL_TIERS, TARGET_INFLUENCED_REVENUE } from './constants';
-import type { AgencyTierType } from './types';
-import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
+import getCurrentAgencyTier from './get-current-agency-tier';
+import type { AgencyTierType, AgencyTierStatus, RecordTracksEvent } from './types';
+
+import './style.scss';
 
 const TEXT_COLOR = 'var(--color-gray-700)';
 
 export default function TierCards( {
 	currentAgencyTierId,
 	tierStatus,
+	recordTracksEvent = () => {},
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	tierStatus?: AgencyTierStatus;
+	recordTracksEvent?: RecordTracksEvent;
 } ) {
-	const dispatch = useDispatch();
-
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -41,29 +39,23 @@ export default function TierCards( {
 	const [ showTierProtectedModal, setShowTierProtectedModal ] = useState( false );
 
 	const handleViewEarlyAccessInfo = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_agency_tier_early_access_learn_more_click', {
-				agency_tier: currentAgencyTierId,
-			} )
-		);
+		recordTracksEvent( 'calypso_a4a_agency_tier_early_access_learn_more_click', {
+			agency_tier: currentAgencyTierId,
+		} );
 		setShowEarlyAccessModal( true );
 	};
 
 	const handleViewTierProtectedInfo = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_agency_tier_tier_protected_learn_more_click', {
-				agency_tier: currentAgencyTierId,
-			} )
-		);
+		recordTracksEvent( 'calypso_a4a_agency_tier_tier_protected_learn_more_click', {
+			agency_tier: currentAgencyTierId,
+		} );
 		setShowTierProtectedModal( true );
 	};
 
 	const handleViewBenefits = ( tierId: string ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_agency_tier_view_benefits_click', {
-				agency_tier: currentAgencyTierId,
-			} )
-		);
+		recordTracksEvent( 'calypso_a4a_agency_tier_view_benefits_click', {
+			agency_tier: currentAgencyTierId,
+		} );
 
 		const element = document.getElementById( tierId );
 		if ( element ) {
