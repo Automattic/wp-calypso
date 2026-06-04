@@ -81,12 +81,15 @@ export function isExpired( purchase: Purchase ) {
  *
  * This is the "active but already past expiry" case that {@link isExpired} does
  * NOT cover: such purchases report an `expiry_status` of 'expiring' (or
- * 'manual-renew'), not 'expired'. It is `is_past_expiry_date` being true while
- * the subscription is still active — excluding bundle-`included` purchases
- * (whose lifecycle is governed by their parent) and Akismet free products.
+ * 'manual-renew'), not 'expired'. Equivalent to `is_past_expiry_date` being
+ * true while {@link isExpired} is false (excluding Akismet free products).
  */
 export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
-	if ( ! purchase.is_past_expiry_date ) {
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
+
+	if ( new Date( purchase.expiry_date ) >= new Date() ) {
 		return false;
 	}
 	if ( isExpired( purchase ) ) {
