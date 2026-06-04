@@ -36,6 +36,14 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
+**Always reach for the idiomatic React Query solution first.** Before hand-rolling effects, manual refetch chains, or imperative cache writes, check what TanStack Query already provides and prefer it:
+
+- Pagination → `useInfiniteQuery` with a correct `getNextPageParam`. Derive the stop condition from the API's real contract (page caps, server-side filtering, `total` counts), not from assumed page sizes. A bug where the org sidebar showed only the first page came from stopping pagination on a short page; see [`packages/api-queries/src/read-follows.ts`](../../packages/api-queries/src/read-follows.ts).
+- Refetch/sync → `staleTime`/`gcTime`, `invalidateQueries`, or `refetch` — not `useEffect` loops driving `fetchNextPage`.
+- Cross-feature refreshes → invalidate the canonical query key on the active `QueryClient` (see the mutation-factory rule below).
+- Loading/error/empty UI → the query's own `isPending`/`isError`/`data` state, not bespoke flags.
+- When unsure, consult the `tanstack-query-best-practices` skill and the official TanStack Query docs before introducing a custom workaround. Document any deliberate deviation from the idiomatic pattern with a comment explaining why.
+
 Site subscriptions are fully on React Query:
 
 - Endpoint contracts and adapters live in `packages/api-core/src/read-follows/`.
