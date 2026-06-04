@@ -945,7 +945,7 @@ export default connect(
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
 			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
-			coexistAiSurfaces: getPreference( state, 'ai_surface_coexistence' ) ?? false,
+			coexistAiSurfaces: getPreference( state, 'ai_surface_coexistence' ) ?? true, // TEMP: force-on for local validation (revert me)
 		};
 	},
 	{

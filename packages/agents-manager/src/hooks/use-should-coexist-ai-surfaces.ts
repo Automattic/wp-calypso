@@ -3,5 +3,5 @@ import { useAiSurfaceCoexistence } from './use-unified-ai-chat';
 
 export const useShouldCoexistAiSurfaces = () => {
 	const { data } = useAiSurfaceCoexistence();
-	return !! data;
+	return !! data || true; // TEMP: force-on for local validation (revert me)
 };
