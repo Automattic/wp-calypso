@@ -23,6 +23,7 @@ import {
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
 import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
+import { getActiveDowngradeVariant } from 'calypso/lib/purchases/active-downgrade-variant';
 import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import {
@@ -600,10 +601,11 @@ function getLoggedInPlansAction( {
 		const targetTier = PLAN_TIER_ORDER[ getPlanClass( planSlug ) ] ?? 0;
 
 		if ( targetTier < currentTier ) {
-			return createLoggedInPlansAction(
-				translate( 'Downgrade', { context: 'verb' } ),
-				'secondary'
-			);
+			const downgradeLabel =
+				getActiveDowngradeVariant() === 'on_renewal'
+					? translate( 'Downgrade on renewal' )
+					: translate( 'Downgrade', { context: 'verb' } );
+			return createLoggedInPlansAction( downgradeLabel, 'secondary' );
 		}
 		return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );
 	}

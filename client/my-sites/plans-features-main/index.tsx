@@ -28,6 +28,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -451,7 +452,7 @@ const PlansFeaturesMain = ( {
 		// Downgrade confirmation (expired plans → checkout, active plans → cancel API)
 		const isDowngradeGateOpen = isPlanExpired
 			? config.isEnabled( 'plans/expired-plan-downgrade' )
-			: getActiveDowngradeVariant() === 'instant';
+			: getActiveDowngradeVariant() !== 'control';
 		if (
 			isDowngradeGateOpen &&
 			sitePlanSlug &&
@@ -996,6 +997,30 @@ const PlansFeaturesMain = ( {
 					onClose={ () => setPendingDowngradePlanSlug( null ) }
 					purchase={ currentPlanPurchase }
 					isPlanExpired={ isPlanExpired }
+					mode={
+						getActiveDowngradeVariant() === 'on_renewal' && ! isPlanExpired
+							? 'on_renewal'
+							: 'immediate'
+					}
+					currentRenewalPriceText={
+						currentPlanPurchase
+							? formatCurrency( currentPlanPurchase.amount, currentPlanPurchase.currencyCode )
+							: ''
+					}
+					targetRenewalPriceText={ ( () => {
+						if ( ! pendingDowngradePlanSlug || ! gridPlansForFeaturesGrid ) {
+							return '';
+						}
+						const targetGridPlan = gridPlansForFeaturesGrid.find(
+							( gp ) => gp.planSlug === pendingDowngradePlanSlug
+						);
+						const price = targetGridPlan?.pricing.originalPrice.full;
+						const currency = targetGridPlan?.pricing.currencyCode;
+						if ( price == null || ! currency ) {
+							return '';
+						}
+						return formatCurrency( price, currency );
+					} )() }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
 					<PlanNotice

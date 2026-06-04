@@ -465,11 +465,11 @@ function isChangePlanEligible( purchase: Purchase, isMigrating: boolean ): boole
 		return /^(value_bundle|business-bundle|ecommerce-bundle)/.test( purchase.product_slug );
 	}
 
-	// Active plans: gated by the active-downgrade flags (instant arm only for now).
-	// Mirrors getActiveDowngradeVariant() === 'instant' from calypso/lib/purchases/active-downgrade-variant.
+	// Active plans: gated by either active-downgrade flag (instant or on-renewal).
+	// Mirrors getActiveDowngradeVariant() !== 'control' from calypso/lib/purchases/active-downgrade-variant.
 	if (
-		isEnabled( 'plans/scheduled-plan-downgrade' ) ||
-		! isEnabled( 'plans/active-plan-downgrade-instant' )
+		! isEnabled( 'plans/active-plan-downgrade-instant' ) &&
+		! isEnabled( 'plans/scheduled-plan-downgrade' )
 	) {
 		return false;
 	}
@@ -557,10 +557,19 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 					purchaseId: String( purchase.ID ),
 			  } );
 
+		// On-renewal variant: different entry-point copy for active plans.
+		const isOnRenewal = isActiveChangePlanEligible && isEnabled( 'plans/scheduled-plan-downgrade' );
+
 		return (
 			<ActionList.ActionItem
-				title={ __( 'Change plan' ) }
-				description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
+				title={ isOnRenewal ? __( 'Downgrade on renewal' ) : __( 'Change plan' ) }
+				description={
+					isOnRenewal
+						? __(
+								'Switch to a lower-tier plan starting at your next renewal. Keep your current features until then.'
+						  )
+						: __( 'Upgrade or downgrade to a plan that works for you.' )
+				}
 				actions={
 					<Button
 						variant="secondary"

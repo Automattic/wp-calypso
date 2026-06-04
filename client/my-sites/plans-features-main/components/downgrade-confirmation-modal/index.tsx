@@ -9,12 +9,17 @@ import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useMemo, useState } from 'react';
 import { isRefundable } from 'calypso/lib/purchases';
-import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
+import {
+	cancelAndRefundPurchaseAsync,
+	enableAutoRenew,
+	scheduleDowngradeAsync,
+} from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -29,6 +34,9 @@ interface DowngradeConfirmationModalProps {
 	onClose: () => void;
 	purchase: Purchase | null;
 	isPlanExpired: boolean;
+	mode?: 'immediate' | 'on_renewal';
+	currentRenewalPriceText?: string;
+	targetRenewalPriceText?: string;
 }
 
 const DowngradeConfirmationModal = ( {
@@ -40,6 +48,9 @@ const DowngradeConfirmationModal = ( {
 	onClose,
 	purchase,
 	isPlanExpired,
+	mode = 'immediate',
+	currentRenewalPriceText,
+	targetRenewalPriceText,
 }: DowngradeConfirmationModalProps ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -79,6 +90,12 @@ const DowngradeConfirmationModal = ( {
 	const currentPlanTitle = getPlan( currentPlanSlug )?.getTitle() ?? '';
 	const targetPlanTitle = getPlan( targetPlanSlug )?.getTitle() ?? '';
 
+	// When auto-renew is on, expiryDate is the next renewal date.
+	// Use non-breaking spaces so the date never wraps mid-line.
+	const renewalDateFormatted = purchase?.expiryDate
+		? moment( purchase.expiryDate ).format( 'LL' ).replace( / /g, '\u00A0' )
+		: '';
+
 	const handleConfirm = async () => {
 		if ( isPlanExpired ) {
 			// Expired plan: route to checkout
@@ -100,7 +117,52 @@ const DowngradeConfirmationModal = ( {
 			return;
 		}
 
-		// Active plan: use cancel API
+		if ( mode === 'on_renewal' ) {
+			// On-renewal: schedule the downgrade for the next renewal date.
+			if ( ! purchase || isDowngrading ) {
+				return;
+			}
+			const targetProductId = getPlan( targetPlanSlug )?.getProductId();
+			if ( ! targetProductId ) {
+				return;
+			}
+
+			setIsDowngrading( true );
+			try {
+				await scheduleDowngradeAsync( purchase.id, targetProductId );
+
+				// Ensure auto-renew is on so the scheduled downgrade triggers at renewal.
+				if ( ! purchase.isAutoRenewEnabled ) {
+					await new Promise< void >( ( resolve ) => {
+						enableAutoRenew( purchase.id, () => resolve() );
+					} );
+				}
+
+				dispatch(
+					successNotice(
+						translate( 'Your plan will downgrade to %(targetPlan)s on %(date)s.', {
+							args: {
+								targetPlan: targetPlanTitle,
+								date: renewalDateFormatted,
+							},
+						} ),
+						{ duration: 5000 }
+					)
+				);
+				onClose();
+			} catch ( error ) {
+				dispatch(
+					errorNotice(
+						error instanceof Error ? error.message : translate( 'An unknown error occurred' ),
+						{ duration: 5000 }
+					)
+				);
+				setIsDowngrading( false );
+			}
+			return;
+		}
+
+		// Active plan (immediate): use cancel API
 		if ( ! purchase || isDowngrading ) {
 			return;
 		}
@@ -164,6 +226,31 @@ const DowngradeConfirmationModal = ( {
 	};
 
 	const renderDescription = () => {
+		if ( mode === 'on_renewal' ) {
+			return (
+				<>
+					<p className="downgrade-confirmation-modal__description">
+						{ translate(
+							'Your plan will change from %(currentPlan)s to %(targetPlan)s on %(date)s. You’ll keep your current features until then.',
+							{
+								args: {
+									currentPlan: currentPlanTitle,
+									targetPlan: targetPlanTitle,
+									date: renewalDateFormatted,
+								},
+								comment: 'Message shown when scheduling a plan downgrade for the next renewal date',
+							}
+						) }
+					</p>
+					{ lostFeatures.length > 0 && (
+						<p className="downgrade-confirmation-modal__description">
+							{ translate( 'Your site will lose access to these features:' ) }
+						</p>
+					) }
+				</>
+			);
+		}
+
 		if ( isPlanExpired ) {
 			// Expired plan: show "what you'll lose" copy
 			if ( lostFeatures.length > 0 ) {
@@ -252,9 +339,14 @@ const DowngradeConfirmationModal = ( {
 		);
 	};
 
+	const modalTitle =
+		mode === 'on_renewal'
+			? String( translate( 'Downgrade on renewal' ) )
+			: String( translate( 'Confirm downgrade' ) );
+
 	return (
 		<Modal
-			title={ String( translate( 'Confirm downgrade' ) ) }
+			title={ modalTitle }
 			onRequestClose={ onClose }
 			className="downgrade-confirmation-modal"
 			size="medium"
@@ -276,12 +368,25 @@ const DowngradeConfirmationModal = ( {
 					) ) }
 				</ul>
 			) }
+			{ mode === 'on_renewal' && currentRenewalPriceText && targetRenewalPriceText && (
+				<p className="downgrade-confirmation-modal__description downgrade-confirmation-modal__price-change">
+					{ translate( 'Your renewal price will change from %(currentPrice)s to %(targetPrice)s.', {
+						args: {
+							currentPrice: currentRenewalPriceText,
+							targetPrice: targetRenewalPriceText,
+						},
+						comment: 'Price comparison shown when scheduling a plan downgrade for renewal',
+					} ) }
+				</p>
+			) }
 			<HStack spacing={ 3 } justify="flex-end" className="downgrade-confirmation-modal__buttons">
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-					{ translate( 'Keep %(planName)s', {
-						args: { planName: currentPlanTitle },
-						comment: 'Button label to dismiss the downgrade modal and keep the current plan',
-					} ) }
+					{ mode === 'on_renewal'
+						? translate( 'Keep my plan' )
+						: translate( 'Keep %(planName)s', {
+								args: { planName: currentPlanTitle },
+								comment: 'Button label to dismiss the downgrade modal and keep the current plan',
+						  } ) }
 				</Button>
 				<Button
 					__next40pxDefaultSize
@@ -290,10 +395,12 @@ const DowngradeConfirmationModal = ( {
 					isBusy={ isDowngrading }
 					disabled={ isDowngrading }
 				>
-					{ translate( 'Downgrade to %(planName)s', {
-						args: { planName: targetPlanTitle },
-						comment: 'Button label to confirm downgrading to a lower-tier plan',
-					} ) }
+					{ mode === 'on_renewal'
+						? translate( 'Downgrade on renewal' )
+						: translate( 'Downgrade to %(planName)s', {
+								args: { planName: targetPlanTitle },
+								comment: 'Button label to confirm downgrading to a lower-tier plan',
+						  } ) }
 				</Button>
 			</HStack>
 		</Modal>
