@@ -98,6 +98,7 @@ class MasterbarItemNotifications extends Component {
 					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
+					ariaExpanded={ this.props.isNotificationsOpen }
 					tooltip={ this.props.tooltip }
 					className={ classes }
 					key={ this.state.animationState }
