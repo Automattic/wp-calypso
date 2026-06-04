@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { close, lineSolid, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
 import { ADMIN_BAR_BUTTON_ID } from '../../hooks/use-admin-bar-integration';
+import { useShouldCoexistAiSurfaces } from '../../hooks/use-should-coexist-ai-surfaces';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
@@ -31,11 +32,15 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 	const [ hasAdminBarTrigger ] = useState(
 		() => !! document.getElementById( ADMIN_BAR_BUTTON_ID )
 	);
+	// When coexisting with Help Center, the masterbar sparkle reopens the chat,
+	// so the floating chat can be minimized to its bar just like in wp-admin.
+	const isCoexisting = useShouldCoexistAiSurfaces();
 
 	const showChatHistory =
 		! isReaderChatHost() && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
-	// Minimize only applies to the floating chat reachable from the WP admin bar.
-	const showMinimize = hasAdminBarTrigger && ! isDocked;
+	// Minimize only applies to the floating chat reachable from a reopen trigger
+	// (the WP admin bar, or the masterbar sparkle when coexisting).
+	const showMinimize = ( hasAdminBarTrigger || isCoexisting ) && ! isDocked;
 
 	return (
 		<div className="agents-manager-chat-header">

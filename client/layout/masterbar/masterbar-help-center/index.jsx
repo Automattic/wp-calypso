@@ -1,3 +1,4 @@
+import { useShouldCoexistAiSurfaces } from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -40,9 +41,13 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)
+	// When coexisting with Agents Manager, always use the menu-panel dropdown so
+	// Help Center keeps its familiar dropdown launcher. Otherwise it's gated by
+	// the menu-popover experiment.
+	const isCoexisting = useShouldCoexistAiSurfaces();
 	const isMenuPanelExperimentEnabled =
-		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
+		isCoexisting ||
+		( ! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover' );
 
 	const trackIconInteraction = () => {
 		recordTracksEvent( `wpcom_help_center_icon_interaction`, {
