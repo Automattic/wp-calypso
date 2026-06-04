@@ -167,21 +167,22 @@ function ResponsiveMenu( {
 			<Menu>
 				{ React.Children.map( children, ( child ) => {
 					if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
-						if ( child.props.target === '_blank' ) {
+						const item = child as React.ReactElement< ComponentProps< typeof RouterLinkMenuItem > >;
+						if ( item.props.target === '_blank' ) {
 							return (
 								<Button
 									className="dashboard-menu__item"
 									variant="tertiary"
-									{ ...child.props }
-									onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-										child.props.onClick?.( e );
+									{ ...item.props }
+									onClick={ () => {
+										item.props.onClick?.();
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-											to: child.props.href ?? '',
+											to: item.props.href ?? '',
 										} );
 									} }
 								>
 									<HStack justify="flex-start" spacing={ 1 }>
-										<span>{ child.props.children }</span>
+										<span>{ item.props.children }</span>
 										<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
 									</HStack>
 								</Button>
@@ -190,11 +191,11 @@ function ResponsiveMenu( {
 
 						return (
 							<Menu.Item
-								{ ...child.props }
-								onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-									child.props.onClick?.( e );
+								{ ...item.props }
+								onClick={ () => {
+									item.props.onClick?.();
 									recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-										to: child.props.to ?? '',
+										to: item.props.to ?? '',
 									} );
 								} }
 							/>
@@ -266,19 +267,22 @@ function ResponsiveMenu( {
 				<>
 					{ React.Children.map( children, ( child ) => {
 						if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
-							if ( child.props.target === '_blank' ) {
+							const item = child as React.ReactElement<
+								ComponentProps< typeof RouterLinkMenuItem >
+							>;
+							if ( item.props.target === '_blank' ) {
 								return (
 									<Menu.ItemLink
-										{ ...child.props }
+										{ ...item.props }
 										onClick={ () => {
-											child.props.onClick?.();
+											item.props.onClick?.();
 											recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-												to: child.props.href ?? '',
+												to: item.props.href ?? '',
 											} );
 										} }
 									>
 										<HStack justify="flex-start" spacing={ 1 }>
-											<span>{ child.props.children }</span>
+											<span>{ item.props.children }</span>
 											<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
 										</HStack>
 									</Menu.ItemLink>
@@ -287,12 +291,12 @@ function ResponsiveMenu( {
 
 							return (
 								<RouterLinkMenuItem
-									{ ...child.props }
-									onClick={ ( e ) => {
+									{ ...item.props }
+									onClick={ () => {
 										onClose();
-										child.props.onClick?.( e );
+										item.props.onClick?.();
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-											to: child.props.to ?? '',
+											to: item.props.to ?? '',
 										} );
 									} }
 								/>
