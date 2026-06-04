@@ -186,7 +186,6 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 				} ) }
 				tooltip={ tooltip }
 				icon={ <HelpCenterIcon hasUnread={ unreadCount > 0 } /> }
-				ariaExpanded={ helpCenterVisible }
 				subItems={ isMenuPanelExperimentEnabled ? menuItems : undefined }
 				openSubMenuOnClick={ isMenuPanelExperimentEnabled }
 			/>

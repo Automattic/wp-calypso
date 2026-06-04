@@ -9,7 +9,6 @@ export function useHelpCenterPlugin(): OmnibarNode {
 		id: 'help-center',
 		label: __( 'Help' ),
 		icon: <Icon icon={ help } />,
-		isActive: isHelpCenterShown,
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

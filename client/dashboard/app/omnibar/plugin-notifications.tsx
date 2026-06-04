@@ -9,12 +9,10 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState(
 		!! user?.has_unseen_notes
 	);
-	const [ isOpen, setIsOpen ] = useState( false );
 
 	useOmnibarEvent( 'notificationsUnseenCount', ( count ) =>
 		setHasUnseenNotifications( count > 0 )
 	);
-	useOmnibarEvent( 'notificationsOpen', setIsOpen );
 
 	const bellRef = useRef< HTMLSpanElement >( null );
 
@@ -27,7 +25,6 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 		id: 'notifications',
 		label: __( 'Notifications' ),
 		icon: <Icon ref={ bellRef } icon={ hasUnseenNotifications ? bellUnread : bell } />,
-		isActive: isOpen,
 		onClick: () => omnibarEvents.notifications.emit(),
 	};
 }

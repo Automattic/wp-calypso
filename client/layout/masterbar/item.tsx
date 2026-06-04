@@ -40,7 +40,6 @@ type MasterbarItemOwnProps = {
 	subItems?: Array< Array< MasterbarSubItemProps > >;
 	hasGlobalBorderStyle?: boolean;
 	ariaLabel?: string;
-	ariaExpanded?: boolean;
 	openSubMenuOnClick?: boolean;
 };
 
@@ -73,7 +72,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		hasGlobalBorderStyle: PropTypes.bool,
 		as: PropTypes.elementType,
 		ariaLabel: PropTypes.string,
-		ariaExpanded: PropTypes.bool,
 		openSubMenuOnClick: PropTypes.bool,
 		asProps: PropTypes.object,
 	};
@@ -266,7 +264,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
 			'aria-label': this.props.ariaLabel,
-			'aria-expanded': this.props.ariaExpanded,
 		};
 
 		const asProps = this.props.as ? this.props.asProps : {};
