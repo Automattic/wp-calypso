@@ -61,7 +61,11 @@ function useInterimOmnibarData( {
 	);
 
 	const onToggleMenu = useCallback( () => events.mobileMenu.emit(), [ events ] );
-	const onToggleNotifications = useCallback( () => events.notifications.emit(), [ events ] );
+	const onToggleNotifications = useCallback( () => {
+		const container = document.getElementById( 'wpcom-omnibar' );
+		const bell = container?.querySelector< HTMLElement >( '.masterbar-notifications' ) ?? null;
+		events.notifications.emit( bell );
+	}, [ events ] );
 
 	if ( ! hydrated ) {
 		return {

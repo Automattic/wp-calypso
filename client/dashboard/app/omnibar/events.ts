@@ -21,7 +21,7 @@ function createOmnibarEvent< T = void >() {
 export const omnibarEvents = {
 	mobileMenu: createOmnibarEvent(),
 	notificationsAnchor: createOmnibarEvent< HTMLElement | null >(),
-	notifications: createOmnibarEvent(),
+	notifications: createOmnibarEvent< HTMLElement | null >(),
 	notificationsUnseenCount: createOmnibarEvent< number >(),
 	siteSwitcher: createOmnibarEvent(),
 	siteSwitcherAnchor: createOmnibarEvent< HTMLElement | null >(),
