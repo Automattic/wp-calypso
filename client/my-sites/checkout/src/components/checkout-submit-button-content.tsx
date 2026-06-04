@@ -2,6 +2,7 @@ import { MaterialIcon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import useCartKey from '../../use-cart-key';
 
@@ -28,7 +29,7 @@ const StyledMaterialIcon = styled( MaterialIcon )`
  * There are also checkout-like forms (eg: "add credit card") which do not use
  * this because they want their submit button to render something different.
  */
-export function CheckoutSubmitButtonContent() {
+export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} ) {
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -50,7 +51,10 @@ export function CheckoutSubmitButtonContent() {
 	return (
 		<CreditCardPayButtonWrapper>
 			<StyledMaterialIcon icon="credit_card" />
-			{ __( 'Pay now' ) }
+			{ last4
+				? /* translators: %s is the last 4 digits of the saved card, e.g. "Pay with 3220" */
+				  sprintf( __( 'Pay with %s' ), last4 )
+				: __( 'Pay now' ) }
 		</CreditCardPayButtonWrapper>
 	);
 }
