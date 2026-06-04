@@ -135,6 +135,9 @@ const BlazePressStrings = () => {
 	translate( 'Duration (days)' );
 	translate( 'Weekly Total' );
 	translate( 'Daily budget' );
+	translate( '%(amount)s/day' );
+	translate( '%(amount)s weekly total' );
+	translate( '%(amount)s per day' );
 	translate( 'Total spend for the campaign duration' );
 	translate( 'Weekly click estimate' );
 	translate( 'Estimated clicks for the campaign duration' );
@@ -155,6 +158,7 @@ const BlazePressStrings = () => {
 	translate( 'day' );
 	translate( 'Weekly' );
 	translate( 'Total' );
+	translate( '%(amount)s total' );
 	translate( 'Est. weekly clicks' );
 	translate( 'Estimated clicks' );
 	translate( 'Tumblr Post views weekly' );
@@ -215,6 +219,13 @@ const BlazePressStrings = () => {
 	translate( 'Promote' );
 	translate(
 		'By clicking "Submit campaign" you agree to our {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize charges to your payment method at regular intervals for the specified budget and duration, until cancellation. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}}.'
+	);
+	translate( 'Blaze campaigns are billed in USD.' );
+	translate(
+		'I agree to recurring weekly charges of up to %(maxBudgetFormatted)s per week starting %(formattedDate)s'
+	);
+	translate(
+		'I agree to be charged up to %(maxBudgetFormatted)s starting %(formattedDate)s. Charges may be made in one or more payments, and the campaign'
 	);
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
