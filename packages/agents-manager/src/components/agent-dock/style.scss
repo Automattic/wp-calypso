@@ -714,6 +714,10 @@ body.post-new-php.agents-manager-sidebar-container {
 	right: 16px !important;
 	bottom: 16px !important;
 	transform: none !important;
+	// The chat is a fixed column here, so disable agenttic's `transition: all`
+	// which otherwise animates the recomputed position — a weird slide-in from
+	// the left when opening or expanding from the minimized bar.
+	transition: none !important;
 
 	// Agenttic caps the inner content/pill narrower than the container; let them
 	// fill the shared 410px width so the minimized bar lines up with Help Center.
