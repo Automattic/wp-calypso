@@ -25,6 +25,7 @@ type RecordTracksEvent = ( eventName: string, properties?: Record< string, unkno
 export interface UseSiteLaunchOptions {
 	tracksContext: string;
 	backTo?: string;
+	postLaunchUrl?: string;
 	a4aLaunchUrl?: string;
 	a4aLaunchModal?: A4aLaunchModalComponent;
 	domainsOptions?: ReturnType< typeof domainsQuery >;
@@ -49,6 +50,7 @@ export function useSiteLaunch(
 	{
 		tracksContext,
 		backTo,
+		postLaunchUrl,
 		a4aLaunchUrl,
 		a4aLaunchModal: A4aLaunchModal,
 		domainsOptions,
@@ -106,17 +108,26 @@ export function useSiteLaunch(
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
+	const redirectAfterLaunch = ( options: { celebrate?: boolean } = {} ) => {
+		const targetUrl = addQueryArgs( postLaunchUrl ?? window.location.href, {
+			...( options.celebrate ? { celebrateLaunch: 'true' } : {} ),
+		} );
+
+		if ( postLaunchUrl ) {
+			window.location.assign( targetUrl );
+			return;
+		}
+
+		window.history.replaceState( null, '', targetUrl );
+	};
+
 	// The ungated experiment is the only path that triggers celebration.
 	const handleUngatedLaunch = () => {
 		track();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
 				// Add a query param to trigger the celebration modal in the parent.
-				window.history.replaceState(
-					null,
-					'',
-					addQueryArgs( window.location.href, { celebrateLaunch: 'true' } )
-				);
+				redirectAfterLaunch( { celebrate: true } );
 			},
 		} );
 	};
@@ -187,7 +198,9 @@ export function useSiteLaunch(
 			isHidden: false,
 			onClick: () => {
 				track();
-				launchMutation.mutate();
+				launchMutation.mutate( undefined, {
+					onSuccess: () => redirectAfterLaunch(),
+				} );
 			},
 		};
 	}

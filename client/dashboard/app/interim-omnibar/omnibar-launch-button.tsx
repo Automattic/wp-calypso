@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import Item from 'calypso/layout/masterbar/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteLaunch } from '../../sites/site-launch-button/use-site-launch';
+import { dashboardLinkWithBackport } from '../../utils/link';
 import type { Site } from '@automattic/api-core';
 
 const LaunchRocketIcon = () => (
@@ -19,9 +20,12 @@ const LaunchRocketIcon = () => (
 );
 
 export function OmnibarLaunchButton( { site }: { site: Site } ) {
+	const siteOverviewUrl = `/sites/${ site.slug }`;
 	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
 		useSiteLaunch( site, {
 			tracksContext: 'interim_omnibar',
+			backTo: siteOverviewUrl,
+			postLaunchUrl: dashboardLinkWithBackport( siteOverviewUrl ),
 			recordTracksEvent,
 		} );
 
