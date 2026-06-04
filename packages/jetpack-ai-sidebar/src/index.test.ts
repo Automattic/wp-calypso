@@ -773,6 +773,23 @@ describe( 'toolProvider', () => {
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
 		} );
 
+		it( 'preserves Big Sky abilities exposed through wp.abilities', async () => {
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'big-sky/show-component', label: 'Big Sky show component' },
+					{ name: 'big-sky/change-colors', label: 'Change colors' },
+				] ),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( 'big-sky/show-component' );
+			expect( names ).toContain( 'big-sky/change-colors' );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).not.toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
+		} );
+
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
 			const args = {
 				type: 'color-picker',
