@@ -72,7 +72,7 @@ describe( 'siteSubscriptionsQuery', () => {
 	it( 'fetches follows with the canonical key and legacy paging args', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.2/read/following/mine' )
-			.query( { page: '1', number: '200', meta: '' } )
+			.query( { page: '1', number: '100', meta: '' } )
 			.reply( 200, {
 				subscriptions: [
 					{
@@ -84,7 +84,7 @@ describe( 'siteSubscriptionsQuery', () => {
 				],
 				total_subscriptions: 1,
 				page: 1,
-				number: 200,
+				number: 1,
 			} );
 
 		const client = newClient();
@@ -105,6 +105,63 @@ describe( 'siteSubscriptionsQuery', () => {
 			feed_ID: 789,
 			is_following: true,
 		} );
+	} );
+
+	it( 'keeps paginating after a short page until an empty page is returned', async () => {
+		// The endpoint caps each page at 100 and filters deleted/spammy sites,
+		// so pages come back shorter than requested even when more remain. A
+		// short page must not be mistaken for the last page.
+		const makeSubscription = ( id: number ) => ( {
+			ID: String( id ),
+			URL: `https://example-${ id }.com/feed/`,
+			blog_ID: String( id ),
+			feed_ID: String( id ),
+		} );
+
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( { page: '1', number: '100', meta: '' } )
+			.reply( 200, {
+				subscriptions: [ makeSubscription( 1 ), makeSubscription( 2 ) ],
+				total_subscriptions: 150,
+				page: 1,
+				number: 2,
+			} );
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( { page: '2', number: '100', meta: '' } )
+			.reply( 200, {
+				subscriptions: [ makeSubscription( 3 ) ],
+				total_subscriptions: 150,
+				page: 2,
+				number: 1,
+			} );
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( { page: '3', number: '100', meta: '' } )
+			.reply( 200, {
+				subscriptions: [],
+				total_subscriptions: 150,
+				page: 3,
+				number: 0,
+			} );
+
+		const client = newClient();
+		const { result } = renderHook( () => useInfiniteQuery( siteSubscriptionsQuery() ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		await act( async () => {
+			while ( result.current.hasNextPage ) {
+				await result.current.fetchNextPage();
+			}
+		} );
+
+		expect( getSiteSubscriptionsFromData( result.current.data ).map( ( sub ) => sub.ID ) ).toEqual(
+			[ 1, 2, 3 ]
+		);
 	} );
 } );
 

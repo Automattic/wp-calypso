@@ -22,7 +22,10 @@ import {
 	type QueryClient,
 } from '@tanstack/react-query';
 
-const ITEMS_PER_PAGE = 200;
+// The /read/following/mine endpoint caps the page size at 100 server-side
+// (PER_PAGE_MAX), so requesting more never returns more. Keep the request size
+// aligned with that cap so pagination advances one server page at a time.
+const ITEMS_PER_PAGE = 100;
 const MAX_ITEMS = 2000;
 const STALE_TIME = 60 * 60 * 1000;
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
@@ -54,7 +57,10 @@ export const siteSubscriptionsQuery = () =>
 			if ( allPages.length >= MAX_PAGES_TO_FETCH ) {
 				return undefined;
 			}
-			if ( lastPage.subscriptions.length < ITEMS_PER_PAGE ) {
+			// The server filters out deleted/spammy sites after applying the page
+			// limit, so a short (but non-empty) page does not mean we reached the
+			// end. Only an empty page signals there is nothing left to fetch.
+			if ( lastPage.subscriptions.length === 0 ) {
 				return undefined;
 			}
 			if ( typeof totalCount === 'number' && fetchedItems >= Math.min( totalCount, MAX_ITEMS ) ) {
