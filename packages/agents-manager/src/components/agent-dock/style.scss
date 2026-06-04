@@ -699,12 +699,21 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
-// Coexistence: widen the floating chat to the shared 410px column width so it
-// matches Help Center (the wider option), in both open and minimized states.
+// Coexistence: pin the floating chat into a fixed bottom-right column aligned
+// with Help Center — shared 410px width and 16px right/bottom insets, in both
+// open and minimized states. Agenttic positions the chat with a width-derived
+// `translateX`, which a CSS width change alone would leave stale (pushing it
+// off-screen); right-anchoring and clearing the transform keeps it aligned.
+// (This fixes the chat in place, so it is no longer drag-repositionable while
+// coexisting — intended for the aligned-column layout.)
 .is-ai-surface-coexisting
 	.agents-manager-chat--undocked
 	.agenttic.Chat-module_container.Chat-module_floating {
 	width: 410px;
+	left: auto !important;
+	right: 16px !important;
+	bottom: 16px !important;
+	transform: none !important;
 }
 
 /* Agenttic UI: Styles for the undocked chat */

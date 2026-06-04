@@ -22,11 +22,11 @@ describe( 'computeLayoutVars', () => {
 		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
 	} );
 
-	it( 'applies no offset when both are minimized (handled by the shared container)', () => {
+	it( 'stacks both minimized bars into a column (HC bar above the AM bar)', () => {
 		const vars = computeLayoutVars(
 			snap( { shown: true, minimized: true }, { open: true, minimized: true } )
 		);
-		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( RAISED );
 		expect( vars[ '--ai-surface-am-bottom-offset' ] ).toBe( '0px' );
 	} );
 

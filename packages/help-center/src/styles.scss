@@ -239,10 +239,13 @@
 // other's minimized bar). Scoped to the coexistence flag via the class the AI
 // surface coordinator sets on <html>.
 .is-ai-surface-coexisting .help-center > .help-center__container.is-desktop {
-	// Both surfaces use the wider 410px width for a consistent column; Help
-	// Center keeps its native width. Align the right edge with Agents Manager.
+	// Align with Agents Manager into a shared bottom-right column: same 410px
+	// width (Help Center's native, the wider option) and the same 16px right /
+	// bottom insets, so the open panel and the minimized bars line up and the
+	// --ai-surface-hc-bottom-offset gutter is measured from the same baseline.
 	&,
 	&.is-minimized {
 		right: calc( 16px + var( --ai-surface-rail-inset, 0px ) ) !important;
+		bottom: calc( 16px + var( --ai-surface-hc-bottom-offset, 0px ) ) !important;
 	}
 }

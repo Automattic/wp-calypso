@@ -13,10 +13,6 @@ export type LayoutVars = Record< string, string >;
 const hcBarPresent = ( s: SurfaceSnapshot ) =>
 	s.helpCenter.present && s.helpCenter.shown && s.helpCenter.minimized;
 
-// Help Center's open card is shown when it's shown and not minimized.
-const hcOpenCard = ( s: SurfaceSnapshot ) =>
-	s.helpCenter.present && s.helpCenter.shown && ! s.helpCenter.minimized;
-
 // Agents Manager's "Ask AI" minimized bar (open + minimized, undocked).
 const amBarPresent = ( s: SurfaceSnapshot ) =>
 	s.agentsManager.present &&
@@ -34,10 +30,14 @@ const amOpenPanel = ( s: SurfaceSnapshot ) =>
 export function computeLayoutVars( s: SurfaceSnapshot ): LayoutVars {
 	const raised = `${ MINIMIZED_BAR_HEIGHT + STACK_GAP }px`;
 
-	// Whichever surface is OPEN lifts above the OTHER surface's minimized bar so
-	// the open panel sits cleanly above it. (Both-minimized is handled by a
-	// shared container, not these offsets.)
-	const hcBottomOffset = amBarPresent( s ) && hcOpenCard( s ) ? raised : '0px';
+	// Help Center always sits above Agents Manager's bar when that bar is present
+	// — whether Help Center is the open card (single-open case) or its own
+	// minimized bar (both-minimized case, which forms a single aligned column
+	// since both share the same width and right edge).
+	const hcBottomOffset = amBarPresent( s ) ? raised : '0px';
+	// Agents Manager's open panel lifts above Help Center's minimized bar. (When
+	// AM is itself minimized, it stays at the bottom and Help Center lifts above
+	// it via the offset above — so they never both lift.)
 	const amBottomOffset = hcBarPresent( s ) && amOpenPanel( s ) ? raised : '0px';
 
 	return {
