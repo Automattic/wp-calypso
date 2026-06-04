@@ -23,12 +23,15 @@ const parameters = {
 				return aIndex - bIndex;
 			}
 
-			// If they're in the same section, put MDX files first
-			const aIsMdx = a.importPath.endsWith( '.mdx' );
-			const bIsMdx = b.importPath.endsWith( '.mdx' );
+			// If they're in the same section, put docs entries first (MDX files or
+			// autodocs-generated pages). Storybook 9 no longer auto-pins Docs to the
+			// top of each component group, so we need to handle it here.
+			// Autodocs entries have type === 'docs' but importPath ending in .stories.*
+			const aIsDocs = a.type === 'docs' || a.importPath.endsWith( '.mdx' );
+			const bIsDocs = b.type === 'docs' || b.importPath.endsWith( '.mdx' );
 
-			if ( aIsMdx && ! bIsMdx ) return -1;
-			if ( ! aIsMdx && bIsMdx ) return 1;
+			if ( aIsDocs && ! bIsDocs ) return -1;
+			if ( ! aIsDocs && bIsDocs ) return 1;
 
 			// Explicit order within UI/Stepper
 			const stepperOrder = [
@@ -50,4 +53,5 @@ const parameters = {
 
 export default {
 	parameters,
+	tags: [ 'autodocs' ],
 };
