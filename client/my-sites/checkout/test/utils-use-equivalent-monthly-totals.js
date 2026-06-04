@@ -5,6 +5,7 @@ import {
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_STUDENT,
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
@@ -72,6 +73,21 @@ describe( 'useEquivalentMonthlyTotals', () => {
 		bill_period: '365',
 		months_per_bill_period: 12,
 	};
+	const student_yearly = {
+		...getEmptyResponseCartProduct(),
+		product_name: 'Student',
+		product_slug: PLAN_STUDENT,
+		currency: 'USD',
+		extra: {},
+		meta: 'test',
+		product_id: 1090,
+		volume: 1,
+		is_domain_registration: false,
+		item_original_cost_integer: 30,
+		item_subtotal_integer: 30,
+		bill_period: '365',
+		months_per_bill_period: 12,
+	};
 
 	beforeEach( () => {
 		jest.resetAllMocks();
@@ -111,5 +127,24 @@ describe( 'useEquivalentMonthlyTotals', () => {
 			useEquivalentMonthlyTotals( [ business_2years, personal_monthly, jetpack_yearly ] )
 		);
 		expect( result.current ).toStrictEqual( { 'business-bundle-2y': 0 } );
+	} );
+
+	it( 'ignores annual-only wpcom plans without monthly equivalents', () => {
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ PLAN_BUSINESS_MONTHLY ]: {
+				originalPrice: { monthly: 4000, full: 4000 },
+			},
+		} ) );
+
+		const { result } = renderHookWithProvider( () =>
+			useEquivalentMonthlyTotals( [ business_2years, student_yearly ] )
+		);
+
+		expect( Plans.usePricingMetaForGridPlans ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				planSlugs: [ PLAN_BUSINESS_MONTHLY ],
+			} )
+		);
+		expect( result.current ).toStrictEqual( { 'business-bundle-2y': 96000 } );
 	} );
 } );
