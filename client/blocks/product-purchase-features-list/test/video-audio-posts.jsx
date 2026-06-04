@@ -11,6 +11,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_STUDENT,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_JETPACK_FREE,
@@ -78,6 +79,28 @@ describe( 'VideoAudioPosts should use proper description', () => {
 		);
 		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /200 GB storage/ );
 		expect( screen.queryByTestId( 'purchase-detail' ) ).not.toHaveTextContent( /50 GB storage/ );
+	} );
+
+	test( 'for student plan', () => {
+		const translate = ( text, { args = {} } = {} ) =>
+			Object.entries( args ).reduce(
+				( result, [ key, value ] ) =>
+					result.replace( new RegExp( `%\\(${ key }\\)[sd]`, 'g' ), value ),
+				text
+		);
+
+		render(
+			<VideoAudioPosts
+				{ ...props }
+				hasLegacyStorage
+				plan={ PLAN_STUDENT }
+				translate={ translate }
+			/>
+		);
+		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /Student Plan/ );
+		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /6 GB storage/ );
+		expect( screen.queryByTestId( 'purchase-detail' ) ).not.toHaveTextContent( /50 GB storage/ );
+		expect( screen.queryByTestId( 'purchase-detail' ) ).not.toHaveTextContent( /200 GB storage/ );
 	} );
 
 	test.each( [
