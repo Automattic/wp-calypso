@@ -30,6 +30,7 @@
 		"catch-js-errors": false,
 		"checkout/checkout-version": false,
 		"checkout/google-pay": true,
+		"checkout/sidebar-express-payment-buttons": false,
 		"checkout/stripe-upi": true,
 		"cookie-banner": false,
 		"current-site/domain-warning": false,

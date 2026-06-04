@@ -685,6 +685,7 @@ export function CheckoutFormSubmit( {
 	submitButton,
 	onPageLoadError,
 	continueToNextIncompleteStep,
+	expressPaymentMethodIds,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
@@ -693,6 +694,7 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 	continueToNextIncompleteStep?: boolean;
+	expressPaymentMethodIds?: string[];
 } ) {
 	const { __ } = useI18n();
 	const { state, actions } = useContext( CheckoutStepGroupContext );
@@ -850,6 +852,7 @@ export function CheckoutFormSubmit( {
 						validateForm={ wrappedValidateForm }
 						disabled={ isDisabled }
 						onLoadError={ onSubmitButtonLoadError }
+						expressPaymentMethodIds={ expressPaymentMethodIds }
 					/>
 				)
 			) }
