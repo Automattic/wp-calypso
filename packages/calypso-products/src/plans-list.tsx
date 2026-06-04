@@ -201,6 +201,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
+	PLAN_STUDENT,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
@@ -230,6 +231,7 @@ import {
 	TYPE_100_YEAR,
 	TYPE_PRO,
 	TYPE_STARTER,
+	TYPE_STUDENT,
 	TYPE_GOLDEN_TOKEN,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_SCAN,
@@ -1045,6 +1047,30 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_AUDIO_UPLOADS,
 	],
+} );
+
+const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanPersonalDetails(),
+	type: TYPE_STUDENT,
+	getTitle: () => i18n.translate( 'Student' ),
+	getAudience: () => i18n.translate( 'Best for students' ),
+	getBlogAudience: () => i18n.translate( 'Best for students' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
+	getStoreAudience: () => i18n.translate( 'Best for students' ),
+	getPlanTagline: () => i18n.translate( 'Build your site with student-friendly tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Create, share, and grow your work with a custom domain.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate( 'Take the next step with an ad-free site and room to grow.' ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for students:{{/strong}} Build your online presence with a custom domain and an ad-free experience.',
+			plansDescriptionHeadingComponent
+		),
+	getShortDescription: () =>
+		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
+	getTagline: () =>
+		i18n.translate( 'Learn more about everything included with the Student plan.' ),
 } );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
@@ -3101,6 +3127,16 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'personal-3-years',
 	},
 
+	[ PLAN_STUDENT ]: {
+		...getPlanStudentDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: () => false,
+		getProductId: () => 1090,
+		getStoreSlug: () => PLAN_STUDENT,
+		getPathSlug: () => 'student',
+	},
+
 	[ PLAN_PREMIUM_MONTHLY ]: {
 		...getPlanPremiumDetails(),
 		...getMonthlyTimeframe(),
@@ -3224,6 +3260,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
@@ -3251,6 +3288,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
@@ -3282,6 +3320,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
 				PLAN_PERSONAL_3_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
@@ -3403,6 +3442,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
@@ -3437,6 +3477,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
@@ -3633,6 +3674,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
 				PLAN_PERSONAL_3_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
