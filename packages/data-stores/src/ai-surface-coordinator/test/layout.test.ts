@@ -8,15 +8,18 @@ function snap( hc = {}, am = {} ): SurfaceSnapshot {
 }
 
 describe( 'computeLayoutVars', () => {
-	it( "offsets Help Center up by (bar height + gap) while Agents Manager's Ask AI bar is present", () => {
-		// AM loaded but not open and not docked → its persistent Ask AI bar owns
-		// the corner, so Help Center must sit above it.
-		const vars = computeLayoutVars( snap( { shown: true }, { open: false } ) );
+	it( "offsets Help Center up while Agents Manager's Ask AI bar is shown (open + minimized)", () => {
+		const vars = computeLayoutVars( snap( { shown: true }, { open: true, minimized: true } ) );
 		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '64px' ); // 56 + 8
 	} );
 
-	it( 'does not offset Help Center when Agents Manager is expanded (bar not shown)', () => {
-		const vars = computeLayoutVars( snap( { shown: true }, { open: true } ) );
+	it( 'does not offset Help Center when Agents Manager is expanded (open, not minimized)', () => {
+		const vars = computeLayoutVars( snap( { shown: true }, { open: true, minimized: false } ) );
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
+	} );
+
+	it( 'does not offset Help Center when Agents Manager is fully hidden (not open)', () => {
+		const vars = computeLayoutVars( snap( { shown: true }, { open: false } ) );
 		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
 	} );
 

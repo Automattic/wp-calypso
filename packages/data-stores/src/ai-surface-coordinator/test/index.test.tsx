@@ -36,7 +36,6 @@ function registerStubStores() {
 			) => ( action.type === 'SET' ? { ...state, ...action.payload } : state ),
 			actions: {
 				set: ( payload: Record< string, unknown > ) => ( { type: 'SET', payload } ),
-				// Mirrors the real store: closing the panel is setIsOpen( false ).
 				setIsOpen: ( isOpen: boolean ) => ( { type: 'SET', payload: { isOpen } } ),
 				setIsMinimized: ( isMinimized: boolean ) => ( {
 					type: 'SET',
@@ -71,7 +70,7 @@ beforeEach( () => {
 	} );
 } );
 
-it( 'closes Agents Manager when Help Center opens while AM is expanded', () => {
+it( 'minimizes Agents Manager to its bar when Help Center opens while AM is expanded', () => {
 	act( () => {
 		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
 	} );
@@ -79,7 +78,8 @@ it( 'closes Agents Manager when Help Center opens while AM is expanded', () => {
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsOpen() ).toBe( false );
+	expect( select( AM_KEY ).getIsMinimized() ).toBe( true );
+	expect( select( AM_KEY ).getIsOpen() ).toBe( true ); // still open, just minimized to the bar
 	unmount();
 } );
 
@@ -103,13 +103,14 @@ it( 'no-ops when disabled', () => {
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsOpen() ).toBe( true );
+	expect( select( AM_KEY ).getIsMinimized() ).toBe( false );
 	unmount();
 } );
 
 it( "offsets Help Center above Agents Manager's Ask AI bar via a CSS custom property", () => {
-	// AM loaded but closed → its persistent Ask AI bar is present, HC shown.
+	// AM open + minimized → its Ask AI bar is shown, HC open above it.
 	act( () => {
+		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true, isMinimized: true } );
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
 	const { unmount } = renderHook( () => useAiSurfaceCoordinator( true ) );
@@ -127,15 +128,15 @@ it( 'does NOT coordinate after unmount', () => {
 	const { unmount } = renderHook( () => useAiSurfaceCoordinator( true ) );
 	unmount();
 
-	// After unmount, opening HC must NOT close AM.
+	// After unmount, opening HC must NOT minimize AM.
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsOpen() ).toBe( true );
+	expect( select( AM_KEY ).getIsMinimized() ).toBe( false );
 } );
 
 it( 'handles a second conflict correctly after a first (re-entrancy / stale prev)', () => {
-	// Round 1: AM open, HC opens → AM is closed.
+	// Round 1: AM open, HC opens → AM minimized to its bar.
 	act( () => {
 		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
 	} );
@@ -143,12 +144,12 @@ it( 'handles a second conflict correctly after a first (re-entrancy / stale prev
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsOpen() ).toBe( false );
+	expect( select( AM_KEY ).getIsMinimized() ).toBe( true );
 
-	// Round 2: AM re-expands while HC is still shown → AM just-expanded wins,
-	// so Help Center is minimized.
+	// Round 2: AM un-minimizes (re-expands) while HC is still shown → AM just
+	// became expanded, so Help Center is minimized.
 	act( () => {
-		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
+		( dispatch( AM_KEY ) as AMDispatch ).set( { isMinimized: false } );
 	} );
 	expect( select( HC_KEY ).getIsMinimized() ).toBe( true );
 

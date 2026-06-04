@@ -14,6 +14,7 @@ import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
+import { useShouldCoexistAiSurfaces } from '../../hooks/use-should-coexist-ai-surfaces';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
@@ -136,8 +137,13 @@ export default function AgentDock( {
 			isSplitScreen,
 		} );
 
+	// When coexisting with Help Center, an external masterbar sparkle reopens the
+	// chat, so AM behaves as if it has a trigger: it fully hides on close (rather
+	// than leaving the persistent "Ask AI" bar) and can minimize to a bar.
+	const isCoexisting = useShouldCoexistAiSurfaces();
+
 	// WP admin bar integration. Returns whether a trigger button can reopen the chat.
-	const hasAdminBarTrigger = useAdminBarIntegration( {
+	const hasAdminBarButton = useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
 		maybeOpenChat: () => {
@@ -154,6 +160,7 @@ export default function AgentDock( {
 		},
 		navigate,
 	} );
+	const hasAdminBarTrigger = hasAdminBarButton || isCoexisting;
 
 	useSetupCustomActions( {
 		canDock,

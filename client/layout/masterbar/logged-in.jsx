@@ -78,6 +78,10 @@ const loadMasterbarAgentsManager = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
 	);
+const loadMasterbarAgentsManagerLauncher = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager-launcher" */ './masterbar-agents-manager/launcher'
+	);
 const loadMasterbarHelpCenter = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
@@ -830,7 +834,7 @@ class MasterbarLoggedIn extends Component {
 		const agentsManagerPlaceholder = (
 			<Item
 				className="masterbar__item-agents-manager"
-				tooltip={ translate( 'Help' ) }
+				tooltip={ translate( 'Assistant' ) }
 				icon={ <AgentsManagerIcon hasUnread={ false } /> }
 			/>
 		);
@@ -848,10 +852,23 @@ class MasterbarLoggedIn extends Component {
 		);
 
 		if ( coexistAiSurfaces ) {
+			// In coexistence, Help Center keeps its dropdown and Agents Manager gets
+			// a plain sparkle launcher that appears only when AM is fully closed.
+			const agentsManagerLauncher = this.state.mounted ? (
+				<AsyncLoad
+					key="agents-manager"
+					require={ loadMasterbarAgentsManagerLauncher }
+					tooltip={ translate( 'Assistant' ) }
+					placeholder={ agentsManagerPlaceholder }
+				/>
+			) : (
+				agentsManagerPlaceholder
+			);
+
 			return (
 				<>
 					{ helpCenterIcon }
-					{ agentsManagerIcon }
+					{ agentsManagerLauncher }
 				</>
 			);
 		}

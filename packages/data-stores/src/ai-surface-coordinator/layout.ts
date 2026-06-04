@@ -9,12 +9,16 @@ import type { SurfaceSnapshot } from './reconciler';
 export type LayoutVars = Record< string, string >;
 
 /**
- * Agents Manager's "Ask AI" compact bar is a persistent bottom-right launcher:
- * it is shown whenever Agents Manager is loaded but neither expanded nor docked.
+ * Agents Manager's "Ask AI" minimized bar sits in the bottom-right corner only
+ * while AM is open *and* minimized (not docked). When fully hidden (not open)
+ * nothing is shown there, and when expanded the panel — not a bar — is shown.
  * While that bar owns the corner, Help Center must sit above it.
  */
 const amBarPresent = ( s: SurfaceSnapshot ) =>
-	s.agentsManager.present && ! s.agentsManager.open && ! s.agentsManager.docked;
+	s.agentsManager.present &&
+	s.agentsManager.open &&
+	s.agentsManager.minimized &&
+	! s.agentsManager.docked;
 
 export function computeLayoutVars( s: SurfaceSnapshot ): LayoutVars {
 	return {

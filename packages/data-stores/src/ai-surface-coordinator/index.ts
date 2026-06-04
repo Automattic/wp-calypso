@@ -94,10 +94,10 @@ export function useAiSurfaceCoordinator( enabled: boolean ) {
 			try {
 				for ( const command of commands ) {
 					if ( command.surface === 'agents-manager' ) {
-						// Agents Manager "parks" by closing its panel back to the
-						// persistent "Ask AI" bar — not via isMinimized (which is a
-						// wp-admin-only concept). setIsOpen( false ) is its real close.
-						( dispatch( AM_KEY ) as AgentsManagerDispatch ).setIsOpen( false );
+						// Park Agents Manager by minimizing it to its "Ask AI" bar
+						// (stays open, just collapsed) rather than fully hiding it, so
+						// the user keeps a visible, one-click way back to it.
+						( dispatch( AM_KEY ) as AgentsManagerDispatch ).setIsMinimized( true );
 					} else {
 						( dispatch( HC_KEY ) as HelpCenterDispatch[ 'dispatch' ] ).setIsMinimized( true );
 					}
