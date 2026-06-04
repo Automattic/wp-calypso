@@ -237,3 +237,62 @@ planning time (new flag layered on top vs. repurposing the existing one).
   persistence backend).
 - Slot/offset hand-off mechanism across the two portals (CSS custom property vs. state).
 - New flag vs. repurposing `unified_ai_chat`.
+
+## Phase 2: launcher & layout refinements (live-driven)
+
+A second round of live feedback reshaped the launchers, the Agents Manager state
+model, and the minimized-bar layout. Implemented unless noted.
+
+**Launchers (Dashboard masterbar / omnibar)**
+- **Help Center keeps its dropdown.** `MasterbarHelpCenter` forces its
+  menu-panel dropdown on when coexisting (otherwise it is gated behind the
+  `calypso_help_center_menu_popover_increase_exposure` ExPlat experiment, so it
+  only appeared for users in that variation).
+- **Agents Manager gets a sparkle launcher, not a dropdown.** New
+  `MasterbarAgentsManagerLauncher` — a plain sparkle button that renders **only
+  when AM is fully hidden** (`isOpen === false`) and opens AM on click. When AM
+  is open or minimized, its panel / bar is the entry point so the launcher hides.
+- The AM masterbar icon is now an **AI sparkle** (was the WordPress `help`
+  question-mark, which made it indistinguishable from Help Center).
+
+**Agents Manager 3-state model (when coexisting)**
+- States: **open** (`isOpen && !minimized`) / **minimized** — the "Ask AI" bar
+  (`isOpen && minimized`) / **fully hidden** (`!isOpen`, nothing on screen).
+- Realized by treating AM as having a reopen trigger when coexisting:
+  `hasAdminBarTrigger ||= isCoexisting` in `agent-dock`, which makes the floating
+  chat hide on close (instead of leaving the persistent Ask AI bar) and allows
+  minimizing. The masterbar sparkle is the external reopen trigger.
+- The chat header shows the **Minimize** control when coexisting + undocked
+  (`chat-header` previously detected only the wp-admin DOM trigger).
+- The coordinator parks AM by **minimizing** it to the bar (`setIsMinimized`),
+  not fully hiding it.
+
+**Layout / alignment**
+- Help Center is matched to Agents Manager's **372px width** and a **shared
+  right edge** (`right: 16px`) when coexisting, gated by the
+  `is-ai-surface-coexisting` class the coordinator sets on `<html>`. The open
+  panel sits above the other surface's minimized bar via
+  `--ai-surface-hc-bottom-offset`.
+- **DECISION (not yet implemented): when BOTH are minimized, render the two bars
+  in a single shared container.** This is the brainstorm's "shared tray"
+  (option C), chosen over independent CSS-offset bars because two independently
+  positioned, different-width bars do not align cleanly. This supersedes the
+  both-minimized case of the CSS-offset approach and is the main remaining
+  implementation item. It requires a coordinator-owned container that both
+  surfaces portal their minimized bar into.
+
+**Cross-repo dependency (not changeable in Calypso)**
+- Renaming the Agents Manager minimized bar label from **"Ask AI" to "WordPress
+  Assistant"** requires a change in the external **`@automattic/agenttic-ui`**
+  package: the label is the hardcoded default `title` of agenttic-ui's internal
+  `MinimizedView`, and `AgentUI.Container` does not expose a `title` prop. Either
+  expose the prop in agenttic-ui (then pass it from `agent-chat`) or override the
+  `"Ask AI"` string in the `a8c-agenttic` text domain.
+
+**Validated live (Dashboard, clean load):** AM fully hidden by default with the
+sparkle + Help dropdown both shown; sparkle opens AM and hides itself; Help
+dropdown renders its menu panel; AM minimize control present when undocked. **Not
+yet done:** the shared-tray both-minimized container; the "WordPress Assistant"
+label (agenttic-ui); final visual alignment tuning of the open-above-minimized
+column (needs a clean browser — heavy live testing left persisted docked/open
+state that muddies local verification).

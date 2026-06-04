@@ -71,6 +71,10 @@ export function useAiSurfaceCoordinator( enabled: boolean ) {
 			return;
 		}
 
+		// Mark the document so each surface's SCSS can apply coexistence-only
+		// layout (shared width + right edge) without affecting standalone mode.
+		document.documentElement.classList.add( 'is-ai-surface-coexisting' );
+
 		let prev = readSnapshot();
 		let lastExpanded = readLastExpanded();
 		let reconciling = false;
@@ -118,6 +122,9 @@ export function useAiSurfaceCoordinator( enabled: boolean ) {
 
 		reconcile(); // boot reconciliation
 		const unsubscribe = subscribe( reconcile );
-		return unsubscribe;
+		return () => {
+			unsubscribe();
+			document.documentElement.classList.remove( 'is-ai-surface-coexisting' );
+		};
 	}, [ enabled ] );
 }

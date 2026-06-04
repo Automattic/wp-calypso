@@ -116,7 +116,7 @@ it( "offsets Help Center above Agents Manager's Ask AI bar via a CSS custom prop
 	const { unmount } = renderHook( () => useAiSurfaceCoordinator( true ) );
 
 	const root = document.documentElement;
-	expect( root.style.getPropertyValue( CSS_VAR_HC_BOTTOM_OFFSET ) ).toBe( '64px' ); // 56 + 8
+	expect( root.style.getPropertyValue( CSS_VAR_HC_BOTTOM_OFFSET ) ).toBe( '72px' ); // 56 + 16
 	expect( root.style.getPropertyValue( CSS_VAR_RAIL_INSET ) ).toBe( '0px' );
 	unmount();
 } );

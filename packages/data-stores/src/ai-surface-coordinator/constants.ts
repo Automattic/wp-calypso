@@ -1,8 +1,8 @@
 // Height of the Agents Manager "Ask AI" compact bar, in px. Matches Help
 // Center's own minimized bar height ($head-foot-height, 56px).
 export const MINIMIZED_BAR_HEIGHT = 56;
-// Vertical gap left between Help Center and the Ask AI bar when stacked.
-export const STACK_GAP = 8;
+// Vertical gap left between an open panel and the other surface's minimized bar.
+export const STACK_GAP = 16;
 
 // Persisted (localStorage) marker for boot tie-break. Not server-backed: it is
 // a non-critical UI hint, so it avoids a backend allowed-key change.
@@ -15,5 +15,8 @@ export const LAST_EXPANDED_STORAGE_KEY = 'ai-surface-last-expanded';
 // when that bar occupies the bottom-right corner, Help Center (its open card
 // and its minimized bar) shifts up by this offset to sit above it.
 export const CSS_VAR_HC_BOTTOM_OFFSET = '--ai-surface-hc-bottom-offset';
+// Bottom offset lifting the Agents Manager open panel above Help Center's
+// minimized bar (the symmetric counterpart of the HC offset).
+export const CSS_VAR_AM_BOTTOM_OFFSET = '--ai-surface-am-bottom-offset';
 // Extra inline-end inset for Help Center to clear a docked Agents Manager rail.
 export const CSS_VAR_RAIL_INSET = '--ai-surface-rail-inset';

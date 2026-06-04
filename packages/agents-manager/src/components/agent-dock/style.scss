@@ -699,10 +699,21 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
+// Coexistence: widen the floating chat to the shared 410px column width so it
+// matches Help Center (the wider option), in both open and minimized states.
+.is-ai-surface-coexisting
+	.agents-manager-chat--undocked
+	.agenttic.Chat-module_container.Chat-module_floating {
+	width: 410px;
+}
+
 /* Agenttic UI: Styles for the undocked chat */
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+	// Lift the open panel above Help Center's minimized bar when coexisting
+	// (0 unless the coordinator sets it).
+	margin-block-end: var( --ai-surface-am-bottom-offset, 0 );
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&:not( .is-active ):hover {
