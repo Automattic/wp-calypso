@@ -24,7 +24,7 @@
 .trigger {
 	display: flex;
 	flex-direction: row;
-	align-items: center;
+	align-items: flex-start;
 	gap: var( --wpds-dimension-gap-sm, 8px );
 	background: none;
 	border: none;

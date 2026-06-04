@@ -32,7 +32,7 @@
 
 .trigger {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: var( --wpds-dimension-gap-sm, 8px );
 	padding-block: var( --wpds-dimension-padding-sm, 8px );
 	background: none;
