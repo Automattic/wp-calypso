@@ -100,7 +100,7 @@
 		height: 80vh;
 		max-height: 800px;
 		border-radius: 16px;
-		right: 50px;
+		right: calc( 50px + var( --ai-surface-rail-inset, 0px ) );
 		bottom: 50px;
 
 		&:not( .react-draggable-dragging ) {
@@ -113,7 +113,8 @@
 
 		&.is-minimized {
 			height: $head-foot-height;
-			bottom: 0;
+			bottom: var( --ai-surface-hc-stack-bottom, 0 );
+			right: calc( 50px + var( --ai-surface-rail-inset, 0px ) );
 
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
