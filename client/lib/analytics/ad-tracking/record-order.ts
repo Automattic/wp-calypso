@@ -757,13 +757,14 @@ function recordOrderInOpenAI(
 		return;
 	}
 	const params = {
+		type: 'contents',
 		contents: wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
 			id: product.product_slug,
 			name: product.product_name_en,
 			content_type: 'product',
 			quantity: 1,
 		} ) ),
-		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		value: Math.floor( Number( wpcomJetpackCartInfo.wpcomCostUSD ) * 100 ),
 		currency: 'USD',
 	};
 	debug( 'recordOrderInOpenAI:', 'track', params );

@@ -128,11 +128,13 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// OpenAI ads
 	if ( mayWeTrackByTracker( 'openai' ) ) {
-		window.oaiq( 'measure', 'registration_completed', {
+		const params = {
 			type: 'customer_action',
-			amount: usdCost,
+			amount: 0,
 			currency: 'USD',
-		} );
+		};
+		window.oaiq( 'measure', 'registration_completed', params );
+		debug( 'recordSignup: [OpenAI]', params );
 	}
 
 	if ( mayWeTrackByTracker( 'quora' ) ) {
