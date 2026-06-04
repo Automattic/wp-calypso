@@ -100,6 +100,7 @@ class MasterbarLoggedIn extends Component {
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
+		coexistAiSurfaces: PropTypes.bool,
 		launchButton: PropTypes.node,
 	};
 
@@ -804,32 +805,9 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		const { siteId, translate, useUnifiedAgent } = this.props;
+		const { siteId, translate, useUnifiedAgent, coexistAiSurfaces } = this.props;
 
-		if ( useUnifiedAgent ) {
-			const placeholder = (
-				<Item
-					className="masterbar__item-agents-manager"
-					tooltip={ translate( 'Help' ) }
-					icon={ <AgentsManagerIcon hasUnread={ false } /> }
-				/>
-			);
-
-			if ( ! this.state.mounted ) {
-				return placeholder;
-			}
-
-			return (
-				<AsyncLoad
-					require={ loadMasterbarAgentsManager }
-					siteId={ siteId }
-					tooltip={ translate( 'Help' ) }
-					placeholder={ placeholder }
-				/>
-			);
-		}
-
-		const placeholder = (
+		const helpCenterPlaceholder = (
 			<Item
 				className="masterbar__item-help"
 				tooltip={ translate( 'Help' ) }
@@ -837,18 +815,48 @@ class MasterbarLoggedIn extends Component {
 			/>
 		);
 
-		if ( ! this.state.mounted ) {
-			return placeholder;
-		}
-
-		return (
+		const helpCenterIcon = this.state.mounted ? (
 			<AsyncLoad
+				key="help-center"
 				require={ loadMasterbarHelpCenter }
 				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
-				placeholder={ placeholder }
+				placeholder={ helpCenterPlaceholder }
+			/>
+		) : (
+			helpCenterPlaceholder
+		);
+
+		const agentsManagerPlaceholder = (
+			<Item
+				className="masterbar__item-agents-manager"
+				tooltip={ translate( 'Help' ) }
+				icon={ <AgentsManagerIcon hasUnread={ false } /> }
 			/>
 		);
+
+		const agentsManagerIcon = this.state.mounted ? (
+			<AsyncLoad
+				key="agents-manager"
+				require={ loadMasterbarAgentsManager }
+				siteId={ siteId }
+				tooltip={ translate( 'Help' ) }
+				placeholder={ agentsManagerPlaceholder }
+			/>
+		) : (
+			agentsManagerPlaceholder
+		);
+
+		if ( coexistAiSurfaces ) {
+			return (
+				<>
+					{ helpCenterIcon }
+					{ agentsManagerIcon }
+				</>
+			);
+		}
+
+		return useUnifiedAgent ? agentsManagerIcon : helpCenterIcon;
 	}
 
 	render() {
@@ -937,6 +945,7 @@ export default connect(
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
 			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
+			coexistAiSurfaces: getPreference( state, 'ai_surface_coexistence' ) ?? false,
 		};
 	},
 	{
