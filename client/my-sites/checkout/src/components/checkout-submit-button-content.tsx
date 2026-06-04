@@ -30,7 +30,7 @@ const StyledMaterialIcon = styled( MaterialIcon )`
  * this because they want their submit button to render something different.
  */
 export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} ) {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
@@ -52,8 +52,12 @@ export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} 
 		<CreditCardPayButtonWrapper>
 			<StyledMaterialIcon icon="credit_card" />
 			{ last4
-				? /* translators: %s is the last 4 digits of the saved card, e.g. "Pay with 3220" */
-				  sprintf( __( 'Pay with %s' ), last4 )
+				? sprintf(
+						/* translators: %s is the masked saved card number, e.g. "**** 3220" */
+						__( 'Pay with %s' ),
+						/* translators: %s is the last 4 digits of the credit card number */
+						sprintf( _x( '**** %s', 'Masked credit card number' ), last4 )
+				  )
 				: __( 'Pay now' ) }
 		</CreditCardPayButtonWrapper>
 	);
