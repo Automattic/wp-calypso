@@ -119,7 +119,7 @@ function isJetpackAiSidebarPreviewFeatureEnabled(
 	if ( ! preview ) {
 		return defaultValue;
 	}
-	if ( ! preview.enabled ) {
+	if ( preview.enabled === false ) {
 		return false;
 	}
 	return preview.features?.[ feature ] === true;
@@ -228,6 +228,7 @@ function applySuggestionLimit< T extends { id: string } >(
 
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const BIG_SKY_SHOW_COMPONENT_ABILITY = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
 /**
@@ -421,6 +422,18 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 	);
 }
 
+function hasLegacyShowComponentAbility( abilities: any[] ): boolean {
+	const legacyNormalized = normalizeAbilityName( LEGACY_SHOW_COMPONENT_TOOL_ID );
+	return abilities.some( ( ability: any ) => {
+		const name = ability?.name;
+		return (
+			typeof name === 'string' &&
+			( name === BIG_SKY_SHOW_COMPONENT_ABILITY ||
+				normalizeAbilityName( name ) === legacyNormalized )
+		);
+	} );
+}
+
 function isShowComponentTool( toolId: string ): boolean {
 	return SHOW_COMPONENT_TOOL_IDS.includes( toolId );
 }
@@ -448,10 +461,9 @@ export const toolProvider = {
 			}
 		}
 
+		const externalLegacyShowComponentAvailable = hasLegacyShowComponentAbility( abilities );
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
-		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
-			abilities = filterAbility( abilities, toolId );
-		}
+		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
 		const jetpackAbilities = [
 			...( isBlockTransformationsEnabled()
 				? [
@@ -465,10 +477,14 @@ export const toolProvider = {
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
 			},
-			{
-				...LEGACY_SHOW_COMPONENT_ABILITY,
-				callback: handleLegacyShowComponent,
-			},
+			...( externalLegacyShowComponentAvailable
+				? []
+				: [
+						{
+							...LEGACY_SHOW_COMPONENT_ABILITY,
+							callback: handleLegacyShowComponent,
+						},
+				  ] ),
 		];
 		abilities.unshift( ...jetpackAbilities );
 		return abilities;
