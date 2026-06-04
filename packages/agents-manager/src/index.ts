@@ -21,6 +21,7 @@ export type {
 } from './types';
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
+export { useShouldCoexistAiSurfaces } from './hooks/use-should-coexist-ai-surfaces';
 export { useImageUpload } from './hooks/use-image-upload';
 
 // Feedback exports

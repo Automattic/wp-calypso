@@ -49,3 +49,31 @@ export function useUnifiedAiChat( enabled = true ) {
 		staleTime: 300000, // 5 minutes
 	} );
 }
+
+interface CoexistenceStateResponse {
+	ai_surface_coexistence?: boolean;
+}
+
+/**
+ * Determines whether Help Center and Agents Manager should coexist (both
+ * loaded, runtime-coordinated) instead of being mutually exclusive.
+ * Mirrors useUnifiedAiChat's hybrid inline/endpoint approach.
+ */
+export function useAiSurfaceCoexistence( enabled = true ) {
+	return useQuery< boolean, Error >( {
+		queryKey: [ 'ai-surface-coexistence' ],
+		queryFn: async () => {
+			if ( canAccessWpcomApis() ) {
+				const response: CoexistenceStateResponse = await wpcomRequest( {
+					path: '/agents-manager/state?key=ai_surface_coexistence',
+					apiNamespace: 'wpcom/v2',
+				} );
+				return response.ai_surface_coexistence ?? false;
+			}
+			return false;
+		},
+		enabled,
+		refetchOnWindowFocus: false,
+		staleTime: 300000,
+	} );
+}
