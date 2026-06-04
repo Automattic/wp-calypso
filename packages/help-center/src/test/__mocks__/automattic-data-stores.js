@@ -7,4 +7,8 @@ const HelpCenter = {
 	register: () => 'help-center',
 };
 
-module.exports = { HelpCenter };
+const AiSurfaceCoordinator = {
+	useAiSurfaceCoordinator: () => {},
+};
+
+module.exports = { HelpCenter, AiSurfaceCoordinator };

@@ -2,8 +2,9 @@
 /**
  * External Dependencies
  */
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { useShouldCoexistAiSurfaces, useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { AiSurfaceCoordinator, type HelpCenterSelect } from '@automattic/data-stores';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
@@ -20,7 +21,6 @@ import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import HelpCenterSmooch from './help-center-smooch';
-import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( {
@@ -29,6 +29,10 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	const shouldCoexist = useShouldCoexistAiSurfaces();
+	// When coexisting, Help Center must render even though the unified agent is on.
+	const suppress = shouldUseUnifiedAgent && ! shouldCoexist;
+	AiSurfaceCoordinator.useAiSurfaceCoordinator( shouldCoexist );
 	const [ container, setContainer ] = useState< HTMLDivElement >();
 
 	const isHelpCenterShown = useSelect( ( select ) => {
@@ -55,7 +59,7 @@ const HelpCenter: React.FC< Container > = ( {
 	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {
 		let div: HTMLDivElement | undefined;
-		if ( ! shouldUseUnifiedAgent ) {
+		if ( ! suppress ) {
 			div = document.createElement( 'div' );
 			div.classList.add( 'help-center' );
 			div.setAttribute( 'role', 'dialog' );
@@ -74,7 +78,7 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [] );
 
 	// If unified agent flag is enabled, things will be handled by agents-manager app
-	if ( ! container || shouldUseUnifiedAgent ) {
+	if ( ! container || suppress ) {
 		return null;
 	}
 
