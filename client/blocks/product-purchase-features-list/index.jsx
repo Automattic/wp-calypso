@@ -173,6 +173,69 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
+	getStudentFeatures() {
+		const {
+			canActivateWordadsInstant,
+			hasLegacyStorage,
+			isPlaceholder,
+			isMonthlyPlan,
+			plan,
+			currentPlan,
+			planHasDomainCredit,
+			selectedSite,
+			scheduleId,
+		} = this.props;
+
+		let hasBusinessOnboardingExpired;
+		if ( currentPlan ) {
+			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+			const businessOnboardingExpiration = this.props.moment( PLAN_BUSINESS_ONBOARDING_EXPIRE );
+
+			hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
+		}
+
+		const hasIncludedSessions = scheduleId === 1;
+		const hasPurchasedSessions = scheduleId > 1;
+
+		const isBusinessOnboardingAvailable =
+			hasPurchasedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
+
+		return (
+			<Fragment>
+				<HappinessSupportCard
+					isPlaceholder={ isPlaceholder }
+					contactButtonEventName="calypso_livechat_my_plan_student"
+				/>
+				{ ! isMonthlyPlan && (
+					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				) }
+				{ isBusinessOnboardingAvailable && (
+					<BusinessOnboarding
+						isWpcomPlan
+						onClick={ this.handleBusinessOnboardingClick }
+						link={ `/me/quickstart/${ selectedSite.slug }/book` }
+					/>
+				) }
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<CustomCSS selectedSite={ selectedSite } />
+				<VideoAudioPosts
+					hasLegacyStorage={ hasLegacyStorage }
+					selectedSite={ selectedSite }
+					plan={ plan }
+				/>
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
+				<UploadPlugins selectedSite={ selectedSite } />
+				<SiteActivity />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<SellOnlinePaypal isJetpack={ false } />
+			</Fragment>
+		);
+	}
+
 	getPremiumFeatures() {
 		const {
 			canActivateWordadsInstant,
@@ -415,7 +478,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
-				[ TYPE_STUDENT ]: () => this.getPersonalFeatures(),
+				[ TYPE_STUDENT ]: () => this.getStudentFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
 				[ TYPE_100_YEAR ]: () => this.getBusinessFeatures(),

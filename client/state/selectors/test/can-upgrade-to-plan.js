@@ -116,7 +116,7 @@ describe( 'canUpgradeToPlan', () => {
 		);
 	} );
 
-	test( 'should return true from student plan to business and ecommerce yearly plans', () => {
+	test( 'should return true from student plan to business, ecommerce, and 100-year plans', () => {
 		[
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
@@ -124,6 +124,7 @@ describe( 'canUpgradeToPlan', () => {
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
 			PLAN_ECOMMERCE_3_YEARS,
+			PLAN_100_YEARS,
 		].forEach( ( planToPurchase ) =>
 			expect( canUpgradeToPlan( makeState( siteId, PLAN_STUDENT ), siteId, planToPurchase ) ).toBe(
 				true
@@ -140,7 +141,6 @@ describe( 'canUpgradeToPlan', () => {
 			PLAN_PREMIUM_3_YEARS,
 			PLAN_PERSONAL,
 			PLAN_BLOGGER,
-			PLAN_100_YEARS,
 		].forEach( ( planToPurchase ) =>
 			expect( canUpgradeToPlan( makeState( siteId, PLAN_STUDENT ), siteId, planToPurchase ) ).toBe(
 				false

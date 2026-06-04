@@ -3386,6 +3386,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
+				PLAN_STUDENT,
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
