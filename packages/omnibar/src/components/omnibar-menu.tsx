@@ -76,6 +76,7 @@ export function OmnibarMenu( { node, style }: { node: OmnibarNode; style?: React
 				render={ node.href ? <a href={ node.href } /> : undefined }
 				onClick={ node.onClick }
 				aria-label={ label }
+				aria-expanded={ node.isActive || undefined }
 			>
 				<OmnibarNodeContent node={ node } />
 			</Button>
