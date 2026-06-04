@@ -166,7 +166,7 @@ export async function recordAddToCart( cartItem ) {
 					name: cartItem.product_name,
 					content_type: 'product',
 					quantity: 1,
-					amount: cartItem.item_subtotal_integer,
+					amount: Math.round( Number( cartItem.cost ) * 100 ),
 					currency: cartItem.currency,
 				},
 			],

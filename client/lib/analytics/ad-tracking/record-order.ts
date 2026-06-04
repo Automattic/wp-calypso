@@ -764,7 +764,7 @@ function recordOrderInOpenAI(
 			content_type: 'product',
 			quantity: 1,
 		} ) ),
-		value: Math.floor( Number( wpcomJetpackCartInfo.wpcomCostUSD ) * 100 ),
+		amount: Math.round( Number( wpcomJetpackCartInfo.wpcomCostUSD ) * 100 ),
 		currency: 'USD',
 	};
 	debug( 'recordOrderInOpenAI:', 'track', params );
