@@ -209,6 +209,7 @@ export const receiptRoute = createRoute( {
 	loader: async ( { params: { receiptId } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
+			queryClient.ensureQueryData( userReceiptsQuery() ),
 			queryClient.ensureQueryData( userTaxDetailsQuery() ),
 			queryClient.ensureQueryData( countryListQuery() ),
 		] );

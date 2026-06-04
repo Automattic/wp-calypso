@@ -38,7 +38,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dark-mode": false,
-		"dashboard/omnibar": false,
+		"dashboard/omnibar": true,
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
