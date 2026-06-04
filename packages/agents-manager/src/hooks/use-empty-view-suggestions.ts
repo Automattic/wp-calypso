@@ -129,8 +129,29 @@ function isSiteEditorSurface( sectionName: string, currentRoute?: string ): bool
 	return sectionName === 'site-editor' || isSiteEditorRoute( currentRoute );
 }
 
+function getRuntimeCurrentPostType(): string | undefined {
+	if ( typeof window === 'undefined' ) {
+		return undefined;
+	}
+
+	const runtime = window as unknown as {
+		agentsManagerData?: { currentScreen?: { postType?: unknown } };
+		bigSkyInitialState?: { currentScreen?: { postType?: unknown } };
+	};
+	const postType =
+		runtime.agentsManagerData?.currentScreen?.postType ??
+		runtime.bigSkyInitialState?.currentScreen?.postType;
+
+	return typeof postType === 'string' ? postType : undefined;
+}
+
 function isPageEditorSurface( currentPostType?: string, currentRoute?: string ): boolean {
-	return currentPostType === 'page' || !! currentRoute?.includes( 'post_type=page' );
+	return (
+		currentPostType === 'page' ||
+		getRuntimeCurrentPostType() === 'page' ||
+		!! currentRoute?.includes( 'post_type=page' ) ||
+		( typeof document !== 'undefined' && document.body?.classList.contains( 'post-type-page' ) )
+	);
 }
 
 function filterEmptyViewSuggestions(

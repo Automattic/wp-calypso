@@ -83,6 +83,8 @@ describe( 'useEmptyViewSuggestions', () => {
 
 	afterEach( () => {
 		delete ( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData;
+		delete ( window as unknown as { bigSkyInitialState?: unknown } ).bigSkyInitialState;
+		document.body.classList.remove( 'post-type-page' );
 		window.history.pushState( {}, '', '/' );
 	} );
 
@@ -164,6 +166,29 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
 		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
+	it( 'keeps site-editor provider suggestions in the page editor from Big Sky runtime screen data', async () => {
+		mockCoreStoreReady( true, undefined );
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		( window as unknown as { bigSkyInitialState?: Record< string, unknown > } ).bigSkyInitialState =
+			{
+				currentScreen: {
+					screen: 'post',
+					postType: 'page',
+				},
+			};
 		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
