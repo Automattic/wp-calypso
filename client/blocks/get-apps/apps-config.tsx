@@ -211,12 +211,12 @@ export const createWordPressStudioConfig = (
 			[ PlatformType.LinuxX64 ]: {
 				...platformConfigs[ PlatformType.LinuxX64 ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_linux_x64_click' ),
-				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/linux-x64/latest',
+				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/linux-x64/latest/update',
 			},
 			[ PlatformType.LinuxARM64 ]: {
 				...platformConfigs[ PlatformType.LinuxARM64 ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_linux_arm64_click' ),
-				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/linux-arm64/latest',
+				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/linux-arm64/latest/update',
 			},
 		},
 	};
