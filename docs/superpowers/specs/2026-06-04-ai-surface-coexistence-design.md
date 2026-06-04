@@ -2,7 +2,57 @@
 
 **Date:** 2026-06-04
 **Branch:** `add/ai-surface-coexistence`
-**Status:** Approved design — ready for implementation planning
+**Status:** Implemented and validated live on the Dashboard. This section
+records the design as built — see **"Revisions from live validation"** below for
+where the implementation diverged from the original design after testing in a
+running Calypso instance.
+
+## Revisions from live validation (2026-06-04)
+
+Live testing in a running Calypso dev instance surfaced three things the
+original design (written from code reading) got wrong or missed. The
+implementation reflects these corrections:
+
+1. **A third surface: the Dashboard interim omnibar.** The original design
+   covered the classic Calypso masterbar and the widgets path. But the new
+   Multi-site Dashboard (`/sites`, `client/dashboard/app/interim-omnibar/`)
+   renders Agents Manager via `omnibar-agents-manager.tsx`, gated on
+   `useShouldUseUnifiedAgent()` only. That gate now also honors the coexistence
+   flag. The shared Help Center component (and thus the coordinator) already
+   mounts here.
+
+2. **Agents Manager parks via `setIsOpen(false)`, not `isMinimized`.** In
+   Calypso/Dashboard, Agents Manager's closed state is the agenttic **"Ask AI"
+   compact bar** — a *persistent bottom-right launcher* shown whenever AM is not
+   open (`isOpen === false`). `isMinimized` is a wp-admin-only concept. So the
+   coordinator parks AM by dispatching `setIsOpen(false)` (collapsing to the Ask
+   AI bar), and treats AM as "expanded" when `isOpen && !docked`.
+
+3. **Asymmetric layout, not symmetric stacking.** Because the Ask AI bar is a
+   permanent fixture (not a transient pill), the design is no longer "two equal
+   pills stack." Instead **Help Center yields to the persistent Ask AI bar**:
+   whenever the bar is present, Help Center (its open card *and* its minimized
+   bar) shifts up by the bar height + gap (single `--ai-surface-hc-bottom-offset`
+   var). When both are minimized this still produces the desired vertical stack
+   (HC bar above the Ask AI bar). Agents Manager always owns the bottom-right
+   corner.
+
+   A competing `!important` fixed-position declaration on the draggable Help
+   Center card defeated the offset, so the coordinator's offset rule also uses
+   `!important` to match its priority.
+
+**Live-validated:** both surfaces load together; open-one-parks-the-other (both
+directions); HC sits cleanly above the Ask AI bar; both-minimized bars stack with
+an 8px gap and zero overlap; docked AM + open HC coexist with HC offset left of
+the rail; reload boot-reconciliation restores a clean state. **Not validated
+live:** the classic Calypso masterbar (routes redirect to Dashboard/wp-admin
+locally) and the widgets/wp-admin path (both are code-complete + unit-tested);
+the boot tie-break for "both persisted-expanded" (unit-tested only — the
+coordinator never lets both persist as expanded in-session).
+
+---
+
+**Original design status:** Approved design — ready for implementation planning
 
 ## Background
 
