@@ -39,4 +39,25 @@ const agencyOverviewRoute = createRoute( {
 	)
 );
 
-export const createAgencyRoutes = () => [ agencyRoute.addChildren( [ agencyOverviewRoute ] ) ];
+// `/tiers` – agency tiers & benefits
+const agencyTiersRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Tiers' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'tiers',
+} ).lazy( () =>
+	import( '../../agency/tiers' ).then( ( d ) =>
+		createLazyRoute( 'agency-tiers' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const createAgencyRoutes = () => [
+	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute ] ),
+];

@@ -6,6 +6,13 @@
 	--color-gray-700: #{$gray-700};
 }
 
+// The ProgressBar component officially supports a custom width via its
+// `className` prop — see the "With Custom Width" Storybook example:
+// https://wordpress.github.io/gutenberg/?path=/docs/components-progressbar--docs#with-custom-width
+.agency-tiers-influenced-revenue-bar {
+	width: 100%;
+}
+
 // Wrapper provides the gradient fade — must sit outside the scroll container
 // because overflow clips pseudo-elements.
 .tier-cards-scroll-wrapper {
@@ -88,31 +95,5 @@
 				filter: none;
 			}
 		}
-	}
-}
-
-.agency-tier-overview-revamped {
-	// Hacks to make DataViews look non-interactive
-	// Upstream issue: https://github.com/WordPress/gutenberg/issues/71127
-	.dataviews-view-list {
-		button.dataviews-view-list__item {
-			display: none;
-		}
-
-		div[role="row"]:not(.is-selected) {
-			&, &:hover {
-				background-color: $white;
-			}
-		}
-	}
-	&.is-small-viewport {
-		.dataviews-view-list__field {
-			width: 100%;
-		}
-	}
-	// Since we are using ItemsDataViews, we need to override the visited color for the tertiary button.
-	// TODO: Remove this once we start using DataViews from the WordPress core throughout A4A.
-	.dataviews-wrapper .components-button.is-tertiary:visited {
-		color: var(--color-primary-60);
 	}
 }

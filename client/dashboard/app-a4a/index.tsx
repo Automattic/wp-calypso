@@ -21,7 +21,7 @@ boot( {
 	mainRoute: '/overview',
 	Logo,
 	supports: {
-		agency: { overview: true },
+		agency: { overview: true, tiers: true },
 		agencyClient: { subscriptions: true },
 		sites: true,
 		domains: false,
