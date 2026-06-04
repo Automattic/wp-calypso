@@ -1,4 +1,5 @@
 // packages/ui/src/vertical-stepper/style.module.scss
+@use '@wordpress/base-styles/breakpoints';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
@@ -8,26 +9,34 @@
 }
 
 .step {
-	position: relative;
 	display: flex;
 	flex-direction: column;
+}
 
-	// Vertical connector between steps
-	&:not( :last-child )::after {
-		content: '';
-		position: absolute;
-		// Align with indicator center (indicator is 24px wide)
-		inset-inline-start: 11px;
-		top: var( --stepper-trigger-height, 40px );
-		bottom: 0;
-		width: 1px;
-		background: theme.$components-color-gray-200;
+// ---------------------------------------------------------------------------
+// Mobile: connector line between steps
+// ---------------------------------------------------------------------------
 
-		@include ui-mixins.when-dark-theme {
-			background: theme.$components-color-gray-700;
+@media ( max-width: #{ breakpoints.$break-small - 1 } ) {
+	.step {
+		position: relative;
+
+		// Vertical connector from this step's indicator down to the next.
+		&:not( :last-child )::after {
+			content: '';
+			position: absolute;
+			// Align with indicator center: ( 18px indicator - 1px line ) / 2 = 8.5px → 9px
+			inset-inline-start: 9px;
+			top: var( --stepper-trigger-height, 40px );
+			bottom: 0;
+			width: 1px;
+			background: theme.$components-color-gray-200;
+
+			@include ui-mixins.when-dark-theme {
+				background: theme.$components-color-gray-700;
+			}
 		}
 	}
-
 }
 
 .trigger {
