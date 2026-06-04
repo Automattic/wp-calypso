@@ -12,6 +12,22 @@ import './style.scss';
 // Mystery-person Gravatar, used as the 2026 mobile footer avatar fallback.
 const DEFAULT_AVATAR_URL = 'https://www.gravatar.com/avatar/?d=mp&s=96';
 
+// 2026 nav taxonomy shape. A top-level entry is either a dropdown (has `groups`)
+// or a direct link (has `href`).
+interface Nav2026Item {
+	label: string;
+	url: string;
+	target?: string;
+	badge?: boolean;
+}
+interface Nav2026Group {
+	title: string;
+	items: Nav2026Item[];
+}
+type Nav2026Menu =
+	| { name: string; title: string; groups: Nav2026Group[]; href?: undefined }
+	| { name: string; title: string; href: string; groups?: undefined };
+
 const UniversalNavbarHeader = ( {
 	className,
 	hideGetStartedCta = false,
@@ -22,6 +38,7 @@ const UniversalNavbarHeader = ( {
 	startUrl,
 	loginUrl,
 	nav2026 = false,
+	nav2026Variant = 1,
 	userAvatar,
 	userName,
 	userEmail,
@@ -32,6 +49,9 @@ const UniversalNavbarHeader = ( {
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	// 2026 mobile menu drill-down: which category is currently expanded (null = top level).
 	const [ currentDropdown, setCurrentDropdown ] = useState< string | null >( null );
+	// 2026 desktop dropdown: which top-level menu is open (null = none). Drives a single
+	// persistent panel so switching triggers cross-fades the stacked content (no flash).
+	const [ activeDropdown, setActiveDropdown ] = useState< string | null >( null );
 	const isEnglishLocale = useIsEnglishLocale();
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
@@ -40,40 +60,6 @@ const UniversalNavbarHeader = ( {
 		setMobileMenuOpen( false );
 		setCurrentDropdown( null );
 	};
-
-	// 2026 redesign: align the full-width dropdown content under its trigger by
-	// exposing the trigger's inline-start offset as a CSS custom property. This
-	// replaces Landpack's vanilla `dropdown.js` offset() math.
-	useEffect( () => {
-		if ( ! nav2026 ) {
-			return;
-		}
-
-		const setTriggerOffset = ( event: Event ) => {
-			const target = event.target;
-			if ( ! ( target instanceof HTMLElement ) ) {
-				return;
-			}
-			const navItem = target.closest( '.x-nav-item__wide' );
-			const dropdown = navItem?.querySelector< HTMLElement >( '.x-dropdown-content' );
-			const trigger = navItem?.querySelector< HTMLElement >( '.x-nav-link' );
-			if ( ! dropdown || ! trigger ) {
-				return;
-			}
-			const isRTL = getComputedStyle( trigger ).direction === 'rtl';
-			const rect = trigger.getBoundingClientRect();
-			const inlineStart = isRTL ? window.innerWidth - rect.right : rect.left;
-			dropdown.style.setProperty( '--dropdown-trigger-inline-start', `${ inlineStart }px` );
-		};
-
-		document.addEventListener( 'focusin', setTriggerOffset );
-		document.addEventListener( 'mouseenter', setTriggerOffset, true );
-
-		return () => {
-			document.removeEventListener( 'focusin', setTriggerOffset );
-			document.removeEventListener( 'mouseenter', setTriggerOffset, true );
-		};
-	}, [ nav2026 ] );
 
 	// Handle dropdown management to ensure only one is open at a time
 	useEffect( () => {
@@ -122,6 +108,35 @@ const UniversalNavbarHeader = ( {
 		};
 	}, [] );
 
+	// Align the 2026 dropdown content under the first nav item by exposing that
+	// item's inline-start offset as a CSS custom property (RTL-aware). The CSS
+	// consumes it via `calc()` at >= 1025px; below that the panel uses its own padding.
+	useEffect( () => {
+		if ( ! nav2026 ) {
+			return;
+		}
+
+		const updateOffset = () => {
+			const nav = document.querySelector< HTMLElement >( '.x-nav--2026-redesign' );
+			const firstItem = nav?.querySelector< HTMLElement >( '.x-nav-item__wide .x-nav-link' );
+			if ( ! nav || ! firstItem ) {
+				return;
+			}
+			const isRTL = getComputedStyle( nav ).direction === 'rtl';
+			const navRect = nav.getBoundingClientRect();
+			const itemRect = firstItem.getBoundingClientRect();
+			const inlineStart = isRTL ? navRect.right - itemRect.right : itemRect.left - navRect.left;
+			nav.style.setProperty(
+				'--dropdown-trigger-inline-start',
+				`${ Math.round( inlineStart ) }px`
+			);
+		};
+
+		updateOffset();
+		window.addEventListener( 'resize', updateOffset );
+		return () => window.removeEventListener( 'resize', updateOffset );
+	}, [ nav2026, nav2026Variant ] );
+
 	if ( ! startUrl ) {
 		const startPaths: Record< string, string > = {
 			plugins: '//wordpress.com/start/business',
@@ -135,158 +150,379 @@ const UniversalNavbarHeader = ( {
 		);
 	}
 
-	// Taxonomy that drives the 2026 mobile drill-down menu. Mirrors the desktop
-	// dropdown taxonomy above; only built/rendered on the 2026 path.
-	const mobileMenuCategories = [
+	// Shared 2026 sub-structures used by both variants (Features group, Resources
+	// dropdown, and the Support/Pricing direct links).
+	const nav2026FeatureItems: Nav2026Item[] = [
 		{
-			name: 'products',
-			title: __( 'Products', __i18n_text_domain__ ),
-			items: [
-				{
-					content: __( 'WordPress Hosting', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/hosting/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'WordPress for Agencies', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/for-agencies/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Become an Affiliate', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/affiliates/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Domain Names', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/domains/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'AI Website Builder', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Website Builder', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/website-builder/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Create a Blog', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/create-blog/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Newsletter', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/newsletter/', locale, isLoggedIn, true ),
-					target: '_self',
-				},
-				{
-					content: __( 'Professional Email', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/professional-email/' ),
-					target: '_self',
-				},
-				...( isEnglishLocale
-					? [
-							{
-								content: __( 'Website Design Services', __i18n_text_domain__ ),
-								url: localizeUrl( '//wordpress.com/website-design-service/' ),
-								target: '_self',
-							},
-					  ]
-					: [] ),
-				{
-					content: __( 'Commerce', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/ecommerce/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'WordPress Studio', __i18n_text_domain__ ),
-					url: localizeUrl( '//developer.wordpress.com/studio/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Enterprise WordPress', __i18n_text_domain__ ),
-					url: 'https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav',
-					target: undefined,
-				},
-			],
+			label: __( 'Themes', __i18n_text_domain__ ),
+			url: localizeUrl( '//wordpress.com/themes', locale, isLoggedIn, true ),
+			target: undefined,
 		},
 		{
-			name: 'features',
-			title: __( 'Features', __i18n_text_domain__ ),
-			items: [
-				{
-					content: __( 'Overview', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/features/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'WordPress Themes', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/themes', locale, isLoggedIn, true ),
-					target: undefined,
-				},
-				{
-					content: __( 'WordPress Plugins', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn, true ),
-					target: undefined,
-				},
-				{
-					content: __( 'WordPress Patterns', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/patterns', locale, isLoggedIn, true ),
-					target: undefined,
-				},
-				{
-					content: __( 'Google Apps', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/google/' ),
-					target: '_self',
-				},
-			],
+			label: __( 'Plugins', __i18n_text_domain__ ),
+			url: localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn, true ),
+			target: undefined,
 		},
 		{
-			name: 'resources',
-			title: __( 'Resources', __i18n_text_domain__ ),
-			items: [
-				{
-					content: __( 'WordPress.com Support', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/support/' ),
-					target: undefined,
-				},
-				{
-					content: __( 'WordPress News', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/blog/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Business Name Generator', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/business-name-generator/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Logo Maker', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/logo-maker/' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Discover New Posts', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/discover' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Popular Tags', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/tags' ),
-					target: '_self',
-				},
-				{
-					content: __( 'Blog Search', __i18n_text_domain__ ),
-					url: localizeUrl( '//wordpress.com/reader/search' ),
-					target: '_self',
-				},
-			],
+			label: __( 'Patterns', __i18n_text_domain__ ),
+			url: localizeUrl( '//wordpress.com/patterns', locale, isLoggedIn, true ),
+			target: undefined,
+		},
+		{
+			label: __( 'AI features', __i18n_text_domain__ ),
+			url: localizeUrl( '//wordpress.com/ai/' ),
+			target: '_self',
 		},
 	];
-	const activeCategory = mobileMenuCategories.find( ( { name } ) => name === currentDropdown );
+	const nav2026ResourcesMenu: Nav2026Menu = {
+		name: 'resources',
+		title: __( 'Resources', __i18n_text_domain__ ),
+		groups: [
+			{
+				title: __( 'Tools & Services', __i18n_text_domain__ ),
+				items: [
+					{
+						label: __( 'Business name generator', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/business-name-generator/' ),
+						target: '_self',
+					},
+					{
+						label: __( 'Logo generator', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/logo-maker/' ),
+						target: '_self',
+					},
+					{
+						label: __( 'Site profiler (WHOIS)', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/site-profiler' ),
+						target: '_self',
+					},
+					{
+						label: __( 'Speed test', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/speed-test/' ),
+						target: '_self',
+					},
+					{
+						label: __( 'Hire an expert', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/website-design-service/' ),
+						target: '_self',
+					},
+					{
+						label: __( 'AI website builder', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
+						target: '_self',
+						badge: true,
+					},
+				],
+			},
+			{
+				title: __( 'For Developers', __i18n_text_domain__ ),
+				items: [
+					{
+						label: __( 'Developer tools', __i18n_text_domain__ ),
+						url: 'https://developer.wordpress.com/docs/developer-tools/',
+						target: undefined,
+					},
+					{
+						label: __( 'Developer blog', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/blog/category/development/' ),
+						target: '_self',
+					},
+					{
+						label: __( 'Rest API', __i18n_text_domain__ ),
+						url: 'https://developer.wordpress.com/docs/api/',
+						target: undefined,
+					},
+					{
+						label: __( 'Docs', __i18n_text_domain__ ),
+						url: 'https://developer.wordpress.com/docs/',
+						target: undefined,
+					},
+					{
+						label: __( 'Studio', __i18n_text_domain__ ),
+						url: localizeUrl( '//developer.wordpress.com/studio/' ),
+						target: '_self',
+					},
+				],
+			},
+			{
+				title: __( 'Features', __i18n_text_domain__ ),
+				items: nav2026FeatureItems,
+			},
+			{
+				title: __( 'Discover', __i18n_text_domain__ ),
+				items: [
+					{
+						label: __( 'Latest news', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/blog/' ),
+						target: '_self',
+					},
+					{
+						label: __( 'Browse blogs', __i18n_text_domain__ ),
+						url: localizeUrl( '//wordpress.com/discover' ),
+						target: '_self',
+					},
+				],
+			},
+		],
+	};
+	const nav2026SupportLink: Nav2026Menu = {
+		name: 'support',
+		title: __( 'Support', __i18n_text_domain__ ),
+		href: localizeUrl( '//wordpress.com/support/' ),
+	};
+	const nav2026PricingLink: Nav2026Menu = {
+		name: 'pricing',
+		title: __( 'Pricing', __i18n_text_domain__ ),
+		href: localizeUrl( '//wordpress.com/pricing/' ),
+	};
+	// 2026 nav taxonomies — exact mirror of the shipped Landpack reference
+	// (`hp-2024-jul?nav_2026=1` and `?nav_2026=2`). Each top-level menu is either a
+	// dropdown (with grouped subcategory columns) or a direct link (no `groups`).
+	// Selected by `nav2026Variant`; only used on the `nav2026` path. The flag-OFF
+	// nav keeps Calypso's own taxonomy (rendered separately below), unchanged.
+	const nav2026Menus: Nav2026Menu[] =
+		nav2026Variant === 2
+			? [
+					{
+						name: 'products',
+						title: __( 'Products', __i18n_text_domain__ ),
+						groups: [
+							{
+								title: __( 'Build', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Website', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/website-builder/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Ecommerce', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/ecommerce/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Gravatar (Link in bio)', __i18n_text_domain__ ),
+										url: 'https://gravatar.com/link-in-bio',
+										target: '_self',
+									},
+									{
+										label: __( 'AI website builder', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
+										target: '_self',
+										badge: true,
+									},
+								],
+							},
+							{
+								title: __( 'Publish', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Blog', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/create-blog/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Newsletter', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/newsletter/', locale, isLoggedIn, true ),
+										target: '_self',
+									},
+								],
+							},
+							{
+								title: __( 'Hosting', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Managed hosting', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/hosting/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Agency hosting', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/for-agencies/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Enterprise hosting', __i18n_text_domain__ ),
+										url: 'https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav',
+										target: undefined,
+									},
+									{
+										label: __( 'Site migration', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/move/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Affiliate program', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/affiliates/' ),
+										target: '_self',
+									},
+								],
+							},
+							{
+								title: __( 'Domains', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Find a domain', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/domains/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Transfer a domain', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/setup/domain-transfer' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Site profiler (WHOIS)', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/site-profiler' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Professional email', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/professional-email/' ),
+										target: '_self',
+									},
+								],
+							},
+						],
+					},
+					nav2026ResourcesMenu,
+					nav2026SupportLink,
+					nav2026PricingLink,
+			  ]
+			: [
+					{
+						name: 'websites',
+						title: __( 'Websites', __i18n_text_domain__ ),
+						groups: [
+							{
+								title: __( 'Build', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Website', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/website-builder/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Ecommerce', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/ecommerce/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Gravatar (Link in bio)', __i18n_text_domain__ ),
+										url: 'https://gravatar.com/link-in-bio',
+										target: '_self',
+									},
+									{
+										label: __( 'AI website builder', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
+										target: '_self',
+										badge: true,
+									},
+								],
+							},
+							{
+								title: __( 'Publish', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Blog', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/create-blog/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Newsletter', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/newsletter/', locale, isLoggedIn, true ),
+										target: '_self',
+									},
+								],
+							},
+							{
+								title: __( 'Features', __i18n_text_domain__ ),
+								items: nav2026FeatureItems,
+							},
+						],
+					},
+					{
+						name: 'hosting',
+						title: __( 'Hosting', __i18n_text_domain__ ),
+						groups: [
+							{
+								title: __( 'Hosting', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Managed hosting', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/hosting/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Agency hosting', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/for-agencies/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Enterprise hosting', __i18n_text_domain__ ),
+										url: 'https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav',
+										target: undefined,
+									},
+									{
+										label: __( 'Site migration', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/move/' ),
+										target: '_self',
+									},
+								],
+							},
+							{
+								title: __( 'Affiliates', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Affiliate program', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/affiliates/' ),
+										target: '_self',
+									},
+								],
+							},
+						],
+					},
+					{
+						name: 'domains',
+						title: __( 'Domains', __i18n_text_domain__ ),
+						groups: [
+							{
+								title: __( 'Domains', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Find a domain', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/domains/' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Transfer a domain', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/setup/domain-transfer' ),
+										target: '_self',
+									},
+									{
+										label: __( 'Site profiler (WHOIS)', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/site-profiler' ),
+										target: '_self',
+									},
+								],
+							},
+							{
+								title: __( 'Email', __i18n_text_domain__ ),
+								items: [
+									{
+										label: __( 'Professional email', __i18n_text_domain__ ),
+										url: localizeUrl( '//wordpress.com/professional-email/' ),
+										target: '_self',
+									},
+								],
+							},
+						],
+					},
+					nav2026ResourcesMenu,
+					nav2026SupportLink,
+					nav2026PricingLink,
+			  ];
+	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
 	return (
 		<div
@@ -296,7 +532,11 @@ const UniversalNavbarHeader = ( {
 			} ) }
 		>
 			<div className="x-root lpc-header-nav-wrapper">
-				<div className="lpc-header-nav-container">
+				{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+				<div
+					className="lpc-header-nav-container"
+					onMouseLeave={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+				>
 					{ /*<!-- Nav bar starts here. -->*/ }
 					<div className="masterbar-menu">
 						<div className="masterbar">
@@ -323,7 +563,38 @@ const UniversalNavbarHeader = ( {
 											<span className="x-hidden">WordPress.com</span>
 										</a>
 									</li>
-									{ variant !== 'minimal' ? (
+									{ variant !== 'minimal' && nav2026 && (
+										<>
+											{ nav2026Menus.map( ( menu ) =>
+												menu.groups ? (
+													<li
+														className="x-nav-item x-nav-item__wide"
+														role="none"
+														key={ menu.name }
+														onMouseEnter={ () => setActiveDropdown( menu.name ) }
+														onFocus={ () => setActiveDropdown( menu.name ) }
+													>
+														<NonClickableItem
+															className="x-nav-link x-link"
+															content={ menu.title }
+															ariaExpanded={ activeDropdown === menu.name }
+														/>
+													</li>
+												) : (
+													<ClickableItem
+														key={ menu.name }
+														className="x-nav-item x-nav-item__wide"
+														titleValue=""
+														content={ menu.title }
+														urlValue={ menu.href }
+														type="nav"
+														target="_self"
+													/>
+												)
+											) }
+										</>
+									) }
+									{ variant !== 'minimal' && ! nav2026 && (
 										<>
 											<li className="x-nav-item x-nav-item__wide" role="none">
 												<NonClickableItem
@@ -331,9 +602,7 @@ const UniversalNavbarHeader = ( {
 													content={ __( 'Products', __i18n_text_domain__ ) }
 												/>
 												<div
-													className={ clsx( 'x-dropdown-content', {
-														'x-dropdown--2026': nav2026,
-													} ) }
+													className="x-dropdown-content"
 													data-dropdown-name="products"
 													role="menu"
 													aria-label={ __( 'Products', __i18n_text_domain__ ) }
@@ -453,9 +722,7 @@ const UniversalNavbarHeader = ( {
 													content={ __( 'Features', __i18n_text_domain__ ) }
 												/>
 												<div
-													className={ clsx( 'x-dropdown-content', {
-														'x-dropdown--2026': nav2026,
-													} ) }
+													className="x-dropdown-content"
 													data-dropdown-name="features"
 													role="menu"
 													aria-label={ __( 'Features', __i18n_text_domain__ ) }
@@ -521,9 +788,7 @@ const UniversalNavbarHeader = ( {
 													content={ __( 'Resources', __i18n_text_domain__ ) }
 												/>
 												<div
-													className={ clsx( 'x-dropdown-content', {
-														'x-dropdown--2026': nav2026,
-													} ) }
+													className="x-dropdown-content"
 													data-dropdown-name="resources"
 													role="menu"
 													aria-label={ __( 'Resources', __i18n_text_domain__ ) }
@@ -590,7 +855,7 @@ const UniversalNavbarHeader = ( {
 												target="_self"
 											/>
 										</>
-									) : null }
+									) }
 								</ul>
 								<ul className="x-nav-list x-nav-list__right" role="menu">
 									{ ! isLoggedIn && (
@@ -633,10 +898,63 @@ const UniversalNavbarHeader = ( {
 									</li>
 								</ul>
 							</nav>
-							{ /* 2026 redesign: full-viewport blur behind the open desktop dropdown. */ }
-							{ nav2026 && <div className="x-nav-backdrop" aria-hidden="true" /> }
 						</div>
 					</div>
+					{ /* Full-viewport blur behind the open dropdown. Outside `.masterbar` so the
+					     open-state white nav background never sits over it. */ }
+					{ nav2026 && <div className="x-nav-backdrop" aria-hidden="true" /> }
+					{ /* 2026 desktop dropdown — ONE persistent panel holding all menus' content
+					     stacked; the active one (activeDropdown) cross-fades in while the others fade out,
+					     so switching triggers never blanks the panel. Hovering the panel keeps it
+					     open; leaving the nav area closes it. */ }
+					{ variant !== 'minimal' && nav2026 && (
+						<div className="x-dropdown x-dropdown--2026">
+							{ nav2026Menus.map( ( menu ) =>
+								menu.groups ? (
+									<div
+										className="x-dropdown-content x-dropdown--2026"
+										data-dropdown-name={ menu.name }
+										role="menu"
+										aria-label={ menu.title }
+										aria-hidden={ activeDropdown !== menu.name }
+										key={ menu.name }
+									>
+										<div className="x-dropdown-subcategories">
+											{ menu.groups.map( ( group ) => (
+												<div className="x-dropdown-column-group" key={ group.title }>
+													<h4 className="x-dropdown-subcategory-title">{ group.title }</h4>
+													<ul>
+														{ group.items.map( ( item ) => (
+															<ClickableItem
+																key={ item.url }
+																titleValue=""
+																content={
+																	item.badge ? (
+																		<>
+																			{ item.label }{ ' ' }
+																			<span className="x-dropdown-badge-new">
+																				{ __( 'New', __i18n_text_domain__ ) }
+																			</span>
+																		</>
+																	) : (
+																		item.label
+																	)
+																}
+																urlValue={ item.url }
+																type="dropdown"
+																target={ item.target }
+																tabIndex={ activeDropdown === menu.name ? undefined : -1 }
+															/>
+														) ) }
+													</ul>
+												</div>
+											) ) }
+										</div>
+									</div>
+								) : null
+							) }
+						</div>
+					) }
 					{ /*<!-- Nav bar ends here. -->*/ }
 
 					{ /*<!-- Mobile menu starts here. -->*/ }
@@ -693,43 +1011,83 @@ const UniversalNavbarHeader = ( {
 									</button>
 								</div>
 								<div className="x-menu-mobile-main" aria-hidden={ ! isMobileMenuOpen }>
-									{ activeCategory ? (
-										<ul className="x-menu-mobile-items" data-dropdown-name={ activeCategory.name }>
-											{ activeCategory.items.map( ( item ) => (
-												<ClickableItem
-													key={ item.url }
-													titleValue=""
-													content={ item.content }
-													urlValue={ item.url }
-													type="menu"
-													target={ item.target }
-													tabIndex={ mobileMenuTabIndex }
-												/>
+									{ activeCategory && activeCategory.groups ? (
+										<div
+											className="x-menu-mobile-dropdown"
+											data-dropdown-name={ activeCategory.name }
+										>
+											{ activeCategory.groups.map( ( group, groupIndex ) => (
+												<ul className="x-menu-mobile-dropdown-list" key={ group.title }>
+													<li className="x-menu-mobile-dropdown-subtitle" role="presentation">
+														{ group.title }
+													</li>
+													{ group.items.map( ( item, itemIndex ) => (
+														<li
+															className="x-menu-mobile-dropdown-item"
+															role="none"
+															key={ item.url }
+															style={
+																{
+																	'--stagger-index': groupIndex * 4 + itemIndex,
+																} as React.CSSProperties
+															}
+														>
+															<ClickableItem
+																titleValue=""
+																content={
+																	item.badge ? (
+																		<>
+																			{ item.label }{ ' ' }
+																			<span className="x-dropdown-badge-new">
+																				{ __( 'New', __i18n_text_domain__ ) }
+																			</span>
+																		</>
+																	) : (
+																		item.label
+																	)
+																}
+																urlValue={ item.url }
+																type="menu"
+																typeClassName="x-menu-mobile-dropdown-link x-link"
+																target={ item.target }
+																tabIndex={ mobileMenuTabIndex }
+															/>
+														</li>
+													) ) }
+												</ul>
 											) ) }
-										</ul>
+										</div>
 									) : (
 										variant !== 'minimal' && (
-											<ul className="x-menu-mobile-categories">
-												{ mobileMenuCategories.map( ( category ) => (
-													<li className="x-menu-mobile-category" role="none" key={ category.name }>
-														<button
-															className="x-menu-mobile-category-button x-link"
-															onClick={ () => setCurrentDropdown( category.name ) }
-															tabIndex={ mobileMenuTabIndex }
-														>
-															{ category.title }
-															<span className="x-menu-mobile-category-chevron" aria-hidden="true" />
-														</button>
+											<ul className="x-menu-mobile-nav-list">
+												{ nav2026Menus.map( ( menu, index ) => (
+													<li
+														className="x-menu-mobile-nav-item"
+														role="none"
+														key={ menu.name }
+														style={ { '--stagger-index': index } as React.CSSProperties }
+													>
+														{ menu.groups ? (
+															<button
+																className="x-menu-mobile-nav-link x-link"
+																onClick={ () => setCurrentDropdown( menu.name ) }
+																tabIndex={ mobileMenuTabIndex }
+															>
+																{ menu.title }
+																<span className="x-menu-mobile-nav-chevron" aria-hidden="true" />
+															</button>
+														) : (
+															<ClickableItem
+																titleValue=""
+																content={ menu.title }
+																urlValue={ menu.href }
+																type="menu"
+																typeClassName="x-menu-mobile-nav-link x-link"
+																tabIndex={ mobileMenuTabIndex }
+															/>
+														) }
 													</li>
 												) ) }
-												<ClickableItem
-													titleValue=""
-													content={ __( 'Plans & Pricing', __i18n_text_domain__ ) }
-													urlValue={ localizeUrl( '//wordpress.com/pricing/' ) }
-													type="menu"
-													className="x-menu-mobile-category"
-													tabIndex={ mobileMenuTabIndex }
-												/>
 											</ul>
 										)
 									) }

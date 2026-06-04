@@ -108,6 +108,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
 		"nav-redesign/2026": false,
+		"nav-redesign/2026-variant-2": false,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
 		"onboarding/import": true,

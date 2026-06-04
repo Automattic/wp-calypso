@@ -558,3 +558,23 @@ body.is-mobile-app-view {
 .layout.has-universal-header .lpc-header-nav-wrapper {
 	padding-top: var( --masterbar-height );
 }
+
+// The 2026 nav overlays the page (`position: absolute`), so it sits below the admin
+// bar by `--nav-2026-admin-offset` — the real admin-bar height when logged in (32px
+// desktop / 46px mobile / etc., never hardcoded), or 0 when logged out (no admin
+// bar). Everything that positions against the admin bar reads this one var.
+.layout:has( .x-nav--2026-redesign ) {
+	/* stylelint-disable-next-line length-zero-no-unit -- px needed for the consuming calc() */
+	--nav-2026-admin-offset: 0px;
+}
+
+.layout.is-logged-in:has( .x-nav--2026-redesign ) {
+	--nav-2026-admin-offset: var( --masterbar-height );
+}
+
+// Overlaid nav is out of flow, so pad the content down by the nav height (a fixed
+// 64px design constant) + the admin-bar offset so the hero clears the nav while its
+// background slides under.
+.layout:has( .x-nav--2026-redesign ) .layout__content {
+	padding-top: calc( var( --nav-2026-admin-offset ) + 64px );
+}

@@ -22,7 +22,7 @@ $studio-blue-15: #e5f4ff;
 }
 
 .is-section-plugins.has-no-sidebar {
-	.lpc-header-nav-wrapper .masterbar {
+	.lpc-header-nav-wrapper .masterbar:not( :has( .x-nav--2026-redesign ) ) {
 		height: 56px;
 		position: relative;
 		background: $studio-blue-15;
@@ -48,7 +48,7 @@ $studio-blue-15: #e5f4ff;
 .is-section-themes {
 	&.has-no-sidebar {
 		.masterbar-menu {
-			.masterbar {
+			.masterbar:not( :has( .x-nav--2026-redesign ) ) {
 				height: 56px;
 				position: relative;
 				background: $studio-blue-15;
@@ -60,12 +60,12 @@ $studio-blue-15: #e5f4ff;
 		}
 
 		&.is-theme-showcase-modern {
-			.masterbar-menu .masterbar {
+			.masterbar-menu .masterbar:not( :has( .x-nav--2026-redesign ) ) {
 				background: transparent;
 				border-bottom-color: transparent;
 			}
 
-			.cta-btn-nav {
+			.masterbar:not( :has( .x-nav--2026-redesign ) ) .cta-btn-nav {
 				color: var( --studio-gray-100 ) !important;
 				background: inherit !important;
 				border: 1px solid var( --studio-gray-100 );
@@ -976,123 +976,355 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
    ========================================================================== */
 
 $x-nav-2026-height: 64px;
-$x-nav-2026-hover-delay: 150ms;
+// Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
+$x-nav-2026-transition: 0.22s ease-in-out;
 $x-nav-2026-content-max-width: 1200px;
+// Dropdown item + trigger metrics, sourced from the live reference's computed styles.
+$x-nav-2026-item-padding-x: 8px;
+$x-dropdown-2026-link-font-size: 18px;
+$x-dropdown-2026-link-line-height: 38px;
+$x-dropdown-2026-column-max-width: 220px;
+$x-dropdown-2026-column-gap: 100px;
+$x-dropdown-2026-subtitle-font-size: 12px;
+$x-dropdown-2026-content-padding: 20px 24px 48px;
 $x-menu-2026-admin-bar-desktop: 32px;
 $x-menu-2026-admin-bar-mobile: 46px;
 
 /*
  * Desktop nav bar
  *
- * Override the per-section 56px masterbar/nav heights with the 64px redesign
- * height. The full ancestor chain matches the specificity of the section rules
- * above so these win without `!important`.
+ * The same `UniversalNavbarHeader` renders in two contexts: logged-out (the nav
+ * floats over the page on a white bar) and logged-in (Calypso boxes it inside a
+ * `.masterbar` wrapper that is pinned to 56px and given a per-section background
+ * — lavender on /themes, dark on /patterns — with white default nav text). The
+ * 2026 redesign must look identical in both, so on the 2026 path we neutralise
+ * those per-section masterbar backgrounds back to a plain white bar and let the
+ * canonical navy nav text (`.x-nav-item { color: $studio-blue-90 }`) read
+ * against it — exactly what the logged-out surface shows.
+ *
+ * Two ancestor chains exist: `/plugins` nests the wrapper as
+ * `.lpc-header-nav-wrapper .masterbar`; the other sections nest it as
+ * `.lpc-header-nav-wrapper .lpc-header-nav-container .masterbar-menu .masterbar`.
+ * Both are matched here so the override wins over the section rules without
+ * `!important`.
  */
+// Overlay the nav over the page so the hero slides beneath it (reference wraps
+// the nav in an absolutely-positioned element). Transparent at rest; the white
+// only appears via the dropdown panel when open.
+.lpc-header-nav-wrapper .masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
 	.masterbar:has( .x-nav--2026-redesign ) {
+	position: absolute;
+	// Below the admin bar only when one exists (Calypso sets `--nav-2026-admin-offset`
+	// to the real admin-bar height logged-in, 0 logged-out). Falls back to
+	// `--masterbar-height` then 0 for non-Calypso consumers.
+	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
+	inset-inline: 0;
+	z-index: $x-content-min-z-index;
 	height: $x-nav-2026-height;
+	background: transparent;
+	border-bottom-color: transparent;
+	transition: background-color $x-nav-2026-transition;
 }
 
+// When a dropdown is open the nav bar turns white so it forms one continuous white
+// surface with the dropdown panel below it (instead of a gray backdrop band behind
+// the nav).
+.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.masterbar:has( .x-nav--2026-redesign ) {
+	background: $studio-white;
+}
+
+.lpc-header-nav-wrapper .masterbar .x-nav--2026-redesign,
 .lpc-header-nav-wrapper .lpc-header-nav-container .masterbar-menu .masterbar .x-nav--2026-redesign {
 	height: $x-nav-2026-height;
 	align-items: center;
+	position: relative;
+	top: 0;
+	// Full width so `space-between` pushes the right-hand group to the far edge.
+	width: 100%;
 	background: transparent;
-	transition: background-color $x-nav-2026-hover-delay ease;
+	color: $studio-gray-100;
+	transition: background-color $x-nav-2026-transition;
+
+	// Vertically centre every item (incl. the shorter "Get started" pill) within
+	// the 64px bar.
+	.x-nav-list {
+		align-items: center;
+	}
+
+	// The base `.x-nav-item { color: $studio-blue-90 }` (navy) sits between the nav
+	// and the links, so `inherit` below would pick up navy. Override it here so the
+	// 2026 nav text is black by default (white on dark-hero sections, set per-section).
+	.x-nav-item {
+		color: $studio-gray-100;
+	}
 
 	.x-nav-link {
-		color: $studio-gray-100 !important;
+		height: $x-nav-2026-height;
+		font-size: 13px;
+		font-weight: 500 !important;
+		line-height: 20px;
+		color: inherit;
+		transition: color $x-nav-2026-transition;
+	}
+
+	.x-nav-link__logo svg path {
+		fill: currentcolor;
+	}
+
+	/*
+	 * Reference triggers are `padding: 0 8px` and vertically centred via the
+	 * 64px height + flex. The base rule adds top/bottom offsets, so set the full
+	 * shorthand here to zero them.
+	 */
+	.x-nav-item__wide .x-nav-link:not( .x-nav-link__primary ):not( .x-nav-link__logo ) {
+		display: flex;
+		align-items: center;
+		padding: 0 $x-nav-2026-item-padding-x;
+	}
+
+	// Logo: flex-centred to the 64px nav height; reference padding is 24px left /
+	// 18px right (the left gutter anchors the first nav item + dropdown alignment).
+	.x-nav-link__logo {
+		display: flex;
+		align-items: center;
+		height: $x-nav-2026-height;
+		padding: 0 18px 0 24px;
+	}
+
+	// "Get started" CTA — outlined pill (no fill). Right margin set so the pill sits
+	// ~15px from the viewport edge, matching the reference.
+	.x-nav-link__primary.cta-btn-nav {
+		display: flex;
+		align-items: center;
+		height: 40px;
+		margin: 0 15px 0 12px;
+		padding: 0 20px !important;
+		background: transparent !important;
+		color: inherit !important;
+		border: 1px solid currentcolor;
+		border-radius: 3px;
+		transition: opacity $x-nav-2026-transition;
+
+		&::before {
+			display: none;
+		}
+
+		&:hover,
+		&:focus {
+			opacity: 0.8;
+		}
 	}
 
 	.x-nav-link-chevron {
-		display: inline-block;
-		transition: transform $x-nav-2026-hover-delay ease;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		opacity: 0.65;
 	}
 
 	.x-nav-link-chevron::before {
-		color: inherit;
+		content: '';
+		display: block;
+		width: 5px;
+		height: 5px;
+		margin-top: -2px;
+		border-style: solid;
+		border-color: currentcolor;
+		border-width: 0 1px 1px 0;
+		box-sizing: border-box;
+		transform: rotate( 45deg );
+		transform-origin: 75% 75%;
+		transition: transform $x-nav-2026-transition, border-color $x-nav-2026-transition;
 	}
 
-	/* Hover/focus on a dropdown trigger turns it blue and rotates its chevron. */
-	.x-nav-item__wide:hover .x-nav-link,
-	.x-nav-item__wide:focus-within .x-nav-link {
+	// The open trigger (its dropdown active → aria-expanded="true") turns blue, as
+	// does a hovered one. Driven by aria-expanded so it tracks the persistent-panel
+	// active state, not just `:hover`.
+	// Dropdown triggers (those with a chevron) turn blue on hover / when open.
+	.x-nav-item__wide:hover .x-nav-link:has( .x-nav-link-chevron ),
+	.x-nav-link[aria-expanded='true'] {
 		color: $studio-wordpress-blue-50 !important;
 	}
 
-	.x-nav-item__wide:hover .x-nav-link-chevron,
-	.x-nav-item__wide:focus-within .x-nav-link-chevron {
-		transform: rotate( 180deg );
+	.x-nav-item__wide:hover .x-nav-link-chevron::before,
+	.x-nav-link[aria-expanded='true'] .x-nav-link-chevron::before {
+		border-color: $studio-wordpress-blue-50;
+	}
+
+	[aria-expanded='true'] .x-nav-link-chevron::before {
+		transform: scaleY( -1 ) rotate( 45deg );
+	}
+
+	// Non-dropdown items (Support, Pricing, Log in, Get started — no chevron) dim to
+	// 0.8 on hover instead of changing colour.
+	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ) {
+		opacity: 0.8;
 	}
 }
 
-/* Nav background turns white (text dark) while any dropdown is open. */
-.lpc-header-nav-wrapper
-	.lpc-header-nav-container
-	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign .x-nav-item__wide:hover ),
-.lpc-header-nav-wrapper
-	.lpc-header-nav-container
-	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign .x-nav-item__wide:focus-within ) {
-	background: $studio-white;
-
-	.x-nav--2026-redesign {
-		background: $studio-white;
-	}
+// The active dropdown content block fades in; the rest stay hidden (cross-fade).
+.x-dropdown--2026.x-dropdown-content[aria-hidden='false'] {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
 }
 
 /*
- * Full-viewport blur behind the open dropdown. Sits just below the nav's
- * stacking context (801) so the nav bar and dropdown stay sharp on top.
+ * Note: the shipped reference deliberately does NOT recolour the nav bar when a
+ * dropdown opens — the bar stays transparent over whatever hero it sits on, and
+ * the open state reads purely from the white dropdown panel plus the blurred
+ * backdrop below. Keeping the nav transparent is what lets it work over both the
+ * light themes nav and the dark patterns hero without any per-section contrast
+ * juggling, so we intentionally don't swap the nav background here.
  */
+
+// Desktop/mobile breakpoint: the reference flips desktop bar ↔ hamburger at 1025px.
+// The base rule shows the wide items from 864px, so on the 2026 path re-hide them
+// (and re-show the hamburger) below 1025px to match.
+@media ( max-width: 1024px ) {
+	.x-nav--2026-redesign {
+		.x-nav-item__wide {
+			display: none;
+		}
+
+		.x-nav-item__narrow {
+			display: block;
+		}
+	}
+}
+
+// Blur behind the open dropdown. Rendered as a sibling of the nav (outside
+// `.masterbar`) and below it (z just under the masterbar's 801) so the open-state
+// white nav background never sits over the blur. Starts below the admin bar so it
+// doesn't overlap it.
 .x-nav-backdrop {
 	position: fixed;
-	inset: 0;
+	inset-inline: 0;
+	bottom: 0;
+	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
 	z-index: $x-content-min-z-index - 1;
-	background: rgba( $studio-gray-100, 0.05 );
+	background: rgba( $studio-gray-100, 0.3 );
 	backdrop-filter: blur( 4px );
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity $x-nav-2026-hover-delay ease;
+	transition: opacity $x-nav-2026-transition;
 }
 
-.masterbar:has( .x-nav--2026-redesign .x-nav-item__wide:hover ) .x-nav-backdrop,
-.masterbar:has( .x-nav--2026-redesign .x-nav-item__wide:focus-within ) .x-nav-backdrop {
+// Show the backdrop whenever a dropdown content block is active.
+.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.x-nav-backdrop {
 	opacity: 1;
 }
 
-/*
- * Desktop dropdown — full viewport width with a white panel; the inner list is
- * aligned under its trigger via the `--dropdown-trigger-inline-start` custom
- * property set in JS (RTL-aware).
- */
-.x-nav--2026-redesign .x-dropdown--2026.x-dropdown-content {
+// Desktop dropdown — one persistent panel with all menus' content blocks stacked.
+// Each block is hidden by default and the active one (aria-hidden="false") fades
+// in while the rest fade out — a clean cross-fade with no both-hidden gap.
+// The persistent panel wrapper. `position: relative` (not the legacy `absolute`,
+// which constrained the width, nor `static`, which would ignore z-index) gives it a
+// high-z stacking context so the fixed content blocks inside paint above the page
+// content — sections like `.themes .main` create their own z-index contexts that
+// would otherwise cover the dropdown. The wrapper itself is 0-size; the content is
+// `position: fixed` so it still positions against the viewport.
+.x-dropdown.x-dropdown--2026 {
+	position: relative;
+	z-index: 900000;
+	width: auto;
+	height: auto;
+	inset: auto;
+	// The legacy `.x-dropdown` base hides itself with `opacity: 0`; this wrapper is
+	// always visible (its content blocks manage their own open/close opacity).
+	opacity: 1;
+}
+
+.x-dropdown--2026.x-dropdown-content {
 	position: fixed;
-	top: $x-nav-2026-height;
+	top: calc(
+		var( --nav-2026-admin-offset, var( --masterbar-height, 0px ) ) + #{$x-nav-2026-height}
+	);
+	// `inset-inline: 0` already spans the viewport minus the scrollbar; `100vw`
+	// would include the scrollbar width and overflow horizontally. `width: auto`
+	// beats the legacy `.x-dropdown-content { width: 210px }`.
 	inset-inline: 0;
-	width: 100vw;
-	max-width: 100vw;
-	padding-block: 24px;
-	padding-inline: 0;
+	width: auto;
+	// Above the blur backdrop (z 800) so the white panel renders on top of it.
+	z-index: $x-content-min-z-index;
+	padding: $x-dropdown-2026-content-padding;
+	padding-inline-start: 24px;
 	border-radius: 0;
 	background: $studio-white;
-	box-shadow: 0 9px 48px rgba( $studio-gray-100, 0.12 );
+	box-shadow: none;
 	transform: none;
-	transition: opacity $x-nav-2026-hover-delay ease;
-	transition-delay: $x-nav-2026-hover-delay; /* lengthen the hover-close delay */
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity $x-nav-2026-transition, visibility $x-nav-2026-transition;
 
-	&::before {
-		display: none; /* drop the little caret used by the legacy dropdown */
+	// At >= 1025px, align the content under the first nav item via the JS-set var.
+	@media ( min-width: 1025px ) {
+		padding-inline-start: calc( var( --dropdown-trigger-inline-start, 188px ) + 7px );
 	}
 
-	> ul {
+	&::before {
+		display: none;
+	}
+
+	.x-dropdown-subcategories {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $x-dropdown-2026-column-gap;
 		max-width: $x-nav-2026-content-max-width;
-		padding-inline-start: var( --dropdown-trigger-inline-start, $x-nav-padding-x-wide );
+		margin: 0;
+		padding: 0;
+	}
+
+	.x-dropdown-column-group {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+
+		> ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		li {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.x-dropdown-subcategory-title {
+		margin: 0;
+		padding: 0 0 12px;
+		font-size: $x-dropdown-2026-subtitle-font-size;
+		font-weight: 400;
+		line-height: 33px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: $studio-gray-30;
 	}
 
 	.x-dropdown-link.x-dropdown-link {
+		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+		padding: 0;
+		font-size: $x-dropdown-2026-link-font-size;
+		font-weight: 400;
+		line-height: $x-dropdown-2026-link-line-height;
 		color: $studio-gray-100;
+		// Some sections (e.g. themes) underline links by default; the dropdown links
+		// should never be underlined.
+		text-decoration: none;
+		transition: color $x-nav-2026-transition;
 
 		&:hover,
 		&:focus,
@@ -1100,13 +1332,21 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			color: $studio-wordpress-blue-50;
 		}
 	}
-}
 
-/* Open immediately; only the close transition is delayed. */
-.x-nav--2026-redesign .x-nav-item__wide:hover > .x-dropdown--2026.x-dropdown-content,
-.x-nav--2026-redesign .x-nav-item__wide:focus-within > .x-dropdown--2026.x-dropdown-content {
-	transform: none;
-	transition-delay: 0s;
+	/* Yellow "New" pill appended to a link label (reference: yellow-20 bg, yellow-80 text). */
+	.x-dropdown-badge-new {
+		display: inline-block;
+		margin-inline-start: 10px;
+		padding: 0 10px;
+		border-radius: 4px;
+		background: $studio-yellow-20;
+		color: $studio-yellow-80;
+		font-size: 10px;
+		font-weight: 400;
+		line-height: 20px;
+		text-transform: none;
+		vertical-align: middle;
+	}
 }
 
 /*
@@ -1114,13 +1354,36 @@ $x-menu-2026-admin-bar-mobile: 46px;
  * a drill-down category list, and a footer (logged-out CTAs vs logged-in user).
  */
 .x-menu--2026 {
+	/* Blurred overlay behind the menu (reference: blur(8px) over rgba(0,0,0,0.2)). */
 	.x-menu-overlay {
-		background: transparent;
+		position: fixed;
+		inset: 0;
+		// Sit below the admin bar (real height logged-in, 0 logged-out), matching the
+		// Landpack reference. Overridden for `body.admin-bar` consumers further down.
+		top: var( --nav-2026-admin-offset, 0 );
+		background: rgba( $studio-gray-100, 0.2 );
+		backdrop-filter: blur( 8px );
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
 	}
 
+	&.x-menu__open .x-menu-overlay {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	/*
+	 * The pane slides in first (blank), then its content fades in. The content
+	 * wrapper starts hidden and fades once the menu is open (reference uses a
+	 * 0.27s content fade after the panel transform).
+	 */
 	.x-menu-content {
 		position: fixed;
 		inset: 0;
+		// Sit below the admin bar (real height logged-in, 0 logged-out), matching the
+		// Landpack reference. Overridden for `body.admin-bar` consumers further down.
+		top: var( --nav-2026-admin-offset, 0 );
 		display: flex;
 		flex-direction: column;
 		width: 100%;
@@ -1129,25 +1392,39 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		background: $studio-white;
 		transform: translateX( 100% );
 		transition: transform 0.3s ease-in-out;
-		overflow-y: auto;
+		overflow-x: hidden; // setting only overflow-y would compute overflow-x to `auto`
+		overflow-y: auto;    // (CSS rule), producing a spurious horizontal scrollbar.
 	}
 
 	&.x-menu__open .x-menu-content {
 		transform: translateX( 0 );
 	}
 
+	/* When open, items settle to their resting state — the staggered delays fire. */
+	&.x-menu__open .x-menu-mobile-nav-item,
+	&.x-menu__open .x-menu-mobile-dropdown-item {
+		opacity: 1;
+		transform: translateX( 0 );
+	}
+
+	/* Header (logo ⇄ back + close). No bottom separator, per the reference. */
 	.x-menu-mobile-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		padding-block: 12px;
 		padding-inline: 18px;
-		border-bottom: 1px solid $studio-gray-5;
 	}
 
+	/* Logo is black in the mobile menu (sits on the white panel). */
 	.x-menu-mobile-logo {
 		display: inline-flex;
 		align-items: center;
+		color: $studio-gray-100;
+
+		svg path {
+			fill: currentcolor;
+		}
 	}
 
 	.x-menu-mobile-back {
@@ -1186,40 +1463,98 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-inline: 6px;
 	}
 
-	.x-menu-mobile-categories,
-	.x-menu-mobile-items {
+	/* Top-level category list + drill-down lists share the reset. */
+	.x-menu-mobile-nav-list,
+	.x-menu-mobile-dropdown-list {
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 
-	.x-menu-mobile-category-button {
+	/*
+	 * Each item slides up + fades in sequentially. `--stagger-index` is set
+	 * inline per item; the delay increments 18ms per item after a 0.43s lead-in,
+	 * matching the reference. The menu-open state flips opacity/transform to the
+	 * resting values, triggering the staggered transition.
+	 */
+	.x-menu-mobile-nav-item,
+	.x-menu-mobile-dropdown-item {
+		opacity: 0;
+		// Items slide in from the left (matching the Landpack reference), staggered.
+		transform: translateX( -32px );
+		transition:
+			opacity 0.3s cubic-bezier( 0.45, 0.85, 0.9, 1 )
+				calc( 0.43s + var( --stagger-index, 0 ) * 0.018s ),
+			transform 0.3s cubic-bezier( 0.45, 0.85, 0.9, 1 )
+				calc( 0.43s + var( --stagger-index, 0 ) * 0.018s );
+	}
+
+	/* Top-level category links: large (26px), no underline, chevron on the right. */
+	.x-menu-mobile-nav-link {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		// `<a>` items default to content-box, so `width: 100%` + 18px inline padding
+		// overflowed the panel by 36px (horizontal scroll); border-box folds the
+		// padding into the 100% so links fit.
+		box-sizing: border-box;
 		width: 100%;
-		padding-block: 14px;
+		padding-block: 4px;
 		padding-inline: 18px;
 		border: none;
 		background: none;
 		color: $studio-gray-100;
 		cursor: pointer;
-		font-size: $x-nav-item-font-size;
-		font-weight: $lp-font-weight-semi-bold;
+		font-size: 26px;
+		font-weight: 500;
+		line-height: 48px;
 		text-align: start;
+		text-decoration: none;
 	}
 
-	.x-menu-mobile-category-chevron::before {
+	.x-menu-mobile-nav-chevron::before {
 		content: $lp-chevron-content-right;
 		color: $studio-gray-30;
 	}
 
-	.x-menu-mobile-items .x-menu-link.x-menu-link,
-	.x-menu-mobile-category .x-menu-link.x-menu-link {
-		padding-block: 14px;
+	/* Drill-down group: gray uppercase subtitle + 26px links. */
+	.x-menu-mobile-dropdown-list + .x-menu-mobile-dropdown-list {
+		margin-top: 24px;
+	}
+
+	.x-menu-mobile-dropdown-subtitle {
+		padding-inline: 18px;
+		font-size: $x-dropdown-2026-subtitle-font-size;
+		font-weight: 500;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: $studio-gray-30;
+	}
+
+	.x-menu-mobile-dropdown-link.x-menu-mobile-dropdown-link {
+		display: block;
+		padding-block: 4px;
 		padding-inline: 18px;
 		color: $studio-gray-100;
-		font-size: $x-nav-item-font-size;
+		font-size: 26px;
+		font-weight: 500;
+		line-height: 48px;
+		text-decoration: none;
+	}
+
+	/* "New" pill in the mobile drill-down, sized down from the 26px link text. */
+	.x-dropdown-badge-new {
+		display: inline-block;
+		margin-inline-start: 10px;
+		padding: 0 10px;
+		border-radius: 4px;
+		background: $studio-yellow-20;
+		color: $studio-yellow-80;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 26px;
+		text-transform: none;
+		vertical-align: middle;
 	}
 
 	.x-menu-mobile-footer {
@@ -1278,7 +1613,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-/* Keep the full-screen menu and overlay below the admin bar when logged in. */
+/* Keep the full-screen menu and overlay below the admin bar when logged in, for
+   non-Calypso consumers that signal the bar via WP's `body.admin-bar` (Calypso uses
+   `--nav-2026-admin-offset` instead — see the `.x-menu-content`/`.x-menu-overlay`
+   `top` rules above). */
 body.admin-bar .x-menu--2026 {
 	.x-menu-content,
 	.x-menu-overlay {

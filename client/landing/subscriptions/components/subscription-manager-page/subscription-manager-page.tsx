@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
@@ -47,6 +48,10 @@ const SubscriptionManagementPage = () => {
 				isLoggedIn={ isLoggedIn }
 				startUrl={ startUrl }
 				loginUrl={ loginUrl }
+				{ ...( config.isEnabled( 'nav-redesign/2026' ) && {
+					nav2026: true,
+					nav2026Variant: config.isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1,
+				} ) }
 			/>
 			<Main className="subscription-manager__container">
 				<FormattedHeader

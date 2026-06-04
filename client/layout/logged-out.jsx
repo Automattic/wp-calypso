@@ -288,13 +288,20 @@ const LayoutLoggedOut = ( {
 		} );
 
 		const nav2026 = isEnabled( 'nav-redesign/2026' );
+		const nav2026Variant = isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1;
 
 		masterbar = (
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }
-				{ ...( nav2026 && { nav2026: true, userAvatar, userName, userEmail } ) }
+				{ ...( nav2026 && {
+					nav2026: true,
+					nav2026Variant,
+					userAvatar,
+					userName,
+					userEmail,
+				} ) }
 				{ ...( isEnabled( 'site-profiler/metrics' ) &&
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',

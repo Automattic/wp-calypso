@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Context } from '@automattic/calypso-router';
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { translate, fixMe } from 'i18n-calypso';
@@ -5,7 +6,13 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useSelector } from 'calypso/state';
+import {
+	getCurrentUser,
+	getCurrentUserDisplayName,
+	getCurrentUserEmail,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { TabTypes } from './components/header';
 import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
@@ -20,9 +27,26 @@ export function PerformanceProfilerWrapper( {
 	children: React.ReactNode;
 	isLoggedIn: boolean;
 } ): JSX.Element {
+	const nav2026 = config.isEnabled( 'nav-redesign/2026' );
+	const nav2026Variant = config.isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1;
+	const userAvatar = useSelector( ( state ) => getCurrentUser( state )?.avatar_URL );
+	const userName = useSelector( getCurrentUserDisplayName );
+	const userEmail = useSelector( getCurrentUserEmail );
+
 	return (
 		<>
-			{ isLoggedIn && <UniversalNavbarHeader isLoggedIn /> }
+			{ isLoggedIn && (
+				<UniversalNavbarHeader
+					isLoggedIn
+					{ ...( nav2026 && {
+						nav2026: true,
+						nav2026Variant,
+						userAvatar,
+						userName,
+						userEmail,
+					} ) }
+				/>
+			) }
 			<Main fullWidthLayout>{ children }</Main>
 			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
 		</>

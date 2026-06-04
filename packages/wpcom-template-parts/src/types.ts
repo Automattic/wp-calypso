@@ -12,6 +12,8 @@ export interface HeaderProps {
 	loginUrl?: string;
 	/** Opt into the 2026 Global Nav redesign (logged-out surfaces). */
 	nav2026?: boolean;
+	/** Which 2026 taxonomy to render: 1 (Websites/Hosting/Domains/…) or 2 (Products/…). Defaults to 1. */
+	nav2026Variant?: 1 | 2;
 	/** Current user's avatar URL, used by the 2026 mobile menu footer when logged in. */
 	userAvatar?: string;
 	/** Current user's display name, used by the 2026 mobile menu footer when logged in. */
@@ -37,6 +39,7 @@ export interface PureFooterProps extends FooterProps {
 export interface MenuItemProps {
 	content: string | React.ReactNode;
 	className?: string;
+	ariaExpanded?: boolean;
 }
 
 export interface ClickableItemProps extends MenuItemProps {

@@ -47,26 +47,75 @@
 		}
 	}
 
+	// Pre-2026 design: dark masterbar with white nav text. Gated off the 2026 path.
 	.has-no-sidebar {
 		.masterbar-menu {
-			.masterbar {
+			.masterbar:not(:has(.x-nav--2026-redesign)) {
 				background: #1d2327;
 				border-bottom: 1px solid #1d2327;
 			}
 		}
 	}
 
-	.x-nav-link__logo svg path {
-		fill: var(--studio-white);
+	.masterbar:not(:has(.x-nav--2026-redesign)) {
+		.x-nav-link__logo svg path {
+			fill: var(--studio-white);
+		}
+
+		.x-nav-item,
+		.x-nav-link-chevron::before {
+			color: var(--studio-white);
+		}
+
+		.x-nav-item .cta-btn-nav {
+			background: var(--studio-white) !important;
+			color: var(--studio-black) !important;
+		}
 	}
 
-	.x-nav-item,
-	.x-nav-link-chevron::before {
-		color: var(--studio-white);
+	// 2026 redesign: the nav is transparent over the dark patterns hero, so its
+	// text/logo/chevron must be white for contrast (overrides the package default
+	// of black). Logo + CTA follow `currentcolor`.
+	// White nav text/logo over the dark patterns hero. `!important` to beat the
+	// package default (black) regardless of stylesheet load order.
+	// Scoped to the CLOSED state: when a dropdown is open the nav turns white, so the
+	// text must switch back to dark (handled below) to stay legible.
+	.lpc-header-nav-container:not(
+			:has(.x-dropdown--2026.x-dropdown-content[aria-hidden="false"])
+		)
+		.x-nav--2026-redesign
+		.x-nav-item {
+		color: var(--studio-white) !important;
 	}
 
-	.x-nav-item .cta-btn-nav {
-		background: var(--studio-white) !important;
-		color: var(--studio-black) !important;
+	// Dropdown open: the nav bar is white, so logo/text/chevron revert to dark for
+	// contrast against the white surface (matching the light-hero sections).
+	.lpc-header-nav-container:has(
+			.x-dropdown--2026.x-dropdown-content[aria-hidden="false"]
+		) {
+		.x-nav--2026-redesign .x-nav-item {
+			color: var(--studio-gray-100) !important;
+		}
+
+		.x-nav-link__logo svg path {
+			fill: var(--studio-gray-100);
+		}
+	}
+
+	// The 2026 nav floats (overlays) the page, so the dark hero band must slide up
+	// underneath it. The generic `.layout__content { padding-top: 64px }` (which
+	// clears the nav elsewhere) would instead push the dark band down and leave a
+	// white strip behind the nav — so on the 2026 path drop that padding and pad the
+	// hero's inner content down by the nav height (64px) instead.
+	&:has(.x-nav--2026-redesign) {
+		.layout__content {
+			padding-top: 0;
+		}
+
+		.patterns-header__inner {
+			// 64px clears the floating nav; the extra 48px gives the hero content
+			// breathing room below it instead of sitting flush against the nav.
+			padding-top: 112px;
+		}
 	}
 }
