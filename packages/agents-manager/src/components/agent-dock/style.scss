@@ -703,7 +703,6 @@ body.post-new-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
-	margin-block-end: var( --ai-surface-am-stack-bottom, 0 );
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&:not( .is-active ):hover {

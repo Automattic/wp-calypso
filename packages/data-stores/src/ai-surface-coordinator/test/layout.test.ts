@@ -1,5 +1,5 @@
 import { computeLayoutVars } from '../layout';
-import type { SurfaceSnapshot, Surface } from '../reconciler';
+import type { SurfaceSnapshot } from '../reconciler';
 
 const HC_CLOSED = { present: true, shown: false, minimized: false };
 const AM_CLOSED = { present: true, open: false, minimized: false, docked: false };
@@ -8,26 +8,31 @@ function snap( hc = {}, am = {} ): SurfaceSnapshot {
 }
 
 describe( 'computeLayoutVars', () => {
-	it( 'leaves both stack bottoms at 0 when only one bar is minimized', () => {
-		const vars = computeLayoutVars( snap( { shown: true, minimized: true } ), null );
-		expect( vars[ '--ai-surface-hc-stack-bottom' ] ).toBe( '0px' );
-		expect( vars[ '--ai-surface-am-stack-bottom' ] ).toBe( '0px' );
+	it( "offsets Help Center up by (bar height + gap) while Agents Manager's Ask AI bar is present", () => {
+		// AM loaded but not open and not docked → its persistent Ask AI bar owns
+		// the corner, so Help Center must sit above it.
+		const vars = computeLayoutVars( snap( { shown: true }, { open: false } ) );
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '64px' ); // 56 + 8
 	} );
 
-	it( 'raises the non-most-recent bar by (barHeight + gap) when both are minimized', () => {
-		const both = snap( { shown: true, minimized: true }, { open: true, minimized: true } );
-		const vars = computeLayoutVars( both, 'help-center' as Surface );
-		expect( vars[ '--ai-surface-hc-stack-bottom' ] ).toBe( '0px' );
-		expect( vars[ '--ai-surface-am-stack-bottom' ] ).toBe( '64px' );
+	it( 'does not offset Help Center when Agents Manager is expanded (bar not shown)', () => {
+		const vars = computeLayoutVars( snap( { shown: true }, { open: true } ) );
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
 	} );
 
-	it( 'sets the rail inset to the sidebar width when Agents Manager is docked', () => {
-		const vars = computeLayoutVars( snap( {}, { open: true, docked: true } ), null );
+	it( 'does not offset Help Center when Agents Manager is not present', () => {
+		const vars = computeLayoutVars( snap( { shown: true }, { present: false } ) );
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
+	} );
+
+	it( 'sets the rail inset (and no bottom offset) when Agents Manager is docked', () => {
+		const vars = computeLayoutVars( snap( {}, { open: true, docked: true } ) );
 		expect( vars[ '--ai-surface-rail-inset' ] ).toBe( 'var(--am-sidebar-width, 350px)' );
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
 	} );
 
 	it( 'sets the rail inset to 0 when Agents Manager is not docked', () => {
-		const vars = computeLayoutVars( snap( {}, {} ), null );
+		const vars = computeLayoutVars( snap( {}, {} ) );
 		expect( vars[ '--ai-surface-rail-inset' ] ).toBe( '0px' );
 	} );
 } );

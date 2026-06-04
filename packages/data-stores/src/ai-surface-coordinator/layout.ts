@@ -1,39 +1,26 @@
 import {
 	MINIMIZED_BAR_HEIGHT,
 	STACK_GAP,
-	CSS_VAR_HC_STACK_BOTTOM,
-	CSS_VAR_AM_STACK_BOTTOM,
+	CSS_VAR_HC_BOTTOM_OFFSET,
 	CSS_VAR_RAIL_INSET,
 } from './constants';
-import type { Surface, SurfaceSnapshot } from './reconciler';
+import type { SurfaceSnapshot } from './reconciler';
 
 export type LayoutVars = Record< string, string >;
 
-const hcBarVisible = ( s: SurfaceSnapshot ) =>
-	s.helpCenter.present && s.helpCenter.shown && s.helpCenter.minimized;
+/**
+ * Agents Manager's "Ask AI" compact bar is a persistent bottom-right launcher:
+ * it is shown whenever Agents Manager is loaded but neither expanded nor docked.
+ * While that bar owns the corner, Help Center must sit above it.
+ */
+const amBarPresent = ( s: SurfaceSnapshot ) =>
+	s.agentsManager.present && ! s.agentsManager.open && ! s.agentsManager.docked;
 
-const amBarVisible = ( s: SurfaceSnapshot ) =>
-	s.agentsManager.present &&
-	s.agentsManager.open &&
-	s.agentsManager.minimized &&
-	! s.agentsManager.docked;
-
-export function computeLayoutVars( s: SurfaceSnapshot, lastExpanded: Surface | null ): LayoutVars {
-	const raised = `${ MINIMIZED_BAR_HEIGHT + STACK_GAP }px`;
-	const bothMinimized = hcBarVisible( s ) && amBarVisible( s );
-
-	let hcBottom = '0px';
-	let amBottom = '0px';
-	if ( bothMinimized ) {
-		// Most-recently-active bar sits on the bottom (slot 0); the other is raised.
-		const amOnBottom = lastExpanded === 'agents-manager';
-		hcBottom = amOnBottom ? raised : '0px';
-		amBottom = amOnBottom ? '0px' : raised;
-	}
-
+export function computeLayoutVars( s: SurfaceSnapshot ): LayoutVars {
 	return {
-		[ CSS_VAR_HC_STACK_BOTTOM ]: hcBottom,
-		[ CSS_VAR_AM_STACK_BOTTOM ]: amBottom,
+		[ CSS_VAR_HC_BOTTOM_OFFSET ]: amBarPresent( s )
+			? `${ MINIMIZED_BAR_HEIGHT + STACK_GAP }px`
+			: '0px',
 		[ CSS_VAR_RAIL_INSET ]: s.agentsManager.docked ? 'var(--am-sidebar-width, 350px)' : '0px',
 	};
 }

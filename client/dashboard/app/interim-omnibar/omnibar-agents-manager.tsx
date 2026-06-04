@@ -1,4 +1,4 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent, useShouldCoexistAiSurfaces } from '@automattic/agents-manager';
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
@@ -25,6 +25,7 @@ const AsyncAgentsManager = lazy(
  */
 export default function OmnibarAgentsManager() {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	const shouldCoexist = useShouldCoexistAiSurfaces();
 	const { user } = useAuth();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
@@ -36,7 +37,9 @@ export default function OmnibarAgentsManager() {
 			state.matches.some( ( match ) => !! ( match.params as { siteSlug?: string } )?.siteSlug ),
 	} );
 
-	if ( ! shouldUseUnifiedAgent ) {
+	// Render Agents Manager when the user is on the unified experience, or when
+	// AI surface coexistence is on (both surfaces load and coordinate at runtime).
+	if ( ! shouldUseUnifiedAgent && ! shouldCoexist ) {
 		return null;
 	}
 

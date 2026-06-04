@@ -5,7 +5,7 @@ import { renderHook, act } from '@testing-library/react';
 import { dispatch, register, createReduxStore, select } from '@wordpress/data';
 import { STORE_KEY as AM_KEY } from '../../agents-manager/constants';
 import { STORE_KEY as HC_KEY } from '../../help-center/constants';
-import { CSS_VAR_AM_STACK_BOTTOM, CSS_VAR_HC_STACK_BOTTOM, CSS_VAR_RAIL_INSET } from '../constants';
+import { CSS_VAR_HC_BOTTOM_OFFSET, CSS_VAR_RAIL_INSET } from '../constants';
 import { useAiSurfaceCoordinator } from '../index';
 
 function registerStubStores() {
@@ -36,6 +36,8 @@ function registerStubStores() {
 			) => ( action.type === 'SET' ? { ...state, ...action.payload } : state ),
 			actions: {
 				set: ( payload: Record< string, unknown > ) => ( { type: 'SET', payload } ),
+				// Mirrors the real store: closing the panel is setIsOpen( false ).
+				setIsOpen: ( isOpen: boolean ) => ( { type: 'SET', payload: { isOpen } } ),
 				setIsMinimized: ( isMinimized: boolean ) => ( {
 					type: 'SET',
 					payload: { isMinimized },
@@ -69,7 +71,7 @@ beforeEach( () => {
 	} );
 } );
 
-it( 'minimizes Agents Manager when Help Center opens while AM is floating-open', () => {
+it( 'closes Agents Manager when Help Center opens while AM is expanded', () => {
 	act( () => {
 		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
 	} );
@@ -77,7 +79,19 @@ it( 'minimizes Agents Manager when Help Center opens while AM is floating-open',
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsMinimized() ).toBe( true );
+	expect( select( AM_KEY ).getIsOpen() ).toBe( false );
+	unmount();
+} );
+
+it( 'minimizes Help Center when Agents Manager expands over an open Help Center', () => {
+	act( () => {
+		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
+	} );
+	const { unmount } = renderHook( () => useAiSurfaceCoordinator( true ) );
+	act( () => {
+		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
+	} );
+	expect( select( HC_KEY ).getIsMinimized() ).toBe( true );
 	unmount();
 } );
 
@@ -89,24 +103,19 @@ it( 'no-ops when disabled', () => {
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsMinimized() ).toBe( false );
+	expect( select( AM_KEY ).getIsOpen() ).toBe( true );
 	unmount();
 } );
 
-it( 'writes layout CSS custom properties onto documentElement when enabled', () => {
-	// Both surfaces minimized: AM open+minimized, HC shown+minimized, lastExpanded = help-center.
-	// That means HC is on bottom (slot 0), AM is raised.
-	window.localStorage.setItem( 'ai-surface-last-expanded', 'help-center' );
+it( "offsets Help Center above Agents Manager's Ask AI bar via a CSS custom property", () => {
+	// AM loaded but closed → its persistent Ask AI bar is present, HC shown.
 	act( () => {
-		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true, isMinimized: true } );
-		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true, isMinimized: true } );
+		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
 	const { unmount } = renderHook( () => useAiSurfaceCoordinator( true ) );
 
-	// After boot reconciliation the CSS vars should be set.
 	const root = document.documentElement;
-	expect( root.style.getPropertyValue( CSS_VAR_HC_STACK_BOTTOM ) ).toBe( '0px' );
-	expect( root.style.getPropertyValue( CSS_VAR_AM_STACK_BOTTOM ) ).toBe( '64px' ); // MINIMIZED_BAR_HEIGHT(56) + STACK_GAP(8)
+	expect( root.style.getPropertyValue( CSS_VAR_HC_BOTTOM_OFFSET ) ).toBe( '64px' ); // 56 + 8
 	expect( root.style.getPropertyValue( CSS_VAR_RAIL_INSET ) ).toBe( '0px' );
 	unmount();
 } );
@@ -118,15 +127,15 @@ it( 'does NOT coordinate after unmount', () => {
 	const { unmount } = renderHook( () => useAiSurfaceCoordinator( true ) );
 	unmount();
 
-	// After unmount, opening HC must NOT minimize AM.
+	// After unmount, opening HC must NOT close AM.
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsMinimized() ).toBe( false );
+	expect( select( AM_KEY ).getIsOpen() ).toBe( true );
 } );
 
 it( 'handles a second conflict correctly after a first (re-entrancy / stale prev)', () => {
-	// Round 1: AM open, HC opens → AM gets minimized.
+	// Round 1: AM open, HC opens → AM is closed.
 	act( () => {
 		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
 	} );
@@ -134,12 +143,12 @@ it( 'handles a second conflict correctly after a first (re-entrancy / stale prev
 	act( () => {
 		( dispatch( HC_KEY ) as HCDispatch ).set( { showHelpCenter: true } );
 	} );
-	expect( select( AM_KEY ).getIsMinimized() ).toBe( true );
+	expect( select( AM_KEY ).getIsOpen() ).toBe( false );
 
-	// Round 2: restore AM to expanded (isMinimized: false), with HC still shown.
-	// Now AM just-expanded → HC should be minimized.
+	// Round 2: AM re-expands while HC is still shown → AM just-expanded wins,
+	// so Help Center is minimized.
 	act( () => {
-		( dispatch( AM_KEY ) as AMDispatch ).set( { isMinimized: false } );
+		( dispatch( AM_KEY ) as AMDispatch ).set( { isOpen: true } );
 	} );
 	expect( select( HC_KEY ).getIsMinimized() ).toBe( true );
 

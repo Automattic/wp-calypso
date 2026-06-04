@@ -101,7 +101,9 @@
 		max-height: 800px;
 		border-radius: 16px;
 		right: calc( 50px + var( --ai-surface-rail-inset, 0px ) );
-		bottom: 50px;
+		// Sit above Agents Manager's persistent "Ask AI" bar when coexisting
+		// (the offset is 0 unless the coordinator sets it).
+		bottom: calc( 50px + var( --ai-surface-hc-bottom-offset, 0px ) );
 
 		&:not( .react-draggable-dragging ) {
 			transition: all 0.2s ease-in-out;
@@ -113,7 +115,7 @@
 
 		&.is-minimized {
 			height: $head-foot-height;
-			bottom: var( --ai-surface-hc-stack-bottom, 0 );
+			bottom: var( --ai-surface-hc-bottom-offset, 0 );
 			right: calc( 50px + var( --ai-surface-rail-inset, 0px ) );
 
 			border-bottom-left-radius: 0;
