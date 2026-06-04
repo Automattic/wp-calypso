@@ -158,16 +158,11 @@ export async function recordAddToCart( cartItem ) {
 	if ( mayWeTrackByTracker( 'openai' ) ) {
 		const params = {
 			type: 'contents',
-			amount: cartItem.item_subtotal_integer ?? 0,
-			currency: cartItem.currency,
 			contents: [
 				{
 					id: cartItem.product_slug,
-					name: cartItem.product_name,
 					content_type: 'product',
 					quantity: 1,
-					amount: cartItem.item_subtotal_integer ?? 0,
-					currency: cartItem.currency,
 				},
 			],
 		};
