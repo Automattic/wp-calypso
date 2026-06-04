@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useLayoutEffect } from '@wordpress/element';
 import type { StepProps } from '../stepper/types';
 
-export type HorizontalStepRecord = StepProps;
+export type HorizontalStepRecord = Omit< StepProps, 'description' >;
 
 type HorizontalStepRegistration = {
 	registerStep: ( record: HorizontalStepRecord ) => () => void;
@@ -50,7 +50,6 @@ export function HorizontalStepperStep( props: HorizontalStepperStepProps ) {
 		updateStep,
 		props.value,
 		props.title,
-		props.description,
 		props.status,
 		props.optional,
 		props.disabled,

@@ -55,7 +55,7 @@ export default meta;
 type Story = StoryObj< typeof meta >;
 
 const checkoutSteps = [
-	{ value: 'shipping', title: 'Shipping', description: '123 Main St' },
+	{ value: 'shipping', title: 'Shipping' },
 	{ value: 'payment', title: 'Payment' },
 	{ value: 'review', title: 'Review', optional: true },
 ];
@@ -82,7 +82,6 @@ function DefaultDemo( {
 					key={ s.value }
 					value={ s.value }
 					title={ s.title }
-					description={ s.description }
 					status={ i < currentIndex ? 'completed' : undefined }
 					optional={ s.optional }
 				>
@@ -208,12 +207,7 @@ function StepVariantsDemo( {
 			activationMode={ activationMode }
 			indicatorVariant={ indicatorVariant }
 		>
-			<HorizontalStepper.Step
-				value="completed"
-				title="Completed"
-				status="completed"
-				description="Payment received"
-			>
+			<HorizontalStepper.Step value="completed" title="Completed" status="completed">
 				<p>
 					This step has <code>status=&quot;completed&quot;</code>. The indicator shows a check.
 				</p>
@@ -226,12 +220,7 @@ function StepVariantsDemo( {
 				</p>
 			</HorizontalStepper.Step>
 
-			<HorizontalStepper.Step
-				value="error"
-				title="Error"
-				status="error"
-				description="Invalid card number"
-			>
+			<HorizontalStepper.Step value="error" title="Error" status="error">
 				<p>
 					This step has <code>status=&quot;error&quot;</code>. Use it to flag a validation failure
 					that needs the user&apos;s attention.

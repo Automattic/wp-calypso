@@ -82,17 +82,6 @@ describe( 'HorizontalStepper', () => {
 		await waitFor( () => expect( screen.getByText( 'Panel B' ) ).toBeVisible() );
 	} );
 
-	it( 'renders a description when provided', () => {
-		render(
-			<HorizontalStepper value="a" aria-label="Test">
-				<HorizontalStepper.Step value="a" title="Step A" description="Do the first thing">
-					<p>Panel A</p>
-				</HorizontalStepper.Step>
-			</HorizontalStepper>
-		);
-		expect( screen.getByText( 'Do the first thing' ) ).toBeInTheDocument();
-	} );
-
 	it( 'does not call onValueChange when an explicitly disabled step tab is clicked', async () => {
 		const onValueChange = jest.fn();
 		const user = userEvent.setup();
