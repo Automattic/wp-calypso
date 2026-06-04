@@ -7,7 +7,6 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-	isWpComStudentPlan,
 	isStarterPlan,
 	is100YearPlan,
 	Feature,
@@ -77,7 +76,7 @@ export default function getPlanFeatures(
 		: undefined;
 	const googleAnalytics = String( translate( 'Track your stats with Google Analytics' ) );
 
-	if ( isWpComPersonalPlan( productSlug ) || isWpComStudentPlan( productSlug ) ) {
+	if ( isWpComPersonalPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
 			fastSupport,
