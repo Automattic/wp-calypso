@@ -12,8 +12,6 @@ import DateControl from '../date-control';
 import { DateRangePickerShortcut } from '../date-range/shortcuts';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 type DateRange = {
 	chartStart: string;
 	chartEnd: string;

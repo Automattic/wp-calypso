@@ -10,8 +10,6 @@ import type { DirectoryApplicationType } from '../../partner-directory/types';
 import type { AgencyTier } from '../types';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 function DownloadLink( {
 	product,
 	currentAgencyTier,

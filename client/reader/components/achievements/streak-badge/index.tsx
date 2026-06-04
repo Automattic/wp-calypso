@@ -4,8 +4,6 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
-import type { JSX } from 'react';
-
 export type StreakBadgeState = 'inactive' | 'active' | 'longest-active' | 'frozen';
 
 interface StreakBadgeProps {

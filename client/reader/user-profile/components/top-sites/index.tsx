@@ -6,8 +6,6 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { getStreamUrl } from 'calypso/reader/route';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 interface UserTopSitesProps {
 	userId: number;
 	userLogin: string;

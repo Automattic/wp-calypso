@@ -7,10 +7,9 @@ import {
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 import './style.scss';
-
-import type { JSX } from 'react';
 
 const ICON_SIZE = 24;
 

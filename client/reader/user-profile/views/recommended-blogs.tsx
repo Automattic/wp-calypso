@@ -9,8 +9,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { ReaderUser } from '@automattic/api-core';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 interface UserRecommendedBlogsProps {
 	user: ReaderUser;
 }

@@ -21,8 +21,6 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
-import type { JSX } from 'react';
-
 interface MarketplaceAIBannerProps {
 	variant?: 'hero' | 'slim';
 }

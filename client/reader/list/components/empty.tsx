@@ -7,8 +7,6 @@ import { ReaderList } from 'calypso/reader/list-manage/types';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 interface ListEmptyProps {
 	list?: ReaderList;
 }

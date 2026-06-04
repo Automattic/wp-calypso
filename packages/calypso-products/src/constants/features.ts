@@ -256,6 +256,18 @@ export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';
 export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-support';
 export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
 
+export const WPCOM_PLAN_STORAGE_FEATURES = < const >[
+	FEATURE_1GB_STORAGE,
+	FEATURE_3GB_STORAGE,
+	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_100GB_STORAGE,
+	FEATURE_200GB_STORAGE,
+	FEATURE_P2_13GB_STORAGE,
+	FEATURE_P2_3GB_STORAGE,
+];
+
 // New features Flexible and Pro plans introduced.
 export const FEATURE_MANAGED_HOSTING = 'managed-hosting';
 export const FEATURE_UNLIMITED_USERS = 'unlimited-users';

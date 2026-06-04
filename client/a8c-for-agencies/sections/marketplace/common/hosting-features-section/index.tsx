@@ -2,8 +2,6 @@ import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/componen
 import HostingOverviewFeatures from '../hosting-overview-features';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 type Props = Omit< PageSectionProps, 'children' > & {
 	items: {
 		icon: JSX.Element;

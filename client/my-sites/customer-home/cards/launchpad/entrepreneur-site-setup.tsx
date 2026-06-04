@@ -1,8 +1,6 @@
 import CustomerHomeLaunchpad from '.';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 const checklistSlug = 'entrepreneur-site-setup';
 
 const LaunchpadEntrepreneurSiteSetup = (): JSX.Element => {

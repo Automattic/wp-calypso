@@ -1,8 +1,6 @@
 import CustomerHomeLaunchpad from '.';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 const checklistSlug = 'intent-write';
 
 const LaunchpadIntentWrite = (): JSX.Element => {

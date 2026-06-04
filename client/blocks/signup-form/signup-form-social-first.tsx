@@ -20,8 +20,6 @@ import type { SignupAllowedService } from 'calypso/components/social-buttons/uti
 import type { JSX } from 'react';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 interface QueryArgs {
 	redirect_to?: string;
 }

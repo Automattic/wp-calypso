@@ -9,8 +9,6 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
-import type { JSX } from 'react';
-
 function FeatureCard( {
 	title,
 	icon,

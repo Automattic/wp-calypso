@@ -7,8 +7,6 @@ import { DefaultMasterbarContact } from './default-contact';
 import type { JSX } from 'react';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 const MasterbarStyled = ( {
 	onClick,
 	backText,

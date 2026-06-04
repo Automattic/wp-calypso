@@ -10,8 +10,6 @@ import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( s: string ) => s,
 	sprintf: ( s: string ) => s,

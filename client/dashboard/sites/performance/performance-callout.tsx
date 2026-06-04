@@ -6,8 +6,6 @@ import illustrationUrl from './performance-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export function getPerformanceCalloutProps() {
 	return {
 		feature: HostingFeatures.PERFORMANCE,

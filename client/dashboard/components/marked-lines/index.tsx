@@ -2,8 +2,6 @@ import clsx from 'clsx';
 import type { JSX } from 'react';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 interface MarkedLinesProps {
 	/**
 	 * Provides the line content and mark ranges

@@ -15,8 +15,6 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import getSites from 'calypso/state/selectors/get-sites';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 const FEDIVERSE_SUPPORT_POST_ID = 294460;
 const SOCIAL_SUPPORT_POST_ID = 439167;
 

@@ -13,8 +13,6 @@ import configureStore from 'redux-mock-store';
 import SitePicker from '../site-picker';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 const renderComponent = ( component: JSX.Element, initialState = {} ) => {
 	const mockStore = configureStore();
 	const store = mockStore( initialState );

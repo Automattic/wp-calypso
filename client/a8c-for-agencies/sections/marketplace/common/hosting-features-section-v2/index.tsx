@@ -7,8 +7,6 @@ import type { JSX } from 'react';
 
 import './style.scss';
 
-import type { JSX } from 'react';
-
 type Props = Omit< PageSectionProps, 'children' > & {
 	features: {
 		icon: JSX.Element;

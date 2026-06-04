@@ -10,8 +10,6 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 interface PrimaryBlogCardProps {
 	user: UserResponse;
 }

@@ -6,8 +6,6 @@ import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-d
 import { getProcessedGravatarUrl } from '../../utils';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 interface UserHovercardHeaderProps {
 	user: UserResponse;
 }

@@ -18,8 +18,6 @@ import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 const importAgentsManager = () =>
 	import(
 		/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'

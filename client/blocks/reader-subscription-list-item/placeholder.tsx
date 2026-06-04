@@ -1,8 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 const ReaderSubscriptionListItemPlaceholder = (): JSX.Element => {
 	const translate = useTranslate();
 

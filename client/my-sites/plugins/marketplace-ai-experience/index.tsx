@@ -22,8 +22,6 @@ import type { JSX } from 'react';
 import 'calypso/my-sites/plugins/plugins-browser-list/style.scss';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 function hasRenderableName( data: unknown ): boolean {
 	return (
 		!! data && typeof data === 'object' && typeof ( data as { name?: unknown } ).name === 'string'

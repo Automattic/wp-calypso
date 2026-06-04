@@ -3,8 +3,6 @@ import { translate } from 'i18n-calypso';
 import type { APIError } from '@automattic/data-stores';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export const handleErrorMessage = ( error: APIError ): string => {
 	switch ( error.status ) {
 		case 500:

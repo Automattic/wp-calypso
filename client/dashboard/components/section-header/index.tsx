@@ -9,8 +9,6 @@ import type { SectionHeaderProps } from './types';
 import type { JSX } from 'react';
 import './style.scss';
 
-import type { JSX } from 'react';
-
 /**
  * The SectionHeader component provides a consistently structured introduction
  * to a section of content, combining a title, optional description/decoration,

@@ -8,8 +8,6 @@ import type { Task } from '@automattic/launchpad';
 import type { AppState } from 'calypso/types';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 type LaunchpadPreLaunchProps = {
 	checklistSlug?: string;
 };

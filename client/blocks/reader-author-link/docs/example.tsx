@@ -2,8 +2,6 @@ import { Card } from '@automattic/components';
 import ReaderAuthorLink, { ReaderLinkAuthor } from 'calypso/blocks/reader-author-link';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export default function ReaderAuthorLinkExample(): JSX.Element {
 	const author: ReaderLinkAuthor = {
 		URL: 'http://wpcalypso.wordpress.com',

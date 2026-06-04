@@ -7,8 +7,6 @@ import type { ResourceItem } from './types';
 import type { AgencyResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-import type { JSX } from 'react';
-
 /**
  * Get logo element based on related product.
  */

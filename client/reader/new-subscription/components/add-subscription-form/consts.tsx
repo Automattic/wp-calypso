@@ -5,8 +5,6 @@ import ReaderTumblrIcon from 'calypso/reader/components/icons/tumblr-icon';
 import ReaderYouTubeIcon from 'calypso/reader/components/icons/youtube-icon';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export type SubscriptionType = 'add-new' | 'reddit' | 'youtube' | 'tumblr' | 'substack';
 
 interface AddSubscriptionFormConfig {

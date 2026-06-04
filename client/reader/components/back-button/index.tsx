@@ -6,8 +6,6 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import type { AppState } from 'calypso/types';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export default function ReaderBackButton( {
 	handleBack,
 	preventRouteChange = false,

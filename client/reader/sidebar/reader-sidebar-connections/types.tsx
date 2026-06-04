@@ -3,8 +3,6 @@ import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-i
 import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export type ConnectionProtocol = 'atmosphere' | 'mastodon' | 'fediverse';
 
 export interface UnifiedConnection {

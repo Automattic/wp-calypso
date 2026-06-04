@@ -4,8 +4,6 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export type BrandMeta = {
 	brand: string;
 	icon: JSX.Element | undefined;

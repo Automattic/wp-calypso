@@ -6,8 +6,6 @@ import illustrationUrl from './monitoring-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 import type { JSX } from 'react';
 
-import type { JSX } from 'react';
-
 export function getMonitoringCalloutProps() {
 	return {
 		feature: HostingFeatures.MONITOR,

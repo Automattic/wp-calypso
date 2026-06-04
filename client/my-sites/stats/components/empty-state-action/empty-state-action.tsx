@@ -5,8 +5,6 @@ import type { JSX } from 'react';
 
 import './styles.scss';
 
-import type { JSX } from 'react';
-
 interface EmptyStateActionProps {
 	text: string;
 	icon: JSX.Element;
