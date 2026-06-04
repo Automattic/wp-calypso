@@ -330,7 +330,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const editing = product && product.ID;
 
-	recordTracksEvent( 'calypso_earn_page_payment_modal_show', { editing: editing } );
+	// Record the "modal shown" event once on mount rather than on every render.
+	useEffect( () => {
+		recordTracksEvent( 'calypso_earn_page_payment_modal_show', { editing: product && product.ID } );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
 		<Dialog
