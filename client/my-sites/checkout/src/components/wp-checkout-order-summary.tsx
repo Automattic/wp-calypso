@@ -720,6 +720,7 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 		width: 100%;
 		height: 50px;
 		box-sizing: border-box;
+		margin-block-end: 6px;
 	}
 `;
 const CheckoutSummaryFeatures = styled.div`
