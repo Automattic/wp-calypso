@@ -32,13 +32,15 @@
 
 // Tier cards horizontal scroll container
 .tier-cards-container {
+	--tier-card-width: max( 260px, 72vw );
+
 	display: flex;
 	flex-direction: row;
 	gap: 24px;
 	overflow-x: auto;
 	scroll-behavior: smooth;
 	// 4px block padding so box-shadows/borders aren't clipped top/bottom.
-	// 24px inline-start for left breathing room.
+	// 4px inline-start padding so box-shadows/borders aren't clipped.
 	padding-block: 4px;
 	padding-inline: 4px 0;
 	// Hide scrollbar visually but keep functionality
@@ -47,36 +49,37 @@
 	&::-webkit-scrollbar {
 		display: none;
 	}
+
+	&::after {
+		content: '';
+		flex: 0 0 max( 80px, calc( 100% - var(--tier-card-width) ) );
+	}
+
+	@media ( min-width: #{ $break-small } ) {
+		--tier-card-width: clamp( 260px, calc( 30% - 12px ), 340px );
+	}
 }
 
 // Individual card wrappers — fixed width so cards never stack.
-// On small screens: 85vw shows the current card fully with the next peeking in.
+// On small screens: 72vw shows the current card fully with the next peeking in.
 // On larger screens: dynamic ~30% width shows ~3 cards with a peek.
 .tier-card-wrapper {
-	width: 72vw;
-	min-width: 260px;
+	width: var(--tier-card-width);
 	min-height: 250px;
 	flex-shrink: 0;
 
-	@media ( min-width: #{ $break-small } ) {
-		width: clamp( 260px, calc( 30% - 12px ), 340px );
-	}
-
-	// Right-edge breathing room for the last card's border/shadow
-	&:last-child {
-		margin-inline-end: 80px; // wider than gradient so border clears the fade
-	}
-
 	// Lower (already-passed) tiers are muted
 	&.is-lower-tier {
-		opacity: 0.45;
-		filter: grayscale( 0.25 );
-		transition: opacity 0.2s ease, filter 0.2s ease;
+		filter: grayscale( 0.35 );
+		transition: filter 0.2s ease;
+
+		&:focus-within {
+			filter: none;
+		}
 
 		// On pointer devices (desktop), reveal on hover
 		@media ( hover: hover ) and ( pointer: fine ) {
 			&:hover {
-				opacity: 1;
 				filter: none;
 			}
 		}

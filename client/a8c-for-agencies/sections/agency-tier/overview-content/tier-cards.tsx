@@ -84,9 +84,7 @@ export default function TierCards( {
 			'[data-is-current-tier="true"]'
 		);
 		if ( currentCard ) {
-			const containerRect = containerRef.current.getBoundingClientRect();
-			const cardRect = currentCard.getBoundingClientRect();
-			containerRef.current.scrollLeft += cardRect.left - containerRect.left;
+			currentCard.scrollIntoView( { block: 'nearest', inline: 'start' } );
 		}
 	}, [ currentTier ] );
 
