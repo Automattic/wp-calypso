@@ -8,7 +8,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-function SidebarNavigation( { sectionTitle, site, toggleSidebar } ) {
+function SidebarNavigation( { sectionTitle = undefined, site, toggleSidebar } ) {
 	const translate = useTranslate();
 
 	const siteTitle = site?.title ?? translate( 'All Sites' );
