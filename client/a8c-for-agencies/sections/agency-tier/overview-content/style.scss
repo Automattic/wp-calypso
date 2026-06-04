@@ -16,13 +16,17 @@
 	&::after {
 		content: '';
 		position: absolute;
-		top: 0;
-		right: 0;
+		inset-block-start: 0;
+		inset-inline-end: 0;
 		width: 80px;
 		height: 100%;
-		background: linear-gradient( to right, transparent, #fff );
+		background: linear-gradient( to right, transparent, var(--color-surface) );
 		pointer-events: none;
 		z-index: 1;
+	}
+
+	html[dir="rtl"] &::after {
+		background: linear-gradient( to left, transparent, var(--color-surface) ) #{"/*rtl:ignore*/"};
 	}
 }
 
@@ -35,7 +39,8 @@
 	scroll-behavior: smooth;
 	// 4px block padding so box-shadows/borders aren't clipped top/bottom.
 	// 24px inline-start for left breathing room.
-	padding: 4px 0 4px 4px;
+	padding-block: 4px;
+	padding-inline: 4px 0;
 	// Hide scrollbar visually but keep functionality
 	scrollbar-width: none;
 	-ms-overflow-style: none;
@@ -103,4 +108,3 @@
 		color: var(--color-primary-60);
 	}
 }
-

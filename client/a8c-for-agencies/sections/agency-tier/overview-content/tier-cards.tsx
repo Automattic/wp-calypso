@@ -12,6 +12,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
@@ -98,9 +99,7 @@ export default function TierCards( {
 		return (
 			<div
 				key={ tier.id }
-				className={ [ 'tier-card-wrapper', hasLowerTier ? 'is-lower-tier' : '' ]
-					.filter( Boolean )
-					.join( ' ' ) }
+				className={ clsx( 'tier-card-wrapper', hasLowerTier && 'is-lower-tier' ) }
 				data-is-current-tier={ isCurrentTier ? 'true' : undefined }
 			>
 				<Card
