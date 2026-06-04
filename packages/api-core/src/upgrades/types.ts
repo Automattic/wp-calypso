@@ -181,7 +181,8 @@ export interface Purchase {
 	 * surfaces here as 'expiring' (because past-expiry trivially satisfies
 	 * "expiring soon" and a lapsed purchase is not auto-renewing). However,
 	 * 'expiring' also covers subscriptions that are merely approaching expiry
-	 * and have NOT passed it yet.
+	 * and have NOT passed it yet. To distinguish "active but already past
+	 * expiry" precisely, use `is_past_expiry_date`.
 	 */
 	expiry_status:
 		| 'expiring'
@@ -191,6 +192,19 @@ export interface Purchase {
 		| 'manual-renew'
 		| 'expired'
 		| 'one-time-purchase';
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since become
+	 * inactive ('expired'). This is a more precise signal than
+	 * `expiry_status === 'expiring'`, which also covers subscriptions that are
+	 * merely approaching expiry but have not passed it.
+	 *
+	 * Always false for purchases with no expiry time (one-time purchases and
+	 * perpetual purchases).
+	 */
+	is_past_expiry_date: boolean;
+
 	iap_purchase_management_link: string | null;
 
 	/**
