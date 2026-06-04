@@ -33,6 +33,7 @@
 		"@automattic/agents-manager": "workspace:^",
 		"@automattic/block-notes": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
 		"@automattic/image-studio": "workspace:^",
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
