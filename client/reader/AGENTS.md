@@ -13,6 +13,13 @@ yarn test-client client/reader/<path>        # Run Reader tests
 yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
 ```
 
+## Linear issues
+
+File Reader issues under the **Reader** Linear team (key `READ`, e.g. `READ-532`) — not the generic `LIN` team. When creating an issue with the Linear MCP tools, pass `team: "Reader"`.
+
+- The Reader team's issue identifiers use the `READ-` prefix. Reference them in PRs as `READ-123` (per the repo-wide rule to use Linear IDs, not full URLs), and link the work with `Closes READ-123` so the issue auto-closes on merge.
+- For a bug, set `labels: ["Bug"]` and an appropriate `priority` (1=Urgent … 4=Low).
+
 ## Architecture decisions
 
 ### Dark mode
