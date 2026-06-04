@@ -219,7 +219,7 @@ describe( 'Existing credit card payment methods', () => {
 			></TestWrapper>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( `Pay with ${ last4 }` ) ).toBeVisible();
+			expect( screen.getByText( `Pay with **** ${ last4 }` ) ).toBeVisible();
 		} );
 	} );
 } );
