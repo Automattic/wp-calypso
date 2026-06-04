@@ -13,9 +13,11 @@ import { __ } from '@wordpress/i18n';
 import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useState } from 'react';
+import useDeliverableThumbnail from '../../data/use-deliverable-thumbnail';
 import useDeliverableTitle from '../../data/use-deliverable-title';
 import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
+import DeliverableThumbnailFrame from './deliverable-thumbnail-frame';
 import type { AgentStudioOutput } from '../../types';
 
 import './style.scss';
@@ -35,7 +37,7 @@ export default function DeliverableCard( { output }: Props ) {
 			className={ clsx( 'a4a-agent-studio-deliverable-card', { 'is-clickable': isReady } ) }
 		>
 			<CardMedia className="a4a-agent-studio-deliverable-card__media">
-				<DeliverablePreview output={ output } />
+				<DeliverablePreview output={ output } title={ title } />
 			</CardMedia>
 			<CardBody className="a4a-agent-studio-deliverable-card__body">
 				<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
@@ -81,7 +83,9 @@ export default function DeliverableCard( { output }: Props ) {
 	);
 }
 
-function DeliverablePreview( { output }: Props ) {
+function DeliverablePreview( { output, title }: Props & { title: string } ) {
+	const { frames, isFilmstrip, isLoading } = useDeliverableThumbnail( output );
+
 	if ( output.status === 'generating' ) {
 		return (
 			<div className="a4a-agent-studio-deliverable-card__state">
@@ -96,6 +100,28 @@ function DeliverablePreview( { output }: Props ) {
 			<div className="a4a-agent-studio-deliverable-card__state">
 				<Icon icon={ warning } size={ 24 } />
 				<Text>{ __( 'Generation failed' ) }</Text>
+			</div>
+		);
+	}
+
+	if ( frames.length > 0 ) {
+		return (
+			<div
+				className={ clsx( 'a4a-agent-studio-deliverable-card__frames', {
+					'is-filmstrip': isFilmstrip,
+				} ) }
+			>
+				{ frames.map( ( frame, index ) => (
+					<DeliverableThumbnailFrame key={ index } frame={ frame } title={ title } />
+				) ) }
+			</div>
+		);
+	}
+
+	if ( isLoading ) {
+		return (
+			<div className="a4a-agent-studio-deliverable-card__state">
+				<Spinner />
 			</div>
 		);
 	}
