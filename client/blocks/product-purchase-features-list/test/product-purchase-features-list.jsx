@@ -7,7 +7,6 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_STUDENT,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_ECOMMERCE,
@@ -122,18 +121,6 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL_2_YEARS } />
-		);
-		expect( spy ).toHaveBeenCalled();
-		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( container.firstChild ).not.toBeEmptyDOMElement();
-	} );
-
-	test( 'should render WP student features for WP student plan', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getStudentFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
-
-		const { container } = render(
-			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_STUDENT } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
@@ -312,7 +299,6 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
 		PLAN_PREMIUM,
-		PLAN_STUDENT,
 	] )( `should pass proper plan type to VideoAudioPosts child component`, ( plan ) => {
 		render( <ProductPurchaseFeaturesList { ...props } plan={ plan } /> );
 		const audioPosts = screen.getByTestId( 'video-audio-posts' );

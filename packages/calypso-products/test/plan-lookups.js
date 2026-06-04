@@ -858,6 +858,41 @@ describe( 'getPlan', () => {
 	} );
 } );
 
+describe( 'availableFor', () => {
+	test( 'should allow student plan sites to upgrade to business, ecommerce, and 100-year plans', () => {
+		[
+			PLAN_BUSINESS,
+			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_ECOMMERCE_3_YEARS,
+			PLAN_100_YEARS,
+		].forEach( ( plan ) => {
+			expect( getPlan( plan ).availableFor( PLAN_STUDENT ) ).toEqual( true );
+		} );
+	} );
+
+	test( 'should not allow student plan sites to upgrade to monthly, premium, or lower-tier plans', () => {
+		[
+			PLAN_BUSINESS_MONTHLY,
+			PLAN_ECOMMERCE_MONTHLY,
+			PLAN_PREMIUM,
+			PLAN_PREMIUM_2_YEARS,
+			PLAN_PREMIUM_3_YEARS,
+			PLAN_PERSONAL,
+			PLAN_BLOGGER,
+		].forEach( ( plan ) => {
+			expect( getPlan( plan ).availableFor( PLAN_STUDENT ) ).toEqual( false );
+		} );
+	} );
+
+	test( 'should not make student plan available through regular upgrade paths', () => {
+		expect( getPlan( PLAN_STUDENT ).availableFor( PLAN_FREE ) ).toEqual( false );
+		expect( getPlan( PLAN_STUDENT ).availableFor( PLAN_PERSONAL ) ).toEqual( false );
+	} );
+} );
+
 describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by term', () => {
 		expect( findSimilarPlansKeys( PLAN_BLOGGER, { term: TERM_BIENNIALLY } ) ).toEqual( [

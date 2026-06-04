@@ -10,9 +10,7 @@ import { useMemo } from 'react';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 
 const isEligibleProduct = ( product: ResponseCartProduct ) =>
-	isWpComPlan( product.product_slug ) &&
-	! isMonthly( product.product_slug ) &&
-	Boolean( getMonthlyPlanByYearly( product.product_slug ) );
+	isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug );
 
 /**
  * Calculate the equivalent monthly total prices for non-monthly WordPress.com plans from the passed
@@ -33,10 +31,7 @@ export default function useEquivalentMonthlyTotals(
 	const monthlyProductSlugs = useMemo( () => {
 		const uniqueSlugs = new Set< PlanSlug >();
 		for ( const product of eligibleProducts ) {
-			const monthlyPlanSlug = getMonthlyPlanByYearly( product.product_slug );
-			if ( monthlyPlanSlug ) {
-				uniqueSlugs.add( monthlyPlanSlug as PlanSlug );
-			}
+			uniqueSlugs.add( getMonthlyPlanByYearly( product.product_slug ) as PlanSlug );
 		}
 		return Array.from( uniqueSlugs );
 	}, [ eligibleProducts ] );
