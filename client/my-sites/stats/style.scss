@@ -1,5 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
@@ -146,8 +147,15 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		}
 
 		> .stats-navigation {
-			background: var(--wpds-color-bg-surface-neutral-strong);
-			padding-inline: var(--wpds-dimension-padding-2xl, 24px);
+			// The unified-header treatment (background strip + inset) only
+			// applies on wider screens. On small screens the nav block insets
+			// the tabs itself (16px on the --improved variant), so applying the
+			// inset here too would stack. Mirrors the block's
+			// `@media (max-width: $break-small)` rule.
+			@media (min-width: ($break-small + 1px)) {
+				background: var(--wpds-color-bg-surface-neutral-strong);
+				padding-inline: var(--wpds-dimension-padding-2xl, 24px);
+			}
 		}
 	}
 
