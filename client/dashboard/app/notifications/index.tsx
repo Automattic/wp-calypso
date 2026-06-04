@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
@@ -31,34 +31,23 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
-	const anchorElRef = useRef< HTMLElement | null >( null );
-	anchorElRef.current = anchorEl;
 
 	// The legacy masterbar remounts the notification bell (it keys the item on an
 	// internal animation state that flips when the unseen count changes), which
-	// detaches whatever node we captured. A detached node reports a zero-size rect,
-	// so a cached anchor positions the popover in the corner until an unrelated
-	// re-render hands us a fresh node — that's why navigating away and back
-	// "fixes" it. Hand the Popover a virtual anchor that resolves the live bell on
-	// every measurement instead, so floating-ui always positions against the
-	// current node (and follows it if the masterbar reflows while open).
-	const resolveBell = useCallback( () => {
-		const captured = anchorElRef.current;
-		if ( captured?.isConnected ) {
-			return captured;
-		}
-		return (
-			document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' ) ?? captured
-		);
-	}, [] );
+	// detaches whatever node we captured — a detached node reports a zero-size rect,
+	// so a cached anchor would position the popover in the corner until an unrelated
+	// re-render handed us a fresh node. Hand the Popover a virtual anchor that
+	// re-resolves the live bell on every measurement instead, falling back to the
+	// captured node (e.g. the non-masterbar omnibar) when it is still connected.
 	const popoverAnchor = useMemo(
 		() => ( {
-			getBoundingClientRect: () => resolveBell()?.getBoundingClientRect() ?? new DOMRect(),
-			get contextElement() {
-				return resolveBell() ?? undefined;
-			},
+			getBoundingClientRect: () =>
+				( anchorEl?.isConnected
+					? anchorEl
+					: document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' )
+				)?.getBoundingClientRect() ?? new DOMRect(),
 		} ),
-		[ resolveBell ]
+		[ anchorEl ]
 	);
 
 	const handleToggle = ( willOpen: boolean ) => {
