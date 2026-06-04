@@ -1,4 +1,4 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent, useShouldCoexistAiSurfaces } from '@automattic/agents-manager';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -19,13 +19,14 @@ export default function AgentsManagerLoader( {
 	loadAgentsManager: boolean;
 } ) {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	const shouldCoexist = useShouldCoexistAiSurfaces();
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
 	const isSiteSpecific = useSelector( isSiteSection );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 
-	if ( ! shouldUseUnifiedAgent || ! loadAgentsManager ) {
+	if ( ( ! shouldUseUnifiedAgent && ! shouldCoexist ) || ! loadAgentsManager ) {
 		return null;
 	}
 
