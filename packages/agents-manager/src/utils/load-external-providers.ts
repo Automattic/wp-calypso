@@ -97,9 +97,16 @@ type ChatComponentType =
 /**
  * Get a chat component by type for rendering in agent messages.
  * @param type - The type of chat component to get
+ * @param context - Optional source tool metadata for source-aware component lookup
  * @returns The React component for the specified type, or `null` if unknown
  */
-export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
+export type GetChatComponentContext = {
+	toolId?: string;
+};
+export type GetChatComponent = (
+	type: ChatComponentType | string,
+	context?: GetChatComponentContext
+) => React.ComponentType< unknown > | null;
 
 /**
  * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
@@ -163,6 +170,72 @@ export interface LoadedProviders {
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
 	capabilities?: ProviderCapabilities;
+}
+
+type AbilityProviderEntry = {
+	provider: ToolProvider;
+	abilityName: string;
+};
+
+const BIG_SKY_SHOW_COMPONENT_ABILITY = 'big-sky/show-component';
+const BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID = 'big-sky-show-component';
+const BIG_SKY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+
+function getProviderAgentMessage( result: unknown ): string | undefined {
+	if ( ! result || typeof result !== 'object' ) {
+		return undefined;
+	}
+
+	const agentMessage = ( result as { agentMessage?: unknown } ).agentMessage;
+	if ( typeof agentMessage === 'string' && agentMessage.trim() ) {
+		return agentMessage;
+	}
+
+	const nestedResult = ( result as { result?: unknown } ).result;
+	if ( ! nestedResult || typeof nestedResult !== 'object' ) {
+		return undefined;
+	}
+
+	const nestedAgentMessage = ( nestedResult as { agentMessage?: unknown } ).agentMessage;
+	return typeof nestedAgentMessage === 'string' && nestedAgentMessage.trim()
+		? nestedAgentMessage
+		: undefined;
+}
+
+function normalizeProviderResult( result: unknown ): unknown {
+	const message = getProviderAgentMessage( result );
+	if ( ! message || ! result || typeof result !== 'object' ) {
+		return result;
+	}
+
+	if ( ( result as { agentMessage?: unknown } ).agentMessage === message ) {
+		return result;
+	}
+
+	return {
+		...( result as Record< string, unknown > ),
+		agentMessage: message,
+	};
+}
+
+function addProviderCallbackToAbility( ability: unknown, entry: AbilityProviderEntry ): unknown {
+	if ( ! ability || typeof ability !== 'object' ) {
+		return ability;
+	}
+
+	const abilityWithCallback = { ...( ability as Record< string, unknown > ) };
+	const existingCallback =
+		typeof abilityWithCallback.callback === 'function' ? abilityWithCallback.callback : undefined;
+	Object.defineProperty( abilityWithCallback, 'callback', {
+		value: async ( args: unknown ) => {
+			const result = existingCallback
+				? await existingCallback( args )
+				: await entry.provider.executeAbility( entry.abilityName, args );
+			return normalizeProviderResult( result );
+		},
+		enumerable: false,
+	} );
+	return abilityWithCallback;
 }
 
 export function mergeUseSuggestionsHooks(
@@ -243,10 +316,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
+	const abilityProviderMap = new Map< string, AbilityProviderEntry >();
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
-	const allGetChatComponents: GetChatComponent[] = [];
+	const allGetChatComponents: Array< {
+		getChatComponent: GetChatComponent;
+		toolProvider?: ToolProvider;
+	} > = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
@@ -284,7 +361,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			allToolProviders.push( module.toolProvider );
 		}
 		if ( module.getChatComponent ) {
-			allGetChatComponents.push( module.getChatComponent );
+			allGetChatComponents.push( {
+				getChatComponent: module.getChatComponent,
+				toolProvider: module.toolProvider,
+			} );
 		}
 		if ( module.useAbilitiesSetup ) {
 			allAbilitiesSetups.push( module.useAbilitiesSetup );
@@ -327,16 +407,19 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// getChatComponent, useSuggestions, etc). Providers are processed in the
 	// order they were registered; earlier providers win on ability-name
 	// collisions.
-	if ( allToolProviders.length === 1 ) {
-		mergedToolProvider = allToolProviders[ 0 ];
-	} else if ( allToolProviders.length > 1 ) {
-		// Fetch all abilities once and build a name→provider map so that
-		// executeAbility can look up the owning provider in O(1) instead of
-		// re-querying getAbilities() on every call.
+	const refreshProviderAbilities = async () => {
+		abilityProviderMap.clear();
+
 		const allAbilityResults = await Promise.all(
 			allToolProviders.map( async ( tp ) => {
 				try {
-					return await tp.getAbilities();
+					const abilities = await tp.getAbilities();
+					if ( ! Array.isArray( abilities ) ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[AgentsManager] Provider returned invalid abilities; expected array.' );
+						return [];
+					}
+					return abilities;
 				} catch ( error ) {
 					// eslint-disable-next-line no-console
 					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
@@ -344,7 +427,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				}
 			} )
 		);
-		const abilityProviderMap = new Map< string, ToolProvider >();
 		const seenAbilities = new Map< string, unknown >();
 		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
 		// when routing tool calls. Index both raw and normalized forms
@@ -352,29 +434,59 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
 		for ( let i = 0; i < allToolProviders.length; i++ ) {
 			for ( const ability of allAbilityResults[ i ] ) {
-				if ( ! abilityProviderMap.has( ability.name ) ) {
-					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
-					const normalized = normalize( ability.name );
-					if ( normalized !== ability.name ) {
-						abilityProviderMap.set( normalized, allToolProviders[ i ] );
-					}
-					seenAbilities.set( ability.name, ability );
+				if ( ! ability || typeof ability.name !== 'string' ) {
+					continue;
 				}
+
+				const normalized = normalize( ability.name );
+				if ( ability.name === BIG_SKY_SHOW_COMPONENT_ABILITY ) {
+					const entry = {
+						provider: allToolProviders[ i ],
+						abilityName: ability.name,
+					};
+					const abilityWithCallback = addProviderCallbackToAbility( ability, entry );
+					abilityProviderMap.set( ability.name, entry );
+					abilityProviderMap.set( BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID, entry );
+					abilityProviderMap.set( BIG_SKY_SHOW_COMPONENT_TOOL_ID, entry );
+					seenAbilities.set( BIG_SKY_SHOW_COMPONENT_TOOL_ID, abilityWithCallback );
+					continue;
+				}
+
+				const existingEntry =
+					abilityProviderMap.get( ability.name ) ?? abilityProviderMap.get( normalized );
+				if ( existingEntry ) {
+					if ( ! abilityProviderMap.has( ability.name ) ) {
+						abilityProviderMap.set( ability.name, existingEntry );
+					}
+					if ( ! abilityProviderMap.has( normalized ) ) {
+						abilityProviderMap.set( normalized, existingEntry );
+					}
+					continue;
+				}
+
+				const entry = {
+					provider: allToolProviders[ i ],
+					abilityName: ability.name,
+				};
+				abilityProviderMap.set( ability.name, entry );
+				abilityProviderMap.set( normalized, entry );
+				seenAbilities.set( normalized, addProviderCallbackToAbility( ability, entry ) );
 			}
 		}
-		const cachedAbilities = [ ...seenAbilities.values() ] as Awaited<
-			ReturnType< ToolProvider[ 'getAbilities' ] >
-		>;
 
+		return [ ...seenAbilities.values() ] as Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
+	};
+
+	if ( allToolProviders.length > 0 ) {
 		mergedToolProvider = {
-			getAbilities: async () => cachedAbilities,
+			getAbilities: refreshProviderAbilities,
 			executeAbility: async ( name: string, args: unknown ) => {
-				// Use the pre-built map — avoids re-querying getAbilities() on
-				// every call and surfaces real errors from the owning provider
-				// instead of silently swallowing them.
-				const provider = abilityProviderMap.get( name );
-				if ( provider ) {
-					return provider.executeAbility( name, args );
+				// Rebuild at execution time because some provider abilities are
+				// registered by setup hooks after the provider module is imported.
+				await refreshProviderAbilities();
+				const entry = abilityProviderMap.get( name );
+				if ( entry ) {
+					return entry.provider.executeAbility( entry.abilityName, args );
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
 			},
@@ -383,11 +495,29 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Merge getChatComponent: try each provider, return first non-null.
 	if ( allGetChatComponents.length === 1 ) {
-		mergedGetChatComponent = allGetChatComponents[ 0 ];
+		mergedGetChatComponent = allGetChatComponents[ 0 ].getChatComponent;
 	} else if ( allGetChatComponents.length > 1 ) {
-		mergedGetChatComponent = ( ( type: string ) => {
-			for ( const fn of allGetChatComponents ) {
-				const result = fn( type as ChatComponentType );
+		mergedGetChatComponent = ( ( type: string, context?: GetChatComponentContext ) => {
+			const sourceProvider =
+				typeof context?.toolId === 'string'
+					? abilityProviderMap.get( context.toolId )?.provider
+					: undefined;
+			const sourceComponentResolver = sourceProvider
+				? allGetChatComponents.find( ( entry ) => entry.toolProvider === sourceProvider )
+				: undefined;
+
+			if ( sourceComponentResolver ) {
+				const result = sourceComponentResolver.getChatComponent( type, context );
+				if ( result ) {
+					return result;
+				}
+			}
+
+			for ( const entry of allGetChatComponents ) {
+				if ( entry === sourceComponentResolver ) {
+					continue;
+				}
+				const result = entry.getChatComponent( type, context );
 				if ( result ) {
 					return result;
 				}

@@ -17,6 +17,9 @@ import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
+type ToolProviderOption = NonNullable<
+	Parameters< typeof createAgentConfig >[ 0 ][ 'toolProvider' ]
+>;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =
@@ -192,5 +195,93 @@ describe( 'createAgentConfig', () => {
 				},
 			} )
 		);
+	} );
+
+	it( 'returns empty abilities when the final tool provider returns an invalid payload', async () => {
+		const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( undefined ),
+				executeAbility: jest.fn(),
+			} as unknown as ToolProviderOption,
+		} );
+
+		expect( config.toolProvider?.getAbilities ).toEqual( expect.any( Function ) );
+		await expect( config.toolProvider!.getAbilities!() ).resolves.toEqual( [] );
+		expect( warnSpy ).toHaveBeenCalledWith(
+			'[AgentsManager] Tool provider returned invalid abilities; expected array.'
+		);
+
+		warnSpy.mockRestore();
+	} );
+
+	it( 'filters malformed abilities and removes null annotation values', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{
+						name: 'valid/tool',
+						meta: {
+							annotations: {
+								readonly: null,
+								destructive: true,
+							},
+						},
+					},
+					{ label: 'Missing name' },
+				] ),
+				executeAbility: jest.fn(),
+			} as unknown as ToolProviderOption,
+		} );
+
+		expect( config.toolProvider?.getAbilities ).toEqual( expect.any( Function ) );
+		await expect( config.toolProvider!.getAbilities!() ).resolves.toEqual( [
+			{
+				name: 'valid/tool',
+				meta: {
+					annotations: {
+						destructive: true,
+					},
+				},
+			},
+		] );
+	} );
+
+	it( 'preserves ability callbacks while normalizing metadata', async () => {
+		const callback = jest.fn();
+		const ability = {
+			name: 'jetpack_ai__show_component',
+			meta: {
+				annotations: {
+					readonly: null,
+					destructive: false,
+				},
+			},
+		};
+		Object.defineProperty( ability, 'callback', {
+			value: callback,
+			enumerable: false,
+		} );
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ ability ] ),
+				executeAbility: jest.fn(),
+			} as unknown as ToolProviderOption,
+		} );
+
+		await expect( config.toolProvider!.getAbilities!() ).resolves.toEqual( [
+			{
+				name: 'jetpack_ai__show_component',
+				meta: {
+					annotations: {
+						destructive: false,
+					},
+				},
+				callback,
+			},
+		] );
 	} );
 } );

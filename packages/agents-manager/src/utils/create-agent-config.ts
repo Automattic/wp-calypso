@@ -73,19 +73,35 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 		...toolProvider,
 		getAbilities: async (): Promise< AgenticAbility[] > => {
 			const abilities = await toolProvider.getAbilities();
-			return abilities.map( ( ability ) => ( {
-				...ability,
-				meta: ability.meta?.annotations
-					? {
-							...ability.meta,
-							annotations: Object.fromEntries(
-								Object.entries( ability.meta.annotations ).filter(
-									( [ , value ] ) => value !== null
-								)
-							),
-					  }
-					: ability.meta,
-			} ) ) as AgenticAbility[];
+			if ( ! Array.isArray( abilities ) ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[AgentsManager] Tool provider returned invalid abilities; expected array.' );
+				return [];
+			}
+
+			return abilities
+				.filter( ( ability ) => ability && typeof ability.name === 'string' )
+				.map( ( ability ) => {
+					const normalizedAbility = {
+						...ability,
+						meta: ability.meta?.annotations
+							? {
+									...ability.meta,
+									annotations: Object.fromEntries(
+										Object.entries( ability.meta.annotations ).filter(
+											( [ , value ] ) => value !== null
+										)
+									),
+							  }
+							: ability.meta,
+					} as AgenticAbility;
+
+					if ( typeof ability.callback === 'function' ) {
+						normalizedAbility.callback = ability.callback;
+					}
+
+					return normalizedAbility;
+				} );
 		},
 	};
 }

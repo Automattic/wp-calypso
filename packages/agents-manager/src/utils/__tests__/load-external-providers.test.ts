@@ -90,6 +90,566 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.contextProvider ).toBeUndefined();
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 	} );
+
+	it( 'does not freeze provider abilities before hook-dependent abilities register', async () => {
+		let showComponentRegistered = false;
+		const executeAbility = jest.fn().mockResolvedValue( { result: { provider: 'big-sky' } } );
+		const provider = {
+			toolProvider: {
+				getAbilities: jest.fn( async () =>
+					showComponentRegistered ? [ { name: 'big-sky/show-component' } ] : []
+				),
+				executeAbility,
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ provider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( provider.toolProvider.getAbilities ).not.toHaveBeenCalled();
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [] );
+
+		showComponentRegistered = true;
+
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
+			{ name: 'big-sky/show-component' },
+		] );
+
+		await providers.toolProvider?.executeAbility( 'big_sky__show_component', {
+			type: 'color-picker',
+		} );
+
+		expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', {
+			type: 'color-picker',
+		} );
+	} );
+
+	it( 'composes tool providers in registration order with first-provider-wins duplicates', async () => {
+		const firstExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'first' } } );
+		const secondExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'second' } } );
+		const firstProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'wpcom/update-block-content', label: 'First shared' },
+					{ name: 'first-only', label: 'First only' },
+				] ),
+				executeAbility: firstExecuteAbility,
+			},
+		};
+		const secondProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'wpcom/update-block-content', label: 'Second shared' },
+					{ name: 'second-only', label: 'Second only' },
+				] ),
+				executeAbility: secondExecuteAbility,
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ firstProvider, secondProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+		const abilities = await providers.toolProvider?.getAbilities();
+
+		expect( abilities ).toEqual( [
+			{ name: 'wpcom/update-block-content', label: 'First shared' },
+			{ name: 'first-only', label: 'First only' },
+			{ name: 'second-only', label: 'Second only' },
+		] );
+
+		await providers.toolProvider?.executeAbility( 'wpcom__update_block_content', {} );
+		await providers.toolProvider?.executeAbility( 'second-only', {} );
+
+		expect( firstExecuteAbility ).toHaveBeenCalledWith( 'wpcom/update-block-content', {} );
+		expect( secondExecuteAbility ).toHaveBeenCalledWith( 'second-only', {} );
+	} );
+
+	it( 'keeps the first provider for equivalent raw and normalized non-show-component ability names', async () => {
+		const firstExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'first' } } );
+		const secondExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'second' } } );
+		const firstProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'wpcom__update_block_content' } ] ),
+				executeAbility: firstExecuteAbility,
+			},
+		};
+		const secondProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'wpcom/update-block-content' } ] ),
+				executeAbility: secondExecuteAbility,
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ firstProvider, secondProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
+			{ name: 'wpcom__update_block_content' },
+		] );
+
+		await providers.toolProvider?.executeAbility( 'wpcom/update-block-content', {} );
+
+		expect( firstExecuteAbility ).toHaveBeenCalledWith( 'wpcom__update_block_content', {} );
+		expect( secondExecuteAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps Big Sky ownership for show-component even when Jetpack legacy alias loads first', async () => {
+		const bigSkyResult = {
+			result: { provider: 'big-sky' },
+			returnToAgent: true,
+			agentMessage: JSON.stringify( {
+				tool_id: 'big_sky__show_component',
+				data: { type: 'color-picker' },
+			} ),
+		};
+		const bigSkyExecuteAbility = jest.fn().mockResolvedValue( bigSkyResult );
+		const jetpackExecuteAbility = jest
+			.fn()
+			.mockResolvedValue( { result: { provider: 'jetpack' } } );
+		const BigSkyColorPicker = () => null;
+		const JetpackTitlePicker = () => null;
+		const jetpackProvider = {
+			toolProvider: {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [
+						{ name: 'jetpack_ai__show_component' },
+						{ name: 'big_sky__show_component' },
+					] ),
+				executeAbility: jetpackExecuteAbility,
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? JetpackTitlePicker : null
+			),
+		};
+		const bigSkyProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
+				executeAbility: bigSkyExecuteAbility,
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'color-picker' ? BigSkyColorPicker : null
+			),
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ jetpackProvider, bigSkyProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		const abilities = await providers.toolProvider?.getAbilities();
+		expect( abilities ).toEqual( [
+			{ name: 'jetpack_ai__show_component' },
+			{ name: 'big-sky/show-component' },
+		] );
+		const bigSkyShowComponentAbility = abilities?.find(
+			( ability ) => ability.name === 'big-sky/show-component'
+		);
+
+		expect( bigSkyShowComponentAbility?.callback ).toEqual( expect.any( Function ) );
+		await expect(
+			bigSkyShowComponentAbility?.callback?.( { type: 'color-picker' } )
+		).resolves.toBe( bigSkyResult );
+
+		await providers.toolProvider?.executeAbility( 'big_sky__show_component', {
+			type: 'color-picker',
+		} );
+		await providers.toolProvider?.executeAbility( 'big-sky-show-component', {
+			type: 'font-picker',
+		} );
+
+		expect( bigSkyExecuteAbility ).toHaveBeenCalledWith( 'big-sky/show-component', {
+			type: 'color-picker',
+		} );
+		expect( bigSkyExecuteAbility ).toHaveBeenCalledWith( 'big-sky/show-component', {
+			type: 'font-picker',
+		} );
+		expect( jetpackExecuteAbility ).not.toHaveBeenCalledWith(
+			'big_sky__show_component',
+			expect.anything()
+		);
+		expect(
+			providers.getChatComponent?.( 'color-picker', { toolId: 'big_sky__show_component' } )
+		).toBe( BigSkyColorPicker );
+		expect(
+			providers.getChatComponent?.( 'color-picker', { toolId: 'big-sky-show-component' } )
+		).toBe( BigSkyColorPicker );
+		expect(
+			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
+		).toBe( JetpackTitlePicker );
+	} );
+
+	it( 'continues loading later providers when one provider import fails', async () => {
+		const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
+		const provider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'second-only' } ] ),
+				executeAbility: jest.fn(),
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ 'https://example.invalid/missing-provider.mjs', provider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [ { name: 'second-only' } ] );
+		expect( warnSpy ).toHaveBeenCalledWith(
+			expect.stringContaining( 'Failed to load provider' ),
+			expect.anything()
+		);
+
+		warnSpy.mockRestore();
+	} );
+
+	it( 'continues composing later providers when one provider returns invalid abilities', async () => {
+		const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
+		const badProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( undefined ),
+				executeAbility: jest.fn(),
+			},
+		};
+		const goodProvider = {
+			toolProvider: {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [ { name: 'good-provider/tool' }, { label: 'Missing name' } ] ),
+				executeAbility: jest.fn().mockResolvedValue( { result: { provider: 'good' } } ),
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ badProvider, goodProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
+			{ name: 'good-provider/tool' },
+		] );
+		await providers.toolProvider?.executeAbility( 'good_provider__tool', {} );
+		expect( goodProvider.toolProvider.executeAbility ).toHaveBeenCalledWith(
+			'good-provider/tool',
+			{}
+		);
+		expect( warnSpy ).toHaveBeenCalledWith(
+			'[AgentsManager] Provider returned invalid abilities; expected array.'
+		);
+
+		warnSpy.mockRestore();
+	} );
+
+	it( 'adds callbacks for a single provider so UI agent messages are promoted', async () => {
+		const bigSkyResult = {
+			result: { success: true, message: 'Pick a palette.' },
+			returnToAgent: true,
+			agentMessage: JSON.stringify( {
+				tool_id: 'big_sky__show_component',
+				data: { type: 'color-picker' },
+			} ),
+		};
+		const bigSkyExecuteAbility = jest.fn().mockResolvedValue( bigSkyResult );
+		const BigSkyColorPicker = () => null;
+		const bigSkyProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
+				executeAbility: bigSkyExecuteAbility,
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'color-picker' ? BigSkyColorPicker : null
+			),
+		};
+		const agentsManagerData = {
+			agentId: 'dolly',
+			agentProviders: [ bigSkyProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+		const abilities = await providers.toolProvider?.getAbilities();
+		const showComponentAbility = abilities?.find(
+			( ability ) => ability.name === 'big-sky/show-component'
+		);
+
+		expect( abilities ).toEqual( [ { name: 'big-sky/show-component' } ] );
+		expect( showComponentAbility?.callback ).toEqual( expect.any( Function ) );
+		await expect( showComponentAbility?.callback?.( { type: 'color-picker' } ) ).resolves.toBe(
+			bigSkyResult
+		);
+		expect( bigSkyExecuteAbility ).toHaveBeenCalledWith( 'big-sky/show-component', {
+			type: 'color-picker',
+		} );
+		expect(
+			providers.getChatComponent?.( 'color-picker', { toolId: 'big_sky__show_component' } )
+		).toBe( BigSkyColorPicker );
+	} );
+
+	it( 'loads Jetpack AI by itself when no host provider is present', async () => {
+		const JetpackTitlePicker = () => null;
+		const jetpackToolProvider = {
+			getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
+			executeAbility: jest.fn().mockResolvedValue( { result: { provider: 'jetpack' } } ),
+		};
+		const jetpackProvider = {
+			toolProvider: jetpackToolProvider,
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? JetpackTitlePicker : null
+			),
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ jetpackProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+		const abilities = await providers.toolProvider?.getAbilities();
+
+		expect( abilities ).toEqual( [ { name: 'jetpack_ai__show_component' } ] );
+		expect( abilities?.[ 0 ]?.callback ).toEqual( expect.any( Function ) );
+		await providers.toolProvider?.executeAbility( 'jetpack_ai__show_component', {} );
+		expect( jetpackToolProvider.executeAbility ).toHaveBeenCalledWith(
+			'jetpack_ai__show_component',
+			{}
+		);
+		expect(
+			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
+		).toBe( JetpackTitlePicker );
+	} );
+
+	it( 'promotes nested provider agent messages returned by executeAbility', async () => {
+		const agentMessage = JSON.stringify( {
+			tool_id: 'jetpack_ai__show_component',
+			data: { type: 'title-picker' },
+		} );
+		const jetpackExecuteAbility = jest.fn().mockResolvedValue( {
+			result: {
+				result: 'Component displayed successfully',
+				returnToAgent: false,
+				agentMessage,
+			},
+			returnToAgent: false,
+		} );
+		const jetpackProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
+				executeAbility: jetpackExecuteAbility,
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ jetpackProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+		const abilities = await providers.toolProvider?.getAbilities();
+		const showComponentAbility = abilities?.find(
+			( ability ) => ability.name === 'jetpack_ai__show_component'
+		);
+
+		await expect(
+			showComponentAbility?.callback?.( {
+				type: 'title-picker',
+			} )
+		).resolves.toEqual(
+			expect.objectContaining( {
+				agentMessage,
+			} )
+		);
+		expect( jetpackExecuteAbility ).toHaveBeenCalledWith( 'jetpack_ai__show_component', {
+			type: 'title-picker',
+		} );
+	} );
+
+	it( 'composes Big Sky and Jetpack while routing source-owned components first', async () => {
+		const BigSkyTitlePicker = () => null;
+		const JetpackTitlePicker = () => null;
+		const bigSkyProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
+				executeAbility: jest.fn(),
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? BigSkyTitlePicker : null
+			),
+		};
+		const jetpackProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
+				executeAbility: jest.fn(),
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? JetpackTitlePicker : null
+			),
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ bigSkyProvider, jetpackProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+		await providers.toolProvider?.getAbilities();
+
+		expect(
+			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
+		).toBe( JetpackTitlePicker );
+		expect(
+			providers.getChatComponent?.( 'title-picker', { toolId: 'big_sky__show_component' } )
+		).toBe( BigSkyTitlePicker );
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( BigSkyTitlePicker );
+	} );
+
+	it( 'falls through to Jetpack for legacy show-component messages with Jetpack-only component types', async () => {
+		const BigSkyFontPicker = () => null;
+		const JetpackTitlePicker = () => null;
+		const bigSkyProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
+				executeAbility: jest.fn(),
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'font-picker' ? BigSkyFontPicker : null
+			),
+		};
+		const jetpackProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
+				executeAbility: jest.fn(),
+			},
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? JetpackTitlePicker : null
+			),
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ bigSkyProvider, jetpackProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect(
+			providers.getChatComponent?.( 'title-picker', { toolId: 'big_sky__show_component' } )
+		).toBe( JetpackTitlePicker );
+		expect(
+			providers.getChatComponent?.( 'font-picker', { toolId: 'big_sky__show_component' } )
+		).toBe( BigSkyFontPicker );
+	} );
+
+	it( 'uses the owning tool provider when a component-only provider is registered first', async () => {
+		const HostTitlePicker = () => null;
+		const JetpackTitlePicker = () => null;
+		const hostProvider = {
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? HostTitlePicker : null
+			),
+		};
+		const jetpackToolProvider = {
+			getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
+			executeAbility: jest.fn(),
+		};
+		const jetpackProvider = {
+			toolProvider: jetpackToolProvider,
+			getChatComponent: jest.fn( ( type: string ) =>
+				type === 'title-picker' ? JetpackTitlePicker : null
+			),
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ hostProvider, jetpackProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+		await providers.toolProvider?.getAbilities();
+
+		expect(
+			providers.getChatComponent?.( 'title-picker', { toolId: 'jetpack_ai__show_component' } )
+		).toBe( JetpackTitlePicker );
+		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( HostTitlePicker );
+	} );
+
+	it( 'composes a third provider under Unified Chat without changing Big Sky or Jetpack ownership', async () => {
+		const bigSkyExecuteAbility = jest.fn().mockResolvedValue( { result: { provider: 'big-sky' } } );
+		const jetpackExecuteAbility = jest
+			.fn()
+			.mockResolvedValue( { result: { provider: 'jetpack' } } );
+		const unifiedChatExecuteAbility = jest
+			.fn()
+			.mockResolvedValue( { result: { provider: 'unified-chat' } } );
+		const bigSkyProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'big-sky/show-component' } ] ),
+				executeAbility: bigSkyExecuteAbility,
+			},
+		};
+		const jetpackProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'jetpack_ai__show_component' } ] ),
+				executeAbility: jetpackExecuteAbility,
+			},
+		};
+		const unifiedChatProvider = {
+			toolProvider: {
+				getAbilities: jest.fn().mockResolvedValue( [ { name: 'unified-chat/search' } ] ),
+				executeAbility: unifiedChatExecuteAbility,
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wpcom-workflow-unified_chat',
+			agentProviders: [ bigSkyProvider, jetpackProvider, unifiedChatProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+		( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
+			{ name: 'big-sky/show-component' },
+			{ name: 'jetpack_ai__show_component' },
+			{ name: 'unified-chat/search' },
+		] );
+
+		await providers.toolProvider?.executeAbility( 'jetpack_ai__show_component', {} );
+		await providers.toolProvider?.executeAbility( 'unified_chat__search', {} );
+
+		expect( jetpackExecuteAbility ).toHaveBeenCalledWith( 'jetpack_ai__show_component', {} );
+		expect( unifiedChatExecuteAbility ).toHaveBeenCalledWith( 'unified-chat/search', {} );
+		expect( bigSkyExecuteAbility ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'mergeUseSuggestionsHooks', () => {

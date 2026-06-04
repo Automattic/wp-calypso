@@ -11,7 +11,11 @@ jest.mock( '../../utils/is-editor-page' );
 
 type MessageActionsRegistration = Parameters< UseAgentChatReturn[ 'registerMessageActions' ] >[ 0 ];
 
-function createToolMessage( type: string, data: Record< string, unknown > = {} ): UIMessage {
+function createToolMessage(
+	type: string,
+	data: Record< string, unknown > = {},
+	toolId = 'big_sky__show_component'
+): UIMessage {
 	return {
 		id: 'message-1',
 		role: 'agent',
@@ -19,7 +23,7 @@ function createToolMessage( type: string, data: Record< string, unknown > = {} )
 			{
 				type: 'text',
 				text: JSON.stringify( {
-					tool_id: 'big_sky__show_component',
+					tool_id: toolId,
 					data: {
 						type,
 						...data,
@@ -45,7 +49,12 @@ describe( 'useZoomAction', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( true );
 	} );
 
-	it( 'registers zoom action for show-component messages', () => {
+	it.each( [
+		'big-sky/show-component',
+		'big-sky-show-component',
+		'big_sky__show_component',
+		'jetpack_ai__show_component',
+	] )( 'registers zoom action for %s messages', ( toolId ) => {
 		let registration: MessageActionsRegistration | undefined;
 		const registerMessageActions = jest.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
@@ -53,7 +62,9 @@ describe( 'useZoomAction', () => {
 
 		renderHook( () => useZoomAction( registerMessageActions ) );
 
-		expect( getActions( registration, createToolMessage( 'pattern-picker' ) ) ).toHaveLength( 1 );
+		expect(
+			getActions( registration, createToolMessage( 'pattern-picker', {}, toolId ) )
+		).toHaveLength( 1 );
 	} );
 
 	it.each( [ 'color-picker', 'font-picker' ] )(
