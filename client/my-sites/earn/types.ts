@@ -3,6 +3,7 @@ export type Product = {
 	currency?: string;
 	price?: number;
 	title?: string;
+	description?: string;
 	interval?: string;
 	buyer_can_change_amount?: boolean;
 	multiple_per_user?: boolean;

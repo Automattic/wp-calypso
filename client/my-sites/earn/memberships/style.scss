@@ -388,6 +388,12 @@ body.is-section-earn.theme-default.color-scheme {
 	font-size: $font-body;
 	font-weight: bold;
 }
+.memberships__products-product-description {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	line-height: 1.4;
+	margin-top: 4px;
+}
 .memberships__products-product-badge {
 	margin-top: 10px;
 	margin-left: -5px;

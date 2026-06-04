@@ -205,6 +205,11 @@ function ProductsList() {
 									<div className="memberships__products-product-title">
 										{ currentProduct?.title }
 									</div>
+									{ currentProduct.type === TYPE_TIER && currentProduct.description && (
+										<div className="memberships__products-product-description">
+											{ currentProduct.description }
+										</div>
+									) }
 									<sub className="memberships__products-product-price">
 										{ getPriceFromProduct( currentProduct, price ) }
 										{ currentAnnualProduct &&

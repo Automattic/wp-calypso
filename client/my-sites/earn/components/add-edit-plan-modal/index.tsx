@@ -73,6 +73,7 @@ function minimumCurrencyTransactionAmount(
 }
 
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
+const MAX_LENGTH_TIER_DESCRIPTION = 500;
 
 const RecurringPaymentsPlanAddEditModal = ( {
 	closeDialog,
@@ -137,6 +138,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				)
 	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
+	const [ editedDescription, setEditedDescription ] = useState( product?.description ?? '' );
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
 		product?.subscribe_as_site_subscriber ?? isOnlyTier
 	);
@@ -180,6 +182,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			! field &&
 			editedCustomConfirmationMessage &&
 			editedCustomConfirmationMessage.length > MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE
+		) {
+			return false;
+		}
+		if (
+			( field === 'description' || ! field ) &&
+			editedPostIsTier &&
+			editedDescription.length > MAX_LENGTH_TIER_DESCRIPTION
 		) {
 			return false;
 		}
@@ -263,6 +272,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 		if ( editedPostIsTier ) {
 			product.type = TYPE_TIER;
+			product.description = editedDescription.trim();
 		}
 
 		return product;
@@ -370,6 +380,38 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
+				{ editedPostIsTier && (
+					<FormFieldset>
+						<FormLabel htmlFor="tier-description">
+							{ translate( 'Describe what subscribers get at this tier' ) }
+						</FormLabel>
+						<CountedTextArea
+							id="tier-description"
+							value={ editedDescription }
+							onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+								setEditedDescription( event.target.value )
+							}
+							acceptableLength={ MAX_LENGTH_TIER_DESCRIPTION }
+							showRemainingCharacters
+							placeholder={ translate(
+								'e.g. Full archive access, community Q&A, and bonus newsletters'
+							) }
+						/>
+						<FormSettingExplanation>
+							{ translate(
+								'Optional. Shown to readers when they choose a paid tier on your site.'
+							) }
+						</FormSettingExplanation>
+						{ ! isFormValid( 'description' ) && (
+							<FormInputValidation
+								isError
+								text={ translate( 'Description must be %(max)d characters or fewer.', {
+									args: { max: MAX_LENGTH_TIER_DESCRIPTION },
+								} ) }
+							/>
+						) }
+					</FormFieldset>
+				) }
 				{ ! isOnlyTier && (
 					<FormFieldset className="memberships__dialog-sections-type">
 						<ToggleControl
