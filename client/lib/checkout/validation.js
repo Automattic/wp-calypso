@@ -235,51 +235,6 @@ validators.validBrazilTaxId = {
 	},
 };
 
-validators.validIndiaPan = {
-	isValid( value ) {
-		const panRegex = /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/;
-
-		if ( ! value ) {
-			return false;
-		}
-		return panRegex.test( value );
-	},
-	error: function ( description ) {
-		return i18n.translate( '%(description)s is invalid', {
-			args: { description },
-		} );
-	},
-};
-
-validators.validIndonesiaNik = {
-	isValid( value ) {
-		const digitsOnly = typeof value === 'string' ? value.replace( /[^0-9]/g, '' ) : '';
-		return digitsOnly.length === 16;
-	},
-	error: function ( description ) {
-		return i18n.translate( '%(description)s is invalid', {
-			args: { description: capitalize( description ) },
-		} );
-	},
-};
-
-validators.validIndiaGstin = {
-	isValid( value ) {
-		const gstinRegex =
-			/^([0-2][0-9]|[3][0-7])[A-Z]{3}[ABCFGHLJPTK][A-Z]\d{4}[A-Z][A-Z0-9][Z][A-Z0-9]$/i;
-
-		if ( ! value ) {
-			return true;
-		}
-		return gstinRegex.test( value );
-	},
-	error: function ( description ) {
-		return i18n.translate( '%(description)s is invalid', {
-			args: { description },
-		} );
-	},
-};
-
 validators.validPostalCodeUS = {
 	isValid: ( value ) => isValidPostalCode( value, 'US' ),
 	error: function ( description ) {

@@ -140,9 +140,6 @@ export interface TransactionRequest {
 	successUrl?: string | undefined;
 	cancelUrl?: string | undefined;
 	idealBank?: string | undefined;
-	pan?: string | undefined;
-	gstin?: string | undefined;
-	nik?: string | undefined;
 	// 6-digit BLIK code generated in the customer's banking app.
 	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
@@ -196,9 +193,6 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	pan?: string;
-	gstin?: string;
-	nik?: string;
 	// 6-digit BLIK code generated in the customer's banking app.
 	code?: string;
 	useForAllSubscriptions?: boolean;
