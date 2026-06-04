@@ -25,7 +25,7 @@ function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/preferences/appearance"
-			title={ __( 'Appearance (Experimental)' ) }
+			title={ __( 'Appearance' ) }
 			description={ __( 'Choose how the dashboard looks.' ) }
 			decoration={ <Icon icon={ styles } size={ 24 } /> }
 			badges={ [ { text: getColorSchemeLabel( colorScheme ) } ] }
