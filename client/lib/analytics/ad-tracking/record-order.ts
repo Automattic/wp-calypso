@@ -679,6 +679,7 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 	loadParselyTracker()
 		.then( () => {
 			debug( `loadParselyTracker: Loaded Parsely tracker ${ TRACKING_IDS.parselyTracker }` );
+			//eslint-disable-next-line @typescript-eslint/no-unused-expressions
 			window.PARSELY && window.PARSELY.conversions.trackPurchase( cartContents );
 		} )
 		.then( () => {
