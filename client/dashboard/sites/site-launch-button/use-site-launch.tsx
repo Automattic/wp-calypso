@@ -106,9 +106,12 @@ export function useSiteLaunch(
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
-	const launchWithCelebration = () => {
+	// The ungated experiment is the only path that triggers celebration.
+	const handleUngatedLaunch = () => {
+		track();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
+				// Add a query param to trigger the celebration modal in the parent.
 				window.history.replaceState(
 					null,
 					'',
@@ -174,11 +177,7 @@ export function useSiteLaunch(
 		return {
 			...baseResult,
 			isHidden: false,
-			onClick: () => {
-				track();
-				// The ungated experiment is the only path that triggers celebration.
-				launchWithCelebration();
-			},
+			onClick: handleUngatedLaunch,
 		};
 	}
 
