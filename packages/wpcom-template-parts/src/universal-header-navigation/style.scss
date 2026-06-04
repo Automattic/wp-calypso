@@ -180,6 +180,8 @@ $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
 $x-content-min-z-index: 801;
 $lp-font-weight-bold: 600;
 $lp-font-weight-semi-bold: 600;
+$lp-font-weight-medium: 500;
+$lp-font-weight-regular: 400;
 $lp-chevron-content-right: '\203A';
 $lp-chevron-content-down: '\25BE';
 $x-nav-breakpoint-small: $lp-breakpoint-S;
@@ -1565,6 +1567,129 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-block: 18px;
 		padding-inline: 18px;
 		border-top: 1px solid $studio-gray-5;
+
+		// When the "Get Jetpack app" banner is present (iOS / Android) it stacks
+		// full-width above the user row / CTAs instead of sitting beside them. Drop
+		// the top separator so the banner reads as part of the footer, not below a line.
+		&:has( .x-menu-mobile-app-banner ) {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+			border-top: none;
+		}
+	}
+
+	// "Get Jetpack app" banner (2026 mobile menu). The whole banner is the link; the
+	// Download chip is decorative. Ported from the wpcom Landpack reference. Device
+	// targeting is driven by the `--ios` / `--android` modifier set in the component
+	// (the reference keys off `is-ios-platform` / `is-android-platform` body classes,
+	// which Calypso doesn't have).
+	.x-menu-mobile-app-banner {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 12px 14px;
+		border-radius: 8px;
+		background: $studio-gray-0;
+		text-decoration: none;
+		color: inherit;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			text-decoration: none;
+			color: inherit;
+		}
+	}
+
+	// Overlapping WordPress + Jetpack badge icons.
+	.x-menu-mobile-app-banner-icons {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.x-menu-mobile-app-banner-icon {
+		display: block;
+		width: 32px;
+		height: 32px;
+
+		// Jetpack badge overlaps the WordPress badge, on a white fill so the WP badge
+		// doesn't show through behind it.
+		&--jetpack {
+			margin-inline-start: -10px;
+			border-radius: 50%;
+			background: $studio-white;
+		}
+	}
+
+	.x-menu-mobile-app-banner-text {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		flex: 1;
+	}
+
+	.x-menu-mobile-app-banner-title {
+		font-size: 14px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 20px;
+		color: $studio-gray-100;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.x-menu-mobile-app-banner-subtitle {
+		// 12px so the subtitle fits one line next to the badges and Download.
+		font-size: 12px;
+		font-weight: $lp-font-weight-regular;
+		line-height: 20px;
+		color: #50575e; // gray-70 (no exact studio token)
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	// Download chip - decorative (the whole banner is the link). Compact so the
+	// subtitle fits beside it. Reacts to the banner's hover/focus state.
+	.x-menu-mobile-app-banner-download {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex-shrink: 0;
+		height: 36px;
+		padding: 0 8px;
+		// Reference uses 6px; Calypso's radii scale snaps to 8px (visually equivalent).
+		border-radius: 8px;
+		background: $studio-white;
+		border: 1px solid $studio-gray-5;
+		font-size: 13px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 20px;
+		color: $studio-gray-100;
+		white-space: nowrap;
+	}
+
+	.x-menu-mobile-app-banner:hover .x-menu-mobile-app-banner-download,
+	.x-menu-mobile-app-banner:focus .x-menu-mobile-app-banner-download {
+		background: $studio-gray-0;
+	}
+
+	// Store glyphs. The component renders only the glyph matching the device, but keep
+	// the size rules so each is correctly dimensioned when present.
+	.x-menu-mobile-app-banner-store-icon {
+		flex-shrink: 0;
+	}
+
+	.x-menu-mobile-app-banner-store-icon--apple {
+		width: 14px;
+		height: 17px;
+	}
+
+	.x-menu-mobile-app-banner-store-icon--google {
+		width: 14px;
+		height: 16px;
 	}
 
 	.x-menu-mobile-footer-actions {
