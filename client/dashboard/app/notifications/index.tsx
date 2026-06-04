@@ -94,20 +94,14 @@ export default function Notifications( {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
-	const handleOmnibarToggle = useCallback(
-		( eventAnchor?: HTMLElement | null ) => {
-			if ( eventAnchor !== undefined ) {
-				setAnchorEl( eventAnchor );
+	const handleOmnibarToggle = useCallback( () => {
+		setIsOpen( ( prev ) => {
+			if ( ! prev ) {
+				setShowHelpCenter( false, undefined, true );
 			}
-			setIsOpen( ( prev ) => {
-				if ( ! prev ) {
-					setShowHelpCenter( false, undefined, true );
-				}
-				return ! prev;
-			} );
-		},
-		[ setShowHelpCenter ]
-	);
+			return ! prev;
+		} );
+	}, [ setShowHelpCenter ] );
 
 	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );

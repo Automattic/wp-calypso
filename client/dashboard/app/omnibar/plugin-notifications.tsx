@@ -25,9 +25,6 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 		id: 'notifications',
 		label: __( 'Notifications' ),
 		icon: <Icon ref={ bellRef } icon={ hasUnseenNotifications ? bellUnread : bell } />,
-		onClick: () =>
-			omnibarEvents.notifications.emit(
-				bellRef.current?.closest< HTMLElement >( 'button' ) ?? null
-			),
+		onClick: () => omnibarEvents.notifications.emit(),
 	};
 }
