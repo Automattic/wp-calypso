@@ -7,18 +7,18 @@ function snap( hc = {}, am = {} ): SurfaceSnapshot {
 	return { helpCenter: { ...HC_CLOSED, ...hc }, agentsManager: { ...AM_CLOSED, ...am } };
 }
 
-const RAISED = '72px'; // MINIMIZED_BAR_HEIGHT (56) + STACK_GAP (16)
-
 describe( 'computeLayoutVars', () => {
-	it( 'lifts the open Help Center card above the Agents Manager Ask AI bar', () => {
+	it( 'lifts the open Help Center card above the Agents Manager Ask AI bar (gutter)', () => {
 		const vars = computeLayoutVars( snap( { shown: true }, { open: true, minimized: true } ) );
-		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( RAISED );
+		// AM bar height (40) + STACK_GAP (16).
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '56px' );
 		expect( vars[ '--ai-surface-am-bottom-offset' ] ).toBe( '0px' );
 	} );
 
-	it( 'lifts the open Agents Manager panel above the Help Center minimized bar', () => {
+	it( 'lifts the open Agents Manager panel above the Help Center minimized bar (gutter)', () => {
 		const vars = computeLayoutVars( snap( { shown: true, minimized: true }, { open: true } ) );
-		expect( vars[ '--ai-surface-am-bottom-offset' ] ).toBe( RAISED );
+		// HC bar height (56) + STACK_GAP (16).
+		expect( vars[ '--ai-surface-am-bottom-offset' ] ).toBe( '72px' );
 		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
 	} );
 
@@ -26,8 +26,9 @@ describe( 'computeLayoutVars', () => {
 		const vars = computeLayoutVars(
 			snap( { shown: true, minimized: true }, { open: true, minimized: true } )
 		);
-		// Flush (no gutter) so the two bars read as a single stacked container.
-		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '56px' ); // MINIMIZED_BAR_HEIGHT
+		// Flush against the AM bar's own height (40), so the two bars read as one
+		// stacked container with no gutter.
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '40px' );
 		expect( vars[ '--ai-surface-am-bottom-offset' ] ).toBe( '0px' );
 	} );
 

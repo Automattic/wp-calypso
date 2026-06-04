@@ -699,42 +699,23 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
-// Coexistence: pin the floating chat into a fixed bottom-right column aligned
-// with Help Center — shared 410px width and 16px right/bottom insets, in both
-// open and minimized states. Agenttic positions the chat with a width-derived
-// `translateX`, which a CSS width change alone would leave stale (pushing it
-// off-screen); right-anchoring and clearing the transform keeps it aligned.
-// (This fixes the chat in place, so it is no longer drag-repositionable while
-// coexisting — intended for the aligned-column layout.)
+// Coexistence: keep agenttic's native width and positioning for the floating
+// chat (overriding them disrupts its JS-driven entry/state animation, causing a
+// slide-in from the left). Only let the inner content/pill fill the bar's width
+// so the minimized bar lines up with Help Center, which is matched to the same
+// native width.
 .is-ai-surface-coexisting
 	.agents-manager-chat--undocked
 	.agenttic.Chat-module_container.Chat-module_floating {
-	width: 410px;
-	left: auto !important;
-	right: 16px !important;
-	bottom: 16px !important;
-	transform: none !important;
-	// The chat is a fixed column here, so disable agenttic's `transition: all`
-	// which otherwise animates the recomputed position — a weird slide-in from
-	// the left when opening or expanding from the minimized bar.
-	transition: none !important;
-
-	// Agenttic caps the inner content/pill narrower than the container; let them
-	// fill the shared 410px width so the minimized bar lines up with Help Center.
-	.Chat-module_content {
-		width: 100% !important;
-	}
-
-	// On the minimized bar specifically, drop agenttic's 8px content padding so
-	// the pill fills the full 410px width (right edge at 16px like Help Center)
-	// and sits flush against Help Center's bar above it. Scoped via :has so the
-	// open panel keeps its inset.
+	// On the minimized bar only, drop agenttic's 8px content padding and let the
+	// pill fill the bar so it lines up with Help Center's bar above it. Scoped
+	// via :has so the open panel keeps agenttic's native sizing untouched.
 	.Chat-module_content:has( .MinimizedView-module_button ) {
 		padding: 0 !important;
-	}
 
-	.MinimizedView-module_button {
-		width: 100% !important;
+		.MinimizedView-module_button {
+			width: 100% !important;
+		}
 	}
 }
 

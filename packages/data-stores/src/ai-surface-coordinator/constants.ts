@@ -1,6 +1,9 @@
-// Height of the Agents Manager "Ask AI" compact bar, in px. Matches Help
-// Center's own minimized bar height ($head-foot-height, 56px).
+// Visible height of Help Center's minimized bar, in px ($head-foot-height).
 export const MINIMIZED_BAR_HEIGHT = 56;
+// Visible height of Agents Manager's minimized "Ask AI" bar, in px. It is
+// shorter than Help Center's bar (agenttic's MinimizedView), so offsets that
+// stack against it use this value rather than MINIMIZED_BAR_HEIGHT.
+export const AM_MINIMIZED_BAR_HEIGHT = 40;
 // Vertical gap left between an open panel and the other surface's minimized bar.
 export const STACK_GAP = 16;
 
