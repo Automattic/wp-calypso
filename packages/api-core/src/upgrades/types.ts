@@ -437,6 +437,26 @@ export interface Purchase {
 	is_upgradable: boolean;
 
 	/**
+	 * True if this subscription's plan can be downgraded to a different, lower
+	 * plan type (eg: Business to Personal).
+	 *
+	 * Only ever true for plans. Like `is_upgradable`, this is false for A4A
+	 * plans, bundle-`included` subscriptions, and (for Jetpack plans) holding
+	 * sites. Unlike `is_upgradable`, an active subscription that is merely past
+	 * its expiry date (grace period) is still considered downgradable; only
+	 * inactive ('expired') subscriptions are excluded.
+	 */
+	is_plan_type_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded to a shorter billing
+	 * term of the same plan (eg: annual to monthly).
+	 *
+	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
+	 */
+	is_plan_term_downgradable: boolean;
+
+	/**
 	 * True if deactivating this subscription will cause the site to be reverted
 	 * from an Atomic site to a Simple site. This is only true if the site is
 	 * currently on the Atomic architecture and removing this subscription would
