@@ -714,6 +714,34 @@ body.post-new-php.agents-manager-sidebar-container {
 	right: 16px !important;
 	bottom: 16px !important;
 	transform: none !important;
+
+	// Agenttic caps the inner content/pill narrower than the container; let them
+	// fill the shared 410px width so the minimized bar lines up with Help Center.
+	.Chat-module_content {
+		width: 100% !important;
+	}
+
+	// On the minimized bar specifically, drop agenttic's 8px content padding so
+	// the pill fills the full 410px width (right edge at 16px like Help Center)
+	// and sits flush against Help Center's bar above it. Scoped via :has so the
+	// open panel keeps its inset.
+	.Chat-module_content:has( .MinimizedView-module_button ) {
+		padding: 0 !important;
+	}
+
+	.MinimizedView-module_button {
+		width: 100% !important;
+	}
+}
+
+// When both surfaces are minimized, square the Agents Manager bar's top corners
+// so it sits flush under Help Center's bar (which already squares its bottom),
+// reading as one stacked container rounded only on the outer edges.
+.is-ai-surfaces-both-minimized
+	.agents-manager-chat--undocked
+	.MinimizedView-module_button {
+	border-start-start-radius: 0 !important;
+	border-start-end-radius: 0 !important;
 }
 
 /* Agenttic UI: Styles for the undocked chat */

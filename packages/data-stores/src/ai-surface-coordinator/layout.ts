@@ -30,11 +30,14 @@ const amOpenPanel = ( s: SurfaceSnapshot ) =>
 export function computeLayoutVars( s: SurfaceSnapshot ): LayoutVars {
 	const raised = `${ MINIMIZED_BAR_HEIGHT + STACK_GAP }px`;
 
-	// Help Center always sits above Agents Manager's bar when that bar is present
-	// — whether Help Center is the open card (single-open case) or its own
-	// minimized bar (both-minimized case, which forms a single aligned column
-	// since both share the same width and right edge).
-	const hcBottomOffset = amBarPresent( s ) ? raised : '0px';
+	// Help Center always sits above Agents Manager's bar when that bar is present.
+	// When BOTH are minimized they form a single stacked container, so the bars
+	// sit flush (no gutter); when Help Center is the open card it keeps the
+	// gutter above the bar.
+	let hcBottomOffset = '0px';
+	if ( amBarPresent( s ) ) {
+		hcBottomOffset = hcBarPresent( s ) ? `${ MINIMIZED_BAR_HEIGHT }px` : raised;
+	}
 	// Agents Manager's open panel lifts above Help Center's minimized bar. (When
 	// AM is itself minimized, it stays at the bottom and Help Center lifts above
 	// it via the offset above — so they never both lift.)

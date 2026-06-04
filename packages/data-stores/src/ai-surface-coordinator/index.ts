@@ -118,13 +118,28 @@ export function useAiSurfaceCoordinator( enabled: boolean ) {
 			}
 
 			applyLayoutVars( computeLayoutVars( next ) );
+
+			// Mark when both surfaces are minimized so their bars can be styled as
+			// one stacked container (flush, rounded only on the outer edges).
+			const bothMinimized =
+				next.helpCenter.present &&
+				next.helpCenter.shown &&
+				next.helpCenter.minimized &&
+				next.agentsManager.present &&
+				next.agentsManager.open &&
+				next.agentsManager.minimized &&
+				! next.agentsManager.docked;
+			document.documentElement.classList.toggle( 'is-ai-surfaces-both-minimized', bothMinimized );
 		};
 
 		reconcile(); // boot reconciliation
 		const unsubscribe = subscribe( reconcile );
 		return () => {
 			unsubscribe();
-			document.documentElement.classList.remove( 'is-ai-surface-coexisting' );
+			document.documentElement.classList.remove(
+				'is-ai-surface-coexisting',
+				'is-ai-surfaces-both-minimized'
+			);
 		};
 	}, [ enabled ] );
 }

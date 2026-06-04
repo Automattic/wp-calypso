@@ -22,11 +22,12 @@ describe( 'computeLayoutVars', () => {
 		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '0px' );
 	} );
 
-	it( 'stacks both minimized bars into a column (HC bar above the AM bar)', () => {
+	it( 'stacks both minimized bars flush into one column (HC bar directly atop the AM bar)', () => {
 		const vars = computeLayoutVars(
 			snap( { shown: true, minimized: true }, { open: true, minimized: true } )
 		);
-		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( RAISED );
+		// Flush (no gutter) so the two bars read as a single stacked container.
+		expect( vars[ '--ai-surface-hc-bottom-offset' ] ).toBe( '56px' ); // MINIMIZED_BAR_HEIGHT
 		expect( vars[ '--ai-surface-am-bottom-offset' ] ).toBe( '0px' );
 	} );
 

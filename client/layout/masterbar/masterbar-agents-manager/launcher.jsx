@@ -26,7 +26,7 @@ const MasterbarAgentsManagerLauncher = ( { tooltip } ) => {
 	// `isOpen` is true for both the open panel and the minimized bar; it is only
 	// false when AM is fully hidden, which is exactly when the launcher shows.
 	const isOpen = useDataStoreSelect( ( select ) => select( AGENTS_MANAGER_STORE ).getIsOpen(), [] );
-	const { setIsOpen } = useDataStoreDispatch( AGENTS_MANAGER_STORE );
+	const { setIsOpen, setIsMinimized } = useDataStoreDispatch( AGENTS_MANAGER_STORE );
 
 	if ( isOpen ) {
 		return null;
@@ -38,6 +38,9 @@ const MasterbarAgentsManagerLauncher = ( { tooltip } ) => {
 			location: 'agents-manager',
 			section: sectionName,
 		} );
+		// Always open to the full chat — clear any persisted minimized state so the
+		// launcher never lands on the minimized "Ask AI" bar.
+		setIsMinimized( false );
 		setIsOpen( true );
 	};
 
