@@ -1067,8 +1067,7 @@ const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getShortDescription: () =>
 		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
-	getTagline: () =>
-		i18n.translate( 'Learn more about everything included with the Student plan.' ),
+	getTagline: () => i18n.translate( 'Learn more about everything included with the Student plan.' ),
 } );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
