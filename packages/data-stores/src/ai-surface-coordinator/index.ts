@@ -5,18 +5,19 @@ import { STORE_KEY as HC_KEY } from '../help-center/constants';
 import { LAST_EXPANDED_STORAGE_KEY } from './constants';
 import { computeLayoutVars } from './layout';
 import { computeCoordination, type Surface, type SurfaceSnapshot } from './reconciler';
+import type {
+	AgentsManagerSelect,
+	Dispatch as AgentsManagerDispatch,
+} from '../agents-manager/types';
+import type { HelpCenterSelect, Dispatch as HelpCenterDispatch } from '../help-center/types';
 
 export * from './reconciler';
 export * from './layout';
 export * from './constants';
 
 function readSnapshot(): SurfaceSnapshot {
-	const hc = select( HC_KEY ) as
-		| { isHelpCenterShown: () => boolean; getIsMinimized: () => boolean }
-		| undefined;
-	const am = select( AM_KEY ) as
-		| { getIsOpen: () => boolean; getIsMinimized: () => boolean; getIsDocked: () => boolean }
-		| undefined;
+	const hc = select( HC_KEY ) as unknown as HelpCenterSelect | undefined;
+	const am = select( AM_KEY ) as unknown as AgentsManagerSelect | undefined;
 
 	return {
 		helpCenter: {
@@ -34,13 +35,21 @@ function readSnapshot(): SurfaceSnapshot {
 }
 
 function readLastExpanded(): Surface | null {
-	const v = window.localStorage.getItem( LAST_EXPANDED_STORAGE_KEY );
-	return v === 'help-center' || v === 'agents-manager' ? v : null;
+	try {
+		const v = window.localStorage.getItem( LAST_EXPANDED_STORAGE_KEY );
+		return v === 'help-center' || v === 'agents-manager' ? v : null;
+	} catch {
+		return null;
+	}
 }
 
 function writeLastExpanded( surface: Surface | null ) {
 	if ( surface ) {
-		window.localStorage.setItem( LAST_EXPANDED_STORAGE_KEY, surface );
+		try {
+			window.localStorage.setItem( LAST_EXPANDED_STORAGE_KEY, surface );
+		} catch {
+			// Non-critical UI hint; ignore storage failures (e.g. Safari private mode).
+		}
 	}
 }
 
@@ -64,8 +73,12 @@ export function useAiSurfaceCoordinator( enabled: boolean ) {
 
 		let prev = readSnapshot();
 		let lastExpanded = readLastExpanded();
+		let reconciling = false;
 
 		const reconcile = () => {
+			if ( reconciling ) {
+				return;
+			}
 			const next = readSnapshot();
 			const { commands, lastExpanded: nextLast } = computeCoordination( prev, next, lastExpanded );
 
@@ -74,20 +87,30 @@ export function useAiSurfaceCoordinator( enabled: boolean ) {
 				writeLastExpanded( lastExpanded );
 			}
 
-			for ( const command of commands ) {
-				if ( command.surface === 'agents-manager' ) {
-					( dispatch( AM_KEY ) as { setIsMinimized: ( v: boolean ) => void } ).setIsMinimized(
-						true
-					);
-				} else {
-					( dispatch( HC_KEY ) as { setIsMinimized: ( v: boolean ) => void } ).setIsMinimized(
-						true
-					);
+			// Snapshot prev BEFORE dispatching so re-entrant calls see a consistent baseline.
+			prev = next;
+
+			reconciling = true;
+			try {
+				for ( const command of commands ) {
+					if ( command.surface === 'agents-manager' ) {
+						( dispatch( AM_KEY ) as AgentsManagerDispatch ).setIsMinimized( true );
+					} else {
+						( dispatch( HC_KEY ) as HelpCenterDispatch[ 'dispatch' ] ).setIsMinimized( true );
+					}
 				}
+			} finally {
+				reconciling = false;
+			}
+
+			// After commands ran, bring prev in sync with the actual store state so
+			// subsequent ticks correctly detect new transitions (e.g. a surface
+			// re-expanding after having been minimized by a command above).
+			if ( commands.length > 0 ) {
+				prev = readSnapshot();
 			}
 
 			applyLayoutVars( computeLayoutVars( next, lastExpanded ) );
-			prev = next;
 		};
 
 		reconcile(); // boot reconciliation
