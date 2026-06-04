@@ -32,13 +32,9 @@ export default function Notifications( {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
-	// The legacy masterbar remounts the notification bell (it keys the item on an
-	// internal animation state that flips when the unseen count changes), which
-	// detaches whatever node we captured — a detached node reports a zero-size rect,
-	// so a cached anchor would position the popover in the corner until an unrelated
-	// re-render handed us a fresh node. Hand the Popover a virtual anchor that
-	// re-resolves the live bell on every measurement instead, falling back to the
-	// captured node (e.g. the non-masterbar omnibar) when it is still connected.
+	// The masterbar remounts the bell when the unseen count changes, detaching any
+	// cached node. Resolve the live bell at measurement time so the popover stays
+	// anchored, falling back to the captured node while it is still connected.
 	const popoverAnchor = useMemo(
 		() => ( {
 			getBoundingClientRect: () =>
