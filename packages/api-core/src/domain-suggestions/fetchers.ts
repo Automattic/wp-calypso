@@ -83,7 +83,6 @@ export async function fetchAvailableTlds( search?: string, vendor?: string ): Pr
  * `with_bundles=1` payload (DOMAINS-2166) so the search flow can render the
  * bundle card end-to-end before the backend is wired up. M1b replaces the body
  * with a real network call without changing this signature.
- *
  * @param search The domain search query (an SLD or FQDN).
  * @returns A bundle suggestion, or null when no bundle applies.
  */

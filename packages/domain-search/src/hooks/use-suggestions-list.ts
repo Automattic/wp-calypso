@@ -77,10 +77,12 @@ export const useSuggestionsList = () => {
 		} ) ),
 	} );
 
-	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } = useMemo(
-		() => availablePremiumDomainsCombinator( availabilityResults ),
-		[ availabilityResults ]
-	);
+	// Derived inline (not memoized): availabilityResults is a fresh array each
+	// render, so memoizing on it gains nothing and trips @tanstack/query's
+	// no-unstable-deps rule. Recomputing every render matches the previous
+	// behaviour exactly.
+	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } =
+		availablePremiumDomainsCombinator( availabilityResults );
 
 	const isLoading =
 		isLoadingSuggestions ||
