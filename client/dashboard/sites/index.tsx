@@ -203,7 +203,13 @@ export default function Sites() {
 		totalItems ?? 0
 	);
 
-	const isFilteringDeletedSites = isDeletedFilterActive( view.filters ?? [] );
+	const filters = view.filters ?? [];
+	const hasActiveSearch = !! view.search;
+	const hasActiveQuery = hasActiveSearch || filters.length > 0;
+	const isFilteringOnlyDeletedSites =
+		isDeletedFilterActive( filters ) &&
+		! hasActiveSearch &&
+		filters.every( ( filter ) => filter.field === 'is_deleted' );
 
 	return (
 		<>
@@ -246,7 +252,7 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ userHasSites || isFilteringDeletedSites ? (
+				{ userHasSites || hasActiveQuery ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
@@ -255,7 +261,7 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							isFilteringDeletedSites ? (
+							isFilteringOnlyDeletedSites ? (
 								<DataViewsEmptyStateLayout
 									title={ __( 'You have no deleted sites' ) }
 									description={ createInterpolateElement(
