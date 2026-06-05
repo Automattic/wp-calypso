@@ -5,6 +5,7 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isWpComStudentPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -33,6 +34,7 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -107,9 +109,13 @@ class PlansComponent extends Component {
 	}
 
 	isInvalidPlanInterval() {
-		const { isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
+		const { currentPlan, isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
 
 		if ( 'monthly' === intervalType && selectedSite ) {
+			if ( isWpComStudentPlan( currentPlan?.productSlug ) ) {
+				return true;
+			}
+
 			// This is the reason isInvalidPlanInterval even exists and the redirection isn't handled at controller level
 			return ! isSiteEligibleForMonthlyPlan;
 		}
@@ -184,6 +190,7 @@ class PlansComponent extends Component {
 		const hideEcommerce = deEmphasizedExperiment?.isVariantB && isFreePlan;
 
 		const isExperimentVariant = deEmphasizedExperiment && ! deEmphasizedExperiment.isControl;
+		const isStudentPlan = isWpComStudentPlan( currentPlan?.productSlug );
 		const highlightLabelOverrides =
 			isExperimentVariant && currentPlan?.productSlug
 				? { [ currentPlan.productSlug ]: this.props.translate( 'Current plan' ) }
@@ -191,37 +198,50 @@ class PlansComponent extends Component {
 
 		// Experiment: filter the visible plan tiers to those at or above the current plan.
 		const currentTier = getPlan( currentPlan?.productSlug )?.type;
-		const visiblePlanTiers =
-			isExperimentVariant && currentTier && PLAN_TIERS.includes( currentTier )
-				? PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) )
-				: PLAN_TIERS;
+		let visiblePlanTiers = PLAN_TIERS;
+		if ( isStudentPlan ) {
+			visiblePlanTiers = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+		} else if ( isExperimentVariant && currentTier && PLAN_TIERS.includes( currentTier ) ) {
+			visiblePlanTiers = PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) );
+		}
 
 		return (
-			<PlansFeaturesMain
-				isInSiteDashboard={ isUntangled }
-				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
-				customerType={ this.props.customerType }
-				intervalType={ this.props.intervalType }
-				selectedFeature={ this.props.selectedFeature }
-				selectedPlan={ this.props.selectedPlan }
-				redirectTo={ this.props.redirectTo }
-				pluginSlug={ this.props.pluginSlug }
-				coupon={ this.props.coupon }
-				discountEndDate={ this.props.discountEndDate }
-				siteId={ selectedSite?.ID }
-				plansWithScroll={ false }
-				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
-				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ showSpotlight }
-				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
-				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
-				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
-				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
-				hideEnterprisePlan={ hideEnterprise }
-				hideEcommercePlan={ hideEcommerce }
-				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
-			/>
+			<>
+				{ isStudentPlan && (
+					<Notice
+						status="is-info"
+						text={ this.props.translate(
+							'This site is on the Student plan. Business and Commerce upgrade options are shown below.'
+						) }
+						showDismiss={ false }
+					/>
+				) }
+				<PlansFeaturesMain
+					isInSiteDashboard={ isUntangled }
+					redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
+					customerType={ this.props.customerType }
+					intervalType={ this.props.intervalType }
+					selectedFeature={ this.props.selectedFeature }
+					selectedPlan={ this.props.selectedPlan }
+					redirectTo={ this.props.redirectTo }
+					pluginSlug={ this.props.pluginSlug }
+					coupon={ this.props.coupon }
+					discountEndDate={ this.props.discountEndDate }
+					siteId={ selectedSite?.ID }
+					plansWithScroll={ false }
+					showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
+					intent={ plansIntent }
+					isSpotlightOnCurrentPlan={ showSpotlight }
+					highlightLabelOverrides={ highlightLabelOverrides }
+					hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+					hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
+					hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
+					hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
+					hideEnterprisePlan={ isStudentPlan || hideEnterprise }
+					hideEcommercePlan={ hideEcommerce }
+					showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
+				/>
+			</>
 		);
 	}
 

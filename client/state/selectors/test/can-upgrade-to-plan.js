@@ -22,6 +22,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
+	PLAN_STUDENT,
 } from '@automattic/calypso-products';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 
@@ -109,6 +110,37 @@ describe( 'canUpgradeToPlan', () => {
 		].forEach( ( [ planOwned, planToPurchase ] ) =>
 			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
 				true
+			)
+		);
+	} );
+
+	test( 'should return true from Student to Business and Commerce plans', () => {
+		[
+			PLAN_BUSINESS,
+			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_ECOMMERCE_3_YEARS,
+		].forEach( ( planToPurchase ) =>
+			expect( canUpgradeToPlan( makeState( siteId, PLAN_STUDENT ), siteId, planToPurchase ) ).toBe(
+				true
+			)
+		);
+	} );
+
+	test( 'should return false from Student to lower-tier and monthly plans', () => {
+		[ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS_MONTHLY ].forEach( ( planToPurchase ) =>
+			expect( canUpgradeToPlan( makeState( siteId, PLAN_STUDENT ), siteId, planToPurchase ) ).toBe(
+				false
+			)
+		);
+	} );
+
+	test( 'should return false when purchasing Student from other plans', () => {
+		[ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ].forEach( ( planOwned ) =>
+			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, PLAN_STUDENT ) ).toBe(
+				false
 			)
 		);
 	} );

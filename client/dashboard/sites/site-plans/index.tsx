@@ -1,4 +1,9 @@
-import { SubscriptionBillPeriod } from '@automattic/api-core';
+import {
+	BusinessPlans,
+	DotcomPlans,
+	EcommercePlans,
+	SubscriptionBillPeriod,
+} from '@automattic/api-core';
 import { sitePlansQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { formatCurrency, getCurrencyObject } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -38,6 +43,12 @@ type UpgradeCreditsSource = 'plan' | 'domain' | 'other-upgrades' | 'domain-and-o
 
 type UpgradeCredit = { amount: number; currencyCode: string; source: UpgradeCreditsSource };
 
+const STUDENT_PLAN_UPGRADE_BILL_PERIODS: SubscriptionBillPeriodValue[] = [
+	SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD,
+	SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD,
+	SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD,
+];
+
 /**
  * Computes the upgrade credit to display in the notice banner, or null if none applies.
  *
@@ -47,7 +58,8 @@ type UpgradeCredit = { amount: number; currencyCode: string; source: UpgradeCred
  */
 function getUpgradeCredit(
 	activePlans: Array< { sitePlan: SiteContextualPlan; tierRank: number } >,
-	currentTierRank: number
+	currentTierRank: number,
+	hasHiddenCurrentPlan = false
 ): UpgradeCredit | null {
 	let amount = 0;
 	let currencyCode = '';
@@ -87,10 +99,22 @@ function getUpgradeCredit(
 	} else {
 		// No explicit override code: infer from whether the user has a shown plan.
 		// If they do (currentTierRank >= 0), this is likely a paid-plan upgrade credit.
-		source = currentTierRank >= 0 ? 'plan' : 'other-upgrades';
+		source = currentTierRank >= 0 || hasHiddenCurrentPlan ? 'plan' : 'other-upgrades';
 	}
 
 	return { amount, currencyCode, source };
+}
+
+function StudentPlanNotice() {
+	return (
+		<div className="site-plans__student-plan-notice">
+			<Notice variant="info" density="high">
+				{ __(
+					'This site is on the Student plan. Business and Commerce upgrade options are shown below.'
+				) }
+			</Notice>
+		</div>
+	);
 }
 
 function UpgradeCreditsNotice( {
@@ -723,11 +747,24 @@ export default function SitePlans() {
 	const plansByProductId = new Map< number, SiteContextualPlan >(
 		( sitePlans ?? [] ).map( ( p ) => [ p.product_id, p ] )
 	);
+	const currentPlanSlug =
+		sitePlans?.find( ( p ) => p.current_plan )?.product_slug ?? site.plan?.product_slug;
+	const isCurrentPlanStudent = currentPlanSlug === DotcomPlans.STUDENT;
+	const studentUpgradePlanSlugs = [ ...BusinessPlans, ...EcommercePlans ] as readonly string[];
 
 	// Plans to show, sorted by plan_card_order — one entry per plan family (deduplicated by
 	// product_tier_id in case multiple billing-period variants carry a plan_card_order).
 	const shownPlans = ( sitePlans ?? [] )
 		.filter( ( p ) => typeof p.plan_card_order === 'number' )
+		.filter( ( p ) => {
+			if ( ! isCurrentPlanStudent ) {
+				return true;
+			}
+			return ( p.product_tier_product_ids ?? [] ).some( ( id ) => {
+				const slug = plansByProductId.get( id )?.product_slug;
+				return !! slug && studentUpgradePlanSlugs.includes( slug );
+			} );
+		} )
 		.filter(
 			( p, index, arr ) =>
 				arr.findIndex( ( q ) => q.product_tier_id === p.product_tier_id ) === index
@@ -750,7 +787,12 @@ export default function SitePlans() {
 				} )
 			)
 		)
-	).sort( ( a, b ) => a - b ) as SubscriptionBillPeriodValue[];
+	)
+		.filter(
+			( billPeriod ) =>
+				! isCurrentPlanStudent || STUDENT_PLAN_UPGRADE_BILL_PERIODS.includes( billPeriod )
+		)
+		.sort( ( a, b ) => a - b ) as SubscriptionBillPeriodValue[];
 
 	const activePlans = shownPlans.map( ( canonicalPlan, tierRank ) => {
 		const siblings = ( canonicalPlan.product_tier_product_ids ?? [] )
@@ -768,8 +810,6 @@ export default function SitePlans() {
 	} );
 
 	// Tier rank of the current plan (by product_tier_id)
-	const currentPlanSlug =
-		sitePlans?.find( ( p ) => p.current_plan )?.product_slug ?? site.plan?.product_slug;
 	const currentTierRank = shownPlans.findIndex( ( p ) =>
 		( p.product_tier_product_ids ?? [] )
 			.map( ( id ) => plansByProductId.get( id )?.product_slug )
@@ -786,7 +826,7 @@ export default function SitePlans() {
 		planCardName: ap.sitePlan.plan_card_name ?? ap.sitePlan.product_name,
 	} ) );
 
-	const upgradeCredit = getUpgradeCredit( activePlans, currentTierRank );
+	const upgradeCredit = getUpgradeCredit( activePlans, currentTierRank, isCurrentPlanStudent );
 
 	return (
 		<PageLayout
@@ -812,6 +852,7 @@ export default function SitePlans() {
 							source={ upgradeCredit.source }
 						/>
 					) }
+					{ isCurrentPlanStudent && <StudentPlanNotice /> }
 					<div className="site-plans__interval-selector-wrap">
 						<BillingIntervalSelector
 							billingInterval={ billingInterval }

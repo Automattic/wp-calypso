@@ -6,6 +6,7 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_STUDENT,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_WOO_HOSTED_BASIC,
@@ -189,12 +190,19 @@ export const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-plugins':
 			planTypes = [
-				...( currentSitePlanType ? [ currentSitePlanType ] : [] ),
+				...( currentSitePlanType && currentSitePlanType !== TYPE_STUDENT
+					? [ currentSitePlanType ]
+					: [] ),
 				TYPE_BUSINESS,
 				TYPE_ECOMMERCE,
 			];
 			break;
 		case 'plans-upgrade': {
+			if ( currentSitePlanType === TYPE_STUDENT ) {
+				planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+				break;
+			}
+
 			// Show current plan plus all higher-tier plans (upgrade options only)
 			const upgradePlanTypes = [
 				TYPE_FREE,
