@@ -143,9 +143,12 @@ function useDowngradeHandler( {
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
+			// Use full navigations rather than `page()` below because this grid can be
+			// rendered inside the Stepper, where the `page` router is not initialized.
+
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) ) {
-				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
+				window.location.href = cancelPurchase( siteSlug, currentPlan?.purchaseId );
 				return;
 			}
 
@@ -155,11 +158,9 @@ function useDowngradeHandler( {
 			if ( targetPlan?.availableForDowngrade && currentPlanExpired ) {
 				const planPath = getPlanPath( planSlug ) ?? '';
 				const checkoutUrl = `/checkout/${ siteSlug }/${ planPath }`;
-				page(
-					addQueryArgs(
-						{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
-						checkoutUrl
-					)
+				window.location.href = addQueryArgs(
+					{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
+					checkoutUrl
 				);
 				return;
 			}

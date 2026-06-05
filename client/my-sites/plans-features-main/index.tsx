@@ -937,14 +937,14 @@ const PlansFeaturesMain = ( {
 							return;
 						}
 						setPendingDowngradePlanSlug( null );
-						page(
-							addQueryArgs(
-								{
-									...( coupon && { coupon } ),
-									...( redirectTo && { redirect_to: redirectTo } ),
-								},
-								`/checkout/${ siteSlug }/${ planPath }`
-							)
+						// Use a full navigation rather than `page()` because this grid can be
+						// rendered inside the Stepper, where the `page` router is not initialized.
+						window.location.href = addQueryArgs(
+							{
+								...( coupon && { coupon } ),
+								...( redirectTo && { redirect_to: redirectTo } ),
+							},
+							`/checkout/${ siteSlug }/${ planPath }`
 						);
 					} }
 				/>
