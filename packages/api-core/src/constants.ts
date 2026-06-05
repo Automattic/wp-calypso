@@ -6,6 +6,7 @@ export const DotcomPlans = {
 	BUSINESS_MONTHLY: 'business-bundle-monthly',
 	BUSINESS_2_YEARS: 'business-bundle-2y',
 	BUSINESS_3_YEARS: 'business-bundle-3y',
+	STUDENT: 'wp_bundle_student_yearly',
 	ECOMMERCE: 'ecommerce-bundle',
 	ECOMMERCE_2_YEARS: 'ecommerce-bundle-2y',
 	ECOMMERCE_3_YEARS: 'ecommerce-bundle-3y',
@@ -115,6 +116,8 @@ export const BusinessPlans = [
 	DotcomPlans.BUSINESS_2_YEARS,
 	DotcomPlans.BUSINESS_3_YEARS,
 ];
+
+export const StudentPlans = [ DotcomPlans.STUDENT ];
 
 export const EcommercePlans = [
 	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
@@ -339,6 +342,7 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 } );
 
 export const getPlanNames = () => ( {
+	[ DotcomPlans.STUDENT ]: __( 'Student' ),
 	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
 	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
 	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),

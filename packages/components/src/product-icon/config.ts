@@ -63,6 +63,7 @@ export type SupportedSlugs =
 	| 'value_bundle-2y'
 	| 'value_bundle-monthly'
 	| 'value_bundle_monthly'
+	| 'wp_bundle_student_yearly'
 	| 'ecommerce-bundle'
 	| 'ecommerce-bundle-2y'
 	| 'ecommerce-bundle-monthly'
@@ -178,7 +179,12 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'wpcom-100-year': [ 'wp_com_hundred_year_bundle_centennially' ],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
-	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
+	'wpcom-business': [
+		'business-bundle',
+		'business-bundle-2y',
+		'business-bundle-monthly',
+		'wp_bundle_student_yearly',
+	],
 	'jetpack-ai': [ 'jetpack_ai_monthly', 'jetpack_ai_yearly' ],
 	'jetpack-free': [ 'jetpack_free' ],
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],

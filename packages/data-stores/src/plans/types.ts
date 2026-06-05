@@ -23,6 +23,7 @@ export type PlanNonlocalizedShortName =
 	| 'Premium'
 	| 'Business'
 	| 'eCommerce'
+	| 'Student'
 	| 'Starter'
 	| 'Explorer'
 	| 'Creator'

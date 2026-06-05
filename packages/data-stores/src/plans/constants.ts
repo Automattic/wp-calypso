@@ -30,6 +30,7 @@ export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PREMIUM = 'value_bundle';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_ECOMMERCE = 'ecommerce-bundle';
+export const PLAN_STUDENT = 'wp_bundle_student_yearly';
 
 export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
@@ -51,7 +52,7 @@ export const monthlySlugs = [
 	PLAN_PERSONAL_TRIAL_MONTHLY,
 ] as const;
 
-export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, ...monthlySlugs ] as const;
+export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, PLAN_STUDENT, ...monthlySlugs ] as const;
 
 export const FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN = [
 	'custom-domain',
