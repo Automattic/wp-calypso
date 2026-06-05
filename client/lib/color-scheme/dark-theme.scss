@@ -79,9 +79,11 @@ This mixin generates alias variables for a color palette. For example, the
 	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
 	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
 	--wp-components-color-accent-inverted: #fff;
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Dark theme maps WPDS brand tokens to the Calypso accent palette. */
 	--wpds-color-fg-interactive-brand: var( --wp-components-color-accent );
 	--wpds-color-fg-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
 	--wpds-color-stroke-focus-brand: var( --wp-components-color-accent );
+	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;

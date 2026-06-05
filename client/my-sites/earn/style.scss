@@ -19,8 +19,8 @@ body.is-section-jetpack-monetize {
 	.section-nav {
 		background: none;
 		box-shadow: none;
-		padding: 0 var(--wpds-dimension-padding-2xl, 24px);
-		border-bottom: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
+		padding: 0 var(--wpds-dimension-padding-2xl);
+		border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
 	}
 }
 
