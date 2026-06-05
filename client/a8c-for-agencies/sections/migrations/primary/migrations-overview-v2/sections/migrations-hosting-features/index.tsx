@@ -5,6 +5,7 @@ import A4ACarousel from 'calypso/a8c-for-agencies/components/a4a-carousel';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { preventWidows } from 'calypso/lib/formatting';
+import type { JSX } from 'react';
 
 import './style.scss';
 
