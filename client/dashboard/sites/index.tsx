@@ -26,7 +26,6 @@ import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
-import { AI_SITE_BUILDER_SPEC_FLOW } from './ai-site-builder-spec-flow';
 import {
 	SitesDataViews,
 	useActions,
@@ -217,10 +216,7 @@ export default function Sites() {
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite
-						context="sites-dashboard"
-						aiSiteBuilderPath={ `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` }
-					/>
+					<AddNewSite context="sites-dashboard" aiSiteBuilderPath="/setup/ai-site-builder" />
 				</Modal>
 			) }
 			<PageLayout
