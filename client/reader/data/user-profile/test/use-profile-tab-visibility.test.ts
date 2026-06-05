@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { createElement } from 'react';
-import useProfileTabVisibility from '../use-profile-tab-visibility';
+import { useProfileTabVisibility } from '../use-profile-tab-visibility';
 import type { ReadProfileSettingsResponse } from '@automattic/api-core';
 
 jest.mock( 'calypso/state', () => ( {

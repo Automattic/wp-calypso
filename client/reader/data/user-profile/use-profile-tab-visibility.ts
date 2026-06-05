@@ -14,7 +14,7 @@ type Visibility = 'public' | 'hidden';
  * visibility from the public endpoint: we default to visible while it loads (to avoid a flicker)
  * but fail closed on error, so an API outage can never expose a tab the owner has chosen to hide.
  */
-export default function useProfileTabVisibility( profileUserLogin?: string ) {
+export function useProfileTabVisibility( profileUserLogin?: string ) {
 	const currentUser = useSelector( getCurrentUser );
 	const isOwnProfile = currentUser?.username === profileUserLogin;
 

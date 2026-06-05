@@ -40,9 +40,8 @@ jest.mock( 'calypso/reader/user-profile/views/settings', () => () => (
 ) );
 
 const mockUseProfileTabVisibility = jest.fn();
-jest.mock( 'calypso/reader/user-profile/hooks/use-profile-tab-visibility', () => ( {
-	__esModule: true,
-	default: () => mockUseProfileTabVisibility(),
+jest.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
+	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
 } ) );
 
 jest.mock( 'calypso/reader/components/back-button', () => () => (

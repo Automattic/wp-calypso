@@ -16,9 +16,8 @@ const mockSetSiteHidden = jest.fn();
 const mockSetAllHidden = jest.fn();
 let mockPendingSiteId: number | null = null;
 let mockIsPending = false;
-jest.mock( '../../../hooks/use-set-hidden-sites', () => ( {
-	__esModule: true,
-	default: () => ( {
+jest.mock( 'calypso/reader/data/user-profile/use-set-hidden-sites', () => ( {
+	useSetHiddenSites: () => ( {
 		setSiteHidden: mockSetSiteHidden,
 		setAllHidden: mockSetAllHidden,
 		pendingSiteId: mockPendingSiteId,

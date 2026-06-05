@@ -15,7 +15,7 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { withoutHttp } from 'calypso/lib/url';
-import useSetHiddenSites from '../../hooks/use-set-hidden-sites';
+import { useSetHiddenSites } from 'calypso/reader/data/user-profile';
 
 interface SitesVisibilityCardProps {
 	userId: number;

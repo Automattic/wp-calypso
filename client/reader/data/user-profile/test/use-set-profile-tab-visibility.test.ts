@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { createElement } from 'react';
-import useSetProfileTabVisibility from '../use-set-profile-tab-visibility';
+import { useSetProfileTabVisibility } from '../use-set-profile-tab-visibility';
 import type { UserPreferences } from '@automattic/api-core';
 
 const mockDispatch = jest.fn();
