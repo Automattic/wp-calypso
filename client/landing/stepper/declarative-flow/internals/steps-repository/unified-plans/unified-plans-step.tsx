@@ -566,7 +566,11 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
+		if (
+			isOnboardingFlow( flowName ) ||
+			intent === 'plans-upgrade' ||
+			intent === 'plans-upgrade-or-downgrade'
+		) {
 			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};

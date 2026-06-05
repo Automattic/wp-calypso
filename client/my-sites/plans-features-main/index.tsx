@@ -390,6 +390,7 @@ const PlansFeaturesMain = ( {
 		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
 		// that may not be in the feature key list (e.g. because they're grouped into a broader feature).
 		( intent === 'plans-upgrade' ||
+			intent === 'plans-upgrade-or-downgrade' ||
 			( isValidFeatureKey( selectedFeature ) &&
 				!! selectedPlan &&
 				!! getPlan( selectedPlan ) &&

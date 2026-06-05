@@ -145,6 +145,7 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
 		redirect_to: getUpgradedPurchaseRedirectUrl(),
+		allow_downgrade: 'true',
 	} );
 }
 

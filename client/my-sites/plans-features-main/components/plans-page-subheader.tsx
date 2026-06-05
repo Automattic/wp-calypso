@@ -366,7 +366,10 @@ const PlansPageSubheader = ( {
 			return <PlanBenefitHeader />;
 		}
 
-		if ( ! isUsingStepContainerV2 && ( isOnboarding || intent === 'plans-upgrade' ) ) {
+		if (
+			! isUsingStepContainerV2 &&
+			( isOnboarding || intent === 'plans-upgrade' || intent === 'plans-upgrade-or-downgrade' )
+		) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
@@ -380,9 +383,11 @@ const PlansPageSubheader = ( {
 	return (
 		<>
 			{ renderSubheader() }
-			{ isDisplayingPlansNeededForFeature && intent !== 'plans-upgrade' && (
-				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
-			) }
+			{ isDisplayingPlansNeededForFeature &&
+				intent !== 'plans-upgrade' &&
+				intent !== 'plans-upgrade-or-downgrade' && (
+					<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
+				) }
 		</>
 	);
 };
