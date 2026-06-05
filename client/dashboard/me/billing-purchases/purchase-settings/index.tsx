@@ -49,6 +49,7 @@ import {
 	check,
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -99,12 +100,14 @@ import {
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
+	hasScheduledDowngrade,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
+import { CancelScheduledDowngradeDialog } from './cancel-scheduled-downgrade-dialog';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
@@ -118,6 +121,26 @@ const SPACING = {
 	DEFAULT: 6,
 	SMALL: 4,
 };
+
+/**
+ * Resolves a product slug (e.g. "value_bundle_monthly") to its display name.
+ * Used for the scheduled downgrade target plan title.
+ */
+function getTargetPlanTitle( slug: string ): string {
+	if ( slug.startsWith( 'personal-bundle' ) ) {
+		return __( 'Personal' );
+	}
+	if ( slug.startsWith( 'value_bundle' ) ) {
+		return __( 'Premium' );
+	}
+	if ( slug.startsWith( 'business-bundle' ) ) {
+		return __( 'Business' );
+	}
+	if ( slug.startsWith( 'ecommerce-bundle' ) ) {
+		return __( 'Commerce' );
+	}
+	return slug;
+}
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
@@ -814,6 +837,26 @@ function getFields( {
 				const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 				const { getValue } = field;
 				const helpText = ( () => {
+					// Scheduled downgrade: show target plan + renewal date instead of generic billing copy.
+					if (
+						hasScheduledDowngrade( purchase ) &&
+						purchase.is_auto_renew_enabled &&
+						isEnabled( 'plans/scheduled-plan-downgrade' )
+					) {
+						const targetTitle = getTargetPlanTitle(
+							purchase.scheduled_downgrade_product_slug ?? ''
+						);
+						const renewalDate = formatDate(
+							new Date( purchase.scheduled_downgrade_renewal_date ?? purchase.renew_date ),
+							locale,
+							{ dateStyle: 'long' }
+						);
+						return sprintf(
+							/* translators: %(plan)s is the target plan name, %(date)s is the renewal date */
+							__( 'Renews as the %(plan)s plan on %(date)s.' ),
+							{ plan: targetTitle, date: renewalDate }
+						);
+					}
 					if (
 						purchase.is_auto_renew_enabled &&
 						Boolean( purchase.renew_date ) &&
@@ -924,6 +967,13 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const [ isCancelDialogOpen, setIsCancelDialogOpen ] = useState( false );
+
+	const isScheduledDowngrade =
+		hasScheduledDowngrade( purchase ) && isEnabled( 'plans/scheduled-plan-downgrade' );
+	const targetPlanTitle = isScheduledDowngrade
+		? getTargetPlanTitle( purchase.scheduled_downgrade_product_slug ?? '' )
+		: '';
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return null;
@@ -932,31 +982,76 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	return (
 		<Card>
 			<CardBody>
-				<DataForm< Purchase >
-					data={ purchase }
-					fields={ getFields( { isMutationPending, user } ) }
-					form={ form }
-					onChange={ ( newData ) => {
-						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
-							if ( ! newData.is_auto_renew_enabled && isSplitCancelRemoveEnabled ) {
-								navigate( {
-									to: cancelPurchaseRoute.fullPath,
-									params: { purchaseId: purchase.ID },
-									search: { intent: 'auto-renew' as const },
+				<VStack spacing={ 4 }>
+					<DataForm< Purchase >
+						data={ purchase }
+						fields={ getFields( { isMutationPending, user } ) }
+						form={ form }
+						onChange={ ( newData ) => {
+							if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
+								if ( ! newData.is_auto_renew_enabled && isSplitCancelRemoveEnabled ) {
+									navigate( {
+										to: cancelPurchaseRoute.fullPath,
+										params: { purchaseId: purchase.ID },
+										search: { intent: 'auto-renew' as const },
+									} );
+									return;
+								}
+								setAutoRenew( {
+									purchaseId: purchase.ID,
+									autoRenew: newData.is_auto_renew_enabled,
 								} );
-								return;
 							}
-							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
-						}
-					} }
-				/>
+						} }
+					/>
 
-				{ error && (
-					<Notice status="error" isDismissible={ false }>
-						{ error.message }
-					</Notice>
-				) }
+					{ isScheduledDowngrade && purchase.is_auto_renew_enabled && (
+						<Button variant="link" isDestructive onClick={ () => setIsCancelDialogOpen( true ) }>
+							{ __( 'Cancel scheduled downgrade' ) }
+						</Button>
+					) }
+
+					{ isScheduledDowngrade && ! purchase.is_auto_renew_enabled && (
+						<Notice
+							status="warning"
+							isDismissible={ false }
+							actions={ [
+								{
+									label: __( 'Turn on auto-renew' ),
+									onClick: () =>
+										setAutoRenew( {
+											purchaseId: purchase.ID,
+											autoRenew: true,
+										} ),
+								},
+							] }
+						>
+							{ sprintf(
+								/* translators: %(plan)s is the target plan name */
+								__(
+									'You scheduled a downgrade to the %(plan)s plan, but it won\u2019t take effect while auto-renew is off. Turn on auto-renew to keep the scheduled change.'
+								),
+								{ plan: targetPlanTitle }
+							) }
+						</Notice>
+					) }
+
+					{ error && (
+						<Notice status="error" isDismissible={ false }>
+							{ error.message }
+						</Notice>
+					) }
+				</VStack>
 			</CardBody>
+
+			{ isScheduledDowngrade && (
+				<CancelScheduledDowngradeDialog
+					purchase={ purchase }
+					currentPlanTitle={ purchase.product_name }
+					isOpen={ isCancelDialogOpen }
+					onClose={ () => setIsCancelDialogOpen( false ) }
+				/>
+			) }
 		</Card>
 	);
 }
@@ -1614,6 +1709,19 @@ export default function PurchaseSettings() {
 										return __( 'Pending renewal' );
 									}
 									if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
+										if (
+											hasScheduledDowngrade( purchase ) &&
+											isEnabled( 'plans/scheduled-plan-downgrade' )
+										) {
+											const targetTitle = getTargetPlanTitle(
+												purchase.scheduled_downgrade_product_slug ?? ''
+											);
+											return sprintf(
+												/* translators: %(plan)s is the target plan name */
+												__( 'Downgrade to %(plan)s scheduled' ),
+												{ plan: targetTitle }
+											);
+										}
 										return __( 'Auto-renew is enabled' );
 									}
 									if ( isIncluded && purchase.attached_to_purchase_id ) {

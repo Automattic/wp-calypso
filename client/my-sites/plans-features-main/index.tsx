@@ -63,6 +63,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { hasScheduledDowngrade } from 'calypso/lib/purchases';
 import { getActiveDowngradeVariant } from 'calypso/lib/purchases/active-downgrade-variant';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
@@ -541,16 +542,45 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ isPlanExpired, sitePlanSlug ] );
 
-	// Merge prop-provided overrides with expired-plan overrides. Expired overrides take precedence.
+	// When a scheduled downgrade exists, mark the target plan with a badge.
+	const scheduledDowngradeHighlightOverrides = useMemo( () => {
+		if (
+			isPlanExpired ||
+			getActiveDowngradeVariant() !== 'on_renewal' ||
+			! currentPlanPurchase ||
+			! hasScheduledDowngrade( currentPlanPurchase )
+		) {
+			return undefined;
+		}
+		const targetSlug = currentPlanPurchase.scheduledDowngradeProductSlug;
+		if ( ! targetSlug ) {
+			return undefined;
+		}
+		return { [ targetSlug ]: translate( 'Downgrade scheduled' ) } as {
+			[ K in PlanSlug ]?: TranslateResult;
+		};
+	}, [ isPlanExpired, currentPlanPurchase, translate ] );
+
+	// Merge prop-provided overrides with expired-plan and scheduled-downgrade overrides.
+	// Expired overrides take precedence over scheduled (the two don't coexist, but be safe).
 	const effectiveHighlightOverrides = useMemo( () => {
-		if ( ! expiredPlanHighlightOverrides && ! highlightLabelOverrides ) {
+		if (
+			! expiredPlanHighlightOverrides &&
+			! highlightLabelOverrides &&
+			! scheduledDowngradeHighlightOverrides
+		) {
 			return undefined;
 		}
 		return {
 			...highlightLabelOverrides,
+			...scheduledDowngradeHighlightOverrides,
 			...expiredPlanHighlightOverrides,
 		};
-	}, [ highlightLabelOverrides, expiredPlanHighlightOverrides ] );
+	}, [
+		highlightLabelOverrides,
+		expiredPlanHighlightOverrides,
+		scheduledDowngradeHighlightOverrides,
+	] );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
