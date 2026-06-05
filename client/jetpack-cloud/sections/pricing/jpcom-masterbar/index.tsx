@@ -54,7 +54,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 	const [ barRef, hasCrossed ] = useDetectWindowBoundary( windowBoundaryOffset );
 
-	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
+	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement | null > } : {};
 
 	const classes = clsx( 'header__content-background-wrapper', {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
