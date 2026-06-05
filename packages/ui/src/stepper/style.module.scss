@@ -18,11 +18,11 @@ $indicator-size-sm: 16px; // bullet completed + current
 	width: $indicator-size;
 	height: $indicator-size;
 	border-radius: 50%;
-	border: var( --wpds-border-width-xs, 1px ) solid theme.$components-color-gray-700;
+	border: var( --wpds-border-width-xs, 1px ) solid var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
 	flex-shrink: 0;
 	font-size: var( --wpds-typography-font-size-sm, 12px );
 	font-weight: 400;
-	color: theme.$components-color-gray-700;
+	color: var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
 	background: theme.$components-color-background;
 
 	@include ui-mixins.when-dark-theme {
@@ -100,17 +100,17 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 // Upcoming step titles
 [data-indicator-variant] .title {
-	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
+	color: var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
 }
 
 // Completed step titles — same weight as upcoming but full neutral (not weak)
 [data-indicator-variant] [data-status='completed'] .title {
-	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-fg-interactive-neutral-active, #{ theme.$components-color-foreground } );
 }
 
 // Current/active step title — full neutral, bold (weight set on the trigger below)
 [data-indicator-variant] [data-current] .title {
-	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-fg-interactive-neutral-active, #{ theme.$components-color-foreground } );
 }
 
 // ---------------------------------------------------------------------------
@@ -141,14 +141,24 @@ $indicator-size-sm: 16px; // bullet completed + current
 		}
 
 		.indicator {
-			color: var( --wpds-color-fg-interactive-brand, #{ theme.$components-color-accent } );
 			border-color: var( --wpds-color-fg-interactive-brand, #{ theme.$components-color-accent } );
+		}
+
+		// Pull icon color for completed and current steps (SVG/dome use currentColor).
+		// Number-variant upcoming steps keep their neutral number color on hover.
+		.indicator.is-completed,
+		.indicator.is-current {
+			color: var( --wpds-color-fg-interactive-brand, #{ theme.$components-color-accent } );
 		}
 	}
 
 	&[aria-disabled='true'] {
 		cursor: default;
-		opacity: 0.6;
+
+		&,
+		.title {
+			color: var( --wpds-color-fg-interactive-neutral-disabled, #{ theme.$components-color-disabled } );
+		}
 	}
 
 	&[aria-expanded='true'],
