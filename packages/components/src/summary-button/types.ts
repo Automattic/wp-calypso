@@ -1,4 +1,4 @@
-import type { Badge } from '@automattic/ui';
+import type { Badge } from '@wordpress/ui';
 
 export type Density = 'low' | 'medium-low' | 'medium';
 
