@@ -99,6 +99,7 @@ import {
 	isPaidWithCredits,
 	canAutoRenewBeTurnedOff,
 	isExpired,
+	isInExpirationGracePeriod,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
@@ -586,6 +587,24 @@ class ManagePurchase extends Component<
 		}
 
 		return `/plans/${ siteSlug }`;
+	}
+
+	renderChangePlanNavItem() {
+		const { purchase, siteSlug, translate } = this.props;
+		if ( ! purchase || ! isPlan( purchase ) ) {
+			return null;
+		}
+
+		if ( ! isExpired( purchase ) && ! isInExpirationGracePeriod( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard tagName="a" displayAsLink href={ `/plans/${ siteSlug }` }>
+				<Icon icon={ column } className="card__icon" />
+				{ translate( 'Change plan' ) }
+			</CompactCard>
+		);
 	}
 
 	renderUpgradeNavItem() {
@@ -1531,6 +1550,7 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
+						{ this.renderChangePlanNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
