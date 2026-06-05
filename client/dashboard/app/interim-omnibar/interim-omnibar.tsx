@@ -71,6 +71,11 @@ export function InterimOmnibar( {
 		} );
 	}, [ store, user.has_unseen_notes ] );
 
+	// Sync the notifications open state (e.g. when the panel closes externally).
+	useOmnibarEvent( 'notificationsOpen', ( isOpen ) => {
+		store.dispatch( { type: 'NOTIFICATIONS_OPEN_SET', isOpen } );
+	} );
+
 	// Also dispatch the emitted unseen note count from the notifications panel.
 	useOmnibarEvent( 'notificationsUnseenCount', ( unseenCount ) => {
 		store.dispatch( { type: 'NOTIFICATIONS_UNSEEN_COUNT_SET', unseenCount } );

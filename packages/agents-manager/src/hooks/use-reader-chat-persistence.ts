@@ -1,5 +1,6 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { useAgentsManagerContext } from '../contexts';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
@@ -12,9 +13,14 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  * flag in `localStorage`: restore it on first mount and write it on every
  * toggle. No-op for other agents, whose state is server-backed.
  */
-export default function useReaderChatPersistence( agentId: string ): void {
+export default function useReaderChatPersistence(): void {
+	const { agentConfig } = useAgentsManagerContext();
+	// No-op until the agent config is ready; `isReaderChatAgent( '' )` is false.
+	const agentId = agentConfig?.agentId ?? '';
+
 	const isReaderChat = isReaderChatAgent( agentId );
 	const storageKey = `jetpack-reader-chat-open-${ agentId }`;
+
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const isOpen = useSelect(
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getIsOpen(),
@@ -26,6 +32,7 @@ export default function useReaderChatPersistence( agentId: string ): void {
 		if ( ! isReaderChat ) {
 			return;
 		}
+
 		try {
 			if ( localStorage.getItem( storageKey ) === '1' && ! isOpen ) {
 				setIsOpen( true, false );
@@ -41,6 +48,7 @@ export default function useReaderChatPersistence( agentId: string ): void {
 		if ( ! isReaderChat ) {
 			return;
 		}
+
 		try {
 			if ( isOpen ) {
 				localStorage.setItem( storageKey, '1' );

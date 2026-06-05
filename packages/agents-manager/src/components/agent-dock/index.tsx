@@ -106,6 +106,7 @@ export default function AgentDock( {
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
+
 	// Reader-chat runs on public blog frontends where there's no wp-admin
 	// sidebar to dock into. Detect that context so we can hide options that
 	// don't apply and avoid persisting open/close state through the logged-in
@@ -115,10 +116,12 @@ export default function AgentDock( {
 		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
 	const showSupportGuides =
 		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
+
 	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
 	// so Zendesk escalation is disabled until routing is in place.
 	const isWooAiAdmin = sectionName === 'wooai-admin';
 	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
+
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
 		[ isReaderChat, setIsOpen ]
@@ -166,7 +169,8 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	useReaderChatPersistence( agentId );
+	// Persist the reader-chat open state across page loads (no-op for other agents).
+	useReaderChatPersistence();
 
 	const handleAbort = useCallback( () => {
 		const agentManager = getAgentManager();
