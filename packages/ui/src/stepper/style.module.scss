@@ -23,7 +23,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 	font-size: var( --wpds-typography-font-size-sm, 12px );
 	font-weight: 400;
 	color: var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
-	background: theme.$components-color-background;
+	background: var( --wpds-color-bg-surface-neutral-strong, #{ theme.$components-color-background } );
 
 	@include ui-mixins.when-dark-theme {
 		border-color: theme.$components-color-gray-600;
@@ -33,31 +33,21 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 // Current step
 .indicator.is-current {
-	border-color: theme.$components-color-foreground;
-	background: theme.$components-color-foreground;
-	color: theme.$components-color-background;
+	border-color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	background: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-bg-surface-neutral-strong, #{ theme.$components-color-background } );
 	font-weight: 600;
-
-	@include ui-mixins.when-dark-theme {
-		border-color: theme.$components-color-foreground;
-		background: theme.$components-color-foreground;
-	}
 }
 
 // Completed step
 .indicator.is-completed {
-	border-color: theme.$components-color-gray-700;
+	border-color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
 	background: transparent;
-	color: theme.$components-color-gray-700;
+	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
 
 	svg {
 		stroke: currentColor;
 		stroke-width: 1.5px;
-	}
-
-	@include ui-mixins.when-dark-theme {
-		border-color: theme.$components-color-gray-700;
-		color: theme.$components-color-gray-700;
 	}
 }
 
@@ -73,8 +63,8 @@ $indicator-size-sm: 16px; // bullet completed + current
 // Upcoming: dashed gray-700 circle, no icon
 .indicator[data-indicator-variant='bullet'] {
 	border-style: dashed;
-	border-color: theme.$components-color-gray-700;
-	color: theme.$components-color-gray-700;
+	border-color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
+	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
 }
 
 // Current: 16px solid gray-900 ring, transparent background + half-circle dome
@@ -85,9 +75,9 @@ $indicator-size-sm: 16px; // bullet completed + current
 	height: $indicator-size-sm;
 	margin: 1px;
 	border-style: solid;
-	border-color: theme.$components-color-foreground;
+	border-color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
 	background: transparent;
-	color: theme.$components-color-foreground;
+	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
 }
 
 // Completed: 16px, solid border (color inherited from .indicator.is-completed)
@@ -131,7 +121,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 	padding: 0;
 	cursor: pointer;
 	font-size: var( --wpds-typography-font-size-md, #{ variables.$font-size-medium } );
-	color: theme.$components-color-foreground;
+	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
 	text-align: start;
 	width: 100%;
 
@@ -201,11 +191,11 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 .title {
 	font-weight: inherit;
-	color: theme.$components-color-foreground;
+	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
 }
 
 .description {
-	color: theme.$components-color-gray-600;
+	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-600 } );
 
 	@include ui-mixins.when-dark-theme {
 		color: theme.$components-color-gray-300;

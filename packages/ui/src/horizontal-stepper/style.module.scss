@@ -64,7 +64,7 @@
 			inset-inline-start: calc( 50% + 21px );
 			inset-inline-end: calc( -50% + 21px );
 			height: var( --wpds-border-width-xs, 1px );
-			background-color: theme.$components-color-gray-300;
+			background-color: var( --wpds-color-stroke-surface-neutral, #{ theme.$components-color-gray-300 } );
 
 			@include ui-mixins.when-dark-theme {
 				background-color: theme.$components-color-gray-700;

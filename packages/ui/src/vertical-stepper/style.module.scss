@@ -30,7 +30,7 @@
 			top: var( --stepper-trigger-height, 40px );
 			bottom: 0;
 			width: 1px;
-			background: theme.$components-color-gray-200;
+			background: var( --wpds-color-stroke-surface-neutral-weak, #{ theme.$components-color-gray-200 } );
 
 			@include ui-mixins.when-dark-theme {
 				background: theme.$components-color-gray-700;
