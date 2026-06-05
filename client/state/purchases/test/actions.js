@@ -47,7 +47,7 @@ describe( 'actions', () => {
 	describe( '#fetchSitePurchases', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.2/sites/${ siteId }/purchases` )
+				.get( `/rest/v1.2/upgrades?site=${ siteId }` )
 				.reply( 200, purchases );
 		} );
 
@@ -289,7 +289,7 @@ describe( 'actions', () => {
 			// unfiltered.
 			const apiResponse = [ { ID: 1 }, { ID: 2 } ];
 			nockInstance( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.2/sites/${ siteId }/purchases` )
+				.get( `/rest/v1.2/upgrades?site=${ siteId }` )
 				.reply( 200, apiResponse );
 
 			return fetchSitePurchases( siteId )( dispatch ).then( () => {
