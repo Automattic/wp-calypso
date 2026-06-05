@@ -4,7 +4,7 @@ import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
@@ -66,6 +66,17 @@ const UniversalNavbarHeader = ( {
 	// Measured footer height, published as a CSS var so the scroller's bottom padding clears
 	// the absolutely-positioned (overlaid) footer. Height varies with banner/auth/safe-area.
 	const mobileFooterRef = useRef< HTMLDivElement >( null );
+	// 2026 desktop nav: true once the page has scrolled past a small threshold. The nav is
+	// `position: fixed` and transparent over the hero at the top; when scrolled it switches to
+	// the white surface (same treatment as an open dropdown), driven by the `is-scrolled` class.
+	const [ isScrolled, setIsScrolled ] = useState( false );
+	// 2026 desktop dropdown: the persistent panel wrapper, plus the bookkeeping for the
+	// height FLIP that eases the panel's height when switching between menus. `prevDropdown`
+	// distinguishes first-open from switch; `prevHeight` is the pre-switch height (captured in
+	// the effect's cleanup, before React commits the new active block), used as the FLIP `from`.
+	const dropdownRef = useRef< HTMLDivElement >( null );
+	const prevDropdownRef = useRef< string | null >( null );
+	const prevHeightRef = useRef< number >( 0 );
 	const isEnglishLocale = useIsEnglishLocale();
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
@@ -207,6 +218,132 @@ const UniversalNavbarHeader = ( {
 		window.addEventListener( 'resize', updateOffset );
 		return () => window.removeEventListener( 'resize', updateOffset );
 	}, [ nav2026, nav2026Variant ] );
+
+	// 2026 desktop nav scroll state: toggle `is-scrolled` once the page scrolls past a small
+	// threshold so the fixed nav switches from transparent to the white surface. Throttled via
+	// rAF (one read per frame) and only updates state on an actual boolean change. Reads the
+	// initial scroll position on mount so a refresh / deep-link mid-page starts in the right state.
+	useEffect( () => {
+		if ( ! nav2026 ) {
+			return;
+		}
+		// Trigger as soon as the page leaves the very top, so the white surface appears
+		// the moment the hero starts sliding under the fixed nav (no perceptible delay).
+		const SCROLL_THRESHOLD = 0;
+		let frame = 0;
+		const evaluate = () => {
+			frame = 0;
+			setIsScrolled( ( prev ) => {
+				const next = window.scrollY > SCROLL_THRESHOLD;
+				return next === prev ? prev : next;
+			} );
+		};
+		const onScroll = () => {
+			if ( ! frame ) {
+				frame = window.requestAnimationFrame( evaluate );
+			}
+		};
+		evaluate();
+		window.addEventListener( 'scroll', onScroll, { passive: true } );
+		return () => {
+			window.removeEventListener( 'scroll', onScroll );
+			if ( frame ) {
+				window.cancelAnimationFrame( frame );
+			}
+		};
+	}, [ nav2026 ] );
+
+	// 2026 desktop dropdown open/switch behaviour. The panel stays open while moving between
+	// triggers; on a switch its height eases from the old menu's content to the new one via a
+	// FLIP (measure → pin old px height → reflow → set new px height → release to auto on
+	// transitionend). `is-dropdown-first-open` marks the closed→open case so the items wait for
+	// the panel to grow before sliding in; on a switch they use the short stagger instead.
+	// useLayoutEffect so the measure/pin happens before paint (no flash of the auto height).
+	useLayoutEffect( () => {
+		if ( ! nav2026 ) {
+			return;
+		}
+		const el = dropdownRef.current;
+		const prev = prevDropdownRef.current;
+		const next = activeDropdown;
+		prevDropdownRef.current = next;
+		if ( ! el ) {
+			return;
+		}
+		// The height morph is desktop-only (below 1025 the wide triggers / dropdown are hidden).
+		if ( window.matchMedia( '( max-width: 1024px )' ).matches ) {
+			return;
+		}
+
+		// Closed → open: let the panel grow via CSS; flag the unroll so items wait for it. Drop
+		// the flag after the morph so a later switch uses the short stagger.
+		if ( prev === null && next !== null ) {
+			el.classList.add( 'is-dropdown-first-open' );
+			const durMs = parseFloat( getComputedStyle( el ).transitionDuration ) * 1000 || 280;
+			const timer = setTimeout( () => el.classList.remove( 'is-dropdown-first-open' ), durMs + 50 );
+			return () => {
+				clearTimeout( timer );
+				// Stash the current height so the next switch FLIPs from the right `from`.
+				prevHeightRef.current = el.offsetHeight;
+			};
+		}
+
+		// Open → closed: nothing to morph; clear the first-open marker.
+		if ( prev !== null && next === null ) {
+			el.classList.remove( 'is-dropdown-first-open' );
+			return;
+		}
+
+		// Open → open (switch): FLIP the wrapper height between the two menus' content.
+		if ( prev !== null && next !== null && prev !== next ) {
+			el.classList.remove( 'is-dropdown-first-open' );
+			const from = prevHeightRef.current;
+			const to = el.offsetHeight;
+			if ( ! from || from === to ) {
+				return () => {
+					prevHeightRef.current = el.offsetHeight;
+				};
+			}
+			el.style.overflow = 'hidden';
+			el.style.height = `${ from }px`;
+			void el.offsetHeight; // force reflow so the next height change transitions
+			el.style.height = `${ to }px`;
+			// `release` snaps the wrapper back to auto height after the morph. It's idempotent
+			// (the `released` guard), so whichever of the transitionend listener or the fallback
+			// timer fires first wins and the other is a harmless no-op — so `release` needs no
+			// reference to either, avoiding a circular declaration.
+			let released = false;
+			const release = () => {
+				if ( released ) {
+					return;
+				}
+				released = true;
+				el.style.height = '';
+				el.style.overflow = '';
+			};
+			el.addEventListener(
+				'transitionend',
+				( e: TransitionEvent ) => {
+					if ( e.target === el && e.propertyName === 'height' ) {
+						release();
+					}
+				},
+				{ once: true }
+			);
+			const durMs = parseFloat( getComputedStyle( el ).transitionDuration ) * 1000 || 280;
+			const fallback = window.setTimeout( release, durMs + 50 );
+			return () => {
+				// Released early if the dropdown changes mid-morph; capture height for the next FLIP.
+				clearTimeout( fallback );
+				release();
+				prevHeightRef.current = el.offsetHeight;
+			};
+		}
+
+		return () => {
+			prevHeightRef.current = el.offsetHeight;
+		};
+	}, [ nav2026, activeDropdown ] );
 
 	if ( ! startUrl ) {
 		const startPaths: Record< string, string > = {
@@ -702,7 +839,9 @@ const UniversalNavbarHeader = ( {
 			<div className="x-root lpc-header-nav-wrapper">
 				{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 				<div
-					className="lpc-header-nav-container"
+					className={ clsx( 'lpc-header-nav-container', {
+						'is-scrolled': nav2026 && isScrolled,
+					} ) }
 					onMouseLeave={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 				>
 					{ /*<!-- Nav bar starts here. -->*/ }
@@ -1076,9 +1215,21 @@ const UniversalNavbarHeader = ( {
 					     so switching triggers never blanks the panel. Hovering the panel keeps it
 					     open; leaving the nav area closes it. */ }
 					{ variant !== 'minimal' && nav2026 && (
-						<div className="x-dropdown x-dropdown--2026">
-							{ nav2026Menus.map( ( menu ) =>
-								menu.groups ? (
+						<div
+							ref={ dropdownRef }
+							className={ clsx( 'x-dropdown x-dropdown--2026', {
+								'is-dropdown-open': activeDropdown !== null,
+							} ) }
+						>
+							{ nav2026Menus.map( ( menu ) => {
+								if ( ! menu.groups ) {
+									return null;
+								}
+								// Reading-order counter shared across this menu's groups: each
+								// subcategory title takes one index, then its links take the next,
+								// so the slide-in staggers title → its links → next title …
+								let staggerIndex = 0;
+								return (
 									<div
 										className="x-dropdown-content x-dropdown--2026"
 										data-dropdown-name={ menu.name }
@@ -1090,11 +1241,17 @@ const UniversalNavbarHeader = ( {
 										<div className="x-dropdown-subcategories">
 											{ menu.groups.map( ( group ) => (
 												<div className="x-dropdown-column-group" key={ group.title }>
-													<h4 className="x-dropdown-subcategory-title">{ group.title }</h4>
+													<h4
+														className="x-dropdown-subcategory-title"
+														style={ { '--stagger-index': staggerIndex++ } as React.CSSProperties }
+													>
+														{ group.title }
+													</h4>
 													<ul>
 														{ group.items.map( ( item ) => (
 															<ClickableItem
 																key={ item.url }
+																index={ staggerIndex++ }
 																titleValue=""
 																content={
 																	item.badge ? (
@@ -1119,8 +1276,8 @@ const UniversalNavbarHeader = ( {
 											) ) }
 										</div>
 									</div>
-								) : null
-							) }
+								);
+							} ) }
 						</div>
 					) }
 					{ /*<!-- Nav bar ends here. -->*/ }

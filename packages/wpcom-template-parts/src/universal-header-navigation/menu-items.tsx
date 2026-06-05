@@ -60,6 +60,7 @@ export const ClickableItem = ( {
 	typeClassName,
 	target,
 	tabIndex,
+	index,
 }: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -74,7 +75,13 @@ export const ClickableItem = ( {
 		clickNavLinkEvent( target );
 	};
 	return (
-		<li className={ liClassName } role="none">
+		<li
+			className={ liClassName }
+			role="none"
+			style={
+				index !== undefined ? ( { '--stagger-index': index } as React.CSSProperties ) : undefined
+			}
+		>
 			<a
 				role="menuitem"
 				className={ typeClassName ? typeClassName : `x-${ type }-link x-link` }

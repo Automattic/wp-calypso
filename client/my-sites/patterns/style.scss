@@ -78,21 +78,22 @@
 	// of black). Logo + CTA follow `currentcolor`.
 	// White nav text/logo over the dark patterns hero. `!important` to beat the
 	// package default (black) regardless of stylesheet load order.
-	// Scoped to the CLOSED state: when a dropdown is open the nav turns white, so the
-	// text must switch back to dark (handled below) to stay legible.
+	// Scoped to the CLOSED state: when a dropdown is open OR the page is scrolled the nav
+	// turns white, so the text must switch back to dark (handled below) to stay legible.
 	.lpc-header-nav-container:not(
 			:has(.x-dropdown--2026.x-dropdown-content[aria-hidden="false"])
-		)
+		):not(.is-scrolled)
 		.x-nav--2026-redesign
 		.x-nav-item {
 		color: var(--studio-white) !important;
 	}
 
-	// Dropdown open: the nav bar is white, so logo/text/chevron revert to dark for
-	// contrast against the white surface (matching the light-hero sections).
+	// Dropdown open or scrolled: the nav bar is white, so logo/text/chevron revert to dark
+	// for contrast against the white surface (matching the light-hero sections).
 	.lpc-header-nav-container:has(
 			.x-dropdown--2026.x-dropdown-content[aria-hidden="false"]
-		) {
+		),
+	.lpc-header-nav-container.is-scrolled {
 		.x-nav--2026-redesign .x-nav-item {
 			color: var(--studio-gray-100) !important;
 		}

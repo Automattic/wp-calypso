@@ -566,6 +566,11 @@ body.is-mobile-app-view {
 .layout:has( .x-nav--2026-redesign ) {
 	/* stylelint-disable-next-line length-zero-no-unit -- px needed for the consuming calc() */
 	--nav-2026-admin-offset: 0px;
+	// Bottom edge of the fixed 2026 nav (admin-bar offset + the 64px nav height).
+	// Secondary sticky sub-menus on 2026-nav pages stick to this so they rest below
+	// the nav instead of scrolling up behind it. Tracks `--nav-2026-admin-offset`,
+	// so it's correct logged-out (0) and logged-in (responsive masterbar height).
+	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + 64px );
 }
 
 .layout.is-logged-in:has( .x-nav--2026-redesign ) {

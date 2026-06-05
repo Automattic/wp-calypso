@@ -980,6 +980,9 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 $x-nav-2026-height: 64px;
 // Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
 $x-nav-2026-transition: 0.22s ease-in-out;
+// Backdrop blur applied behind the nav once scrolled (translucent white surface over
+// the content scrolling beneath). Exposed as a custom prop so it can be tuned per host.
+$x-nav-2026-scrolled-blur: 8px;
 $x-nav-2026-content-max-width: 1200px;
 // Dropdown item + trigger metrics, sourced from the live reference's computed styles.
 $x-nav-2026-item-padding-x: 8px;
@@ -1011,14 +1014,15 @@ $x-menu-2026-admin-bar-mobile: 46px;
  * `!important`.
  */
 // Overlay the nav over the page so the hero slides beneath it (reference wraps
-// the nav in an absolutely-positioned element). Transparent at rest; the white
-// only appears via the dropdown panel when open.
+// the nav in an absolutely-positioned element). `fixed` keeps it pinned to the
+// viewport top as the page scrolls (the dropdown panel below is already fixed).
+// Transparent at rest; the white appears when a dropdown opens or once scrolled.
 .lpc-header-nav-wrapper .masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
 	.masterbar:has( .x-nav--2026-redesign ) {
-	position: absolute;
+	position: fixed;
 	// Below the admin bar only when one exists (Calypso sets `--nav-2026-admin-offset`
 	// to the real admin-bar height logged-in, 0 logged-out). Falls back to
 	// `--masterbar-height` then 0 for non-Calypso consumers.
@@ -1028,15 +1032,45 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	height: $x-nav-2026-height;
 	background: transparent;
 	border-bottom-color: transparent;
-	transition: background-color $x-nav-2026-transition;
+	// Exit transition (white → transparent), used when the `is-scrolled` / dropdown-open
+	// class drops and the bar falls back to this rule. The white *appears* fast via the
+	// rules below; on exit it eases out over this duration after a short delay, so the
+	// surface lingers a beat instead of vanishing the instant you reach the top (and it
+	// stays up while a closing dropdown panel fades). `backdrop-filter` eases in step.
+	transition: background-color $x-nav-2026-transition 0.12s,
+		box-shadow $x-nav-2026-transition 0.12s, backdrop-filter $x-nav-2026-transition 0.12s;
 }
 
 // When a dropdown is open the nav bar turns white so it forms one continuous white
 // surface with the dropdown panel below it (instead of a gray backdrop band behind
-// the nav).
+// the nav). The same white surface appears once the page is scrolled (`is-scrolled`),
+// so the fixed nav stays legible over whatever has scrolled beneath it — a shared
+// selector list, matching the reference's single white-state mechanism.
 .lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.masterbar:has( .x-nav--2026-redesign ),
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
 	.masterbar:has( .x-nav--2026-redesign ) {
 	background: $studio-white;
+	// Snap the white surface in quickly when it appears (scroll / dropdown-open),
+	// matching the reference's white-state reveal (0.12s ease-out, no delay) rather
+	// than the slower default bar transition.
+	transition: background-color 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+
+// Scrolled-only treatment (NOT when a dropdown is open): a near-opaque white with a
+// backdrop blur so the content scrolling beneath reads as a faint frost, plus a hairline
+// shadow to lift the fixed bar off the page. The dropdown-open state stays fully solid
+// white (above) so it forms one flat surface with the panel below it.
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign ) {
+	--x-nav-2026-scrolled-blur: #{$x-nav-2026-scrolled-blur};
+	background: rgba( $studio-white, 0.97 );
+	box-shadow: 0 1px 1px rgba( $studio-black, 0.02 );
+	backdrop-filter: blur( var( --x-nav-2026-scrolled-blur ) );
 }
 
 .lpc-header-nav-wrapper .masterbar .x-nav--2026-redesign,
@@ -1171,10 +1205,51 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 // The active dropdown content block fades in; the rest stay hidden (cross-fade).
+// `position: relative` restores it to normal flow so the (fixed) panel wrapper
+// auto-sizes to this block's height — that auto height is what the wrapper's height
+// transition (and the JS FLIP) eases between when switching menus.
 .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] {
+	position: relative;
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
+
+	// Items slide in from the left, staggered by their reading-order --stagger-index
+	// (set per item in markup). SWITCH regime: short per-item delay, no unroll wait.
+	.x-dropdown-subcategory-title,
+	.x-dropdown-link.x-dropdown-link {
+		opacity: 1;
+		transform: translateX( 0 );
+		transition: opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) ),
+			transform var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) );
+	}
+
+	// Links also keep their colour transition for hover.
+	.x-dropdown-link.x-dropdown-link {
+		transition: color $x-nav-2026-transition,
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) ),
+			transform var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) );
+	}
+}
+
+// FIRST OPEN (closed → open): items wait for the panel to grow (panel-duration minus a
+// small overlap) before staggering in, so they don't appear in empty space mid-unroll.
+.x-dropdown.x-dropdown--2026.is-dropdown-first-open
+	.x-dropdown-content[aria-hidden='false'] {
+	.x-dropdown-subcategory-title,
+	.x-dropdown-link.x-dropdown-link {
+		transition-delay: calc(
+			(
+					var( --x-dropdown-2026-panel-duration ) - var(
+							--x-dropdown-2026-items-slide-overlap
+						)
+				) + var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step )
+		);
+	}
 }
 
 /*
@@ -1224,42 +1299,70 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 }
 
-// Desktop dropdown — one persistent panel with all menus' content blocks stacked.
-// Each block is hidden by default and the active one (aria-hidden="false") fades
-// in while the rest fade out — a clean cross-fade with no both-hidden gap.
-// The persistent panel wrapper. `position: relative` (not the legacy `absolute`,
-// which constrained the width, nor `static`, which would ignore z-index) gives it a
-// high-z stacking context so the fixed content blocks inside paint above the page
-// content — sections like `.themes .main` create their own z-index contexts that
-// would otherwise cover the dropdown. The wrapper itself is 0-size; the content is
-// `position: fixed` so it still positions against the viewport.
+// Desktop dropdown — ONE persistent panel that stays open while you move between
+// triggers and eases its HEIGHT from one menu's content to the next. The wrapper is the
+// fixed, full-viewport-width white panel; the per-menu content blocks live inside it,
+// the active one (aria-hidden="false") in normal flow so the wrapper auto-sizes to it.
+// The wrapper carries the positioning/background/z that used to live on each block:
+// `position: fixed` + high z escapes section stacking contexts (e.g. `.themes .main`)
+// by positioning against the initial containing block, and spans the viewport via
+// `inset-inline: 0`. Hidden at rest so the full-width fixed element neither intercepts
+// the viewport nor paints a white band; `is-dropdown-open` (JS) reveals it.
 .x-dropdown.x-dropdown--2026 {
-	position: relative;
-	z-index: 900000;
-	width: auto;
-	height: auto;
-	inset: auto;
-	// The legacy `.x-dropdown` base hides itself with `opacity: 0`; this wrapper is
-	// always visible (its content blocks manage their own open/close opacity).
-	opacity: 1;
-}
+	// Timing for the height morph + per-item slide-in. Exposed as custom props so a host
+	// can tune them and `calc()` can consume them (mirrors the mobile `--x-menu-2026-*`).
+	--x-dropdown-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
+	--x-dropdown-2026-panel-duration: 0.28s; // wrapper height morph between menus
+	--x-dropdown-2026-link-offset: 16px; // how far each item slides in from the left
+	--x-dropdown-2026-link-duration: 0.26s; // per-item fade + slide duration
+	--x-dropdown-2026-stagger-step: 0.02s; // added per --stagger-index (reading order)
+	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
 
-.x-dropdown--2026.x-dropdown-content {
 	position: fixed;
 	top: calc(
 		var( --nav-2026-admin-offset, var( --masterbar-height, 0px ) ) + #{$x-nav-2026-height}
 	);
-	// `inset-inline: 0` already spans the viewport minus the scrollbar; `100vw`
-	// would include the scrollbar width and overflow horizontally. `width: auto`
-	// beats the legacy `.x-dropdown-content { width: 210px }`.
 	inset-inline: 0;
+	// The legacy `.x-dropdown` base sets `bottom: 0`, which would stretch this fixed
+	// wrapper to fill the whole viewport (painting a full-height white panel). Force
+	// `bottom: auto` so it sizes to its content — the active block's height — instead.
+	bottom: auto;
 	width: auto;
-	// Above the blur backdrop (z 800) so the white panel renders on top of it.
-	z-index: $x-content-min-z-index;
+	height: auto; // at rest; the JS FLIP pins an explicit px height during a switch
+	z-index: 900000;
+	background: $studio-white;
+	opacity: 1;
+	visibility: hidden;
+	pointer-events: none;
+	transition: visibility $x-nav-2026-transition;
+
+	// Height morph is desktop-only (below 1025 the wide items are hidden, no dropdown).
+	@media ( min-width: 1025px ) {
+		transition: visibility $x-nav-2026-transition,
+			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing );
+	}
+}
+
+// Open: reveal the panel (its content blocks still manage their own cross-fade).
+.x-dropdown.x-dropdown--2026.is-dropdown-open {
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.x-dropdown--2026.x-dropdown-content {
+	// Hidden blocks are out of flow (pinned at the panel top, intrinsic height); the active
+	// one flips to `position: relative` (above) to restore flow and drive the wrapper's auto
+	// height. Only top + inline edges are set (NO `bottom`) so a hidden block sizes to its own
+	// content and never stretches to the container — matching the reference. This is what makes
+	// the panel auto-size to ONLY the active menu's content rather than the tallest/sum.
+	position: absolute;
+	top: 0;
+	inset-inline: 0;
+	bottom: auto;
+	width: auto;
 	padding: $x-dropdown-2026-content-padding;
 	padding-inline-start: 24px;
 	border-radius: 0;
-	background: $studio-white;
 	box-shadow: none;
 	transform: none;
 	opacity: 0;
@@ -1304,6 +1407,15 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
+	// Base (hidden) slide-in state for titles + links: offset to the left + faded out.
+	// The transform reset is deferred (`0s … <duration>` delay) so on close the items
+	// snap back to the offset instead of sliding rightward out of view.
+	.x-dropdown-subcategory-title,
+	.x-dropdown-link.x-dropdown-link {
+		opacity: 0;
+		transform: translateX( calc( -1 * var( --x-dropdown-2026-link-offset ) ) );
+	}
+
 	.x-dropdown-subcategory-title {
 		margin: 0;
 		padding: 0 0 12px;
@@ -1313,6 +1425,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		color: $studio-gray-30;
+		transition: opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
+			transform 0s linear var( --x-dropdown-2026-link-duration );
 	}
 
 	.x-dropdown-link.x-dropdown-link {
@@ -1326,7 +1440,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		// Some sections (e.g. themes) underline links by default; the dropdown links
 		// should never be underlined.
 		text-decoration: none;
-		transition: color $x-nav-2026-transition;
+		transition: color $x-nav-2026-transition,
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
+			transform 0s linear var( --x-dropdown-2026-link-duration );
 
 		&:hover,
 		&:focus,
@@ -2020,6 +2136,20 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		.x-menu-mobile-nav-item {
 			transform: none !important;
 		}
+	}
+
+	// Desktop dropdown: collapse the height morph + item slide-in to near-instant.
+	.x-dropdown.x-dropdown--2026,
+	.x-dropdown--2026.x-dropdown-content,
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-subcategory-title,
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-link.x-dropdown-link {
+		transition-duration: 0.001ms !important;
+		transition-delay: 0s !important;
+	}
+
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-subcategory-title,
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-link.x-dropdown-link {
+		transform: none !important;
 	}
 }
 

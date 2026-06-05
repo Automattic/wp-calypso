@@ -49,6 +49,9 @@ export interface ClickableItemProps extends MenuItemProps {
 	typeClassName?: string;
 	target?: string;
 	tabIndex?: number;
+	// Reading-order position, published as `--stagger-index` so the 2026 dropdown's
+	// slide-in animation can offset each item's transition-delay.
+	index?: number;
 }
 
 export type LanguageOptions = Record< string, string >;
