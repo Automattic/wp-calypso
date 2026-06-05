@@ -1047,6 +1047,8 @@ export class EditorPage {
 		if ( ! publishedURL ) {
 			throw new Error( 'No published article URL found in response.' );
 		}
+		// `response` is the Promise.race winner — either the POST (Atomic) or the PUT (Simple).
+		// The `publishResponse.method` field in diagnostics will reflect whichever verb won.
 		const publishDiagnostics = getPublishDiagnostics( response, json, publishedURL );
 
 		if ( visit ) {
@@ -1160,6 +1162,10 @@ export class EditorPage {
 		} );
 		publicResponses.push( getResponseDiagnostic( response, 'published-url-goto' ) );
 
+		// `onReload` is called only when retrying (retries > 1). On the final attempt,
+		// `reloadAndRetry` re-throws without reloading, so the response for the last
+		// page load before the error is not captured — `publicResponses` reflects all
+		// attempts up to but not including the final failing check.
 		await reloadAndRetry( this.page, confirmPostShown, {
 			onReload: ( response ) => {
 				publicResponses.push( getResponseDiagnostic( response, 'published-url-reload' ) );
