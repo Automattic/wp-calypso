@@ -36,10 +36,10 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                     | UI Component           | Description                                              |
-| ---------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
-| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
-| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
+| Tool ID                           | Handler                     | UI Component           | Description                                              |
+| --------------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
+| `jetpack_ai__show_component`      | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
+| `big_sky__show_component`         | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
 | `jetpack-ai/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
 
 ### Show-component pattern
