@@ -3,15 +3,17 @@
 	"plugins": [
 		"@signal-noise/stylelint-scales",
 		"@wordpress/theme/stylelint-plugins/no-unknown-ds-tokens",
-		"@wordpress/theme/stylelint-plugins/no-setting-wpds-custom-properties"
+		"@wordpress/theme/stylelint-plugins/no-setting-wpds-custom-properties",
+		"@wordpress/theme/stylelint-plugins/no-token-fallback-values"
 	],
 	"reportInvalidScopeDisables": true,
 	"reportNeedlessDisables": true,
 	"rules": {
 		"at-rule-empty-line-before": null,
 		"at-rule-no-unknown": null,
-		"plugin-wpds/no-unknown-ds-tokens": null,
-		"plugin-wpds/no-setting-wpds-custom-properties": null,
+		"plugin-wpds/no-unknown-ds-tokens": true,
+		"plugin-wpds/no-setting-wpds-custom-properties": true,
+		"plugin-wpds/no-token-fallback-values": true,
 		"comment-empty-line-before": null,
 		"font-weight-notation": null,
 		"no-descending-specificity": null,

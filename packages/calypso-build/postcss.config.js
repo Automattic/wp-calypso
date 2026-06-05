@@ -1,6 +1,5 @@
+const { getPostCssPlugins } = require( './postcss-plugins' );
+
 module.exports = () => ( {
-	plugins: {
-		'postcss-custom-properties': {},
-		autoprefixer: {},
-	},
+	plugins: getPostCssPlugins( { customProperties: true } ),
 } );

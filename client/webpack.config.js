@@ -3,6 +3,7 @@
  */
 
 const path = require( 'path' );
+const { getPostCssPlugins } = require( '@automattic/calypso-build/postcss-plugins' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
@@ -15,7 +16,6 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
-const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -296,7 +296,7 @@ const webpackConfig = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: getPostCssPlugins(),
 				},
 				prelude: `@use 'calypso/assets/stylesheets/shared/_utils.scss' as *;`,
 			} ),

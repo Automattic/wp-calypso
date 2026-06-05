@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const process = require( 'process' ); // eslint-disable-line
+const { getPostCssPlugins } = require( '@automattic/calypso-build/postcss-plugins' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
@@ -12,7 +13,6 @@ const {
 	defaultRequestToExternal,
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
-const autoprefixerPlugin = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
@@ -95,7 +95,7 @@ module.exports = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: getPostCssPlugins(),
 				},
 				prelude: `@use '${ require.resolve(
 					'calypso/assets/stylesheets/shared/_utils.scss'
