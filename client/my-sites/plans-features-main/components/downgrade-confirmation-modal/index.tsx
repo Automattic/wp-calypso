@@ -260,7 +260,7 @@ const DowngradeConfirmationModal = ( {
 				return (
 					<p className="downgrade-confirmation-modal__description">
 						{ translate(
-							"When you change from %(currentPlan)s to %(targetPlan)s, here's what you'll lose:",
+							'When you change from %(currentPlan)s to %(targetPlan)s, here’s what you’ll lose:',
 							{
 								args: {
 									currentPlan: currentPlanTitle,
@@ -294,7 +294,7 @@ const DowngradeConfirmationModal = ( {
 			return (
 				<p className="downgrade-confirmation-modal__description">
 					{ translate(
-						"When you downgrade from %(currentPlan)s to %(targetPlan)s, you'll receive a refund of %(amount)s to your original payment method.",
+						'When you downgrade from %(currentPlan)s to %(targetPlan)s, you’ll receive a refund of %(amount)s to your original payment method.',
 						{
 							args: {
 								currentPlan: currentPlanTitle,
