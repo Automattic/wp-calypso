@@ -372,11 +372,16 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-bottom: 30px;
 }
 
-.memberships__products-product-card {
+.card.memberships__products-product-card {
 	display: flex;
+	align-items: flex-start;
 }
 .memberships__products-product-details {
-	flex-grow: 1;
+	flex: 1;
+	min-width: 0;
+}
+.memberships__products-product-card > .ellipsis-menu {
+	flex-shrink: 0;
 }
 .memberships__products-product-price {
 	color: var(--color-text-subtle);
@@ -393,6 +398,7 @@ body.is-section-earn.theme-default.color-scheme {
 	font-size: $font-body-small;
 	line-height: 1.4;
 	margin-top: 4px;
+	overflow-wrap: break-word;
 }
 .memberships__products-product-badge {
 	margin-top: 10px;
