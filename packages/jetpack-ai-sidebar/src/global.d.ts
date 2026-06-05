@@ -9,6 +9,7 @@ declare const agentsManagerData:
 				enabled: boolean;
 				features?: {
 					aiEditorialReview?: boolean;
+					generateFeedback?: boolean;
 					blockTransformations?: boolean;
 					optimizeTitleSuggestion?: boolean;
 					chatHistory?: boolean;

@@ -61,6 +61,7 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 let clearSuggestionsFn: ( () => void ) | null = null;
 let wasAgentProcessing = false;
 let suppressCurrentPageContentForNextContext = false;
+let requestedActionForNextContext: string | null = null;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -111,6 +112,7 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 
 type JetpackAiSidebarPreviewFeature =
 	| 'aiEditorialReview'
+	| 'generateFeedback'
 	| 'blockTransformations'
 	| 'optimizeTitleSuggestion'
 	| 'chatHistory'
@@ -156,6 +158,10 @@ function isBlockTransformationsEnabled(): boolean {
 	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
 }
 
+function isGenerateFeedbackEnabled(): boolean {
+	return isJetpackAiSidebarPreviewFeatureEnabled( 'generateFeedback', false );
+}
+
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
 	return typeof postType === 'string' ? postType : undefined;
@@ -178,7 +184,7 @@ function isGenerateFeedbackAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType(),
 	currentPostId: number | null | undefined = getCurrentEditorPostId()
 ): boolean {
-	return currentPostType === 'post' && !! currentPostId;
+	return isGenerateFeedbackEnabled() && currentPostType === 'post' && !! currentPostId;
 }
 
 function trackAiEditorialReviewSuggestionRenderedOnce(): void {
@@ -585,7 +591,9 @@ export const contextProvider = {
 		let selectedBlockContent = '';
 		let currentPostType: string | undefined;
 		const suppressCurrentPageContent = suppressCurrentPageContentForNextContext;
+		const requestedAction = requestedActionForNextContext;
 		suppressCurrentPageContentForNextContext = false;
+		requestedActionForNextContext = null;
 
 		if ( wpData ) {
 			const editor = wpData.select( 'core/editor' );
@@ -617,6 +625,7 @@ export const contextProvider = {
 				...( currentPostType && { postType: currentPostType } ),
 			},
 			currentPageContent,
+			...( requestedAction && { jetpackAi: { requestedAction } } ),
 			selectedBlockClientId,
 			contextEntries: [
 				{
@@ -882,6 +891,8 @@ export function useSuggestions(
 
 			setHidden( true );
 			clearSuggestionsFn?.();
+			suppressCurrentPageContentForNextContext = false;
+			requestedActionForNextContext = null;
 
 			// Review-style responses are dense, so auto-expand those suggestion
 			// flows to 50vw when they are started from chips.
@@ -890,6 +901,7 @@ export function useSuggestions(
 			}
 			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
 				suppressCurrentPageContentForNextContext = true;
+				requestedActionForNextContext = POST_FEEDBACK_SUGGESTION.id;
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {

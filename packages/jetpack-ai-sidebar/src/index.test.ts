@@ -215,6 +215,7 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 			enabled: true,
 			features: {
 				aiEditorialReview: true,
+				generateFeedback: true,
 				blockTransformations: true,
 				optimizeTitleSuggestion: false,
 				chatHistory: false,
@@ -542,6 +543,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).toContain( 'Generate Feedback' );
 	} );
 
 	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
@@ -552,6 +554,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		expect( labels ).toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Generate Feedback' );
 	} );
 
 	it( 'hides AI Editorial Review on page editors', () => {
@@ -584,6 +587,16 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).toContain( 'AI Editorial Review' );
 	} );
 
+	it( 'hides Generate Feedback when the preview feature disables it', () => {
+		installAiEditorialReviewData( { generateFeedback: false } );
+		installPostTypeMock( 'post' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'AI Editorial Review' );
+	} );
+
 	it( 'hides Optimize Title when the preview feature disables it', () => {
 		installAiEditorialReviewData( { aiEditorialReview: false, optimizeTitleSuggestion: false } );
 		installPostTypeMock( 'post' );
@@ -608,6 +621,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		expect( labels ).not.toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Generate Feedback' );
 	} );
 } );
 
@@ -827,7 +841,6 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Generate Feedback',
 			'AI Editorial Review',
 		] );
 	} );
@@ -1126,8 +1139,42 @@ describe( 'contextProvider', () => {
 			);
 		} );
 
-		expect( contextProvider.getClientContext().currentPageContent ).toEqual( [] );
+		const feedbackContext = contextProvider.getClientContext();
+		expect( feedbackContext.currentPageContent ).toEqual( [] );
+		expect( feedbackContext.jetpackAi ).toEqual( { requestedAction: 'generate-feedback' } );
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
+		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
+	} );
+
+	it( 'clears pending Generate Feedback context when another suggestion is clicked', () => {
+		installAiEditorialReviewData();
+		installContextProviderMock();
+		const suggestions = getEmptyViewSuggestions();
+		const feedbackPrompt = suggestions.find(
+			( suggestion ) => suggestion.id === 'generate-feedback'
+		)?.prompt;
+		const mediationPrompt = suggestions.find(
+			( suggestion ) => suggestion.id === 'mediate-review-notes'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: feedbackPrompt },
+				} )
+			);
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: mediationPrompt },
+				} )
+			);
+		} );
+
+		const context = contextProvider.getClientContext();
+		expect( context.currentPageContent ).toHaveLength( 1 );
+		expect( context.jetpackAi ).toBeUndefined();
 	} );
 } );
 
