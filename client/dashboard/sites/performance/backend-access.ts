@@ -1,4 +1,4 @@
-import { BusinessPlans, EcommercePlans } from '@automattic/api-core';
+import { BusinessPlans, EcommercePlans, StudentPlans } from '@automattic/api-core';
 
 export function hasBackendAccess( productSlug: string | undefined ) {
 	if ( ! productSlug ) {
@@ -6,6 +6,7 @@ export function hasBackendAccess( productSlug: string | undefined ) {
 	}
 	return (
 		( BusinessPlans as readonly string[] ).includes( productSlug ) ||
-		( EcommercePlans as readonly string[] ).includes( productSlug )
+		( EcommercePlans as readonly string[] ).includes( productSlug ) ||
+		( StudentPlans as readonly string[] ).includes( productSlug )
 	);
 }

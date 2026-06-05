@@ -34,6 +34,7 @@ export const isSitePlanBigSkyTrial = ( site: Site ) => {
 		DotcomPlans.BUSINESS_MONTHLY,
 		DotcomPlans.BUSINESS_2_YEARS,
 		DotcomPlans.BUSINESS_3_YEARS,
+		DotcomPlans.STUDENT,
 		DotcomPlans.PREMIUM,
 		DotcomPlans.PREMIUM_MONTHLY,
 		DotcomPlans.PREMIUM_2_YEARS,

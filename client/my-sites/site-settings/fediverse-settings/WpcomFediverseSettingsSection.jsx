@@ -1,4 +1,10 @@
-import { getPlan, isFreePlanProduct, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	isFreePlanProduct,
+	isWpComBusinessPlan,
+	isWpComStudentPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -97,7 +103,8 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
 	// If the user is already on Atomic, we'll be in `JetpackFediverseSettingsSection` instead.
 	// But they could have purchased the upgrade and not have transferred yet.
-	const isBusinessPlan = sitePlanSlug === PLAN_BUSINESS;
+	const canInstallActivityPubPlugin =
+		isWpComBusinessPlan( sitePlanSlug ) || isWpComStudentPlan( sitePlanSlug );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const linkUrl = `/plans/select/business/${ domain }`;
 	const translate = useTranslate();
@@ -107,7 +114,7 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click', { route: currentRoute } );
 	};
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
-	if ( isBusinessPlan ) {
+	if ( canInstallActivityPubPlugin ) {
 		// show a card that links to the plugin page to install the ActivityPub plugin
 		return (
 			<div>
