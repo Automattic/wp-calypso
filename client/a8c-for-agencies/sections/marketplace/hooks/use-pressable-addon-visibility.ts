@@ -10,7 +10,6 @@ import type { License } from 'calypso/state/partner-portal/types';
 
 type PressableAddonLicenseVisibility = {
 	hasActiveAgencyPressablePlanLicense: boolean;
-	hasActiveReferralPressablePlanLicense: boolean;
 };
 
 type PressableAddonMarketplaceVisibility = Pick<
@@ -22,7 +21,6 @@ type PressableAddonMarketplaceVisibility = Pick<
 
 export const DEFAULT_PRESSABLE_ADDON_VISIBILITY: PressableAddonLicenseVisibility = {
 	hasActiveAgencyPressablePlanLicense: false,
-	hasActiveReferralPressablePlanLicense: false,
 };
 
 export function getPressableAddonLicenseVisibility(
@@ -42,9 +40,7 @@ export function getPressableAddonLicenseVisibility(
 				return visibility;
 			}
 
-			if ( license.referral ) {
-				visibility.hasActiveReferralPressablePlanLicense = true;
-			} else {
+			if ( ! license.referral ) {
 				visibility.hasActiveAgencyPressablePlanLicense = true;
 			}
 

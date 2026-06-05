@@ -35,11 +35,10 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 	it( 'returns no visibility for empty input', () => {
 		expect( getPressableAddonLicenseVisibility( [] ) ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: false,
-			hasActiveReferralPressablePlanLicense: false,
 		} );
 	} );
 
-	it( 'OFF mode case: only referral pressable plan license does not grant agency visibility', () => {
+	it( 'does not grant agency visibility for a referral Pressable plan license', () => {
 		const visibility = getPressableAddonLicenseVisibility( [
 			buildLicense( {
 				licenseKey: 'pressable-premium',
@@ -49,22 +48,20 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: false,
-			hasActiveReferralPressablePlanLicense: true,
 		} );
 	} );
 
-	it( 'ON mode case: only non-referral pressable plan license does not grant referral visibility', () => {
+	it( 'grants agency visibility for a non-referral Pressable plan license', () => {
 		const visibility = getPressableAddonLicenseVisibility( [
 			buildLicense( { licenseKey: 'pressable-premium' } ),
 		] );
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: true,
-			hasActiveReferralPressablePlanLicense: false,
 		} );
 	} );
 
-	it( 'marks both visibilities when both license types exist', () => {
+	it( 'grants agency visibility when both license types exist', () => {
 		const visibility = getPressableAddonLicenseVisibility( [
 			buildLicense( { licenseKey: 'pressable-premium' } ),
 			buildLicense( {
@@ -75,7 +72,6 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: true,
-			hasActiveReferralPressablePlanLicense: true,
 		} );
 	} );
 
@@ -91,7 +87,6 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: false,
-			hasActiveReferralPressablePlanLicense: false,
 		} );
 	} );
 } );
