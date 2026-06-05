@@ -14,6 +14,13 @@ import type { SiteSubscriptionItem } from '../types';
 
 export const siteSubscriptionsQueryKeyPrefix = [ ...getSiteSubscriptionsQueryKey() ];
 
+// Must match the page size the shared `siteSubscriptionsQuery` (in
+// `@automattic/api-queries`) assumes for next-page detection. That query reasons
+// about how much offset it has covered, so requesting a different page size here
+// would make pagination stop early or over-fetch. The value mirrors the server
+// cap (`PER_PAGE_MAX = 100`) on `/read/following/mine`.
+const SITE_SUBSCRIPTIONS_PAGE_SIZE = 100;
+
 const sortByDateSubscribed = ( a: SiteSubscriptionItem, b: SiteSubscriptionItem ) =>
 	a.date_subscribed instanceof Date && b.date_subscribed instanceof Date
 		? b.date_subscribed.getTime() - a.date_subscribed.getTime()
@@ -51,7 +58,7 @@ const useSiteSubscriptionsQuery = () => {
 			const response = await callApi< SiteSubscriptionsApiResponse >( {
 				path: addQueryArgs( '/read/following/mine', {
 					page: pageParam,
-					number: 200,
+					number: SITE_SUBSCRIPTIONS_PAGE_SIZE,
 					meta: '',
 				} ),
 				apiVersion: '1.2',

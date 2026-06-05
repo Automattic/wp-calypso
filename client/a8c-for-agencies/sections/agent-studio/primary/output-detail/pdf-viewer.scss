@@ -101,3 +101,56 @@
 	opacity: 1;
 	pointer-events: auto;
 }
+
+.a4a-one-pager-viewer__page-edit {
+	position: absolute;
+	inset-block-start: 12px;
+	inset-inline-end: 12px;
+	z-index: 4;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 120ms ease;
+}
+
+.a4a-one-pager-viewer__frame:hover .a4a-one-pager-viewer__page-edit,
+.a4a-one-pager-viewer__frame:focus-within .a4a-one-pager-viewer__page-edit {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+// Quiet per-page button, kept understated so the floating launcher stays the CTA.
+.a4a-one-pager-viewer__page-edit-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	padding-block: 8px;
+	padding-inline: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 4px;
+	background-color: rgba(18, 18, 18, 0.88);
+	color: rgba(255, 255, 255, 0.95);
+	box-sizing: border-box;
+	cursor: pointer;
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1;
+	appearance: none;
+	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.26);
+	backdrop-filter: blur(10px);
+	transition: background-color 120ms ease;
+}
+
+.a4a-one-pager-viewer__page-edit-button svg,
+.a4a-one-pager-viewer__page-edit-button svg path {
+	fill: currentColor;
+}
+
+.a4a-one-pager-viewer__page-edit-button:hover {
+	background-color: rgba(34, 34, 34, 0.94);
+}
+
+.a4a-one-pager-viewer__page-edit-button:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.72);
+	outline-offset: 2px;
+}

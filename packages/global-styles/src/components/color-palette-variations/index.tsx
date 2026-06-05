@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import {
 	__unstableComposite as Composite,
@@ -32,7 +32,6 @@ interface ColorPaletteVariationsProps {
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
 	limitGlobalStyles?: boolean;
-	isGlobalStylesOnPersonal?: boolean;
 }
 
 const ColorPaletteVariation = ( {
@@ -89,13 +88,12 @@ const ColorPaletteVariations = ( {
 	selectedColorPaletteVariation,
 	onSelect,
 	limitGlobalStyles,
-	isGlobalStylesOnPersonal = window.isGlobalStylesOnPersonal ?? false,
 }: ColorPaletteVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( stylesheet ) ?? [];
 	const composite = useCompositeState();
 
-	const upgradeToPlan = isGlobalStylesOnPersonal ? PLAN_PERSONAL : PLAN_PREMIUM;
+	const upgradeToPlan = PLAN_PERSONAL;
 
 	const variationDescription = translate(
 		'Preview our style variations for free or pick your own fonts and colors with the %(planName)s plan later on.',

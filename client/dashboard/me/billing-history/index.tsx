@@ -49,7 +49,10 @@ export default function BillingHistory() {
 		}
 	} );
 
-	const fields = useMemo( () => getFields( receipts, countryList ), [ receipts, countryList ] );
+	const fields = useMemo(
+		() => getFields( receipts, countryList, view.fields ?? WIDE_FIELDS ),
+		[ receipts, countryList, view.fields ]
+	);
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( receipts, view, fields );

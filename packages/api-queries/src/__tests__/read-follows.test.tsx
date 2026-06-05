@@ -72,7 +72,7 @@ describe( 'siteSubscriptionsQuery', () => {
 	it( 'fetches follows with the canonical key and legacy paging args', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.2/read/following/mine' )
-			.query( { page: '1', number: '200', meta: '' } )
+			.query( { page: '1', number: '100', meta: '' } )
 			.reply( 200, {
 				subscriptions: [
 					{
@@ -84,7 +84,7 @@ describe( 'siteSubscriptionsQuery', () => {
 				],
 				total_subscriptions: 1,
 				page: 1,
-				number: 200,
+				number: 1,
 			} );
 
 		const client = newClient();
@@ -105,6 +105,77 @@ describe( 'siteSubscriptionsQuery', () => {
 			feed_ID: 789,
 			is_following: true,
 		} );
+	} );
+
+	it( 'paginates by the server total, past short and empty pages, until all rows are covered', async () => {
+		// The server walks raw rows by offset and filters deleted/spammy sites
+		// *after* applying the page limit, so a page can be short or even empty
+		// while later offset windows still hold valid rows. With a reported total
+		// of 250 and a page size of 100, three pages cover every row — even
+		// though the middle page comes back empty.
+		const makeSubscription = ( id: number ) => ( {
+			ID: String( id ),
+			URL: `https://example-${ id }.com/feed/`,
+			blog_ID: String( id ),
+			feed_ID: String( id ),
+		} );
+
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( { page: '1', number: '100', meta: '' } )
+			.reply( 200, {
+				subscriptions: [ makeSubscription( 1 ), makeSubscription( 2 ) ],
+				total_subscriptions: 250,
+				page: 1,
+				number: 2,
+			} );
+		// Middle page: every raw row in this window was filtered out, so it comes
+		// back empty — but there are still rows beyond it.
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( { page: '2', number: '100', meta: '' } )
+			.reply( 200, {
+				subscriptions: [],
+				total_subscriptions: 250,
+				page: 2,
+				number: 0,
+			} );
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( { page: '3', number: '100', meta: '' } )
+			.reply( 200, {
+				subscriptions: [ makeSubscription( 3 ) ],
+				total_subscriptions: 250,
+				page: 3,
+				number: 1,
+			} );
+
+		const client = newClient();
+		const { result } = renderHook( () => useInfiniteQuery( siteSubscriptionsQuery() ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		// Page 1 (auto-fetched) only covers 100 of 250 rows, so more remain.
+		await waitFor( () => expect( result.current.data?.pages ).toHaveLength( 1 ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		// Page 2 comes back empty, but 200 < 250 rows covered — keep going.
+		await act( async () => {
+			await result.current.fetchNextPage();
+		} );
+		await waitFor( () => expect( result.current.data?.pages ).toHaveLength( 2 ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		// Page 3 covers rows up to 300 >= 250, so pagination stops here.
+		await act( async () => {
+			await result.current.fetchNextPage();
+		} );
+		await waitFor( () => expect( result.current.hasNextPage ).toBe( false ) );
+
+		// The site beyond the empty middle page is still collected.
+		expect( getSiteSubscriptionsFromData( result.current.data ).map( ( sub ) => sub.ID ) ).toEqual(
+			[ 1, 2, 3 ]
+		);
 	} );
 } );
 

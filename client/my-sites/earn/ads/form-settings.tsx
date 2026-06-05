@@ -1,14 +1,17 @@
 import { Button, Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ToggleControl } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	RadioControl,
+	ToggleControl,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLegend from 'calypso/components/forms/form-legend';
-import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -178,41 +181,24 @@ const AdsFormSettings = () => {
 		}
 
 		return (
-			<FormFieldset>
-				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
-				<FormLabel>
-					<FormRadio
-						name="show_to_logged_in"
-						value="yes"
-						checked={ 'yes' === settings.show_to_logged_in }
-						onChange={ handleChange }
-						disabled={ isLoading }
-						label={ translate( 'Run ads for all users' ) }
-					/>
-				</FormLabel>
-
-				<FormLabel>
-					<FormRadio
-						name="show_to_logged_in"
-						value="no"
-						checked={ 'no' === settings.show_to_logged_in }
-						onChange={ handleChange }
-						disabled={ isLoading }
-						label={ translate( 'Run ads only for logged-out users (less revenue)' ) }
-					/>
-				</FormLabel>
-
-				<FormLabel>
-					<FormRadio
-						name="show_to_logged_in"
-						value="pause"
-						checked={ 'pause' === settings.show_to_logged_in }
-						onChange={ handleChange }
-						disabled={ isLoading }
-						label={ translate( 'Pause ads (no revenue)' ) }
-					/>
-				</FormLabel>
-			</FormFieldset>
+			<>
+				<FormSectionHeading>{ translate( 'Ads Visibility' ) }</FormSectionHeading>
+				<RadioControl
+					selected={ settings.show_to_logged_in }
+					options={ [
+						{ label: String( translate( 'Run ads for all users' ) ), value: 'yes' },
+						{
+							label: String( translate( 'Run ads only for logged-out users (less revenue)' ) ),
+							value: 'no',
+						},
+						{ label: String( translate( 'Pause ads (no revenue)' ) ), value: 'pause' },
+					] }
+					onChange={ ( value ) =>
+						setSettings( ( prevState ) => ( { ...prevState, show_to_logged_in: value } ) )
+					}
+					disabled={ isLoading }
+				/>
+			</>
 		);
 	}
 
@@ -220,66 +206,70 @@ const AdsFormSettings = () => {
 		const isDisabled = isLoading || Boolean( siteIsJetpack && ! settings.jetpack_module_enabled );
 
 		return (
-			<div>
-				<FormFieldset className="ads__settings-display-toggles">
-					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
-					<ToggleControl
-						checked={ !! settings.display_options?.display_front_page }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'display_front_page' ) }
-						label={ translate( 'Front page' ) }
-					/>
-					<ToggleControl
-						checked={ !! settings.display_options?.display_post }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'display_post' ) }
-						label={ translate( 'Posts' ) }
-					/>
-					<ToggleControl
-						checked={ !! settings.display_options?.display_page }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'display_page' ) }
-						label={ translate( 'Pages' ) }
-					/>
-					<ToggleControl
-						checked={ !! settings.display_options?.display_archive }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'display_archive' ) }
-						label={ translate( 'Archives' ) }
-					/>
-				</FormFieldset>
-				<FormFieldset className="ads__settings-display-toggles">
-					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
-					<ToggleControl
-						checked={ !! settings.display_options?.enable_header_ad }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'enable_header_ad' ) }
-						label={ translate( 'Top of each page' ) }
-					/>
-					<ToggleControl
-						checked={ !! settings.display_options?.second_belowpost }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'second_belowpost' ) }
-						label={ translate( 'Second ad below post' ) }
-					/>
-					{ supportsInlineAds && (
+			<>
+				<FormSectionHeading>{ translate( 'Display ads below posts on' ) }</FormSectionHeading>
+				<FormFieldset>
+					<VStack spacing={ 6 }>
 						<ToggleControl
-							checked={ !! settings.display_options?.inline_enabled }
+							checked={ !! settings.display_options?.display_front_page }
 							disabled={ isDisabled }
-							onChange={ () => handleDisplayToggle( 'inline_enabled' ) }
-							label={ translate( 'Inline within post content' ) }
+							onChange={ () => handleDisplayToggle( 'display_front_page' ) }
+							label={ translate( 'Front page' ) }
 						/>
-					) }
-					{ ! siteIsJetpack && (
 						<ToggleControl
-							checked={ !! settings.display_options?.sidebar }
+							checked={ !! settings.display_options?.display_post }
 							disabled={ isDisabled }
-							onChange={ () => handleDisplayToggle( 'sidebar' ) }
-							label={ translate( 'Sidebar' ) }
+							onChange={ () => handleDisplayToggle( 'display_post' ) }
+							label={ translate( 'Posts' ) }
 						/>
-					) }
+						<ToggleControl
+							checked={ !! settings.display_options?.display_page }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'display_page' ) }
+							label={ translate( 'Pages' ) }
+						/>
+						<ToggleControl
+							checked={ !! settings.display_options?.display_archive }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'display_archive' ) }
+							label={ translate( 'Archives' ) }
+						/>
+					</VStack>
 				</FormFieldset>
-			</div>
+				<FormSectionHeading>{ translate( 'Additional ad placements' ) }</FormSectionHeading>
+				<FormFieldset>
+					<VStack spacing={ 6 }>
+						<ToggleControl
+							checked={ !! settings.display_options?.enable_header_ad }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'enable_header_ad' ) }
+							label={ translate( 'Top of each page' ) }
+						/>
+						<ToggleControl
+							checked={ !! settings.display_options?.second_belowpost }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'second_belowpost' ) }
+							label={ translate( 'Second ad below post' ) }
+						/>
+						{ supportsInlineAds && (
+							<ToggleControl
+								checked={ !! settings.display_options?.inline_enabled }
+								disabled={ isDisabled }
+								onChange={ () => handleDisplayToggle( 'inline_enabled' ) }
+								label={ translate( 'Inline within post content' ) }
+							/>
+						) }
+						{ ! siteIsJetpack && (
+							<ToggleControl
+								checked={ !! settings.display_options?.sidebar }
+								disabled={ isDisabled }
+								onChange={ () => handleDisplayToggle( 'sidebar' ) }
+								label={ translate( 'Sidebar' ) }
+							/>
+						) }
+					</VStack>
+				</FormFieldset>
+			</>
 		);
 	}
 
@@ -361,28 +351,27 @@ const AdsFormSettings = () => {
 			<div>
 				<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
 				<FormFieldset>
-					<SupportInfo
-						text={ translate(
-							'Enables a targeted advertising opt-out link in US states where this is legally required.'
-						) }
-						link={ localizeUrl(
-							'https://wordpress.com/support/us-privacy-laws-and-your-wordpress-com-site/'
-						) }
-					/>
-					<ToggleControl
-						checked={ !! settings.ccpa_enabled }
-						disabled={ isDisabled }
-						onChange={ () => handleCompactToggle( 'ccpa_enabled' ) }
-						label={ translate( 'Enable targeted advertising to site visitors in all US states.' ) }
-					/>
-
-					<div className="ads__child-settings">
-						<FormSettingExplanation>
-							{ translate(
+					<HStack justify="space-between" alignment="flex-start" spacing={ 4 }>
+						<ToggleControl
+							checked={ !! settings.ccpa_enabled }
+							disabled={ isDisabled }
+							onChange={ () => handleCompactToggle( 'ccpa_enabled' ) }
+							label={ translate(
+								'Enable targeted advertising to site visitors in all US states.'
+							) }
+							help={ translate(
 								'Some US states have laws that require offering site visitors an opt-out from having their data used to personalize ads. Targeted advertising is off in certain states unless you enable it.'
 							) }
-						</FormSettingExplanation>
-					</div>
+						/>
+						<SupportInfo
+							text={ translate(
+								'Enables a targeted advertising opt-out link in US states where this is legally required.'
+							) }
+							link={ localizeUrl(
+								'https://wordpress.com/support/us-privacy-laws-and-your-wordpress-com-site/'
+							) }
+						/>
+					</HStack>
 				</FormFieldset>
 
 				{ settings.ccpa_enabled && (

@@ -57,6 +57,16 @@ export default function SitesWithWooPayments() {
 			'woopaymentsStatus',
 			'commissionEligibility',
 		],
+		layout: {
+			styles: {
+				site: { minWidth: '260px' },
+				transactions: { minWidth: '120px' },
+				commissionsPaid: { minWidth: '150px' },
+				timeframeCommissions: { minWidth: '170px' },
+				woopaymentsStatus: { minWidth: '160px' },
+				commissionEligibility: { minWidth: '190px' },
+			},
+		},
 	} );
 
 	const fields = useMemo(

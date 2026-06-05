@@ -354,7 +354,10 @@ function PortaledCheckoutFormSubmit( {
 	if ( ! slotEl ) {
 		return null;
 	}
-	return createPortal( <CheckoutFormSubmit validateForm={ validateForm } />, slotEl );
+	return createPortal(
+		<CheckoutFormSubmit validateForm={ validateForm } continueToNextIncompleteStep />,
+		slotEl
+	);
 }
 
 export default function CheckoutMainContent( {
