@@ -9,8 +9,12 @@ export const NonClickableItem = ( {
 }: MenuItemProps ) => {
 	return (
 		<button
+			type="button"
 			role="menuitem"
 			className={ className }
+			// Only advertise a popup where we also report its open/close state (the 2026
+			// dropdown triggers pass `ariaExpanded`); legacy triggers pass neither.
+			aria-haspopup={ ariaExpanded !== undefined ? true : undefined }
 			aria-expanded={ ariaExpanded }
 			aria-controls={ ariaControls }
 		>

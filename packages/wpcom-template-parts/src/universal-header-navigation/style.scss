@@ -1267,12 +1267,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 /*
- * Note: the shipped reference deliberately does NOT recolour the nav bar when a
- * dropdown opens — the bar stays transparent over whatever hero it sits on, and
- * the open state reads purely from the white dropdown panel plus the blurred
- * backdrop below. Keeping the nav transparent is what lets it work over both the
- * light themes nav and the dark patterns hero without any per-section contrast
- * juggling, so we intentionally don't swap the nav background here.
+ * Note: when a dropdown opens (or the page is scrolled) the nav bar turns white so it
+ * forms one continuous white surface with the dropdown panel / reads legibly over
+ * scrolled content — see the shared white-state rule above (`…[aria-hidden='false']` /
+ * `.is-scrolled`). Per-section contrast (white text over the dark patterns hero, dark
+ * text on the white surface) is handled in each section's stylesheet, keyed off the
+ * same open/scrolled selectors.
  */
 
 // Desktop/mobile breakpoint: the reference flips desktop bar ↔ hamburger at 1025px.
