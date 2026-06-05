@@ -53,9 +53,11 @@
 	display: flex;
 	align-items: center;
 	min-width: 0;
-	min-height: 160px;
+	min-height: 210px;
 	overflow: hidden;
-	background: var( --color-neutral-80 );
+	// No background of its own: the placeholder, state, and social band each
+	// paint their own, and a one-pager's pages sit on the card surface. A dark
+	// media background here would show through at the rounded top corners.
 }
 
 .a4a-agent-studio-deliverable-card__body.components-card__body {
@@ -85,7 +87,9 @@
 	gap: 8px;
 	align-items: center;
 	justify-content: center;
+	width: 100%;
 	min-height: 160px;
+	background: var( --color-neutral-80 );
 	color: var( --color-text-inverted );
 }
 
@@ -102,4 +106,65 @@
 .a4a-agent-studio-deliverable-card__placeholder svg,
 .a4a-agent-studio-deliverable-card__placeholder svg path {
 	fill: currentColor;
+}
+
+// Thumbnail area: each page is scaled to the band height (shown in full) and
+// packed left-to-right at its natural width. A single tile (social) stays
+// centered on a dark band; a multi-page one-pager (`is-filmstrip`) pulls the
+// cover half off the leading edge so ~4 pages span the area and the trailing
+// page is half-visible too. The one-pager has no background of its own — the
+// pages sit on the card surface, so the rounded card corners stay clean.
+.a4a-agent-studio-deliverable-card__frames {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	width: 100%;
+	height: 210px;
+	overflow: hidden;
+}
+
+.a4a-agent-studio-deliverable-card__frames.is-filmstrip {
+	justify-content: flex-start;
+}
+
+.a4a-agent-studio-deliverable-card__frames.is-filmstrip
+	.a4a-agent-studio-deliverable-card__frame:first-child {
+	// Half of a page's scaled width (a 210px-tall page is ~162px wide), so the
+	// cover bleeds halfway off the leading edge.
+	margin-inline-start: -81px;
+}
+
+// A single social tile reads as a contained card floating on a dark band:
+// give it breathing room on all sides. The band's top corners are rounded to
+// the card's radius so it's clipped on its own clean curve (no dark fringe).
+.a4a-agent-studio-deliverable-card__frames:not( .is-filmstrip ) {
+	padding: 24px;
+	// Round the band's top corners (>= the card's radius) so its dark
+	// backdrop is clipped on a clean curve rather than leaving a fringe.
+	border-start-start-radius: 8px;
+	border-start-end-radius: 8px;
+	background: var( --color-neutral-100 );
+}
+
+.a4a-agent-studio-deliverable-card__frames:not( .is-filmstrip )
+	.a4a-agent-studio-deliverable-card__frame {
+	border-radius: 4px;
+}
+
+.a4a-agent-studio-deliverable-card__frame {
+	position: relative;
+	flex: 0 0 auto;
+	height: 100%;
+	overflow: hidden;
+}
+
+.a4a-agent-studio-deliverable-card__frame iframe {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	// Opt out of the global `iframe { max-width: 100% }` reset so the page
+	// keeps its natural canvas width and the transform can scale it to fit.
+	max-width: none;
 }

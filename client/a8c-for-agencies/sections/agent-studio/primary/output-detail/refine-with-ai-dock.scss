@@ -1,0 +1,62 @@
+.a4a-refine-with-ai-dock {
+	// Calypso doesn't set border-box globally here; without it the padded
+	// header overflows and pushes the close button off the edge.
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	inset-block: 0;
+	inset-inline-end: 0;
+	width: min(400px, 100vw);
+	z-index: 100;
+	background: var(--color-surface);
+	border-inline-start: 1px solid var(--color-border-subtle);
+	box-shadow: -2px 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.a4a-refine-with-ai-dock__header {
+	box-sizing: border-box;
+	flex-shrink: 0;
+	padding-block: 12px;
+	padding-inline: 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.a4a-refine-with-ai-dock__header strong {
+	font-size: 0.875rem;
+}
+
+.a4a-refine-with-ai-dock__body {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	// Let AgentUI's embedded flex column fill the dock (input pinned bottom,
+	// transcript scrolling above).
+	.agenttic {
+		flex: 1 1 auto;
+		min-height: 0;
+
+		// The embedded message list ships with no horizontal padding; supply it
+		// so bubbles don't run edge to edge, and lift the input off the bottom.
+		padding-inline: 16px;
+		padding-block-end: 16px;
+	}
+}
+
+.a4a-refine-with-ai-dock__empty {
+	max-width: 280px;
+	margin: auto;
+	padding-block: 24px;
+	padding-inline: 16px;
+}
+
+.a4a-refine-with-ai-dock__empty-icon {
+	fill: var(--color-neutral-40);
+}
+
+.a4a-refine-with-ai-dock__empty-hint {
+	line-height: 1.5;
+}
