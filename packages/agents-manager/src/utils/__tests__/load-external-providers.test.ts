@@ -4,6 +4,7 @@
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
+	mergeContextProviders,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
 import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
@@ -65,6 +66,108 @@ describe( 'mergeCapabilitiesInto', () => {
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, lazyCapabilities );
 		expect( merged.supportsSplitScreen ).toBe( true );
+	} );
+} );
+
+describe( 'mergeContextProviders', () => {
+	it( 'preserves earlier provider editor context while filling missing fields from later providers', () => {
+		const provider = mergeContextProviders( [
+			{
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					pathname: '/wp-admin/post.php',
+					search: '?post=1&action=edit',
+					environment: 'wp-admin',
+					currentScreen: {
+						url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					},
+					currentPageContent: [ { id: 'big-sky-block' } ],
+					selectedBlockClientId: 'short-selected-id',
+					contextEntries: [
+						{
+							id: 'big-sky-page-context',
+							type: 'big-sky-page-context',
+						},
+					],
+				} ),
+			},
+			{
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					pathname: '/wp-admin/post.php',
+					search: '?post=1&action=edit',
+					environment: 'gutenberg',
+					titleSuggestionCount: 3,
+					currentScreen: {
+						postType: 'page',
+					},
+					currentPageContent: [ { id: 'jetpack-block' } ],
+					selectedBlockClientId: 'short-selected-id',
+					contextEntries: [
+						{
+							id: 'selected-block-content',
+							type: 'selected-block-content',
+							data: { content: 'Selected text' },
+						},
+					],
+				} ),
+			},
+		] );
+
+		expect( provider?.getClientContext() ).toEqual(
+			expect.objectContaining( {
+				environment: 'wp-admin',
+				titleSuggestionCount: 3,
+				currentScreen: {
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					postType: 'page',
+				},
+				currentPageContent: [ { id: 'big-sky-block' } ],
+				selectedBlockClientId: 'short-selected-id',
+				contextEntries: [
+					{
+						id: 'big-sky-page-context',
+						type: 'big-sky-page-context',
+					},
+					{
+						id: 'selected-block-content',
+						type: 'selected-block-content',
+						data: { content: 'Selected text' },
+					},
+				],
+			} )
+		);
+	} );
+
+	it( 'keeps earlier provider selected block id when later selected-block context is present', () => {
+		const provider = mergeContextProviders( [
+			{
+				getClientContext: () => ( {
+					environment: 'wp-admin',
+					selectedBlockClientId: 'short-selected-id',
+				} ),
+			},
+			{
+				getClientContext: () => ( {
+					environment: 'gutenberg',
+					selectedBlockClientId: 'raw-selected-id',
+					contextEntries: [
+						{
+							id: 'selected-block-content',
+							type: 'selected-block-content',
+							data: { content: 'Selected text' },
+						},
+					],
+				} ),
+			},
+		] );
+
+		expect( provider?.getClientContext() ).toEqual(
+			expect.objectContaining( {
+				environment: 'wp-admin',
+				selectedBlockClientId: 'short-selected-id',
+			} )
+		);
 	} );
 } );
 
@@ -526,6 +629,64 @@ describe( 'loadExternalProviders', () => {
 			providers.getChatComponent?.( 'title-picker', { toolId: 'big_sky__show_component' } )
 		).toBe( BigSkyTitlePicker );
 		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( BigSkyTitlePicker );
+	} );
+
+	it( 'composes Big Sky and Jetpack context providers without replacing Big Sky editor context', async () => {
+		const bigSkyProvider = {
+			contextProvider: {
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					pathname: '/wp-admin/post.php',
+					search: '?post=1&action=edit',
+					environment: 'wp-admin',
+					currentPageContent: [ { id: 'big-sky-block' } ],
+					selectedBlockClientId: 'short-selected-id',
+				} ),
+			},
+		};
+		const jetpackProvider = {
+			contextProvider: {
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					pathname: '/wp-admin/post.php',
+					search: '?post=1&action=edit',
+					environment: 'gutenberg',
+					titleSuggestionCount: 3,
+					selectedBlockClientId: 'raw-selected-id',
+					contextEntries: [
+						{
+							id: 'selected-block-content',
+							type: 'selected-block-content',
+							data: { content: 'Selected text' },
+						},
+					],
+				} ),
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ bigSkyProvider, jetpackProvider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext() ).toEqual(
+			expect.objectContaining( {
+				environment: 'wp-admin',
+				titleSuggestionCount: 3,
+				currentPageContent: [ { id: 'big-sky-block' } ],
+				selectedBlockClientId: 'short-selected-id',
+				contextEntries: [
+					{
+						id: 'selected-block-content',
+						type: 'selected-block-content',
+						data: { content: 'Selected text' },
+					},
+				],
+			} )
+		);
 	} );
 
 	it( 'falls through to Jetpack for legacy show-component messages with Jetpack-only component types', async () => {
