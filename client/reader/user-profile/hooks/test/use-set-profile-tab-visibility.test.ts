@@ -45,7 +45,7 @@ describe( 'useSetProfileTabVisibility', () => {
 	const getPref = ( key: keyof UserPreferences ) =>
 		queryClient.getQueryData< UserPreferences >( rawUserPreferencesQuery().queryKey )?.[ key ];
 
-	test( 'optimistically patches the active query client so the tabs update immediately', () => {
+	it( 'optimistically patches the active query client so the tabs update immediately', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences' )
 			.reply( 200, { calypso_preferences: {} } );
@@ -60,7 +60,7 @@ describe( 'useSetProfileTabVisibility', () => {
 		expect( getPref( 'reader-profile-sites-visibility' ) ).toBe( 'hidden' );
 	} );
 
-	test( 'rolls back the optimistic patch and notifies on error', async () => {
+	it( 'rolls back the optimistic patch and notifies on error', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences' )
 			.reply( 500, { error: 'nope' } );
