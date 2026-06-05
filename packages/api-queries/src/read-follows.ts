@@ -22,9 +22,10 @@ import {
 	type QueryClient,
 } from '@tanstack/react-query';
 
-// The /read/following/mine endpoint caps the page size at 100 server-side
-// (PER_PAGE_MAX), so requesting more never returns more. Keep the request size
-// aligned with that cap so pagination advances one server page at a time.
+// The /read/following/mine endpoint paginates by walking raw subscription rows
+// with offset = (page - 1) * limit, and caps `limit` at 100 server-side
+// (PER_PAGE_MAX). Keep the request size aligned with that cap so each page maps
+// to exactly one server-side offset window.
 const ITEMS_PER_PAGE = 100;
 const MAX_ITEMS = 2000;
 const STALE_TIME = 60 * 60 * 1000;
@@ -47,27 +48,27 @@ export const siteSubscriptionsQuery = () =>
 			fetchReadFollows( { page: pageParam, number: ITEMS_PER_PAGE, meta: '' } ),
 		initialPageParam: 1,
 		getNextPageParam: ( lastPage, allPages ) => {
-			const fetchedItems = allPages.reduce(
-				( count, page ) => count + page.subscriptions.length,
-				0
-			);
-			const totalCount = allPages.find( ( page ) => typeof page.totalCount === 'number' )
-				?.totalCount;
-
 			if ( allPages.length >= MAX_PAGES_TO_FETCH ) {
 				return undefined;
 			}
-			// The server filters out deleted/spammy sites after applying the page
-			// limit, so a short (but non-empty) page does not mean we reached the
-			// end. Only an empty page signals there is nothing left to fetch.
-			if ( lastPage.subscriptions.length === 0 ) {
-				return undefined;
-			}
-			if ( typeof totalCount === 'number' && fetchedItems >= Math.min( totalCount, MAX_ITEMS ) ) {
-				return undefined;
+
+			// `total_subscriptions` is the server's raw row count (it does not
+			// discount deleted/spammy sites). The server filters those out *after*
+			// applying the page limit, so a page can come back short — or even
+			// empty — while later offset windows still hold valid rows. We must
+			// therefore decide whether another page exists from the offset we have
+			// covered, not from how many items the last page happened to return.
+			const totalCount = allPages.find( ( page ) => typeof page.totalCount === 'number' )
+				?.totalCount;
+
+			if ( typeof totalCount === 'number' ) {
+				const requestedRows = allPages.length * ITEMS_PER_PAGE;
+				return requestedRows >= Math.min( totalCount, MAX_ITEMS ) ? undefined : allPages.length + 1;
 			}
 
-			return allPages.length + 1;
+			// Without a total to compare against, fall back to stopping on an
+			// empty page.
+			return lastPage.subscriptions.length === 0 ? undefined : allPages.length + 1;
 		},
 		staleTime: STALE_TIME,
 		meta: { persist: true },
