@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import {
+	getPlan,
 	isDomainTransfer,
 	isDomainRegistration,
 	isConciergeSession,
@@ -49,6 +51,7 @@ import {
 	hasPaymentMethod,
 	isPaidWithCredits,
 	isInExpirationGracePeriod,
+	hasScheduledDowngrade,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -466,6 +469,11 @@ export function PurchaseItemStatus( {
 				<TrackImpression warning="purchase-expiring" />
 			</span>
 		);
+	}
+
+	if ( hasScheduledDowngrade( purchase ) && config.isEnabled( 'plans/scheduled-plan-downgrade' ) ) {
+		const targetTitle = getPlan( purchase.scheduledDowngradeProductSlug ?? '' )?.getTitle() ?? '';
+		return translate( 'Changing to %(plan)s at renewal', { args: { plan: targetTitle } } );
 	}
 
 	if ( isRenewing( purchase ) && purchase.renewDate ) {

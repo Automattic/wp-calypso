@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isFreeJetpackPlan,
 	isFreePlan,
@@ -30,6 +31,7 @@ import ProductExpiration from 'calypso/components/product-expiration';
 import {
 	isExpiring,
 	getDisplayName,
+	hasScheduledDowngrade,
 	isPartnerPurchase,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
@@ -38,6 +40,7 @@ import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors/fetching';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import {
 	getCurrentPlan,
@@ -71,9 +74,20 @@ class PurchasesListing extends Component {
 	};
 
 	isLoading() {
-		const { currentPlan, selectedSite, isRequestingPlans, isCloudEligible } = this.props;
+		const { currentPlan, selectedSite, isRequestingPlans, isCloudEligible, purchasesLoaded } =
+			this.props;
 
-		return ! currentPlan || ! selectedSite || isRequestingPlans || undefined === isCloudEligible;
+		if ( ! currentPlan || ! selectedSite || isRequestingPlans || undefined === isCloudEligible ) {
+			return true;
+		}
+
+		// Wait for purchases to load so the scheduled downgrade status doesn't flash
+		// "Renews on" before switching to "Changing to {plan} at renewal".
+		if ( config.isEnabled( 'plans/scheduled-plan-downgrade' ) && ! purchasesLoaded ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	isFreePlan( purchase ) {
@@ -143,6 +157,23 @@ class PurchasesListing extends Component {
 		// No expiration date for free plans.
 		if ( this.isFreePlan( plan ) ) {
 			return null;
+		}
+
+		const { purchases, translate } = this.props;
+		const planPurchase = purchases?.find(
+			( p ) => isPlan( p ) && p.productSlug === plan.productSlug
+		);
+
+		if (
+			planPurchase &&
+			hasScheduledDowngrade( planPurchase ) &&
+			config.isEnabled( 'plans/scheduled-plan-downgrade' )
+		) {
+			const targetTitle =
+				getPlan( planPurchase.scheduledDowngradeProductSlug ?? '' )?.getTitle() ?? '';
+			return translate( 'Changing to %(plan)s at renewal', {
+				args: { plan: targetTitle },
+			} );
 		}
 
 		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
@@ -441,6 +472,7 @@ export default connect( ( state ) => {
 		isPlanExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isRequestingPlans: isRequestingSitePlans( state, selectedSiteId ),
 		purchases: getSitePurchases( state, selectedSiteId ),
+		purchasesLoaded: hasLoadedSitePurchasesFromServer( state ),
 		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),

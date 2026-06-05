@@ -611,8 +611,9 @@ class ManagePurchase extends Component<
 				isPremium( purchase ) ||
 				isBusiness( purchase ) ||
 				isEcommerce( purchase ) );
+		const activeDowngradeVariant = getActiveDowngradeVariant();
 		const isActiveDowngradeEligible =
-			getActiveDowngradeVariant() === 'instant' &&
+			( activeDowngradeVariant === 'instant' || activeDowngradeVariant === 'on_renewal' ) &&
 			purchase &&
 			! isExpired( purchase ) &&
 			! isInExpirationGracePeriod( purchase ) &&
@@ -681,11 +682,12 @@ class ManagePurchase extends Component<
 				isBusiness( purchase ) ||
 				isEcommerce( purchase ) );
 
+		const activeDowngradeVariant = getActiveDowngradeVariant();
 		const isActiveDowngradeEligible =
 			! isExpired( purchase ) &&
 			! isInExpirationGracePeriod( purchase ) &&
 			isPlan( purchase ) &&
-			getActiveDowngradeVariant() === 'instant' &&
+			( activeDowngradeVariant === 'instant' || activeDowngradeVariant === 'on_renewal' ) &&
 			( isPremium( purchase ) || isBusiness( purchase ) || isEcommerce( purchase ) );
 
 		const isDowngradeEligible = isExpiredDowngradeEligible || isActiveDowngradeEligible;

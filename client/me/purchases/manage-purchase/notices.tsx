@@ -52,12 +52,14 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	isMonthlyPurchase,
 	isInExpirationGracePeriod,
+	hasScheduledDowngrade,
 } from 'calypso/lib/purchases';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAddNewPaymentMethodPath } from '../utils';
+import CancelScheduledDowngradeDialog from './cancel-scheduled-downgrade-dialog';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -122,6 +124,11 @@ class PurchaseNotice extends Component<
 		showPlanChangedNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'plan_changed' ) === 'true',
+		showDowngradeScheduledNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'downgrade_scheduled' ) === 'true',
+		showCancelDowngradeDialog: false,
+		scheduledDowngradeCanceled: false,
 	};
 
 	componentDidMount() {
@@ -143,6 +150,10 @@ class PurchaseNotice extends Component<
 			params.delete( 'plan_changed' );
 			changed = true;
 		}
+		if ( params.get( 'downgrade_scheduled' ) === 'true' ) {
+			params.delete( 'downgrade_scheduled' );
+			changed = true;
+		}
 		if ( changed ) {
 			const newSearch = params.toString();
 			const newUrl =
@@ -161,6 +172,22 @@ class PurchaseNotice extends Component<
 
 	dismissPlanChangedNotice = () => {
 		this.setState( { showPlanChangedNotice: false } );
+	};
+
+	dismissDowngradeScheduledNotice = () => {
+		this.setState( { showDowngradeScheduledNotice: false } );
+	};
+
+	openCancelDowngradeDialog = () => {
+		this.setState( { showCancelDowngradeDialog: true } );
+	};
+
+	closeCancelDowngradeDialog = () => {
+		this.setState( { showCancelDowngradeDialog: false } );
+	};
+
+	handleCancelDowngradeSuccess = () => {
+		this.setState( { showCancelDowngradeDialog: false, scheduledDowngradeCanceled: true } );
 	};
 
 	/**
@@ -269,6 +296,100 @@ class PurchaseNotice extends Component<
 					args: { planName: getName( purchase ) },
 				} ) }
 			/>
+		);
+	}
+
+	renderDowngradeScheduledNotice() {
+		const { purchase, translate } = this.props;
+		if ( ! this.state.showDowngradeScheduledNotice || ! purchase ) {
+			return null;
+		}
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissDowngradeScheduledNotice }
+				status="is-success"
+				text={ translate( 'Your downgrade has been scheduled.' ) }
+			/>
+		);
+	}
+
+	renderScheduledDowngradeNotice() {
+		const { purchase, translate, moment } = this.props;
+		if (
+			! purchase ||
+			! config.isEnabled( 'plans/scheduled-plan-downgrade' ) ||
+			! hasScheduledDowngrade( purchase ) ||
+			this.state.scheduledDowngradeCanceled
+		) {
+			return null;
+		}
+
+		const targetPlanTitle =
+			getPlan( purchase.scheduledDowngradeProductSlug ?? '' )?.getTitle() ?? '';
+		const renewalDateFormatted = purchase.scheduledDowngradeRenewalDate
+			? moment( purchase.scheduledDowngradeRenewalDate ).format( 'LL' )
+			: '';
+
+		// Auto-renew ON: info notice with undo button.
+		if ( purchase.isAutoRenewEnabled ) {
+			return (
+				<>
+					<Notice
+						className="manage-purchase__purchase-expiring-notice"
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'You\u2019ve scheduled a downgrade to %(plan)s. Your current plan stays active until %(date)s.',
+							{
+								args: {
+									plan: targetPlanTitle,
+									date: renewalDateFormatted,
+								},
+							}
+						) }
+					>
+						<NoticeAction onClick={ this.openCancelDowngradeDialog }>
+							{ translate( 'Undo downgrade' ) }
+						</NoticeAction>
+					</Notice>
+					<CancelScheduledDowngradeDialog
+						isVisible={ this.state.showCancelDowngradeDialog }
+						purchase={ purchase }
+						onClose={ this.closeCancelDowngradeDialog }
+						onCancelSuccess={ this.handleCancelDowngradeSuccess }
+					/>
+				</>
+			);
+		}
+
+		// Auto-renew OFF: warning notice with enable auto-renew and undo actions.
+		return (
+			<>
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate(
+						'You\u2019ve scheduled a downgrade to %(plan)s, but your plan isn\u2019t set to renew. The downgrade won\u2019t happen unless you enable auto-renew.',
+						{
+							args: {
+								plan: targetPlanTitle,
+							},
+						}
+					) }
+				>
+					<NoticeAction onClick={ this.openCancelDowngradeDialog }>
+						{ translate( 'Undo downgrade' ) }
+					</NoticeAction>
+				</Notice>
+				<CancelScheduledDowngradeDialog
+					isVisible={ this.state.showCancelDowngradeDialog }
+					purchase={ purchase }
+					onClose={ this.closeCancelDowngradeDialog }
+				/>
+			</>
 		);
 	}
 
@@ -1489,6 +1610,11 @@ class PurchaseNotice extends Component<
 			return planChangedNotice;
 		}
 
+		const downgradeScheduledNotice = this.renderDowngradeScheduledNotice();
+		if ( downgradeScheduledNotice ) {
+			return downgradeScheduledNotice;
+		}
+
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {
 			return this.renderAsyncPendingPaymentNotice();
 		}
@@ -1516,6 +1642,11 @@ class PurchaseNotice extends Component<
 
 		if ( this.shouldRenderConciergeConsumedNotice() ) {
 			return this.renderConciergeConsumedNotice();
+		}
+
+		const scheduledDowngradeNotice = this.renderScheduledDowngradeNotice();
+		if ( scheduledDowngradeNotice ) {
+			return scheduledDowngradeNotice;
 		}
 
 		const otherRenewablePurchasesNotice = this.renderOtherRenewablePurchasesNotice();
