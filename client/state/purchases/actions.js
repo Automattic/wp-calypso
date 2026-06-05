@@ -107,7 +107,7 @@ export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 
 	return wpcom.req
 		.get( {
-			path: `/sites/${ siteId }/purchases`,
+			path: `/upgrades?site=${ siteId }`,
 			apiVersion: '1.2',
 		} )
 		.then( ( data ) => {
