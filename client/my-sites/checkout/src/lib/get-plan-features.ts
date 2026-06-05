@@ -3,6 +3,7 @@ import {
 	isMonthly,
 	isWooExpressPlan,
 	isWpComProPlan,
+	isWpComStudentPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
@@ -111,7 +112,11 @@ export default function getPlanFeatures(
 		].filter( isValueTruthy );
 	}
 
-	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
+	if (
+		isWpComBusinessPlan( productSlug ) ||
+		isWpComStudentPlan( productSlug ) ||
+		isWpComProPlan( productSlug )
+	) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
 			isMonthlyPlan && fastSupport,

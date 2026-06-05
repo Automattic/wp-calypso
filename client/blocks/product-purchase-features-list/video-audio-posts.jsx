@@ -8,6 +8,7 @@ import {
 	isWpComEcommercePlan,
 	isWpComPremiumPlan,
 	isWpComProPlan,
+	isWpComStudentPlan,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import videoImage from 'calypso/assets/images/illustrations/video-hosting.svg';
@@ -44,6 +45,22 @@ function getDescription( plan, translate, hasLegacyStorage ) {
 				args: {
 					planName: wooExpressPlan.getTitle(),
 					storageLimit: wooExpressStorageLimit,
+				},
+			}
+		);
+	}
+
+	if ( isWpComStudentPlan( plan ) ) {
+		const newPlan = getPlan( plan );
+		const storageLimit = hasLegacyStorage ? 200 : 6;
+		// Translators: %(planName)s is the name of the plan, %(storageLimit)d is the storage limit in GB.
+		return translate(
+			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
+				'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
+			{
+				args: {
+					planName: newPlan.getTitle(),
+					storageLimit,
 				},
 			}
 		);

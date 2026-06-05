@@ -2,6 +2,7 @@ import {
 	BusinessPlans,
 	DotcomPlans,
 	EcommercePlans,
+	StudentPlans,
 	SubscriptionBillPeriod,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
@@ -27,6 +28,10 @@ type UpsellType =
 	| 'education:domain-connection'
 	| 'upgrade-atomic';
 
+function isStudentPlan( productSlug: string ): boolean {
+	return ( StudentPlans as readonly string[] ).includes( productSlug );
+}
+
 /**
  * Get a relevant upsell nudge for the chosen reason if exists.
  */
@@ -51,9 +56,10 @@ export function getUpsellType(
 			}
 
 			if (
-				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD ||
-				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD ||
-				purchase.bill_period_days === SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
+				! isStudentPlan( productSlug ) &&
+				( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD ||
+					purchase.bill_period_days === SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD ||
+					purchase.bill_period_days === SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD )
 			) {
 				return 'downgrade-monthly';
 			}
@@ -88,7 +94,8 @@ export function getUpsellType(
 		case 'cannotUploadThemes': {
 			if (
 				( BusinessPlans as readonly string[] ).includes( productSlug ) ||
-				( EcommercePlans as readonly string[] ).includes( productSlug )
+				( EcommercePlans as readonly string[] ).includes( productSlug ) ||
+				isStudentPlan( productSlug )
 			) {
 				if ( liveChatSupported ) {
 					return reason === 'cannotInstallPlugins' ? 'live-chat:plugins' : 'live-chat:themes';
