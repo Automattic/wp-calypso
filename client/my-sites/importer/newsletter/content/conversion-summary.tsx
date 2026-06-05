@@ -181,7 +181,7 @@ const PostErrorsMessage = ( { postErrors }: { postErrors: PostErrorsType } ) => 
 									<p>
 										{ createInterpolateElement(
 											sprintf(
-												/* translators: %s is the node name, %s is the block name */
+												/* translators: %(nodeName)s is the node name, %(blockName)s is the block name */
 												__(
 													'%(nodeName)s can be added using the <supportLink>%(blockName)s</supportLink>.'
 												),
