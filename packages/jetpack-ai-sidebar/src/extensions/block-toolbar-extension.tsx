@@ -14,9 +14,15 @@ type BlockEditProps = {
 	[ key: string ]: unknown;
 };
 
+type AgentsManagerChatState = {
+	isOpen: boolean;
+	isDocked: boolean;
+};
+
 type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
 		isReady?: boolean;
+		getChatState?: () => Promise< AgentsManagerChatState >;
 		setChatOpen?: ( isOpen: boolean ) => void;
 		setChatDocked?: ( isDocked: boolean ) => void;
 		setChatCompactMode?: ( isCompact: boolean ) => void;
@@ -25,17 +31,38 @@ type WindowWithAgentsManagerActions = Window & {
 
 let isWaitingForAgentsManagerReady = false;
 
-function openAgentsManagerChat() {
+async function openAgentsManagerChat() {
 	const actions = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 
-	if ( actions?.setChatCompactMode ) {
+	if ( ! actions ) {
+		return;
+	}
+
+	const chatState = await actions.getChatState?.();
+
+	// The chat is already open (docked or floating). Leave it exactly as the
+	// user has it — the toolbar entry only opens the chat from a minimized /
+	// floating resting state, it must never reshape an already-open chat.
+	if ( chatState?.isOpen ) {
+		return;
+	}
+
+	// Closed but docked: respect the docked preference and open it docked
+	// rather than forcing the floating compact view.
+	if ( chatState?.isDocked ) {
+		actions.setChatOpen?.( true );
+		return;
+	}
+
+	// Closed and floating (minimized): open into the compact view.
+	if ( actions.setChatCompactMode ) {
 		actions.setChatDocked?.( false );
 		actions.setChatCompactMode( true );
 		actions.setChatOpen?.( false );
 		return;
 	}
 
-	actions?.setChatOpen?.( true );
+	actions.setChatOpen?.( true );
 }
 
 function handleAgentsManagerReady() {

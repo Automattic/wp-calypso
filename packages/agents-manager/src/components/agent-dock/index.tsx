@@ -151,6 +151,10 @@ export default function AgentDock( {
 		} else {
 			recordBigSkyTracksEvent( 'dock_back_button_click' );
 			setOpenState( false );
+			// Closing a floating chat also clears compact mode so it comes to rest
+			// as the minimized bar rather than snapping back to the compact input
+			// (which is the derived resting state while `isCompactMode` stays on).
+			setIsCompactMode( false );
 		}
 	};
 
