@@ -21,7 +21,7 @@ import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-co
 import useAgentStudioRun, { NON_TERMINAL_RUN_STATUSES } from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
 import useRefineCollateralPage, {
-	isRefineClarification,
+	getRefineClarificationMessage,
 } from '../../data/use-refine-collateral-page';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
@@ -165,9 +165,10 @@ export default function RefineWithAiDock( {
 				userFacingPage: response.page,
 			} );
 		} catch ( err: unknown ) {
-			if ( isRefineClarification( err ) ) {
+			const clarification = getRefineClarificationMessage( err );
+			if ( clarification ) {
 				// Server asked for clarification (no run created); show it inline.
-				setMessages( ( current ) => [ ...current, agentMessage( err.message ) ] );
+				setMessages( ( current ) => [ ...current, agentMessage( clarification ) ] );
 				return;
 			}
 			setMessages( ( current ) => [

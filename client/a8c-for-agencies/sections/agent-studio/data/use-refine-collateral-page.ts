@@ -22,75 +22,44 @@ export interface RefineCollateralPageResponse {
 	page_index: number;
 }
 
-export interface RefineCollateralPageClarification {
-	kind: 'clarification_needed';
-	message: string;
-}
-
-// Shape wpcom.req raises for a WP_Error: `error` is the code, `data` the payload.
+// Shape wpcom.req rejects with for a WP_Error: `error` is the code, `data`
+// the payload the endpoint attached.
 interface WpcomReqError {
 	error?: string;
 	message?: string;
-	data?: { status?: number; kind?: string; [ key: string ]: unknown };
+	data?: { kind?: string };
 }
 
-const isClarification = (
-	err: unknown
-): err is WpcomReqError & { data: { kind: 'clarification_needed' } } => {
+/**
+ * When the endpoint asks for a clearer instruction (no run created), returns
+ * the message to show inline; otherwise null so the caller falls back to a
+ * generic hard-error reply. Checks `data.kind` and the WP_Error code, since a
+ * transport layer can drop one or the other.
+ */
+export const getRefineClarificationMessage = ( err: unknown ): string | null => {
 	if ( ! err || typeof err !== 'object' ) {
-		return false;
+		return null;
 	}
-	const data = ( err as WpcomReqError ).data;
-	if ( ! data || typeof data !== 'object' ) {
-		return false;
+	const { error, message, data } = err as WpcomReqError;
+	if ( data?.kind !== 'clarification_needed' && error !== 'a4a_clarification_needed' ) {
+		return null;
 	}
-	if ( data.kind === 'clarification_needed' ) {
-		return true;
-	}
-	// Fall back to the WP_Error code if `data.kind` is dropped in transport.
-	return ( err as WpcomReqError ).error === 'a4a_clarification_needed';
+	return message || 'I need more detail to do that.';
 };
 
 export default function useRefineCollateralPage() {
 	const agencyId = useSelector( getActiveAgencyId );
 
-	return useMutation<
-		RefineCollateralPageResponse,
-		RefineCollateralPageClarification | Error,
-		RefineCollateralPageInput
-	>( {
-		mutationFn: async ( { collateralPostId, instruction } ) => {
+	return useMutation< RefineCollateralPageResponse, unknown, RefineCollateralPageInput >( {
+		mutationFn: ( { collateralPostId, instruction } ) => {
 			if ( ! agencyId ) {
 				throw new Error( 'useRefineCollateralPage: no active agency.' );
 			}
-			try {
-				const response: RefineCollateralPageResponse = await wpcom.req.post( {
-					apiNamespace: 'wpcom/v2',
-					path: `/agency/${ agencyId }/a4a/collaterals/${ collateralPostId }/refine`,
-					body: { instruction },
-				} );
-				return response;
-			} catch ( err: unknown ) {
-				if ( isClarification( err ) ) {
-					const message =
-						typeof err.message === 'string' ? err.message : 'I need more detail to do that.';
-					// Typed clarification so the caller can render it inline
-					// instead of a generic hard-error banner.
-					const clarification: RefineCollateralPageClarification = {
-						kind: 'clarification_needed',
-						message,
-					};
-					throw clarification;
-				}
-				throw err instanceof Error ? err : new Error( 'Refine request failed.' );
-			}
+			return wpcom.req.post( {
+				apiNamespace: 'wpcom/v2',
+				path: `/agency/${ agencyId }/a4a/collaterals/${ collateralPostId }/refine`,
+				body: { instruction },
+			} );
 		},
 	} );
 }
-
-export const isRefineClarification = ( err: unknown ): err is RefineCollateralPageClarification => {
-	if ( ! err || typeof err !== 'object' ) {
-		return false;
-	}
-	return ( err as RefineCollateralPageClarification ).kind === 'clarification_needed';
-};
