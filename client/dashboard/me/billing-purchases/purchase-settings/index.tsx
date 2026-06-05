@@ -598,6 +598,35 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	if ( ! purchase.is_past_expiry_date || ! purchase.is_plan ) {
+		return null;
+	}
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Change plan' ) }
+			description={ __( 'Switch to a different plan for this site.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_change_plan_click', {
+							product_slug: purchase.product_slug,
+						} );
+						window.location.href = getExpiredNewPlanUrl( purchase );
+					} }
+				>
+					{ __( 'See plans' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
@@ -613,6 +642,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return (
 			<VStack spacing={ 4 }>
 				<ActionList>
+					<ChangePlanActionItem purchase={ purchase } />
 					<ReSubscribeActionButton purchase={ purchase } />
 				</ActionList>
 			</VStack>
@@ -626,6 +656,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
 				<ReSubscribeActionButton purchase={ purchase } />
+				<ChangePlanActionItem purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
