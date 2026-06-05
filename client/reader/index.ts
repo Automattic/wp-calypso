@@ -40,6 +40,7 @@ import {
 	listListing,
 } from './list/controller';
 import { onThisDay } from './on-this-day/controller';
+import { read295PocList, read295PocPost } from './read-295-poc/controller';
 import { redirectMeToCurrentUser, userProfile } from './user-profile/controller';
 
 function forceTeamA8C( context: Context, next: () => void ): void {
@@ -62,6 +63,26 @@ export async function lazyLoadDependencies(): Promise< void > {
 export default async function (): Promise< void > {
 	await lazyLoadDependencies();
 	setupReadRoutes();
+
+	page(
+		'/reader/read-295-poc',
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		read295PocList,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/reader/read-295-poc/posts/:sourceType/:sourceId/:post',
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		read295PocPost,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		[ '/reader', '/reader/recent/:feed_id' ],

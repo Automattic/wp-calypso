@@ -4,6 +4,20 @@
 @import '@wordpress/base-styles/breakpoints';
 @import 'calypso/assets/stylesheets/shared/mixins/long-content-fade';
 
+body.is-section-reader.is-global:has( .reader-stream__browser-scroll-poc ) {
+	overflow-y: auto;
+}
+
+body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary > div:has( .reader-stream__browser-scroll-poc ) {
+	height: auto;
+	overflow: visible;
+}
+
+body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary > div:has( .reader-stream__browser-scroll-poc ) > div {
+	height: auto;
+	overflow: visible;
+}
+
 .following {
 
 	@include breakpoint-deprecated( '<660px' ) {

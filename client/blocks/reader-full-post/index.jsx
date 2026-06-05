@@ -89,6 +89,7 @@ export class FullPostView extends Component {
 		currentPath: PropTypes.string,
 		isAutomattician: PropTypes.bool,
 		commentsApiDisabled: PropTypes.bool,
+		disableScrollManagement: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -118,11 +119,13 @@ export class FullPostView extends Component {
 		this.maybeDisableAppBanner();
 		this.mountedPath = this.props.currentPath;
 
-		this.checkForCommentAnchor();
+		if ( ! this.props.disableScrollManagement ) {
+			this.checkForCommentAnchor();
 
-		// If we have a comment anchor, scroll to comments
-		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
-			this.scrollToComments();
+			// If we have a comment anchor, scroll to comments
+			if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
+				this.scrollToComments();
+			}
 		}
 
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
@@ -135,13 +138,15 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		const scrollableContainer = this.findScrollableContainer();
-		if ( scrollableContainer ) {
-			this.scrollableContainer = scrollableContainer;
-			if ( scrollableContainer !== window ) {
-				this.scrollTracker.setContainer( scrollableContainer );
+		if ( ! this.props.disableScrollManagement ) {
+			const scrollableContainer = this.findScrollableContainer();
+			if ( scrollableContainer ) {
+				this.scrollableContainer = scrollableContainer;
+				if ( scrollableContainer !== window ) {
+					this.scrollTracker.setContainer( scrollableContainer );
+				}
+				this.resetScroll();
 			}
-			this.resetScroll();
 		}
 	}
 
@@ -163,8 +168,10 @@ export class FullPostView extends Component {
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
 				this.setReadingStartTime();
-				this.resetScroll();
-				this.focusPostTitle();
+				if ( ! this.props.disableScrollManagement ) {
+					this.resetScroll();
+					this.focusPostTitle();
+				}
 			}
 		}
 
@@ -172,11 +179,13 @@ export class FullPostView extends Component {
 			this.hasScrolledToCommentAnchor = false;
 		}
 
-		this.checkForCommentAnchor();
+		if ( ! this.props.disableScrollManagement ) {
+			this.checkForCommentAnchor();
 
-		// If we have a comment anchor, scroll to comments
-		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
-			this.scrollToComments();
+			// If we have a comment anchor, scroll to comments
+			if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
+				this.scrollToComments();
+			}
 		}
 
 		// Check if we just finished loading the post and enable the app banner when there's no error
@@ -319,6 +328,10 @@ export class FullPostView extends Component {
 	};
 
 	resetScroll = () => {
+		if ( this.props.disableScrollManagement ) {
+			return;
+		}
+
 		this.clearResetScrollTimeout();
 		this.resetScrollTimeout = setTimeout( () => {
 			if ( ! this.scrollableContainer ) {
@@ -508,6 +521,10 @@ export class FullPostView extends Component {
 
 	// Scroll to the top of the comments section.
 	scrollToComments = ( { focusTextArea = false } = {} ) => {
+		if ( this.props.disableScrollManagement ) {
+			return;
+		}
+
 		if ( ! this.props.post || this.props.post._state || this._scrolling ) {
 			return;
 		}
