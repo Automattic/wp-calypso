@@ -8,7 +8,6 @@ import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
-import { createMarketplaceRoutes } from './marketplace';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
@@ -58,10 +57,6 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.agencyClient ) {
 		children.push( ...createAgencyClientRoutes() );
-	}
-
-	if ( config.supports.marketplace ) {
-		children.push( ...createMarketplaceRoutes() );
 	}
 
 	if ( config.supports.sites ) {

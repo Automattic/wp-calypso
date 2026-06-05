@@ -65,15 +65,15 @@ function PrimaryMenuSidebar() {
 		<SidebarMenu>
 			{ supports.agency && <AgencySidebar /> }
 			{ supports.agencyClient && <AgencyClientSidebar /> }
-			{ supports.marketplace && (
+			{ supports.agency && supports.agency.exclusiveOffers && (
 				<SidebarExpandableMenuItem
 					label={ __( 'Marketplace' ) }
 					icon={ tag }
-					to="/exclusive-offers"
+					to="/marketplace/exclusive-offers"
 				>
-					{ supports.marketplace.exclusiveOffers && (
-						<SidebarMenuItem to="/exclusive-offers">{ __( 'Exclusive offers' ) }</SidebarMenuItem>
-					) }
+					<SidebarMenuItem to="/marketplace/exclusive-offers">
+						{ __( 'Exclusive offers' ) }
+					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
 			{ supports.sites && (

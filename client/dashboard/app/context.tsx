@@ -17,14 +17,11 @@ import type { PostHogOverrides } from '@automattic/posthog';
 export type AgencySupports = {
 	overview: boolean;
 	tiers: boolean;
+	exclusiveOffers: boolean;
 };
 
 export type AgencyClientSupports = {
 	subscriptions: boolean;
-};
-
-export type MarketplaceSupports = {
-	exclusiveOffers: boolean;
 };
 
 export type MeBillingSupports = {
@@ -54,7 +51,6 @@ export type AppConfig = {
 	supports: {
 		agency: AgencySupports | false;
 		agencyClient: AgencyClientSupports | false;
-		marketplace?: MarketplaceSupports | false;
 		sites: boolean;
 		plugins: boolean;
 		domains: boolean;

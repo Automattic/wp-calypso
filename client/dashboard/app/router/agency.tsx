@@ -59,6 +59,25 @@ const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
+const exclusiveOffersRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Exclusive offers' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/exclusive-offers',
+} ).lazy( () =>
+	import( '../../marketplace/exclusive-offers' ).then( ( d ) =>
+		createLazyRoute( 'exclusive-offers' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
-	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute ] ),
+	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute, exclusiveOffersRoute ] ),
 ];

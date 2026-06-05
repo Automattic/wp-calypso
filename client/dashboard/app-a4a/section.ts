@@ -8,7 +8,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/sites',
 	'/oauth/token',
 	'/overview',
-	'/exclusive-offers',
+	'/marketplace/exclusive-offers',
 	'/agency/tiers',
 	'/client',
 	'/client/subscriptions',
