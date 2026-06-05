@@ -231,14 +231,17 @@ const DowngradeConfirmationModal = ( {
 				<>
 					<p className="downgrade-confirmation-modal__description">
 						{ translate(
-							'Your plan will change from %(currentPlan)s to %(targetPlan)s on %(date)s. You’ll keep your current features until then.',
+							'On %(date)s, your plan will switch from %(currentPlan)s to %(targetPlan)s. The renewal price will change from %(currentPrice)s to %(targetPrice)s.',
 							{
 								args: {
+									date: renewalDateFormatted,
 									currentPlan: currentPlanTitle,
 									targetPlan: targetPlanTitle,
-									date: renewalDateFormatted,
+									currentPrice: currentRenewalPriceText ?? '',
+									targetPrice: targetRenewalPriceText ?? '',
 								},
-								comment: 'Message shown when scheduling a plan downgrade for the next renewal date',
+								comment:
+									'Message shown when scheduling a plan downgrade for the next renewal date, including price change',
 							}
 						) }
 					</p>
@@ -341,7 +344,7 @@ const DowngradeConfirmationModal = ( {
 
 	const modalTitle =
 		mode === 'on_renewal'
-			? String( translate( 'Downgrade on renewal' ) )
+			? String( translate( 'Downgrade at renewal' ) )
 			: String( translate( 'Confirm downgrade' ) );
 
 	return (
@@ -368,17 +371,6 @@ const DowngradeConfirmationModal = ( {
 					) ) }
 				</ul>
 			) }
-			{ mode === 'on_renewal' && currentRenewalPriceText && targetRenewalPriceText && (
-				<p className="downgrade-confirmation-modal__description downgrade-confirmation-modal__price-change">
-					{ translate( 'Your renewal price will change from %(currentPrice)s to %(targetPrice)s.', {
-						args: {
-							currentPrice: currentRenewalPriceText,
-							targetPrice: targetRenewalPriceText,
-						},
-						comment: 'Price comparison shown when scheduling a plan downgrade for renewal',
-					} ) }
-				</p>
-			) }
 			<HStack spacing={ 3 } justify="flex-end" className="downgrade-confirmation-modal__buttons">
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ mode === 'on_renewal'
@@ -396,7 +388,7 @@ const DowngradeConfirmationModal = ( {
 					disabled={ isDowngrading }
 				>
 					{ mode === 'on_renewal'
-						? translate( 'Downgrade on renewal' )
+						? translate( 'Downgrade at renewal' )
 						: translate( 'Downgrade to %(planName)s', {
 								args: { planName: targetPlanTitle },
 								comment: 'Button label to confirm downgrading to a lower-tier plan',

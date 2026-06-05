@@ -557,19 +557,10 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 					purchaseId: String( purchase.ID ),
 			  } );
 
-		// On-renewal variant: different entry-point copy for active plans.
-		const isOnRenewal = isActiveChangePlanEligible && isEnabled( 'plans/scheduled-plan-downgrade' );
-
 		return (
 			<ActionList.ActionItem
-				title={ isOnRenewal ? __( 'Downgrade on renewal' ) : __( 'Change plan' ) }
-				description={
-					isOnRenewal
-						? __(
-								'Switch to a lower-tier plan starting at your next renewal. Keep your current features until then.'
-						  )
-						: __( 'Upgrade or downgrade to a plan that works for you.' )
-				}
+				title={ __( 'Change plan' ) }
+				description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
 				actions={
 					<Button
 						variant="secondary"

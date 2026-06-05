@@ -1019,7 +1019,7 @@ const PlansFeaturesMain = ( {
 						if ( price == null || ! currency ) {
 							return '';
 						}
-						return formatCurrency( price, currency );
+						return formatCurrency( price, currency, { isSmallestUnit: true } );
 					} )() }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (

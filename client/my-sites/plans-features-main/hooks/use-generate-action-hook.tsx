@@ -551,7 +551,8 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase.
 	// Skip this when the plan is expired — let it fall through to the "Get {plan}" block.
-	if ( ! availableForPurchase && ! isPlanExpired ) {
+	// Also skip when active downgrades are enabled — fall through to the downgrade label block.
+	if ( ! availableForPurchase && ! isPlanExpired && getActiveDowngradeVariant() === 'control' ) {
 		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
 			return {
 				primary: {
@@ -590,10 +591,9 @@ function getLoggedInPlansAction( {
 	}
 
 	// Show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
-	// Only in change-plan flow (active downgrades) or expired plans — not normal upgrades,
-	// which fall through to the sticky-price block below.
+	// Applies to expired plans, change-plan flow, or when active downgrade flags are on.
 	if (
-		( isPlanExpired || isChangePlanFlow ) &&
+		( isPlanExpired || isChangePlanFlow || getActiveDowngradeVariant() !== 'control' ) &&
 		sitePlanSlug &&
 		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
 	) {
@@ -603,7 +603,7 @@ function getLoggedInPlansAction( {
 		if ( targetTier < currentTier ) {
 			const downgradeLabel =
 				getActiveDowngradeVariant() === 'on_renewal'
-					? translate( 'Downgrade on renewal' )
+					? translate( 'Downgrade at renewal' )
 					: translate( 'Downgrade', { context: 'verb' } );
 			return createLoggedInPlansAction( downgradeLabel, 'secondary' );
 		}

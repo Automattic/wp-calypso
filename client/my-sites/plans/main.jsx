@@ -240,7 +240,14 @@ class PlansComponent extends Component {
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ showSpotlight && ! isPlanExpired }
 				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ isPlanExpired || ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+				hideFreePlan={
+					isPlanExpired ||
+					( ! isFreePlan &&
+						( isEnabled( 'plans/active-plan-downgrade-instant' ) ||
+							isEnabled( 'plans/scheduled-plan-downgrade' ) ) ) ||
+					! visiblePlanTiers.includes( TYPE_FREE ) ||
+					undefined
+				}
 				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
