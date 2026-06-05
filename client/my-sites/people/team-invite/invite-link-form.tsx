@@ -27,7 +27,7 @@ export function InviteLinkForm( props: Props ) {
 		getInviteLinksForSite( state, siteId )
 	) as InviteLinks | null;
 
-	const copyConfirmTimeoutId = useRef< NodeJS.Timeout >();
+	const copyConfirmTimeoutId = useRef< NodeJS.Timeout >( undefined );
 
 	useEffect( resetActiveLinkValue, [ inviteLinks, role ] );
 	useEffect( toggleIsGeneratingInviteLinks, [ activeInviteLink ] );

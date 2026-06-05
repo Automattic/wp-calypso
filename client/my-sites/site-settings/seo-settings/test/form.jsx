@@ -75,7 +75,7 @@ describe( 'SeoForm basic tests', () => {
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
 		expect( UpsellNudge ).toHaveBeenCalledWith(
 			expect.objectContaining( { event: 'calypso_seo_settings_upgrade_nudge' } ),
-			expect.anything()
+			undefined
 		);
 	} );
 
@@ -157,7 +157,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			expect( nudge ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { plan: PLAN_BUSINESS } ),
-				expect.anything()
+				undefined
 			);
 		}
 	);
@@ -171,7 +171,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { plan: PLAN_BUSINESS_2_YEARS } ),
-				expect.anything()
+				undefined
 			);
 		}
 	);
@@ -183,7 +183,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ) } ),
-				expect.anything()
+				undefined
 			);
 		}
 	);
