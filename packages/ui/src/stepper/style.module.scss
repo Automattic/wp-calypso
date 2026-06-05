@@ -130,7 +130,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 	border: none;
 	padding: 0;
 	cursor: pointer;
-	font-size: variables.$font-size-medium;
+	font-size: var( --wpds-typography-font-size-md, #{ variables.$font-size-medium } );
 	color: theme.$components-color-foreground;
 	text-align: start;
 	width: 100%;
