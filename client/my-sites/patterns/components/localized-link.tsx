@@ -19,5 +19,3 @@ export const LocalizedLink = forwardRef< HTMLAnchorElement, JSX.IntrinsicElement
 		);
 	}
 );
-
-LocalizedLink.displayName = 'LocalizedLink';
