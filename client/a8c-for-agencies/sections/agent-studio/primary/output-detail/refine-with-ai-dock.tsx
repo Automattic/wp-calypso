@@ -31,11 +31,11 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, comment } from '@wordpress/icons';
 import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
-import useAgentStudioRun from '../../data/use-agent-studio-run';
+import useAgentStudioRun, { TERMINAL_RUN_STATUSES } from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
 import useRefineCollateralPage, {
 	isRefineClarification,
@@ -84,23 +84,18 @@ const newMessageId = (): string => {
 	return `refine-msg-${ Date.now() }-${ messageIdCounter }`;
 };
 
-const userMessage = ( text: string ): Message => ( {
+const makeMessage = ( role: 'user' | 'agent', text: string ): Message => ( {
 	id: newMessageId(),
-	role: 'user',
+	role,
 	content: [ { type: 'text', text } ],
 	timestamp: Date.now(),
 	archived: false,
-	showIcon: false,
+	// The agent's replies carry the assistant avatar; the user's don't.
+	showIcon: role === 'agent',
 } );
 
-const agentMessage = ( text: string ): Message => ( {
-	id: newMessageId(),
-	role: 'agent',
-	content: [ { type: 'text', text } ],
-	timestamp: Date.now(),
-	archived: false,
-	showIcon: true,
-} );
+const userMessage = ( text: string ): Message => makeMessage( 'user', text );
+const agentMessage = ( text: string ): Message => makeMessage( 'agent', text );
 
 export default function RefineWithAiDock( {
 	collateralPostId,
@@ -136,25 +131,10 @@ export default function RefineWithAiDock( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ seedToken ] );
 
-	// Poll the active refine run. `useAgentStudioRun` is the existing
-	// runs poll hook; passing undefined keeps it idle.
+	// Poll the active refine run. `useAgentStudioRun` self-polls via
+	// react-query's `refetchInterval` while the status is non-terminal and
+	// stops once it settles; passing undefined keeps it idle.
 	const run = useAgentStudioRun( activeRun?.runId );
-
-	// React-Query polls on a default interval when `refetchInterval` is
-	// set. The runs hook doesn't set one — opt in here while a run is
-	// in-flight, then turn it off on terminal status. `run.refetch` is
-	// stable across renders in react-query v5; depending only on
-	// `activeRun` keeps the interval from restarting every render.
-	const refetch = run.refetch;
-	useEffect( () => {
-		if ( ! activeRun ) {
-			return;
-		}
-		const interval = setInterval( () => {
-			void refetch();
-		}, 2000 );
-		return () => clearInterval( interval );
-	}, [ activeRun, refetch ] );
 
 	// Track terminal transitions so we only post the success/failure
 	// message once per run. Without this the polling-driven re-render
@@ -165,9 +145,7 @@ export default function RefineWithAiDock( {
 			return;
 		}
 		const status = run.data.status;
-		const isTerminal =
-			status === 'a4a_completed' || status === 'a4a_failed' || status === 'a4a_cancelled';
-		if ( ! isTerminal ) {
+		if ( ! TERMINAL_RUN_STATUSES.has( status ) ) {
 			return;
 		}
 		if ( handledRunIdRef.current === activeRun.runId ) {
@@ -245,25 +223,22 @@ export default function RefineWithAiDock( {
 	};
 
 	const isProcessing = activeRun !== null || refine.isPending;
-	const thinkingMessage = useMemo( () => {
-		if ( ! activeRun ) {
-			return undefined;
-		}
-		return sprintf(
-			/* translators: %d is the 1-based page number being refined. */
-			__( 'Updating page %d…' ),
-			activeRun.userFacingPage
-		);
-	}, [ activeRun ] );
 
-	const placeholderHint = useMemo( () => {
-		// totalPages includes the cover; the lowest refinable page is 2.
-		return sprintf(
-			/* translators: %d is the highest body page number, 1-based with cover. */
-			__( 'Tell me what to change. e.g. "page %d is clipped".' ),
-			Math.max( 2, totalPages )
-		);
-	}, [ totalPages ] );
+	// Plain strings — primitives compared by value, so memoizing buys nothing.
+	const thinkingMessage = activeRun
+		? sprintf(
+				/* translators: %d is the 1-based page number being refined. */
+				__( 'Updating page %d…' ),
+				activeRun.userFacingPage
+		  )
+		: undefined;
+
+	// totalPages includes the cover; the lowest refinable page is 2.
+	const placeholderHint = sprintf(
+		/* translators: %d is the highest body page number, 1-based with cover. */
+		__( 'Tell me what to change. e.g. "page %d is clipped".' ),
+		Math.max( 2, totalPages )
+	);
 
 	const emptyView = (
 		<VStack className="a4a-refine-with-ai-dock__empty" spacing={ 3 } alignment="center">

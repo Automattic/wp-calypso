@@ -91,9 +91,7 @@ export default function useRefineCollateralPage() {
 			} catch ( err: unknown ) {
 				if ( isClarification( err ) ) {
 					const message =
-						typeof ( err as WpcomReqError ).message === 'string'
-							? ( ( err as WpcomReqError ).message as string )
-							: 'I need more detail to do that.';
+						typeof err.message === 'string' ? err.message : 'I need more detail to do that.';
 					// Throw a typed clarification so the caller's
 					// `onError` branch can render the message as an
 					// assistant chat reply without surfacing a generic

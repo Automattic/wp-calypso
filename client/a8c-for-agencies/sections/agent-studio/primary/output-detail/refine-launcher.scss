@@ -26,7 +26,8 @@
 	);
 	background-size: 150% 150%;
 	background-position: 0% 50%;
-	box-shadow: 0 8px 24px rgba(108, 92, 231, 0.45);
+	// Neutral drop shadow — no coloured halo glowing around the button.
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 	cursor: pointer;
 	transition: transform 160ms ease, box-shadow 160ms ease, background-position 480ms ease;
 }
@@ -40,7 +41,7 @@
 .components-button.a4a-refine-launcher.a4a-refine-launcher:focus {
 	color: rgba(255, 255, 255, 1);
 	background-position: 100% 50%;
-	box-shadow: 0 12px 30px rgba(236, 72, 153, 0.5);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
 	transform: translateY(-2px) scale(1.08);
 }
 
@@ -58,34 +59,18 @@
 	outline-offset: 3px;
 }
 
-// Motion is opt-in: a gentle breathing glow draws the eye to the launcher
-// while idle, and the star twinkles on entry. Skipped entirely for users who
-// prefer reduced motion.
+// Motion is opt-in: the star gives a subtle periodic twinkle. Skipped
+// entirely for users who prefer reduced motion.
 @media (prefers-reduced-motion: no-preference) {
-	.components-button.a4a-refine-launcher.a4a-refine-launcher {
-		animation: a4a-refine-launcher-glow 2800ms ease-in-out infinite;
-	}
-
 	.components-button.a4a-refine-launcher.a4a-refine-launcher svg {
 		animation: a4a-refine-launcher-twinkle 2800ms ease-in-out infinite;
 	}
 
-	// Pause the idle glow while the user is interacting so hover/active feel
+	// Pause the twinkle while the user is interacting so hover/active feel
 	// crisp rather than fighting the keyframes.
-	.components-button.a4a-refine-launcher.a4a-refine-launcher:hover,
-	.components-button.a4a-refine-launcher.a4a-refine-launcher:focus {
+	.components-button.a4a-refine-launcher.a4a-refine-launcher:hover svg,
+	.components-button.a4a-refine-launcher.a4a-refine-launcher:focus svg {
 		animation-play-state: paused;
-	}
-}
-
-@keyframes a4a-refine-launcher-glow {
-	0%,
-	100% {
-		box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4);
-	}
-
-	50% {
-		box-shadow: 0 10px 30px rgba(236, 72, 153, 0.55);
 	}
 }
 
