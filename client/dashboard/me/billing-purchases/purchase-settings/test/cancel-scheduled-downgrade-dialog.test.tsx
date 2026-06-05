@@ -38,11 +38,11 @@ describe( '<CancelScheduledDowngradeDialog />', () => {
 		);
 
 		expect(
-			await screen.findByRole( 'dialog', { name: /cancel scheduled downgrade/i } )
+			await screen.findByRole( 'dialog', { name: /keep your current plan/i } )
 		).toBeVisible();
-		expect( screen.getByText( /Your plan will keep renewing as Business/i ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /cancel downgrade/i } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /keep schedule/i } ) ).toBeVisible();
+		expect( screen.getByText( /Your Business plan will stay active/i ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /keep my plan/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /not now/i } ) ).toBeVisible();
 	} );
 
 	test( 'calls cancel mutation on confirm and closes on success', async () => {
@@ -62,7 +62,7 @@ describe( '<CancelScheduledDowngradeDialog />', () => {
 			/>
 		);
 
-		const confirmButton = await screen.findByRole( 'button', { name: /cancel downgrade/i } );
+		const confirmButton = await screen.findByRole( 'button', { name: /keep my plan/i } );
 		await user.click( confirmButton );
 
 		await waitFor( () => {
@@ -83,7 +83,7 @@ describe( '<CancelScheduledDowngradeDialog />', () => {
 			/>
 		);
 
-		const keepButton = await screen.findByRole( 'button', { name: /keep schedule/i } );
+		const keepButton = await screen.findByRole( 'button', { name: /not now/i } );
 		await user.click( keepButton );
 
 		expect( onClose ).toHaveBeenCalled();
