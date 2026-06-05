@@ -6,12 +6,14 @@ import {
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isFreePlan,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import type { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -31,11 +33,11 @@ export default function canUpgradeToPlan(
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			? PLAN_JETPACK_FREE
 			: PLAN_FREE;
-	const plan = getCurrentPlan( state, siteId );
+	const plan = getCurrentPlan( state, siteId ) as SitePlanData | null;
 	const purchase = plan?.id ? getByPurchaseId( state, plan.id ) : null;
 
-	// TODO: seems like expired isn't being set.
-	// This information isn't currently available from the sites/%s/plans endpoint.
+	// An expired (but still active) plan is treated as the free plan for upgrade
+	// purposes. `expired` comes from the endpoint's `is_expired` field.
 	const currentPlanSlug = plan?.expired ? freePlan : plan?.productSlug ?? freePlan;
 
 	// Exception for upgrading Atomic v1 sites to eCommerce
@@ -59,5 +61,14 @@ export default function canUpgradeToPlan(
 		return false;
 	}
 
-	return ( getPlan( planKey )?.availableFor ?? ( () => false ) )( currentPlanSlug );
+	// Prefer the server's upgrade-path determination: every non-current plan in the
+	// site's plans carries an `available_for_upgrade` flag. Fall back to the
+	// client-side plan definition when the target plan isn't in the fetched list
+	// (e.g. it's the current plan, or plans haven't loaded).
+	const targetPlan = getSitePlan( state, siteId, planKey ) as SitePlanData | undefined;
+	if ( targetPlan?.availableForUpgrade !== undefined ) {
+		return targetPlan.availableForUpgrade;
+	}
+
+	return ( getPlan( planKey )?.availableFor ?? ( () => false ) )( currentPlanSlug as PlanSlug );
 }
