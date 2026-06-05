@@ -1,4 +1,5 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
 	useQueryClient,
@@ -6,6 +7,7 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -18,6 +20,7 @@ import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DarkModeAnnouncement } from '../components/dark-mode-announcement';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
+import InlineSupportLink from '../components/inline-support-link';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -45,6 +48,10 @@ type SiteListQueryOptions = {
 	isAutomattician: boolean;
 };
 
+function isDeletedFilterActive( filters: Filter[] ): boolean {
+	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
+}
+
 const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
@@ -71,7 +78,7 @@ const getFetchPaginatedSitesOptions = (
 		per_page: view.perPage,
 	};
 
-	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
+	if ( isDeletedFilterActive( filters ) ) {
 		options.site_visibility = 'deleted';
 	}
 
@@ -164,6 +171,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		queryParamFilterFields: [ 'is_deleted' ],
 		sanitizeFields,
 	} );
 
@@ -194,6 +202,14 @@ export default function Sites() {
 		view,
 		totalItems ?? 0
 	);
+
+	const filters = view.filters ?? [];
+	const hasActiveSearch = !! view.search;
+	const hasActiveQuery = hasActiveSearch || filters.length > 0;
+	const isFilteringOnlyDeletedSites =
+		isDeletedFilterActive( filters ) &&
+		! hasActiveSearch &&
+		filters.every( ( filter ) => filter.field === 'is_deleted' );
 
 	return (
 		<>
@@ -236,7 +252,7 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ userHasSites ? (
+				{ userHasSites || hasActiveQuery ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
@@ -245,13 +261,35 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							<DataViewsEmptyStateLayout
-								title={ __( 'No sites match your search' ) }
-								description={ __( 'Try again, or start a new site with the options below.' ) }
-								isBorderless
-							>
-								<EmptySitesSearchStateContent />
-							</DataViewsEmptyStateLayout>
+							isFilteringOnlyDeletedSites ? (
+								<DataViewsEmptyStateLayout
+									title={ __( 'You have no deleted sites' ) }
+									description={ createInterpolateElement(
+										__(
+											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
+										),
+										{
+											learnLink: (
+												<InlineSupportLink
+													supportLink={ localizeUrl(
+														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
+													) }
+													supportPostId={ 14411 }
+												/>
+											),
+										}
+									) }
+									isBorderless
+								/>
+							) : (
+								<DataViewsEmptyStateLayout
+									title={ __( 'No sites match your search' ) }
+									description={ __( 'Try again, or start a new site with the options below.' ) }
+									isBorderless
+								>
+									<EmptySitesSearchStateContent />
+								</DataViewsEmptyStateLayout>
+							)
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }

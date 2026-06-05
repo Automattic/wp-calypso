@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 
@@ -46,6 +47,8 @@ export function InterimOmnibar( {
 	const siteId = user.primary_blog ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
+	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
+
 	const store = useMemo(
 		() => createOmnibarStore( onToggleNotifications ),
 		[ onToggleNotifications ]
@@ -67,6 +70,11 @@ export function InterimOmnibar( {
 			unseenCount: Number( !! user.has_unseen_notes ),
 		} );
 	}, [ store, user.has_unseen_notes ] );
+
+	// Sync the notifications open state (e.g. when the panel closes externally).
+	useOmnibarEvent( 'notificationsOpen', ( isOpen ) => {
+		store.dispatch( { type: 'NOTIFICATIONS_OPEN_SET', isOpen } );
+	} );
 
 	// Also dispatch the emitted unseen note count from the notifications panel.
 	useOmnibarEvent( 'notificationsUnseenCount', ( unseenCount ) => {
@@ -99,7 +107,8 @@ export function InterimOmnibar( {
 					isSimpleSite={ false }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
-					isUnlaunchedSite={ false }
+					isUnlaunchedSite={ isUnlaunchedSite }
+					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }
 					isSiteP2={ !! site?.options?.is_wpforteams_site }
 					isP2Hub={ !! site?.options?.p2_hub_blog_id && site.options.p2_hub_blog_id === site.ID }
