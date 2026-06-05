@@ -52,7 +52,12 @@ export const monthlySlugs = [
 	PLAN_PERSONAL_TRIAL_MONTHLY,
 ] as const;
 
-export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, PLAN_STUDENT, ...monthlySlugs ] as const;
+export const plansProductSlugs = [
+	PLAN_FREE,
+	...annualSlugs,
+	PLAN_STUDENT,
+	...monthlySlugs,
+] as const;
 
 export const FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN = [
 	'custom-domain',
