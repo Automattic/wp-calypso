@@ -48,11 +48,6 @@ export class IsolatedBlockEditorComponent {
 
 		await firstParagraph.or( defaultBlockButton ).first().waitFor( { state: 'visible' } );
 		if ( await defaultBlockButton.isVisible() ) {
-			// The placeholder can detach between the isVisible check above and the click
-			// if the editor re-renders (e.g. a webfont class change on <html> triggers a
-			// React repaint). Use a short timeout and noWaitAfter to fail fast without
-			// hanging on post-click navigation heuristics. The firstParagraph.waitFor
-			// below is the real assertion that the editor reached the correct state.
 			await defaultBlockButton.click( { timeout: 5000, noWaitAfter: true } ).catch( () => {} );
 			await firstParagraph.waitFor( { state: 'visible' } );
 		}
