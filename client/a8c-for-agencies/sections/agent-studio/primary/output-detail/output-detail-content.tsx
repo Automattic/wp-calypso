@@ -63,17 +63,24 @@ function StateMessage( { children, spinner }: { children: ReactNode; spinner?: b
 	);
 }
 
+interface RefineSeed {
+	text: string;
+	token: number;
+}
+
 function OnePagerOutputDetail( { output }: Props ) {
 	const dispatch = useDispatch();
 	const run = useAgentStudioRun( output.id );
 	const postId = extractPostId( run.data?.payload );
 	const collateral = useAgentStudioCollateral( postId );
 	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
-	const [ refineSeed, setRefineSeed ] = useState( '' );
+	// `token` bumps on every open request so re-opening the same page re-seeds
+	// the dock input even when the seed text is identical.
+	const [ refineSeed, setRefineSeed ] = useState< RefineSeed >( { text: '', token: 0 } );
 
 	const openRefine = useCallback(
 		( seedText: string, source: 'launcher' | 'page', page?: number ) => {
-			setRefineSeed( seedText );
+			setRefineSeed( ( prev ) => ( { text: seedText, token: prev.token + 1 } ) );
 			setIsRefineOpen( true );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_agent_studio_refine_open', {
@@ -236,7 +243,8 @@ function OnePagerOutputDetail( { output }: Props ) {
 				<RefineWithAiDock
 					collateralPostId={ postId }
 					totalPages={ pages.length }
-					seedText={ refineSeed }
+					seedText={ refineSeed.text }
+					seedToken={ refineSeed.token }
 					onClose={ () => setIsRefineOpen( false ) }
 				/>
 			) }

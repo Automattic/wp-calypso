@@ -33,6 +33,13 @@ interface Props {
 	totalPages: number;
 	/** Text to seed the input with (empty opens an empty input). */
 	seedText: string;
+	/**
+	 * Bumped on every open request. The per-page "Edit with AI" button can be
+	 * re-clicked while the dock is already open — and after a submit clears the
+	 * input — so re-seeding the same `seedText` must still fire. The token is
+	 * the trigger; `seedText` alone wouldn't change.
+	 */
+	seedToken: number;
 	onClose: () => void;
 }
 
@@ -69,6 +76,7 @@ export default function RefineWithAiDock( {
 	collateralPostId,
 	totalPages,
 	seedText,
+	seedToken,
 	onClose,
 }: Props ) {
 	const [ messages, setMessages ] = useState< Message[] >( [] );
@@ -78,8 +86,9 @@ export default function RefineWithAiDock( {
 	const queryClient = useQueryClient();
 	const refine = useRefineCollateralPage();
 
-	// Seed the input when the seed text changes, then move the caret to the end
-	// of AgentUI's internal textarea so the user types right after the prompt.
+	// Seed the input on each open request (tracked by `seedToken`), then move
+	// the caret to the end of AgentUI's internal textarea. `seedText` is left
+	// out of the deps so re-clicking the same page's Edit button re-seeds.
 	useEffect( () => {
 		setInputValue( seedText );
 		const raf = requestAnimationFrame( () => {
@@ -91,7 +100,8 @@ export default function RefineWithAiDock( {
 			}
 		} );
 		return () => cancelAnimationFrame( raf );
-	}, [ seedText ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ seedToken ] );
 
 	// `useAgentStudioRun` self-polls while non-terminal; undefined keeps it idle.
 	const run = useAgentStudioRun( activeRun?.runId );
