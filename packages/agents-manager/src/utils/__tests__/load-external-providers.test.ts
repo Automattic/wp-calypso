@@ -144,12 +144,18 @@ describe( 'mergeContextProviders', () => {
 			{
 				getClientContext: () => ( {
 					environment: 'wp-admin',
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					pathname: '/wp-admin/post.php',
+					search: '?post=1&action=edit',
 					selectedBlockClientId: 'short-selected-id',
 				} ),
 			},
 			{
 				getClientContext: () => ( {
 					environment: 'gutenberg',
+					url: 'https://example.com/wp-admin/post.php?post=1&action=edit',
+					pathname: '/wp-admin/post.php',
+					search: '?post=1&action=edit',
 					selectedBlockClientId: 'raw-selected-id',
 					contextEntries: [
 						{
