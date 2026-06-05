@@ -71,7 +71,7 @@ export function useSetupCustomActions( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
@@ -83,19 +83,30 @@ export function useSetupCustomActions( {
 				return;
 			}
 
+			// Opening always expands the chat out of the minimized bar.
+			if ( shouldOpen ) {
+				setIsMinimized( false );
+			}
+
 			if ( ! isDocked || ! canDock ) {
 				return setIsOpen( shouldOpen, shouldPersistOpenState );
 			}
 
 			if ( shouldOpen ) {
 				openSidebar();
-			}
-
-			if ( ! shouldOpen ) {
+			} else {
 				closeSidebar();
 			}
 		},
-		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen, shouldPersistOpenState ]
+		[
+			canDock,
+			closeSidebar,
+			isDocked,
+			openSidebar,
+			setIsMinimized,
+			setIsOpen,
+			shouldPersistOpenState,
+		]
 	);
 
 	const setChatDocked = useCallback(

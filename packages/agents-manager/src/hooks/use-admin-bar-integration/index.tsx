@@ -8,6 +8,9 @@ const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 
+// Calypso uses its own masterbar trigger instead of the wp-admin bar.
+const MASTERBAR_BUTTON_SELECTOR = '.masterbar__item-agents-manager';
+
 // CSS class names
 const ACTIVE_CLASS = 'active';
 const OPEN_CLICK_CLASS = 'open-click';
@@ -25,10 +28,15 @@ interface UseAdminBarIntegrationOptions {
 }
 
 /**
- * Whether the WP admin bar trigger button is on the page.
+ * Whether a trigger button (the WP admin bar or the Calypso masterbar) can open
+ * the chat. If so, the chat hides on close and reopens from it instead of
+ * leaving a floating bubble.
  */
 export function hasAdminBarTrigger(): boolean {
-	return !! document.getElementById( ADMIN_BAR_BUTTON_ID );
+	return (
+		!! document.getElementById( ADMIN_BAR_BUTTON_ID ) ||
+		!! document.querySelector( MASTERBAR_BUTTON_SELECTOR )
+	);
 }
 
 /**
@@ -52,7 +60,7 @@ export default function useAdminBarIntegration( {
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
 
-	// Whether the WP admin bar trigger button is on the page.
+	// Whether an entry-point button (the WP admin bar or the Calypso masterbar) is present.
 	const hasButton = hasAdminBarTrigger();
 
 	// Update admin bar button active state based on isOpen

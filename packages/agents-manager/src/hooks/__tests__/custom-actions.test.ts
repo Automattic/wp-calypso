@@ -7,6 +7,7 @@ import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actio
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
+const mockSetIsMinimized = jest.fn();
 let mockContext = {
 	getActiveSessionId: jest.fn( () => 'session-123' ),
 	agentConfig: { agentId: 'reader-chat' },
@@ -23,6 +24,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn( () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
+		setIsMinimized: mockSetIsMinimized,
 	} ) ),
 } ) );
 
@@ -122,6 +124,22 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.setChatOpen?.( true );
 
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
+	} );
+
+	it( 'expands out of the minimized bar when opening', () => {
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
+	} );
+
+	it( 'leaves the minimized state untouched when closing', () => {
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes its actions from the global on unmount', () => {

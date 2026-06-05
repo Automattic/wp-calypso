@@ -7,7 +7,6 @@ import { MemoryRouter } from 'react-router-dom';
 
 let mockIsDocked = false;
 const mockSetIsMinimized = jest.fn();
-const mockHasAdminBarTrigger = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -44,17 +43,31 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAdminBarTrigger: () => mockHasAdminBarTrigger(),
+	hasAdminBarTrigger: () =>
+		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager' ) ||
+		!! globalThis.document.querySelector( '.masterbar__item-agents-manager' ),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
 import ChatHeader from '../chat-header';
+
+function installAdminBarTrigger() {
+	const el = document.createElement( 'div' );
+	el.id = 'wp-admin-bar-agents-manager';
+	document.body.appendChild( el );
+}
 
 // `isReaderChatHost()` reads the agent ID from this global.
 function installReaderChatHost() {
 	( globalThis as { agentsManagerData?: { agentId?: string } } ).agentsManagerData = {
 		agentId: 'reader-chat',
 	};
+}
+
+function installMasterbarTrigger() {
+	const el = document.createElement( 'div' );
+	el.className = 'masterbar__item-agents-manager';
+	document.body.appendChild( el );
 }
 
 function renderChatHeader( title?: string ) {
@@ -66,14 +79,12 @@ function renderChatHeader( title?: string ) {
 }
 
 describe( 'ChatHeader', () => {
-	beforeEach( () => {
-		mockHasAdminBarTrigger.mockReturnValue( false );
-	} );
-
 	afterEach( () => {
 		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
+		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+		document.querySelector( '.masterbar__item-agents-manager' )?.remove();
 	} );
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
@@ -104,7 +115,7 @@ describe( 'ChatHeader', () => {
 	} );
 
 	it( 'minimizes the chat when the Minimize button is clicked', () => {
-		mockHasAdminBarTrigger.mockReturnValue( true );
+		installAdminBarTrigger();
 
 		renderChatHeader();
 		fireEvent.click( screen.getByText( 'Minimize' ) );
@@ -112,14 +123,22 @@ describe( 'ChatHeader', () => {
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'hides the Minimize button without the WP admin bar trigger', () => {
+	it( 'shows the Minimize button with the Calypso masterbar trigger', () => {
+		installMasterbarTrigger();
+
+		renderChatHeader();
+
+		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the Minimize button without an entry-point trigger', () => {
 		renderChatHeader();
 
 		expect( screen.queryByText( 'Minimize' ) ).toBeNull();
 	} );
 
 	it( 'hides the Minimize button when docked', () => {
-		mockHasAdminBarTrigger.mockReturnValue( true );
+		installAdminBarTrigger();
 		mockIsDocked = true;
 
 		renderChatHeader();

@@ -17,7 +17,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | -------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.            |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                           |
-| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat.                                                      |
+| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.      |
 | `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                     |
 | `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable or disable chat rendering.                                            |
 | `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                         |
