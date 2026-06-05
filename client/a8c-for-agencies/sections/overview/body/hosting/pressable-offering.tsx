@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Button, FoldableCard, Gridicon } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import {

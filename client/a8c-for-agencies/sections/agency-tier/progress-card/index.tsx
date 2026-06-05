@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Card,
 	CardBody,
@@ -9,6 +8,7 @@ import {
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getCurrentAgencyTier from 'calypso/dashboard/agency/tiers/get-current-agency-tier';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';

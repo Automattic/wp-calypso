@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useProductCategories } from '../../hooks/use-product-categories';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
