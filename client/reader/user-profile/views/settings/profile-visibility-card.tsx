@@ -6,7 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import type { ProfileTab } from '../../hooks/use-set-profile-tab-visibility';
+import type { ProfileTab } from 'calypso/reader/data/user-profile';
 
 interface ProfileVisibilityCardProps {
 	postsVisible: boolean;

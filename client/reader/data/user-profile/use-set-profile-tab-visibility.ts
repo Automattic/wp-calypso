@@ -21,7 +21,7 @@ const PREFERENCE_KEY: Record< ProfileTab, keyof UserPreferences > = {
  * not the Calypso one this surface reads from, so we mirror the write into the active client on
  * success (mirrors `useSetAchievementsVisibility`).
  */
-export default function useSetProfileTabVisibility() {
+export function useSetProfileTabVisibility() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();

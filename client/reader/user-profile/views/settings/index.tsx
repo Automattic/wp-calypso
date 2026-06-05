@@ -1,14 +1,14 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { useSetProfileTabVisibility } from 'calypso/reader/data/user-profile';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import useSetProfileTabVisibility from '../../hooks/use-set-profile-tab-visibility';
 import ProfileIdentityCard from './profile-identity-card';
 import ProfileVisibilityCard from './profile-visibility-card';
 import SitesVisibilityCard from './sites-visibility-card';
-import type { ProfileTab } from '../../hooks/use-set-profile-tab-visibility';
 import type { ReaderUser } from '@automattic/api-core';
+import type { ProfileTab } from 'calypso/reader/data/user-profile';
 
 import './style.scss';
 

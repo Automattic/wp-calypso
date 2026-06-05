@@ -11,7 +11,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
-import useProfileTabVisibility from 'calypso/reader/user-profile/hooks/use-profile-tab-visibility';
+import { useProfileTabVisibility } from 'calypso/reader/data/user-profile';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';

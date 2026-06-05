@@ -14,9 +14,8 @@ jest.mock( '../profile-identity-card', () => () => <div data-testid="identity-ca
 jest.mock( '../profile-visibility-card', () => () => <div data-testid="visibility-card" /> );
 jest.mock( '../sites-visibility-card', () => () => <div data-testid="sites-card" /> );
 
-jest.mock( '../../../hooks/use-set-profile-tab-visibility', () => ( {
-	__esModule: true,
-	default: () => ( { setVisibility: jest.fn(), isPending: false } ),
+jest.mock( 'calypso/reader/data/user-profile/use-set-profile-tab-visibility', () => ( {
+	useSetProfileTabVisibility: () => ( { setVisibility: jest.fn(), isPending: false } ),
 } ) );
 
 describe( 'UserProfileSettings', () => {

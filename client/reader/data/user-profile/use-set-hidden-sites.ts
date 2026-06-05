@@ -16,7 +16,7 @@ const PREFERENCE_KEY = 'reader-profile-hidden-sites';
  * optimistic merge races). On success we mirror the new array into the active Calypso QueryClient
  * (the mutation factory patches the `@automattic/api-queries` singleton, not this surface's client).
  */
-export default function useSetHiddenSites( hiddenSites: number[] ) {
+export function useSetHiddenSites( hiddenSites: number[] ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
