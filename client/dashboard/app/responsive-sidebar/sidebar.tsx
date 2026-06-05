@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, envelope, globe, layout, plugins, store } from '@wordpress/icons';
+import { brush, envelope, globe, layout, plugins, tag } from '@wordpress/icons';
 import { useRef } from 'react';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
@@ -68,7 +68,7 @@ function PrimaryMenuSidebar() {
 			{ supports.marketplace && (
 				<SidebarExpandableMenuItem
 					label={ __( 'Marketplace' ) }
-					icon={ store }
+					icon={ tag }
 					to="/exclusive-offers"
 				>
 					{ supports.marketplace.exclusiveOffers && (
