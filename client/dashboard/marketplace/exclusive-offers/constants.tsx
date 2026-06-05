@@ -1,22 +1,6 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import {
-	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
-	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
-	A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK,
-	A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
-	A4A_WOOPAYMENTS_OVERVIEW_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import {
-	PRODUCT_BRAND_FILTER_JETPACK,
-	PRODUCT_BRAND_FILTER_WOOCOMMERCE,
-} from 'calypso/a8c-for-agencies/sections/marketplace/constants';
-import {
-	MARKETPLACE_TYPE_REFERRAL,
-	MARKETPLACE_TYPE_REGULAR,
-} from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import AvalaraLogo from './images/avalara.svg';
 import JetpackLogo from './images/jetpack.svg';
 import PressableLogo from './images/pressable.svg';
@@ -25,6 +9,22 @@ import WooLogo from './images/woo.svg';
 import WooPaymentsLogo from './images/woopayments.svg';
 import WordPressDotComLogo from './images/wordpressdotcom.svg';
 import type { PartnerOffer } from './types';
+
+// Marketplace constant values inlined from client/a8c-for-agencies so the
+// dashboard has no dependency on the classic A4A app. These CTA links resolve
+// in the classic A4A marketplace until a dashboard Marketplace exists.
+const MARKETPLACE_TYPE_REFERRAL = 'referral';
+const MARKETPLACE_TYPE_REGULAR = 'regular';
+const PRODUCT_BRAND_FILTER_WOOCOMMERCE = 'woocommerce';
+const PRODUCT_BRAND_FILTER_JETPACK = 'jetpack';
+const A4A_MARKETPLACE_HOSTING_WPCOM_LINK = '/marketplace/hosting/wpcom';
+const A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK = '/marketplace/hosting/pressable';
+const A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK =
+	'/marketplace/hosting/refer-pressable-premium-plan';
+const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK =
+	'/marketplace/hosting/refer-enterprise-hosting';
+const A4A_MARKETPLACE_PRODUCTS_LINK = '/marketplace/products';
+const A4A_WOOPAYMENTS_OVERVIEW_LINK = '/woopayments/overview';
 
 export const filterOptions = {
 	offerTypes: [

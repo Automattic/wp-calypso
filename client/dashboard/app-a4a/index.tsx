@@ -23,6 +23,7 @@ boot( {
 	supports: {
 		agency: { overview: true, tiers: true },
 		agencyClient: { subscriptions: true },
+		marketplace: { exclusiveOffers: true },
 		sites: true,
 		domains: false,
 		emails: false,

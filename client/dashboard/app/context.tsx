@@ -23,6 +23,10 @@ export type AgencyClientSupports = {
 	subscriptions: boolean;
 };
 
+export type MarketplaceSupports = {
+	exclusiveOffers: boolean;
+};
+
 export type MeBillingSupports = {
 	monetizeSubscriptions: boolean;
 };
@@ -50,6 +54,7 @@ export type AppConfig = {
 	supports: {
 		agency: AgencySupports | false;
 		agencyClient: AgencyClientSupports | false;
+		marketplace?: MarketplaceSupports | false;
 		sites: boolean;
 		plugins: boolean;
 		domains: boolean;
