@@ -13,15 +13,20 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import type { AppState } from 'calypso/types';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
- * @param  {import('calypso/types').AppState}   state      Global state tree
- * @param  {number}   siteId     The site we're interested in upgrading
- * @param  {string}   planKey    The plan we want to upgrade to
- * @returns {boolean}             True if the site can be upgraded
+ * @param  state      Global state tree
+ * @param  siteId     The site we're interested in upgrading
+ * @param  planKey    The plan we want to upgrade to
+ * @returns           True if the site can be upgraded
  */
-export default function ( state, siteId, planKey ) {
+export default function canUpgradeToPlan(
+	state: AppState,
+	siteId: number,
+	planKey: string
+): boolean {
 	// Which "free plan" should we use to test
 	const freePlan =
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
