@@ -188,7 +188,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if (
 			( field === 'description' || ! field ) &&
 			editedPostIsTier &&
-			editedDescription.length > MAX_LENGTH_TIER_DESCRIPTION
+			editedDescription.trim().length > MAX_LENGTH_TIER_DESCRIPTION
 		) {
 			return false;
 		}
