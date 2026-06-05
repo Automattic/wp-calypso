@@ -11,7 +11,8 @@
 
 import type { Tool } from '@automattic/agenttic-client';
 
-export const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom/update-block-content';
+export const UPDATE_BLOCK_CONTENT_TOOL_ID = 'jetpack-ai/update-block-content';
+export const LEGACY_UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom/update-block-content';
 
 export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 	id: UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -19,6 +20,10 @@ export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 	...( { label: 'Update block content', category: 'jetpack-ai' } as any ), // eslint-disable-line @typescript-eslint/no-explicit-any
 	description:
 		'Update the text content of a specific block in the editor. Use this after translating, changing tone, checking grammar, or any other text transformation. The block will be updated directly in the editor.',
+	meta: {
+		instructions:
+			'Call jetpack_ai__update_block_content for Jetpack AI Sidebar selected text-block transformations, including translation, tone changes, grammar/spelling fixes, simplification, and similar rewrites. Use selected_block_client_id as clientId. When selected block content is available, include the exact original attributes.content string as currentText. Do not use wpcom__rewrite_content, wpcom__block_editing, or big_sky__set_processing_state for these Jetpack AI Sidebar selected-block transformations.',
+	},
 	input_schema: {
 		type: 'object',
 		properties: {
@@ -45,5 +50,10 @@ export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 };
 
 export function isUpdateBlockContentTool( toolId: string ): boolean {
-	return toolId === UPDATE_BLOCK_CONTENT_TOOL_ID || toolId === 'wpcom__update_block_content';
+	return [
+		UPDATE_BLOCK_CONTENT_TOOL_ID,
+		'jetpack_ai__update_block_content',
+		LEGACY_UPDATE_BLOCK_CONTENT_TOOL_ID,
+		'wpcom__update_block_content',
+	].includes( toolId );
 }
