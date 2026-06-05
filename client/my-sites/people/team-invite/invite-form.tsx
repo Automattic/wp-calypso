@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent, useEffect, FormEvent, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type ChangeEvent, type FormEvent } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -99,7 +99,9 @@ function InviteForm( props: Props ) {
 	}
 
 	function tokenValidation( i: number, tokenValues: unknown[] ) {
-		tokenValues[ i ] && dispatch( validateTokens( siteId, tokenValues, role ) );
+		if ( tokenValues[ i ] ) {
+			dispatch( validateTokens( siteId, tokenValues, role ) );
+		}
 	}
 
 	/**
@@ -130,7 +132,9 @@ function InviteForm( props: Props ) {
 		const incrementControlNum =
 			valuesNum === tokenControlNum && TOKEN_CONTROL_MAX_NUM > tokenControlNum;
 
-		incrementControlNum && setTokenControlNum( tokenControlNum + 1 );
+		if ( incrementControlNum ) {
+			setTokenControlNum( tokenControlNum + 1 );
+		}
 	}
 
 	function toggleShowContractorCb() {

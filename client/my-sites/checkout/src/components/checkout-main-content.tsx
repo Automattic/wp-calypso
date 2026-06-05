@@ -40,7 +40,14 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import {
+	useCallback,
+	useMemo,
+	useState,
+	type JSX,
+	type PropsWithChildren,
+	type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
@@ -125,7 +132,6 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 

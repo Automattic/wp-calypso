@@ -148,7 +148,7 @@ export function useCustomizeContext(): CustomizeController | null {
  * inert/aria-hidden flips on the children container.
  */
 function useLiveRegion(): {
-	liveRef: React.RefObject< HTMLDivElement >;
+	liveRef: React.RefObject< HTMLDivElement | null >;
 	announce: ( msg: string ) => void;
 } {
 	const liveRef = useRef< HTMLDivElement >( null );

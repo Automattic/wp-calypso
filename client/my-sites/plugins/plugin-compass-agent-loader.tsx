@@ -16,6 +16,7 @@ import { useStore } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Suggestion } from '@automattic/agenttic-ui';
+import type { JSX } from 'react';
 
 const importAgentsManager = () =>
 	import(
