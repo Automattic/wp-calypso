@@ -17,3 +17,19 @@ declare const agentsManagerData:
 			};
 	  }
 	| undefined;
+
+declare module '@wordpress/block-editor' {
+	import type { StoreDescriptor } from '@wordpress/data';
+
+	interface BlockEditorSelectors {
+		getSelectedBlockClientId(): string | null;
+	}
+
+	interface BlockEditorActions {
+		selectBlock( clientId: string, initialPosition?: 0 | -1 | null ): void;
+		clearSelectedBlock(): void;
+		toggleBlockSpotlight?: ( clientId: string, hasBlockSpotlight: boolean ) => void;
+	}
+
+	export const store: StoreDescriptor< BlockEditorSelectors, BlockEditorActions >;
+}

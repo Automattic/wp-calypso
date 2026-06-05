@@ -6,6 +6,12 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { dispatch, select } from '@wordpress/data';
+import { unlock } from './unlock-private-apis';
+
+const FOCUS_MODE_CLASS = 'is-focus-mode';
+
 /**
  * Checkpoint API shared between the React `useCheckpoint` hook (which AM
  * calls) and the synchronous `handleShowComponent` callback.
@@ -22,6 +28,7 @@ let moduleCheckpointApi: CheckpointApi | null = null;
 const processingEffectTimeouts = new WeakMap< HTMLElement, ReturnType< typeof setTimeout > >();
 const processingEffectElements = new Set< HTMLElement >();
 let rememberedSelectedBlockClientId: string | null = null;
+let activeBlockFocusClientId: string | null = null;
 
 export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
 export const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
@@ -138,6 +145,113 @@ export function findBlockListLayout(): HTMLElement | null {
 		}
 	} catch {}
 	return null;
+}
+
+type BlockEditorDispatch = {
+	selectBlock?: ( clientId: string, initialPosition?: 0 | -1 | null ) => void;
+	clearSelectedBlock?: () => void;
+	toggleBlockSpotlight?: ( clientId: string, hasBlockSpotlight: boolean ) => void;
+};
+
+type BlockEditorSelect = {
+	getSelectedBlockClientId?: () => string | null;
+};
+
+function getBlockEditorDispatch(): BlockEditorDispatch {
+	let publicDispatch: BlockEditorDispatch = {};
+	try {
+		publicDispatch = dispatch( blockEditorStore ) as BlockEditorDispatch;
+	} catch {}
+
+	try {
+		return { ...publicDispatch, ...unlock( publicDispatch ) };
+	} catch {
+		return publicDispatch;
+	}
+}
+
+function getSelectedBlockClientId(): string | null {
+	try {
+		return (
+			( select( blockEditorStore ) as BlockEditorSelect )?.getSelectedBlockClientId?.() ?? null
+		);
+	} catch {
+		return null;
+	}
+}
+
+function setFallbackFocusModeClass( isFocused: boolean ): void {
+	const blockListLayout = findBlockListLayout();
+	if ( ! blockListLayout ) {
+		return;
+	}
+	if ( isFocused ) {
+		blockListLayout.classList.add( FOCUS_MODE_CLASS );
+		return;
+	}
+	blockListLayout.classList.remove( FOCUS_MODE_CLASS );
+}
+
+/**
+ * Clear the block focus created by the sidebar. This intentionally clears the
+ * selected block only when that selection still belongs to the sidebar-focused
+ * block, so normal editor selections made after focus are left alone.
+ */
+export function clearActiveBlockFocus(): void {
+	const clientId = activeBlockFocusClientId;
+	activeBlockFocusClientId = null;
+
+	if ( ! clientId ) {
+		setFallbackFocusModeClass( false );
+		return;
+	}
+
+	const blockEditor = getBlockEditorDispatch();
+	blockEditor.toggleBlockSpotlight?.( clientId, false );
+	if ( getSelectedBlockClientId() === clientId ) {
+		blockEditor.clearSelectedBlock?.();
+	}
+	setFallbackFocusModeClass( false );
+}
+
+/**
+ * Focus a block reference from the sidebar, or clear focus when the same
+ * sidebar-owned block is clicked again.
+ * @param clientId Block clientId.
+ * @returns Whether the click focused or cleared the block.
+ */
+export function toggleBlockReferenceFocus( clientId: string ): 'focused' | 'cleared' {
+	if ( activeBlockFocusClientId === clientId && getSelectedBlockClientId() === clientId ) {
+		clearActiveBlockFocus();
+		return 'cleared';
+	}
+
+	clearActiveBlockFocus();
+
+	const blockEditor = getBlockEditorDispatch();
+	const hasPrivateSpotlight = typeof blockEditor.toggleBlockSpotlight === 'function';
+
+	if ( hasPrivateSpotlight ) {
+		blockEditor.toggleBlockSpotlight?.( clientId, true );
+	} else {
+		setFallbackFocusModeClass( true );
+	}
+	blockEditor.selectBlock?.( clientId, null );
+	activeBlockFocusClientId = clientId;
+	findBlockElement( clientId )?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
+
+	return 'focused';
+}
+
+/**
+ * Clear sidebar-created block focus for clicks that are not block reference links.
+ * @param target Event target from a sidebar click.
+ */
+export function clearActiveBlockFocusUnlessBlockReferenceClick( target: EventTarget | null ): void {
+	if ( target instanceof Element && target.closest( '.jetpack-ai-block-ref.is-clickable' ) ) {
+		return;
+	}
+	clearActiveBlockFocus();
 }
 
 // ---------- Processing effect (Flow Block shimmer) ----------

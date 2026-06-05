@@ -24,8 +24,9 @@ global.requestAnimationFrame = jest.fn( ( cb ) => {
 } );
 
 const mockApplyReviewEdit = jest.fn();
-const mockFindBlockElement = jest.fn();
-const mockFindBlockListLayout = jest.fn();
+const mockClearActiveBlockFocus = jest.fn();
+const mockClearActiveBlockFocusUnlessBlockReferenceClick = jest.fn();
+const mockToggleBlockReferenceFocus = jest.fn();
 const mockUndoBlockEdit = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
@@ -33,10 +34,12 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 
 jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
-	findBlockElement: ( ...args: any[] ) => mockFindBlockElement( ...args ),
-	findBlockListLayout: ( ...args: any[] ) => mockFindBlockListLayout( ...args ),
+	clearActiveBlockFocus: ( ...args: any[] ) => mockClearActiveBlockFocus( ...args ),
+	clearActiveBlockFocusUnlessBlockReferenceClick: ( ...args: any[] ) =>
+		mockClearActiveBlockFocusUnlessBlockReferenceClick( ...args ),
 	isSupportedEditBlockType: ( blockName?: string | null ) =>
 		[ 'core/paragraph', 'core/heading' ].includes( blockName ?? '' ),
+	toggleBlockReferenceFocus: ( ...args: any[] ) => mockToggleBlockReferenceFocus( ...args ),
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
@@ -66,7 +69,7 @@ jest.mock( '@wordpress/data', () => ( {
 // Stub @wordpress/components: real one transitively boots rich-text + data.
 // PanelBody honours the controlled `opened` prop so toggle tests work.
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const React = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			React.createElement( 'div', { className }, children ),
@@ -117,8 +120,9 @@ function basePayload(
 
 beforeEach( () => {
 	mockApplyReviewEdit.mockReset();
-	mockFindBlockElement.mockReset();
-	mockFindBlockListLayout.mockReset();
+	mockClearActiveBlockFocus.mockReset();
+	mockClearActiveBlockFocusUnlessBlockReferenceClick.mockReset();
+	mockToggleBlockReferenceFocus.mockReset();
 	mockUndoBlockEdit.mockReset();
 	mockUndoBlockEdit.mockReturnValue( true );
 	mockSelectBlock.mockReset();
@@ -672,23 +676,20 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	} );
 
 	it( 'keeps block focus on the explicit block reference button', () => {
-		const blockElement = document.createElement( 'div' );
-		const layoutElement = document.createElement( 'div' );
-		mockFindBlockElement.mockReturnValue( blockElement );
-		mockFindBlockListLayout.mockReturnValue( layoutElement );
-
 		render( <ReviewMediation { ...editsPayload } /> );
 
 		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-review-mediation__card' );
 		expect( card ).toBeInTheDocument();
 
-		fireEvent.click( card! );
+		fireEvent.mouseDown( card! );
 		expect( mockSelectBlock ).not.toHaveBeenCalled();
+		expect( mockToggleBlockReferenceFocus ).not.toHaveBeenCalled();
+		expect( mockClearActiveBlockFocusUnlessBlockReferenceClick ).toHaveBeenCalledWith( card );
 
-		fireEvent.click( screen.getByTitle( 'Scroll to block in editor' ) );
-		expect( mockSelectBlock ).toHaveBeenCalledWith( 'b1' );
-		expect( mockFindBlockElement ).toHaveBeenCalledWith( 'b1' );
-		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		const blockRef = screen.getByTitle( 'Scroll to block in editor' );
+		fireEvent.mouseDown( blockRef );
+		fireEvent.click( blockRef );
+		expect( mockToggleBlockReferenceFocus ).toHaveBeenCalledWith( 'b1' );
 	} );
 
 	it( 'maps block_index against the recursive flattened block tree', async () => {

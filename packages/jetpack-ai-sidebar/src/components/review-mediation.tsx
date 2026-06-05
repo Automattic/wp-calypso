@@ -7,7 +7,7 @@
  * External dependencies
  */
 import { Panel, PanelBody } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 /**
@@ -15,9 +15,10 @@ import { __, _n, sprintf } from '@wordpress/i18n';
  */
 import {
 	applyReviewEdit,
-	findBlockElement,
-	findBlockListLayout,
+	clearActiveBlockFocus,
+	clearActiveBlockFocusUnlessBlockReferenceClick,
 	isSupportedEditBlockType,
+	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import {
@@ -27,8 +28,6 @@ import {
 } from '../utils/tracking';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
-
-const FOCUS_MODE_CLASS = 'is-focus-mode';
 
 /**
  * Types mirroring the wpcom `Review_Mediator_Ability` structured output.
@@ -429,9 +428,6 @@ export default function ReviewMediation( {
 		return flattenBlocks( rootBlocks );
 	}, [] );
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const { selectBlock } = useDispatch( 'core/block-editor' ) as any;
-
 	const getBlock = useCallback(
 		( blockIndex: number | null ): BlockSnapshot | null => {
 			if ( blockIndex === null || blockIndex < 0 || blockIndex >= blocks.length ) {
@@ -471,14 +467,9 @@ export default function ReviewMediation( {
 			if ( ! clientId ) {
 				return;
 			}
-			selectBlock?.( clientId );
-			const el = findBlockElement( clientId );
-			el?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
-			// Mirror block-notes' dim-others UX — class-level toggle (see
-			// index.ts commentary for why we don't use the private spotlight action).
-			findBlockListLayout()?.classList.add( FOCUS_MODE_CLASS );
+			toggleBlockReferenceFocus( clientId );
 		},
-		[ getClientId, isPostStale, selectBlock ]
+		[ getClientId, isPostStale ]
 	);
 	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
 
@@ -494,10 +485,14 @@ export default function ReviewMediation( {
 		[]
 	);
 
-	// Clear focus-mode when the mediation session ends.
+	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
+		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );
+	}, [] );
+
+	// Clear sidebar-created block focus when the mediation session ends.
 	useEffect( () => {
 		return () => {
-			findBlockListLayout()?.classList.remove( FOCUS_MODE_CLASS );
+			clearActiveBlockFocus();
 		};
 	}, [] );
 
@@ -959,6 +954,7 @@ export default function ReviewMediation( {
 		<div
 			className={ `jetpack-ai-review-mediation${ isPostStale ? ' is-post-stale' : '' }` }
 			aria-disabled={ isPostStale || undefined }
+			onMouseDownCapture={ handleRootMouseDown }
 		>
 			{ isPostStale && (
 				<p className="jetpack-ai-review-mediation__stale-warning" role="note">

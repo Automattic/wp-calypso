@@ -9,16 +9,18 @@
  * External dependencies
  */
 import { Panel, PanelBody } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo, useRef, useState } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
 import {
 	applyReviewEdit,
-	findBlockElement,
+	clearActiveBlockFocus,
+	clearActiveBlockFocusUnlessBlockReferenceClick,
 	isSupportedEditBlockType,
+	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import BlockRef, { type BlockSnapshot } from './block-ref';
@@ -223,10 +225,6 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
 		return ! postId || ! latestCurrentPostId || postId !== latestCurrentPostId;
 	}, [ currentPostId, postId ] );
-	const { selectBlock } = useDispatch( 'core/block-editor' ) as {
-		selectBlock?: ( clientId: string ) => void;
-	};
-
 	const setItemStatus = useCallback( ( key: string, status: ItemStatus ) => {
 		setItemStatuses( ( prev ) => ( { ...prev, [ key ]: status } ) );
 	}, [] );
@@ -237,11 +235,21 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 			if ( ! clientId ) {
 				return;
 			}
-			selectBlock?.( clientId );
-			findBlockElement( clientId )?.scrollIntoView( { block: 'center', behavior: 'smooth' } );
+			toggleBlockReferenceFocus( clientId );
 		},
-		[ flatBlocks, selectBlock ]
+		[ flatBlocks ]
 	);
+	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
+
+	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
+		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );
+	}, [] );
+
+	useEffect( () => {
+		return () => {
+			clearActiveBlockFocus();
+		};
+	}, [] );
 
 	const applyItem = useCallback(
 		async ( item: PostFeedbackItem, sectionIndex: number, itemIndex: number ) => {
@@ -320,14 +328,23 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 	);
 
 	return (
-		<div className={ `jetpack-ai-post-feedback${ isPostStale ? ' is-post-stale' : '' }` }>
+		<div
+			className={ `jetpack-ai-post-feedback${ isPostStale ? ' is-post-stale' : '' }` }
+			onMouseDownCapture={ handleRootMouseDown }
+		>
 			{ isPostStale && (
 				<p className="jetpack-ai-post-feedback__stale-warning" role="note">
 					{ __( 'Feedback context changed. Generate feedback again for this post.', 'jetpack' ) }
 				</p>
 			) }
-			<p className="jetpack-ai-post-feedback__summary">{ summary }</p>
 			<Panel className="jetpack-ai-post-feedback__panel">
+				<PanelBody
+					title={ __( 'Summary', 'jetpack' ) }
+					className="jetpack-ai-post-feedback__summary"
+					initialOpen
+				>
+					<p>{ summary }</p>
+				</PanelBody>
 				{ feedbackSections.map( ( section, sectionIndex ) => (
 					<PanelBody
 						key={ `${ section.title }:${ sectionIndex }` }
@@ -379,7 +396,7 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 											<BlockRef
 												index={ item.block_index }
 												blocks={ flatBlocks }
-												onFocus={ focusBlock }
+												onFocus={ focusCurrentPostBlock }
 												className="jetpack-ai-post-feedback__block-ref"
 											/>
 										</div>
