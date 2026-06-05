@@ -27,10 +27,8 @@ interface Props {
 
 export default function DeliverableCard( { output }: Props ) {
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
-	// The outputs endpoint resolves the human title server-side (brief
-	// heading → collateral title → machine run title), so the card and the
-	// delete dialog both render the same `output.title` without a per-card
-	// run fetch.
+	// Title is resolved server-side, so it's consistent across the card,
+	// delete dialog and detail page.
 	const title = output.title;
 	const isReady = output.status === 'ready';
 
