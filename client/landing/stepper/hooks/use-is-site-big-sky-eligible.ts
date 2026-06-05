@@ -39,11 +39,12 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	);
 
 	const isEligibleGoals = isGoalsBigSkyEligible( goals );
+	const siteHasBigSkyFeature = site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ) ?? false;
 	const isEligiblePlan =
 		isPersonalPlan( product_slug ) ||
 		isPremiumPlan( product_slug ) ||
-		isBusinessPlan( product_slug );
-	const siteHasBigSkyFeature = site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ) ?? false;
+		isBusinessPlan( product_slug ) ||
+		siteHasBigSkyFeature;
 
 	if ( flowName === AI_SITE_BUILDER_FLOW ) {
 		return { isEligible: true };

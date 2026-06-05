@@ -8,6 +8,7 @@ import {
 	isBusiness,
 	isEcommerce,
 	isPro,
+	isStudentPlan,
 	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -23,8 +24,8 @@ import { getSitePlan } from 'calypso/state/sites/selectors';
 const hasHigherPlan = ( currentPlan: string, plan: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS ) => {
 	const planMatchers =
 		plan === PLAN_PREMIUM
-			? [ isPremium, isBusiness, isEcommerce, isPro ]
-			: [ isBusiness, isEcommerce, isPro ];
+			? [ isPremium, isBusiness, isEcommerce, isPro, isStudentPlan ]
+			: [ isBusiness, isEcommerce, isPro, isStudentPlan ];
 
 	return planMatchers.some( ( planMatcher ) =>
 		planMatcher( {

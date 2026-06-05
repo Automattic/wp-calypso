@@ -11,6 +11,7 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
+	PLAN_STUDENT,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
@@ -51,6 +52,7 @@ export default function isSiteBigSkyTrial( state: AppState, siteId: number ) {
 		PLAN_PREMIUM_MONTHLY,
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_PREMIUM_3_YEARS,
+		PLAN_STUDENT,
 	];
 
 	const productSlug = currentPlan?.productSlug || site?.plan?.product_slug;

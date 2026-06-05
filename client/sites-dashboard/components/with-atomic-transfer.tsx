@@ -1,4 +1,4 @@
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -19,9 +19,9 @@ const MaybePollAtomicTransfer = ( { site, children }: WithAtomicTransferProps ) 
 		return children( { wasTransferring: false } );
 	}
 
-	const isBusinessOrEcommerceSite = isBusinessPlan( sitePlan ) || isEcommercePlan( sitePlan );
+	const hasAtomicFeature = planHasFeature( sitePlan, WPCOM_FEATURES_ATOMIC );
 
-	if ( ! isBusinessOrEcommerceSite ) {
+	if ( ! hasAtomicFeature ) {
 		return children( { wasTransferring: false } );
 	}
 

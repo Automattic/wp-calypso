@@ -3,6 +3,7 @@ import {
 	isEcommercePlan,
 	isPersonalPlan,
 	isPremiumPlan,
+	isStudentPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { PlanPrice } from '@automattic/components';
@@ -21,8 +22,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-type PlanSlug = 'personal' | 'premium' | 'business';
-type PlanTier = 'free' | PlanSlug;
+type PurchasablePlanSlug = 'personal' | 'premium' | 'business';
+type DisplayPlanSlug = PurchasablePlanSlug | 'student';
+type PlanTier = 'free' | DisplayPlanSlug;
 type Translate = ReturnType< typeof useTranslate >;
 
 const getPlanTier = ( planSlug: string | null ): PlanTier => {
@@ -31,6 +33,9 @@ const getPlanTier = ( planSlug: string | null ): PlanTier => {
 	}
 	if ( isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ) {
 		return 'business';
+	}
+	if ( isStudentPlan( planSlug ) ) {
+		return 'student';
 	}
 	if ( isPremiumPlan( planSlug ) ) {
 		return 'premium';
@@ -42,10 +47,10 @@ const getPlanTier = ( planSlug: string | null ): PlanTier => {
 };
 
 interface PlanDef {
-	slug: PlanSlug;
+	slug: DisplayPlanSlug;
 	name: string;
 	blurb: string;
-	price: number;
+	price?: number;
 	features: string[];
 }
 
@@ -91,6 +96,17 @@ function getPlanCards( tier: PlanTier, translate: Translate ): PlanCard[] {
 			translate( 'SFTP, WP-CLI, and GitHub Deployments' ) as string,
 		],
 	};
+	const student: PlanDef = {
+		slug: 'student',
+		name: translate( 'Student' ) as string,
+		blurb: translate( 'Podcasting is included in your Student plan.' ) as string,
+		features: [
+			translate( 'Audio upload to WordPress.com' ) as string,
+			translate( 'Podcast dashboard' ) as string,
+			translate( 'Native podcast stats' ) as string,
+			translate( 'Episode block' ) as string,
+		],
+	};
 
 	switch ( tier ) {
 		case 'free':
@@ -110,7 +126,13 @@ function getPlanCards( tier: PlanTier, translate: Translate ): PlanCard[] {
 			];
 		case 'business':
 			return [ { plan: business, label: 'your-plan' } ];
+		case 'student':
+			return [ { plan: student, label: 'your-plan' } ];
 	}
+}
+
+function isPurchasablePlanSlug( planSlug: DisplayPlanSlug ): planSlug is PurchasablePlanSlug {
+	return planSlug === 'personal' || planSlug === 'premium' || planSlug === 'business';
 }
 
 const getBenefits = (
@@ -198,7 +220,7 @@ function Welcome() {
 
 	// Redirect through Calypso checkout, then back to /settings/podcast so the user can
 	// click Enable on their now-eligible plan.
-	const goToCheckout = ( targetPlan: PlanSlug ) => {
+	const goToCheckout = ( targetPlan: PurchasablePlanSlug ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_podcast_upgrade_clicked', {
 				plan_slug: targetPlan,
@@ -301,11 +323,21 @@ function Welcome() {
 											</Text>
 											<Text variant="muted">{ plan.blurb }</Text>
 										</VStack>
-										<PlanPrice rawPrice={ plan.price } currencyCode="USD" displayPerMonthNotation />
+										{ typeof plan.price === 'number' && (
+											<PlanPrice
+												rawPrice={ plan.price }
+												currencyCode="USD"
+												displayPerMonthNotation
+											/>
+										) }
 										<Button
 											className="podcast__plan-cta"
 											variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
-											onClick={ () => ( isYourPlan ? goToSettings() : goToCheckout( plan.slug ) ) }
+											onClick={ () =>
+												isYourPlan || ! isPurchasablePlanSlug( plan.slug )
+													? goToSettings()
+													: goToCheckout( plan.slug )
+											}
 										>
 											{ isYourPlan
 												? translate( 'Enable podcasting' )
