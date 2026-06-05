@@ -83,6 +83,7 @@ export default function useGenerateActionHook( {
 	isPlanExpired: isPlanExpiredProp,
 	redirectTo,
 	pluginSlug,
+	scheduledDowngradeTargetSlug,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -104,6 +105,7 @@ export default function useGenerateActionHook( {
 	isPlanExpired?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
+	scheduledDowngradeTargetSlug?: string | null;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -244,6 +246,7 @@ export default function useGenerateActionHook( {
 			setIsLoading,
 			isLoading,
 			plansIntent,
+			scheduledDowngradeTargetSlug,
 		} );
 		return {
 			...action,
@@ -444,6 +447,7 @@ function getLoggedInPlansAction( {
 	isLoading,
 	setIsLoading,
 	plansIntent,
+	scheduledDowngradeTargetSlug,
 }: {
 	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
@@ -455,6 +459,7 @@ function getLoggedInPlansAction( {
 	isLoading: boolean;
 	setIsLoading: ( value: boolean ) => void;
 	plansIntent?: PlansIntent | null;
+	scheduledDowngradeTargetSlug?: string | null;
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
@@ -602,11 +607,19 @@ function getLoggedInPlansAction( {
 		const targetTier = PLAN_TIER_ORDER[ getPlanClass( planSlug ) ] ?? 0;
 
 		if ( targetTier < currentTier ) {
+			const isAlreadyScheduled =
+				scheduledDowngradeTargetSlug &&
+				getPlanClass( planSlug ) === getPlanClass( scheduledDowngradeTargetSlug );
 			const downgradeLabel =
 				getActiveDowngradeVariant() === 'on_renewal'
 					? translate( 'Downgrade at renewal' )
 					: translate( 'Downgrade', { context: 'verb' } );
-			return createLoggedInPlansAction( downgradeLabel, 'secondary' );
+			return createLoggedInPlansAction(
+				downgradeLabel,
+				'secondary',
+				undefined,
+				isAlreadyScheduled ? 'disabled' : undefined
+			);
 		}
 		if ( ! isStuck ) {
 			return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );

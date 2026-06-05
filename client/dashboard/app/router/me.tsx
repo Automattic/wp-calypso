@@ -290,6 +290,7 @@ export const purchaseSettingsRoute = createRoute( {
 		cancelled?: true;
 		downgraded?: true;
 		plan_changed?: true;
+		downgrade_scheduled?: true;
 		intent?: 'auto-renew';
 	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
@@ -297,6 +298,8 @@ export const purchaseSettingsRoute = createRoute( {
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
 		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
 		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
+		const isDowngradeScheduled =
+			search.downgrade_scheduled === true || search.downgrade_scheduled === 'true';
 		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
@@ -304,6 +307,7 @@ export const purchaseSettingsRoute = createRoute( {
 			...( isCancelled ? { cancelled: true } : {} ),
 			...( isDowngraded ? { downgraded: true } : {} ),
 			...( isPlanChanged ? { plan_changed: true } : {} ),
+			...( isDowngradeScheduled ? { downgrade_scheduled: true } : {} ),
 			...( intent ? { intent } : {} ),
 		};
 	},

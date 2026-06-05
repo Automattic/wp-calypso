@@ -486,6 +486,15 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
+	// When a scheduled downgrade exists, pass the target slug to disable its button.
+	const scheduledDowngradeTargetSlug =
+		! isPlanExpired &&
+		getActiveDowngradeVariant() === 'on_renewal' &&
+		currentPlanPurchase &&
+		hasScheduledDowngrade( currentPlanPurchase )
+			? currentPlanPurchase.scheduledDowngradeProductSlug
+			: null;
+
 	const useAction = useGenerateActionHook( {
 		siteId,
 		cartHandler: onUpgradeClick,
@@ -503,6 +512,7 @@ const PlansFeaturesMain = ( {
 		isPlanExpired,
 		redirectTo,
 		pluginSlug,
+		scheduledDowngradeTargetSlug,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

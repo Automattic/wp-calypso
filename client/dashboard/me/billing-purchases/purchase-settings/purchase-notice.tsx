@@ -6,6 +6,7 @@ import {
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -32,6 +33,7 @@ import {
 	getRenewalUrlFromPurchase,
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
+	hasScheduledDowngrade,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
@@ -162,6 +164,12 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 				) }
 			</Notice>
 		);
+	}
+
+	// Suppress all other notices when a scheduled downgrade is active — the
+	// page-level ScheduledDowngradeNotice already communicates plan status.
+	if ( hasScheduledDowngrade( purchase ) && isEnabled( 'plans/scheduled-plan-downgrade' ) ) {
+		return null;
 	}
 
 	if ( purchase.async_pending_payment_block_is_set ) {

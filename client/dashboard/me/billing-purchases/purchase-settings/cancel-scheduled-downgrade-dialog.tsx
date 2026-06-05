@@ -1,14 +1,11 @@
 import { userCancelScheduledDowngradeQuery } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	Modal,
-	Button,
-	__experimentalVStack as VStack,
+	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ButtonStack } from '../../../components/button-stack';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelScheduledDowngradeDialogProps {
@@ -16,6 +13,7 @@ interface CancelScheduledDowngradeDialogProps {
 	currentPlanTitle: string;
 	isOpen: boolean;
 	onClose: () => void;
+	onCancelSuccess?: () => void;
 }
 
 export function CancelScheduledDowngradeDialog( {
@@ -23,9 +21,10 @@ export function CancelScheduledDowngradeDialog( {
 	currentPlanTitle,
 	isOpen,
 	onClose,
+	onCancelSuccess,
 }: CancelScheduledDowngradeDialogProps ) {
 	const [ error, setError ] = useState< string | null >( null );
-	const { mutate: cancelScheduledDowngrade, isPending } = useMutation( {
+	const { mutate: cancelScheduledDowngrade } = useMutation( {
 		...userCancelScheduledDowngradeQuery(),
 		meta: {
 			snackbar: {
@@ -35,6 +34,7 @@ export function CancelScheduledDowngradeDialog( {
 		onSuccess: () => {
 			setError( null );
 			onClose();
+			onCancelSuccess?.();
 		},
 		onError: ( err: Error ) => {
 			setError( err.message );
@@ -46,43 +46,24 @@ export function CancelScheduledDowngradeDialog( {
 	}
 
 	return (
-		<Modal
-			title={ String( __( 'Cancel scheduled downgrade?' ) ) }
-			onRequestClose={ onClose }
+		<ConfirmDialog
+			__experimentalHideHeader={ false }
+			title={ String( __( 'Keep your current plan?' ) ) }
 			size="small"
+			confirmButtonText={ String( __( 'Keep my plan' ) ) }
+			cancelButtonText={ String( __( 'Not now' ) ) }
+			isOpen={ isOpen }
+			onConfirm={ () => cancelScheduledDowngrade( { purchaseId: purchase.ID } ) }
+			onCancel={ onClose }
 		>
-			<VStack spacing={ 4 }>
-				<Text>
-					{ sprintf(
-						/* translators: %(plan)s is the name of the current plan */
-						__(
-							'Your plan will keep renewing as %(plan)s. You can schedule a downgrade again anytime.'
-						),
-						{ plan: currentPlanTitle }
-					) }
-				</Text>
-				{ error && <Text className="cancel-scheduled-downgrade-dialog__error">{ error }</Text> }
-				<ButtonStack justify="flex-start">
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						isDestructive
-						isBusy={ isPending }
-						disabled={ isPending }
-						onClick={ () => cancelScheduledDowngrade( { purchaseId: purchase.ID } ) }
-					>
-						{ __( 'Cancel downgrade' ) }
-					</Button>
-					<Button
-						__next40pxDefaultSize
-						variant="tertiary"
-						onClick={ onClose }
-						disabled={ isPending }
-					>
-						{ __( 'Keep schedule' ) }
-					</Button>
-				</ButtonStack>
-			</VStack>
-		</Modal>
+			<Text>
+				{ sprintf(
+					/* translators: %(plan)s is the current plan name (e.g. "WordPress.com Business") */
+					__( 'Your %(plan)s plan will stay active. You can schedule a downgrade again anytime.' ),
+					{ plan: currentPlanTitle }
+				) }
+			</Text>
+			{ error && <Text>{ error }</Text> }
+		</ConfirmDialog>
 	);
 }

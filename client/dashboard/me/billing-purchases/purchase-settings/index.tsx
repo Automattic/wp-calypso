@@ -49,7 +49,7 @@ import {
 	check,
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -67,6 +67,7 @@ import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
+import { Notice as DashboardNotice } from '../../../components/notice';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -958,6 +959,115 @@ const form = {
 	],
 };
 
+function ScheduledDowngradeNotice( { purchase }: { purchase: Purchase } ) {
+	const locale = useLocale();
+	const { mutate: setAutoRenew } = useMutation( userPurchaseSetAutoRenewQuery() );
+	const [ isCancelDialogOpen, setIsCancelDialogOpen ] = useState( false );
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	// When redirected from the confirmation modal after scheduling a downgrade,
+	// downgrade_scheduled=true is in the URL. The API cache may still show stale
+	// data (no scheduled_downgrade fields, auto-renew off). Capture the flag on
+	// mount so we can render the auto-renew-ON info variant optimistically, then
+	// clear the param from the URL (same pattern as cancelled/plan_changed).
+	const { downgrade_scheduled: justScheduled } = purchaseSettingsRoute.useSearch();
+	const [ isOptimistic ] = useState( () => Boolean( justScheduled ) );
+	const navigate = purchaseSettingsRoute.useNavigate();
+	useEffect( () => {
+		if ( justScheduled ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { downgrade_scheduled: _ds, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ justScheduled, navigate ] );
+
+	const isScheduledDowngrade =
+		( hasScheduledDowngrade( purchase ) || isOptimistic ) &&
+		isEnabled( 'plans/scheduled-plan-downgrade' );
+
+	if ( ! isScheduledDowngrade || isDismissed ) {
+		return null;
+	}
+
+	const targetPlanTitle = getTargetPlanTitle( purchase.scheduled_downgrade_product_slug ?? '' );
+
+	// When arriving via redirect (isOptimistic), auto-renew was just enabled by
+	// the confirmation modal — show the info variant even if the cached purchase
+	// object still says auto-renew is off.
+	const showAutoRenewOnVariant = purchase.is_auto_renew_enabled || isOptimistic;
+
+	return (
+		<>
+			{ showAutoRenewOnVariant ? (
+				<DashboardNotice
+					actions={
+						<Button variant="secondary" onClick={ () => setIsCancelDialogOpen( true ) }>
+							{ __( 'Undo downgrade' ) }
+						</Button>
+					}
+				>
+					{ sprintf(
+						/* translators: %(plan)s is the target plan name, %(date)s is the renewal date */
+						__(
+							'You\u2019ve scheduled a downgrade to %(plan)s. Your current plan stays active until %(date)s.'
+						),
+						{
+							plan: targetPlanTitle,
+							date: formatDate(
+								new Date( purchase.scheduled_downgrade_renewal_date ?? purchase.renew_date ),
+								locale,
+								{ dateStyle: 'long' }
+							),
+						}
+					) }
+				</DashboardNotice>
+			) : (
+				<DashboardNotice
+					variant="warning"
+					actions={
+						<HStack spacing={ 2 } justify="flex-start">
+							<Button
+								variant="secondary"
+								onClick={ () =>
+									setAutoRenew( {
+										purchaseId: purchase.ID,
+										autoRenew: true,
+									} )
+								}
+							>
+								{ __( 'Enable auto-renew' ) }
+							</Button>
+							<Button variant="tertiary" onClick={ () => setIsCancelDialogOpen( true ) }>
+								{ __( 'Undo downgrade' ) }
+							</Button>
+						</HStack>
+					}
+				>
+					{ sprintf(
+						/* translators: %(plan)s is the target plan name */
+						__(
+							'You\u2019ve scheduled a downgrade to %(plan)s, but your plan isn\u2019t set to renew. The downgrade won\u2019t happen unless you enable auto-renew.'
+						),
+						{ plan: targetPlanTitle }
+					) }
+				</DashboardNotice>
+			) }
+
+			<CancelScheduledDowngradeDialog
+				purchase={ purchase }
+				currentPlanTitle={ purchase.product_name }
+				isOpen={ isCancelDialogOpen }
+				onClose={ () => setIsCancelDialogOpen( false ) }
+				onCancelSuccess={ () => setIsDismissed( true ) }
+			/>
+		</>
+	);
+}
+
 function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const {
 		mutate: setAutoRenew,
@@ -967,13 +1077,6 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const [ isCancelDialogOpen, setIsCancelDialogOpen ] = useState( false );
-
-	const isScheduledDowngrade =
-		hasScheduledDowngrade( purchase ) && isEnabled( 'plans/scheduled-plan-downgrade' );
-	const targetPlanTitle = isScheduledDowngrade
-		? getTargetPlanTitle( purchase.scheduled_downgrade_product_slug ?? '' )
-		: '';
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return null;
@@ -1005,37 +1108,6 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 						} }
 					/>
 
-					{ isScheduledDowngrade && purchase.is_auto_renew_enabled && (
-						<Button variant="link" isDestructive onClick={ () => setIsCancelDialogOpen( true ) }>
-							{ __( 'Cancel scheduled downgrade' ) }
-						</Button>
-					) }
-
-					{ isScheduledDowngrade && ! purchase.is_auto_renew_enabled && (
-						<Notice
-							status="warning"
-							isDismissible={ false }
-							actions={ [
-								{
-									label: __( 'Turn on auto-renew' ),
-									onClick: () =>
-										setAutoRenew( {
-											purchaseId: purchase.ID,
-											autoRenew: true,
-										} ),
-								},
-							] }
-						>
-							{ sprintf(
-								/* translators: %(plan)s is the target plan name */
-								__(
-									'You scheduled a downgrade to the %(plan)s plan, but it won\u2019t take effect while auto-renew is off. Turn on auto-renew to keep the scheduled change.'
-								),
-								{ plan: targetPlanTitle }
-							) }
-						</Notice>
-					) }
-
 					{ error && (
 						<Notice status="error" isDismissible={ false }>
 							{ error.message }
@@ -1043,15 +1115,6 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 					) }
 				</VStack>
 			</CardBody>
-
-			{ isScheduledDowngrade && (
-				<CancelScheduledDowngradeDialog
-					purchase={ purchase }
-					currentPlanTitle={ purchase.product_name }
-					isOpen={ isCancelDialogOpen }
-					onClose={ () => setIsCancelDialogOpen( false ) }
-				/>
-			) }
 		</Card>
 	);
 }
@@ -1597,6 +1660,7 @@ export default function PurchaseSettings() {
 	return (
 		<PageLayout
 			size="small"
+			notices={ <ScheduledDowngradeNotice purchase={ purchase } /> }
 			header={
 				<VStack>
 					<PageHeader

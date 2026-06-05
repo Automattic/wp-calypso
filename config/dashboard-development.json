@@ -42,7 +42,7 @@
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
-		"plans/scheduled-plan-downgrade": false,
+		"plans/scheduled-plan-downgrade": true,
 		"plans/self-service-downgrade": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,

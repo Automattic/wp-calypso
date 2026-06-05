@@ -19,7 +19,7 @@ import {
 } from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -138,18 +138,18 @@ const DowngradeConfirmationModal = ( {
 					} );
 				}
 
-				dispatch(
-					successNotice(
-						translate( 'Your plan will downgrade to %(targetPlan)s on %(date)s.', {
-							args: {
-								targetPlan: targetPlanTitle,
-								date: renewalDateFormatted,
-							},
-						} ),
-						{ duration: 5000 }
-					)
-				);
-				onClose();
+				// Redirect to purchase settings — the page-level notice communicates the schedule.
+				// Append downgrade_scheduled=true so purchase settings can render optimistically
+				// before the API cache refreshes (same pattern as plan_changed=true).
+				const cancelTo = new URLSearchParams( window.location.search ).get( 'cancel_to' );
+				if ( cancelTo ) {
+					const separator = cancelTo.includes( '?' ) ? '&' : '?';
+					window.location.href = cancelTo + separator + 'downgrade_scheduled=true';
+				} else {
+					window.location.href = `/purchases/subscriptions/${ siteSlug ?? '' }/${
+						purchase.id
+					}?downgrade_scheduled=true`;
+				}
 			} catch ( error ) {
 				dispatch(
 					errorNotice(
