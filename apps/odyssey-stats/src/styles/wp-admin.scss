@@ -97,13 +97,15 @@
 		}
 	}
 
-	// Some `.stats-section-title` markup wraps a bare child `<h3>` (e.g.
-	// stats-date-label, stats-email-summary). wp-admin core (common.css) applies
-	// an unlayered `h2, h3 { font-size: 1.3em; margin: 1em 0; color: #1d2327 }`
-	// that wins over Calypso's `@layer reset`, inflating that inner heading and
-	// double-spacing it against its wrapper. Re-anchor it on the wrapper so the
-	// inner h3 follows the wrapper's (responsive) size/color and adds no margin.
-	& .stats-section-title h3 {
+	// The period-navigation heading (stats-date-label) wraps a bare child `<h3>`
+	// inside `.stats-section-title`. wp-admin core (common.css) applies an
+	// unlayered `h2, h3 { font-size: 1.3em; margin: 1em 0; color: #1d2327 }` that
+	// wins over Calypso's `@layer reset`, inflating that inner heading and
+	// double-spacing it against its wrapper. Scope the reset to the period nav so
+	// the inner h3 follows the wrapper's (responsive) size/color and adds no
+	// margin — without touching other `.stats-section-title` headings (e.g. the
+	// Emails summary, which lives under `.stats-summary-nav`, not the period nav).
+	& .stats-period-navigation .stats-section-title h3 {
 		font-size: inherit;
 		margin: 0;
 		color: inherit;
