@@ -12,7 +12,7 @@ export const DASHBOARD_SECTION_PATHS = [
 // These must be registered server-side so refresh/direct hits work.
 export const A4A_DASHBOARD_EXTRA_PATHS = [
 	'/overview',
-	'/tiers',
+	'/agency/tiers',
 	'/client',
 	'/client/subscriptions',
 ];
