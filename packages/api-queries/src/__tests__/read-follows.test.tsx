@@ -151,13 +151,23 @@ describe( 'siteSubscriptionsQuery', () => {
 			wrapper: makeWrapper( client ),
 		} );
 
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		// Page 1 is fetched automatically. There are more pages, so a short
+		// (non-empty) first page must not end pagination.
+		await waitFor( () => expect( result.current.data?.pages ).toHaveLength( 1 ) );
+		expect( result.current.hasNextPage ).toBe( true );
 
+		// Fetch page 2 — still short, still not the last page.
 		await act( async () => {
-			while ( result.current.hasNextPage ) {
-				await result.current.fetchNextPage();
-			}
+			await result.current.fetchNextPage();
 		} );
+		await waitFor( () => expect( result.current.data?.pages ).toHaveLength( 2 ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		// Fetch page 3 — empty, so pagination stops here.
+		await act( async () => {
+			await result.current.fetchNextPage();
+		} );
+		await waitFor( () => expect( result.current.hasNextPage ).toBe( false ) );
 
 		expect( getSiteSubscriptionsFromData( result.current.data ).map( ( sub ) => sub.ID ) ).toEqual(
 			[ 1, 2, 3 ]
