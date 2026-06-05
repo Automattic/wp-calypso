@@ -49,7 +49,7 @@ const agencyTiersRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'tiers',
+	path: 'agency/tiers',
 } ).lazy( () =>
 	import( '../../agency/tiers' ).then( ( d ) =>
 		createLazyRoute( 'agency-tiers' )( {

@@ -18,8 +18,8 @@ export default function AgencySidebar() {
 				{ __( 'Home' ) }
 			</SidebarMenuItem>
 			{ supports.agency && supports.agency.tiers && (
-				<SidebarExpandableMenuItem label={ __( 'Agency' ) } icon={ globe } to="/tiers">
-					<SidebarMenuItem to="/tiers">{ __( 'Tiers' ) }</SidebarMenuItem>
+				<SidebarExpandableMenuItem label={ __( 'Agency' ) } icon={ globe } to="/agency/tiers">
+					<SidebarMenuItem to="/agency/tiers">{ __( 'Tiers' ) }</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
 		</>
