@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	FEATURE_6GB_STORAGE,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,
@@ -1532,6 +1533,19 @@ describe( 'planHasFeature', () => {
 
 	test( 'should return false when a plan does not have a feature', () => {
 		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).toBe( false );
+	} );
+
+	test( 'student plan should use business feature mapping with personal storage', () => {
+		const studentPlan = getPlan( PLAN_STUDENT );
+
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_VIDEO_UPLOADS ) ).toBe( true );
+		expect( studentPlan.get2023PricingGridSignupWpcomFeatures() ).toEqual(
+			getPlan( PLAN_BUSINESS ).get2023PricingGridSignupWpcomFeatures()
+		);
+		expect( studentPlan.getStorageFeature() ).toEqual(
+			getPlan( PLAN_PERSONAL ).getStorageFeature()
+		);
+		expect( studentPlan.getStorageFeature() ).toEqual( FEATURE_6GB_STORAGE );
 	} );
 } );
 

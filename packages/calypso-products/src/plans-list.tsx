@@ -1049,29 +1049,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 } );
 
-const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanPersonalDetails(),
-	type: TYPE_STUDENT,
-	getTitle: () => i18n.translate( 'Student' ),
-	getAudience: () => i18n.translate( 'Best for students' ),
-	getBlogAudience: () => i18n.translate( 'Best for students' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
-	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: () => i18n.translate( 'Build your site with student-friendly tools.' ),
-	getNewsletterTagLine: () =>
-		i18n.translate( 'Create, share, and grow your work with a custom domain.' ),
-	getBlogOnboardingTagLine: () =>
-		i18n.translate( 'Take the next step with an ad-free site and room to grow.' ),
-	getDescription: () =>
-		i18n.translate(
-			'{{strong}}Best for students:{{/strong}} Build your online presence with a custom domain and an ad-free experience.',
-			plansDescriptionHeadingComponent
-		),
-	getShortDescription: () =>
-		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
-	getTagline: () => i18n.translate( 'Learn more about everything included with the Student plan.' ),
-} );
-
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -2301,6 +2278,31 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PRIORITY_24_7_SUPPORT,
 	],
 } );
+
+const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanBusinessDetails(),
+	type: TYPE_STUDENT,
+	getTitle: () => i18n.translate( 'Student' ),
+	getAudience: () => i18n.translate( 'Best for students' ),
+	getBlogAudience: () => i18n.translate( 'Best for students' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
+	getStoreAudience: () => i18n.translate( 'Best for students' ),
+	getPlanTagline: () => i18n.translate( 'Build your site with student-friendly tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Create, share, and grow your work with a custom domain.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate( 'Take the next step with an ad-free site and room to grow.' ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for students:{{/strong}} Build your online presence with a custom domain and an ad-free experience.',
+			plansDescriptionHeadingComponent
+		),
+	getShortDescription: () =>
+		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
+	getTagline: () => i18n.translate( 'Learn more about everything included with the Student plan.' ),
+	getStorageFeature: () => FEATURE_6GB_STORAGE,
+} );
+
 const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
