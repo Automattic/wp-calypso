@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
+	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
@@ -59,6 +60,7 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import {
 	shouldForceDefaultPlansBasedOnIntent,
@@ -75,8 +77,10 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
+import DowngradeConfirmationModal from './components/downgrade-confirmation-modal';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
@@ -245,6 +249,9 @@ const PlansFeaturesMain = ( {
 	onReady,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
+		null
+	);
 	// TODO: Remove temporary eslint disable
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -263,6 +270,10 @@ const PlansFeaturesMain = ( {
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const sitePlanSlug = currentPlan?.productSlug;
+	const sitePlansData = useSelector( ( state: IAppState ) =>
+		siteId ? getPlansBySiteId( state, siteId )?.data : null
+	);
+	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -418,6 +429,15 @@ const PlansFeaturesMain = ( {
 			intentFromProps !== 'plans-p2'
 		) {
 			showDomainUpsellDialog();
+			return true;
+		}
+
+		// For expired plans, intercept downgrades to show a confirmation modal.
+		if (
+			isPlanExpired &&
+			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
+		) {
+			setPendingDowngradePlanSlug( planSlug );
 			return true;
 		}
 
@@ -895,6 +915,35 @@ const PlansFeaturesMain = ( {
 						const cartItemForPlan = getCartItemForPlan( planSlug );
 						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
 						onUpgradeClick?.( cartItems );
+					} }
+				/>
+				<DowngradeConfirmationModal
+					isOpen={ !! pendingDowngradePlanSlug }
+					currentPlanName={ sitePlansData?.find( ( p ) => p.currentPlan )?.productName ?? '' }
+					targetPlanName={
+						sitePlansData?.find( ( p ) => p.productSlug === pendingDowngradePlanSlug )
+							?.productName ?? ''
+					}
+					targetPlanSlug={ pendingDowngradePlanSlug }
+					purchaseId={ currentPlan?.purchaseId }
+					onClose={ () => setPendingDowngradePlanSlug( null ) }
+					onConfirm={ () => {
+						const planPath = pendingDowngradePlanSlug
+							? getPlanPath( pendingDowngradePlanSlug )
+							: null;
+						if ( ! planPath || ! siteSlug ) {
+							return;
+						}
+						setPendingDowngradePlanSlug( null );
+						page(
+							addQueryArgs(
+								{
+									...( coupon && { coupon } ),
+									...( redirectTo && { redirect_to: redirectTo } ),
+								},
+								`/checkout/${ siteSlug }/${ planPath }`
+							)
+						);
 					} }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
