@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Breaking Changes
+
+- `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
+
 ## 1.1.0
 
 ### Enhancements

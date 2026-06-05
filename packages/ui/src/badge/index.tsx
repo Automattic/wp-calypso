@@ -6,8 +6,8 @@
  */
 
 import { info, caution, error, published } from '@wordpress/icons';
+import { Icon } from '@wordpress/ui';
 import clsx from 'clsx';
-import { Icon } from '../icon';
 import styles from './style.module.scss';
 import type { BadgeProps } from './types';
 
