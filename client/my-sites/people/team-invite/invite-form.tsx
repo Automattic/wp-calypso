@@ -46,7 +46,7 @@ function InviteForm( props: Props ) {
 	const defaultUserRole = useInitialRole( siteId );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteForTeams = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
-	const prevInvitingProgress = useRef();
+	const prevInvitingProgress = useRef( undefined );
 	const { errors: tokenErrors, progress: validationProgress } = useSelector( getTokenValidation );
 	const { progress: invitingProgress, success: invitingSuccess } =
 		useSelector( getSendInviteState );

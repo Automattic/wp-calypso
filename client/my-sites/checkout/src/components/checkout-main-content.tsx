@@ -43,6 +43,7 @@ import { useTranslate } from 'i18n-calypso';
 import {
 	useCallback,
 	useMemo,
+	useRef,
 	useState,
 	type JSX,
 	type PropsWithChildren,
@@ -500,8 +501,24 @@ export default function CheckoutMainContent( {
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
-	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( true );
+	const [
+		shouldShowContactDetailsValidationErrors,
+		setShouldShowContactDetailsValidationErrorsState,
+	] = useState( true );
+	// Mirror the flag in a ref so the step-completion validation — which runs
+	// synchronously right after the contact-form autocomplete sets this to
+	// `false` — reads the current value instead of a stale render closure. Under
+	// React 19's update timing the state setter hasn't propagated to the
+	// `isCompleteCallback` closure yet, which would otherwise surface validation
+	// errors for cached details the user never entered.
+	// See `use-prefill-checkout-contact-form`.
+	const shouldShowContactDetailsValidationErrorsRef = useRef(
+		shouldShowContactDetailsValidationErrors
+	);
+	const setShouldShowContactDetailsValidationErrors = useCallback( ( value: boolean ) => {
+		shouldShowContactDetailsValidationErrorsRef.current = value;
+		setShouldShowContactDetailsValidationErrorsState( value );
+	}, [] );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -816,8 +833,13 @@ export default function CheckoutMainContent( {
 							stepId="contact-form"
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
+								// Read from the ref: autocomplete suppresses errors by setting the
+								// flag to `false` immediately before invoking this callback, and the
+								// state update would not yet be visible in this closure.
+								const shouldDisplayValidationErrors =
+									shouldShowContactDetailsValidationErrorsRef.current;
 								// Touch the fields so they display validation errors
-								if ( shouldShowContactDetailsValidationErrors ) {
+								if ( shouldDisplayValidationErrors ) {
 									touchContactFields();
 								}
 								const validationResponse = await validateContactDetails(
@@ -829,7 +851,7 @@ export default function CheckoutMainContent( {
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
-									shouldShowContactDetailsValidationErrors
+									shouldDisplayValidationErrors
 								);
 								if ( validationResponse ) {
 									// When the contact details change, update the VAT details on the server.
@@ -843,7 +865,7 @@ export default function CheckoutMainContent( {
 										}
 									} catch ( error ) {
 										reduxDispatch( removeNotice( 'vat_info_notice' ) );
-										if ( shouldShowContactDetailsValidationErrors ) {
+										if ( shouldDisplayValidationErrors ) {
 											reduxDispatch(
 												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
 											);

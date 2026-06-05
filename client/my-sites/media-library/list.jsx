@@ -146,16 +146,15 @@ export class MediaLibraryList extends Component {
 		return this.props.moment( minDate ).format( 'YYYY-MM-DD' );
 	};
 
-	renderItem = ( item, listIndex, itemRef ) => {
+	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
 		const selectedItems = this.props.selectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
-		const ref = this.getItemRef( item );
+		const itemKey = this.getItemRef( item );
 
 		return (
 			<ListItem
-				forwardedRef={ itemRef }
-				key={ ref }
+				key={ itemKey }
 				style={ this.getMediaItemStyle( index ) }
 				media={ item }
 				scale={ this.props.mediaScale }

@@ -127,7 +127,7 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 			expect( nudge ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { plan: PLAN_PREMIUM } ),
-				expect.anything()
+				undefined
 			);
 		}
 	);
@@ -141,7 +141,7 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 			expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { plan: PLAN_PREMIUM_2_YEARS } ),
-				expect.anything()
+				undefined
 			);
 		}
 	);
@@ -157,7 +157,7 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 			expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { plan: PLAN_JETPACK_SECURITY_DAILY } ),
-				expect.anything()
+				undefined
 			);
 		}
 	);
