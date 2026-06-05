@@ -77,14 +77,20 @@ export default function TierCards( {
 	// Scroll so the current tier card is the first visible card on mount.
 	// Level 0 is already at the natural scroll start — only scroll for higher tiers.
 	useEffect( () => {
-		if ( ! containerRef.current || ! currentTier || currentTier.level === 0 ) {
+		const container = containerRef.current;
+		if ( ! container || ! currentTier || currentTier.level === 0 ) {
 			return;
 		}
-		const currentCard = containerRef.current.querySelector< HTMLElement >(
-			'[data-is-current-tier="true"]'
-		);
+		const currentCard = container.querySelector< HTMLElement >( '[data-is-current-tier="true"]' );
 		if ( currentCard ) {
-			currentCard.scrollIntoView( { block: 'nearest', inline: 'start' } );
+			const isRTL = getComputedStyle( container ).direction === 'rtl';
+			const containerRect = container.getBoundingClientRect();
+			const cardRect = currentCard.getBoundingClientRect();
+			const scrollOffset = isRTL
+				? cardRect.right - containerRect.right
+				: cardRect.left - containerRect.left;
+
+			container.scrollLeft += scrollOffset;
 		}
 	}, [ currentTier ] );
 
@@ -135,7 +141,7 @@ export default function TierCards( {
 							<Text color={ TEXT_COLOR }>{ tier.description }</Text>
 							{ isCurrentTier && isEarlyAccess && (
 								<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
-									{ createInterpolateElement( __( "You're in early. <a>Learn more</a>" ), {
+									{ createInterpolateElement( __( 'You’re in early. <a>Learn more</a>' ), {
 										a: (
 											<Button onClick={ handleViewEarlyAccessInfo } variant="link">
 												{ __( 'Learn more.' ) }
@@ -173,7 +179,7 @@ export default function TierCards( {
 							variant={ isSecondary ? 'secondary' : 'primary' }
 							style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
 						>
-							{ hasHigherTier ? __( "See what you'll unlock" ) : __( 'View your benefits' ) }
+							{ hasHigherTier ? __( 'See what you’ll unlock' ) : __( 'View your benefits' ) }
 						</Button>
 					</CardBody>
 				</Card>
@@ -193,14 +199,14 @@ export default function TierCards( {
 					isDismissible
 					size="medium"
 					onRequestClose={ () => setShowEarlyAccessModal( false ) }
-					title={ __( "You've been granted early access" ) }
+					title={ __( 'You’ve been granted early access' ) }
 				>
 					<VStack spacing={ 8 }>
 						<Text>
 							{ sprintf(
 								/* translators: %s is the tier name */
 								__(
-									"You've been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources."
+									'You’ve been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
 								),
 								currentTier.name
 							) }
@@ -246,7 +252,7 @@ export default function TierCards( {
 						</Text>
 						<Text>
 							{ __(
-								"You can still move up to a higher tier if your influenced revenue qualifies. However, if you do not meet the minimum requirements for this tier, any downgrade will only occur when the next year's cycle begins in January. This protection ensures you can continue to enjoy your current tier benefits throughout the year."
+								'You can still move up to a higher tier if your influenced revenue qualifies. However, if you do not meet the minimum requirements for this tier, any downgrade will only occur when the next year’s cycle begins in January. This protection ensures you can continue to enjoy your current tier benefits throughout the year.'
 							) }
 						</Text>
 						<ButtonStack justify="flex-end">
