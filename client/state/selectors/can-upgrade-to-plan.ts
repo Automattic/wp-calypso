@@ -2,11 +2,9 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
 	PLAN_P2_PLUS,
-	getPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isFreePlan,
-	type PlanSlug,
 } from '@automattic/calypso-products';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -61,14 +59,6 @@ export default function canUpgradeToPlan(
 		return false;
 	}
 
-	// Prefer the server's upgrade-path determination: every non-current plan in the
-	// site's plans carries an `available_for_upgrade` flag. Fall back to the
-	// client-side plan definition when the target plan isn't in the fetched list
-	// (e.g. it's the current plan, or plans haven't loaded).
 	const targetPlan = getSitePlan( state, siteId, planKey ) as SitePlanData | undefined;
-	if ( targetPlan?.availableForUpgrade !== undefined ) {
-		return targetPlan.availableForUpgrade;
-	}
-
-	return ( getPlan( planKey )?.availableFor ?? ( () => false ) )( currentPlanSlug as PlanSlug );
+	return targetPlan?.availableForUpgrade ?? false;
 }
