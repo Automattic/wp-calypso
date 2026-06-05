@@ -1,6 +1,6 @@
 import { Domain } from '@automattic/api-core';
 import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';

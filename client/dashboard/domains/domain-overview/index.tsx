@@ -7,7 +7,7 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';

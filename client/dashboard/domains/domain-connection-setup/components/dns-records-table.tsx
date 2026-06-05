@@ -3,7 +3,7 @@ import {
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';

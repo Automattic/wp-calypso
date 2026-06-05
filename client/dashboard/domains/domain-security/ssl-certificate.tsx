@@ -1,5 +1,5 @@
 import { provisionSslCertificateMutation } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';

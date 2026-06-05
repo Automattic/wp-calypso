@@ -1,6 +1,6 @@
 import { DomainSubtype, DomainSummary } from '@automattic/api-core';
 import { sslDetailsQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 

@@ -1,5 +1,5 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import {
 	ExternalLink,
 	Icon,
