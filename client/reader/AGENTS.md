@@ -42,7 +42,7 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - Refetch/sync → `staleTime`/`gcTime`, `invalidateQueries`, or `refetch` — not `useEffect` loops driving `fetchNextPage`.
 - Cross-feature refreshes → invalidate the canonical query key on the active `QueryClient` (see the mutation-factory rule below).
 - Loading/error/empty UI → the query's own `isPending`/`isError`/`data` state, not bespoke flags.
-- When unsure, consult the `tanstack-query-best-practices` skill and the official TanStack Query docs before introducing a custom workaround. Document any deliberate deviation from the idiomatic pattern with a comment explaining why.
+- When unsure, consult the official TanStack Query docs before introducing a custom workaround. Document any deliberate deviation from the idiomatic pattern with a comment explaining why.
 
 Site subscriptions are fully on React Query:
 

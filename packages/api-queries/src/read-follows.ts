@@ -25,7 +25,10 @@ import {
 // The /read/following/mine endpoint paginates by walking raw subscription rows
 // with offset = (page - 1) * limit, and caps `limit` at 100 server-side
 // (PER_PAGE_MAX). Keep the request size aligned with that cap so each page maps
-// to exactly one server-side offset window.
+// to exactly one server-side offset window. Consumers that supply their own
+// queryFn (e.g. the data-stores subscription manager) must request this same
+// page size, or the next-page detection below (which reasons about covered
+// offset) will paginate incorrectly.
 const ITEMS_PER_PAGE = 100;
 const MAX_ITEMS = 2000;
 const STALE_TIME = 60 * 60 * 1000;
