@@ -2,11 +2,11 @@ import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 // @ts-expect-error The commands package is not yet typed.
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
 import { displayShortcut } from '@wordpress/keycodes';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
