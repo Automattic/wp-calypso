@@ -1,4 +1,4 @@
-import { PersonalPlans, SubscriptionBillPeriod } from '@automattic/api-core';
+import { PersonalPlans, StudentPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
 // eslint-disable-next-line no-restricted-imports -- Zendesk eligibility gate for speak-with-support intervention
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
@@ -71,6 +71,10 @@ function isAnnualOrLongerPlan( purchase: Purchase ): boolean {
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
 	);
+}
+
+function isStudentPlan( purchase: Purchase ): boolean {
+	return ( StudentPlans as readonly string[] ).includes( purchase.product_slug );
 }
 
 const SUPPORT_GUIDES_URL = localizeUrl( wpcomLink( '/support/' ) );
@@ -257,7 +261,7 @@ export default function SolutionsCardsUpsellStep( {
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
-	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase );
+	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase ) && ! isStudentPlan( purchase );
 
 	const hideChangePlan =
 		( PersonalPlans as readonly string[] ).includes( purchase.product_slug ) &&

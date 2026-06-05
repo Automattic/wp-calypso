@@ -15,6 +15,7 @@ import {
 	isWpComPersonalPlan,
 	isWpComPlan,
 	isWpComPremiumPlan,
+	isWpComStudentPlan,
 	isJetpackProduct,
 	isJetpackPlan,
 	isAkismetProduct,
@@ -593,7 +594,8 @@ function CheckoutSummarySupportIfAvailable( props: {
 		( currentPlanSlug &&
 			( isWpComPremiumPlan( currentPlanSlug ) ||
 				isWpComBusinessPlan( currentPlanSlug ) ||
-				isWpComEcommercePlan( currentPlanSlug ) ) &&
+				isWpComEcommercePlan( currentPlanSlug ) ||
+				isWpComStudentPlan( currentPlanSlug ) ) &&
 			! isMonthly( currentPlanSlug ) );
 
 	if ( ! isSupportAvailable ) {

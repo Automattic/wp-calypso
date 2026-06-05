@@ -1,8 +1,17 @@
-import { getPlan, findPlansKeys, TYPE_PERSONAL } from '@automattic/calypso-products';
+import {
+	getPlan,
+	findPlansKeys,
+	isWpComStudentPlan,
+	TYPE_PERSONAL,
+} from '@automattic/calypso-products';
 
 import 'calypso/state/purchases/init';
 
 export const getDowngradePlanFromPurchase = ( purchase ) => {
+	if ( isWpComStudentPlan( purchase.productSlug ) ) {
+		return null;
+	}
+
 	const plan = getPlan( purchase.productSlug );
 	if ( ! plan ) {
 		return null;

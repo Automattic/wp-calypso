@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
@@ -136,5 +137,20 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 		);
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();
 		expect( closeDialog ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does not show switch-to-monthly card for Student plans', () => {
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ { ...purchase, productSlug: PLAN_STUDENT } }
+				site={ site }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Switch to monthly payments' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Switch to a different plan' ) ).toBeInTheDocument();
 	} );
 } );

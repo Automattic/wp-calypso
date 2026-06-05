@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { DotcomPlans } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../../test-utils';
@@ -166,5 +167,19 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		);
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();
 		expect( closeDialog ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does not show switch-to-monthly card for Student plans', () => {
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ { ...purchase, product_slug: DotcomPlans.STUDENT } }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Switch to monthly payments' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Switch to a different plan' ) ).toBeInTheDocument();
 	} );
 } );

@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	getMonthlyPlanByYearly,
 	isWpComMonthlyPlan,
 	isWpComBusinessPlan,
 	isWpComPremiumPlan,
@@ -7,6 +8,7 @@ import {
 	isWpComBiennialPlan,
 	isWpComTriennialPlan,
 	isWpComEcommercePlan,
+	isWpComStudentPlan,
 } from '@automattic/calypso-products';
 
 type UpsellOptions = {
@@ -31,6 +33,10 @@ export type UpsellType =
 	| 'education:free-domain'
 	| 'education:domain-connection'
 	| 'upgrade-atomic';
+
+function hasMonthlyPlanDowngrade( productSlug: string ): boolean {
+	return Boolean( getMonthlyPlanByYearly( productSlug ) );
+}
 
 /**
  * Get a relevant upsell nudge for the chosen reason if exists.
@@ -58,9 +64,10 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 			}
 
 			if (
-				isWpComAnnualPlan( productSlug ) ||
-				isWpComBiennialPlan( productSlug ) ||
-				isWpComTriennialPlan( productSlug )
+				( isWpComAnnualPlan( productSlug ) ||
+					isWpComBiennialPlan( productSlug ) ||
+					isWpComTriennialPlan( productSlug ) ) &&
+				hasMonthlyPlanDowngrade( productSlug )
 			) {
 				return 'downgrade-monthly';
 			}
@@ -88,7 +95,11 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 
 		case 'cannotInstallPlugins':
 		case 'cannotUploadThemes':
-			if ( isWpComBusinessPlan( productSlug ) || isWpComEcommercePlan( productSlug ) ) {
+			if (
+				isWpComBusinessPlan( productSlug ) ||
+				isWpComEcommercePlan( productSlug ) ||
+				isWpComStudentPlan( productSlug )
+			) {
 				if ( liveChatSupported ) {
 					return reason === 'cannotInstallPlugins' ? 'live-chat:plugins' : 'live-chat:themes';
 				}

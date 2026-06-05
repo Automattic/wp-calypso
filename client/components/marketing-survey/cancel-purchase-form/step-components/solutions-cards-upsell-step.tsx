@@ -1,4 +1,5 @@
 import {
+	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	isPersonalPlan,
 	isWpComAnnualPlan,
@@ -196,7 +197,9 @@ export default function SolutionsCardsUpsellStep( {
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
-	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.productSlug );
+	const showSwitchToMonthly =
+		isAnnualOrLongerPlan( purchase.productSlug ) &&
+		Boolean( getMonthlyPlanByYearly( purchase.productSlug ) );
 	const showSwitchToYearly =
 		! isAnnualOrLongerPlan( purchase.productSlug ) &&
 		!! getYearlyPlanByMonthly( purchase.productSlug );
