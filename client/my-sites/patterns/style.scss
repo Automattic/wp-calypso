@@ -129,9 +129,18 @@
 		}
 
 		.patterns-header__inner {
-			// 64px clears the floating nav; the extra ~104px gives the hero content the
-			// same breathing room below the nav as the legacy nav does (~105px gap).
-			padding-top: 168px;
+			// The 2026 nav floats (fixed, out of flow), so unlike the legacy in-flow
+			// masterbar the hero must clear it with padding. The hero band already starts
+			// below the admin bar, so it only needs to clear the nav's own height —
+			// `--nav-2026-height`, not the admin-bar-inclusive sticky offset (that would
+			// double-count the admin bar logged-in). Add it on top of legacy's own two-tier
+			// breathing room (105 / 90, from components/header/style.scss) so the nav→heading
+			// gap matches legacy at every breakpoint, with the nav height not duplicated here.
+			padding-top: calc(105px + var(--nav-2026-height));
+
+			@media (max-width: $break-xlarge) {
+				padding-top: calc(90px + var(--nav-2026-height));
+			}
 		}
 	}
 }

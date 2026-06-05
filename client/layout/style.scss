@@ -566,20 +566,24 @@ body.is-mobile-app-view {
 .layout:has( .x-nav--2026-redesign ) {
 	/* stylelint-disable-next-line length-zero-no-unit -- px needed for the consuming calc() */
 	--nav-2026-admin-offset: 0px;
-	// Bottom edge of the fixed 2026 nav (admin-bar offset + the 64px nav height).
+	// Height of the fixed 2026 nav bar itself (a design constant). Single source of
+	// truth — everything that clears or sticks to the nav derives from this so the
+	// number lives in exactly one place.
+	--nav-2026-height: 64px;
+	// Bottom edge of the fixed 2026 nav (admin-bar offset + the nav height).
 	// Secondary sticky sub-menus on 2026-nav pages stick to this so they rest below
 	// the nav instead of scrolling up behind it. Tracks `--nav-2026-admin-offset`,
 	// so it's correct logged-out (0) and logged-in (responsive masterbar height).
-	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + 64px );
+	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + var( --nav-2026-height ) );
 }
 
 .layout.is-logged-in:has( .x-nav--2026-redesign ) {
 	--nav-2026-admin-offset: var( --masterbar-height );
 }
 
-// Overlaid nav is out of flow, so pad the content down by the nav height (a fixed
-// 64px design constant) + the admin-bar offset so the hero clears the nav while its
-// background slides under.
+// Overlaid nav is out of flow, so pad the content down by the nav height + the
+// admin-bar offset so the hero clears the nav while its background slides under.
+// This is exactly the nav's bottom edge, i.e. `--nav-2026-sticky-offset`.
 .layout:has( .x-nav--2026-redesign ) .layout__content {
-	padding-top: calc( var( --nav-2026-admin-offset ) + 64px );
+	padding-top: var( --nav-2026-sticky-offset );
 }
