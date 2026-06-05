@@ -1,5 +1,4 @@
 import { odieAssistantPerformanceProfilerQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -13,6 +12,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useAnalytics } from '../../app/analytics';

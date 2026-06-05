@@ -7,7 +7,6 @@ import {
 	siteSshKeysDetachMutation,
 	sshKeysQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -25,6 +24,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { securitySshKeyRoute } from '../../app/router/me';

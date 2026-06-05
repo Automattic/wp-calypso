@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { getStatusIntent, getStatusText, Valuation } from '../../utils/site-performance';
 
 export const CoreMetricsStatusBadge = ( { value }: { value: Valuation } ) => {

@@ -1,5 +1,4 @@
 import { deploymentRunLogsQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -11,6 +10,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useLocale } from '../../../app/locale';
 import { formatDate } from '../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';

@@ -1,11 +1,11 @@
 import './span-tree.scss';
 
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';

@@ -1,5 +1,5 @@
-import { Badge } from '@automattic/ui';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 
 export const getSeverityLabel = ( severity: number ): string => {
 	if ( severity >= 5 ) {

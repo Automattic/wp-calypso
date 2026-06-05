@@ -1,10 +1,10 @@
-import { Badge } from '@automattic/ui';
 import {
 	Icon,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { FormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';

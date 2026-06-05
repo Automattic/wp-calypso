@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 
 export const DeployStatus = {
 	STATUS_PENDING: 'pending',

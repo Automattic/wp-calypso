@@ -6,7 +6,6 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { useExperiment } from 'calypso/lib/explat';
