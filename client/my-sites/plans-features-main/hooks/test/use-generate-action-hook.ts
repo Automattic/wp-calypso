@@ -41,6 +41,7 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { getActiveDowngradeVariant } from 'calypso/lib/purchases/active-downgrade-variant';
 import useGenerateActionHook from '../use-generate-action-hook';
 
 describe( 'useGenerateActionHook', () => {
@@ -114,6 +115,7 @@ describe( 'useGenerateActionHook', () => {
 
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
 		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockImplementation( () => ( {} ) );
+		( getActiveDowngradeVariant as jest.Mock ).mockReturnValue( 'control' );
 	} );
 
 	it( 'should handle enterprise plans', () => {
