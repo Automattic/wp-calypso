@@ -39,10 +39,6 @@ export const getAgentStudioRunQueryKey = ( agencyId: number | undefined, runId: 
 // (empty-payload) response and never recover without a reload.
 export const NON_TERMINAL_RUN_STATUSES = new Set( [ 'a4a_pending', 'a4a_running' ] );
 
-// Statuses that end a run. Consumers that react to completion (e.g. the
-// refine dock) match against this instead of re-listing the literals.
-export const TERMINAL_RUN_STATUSES = new Set( [ 'a4a_completed', 'a4a_failed', 'a4a_cancelled' ] );
-
 const RUN_POLL_INTERVAL_MS = 2000;
 
 export default function useAgentStudioRun( runId: string | undefined ) {

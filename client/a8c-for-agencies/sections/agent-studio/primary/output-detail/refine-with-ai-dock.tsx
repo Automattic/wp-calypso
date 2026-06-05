@@ -18,7 +18,7 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, comment } from '@wordpress/icons';
 import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
-import useAgentStudioRun, { TERMINAL_RUN_STATUSES } from '../../data/use-agent-studio-run';
+import useAgentStudioRun, { NON_TERMINAL_RUN_STATUSES } from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
 import useRefineCollateralPage, {
 	isRefineClarification,
@@ -107,8 +107,10 @@ export default function RefineWithAiDock( {
 		if ( ! activeRun || ! run.data ) {
 			return;
 		}
+		// Settled once the run leaves the non-terminal set — same signal the
+		// hook uses to stop polling.
 		const status = run.data.status;
-		if ( ! TERMINAL_RUN_STATUSES.has( status ) ) {
+		if ( NON_TERMINAL_RUN_STATUSES.has( status ) ) {
 			return;
 		}
 		if ( handledRunIdRef.current === activeRun.runId ) {
