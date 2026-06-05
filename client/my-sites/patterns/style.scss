@@ -86,6 +86,13 @@
 		.x-nav--2026-redesign
 		.x-nav-item {
 		color: var(--studio-white) !important;
+
+		// Match the chevron arrow to the white text over the dark hero (the package draws
+		// it navy by default). Pairs with the dark flip in the scrolled/open rule below, so
+		// the chevron transitions colour in step with the text in both directions.
+		.x-nav-link-chevron::before {
+			border-color: var(--studio-white);
+		}
 	}
 
 	// Dropdown open or scrolled: the nav bar is white, so logo/text/chevron revert to dark
@@ -101,6 +108,14 @@
 		.x-nav-link__logo svg path {
 			fill: var(--studio-gray-100);
 		}
+
+		// Flip the chevron arrow dark to match the text on the white bar (it's white at the
+		// top via the closed-state rule above). Setting `border-color` directly lets the
+		// `::before`'s existing `border-color 0.22s` transition animate it in step with the
+		// text. No `!important` — this container-scoped selector out-specifies the package.
+		.x-nav--2026-redesign .x-nav-item .x-nav-link-chevron::before {
+			border-color: var(--studio-gray-100);
+		}
 	}
 
 	// The 2026 nav floats (overlays) the page, so the dark hero band must slide up
@@ -114,9 +129,9 @@
 		}
 
 		.patterns-header__inner {
-			// 64px clears the floating nav; the extra 48px gives the hero content
-			// breathing room below it instead of sitting flush against the nav.
-			padding-top: 112px;
+			// 64px clears the floating nav; the extra ~104px gives the hero content the
+			// same breathing room below the nav as the legacy nav does (~105px gap).
+			padding-top: 168px;
 		}
 	}
 }

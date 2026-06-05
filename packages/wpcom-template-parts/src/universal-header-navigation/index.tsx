@@ -201,14 +201,20 @@ const UniversalNavbarHeader = ( {
 		const updateOffset = () => {
 			const nav = document.querySelector< HTMLElement >( '.x-nav--2026-redesign' );
 			const firstItem = nav?.querySelector< HTMLElement >( '.x-nav-item__wide .x-nav-link' );
-			if ( ! nav || ! firstItem ) {
+			// The dropdown panel is a SIBLING of the nav (not a descendant), so the var must
+			// live on a common ancestor to reach it — set it on `.lpc-header-nav-container`,
+			// which wraps both the nav and the dropdown.
+			const host = nav?.closest< HTMLElement >( '.lpc-header-nav-container' );
+			if ( ! nav || ! firstItem || ! host ) {
 				return;
 			}
 			const isRTL = getComputedStyle( nav ).direction === 'rtl';
-			const navRect = nav.getBoundingClientRect();
+			const hostRect = host.getBoundingClientRect();
 			const itemRect = firstItem.getBoundingClientRect();
-			const inlineStart = isRTL ? navRect.right - itemRect.right : itemRect.left - navRect.left;
-			nav.style.setProperty(
+			// Offset of the first nav item from the container edge, so the dropdown's first
+			// column lines up under it (RTL-aware).
+			const inlineStart = isRTL ? hostRect.right - itemRect.right : itemRect.left - hostRect.left;
+			host.style.setProperty(
 				'--dropdown-trigger-inline-start',
 				`${ Math.round( inlineStart ) }px`
 			);

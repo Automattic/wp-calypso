@@ -1418,7 +1418,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategory-title {
 		margin: 0;
-		padding: 0 0 12px;
+		padding: 0;
 		font-size: $x-dropdown-2026-subtitle-font-size;
 		font-weight: 400;
 		line-height: 33px;
@@ -1538,6 +1538,15 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		// Block interaction while slid off-screen (closed); the transform keeps it out of
 		// view, so no visibility transition is needed (which was leaving content stuck hidden).
 		pointer-events: none;
+
+		// Tablet (480–1024px): the menu is a right-pinned 414px panel, not full-screen —
+		// matching the reference (which caps it at 414px in this range). Below 480 it stays
+		// full-screen; at >=1025 the desktop nav takes over and the menu isn't shown.
+		@media ( min-width: 480px ) and ( max-width: 1024px ) {
+			width: 414px;
+			max-width: 414px;
+			inset-inline-start: auto;
+		}
 	}
 
 	&.x-menu__open .x-menu-content {
@@ -2045,16 +2054,66 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-menu-mobile-footer-actions {
 		display: flex;
-		align-items: center;
-		gap: 12px;
+		align-items: stretch;
+		gap: 16px;
 		width: 100%;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 
+	// Each CTA's `<li>` wrapper takes an equal half of the row, so the two buttons split
+	// the full width evenly (ClickableItem renders `<li><a>`, so the flex sizing must live
+	// on the `<li>`, not just the inner link).
+	.x-menu-mobile-footer-actions > li {
+		display: flex;
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+	}
+
+	// Logged-out footer CTAs (Log in / Get started) — full-width pills, ported from the
+	// reference: each fills its half of the row, 48px tall, rounded; Log in is outlined,
+	// Get started is the filled blue primary.
 	.x-menu-mobile-footer-actions .x-menu-link.x-menu-link {
-		padding: 8px 12px;
+		display: flex;
+		flex: 1;
+		align-items: center;
+		justify-content: center;
+		height: 48px;
+		padding: 0 16px;
+		border-radius: 4px;
+		font-size: 16px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 24px;
+		text-decoration: none;
+	}
+
+	.x-menu-mobile-login.x-menu-link {
+		background: transparent;
+		border: 1px solid $studio-gray-10;
+		color: $studio-blue-100;
+
+		&:hover,
+		&:focus {
+			background: rgba( $studio-black, 0.05 );
+			color: $studio-blue-100;
+			text-decoration: none;
+		}
+	}
+
+	.x-menu-mobile-get-started.x-menu-link {
+		background: $studio-blue-50;
+		border: none;
+		color: $studio-white;
+
+		&:hover,
+		&:focus {
+			background: $studio-blue-60;
+			color: $studio-white;
+			text-decoration: none;
+		}
 	}
 
 	.x-menu-mobile-user {
