@@ -1,4 +1,8 @@
-import { fetchAgency, fetchAgencyScheduleCallLink } from '@automattic/api-core';
+import {
+	fetchAgency,
+	fetchAgencyResources,
+	fetchAgencyScheduleCallLink,
+} from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 import type { Agency } from '@automattic/api-core';
 
@@ -59,4 +63,11 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		enabled: false,
 		staleTime: 5 * 60 * 1000,
 		retry: false,
+	} );
+
+export const agencyResourcesQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'resources' ] as const,
+		queryFn: fetchAgencyResources,
+		staleTime: 5 * 60 * 1000,
 	} );

@@ -1,5 +1,5 @@
-import { useMemo } from '@wordpress/element';
-import type { ResourceItem } from '../types';
+import { useMemo } from 'react';
+import type { ResourceItem } from './types';
 
 /**
  * Custom hook to filter resources into different sections

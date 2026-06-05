@@ -1,9 +1,16 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencyApiResponse, AgencyBlog } from './types';
+import type { AgencyApiResponse, AgencyBlog, AgencyResourcesResponse } from './types';
 
 export async function fetchAgency(): Promise< AgencyApiResponse > {
 	return wpcom.req.get( {
 		path: '/agency',
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
+	return wpcom.req.get( {
+		path: '/agency/resources',
 		apiNamespace: 'wpcom/v2',
 	} );
 }

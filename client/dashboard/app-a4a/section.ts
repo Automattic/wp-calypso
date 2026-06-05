@@ -10,6 +10,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/overview',
 	'/marketplace/exclusive-offers',
 	'/agency/tiers',
+	'/resources/learn',
 	'/client',
 	'/client/subscriptions',
 ];

@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * Custom hook to get the appropriate CTA label based on resource format
- * @param format - The format of the resource (e.g., 'video', 'article')
+ * @param format - The format of the resource (e.g., 'Video', 'PDF')
  * @returns Translated CTA label text
  */
 export function useResourceCtaLabel( format: string ): string {

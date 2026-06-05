@@ -1,4 +1,9 @@
-import { activeAgencyQuery, agencyQuery, queryClient } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	agencyQuery,
+	agencyResourcesQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { redirectAsNotAllowed } from './redirect';
@@ -78,6 +83,31 @@ const exclusiveOffersRoute = createRoute( {
 	)
 );
 
+// `/resources/learn` – guides, articles, and training for agencies
+const learnRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Learn' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'resources/learn',
+	loader: () => queryClient.ensureQueryData( agencyResourcesQuery() ),
+} ).lazy( () =>
+	import( '../../agency/resources/learn' ).then( ( d ) =>
+		createLazyRoute( 'resources-learn' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
-	agencyRoute.addChildren( [ agencyOverviewRoute, agencyTiersRoute, exclusiveOffersRoute ] ),
+	agencyRoute.addChildren( [
+		agencyOverviewRoute,
+		agencyTiersRoute,
+		exclusiveOffersRoute,
+		learnRoute,
+	] ),
 ];

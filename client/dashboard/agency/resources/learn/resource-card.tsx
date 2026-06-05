@@ -1,22 +1,19 @@
 import {
-	Card,
-	CardBody,
-	CardMedia,
 	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import useRecordResourceEventMutation from 'calypso/a8c-for-agencies/data/learn/use-record-resource-event-mutation';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useResourceCtaLabel } from './hooks/use-resource-cta-label';
-import type { ResourceItem } from './types';
+import { Card, CardBody, CardMedia } from '../../../components/card';
+import { useResourceCtaLabel } from './use-resource-cta-label';
+import type { ResourceItem, RecordTracksEvent } from './types';
+import type { MouseEvent } from 'react';
 
 interface ResourceCardProps {
 	resource: ResourceItem;
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
+	recordTracksEvent: RecordTracksEvent;
+	onResourceClick?: ( resource: ResourceItem ) => void;
 	showLogo?: boolean;
 	showPreviewImage?: boolean;
 	tracksEventName: string;
@@ -26,39 +23,29 @@ interface ResourceCardProps {
 export default function ResourceCard( {
 	resource,
 	onOpenVideoModal,
+	recordTracksEvent,
+	onResourceClick,
 	showLogo = false,
 	showPreviewImage = false,
 	tracksEventName,
 	isBorderless = false,
 }: ResourceCardProps ) {
-	const dispatch = useDispatch();
-	const agencyId = useSelector( getActiveAgencyId );
 	const ctaLabel = useResourceCtaLabel( resource.format );
 	const isVideo = resource.format === 'Video';
-	const { mutate: recordResourceEvent } = useRecordResourceEventMutation();
 
-	const handleClick = ( e: React.MouseEvent ) => {
+	const handleClick = ( event: MouseEvent ) => {
 		if ( isVideo ) {
-			e.preventDefault();
+			event.preventDefault();
 			onOpenVideoModal( resource );
 		}
 
-		// Track event in analytics
-		dispatch(
-			recordTracksEvent( tracksEventName, {
-				resource_id: resource.id,
-				resource_name: resource.name,
-			} )
-		);
+		recordTracksEvent( tracksEventName, {
+			resource_id: resource.id,
+			resource_name: resource.name,
+		} );
 
-		// Record event in the API
-		if ( agencyId ) {
-			recordResourceEvent( {
-				resourceId: resource.id,
-				resourceName: resource.name,
-				agencyId,
-			} );
-		}
+		// Host-specific side effect (a8c records the event server-side).
+		onResourceClick?.( resource );
 	};
 
 	return (

@@ -2,18 +2,21 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
+	__experimentalGrid as Grid,
 } from '@wordpress/components';
 import ResourceCard from './resource-card';
-import type { ResourceItem } from './types';
+import type { ResourceItem, RecordTracksEvent } from './types';
 
 interface ResourceSectionProps {
 	title: string;
 	description?: string;
 	resources: ResourceItem[];
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
+	recordTracksEvent: RecordTracksEvent;
+	onResourceClick?: ( resource: ResourceItem ) => void;
 	maxResources?: number;
 	showLogo?: boolean;
-	className?: string;
+	columnMinWidth?: number;
 	tracksEventName: string;
 }
 
@@ -22,9 +25,11 @@ export default function ResourceSection( {
 	description,
 	resources,
 	onOpenVideoModal,
+	recordTracksEvent,
+	onResourceClick,
 	maxResources,
 	showLogo = false,
-	className = '',
+	columnMinWidth = 280,
 	tracksEventName,
 }: ResourceSectionProps ) {
 	const marginBottom = description ? 6 : 4;
@@ -48,19 +53,24 @@ export default function ResourceSection( {
 				) }
 			</Spacer>
 
-			<div className={ `resource-center-cards ${ className }` }>
+			<Grid
+				templateColumns={ `repeat( auto-fit, minmax( ${ columnMinWidth }px, 1fr ) )` }
+				gap={ 8 }
+			>
 				{ displayResources.map( ( resource ) => (
 					<ResourceCard
 						key={ resource.id }
 						resource={ resource }
 						onOpenVideoModal={ onOpenVideoModal }
+						recordTracksEvent={ recordTracksEvent }
+						onResourceClick={ onResourceClick }
 						showLogo={ showLogo }
 						showPreviewImage
 						tracksEventName={ tracksEventName }
 						isBorderless
 					/>
 				) ) }
-			</div>
+			</Grid>
 
 			<Spacer marginBottom={ 12 } />
 		</>
