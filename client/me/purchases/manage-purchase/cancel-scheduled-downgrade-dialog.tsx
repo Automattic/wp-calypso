@@ -64,6 +64,7 @@ export default function CancelScheduledDowngradeDialog( {
 		<ConfirmDialog
 			onRequestClose={ onClose }
 			title={ String( translate( 'Keep your current plan?' ) ) }
+			size="small"
 		>
 			<DialogContent>
 				{ translate(

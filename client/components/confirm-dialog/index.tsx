@@ -25,6 +25,7 @@ interface ConfirmDialogProps {
 	onRequestClose: ComponentProps< typeof Modal >[ 'onRequestClose' ];
 	children: React.ReactNode;
 	title?: string;
+	size?: ComponentProps< typeof Modal >[ 'size' ];
 	style?: React.CSSProperties;
 	className?: string;
 }
@@ -33,6 +34,7 @@ export const ConfirmDialog = ( {
 	onRequestClose,
 	children,
 	title,
+	size,
 	style,
 	className,
 }: ConfirmDialogProps ) => {
@@ -41,6 +43,7 @@ export const ConfirmDialog = ( {
 			className={ clsx( 'confirm-dialog', className ) }
 			onRequestClose={ onRequestClose }
 			title={ title }
+			size={ size }
 			style={ style }
 		>
 			{ children }
