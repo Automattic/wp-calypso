@@ -17,6 +17,8 @@ import {
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, comment } from '@wordpress/icons';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
 import useAgentStudioRun, { NON_TERMINAL_RUN_STATUSES } from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
@@ -83,6 +85,7 @@ export default function RefineWithAiDock( {
 	const [ activeRun, setActiveRun ] = useState< ActiveRun | null >( null );
 	const [ inputValue, setInputValue ] = useState( '' );
 	const rootRef = useRef< HTMLElement >( null );
+	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const refine = useRefineCollateralPage();
 
@@ -142,14 +145,28 @@ export default function RefineWithAiDock( {
 			void queryClient.invalidateQueries( {
 				queryKey: getAgentStudioCollateralQueryKey( undefined, undefined ).slice( 0, 1 ),
 			} );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_refine_complete', {
+					run_id: activeRun.runId,
+					page: activeRun.userFacingPage,
+					status,
+				} )
+			);
 		} else {
 			setMessages( ( current ) => [
 				...current,
 				agentMessage( __( "I couldn't update that page. Try rephrasing your request." ) ),
 			] );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_refine_error', {
+					run_id: activeRun.runId,
+					page: activeRun.userFacingPage,
+					status,
+				} )
+			);
 		}
 		setActiveRun( null );
-	}, [ activeRun, run.data, queryClient ] );
+	}, [ activeRun, run.data, queryClient, dispatch ] );
 
 	const handleSubmit = async ( instruction: string ): Promise< void > => {
 		const trimmed = instruction.trim();
@@ -159,6 +176,12 @@ export default function RefineWithAiDock( {
 		// Input is controlled, so clear it ourselves once the message is sent.
 		setInputValue( '' );
 		setMessages( ( current ) => [ ...current, userMessage( trimmed ) ] );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agent_studio_refine_submit', {
+				collateral_post_id: collateralPostId,
+				instruction_length: trimmed.length,
+			} )
+		);
 
 		try {
 			const response = await refine.mutateAsync( {
@@ -174,12 +197,23 @@ export default function RefineWithAiDock( {
 			if ( clarification ) {
 				// Server asked for clarification (no run created); show it inline.
 				setMessages( ( current ) => [ ...current, agentMessage( clarification ) ] );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_agent_studio_refine_clarification', {
+						collateral_post_id: collateralPostId,
+					} )
+				);
 				return;
 			}
 			setMessages( ( current ) => [
 				...current,
 				agentMessage( __( 'Something went wrong. Please try again in a moment.' ) ),
 			] );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_refine_error', {
+					collateral_post_id: collateralPostId,
+					reason: 'request_failed',
+				} )
+			);
 		}
 	};
 
