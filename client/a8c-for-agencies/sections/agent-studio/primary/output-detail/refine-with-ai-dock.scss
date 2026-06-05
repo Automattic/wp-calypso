@@ -1,7 +1,6 @@
 .a4a-refine-with-ai-dock {
-	// Calypso doesn't set border-box globally on this surface, so without
-	// this the header's width + horizontal padding overflows the dock and
-	// pushes the close button off the right edge.
+	// Calypso doesn't set border-box globally here; without it the padded
+	// header overflows and pushes the close button off the edge.
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
@@ -34,18 +33,14 @@
 	flex-direction: column;
 	overflow: hidden;
 
-	// AgentUI's embedded variant lays itself out as a flex column; let it
-	// fill the dock so the input pins to the bottom and the transcript
-	// scrolls in the space above it.
+	// Let AgentUI's embedded flex column fill the dock (input pinned bottom,
+	// transcript scrolling above).
 	.agenttic {
 		flex: 1 1 auto;
 		min-height: 0;
 
-		// agenttic's embedded message list ships with no horizontal padding
-		// — it expects the embedding surface to supply it (the floating
-		// variant gets it from its own wrapper). Inset the transcript and
-		// input so bubbles and agent replies don't run edge to edge, and
-		// lift the input off the panel's bottom edge.
+		// The embedded message list ships with no horizontal padding; supply it
+		// so bubbles don't run edge to edge, and lift the input off the bottom.
 		padding-inline: 16px;
 		padding-block-end: 16px;
 	}

@@ -1,25 +1,8 @@
 /**
- * Refine-with-AI dock attached to the output-detail screen.
- *
- * Conversational refinement layer over the existing
- * `compose-one-pager-ela-v2` pipeline. The user looks at a rendered
- * one-pager, opens this dock, and says something like "page 5 is
- * clipped". The wpcom endpoint
- * `/agency/<id>/a4a/collaterals/<post_id>/refine` parses the page
- * number out of the instruction, validates it, and dispatches the
- * `refine-one-pager-ela-v2` recipe. We poll the run and re-render
- * the preview iframe on completion.
- *
- * The chat surface is `AgentUI` from `@automattic/agenttic-ui` — the
- * framework-agnostic pure-UI primitive that `AgentChat` wraps. We
- * use it directly so we can drive everything from local React state
- * without dragging in `AGENTS_MANAGER_STORE`, `AgentsManagerContext`,
- * `agenttic-client`'s agent registry, or React Router.
- *
- * Thread state is ephemeral by design — closing the dock or
- * refreshing the page resets the transcript. The collateral itself
- * persists with the latest body_pages; the conversation about it
- * doesn't. See `~/Projects/wpcom-specs/one-pager-refinement-chat/`.
+ * Refine-with-AI dock for the output-detail screen: a chat layer over
+ * the `refine` endpoint that page-scopes edits to a rendered one-pager.
+ * Uses `AgentUI` directly (driven from local state) rather than the
+ * agenttic-client stack. Thread state is ephemeral by design.
  */
 import '@automattic/agenttic-ui/index.css';
 import { AgentUI } from '@automattic/agenttic-ui';
@@ -48,18 +31,9 @@ interface Props {
 	collateralPostId: number;
 	/** Total visible pages (cover + body pages). Used in the empty-state hint. */
 	totalPages: number;
-	/**
-	 * Text to seed the input with — set when the user opens the dock from a
-	 * page-scoped "Edit this page" affordance (e.g. "On page 3, make the
-	 * following edits: "). Empty string opens an empty input.
-	 */
+	/** Text to seed the input with (empty opens an empty input). */
 	seedText: string;
-	/**
-	 * Bumped every time a seed is requested. Re-seeding with the same text
-	 * (clicking the same page's Edit button twice) still needs to re-focus
-	 * and reset the input, which an identical `seedText` alone wouldn't
-	 * trigger.
-	 */
+	/** Bumped per open request so re-seeding identical text still re-seeds. */
 	seedToken: number;
 	onClose: () => void;
 }
@@ -69,12 +43,8 @@ interface ActiveRun {
 	userFacingPage: number;
 }
 
-/**
- * Stable message id factory — `crypto.randomUUID` when available,
- * monotonic counter fallback for older environments. agenttic-ui keys
- * its list off `Message.id`, so collisions cause React reconciliation
- * bugs in long threads.
- */
+// Stable message id (agenttic-ui keys its list off `Message.id`).
+// `crypto.randomUUID` when available, monotonic counter otherwise.
 let messageIdCounter = 0;
 const newMessageId = (): string => {
 	if ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ) {
@@ -111,12 +81,9 @@ export default function RefineWithAiDock( {
 	const queryClient = useQueryClient();
 	const refine = useRefineCollateralPage();
 
-	// Seed the input when the dock opens from a page-scoped affordance, and
-	// re-seed when a new request comes in (tracked by `seedToken`). AgentUI's
-	// textarea is internal, so we reach it through the dock root to move the
-	// caret to the end after filling — the user picks up typing right where
-	// the prompt leaves off. `seedText` is intentionally excluded from the
-	// deps: the token is the trigger, so re-clicking the same page re-seeds.
+	// Seed the input on each open request (tracked by `seedToken`), then move
+	// the caret to the end of AgentUI's internal textarea. `seedText` is left
+	// out of the deps so re-clicking the same page still re-seeds.
 	useEffect( () => {
 		setInputValue( seedText );
 		const raf = requestAnimationFrame( () => {
@@ -131,14 +98,10 @@ export default function RefineWithAiDock( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ seedToken ] );
 
-	// Poll the active refine run. `useAgentStudioRun` self-polls via
-	// react-query's `refetchInterval` while the status is non-terminal and
-	// stops once it settles; passing undefined keeps it idle.
+	// `useAgentStudioRun` self-polls while non-terminal; undefined keeps it idle.
 	const run = useAgentStudioRun( activeRun?.runId );
 
-	// Track terminal transitions so we only post the success/failure
-	// message once per run. Without this the polling-driven re-render
-	// would repeatedly append the same "Updated page N." reply.
+	// Post the success/failure reply once per run, not on every poll re-render.
 	const handledRunIdRef = useRef< string | null >( null );
 	useEffect( () => {
 		if ( ! activeRun || ! run.data ) {
@@ -164,16 +127,8 @@ export default function RefineWithAiDock( {
 					)
 				),
 			] );
-			// Refresh the rendered preview. Two caches sit between us
-			// and the new HTML:
-			//   1. The variant-html query (keyed on html_url). Invalidate
-			//      by prefix so every variant's entry refetches; the
-			//      fetch itself uses `cache: 'no-cache'` to bypass the
-			//      browser's HTTP cache for the same URL.
-			//   2. The collateral query (keyed on agencyId + postId).
-			//      Refine may bump variant.html_url to a new versioned
-			//      path; without invalidating the collateral we'd keep
-			//      rendering the pre-refine URL.
+			// Refresh the preview: invalidate the variant-html and collateral
+			// queries by prefix (refine may also bump html_url on the collateral).
 			void queryClient.invalidateQueries( {
 				queryKey: getAgentStudioVariantHtmlQueryKey( undefined ).slice( 0, 1 ),
 			} );
@@ -209,9 +164,7 @@ export default function RefineWithAiDock( {
 			} );
 		} catch ( err: unknown ) {
 			if ( isRefineClarification( err ) ) {
-				// Server told us what to ask for. Render the message as
-				// an assistant reply; user retries with a clearer
-				// instruction. No run was created.
+				// Server asked for clarification (no run created); show it inline.
 				setMessages( ( current ) => [ ...current, agentMessage( err.message ) ] );
 				return;
 			}

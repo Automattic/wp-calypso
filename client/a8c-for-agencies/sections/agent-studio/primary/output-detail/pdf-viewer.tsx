@@ -28,11 +28,8 @@ interface Props {
 	/** Hover-revealed chevrons over the cover page. */
 	coverNavigation?: CoverNavigation;
 	/**
-	 * Called when the user clicks a body page's hover-revealed "Edit this
-	 * page" button. The argument is the 1-based page number including the
-	 * cover (i.e. `index + 1`), matching what the refine endpoint expects.
-	 * Omit to hide the per-page edit affordance. The cover (page 1) never
-	 * shows it — the refine endpoint doesn't support editing the cover.
+	 * Called with the 1-based page number (cover included) when a body page's
+	 * "Edit with AI" button is clicked. Omit to hide it; the cover never shows it.
 	 */
 	onEditPage?: ( pageNumber: number ) => void;
 }

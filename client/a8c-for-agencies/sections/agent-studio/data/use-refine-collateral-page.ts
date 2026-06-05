@@ -1,21 +1,9 @@
 /**
  * `POST /agency/<id>/a4a/collaterals/<post_id>/refine` — dispatches a
- * page-scoped refinement run against an existing collateral. The
- * wpcom endpoint parses the page number out of the natural-language
- * `instruction` server-side, so callers only pass the raw text.
- *
- * Two distinct outcomes the chat UI needs to distinguish:
- *
- *   - Success: `{ run_id, status, page, page_index }`. The UI starts
- *     polling `/a4a/runs/<run_id>` and bumps a thinking indicator.
- *   - Clarification: `400` with `data.kind === 'clarification_needed'`.
- *     The error's `message` is suitable for rendering inline as an
- *     assistant reply ("Which page?", "Page 99 doesn't exist…",
- *     "Page 1 is the cover…"). The UI surfaces this message and lets
- *     the user retry — no run was created.
- *
- * Hard errors (auth, server, network) come through as rejected
- * mutations and the UI shows a brief generic fallback message.
+ * page-scoped refinement run; the endpoint parses the page number out of
+ * the `instruction` server-side. Two outcomes the UI distinguishes:
+ * success (`run_id` to poll) and clarification (a `400` whose message is
+ * shown inline, no run created). Hard errors reject the mutation.
  */
 import { useMutation } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
@@ -39,11 +27,7 @@ export interface RefineCollateralPageClarification {
 	message: string;
 }
 
-/**
- * Shape wpcom.req raises for a WP_Error response. `error` carries the
- * WP_Error code; `data` carries the `[ 'status' => …, 'kind' => … ]`
- * payload the endpoint attached.
- */
+// Shape wpcom.req raises for a WP_Error: `error` is the code, `data` the payload.
 interface WpcomReqError {
 	error?: string;
 	message?: string;
@@ -63,9 +47,7 @@ const isClarification = (
 	if ( data.kind === 'clarification_needed' ) {
 		return true;
 	}
-	// Fall back to inspecting the WP_Error code in case `data.kind` is
-	// dropped by a transport layer. The endpoint uses the code
-	// `a4a_clarification_needed` for the same condition.
+	// Fall back to the WP_Error code if `data.kind` is dropped in transport.
 	return ( err as WpcomReqError ).error === 'a4a_clarification_needed';
 };
 
@@ -92,10 +74,8 @@ export default function useRefineCollateralPage() {
 				if ( isClarification( err ) ) {
 					const message =
 						typeof err.message === 'string' ? err.message : 'I need more detail to do that.';
-					// Throw a typed clarification so the caller's
-					// `onError` branch can render the message as an
-					// assistant chat reply without surfacing a generic
-					// hard-error banner.
+					// Typed clarification so the caller can render it inline
+					// instead of a generic hard-error banner.
 					const clarification: RefineCollateralPageClarification = {
 						kind: 'clarification_needed',
 						message,

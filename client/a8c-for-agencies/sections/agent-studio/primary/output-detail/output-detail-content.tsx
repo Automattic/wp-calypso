@@ -74,9 +74,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 	const postId = extractPostId( run.data?.payload );
 	const collateral = useAgentStudioCollateral( postId );
 	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
-	// Seed for the refine dock's input. `token` bumps on every open request
-	// so re-opening for the same page (identical `text`) still re-seeds and
-	// re-focuses the input.
+	// `token` bumps on every open request so re-opening the same page re-seeds.
 	const [ refineSeed, setRefineSeed ] = useState< RefineSeed >( { text: '', token: 0 } );
 
 	const openRefine = useCallback(
@@ -97,8 +95,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 	const handleEditPage = useCallback(
 		( pageNumber: number ) => {
 			openRefine(
-				// Trailing space is appended outside the translatable string so
-				// the caret lands one space after the prompt when the dock opens.
+				// Trailing space added outside the translatable string.
 				sprintf(
 					/* translators: %d is the 1-based page number, cover included. */
 					__( 'On page %d, make the following edits:' ),
