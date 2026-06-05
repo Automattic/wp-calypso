@@ -40,7 +40,6 @@
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
-		"plans/self-service-downgrade": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"purchases/split-cancel-remove": true,

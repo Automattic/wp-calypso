@@ -58,17 +58,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import { hasTranslation } from '@wordpress/i18n';
-import {
-	check,
-	column,
-	download,
-	Icon,
-	payment,
-	reusableBlock,
-	tool,
-	trash,
-	upload,
-} from '@wordpress/icons';
+import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -133,7 +123,6 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
-	getDowngradeUrlFor,
 } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -168,7 +157,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -209,7 +198,6 @@ export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
 	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
-	getDowngradeUrlFor?: typeof getDowngradeUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isSiteLevel?: boolean;
@@ -1115,30 +1103,6 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderDowngradeNavItem() {
-		const { purchase, translate } = this.props;
-		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
-			return null;
-		}
-
-		const link = ( this.props.getDowngradeUrlFor ?? downgradePurchase )(
-			this.props.siteSlug,
-			purchase.id
-		);
-
-		return (
-			<CompactCard href={ link }>
-				<Icon icon={ download } className="card__icon" />
-				{ translate( 'Downgrade plan' ) }
-				{ this.renderActionDetails() }
-			</CompactCard>
-		);
-	}
-
 	renderPurchaseIcon() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -1582,9 +1546,6 @@ class ManagePurchase extends Component<
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
 						<div className="manage-purchase__downgrade-products">
-							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
-								? this.renderDowngradeNavItem()
-								: null }
 							{ this.renderCancelPurchaseNavItem() }
 							{ this.renderRemovePurchaseNavItem() }
 							{ this.renderCancelSurvey() }
