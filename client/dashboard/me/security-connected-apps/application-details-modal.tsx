@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Modal,
 	ExternalLink,
@@ -7,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useLocale } from '../../app/locale';
 import type { ConnectedApplication } from '@automattic/api-core';
 
