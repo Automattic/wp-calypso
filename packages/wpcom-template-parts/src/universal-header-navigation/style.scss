@@ -1356,6 +1356,28 @@ $x-menu-2026-admin-bar-mobile: 46px;
  * a drill-down category list, and a footer (logged-out CTAs vs logged-in user).
  */
 .x-menu--2026 {
+	/* Drill / reveal timing tokens (copied from the Landpack reference). The easing is
+	   the same curve used by the item-stagger entrance; the drill-fade drives the
+	   logo⇄back and nav-list⇄dropdown crossfades; the reveal-delay gates the first-open
+	   header/footer reveal. */
+	--x-menu-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
+	--x-menu-2026-panel-duration: 0.34s; // panel slide in/out
+	--x-menu-2026-reveal-delay: 0.43s; // gap before header/footer/items fade in on open
+	--x-menu-2026-header-fade-duration: 0.3s; // logo / close / footer reveal duration
+	--x-menu-2026-stagger-offset: 32px; // nav items' left slide-in distance
+	--x-menu-2026-stagger-duration: 0.3s; // each nav item's slide-in duration
+	--x-menu-2026-stagger-step: 0.018s; // per-item delay step (× --stagger-index)
+	--x-menu-2026-drill-fade: opacity 0.27s var( --x-menu-2026-easing ),
+		visibility 0.27s var( --x-menu-2026-easing );
+
+	/* Shared header geometry. The drilled-in title and the fading-out nav list both derive
+	   their vertical position from these, so they can't drift apart (the title must land
+	   exactly where the tapped nav word was for the recolour-in-place effect). */
+	--x-menu-2026-header-pad-block: 12px; // header's vertical padding
+	--x-menu-2026-header-top-height: 36px; // the logo / back / X row
+	--x-menu-2026-title-pad-top: 16px; // drilled-in title's top padding
+	--x-menu-2026-navlink-pad-block: 4px; // each nav link's vertical padding
+
 	/* Blurred overlay behind the menu (reference: blur(8px) over rgba(0,0,0,0.2)). */
 	.x-menu-overlay {
 		position: fixed;
@@ -1393,29 +1415,80 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		border-radius: 0;
 		background: $studio-white;
 		transform: translateX( 100% );
-		transition: transform 0.3s ease-in-out;
-		overflow-x: hidden; // setting only overflow-y would compute overflow-x to `auto`
-		overflow-y: auto;    // (CSS rule), producing a spurious horizontal scrollbar.
+		transition: transform var( --x-menu-2026-panel-duration ) var( --x-menu-2026-easing );
+		// The content itself doesn't scroll — `.x-menu-mobile-main` is the scroller, so the
+		// sticky header and the overlaid (absolute) footer stay pinned while the list moves.
+		overflow: hidden;
+		// Block interaction while slid off-screen (closed); the transform keeps it out of
+		// view, so no visibility transition is needed (which was leaving content stuck hidden).
+		pointer-events: none;
 	}
 
 	&.x-menu__open .x-menu-content {
 		transform: translateX( 0 );
+		pointer-events: auto;
 	}
 
-	/* When open, items settle to their resting state — the staggered delays fire. */
-	&.x-menu__open .x-menu-mobile-nav-item,
-	&.x-menu__open .x-menu-mobile-dropdown-item {
+	/* On open, the top-level items slide in from the left and fade, staggered: a reveal-delay
+	   lead-in that waits for the panel, then each item stepped by its --stagger-index. Only
+	   the top-level items slide; drill-down items fade only (reference: "swap is fade only,
+	   no slide"). */
+	&.x-menu__open .x-menu-mobile-nav-item {
 		opacity: 1;
 		transform: translateX( 0 );
+		transition:
+			opacity var( --x-menu-2026-stagger-duration ) var( --x-menu-2026-easing )
+				calc(
+					var( --x-menu-2026-reveal-delay ) + var( --stagger-index, 0 ) *
+						var( --x-menu-2026-stagger-step )
+				),
+			transform var( --x-menu-2026-stagger-duration ) var( --x-menu-2026-easing )
+				calc(
+					var( --x-menu-2026-reveal-delay ) + var( --stagger-index, 0 ) *
+						var( --x-menu-2026-stagger-step )
+				);
 	}
 
-	/* Header (logo ⇄ back + close). No bottom separator, per the reference. */
+
+	/* Scroller. The header stickies at its top and the footer overlays its bottom, so the
+	   nav list scrolls beneath both. Bottom padding clears the overlaid footer (its real
+	   height is published as --x-menu-2026-footer-height; the fallback covers the
+	   logged-out banner + CTAs before the observer fires). */
+	.x-menu-mobile-main {
+		position: relative;
+		flex: 1;
+		padding-bottom: var( --x-menu-2026-footer-height, 96px );
+		overflow-x: hidden; // setting only overflow-y would compute overflow-x to `auto`
+		overflow-y: auto;    // (CSS rule), producing a spurious horizontal scrollbar.
+		-webkit-overflow-scrolling: touch;
+		// Don't chain scroll to the page behind when the panel hits its edges.
+		overscroll-behavior: contain;
+	}
+
+	/* Sticky, translucent header (logo ⇄ back + close, plus the drilled-in category title).
+	   18px inline padding aligns the header content (logo / Back / title) with the nav
+	   items, whose links carry the same 18px gutter. The scroller has no horizontal
+	   padding, so the blurred band already spans the full panel width. */
 	.x-menu-mobile-header {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		padding-block: var( --x-menu-2026-header-pad-block );
+		// 18px start aligns the logo / title with the nav items; the end is 9px because the
+		// close (X) button carries its own inner padding, so 9px lands the X on the same
+		// right edge as the item chevrons.
+		padding-inline-start: 18px;
+		padding-inline-end: 9px;
+		background: rgba( $studio-white, 0.7 );
+		backdrop-filter: blur( 8px );
+	}
+
+	/* Top row: logo / back (overlaid, crossfading) on the start, close on the end. */
+	.x-menu-mobile-header-top {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding-block: 12px;
-		padding-inline: 18px;
+		min-height: var( --x-menu-2026-header-top-height );
 	}
 
 	/* Logo is black in the mobile menu (sits on the white panel). */
@@ -1423,30 +1496,110 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: inline-flex;
 		align-items: center;
 		color: $studio-gray-100;
+		// Hidden until the open-reveal rule fades it in. Base = snap-out with the panel (0s
+		// duration, panel-slide delay) so on close it rides out with the panel rather than
+		// fading. The BACK swap (.is-hidden) overrides this with the quick drill-fade.
+		opacity: 0;
+		transition:
+			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
+			visibility 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
 
 		svg path {
 			fill: currentcolor;
+		}
+
+		/* Drilled in: hide the logo (the back button takes its place). Pinned absolute so it
+		   crossfades with the back button via the quick drill-fade instead of reflowing. */
+		&.is-hidden {
+			position: absolute;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+			transition: var( --x-menu-2026-drill-fade );
 		}
 	}
 
 	.x-menu-mobile-back {
 		display: inline-flex;
 		align-items: center;
+		gap: 8px;
 		border: none;
 		background: none;
+		padding: 0;
+		// Shift left so the drawn chevron's tip lines up with the content gutter below.
+		margin-inline-start: -6px;
 		color: $studio-gray-100;
 		cursor: pointer;
-		font-size: $x-nav-item-font-size;
-		font-weight: $lp-font-weight-semi-bold;
+		// Match the reference: 14px uppercase label, line-height matched to the 36px logo
+		// height so swapping logo ⇄ BACK doesn't change the header row height.
+		font-size: 14px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 36px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		transition: var( --x-menu-2026-drill-fade );
+
+		/* Top level: hide the back button (the logo shows instead). */
+		&.is-hidden {
+			position: absolute;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
 	}
 
+	/* Drawn left-chevron (matching the reference) — an 8px box of 2px borders rotated 45°,
+	   centred in a 24px square so it aligns with the text rather than riding a font baseline. */
 	.x-menu-mobile-back-chevron {
-		display: inline-block;
-		margin-inline-end: 6px;
-		transform: rotate( 180deg );
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
 
 		&::before {
-			content: $lp-chevron-content-right;
+			content: "";
+			display: block;
+			width: 7px;
+			height: 7px;
+			border-left: 1.5px solid currentcolor;
+			border-bottom: 1.5px solid currentcolor;
+			transform: rotate( 45deg );
+		}
+	}
+
+	/* Drilled-in category name (e.g. "Hosting"). Hidden at top level (collapsed to 0
+	   height so it takes no space); on drill-in it fades in quickly so the blue reads as
+	   the word appearing in place, matching the reference. */
+	.x-menu-mobile-category-title {
+		margin: 0;
+		overflow: hidden;
+		height: 0;
+		opacity: 0;
+		visibility: hidden;
+		color: $studio-wordpress-blue-50;
+		font-size: 26px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 48px;
+		transition: var( --x-menu-2026-drill-fade );
+
+		&.is-visible {
+			height: auto;
+			// Lands the title's text glyph exactly where the tapped nav item's text sat (the
+			// nav link adds its own block padding, so the title carries a matching offset for
+			// the word to read as recolouring to blue in place). Shared token — see the
+			// `.is-hidden` nav-list pin, which derives from the same values.
+			padding-top: var( --x-menu-2026-title-pad-top );
+			opacity: 1;
+			visibility: visible;
+			// Sit ABOVE the black nav-list word fading out beneath (z 11), and reveal fast
+			// (0.12s) so the blue is fully opaque before the black is gone — the swap reads
+			// as the word recolouring to blue in place, not two words cross-fading (which
+			// flashes a muddy black+blue overlap).
+			position: relative;
+			z-index: 12;
+			transition: opacity 0.12s var( --x-menu-2026-easing ), visibility 0s;
 		}
 	}
 
@@ -1457,12 +1610,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		height: 36px;
 		padding: 0;
 		color: $studio-gray-100;
-	}
-
-	.x-menu-mobile-main {
-		flex: 1;
-		padding-block: 12px;
-		padding-inline: 6px;
+		// Hidden until the open-reveal fades it in; base snaps out with the panel on close
+		// (0s duration, panel-slide delay) so it rides out rather than fading.
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
+			visibility 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
 	}
 
 	/* Top-level category list + drill-down lists share the reset. */
@@ -1473,22 +1627,86 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		list-style: none;
 	}
 
-	/*
-	 * Each item slides up + fades in sequentially. `--stagger-index` is set
-	 * inline per item; the delay increments 18ms per item after a 0.43s lead-in,
-	 * matching the reference. The menu-open state flips opacity/transform to the
-	 * resting values, triggering the staggered transition.
-	 */
-	.x-menu-mobile-nav-item,
-	.x-menu-mobile-dropdown-item {
+	/* The nav list and the drill-down panels occupy the same spot. On drill-IN the nav list
+	   fades OUT pinned where it sat (its `.is-hidden` rule carries the fade), so its word
+	   recolours under the incoming blue title. On drill-OUT (BACK) the base has NO transition,
+	   so the nav list snaps back instantly ON TOP (z-index 11) of the dropdown still fading
+	   out beneath it — covering it cleanly instead of the two cross-fading through a muddy
+	   ~50/50 overlap (the BACK flash). */
+	.x-menu-mobile-nav-list {
+		&.is-hidden {
+			position: absolute;
+			transition: var( --x-menu-2026-drill-fade );
+			// Pin the fading nav list so its first word stays exactly under the incoming blue
+			// title, which sits below the header-top row. Derived from the SAME shared tokens
+			// the title uses (header block-padding + header-top row + title pad-top, minus the
+			// nav link's own block padding), so the two "Websites" glyphs always coincide and
+			// the swap reads as a recolour-in-place, never a vertical jump — no magic number.
+			top: calc(
+				var( --x-menu-2026-header-pad-block ) + var( --x-menu-2026-header-top-height ) +
+					var( --x-menu-2026-title-pad-top ) - var( --x-menu-2026-navlink-pad-block )
+			);
+			inset-inline: 0;
+			z-index: 11;
+			overflow: hidden;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+
+			// Snap the items to their resting x (not the -32px slide-in start, and with no
+			// delayed transition) so the fading word sits exactly under the title — otherwise
+			// the leftover slide offset shifts the word 32px left of the blue title.
+			.x-menu-mobile-nav-item {
+				transform: translateX( 0 );
+				transition: none;
+			}
+		}
+	}
+
+	/* Drill-down lists ARE the fading panels (no wrapper — matches the reference's flat
+	   structure). Hidden lists are pinned absolute (out of flow, so no scroll height) and
+	   faded to 0 — but kept *rendered* (no `visibility: hidden` / `height: 0`, which would
+	   suppress the opacity transition and leave it stuck). `.is-visible` drops them back
+	   into flow and fades them in. Drilling is a pure opacity fade — no slide. All lists for
+	   the active category share the same `data-dropdown-name` and toggle together. */
+	.x-menu-mobile-dropdown-list {
+		position: absolute;
+		top: 16px; // aligns with the scroller's content start when absolute
+		inset-inline: 0;
+		// Hidden lists are faded to 0 + out of flow (no scroll height), but kept *rendered*
+		// (no visibility/height collapse, which would suppress the transition). Base has NO
+		// transition, so on BACK the list snaps out instantly (the nav list snaps back over
+		// it) — no slow cross-fade through a muddy overlap. The fade-IN lives on `.is-visible`.
 		opacity: 0;
-		// Items slide in from the left (matching the Landpack reference), staggered.
-		transform: translateX( -32px );
+		pointer-events: none;
+
+		&.is-visible {
+			position: relative;
+			top: auto;
+			inset-inline: auto;
+			opacity: 1;
+			pointer-events: auto;
+			// Drill-in: fade the items in (matching the reference's --drill-fade) so they
+			// don't pop in over the fading-out nav list.
+			transition: opacity 0.27s var( --x-menu-2026-easing );
+		}
+	}
+
+	/*
+	 * Top-level nav items slide in from the left and fade in sequentially on open.
+	 * `--stagger-index` is set inline per item; the delay increments 18ms per item after a
+	 * 0.43s lead-in that waits for the panel slide. (Drill-down items don't slide — they
+	 * fade only, via the panel's drill-fade; see the reference.)
+	 */
+	.x-menu-mobile-nav-item {
+		opacity: 0;
+		transform: translateX( calc( -1 * var( --x-menu-2026-stagger-offset ) ) );
+		// Base = "snap out with the panel": 0-duration with the panel-slide delay, so on
+		// close the items hold their position until the panel has slid away, then snap (no
+		// fade-out mid-slide). The open-state rule below replaces this with the real slide-in.
 		transition:
-			opacity 0.3s cubic-bezier( 0.45, 0.85, 0.9, 1 )
-				calc( 0.43s + var( --stagger-index, 0 ) * 0.018s ),
-			transform 0.3s cubic-bezier( 0.45, 0.85, 0.9, 1 )
-				calc( 0.43s + var( --stagger-index, 0 ) * 0.018s );
+			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
+			transform 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
 	}
 
 	/* Top-level category links: large (26px), no underline, chevron on the right. */
@@ -1501,7 +1719,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		// padding into the 100% so links fit.
 		box-sizing: border-box;
 		width: 100%;
-		padding-block: 4px;
+		padding-block: var( --x-menu-2026-navlink-pad-block );
 		padding-inline: 18px;
 		border: none;
 		background: none;
@@ -1516,21 +1734,25 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-menu-mobile-nav-chevron::before {
 		content: $lp-chevron-content-right;
-		color: $studio-gray-30;
+		// Match the item text colour rather than a fixed gray.
+		color: currentcolor;
 	}
 
-	/* Drill-down group: gray uppercase subtitle + 26px links. */
-	.x-menu-mobile-dropdown-list + .x-menu-mobile-dropdown-list {
-		margin-top: 24px;
-	}
-
+	/* Drill-down group: gray uppercase subtitle (12px) + secondary 18px links — matching
+	   the reference, where drilled-in links are smaller than the 26px top-level categories. */
 	.x-menu-mobile-dropdown-subtitle {
+		padding-top: 22px;
 		padding-inline: 18px;
 		font-size: $x-dropdown-2026-subtitle-font-size;
-		font-weight: 500;
-		letter-spacing: 0.04em;
+		font-weight: $lp-font-weight-medium;
+		line-height: 33px;
+		letter-spacing: 0.005em;
 		text-transform: uppercase;
 		color: $studio-gray-30;
+
+		&:first-child {
+			padding-top: 0;
+		}
 	}
 
 	.x-menu-mobile-dropdown-link.x-menu-mobile-dropdown-link {
@@ -1538,13 +1760,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-block: 4px;
 		padding-inline: 18px;
 		color: $studio-gray-100;
-		font-size: 26px;
-		font-weight: 500;
-		line-height: 48px;
+		font-size: 18px;
+		font-weight: $lp-font-weight-regular;
+		line-height: 28px;
 		text-decoration: none;
 	}
 
-	/* "New" pill in the mobile drill-down, sized down from the 26px link text. */
+	/* "New" pill in the mobile drill-down. */
 	.x-dropdown-badge-new {
 		display: inline-block;
 		margin-inline-start: 10px;
@@ -1552,30 +1774,43 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		border-radius: 4px;
 		background: $studio-yellow-20;
 		color: $studio-yellow-80;
-		font-size: 13px;
-		font-weight: 400;
-		line-height: 26px;
+		font-size: 12px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 20px;
 		text-transform: none;
 		vertical-align: middle;
 	}
 
+	/* Footer overlays the bottom of the scroller (translucent + blurred, matching the
+	   header) so the nav list scrolls beneath it. The scroller pads its bottom by the
+	   footer's measured height so the last item still clears it. */
 	.x-menu-mobile-footer {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 10;
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		margin-top: auto;
 		padding-block: 18px;
 		padding-inline: 18px;
-		border-top: 1px solid $studio-gray-5;
+		background: rgba( $studio-white, 0.7 );
+		backdrop-filter: blur( 8px );
 
 		// When the "Get Jetpack app" banner is present (iOS / Android) it stacks
-		// full-width above the user row / CTAs instead of sitting beside them. Drop
-		// the top separator so the banner reads as part of the footer, not below a line.
+		// full-width above the user row / CTAs instead of sitting beside them.
 		&:has( .x-menu-mobile-app-banner ) {
 			flex-direction: column;
 			align-items: stretch;
 			gap: 16px;
-			border-top: none;
+		}
+
+		// Only the footer's CONTENTS fade in on open; the blurred bar itself stays put so the
+		// nav items slide in behind it. Base snaps out with the panel (0s / panel-delay).
+		> * {
+			opacity: 0;
+			transition: opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
 		}
 	}
 
@@ -1735,6 +1970,56 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-menu-mobile-user-email {
 		color: $studio-gray-30;
 		font-size: $x-menu-item-font-size-narrow;
+	}
+
+	/* When open, the logo / close / footer-contents are visible. By DEFAULT they use the
+	   quick drill-fade, so a BACK tap re-shows the logo promptly. The slow panel-synced
+	   reveal (below) applies ONLY during the initial open (`.is-opening`, set by the
+	   component for ~1.1s), so they fade in after the panel settles instead of mid-slide. */
+	&.x-menu__open {
+		.x-menu-mobile-logo:not( .is-hidden ),
+		.x-menu-button.x-menu-mobile-close,
+		.x-menu-mobile-footer > * {
+			opacity: 1;
+			visibility: visible;
+			transition: var( --x-menu-2026-drill-fade );
+		}
+
+		&.is-opening {
+			.x-menu-mobile-logo:not( .is-hidden ),
+			.x-menu-button.x-menu-mobile-close,
+			.x-menu-mobile-footer > * {
+				// Delayed past the slide so they stay unpainted until the gap, then fade in.
+				transition:
+					opacity var( --x-menu-2026-header-fade-duration ) var( --x-menu-2026-easing )
+						var( --x-menu-2026-reveal-delay ),
+					visibility var( --x-menu-2026-header-fade-duration ) var( --x-menu-2026-easing )
+						var( --x-menu-2026-reveal-delay );
+			}
+		}
+	}
+}
+
+/* Reduced motion: collapse the mobile menu's panel slide, item stagger and drill
+   crossfades so state still toggles but completes near-instantly. */
+@media ( prefers-reduced-motion: reduce ) {
+	.x-menu--2026 {
+		.x-menu-content,
+		.x-menu-mobile-nav-item,
+		.x-menu-mobile-nav-list,
+		.x-menu-mobile-dropdown-list,
+		.x-menu-mobile-category-title,
+		.x-menu-mobile-logo,
+		.x-menu-mobile-back,
+		.x-menu-button.x-menu-mobile-close,
+		.x-menu-mobile-footer > * {
+			transition-duration: 0.001ms !important;
+			transition-delay: 0s !important;
+		}
+
+		.x-menu-mobile-nav-item {
+			transform: none !important;
+		}
 	}
 }
 

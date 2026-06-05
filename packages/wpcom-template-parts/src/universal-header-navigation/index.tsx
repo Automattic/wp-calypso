@@ -4,7 +4,7 @@ import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
@@ -59,6 +59,13 @@ const UniversalNavbarHeader = ( {
 	// server-side via `is-ios-platform`/`is-android-platform` body classes, which Calypso
 	// (a client SPA) doesn't have — so we sniff the UA here instead.
 	const [ mobilePlatform, setMobilePlatform ] = useState< 'ios' | 'android' | null >( null );
+	// One-shot "panel is opening" phase. While true, the header (logo/close) and footer use
+	// their long, panel-synced reveal delay (first open); cleared after the panel settles so
+	// later drill/BACK swaps use the quick fade. Mirrors the reference's `is-opening` marker.
+	const [ isMenuOpening, setIsMenuOpening ] = useState( false );
+	// Measured footer height, published as a CSS var so the scroller's bottom padding clears
+	// the absolutely-positioned (overlaid) footer. Height varies with banner/auth/safe-area.
+	const mobileFooterRef = useRef< HTMLDivElement >( null );
 	const isEnglishLocale = useIsEnglishLocale();
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
@@ -131,6 +138,46 @@ const UniversalNavbarHeader = ( {
 			setMobilePlatform( 'android' );
 		}
 	}, [ nav2026 ] );
+
+	// 2026 mobile menu open phase: mark `is-opening` while the panel slides in so the
+	// header/footer use their delayed reveal once; clear it after the panel settles so
+	// subsequent drill/BACK swaps use the quick fade. Mirrors the reference's
+	// OPENING_PHASE_MS (~1100ms = panel slide 0.34 + reveal delay 0.43 + fade 0.3).
+	useEffect( () => {
+		if ( ! nav2026 || ! isMobileMenuOpen ) {
+			setIsMenuOpening( false );
+			return;
+		}
+		setIsMenuOpening( true );
+		const timer = setTimeout( () => setIsMenuOpening( false ), 1100 );
+		return () => clearTimeout( timer );
+	}, [ nav2026, isMobileMenuOpen ] );
+
+	// Publish the mobile footer's measured height as a CSS var so the scroller can pad its
+	// bottom by exactly that much (the footer is absolutely positioned / overlaid, so the
+	// last nav item would otherwise sit behind it). Height varies with the app banner,
+	// auth state, and the iOS safe-area inset — a ResizeObserver keeps the var in sync.
+	useEffect( () => {
+		if ( ! nav2026 || typeof ResizeObserver === 'undefined' ) {
+			return;
+		}
+		const footer = mobileFooterRef.current;
+		if ( ! footer ) {
+			return;
+		}
+		// Set the var on `.x-menu-content` (a common ancestor) so the scroller
+		// `.x-menu-mobile-main` inherits it — CSS custom props flow down, not up.
+		const host = footer.closest< HTMLElement >( '.x-menu-content' ) ?? footer;
+		const sync = () => {
+			if ( footer.offsetHeight ) {
+				host.style.setProperty( '--x-menu-2026-footer-height', `${ footer.offsetHeight }px` );
+			}
+		};
+		const observer = new ResizeObserver( sync );
+		observer.observe( footer );
+		sync();
+		return () => observer.disconnect();
+	}, [ nav2026, isMobileMenuOpen, isLoggedIn, mobilePlatform ] );
 
 	// Align the 2026 dropdown content under the first nav item by exposing that
 	// item's inline-start offset as a CSS custom property (RTL-aware). The CSS
@@ -1081,11 +1128,10 @@ const UniversalNavbarHeader = ( {
 					{ /*<!-- Mobile menu starts here. -->*/ }
 					{ nav2026 ? (
 						<div
-							className={
-								isMobileMenuOpen
-									? 'x-menu x-menu--2026 x-menu__active x-menu__open'
-									: 'x-menu x-menu--2026'
-							}
+							className={ clsx( 'x-menu x-menu--2026', {
+								'x-menu__active x-menu__open': isMobileMenuOpen,
+								'is-opening': isMenuOpening,
+							} ) }
 							role="menu"
 							aria-label={ __( 'WordPress.com Navigation Menu', __i18n_text_domain__ ) }
 							aria-hidden={ ! isMobileMenuOpen }
@@ -1097,90 +1143,62 @@ const UniversalNavbarHeader = ( {
 								onClick={ closeMobileMenu }
 							/>
 							<div className="x-menu-content">
-								<div className="x-menu-mobile-header">
-									{ activeCategory ? (
-										<button
-											className="x-menu-mobile-back x-link"
-											onClick={ () => setCurrentDropdown( null ) }
-										>
-											<span className="x-menu-mobile-back-chevron" aria-hidden="true" />
-											{ __( 'Back', __i18n_text_domain__ ) }
-										</button>
-									) : (
-										<a
-											className="x-menu-mobile-logo x-link"
-											href={ localizeUrl( '//wordpress.com' ) }
-											target="_self"
-										>
-											<WordPressWordmark
-												className="x-icon x-icon__logo"
-												color={ logoColor ?? 'var(--studio-blue-50)' }
-												size={ { width: 170, height: 36 } }
-											/>
-											<span className="x-hidden">WordPress.com</span>
-										</a>
-									) }
-									<button
-										className="x-menu-button x-menu-mobile-close x-link"
-										onClick={ closeMobileMenu }
-									>
-										<span className="x-hidden">{ __( 'Close menu', __i18n_text_domain__ ) }</span>
-										<span className="x-icon x-icon__close">
-											<span></span>
-											<span></span>
-										</span>
-									</button>
-								</div>
 								<div className="x-menu-mobile-main" aria-hidden={ ! isMobileMenuOpen }>
-									{ activeCategory && activeCategory.groups ? (
-										<div
-											className="x-menu-mobile-dropdown"
-											data-dropdown-name={ activeCategory.name }
-										>
-											{ activeCategory.groups.map( ( group, groupIndex ) => (
-												<ul className="x-menu-mobile-dropdown-list" key={ group.title }>
-													<li className="x-menu-mobile-dropdown-subtitle" role="presentation">
-														{ group.title }
-													</li>
-													{ group.items.map( ( item, itemIndex ) => (
-														<li
-															className="x-menu-mobile-dropdown-item"
-															role="none"
-															key={ item.url }
-															style={
-																{
-																	'--stagger-index': groupIndex * 4 + itemIndex,
-																} as React.CSSProperties
-															}
-														>
-															<ClickableItem
-																titleValue=""
-																content={
-																	item.badge ? (
-																		<>
-																			{ item.label }{ ' ' }
-																			<span className="x-dropdown-badge-new">
-																				{ __( 'New', __i18n_text_domain__ ) }
-																			</span>
-																		</>
-																	) : (
-																		item.label
-																	)
-																}
-																urlValue={ item.url }
-																type="menu"
-																typeClassName="x-menu-mobile-dropdown-link x-link"
-																target={ item.target }
-																tabIndex={ mobileMenuTabIndex }
-															/>
-														</li>
-													) ) }
-												</ul>
-											) ) }
+									{ /* Sticky, translucent header (logo ⇄ back + close + category title).
+									   Lives inside the scroller so it stickies as the list scrolls beneath. */ }
+									<div className="x-menu-mobile-header">
+										<div className="x-menu-mobile-header-top">
+											<a
+												className={ clsx( 'x-menu-mobile-logo x-link', {
+													'is-hidden': !! activeCategory,
+												} ) }
+												href={ localizeUrl( '//wordpress.com' ) }
+												target="_self"
+											>
+												<WordPressWordmark
+													className="x-icon x-icon__logo"
+													color={ logoColor ?? 'var(--studio-blue-50)' }
+													size={ { width: 170, height: 36 } }
+												/>
+												<span className="x-hidden">WordPress.com</span>
+											</a>
+											<button
+												className={ clsx( 'x-menu-mobile-back x-link', {
+													'is-hidden': ! activeCategory,
+												} ) }
+												onClick={ () => setCurrentDropdown( null ) }
+											>
+												<span className="x-menu-mobile-back-chevron" aria-hidden="true" />
+												{ __( 'Back', __i18n_text_domain__ ) }
+											</button>
+											<button
+												className="x-menu-button x-menu-mobile-close x-link"
+												onClick={ closeMobileMenu }
+											>
+												<span className="x-hidden">
+													{ __( 'Close menu', __i18n_text_domain__ ) }
+												</span>
+												<span className="x-icon x-icon__close">
+													<span></span>
+													<span></span>
+												</span>
+											</button>
 										</div>
-									) : (
-										variant !== 'minimal' && (
-											<ul className="x-menu-mobile-nav-list">
+										<h4
+											className={ clsx( 'x-menu-mobile-category-title', {
+												'is-visible': !! activeCategory,
+											} ) }
+										>
+											{ activeCategory?.title }
+										</h4>
+									</div>
+									{ variant !== 'minimal' && (
+										<>
+											<ul
+												className={ clsx( 'x-menu-mobile-nav-list', {
+													'is-hidden': !! activeCategory,
+												} ) }
+											>
 												{ nav2026Menus.map( ( menu, index ) => (
 													<li
 														className="x-menu-mobile-nav-item"
@@ -1210,7 +1228,62 @@ const UniversalNavbarHeader = ( {
 													</li>
 												) ) }
 											</ul>
-										)
+											{ nav2026Menus
+												.filter( ( menu ) => menu.groups )
+												.flatMap( ( menu ) => {
+													const isActive = activeCategory?.name === menu.name;
+													// Each subcategory group is its own `.x-menu-mobile-dropdown-list`
+													// (no wrapper div — matches the reference's flat structure so the
+													// drill fade works). All lists for the active category share the
+													// same `data-dropdown-name` and toggle `.is-visible` together.
+													return ( menu.groups ?? [] ).map( ( group, groupIndex ) => (
+														<ul
+															className={ clsx( 'x-menu-mobile-dropdown-list', {
+																'is-visible': isActive,
+															} ) }
+															data-dropdown-name={ menu.name }
+															key={ `${ menu.name }-${ group.title }` }
+														>
+															<li className="x-menu-mobile-dropdown-subtitle" role="presentation">
+																{ group.title }
+															</li>
+															{ group.items.map( ( item, itemIndex ) => (
+																<li
+																	className="x-menu-mobile-dropdown-item"
+																	role="none"
+																	key={ item.url }
+																	style={
+																		{
+																			'--stagger-index': groupIndex * 4 + itemIndex,
+																		} as React.CSSProperties
+																	}
+																>
+																	<ClickableItem
+																		titleValue=""
+																		content={
+																			item.badge ? (
+																				<>
+																					{ item.label }{ ' ' }
+																					<span className="x-dropdown-badge-new">
+																						{ __( 'New', __i18n_text_domain__ ) }
+																					</span>
+																				</>
+																			) : (
+																				item.label
+																			)
+																		}
+																		urlValue={ item.url }
+																		type="menu"
+																		typeClassName="x-menu-mobile-dropdown-link x-link"
+																		target={ item.target }
+																		tabIndex={ isActive ? mobileMenuTabIndex : -1 }
+																	/>
+																</li>
+															) ) }
+														</ul>
+													) );
+												} ) }
+										</>
 									) }
 								</div>
 								<div className="x-menu-mobile-footer">
