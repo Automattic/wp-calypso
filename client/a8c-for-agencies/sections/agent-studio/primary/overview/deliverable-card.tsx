@@ -14,7 +14,6 @@ import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@word
 import clsx from 'clsx';
 import { useState } from 'react';
 import useDeliverableThumbnail from '../../data/use-deliverable-thumbnail';
-import useDeliverableTitle from '../../data/use-deliverable-title';
 import { getAgentStudioOutputPath } from '../../lib/paths';
 import DeleteDeliverableDialog from './delete-deliverable-dialog';
 import DeliverableThumbnailFrame from './deliverable-thumbnail-frame';
@@ -28,7 +27,11 @@ interface Props {
 
 export default function DeliverableCard( { output }: Props ) {
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
-	const title = useDeliverableTitle( output );
+	// The outputs endpoint resolves the human title server-side (brief
+	// heading → collateral title → machine run title), so the card and the
+	// delete dialog both render the same `output.title` without a per-card
+	// run fetch.
+	const title = output.title;
 	const isReady = output.status === 'ready';
 
 	return (
