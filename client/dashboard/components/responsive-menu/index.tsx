@@ -7,10 +7,11 @@ import {
 import { throttle, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, menu } from '@wordpress/icons';
-import React, { useEffect, useRef, useState, ComponentProps, CSSProperties } from 'react';
+import React, { useEffect, useRef, useState, CSSProperties } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Menu from '../menu';
 import RouterLinkMenuItem from '../router-link-menu-item';
+import type { ActiveOptions } from '@tanstack/react-router';
 
 import './style.scss';
 
@@ -21,6 +22,26 @@ type ResponsiveMenuProps = {
 	label?: string;
 	dropdownPlacement?: 'bottom-end' | 'bottom-start' | 'bottom';
 };
+
+type ResponsiveMenuItemProps = {
+	onClick?: () => void;
+	children: React.ReactNode;
+} & (
+	| {
+			to: string;
+			activeOptions?: ActiveOptions;
+			href?: never;
+			target?: never;
+			rel?: never;
+	  }
+	| {
+			href: string;
+			target: '_blank';
+			rel?: string;
+			to?: never;
+			activeOptions?: never;
+	  }
+);
 
 function ScrollButton( {
 	icon,
@@ -146,21 +167,22 @@ function ResponsiveMenu( {
 			<Menu>
 				{ React.Children.map( children, ( child ) => {
 					if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
-						if ( child.props.target === '_blank' ) {
+						const item = child as React.ReactElement< ResponsiveMenuItemProps >;
+						if ( item.props.target === '_blank' ) {
 							return (
 								<Button
 									className="dashboard-menu__item"
 									variant="tertiary"
-									{ ...child.props }
+									{ ...item.props }
 									onClick={ () => {
-										child.props.onClick?.();
+										item.props.onClick?.();
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-											to: child.props.href ?? '',
+											to: item.props.href,
 										} );
 									} }
 								>
 									<HStack justify="flex-start" spacing={ 1 }>
-										<span>{ child.props.children }</span>
+										<span>{ item.props.children }</span>
 										<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
 									</HStack>
 								</Button>
@@ -169,11 +191,11 @@ function ResponsiveMenu( {
 
 						return (
 							<Menu.Item
-								{ ...child.props }
+								{ ...item.props }
 								onClick={ () => {
-									child.props.onClick?.();
+									item.props.onClick?.();
 									recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-										to: child.props.to ?? '',
+										to: item.props.to,
 									} );
 								} }
 							/>
@@ -245,19 +267,20 @@ function ResponsiveMenu( {
 				<>
 					{ React.Children.map( children, ( child ) => {
 						if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
-							if ( child.props.target === '_blank' ) {
+							const item = child as React.ReactElement< ResponsiveMenuItemProps >;
+							if ( item.props.target === '_blank' ) {
 								return (
 									<Menu.ItemLink
-										{ ...child.props }
+										{ ...item.props }
 										onClick={ () => {
-											child.props.onClick?.();
+											item.props.onClick?.();
 											recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-												to: child.props.href ?? '',
+												to: item.props.href,
 											} );
 										} }
 									>
 										<HStack justify="flex-start" spacing={ 1 }>
-											<span>{ child.props.children }</span>
+											<span>{ item.props.children }</span>
 											<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
 										</HStack>
 									</Menu.ItemLink>
@@ -266,12 +289,12 @@ function ResponsiveMenu( {
 
 							return (
 								<RouterLinkMenuItem
-									{ ...child.props }
+									{ ...item.props }
 									onClick={ () => {
 										onClose();
-										child.props.onClick?.();
+										item.props.onClick?.();
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
-											to: child.props.to ?? '',
+											to: item.props.to,
 										} );
 									} }
 								/>
@@ -288,7 +311,7 @@ function ResponsiveMenu( {
 
 ResponsiveMenu.Item = function MenuItem(
 	// eslint-disable-next-line -- The props are not used because this is just a placeholder component.
-	props: ComponentProps< typeof RouterLinkMenuItem >
+	props: ResponsiveMenuItemProps
 ) {
 	// This is going to be replaced with the right menu item depending on the screen size.
 	return null;
