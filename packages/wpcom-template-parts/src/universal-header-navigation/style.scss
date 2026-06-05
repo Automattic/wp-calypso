@@ -178,6 +178,10 @@ $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
 $x-content-min-z-index: 801;
+// 2026 dropdown panel: one above the nav bar / dim overlay so it covers the dimmed page
+// while sliding down from under the nav. Sits in the nav's own stacking band (not an
+// arbitrary 900000) so it never escapes above Calypso modals/tooltips.
+$x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
 $lp-font-weight-bold: 600;
 $lp-font-weight-semi-bold: 600;
 $lp-font-weight-medium: 500;
@@ -1037,8 +1041,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	// rules below; on exit it eases out over this duration after a short delay, so the
 	// surface lingers a beat instead of vanishing the instant you reach the top (and it
 	// stays up while a closing dropdown panel fades). `backdrop-filter` eases in step.
-	transition: background-color $x-nav-2026-transition 0.12s,
-		box-shadow $x-nav-2026-transition 0.12s, backdrop-filter $x-nav-2026-transition 0.12s;
+	transition:
+		background-color $x-nav-2026-transition 0.12s,
+		box-shadow $x-nav-2026-transition 0.12s,
+		backdrop-filter $x-nav-2026-transition 0.12s;
 }
 
 // When a dropdown is open the nav bar turns white so it forms one continuous white
@@ -1056,7 +1062,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	// Snap the white surface in quickly when it appears (scroll / dropdown-open),
 	// matching the reference's white-state reveal (0.12s ease-out, no delay) rather
 	// than the slower default bar transition.
-	transition: background-color 0.12s ease-out, box-shadow 0.12s ease-out;
+	transition:
+		background-color 0.12s ease-out,
+		box-shadow 0.12s ease-out;
 }
 
 // Scrolled-only treatment (NOT when a dropdown is open): a near-opaque white with a
@@ -1101,7 +1109,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-nav-link {
 		height: $x-nav-2026-height;
 		font-size: 13px;
-		font-weight: 500 !important;
+		// `!important` only to beat the legacy base `.x-nav-link` rule's own
+		// `font-weight: …semi-bold !important` (line ~278); not a new specificity hack.
+		font-weight: $lp-font-weight-medium !important;
 		line-height: 20px;
 		color: inherit;
 		transition: color $x-nav-2026-transition;
@@ -1122,22 +1132,26 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding: 0 $x-nav-2026-item-padding-x;
 	}
 
-	// Logo: flex-centred to the 64px nav height; reference padding is 24px left /
-	// 18px right (the left gutter anchors the first nav item + dropdown alignment).
+	// Logo: flex-centred to the 64px nav height; reference padding is 24px inline-start /
+	// 18px inline-end (the start gutter anchors the first nav item + dropdown alignment).
 	.x-nav-link__logo {
 		display: flex;
 		align-items: center;
 		height: $x-nav-2026-height;
-		padding: 0 18px 0 24px;
+		padding-block: 0;
+		padding-inline-start: 24px;
+		padding-inline-end: 18px;
 	}
 
-	// "Get started" CTA — outlined pill (no fill). Right margin set so the pill sits
+	// "Get started" CTA — outlined pill (no fill). Inline-end margin set so the pill sits
 	// ~15px from the viewport edge, matching the reference.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
 		height: 40px;
-		margin: 0 15px 0 12px;
+		margin-block: 0;
+		margin-inline-start: 12px;
+		margin-inline-end: 15px;
 		padding: 0 20px !important;
 		background: transparent !important;
 		color: inherit !important;
@@ -1169,14 +1183,16 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: block;
 		width: 5px;
 		height: 5px;
-		margin-top: -2px;
+		margin-block-start: -2px;
 		border-style: solid;
 		border-color: currentcolor;
 		border-width: 0 1px 1px 0;
 		box-sizing: border-box;
 		transform: rotate( 45deg );
 		transform-origin: 75% 75%;
-		transition: transform $x-nav-2026-transition, border-color $x-nav-2026-transition;
+		transition:
+			transform $x-nav-2026-transition,
+			border-color $x-nav-2026-transition;
 	}
 
 	// The open trigger (its dropdown active → aria-expanded="true") turns blue, as
@@ -1220,7 +1236,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-dropdown-link.x-dropdown-link {
 		opacity: 1;
 		transform: translateX( 0 );
-		transition: opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+		transition:
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
 				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) ),
 			transform var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
 				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) );
@@ -1228,7 +1245,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	// Links also keep their colour transition for hover.
 	.x-dropdown-link.x-dropdown-link {
-		transition: color $x-nav-2026-transition,
+		transition:
+			color $x-nav-2026-transition,
 			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
 				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) ),
 			transform var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
@@ -1238,16 +1256,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 // FIRST OPEN (closed → open): items wait for the panel to grow (panel-duration minus a
 // small overlap) before staggering in, so they don't appear in empty space mid-unroll.
-.x-dropdown.x-dropdown--2026.is-dropdown-first-open
-	.x-dropdown-content[aria-hidden='false'] {
+.x-dropdown.x-dropdown--2026.is-dropdown-first-open .x-dropdown-content[aria-hidden='false'] {
 	.x-dropdown-subcategory-title,
 	.x-dropdown-link.x-dropdown-link {
 		transition-delay: calc(
-			(
-					var( --x-dropdown-2026-panel-duration ) - var(
-							--x-dropdown-2026-items-slide-overlap
-						)
-				) + var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step )
+			( var( --x-dropdown-2026-panel-duration ) - var( --x-dropdown-2026-items-slide-overlap ) ) +
+				var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step )
 		);
 	}
 }
@@ -1319,8 +1333,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
 
 	position: fixed;
+	// Prefer the host-provided `--nav-2026-height` (Calypso's layout defines it as the
+	// single source of truth); fall back to the package's own constant when used standalone.
 	top: calc(
-		var( --nav-2026-admin-offset, var( --masterbar-height, 0px ) ) + #{$x-nav-2026-height}
+		var( --nav-2026-admin-offset, var( --masterbar-height, 0px ) ) +
+			var( --nav-2026-height, #{$x-nav-2026-height} )
 	);
 	inset-inline: 0;
 	// The legacy `.x-dropdown` base sets `bottom: 0`, which would stretch this fixed
@@ -1329,7 +1346,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	bottom: auto;
 	width: auto;
 	height: auto; // at rest; the JS FLIP pins an explicit px height during a switch
-	z-index: 900000;
+	z-index: $x-nav-2026-dropdown-z-index;
 	background: $studio-white;
 	opacity: 1;
 	visibility: hidden;
@@ -1338,7 +1355,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	// Height morph is desktop-only (below 1025 the wide items are hidden, no dropdown).
 	@media ( min-width: 1025px ) {
-		transition: visibility $x-nav-2026-transition,
+		transition:
+			visibility $x-nav-2026-transition,
 			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing );
 	}
 }
@@ -1368,7 +1386,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
-	transition: opacity $x-nav-2026-transition, visibility $x-nav-2026-transition;
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility $x-nav-2026-transition;
 
 	// At >= 1025px, align the content under the first nav item via the JS-set var.
 	@media ( min-width: 1025px ) {
@@ -1425,7 +1445,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		color: $studio-gray-30;
-		transition: opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
+		transition:
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
 			transform 0s linear var( --x-dropdown-2026-link-duration );
 	}
 
@@ -1440,7 +1461,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		// Some sections (e.g. themes) underline links by default; the dropdown links
 		// should never be underlined.
 		text-decoration: none;
-		transition: color $x-nav-2026-transition,
+		transition:
+			color $x-nav-2026-transition,
 			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
 			transform 0s linear var( --x-dropdown-2026-link-duration );
 
@@ -1505,7 +1527,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		backdrop-filter: blur( 8px );
 		opacity: 0;
 		visibility: hidden;
-		transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+		transition:
+			opacity 0.2s ease-out,
+			visibility 0.2s ease-out;
 	}
 
 	&.x-menu__open .x-menu-overlay {
@@ -1574,7 +1598,6 @@ $x-menu-2026-admin-bar-mobile: 46px;
 				);
 	}
 
-
 	/* Scroller. The header stickies at its top and the footer overlays its bottom, so the
 	   nav list scrolls beneath both. Bottom padding clears the overlaid footer (its real
 	   height is published as --x-menu-2026-footer-height; the fallback covers the
@@ -1584,7 +1607,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		flex: 1;
 		padding-bottom: var( --x-menu-2026-footer-height, 96px );
 		overflow-x: hidden; // setting only overflow-y would compute overflow-x to `auto`
-		overflow-y: auto;    // (CSS rule), producing a spurious horizontal scrollbar.
+		overflow-y: auto; // (CSS rule), producing a spurious horizontal scrollbar.
 		-webkit-overflow-scrolling: touch;
 		// Don't chain scroll to the page behind when the panel hits its edges.
 		overscroll-behavior: contain;
@@ -1684,12 +1707,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		flex-shrink: 0;
 
 		&::before {
-			content: "";
+			content: '';
 			display: block;
 			width: 7px;
 			height: 7px;
-			border-left: 1.5px solid currentcolor;
-			border-bottom: 1.5px solid currentcolor;
+			// Logical borders so the back arrow points inline-start and auto-flips in RTL.
+			border-inline-start: 1.5px solid currentcolor;
+			border-block-end: 1.5px solid currentcolor;
 			transform: rotate( 45deg );
 		}
 	}
@@ -1724,7 +1748,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			// flashes a muddy black+blue overlap).
 			position: relative;
 			z-index: 12;
-			transition: opacity 0.12s var( --x-menu-2026-easing ), visibility 0s;
+			transition:
+				opacity 0.12s var( --x-menu-2026-easing ),
+				visibility 0s;
 		}
 	}
 
@@ -1912,8 +1938,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-menu-mobile-footer {
 		position: absolute;
 		bottom: 0;
-		left: 0;
-		right: 0;
+		inset-inline: 0;
 		z-index: 10;
 		display: flex;
 		align-items: center;
@@ -2005,7 +2030,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-size: 12px;
 		font-weight: $lp-font-weight-regular;
 		line-height: 20px;
-		color: #50575e; // gray-70 (no exact studio token)
+		color: $studio-gray-60;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

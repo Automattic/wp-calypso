@@ -575,15 +575,30 @@ body.is-mobile-app-view {
 	// the nav instead of scrolling up behind it. Tracks `--nav-2026-admin-offset`,
 	// so it's correct logged-out (0) and logged-in (responsive masterbar height).
 	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + var( --nav-2026-height ) );
+
+	// The 2026 nav is `position: fixed` (out of flow), so its wrapper would collapse and let
+	// content start at the viewport top, under the nav. Rather than pad every section's
+	// `.layout__content` (and fight each section's own padding overrides), reserve the nav's
+	// height on the header-section wrapper itself — one lever that pushes all content below
+	// the nav for every section, no matter how that section pads its own content. The
+	// companion rule zeroes the content's own top clearance (which cleared the now-removed
+	// masterbar) so the two never stack.
+	.layout__header-section {
+		min-height: var( --nav-2026-sticky-offset );
+	}
+
+	.layout__content {
+		--_layout__content-top-spacing: 0;
+		padding-top: 0;
+	}
 }
 
 .layout.is-logged-in:has( .x-nav--2026-redesign ) {
 	--nav-2026-admin-offset: var( --masterbar-height );
 }
 
-// Overlaid nav is out of flow, so pad the content down by the nav height + the
-// admin-bar offset so the hero clears the nav while its background slides under.
-// This is exactly the nav's bottom edge, i.e. `--nav-2026-sticky-offset`.
-.layout:has( .x-nav--2026-redesign ) .layout__content {
-	padding-top: var( --nav-2026-sticky-offset );
+// Patterns opts out: its dark hero deliberately slides *under* the nav, so the wrapper must
+// not reserve space (the hero pads its own content down by the nav height instead).
+.layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section {
+	min-height: 0;
 }

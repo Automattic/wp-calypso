@@ -40,6 +40,8 @@ export interface MenuItemProps {
 	content: string | React.ReactNode;
 	className?: string;
 	ariaExpanded?: boolean;
+	/** id of the panel this trigger controls (2026 desktop dropdown a11y). */
+	ariaControls?: string;
 }
 
 export interface ClickableItemProps extends MenuItemProps {

@@ -4,10 +4,14 @@ import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
+
+// `useLayoutEffect` warns (and is a no-op) during SSR; fall back to `useEffect` on the
+// server. Mirrors the same guard in the sibling `universal-footer-navigation` component.
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 // Mystery-person Gravatar, used as the 2026 mobile footer avatar fallback.
 const DEFAULT_AVATAR_URL = 'https://www.gravatar.com/avatar/?d=mp&s=96';
@@ -66,6 +70,9 @@ const UniversalNavbarHeader = ( {
 	// Measured footer height, published as a CSS var so the scroller's bottom padding clears
 	// the absolutely-positioned (overlaid) footer. Height varies with banner/auth/safe-area.
 	const mobileFooterRef = useRef< HTMLDivElement >( null );
+	// The hamburger button, so closing the 2026 mobile menu can return focus to it
+	// instead of dropping focus to <body>.
+	const menuTriggerRef = useRef< HTMLButtonElement >( null );
 	// 2026 desktop nav: true once the page has scrolled past a small threshold. The nav is
 	// `position: fixed` and transparent over the hero at the top; when scrolled it switches to
 	// the white surface (same treatment as an open dropdown), driven by the `is-scrolled` class.
@@ -81,15 +88,29 @@ const UniversalNavbarHeader = ( {
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
 
-	const closeMobileMenu = () => {
+	const closeMobileMenu = useCallback( () => {
 		setMobileMenuOpen( false );
 		setCurrentDropdown( null );
-	};
+		// Return focus to the trigger so keyboard/screen-reader users aren't dropped to <body>.
+		menuTriggerRef.current?.focus();
+	}, [] );
 
 	// Handle dropdown management to ensure only one is open at a time
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
+				// 2026 desktop dropdown is React-state-driven; closing it requires clearing the
+				// state (blurring alone leaves the panel open). Return focus to the open trigger.
+				setActiveDropdown( ( open ) => {
+					if ( open !== null ) {
+						const trigger = document.querySelector< HTMLElement >(
+							'.x-nav-item__wide [aria-expanded="true"]'
+						);
+						trigger?.focus();
+					}
+					return null;
+				} );
+
 				const activeElement = document.activeElement;
 				if ( activeElement && activeElement.closest( '[role="menu"], .x-dropdown-content' ) ) {
 					if ( activeElement instanceof HTMLElement ) {
@@ -264,9 +285,10 @@ const UniversalNavbarHeader = ( {
 	// FLIP (measure → pin old px height → reflow → set new px height → release to auto on
 	// transitionend). `is-dropdown-first-open` marks the closed→open case so the items wait for
 	// the panel to grow before sliding in; on a switch they use the short stagger instead.
-	// useLayoutEffect so the measure/pin happens before paint (no flash of the auto height).
-	useLayoutEffect( () => {
-		if ( ! nav2026 ) {
+	// useLayoutEffect so the measure/pin happens before paint (no flash of the auto height);
+	// the isomorphic variant degrades to useEffect under SSR (no `window`).
+	useIsomorphicLayoutEffect( () => {
+		if ( ! nav2026 || typeof window === 'undefined' ) {
 			return;
 		}
 		const el = dropdownRef.current;
@@ -303,6 +325,12 @@ const UniversalNavbarHeader = ( {
 		// Open → open (switch): FLIP the wrapper height between the two menus' content.
 		if ( prev !== null && next !== null && prev !== next ) {
 			el.classList.remove( 'is-dropdown-first-open' );
+			// Honor reduced-motion: snap to the new height instead of animating it.
+			if ( window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
+				return () => {
+					prevHeightRef.current = el.offsetHeight;
+				};
+			}
 			const from = prevHeightRef.current;
 			const to = el.offsetHeight;
 			if ( ! from || from === to ) {
@@ -310,39 +338,46 @@ const UniversalNavbarHeader = ( {
 					prevHeightRef.current = el.offsetHeight;
 				};
 			}
-			el.style.overflow = 'hidden';
-			el.style.height = `${ from }px`;
-			void el.offsetHeight; // force reflow so the next height change transitions
-			el.style.height = `${ to }px`;
+			// Non-null alias so the listener/cleanup closures keep `el`'s narrowing.
+			const node = el;
+			node.style.overflow = 'hidden';
+			node.style.height = `${ from }px`;
+			void node.offsetHeight; // force reflow so the next height change transitions
+			node.style.height = `${ to }px`;
 			// `release` snaps the wrapper back to auto height after the morph. It's idempotent
 			// (the `released` guard), so whichever of the transitionend listener or the fallback
-			// timer fires first wins and the other is a harmless no-op — so `release` needs no
-			// reference to either, avoiding a circular declaration.
+			// timer fires first wins and the other is a harmless no-op.
 			let released = false;
+			// AbortController detaches the listener without naming it — avoids `{ once: true }`,
+			// whose stale one-shot handler would otherwise fire on the *next* morph's
+			// transitionend if this element is still transitioning when a new switch starts,
+			// releasing it prematurely.
+			const listenerAbort = new AbortController();
 			const release = () => {
 				if ( released ) {
 					return;
 				}
 				released = true;
-				el.style.height = '';
-				el.style.overflow = '';
+				listenerAbort.abort();
+				node.style.height = '';
+				node.style.overflow = '';
 			};
-			el.addEventListener(
+			node.addEventListener(
 				'transitionend',
 				( e: TransitionEvent ) => {
-					if ( e.target === el && e.propertyName === 'height' ) {
+					if ( e.target === node && e.propertyName === 'height' ) {
 						release();
 					}
 				},
-				{ once: true }
+				{ signal: listenerAbort.signal }
 			);
-			const durMs = parseFloat( getComputedStyle( el ).transitionDuration ) * 1000 || 280;
+			const durMs = parseFloat( getComputedStyle( node ).transitionDuration ) * 1000 || 280;
 			const fallback = window.setTimeout( release, durMs + 50 );
 			return () => {
 				// Released early if the dropdown changes mid-morph; capture height for the next FLIP.
 				clearTimeout( fallback );
 				release();
-				prevHeightRef.current = el.offsetHeight;
+				prevHeightRef.current = node.offsetHeight;
 			};
 		}
 
@@ -424,7 +459,6 @@ const UniversalNavbarHeader = ( {
 						label: __( 'AI website builder', __i18n_text_domain__ ),
 						url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
 						target: '_self',
-						badge: true,
 					},
 				],
 			},
@@ -523,7 +557,6 @@ const UniversalNavbarHeader = ( {
 										label: __( 'AI website builder', __i18n_text_domain__ ),
 										url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
 										target: '_self',
-										badge: true,
 									},
 								],
 							},
@@ -630,7 +663,6 @@ const UniversalNavbarHeader = ( {
 										label: __( 'AI website builder', __i18n_text_domain__ ),
 										url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
 										target: '_self',
-										badge: true,
 									},
 								],
 							},
@@ -849,6 +881,17 @@ const UniversalNavbarHeader = ( {
 						'is-scrolled': nav2026 && isScrolled,
 					} ) }
 					onMouseLeave={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+					onBlur={
+						nav2026
+							? ( event ) => {
+									// Close when keyboard focus leaves the nav+dropdown entirely (tabbing
+									// past the last item), so the dropdown isn't mouse-dismiss-only.
+									if ( ! event.currentTarget.contains( event.relatedTarget as Node ) ) {
+										setActiveDropdown( null );
+									}
+							  }
+							: undefined
+					}
 				>
 					{ /*<!-- Nav bar starts here. -->*/ }
 					<div className="masterbar-menu">
@@ -891,6 +934,7 @@ const UniversalNavbarHeader = ( {
 															className="x-nav-link x-link"
 															content={ menu.title }
 															ariaExpanded={ activeDropdown === menu.name }
+															ariaControls={ `x-dropdown-2026-${ menu.name }` }
 														/>
 													</li>
 												) : (
@@ -1195,9 +1239,11 @@ const UniversalNavbarHeader = ( {
 									) }
 									<li className="x-nav-item x-nav-item__narrow" role="none">
 										<button
+											ref={ menuTriggerRef }
 											role="menuitem"
 											className="x-nav-link x-nav-link__menu x-link"
-											aria-haspopup="true"
+											aria-haspopup="dialog"
+											aria-controls="x-mobile-menu-2026"
 											aria-expanded={ isMobileMenuOpen }
 											onClick={ () => setMobileMenuOpen( true ) }
 										>
@@ -1239,6 +1285,7 @@ const UniversalNavbarHeader = ( {
 									<div
 										className="x-dropdown-content x-dropdown--2026"
 										data-dropdown-name={ menu.name }
+										id={ `x-dropdown-2026-${ menu.name }` }
 										role="menu"
 										aria-label={ menu.title }
 										aria-hidden={ activeDropdown !== menu.name }
@@ -1249,6 +1296,7 @@ const UniversalNavbarHeader = ( {
 												<div className="x-dropdown-column-group" key={ group.title }>
 													<h4
 														className="x-dropdown-subcategory-title"
+														role="presentation"
 														style={ { '--stagger-index': staggerIndex++ } as React.CSSProperties }
 													>
 														{ group.title }
@@ -1291,11 +1339,13 @@ const UniversalNavbarHeader = ( {
 					{ /*<!-- Mobile menu starts here. -->*/ }
 					{ nav2026 ? (
 						<div
+							id="x-mobile-menu-2026"
 							className={ clsx( 'x-menu x-menu--2026', {
 								'x-menu__active x-menu__open': isMobileMenuOpen,
 								'is-opening': isMenuOpening,
 							} ) }
-							role="menu"
+							role="dialog"
+							aria-modal="true"
 							aria-label={ __( 'WordPress.com Navigation Menu', __i18n_text_domain__ ) }
 							aria-hidden={ ! isMobileMenuOpen }
 						>
@@ -1306,7 +1356,7 @@ const UniversalNavbarHeader = ( {
 								onClick={ closeMobileMenu }
 							/>
 							<div className="x-menu-content">
-								<div className="x-menu-mobile-main" aria-hidden={ ! isMobileMenuOpen }>
+								<div className="x-menu-mobile-main">
 									{ /* Sticky, translucent header (logo ⇄ back + close + category title).
 									   Lives inside the scroller so it stickies as the list scrolls beneath. */ }
 									<div className="x-menu-mobile-header">
@@ -1449,7 +1499,7 @@ const UniversalNavbarHeader = ( {
 										</>
 									) }
 								</div>
-								<div className="x-menu-mobile-footer">
+								<div className="x-menu-mobile-footer" ref={ mobileFooterRef }>
 									{ renderAppBanner() }
 									{ isLoggedIn ? (
 										<a

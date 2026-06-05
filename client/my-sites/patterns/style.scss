@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "calypso/my-sites/patterns/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import 'calypso/my-sites/patterns/mixins';
 
 .is-section-patterns {
 	.layout__content {
@@ -8,7 +8,7 @@
 
 		.masterbar {
 			// Makes sure the navigation bar header appears below the masterbar and notices
-			z-index: z-index("root", ".main") - 1;
+			z-index: z-index( 'root', '.main' ) - 1;
 		}
 		a {
 			text-decoration: none;
@@ -25,7 +25,7 @@
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;
 
-			@media (max-width: $break-medium) {
+			@media ( max-width: $break-medium ) {
 				padding-top: 46px;
 			}
 		}
@@ -50,26 +50,26 @@
 	// Pre-2026 design: dark masterbar with white nav text. Gated off the 2026 path.
 	.has-no-sidebar {
 		.masterbar-menu {
-			.masterbar:not(:has(.x-nav--2026-redesign)) {
-				background: #1d2327;
-				border-bottom: 1px solid #1d2327;
+			.masterbar:not( :has( .x-nav--2026-redesign ) ) {
+				background: var( --studio-gray-90 );
+				border-bottom: 1px solid var( --studio-gray-90 );
 			}
 		}
 	}
 
-	.masterbar:not(:has(.x-nav--2026-redesign)) {
+	.masterbar:not( :has( .x-nav--2026-redesign ) ) {
 		.x-nav-link__logo svg path {
-			fill: var(--studio-white);
+			fill: var( --studio-white );
 		}
 
 		.x-nav-item,
 		.x-nav-link-chevron::before {
-			color: var(--studio-white);
+			color: var( --studio-white );
 		}
 
 		.x-nav-item .cta-btn-nav {
-			background: var(--studio-white) !important;
-			color: var(--studio-black) !important;
+			background: var( --studio-white ) !important;
+			color: var( --studio-black ) !important;
 		}
 	}
 
@@ -81,32 +81,30 @@
 	// Scoped to the CLOSED state: when a dropdown is open OR the page is scrolled the nav
 	// turns white, so the text must switch back to dark (handled below) to stay legible.
 	.lpc-header-nav-container:not(
-			:has(.x-dropdown--2026.x-dropdown-content[aria-hidden="false"])
-		):not(.is-scrolled)
+			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+		):not( .is-scrolled )
 		.x-nav--2026-redesign
 		.x-nav-item {
-		color: var(--studio-white) !important;
+		color: var( --studio-white ) !important;
 
 		// Match the chevron arrow to the white text over the dark hero (the package draws
 		// it navy by default). Pairs with the dark flip in the scrolled/open rule below, so
 		// the chevron transitions colour in step with the text in both directions.
 		.x-nav-link-chevron::before {
-			border-color: var(--studio-white);
+			border-color: var( --studio-white );
 		}
 	}
 
 	// Dropdown open or scrolled: the nav bar is white, so logo/text/chevron revert to dark
 	// for contrast against the white surface (matching the light-hero sections).
-	.lpc-header-nav-container:has(
-			.x-dropdown--2026.x-dropdown-content[aria-hidden="false"]
-		),
+	.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] ),
 	.lpc-header-nav-container.is-scrolled {
 		.x-nav--2026-redesign .x-nav-item {
-			color: var(--studio-gray-100) !important;
+			color: var( --studio-gray-100 ) !important;
 		}
 
 		.x-nav-link__logo svg path {
-			fill: var(--studio-gray-100);
+			fill: var( --studio-gray-100 );
 		}
 
 		// Flip the chevron arrow dark to match the text on the white bar (it's white at the
@@ -114,7 +112,7 @@
 		// `::before`'s existing `border-color 0.22s` transition animate it in step with the
 		// text. No `!important` — this container-scoped selector out-specifies the package.
 		.x-nav--2026-redesign .x-nav-item .x-nav-link-chevron::before {
-			border-color: var(--studio-gray-100);
+			border-color: var( --studio-gray-100 );
 		}
 	}
 
@@ -123,7 +121,7 @@
 	// clears the nav elsewhere) would instead push the dark band down and leave a
 	// white strip behind the nav — so on the 2026 path drop that padding and pad the
 	// hero's inner content down by the nav height (64px) instead.
-	&:has(.x-nav--2026-redesign) {
+	&:has( .x-nav--2026-redesign ) {
 		.layout__content {
 			padding-top: 0;
 		}
@@ -136,10 +134,10 @@
 			// double-count the admin bar logged-in). Add it on top of legacy's own two-tier
 			// breathing room (105 / 90, from components/header/style.scss) so the nav→heading
 			// gap matches legacy at every breakpoint, with the nav height not duplicated here.
-			padding-top: calc(105px + var(--nav-2026-height));
+			padding-top: calc( 105px + var( --nav-2026-height ) );
 
-			@media (max-width: $break-xlarge) {
-				padding-top: calc(90px + var(--nav-2026-height));
+			@media ( max-width: $break-xlarge ) {
+				padding-top: calc( 90px + var( --nav-2026-height ) );
 			}
 		}
 	}

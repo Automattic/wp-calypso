@@ -1,9 +1,19 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ClickableItemProps, MenuItemProps } from '../types';
 
-export const NonClickableItem = ( { content, className, ariaExpanded }: MenuItemProps ) => {
+export const NonClickableItem = ( {
+	content,
+	className,
+	ariaExpanded,
+	ariaControls,
+}: MenuItemProps ) => {
 	return (
-		<button role="menuitem" className={ className } aria-expanded={ ariaExpanded }>
+		<button
+			role="menuitem"
+			className={ className }
+			aria-expanded={ ariaExpanded }
+			aria-controls={ ariaControls }
+		>
 			{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
 		</button>
 	);
