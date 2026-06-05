@@ -39,6 +39,7 @@ let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const UPDATE_BLOCK_CONTENT_TOOL_ID = 'jetpack-ai/update-block-content';
 
 jest.mock( '@wordpress/components', () => {
 	const react = jest.requireActual< typeof import('react') >( 'react' );
@@ -147,6 +148,13 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 			},
 		},
 	};
+}
+
+function installBigSkyProviderData( features: Record< string, boolean > = {} ) {
+	installAiEditorialReviewData( features );
+	( globalThis as any ).agentsManagerData.agentProviders = [
+		'https://widgets.wp.com/agents-manager/big-sky.provider.mjs',
+	];
 }
 
 function SuggestionsProbe( {
@@ -372,6 +380,38 @@ describe( 'useSuggestions', () => {
 	} );
 
 	it( 'keeps Optimize Title out of selected-block suggestions', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		mockCurrentPostType = 'page';
+		mockSelectedBlock = { clientId: 'b-selected', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
+	} );
+
+	it( 'omits Jetpack selected-block text suggestions on Big Sky Page Editor surfaces', () => {
+		installBigSkyProviderData( { optimizeTitleSuggestion: true } );
+		mockCurrentPostType = 'page';
+		mockSelectedBlock = { clientId: 'b-selected', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [] );
+		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
+	} );
+
+	it( 'keeps Jetpack selected-block text suggestions on Jetpack-only Page Editor surfaces', () => {
 		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
 		mockCurrentPostType = 'page';
 		mockSelectedBlock = { clientId: 'b-selected', name: 'core/paragraph' };
@@ -797,9 +837,31 @@ describe( 'toolProvider', () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
-			expect( names ).toContain( 'wpcom/update-block-content' );
+			expect( names ).toContain( UPDATE_BLOCK_CONTENT_TOOL_ID );
 			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
 			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
+		} );
+
+		it( 'keeps update-block-content available on Big Sky Page Editor surfaces', async () => {
+			installBigSkyProviderData();
+			installPostTypeMock( 'page' );
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( UPDATE_BLOCK_CONTENT_TOOL_ID );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
+		} );
+
+		it( 'keeps update-block-content on Jetpack-only Page Editor surfaces', async () => {
+			installAiEditorialReviewData();
+			installPostTypeMock( 'page' );
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( UPDATE_BLOCK_CONTENT_TOOL_ID );
+			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
@@ -808,11 +870,22 @@ describe( 'toolProvider', () => {
 			const legacyShowComponent = abilities.find(
 				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
 			);
-			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
+			const updateBlock = abilities.find( ( a: any ) => a.name === UPDATE_BLOCK_CONTENT_TOOL_ID );
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
 			expect( typeof legacyShowComponent?.callback ).toBe( 'function' );
 			expect( typeof updateBlock?.callback ).toBe( 'function' );
+		} );
+
+		it( 'includes routing instructions on update-block-content', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find( ( a: any ) => a.name === UPDATE_BLOCK_CONTENT_TOOL_ID );
+
+			expect( updateBlock?.meta?.instructions ).toContain(
+				'Jetpack AI Sidebar selected text-block'
+			);
+			expect( updateBlock?.meta?.instructions ).toContain( 'jetpack_ai__update_block_content' );
+			expect( updateBlock?.meta?.instructions ).toContain( 'wpcom__rewrite_content' );
 		} );
 
 		it( 'preserves Big Sky abilities exposed through wp.abilities', async () => {
@@ -889,7 +962,7 @@ describe( 'toolProvider', () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
-			expect( names ).not.toContain( 'wpcom/update-block-content' );
+			expect( names ).not.toContain( UPDATE_BLOCK_CONTENT_TOOL_ID );
 			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
 			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
@@ -1119,11 +1192,13 @@ function installWpDataMockWithBlockEditor(
 			name: 'core/paragraph',
 			attributes: { content: 'original block content' },
 		},
-	}
+	},
+	selectedClientId?: string
 ) {
 	const editorState: { title: string } = { title: 'original' };
 	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
 	const selectedClientIds: string[] = [];
+	let selectedBlockClientId = selectedClientId;
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -1137,6 +1212,10 @@ function installWpDataMockWithBlockEditor(
 					return {
 						getBlock: ( clientId: string ) =>
 							blocks[ clientId ] ? { clientId, ...blocks[ clientId ] } : null,
+						getSelectedBlock: () =>
+							selectedBlockClientId && blocks[ selectedBlockClientId ]
+								? { clientId: selectedBlockClientId, ...blocks[ selectedBlockClientId ] }
+								: null,
 						getBlocks: () =>
 							Object.entries( blocks ).map( ( [ clientId, block ] ) => ( {
 								clientId,
@@ -1168,6 +1247,7 @@ function installWpDataMockWithBlockEditor(
 							}
 						},
 						selectBlock: ( clientId: string ) => {
+							selectedBlockClientId = clientId;
 							selectedClientIds.push( clientId );
 						},
 					};
@@ -1415,6 +1495,42 @@ describe( 'applyReviewEdit', () => {
 				attrs: { content: 'Hello world, this is my first post.' },
 			},
 		] );
+		warn.mockRestore();
+	} );
+
+	it( 'falls back to the selected block when the clientId is compressed', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor(
+			{
+				'live-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'hello world' },
+				},
+			},
+			'live-client-id'
+		);
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit( 'short-id', 'hola mundo' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			clientId: 'live-client-id',
+			contentBefore: 'hello world',
+			contentAfter: 'hola mundo',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'live-client-id',
+				attrs: { content: 'hola mundo' },
+			},
+		] );
+		expect( warn ).toHaveBeenCalledWith(
+			'[ReviewMediation] stale clientId matched selected block',
+			expect.any( Object )
+		);
 		warn.mockRestore();
 	} );
 

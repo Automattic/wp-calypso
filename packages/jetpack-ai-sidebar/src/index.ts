@@ -39,6 +39,7 @@ import {
 } from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
+	LEGACY_UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
@@ -145,6 +146,50 @@ function isOptimizeTitleSuggestionEnabled(): boolean {
 
 function isBlockTransformationsEnabled(): boolean {
 	return isJetpackAiSidebarPreviewFeatureEnabled( 'blockTransformations', true );
+}
+
+function providerEntryLooksLikeDesignProvider( providerEntry: unknown ): boolean {
+	const providerSource =
+		typeof providerEntry === 'string'
+			? providerEntry
+			: [
+					( providerEntry as any )?.id,
+					( providerEntry as any )?.name,
+					( providerEntry as any )?.url,
+					( providerEntry as any )?.src,
+			  ]
+					.filter( ( value ) => typeof value === 'string' )
+					.join( ' ' );
+
+	return /big[-_]?sky|dolly/i.test( providerSource );
+}
+
+function hasDesignProviderActive(): boolean {
+	const data = getAgentsManagerData() as any;
+	const providers = Array.isArray( data?.agentProviders ) ? data.agentProviders : [];
+
+	return (
+		providers.some( providerEntryLooksLikeDesignProvider ) ||
+		typeof ( window as any ).bigSkyInitialState !== 'undefined' ||
+		!! data?.bigSkyVersion ||
+		!! data?.siteMetadata?.big_sky_version
+	);
+}
+
+function isDesignEditorSurface(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	const pathname = window.location.pathname;
+
+	return currentPostType === 'page' || pathname.includes( 'site-editor.php' );
+}
+
+function shouldProvideBlockTransformations( currentPostType?: string ): boolean {
+	if ( ! isBlockTransformationsEnabled() ) {
+		return false;
+	}
+
+	return ! ( isDesignEditorSurface( currentPostType ) && hasDesignProviderActive() );
 }
 
 function getCurrentEditorPostType(): string | undefined {
@@ -402,8 +447,8 @@ export function useAbilitiesSetup( actions: {
 
 /**
  * Normalize an ability name to the format used by agenttic-client for matching.
- * @param {string} name - Ability name (e.g., 'wpcom/update-block-content').
- * @returns {string} Normalized name (e.g., 'wpcom__update_block_content').
+ * @param {string} name - Ability name (e.g., 'jetpack-ai/update-block-content').
+ * @returns {string} Normalized name (e.g., 'jetpack_ai__update_block_content').
  */
 function normalizeAbilityName( name: string ): string {
 	return name.replace( /\//g, '__' ).replace( /-/g, '_' );
@@ -440,7 +485,7 @@ function isShowComponentTool( toolId: string ): boolean {
 
 export const toolProvider = {
 	/**
-	 * Client-side abilities this provider handles: `wpcom/update-block-content`
+	 * Client-side abilities this provider handles: `jetpack-ai/update-block-content`
 	 * (block edits + summary) and Jetpack show-component tools (interactive
 	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
@@ -463,6 +508,7 @@ export const toolProvider = {
 
 		const externalLegacyShowComponentAvailable = hasLegacyShowComponentAbility( abilities );
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
+		abilities = filterAbility( abilities, LEGACY_UPDATE_BLOCK_CONTENT_TOOL_ID );
 		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
 		const jetpackAbilities = [
 			...( isBlockTransformationsEnabled()
@@ -794,7 +840,7 @@ function trackRenderedBlockTransformationSuggestions(
 }
 
 function trackBlockTransformationSuggestionClickForValue( value: string ): void {
-	if ( ! isBlockTransformationsEnabled() ) {
+	if ( ! shouldProvideBlockTransformations() ) {
 		return;
 	}
 
@@ -923,7 +969,7 @@ export function useSuggestions(
 
 	const selectedBlock = editorContext.selectedBlock;
 	const aiEditorialReviewSuggestions = getAiEditorialReviewSuggestions( editorContext.postType );
-	const blockTransformationsEnabled = isBlockTransformationsEnabled();
+	const blockTransformationsEnabled = shouldProvideBlockTransformations( editorContext.postType );
 	const applicable = useMemo(
 		() =>
 			selectedBlock && blockTransformationsEnabled
