@@ -102,6 +102,7 @@ import {
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 	hasScheduledDowngrade,
+	getTargetPlanTitle,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
@@ -122,26 +123,6 @@ const SPACING = {
 	DEFAULT: 6,
 	SMALL: 4,
 };
-
-/**
- * Resolves a product slug (e.g. "value_bundle_monthly") to its display name.
- * Used for the scheduled downgrade target plan title.
- */
-function getTargetPlanTitle( slug: string ): string {
-	if ( slug.startsWith( 'personal-bundle' ) ) {
-		return __( 'Personal' );
-	}
-	if ( slug.startsWith( 'value_bundle' ) ) {
-		return __( 'Premium' );
-	}
-	if ( slug.startsWith( 'business-bundle' ) ) {
-		return __( 'Business' );
-	}
-	if ( slug.startsWith( 'ecommerce-bundle' ) ) {
-		return __( 'Commerce' );
-	}
-	return slug;
-}
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );

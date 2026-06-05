@@ -1,5 +1,6 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -14,6 +15,7 @@ import { wordpress } from '@wordpress/icons';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { hasScheduledDowngrade, getTargetPlanTitle } from '../../utils/purchase';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -219,6 +221,20 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 				: __( 'Upgrade to access more Jetpack tools.' );
 		case WooHostedPlans.WOO_HOSTED_FREE_PLAN:
 			return __( 'Upgrade to keep your online store.' );
+	}
+
+	if (
+		purchase &&
+		hasScheduledDowngrade( purchase ) &&
+		purchase.is_auto_renew_enabled &&
+		isEnabled( 'plans/scheduled-plan-downgrade' )
+	) {
+		const targetTitle = getTargetPlanTitle( purchase.scheduled_downgrade_product_slug ?? '' );
+		return sprintf(
+			/* translators: %(plan)s is the target plan name */
+			__( 'Changing to %(plan)s at renewal.' ),
+			{ plan: targetTitle }
+		);
 	}
 
 	if ( purchase ) {

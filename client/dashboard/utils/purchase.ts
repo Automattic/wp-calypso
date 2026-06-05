@@ -40,6 +40,26 @@ export function hasScheduledDowngrade( purchase: Purchase ): boolean {
 }
 
 /**
+ * Resolves a product slug (e.g. "value_bundle_monthly") to its display name.
+ * Used for the scheduled downgrade target plan title.
+ */
+export function getTargetPlanTitle( slug: string ): string {
+	if ( slug.startsWith( 'personal-bundle' ) || slug.startsWith( 'starter-plan' ) ) {
+		return __( 'Personal' );
+	}
+	if ( slug.startsWith( 'value_bundle' ) ) {
+		return __( 'Premium' );
+	}
+	if ( slug.startsWith( 'business-bundle' ) ) {
+		return __( 'Business' );
+	}
+	if ( slug.startsWith( 'ecommerce-bundle' ) ) {
+		return __( 'Commerce' );
+	}
+	return slug;
+}
+
+/**
  * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
  */
 export function isFailedAutoRenewal( purchase: Purchase ): boolean {

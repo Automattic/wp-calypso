@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Icon, Popover, Button } from '@wordpress/components';
@@ -14,6 +15,8 @@ import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
 	isRenewing,
+	hasScheduledDowngrade,
+	getTargetPlanTitle,
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
@@ -432,6 +435,23 @@ export function getFields( {
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				if (
+					hasScheduledDowngrade( item ) &&
+					item.is_auto_renew_enabled &&
+					isEnabled( 'plans/scheduled-plan-downgrade' )
+				) {
+					return (
+						<div>
+							{ sprintf(
+								/* translators: %(plan)s is the target plan name */
+								__( 'Changing to %(plan)s at renewal' ),
+								{
+									plan: getTargetPlanTitle( item.scheduled_downgrade_product_slug ?? '' ),
+								}
+							) }
+						</div>
+					);
+				}
 				return (
 					<div>
 						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
