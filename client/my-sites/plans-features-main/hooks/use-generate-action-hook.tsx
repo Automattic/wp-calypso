@@ -592,6 +592,7 @@ function getLoggedInPlansAction( {
 
 	// Show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
 	// Applies to expired plans, change-plan flow, or when active downgrade flags are on.
+	// When `isStuck` and the target is an upgrade, fall through to the sticky-price block below.
 	if (
 		( isPlanExpired || isChangePlanFlow || getActiveDowngradeVariant() !== 'control' ) &&
 		sitePlanSlug &&
@@ -607,7 +608,9 @@ function getLoggedInPlansAction( {
 					: translate( 'Downgrade', { context: 'verb' } );
 			return createLoggedInPlansAction( downgradeLabel, 'secondary' );
 		}
-		return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );
+		if ( ! isStuck ) {
+			return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );
+		}
 	}
 
 	/**

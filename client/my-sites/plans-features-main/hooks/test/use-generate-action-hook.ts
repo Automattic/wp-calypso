@@ -23,6 +23,9 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 jest.mock( '@wordpress/data' );
 jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
+jest.mock( 'calypso/lib/purchases/active-downgrade-variant', () => ( {
+	getActiveDowngradeVariant: jest.fn( () => 'control' ),
+} ) );
 
 import {
 	PLAN_BUSINESS,
