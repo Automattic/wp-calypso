@@ -50,6 +50,7 @@ export function CancelScheduledDowngradeDialog( {
 			__experimentalHideHeader={ false }
 			title={ String( __( 'Keep your current plan?' ) ) }
 			size="small"
+			closeButtonLabel={ String( __( 'Close' ) ) }
 			confirmButtonText={ String( __( 'Keep my plan' ) ) }
 			cancelButtonText={ String( __( 'Not now' ) ) }
 			isOpen={ isOpen }

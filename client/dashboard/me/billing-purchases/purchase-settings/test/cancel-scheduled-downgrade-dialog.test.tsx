@@ -2,6 +2,11 @@
  * @jest-environment jsdom
  */
 
+// Prevent the import chain from pulling in server-side wpcom/superagent.
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: { get: jest.fn(), post: jest.fn() },
+} ) );
+
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
