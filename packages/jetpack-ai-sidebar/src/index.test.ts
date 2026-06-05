@@ -229,6 +229,16 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
+	it( 'shows Optimize Title on page editors when the preview feature enables it', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		installPostTypeMock( 'page' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
+	} );
+
 	it( 'hides AI Editorial Review until the post type is known', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock();
@@ -358,6 +368,38 @@ describe( 'useSuggestions', () => {
 					surface: 'jetpack_ai_sidebar',
 				},
 			],
+		] );
+	} );
+
+	it( 'keeps Optimize Title out of selected-block suggestions', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		mockCurrentPostType = 'page';
+		mockSelectedBlock = { clientId: 'b-selected', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
+	} );
+
+	it( 'shows Optimize Title in Page Editor when no block is selected', () => {
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
+		mockCurrentPostType = 'page';
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Optimize Title',
 		] );
 	} );
 
