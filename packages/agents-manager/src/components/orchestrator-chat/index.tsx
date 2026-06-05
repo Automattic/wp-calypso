@@ -197,6 +197,16 @@ export default function OrchestratorChat( {
 		suggestionsVisible: isDocked || isOpen || isCompactMode,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const hasSelectedBlock = useSelect( ( select ) => {
+		try {
+			const blockEditorStore = select( 'core/block-editor' ) as {
+				getSelectedBlock?: () => unknown;
+			};
+			return !! blockEditorStore?.getSelectedBlock?.();
+		} catch {
+			return false;
+		}
+	}, [] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
@@ -479,9 +489,15 @@ export default function OrchestratorChat( {
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	const shouldShowEmptySuggestions = displayedMessages.length === 0 && inputValue.length === 0;
+	const agentticSuggestions =
+		hasSelectedBlock && dynamicSuggestionsList.length > 0 ? [] : suggestions;
 	const registeredSuggestions = shouldShowEmptySuggestions
-		? mergeSuggestionsById( dynamicSuggestionsList, suggestions, emptyViewSuggestions )
-		: mergeSuggestionsById( dynamicSuggestionsList, suggestions );
+		? mergeSuggestionsById(
+				dynamicSuggestionsList,
+				agentticSuggestions,
+				hasSelectedBlock ? [] : emptyViewSuggestions
+		  )
+		: mergeSuggestionsById( dynamicSuggestionsList, agentticSuggestions );
 	const activeSuggestions = shouldShowEmptySuggestions ? [] : registeredSuggestions;
 	const activeSuggestionsKey = JSON.stringify(
 		registeredSuggestions.map( ( s ) => [ s.id, s.label, s.prompt ] )
