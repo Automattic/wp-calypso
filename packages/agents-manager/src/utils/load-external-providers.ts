@@ -177,9 +177,98 @@ type AbilityProviderEntry = {
 	abilityName: string;
 };
 
+type ProviderClientContext = ReturnType< ContextProvider[ 'getClientContext' ] >;
+
 const BIG_SKY_SHOW_COMPONENT_ABILITY = 'big-sky/show-component';
 const BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID = 'big-sky-show-component';
 const BIG_SKY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+
+function mergeContextEntries(
+	firstEntries?: ProviderClientContext[ 'contextEntries' ],
+	secondEntries?: ProviderClientContext[ 'contextEntries' ]
+): ProviderClientContext[ 'contextEntries' ] | undefined {
+	const entries = [ ...( firstEntries || [] ), ...( secondEntries || [] ) ];
+	if ( entries.length === 0 ) {
+		return undefined;
+	}
+
+	const merged = [];
+	const seenIds = new Set< string >();
+	for ( const entry of entries ) {
+		if ( entry?.id && seenIds.has( entry.id ) ) {
+			continue;
+		}
+		if ( entry?.id ) {
+			seenIds.add( entry.id );
+		}
+		merged.push( entry );
+	}
+	return merged;
+}
+
+function isEmptyContextValue( value: unknown ): boolean {
+	return value === undefined || value === null || value === '';
+}
+
+function isPlainRecord( value: unknown ): value is Record< string, unknown > {
+	return !! value && typeof value === 'object' && ! Array.isArray( value );
+}
+
+function mergeClientContexts(
+	firstContext: ProviderClientContext,
+	secondContext: ProviderClientContext
+): ProviderClientContext {
+	const merged = { ...firstContext };
+
+	for ( const [ key, value ] of Object.entries( secondContext ) ) {
+		if ( key === 'contextEntries' ) {
+			continue;
+		}
+
+		const existing = merged[ key ];
+		if (
+			[ 'constructorArguments', 'currentScreen', 'siteEditorActions' ].includes( key ) &&
+			isPlainRecord( existing ) &&
+			isPlainRecord( value )
+		) {
+			merged[ key ] = { ...value, ...existing };
+			continue;
+		}
+
+		if ( isEmptyContextValue( existing ) && ! isEmptyContextValue( value ) ) {
+			merged[ key ] = value;
+		}
+	}
+
+	const contextEntries = mergeContextEntries(
+		firstContext.contextEntries,
+		secondContext.contextEntries
+	);
+	if ( contextEntries ) {
+		merged.contextEntries = contextEntries;
+	}
+
+	return merged;
+}
+
+export function mergeContextProviders(
+	contextProviders: ContextProvider[]
+): ContextProvider | undefined {
+	if ( contextProviders.length === 0 ) {
+		return undefined;
+	}
+
+	if ( contextProviders.length === 1 ) {
+		return contextProviders[ 0 ];
+	}
+
+	return {
+		getClientContext: () =>
+			contextProviders
+				.map( ( contextProvider ) => contextProvider.getClientContext() )
+				.reduce( mergeClientContexts ),
+	};
+}
 
 function getProviderAgentMessage( result: unknown ): string | undefined {
 	if ( ! result || typeof result !== 'object' ) {
@@ -304,7 +393,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedContextProvider: ContextProvider | undefined;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
@@ -320,6 +408,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
+	const allContextProviders: ContextProvider[] = [];
 	const allGetChatComponents: Array< {
 		getChatComponent: GetChatComponent;
 		toolProvider?: ToolProvider;
@@ -360,6 +449,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.toolProvider ) {
 			allToolProviders.push( module.toolProvider );
 		}
+		if ( module.contextProvider ) {
+			allContextProviders.push( module.contextProvider );
+		}
 		if ( module.getChatComponent ) {
 			allGetChatComponents.push( {
 				getChatComponent: module.getChatComponent,
@@ -377,9 +469,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 
 		// First-write-wins for singleton exports.
-		if ( module.contextProvider && ! mergedContextProvider ) {
-			mergedContextProvider = module.contextProvider;
-		}
 		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
 			mergedMarkdownComponents = module.markdownComponents;
 		}
@@ -492,6 +581,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			},
 		};
 	}
+
+	const mergedContextProvider = mergeContextProviders( allContextProviders );
 
 	// Merge getChatComponent: try each provider, return first non-null.
 	if ( allGetChatComponents.length === 1 ) {

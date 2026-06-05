@@ -6,6 +6,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type { Suggestion } from '@automattic/agenttic-ui';
 
 const mockUseAgentChat = jest.fn();
+let mockSelectedBlock: unknown;
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -18,11 +19,18 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: ( mapSelect: ( select: () => unknown ) => unknown ) =>
-		mapSelect( () => ( {
-			getCurrentPostId: () => undefined,
-			getCurrentPostType: () => undefined,
-		} ) ),
+	useSelect: ( mapSelect: ( select: ( storeName?: string ) => unknown ) => unknown ) =>
+		mapSelect( ( storeName?: string ) => {
+			if ( storeName === 'core/block-editor' ) {
+				return {
+					getSelectedBlock: () => mockSelectedBlock,
+				};
+			}
+			return {
+				getCurrentPostId: () => undefined,
+				getCurrentPostType: () => undefined,
+			};
+		} ),
 } ) );
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
@@ -110,6 +118,7 @@ import OrchestratorChat from '../orchestrator-chat';
 
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
+		mockSelectedBlock = undefined;
 		mockUseAgentChat.mockReturnValue( {
 			addMessage: jest.fn(),
 			messages: [],
@@ -369,5 +378,123 @@ describe( 'OrchestratorChat', () => {
 			optimizeTitleSuggestion,
 			bigSkySuggestion,
 		] );
+	} );
+
+	it( 'does not append empty-view suggestions when a block is selected', () => {
+		const textBlockSuggestion = {
+			id: 'translate',
+			label: 'Translate content',
+			prompt: 'Translate this to:',
+		};
+		const bigSkySuggestion = {
+			id: 'customize-colors',
+			label: 'Change colors',
+			prompt: 'Show me color palettes for my site',
+		};
+		const registerSuggestions = jest.fn();
+		const useSuggestions = jest.fn( () => ( { suggestions: [ textBlockSuggestion ] } ) );
+		mockSelectedBlock = { clientId: 'block-1', name: 'core/paragraph' };
+
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [],
+			suggestions: [],
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions,
+			registerMessageActions: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [ bigSkySuggestion ] }
+				isDocked
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByTestId( 'empty-view-suggestions' ).textContent ).toContain(
+			'Translate content'
+		);
+		expect( screen.getByTestId( 'empty-view-suggestions' ).textContent ).not.toContain(
+			'Change colors'
+		);
+		expect( registerSuggestions ).toHaveBeenCalledWith( [ textBlockSuggestion ] );
+	} );
+
+	it( 'ignores stale Agenttic suggestions when selected-block provider suggestions are available', () => {
+		const textBlockSuggestion = {
+			id: 'translate',
+			label: 'Translate content',
+			prompt: 'Translate this to:',
+		};
+		const staleImageSuggestion = {
+			id: 'generate-image',
+			label: 'Generate image',
+			prompt: 'Generate an image of:',
+		};
+		const globalSuggestion = {
+			id: 'customize-colors',
+			label: 'Change colors',
+			prompt: 'Show me color palettes for my site',
+		};
+		const registerSuggestions = jest.fn();
+		const useSuggestions = jest.fn( () => ( { suggestions: [ textBlockSuggestion ] } ) );
+		mockSelectedBlock = { clientId: 'block-1', name: 'core/paragraph' };
+
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [],
+			suggestions: [ staleImageSuggestion ],
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions,
+			registerMessageActions: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [ globalSuggestion ] }
+				isDocked
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByTestId( 'empty-view-suggestions' ).textContent ).toContain(
+			'Translate content'
+		);
+		expect( screen.getByTestId( 'empty-view-suggestions' ).textContent ).not.toContain(
+			'Generate image'
+		);
+		expect( screen.getByTestId( 'empty-view-suggestions' ).textContent ).not.toContain(
+			'Change colors'
+		);
+		expect( registerSuggestions ).toHaveBeenCalledWith( [ textBlockSuggestion ] );
 	} );
 } );
