@@ -37,6 +37,7 @@
 		"mcp-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
+		"plans/expired-downgrade": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
