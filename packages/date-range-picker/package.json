@@ -97,7 +97,7 @@
 		"mockdate": "^2.0.5",
 		"postcss": "^8.5.3",
 		"sass": "1.77.8",
-		"typescript": "^5.9.3",
+		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
 	}
 }
