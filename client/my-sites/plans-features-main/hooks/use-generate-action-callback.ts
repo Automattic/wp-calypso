@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	PRODUCT_1GB_SPACE,
@@ -155,7 +156,11 @@ function useDowngradeHandler( {
 			// If the server says the plan supports a self-service downgrade and the current
 			// plan is expired, send the user directly to checkout.
 			const targetPlan = sitePlansData?.find( ( p ) => p.productSlug === planSlug );
-			if ( targetPlan?.availableForDowngrade && currentPlanExpired ) {
+			if (
+				isEnabled( 'plans/expired-downgrade' ) &&
+				targetPlan?.availableForDowngrade &&
+				currentPlanExpired
+			) {
 				const planPath = getPlanPath( planSlug ) ?? '';
 				const checkoutUrl = `/checkout/${ siteSlug }/${ planPath }`;
 				window.location.href = addQueryArgs(

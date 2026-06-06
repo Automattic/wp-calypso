@@ -435,6 +435,7 @@ const PlansFeaturesMain = ( {
 		// For expired plans, intercept paid-plan downgrades to show a confirmation modal.
 		// Free-plan downgrades are handled separately (they route to the cancel flow).
 		if (
+			config.isEnabled( 'plans/expired-downgrade' ) &&
 			isPlanExpired &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
