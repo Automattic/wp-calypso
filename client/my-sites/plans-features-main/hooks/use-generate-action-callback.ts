@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	PRODUCT_1GB_SPACE,
@@ -21,14 +20,12 @@ import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
-import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
 import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 
 function useUpgradeHandler( {
 	siteSlug,
@@ -126,47 +123,19 @@ function useDowngradeHandler( {
 	siteSlug,
 	siteUrl,
 	currentPlan,
-	currentPlanExpired,
-	sitePlansData,
-	coupon,
-	redirectTo,
 }: {
 	siteSlug?: string | null;
 	siteUrl?: string | null;
 	currentPlan: Plans.SitePlan | undefined;
-	currentPlanExpired: boolean;
-	sitePlansData: SitePlanData[] | null;
-	coupon?: string;
-	redirectTo?: string;
 } ) {
 	const { setNewMessagingChat, setNavigateToOdie } = useDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
-			// Use full navigations rather than `page()` below because this grid can be
-			// rendered inside the Stepper, where the `page` router is not initialized.
-
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) ) {
-				window.location.href = cancelPurchase( siteSlug, currentPlan?.purchaseId );
-				return;
-			}
-
-			// If the server says the plan supports a self-service downgrade and the current
-			// plan is expired, send the user directly to checkout.
-			const targetPlan = sitePlansData?.find( ( p ) => p.productSlug === planSlug );
-			if (
-				isEnabled( 'plans/expired-downgrade' ) &&
-				targetPlan?.availableForDowngrade &&
-				currentPlanExpired
-			) {
-				const planPath = getPlanPath( planSlug ) ?? '';
-				const checkoutUrl = `/checkout/${ siteSlug }/${ planPath }`;
-				window.location.href = addQueryArgs(
-					{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
-					checkoutUrl
-				);
+				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
 				return;
 			}
 
@@ -181,10 +150,6 @@ function useDowngradeHandler( {
 		},
 		[
 			currentPlan?.purchaseId,
-			currentPlanExpired,
-			sitePlansData,
-			coupon,
-			redirectTo,
 			setNewMessagingChat,
 			siteUrl,
 			siteSlug,
@@ -227,10 +192,6 @@ function useGenerateActionCallback( {
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
-	const sitePlansData = useSelector( ( state: IAppState ) =>
-		siteId ? getPlansBySiteId( state, siteId )?.data : null
-	);
-	const currentPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
@@ -252,10 +213,6 @@ function useGenerateActionCallback( {
 		siteSlug,
 		siteUrl: siteUrl || '',
 		currentPlan,
-		currentPlanExpired,
-		sitePlansData: sitePlansData ?? null,
-		coupon,
-		redirectTo,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 
