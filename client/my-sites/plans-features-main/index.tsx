@@ -938,6 +938,10 @@ const PlansFeaturesMain = ( {
 							return;
 						}
 						setPendingDowngradePlanSlug( null );
+						recordTracksEvent( 'calypso_plan_features_downgrade_click', {
+							current_plan: sitePlanSlug,
+							downgrading_to: pendingDowngradePlanSlug,
+						} );
 						// Use a full navigation rather than `page()` because this grid can be
 						// rendered inside the Stepper, where the `page` router is not initialized.
 						window.location.href = addQueryArgs(
