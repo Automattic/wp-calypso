@@ -52,18 +52,24 @@ export async function cancelSubscriptionFlow( page: Page ) {
  *
  * Matching all of these keeps the flow robust regardless of which variant is
  * served. `exact: true` ensures "Continue" does not also resolve "Continue
- * removal" (and vice versa), so the locator never matches two buttons at once.
+ * removal" (and vice versa).
+ *
+ * The locator is scoped to the survey's `.cancel-purchase-form` container. The
+ * survey renders as an overlay on top of the cancellation confirmation screen,
+ * whose own primary button can share a label (e.g. "Continue removal"); scoping
+ * avoids matching that underlying button and tripping strict-mode violations.
  *
  * @param {Page} page Page object the survey is rendered on.
  * @returns {Locator} Locator matching the survey's primary step button.
  */
 function surveyStepButton( page: Page ): Locator {
-	return page
+	const surveyForm = page.locator( '.cancel-purchase-form' );
+	return surveyForm
 		.getByRole( 'button', { name: 'Submit', exact: true } )
-		.or( page.getByRole( 'button', { name: 'Continue', exact: true } ) )
-		.or( page.getByRole( 'button', { name: 'Complete', exact: true } ) )
-		.or( page.getByRole( 'button', { name: 'Continue removal', exact: true } ) )
-		.or( page.getByRole( 'button', { name: 'Complete removal', exact: true } ) );
+		.or( surveyForm.getByRole( 'button', { name: 'Continue', exact: true } ) )
+		.or( surveyForm.getByRole( 'button', { name: 'Complete', exact: true } ) )
+		.or( surveyForm.getByRole( 'button', { name: 'Continue removal', exact: true } ) )
+		.or( surveyForm.getByRole( 'button', { name: 'Complete removal', exact: true } ) );
 }
 
 /**
