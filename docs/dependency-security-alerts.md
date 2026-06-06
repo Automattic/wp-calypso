@@ -19,7 +19,7 @@ For each open alert, identify:
 - whether a matching PR exists
 - whether the matching PR is safe and useful
 
-Dependabot is the alert source. Dependabot, Renovate, or a manual PR can be the remediation vehicle.
+Dependabot is the alert source. A Dependabot PR or a manual remediation PR can be the remediation vehicle.
 
 ## Required access
 
@@ -94,42 +94,6 @@ gh pr list --repo Automattic/wp-calypso --state open --app dependabot --limit 10
 	}'
 ```
 
-### Open Renovate dependency PRs
-
-Renovate PRs in this repo are commonly opened by `matticbot`.
-
-```bash
-gh pr list --repo Automattic/wp-calypso --state open --author matticbot --limit 200 \
-	--json number,title,url,headRefName,labels,createdAt,updatedAt \
-	--jq '.[] |
-		select((.headRefName | test("^renovate/")) or ([ .labels[].name ] | index("dependencies"))) |
-		{
-			number,
-			title,
-			url,
-			headRefName,
-			createdAt,
-			updatedAt,
-			labels: [ .labels[].name ]
-		}'
-```
-
-### Security-labeled PRs
-
-```bash
-gh pr list --repo Automattic/wp-calypso --state open --label Security --limit 100 \
-	--json number,title,url,author,labels,createdAt,updatedAt \
-	--jq '.[] | {
-		number,
-		title,
-		url,
-		author: .author.login,
-		createdAt,
-		updatedAt,
-		labels: [ .labels[].name ]
-	}'
-```
-
 ### PR readiness
 
 Use `gh pr checks`, not only `statusCheckRollup`, when deciding whether Calypso CI is ready.
@@ -152,9 +116,8 @@ Use this order:
 3. Check whether Dependabot opened a PR that actually fixes that alert.
 4. If the Dependabot PR is clean, verify required checks and review state.
 5. If the Dependabot PR is grouped, stale, conflicted, or too broad, treat it as inventory and prepare a smaller remediation PR.
-6. If Renovate opened a nearby dependency PR, verify that it closes the same alert before treating it as a security fix.
-7. If no useful bot PR exists, choose the smallest manual remediation path.
-8. After a remediation PR merges and deploys, re-query GitHub alerts.
+6. If no useful bot PR exists, choose the smallest manual remediation path.
+7. After a remediation PR merges and deploys, re-query GitHub alerts.
 
 Dismissed alerts are not the same as fixed alerts. Treat `fixed_at` as resolved remediation work; treat `dismissed_at` as accepted, irrelevant, or otherwise documented risk until you read the dismissal reason.
 
@@ -179,12 +142,6 @@ Critical or actively exploited alerts can move sooner after required checks pass
 
 During the wait, classify the item as "track and wait", not "ready to merge".
 
-## Dependabot versus Renovate
-
-Dependabot creates GitHub security alerts and can open security PRs.
-
-Renovate creates dependency maintenance PRs. A Renovate PR can be useful, but it is not automatically the security fix.
-
 Use this rule:
 
 > The alert is the remediation unit. The bot PR is only a possible vehicle.
@@ -200,8 +157,6 @@ Scan complete.
 
 - Open Dependabot alerts: <count>
 - Open Dependabot PRs: <count>
-- Open Renovate dependency PRs: <count>
-- Open security-labeled PRs: <count>
 
 Action needed:
 - <item>

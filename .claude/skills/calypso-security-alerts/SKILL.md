@@ -1,6 +1,6 @@
 ---
 name: calypso-security-alerts
-description: Provide advisory guidance for scanning Automattic/wp-calypso Dependabot alerts and dependency-security PRs using the public dependency security alerts playbook.
+description: Provide advisory guidance for scanning Automattic/wp-calypso Dependabot alerts and Dependabot remediation PRs using the public dependency security alerts playbook.
 allowed-tools: Read, Grep, Glob
 ---
 
@@ -35,7 +35,6 @@ Run from the repository root.
 - If open Dependabot alerts are empty, report that the active GitHub dependency alert queue is clear.
 - Prefer an existing Dependabot PR only when it fixes the alert and required checks pass.
 - Treat grouped Dependabot PRs as inventory unless they are clean enough to merge.
-- Treat Renovate PRs as normal dependency maintenance unless they close a current Dependabot alert.
 - If no useful bot PR exists, recommend the smallest manual remediation path.
 - During the dependency-age wait window, classify the item as "track and wait".
 - Use `gh pr checks`, not only `statusCheckRollup`, when deciding whether Calypso CI is ready.
@@ -47,8 +46,6 @@ Scan complete.
 
 - Open Dependabot alerts: <count>
 - Open Dependabot PRs: <count>
-- Open Renovate dependency PRs: <count>
-- Open security-labeled PRs: <count>
 
 Action needed:
 - <item>
