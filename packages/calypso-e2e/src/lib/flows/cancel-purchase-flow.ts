@@ -76,8 +76,11 @@ export async function cancelAtomicPurchaseFlow(
 		customReasonText: string;
 	}
 ) {
+	// The feedback question is worded by intent: "Why would you like to cancel?"
+	// on the cancel path and "Why would you like to remove?" on the refund-and-
+	// remove (`intent=remove`) path this flow now drives. Match either.
 	await page
-		.getByRole( 'combobox', { name: 'Why would you like to cancel?' } )
+		.getByRole( 'combobox', { name: /Why would you like to (cancel|remove)\?/ } )
 		.selectOption( feedback.reason );
 
 	await page
