@@ -1,6 +1,3 @@
-import './styles/global.css';
-import './embedded-agent-ui.css';
-
 export {
 	AgentUI,
 	EmbeddedAgentUI,

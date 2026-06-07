@@ -12,6 +12,11 @@ export default defineConfig( {
 					__dirname,
 					'src/embedded-agent-ui.ts'
 				),
+				'embedded-agent-ui.css': resolve(
+					__dirname,
+					'src/embedded-agent-ui.css'
+				),
+				'global.css': resolve( __dirname, 'src/styles/global.css' ),
 			},
 			name: 'AgentticUI',
 			fileName: ( format, entryName ) => `${ entryName }.js`,
