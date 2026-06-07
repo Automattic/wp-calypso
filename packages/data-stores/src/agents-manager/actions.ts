@@ -1,8 +1,6 @@
-import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { GeneratorReturnType } from '../mapped-types';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
+import { persistAgentsManagerState } from './persist-state';
 import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
-import type { APIFetchOptions } from '../shared-types';
 
 /**
  * Partial state object for saving agents manager preferences
@@ -51,23 +49,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 		return;
 	}
 
-	if ( canAccessWpcomApis() ) {
-		// Use the promise version to do that action without waiting for the result.
-		wpcomRequestPromise( {
-			path: '/agents-manager/state',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: { state: saveState },
-		} ).catch( () => {} );
-	} else {
-		// Use the promise version to do that action without waiting for the result.
-		apiFetchPromise( {
-			global: true,
-			path: '/agents-manager/open-state',
-			method: 'PUT',
-			data: saveState,
-		} as APIFetchOptions ).catch( () => {} );
-	}
+	persistAgentsManagerState( saveState );
 }
 
 export function setRouterHistory( history: PerSiteRouterHistory | undefined ) {
