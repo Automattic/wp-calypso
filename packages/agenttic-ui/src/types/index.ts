@@ -69,7 +69,7 @@ export interface AgentUIProps {
 	messages: Message[];
 	isProcessing: boolean;
 	error?: string | null;
-	onSubmit: ( message: string ) => void | Promise< void >;
+	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 
 	// UI-specific props
 	className?: string;
@@ -119,6 +119,10 @@ export interface AgentUIProps {
 
 	// Typing status callback
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
+
+	// Optional attachment controls for embedded consumers.
+	allowAttachments?: boolean;
+	acceptedFileTypes?: string[];
 }
 
 export interface NoticeConfig {

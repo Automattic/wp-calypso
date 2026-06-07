@@ -6,9 +6,15 @@ import { libInjectCss } from 'vite-plugin-lib-inject-css';
 export default defineConfig( {
 	build: {
 		lib: {
-			entry: resolve( __dirname, 'src/index.ts' ),
+			entry: {
+				index: resolve( __dirname, 'src/index.ts' ),
+				'embedded-agent-ui': resolve(
+					__dirname,
+					'src/embedded-agent-ui.ts'
+				),
+			},
 			name: 'AgentticUI',
-			fileName: 'index',
+			fileName: ( format, entryName ) => `${ entryName }.js`,
 			formats: [ 'es' ],
 		},
 		rollupOptions: {
