@@ -471,6 +471,51 @@ describe( 'loadExternalProviders', () => {
 		warnSpy.mockRestore();
 	} );
 
+	it( 'keeps last successful provider abilities when execution-time refresh fails', async () => {
+		const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
+		let shouldFailRefresh = false;
+		const executeAbility = jest.fn().mockResolvedValue( { result: { provider: 'jetpack' } } );
+		const provider = {
+			toolProvider: {
+				getAbilities: jest.fn( async () => {
+					if ( shouldFailRefresh ) {
+						throw new Error( 'transient provider failure' );
+					}
+					return [ { name: 'jetpack-ai/show-component' } ];
+				} ),
+				executeAbility,
+			},
+		};
+		const agentsManagerData = {
+			agentId: 'wp-orchestrator',
+			agentProviders: [ provider ],
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( await providers.toolProvider?.getAbilities() ).toEqual( [
+			{ name: 'jetpack-ai/show-component' },
+		] );
+
+		shouldFailRefresh = true;
+
+		await providers.toolProvider?.executeAbility( 'jetpack_ai__show_component', {
+			type: 'title-picker',
+		} );
+
+		expect( executeAbility ).toHaveBeenCalledWith( 'jetpack-ai/show-component', {
+			type: 'title-picker',
+		} );
+		expect( warnSpy ).toHaveBeenCalledWith(
+			'[AgentsManager] Failed to load abilities from provider:',
+			expect.any( Error )
+		);
+
+		warnSpy.mockRestore();
+	} );
+
 	it( 'adds callbacks for a single provider so UI agent messages are promoted', async () => {
 		const bigSkyResult = {
 			result: { success: true, message: 'Pick a palette.' },
