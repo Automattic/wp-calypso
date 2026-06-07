@@ -2,18 +2,18 @@
 
 .jetpack-footer {
 	display: flex;
-	border-top: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
+	border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
 	box-sizing: border-box;
-	color: var(--wpds-color-fg-content-neutral, #1e1e1e);
-	font-size: var(--wpds-font-size-md, 13px);
+	color: var(--wpds-color-fg-content-neutral);
+	font-size: var(--wpds-typography-font-size-md);
 	padding: var(--wpds-dimension-padding-xl) var(--wpds-dimension-padding-2xl);
 	width: 100%;
 
 	.jetpack-footer__menu-item {
-		font-family: var(--wpds-font-family-body);
-		font-size: var(--wpds-font-size-sm, 12px);
-		font-weight: var(--wpds-font-weight-regular, 400);
-		line-height: var(--wpds-font-line-height-xs, 16px);
+		font-family: var(--wpds-typography-font-family-body);
+		font-size: var(--wpds-typography-font-size-sm);
+		font-weight: var(--wpds-typography-font-weight-regular);
+		line-height: var(--wpds-typography-line-height-xs);
 		text-underline-offset: 0.2em;
 
 		&:any-link,
@@ -44,10 +44,10 @@
 }
 
 .jetpack-footer__logo-text {
-	font-family: var(--wpds-font-family-body);
-	font-size: var(--wpds-font-size-md);
-	font-weight: var(--wpds-font-weight-regular);
-	line-height: var(--wpds-font-line-height-sm);
+	font-family: var(--wpds-typography-font-family-body);
+	font-size: var(--wpds-typography-font-size-md);
+	font-weight: var(--wpds-typography-font-weight-regular);
+	line-height: var(--wpds-typography-line-height-sm);
 }
 
 a.jetpack-footer__a8c {

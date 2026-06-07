@@ -9,12 +9,12 @@ body.is-section-podcasting {
 // which Calypso's unlayered button reset overrides. Restore the package
 // defaults (16px horizontal padding) and add a separator under the tab bar.
 .podcast__tabs-bar {
-	border-block-end: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral );
 	margin-block-end: 24px;
 }
 
 .podcast__tabs [role='tab'] {
-	padding-inline: var( --wpds-dimension-padding-lg, 16px );
+	padding-inline: var( --wpds-dimension-padding-lg );
 }
 
 .podcast__section-header {
@@ -29,14 +29,14 @@ body.is-section-podcasting {
 	font-size: 28px;
 	font-weight: 400;
 	line-height: 1.2;
-	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+	color: var( --wpds-color-fg-content-neutral );
 }
 
 .podcast__section-description {
 	margin: 0;
 	font-size: 13px;
 	line-height: 1.4;
-	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+	color: var( --wpds-color-fg-content-neutral-weak );
 }
 
 .podcast__directory-list {
@@ -47,7 +47,7 @@ body.is-section-podcasting {
 
 .podcast__directory-row {
 	padding-block: 12px;
-	border-block-end: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral );
 
 	&:last-child {
 		border-block-end: none;
@@ -109,8 +109,8 @@ body.is-section-podcasting {
 	justify-content: center;
 	flex-direction: column;
 	gap: 4px;
-	border: 2px dashed var( --wpds-color-stroke-base-tertiary, #c3c4c7 );
-	background: var( --wpds-color-bg-surface-base-secondary, #f6f7f7 );
+	border: 2px dashed var( --wpds-color-stroke-surface-neutral );
+	background: var( --wpds-color-bg-surface-neutral-weak );
 	transition: border-color 0.15s ease, background-color 0.15s ease;
 
 	&::before {
@@ -118,13 +118,13 @@ body.is-section-podcasting {
 		font-size: 28px;
 		font-weight: 400;
 		line-height: 1;
-		color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+		color: var( --wpds-color-fg-content-neutral-weak );
 	}
 
 	&:hover:not( :disabled ),
 	&:focus-visible {
-		border-color: var( --wpds-color-stroke-status-info-strong, #007cba );
-		background: var( --wpds-color-bg-surface-base, #fff );
+		border-color: var( --wpds-color-stroke-surface-info-strong );
+		background: var( --wpds-color-bg-surface-neutral-strong );
 	}
 }
 
@@ -132,7 +132,7 @@ body.is-section-podcasting {
 	.podcast-cover-image-setting__placeholder {
 	font-style: normal;
 	font-size: 12px;
-	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+	color: var( --wpds-color-fg-content-neutral-weak );
 }
 
 .podcast__settings-cover
@@ -205,7 +205,7 @@ body.is-section-podcasting {
 	inset-block-start: 0;
 	inset-inline-end: 16px;
 	padding: 4px 10px;
-	background: var( --wpds-color-bg-content-neutral-medium, #50575e );
+	background: var( --wpds-color-bg-interactive-neutral-strong );
 	color: #fff;
 	font-size: 10px;
 	font-weight: 600;
@@ -216,7 +216,7 @@ body.is-section-podcasting {
 	z-index: 1;
 
 	&.is-recommended {
-		background: var( --wpds-color-bg-status-success-strong, #1a8d36 );
+		background: var( --wpds-color-stroke-surface-success-strong );
 	}
 }
 
@@ -249,7 +249,7 @@ body.is-section-podcasting {
 	background:
 		radial-gradient( circle at 0% 0%, var( --studio-blue-0, #f0f6fc ) 0%, transparent 50% ),
 		radial-gradient( circle at 100% 100%, var( --studio-purple-0, #fdf3fc ) 0%, transparent 50% ),
-		var( --wpds-color-bg-surface-base, #fff );
+		var( --wpds-color-bg-surface-neutral-strong );
 
 	@media ( max-width: 900px ) {
 		grid-template-columns: 1fr;
@@ -298,7 +298,7 @@ body.is-section-podcasting {
 .podcast__welcome-benefit-icon {
 	display: inline-flex;
 	align-items: center;
-	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+	color: var( --wpds-color-fg-content-neutral );
 
 	svg {
 		inline-size: 24px;
@@ -331,7 +331,7 @@ body.is-section-podcasting {
 	inline-size: 32px;
 	block-size: 32px;
 	border-radius: 50%;
-	background: var( --wpds-color-bg-content-neutral-strong, #2c3338 );
+	background: var( --wpds-color-bg-interactive-neutral-strong );
 	color: #fff;
 	font-size: 14px;
 	font-weight: 600;
@@ -349,7 +349,7 @@ body.is-section-podcasting {
 
 .podcast__submit-step {
 	padding: 16px;
-	background: var( --wpds-color-bg-surface-tertiary, #f6f7f7 );
+	background: var( --wpds-color-bg-surface-neutral-weak );
 	border-radius: 8px;
 }
 
@@ -357,7 +357,7 @@ body.is-section-podcasting {
 	margin: 0;
 	font-size: 14px;
 	font-weight: 600;
-	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+	color: var( --wpds-color-fg-content-neutral );
 }
 
 .podcast__submit-step-row {
@@ -387,14 +387,14 @@ body.is-section-podcasting {
 	flex: 1;
 	min-width: 0;
 	padding: 8px 12px;
-	background: var( --wpds-color-bg-surface, #fff );
-	border: 1px solid var( --wpds-color-border-neutral, #ddd );
+	background: var( --wpds-color-bg-surface-neutral-strong );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 4px;
 }
 
 .podcast__submit-step-saved-icon {
 	flex-shrink: 0;
-	color: var( --wpds-color-fg-content-success, #007a3d );
+	color: var( --wpds-color-fg-content-success );
 
 	// Gutenberg's Icon paths use fill="currentColor"; force any stray fill="none"
 	// or hard-coded colors to inherit so the success token actually wins.
