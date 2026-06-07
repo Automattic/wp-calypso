@@ -67,7 +67,7 @@ export function useSetupCustomActions( {
 	setShouldRenderChat,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
-	const { hasLoaded, isOpen, isDocked, floatingPosition } = useSelect( ( select ) => {
+	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -83,9 +83,15 @@ export function useSetupCustomActions( {
 				return;
 			}
 
-			// Opening always expands the chat out of the minimized bar.
-			if ( shouldOpen ) {
+			// Persist only what changes — a redundant save can race with a
+			// concurrent one and clobber it.
+			if ( shouldOpen && isMinimized ) {
 				setIsMinimized( false );
+			}
+
+			// Open state is unchanged; nothing more to persist.
+			if ( shouldOpen === isOpen ) {
+				return;
 			}
 
 			if ( ! isDocked || ! canDock ) {
@@ -102,6 +108,8 @@ export function useSetupCustomActions( {
 			canDock,
 			closeSidebar,
 			isDocked,
+			isMinimized,
+			isOpen,
 			openSidebar,
 			setIsMinimized,
 			setIsOpen,
