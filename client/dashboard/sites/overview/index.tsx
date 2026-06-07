@@ -1,4 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteMediaStorageQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -21,6 +21,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { getStorageAlertLevel } from '../../utils/site-storage';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
@@ -182,6 +183,10 @@ function SiteOverview( {
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: isDismissedStorageNotice } = useSuspenseQuery(
+		userPreferenceQuery( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
+	);
 	const { supports } = useAppContext();
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
@@ -198,9 +203,18 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
+	const storageAlertLevel = getStorageAlertLevel( mediaStorage );
+	const isStorageWarningVisible =
+		storageAlertLevel !== 'none' &&
+		! ( storageAlertLevel === 'warning' && isDismissedStorageNotice );
+
 	const renderNotices = () => {
 		if ( site.__inaccessible_jetpack_error ) {
 			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
+		}
+
+		if ( isStorageWarningVisible ) {
+			return <StorageWarningBanner site={ site } />;
 		}
 
 		if ( ! isDashboardBackport() && shouldShowOptInSurvey ) {
@@ -269,7 +283,6 @@ function SiteOverview( {
 			notices={ renderNotices() }
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<SiteOverviewPrimaryCards site={ site } spacing={ spacing } />

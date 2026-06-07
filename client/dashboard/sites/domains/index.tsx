@@ -1,4 +1,4 @@
-import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteRedirectQuery, bulkDomainUpdateStatusQuery } from '@automattic/api-queries';
 import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
@@ -21,6 +21,7 @@ import {
 	DEFAULT_LAYOUTS,
 	SITE_CONTEXT_VIEW,
 	BulkActionsProgressNotice,
+	getLastJob,
 } from '../../domains/dataviews';
 import { isPendingPrimaryDomain } from '../../utils/domain';
 import PrimaryDomainSelector from './primary-domain-selector';
@@ -47,6 +48,14 @@ function SiteDomains() {
 
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
+
+	const { data: bulkJob } = useQuery( {
+		...bulkDomainUpdateStatusQuery(),
+		meta: { persist: false },
+		staleTime: 0,
+		select: ( data ) => getLastJob( data ),
+	} );
+	const isBulkInProgress = !! ( bulkJob && ! bulkJob.complete );
 
 	const fields = useFields( {
 		site,
@@ -76,39 +85,47 @@ function SiteDomains() {
 	return (
 		<PageLayout
 			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
-			notices={ <BulkActionsProgressNotice /> }
+			notices={
+				<>
+					<BulkActionsProgressNotice />
+					{ ! isBulkInProgress &&
+						! isLoading &&
+						! isRedirectLoading &&
+						siteDomains &&
+						( ! hasRedirect && pendingDomain ? (
+							<PendingPrimaryDomainNotice
+								domainName={ pendingDomain.domain }
+								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
+							/>
+						) : hasRedirect ? (
+							<Notice variant="warning">
+								{ createInterpolateElement(
+									__(
+										'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
+									),
+									{
+										site: <b>{ site.slug }</b>,
+										redirect: <b>{ redirect.location }</b>,
+										link: (
+											<Link
+												to={ siteSettingsRedirectRoute.fullPath }
+												params={ { siteSlug: site.slug } }
+											/>
+										),
+									}
+								) }
+							</Notice>
+						) : null ) }
+				</>
+			}
 		>
 			{ ! isLoading &&
 				! isRedirectLoading &&
 				siteDomains &&
 				! hasRedirect &&
-				( pendingDomain ? (
-					<PendingPrimaryDomainNotice
-						domainName={ pendingDomain.domain }
-						onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-					/>
-				) : (
+				! pendingDomain && (
 					<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
-				) ) }
-			{ hasRedirect && (
-				<Notice variant="warning">
-					{ createInterpolateElement(
-						__(
-							'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
-						),
-						{
-							site: <b>{ site.slug }</b>,
-							redirect: <b>{ redirect.location }</b>,
-							link: (
-								<Link
-									to={ siteSettingsRedirectRoute.fullPath }
-									params={ { siteSlug: site.slug } }
-								/>
-							),
-						}
-					) }
-				</Notice>
-			) }
+				) }
 			<DataViewsCard>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }

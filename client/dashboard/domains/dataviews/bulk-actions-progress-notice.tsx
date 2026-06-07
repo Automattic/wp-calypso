@@ -6,7 +6,7 @@ import { useAppContext } from '../../app/context';
 import { Notice } from '../../components/notice';
 import type { BulkDomainUpdateStatusQueryFnData } from '@automattic/api-core';
 
-const getLastJob = ( data: BulkDomainUpdateStatusQueryFnData | undefined ) => {
+export const getLastJob = ( data: BulkDomainUpdateStatusQueryFnData | undefined ) => {
 	if ( ! data ) {
 		return undefined;
 	}
