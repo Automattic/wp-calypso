@@ -4,11 +4,12 @@
 
 .dashboard-snackbars {
 	position: fixed;
-	inset-inline-start: 0;
+	inset-inline-start: 50%;
+	transform: translateX( -50% );
 	bottom: 0;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: center;
 	margin: $grid-unit-20;
 
 	@include ui-mixins.when-dark-theme {
