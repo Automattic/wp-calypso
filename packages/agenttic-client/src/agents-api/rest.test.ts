@@ -57,4 +57,19 @@ describe( 'createAgentsApiChatAdapter', () => {
 			]
 		);
 	} );
+
+	it( 'does not duplicate existing agent query parameters', async () => {
+		const fetchFn = vi.fn< AgentsApiFetch >( async () => ( { ok: true } ) );
+		const adapter = createAgentsApiChatAdapter( {
+			agent: 'example',
+			basePath: '/frontend-agent-chat/v1/chat?agent=example',
+			fetchFn,
+		} );
+
+		await agentsApiListSessions( adapter );
+
+		expect( fetchFn ).toHaveBeenCalledWith( {
+			path: '/frontend-agent-chat/v1/chat/sessions?agent=example',
+		} );
+	} );
 } );

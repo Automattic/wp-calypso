@@ -9,9 +9,14 @@ export function createAgentsApiChatAdapter( {
 	basePath: string;
 	fetchFn: AgentsApiFetch;
 } ): AgentsApiChatAdapter {
-	const path = ( suffix: string ) => `${ basePath }${ suffix }`;
+	const path = ( suffix: string ) => {
+		const [ base, query ] = basePath.split( '?', 2 );
+		return query
+			? `${ base }${ suffix }?${ query }`
+			: `${ base }${ suffix }`;
+	};
 	const withAgentPath = ( value: string ) => {
-		if ( ! agent ) {
+		if ( ! agent || /[?&]agent=/.test( value ) ) {
 			return value;
 		}
 		const separator = value.includes( '?' ) ? '&' : '?';
