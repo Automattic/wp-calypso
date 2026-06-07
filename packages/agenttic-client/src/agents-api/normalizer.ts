@@ -53,9 +53,19 @@ function now(): number {
 	return Date.now();
 }
 
+function stableHash( value: string ): string {
+	let hash = 0;
+	for ( let i = 0; i < value.length; i++ ) {
+		hash = ( hash << 5 ) - hash + value.charCodeAt( i );
+		hash |= 0;
+	}
+	return Math.abs( hash ).toString( 36 );
+}
+
 export function normalizeAgentsApiMessage(
 	input: unknown,
-	fallbackRole: 'user' | 'agent' = 'agent'
+	fallbackRole: 'user' | 'agent' = 'agent',
+	fallbackIndex = 0
 ): AgentsApiMessage {
 	const raw = asRecord( input );
 	const role = normalizeRole( raw.role, fallbackRole );
@@ -65,10 +75,16 @@ export function normalizeAgentsApiMessage(
 		asString( raw.message );
 	const timestampValue = raw.timestamp ?? raw.created_at ?? raw.createdAt;
 	const timestamp = normalizeTimestamp( timestampValue );
+	const timestampIdPart =
+		typeof timestampValue === 'string' || typeof timestampValue === 'number'
+			? String( timestampValue )
+			: '';
 	const id =
 		asString( raw.id ) ||
 		asString( raw.message_id ) ||
-		`${ role }-${ timestamp }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+		`${ role }-${ stableHash(
+			`${ fallbackIndex }:${ timestampIdPart }:${ text }`
+		) }`;
 	const content = Array.isArray( raw.content )
 		? raw.content
 		: [ { type: 'text' as const, text } ];
@@ -93,8 +109,8 @@ export function normalizeAgentsApiMessage(
 export function normalizeConversation( input: unknown ): AgentsApiMessage[] {
 	const value = asRecord( input );
 	const conversation = getConversationItems( value );
-	return conversation.map( ( message ) =>
-		normalizeAgentsApiMessage( message )
+	return conversation.map( ( message, index ) =>
+		normalizeAgentsApiMessage( message, 'agent', index )
 	);
 }
 

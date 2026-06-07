@@ -1,29 +1,35 @@
 import type { AgentsApiChatAdapter, AgentsApiFetch } from './types';
 
 export function createAgentsApiChatAdapter( {
+	agent,
 	basePath,
 	fetchFn,
 }: {
+	agent?: string;
 	basePath: string;
 	fetchFn: AgentsApiFetch;
 } ): AgentsApiChatAdapter {
 	const path = ( suffix: string ) => `${ basePath }${ suffix }`;
+	const withAgent = ( data: Record< string, unknown > = {} ) =>
+		agent ? { ...data, agent } : data;
 
 	return {
 		sendMessage: ( input ) =>
 			fetchFn( {
 				path: path( '' ),
 				method: 'POST',
-				data: {
+				data: withAgent( {
 					message: input.message,
 					session_id: input.sessionId ?? '',
 					attachments: input.attachments ?? [],
-				},
+				} ),
 			} ),
-		listSessions: () => fetchFn( { path: path( '/sessions' ) } ),
+		listSessions: () =>
+			fetchFn( { path: path( '/sessions' ), data: withAgent() } ),
 		loadSession: ( sessionId ) =>
 			fetchFn( {
 				path: path( `/${ encodeURIComponent( sessionId ) }` ),
+				data: withAgent(),
 			} ),
 		markSessionRead: ( sessionId ) =>
 			fetchFn( {

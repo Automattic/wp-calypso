@@ -14,6 +14,10 @@
 		"./mocks": {
 			"types": "./dist/mocks/index.d.ts",
 			"import": "./dist/mocks/index.js"
+		},
+		"./agents-api": {
+			"types": "./dist/agents-api/index.d.ts",
+			"import": "./dist/agents-api/index.js"
 		}
 	},
 	"files": [

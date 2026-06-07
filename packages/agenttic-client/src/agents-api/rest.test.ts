@@ -13,6 +13,7 @@ describe( 'createAgentsApiChatAdapter', () => {
 	it( 'builds Agents API chat request paths and payloads', async () => {
 		const fetchFn = vi.fn< AgentsApiFetch >( async () => ( { ok: true } ) );
 		const adapter = createAgentsApiChatAdapter( {
+			agent: 'example',
 			basePath: '/frontend-agent-chat/v1/agents/example/chat',
 			fetchFn,
 		} );
@@ -33,6 +34,7 @@ describe( 'createAgentsApiChatAdapter', () => {
 					path: '/frontend-agent-chat/v1/agents/example/chat',
 					method: 'POST',
 					data: {
+						agent: 'example',
 						message: 'Hello',
 						session_id: 'session/1',
 						attachments: [ { media_id: 123 } ],
@@ -40,9 +42,11 @@ describe( 'createAgentsApiChatAdapter', () => {
 				},
 				{
 					path: '/frontend-agent-chat/v1/agents/example/chat/sessions',
+					data: { agent: 'example' },
 				},
 				{
 					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1',
+					data: { agent: 'example' },
 				},
 				{
 					path: '/frontend-agent-chat/v1/agents/example/chat/sessions/session%2F1/read',

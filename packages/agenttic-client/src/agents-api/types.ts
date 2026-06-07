@@ -145,7 +145,7 @@ export interface AgentsApiChatState {
 	sessions: AgentsApiSession[];
 	sessionId: string | null;
 	isProcessing: boolean;
-	error: Error | null;
+	error: string | null;
 	sendMessage: ( message: string, files?: File[] ) => Promise< void >;
 	loadSession: ( sessionId: string ) => Promise< void >;
 	newSession: () => void;

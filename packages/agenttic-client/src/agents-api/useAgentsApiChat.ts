@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	normalizeLoadedSession,
 	normalizeSendResponse,
@@ -45,26 +45,53 @@ export function useAgentsApiChat( {
 	const [ sessionId, setSessionId ] = useState< string | null >( null );
 	const [ runId, setRunId ] = useState< string | null >( null );
 	const [ isProcessing, setIsProcessing ] = useState( false );
-	const [ error, setError ] = useState< Error | null >( null );
+	const [ error, setError ] = useState< string | null >( null );
+	const messageIdsRef = useRef< Set< string > >( new Set() );
+	const onErrorRef = useRef( onError );
+	const onMessageRef = useRef( onMessage );
+	const onResponseMetadataRef = useRef( onResponseMetadata );
+	const onUnreadChangeRef = useRef( onUnreadChange );
+	const mountedRef = useRef( true );
+	const refreshRequestRef = useRef( 0 );
+
+	useEffect( () => {
+		onErrorRef.current = onError;
+		onMessageRef.current = onMessage;
+		onResponseMetadataRef.current = onResponseMetadata;
+		onUnreadChangeRef.current = onUnreadChange;
+	}, [ onError, onMessage, onResponseMetadata, onUnreadChange ] );
+
+	useEffect( () => {
+		mountedRef.current = true;
+		return () => {
+			mountedRef.current = false;
+		};
+	}, [] );
+
+	const setNormalizedError = useCallback( ( err: unknown ) => {
+		const nextError =
+			err instanceof Error ? err : new Error( String( err ) );
+		setError( nextError.message );
+		onErrorRef.current?.( nextError );
+	}, [] );
 
 	const refreshSessions = useCallback( async () => {
+		const requestId = ++refreshRequestRef.current;
 		const response = await adapter.listSessions();
 		const nextSessions = normalizeSessions( response );
+		if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
+			return;
+		}
 		setSessions( nextSessions );
-		onUnreadChange?.( unreadTotal( nextSessions ) );
-	}, [ adapter, onUnreadChange ] );
+		onUnreadChangeRef.current?.( unreadTotal( nextSessions ) );
+	}, [ adapter ] );
 
 	useEffect( () => {
 		if ( ! isVisible ) {
 			return;
 		}
-		refreshSessions().catch( ( err: unknown ) => {
-			const nextError =
-				err instanceof Error ? err : new Error( String( err ) );
-			setError( nextError );
-			onError?.( nextError );
-		} );
-	}, [ isVisible, onError, refreshSessions ] );
+		refreshSessions().catch( setNormalizedError );
+	}, [ isVisible, refreshSessions, setNormalizedError ] );
 
 	const sendMessage = useCallback(
 		async ( message: string, files?: File[] ) => {
@@ -76,6 +103,7 @@ export function useAgentsApiChat( {
 			setError( null );
 			try {
 				const attachments = await uploadFiles( files, mediaUploadFn );
+				const existingMessageIds = new Set( messageIdsRef.current );
 				const response = await adapter.sendMessage( {
 					message: content,
 					sessionId,
@@ -86,6 +114,9 @@ export function useAgentsApiChat( {
 					content,
 					attachments
 				);
+				messageIdsRef.current = new Set(
+					normalized.messages.map( ( item ) => item.id )
+				);
 				setMessages( normalized.messages );
 				setSessionId( normalized.sessionId );
 				const nextRunId =
@@ -93,14 +124,13 @@ export function useAgentsApiChat( {
 					normalized.runId ??
 					null;
 				setRunId( nextRunId );
-				normalized.messages.forEach( ( item ) => onMessage?.( item ) );
-				onResponseMetadata?.( normalized.metadata );
+				normalized.messages
+					.filter( ( item ) => ! existingMessageIds.has( item.id ) )
+					.forEach( ( item ) => onMessageRef.current?.( item ) );
+				onResponseMetadataRef.current?.( normalized.metadata );
 				await refreshSessions();
 			} catch ( err ) {
-				const nextError =
-					err instanceof Error ? err : new Error( String( err ) );
-				setError( nextError );
-				onError?.( nextError );
+				setNormalizedError( err );
 			} finally {
 				setIsProcessing( false );
 			}
@@ -109,10 +139,8 @@ export function useAgentsApiChat( {
 			adapter,
 			getRunId,
 			mediaUploadFn,
-			onError,
-			onMessage,
-			onResponseMetadata,
 			refreshSessions,
+			setNormalizedError,
 			sessionId,
 		]
 	);
@@ -123,26 +151,27 @@ export function useAgentsApiChat( {
 			try {
 				const response = await adapter.loadSession( nextSessionId );
 				const loaded = normalizeLoadedSession( response );
+				messageIdsRef.current = new Set(
+					loaded.messages.map( ( item ) => item.id )
+				);
 				setSessionId( loaded.sessionId ?? nextSessionId );
 				setMessages( loaded.messages );
-				onResponseMetadata?.( loaded.metadata );
+				onResponseMetadataRef.current?.( loaded.metadata );
 				await adapter.markSessionRead( nextSessionId );
 				await refreshSessions();
 			} catch ( err ) {
-				const nextError =
-					err instanceof Error ? err : new Error( String( err ) );
-				setError( nextError );
-				onError?.( nextError );
+				setNormalizedError( err );
 			} finally {
 				setIsProcessing( false );
 			}
 		},
-		[ adapter, onError, onResponseMetadata, refreshSessions ]
+		[ adapter, refreshSessions, setNormalizedError ]
 	);
 
 	const newSession = useCallback( () => {
 		setSessionId( null );
 		setRunId( null );
+		messageIdsRef.current = new Set();
 		setMessages( [] );
 		setError( null );
 	}, [] );
