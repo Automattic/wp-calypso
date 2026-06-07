@@ -14,6 +14,22 @@ import Item from '../item';
 import AgentsManagerIcon from './agents-manager-icon';
 import './style.scss';
 
+/**
+ * Run a callback with the Agents Manager actions API. The dock is async-loaded,
+ * so if it isn't ready yet, defer until the `agents-manager-ready` event fires
+ * (it won't fire again once ready, so check `isReady` first).
+ */
+const withAgentsManagerActions = ( run ) => {
+	if ( window.__agentsManagerActions?.isReady ) {
+		run( window.__agentsManagerActions );
+		return;
+	}
+
+	window.addEventListener( 'agents-manager-ready', () => run( window.__agentsManagerActions ), {
+		once: true,
+	} );
+};
+
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
@@ -46,9 +62,10 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 
 		// Drive the chat through its own actions so navigation and opening work for
 		// docked and floating chats alike (expanding it from the minimized bar).
-		const actions = window.__agentsManagerActions;
-		actions?.chatNavigate( destination );
-		actions?.setChatOpen( true );
+		withAgentsManagerActions( ( actions ) => {
+			actions?.chatNavigate( destination );
+			actions?.setChatOpen( true );
+		} );
 
 		recordTracksEvent( 'calypso_inlinehelp_show', {
 			force_site_id: true,
