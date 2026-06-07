@@ -71,6 +71,9 @@ export function useAgentsApiChat( {
 	const setNormalizedError = useCallback( ( err: unknown ) => {
 		const nextError =
 			err instanceof Error ? err : new Error( String( err ) );
+		if ( ! mountedRef.current ) {
+			return;
+		}
 		setError( nextError.message );
 		onErrorRef.current?.( nextError );
 	}, [] );
@@ -114,6 +117,9 @@ export function useAgentsApiChat( {
 					content,
 					attachments
 				);
+				if ( ! mountedRef.current ) {
+					return;
+				}
 				messageIdsRef.current = new Set(
 					normalized.messages.map( ( item ) => item.id )
 				);
@@ -132,7 +138,9 @@ export function useAgentsApiChat( {
 			} catch ( err ) {
 				setNormalizedError( err );
 			} finally {
-				setIsProcessing( false );
+				if ( mountedRef.current ) {
+					setIsProcessing( false );
+				}
 			}
 		},
 		[
@@ -151,6 +159,9 @@ export function useAgentsApiChat( {
 			try {
 				const response = await adapter.loadSession( nextSessionId );
 				const loaded = normalizeLoadedSession( response );
+				if ( ! mountedRef.current ) {
+					return;
+				}
 				messageIdsRef.current = new Set(
 					loaded.messages.map( ( item ) => item.id )
 				);
@@ -162,7 +173,9 @@ export function useAgentsApiChat( {
 			} catch ( err ) {
 				setNormalizedError( err );
 			} finally {
-				setIsProcessing( false );
+				if ( mountedRef.current ) {
+					setIsProcessing( false );
+				}
 			}
 		},
 		[ adapter, refreshSessions, setNormalizedError ]

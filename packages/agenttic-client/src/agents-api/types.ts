@@ -154,7 +154,6 @@ export interface AgentsApiChatState {
 
 export interface AgentsApiChatOptions {
 	adapter: AgentsApiChatAdapter;
-	toolRenderers?: AgentsApiToolRenderers;
 	mediaUploadFn?: AgentsApiMediaUpload;
 	runAdapter?: AgentsApiRunAdapter;
 	getRunId?: (

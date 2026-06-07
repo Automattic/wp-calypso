@@ -10,6 +10,13 @@ export function createAgentsApiChatAdapter( {
 	fetchFn: AgentsApiFetch;
 } ): AgentsApiChatAdapter {
 	const path = ( suffix: string ) => `${ basePath }${ suffix }`;
+	const withAgentPath = ( value: string ) => {
+		if ( ! agent ) {
+			return value;
+		}
+		const separator = value.includes( '?' ) ? '&' : '?';
+		return `${ value }${ separator }agent=${ encodeURIComponent( agent ) }`;
+	};
 	const withAgent = ( data: Record< string, unknown > = {} ) =>
 		agent ? { ...data, agent } : data;
 
@@ -25,22 +32,27 @@ export function createAgentsApiChatAdapter( {
 				} ),
 			} ),
 		listSessions: () =>
-			fetchFn( { path: path( '/sessions' ), data: withAgent() } ),
+			fetchFn( { path: withAgentPath( path( '/sessions' ) ) } ),
 		loadSession: ( sessionId ) =>
 			fetchFn( {
-				path: path( `/${ encodeURIComponent( sessionId ) }` ),
-				data: withAgent(),
+				path: withAgentPath(
+					path( `/${ encodeURIComponent( sessionId ) }` )
+				),
 			} ),
 		markSessionRead: ( sessionId ) =>
 			fetchFn( {
-				path: path(
-					`/sessions/${ encodeURIComponent( sessionId ) }/read`
+				path: withAgentPath(
+					path(
+						`/sessions/${ encodeURIComponent( sessionId ) }/read`
+					)
 				),
 				method: 'POST',
 			} ),
 		deleteSession: ( sessionId ) =>
 			fetchFn( {
-				path: path( `/${ encodeURIComponent( sessionId ) }` ),
+				path: withAgentPath(
+					path( `/${ encodeURIComponent( sessionId ) }` )
+				),
 				method: 'DELETE',
 			} ),
 	};

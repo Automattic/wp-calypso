@@ -41,19 +41,17 @@ describe( 'createAgentsApiChatAdapter', () => {
 					},
 				},
 				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/sessions',
-					data: { agent: 'example' },
+					path: '/frontend-agent-chat/v1/agents/example/chat/sessions?agent=example',
 				},
 				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1',
-					data: { agent: 'example' },
+					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1?agent=example',
 				},
 				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/sessions/session%2F1/read',
+					path: '/frontend-agent-chat/v1/agents/example/chat/sessions/session%2F1/read?agent=example',
 					method: 'POST',
 				},
 				{
-					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1',
+					path: '/frontend-agent-chat/v1/agents/example/chat/session%2F1?agent=example',
 					method: 'DELETE',
 				},
 			]
