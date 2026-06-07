@@ -176,6 +176,7 @@ type AbilityProviderEntry = {
 	provider: ToolProvider;
 	abilityName: string;
 };
+type ProviderAbilities = Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
 
 type ProviderClientContext = ReturnType< ContextProvider[ 'getClientContext' ] >;
 
@@ -405,6 +406,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	const abilityProviderMap = new Map< string, AbilityProviderEntry >();
+	const lastGoodProviderAbilities = new Map< ToolProvider, ProviderAbilities >();
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
@@ -497,8 +499,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// order they were registered; earlier providers win on ability-name
 	// collisions.
 	const refreshProviderAbilities = async () => {
-		abilityProviderMap.clear();
-
 		const allAbilityResults = await Promise.all(
 			allToolProviders.map( async ( tp ) => {
 				try {
@@ -506,16 +506,18 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 					if ( ! Array.isArray( abilities ) ) {
 						// eslint-disable-next-line no-console
 						console.warn( '[AgentsManager] Provider returned invalid abilities; expected array.' );
-						return [];
+						return lastGoodProviderAbilities.get( tp ) ?? [];
 					}
+					lastGoodProviderAbilities.set( tp, abilities );
 					return abilities;
 				} catch ( error ) {
 					// eslint-disable-next-line no-console
 					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
-					return [];
+					return lastGoodProviderAbilities.get( tp ) ?? [];
 				}
 			} )
 		);
+		const nextAbilityProviderMap = new Map< string, AbilityProviderEntry >();
 		const seenAbilities = new Map< string, unknown >();
 		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
 		// when routing tool calls. Index both raw and normalized forms
@@ -534,21 +536,21 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 						abilityName: ability.name,
 					};
 					const abilityWithCallback = addProviderCallbackToAbility( ability, entry );
-					abilityProviderMap.set( ability.name, entry );
-					abilityProviderMap.set( BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID, entry );
-					abilityProviderMap.set( BIG_SKY_SHOW_COMPONENT_TOOL_ID, entry );
+					nextAbilityProviderMap.set( ability.name, entry );
+					nextAbilityProviderMap.set( BIG_SKY_SHOW_COMPONENT_AGENTTIC_TOOL_ID, entry );
+					nextAbilityProviderMap.set( BIG_SKY_SHOW_COMPONENT_TOOL_ID, entry );
 					seenAbilities.set( BIG_SKY_SHOW_COMPONENT_TOOL_ID, abilityWithCallback );
 					continue;
 				}
 
 				const existingEntry =
-					abilityProviderMap.get( ability.name ) ?? abilityProviderMap.get( normalized );
+					nextAbilityProviderMap.get( ability.name ) ?? nextAbilityProviderMap.get( normalized );
 				if ( existingEntry ) {
-					if ( ! abilityProviderMap.has( ability.name ) ) {
-						abilityProviderMap.set( ability.name, existingEntry );
+					if ( ! nextAbilityProviderMap.has( ability.name ) ) {
+						nextAbilityProviderMap.set( ability.name, existingEntry );
 					}
-					if ( ! abilityProviderMap.has( normalized ) ) {
-						abilityProviderMap.set( normalized, existingEntry );
+					if ( ! nextAbilityProviderMap.has( normalized ) ) {
+						nextAbilityProviderMap.set( normalized, existingEntry );
 					}
 					continue;
 				}
@@ -557,10 +559,15 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 					provider: allToolProviders[ i ],
 					abilityName: ability.name,
 				};
-				abilityProviderMap.set( ability.name, entry );
-				abilityProviderMap.set( normalized, entry );
+				nextAbilityProviderMap.set( ability.name, entry );
+				nextAbilityProviderMap.set( normalized, entry );
 				seenAbilities.set( normalized, addProviderCallbackToAbility( ability, entry ) );
 			}
+		}
+
+		abilityProviderMap.clear();
+		for ( const [ key, entry ] of nextAbilityProviderMap ) {
+			abilityProviderMap.set( key, entry );
 		}
 
 		return [ ...seenAbilities.values() ] as Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
