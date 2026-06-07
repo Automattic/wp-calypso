@@ -18,7 +18,6 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DarkModeAnnouncement } from '../components/dark-mode-announcement';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
@@ -239,12 +238,7 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						{ ! isDashboardBackport() &&
-							( shouldShowOptInSurvey ? (
-								<OptInSurvey />
-							) : (
-								<DarkModeAnnouncement tracksContext="sites" />
-							) ) }
+						{ ! isDashboardBackport() && shouldShowOptInSurvey && <OptInSurvey /> }
 					</>
 				}
 			>
