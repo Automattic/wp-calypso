@@ -338,7 +338,9 @@ export function EmbeddedAgentUIInput( {
 					if (
 						! event.defaultPrevented &&
 						event.key === 'Enter' &&
-						! event.shiftKey
+						! event.shiftKey &&
+						canSubmit &&
+						! isProcessing
 					) {
 						event.preventDefault();
 						submit();

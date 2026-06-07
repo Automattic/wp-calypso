@@ -124,7 +124,7 @@ export function useAgentsApiChat( {
 					normalized.messages.map( ( item ) => item.id )
 				);
 				setMessages( normalized.messages );
-				setSessionId( normalized.sessionId );
+				setSessionId( normalized.sessionId ?? sessionId );
 				const nextRunId =
 					( getRunId && getRunId( normalized.metadata ) ) ??
 					normalized.runId ??
