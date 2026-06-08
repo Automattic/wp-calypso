@@ -178,7 +178,8 @@ const UniversalNavbarHeader = ( {
 	// Publish the overlaid footer's height as a CSS var so the scroller pads its bottom to
 	// clear it (otherwise the last item sits behind it). ResizeObserver keeps it in sync.
 	useEffect( () => {
-		if ( ! nav2026 || typeof ResizeObserver === 'undefined' ) {
+		// Only while the menu is open — no point measuring the off-screen footer otherwise.
+		if ( ! nav2026 || ! isMobileMenuOpen || typeof ResizeObserver === 'undefined' ) {
 			return;
 		}
 		const footer = mobileFooterRef.current;
@@ -283,12 +284,22 @@ const UniversalNavbarHeader = ( {
 			return;
 		}
 
+		// Height-morph duration in ms. Read the panel-duration CSS var directly rather than
+		// `transitionDuration` — that property is a comma list (visibility, height) and
+		// `parseFloat` would pick the first (visibility) value, not the height one.
+		const morphMs = () => {
+			const raw = getComputedStyle( el ).getPropertyValue( '--x-dropdown-2026-panel-duration' );
+			return parseFloat( raw ) * 1000 || 280;
+		};
+
 		// Closed → open: let the panel grow via CSS; flag the unroll so items wait for it. Drop
 		// the flag after the morph so a later switch uses the short stagger.
 		if ( prev === null && next !== null ) {
 			el.classList.add( 'is-dropdown-first-open' );
-			const durMs = parseFloat( getComputedStyle( el ).transitionDuration ) * 1000 || 280;
-			const timer = setTimeout( () => el.classList.remove( 'is-dropdown-first-open' ), durMs + 50 );
+			const timer = setTimeout(
+				() => el.classList.remove( 'is-dropdown-first-open' ),
+				morphMs() + 50
+			);
 			return () => {
 				clearTimeout( timer );
 				// Stash the current height so the next switch FLIPs from the right `from`.
@@ -348,8 +359,7 @@ const UniversalNavbarHeader = ( {
 				},
 				{ signal: listenerAbort.signal }
 			);
-			const durMs = parseFloat( getComputedStyle( node ).transitionDuration ) * 1000 || 280;
-			const fallback = window.setTimeout( release, durMs + 50 );
+			const fallback = window.setTimeout( release, morphMs() + 50 );
 			return () => {
 				// Released early if the dropdown changes mid-morph; capture height for the next FLIP.
 				clearTimeout( fallback );
@@ -756,7 +766,6 @@ const UniversalNavbarHeader = ( {
 					`x-menu-mobile-app-banner--${ mobilePlatform }`
 				) }
 				href={ localizeUrl( '//apps.wordpress.com/get/?campaign=wpcom-log-out-home-global-nav' ) }
-				aria-label={ __( 'Get the Jetpack app', __i18n_text_domain__ ) }
 				tabIndex={ mobileMenuTabIndex }
 			>
 				<span className="x-menu-mobile-app-banner-icons" aria-hidden="true">
