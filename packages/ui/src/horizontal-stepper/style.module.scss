@@ -6,7 +6,7 @@
 .root {
 	display: flex;
 	flex-direction: column;
-	gap: var( --wpds-dimension-gap-lg, 16px );
+	gap: var( --wpds-dimension-gap-lg );
 	container-type: inline-size;
 }
 
@@ -25,16 +25,16 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: var( --wpds-dimension-gap-sm, 8px );
+	gap: var( --wpds-dimension-gap-sm );
 	background: none;
 	border: none;
-	padding: var( --wpds-dimension-padding-md, 12px );
+	padding: var( --wpds-dimension-padding-md );
 	height: auto;
 	text-align: start;
 }
 
 .panel {
-	padding-block: var( --wpds-dimension-padding-lg, 16px );
+	padding-block: var( --wpds-dimension-padding-lg );
 }
 
 // ---------------------------------------------------------------------------
@@ -63,8 +63,8 @@
 			transform: translateY( -50% );
 			inset-inline-start: calc( 50% + 21px );
 			inset-inline-end: calc( -50% + 21px );
-			height: var( --wpds-border-width-xs, 1px );
-			background-color: var( --wpds-color-stroke-surface-neutral, #{ theme.$components-color-gray-300 } );
+			height: var( --wpds-border-width-xs );
+			background-color: var( --wpds-color-stroke-surface-neutral );
 
 			@include ui-mixins.when-dark-theme {
 				background-color: theme.$components-color-gray-700;

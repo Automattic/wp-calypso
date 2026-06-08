@@ -16,12 +16,12 @@ $indicator-size-sm: 16px; // bullet completed + current
 	width: $indicator-size;
 	height: $indicator-size;
 	border-radius: 50%;
-	border: var( --wpds-border-width-xs, 1px ) solid var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
+	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
 	flex-shrink: 0;
-	font-size: var( --wpds-typography-font-size-sm, 12px );
+	font-size: var( --wpds-typography-font-size-sm );
 	font-weight: 400;
-	color: var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
-	background: var( --wpds-color-bg-surface-neutral-strong, #{ theme.$components-color-background } );
+	color: var( --wpds-color-fg-interactive-neutral );
+	background: var( --wpds-color-bg-surface-neutral-strong );
 
 	@include ui-mixins.when-dark-theme {
 		border-color: theme.$components-color-gray-600;
@@ -31,17 +31,17 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 // Current step
 .indicator.is-current {
-	border-color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
-	background: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
-	color: var( --wpds-color-bg-surface-neutral-strong, #{ theme.$components-color-background } );
+	border-color: var( --wpds-color-fg-content-neutral );
+	background: var( --wpds-color-fg-content-neutral );
+	color: var( --wpds-color-bg-surface-neutral-strong );
 	font-weight: 600;
 }
 
 // Completed step
 .indicator.is-completed {
-	border-color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
+	border-color: var( --wpds-color-fg-content-neutral-weak );
 	background: transparent;
-	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
+	color: var( --wpds-color-fg-content-neutral-weak );
 
 	svg {
 		stroke: currentColor;
@@ -61,8 +61,8 @@ $indicator-size-sm: 16px; // bullet completed + current
 // Upcoming: dashed gray-700 circle, no icon
 .indicator[data-indicator-variant='bullet'] {
 	border-style: dashed;
-	border-color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
-	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-700 } );
+	border-color: var( --wpds-color-fg-content-neutral-weak );
+	color: var( --wpds-color-fg-content-neutral-weak );
 }
 
 // Current: 16px solid gray-900 ring, transparent background + half-circle dome
@@ -73,9 +73,9 @@ $indicator-size-sm: 16px; // bullet completed + current
 	height: $indicator-size-sm;
 	margin: 1px;
 	border-style: solid;
-	border-color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	border-color: var( --wpds-color-fg-content-neutral );
 	background: transparent;
-	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-fg-content-neutral );
 }
 
 // Completed: 16px, solid border (color inherited from .indicator.is-completed)
@@ -88,17 +88,17 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 // Upcoming step titles
 [data-indicator-variant] .title {
-	color: var( --wpds-color-fg-interactive-neutral, #{ theme.$components-color-gray-700 } );
+	color: var( --wpds-color-fg-interactive-neutral );
 }
 
 // Completed step titles — same weight as upcoming but full neutral (not weak)
 [data-indicator-variant] [data-status='completed'] .title {
-	color: var( --wpds-color-fg-interactive-neutral-active, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-fg-interactive-neutral-active );
 }
 
 // Current/active step title — full neutral, bold (weight set on the trigger below)
 [data-indicator-variant] [data-current] .title {
-	color: var( --wpds-color-fg-interactive-neutral-active, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-fg-interactive-neutral-active );
 }
 
 // ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	gap: var( --wpds-dimension-gap-sm, 8px );
+	gap: var( --wpds-dimension-gap-sm );
 	padding: 0;
 	background: none;
 	border: none;
@@ -124,18 +124,18 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 	&:hover:not( [aria-disabled='true'] ) {
 		.title {
-			color: var( --wpds-color-fg-interactive-brand, #{ theme.$components-color-accent } );
+			color: var( --wpds-color-fg-interactive-brand );
 		}
 
 		.indicator {
-			border-color: var( --wpds-color-fg-interactive-brand, #{ theme.$components-color-accent } );
+			border-color: var( --wpds-color-fg-interactive-brand );
 		}
 
 		// Pull icon color for completed and current steps (SVG/dome use currentColor).
 		// Number-variant upcoming steps keep their neutral number color on hover.
 		.indicator.is-completed,
 		.indicator.is-current {
-			color: var( --wpds-color-fg-interactive-brand, #{ theme.$components-color-accent } );
+			color: var( --wpds-color-fg-interactive-brand );
 		}
 	}
 
@@ -144,7 +144,7 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 		&,
 		.title {
-			color: var( --wpds-color-fg-interactive-neutral-disabled, #{ theme.$components-color-disabled } );
+			color: var( --wpds-color-fg-interactive-neutral-disabled );
 		}
 	}
 
@@ -188,11 +188,11 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 .title {
 	font-weight: inherit;
-	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	color: var( --wpds-color-fg-content-neutral );
 }
 
 .description {
-	color: var( --wpds-color-fg-content-neutral-weak, #{ theme.$components-color-gray-600 } );
+	color: var( --wpds-color-fg-content-neutral-weak );
 
 	@include ui-mixins.when-dark-theme {
 		color: theme.$components-color-gray-300;

@@ -30,7 +30,7 @@
 			top: var( --stepper-trigger-height, 40px );
 			bottom: 0;
 			width: 1px;
-			background: var( --wpds-color-stroke-surface-neutral-weak, #{ theme.$components-color-gray-200 } );
+			background: var( --wpds-color-stroke-surface-neutral-weak );
 
 			@include ui-mixins.when-dark-theme {
 				background: theme.$components-color-gray-700;
@@ -44,7 +44,7 @@
 	align-items: center;
 	// Match the title line-height so the indicator stays optically aligned
 	// with the title text even when a description is present.
-	height: var( --wpds-typography-line-height-sm, 20px );
+	height: var( --wpds-typography-line-height-sm );
 	flex-shrink: 0;
 }
 
@@ -52,7 +52,7 @@
 	display: flex;
 	align-items: flex-start;
 	justify-content: flex-start;
-	padding-block: var( --wpds-dimension-padding-sm, 8px );
+	padding-block: var( --wpds-dimension-padding-sm );
 }
 
 .panel {
@@ -82,6 +82,6 @@
 }
 
 .panel-content {
-	padding-inline-start: calc( 24px + var( --wpds-dimension-gap-sm, 8px ) );
-	padding-block-end: var( --wpds-dimension-padding-lg, 16px );
+	padding-inline-start: calc( 24px + var( --wpds-dimension-gap-sm ) );
+	padding-block-end: var( --wpds-dimension-padding-lg );
 }
