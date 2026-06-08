@@ -210,11 +210,6 @@ function FeatureClipEmptyState( {
 	);
 }
 
-// Shown while a saved clip's attachment is still resolving. Reuses the
-// preview frame's 9:16 shape so the body doesn't reflow when the real
-// preview swaps in. Honest "something is loading" beats a permanently
-// blank body when the resolver gets stuck (deleted attachment, REST
-// failure, expired AI quota, etc.).
 function FeatureClipSkeleton(): JSX.Element {
 	return (
 		<div
@@ -276,12 +271,6 @@ function FeatureClipPanel(): JSX.Element {
 				| undefined;
 			return {
 				attachment: core?.getMedia?.( featureClipId ) ?? null,
-				// `getMedia` resolves async on first read. Until resolution
-				// finishes the result is `undefined`; render a skeleton in that
-				// window so the body doesn't flash the empty CTA on reload, and
-				// so a stuck resolver (deleted attachment, REST failure, etc.)
-				// leaves a visible "something is loading" state rather than a
-				// permanently blank panel.
 				hasResolvedAttachment:
 					core?.hasFinishedResolution?.( 'getMedia', [ featureClipId ] ) ?? false,
 				resolutionError: core?.getResolutionError?.( 'getMedia', [ featureClipId ] ) ?? null,
@@ -296,12 +285,6 @@ function FeatureClipPanel(): JSX.Element {
 		trackImageStudioFeatureClipPanelViewed();
 	}, [] );
 
-	// Self-heal a dangling clip reference: when the resolver finishes cleanly
-	// (no error) but no attachment came back, the meta is pointing at a
-	// deleted media item. Clear it once so the panel doesn't sit in a
-	// permanently degraded state on every reload. Don't clear on resolution
-	// errors — those can be transient (network, auth) and the reference may
-	// still be valid.
 	const lastHealedClipIdRef = useRef< number | null >( null );
 	useEffect( () => {
 		if ( ! featureClipId ) {
@@ -310,6 +293,7 @@ function FeatureClipPanel(): JSX.Element {
 		if ( ! hasResolvedAttachment ) {
 			return;
 		}
+		// Skip on resolution errors — transient (network, auth) and the reference may still be valid.
 		if ( resolutionError ) {
 			return;
 		}
@@ -340,10 +324,6 @@ function FeatureClipPanel(): JSX.Element {
 		typeof attachment?.media_details?.length === 'number' ? attachment.media_details.length : null;
 	const hasUsableClip = !! featureClipId && !! videoUrl;
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
-	// A finished resolution that returned no attachment + an error means
-	// we couldn't fetch the saved clip. Surface that distinctly from the
-	// "no clip yet" empty state so the user knows to retry vs. start
-	// fresh.
 	const hasLoadError =
 		!! featureClipId && hasResolvedAttachment && ! attachment && !! resolutionError;
 

@@ -2,10 +2,7 @@
  * @jest-environment jsdom
  */
 
-// Per-test `require()` of the module under test is intentional — paired with
-// `jest.resetModules()` in beforeEach so each case picks up a fresh copy of
-// the extension with its module-level `pluginRegistered` flag reset. ESM
-// import would bind once and defeat that reset.
+// Paired with jest.resetModules() to reset the module-level pluginRegistered flag per test.
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 // eslint-disable-next-line import/order
