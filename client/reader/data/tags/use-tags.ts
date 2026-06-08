@@ -7,7 +7,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
  * Returns the full React Query result for the current user's followed tags.
  * Consumers can read `data`, `isPending`, `isError`, `refetch`, etc. directly.
  */
-export function useFollowedReaderTags(): UseQueryResult< ReaderTag[] > {
+export function useFollowedTags(): UseQueryResult< ReaderTag[] > {
 	const locale = useSelector( getCurrentUserLocale );
 	return useQuery( readTagsQuery( locale ) );
 }
@@ -16,7 +16,7 @@ export function useFollowedReaderTags(): UseQueryResult< ReaderTag[] > {
  * Returns the React Query result for a single reader tag by slug, augmented
  * with `isNotFound` (true when the API responds 404 for the slug).
  */
-export function useReaderTagBySlug(
+export function useTagBySlug(
 	slug: string | null | undefined
 ): UseQueryResult< ReaderTag | null > & { isNotFound: boolean } {
 	const locale = useSelector( getCurrentUserLocale );

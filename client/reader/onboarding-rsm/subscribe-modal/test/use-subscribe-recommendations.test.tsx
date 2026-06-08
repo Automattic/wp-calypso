@@ -4,9 +4,9 @@
 
 import { act, waitFor } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	useSubscribeRecommendations,
@@ -30,8 +30,8 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: jest.fn(),
+jest.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
@@ -141,9 +141,7 @@ jest.mock( '@automattic/api-queries', () => {
 	};
 } );
 
-const mockUseFollowedReaderTags = useFollowedReaderTags as jest.MockedFunction<
-	typeof useFollowedReaderTags
->;
+const mockUseFollowedReaderTags = useFollowedTags as jest.MockedFunction< typeof useFollowedTags >;
 const mockUseSiteSubscriptions = useSiteSubscriptions as jest.MockedFunction<
 	typeof useSiteSubscriptions
 >;
@@ -154,13 +152,13 @@ const tagsLoading = () =>
 	( {
 		data: undefined,
 		isLoading: true,
-	} ) as unknown as ReturnType< typeof useFollowedReaderTags >;
+	} ) as unknown as ReturnType< typeof useFollowedTags >;
 
 const tagsLoaded = ( slugs: string[] ) =>
 	( {
 		data: slugs.map( ( slug ) => ( { slug } ) ),
 		isLoading: false,
-	} ) as unknown as ReturnType< typeof useFollowedReaderTags >;
+	} ) as unknown as ReturnType< typeof useFollowedTags >;
 
 const cardsResponse = ( sites: RecommendedBlogsApiSite[] ) => ( {
 	cards: [ { type: 'recommended_blogs', data: sites } ],
