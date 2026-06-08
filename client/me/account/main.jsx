@@ -1052,7 +1052,10 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isAutomattician: isAutomatticTeamMember( ownProps.teams ),
-			isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
+			isDashboardToggleEnabled: isDashboardToggleEnabled(
+				state,
+				isAutomatticTeamMember( ownProps.teams )
+			),
 		} ),
 		{
 			clearUnsavedUserSettings,

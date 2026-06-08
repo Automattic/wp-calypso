@@ -6,11 +6,16 @@ const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_u
 
 /**
  * Determine whether to display the dashboard toggle. Only users created
- * before 22 December 2025 can manually opt in or out.
+ * before 22 December 2025 can manually opt in or out. Proxied users
+ * (Automatticians) bypass the user ID restriction to enable internal testing.
  */
-export const isDashboardToggleEnabled = ( state: AppState ): boolean => {
+export const isDashboardToggleEnabled = ( state: AppState, isProxiedUser = false ): boolean => {
 	if ( ! config.isEnabled( 'dashboard/v2' ) ) {
 		return false;
+	}
+
+	if ( isProxiedUser ) {
+		return true;
 	}
 
 	const user = getCurrentUser( state ); // Ensure current user is loaded.
