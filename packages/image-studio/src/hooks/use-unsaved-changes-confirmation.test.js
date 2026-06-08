@@ -416,7 +416,7 @@ describe( 'useUnsavedChangesConfirmation', () => {
 	} );
 
 	describe( 'generation in progress (Feature Clip)', () => {
-		it( 'opens the generation warning (not the unsaved-changes dialog) and does not exit', () => {
+		it( 'opens the close dialog in the generation variant and does not exit', () => {
 			mockGetHasUnsavedChanges.mockReturnValue( false );
 
 			const { result } = renderHook( () =>
@@ -432,13 +432,13 @@ describe( 'useUnsavedChangesConfirmation', () => {
 				result.current.handleRequestClose();
 			} );
 
-			expect( result.current.isGenerationWarningOpen ).toBe( true );
-			expect( result.current.isConfirmDialogOpen ).toBe( false );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+			expect( result.current.closeDialogVariant ).toBe( 'generation' );
 			expect( mockOnExit ).not.toHaveBeenCalled();
 			expect( mockTrackCloseWarningShown ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'takes precedence over the unsaved-changes dialog when both apply', () => {
+		it( 'uses the generation variant even when there are also unsaved changes', () => {
 			mockGetHasUnsavedChanges.mockReturnValue( true );
 
 			const { result } = renderHook( () =>
@@ -454,12 +454,12 @@ describe( 'useUnsavedChangesConfirmation', () => {
 				result.current.handleRequestClose();
 			} );
 
-			expect( result.current.isGenerationWarningOpen ).toBe( true );
-			expect( result.current.isConfirmDialogOpen ).toBe( false );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+			expect( result.current.closeDialogVariant ).toBe( 'generation' );
 			expect( mockOnExit ).not.toHaveBeenCalled();
 		} );
 
-		it( 'handleConfirmKeepGenerating closes the warning without exiting', () => {
+		it( 'handleConfirmKeepGenerating closes the dialog without exiting', () => {
 			const { result } = renderHook( () =>
 				useUnsavedChangesConfirmation( {
 					onSave: mockOnSave,
@@ -472,13 +472,13 @@ describe( 'useUnsavedChangesConfirmation', () => {
 			act( () => {
 				result.current.handleRequestClose();
 			} );
-			expect( result.current.isGenerationWarningOpen ).toBe( true );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
 
 			act( () => {
 				result.current.handleConfirmKeepGenerating();
 			} );
 
-			expect( result.current.isGenerationWarningOpen ).toBe( false );
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
 			expect( mockOnExit ).not.toHaveBeenCalled();
 			expect( mockTrackCloseWarningKeptGenerating ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -502,7 +502,7 @@ describe( 'useUnsavedChangesConfirmation', () => {
 			act( () => {
 				result.current.handleRequestClose();
 			} );
-			expect( result.current.isGenerationWarningOpen ).toBe( true );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
 
 			let stopPromise;
 			act( () => {
@@ -513,7 +513,7 @@ describe( 'useUnsavedChangesConfirmation', () => {
 				await Promise.resolve();
 			} );
 
-			expect( result.current.isGenerationWarningOpen ).toBe( false );
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
 			expect( result.current.isExiting ).toBe( true );
 			expect( mockOnExit ).toHaveBeenCalledWith( false );
 			expect( mockTrackCloseWarningStopped ).toHaveBeenCalledTimes( 1 );
@@ -526,7 +526,7 @@ describe( 'useUnsavedChangesConfirmation', () => {
 			expect( result.current.isExiting ).toBe( false );
 		} );
 
-		it( 'intercepts ESC and opens the generation warning when no unsaved changes', () => {
+		it( 'intercepts ESC and opens the generation variant when no unsaved changes', () => {
 			mockGetHasUnsavedChanges.mockReturnValue( false );
 
 			const { result } = renderHook( () =>
@@ -548,7 +548,8 @@ describe( 'useUnsavedChangesConfirmation', () => {
 				document.dispatchEvent( escapeEvent );
 			} );
 
-			expect( result.current.isGenerationWarningOpen ).toBe( true );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+			expect( result.current.closeDialogVariant ).toBe( 'generation' );
 			expect( escapeEvent.defaultPrevented ).toBe( true );
 		} );
 
@@ -569,7 +570,7 @@ describe( 'useUnsavedChangesConfirmation', () => {
 				await result.current.handleRequestClose();
 			} );
 
-			expect( result.current.isGenerationWarningOpen ).toBe( false );
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
 			expect( mockOnExit ).toHaveBeenCalledWith( false );
 			expect( mockTrackCloseWarningShown ).not.toHaveBeenCalled();
 		} );

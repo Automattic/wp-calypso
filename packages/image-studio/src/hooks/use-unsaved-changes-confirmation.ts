@@ -22,11 +22,18 @@ export interface UseUnsavedChangesConfirmationProps {
 }
 
 /**
+ * Which flavor of the close-confirmation dialog is currently relevant:
+ * - `unsaved`     - the user has unsaved image/metadata changes
+ * - `generation`  - a Feature Clip is still rendering (closing aborts it)
+ */
+export type CloseDialogVariant = 'unsaved' | 'generation';
+
+/**
  * Return value from useUnsavedChangesConfirmation
  */
 export interface UseUnsavedChangesConfirmationReturn {
 	isConfirmDialogOpen: boolean;
-	isGenerationWarningOpen: boolean;
+	closeDialogVariant: CloseDialogVariant;
 	isExiting: boolean;
 	setIsExiting: ( value: boolean ) => void;
 	handleRequestClose: () => void;
@@ -55,7 +62,9 @@ export function useUnsavedChangesConfirmation( {
 	isGenerationInProgress = false,
 }: UseUnsavedChangesConfirmationProps ): UseUnsavedChangesConfirmationReturn {
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
-	const [ isGenerationWarningOpen, setIsGenerationWarningOpen ] = useState( false );
+	// Which dialog flavor to render. Captured when the dialog opens (not derived
+	// live), so completing a generation while the dialog is up can't swap its copy.
+	const [ closeDialogVariant, setCloseDialogVariant ] = useState< CloseDialogVariant >( 'unsaved' );
 	const [ isExiting, setIsExiting ] = useState( false );
 
 	const { setIsExitConfirmed } = useDispatch( imageStudioStore ) as ImageStudioActions;
@@ -74,7 +83,8 @@ export function useUnsavedChangesConfirmation( {
 		return select( imageStudioStore ).getHasUpdatedMetadata();
 	}, [] );
 
-	const openConfirmDialog = useCallback( () => {
+	const openConfirmDialog = useCallback( ( variant: CloseDialogVariant ) => {
+		setCloseDialogVariant( variant );
 		setIsConfirmDialogOpen( true );
 	}, [] );
 
@@ -84,21 +94,21 @@ export function useUnsavedChangesConfirmation( {
 
 	// Handles X, ESC, backdrop, Header close
 	const handleRequestClose = useCallback( async () => {
-		if ( isConfirmDialogOpen || isGenerationWarningOpen ) {
+		if ( isConfirmDialogOpen ) {
 			return;
 		}
 
 		// Closing while a clip is rendering aborts the generation — warn first.
 		// This takes precedence over the unsaved-changes dialog.
 		if ( isGenerationInProgress ) {
-			setIsGenerationWarningOpen( true );
+			openConfirmDialog( 'generation' );
 			trackImageStudioFeatureClipCloseWarningShown();
 			return;
 		}
 
 		// Show confirmation if there are unsaved changes (image changes or metadata changes)
 		if ( hasUnsavedChanges || hasUpdatedMetadata ) {
-			openConfirmDialog();
+			openConfirmDialog( 'unsaved' );
 		} else {
 			// No unsaved changes - show loading state during cleanup
 			setIsExiting( true );
@@ -117,7 +127,6 @@ export function useUnsavedChangesConfirmation( {
 		onExit,
 		openConfirmDialog,
 		isConfirmDialogOpen,
-		isGenerationWarningOpen,
 		isGenerationInProgress,
 	] );
 
@@ -165,17 +174,17 @@ export function useUnsavedChangesConfirmation( {
 	 * User clicked "Cancel" in the generation warning — keep the clip rendering.
 	 */
 	const handleConfirmKeepGenerating = useCallback( () => {
-		setIsGenerationWarningOpen( false );
+		closeConfirmDialog();
 		trackImageStudioFeatureClipCloseWarningKeptGenerating();
 		// Don't notify parent - user wants to keep generating
-	}, [] );
+	}, [ closeConfirmDialog ] );
 
 	/**
 	 * User clicked "Stop and close" in the generation warning. Exit the modal;
 	 * unmounting aborts the in-progress request.
 	 */
 	const handleConfirmStopAndClose = useCallback( async () => {
-		setIsGenerationWarningOpen( false );
+		closeConfirmDialog();
 		trackImageStudioFeatureClipCloseWarningStopped();
 		setIsExiting( true );
 		try {
@@ -184,7 +193,7 @@ export function useUnsavedChangesConfirmation( {
 		} finally {
 			setIsExiting( false );
 		}
-	}, [ lastSavedAttachmentId, onExit ] );
+	}, [ closeConfirmDialog, lastSavedAttachmentId, onExit ] );
 
 	// Intercept ESC key when there are unsaved changes or a clip is rendering, to
 	// prevent the modal close animation and manually trigger the right dialog.
@@ -195,9 +204,9 @@ export function useUnsavedChangesConfirmation( {
 		}
 
 		const handleKeyDown = ( e: KeyboardEvent ) => {
-			// Only intercept ESC if no confirmation dialog is already showing
+			// Only intercept ESC if the confirmation dialog is not already showing
 			// This prevents conflicts with other UI elements (dropdowns, popovers)
-			if ( e.key === 'Escape' && ! isConfirmDialogOpen && ! isGenerationWarningOpen ) {
+			if ( e.key === 'Escape' && ! isConfirmDialogOpen ) {
 				// Don't intercept if the event originated from within a popover (e.g., dropdown menu)
 				// This allows dropdowns to close naturally with Escape without triggering the exit flow
 				const target = e.target;
@@ -218,17 +227,11 @@ export function useUnsavedChangesConfirmation( {
 		return () => {
 			document.removeEventListener( 'keydown', handleKeyDown, true );
 		};
-	}, [
-		hasUnsavedChanges,
-		isGenerationInProgress,
-		handleRequestClose,
-		isConfirmDialogOpen,
-		isGenerationWarningOpen,
-	] );
+	}, [ hasUnsavedChanges, isGenerationInProgress, handleRequestClose, isConfirmDialogOpen ] );
 
 	return {
 		isConfirmDialogOpen,
-		isGenerationWarningOpen,
+		closeDialogVariant,
 		isExiting,
 		setIsExiting,
 		handleRequestClose,
