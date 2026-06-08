@@ -141,7 +141,7 @@ jest.mock( '@automattic/api-queries', () => {
 	};
 } );
 
-const mockUseFollowedReaderTags = useFollowedTags as jest.MockedFunction< typeof useFollowedTags >;
+const mockUseFollowedTags = useFollowedTags as jest.MockedFunction< typeof useFollowedTags >;
 const mockUseSiteSubscriptions = useSiteSubscriptions as jest.MockedFunction<
 	typeof useSiteSubscriptions
 >;
@@ -222,7 +222,7 @@ beforeEach( () => {
 	readFeedQueryTestHarness.feedByFeedId = {};
 	readFeedQueryTestHarness.enrichmentByFeedId = {};
 	mockGetLocaleSlug.mockReturnValue( 'en' );
-	mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );
+	mockUseFollowedTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );
 	mockUseSiteSubscriptions.mockReturnValue( {
 		subscriptions: [],
 	} as unknown as ReturnType< typeof useSiteSubscriptions > );
@@ -233,7 +233,7 @@ beforeEach( () => {
 describe( 'useSubscribeRecommendations', () => {
 	describe( 'loading states', () => {
 		it( 'reports isLoading=true while followed tags are loading', () => {
-			mockUseFollowedReaderTags.mockReturnValue( tagsLoading() );
+			mockUseFollowedTags.mockReturnValue( tagsLoading() );
 
 			const { result } = renderHook();
 
@@ -244,7 +244,7 @@ describe( 'useSubscribeRecommendations', () => {
 			// Regression: before plumbing tags-loading state through, the empty-state
 			// briefly rendered because `followedTagSlugs = []` disables the API query
 			// (so `apiLoading` is false) while tags are still in flight.
-			mockUseFollowedReaderTags.mockReturnValue( tagsLoading() );
+			mockUseFollowedTags.mockReturnValue( tagsLoading() );
 
 			const { result } = renderHook();
 
@@ -253,7 +253,7 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 
 		it( 'reports hasNoRecommendations once tags load with no curated/api matches', async () => {
-			mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [] ) );
+			mockUseFollowedTags.mockReturnValue( tagsLoaded( [] ) );
 
 			const { result } = renderHook();
 
@@ -268,7 +268,7 @@ describe( 'useSubscribeRecommendations', () => {
 			readFeedQueryTestHarness.enrichmentByFeedId = {
 				999: { feed_URL: 'https://from-read-feed.example/feed' },
 			};
-			mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'not-in-curated-mock' ] ) );
+			mockUseFollowedTags.mockReturnValue( tagsLoaded( [ 'not-in-curated-mock' ] ) );
 			mockGet.mockResolvedValue(
 				cardsResponse( [
 					{
