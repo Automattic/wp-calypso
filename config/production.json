@@ -47,6 +47,7 @@
 		"dashboard/v2/backport/site-overview": true,
 		"dashboard/wp-beta-program": true,
 		"dolly/telegram": true,
+		"domain-bundling": false,
 		"domain-transfer-redesign": true,
 		"google-my-business": true,
 		"help": true,

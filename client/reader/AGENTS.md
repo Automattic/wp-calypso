@@ -13,6 +13,13 @@ yarn test-client client/reader/<path>        # Run Reader tests
 yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
 ```
 
+## Linear issues
+
+File Reader issues under the **Reader** Linear team (key `READ`, e.g. `READ-532`) — not the generic `LIN` team. When creating an issue with the Linear MCP tools, pass `team: "Reader"`.
+
+- The Reader team's issue identifiers use the `READ-` prefix. Reference them in PRs as `READ-123` (per the repo-wide rule to use Linear IDs, not full URLs), and link the work with `Closes READ-123` so the issue auto-closes on merge.
+- For a bug, set `labels: ["Bug"]` and an appropriate `priority` (1=Urgent … 4=Low).
+
 ## Architecture decisions
 
 ### Dark mode
@@ -28,6 +35,14 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
+
+**Always reach for the idiomatic React Query solution first.** Before hand-rolling effects, manual refetch chains, or imperative cache writes, check what TanStack Query already provides and prefer it:
+
+- Pagination → `useInfiniteQuery` with a correct `getNextPageParam`. Derive the stop condition from the API's real contract (page caps, server-side filtering, `total` counts), not from assumed page sizes. A bug where the org sidebar showed only the first page came from stopping pagination on a short page; see [`packages/api-queries/src/read-follows.ts`](../../packages/api-queries/src/read-follows.ts).
+- Refetch/sync → `staleTime`/`gcTime`, `invalidateQueries`, or `refetch` — not `useEffect` loops driving `fetchNextPage`.
+- Cross-feature refreshes → invalidate the canonical query key on the active `QueryClient` (see the mutation-factory rule below).
+- Loading/error/empty UI → the query's own `isPending`/`isError`/`data` state, not bespoke flags.
+- When unsure, consult the official TanStack Query docs before introducing a custom workaround. Document any deliberate deviation from the idiomatic pattern with a comment explaining why.
 
 Site subscriptions are fully on React Query:
 

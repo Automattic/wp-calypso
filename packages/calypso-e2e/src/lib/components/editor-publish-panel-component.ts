@@ -81,10 +81,7 @@ export class EditorPublishPanelComponent {
 	/* Pre-publish checklist*/
 
 	/**
-	 * Publish or schedule the article. Also dismisses Jetpack Social's
-	 * "Confirm social sharing" prepublish dialog when present — some test sites
-	 * have a connected social account with the always-confirm preference
-	 * enabled, and the dialog otherwise covers the panel publish button.
+	 * Publish or schedule the article.
 	 */
 	async publish(): Promise< void > {
 		const editorParent = await this.editor.parent();
@@ -102,22 +99,65 @@ export class EditorPublishPanelComponent {
 			return;
 		}
 
-		// Dismiss Jetpack Social's "Confirm social sharing" prepublish dialog
-		// if it appears before the panel publish button is clickable. The
-		// modal element isn't always exposed as role="dialog", so match on
-		// the visible heading text.
-		const socialModalContinue = editorParent
-			.locator( ':has(> h1, > h2, > [class*="header"]):has-text("Confirm social sharing")' )
-			.getByRole( 'button', { name: 'Continue', exact: true } )
-			.first();
-		try {
-			await socialModalContinue.waitFor( { timeout: 2000 } );
-			await socialModalContinue.click();
-		} catch {
-			// Modal not present.
-		}
+		await this.continuePastSocialSharingConfirmation();
 
 		await publishButtonLocator.click();
+	}
+
+	/**
+	 * Continues past Jetpack Social's pre-publish confirmation when it appears.
+	 */
+	private async continuePastSocialSharingConfirmation(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const socialSharingDialog = editorParent.getByRole( 'dialog' ).filter( {
+			has: this.page.getByRole( 'heading', {
+				name: 'Confirm social sharing',
+				exact: true,
+			} ),
+		} );
+		const continueButton = socialSharingDialog.getByRole( 'button', {
+			name: 'Continue',
+			exact: true,
+		} );
+
+		try {
+			await continueButton.waitFor( { state: 'visible', timeout: 2000 } );
+		} catch ( error ) {
+			if ( ! this.isTimeoutError( error ) ) {
+				throw error;
+			}
+
+			if ( await socialSharingDialog.isVisible().catch( () => false ) ) {
+				throw new Error(
+					'Jetpack Social sharing confirmation appeared, but its Continue button was not visible.',
+					{ cause: error }
+				);
+			}
+
+			return;
+		}
+
+		await continueButton.click();
+
+		try {
+			await socialSharingDialog.waitFor( { state: 'hidden', timeout: 5000 } );
+		} catch ( error ) {
+			throw new Error( 'Jetpack Social sharing confirmation did not close after Continue.', {
+				cause: error,
+			} );
+		}
+	}
+
+	/**
+	 * Checks whether an error came from a Playwright timeout.
+	 *
+	 * @param {unknown} error The error to inspect.
+	 * @returns {boolean} True when the error is a Playwright timeout.
+	 */
+	private isTimeoutError( error: unknown ): boolean {
+		const message = error instanceof Error ? error.message : String( error );
+
+		return /Timeout \d+ms exceeded/.test( message );
 	}
 
 	/* Post-publish state */

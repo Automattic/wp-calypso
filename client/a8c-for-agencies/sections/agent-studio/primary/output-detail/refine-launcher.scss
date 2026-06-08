@@ -1,0 +1,92 @@
+// Doubled selector raises specificity above `@wordpress/components`' own
+// `.components-button.has-icon` rules regardless of stylesheet order.
+.components-button.a4a-refine-launcher.a4a-refine-launcher {
+	// Intentional tri-tone brand gradient (indigo → blue → magenta). These
+	// vivid stops have no equivalent in the studio palette, so they're
+	// centralised as scoped custom properties rather than inlined per stop.
+	--a4a-refine-gradient-start: #6c5ce7;
+	--a4a-refine-gradient-mid: #387cf6;
+	--a4a-refine-gradient-end: #ec4899;
+	position: fixed;
+	inset-block-end: 24px;
+	inset-inline-end: 24px;
+	z-index: 90;
+	display: inline-grid;
+	place-items: center;
+	width: 56px;
+	height: 56px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	color: var(--color-text-inverted);
+	// Oversized so the hover state can pan across it for a shimmer.
+	background-image: linear-gradient(
+		135deg,
+		var(--a4a-refine-gradient-start) 0%,
+		var(--a4a-refine-gradient-mid) 45%,
+		var(--a4a-refine-gradient-end) 100%
+	);
+	background-size: 150% 150%;
+	background-position: 0% 50%;
+	// Neutral drop shadow — no coloured halo glowing around the button.
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	cursor: pointer;
+	transition: transform 160ms ease, box-shadow 160ms ease, background-position 480ms ease;
+}
+
+.components-button.a4a-refine-launcher.a4a-refine-launcher svg {
+	fill: currentColor;
+	transition: transform 220ms ease;
+}
+
+.components-button.a4a-refine-launcher.a4a-refine-launcher:hover,
+.components-button.a4a-refine-launcher.a4a-refine-launcher:focus {
+	background-position: 100% 50%;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+	transform: translateY(-2px) scale(1.08);
+}
+
+.components-button.a4a-refine-launcher.a4a-refine-launcher:hover svg,
+.components-button.a4a-refine-launcher.a4a-refine-launcher:focus svg {
+	transform: rotate(-18deg) scale(1.12);
+}
+
+.components-button.a4a-refine-launcher.a4a-refine-launcher:active {
+	transform: translateY(0) scale(0.96);
+}
+
+.components-button.a4a-refine-launcher.a4a-refine-launcher:focus-visible {
+	outline: 2px solid var(--color-text-inverted);
+	outline-offset: 3px;
+}
+
+// Motion is opt-in: the star gives a subtle periodic twinkle. Skipped
+// entirely for users who prefer reduced motion.
+@media (prefers-reduced-motion: no-preference) {
+	.components-button.a4a-refine-launcher.a4a-refine-launcher svg {
+		animation: a4a-refine-launcher-twinkle 2800ms ease-in-out infinite;
+	}
+
+	// Pause the twinkle while the user is interacting so hover/active feel
+	// crisp rather than fighting the keyframes.
+	.components-button.a4a-refine-launcher.a4a-refine-launcher:hover svg,
+	.components-button.a4a-refine-launcher.a4a-refine-launcher:focus svg {
+		animation-play-state: paused;
+	}
+}
+
+@keyframes a4a-refine-launcher-twinkle {
+	0%,
+	72%,
+	100% {
+		transform: rotate(0deg) scale(1);
+	}
+
+	80% {
+		transform: rotate(-12deg) scale(1.16);
+	}
+
+	88% {
+		transform: rotate(8deg) scale(1.08);
+	}
+}

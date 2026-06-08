@@ -83,6 +83,7 @@
 		"dev/react-query-devtools": true,
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
+		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
 		"entrepreneur/skip-trial-for-migration": true,

@@ -35,6 +35,7 @@
 		"dashboard/v2/backport/site-overview": true,
 		"dashboard/wp-beta-program": true,
 		"design-picker/use-assembler-styles": true,
+		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"google-my-business": false,
 		"help": true,
