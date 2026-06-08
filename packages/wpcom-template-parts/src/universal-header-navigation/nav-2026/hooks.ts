@@ -149,9 +149,17 @@ export function useDropdownFlip( {
 	activeDropdown,
 }: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
 	const dropdownRef = useRef< HTMLDivElement >( null );
-	// `prevDropdown` tells first-open from switch; `prevHeight` is the FLIP `from`.
+	// Tells first-open from switch.
 	const prevDropdownRef = useRef< string | null >( null );
-	const prevHeightRef = useRef< number >( 0 );
+	// Resting height of each panel, captured while it was the active block. The
+	// FLIP `from` must be the OUTGOING panel's height, but by the time this
+	// layout effect runs React has already swapped `aria-hidden`, so the wrapper
+	// already measures the INCOMING panel — reading the DOM for `from` always
+	// yields `to` (and the morph self-cancels as `from === to`). Keying the
+	// height by name and reading the previous name's stored value sidesteps that.
+	const heightByNameRef = useRef< Record< string, number > >( {} );
+	// Release callback for an in-flight morph, so a rapid re-switch can snap back first.
+	const releaseRef = useRef< ( () => void ) | null >( null );
 
 	useIsomorphicLayoutEffect( () => {
 		if ( ! nav2026 || typeof window === 'undefined' ) {
@@ -176,6 +184,9 @@ export function useDropdownFlip( {
 			return parseFloat( raw ) * 1000 || 280;
 		};
 
+		// Snap any in-flight morph back to `auto` before we measure, so reads are clean.
+		releaseRef.current?.();
+
 		// Closed → open: let CSS grow the panel; flag the unroll so items wait for it.
 		if ( prev === null && next !== null ) {
 			el.classList.add( 'is-dropdown-first-open' );
@@ -183,34 +194,39 @@ export function useDropdownFlip( {
 				() => el.classList.remove( 'is-dropdown-first-open' ),
 				morphMs() + 50
 			);
-			return () => {
-				clearTimeout( timer );
-				prevHeightRef.current = el.offsetHeight;
-			};
+			// Record the opened panel's resting height for a future switch's `from`.
+			heightByNameRef.current[ next ] = el.offsetHeight;
+			return () => clearTimeout( timer );
 		}
 
-		// Open → closed: nothing to morph.
+		// Open → closed: nothing to morph (but keep the last height for re-open).
 		if ( prev !== null && next === null ) {
 			el.classList.remove( 'is-dropdown-first-open' );
+			if ( prev ) {
+				heightByNameRef.current[ prev ] = el.offsetHeight;
+			}
 			return;
 		}
 
 		// Open → open: FLIP the wrapper height between the two menus.
 		if ( prev !== null && next !== null && prev !== next ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			// Reduced motion: snap instead of animate.
-			if ( window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
-				return () => {
-					prevHeightRef.current = el.offsetHeight;
-				};
-			}
-			const from = prevHeightRef.current;
+			// `to` is live (DOM already shows `next`); `from` is the outgoing panel's
+			// stored height, falling back to a live read only if we never saw it.
 			const to = el.offsetHeight;
-			if ( ! from || from === to ) {
-				return () => {
-					prevHeightRef.current = el.offsetHeight;
-				};
+			const from = heightByNameRef.current[ prev ] ?? to;
+			// Keep the incoming panel's height fresh for the next switch.
+			heightByNameRef.current[ next ] = to;
+
+			// Reduced motion, equal heights, or no usable `from`: snap, don't animate.
+			if (
+				! from ||
+				from === to ||
+				window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches
+			) {
+				return;
 			}
+
 			// Alias keeps `el`'s non-null narrowing inside the closures.
 			const node = el;
 			node.style.overflow = 'hidden';
@@ -230,7 +246,9 @@ export function useDropdownFlip( {
 				listenerAbort.abort();
 				node.style.height = '';
 				node.style.overflow = '';
+				releaseRef.current = null;
 			};
+			releaseRef.current = release;
 			node.addEventListener(
 				'transitionend',
 				( e: TransitionEvent ) => {
@@ -242,16 +260,10 @@ export function useDropdownFlip( {
 			);
 			const fallback = window.setTimeout( release, morphMs() + 50 );
 			return () => {
-				// `to` is the settled height — the next switch's `from`, no re-measure.
 				clearTimeout( fallback );
 				release();
-				prevHeightRef.current = to;
 			};
 		}
-
-		return () => {
-			prevHeightRef.current = el.offsetHeight;
-		};
 	}, [ nav2026, activeDropdown ] );
 
 	return dropdownRef;

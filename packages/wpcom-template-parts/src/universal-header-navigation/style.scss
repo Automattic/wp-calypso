@@ -1336,6 +1336,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-weight: 400;
 		line-height: $x-dropdown-2026-link-line-height;
 		color: $studio-gray-100;
+		// The wrapper's white surface owns the background; the legacy
+		// `.x-dropdown-link` base paints a hover background that must not leak here.
+		background: transparent;
 		// Never underline, even in sections (e.g. themes) that underline links by default.
 		text-decoration: none;
 		transition:
@@ -1346,7 +1349,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		&:hover,
 		&:focus,
 		&:active {
-			color: $studio-wordpress-blue-50;
+			// Studio blue (not WordPress blue) + no background, matching the reference.
+			color: $studio-blue-50;
+			background: transparent;
+			opacity: 1;
 		}
 	}
 
