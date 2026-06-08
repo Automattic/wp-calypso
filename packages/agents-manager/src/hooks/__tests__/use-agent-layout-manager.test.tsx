@@ -22,6 +22,7 @@ jest.mock( '@wordpress/element', () => ( {
 
 const CLOSING_CLASS = 'agents-manager-sidebar-container--closing';
 const OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
+const SPLIT_SCREEN_CLASS = 'is-split-screen';
 const TRANSITION_MS = 200;
 
 const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
@@ -220,5 +221,63 @@ describe( 'useAgentLayoutManager — fullscreen gate', () => {
 			await Promise.resolve();
 		} );
 		expect( result.current.canDock ).toBe( false );
+	} );
+} );
+
+describe( 'useAgentLayoutManager — split-screen class', () => {
+	let container: HTMLElement;
+
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+	} );
+
+	afterEach( () => {
+		container.remove();
+	} );
+
+	function renderWithSplitScreen( isSplitScreen: boolean ) {
+		return renderHook(
+			( props: { isSplitScreen: boolean } ) =>
+				useAgentLayoutManager( {
+					sidebarContainer: container,
+					defaultDocked: true,
+					defaultOpen: true,
+					isSplitScreen: props.isSplitScreen,
+				} ),
+			{ initialProps: { isSplitScreen } }
+		);
+	}
+
+	it( 'adds the class when `isSplitScreen` flips from `false` to `true`', () => {
+		const { rerender } = renderWithSplitScreen( false );
+
+		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
+
+		rerender( { isSplitScreen: true } );
+
+		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( true );
+	} );
+
+	it( 'removes the class when `isSplitScreen` flips from `true` to `false`', () => {
+		const { rerender } = renderWithSplitScreen( true );
+
+		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( true );
+
+		rerender( { isSplitScreen: false } );
+
+		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
+	} );
+
+	it( 'removes the class on unmount', () => {
+		const { unmount } = renderWithSplitScreen( true );
+
+		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( true );
+
+		act( () => {
+			unmount();
+		} );
+
+		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
 	} );
 } );

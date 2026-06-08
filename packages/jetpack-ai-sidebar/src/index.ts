@@ -226,14 +226,16 @@ function applySuggestionLimit< T extends { id: string } >(
 
 // ---------- Show-component ability ----------
 
-const SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
+const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
 /**
- * Client-side ability definition for `big_sky__show_component`.
+ * Client-side ability definition for `jetpack_ai__show_component`.
  *
  * Surfaced to AM via `toolProvider.getAbilities()` so the orchestrator
- * recognizes the tool_id on self-hosted Jetpack sites where Big Sky's own
- * registration isn't present. Same pattern as update-block-content.
+ * recognizes Jetpack-owned component tool calls. Same pattern as
+ * update-block-content.
  */
 const SHOW_COMPONENT_ABILITY: any = {
 	id: SHOW_COMPONENT_TOOL_ID,
@@ -251,9 +253,28 @@ const SHOW_COMPONENT_ABILITY: any = {
 	},
 };
 
+const LEGACY_SHOW_COMPONENT_ABILITY: any = {
+	...SHOW_COMPONENT_ABILITY,
+	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
+	name: LEGACY_SHOW_COMPONENT_TOOL_ID,
+};
+
+function hasShowComponentType( type: unknown ): type is string {
+	return typeof type === 'string' && type.trim() !== '';
+}
+
+function isJetpackShowComponentType( type: unknown ): boolean {
+	return hasShowComponentType( type ) && !! getChatComponent( type );
+}
+
+function shouldDelegateLegacyShowComponent( input: any ): boolean {
+	const type = input?.type;
+	return hasShowComponentType( type ) && ! isJetpackShowComponentType( type );
+}
+
 /**
- * Handle `big_sky__show_component` by returning an agentMessage envelope
- * (Big Sky unified-experience pattern). Title picker opts into AM's
+ * Handle Jetpack show-component calls by returning an agentMessage envelope.
+ * Title picker opts into AM's
  * message-level Undo because the checkpoint API snapshots the post title.
  * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
  * @returns {Object} Result containing the `agentMessage` to re-emit.
@@ -261,7 +282,7 @@ const SHOW_COMPONENT_ABILITY: any = {
 function handleShowComponent( input: any ): any {
 	const { type, props } = input || {};
 
-	if ( ! type ) {
+	if ( ! hasShowComponentType( type ) ) {
 		return { success: false, error: 'show-component: missing type', returnToAgent: false };
 	}
 
@@ -316,6 +337,17 @@ function handleShowComponent( input: any ): any {
 	};
 }
 
+async function handleLegacyShowComponent( input: any ): Promise< any > {
+	if ( shouldDelegateLegacyShowComponent( input ) ) {
+		const executeAbility = getAbilitiesExecuteAbility();
+		if ( executeAbility ) {
+			return executeAbility( 'big-sky/show-component', input );
+		}
+	}
+
+	return handleShowComponent( input );
+}
+
 /**
  * Check whether the `@wordpress/abilities` API is available.
  * @returns {boolean} True when window.wp.abilities.getAbilities exists.
@@ -325,6 +357,17 @@ function hasAbilitiesApi(): boolean {
 		return !! ( window as any ).wp?.abilities?.getAbilities;
 	} catch {
 		return false;
+	}
+}
+
+function getAbilitiesExecuteAbility():
+	| ( ( name: string, args: unknown ) => Promise< any > )
+	| null {
+	try {
+		const executeAbility = ( window as any ).wp?.abilities?.executeAbility;
+		return typeof executeAbility === 'function' ? executeAbility : null;
+	} catch {
+		return null;
 	}
 }
 
@@ -379,14 +422,14 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 }
 
 function isShowComponentTool( toolId: string ): boolean {
-	return toolId === SHOW_COMPONENT_TOOL_ID || toolId === 'big_sky__show_component';
+	return SHOW_COMPONENT_TOOL_IDS.includes( toolId );
 }
 
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
-	 * (block edits + summary) and `big_sky__show_component` (interactive pickers,
-	 * registered here so self-hosted Jetpack sees the tool_id).
+	 * (block edits + summary) and Jetpack show-component tools (interactive
+	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -406,7 +449,9 @@ export const toolProvider = {
 		}
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
-		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
+		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
+			abilities = filterAbility( abilities, toolId );
+		}
 		const jetpackAbilities = [
 			...( isBlockTransformationsEnabled()
 				? [
@@ -420,6 +465,10 @@ export const toolProvider = {
 				...SHOW_COMPONENT_ABILITY,
 				callback: handleShowComponent,
 			},
+			{
+				...LEGACY_SHOW_COMPONENT_ABILITY,
+				callback: handleLegacyShowComponent,
+			},
 		];
 		abilities.unshift( ...jetpackAbilities );
 		return abilities;
@@ -429,23 +478,27 @@ export const toolProvider = {
 	 * Execute an ability by name (fallback when callback path is not used).
 	 * @param {string} name - The ability identifier.
 	 * @param {any}    args - Arguments to pass to the ability.
-	 * @returns {Promise<{result: Record<string, unknown>, returnToAgent?: boolean}>} Execution result.
+	 * @returns {Promise<any>} Execution result. Delegated abilities may return provider-specific shapes.
 	 */
-	async executeAbility(
-		name: string,
-		args: any
-	): Promise< { result: Record< string, unknown >; returnToAgent?: boolean } > {
+	async executeAbility( name: string, args: any ): Promise< any > {
 		if ( isUpdateBlockContentTool( name ) ) {
 			const result = await handleUpdateBlockContent( args );
 			return { result, returnToAgent: false };
+		}
+
+		if ( name === LEGACY_SHOW_COMPONENT_TOOL_ID && shouldDelegateLegacyShowComponent( args ) ) {
+			const executeAbility = getAbilitiesExecuteAbility();
+			if ( executeAbility ) {
+				return executeAbility( 'big-sky/show-component', args );
+			}
 		}
 
 		if ( isShowComponentTool( name ) ) {
 			return { result: handleShowComponent( args ), returnToAgent: false };
 		}
 
-		if ( hasAbilitiesApi() ) {
-			const { executeAbility } = ( window as any ).wp.abilities;
+		const executeAbility = getAbilitiesExecuteAbility();
+		if ( executeAbility ) {
 			return executeAbility( name, args );
 		}
 

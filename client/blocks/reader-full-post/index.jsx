@@ -19,7 +19,6 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -32,6 +31,11 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { withSite } from 'calypso/reader/data/site';
+import {
+	useSiteSubscriptionForFeed,
+	useHasSiteSubscriptionOrganization,
+} from 'calypso/reader/data/site-subscriptions';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -46,16 +50,11 @@ import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import {
-	getReaderFollowForFeed,
-	hasReaderFollowOrganization,
-} from 'calypso/state/reader/follows/selectors';
-import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -739,9 +738,6 @@ export class FullPostView extends Component {
 							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
 						/>
 					) }
-					{ post && ! post.is_external && post.site_ID && (
-						<QueryReaderSite siteId={ +post.site_ID } />
-					) }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -912,7 +908,7 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	const currentPath = state.route.path.current;
 	const feed = ownProps.feed;
 
-	const { site_ID: siteId, is_external: isExternal } = post;
+	const { site_ID: siteId } = post;
 
 	const props = {
 		siteId,
@@ -920,7 +916,6 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 			isSiteWPForTeams( state, blogId ) ||
 			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
-		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 		post,
 		postKey,
 		currentPath,
@@ -928,13 +923,8 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 		previousRoute: getPreviousRoute( state ),
 	};
 
-	if ( ! isExternal && siteId ) {
-		props.site = getSite( state, siteId );
-	}
 	if ( feedId && feed ) {
-		// Add site icon to feed object so have icon for external feeds
-		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-		props.feed = { ...feed, site_icon: follow?.site_icon };
+		props.feed = feed;
 	}
 	if ( ownProps.referral ) {
 		props.referralPost = ownProps.referralPost;
@@ -943,20 +933,20 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	return props;
 };
 
-const ConnectedFullPostView = connect(
-	( state, ownProps ) => mapStateToFullPostProps( state, ownProps ),
-	{
-		disableAppBanner,
-		enableAppBanner,
-		setViewingFullPostKey,
-		unsetViewingFullPostKey,
-		requestMarkAsSeen,
-		requestMarkAsUnseen,
-		requestMarkAsSeenBlog,
-		requestMarkAsUnseenBlog,
-		showSelectedPost,
-	}
-)( withPostLikes( withPostLikeActions( FullPostView ) ) );
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
+
+const ConnectedFullPostView = connect( mapStateToFullPostProps, {
+	disableAppBanner,
+	enableAppBanner,
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+	showSelectedPost,
+} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -1051,5 +1041,15 @@ const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
 
 export default function FullPostContainer( props ) {
 	const { data: feed } = useFeedQuery( props.feedId );
-	return <FullPostWithNavigation { ...props } feed={ feed } />;
+	const follow = useSiteSubscriptionForFeed( props.feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
+	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
+
+	return (
+		<FullPostWithNavigation
+			{ ...props }
+			feed={ feedWithIcon }
+			hasOrganization={ hasOrganization }
+		/>
+	);
 }

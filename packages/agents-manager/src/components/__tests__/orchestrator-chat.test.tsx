@@ -32,6 +32,9 @@ jest.mock( '../../contexts', () => ( {
 		siteKey: 'site-1',
 	} ),
 } ) );
+jest.mock( '../../hooks/custom-actions', () => ( {
+	useRegisterCustomActions: () => {},
+} ) );
 jest.mock( '../../hooks/use-conversation', () => () => ( { isLoading: false } ) );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );

@@ -11,7 +11,6 @@ export function SidebarBackButton( { to, children }: { to: string; children: Rea
 				className="dashboard-sidebar__back-button"
 				icon={ arrowLeft }
 				iconSize={ 18 }
-				size="small"
 				to={ to }
 			>
 				{ children }

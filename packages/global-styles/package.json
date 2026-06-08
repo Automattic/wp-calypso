@@ -69,13 +69,13 @@
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"debug": "^4.4.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__block-library": "^2.6.3",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"private": true
 }

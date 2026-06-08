@@ -39,7 +39,12 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import PluginCompassAgentLoader from 'calypso/my-sites/plugins/plugin-compass-agent-loader';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDisplayName,
+	getCurrentUserEmail,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
@@ -284,6 +289,13 @@ class Layout extends Component {
 					<UniversalNavbarHeader
 						isLoggedIn={ this.props.isLoggedIn }
 						sectionName={ this.props.sectionName }
+						{ ...( this.props.nav2026 && {
+							nav2026: true,
+							nav2026Variant: this.props.nav2026Variant,
+							userAvatar: this.props.userAvatar,
+							userName: this.props.userName,
+							userEmail: this.props.userEmail,
+						} ) }
 					/>
 				) }
 				<MasterbarComponent
@@ -616,6 +628,11 @@ export default withCurrentRoute(
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
 			hasUniversalHeader,
+			nav2026: config.isEnabled( 'nav-redesign/2026' ),
+			nav2026Variant: config.isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1,
+			userAvatar: getCurrentUser( state )?.avatar_URL,
+			userName: getCurrentUserDisplayName( state ),
+			userEmail: getCurrentUserEmail( state ),
 		};
 	} )( Layout )
 );

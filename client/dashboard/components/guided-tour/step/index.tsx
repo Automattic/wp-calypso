@@ -134,8 +134,8 @@ export function GuidedTourStep( {
 									// translators: %(currentStep)s is the number of the current step and %(totalSteps)s is the number of total steps.
 									__( '%(currentStep)s of %(totalSteps)s' ),
 									{
-										currentStep: currentStep + 1,
-										totalSteps,
+										currentStep: String( currentStep + 1 ),
+										totalSteps: String( totalSteps ),
 									}
 								) }
 							</Text>

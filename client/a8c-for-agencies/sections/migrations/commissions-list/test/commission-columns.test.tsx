@@ -9,22 +9,22 @@ import { ReviewStatusColumn } from '../commission-columns';
 
 describe( 'ReviewStatusColumn', () => {
 	it( 'renders nothing when the review status is empty', () => {
-		const { container } = render( <ReviewStatusColumn reviewStatus="" canTagSitesForCommission /> );
+		const { container } = render( <ReviewStatusColumn reviewStatus="" /> );
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'shows a "Pending" badge for pending migrations while the agency is still eligible for the incentive', () => {
-		render( <ReviewStatusColumn reviewStatus="pending" canTagSitesForCommission /> );
+	it( 'shows a "Pending" badge for pending migrations', () => {
+		render( <ReviewStatusColumn reviewStatus="pending" /> );
 		expect( screen.getByText( 'Pending' ) ).toBeVisible();
 	} );
 
-	it( 'shows an "Ineligible" badge for pending migrations once the agency is no longer eligible for the incentive', () => {
-		render( <ReviewStatusColumn reviewStatus="pending" canTagSitesForCommission={ false } /> );
+	it( 'shows an "Ineligible" badge for rejected migrations', () => {
+		render( <ReviewStatusColumn reviewStatus="rejected" /> );
 		expect( screen.getByText( 'Ineligible' ) ).toBeVisible();
 	} );
 
-	it( 'shows an "Ineligible" badge for rejected migrations regardless of incentive eligibility', () => {
-		render( <ReviewStatusColumn reviewStatus="rejected" canTagSitesForCommission /> );
+	it( 'shows an "Ineligible" badge for ineligible migrations', () => {
+		render( <ReviewStatusColumn reviewStatus="ineligible" /> );
 		expect( screen.getByText( 'Ineligible' ) ).toBeVisible();
 	} );
 } );

@@ -1,5 +1,4 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { SiteSubscriptionsResponseItem } from '@automattic/data-stores/src/reader';
 import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +7,7 @@ import { Notice, NoticeType } from '../notice';
 import { VirtualizedList } from '../virtualized-list';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
+import type { SiteSubscriptionItem } from '@automattic/data-stores/src/reader';
 
 type SiteSubscriptionsListProps = {
 	emptyComponent?: React.ComponentType;
@@ -128,7 +128,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 
-			<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
+			<VirtualizedList< SiteSubscriptionItem > items={ filteredSubscriptions }>
 				{ ( { item, key, style, registerChild } ) => (
 					<SiteSubscriptionRow
 						{ ...item }

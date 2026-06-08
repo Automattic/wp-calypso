@@ -58,8 +58,8 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"copyfiles": "^2.4.1",
 		"postcss": "^8.5.3",
-		"storybook": "^8.6.17",
-		"typescript": "^5.9.3",
+		"storybook": "^9.1.20",
+		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
 	},
 	"dependencies": {
@@ -70,7 +70,7 @@
 		"@wordpress/core-data": "^7.46.0",
 		"@wordpress/dom": "^4.46.0",
 		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/url": "^4.46.0",
 		"clsx": "^2.1.1",

@@ -8,9 +8,6 @@ import {
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM,
-	PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-	PLAN_WPCOM_CHOOSE_MID_YEARLY,
-	PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
 	PLAN_WPCOM_ENTERPRISE,
 	PLAN_VIP,
 	PLAN_HOST_BUNDLE,
@@ -25,6 +22,7 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_100_YEARS,
+	PLAN_STUDENT,
 } from '../src/constants';
 import { isPlan } from '../src/is-plan';
 
@@ -39,6 +37,7 @@ describe( 'isPlan', () => {
 		PLAN_100_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_BLOGGER,
+		PLAN_STUDENT,
 		PLAN_WPCOM_ENTERPRISE,
 		PLAN_HOST_BUNDLE,
 		PLAN_P2_PLUS,
@@ -48,9 +47,6 @@ describe( 'isPlan', () => {
 		PLAN_JETPACK_SECURITY_DAILY,
 		PLAN_JETPACK_SECURITY_REALTIME,
 		PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-		PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-		PLAN_WPCOM_CHOOSE_MID_YEARLY,
-		PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
 	] )( 'returns true for %s', ( slug ) => {
 		expect( isPlan( { product_slug: slug } ) ).toBeTruthy();
 		expect( isPlan( { productSlug: slug } ) ).toBeTruthy();

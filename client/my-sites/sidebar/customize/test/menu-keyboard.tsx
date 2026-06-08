@@ -82,7 +82,7 @@ describe( '<MySitesSidebarUnifiedMenu> customize keyboard behaviour', () => {
 		expect( row ).toBeInTheDocument();
 		expect( heading ).toHaveAttribute( 'tabindex', '-1' );
 		expect( screen.getByRole( 'button', { name: 'Reorder Upgrades' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toHaveTextContent( '⋮' );
 		expect( screen.queryByRole( 'button', { name: 'Reorder Plans' } ) ).not.toBeInTheDocument();
 	} );
 

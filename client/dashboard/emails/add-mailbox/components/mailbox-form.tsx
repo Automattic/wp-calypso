@@ -160,7 +160,10 @@ export const MailboxForm = ( {
 								__(
 									'Your password reset email is <strong>%(userEmail)s</strong>. <passwordChangeLink>Change it</passwordChangeLink>.'
 								),
-								{ userEmail: mailboxEntity.getFieldValue( FIELD_PASSWORD_RESET_EMAIL ) }
+								{
+									userEmail:
+										mailboxEntity.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ) ?? '',
+								}
 							),
 							{
 								strong: <strong />,

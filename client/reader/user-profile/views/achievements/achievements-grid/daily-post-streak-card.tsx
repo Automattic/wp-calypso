@@ -1,4 +1,4 @@
-import { readFeedSiteQuery } from '@automattic/api-queries';
+import { readSiteQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { globe } from '@wordpress/icons';
@@ -17,7 +17,7 @@ function getHostname( url: string ): string {
 
 export default function DailyPostStreakCard( { streak }: { streak: DailyPostStreak } ) {
 	const translate = useTranslate();
-	const { data: site } = useQuery( readFeedSiteQuery( streak.blog_id ) );
+	const { data: site } = useQuery( readSiteQuery( streak.blog_id ) );
 
 	const siteName = ( site && getSiteName( { site } ) ) || getHostname( streak.url );
 	const iconUrl = site?.icon?.img;

@@ -5,6 +5,7 @@ import {
 	setRouterHistory,
 	setLastActivity,
 	setIsDocked,
+	setIsMinimized,
 	setIsOpen,
 	setIsLoading,
 	setHasLoaded,
@@ -30,6 +31,7 @@ function isValidRouterHistory( value: unknown ): value is PerSiteRouterHistory {
 type AgentsManagerStateResponse = {
 	agents_manager_open?: boolean;
 	agents_manager_docked?: boolean;
+	agents_manager_minimized?: boolean;
 	agents_manager_floating_position?: 'left' | 'right';
 	agents_manager_router_history?: PerSiteRouterHistory;
 	agents_manager_last_activity?: PerSiteLastActivity;
@@ -59,6 +61,10 @@ export function* getAgentsManagerState() {
 
 		if ( typeof state.agents_manager_docked === 'boolean' ) {
 			yield setIsDocked( state.agents_manager_docked, false );
+		}
+
+		if ( typeof state.agents_manager_minimized === 'boolean' ) {
+			yield setIsMinimized( state.agents_manager_minimized, false );
 		}
 
 		if (

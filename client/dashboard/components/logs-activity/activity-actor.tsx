@@ -21,7 +21,7 @@ function getMcpIndicator( actor?: ActivityActorDetails ): string | null {
 }
 
 function getActorPresentation( actor?: ActivityActorDetails ) {
-	let actorName = __( 'Unknown' );
+	let actorName: string = __( 'Unknown' );
 
 	if ( ! actor ) {
 		return {

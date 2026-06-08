@@ -51,8 +51,8 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-client": "^0.1.58",
-		"@automattic/agenttic-ui": "^0.1.58",
+		"@automattic/agenttic-client": "^0.1.65",
+		"@automattic/agenttic-ui": "^0.1.65",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",
@@ -63,7 +63,7 @@
 		"@wordpress/core-data": "^7.46.0",
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/plugins": "^7.46.0",
 		"@wordpress/primitives": "^4.46.0",
@@ -74,10 +74,10 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/react": "^15.0.0",
+		"@testing-library/react": "^15.0.7",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

@@ -1,6 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -11,10 +15,11 @@ import { thunk as thunkMiddleware } from 'redux-thunk';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import Stream from '../index';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
-	const ReactLib = require( 'react' ) as typeof import('react');
+	const ReactLib = jest.requireActual< typeof import('react') >( 'react' );
 	return class PostLifecycle extends ReactLib.Component< {
 		postKey: { postId: number };
 		isSelected: boolean;
@@ -70,7 +75,7 @@ jest.mock(
 );
 jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
 jest.mock( 'calypso/components/infinite-list', () => {
-	const ReactLib = require( 'react' ) as typeof import('react');
+	const ReactLib = jest.requireActual< typeof import('react') >( 'react' );
 	return class InfiniteList extends ReactLib.Component< {
 		items: Array< { postId: number } >;
 		fetchingNextPage?: boolean;
@@ -159,6 +164,23 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
 
+function makeSiteSubscriptionsData(
+	subscriptions: SiteSubscriptionItem[],
+	totalCount = subscriptions.length
+): SiteSubscriptionsInfiniteData {
+	return {
+		pages: [
+			{
+				subscriptions,
+				totalCount,
+				page: 1,
+				number: 200,
+			},
+		],
+		pageParams: [ 1 ],
+	};
+}
+
 const baseState = {
 	ui: { language: { localeSlug: 'en' }, isNotificationsOpen: false },
 	documentHead: { unreadCount: 0 },
@@ -166,7 +188,6 @@ const baseState = {
 	readerUi: { sidebar: { selectedRecentSite: null } },
 	reader: {
 		feeds: { items: {} },
-		follows: { items: {} },
 		siteBlocks: { items: {} },
 		sites: { items: {} },
 		posts: { items: {} },
@@ -174,15 +195,29 @@ const baseState = {
 	},
 };
 
-const followedFeedState = {
-	itemsCount: 1,
-	items: { 1: { feed_ID: 1, is_following: true } },
-};
+const subscribedSites = [ { feed_ID: 1, is_following: true } ];
+
+function seedSiteSubscriptionsQuery(
+	queryClient: QueryClient,
+	followItems: Partial< SiteSubscriptionItem >[] = []
+) {
+	const items = followItems.map(
+		( item ) =>
+			( {
+				...item,
+				URL: item.URL ?? '',
+				feed_URL: item.feed_URL ?? '',
+				is_following: Boolean( item.is_following ),
+			} ) as SiteSubscriptionItem
+	);
+	queryClient.setQueryData( getSiteSubscriptionsQueryKey(), makeSiteSubscriptionsData( items ) );
+}
 
 function renderStream(
 	extraProps: Record< string, unknown > = {},
 	initialStateOverride = {},
-	queryClient = makeQueryClient()
+	queryClient = makeQueryClient(),
+	followItems: Partial< SiteSubscriptionItem >[] = []
 ) {
 	const actions: unknown[] = [];
 	const actionRecorder = () => ( next: ( action: unknown ) => unknown ) => ( action: unknown ) => {
@@ -190,6 +225,7 @@ function renderStream(
 		return next( action );
 	};
 	const seedState = { ...baseState, ...initialStateOverride };
+	seedSiteSubscriptionsQuery( queryClient, followItems );
 	// `<Stream>` keeps post selection in the React Query cache (see
 	// `useStreamPostKeySelection`); only thunks like `likePost` need to dispatch
 	// against the store, so a passthrough reducer is enough.
@@ -335,7 +371,7 @@ describe( 'Stream — render states', () => {
 
 	it( 'injects prompt blocks into long streams', async () => {
 		mockLikesEndpoint( Array.from( { length: 11 }, ( _, index ) => apiPost( index + 1 ) ) );
-		renderStream( {}, { reader: { ...baseState.reader, follows: followedFeedState } } );
+		renderStream( {}, {}, undefined, subscribedSites );
 
 		await waitFor( () => expect( screen.getByTestId( 'post-11' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'prompt-block' ) ).toBeVisible();
@@ -352,7 +388,9 @@ describe( 'Stream — render states', () => {
 			} );
 		renderStream(
 			{ recsStreamKey: 'custom_recs_posts_with_images' },
-			{ reader: { ...baseState.reader, follows: followedFeedState } }
+			{},
+			undefined,
+			subscribedSites
 		);
 
 		await waitFor( () => expect( screen.getByTestId( 'recommendation-block' ) ).toBeVisible() );

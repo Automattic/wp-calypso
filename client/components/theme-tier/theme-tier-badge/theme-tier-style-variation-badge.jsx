@@ -1,20 +1,14 @@
-import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
-import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
 export default function ThemeTierStyleVariationBadge() {
 	const translate = useTranslate();
-	const { siteId } = useThemeTierBadgeContext();
 
-	// @TODO Cleanup once the test phase is over.
-	const upgradeToPlan = useSiteGlobalStylesOnPersonal( siteId )
-		? getPlan( PLAN_PERSONAL )
-		: getPlan( PLAN_PREMIUM );
+	const upgradeToPlan = getPlan( PLAN_PERSONAL );
 
 	const tooltipContent = (
 		<>

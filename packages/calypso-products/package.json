@@ -47,7 +47,7 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.1.9",
+		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/urls": "workspace:^",
 		"i18n-calypso": "workspace:^"
@@ -57,7 +57,7 @@
 		"@wordpress/data": "^10.46.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

@@ -45,7 +45,7 @@
 		"@wordpress/data": "^10.46.0",
 		"@wordpress/dom-ready": "^4.46.0",
 		"@wordpress/editor": "^14.46.0",
-		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/i18n": "^6.19.0",
 		"@wordpress/icons": "^13.2.0",
 		"@wordpress/plugins": "^7.46.0",
 		"@wordpress/private-apis": "^1.47.0",
@@ -61,7 +61,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"copy-webpack-plugin": "^10.2.4",
-		"typescript": "^5.9.3",
+		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {

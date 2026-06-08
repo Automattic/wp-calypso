@@ -109,7 +109,10 @@ export function useActions(): Action< Site >[] {
 		},
 		{
 			id: 'restore',
-			isPrimary: true,
+			// Intentionally not `isPrimary`. For deleted sites, restore is the only
+			// eligible action, and the DataViews bug below hides primary actions behind
+			// hover with no kebab fallback, making restore undiscoverable.
+			// https://github.com/WordPress/gutenberg/issues/78842
 			icon: backup,
 			label: __( 'Restore site' ),
 			isEligible: ( item: Site ) => canRestoreSite( item ),

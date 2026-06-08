@@ -213,7 +213,7 @@ export default function AgentChat( {
 		[ mergedComponents, markdownExtensions ]
 	);
 
-	let floatingChatState: ChatState = 'collapsed';
+	let floatingChatState: ChatState = 'minimized';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {

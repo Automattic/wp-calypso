@@ -1,4 +1,4 @@
-import { Locator, Page, Frame } from 'playwright';
+import { Locator, Page, Frame, Response } from 'playwright';
 import envVariables from './env-variables';
 
 const coreNavTabParent = 'div.components-tab-panel__tabs';
@@ -186,7 +186,8 @@ export async function clickNavTab(
  */
 export async function reloadAndRetry(
 	page: Page,
-	func: ( page: Page ) => Promise< void >
+	func: ( page: Page ) => Promise< void >,
+	options?: { onReload?: ( response: Response | null ) => Promise< void > | void }
 ): Promise< void > {
 	for ( let retries = 3; retries > 0; retries -= 1 ) {
 		try {
@@ -196,7 +197,8 @@ export async function reloadAndRetry(
 			if ( retries === 1 ) {
 				throw err;
 			} else {
-				await page.reload();
+				const response = await page.reload();
+				await options?.onReload?.( response );
 			}
 		}
 	}

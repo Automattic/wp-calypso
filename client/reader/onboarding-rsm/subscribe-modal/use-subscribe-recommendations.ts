@@ -1,38 +1,13 @@
-import { createSelector } from '@automattic/state-utils';
-import { useQuery } from '@tanstack/react-query';
+import { prepareComparableUrl, type SiteSubscriptionItem } from '@automattic/api-core';
+import { readSiteQuery } from '@automattic/api-queries';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
-import { reject } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { useFeedQueries } from 'calypso/reader/data/feed';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
-import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
-import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
-import { AppState } from 'calypso/types';
-
-/**
- * Narrow shape of `state.reader.sites.items` used in this hook. The reader sites slice is a JS
- * module with no exported TS type, and `AppState` is a permissive `any` alias in this codebase,
- * so we declare exactly the fields we read here. This keeps the validation gate honest if the
- * underlying shape ever changes.
- */
-type ReaderItemMap = Record< number, { is_error?: boolean } | undefined >;
-
-const getReaderFollowingItemsRaw = createSelector(
-	( state: AppState ): ReaderFollowItem[] => {
-		const items = state.reader?.follows?.items;
-		if ( ! items ) {
-			return [];
-		}
-		const list = reject( Object.values( items ), 'error' ) as ( ReaderFollowItem | null )[];
-		return list.filter(
-			( item ): item is ReaderFollowItem => item != null && !! item.is_following
-		);
-	},
-	( state: AppState ) => [ state.reader?.follows?.items ]
-);
 
 /**
  * Round-robin interleave of N lists: `[ a[0], b[0], c[0], a[1], b[1], c[1], ... ]`. Lists that
@@ -57,7 +32,7 @@ function interleaveByTag< T >( perTagLists: T[][] ): T[] {
  * Canonical feed URL for de-duping follows vs recommendations when `feed_ID`
  * drifts (same subscription, new feed row) or when matching across sources.
  *
- * Delegates to `prepareComparableUrl` so keys match how the reader follows slice
+ * Delegates to `prepareComparableUrl` so keys match how the follows query
  * indexes subscriptions (scheme stripped, trailing slash trimmed, lowercased).
  */
 function normalizeReaderFeedUrlForSubscriptionMatch(
@@ -81,17 +56,17 @@ type FollowedSubscriptions = {
 };
 
 function buildFollowedSubscriptions(
-	rawFollowingItems: ReaderFollowItem[]
+	rawFollowingItems: SiteSubscriptionItem[]
 ): FollowedSubscriptions {
 	const feedIds = new Set< number >();
 	const blogIds = new Set< number >();
 	const feedUrls = new Set< string >();
 	for ( const f of rawFollowingItems ) {
 		if ( f.feed_ID != null ) {
-			feedIds.add( f.feed_ID );
+			feedIds.add( Number( f.feed_ID ) );
 		}
-		if ( f.blog_ID != null && f.blog_ID !== 0 ) {
-			blogIds.add( f.blog_ID );
+		if ( f.blog_ID != null && Number( f.blog_ID ) !== 0 ) {
+			blogIds.add( Number( f.blog_ID ) );
 		}
 		const urlCandidates = [ f.feed_URL, ...( f.alias_feed_URLs ?? [] ) ];
 		for ( const url of urlCandidates ) {
@@ -166,7 +141,7 @@ interface Card {
 export interface UseSubscribeRecommendationsResult {
 	/** Combined + sorted + filtered recommendations (max 18), after follow de-dupe by ID/URL and `readFeedQuery` URL enrichment. */
 	combinedRecommendations: CardData[];
-	/** Stable list: only items whose feed loaded in Redux without feed/site errors. */
+	/** Stable list: only items whose feed loaded without feed/site errors. */
 	recommendations: CardData[];
 	isLoading: boolean;
 	/** API returned candidates but none are validated yet (feeds still loading). */
@@ -176,7 +151,7 @@ export interface UseSubscribeRecommendationsResult {
 	/**
 	 * Record that the user followed a feed *during this modal session*. Pinned
 	 * cards whose feed_ID was marked here are kept visible (showing their
-	 * "Subscribed" state) even after the follows slice catches up; pinned cards
+	 * "Subscribed" state) even after the follows query catches up; pinned cards
 	 * that turn out to have already been followed before the modal opened are
 	 * pruned instead. Wire this into the `onFollowToggle` of any follow button
 	 * the modal renders.
@@ -185,22 +160,22 @@ export interface UseSubscribeRecommendationsResult {
 }
 
 export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult {
-	const { data: followedTags, isLoading: tagsLoading } = useFollowedReaderTags();
+	const { data: followedTags, isLoading: tagsLoading } = useFollowedTags();
 	const followedTagSlugs = useMemo(
 		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
 		[ followedTags ]
 	);
 
-	const rawFollowingItems = useSelector( getReaderFollowingItemsRaw );
+	const { subscriptions } = useSiteSubscriptions();
+	const rawFollowingItems = subscriptions.filter( ( item ) => item.is_following );
 	const currentLocale = getLocaleSlug();
 
 	/**
 	 * Feed IDs, blog IDs, and normalized feed URLs the user is currently following.
 	 * URLs cover cases where the same subscription gets a new `feed_ID` over time.
 	 * Reactive: updates as the paginated follows API fills in. Safe to use in the
-	 * memo deps below because `getReaderFollowingItemsRaw` only depends on
-	 * `state.reader.follows.items`, not feed query results, so the feed queries below
-	 * can't cause a render storm via this selector.
+	 * memo deps below because it depends on follows query data, not feed query
+	 * results, so the feed queries below can't cause a render storm.
 	 */
 	const followedSubscriptions = useMemo(
 		() => buildFollowedSubscriptions( rawFollowingItems ),
@@ -305,6 +280,14 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	}, [ followedTagSlugs, apiRecommendedSites, tagsLoading, currentLocale, followedSubscriptions ] );
 
 	const feedQueries = useFeedQueries( baseCombinedRecommendations.map( ( site ) => site.feed_ID ) );
+	const feedQueriesStateKey = feedQueries
+		.map(
+			( q ) =>
+				`${ q.status }:${ q.fetchStatus }:${ q.dataUpdatedAt }:${ q.isError }:${
+					q.data?.feed_URL ?? ''
+				}`
+		)
+		.join( '|' );
 
 	const combinedRecommendations = useMemo( () => {
 		const enriched = baseCombinedRecommendations.map( ( site, index ) => {
@@ -321,15 +304,10 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		// Re-check after `readFeedQuery` enriches `feed_URL` so API rows that omitted
 		// the URL in `/read/tags/cards` still match follows keyed by URL when `feed_ID` differs.
 		return enriched.filter( ( site ) => ! isFollowedSubscription( site, followedSubscriptions ) );
-	}, [ baseCombinedRecommendations, feedQueries, followedSubscriptions ] );
-
-	const feedQueriesStateKey = useMemo(
-		() =>
-			feedQueries
-				.map( ( q ) => `${ q.status }:${ q.fetchStatus }:${ q.dataUpdatedAt }:${ q.isError }` )
-				.join( '|' ),
-		[ feedQueries ]
-	);
+		// feedQueries is read from the latest render; feedQueriesStateKey bumps when feed query
+		// status or URL data changes without depending on the unstable useQueries array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ baseCombinedRecommendations, feedQueriesStateKey, followedSubscriptions ] );
 
 	const feedQueryById = useMemo(
 		() =>
@@ -340,9 +318,38 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ baseCombinedRecommendations, feedQueriesStateKey ]
 	);
-	const readerSiteItems = useSelector(
-		( state: AppState ): ReaderItemMap => state.reader?.sites?.items ?? {}
+
+	// Site validation is sourced from React Query. One query per recommendation
+	// that carries a real `site_ID`; we surface only the pieces the validation
+	// gate below needs.
+	const siteIdsForValidation = useMemo(
+		() => combinedRecommendations.filter( ( s ) => s.site_ID > 0 ).map( ( s ) => s.site_ID ),
+		[ combinedRecommendations ]
 	);
+	const siteQueries = useQueries( {
+		queries: siteIdsForValidation.map( ( siteId ) => ( { ...readSiteQuery( siteId ) } ) ),
+	} );
+	const siteQueriesStateKey = siteQueries.map( ( q ) => `${ q.status }` ).join( '|' );
+	const siteValidationBySiteId = useMemo( () => {
+		const map: Record< number, 'pending' | 'success' | 'error' > = {};
+		siteIdsForValidation.forEach( ( siteId, idx ) => {
+			const q = siteQueries[ idx ];
+			if ( ! q ) {
+				return;
+			}
+			if ( q.isSuccess ) {
+				map[ siteId ] = 'success';
+			} else if ( q.isError ) {
+				map[ siteId ] = 'error';
+			} else {
+				map[ siteId ] = 'pending';
+			}
+		} );
+		return map;
+		// `siteQueries` is rebuilt each render but its statuses drive validation;
+		// stringify status keys to keep the memo stable when nothing changed.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ siteIdsForValidation, siteQueriesStateKey ] );
 
 	/**
 	 * Cards captured (in encounter order) once their feed/site metadata has loaded successfully.
@@ -370,7 +377,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 * by the prune effect below to distinguish in-session follows (keep the
 	 * pinned card visible) from follows that turn out to have *already*
 	 * existed before the modal opened but only became known once paginated
-	 * `state.reader.follows.items` pages caught up (prune the pinned card —
+	 * follows query pages caught up (prune the pinned card —
 	 * the PR's stated goal is to not show previously-subscribed blogs as
 	 * recommendations).
 	 */
@@ -391,7 +398,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		sessionFollowedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
-	// Prune pinned cards once the follows slice reveals they were already
+	// Prune pinned cards once the follows query reveals they were already
 	// subscribed before this modal session — unless the user followed them in
 	// this session (which is the "keep visible after follow" UX). Runs whenever
 	// `followedSubscriptions` changes (e.g. a paginated follows page lands).
@@ -448,19 +455,20 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			if ( ! feedQuery.isSuccess || ! feedQuery.data ) {
 				continue;
 			}
-			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds) have no associated
-			// WP.com site and never produce a `readerSiteItems` entry — pinning those on feed alone
-			// is correct. For cards with a real `site_ID`, wait until the site request lands so a
-			// late-arriving site error (e.g. 404/410) reliably excludes the card, rather than
-			// letting it stay pinned because the site hadn't loaded yet.
+			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds like
+			// `design-milk.com`) have no associated WP.com site and never produce a
+			// site query — pinning those on feed alone is correct.
+			// For cards with a real `site_ID`, wait until the site request lands so a
+			// late-arriving site error (e.g. 404/410) reliably excludes the card,
+			// rather than letting it stay pinned because the site hadn't loaded yet.
 			const requiresSite = site.site_ID > 0;
 			if ( requiresSite ) {
-				const reduxSite = readerSiteItems[ site.site_ID ];
-				if ( ! reduxSite ) {
+				const status = siteValidationBySiteId[ site.site_ID ];
+				if ( ! status || status === 'pending' ) {
 					// Site hasn't loaded yet — keep waiting.
 					continue;
 				}
-				if ( reduxSite.is_error ) {
+				if ( status === 'error' ) {
 					newlyRejected.push( site.feed_ID );
 					continue;
 				}
@@ -484,7 +492,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				return next;
 			} );
 		}
-	}, [ combinedRecommendations, feedQueryById, readerSiteItems, rejectedFeedIds ] );
+	}, [ combinedRecommendations, feedQueryById, siteValidationBySiteId, rejectedFeedIds ] );
 
 	const recommendations = pinnedSites;
 

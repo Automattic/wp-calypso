@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -134,13 +134,12 @@ export default function RegularPlanCardContent( {
 						showActualCost &&
 						( pressableOwnership === 'none' || isReferralMode ) && (
 							<span className="pressable-plan-card-content__promo-footnote">
-								{ translate( '*Limited time only. {{a}}See details{{/a}} ↗', {
+								{ translate( '*Limited time only. {{a}}See details{{/a}}', {
 									components: {
 										a: (
-											<a
+											<ExternalLink
 												href="https://pressable.com/legal/hosting-promotion-terms/"
-												target="_blank"
-												rel="noopener noreferrer"
+												children={ null }
 											/>
 										),
 									},

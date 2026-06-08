@@ -91,6 +91,7 @@ interface CancelPurchaseFormProps {
 	questionTwoOrder?: string[];
 	questionTwoRadio?: string;
 	questionTwoText?: string;
+	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
@@ -141,6 +142,7 @@ function SurveyContent( {
 	isAkismet,
 	intent,
 	onSwitchToMonthly,
+	recordEvent,
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
@@ -180,6 +182,7 @@ function SurveyContent( {
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 					onSwitchToMonthly={ onSwitchToMonthly }
 					purchase={ purchase }
+					recordEvent={ recordEvent }
 					refundAmount={ refundAmount }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
@@ -394,7 +397,7 @@ function StepButtons( {
 					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
 					onClick={ () => {
-						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+						onClickAcceptForCancellationOffer?.();
 					} }
 					variant="primary"
 				>

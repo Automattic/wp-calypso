@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import connectSite from 'calypso/lib/reader-connect-site';
-import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '.';
 
 const noop = () => {};
@@ -105,13 +105,18 @@ const normalizeUrl = ( url ) => {
 	return url.match( /^https?:\/\// ) ? url : `http://${ url }`;
 };
 
-export default compose(
-	connect( ( state, ownProps ) => ( {
-		isFollowing: isFollowingSelector( state, {
-			feedId: ownProps.feedId ?? null,
-			blogId: ownProps.siteId ?? null,
-		} ),
+const ConnectedWithSite = compose(
+	connect( ( _state, ownProps ) => ( {
 		url: normalizeUrl( ownProps.url ?? '' ),
 	} ) ),
 	connectSite
 )( ConnectedSubscriptionListItem );
+
+export default function SubscriptionListItemContainer( props ) {
+	const isFollowing = useIsSubscribed( {
+		feedId: props.feedId ?? null,
+		blogId: props.siteId ?? null,
+	} );
+
+	return <ConnectedWithSite { ...props } isFollowing={ isFollowing } />;
+}

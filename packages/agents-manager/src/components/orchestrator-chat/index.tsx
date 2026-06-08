@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
@@ -18,7 +19,9 @@ import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
-import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import convertToolMessagesToComponents, {
+	type AgentsManagerUIMessage,
+} from '../../utils/convert-tool-messages-to-components';
 import {
 	consumeNextMessageExternalContextEntries,
 	removeExternalContextCard,
@@ -288,20 +291,7 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useEffect( () => {
-		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
-		window.__agentsManagerActions.setChatInput = setChatInput;
-		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
-
-		return () => {
-			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
-				delete window.__agentsManagerActions.setChatInput;
-			}
-			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
-				delete window.__agentsManagerActions.submitChatMessage;
-			}
-		};
-	}, [ setChatInput, submitChatMessage ] );
+	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -417,8 +407,8 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
-	const displayedMessages = useMemo( () => {
-		let currentMessages = messages;
+	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+		let currentMessages: AgentsManagerUIMessage[] = messages;
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
@@ -463,6 +453,13 @@ export default function OrchestratorChat( {
 		onHasMessagesChange( hasMessages );
 	}, [ hasMessages, onHasMessagesChange ] );
 
+	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
+	const shouldSuppressTransientThinking = Boolean(
+		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
+	);
+	const showProcessingIndicator =
+		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
+
 	// Determine which suggestions to show following Big Sky's logic:
 	// - When there are dynamic suggestions (from block selection, etc.), show those
 	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
@@ -478,7 +475,7 @@ export default function OrchestratorChat( {
 			messages={ displayedMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
-			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
+			isProcessing={ showProcessingIndicator }
 			thinkingMessage={ progressMessage }
 			error={ chatError }
 			onSubmit={ onSubmitWithImages }

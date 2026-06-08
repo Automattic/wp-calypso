@@ -15,6 +15,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -99,7 +100,11 @@ import {
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import {
+	getChangedPlanRedirectUrl,
+	getSitePurchaseUpgradeUrl,
+	getUpgradedPurchaseRedirectUrl,
+} from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -144,7 +149,8 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
-		redirect_to: getUpgradedPurchaseRedirectUrl(),
+		redirect_to: getChangedPlanRedirectUrl(),
+		allow_downgrade: 'true',
 	} );
 }
 
@@ -598,6 +604,39 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+		return null;
+	}
+
+	if ( ! purchase.is_past_expiry_date || ! purchase.is_plan ) {
+		return null;
+	}
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Change plan' ) }
+			description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_change_plan_click', {
+							product_slug: purchase.product_slug,
+						} );
+						window.location.href = getExpiredNewPlanUrl( purchase );
+					} }
+				>
+					{ __( 'View plans' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
@@ -613,6 +652,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return (
 			<VStack spacing={ 4 }>
 				<ActionList>
+					<ChangePlanActionItem purchase={ purchase } />
 					<ReSubscribeActionButton purchase={ purchase } />
 				</ActionList>
 			</VStack>
@@ -626,6 +666,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
 				<ReSubscribeActionButton purchase={ purchase } />
+				<ChangePlanActionItem purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
@@ -708,7 +749,7 @@ function getFields( {
 						if ( isInExpirationGracePeriod( purchase ) ) {
 							return __( 'Pending renewal' );
 						}
-						// translators: date is a formatted date string
+						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						} );
@@ -719,13 +760,13 @@ function getFields( {
 						} );
 						if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 							return sprintf(
-								// translators: date is a formatted expiry date
+								// translators: %(date)s is a formatted expiry date
 								__( 'Expired on %(date)s.' ),
 								{ date }
 							);
 						}
 						return sprintf(
-							// translators: date is a formatted expiry date
+							// translators: %(date)s is a formatted expiry date
 							__( 'Expires on %(date)s.' ),
 							{ date }
 						);
@@ -897,7 +938,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	}
 	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
 	const offerText = isOffer
-		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		? /* translators: %(regularPrice)s is a monetary amount that the customer will be charged after this offer ends */
 		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
 				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
 					isSmallestUnit: true,
@@ -1008,12 +1049,12 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
 							),
 							{
-								numberOfIncludedPages: tier0.maximum_units,
+								numberOfIncludedPages: String( tier0.maximum_units ),
 							}
 					  ) }{ ' ' }
 				{ extraPageCount > 0 &&
 					sprintf(
-						// translators: numberofPages is a number of pages
+						// translators: %(numberOfPages)d is a number of pages
 						_n(
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
@@ -1272,7 +1313,7 @@ function PurchaseSecondSubtitle( {
 				<Text variant="muted">
 					{ description }{ ' ' }
 					{ sprintf(
-						// translators: numberOfMailboxes is a number and domain is a domain name
+						// translators: %(numberOfMailboxes)d is a number of mailboxes and %(domain)s is a domain name
 						_n(
 							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
 							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
@@ -1280,7 +1321,7 @@ function PurchaseSecondSubtitle( {
 						),
 						{
 							numberOfMailboxes: purchase.renewal_price_tier_usage_quantity,
-							domain: purchase.meta,
+							domain: purchase.meta ?? '',
 						}
 					) }
 				</Text>
@@ -1309,7 +1350,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return (
 			<MetadataItem
 				title={ sprintf(
-					// translators: subtitle is the type of purchase (e.g. "Host Managed Plan"), partnerName is the name of the business partner
+					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"), %(partnerName)s is the name of the business partner
 					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
 					{ subtitle, partnerName: purchase.partner_name }
 				) }

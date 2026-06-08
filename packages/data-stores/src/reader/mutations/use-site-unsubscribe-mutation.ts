@@ -1,11 +1,12 @@
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { buildQueryKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import {
-	SiteSubscriptionsPages,
-	SubscriptionManagerSubscriptionsCount,
-	SiteSubscriptionDetails,
-} from '../types';
+import { SubscriptionManagerSubscriptionsCount, SiteSubscriptionDetails } from '../types';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 type UnsubscribeParams = {
 	subscriptionId: number;
@@ -46,7 +47,7 @@ const buildSiteSubscriptionDetailsQueryKey = (
 const useSiteUnsubscribeMutation = () => {
 	const { isLoggedIn, id: userId } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const siteSubscriptionsQueryKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const siteSubscriptionsQueryKey = getSiteSubscriptionsQueryKey();
 	const subscriptionsCountQueryKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useMutation( {
@@ -93,21 +94,30 @@ const useSiteUnsubscribeMutation = () => {
 			await queryClient.cancelQueries( { queryKey: siteSubscriptionDetailsQueryKey } );
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
+				queryClient.getQueryData< SiteSubscriptionsInfiniteData >( siteSubscriptionsQueryKey );
 
 			// remove blog from site subscriptions
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsQueryKey, {
 					...previousSiteSubscriptions,
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
+						const isTargetSubscription = ( siteSubscription: SiteSubscriptionItem ) =>
+							Number( siteSubscription.ID ) === params.subscriptionId ||
+							( isValidId( params.blog_id ) &&
+								Number( siteSubscription.blog_ID ) === Number( params.blog_id ) );
+						const shouldDecrementTotalCount = page.subscriptions.some( isTargetSubscription );
+
 						return {
 							...page,
-							total_subscriptions: page.total_subscriptions - 1,
+							totalCount:
+								typeof page.totalCount === 'number' && shouldDecrementTotalCount
+									? page.totalCount - 1
+									: page.totalCount,
 							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
-								Number( siteSubscription.ID ) === params.subscriptionId ||
-								( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
+								isTargetSubscription( siteSubscription )
 									? {
 											...siteSubscription,
+											is_following: false,
 											isDeleted: true,
 											resubscribed: false,
 									  }

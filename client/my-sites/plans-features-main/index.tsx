@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
+	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
@@ -59,6 +60,7 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import {
 	shouldForceDefaultPlansBasedOnIntent,
@@ -75,8 +77,10 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
+import DowngradeConfirmationModal from './components/downgrade-confirmation-modal';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
@@ -245,6 +249,9 @@ const PlansFeaturesMain = ( {
 	onReady,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
+		null
+	);
 	// TODO: Remove temporary eslint disable
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -263,6 +270,10 @@ const PlansFeaturesMain = ( {
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const sitePlanSlug = currentPlan?.productSlug;
+	const sitePlansData = useSelector( ( state: IAppState ) =>
+		siteId ? getPlansBySiteId( state, siteId )?.data : null
+	);
+	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -379,6 +390,7 @@ const PlansFeaturesMain = ( {
 		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
 		// that may not be in the feature key list (e.g. because they're grouped into a broader feature).
 		( intent === 'plans-upgrade' ||
+			intent === 'plans-upgrade-or-downgrade' ||
 			( isValidFeatureKey( selectedFeature ) &&
 				!! selectedPlan &&
 				!! getPlan( selectedPlan ) &&
@@ -421,6 +433,18 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
+		// For expired plans, intercept paid-plan downgrades to show a confirmation modal.
+		// Free-plan downgrades are handled separately (they route to the cancel flow).
+		if (
+			config.isEnabled( 'plans/expired-downgrade' ) &&
+			isPlanExpired &&
+			! isFreePlan( planSlug ) &&
+			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
+		) {
+			setPendingDowngradePlanSlug( planSlug );
+			return true;
+		}
+
 		setLastClickedPlan( planSlug );
 
 		const displayedModal = resolveModal( planSlug );
@@ -441,10 +465,8 @@ const PlansFeaturesMain = ( {
 		isLaunchPage,
 		showModalAndExit,
 		coupon,
-		useCheckPlanAvailabilityForPurchase,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 		enableCategorisedFeatures: showSimplifiedFeatures,
-		reflectStorageSelectionInPlanPrices: true,
 		isGatingBusinessQ1: isExperimentVariant,
 		redirectTo,
 		pluginSlug,
@@ -897,6 +919,39 @@ const PlansFeaturesMain = ( {
 						const cartItemForPlan = getCartItemForPlan( planSlug );
 						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
 						onUpgradeClick?.( cartItems );
+					} }
+				/>
+				<DowngradeConfirmationModal
+					isOpen={ !! pendingDowngradePlanSlug }
+					currentPlanName={ sitePlansData?.find( ( p ) => p.currentPlan )?.productName ?? '' }
+					targetPlanName={
+						sitePlansData?.find( ( p ) => p.productSlug === pendingDowngradePlanSlug )
+							?.productName ?? ''
+					}
+					targetPlanSlug={ pendingDowngradePlanSlug }
+					purchaseId={ currentPlan?.purchaseId }
+					onClose={ () => setPendingDowngradePlanSlug( null ) }
+					onConfirm={ () => {
+						const planPath = pendingDowngradePlanSlug
+							? getPlanPath( pendingDowngradePlanSlug )
+							: null;
+						if ( ! planPath || ! siteSlug ) {
+							return;
+						}
+						setPendingDowngradePlanSlug( null );
+						recordTracksEvent( 'calypso_plan_features_downgrade_click', {
+							current_plan: sitePlanSlug,
+							downgrading_to: pendingDowngradePlanSlug,
+						} );
+						// Use a full navigation rather than `page()` because this grid can be
+						// rendered inside the Stepper, where the `page` router is not initialized.
+						window.location.href = addQueryArgs(
+							{
+								...( coupon && { coupon } ),
+								...( redirectTo && { redirect_to: redirectTo } ),
+							},
+							`/checkout/${ siteSlug }/${ planPath }`
+						);
 					} }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
