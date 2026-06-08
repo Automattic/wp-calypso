@@ -70,16 +70,21 @@
 
 	// Lower (already-passed) tiers are muted
 	&.is-lower-tier {
-		filter: grayscale( 0.35 );
-		transition: filter 0.2s ease;
+		opacity: 0.55;
+		filter: grayscale( 0.65 );
+		transition:
+			opacity 0.2s ease,
+			filter 0.2s ease;
 
 		&:focus-within {
+			opacity: 1;
 			filter: none;
 		}
 
 		// On pointer devices (desktop), reveal on hover
 		@media ( hover: hover ) and ( pointer: fine ) {
 			&:hover {
+				opacity: 1;
 				filter: none;
 			}
 		}

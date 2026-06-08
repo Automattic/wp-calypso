@@ -74,7 +74,7 @@ export default function TierCards( {
 	const isEarlyAccess = tierStatus === 'early_access';
 	const isTierProtected = tierStatus === 'tier_protected';
 
-	// Scroll so the current tier card is the first visible card on mount.
+	// Scroll so the current tier stays selected while previous tiers remain visible.
 	// Level 0 is already at the natural scroll start — only scroll for higher tiers.
 	useEffect( () => {
 		const container = containerRef.current;
@@ -83,12 +83,21 @@ export default function TierCards( {
 		}
 		const currentCard = container.querySelector< HTMLElement >( '[data-is-current-tier="true"]' );
 		if ( currentCard ) {
-			const isRTL = getComputedStyle( container ).direction === 'rtl';
+			const containerStyles = getComputedStyle( container );
+			const isRTL = containerStyles.direction === 'rtl';
 			const containerRect = container.getBoundingClientRect();
 			const cardRect = currentCard.getBoundingClientRect();
+			const previousCard = currentCard.previousElementSibling;
+			const cardGap = Number.parseFloat( containerStyles.columnGap ) || 0;
+			const previousTierOffset =
+				previousCard instanceof HTMLElement
+					? previousCard.getBoundingClientRect().width + cardGap
+					: 0;
+			const availableInlineSpace = Math.max( containerRect.width - cardRect.width, 0 );
+			const visiblePreviousTierOffset = Math.min( previousTierOffset, availableInlineSpace / 2 );
 			const scrollOffset = isRTL
-				? cardRect.right - containerRect.right
-				: cardRect.left - containerRect.left;
+				? cardRect.right - containerRect.right + visiblePreviousTierOffset
+				: cardRect.left - containerRect.left - visiblePreviousTierOffset;
 
 			container.scrollLeft += scrollOffset;
 		}
