@@ -153,8 +153,9 @@ export default function AgentDock( {
 	// `/zendesk` also needs the unified agent, and `wooai-admin` sites lack the
 	// HVM-tagged routing it relies on.
 	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat && sectionName !== 'wooai-admin';
-	// `/support-guides` (the list) is only reachable from the WP admin bar trigger.
-	const showSupportGuides = ! isReaderChat && hasAdminBarTrigger;
+	// `/support-guides` (the list) also needs the unified agent, and is only
+	// reachable from the WP admin bar trigger.
+	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAdminBarTrigger;
 	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
 	// so unlike the list it isn't tied to the admin bar.
 	const showSupportGuide = ! isReaderChat;

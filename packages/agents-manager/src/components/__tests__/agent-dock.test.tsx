@@ -248,6 +248,7 @@ describe( 'AgentDock', () => {
 
 	it( 'resumes the active session when expanding from the support guides view', () => {
 		useWpAdminAgent();
+		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
