@@ -8,7 +8,7 @@ packages/api-queries   →  queryOptions()/mutationOptions(): query keys, normal
 client/reader/data/…   →  consumer hooks: thin wrappers over useQuery/useMutation for Reader UI
 ```
 
-Each layer depends only on the one above it. Reader components import from the wrapper (or `@automattic/api-queries` directly for one-off reads); they never call `wpcom.req` or `fetch`.
+Dependencies flow one way: `api-queries` imports from `api-core`, and consumer hooks import from `api-queries` — never the reverse. Reader components import from the wrapper (or `@automattic/api-queries` directly for one-off reads); they never call `wpcom.req` or `fetch`.
 
 The examples below trace two real, correctly-located domains: **sites** (a simple read) and **lists** (mutations).
 
@@ -22,10 +22,14 @@ import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
 import type { ReadSiteResponse } from './types';
 
+// Field-selection lists, trimmed here for brevity; the real module sends the full set.
+const fields = [ 'ID', 'name', 'URL', 'subscription' ].join( ',' );
+
 export const fetchReadSite = ( siteId: number ): Promise< ReadSiteResponse > =>
 	wpcom.req.get( {
 		path: addQueryArgs( `/read/sites/${ siteId }`, { fields } ),
 		apiVersion: '1.1',
+		method: 'GET',
 	} );
 ```
 
@@ -39,14 +43,18 @@ Wrap the fetcher in `queryOptions()`. Response→domain normalization belongs in
 
 ```ts
 // packages/api-queries/src/read-site.ts
-export const readSiteQuery = ( siteId?: number | string ) =>
-	queryOptions( {
-		queryKey: [ 'read', 'sites', siteId ?? 'invalid' ],
-		queryFn: () => fetchReadSite( Number( siteId ) ),
+export const readSiteQuery = ( siteId?: number | string ) => {
+	const coerced = typeof siteId === 'string' ? Number( siteId ) : siteId;
+	const id = typeof coerced === 'number' && Number.isFinite( coerced ) ? coerced : undefined;
+
+	return queryOptions( {
+		queryKey: [ 'read', 'sites', id ?? 'invalid' ],
+		queryFn: () => fetchReadSite( id! ),
 		select: adaptReadSite, // response → domain shape
 		staleTime: ONE_DAY_MS,
-		enabled: typeof siteId === 'number' && siteId > 0,
+		enabled: typeof id === 'number' && id > 0,
 	} );
+};
 ```
 
 - **Query key**: always prefixed `[ 'read', '<domain>', …params ]`. The prefix lets mutations invalidate a whole domain in one call.
