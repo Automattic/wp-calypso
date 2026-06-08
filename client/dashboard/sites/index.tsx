@@ -69,6 +69,7 @@ const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
+		include_staging: false,
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
