@@ -72,8 +72,6 @@
 		"dashboard/omnibar-radical": false,
 		"dashboard/opt-in-banners": false,
 		"dashboard/plans": true,
-		"dashboard/v2": true,
-		"dashboard/v2/backport/site-overview": true,
 		"dashboard/wp-beta-program": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/account-settings-helper": true,

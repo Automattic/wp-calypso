@@ -26,7 +26,6 @@
 		"cookie-banner": false,
 		"dark-mode": true,
 		"dashboard/omnibar": true,
-		"dashboard/v2": false,
 		"dashboard/wp-beta-program": true,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,

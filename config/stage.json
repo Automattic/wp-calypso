@@ -40,8 +40,6 @@
 		"dark-mode": false,
 		"dashboard/omnibar": true,
 		"dashboard/opt-in-banners": false,
-		"dashboard/v2": true,
-		"dashboard/v2/backport/site-overview": true,
 		"dashboard/wp-beta-program": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,

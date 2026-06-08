@@ -32,7 +32,7 @@ function boot( config: AppConfig ) {
 		return;
 	}
 
-	if ( ! isDashboardEnv() && ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
+	if ( ! isDashboardEnv() && ! isSupportSession() ) {
 		throw new Error( 'Multi-site Dashboard is not enabled' );
 	}
 

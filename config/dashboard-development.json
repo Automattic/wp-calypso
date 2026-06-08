@@ -27,7 +27,6 @@
 		"dashboard/omnibar": true,
 		"dashboard/omnibar-radical": false,
 		"dashboard/plans": true,
-		"dashboard/v2": false,
 		"dashboard/wp-beta-program": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
