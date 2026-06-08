@@ -18,7 +18,7 @@ import { Button, Fill, PanelBody } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -175,9 +175,23 @@ function FeatureClipPreview( {
 	);
 }
 
-function FeatureClipEmptyState(): JSX.Element {
+interface FeatureClipEmptyStateProps {
+	hasLoadError?: boolean;
+}
+
+function FeatureClipEmptyState( {
+	hasLoadError = false,
+}: FeatureClipEmptyStateProps ): JSX.Element {
 	return (
 		<>
+			{ hasLoadError && (
+				<p className="image-studio-feature-clip-panel__error-notice" role="status">
+					{ __(
+						"Couldn't load your saved clip. Try again or generate a new one.",
+						__i18n_text_domain__
+					) }
+				</p>
+			) }
 			<p className="image-studio-feature-clip-panel__description">
 				{ __(
 					'Turn this post into a short vertical video. Powered by your site guidelines.',
@@ -193,6 +207,21 @@ function FeatureClipEmptyState(): JSX.Element {
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
 		</>
+	);
+}
+
+// Shown while a saved clip's attachment is still resolving. Reuses the
+// preview frame's 9:16 shape so the body doesn't reflow when the real
+// preview swaps in. Honest "something is loading" beats a permanently
+// blank body when the resolver gets stuck (deleted attachment, REST
+// failure, expired AI quota, etc.).
+function FeatureClipSkeleton(): JSX.Element {
+	return (
+		<div
+			className="image-studio-feature-clip-panel__preview-frame image-studio-feature-clip-panel__preview-frame--loading"
+			aria-busy="true"
+			aria-label={ __( 'Loading saved clip preview', __i18n_text_domain__ ) }
+		/>
 	);
 }
 
@@ -229,26 +258,33 @@ function FeatureClipPanel(): JSX.Element {
 		return Number.isFinite( n ) && n > 0 ? n : null;
 	} )();
 
-	const { attachment, hasResolvedAttachment } = useSelect(
+	const { attachment, hasResolvedAttachment, resolutionError } = useSelect(
 		( select ) => {
 			if ( ! featureClipId ) {
-				return { attachment: null, hasResolvedAttachment: true };
+				return {
+					attachment: null,
+					hasResolvedAttachment: true,
+					resolutionError: null,
+				};
 			}
 			const core = select( 'core' ) as
 				| {
 						getMedia: ( id: number ) => MediaRecord | undefined;
 						hasFinishedResolution: ( name: string, args: unknown[] ) => boolean;
+						getResolutionError?: ( name: string, args: unknown[] ) => unknown;
 				  }
 				| undefined;
 			return {
 				attachment: core?.getMedia?.( featureClipId ) ?? null,
 				// `getMedia` resolves async on first read. Until resolution
-				// finishes the result is `undefined`, which would otherwise
-				// flicker the panel into the empty CTA on reload before the
-				// preview appears. Defer the empty-state fallback until we
-				// know the lookup is genuinely done.
+				// finishes the result is `undefined`; render a skeleton in that
+				// window so the body doesn't flash the empty CTA on reload, and
+				// so a stuck resolver (deleted attachment, REST failure, etc.)
+				// leaves a visible "something is loading" state rather than a
+				// permanently blank panel.
 				hasResolvedAttachment:
 					core?.hasFinishedResolution?.( 'getMedia', [ featureClipId ] ) ?? false,
+				resolutionError: core?.getResolutionError?.( 'getMedia', [ featureClipId ] ) ?? null,
 			};
 		},
 		[ featureClipId ]
@@ -259,6 +295,36 @@ function FeatureClipPanel(): JSX.Element {
 	useEffect( () => {
 		trackImageStudioFeatureClipPanelViewed();
 	}, [] );
+
+	// Self-heal a dangling clip reference: when the resolver finishes cleanly
+	// (no error) but no attachment came back, the meta is pointing at a
+	// deleted media item. Clear it once so the panel doesn't sit in a
+	// permanently degraded state on every reload. Don't clear on resolution
+	// errors — those can be transient (network, auth) and the reference may
+	// still be valid.
+	const lastHealedClipIdRef = useRef< number | null >( null );
+	useEffect( () => {
+		if ( ! featureClipId ) {
+			return;
+		}
+		if ( ! hasResolvedAttachment ) {
+			return;
+		}
+		if ( resolutionError ) {
+			return;
+		}
+		if ( attachment ) {
+			return;
+		}
+		if ( lastHealedClipIdRef.current === featureClipId ) {
+			return;
+		}
+		lastHealedClipIdRef.current = featureClipId;
+		const editor = dispatch( 'core/editor' ) as {
+			editPost?: ( data: { meta: Record< string, unknown > } ) => void;
+		};
+		editor.editPost?.( { meta: { [ FEATURE_CLIP_META_KEY ]: 0 } } );
+	}, [ featureClipId, hasResolvedAttachment, resolutionError, attachment ] );
 
 	const titleNode = (
 		<span className="image-studio-feature-clip-panel__title">
@@ -273,9 +339,13 @@ function FeatureClipPanel(): JSX.Element {
 	const durationSeconds =
 		typeof attachment?.media_details?.length === 'number' ? attachment.media_details.length : null;
 	const hasUsableClip = !! featureClipId && !! videoUrl;
-	// Hold the panel body blank while the clip's attachment is resolving, so
-	// reload doesn't briefly flash the empty CTA before the preview appears.
 	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
+	// A finished resolution that returned no attachment + an error means
+	// we couldn't fetch the saved clip. Surface that distinctly from the
+	// "no clip yet" empty state so the user knows to retry vs. start
+	// fresh.
+	const hasLoadError =
+		!! featureClipId && hasResolvedAttachment && ! attachment && !! resolutionError;
 
 	// Body is described once and rendered into both sidebars. Each SlotFill
 	// portal instantiates its own subtree, so FeatureClipPreview's share
@@ -293,9 +363,9 @@ function FeatureClipPanel(): JSX.Element {
 			);
 		}
 		if ( isResolvingAttachment ) {
-			return null;
+			return <FeatureClipSkeleton />;
 		}
-		return <FeatureClipEmptyState />;
+		return <FeatureClipEmptyState hasLoadError={ hasLoadError } />;
 	} )();
 
 	return (
@@ -350,4 +420,11 @@ export function registerFeatureClipSidebar(): void {
 	pluginRegistered = true;
 }
 
-export { FeatureClipPanel, FeatureClipPreview, FeatureClipEmptyState, PLUGIN_NAME, PANEL_NAME };
+export {
+	FeatureClipPanel,
+	FeatureClipPreview,
+	FeatureClipEmptyState,
+	FeatureClipSkeleton,
+	PLUGIN_NAME,
+	PANEL_NAME,
+};

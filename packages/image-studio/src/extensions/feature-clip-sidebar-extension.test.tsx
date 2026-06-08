@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 
+// Per-test `require()` of the module under test is intentional — paired with
+// `jest.resetModules()` in beforeEach so each case picks up a fresh copy of
+// the extension with its module-level `pluginRegistered` flag reset. ESM
+// import would bind once and defeat that reset.
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 // eslint-disable-next-line import/order
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -26,7 +32,9 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
+let mockResolutionError: unknown = null;
 let mockHasBlockEditor = true;
+const mockEditPost = jest.fn();
 let mockReelVisible = false;
 let mockGenericVisible = false;
 let mockReelIsConfirming = false;
@@ -88,6 +96,9 @@ jest.mock( '@wordpress/data', () => ( {
 		if ( store === 'core/block-editor' ) {
 			return mockHasBlockEditor ? { insertBlocks: mockInsertBlocks } : {};
 		}
+		if ( store === 'core/editor' ) {
+			return { editPost: mockEditPost };
+		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
 	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
@@ -99,6 +110,7 @@ jest.mock( '@wordpress/data', () => ( {
 				return {
 					getMedia: () => mockMedia,
 					hasFinishedResolution: () => mockHasResolvedMedia,
+					getResolutionError: () => mockResolutionError,
 				};
 			}
 			return undefined;
@@ -106,14 +118,16 @@ jest.mock( '@wordpress/data', () => ( {
 	},
 } ) );
 
-// Capture React's useEffect once, at module-load time, bound to the same
-// React instance @testing-library/react holds. The suite calls
-// jest.resetModules() per test, which would otherwise hand the component a
-// freshly-required React whose hook dispatcher react-dom never populates.
+// Capture React's hooks once, at module-load time, bound to the same React
+// instance @testing-library/react holds. The suite calls jest.resetModules()
+// per test, which would otherwise hand the component a freshly-required
+// React whose hook dispatcher react-dom never populates.
 const mockUseEffect = jest.requireActual< typeof import('react') >( 'react' ).useEffect;
+const mockUseRef = jest.requireActual< typeof import('react') >( 'react' ).useRef;
 
 jest.mock( '@wordpress/element', () => ( {
 	useEffect: mockUseEffect,
+	useRef: mockUseRef,
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
@@ -215,9 +229,11 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
+		mockEditPost.mockClear();
 		mockMeta = {};
 		mockMedia = null;
 		mockHasResolvedMedia = true;
+		mockResolutionError = null;
 		mockHasBlockEditor = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
@@ -306,14 +322,62 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'holds the panel body blank while the attachment is still resolving', () => {
+		it( 'self-heals stale meta by clearing the clip id when the attachment is gone', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = null;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockEditPost ).toHaveBeenCalledWith( {
+				meta: { _jetpack_feature_clip_id: 0 },
+			} );
+		} );
+
+		it( 'does not self-heal on a resolution error — the reference may still be valid', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = new Error( 'network down' );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockEditPost ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders a loading skeleton while the attachment is still resolving', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = false; // first render — getMedia hasn't completed
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
+			const { container } = render( <FeatureClipPanel /> );
+			// Skeleton is visible (no Generate / Regenerate), and the body is
+			// not blank — the loading placeholder takes its place.
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Regenerate' } ) ).not.toBeInTheDocument();
+			expect(
+				container.querySelector( '.image-studio-feature-clip-panel__preview-frame--loading' )
+			).not.toBeNull();
+		} );
+
+		it( 'renders the empty state with an error notice when the resolver failed', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = new Error( 'REST failure' );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( "Couldn't load your saved clip. Try again or generate a new one." )
+			).toBeInTheDocument();
+		} );
+
+		it( 'does not show the error notice on a normal empty post', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect(
+				screen.queryByText( "Couldn't load your saved clip. Try again or generate a new one." )
+			).not.toBeInTheDocument();
 		} );
 
 		it( 'opens Image Studio with the post-editor entry point on click', async () => {

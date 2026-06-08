@@ -36,6 +36,31 @@
 		background: #000;
 		border-radius: 8px;
 		overflow: hidden;
+
+		&--loading {
+			background:
+				linear-gradient(
+					90deg,
+					rgba(255, 255, 255, 0) 0%,
+					rgba(255, 255, 255, 0.06) 50%,
+					rgba(255, 255, 255, 0) 100%
+				),
+				#1a1a1a;
+			background-size: 200% 100%, 100% 100%;
+			background-repeat: no-repeat;
+			animation: image-studio-feature-clip-shimmer 1.5s ease-in-out infinite;
+		}
+	}
+
+	&__error-notice {
+		margin: 0 0 12px;
+		padding: 8px 12px;
+		font-size: 12px;
+		line-height: 1.4;
+		color: #8a1f11;
+		background: #fcf0f1;
+		border-left: 3px solid #d63638;
+		border-radius: 2px;
 	}
 
 	&__preview-video {
@@ -79,5 +104,14 @@
 	&__bottom-action {
 		flex: 1 1 0;
 		justify-content: center;
+	}
+}
+
+@keyframes image-studio-feature-clip-shimmer {
+	0% {
+		background-position: 200% 0, 0 0;
+	}
+	100% {
+		background-position: -200% 0, 0 0;
 	}
 }
