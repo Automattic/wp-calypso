@@ -597,8 +597,10 @@ body.is-mobile-app-view {
 	--nav-2026-admin-offset: var( --masterbar-height );
 }
 
-// Patterns opts out: its dark hero deliberately slides *under* the nav, so the wrapper must
-// not reserve space (the hero pads its own content down by the nav height instead).
-.layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section {
+// Patterns and the modern themes showcase opt out: their hero deliberately slides *under*
+// the nav, so the wrapper must not reserve space (the hero pads its own content down by the
+// nav height instead).
+.layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section,
+.layout.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
