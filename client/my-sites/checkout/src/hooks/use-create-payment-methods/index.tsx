@@ -24,7 +24,6 @@ import {
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { createNetBankingMethod } from '../../payment-methods/netbanking';
 import { createPayPalMethod } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
 import {
@@ -293,16 +292,6 @@ function useCreateEps( {
 	);
 }
 
-function useCreateNetbanking(): PaymentMethod {
-	return useMemo(
-		() =>
-			createNetBankingMethod( {
-				submitButtonContent: <CheckoutSubmitButtonContent />,
-			} ),
-		[]
-	);
-}
-
 function useCreateFree() {
 	return useMemo( createFreePaymentMethod, [] );
 }
@@ -445,8 +434,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const netbankingMethod = useCreateNetbanking();
-
 	const sofortMethod = useCreateSofort( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -535,7 +522,6 @@ export default function useCreatePaymentMethods( {
 		idealMethod,
 		blikMethod,
 		sofortMethod,
-		netbankingMethod,
 		pixMethod,
 		pixAutomaticoMethod,
 		alipayMethod,
@@ -560,7 +546,6 @@ export default function useCreatePaymentMethods( {
 			freePaymentMethod,
 			idealMethod,
 			sofortMethod,
-			netbankingMethod,
 			pixMethod,
 			pixAutomaticoMethod,
 			alipayMethod,

@@ -4,8 +4,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
-import InfoPopover from 'calypso/components/info-popover';
-import { paymentMethodName } from 'calypso/lib/cart-values';
 import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';
@@ -270,20 +268,6 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 		setPhoneCountryCode( newPhoneCountryCode );
 	};
 
-	const getPanNumberPopover = () => {
-		const popoverText = translate( 'Paying with %(indiaPaymentMethods)s requires a PAN number.', {
-			comment: 'indiaPaymentMethods are local payment methods in India.',
-			args: {
-				indiaPaymentMethods: paymentMethodName( 'netbanking' ),
-			},
-		} );
-		return (
-			<InfoPopover position="right" className="checkout__pan-number-popover">
-				{ popoverText }
-			</InfoPopover>
-		);
-	};
-
 	const countryData = countriesList.find(
 		( countryElement ) => countryElement.code === countryCode
 	);
@@ -316,51 +300,6 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 						comment:
 							'Individual taxpayer registry identification required ' +
 							'for Brazilian payment methods on credit card form',
-					} ) }
-				/>
-			</OnlyAllowedField>
-
-			<OnlyAllowedField fieldName="nik" allowedFieldNames={ fieldNames }>
-				<InputField
-					fieldName="nik"
-					getFieldValue={ getFieldValue }
-					getErrorMessages={ getErrorMessages }
-					handleFieldChange={ handleFieldChange }
-					disabled={ disableFields }
-					label={ translate( 'NIK - Indonesia Identity Card Number', {
-						comment:
-							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
-					} ) }
-				/>
-			</OnlyAllowedField>
-
-			<OnlyAllowedField fieldName="pan" allowedFieldNames={ fieldNames }>
-				<InputField
-					fieldName="pan"
-					getFieldValue={ getFieldValue }
-					getErrorMessages={ getErrorMessages }
-					handleFieldChange={ handleFieldChange }
-					disabled={ disableFields }
-					placeholder={ ' ' }
-					label={ translate( 'PAN Number {{panNumberPopover/}}', {
-						comment: 'India PAN number ',
-						components: {
-							panNumberPopover: getPanNumberPopover(),
-						},
-					} ) }
-				/>
-			</OnlyAllowedField>
-
-			<OnlyAllowedField fieldName="gstin" allowedFieldNames={ fieldNames }>
-				<InputField
-					fieldName="gstin"
-					getFieldValue={ getFieldValue }
-					getErrorMessages={ getErrorMessages }
-					handleFieldChange={ handleFieldChange }
-					disabled={ disableFields }
-					placeholder={ ' ' }
-					label={ translate( 'GSTIN (optional)', {
-						comment: 'India PAN number ',
 					} ) }
 				/>
 			</OnlyAllowedField>
