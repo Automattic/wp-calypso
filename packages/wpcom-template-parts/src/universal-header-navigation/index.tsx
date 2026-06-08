@@ -9,8 +9,7 @@ import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
 
-// `useLayoutEffect` warns (and is a no-op) during SSR; fall back to `useEffect` on the
-// server. Mirrors the same guard in the sibling `universal-footer-navigation` component.
+// `useLayoutEffect` warns during SSR; fall back to `useEffect` on the server.
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 // Mystery-person Gravatar, used as the 2026 mobile footer avatar fallback.
@@ -54,8 +53,7 @@ const UniversalNavbarHeader = ( {
 	const [ currentDropdown, setCurrentDropdown ] = useState< string | null >( null );
 	// Desktop dropdown: which top-level menu is open (null = none).
 	const [ activeDropdown, setActiveDropdown ] = useState< string | null >( null );
-	// App-banner platform; `null` on desktop / unknown UA (banner hidden). Set in an effect
-	// since `navigator` is client-only.
+	// App-banner platform; `null` on desktop / unknown UA. Set in an effect (`navigator` is client-only).
 	const [ mobilePlatform, setMobilePlatform ] = useState< 'ios' | 'android' | null >( null );
 	// "Opening" phase: first open uses the long reveal delay; later drill/BACK swaps the quick fade.
 	const [ isMenuOpening, setIsMenuOpening ] = useState( false );
@@ -65,8 +63,7 @@ const UniversalNavbarHeader = ( {
 	const menuTriggerRef = useRef< HTMLButtonElement >( null );
 	// True once scrolled: the fixed nav switches from transparent to the white surface.
 	const [ isScrolled, setIsScrolled ] = useState( false );
-	// Desktop dropdown FLIP bookkeeping: `prevDropdown` distinguishes first-open from switch;
-	// `prevHeight` is the FLIP `from`, captured in the effect cleanup.
+	// FLIP bookkeeping: `prevDropdown` distinguishes first-open from switch; `prevHeight` is the `from`.
 	const dropdownRef = useRef< HTMLDivElement >( null );
 	const prevDropdownRef = useRef< string | null >( null );
 	const prevHeightRef = useRef< number >( 0 );
@@ -85,8 +82,7 @@ const UniversalNavbarHeader = ( {
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
-				// 2026 desktop dropdown is React-state-driven; closing it requires clearing the
-				// state (blurring alone leaves the panel open). Return focus to the open trigger.
+				// Close the desktop dropdown, returning focus to the open trigger.
 				setActiveDropdown( ( open ) => {
 					if ( open !== null ) {
 						const trigger = document.querySelector< HTMLElement >(
@@ -97,7 +93,7 @@ const UniversalNavbarHeader = ( {
 					return null;
 				} );
 
-				// Also dismiss the 2026 mobile menu/dialog and return focus to its trigger.
+				// Close the mobile menu, returning focus to the hamburger.
 				setMobileMenuOpen( ( open ) => {
 					if ( open ) {
 						setCurrentDropdown( null );
@@ -149,8 +145,7 @@ const UniversalNavbarHeader = ( {
 		};
 	}, [] );
 
-	// Detect iOS / Android from the UA so the app banner shows the matching store glyph
-	// (hidden on desktop). iPhone/iPad/iPod take precedence over Android, as in the reference.
+	// Detect the platform for the app banner's store glyph (iOS takes precedence over Android).
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
@@ -175,8 +170,7 @@ const UniversalNavbarHeader = ( {
 		return () => clearTimeout( timer );
 	}, [ nav2026, isMobileMenuOpen ] );
 
-	// Publish the overlaid footer's height as a CSS var so the scroller pads its bottom to
-	// clear it (otherwise the last item sits behind it). ResizeObserver keeps it in sync.
+	// Publish the overlaid footer's height as a CSS var so the scroller clears it.
 	useEffect( () => {
 		// Only while the menu is open — no point measuring the off-screen footer otherwise.
 		if ( ! nav2026 || ! isMobileMenuOpen || typeof ResizeObserver === 'undefined' ) {
@@ -186,8 +180,7 @@ const UniversalNavbarHeader = ( {
 		if ( ! footer ) {
 			return;
 		}
-		// Set the var on `.x-menu-content` (a common ancestor) so the scroller
-		// `.x-menu-mobile-main` inherits it — CSS custom props flow down, not up.
+		// Set it on a common ancestor so the scroller inherits it.
 		const host = footer.closest< HTMLElement >( '.x-menu-content' ) ?? footer;
 		const sync = () => {
 			if ( footer.offsetHeight ) {
@@ -200,8 +193,7 @@ const UniversalNavbarHeader = ( {
 		return () => observer.disconnect();
 	}, [ nav2026, isMobileMenuOpen, isLoggedIn, mobilePlatform ] );
 
-	// Publish the first nav item's inline-start offset as a CSS var so the dropdown's first
-	// column aligns under it (consumed via `calc()` at >= 1025px).
+	// Publish the first nav item's inline-start offset so the dropdown's first column aligns under it.
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
@@ -226,23 +218,35 @@ const UniversalNavbarHeader = ( {
 			);
 		};
 
+		let frame = 0;
+		const onResize = () => {
+			if ( ! frame ) {
+				frame = window.requestAnimationFrame( () => {
+					frame = 0;
+					updateOffset();
+				} );
+			}
+		};
 		updateOffset();
-		window.addEventListener( 'resize', updateOffset );
-		return () => window.removeEventListener( 'resize', updateOffset );
+		window.addEventListener( 'resize', onResize, { passive: true } );
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+			if ( frame ) {
+				window.cancelAnimationFrame( frame );
+			}
+		};
 	}, [ nav2026, nav2026Variant ] );
 
-	// Toggle `is-scrolled` once the page leaves the top so the fixed nav switches from
-	// transparent to white. rAF-throttled; evaluated on mount so a mid-page load is correct.
+	// Toggle `is-scrolled` once the page leaves the top (transparent nav → white).
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
 		}
-		const SCROLL_THRESHOLD = 0;
 		let frame = 0;
 		const evaluate = () => {
 			frame = 0;
 			setIsScrolled( ( prev ) => {
-				const next = window.scrollY > SCROLL_THRESHOLD;
+				const next = window.scrollY > 0;
 				return next === prev ? prev : next;
 			} );
 		};
@@ -261,13 +265,8 @@ const UniversalNavbarHeader = ( {
 		};
 	}, [ nav2026 ] );
 
-	// 2026 desktop dropdown open/switch behaviour. The panel stays open while moving between
-	// triggers; on a switch its height eases from the old menu's content to the new one via a
-	// FLIP (measure → pin old px height → reflow → set new px height → release to auto on
-	// transitionend). `is-dropdown-first-open` marks the closed→open case so the items wait for
-	// the panel to grow before sliding in; on a switch they use the short stagger instead.
-	// useLayoutEffect so the measure/pin happens before paint (no flash of the auto height);
-	// the isomorphic variant degrades to useEffect under SSR (no `window`).
+	// Desktop dropdown: the panel stays open between triggers and FLIP-eases its height on a
+	// switch. `useLayoutEffect` so the measure/pin happens before paint (no auto-height flash).
 	useIsomorphicLayoutEffect( () => {
 		if ( ! nav2026 || typeof window === 'undefined' ) {
 			return;
@@ -361,10 +360,11 @@ const UniversalNavbarHeader = ( {
 			);
 			const fallback = window.setTimeout( release, morphMs() + 50 );
 			return () => {
-				// Released early if the dropdown changes mid-morph; capture height for the next FLIP.
+				// Released early if the dropdown changes mid-morph; `to` is the FLIP target (the
+				// settled height) for the next switch, no extra layout read needed.
 				clearTimeout( fallback );
 				release();
-				prevHeightRef.current = node.offsetHeight;
+				prevHeightRef.current = to;
 			};
 		}
 
@@ -386,22 +386,60 @@ const UniversalNavbarHeader = ( {
 		);
 	}
 
-	// Sub-structures shared by both variants (Features, Resources, Support/Pricing links).
+	// Sub-structures shared by both variants (Build/Publish groups, Features, Resources,
+	// Support/Pricing links).
+	const nav2026BuildGroup: Nav2026Group = {
+		title: __( 'Build', __i18n_text_domain__ ),
+		items: [
+			{
+				label: __( 'Website', __i18n_text_domain__ ),
+				url: localizeUrl( '//wordpress.com/website-builder/' ),
+				target: '_self',
+			},
+			{
+				label: __( 'Ecommerce', __i18n_text_domain__ ),
+				url: localizeUrl( '//wordpress.com/ecommerce/' ),
+				target: '_self',
+			},
+			{
+				label: __( 'Gravatar (Link in bio)', __i18n_text_domain__ ),
+				url: 'https://gravatar.com/link-in-bio',
+				target: '_self',
+			},
+			{
+				label: __( 'AI website builder', __i18n_text_domain__ ),
+				url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
+				target: '_self',
+			},
+		],
+	};
+	const nav2026PublishGroup: Nav2026Group = {
+		title: __( 'Publish', __i18n_text_domain__ ),
+		items: [
+			{
+				label: __( 'Blog', __i18n_text_domain__ ),
+				url: localizeUrl( '//wordpress.com/create-blog/' ),
+				target: '_self',
+			},
+			{
+				label: __( 'Newsletter', __i18n_text_domain__ ),
+				url: localizeUrl( '//wordpress.com/newsletter/', locale, isLoggedIn, true ),
+				target: '_self',
+			},
+		],
+	};
 	const nav2026FeatureItems: Nav2026Item[] = [
 		{
 			label: __( 'Themes', __i18n_text_domain__ ),
 			url: localizeUrl( '//wordpress.com/themes', locale, isLoggedIn, true ),
-			target: undefined,
 		},
 		{
 			label: __( 'Plugins', __i18n_text_domain__ ),
 			url: localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn, true ),
-			target: undefined,
 		},
 		{
 			label: __( 'Patterns', __i18n_text_domain__ ),
 			url: localizeUrl( '//wordpress.com/patterns', locale, isLoggedIn, true ),
-			target: undefined,
 		},
 		{
 			label: __( 'AI features', __i18n_text_domain__ ),
@@ -454,7 +492,6 @@ const UniversalNavbarHeader = ( {
 					{
 						label: __( 'Developer tools', __i18n_text_domain__ ),
 						url: 'https://developer.wordpress.com/docs/developer-tools/',
-						target: undefined,
 					},
 					{
 						label: __( 'Developer blog', __i18n_text_domain__ ),
@@ -464,12 +501,10 @@ const UniversalNavbarHeader = ( {
 					{
 						label: __( 'Rest API', __i18n_text_domain__ ),
 						url: 'https://developer.wordpress.com/docs/api/',
-						target: undefined,
 					},
 					{
 						label: __( 'Docs', __i18n_text_domain__ ),
 						url: 'https://developer.wordpress.com/docs/',
-						target: undefined,
 					},
 					{
 						label: __( 'Studio', __i18n_text_domain__ ),
@@ -518,46 +553,8 @@ const UniversalNavbarHeader = ( {
 						name: 'products',
 						title: __( 'Products', __i18n_text_domain__ ),
 						groups: [
-							{
-								title: __( 'Build', __i18n_text_domain__ ),
-								items: [
-									{
-										label: __( 'Website', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/website-builder/' ),
-										target: '_self',
-									},
-									{
-										label: __( 'Ecommerce', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/ecommerce/' ),
-										target: '_self',
-									},
-									{
-										label: __( 'Gravatar (Link in bio)', __i18n_text_domain__ ),
-										url: 'https://gravatar.com/link-in-bio',
-										target: '_self',
-									},
-									{
-										label: __( 'AI website builder', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
-										target: '_self',
-									},
-								],
-							},
-							{
-								title: __( 'Publish', __i18n_text_domain__ ),
-								items: [
-									{
-										label: __( 'Blog', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/create-blog/' ),
-										target: '_self',
-									},
-									{
-										label: __( 'Newsletter', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/newsletter/', locale, isLoggedIn, true ),
-										target: '_self',
-									},
-								],
-							},
+							nav2026BuildGroup,
+							nav2026PublishGroup,
 							{
 								title: __( 'Hosting', __i18n_text_domain__ ),
 								items: [
@@ -574,7 +571,6 @@ const UniversalNavbarHeader = ( {
 									{
 										label: __( 'Enterprise hosting', __i18n_text_domain__ ),
 										url: 'https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav',
-										target: undefined,
 									},
 									{
 										label: __( 'Site migration', __i18n_text_domain__ ),
@@ -624,46 +620,8 @@ const UniversalNavbarHeader = ( {
 						name: 'websites',
 						title: __( 'Websites', __i18n_text_domain__ ),
 						groups: [
-							{
-								title: __( 'Build', __i18n_text_domain__ ),
-								items: [
-									{
-										label: __( 'Website', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/website-builder/' ),
-										target: '_self',
-									},
-									{
-										label: __( 'Ecommerce', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/ecommerce/' ),
-										target: '_self',
-									},
-									{
-										label: __( 'Gravatar (Link in bio)', __i18n_text_domain__ ),
-										url: 'https://gravatar.com/link-in-bio',
-										target: '_self',
-									},
-									{
-										label: __( 'AI website builder', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ),
-										target: '_self',
-									},
-								],
-							},
-							{
-								title: __( 'Publish', __i18n_text_domain__ ),
-								items: [
-									{
-										label: __( 'Blog', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/create-blog/' ),
-										target: '_self',
-									},
-									{
-										label: __( 'Newsletter', __i18n_text_domain__ ),
-										url: localizeUrl( '//wordpress.com/newsletter/', locale, isLoggedIn, true ),
-										target: '_self',
-									},
-								],
-							},
+							nav2026BuildGroup,
+							nav2026PublishGroup,
 							{
 								title: __( 'Features', __i18n_text_domain__ ),
 								items: nav2026FeatureItems,
@@ -690,7 +648,6 @@ const UniversalNavbarHeader = ( {
 									{
 										label: __( 'Enterprise hosting', __i18n_text_domain__ ),
 										url: 'https://wpvip.com/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav',
-										target: undefined,
 									},
 									{
 										label: __( 'Site migration', __i18n_text_domain__ ),
