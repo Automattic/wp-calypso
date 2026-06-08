@@ -22,7 +22,7 @@ body.is-section-reader
 .read-295-poc {
 	box-sizing: border-box;
 	margin: 0 auto;
-	max-width: 760px;
+	max-width: 720px;
 	padding: 32px 24px 80px;
 
 	* {
@@ -50,8 +50,9 @@ body.is-section-reader
 }
 
 .read-295-poc__list {
-	display: grid;
-	gap: 18px;
+	margin: 0 auto;
+	max-width: 672px;
+	width: 100%;
 }
 
 .read-295-poc__item {
@@ -59,6 +60,11 @@ body.is-section-reader
 	flex-direction: column;
 	gap: 8px;
 	justify-content: space-between;
+}
+
+.read-295-poc .reader-infinite-stream__row-wrapper {
+	border-bottom: 0;
+	padding-bottom: 18px;
 }
 
 .read-295-poc__post a,
@@ -75,12 +81,4 @@ body.is-section-reader
 	line-height: 1;
 	padding: 10px 14px;
 	text-decoration: none;
-}
-
-.read-295-poc__load-more {
-	color: var( --color-text-subtle );
-	font-size: 0.875rem;
-	margin-top: 24px;
-	min-height: 32px;
-	text-align: center;
 }
