@@ -16,7 +16,7 @@ type InputFieldProps = {
 	placeholder: string;
 	value: string;
 	onChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
-	labelReference?: React.RefObject< HTMLLabelElement | null >;
+	labelReference?: React.Ref< HTMLLabelElement >;
 	ariaDescribedBy?: string;
 };
 
@@ -29,7 +29,7 @@ export type UtmBuilderProps = {
 	};
 };
 
-type UtmKeyType = 'url' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_content' | 'utm_term';
+type UtmKeyType = string;
 
 type inputValuesType = Record< UtmKeyType, string >;
 type formLabelsType = Record<

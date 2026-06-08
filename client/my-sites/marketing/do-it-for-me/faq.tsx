@@ -10,7 +10,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { CHARACTER_LIMIT } from 'calypso/signup/steps/website-content/section-types/constants';
 import FoldableFAQComponent from '../../../components/foldable-faq';
 import { useDIFMPlanInfo } from './use-difm-plan-info';
-import type { RefObject } from '@wordpress/element';
+import type { Ref } from '@wordpress/element';
 
 const FAQHeader = styled.h1`
 	font-size: 2rem;
@@ -100,7 +100,7 @@ const CTASection = styled.div`
 `;
 
 interface FAQExpanderProps {
-	ref: RefObject< HTMLButtonElement >;
+	ref: Ref< HTMLButtonElement >;
 	onClick: () => void;
 	isFAQSectionOpen: boolean;
 	children: ReactNode;

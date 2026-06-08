@@ -1,13 +1,13 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, type Ref } from 'react';
 import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-template-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
 import './style.scss';
 
 type ReadymadeTemplatesSectionProps = ReadymadeTemplatesProps & {
-	forwardRef: RefObject< HTMLDivElement | null > | null;
+	forwardRef: Ref< HTMLDivElement > | null;
 };
 
 export const ReadymadeTemplates = ( {
