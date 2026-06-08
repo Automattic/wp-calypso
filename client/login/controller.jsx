@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isAkismetOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login as loginUrl } from 'calypso/lib/paths';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -116,6 +117,27 @@ export async function login( context, next ) {
 				return next( error );
 			}
 		}
+	}
+
+	// Akismet logins default to the passwordless magic link flow, like Gravatar.
+	// Only redirect from the plain login view, leaving 2FA/lost-password/social
+	// sub-routes (which share this controller) untouched.
+	const oauth2Client = getOAuth2Client( context.store.getState(), Number( client_id ) );
+	const { flow, socialService, twoFactorAuthType, action } = context.params;
+	if (
+		config.isEnabled( 'login/magic-login' ) &&
+		! context.isServerSide &&
+		isAkismetOAuth2Client( oauth2Client ) &&
+		! ( twoFactorAuthType || action || flow || socialService )
+	) {
+		return page.redirect(
+			loginUrl( {
+				locale: context.params.lang,
+				twoFactorAuthType: 'link',
+				oauth2ClientId: client_id,
+				redirectTo: redirect_to,
+			} )
+		);
 	}
 
 	enhanceContextWithLogin( context );
