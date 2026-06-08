@@ -51,20 +51,20 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-client": "^0.1.58",
-		"@automattic/agenttic-ui": "^0.1.58",
+		"@automattic/agenttic-client": "^0.1.65",
+		"@automattic/agenttic-ui": "^0.1.65",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@wordpress/abilities": "^0.12.0",
 		"@wordpress/api-fetch": "^7.46.0",
 		"@wordpress/base-styles": "^8.0.0",
 		"@wordpress/components": "^33.1.0",
-		"@wordpress/compose": "^7.23.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
 		"@wordpress/core-data": "^7.46.0",
 		"@wordpress/editor": "^14.46.0",
 		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^5.23.0",
-		"@wordpress/icons": "^10.23.0",
+		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/icons": "^13.2.0",
 		"@wordpress/plugins": "^7.46.0",
 		"@wordpress/primitives": "^4.46.0",
 		"@wordpress/url": "^4.46.0",
@@ -74,10 +74,10 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/react": "^15.0.0",
+		"@testing-library/react": "^15.0.7",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

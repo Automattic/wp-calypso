@@ -72,6 +72,25 @@ function snippet( text: string ): string {
 	return flat.slice( 0, MAX_SNIPPET_CHARS - 1 ).trimEnd() + '…';
 }
 
+// Mastodon and Fediverse upstreams only carry HTML for post content, so
+// their mappers set `post.text` to '' and put the body in `post.html`.
+// Derive a plain-text preview from the HTML for the snippet only — this
+// is never injected as HTML, so DOMPurify isn't needed.
+function plainTextFromHtml( html: string ): string {
+	if ( ! html ) {
+		return '';
+	}
+	if ( typeof DOMParser === 'undefined' ) {
+		return html.replace( /<[^>]+>/g, ' ' );
+	}
+	const doc = new DOMParser().parseFromString( html, 'text/html' );
+	return doc.body.textContent ?? '';
+}
+
+function previewSnippet( post: SocialPost ): string {
+	return snippet( post.text || plainTextFromHtml( post.html ) );
+}
+
 function spotlightHrefFor(
 	protocol: ConnectionProtocol,
 	connectionId: number,
@@ -133,6 +152,17 @@ export function SocialSpotlight( { connections }: Props ) {
 	// strip never appears. Track which queries we've already logged for
 	// this session so a re-render or refetch loop doesn't spam logstash.
 	const loggedErrorKeys = useRef< Set< string > >( new Set() );
+	// `useQueries` returns a freshly-constructed array on every render, so
+	// depending on it directly trips `@tanstack/query/no-unstable-deps`
+	// (and the effect would re-run unnecessarily). Mirror the `dataSignature`
+	// pattern used by the items memo below: derive a stable string keyed on
+	// per-connection error state.
+	const errorSignature = queries
+		.map( ( q, index ) => {
+			const connection = connections[ index ];
+			return `${ connection.protocol }-${ connection.id }-${ q.isError ? '1' : '0' }`;
+		} )
+		.join( '|' );
 	useEffect( () => {
 		queries.forEach( ( query, index ) => {
 			if ( ! query.isError ) {
@@ -157,7 +187,10 @@ export function SocialSpotlight( { connections }: Props ) {
 				},
 			} );
 		} );
-	}, [ queries, connections ] );
+		// `errorSignature` is the stable shadow of `queries` and `connections` —
+		// see the comment above its declaration.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ errorSignature ] );
 
 	// `useQueries` returns a freshly-constructed array on each render even
 	// when no underlying state changed, so memoing on `queries` directly
@@ -309,7 +342,7 @@ export function SocialSpotlight( { connections }: Props ) {
 										{ getProtocolIcon( item.protocol ) }
 									</span>
 								</header>
-								<p className="social-spotlight__card-text">{ snippet( item.post.text ) }</p>
+								<p className="social-spotlight__card-text">{ previewSnippet( item.post ) }</p>
 								<footer className="social-spotlight__card-counts">
 									<span>
 										<span aria-hidden="true">♡ { item.post.counts?.likes ?? 0 }</span>

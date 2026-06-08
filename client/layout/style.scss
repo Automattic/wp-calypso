@@ -558,3 +558,33 @@ body.is-mobile-app-view {
 .layout.has-universal-header .lpc-header-nav-wrapper {
 	padding-top: var( --masterbar-height );
 }
+
+// Source of truth for the fixed 2026 nav's geometry; everything that clears or sticks
+// to the nav derives from these vars.
+.layout:has( .x-nav--2026-redesign ) {
+	/* stylelint-disable-next-line length-zero-no-unit -- px needed for the consuming calc() */
+	--nav-2026-admin-offset: 0px; // admin-bar height logged-in, 0 logged-out
+	--nav-2026-height: 64px;
+	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + var( --nav-2026-height ) );
+
+	// The nav is fixed (out of flow); reserve its height on the wrapper so every section's
+	// content clears it, and zero the content's own clearance so the two never stack.
+	.layout__header-section {
+		min-height: var( --nav-2026-sticky-offset );
+	}
+
+	.layout__content {
+		--_layout__content-top-spacing: 0;
+		padding-top: 0;
+	}
+}
+
+.layout.is-logged-in:has( .x-nav--2026-redesign ) {
+	--nav-2026-admin-offset: var( --masterbar-height );
+}
+
+// Patterns and modern themes opt out — their hero slides under the nav, so don't reserve space.
+.layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section,
+.layout.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section {
+	min-height: 0;
+}

@@ -64,8 +64,8 @@ export function ActiveThreatsDataViews( {
 	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
 
 	const NoActiveThreatsFound = () => {
-		let title = __( 'Don’t worry about a thing' );
-		let description = sprintf(
+		let title: string = __( 'Don’t worry about a thing' );
+		let description: string = sprintf(
 			/** translators: %s: relative time string like "2 hours ago" */
 			__( 'The last scan ran %s and found no security issues.' ),
 			recentScanRelativeTime

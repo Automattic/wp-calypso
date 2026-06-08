@@ -10,6 +10,7 @@ import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/ho
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 	A4A_FEEDBACK_LINK,
@@ -301,7 +302,7 @@ export default function LicensePreview( {
 				<div>
 					{ quantity ? (
 						<div className="license-preview__bundle">
-							<Gridicon icon="minus" className="license-preview__no-value" />
+							<EmptyValueIndicator className="license-preview__no-value" />
 							<div className="license-preview__product-small">{ productName }</div>
 							<div>{ bundleCountContent }</div>
 						</div>
@@ -338,7 +339,7 @@ export default function LicensePreview( {
 
 				<div>
 					{ quantity ? (
-						<Gridicon icon="minus" className="license-preview__no-value" />
+						<EmptyValueIndicator className="license-preview__no-value" />
 					) : (
 						<>
 							<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
@@ -357,7 +358,7 @@ export default function LicensePreview( {
 						) }
 
 						{ licenseState !== LicenseState.Attached && (
-							<Gridicon icon="minus" className="license-preview__no-value" />
+							<EmptyValueIndicator className="license-preview__no-value" />
 						) }
 					</div>
 				) : (
@@ -369,7 +370,7 @@ export default function LicensePreview( {
 						) }
 
 						{ licenseState !== LicenseState.Revoked && (
-							<Gridicon icon="minus" className="license-preview__no-value" />
+							<EmptyValueIndicator className="license-preview__no-value" />
 						) }
 					</div>
 				) }

@@ -63,7 +63,9 @@ class EditContactInfoFormCard extends Component {
 		};
 
 		this.contactFormFieldValues = this.getContactFormFieldValues();
+	}
 
+	componentDidMount() {
 		this.fetchWhois();
 	}
 

@@ -60,7 +60,7 @@ const pressableSteps = (
 		),
 		buttonProps: {
 			variant: 'primary',
-			label: translate( 'Download Migration plugin' ),
+			label: translate( 'Download migration plugin' ),
 			icon: download,
 			isExternal: true,
 			href: 'https://wordpress.org/plugins/pressable-automated-migration/',

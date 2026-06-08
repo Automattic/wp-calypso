@@ -95,7 +95,7 @@ describe( '<ComposerModal>', () => {
 		openFn = null;
 		closeFn = null;
 
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
 		jest
@@ -136,6 +136,48 @@ describe( '<ComposerModal>', () => {
 		// Touch the unused bindings so TS / lint don't trip on them.
 		void rerender;
 		void queryClient;
+	} );
+
+	it( 'passes config.headerIcon to the Modal and calls config.useAuthorHandle for the title', () => {
+		const useAuthorHandle = jest.fn( ( id: number | null ) =>
+			id === 7 ? 'jordesign.bsky.social' : null
+		);
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useAuthorHandle,
+			headerIcon: <span data-testid="composer-header-icon" />,
+			copy: {
+				...testComposerConfig.copy,
+				title: ( mode, _t, handle ) =>
+					handle ? `Title:${ mode.kind } · @${ handle }` : `Title:${ mode.kind }`,
+			},
+		};
+		renderModal( config );
+
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( useAuthorHandle ).toHaveBeenCalledWith( 7 );
+		expect(
+			screen.getByRole( 'dialog', { name: 'Title:standalone · @jordesign.bsky.social' } )
+		).toBeVisible();
+		expect( screen.getByTestId( 'composer-header-icon' ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the bare title when config.useAuthorHandle returns null', () => {
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useAuthorHandle: () => null,
+			copy: {
+				...testComposerConfig.copy,
+				title: ( mode, _t, handle ) =>
+					handle ? `Title:${ mode.kind } · @${ handle }` : `Title:${ mode.kind }`,
+			},
+		};
+		renderModal( config );
+
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( screen.getByRole( 'dialog', { name: 'Title:standalone' } ) ).toBeVisible();
 	} );
 
 	it( 'fires tracks.opened on mount when a mode is active', () => {

@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import type { ActiveMode, ComposerMode } from './composer-provider';
 import type { QueryClient, UseMutationOptions } from '@tanstack/react-query';
 import type { useTranslate } from 'i18n-calypso';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 /**
  * Optional media-attachment slot exposed by per-protocol configs. The shared
@@ -203,9 +203,35 @@ export interface ComposerConfig< TError, TParams, TResult > {
 			meta: { siteId: number }
 		) => { event: string; props: Record< string, unknown > };
 	};
+	/**
+	 * Optional icon forwarded to the WP `<Modal>` `icon` prop (typed as
+	 * `React.JSX.Element` — pass a single element, not a fragment or array).
+	 */
+	headerIcon?: ReactElement;
+	/**
+	 * Optional hook returning the handle of the account the user is posting
+	 * from, given the active connection id (or `null` when no mode is
+	 * active). The shared modal appends "@%(handle)s" to the mode-specific
+	 * title via `copy.title` so the destination account is unambiguous —
+	 * the "New post" header otherwise reads like a generic WordPress post.
+	 *
+	 * Called unconditionally inside `<ComposerModal>` (rules of hooks).
+	 * Implementations must accept `null` for the connection id and return
+	 * `null` when the handle isn't resolvable yet (query pending, missing
+	 * connection). Keep it cheap: cached query reads only.
+	 */
+	useAuthorHandle?: ( connectionId: number | null ) => string | null;
 	/** Per-mode title and placeholder copy. */
 	copy: {
-		title: ( mode: ActiveMode, translate: Translate ) => string;
+		/**
+		 * `handle` is the value returned by `useAuthorHandle` (`null` if the
+		 * config doesn't supply that hook or the handle isn't resolvable
+		 * yet, omitted entirely by tests that don't care). Per-protocol
+		 * configs are free to compose it into the title — atmosphere /
+		 * mastodon render "New post · @handle"; fediverse ignores it
+		 * because the destination is a blog, not a social account.
+		 */
+		title: ( mode: ActiveMode, translate: Translate, handle?: string | null ) => string;
 		placeholder: ( mode: ActiveMode, translate: Translate, handle?: string ) => string;
 	};
 	/**

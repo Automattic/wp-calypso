@@ -859,6 +859,14 @@ export type DomainLegalAgreementTitle = string;
 export type DomainLegalAgreements = Record< DomainLegalAgreementUrl, DomainLegalAgreementTitle >;
 
 /**
+ * A bundled domain product's role within its domain bundle.
+ *
+ * The `primary` product is the SLD the user searched for; `companion` products are
+ * the additional TLDs offered as part of the bundle.
+ */
+export type DomainBundleRole = 'primary' | 'companion';
+
+/**
  * Miscellaneous data attached to the shopping cart item.
  */
 export interface ResponseCartProductExtra {
@@ -875,6 +883,48 @@ export interface ResponseCartProductExtra {
 	legal_agreements?: never[] | DomainLegalAgreements;
 	is_gravatar_domain?: boolean;
 	is_hundred_year_domain?: boolean;
+
+	/**
+	 * Domain bundle fields. Present only on domain products that belong to a
+	 * domain bundle (the "intelligent bundle recommender" feature). All four are
+	 * optional and absent on non-bundled products.
+	 *
+	 * These names are a contract with the wpcom backend cart validator — they must
+	 * match the snake_case names it reads/writes exactly. See DOMAINS-2164.
+	 */
+
+	/**
+	 * Server-issued identifier shared by every domain product in the same bundle.
+	 * The backend issues this at suggestion time and verifies it before applying
+	 * any bundle discount or all-or-nothing logic; the client never mints it.
+	 */
+	domain_bundle_group_id?: string;
+
+	/**
+	 * This product's role within its bundle. The `primary` is the searched SLD;
+	 * `companion` products are the additional bundled TLDs.
+	 */
+	domain_bundle_role?: DomainBundleRole;
+
+	/**
+	 * The bundle discount as a percentage, for display only. The backend
+	 * recomputes the actual discount from its catalogue on every cart sync and
+	 * overwrites this value; never use it for price math on the client.
+	 *
+	 * Typed as a string because cart `extra` round-trips numeric values as
+	 * strings; coerce with `Number()` before display.
+	 */
+	domain_bundle_discount_percent?: string;
+
+	/**
+	 * The number of domain products the bundle is expected to contain. Used by the
+	 * backend all-or-nothing invariant to detect a partially-removed bundle.
+	 *
+	 * Typed as a string because cart `extra` round-trips numeric values as
+	 * strings; coerce with `Number()` if you need to compare counts.
+	 */
+	expected_bundle_size?: string;
+
 	is_art_promo?: boolean;
 
 	/**

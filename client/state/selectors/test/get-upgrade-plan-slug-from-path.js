@@ -1,16 +1,9 @@
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-	PLAN_WPCOM_CHOOSE_MID_YEARLY,
-	PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
-} from '@automattic/calypso-products';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 
 describe( 'getUpgradePlanSlugFromPath', () => {
 	const siteId = 1234567;
-	const makeState = ( s, productSlug ) => ( {
+	const makeState = ( s, productSlug, extraPlans = [] ) => ( {
 		sites: {
 			plans: {
 				[ s ]: {
@@ -19,6 +12,7 @@ describe( 'getUpgradePlanSlugFromPath', () => {
 							currentPlan: true,
 							productSlug,
 						},
+						...extraPlans,
 					],
 				},
 			},
@@ -32,20 +26,14 @@ describe( 'getUpgradePlanSlugFromPath', () => {
 	} );
 
 	test( 'should return the plan slug for the given plan if the site can be upgraded', () => {
-		expect( getUpgradePlanSlugFromPath( makeState( siteId, PLAN_FREE ), siteId, 'personal' ) ).toBe(
-			PLAN_PERSONAL
-		);
-	} );
-
-	test( 'should resolve Choose yearly path slugs from a free-plan site', () => {
 		expect(
-			getUpgradePlanSlugFromPath( makeState( siteId, PLAN_FREE ), siteId, 'choose-12-yearly' )
-		).toBe( PLAN_WPCOM_CHOOSE_LOW_YEARLY );
-		expect(
-			getUpgradePlanSlugFromPath( makeState( siteId, PLAN_FREE ), siteId, 'choose-24-yearly' )
-		).toBe( PLAN_WPCOM_CHOOSE_MID_YEARLY );
-		expect(
-			getUpgradePlanSlugFromPath( makeState( siteId, PLAN_FREE ), siteId, 'choose-36-yearly' )
-		).toBe( PLAN_WPCOM_CHOOSE_HIGH_YEARLY );
+			getUpgradePlanSlugFromPath(
+				makeState( siteId, PLAN_FREE, [
+					{ productSlug: PLAN_PERSONAL, availableForUpgrade: true },
+				] ),
+				siteId,
+				'personal'
+			)
+		).toBe( PLAN_PERSONAL );
 	} );
 } );

@@ -79,7 +79,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 						},
 						{
 							id: 'pending-orders',
-							label: translate( 'Pending Orders' ).toUpperCase(),
+							label: translate( 'Pending orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
@@ -88,7 +88,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 						},
 						{
 							id: 'estimated-commissions',
-							label: translate( 'Estimated Commissions' ).toUpperCase(),
+							label: translate( 'Estimated commissions' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<CommissionsColumn referral={ item } />
@@ -98,7 +98,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 						},
 						{
 							id: 'subscription-status',
-							label: translate( 'Subscription Status' ).toUpperCase(),
+							label: translate( 'Subscription status' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<SubscriptionStatus item={ item } />
@@ -160,7 +160,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 			return [
 				{
 					id: 'view-details',
-					label: translate( 'View Details' ),
+					label: translate( 'View details' ),
 					isPrimary: true,
 					icon: chevronRight,
 					callback( items ) {

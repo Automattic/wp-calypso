@@ -1,15 +1,22 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "calypso/a8c-for-agencies/style";
 
 $alt-color: var(--color-neutral-0);
 
 .woopayments-overview {
+	@include a4a-overview-header;
+
 	.hosting-dashboard-layout__header-actions {
 		display: flex;
 		flex-direction: column;
 		align-items: normal;
 		justify-content: normal;
+	}
+
+	.hosting-dashboard-layout__body {
+		padding-block-start: 0;
 	}
 
 	.hosting-dashboard-layout__body-wrapper {
@@ -27,11 +34,6 @@ $alt-color: var(--color-neutral-0);
 	img {
 		width: max-content;
 	}
-}
-
-.woopayments-overview__heading {
-	@include heading-2x-large;
-	margin-block-end: 8px;
 }
 
 .woopayments-overview__description {

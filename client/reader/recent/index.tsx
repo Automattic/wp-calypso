@@ -4,12 +4,14 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useCachedPosts } from 'calypso/reader/data/post/cache';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import {
 	isPaddingStreamItem,
 	usePaginatedStream,
@@ -18,8 +20,6 @@ import {
 } from 'calypso/reader/data/stream';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import Skeleton from '../components/skeleton';
@@ -102,11 +102,15 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		[ postItems ]
 	);
 	const cachedPosts = useCachedPosts( postKeys );
-	const siteIconsByFeedId = useSelector( ( state: AppState ) => {
+	const { subscriptions } = useSiteSubscriptions();
+	const siteIconsByFeedId = useMemo( () => {
 		const items = streamItems;
 		if ( ! items ) {
 			return {};
 		}
+		const subscriptionsByFeedId = new Map(
+			subscriptions.map( ( subscription ) => [ Number( subscription.feed_ID ), subscription ] )
+		);
 
 		return items.reduce( ( acc: Record< number, unknown >, item: StreamListItem ) => {
 			if ( isPaddingStreamItem( item ) || item.feedId == null ) {
@@ -114,14 +118,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			}
 
 			const feedId = Number( item.feedId );
-			const feedSubscription = getReaderFollowForFeed( state, feedId );
+			const feedSubscription = subscriptionsByFeedId.get( feedId );
 			if ( feedSubscription?.site_icon ) {
 				acc[ feedId ] = feedSubscription.site_icon;
 			}
 
 			return acc;
 		}, {} );
-	}, shallowEqual );
+	}, [ subscriptions, streamItems ] );
 
 	const posts = useMemo( () => {
 		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {
@@ -163,14 +167,8 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		[ selectItem ]
 	);
 
-	// Get comments API disabled status for the selected post
-	const commentsApiDisabled = useSelector( ( state: AppState ) => {
-		if ( ! selectedItem ) {
-			return false;
-		}
-		const post = getPostFromItem( selectedItem );
-		return post?.site_ID ? isCommentsApiDisabled( state, post.site_ID ) : false;
-	} );
+	const selectedPost = selectedItem ? getPostFromItem( selectedItem ) : undefined;
+	const commentsApiDisabled = useCommentsApiDisabled( selectedPost?.site_ID );
 
 	const fields = useMemo(
 		() => [
@@ -329,7 +327,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<RecentPostSkeleton />
 				) }
 				{ ! isLoading && streamItems.length === 0 && <FollowingEmptyContent view="recent" /> }
-				{ streamItems.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+				{ streamItems.length > 0 && selectedItem && selectedPost && (
 					<>
 						<AsyncLoad
 							require={ loadReaderFullPost }

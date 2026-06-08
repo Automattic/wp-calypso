@@ -2,6 +2,24 @@
 	text-decoration: none;
 }
 
+.billing-history-receipt-meta {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.billing-history-receipt-meta-label {
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 20px;
+	text-transform: uppercase;
+	color: var( --wp-components-color-foreground );
+
+	&::after {
+		content: ":";
+	}
+}
+
 .receipt-icon {
 	width: 68px;
 	height: 68px;

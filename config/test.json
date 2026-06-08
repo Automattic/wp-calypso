@@ -36,7 +36,6 @@
 		"current-site/notice": true,
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
-		"global-styles/on-personal-plan": false,
 		"google-my-business": false,
 		"help": true,
 		"hosting-server-settings-enhancements": true,

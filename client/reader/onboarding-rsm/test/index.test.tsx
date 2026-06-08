@@ -152,13 +152,6 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 } ) );
 
-// The real selector traverses `state.reader.follows`, which the lightweight
-// test store does not seed. Default to an empty follow list so the parent
-// completion event still has a valid `followed_non_self_sites_count`.
-jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
-	getReaderFollows: jest.fn().mockReturnValue( [] ),
-} ) );
-
 const mockRefreshFollowingStreams = jest.fn();
 jest.mock( '../use-refresh-following-streams', () => ( {
 	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
@@ -168,6 +161,10 @@ jest.mock( '../use-refresh-following-streams', () => ( {
 
 jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 	useFollowedReaderTags: jest.fn( () => ( { data: [], isPending: false } ) ),
+} ) );
+
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
 } ) );
 
 jest.mock( '../../following/use-site-subscriptions', () => ( {
@@ -198,6 +195,11 @@ beforeEach( () => {
 	const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
 		useFollowedReaderTags: jest.Mock;
 	};
+	const { useSiteSubscriptions: useCachedSiteSubscriptions } = jest.requireMock(
+		'calypso/reader/data/site-subscriptions'
+	) as {
+		useSiteSubscriptions: jest.Mock;
+	};
 	const { useSiteSubscriptions } = jest.requireMock( '../../following/use-site-subscriptions' ) as {
 		useSiteSubscriptions: jest.Mock;
 	};
@@ -205,6 +207,7 @@ beforeEach( () => {
 		getCurrentUserDate: jest.Mock;
 	};
 	useFollowedReaderTags.mockImplementation( () => ( { data: [], isPending: false } ) );
+	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
 	useSiteSubscriptions.mockImplementation( () => ( {
 		isLoading: false,
 		hasNonSelfSubscriptions: false,
@@ -304,8 +307,8 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 describe( 'ReaderOnboardingRsm – subscription query invalidation on step close', () => {
 	// Site follows during onboarding (discover-step `ReaderFollowButton` and
-	// interests-step pack subscriptions) go through the legacy Redux follow
-	// path, which doesn't touch the SubscriptionManager TanStack Query caches.
+	// interests-step pack subscriptions) update the follows query, while
+	// SubscriptionManager owns separate TanStack Query caches.
 	// The component invalidates those caches whenever the interests or discover
 	// step closes so the next mount of `useSiteSubscriptions` (here or elsewhere
 	// in Reader) reflects the user's real post-onboarding follow counts instead
@@ -351,7 +354,7 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 
 	it( 'invalidates the subscription queries when Continue is clicked on the interests step', async () => {
 		// Pack subscriptions in the interests step can follow blogs via the
-		// legacy Redux follow path, so closing this step must also kick a
+		// follows query path, so closing this step must also kick a
 		// fresh fetch of the subscription queries.
 		const user = userEvent.setup();
 		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
@@ -605,25 +608,29 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
 			useFollowedReaderTags: jest.Mock;
 		};
-		const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
-			getReaderFollows: jest.Mock;
-		};
 
 		useFollowedReaderTags.mockImplementation( () => ( {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
+		const { useSiteSubscriptions } = jest.requireMock(
+			'calypso/reader/data/site-subscriptions'
+		) as {
+			useSiteSubscriptions: jest.Mock;
+		};
 		// Mix of active non-self, stale (unfollowed), and self-owned to verify
 		// the filter — only the two active non-self entries should be counted.
 		// `nonSelfSubscriptionsCount` defaults to 0 here (per beforeEach), so
-		// the reported count comes from the Redux-derived count, not the
-		// TanStack-query baseline.
-		getReaderFollows.mockReturnValue( [
-			{ is_following: true, is_owner: false },
-			{ is_following: true, is_owner: false },
-			{ is_following: false, is_owner: false },
-			{ is_following: true, is_owner: true },
-		] );
+		// the reported count comes from the follows query, not the
+		// SubscriptionManager query baseline.
+		useSiteSubscriptions.mockReturnValue( {
+			subscriptions: [
+				{ is_following: true, is_owner: false },
+				{ is_following: true, is_owner: false },
+				{ is_following: false, is_owner: false },
+				{ is_following: true, is_owner: true },
+			],
+		} );
 
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
@@ -638,13 +645,11 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 				followed_non_self_sites_count: 2,
 			} )
 		);
-
-		getReaderFollows.mockReturnValue( [] );
 	} );
 
-	it( 'falls back to nonSelfSubscriptionsCount when the Redux follows slice has not hydrated yet', async () => {
-		// Guards the `Math.max( nonSelfSubscriptionsCount, reduxCount )` merge:
-		// if the Redux follows slice is empty (e.g. slow network, lazy load)
+	it( 'falls back to nonSelfSubscriptionsCount when the follows query has not hydrated yet', async () => {
+		// Guards the `Math.max( nonSelfSubscriptionsCount, queryCount )` merge:
+		// if the follows query is empty (e.g. slow network, lazy load)
 		// but `useSiteSubscriptions` is already populated, the completion event
 		// should report the TanStack-query count rather than 0.
 		const { useSiteSubscriptions } = jest.requireMock(
@@ -655,7 +660,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			hasNonSelfSubscriptions: true,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
-		// Redux follows slice intentionally empty — default mock returns [].
+		// Follows query intentionally empty — default mock returns [].
 
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
@@ -972,8 +977,8 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		} ) );
 
 		// Flip the completion preference to true once the user clicks Finish so
-		// `meetsEligibility` also remains false after this point — mirrors the
-		// real Redux roundtrip without coupling to dispatch timing.
+		// `meetsEligibility` also remains false after this point without coupling
+		// to dispatch timing.
 		const getPreference = getPreferenceMock();
 		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? false : null

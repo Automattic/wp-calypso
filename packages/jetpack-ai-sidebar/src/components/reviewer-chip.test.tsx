@@ -18,18 +18,56 @@ function getRawStyle( el: Element ): string {
 }
 
 describe( 'ReviewerChip', () => {
-	it( 'renders an <img> when avatar_url is provided', () => {
+	it( 'renders an <img> when avatar_url is safe', () => {
 		const { container } = render(
 			<ReviewerChip
 				name="Marcus Holloway"
-				metadata={ { avatar_url: 'https://example.test/avatar.png' } }
+				metadata={ { avatar_url: 'https://secure.gravatar.com/avatar/example' } }
 			/>
 		);
 		// `alt=""` demotes role to "presentation"; query by selector instead.
 		const img = container.querySelector( 'img' ) as HTMLImageElement;
 		expect( img ).not.toBeNull();
-		expect( img.getAttribute( 'src' ) ).toBe( 'https://example.test/avatar.png' );
+		expect( img.getAttribute( 'src' ) ).toBe( 'https://secure.gravatar.com/avatar/example' );
 		expect( screen.getByText( 'Marcus Holloway' ) ).toBeInTheDocument();
+	} );
+
+	it( 'promotes Automattic avatar URLs to HTTPS before rendering', () => {
+		const { container } = render(
+			<ReviewerChip
+				name="Priya Desai"
+				metadata={ { avatar_url: 'http://files.wordpress.com/avatar.png' } }
+			/>
+		);
+
+		const img = container.querySelector( 'img' ) as HTMLImageElement;
+		expect( img ).not.toBeNull();
+		expect( img.getAttribute( 'src' ) ).toBe( 'https://files.wordpress.com/avatar.png' );
+	} );
+
+	it( 'proxies external avatar URLs before rendering', () => {
+		const { container } = render(
+			<ReviewerChip
+				name="Priya Desai"
+				metadata={ { avatar_url: 'https://example.test/avatar.png' } }
+			/>
+		);
+
+		const img = container.querySelector( 'img' ) as HTMLImageElement;
+		expect( img ).not.toBeNull();
+		expect( img.getAttribute( 'src' ) ).toBe( 'https://i0.wp.com/example.test/avatar.png?ssl=1' );
+	} );
+
+	it( 'falls back to pill when avatar_url cannot be made safe', () => {
+		const { container } = render(
+			<ReviewerChip
+				name="Priya Desai"
+				metadata={ { avatar_url: 'https://example.test/avatar.png?token=abc123' } }
+			/>
+		);
+
+		expect( container.querySelector( 'img' ) ).toBeNull();
+		expect( container.querySelector( '.jetpack-ai-reviewer-chip.is-pill' ) ).not.toBeNull();
 	} );
 
 	it( 'renders the full name in a coloured pill when no avatar_url', () => {

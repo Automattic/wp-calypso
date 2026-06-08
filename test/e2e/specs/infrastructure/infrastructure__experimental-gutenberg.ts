@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	it.each( [
 		[ 'blockEditor', '__unstableInserterMenuExtension', 'function' ],
 		[ 'date', '__experimentalGetSettings', 'function' ],
-		[ 'components', '__experimentalNavigationBackButton', 'object' ],
+		[ 'components', '__experimentalNavigatorBackButton', 'object' ],
 		[ 'editPost', '__experimentalMainDashboardButton', 'function' ],
 	] )(
 		'Experimental package %s and feature %s are available',

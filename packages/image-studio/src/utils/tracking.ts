@@ -12,6 +12,15 @@ import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
+const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
+
+type ImageStudioSiteType = ( typeof SITE_TYPES )[ number ];
+type ImageStudioTrackingData = {
+	blogId?: number | string;
+	siteType?: string;
+	isA11n?: boolean;
+	isDevMode?: boolean;
+};
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
@@ -31,14 +40,48 @@ export function formatSuggestionIds( suggestions: Array< { id?: string } > ): st
  */
 function getImageStudioEntryPoint(): string | null {
 	try {
-		const imageStudioStoreData = select( imageStudioStore );
-		if ( imageStudioStoreData && imageStudioStoreData.getEntryPoint ) {
-			return imageStudioStoreData.getEntryPoint();
+		const imageStudioSelectors = select( imageStudioStore );
+		if ( imageStudioSelectors && imageStudioSelectors.getEntryPoint ) {
+			return imageStudioSelectors.getEntryPoint();
 		}
 	} catch ( error ) {
 		// Store may not be registered yet
 	}
 	return null;
+}
+
+function getImageStudioWindowData(): ImageStudioTrackingData | undefined {
+	return ( window as unknown as { imageStudioData?: ImageStudioTrackingData } ).imageStudioData;
+}
+
+function getTrackingBlogId(): number | null {
+	const blogId = getImageStudioWindowData()?.blogId;
+
+	if ( typeof blogId !== 'number' && typeof blogId !== 'string' ) {
+		return null;
+	}
+
+	const parsedBlogId = typeof blogId === 'number' ? blogId : Number( blogId );
+
+	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
+}
+
+function getTrackingSiteType(): ImageStudioSiteType {
+	const siteType = getImageStudioWindowData()?.siteType;
+
+	if ( SITE_TYPES.includes( siteType as ImageStudioSiteType ) ) {
+		return siteType as ImageStudioSiteType;
+	}
+
+	if ( siteType === 'wpcom' ) {
+		return 'simple';
+	}
+
+	if ( siteType === 'woa' ) {
+		return 'atomic';
+	}
+
+	return 'jetpack';
 }
 
 /**
@@ -63,10 +106,19 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
+	const blogId = getTrackingBlogId();
+	const siteType = getTrackingSiteType();
+	const imageStudioWindowData = getImageStudioWindowData();
 	const baseProps: Record< string, string | number | boolean > = {
 		...properties,
 		sessionid: getSessionId(),
 	};
+
+	if ( blogId ) {
+		baseProps.blog_id = blogId;
+	}
+
+	baseProps.site_type = siteType;
 
 	if ( entryPoint ) {
 		baseProps.placement = entryPoint;
@@ -81,8 +133,10 @@ function recordImageStudioEvent(
 		baseProps.post_type = win.typenow;
 	}
 
+	baseProps.is_a11n = !! imageStudioWindowData?.isA11n;
+
 	// Add dev mode flag for filtering test/internal traffic
-	baseProps.is_test = !! win.imageStudioData?.isDevMode;
+	baseProps.is_test = !! imageStudioWindowData?.isDevMode;
 
 	recordTracksEvent( eventName, baseProps );
 }

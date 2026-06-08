@@ -10,8 +10,8 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { useSite } from 'calypso/reader/data/site';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 
 const noop = () => {};
@@ -108,6 +108,8 @@ export function RelatedPostCard( {
 } ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const effectiveSiteId = siteId ?? post?.site_ID;
+	const { site: readerSite } = useSite( effectiveSiteId );
+	const resolvedSite = site ?? readerSite;
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -158,10 +160,9 @@ export function RelatedPostCard( {
 
 	return (
 		<Card className={ classes }>
-			{ effectiveSiteId && ! site && <QueryReaderSite siteId={ +effectiveSiteId } /> }
 			<AuthorAndSiteFollow
 				post={ post }
-				site={ site }
+				site={ resolvedSite }
 				onSiteClick={ siteClickTracker }
 				followSource={ followSource }
 				onFollowToggle={ openSuggestedFollowsModal }

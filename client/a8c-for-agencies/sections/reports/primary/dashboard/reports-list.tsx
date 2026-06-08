@@ -48,7 +48,7 @@ export default function ReportsList( {
 		() => [
 			{
 				id: 'site',
-				label: translate( 'Site Name / URL' ),
+				label: translate( 'Site name / URL' ),
 				getValue: () => '-',
 				render: ( { item }: { item: SiteReports } ) => {
 					return <ReportSiteColumn site={ item.site } />;
@@ -73,7 +73,7 @@ export default function ReportsList( {
 						},
 						{
 							id: 'latestStatus',
-							label: translate( 'Latest Status' ),
+							label: translate( 'Latest status' ),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteReports } ) => (
 								<ReportStatusColumn status={ item.latestReport.status } />
@@ -83,7 +83,7 @@ export default function ReportsList( {
 						},
 						{
 							id: 'dateSent',
-							label: translate( 'Last Generated' ),
+							label: translate( 'Last generated' ),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteReports } ) => (
 								<ReportDateColumn date={ item.latestReport.created_at } />
@@ -106,7 +106,7 @@ export default function ReportsList( {
 			return [
 				{
 					id: 'view-details',
-					label: translate( 'View Details' ),
+					label: translate( 'View details' ),
 					isPrimary: true,
 					icon: chevronRight,
 					callback( items: SiteReports[] ) {

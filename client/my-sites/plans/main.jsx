@@ -53,7 +53,6 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -469,9 +468,6 @@ export default function PlansWrapper( props ) {
 		isVariantA,
 		isVariantB,
 	} = useDeEmphasizedPlanCardExperiment();
-
-	// Initialize Global Styles.
-	useSiteGlobalStylesOnPersonal();
 
 	/**
 	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,

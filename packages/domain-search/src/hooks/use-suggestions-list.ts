@@ -49,6 +49,14 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable && ! isFqdnQuery,
 	} );
 
+	// Bundle suggestions are gated behind the frontend `domain-bundling` flag
+	// (surfaced as config.showBundleSuggestions). When off, the query never runs
+	// and bundleSuggestion stays undefined, leaving the rest of the flow unchanged.
+	const { data: bundleSuggestion } = useQuery( {
+		...queries.bundleSuggestion( query ),
+		enabled: config.showBundleSuggestions,
+	} );
+
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: isFqdnQuery,
@@ -69,10 +77,12 @@ export const useSuggestionsList = () => {
 		} ) ),
 	} );
 
-	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } = useMemo(
-		() => availablePremiumDomainsCombinator( availabilityResults ),
-		[ availabilityResults ]
-	);
+	// Derived inline (not memoized): availabilityResults is a fresh array each
+	// render, so memoizing on it gains nothing and trips @tanstack/query's
+	// no-unstable-deps rule. Recomputing every render matches the previous
+	// behaviour exactly.
+	const { isLoadingAvailablePremiumDomains, availablePremiumDomains } =
+		availablePremiumDomainsCombinator( availabilityResults );
 
 	const isLoading =
 		isLoadingSuggestions ||
@@ -123,5 +133,6 @@ export const useSuggestionsList = () => {
 		isLoading,
 		featuredSuggestions,
 		regularSuggestions,
+		bundleSuggestion,
 	};
 };

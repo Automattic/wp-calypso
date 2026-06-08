@@ -1,6 +1,5 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
-import { useEffect } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
@@ -22,8 +21,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Called when the has-messages state changes. */
-	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 export default function ZendeskChat( {
@@ -34,7 +31,6 @@ export default function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-	onHasMessagesChange,
 }: Props ) {
 	const {
 		agentticMessages,
@@ -47,12 +43,6 @@ export default function ZendeskChat( {
 		notice,
 		hasInteractionEnded,
 	} = useManagedZendeskChat();
-
-	// Notify parent when has-messages state changes
-	const hasMessages = agentticMessages.length > 0;
-	useEffect( () => {
-		onHasMessagesChange( hasMessages );
-	}, [ hasMessages, onHasMessagesChange ] );
 
 	return (
 		<AgentChat

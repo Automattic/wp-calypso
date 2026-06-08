@@ -1,7 +1,9 @@
 import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/number-formatters';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
+import { wideFields } from './constants';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -114,10 +116,61 @@ function getUniqueTransactionTypes(
 		} ) );
 }
 
+function renderInlineHiddenField( key: string, label: string, value: string ) {
+	return (
+		<span key={ key } className="billing-history__item-meta">
+			<span className="billing-history__item-meta-label">{ label }</span>
+			<span className="billing-history__item-meta-value">{ value }</span>
+		</span>
+	);
+}
+
+function renderInlineHiddenFields(
+	transaction: BillingTransaction,
+	translate: ReturnType< typeof useTranslate >,
+	visibleFields: string[]
+) {
+	const [ transactionItem ] = groupDomainProducts( transaction.items, translate );
+	const lines: JSX.Element[] = [];
+
+	if ( ! visibleFields.includes( 'date' ) ) {
+		lines.push(
+			renderInlineHiddenField(
+				'date',
+				translate( 'Date' ),
+				formatDisplayDate( new Date( transaction.date ) )
+			)
+		);
+	}
+	if ( ! visibleFields.includes( 'type' ) ) {
+		lines.push(
+			renderInlineHiddenField(
+				'type',
+				translate( 'Type' ),
+				transactionItem.type_localized || transactionItem.type
+			)
+		);
+	}
+	if ( ! visibleFields.includes( 'amount' ) ) {
+		lines.push(
+			renderInlineHiddenField(
+				'amount',
+				translate( 'Amount' ),
+				formatCurrency( transaction.amount_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} )
+			)
+		);
+	}
+	return lines;
+}
+
 export function getFieldDefinitions(
 	transactions: BillingTransaction[] | null,
 	translate: ReturnType< typeof useTranslate >,
-	getReceiptUrlFor: ( receiptId: string ) => string
+	getReceiptUrlFor: ( receiptId: string ) => string,
+	visibleFields: string[] = wideFields
 ): Fields< BillingTransaction > {
 	return [
 		{
@@ -158,6 +211,7 @@ export function getFieldDefinitions(
 						>
 							{ renderServiceName( item, translate ) }
 						</a>
+						{ renderInlineHiddenFields( item, translate, visibleFields ) }
 					</div>
 				);
 			},

@@ -50,6 +50,8 @@ interface SignupFormSocialFirst {
 	emailLabelText?: string;
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
+	isMobileCompactVariant?: boolean;
+	hideTosElement?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -75,6 +77,29 @@ const options = {
 
 type Screen = 'initial' | 'email';
 
+// ToS copy for the mobile-layout experiment. Same component is rendered in two
+// places depending on the variant — inside the form (`position='above'`) or in
+// the parent's heading slot (`position='below'`) — so the legal links and the
+// translation string live in one location.
+export const MobileCompactTosNotice = ( { position }: { position: 'above' | 'below' } ) => {
+	const { __ } = useI18n();
+	const tosText =
+		position === 'above'
+			? createInterpolateElement(
+					__(
+						'By continuing with any of the options above, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+			  )
+			: createInterpolateElement(
+					__(
+						'By continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+			  );
+	return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
+};
+
 const SignupFormSocialFirst = ( {
 	goToNextStep,
 	stepName,
@@ -93,6 +118,8 @@ const SignupFormSocialFirst = ( {
 	emailLabelText,
 	isEmailFirstVariant,
 	isEmailAtBottom,
+	isMobileCompactVariant,
+	hideTosElement,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -163,38 +190,88 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
+	// Shared by the email-first (Woo or experiment) branch and the mobile-compact
+	// branch so the conversion-critical existing-account redirect lives in one place.
+	const passwordlessFormProps = {
+		stepName,
+		flowName,
+		goToNextStep,
+		logInUrl,
+		queryArgs,
+		labelText: emailLabelText ?? __( 'Your email' ),
+		submitButtonLabel: __( 'Continue' ),
+		userEmail,
+		passDataToNextStep,
+		onCreateAccountError: ( error: { error: string }, email: string ) => {
+			if ( isExistingAccountError( error.error ) ) {
+				window.location.assign(
+					addQueryArgs(
+						{
+							email_address: email,
+							is_signup_existing_account: true,
+							redirect_to: queryArgs?.redirect_to,
+						},
+						logInUrl
+					)
+				);
+			}
+		},
+		onCreateAccountSuccess,
+		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
+		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
+	};
+
 	const emailLoginBlock = isEmailFirstVariant ? (
 		<div className="signup-form-social-first-email">
-			<PasswordlessSignupForm
-				stepName={ stepName }
-				flowName={ flowName }
-				goToNextStep={ goToNextStep }
-				logInUrl={ logInUrl }
-				queryArgs={ queryArgs }
-				labelText={ emailLabelText ?? __( 'Your email' ) }
-				submitButtonLabel={ __( 'Continue' ) }
-				userEmail={ userEmail }
-				passDataToNextStep={ passDataToNextStep }
-				onCreateAccountError={ ( error: { error: string }, email: string ) => {
-					if ( isExistingAccountError( error.error ) ) {
-						window.location.assign(
-							addQueryArgs(
-								{
-									email_address: email,
-									is_signup_existing_account: true,
-									redirect_to: queryArgs?.redirect_to,
-								},
-								logInUrl
-							)
-						);
-					}
-				} }
-				onCreateAccountSuccess={ onCreateAccountSuccess }
-				inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-				submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-			/>
+			<PasswordlessSignupForm { ...passwordlessFormProps } />
 		</div>
 	) : null;
+
+	const loginLinkParagraph = (
+		<p className="signup-form-social-first__login-link">
+			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
+				link: <Step.LinkButton href={ logInUrl } />,
+			} ) }
+		</p>
+	);
+
+	if ( isMobileCompactVariant ) {
+		// In-form ToS:
+		//   - hideTosElement → parent renders the ToS elsewhere (top-position arm).
+		//   - customTosElement → partner branding wins (rendered by renderTermsOfService).
+		//   - otherwise → bottom-position "above" copy.
+		let inFormTosElement = null;
+		if ( ! hideTosElement ) {
+			inFormTosElement = customTosElement ? (
+				renderTermsOfService()
+			) : (
+				<MobileCompactTosNotice position="above" />
+			);
+		}
+		// Mobile compact: no "Have an account? Log in" link inside the form —
+		// the Log in link in the top bar covers that affordance per the Figma.
+		return (
+			<div className="signup-form signup-form-social-first signup-form-social-first--mobile-compact">
+				{ notice }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton={ false }
+					allowedSocialServices={ allowedSocialServices }
+				/>
+				<FormDivider isHorizontal />
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm { ...passwordlessFormProps } />
+				</div>
+				{ inFormTosElement }
+			</div>
+		);
+	}
 
 	return (
 		<div className="signup-form signup-form-social-first">
@@ -224,13 +301,7 @@ const SignupFormSocialFirst = ( {
 						{ emailLoginBlock }
 					</>
 				) }
-				{ isEmailFirstVariant && (
-					<p className="signup-form-social-first__login-link">
-						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-							link: <Step.LinkButton href={ logInUrl } />,
-						} ) }
-					</p>
-				) }
+				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

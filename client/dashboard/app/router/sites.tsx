@@ -21,6 +21,7 @@ import {
 	siteJetpackSettingsQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
+	sitePostByEmailSettingsQuery,
 	siteCurrentPlanQuery,
 	sitePlansQuery,
 	siteBySlugQuery,
@@ -322,7 +323,9 @@ export const siteLogsPhpRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: () => <d.default logType={ LogType.PHP } />,
+			component: () => (
+				<d.default logType={ LogType.PHP } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -341,7 +344,9 @@ export const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: () => <d.default logType={ LogType.SERVER } />,
+			component: () => (
+				<d.default logType={ LogType.SERVER } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -360,7 +365,9 @@ export const siteLogsActivityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
-			component: () => <d.default logType={ LogType.ACTIVITY } />,
+			component: () => (
+				<d.default logType={ LogType.ACTIVITY } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -857,10 +864,13 @@ export const siteSettingsAIToolsRoute = createRoute( {
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await Promise.all( [
-			queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) ),
-			queryClient.ensureQueryData( userSettingsQuery() ),
-		] );
+		const pluginStatus = await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+
+		if ( pluginStatus?.available ) {
+			queryClient.prefetchQuery( sitePostByEmailSettingsQuery( site ) );
+		}
+
+		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
 } );
 
