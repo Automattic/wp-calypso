@@ -100,6 +100,7 @@ class MasterbarLoggedIn extends Component {
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
+		launchButton: PropTypes.node,
 	};
 
 	state = { mounted: false };
@@ -638,10 +639,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderLaunchButton() {
-		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled } = this.props;
+		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled, launchButton } =
+			this.props;
 
 		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
 			return null;
+		}
+
+		if ( launchButton ) {
+			return launchButton;
 		}
 
 		return <MasterbarLaunchButton siteId={ siteId } />;

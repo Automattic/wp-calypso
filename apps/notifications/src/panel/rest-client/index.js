@@ -151,7 +151,7 @@ function getNote( note_id ) {
 	}
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash',
+		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
 	};
 
 	fetchNote( note_id, parameters, ( error, data ) => {
@@ -170,7 +170,7 @@ function getNotes() {
 	this.gettingNotes = true;
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash',
+		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
 		number: this.noteRequestLimit,
 		locale: this.locale,
 	};

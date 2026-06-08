@@ -308,6 +308,7 @@ export interface LineItemType {
 	id: string;
 	type: string;
 	label: string;
+	labelSuffix?: string;
 	formattedAmount: string;
 	hasDeleteButton?: boolean;
 }

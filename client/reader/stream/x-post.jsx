@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
@@ -198,7 +198,7 @@ class CrossPost extends PureComponent {
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
 const ConnectedCrossPost = connect( ( state, ownProps ) => {
-	const { feedId, blogId } = ownProps.postKey;
+	const { blogId } = ownProps.postKey;
 	const feed = ownProps.feed;
 	const site = ownProps.site;
 	return {
@@ -207,7 +207,6 @@ const ConnectedCrossPost = connect( ( state, ownProps ) => {
 			isSiteWPForTeams( state, blogId ) ||
 			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ) ||
 			( site?.ID ? isSiteWPForTeams( state, site.ID ) : false ),
-		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 	};
 } )( localize( CrossPost ) );
 
@@ -218,5 +217,13 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
-	return <ConnectedCrossPost { ...props } site={ site } feed={ feedFromKey || feedFromSite } />;
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+	return (
+		<ConnectedCrossPost
+			{ ...props }
+			site={ site }
+			feed={ feedFromKey || feedFromSite }
+			hasOrganization={ hasOrganization }
+		/>
+	);
 }

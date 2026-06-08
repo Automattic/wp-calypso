@@ -38,7 +38,7 @@
 		"@types/node": "^24.12.2",
 		"@wordpress/i18n": "^6.19.0",
 		"asana-phrase": "^0.0.8",
-		"nock": "^14.0.10",
+		"nock": "^14.0.15",
 		"typescript": "^5.9.3"
 	},
 	"scripts": {

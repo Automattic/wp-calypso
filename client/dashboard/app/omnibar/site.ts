@@ -54,6 +54,10 @@ export function useInitializeOmnibarSite() {
 			return;
 		}
 
+		// `omnibarSiteIdQuery` is used as cross-tree shared state — its placeholder
+		// queryFn resolves to `null`. If it's still in flight when we write here,
+		// the resolution will overwrite our value and the omnibar loses the site.
+		queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
 		queryClient.setQueryData(
 			omnibarSiteIdQuery().queryKey,
 			( currentSiteId ) => selectedSiteId || currentSiteId || fallbackSiteId

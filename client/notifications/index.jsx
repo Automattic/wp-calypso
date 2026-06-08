@@ -198,9 +198,24 @@ export class Notifications extends Component {
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
+
+		this.maybeForceRefresh();
+	}
+
+	// Honor a requested force-refresh (e.g. dispatched from the desktop app) in
+	// the commit phase rather than during render, where it ran on every —
+	// possibly discarded — render attempt under concurrent rendering.
+	maybeForceRefresh() {
+		if ( this.props.forceRefresh ) {
+			debug( 'Refreshing notes panel...' );
+			refreshNotes();
+			this.props.didForceRefresh();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
+		this.maybeForceRefresh();
+
 		if ( prevProps.isShowing === this.props.isShowing ) {
 			return;
 		}
@@ -299,12 +314,6 @@ export class Notifications extends Component {
 	render() {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
 		const isDedicatedReaderPage = this.props.currentRoute?.startsWith( '/reader/notifications' );
-
-		if ( this.props.forceRefresh ) {
-			debug( 'Refreshing notes panel...' );
-			refreshNotes();
-			this.props.didForceRefresh();
-		}
 
 		return (
 			<>

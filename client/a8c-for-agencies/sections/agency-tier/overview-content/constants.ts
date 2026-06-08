@@ -28,7 +28,7 @@ export const ALL_TIERS: TierItem[] = [
 		level: 0,
 		id: 'emerging-partner',
 		name: __( 'Account activated' ),
-		description: 'Joining the program',
+		description: __( 'Joining the program' ),
 		heading: __( 'Essential benefits' ),
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],

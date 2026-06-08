@@ -15,6 +15,8 @@
 //   hover and selected paint suppressed (plugin v0.1.6, l.170-215, DES-605).
 // - Transitions are disabled on the customize overrides so there's no
 //   trailing blue "ease-out" when the cursor leaves a row.
+// - Custom plugin icons stay on the sidebar foreground token during
+//   customize mode (WordPress/wp-admin-sidebar#79).
 // - Drag-time hover suppression on every row (plugin v0.1.6, l.329-347).
 // - Solid drop-zone hints stay visible throughout customization
 //   (WordPress/wp-admin-sidebar#81).
@@ -22,6 +24,25 @@
 // @see WordPress/wp-admin-sidebar v0.1.6 src/customizer/customizer.css
 
 body.is-admin-sidebar-customize-mode {
+	// While customize mode is open, every row is visually inert except for
+	// the drag affordances. Pin all icon glyphs to the foreground token so
+	// Calypso's normal hover/selected icon colors cannot leak through.
+	.sidebar .sidebar__heading .sidebar__menu-icon,
+	.sidebar .sidebar__menu-link .sidebar__menu-icon {
+		fill: var( --color-sidebar-text ) !important;
+		color: var( --color-sidebar-text ) !important;
+	}
+
+	.sidebar .sidebar__heading .sidebar__menu-icon-img,
+	.sidebar .sidebar__menu-link .sidebar__menu-icon-img {
+		background-color: currentColor !important;
+	}
+
+	.sidebar .sidebar__heading img.sidebar__menu-icon,
+	.sidebar .sidebar__menu-link img.sidebar__menu-icon {
+		opacity: 1 !important;
+	}
+
 	// === REASSIGNABLE ROWS ===
 	// 1. Static `#2c3439` gray bg so they read as visually distinct.
 	// 2. `cursor: grab` across the whole row; `grabbing` while dragging.
@@ -97,17 +118,33 @@ body.is-admin-sidebar-customize-mode {
 			box-shadow: none;
 		}
 
-		// Icon color stays at idle across all interactive states (matches
-		// the public plugin's `color: inherit` rule for `.wp-menu-image`).
-		// Calypso's icon is `.sidebar__menu-icon`; keep its color tied to
-		// the LI text color so it doesn't paint blue on hover/selected.
+		// Icon color stays pinned to the sidebar foreground token across all
+		// interactive states. This keeps masked SVG custom icons on the same
+		// foreground as dashicons instead of assuming a fixed white value.
+		> .sidebar__menu-link .sidebar__menu-icon,
 		> .sidebar__menu-link:hover .sidebar__menu-icon,
 		> .sidebar__menu-link:focus .sidebar__menu-icon,
 		&.selected > .sidebar__menu-link .sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading .sidebar__menu-icon,
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover .sidebar__menu-icon,
 		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus .sidebar__menu-icon {
 			fill: var( --color-sidebar-text );
 			color: var( --color-sidebar-text );
+		}
+
+		// Bitmap `<img>` icons inherit Calypso's default `opacity: 0.6` idle
+		// state and `opacity: 1` hover/selected state. Customize rows are
+		// inert, so keep bitmap icons at one brightness across the session.
+		// Masked SVG icons are handled by the foreground-token rule above.
+		> .sidebar__menu-link img.sidebar__menu-icon,
+		> .sidebar__menu-link:hover img.sidebar__menu-icon,
+		> .sidebar__menu-link:focus img.sidebar__menu-icon,
+		&.selected > .sidebar__menu-link img.sidebar__menu-icon,
+		&.selected > .sidebar__menu-link:hover img.sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading img.sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:hover img.sidebar__menu-icon,
+		> .sidebar__menu.is-togglable > li > .sidebar__heading:focus img.sidebar__menu-icon {
+			opacity: 1;
 		}
 	}
 
@@ -177,7 +214,7 @@ body.is-admin-sidebar-customize-mode {
 	// `<MySitesSidebarUnifiedMenu>` → `<ExpandableSidebarMenu>` renders a bare
 	// `<li>` wrapping `.sidebar__menu.is-togglable`, which the inert rule above
 	// doesn't catch. Same suppression treatment + kill the hover-intent flyout.
-	.sidebar > li:not( [data-wp-admin-sidebar-item-id] ) .sidebar__menu.is-togglable {
+	.sidebar > li:not( [data-wp-admin-sidebar-item-id] ) > .sidebar__menu.is-togglable {
 		.sidebar__menu-link,
 		.sidebar__heading {
 			pointer-events: none;
@@ -475,6 +512,30 @@ li.admin-sidebar-drop-indicator {
 
 	.sidebar__menu-item-parent:hover &,
 	.sidebar__menu-item-parent:focus-within &,
+	body.is-admin-sidebar-customize-mode
+		.sidebar
+		li[data-wp-admin-sidebar-item-id]:hover
+		> .sidebar__menu-link
+		&,
+	body.is-admin-sidebar-customize-mode
+		.sidebar
+		li[data-wp-admin-sidebar-item-id]:focus-within
+		> .sidebar__menu-link
+		&,
+	body.is-admin-sidebar-customize-mode
+		.sidebar
+		li[data-wp-admin-sidebar-item-id]:hover
+		> .sidebar__menu.is-togglable
+		> li
+		> .sidebar__heading
+		&,
+	body.is-admin-sidebar-customize-mode
+		.sidebar
+		li[data-wp-admin-sidebar-item-id]:focus-within
+		> .sidebar__menu.is-togglable
+		> li
+		> .sidebar__heading
+		&,
 	.sidebar__heading:hover &,
 	.sidebar__heading:focus-within &,
 	&[aria-expanded='true'] {

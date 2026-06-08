@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .sites-with-woopayments-list-mobile-view__column {
 	@include body-medium;
@@ -48,7 +48,7 @@
 	.download-commissions-modal__instruction {
 		@include body-medium;
 		margin: 0;
-		color: var(--color-accent-60);
+		color: var( --color-accent-60 );
 		display: flex;
 		align-items: center;
 		gap: 16px;
@@ -72,9 +72,9 @@
 		}
 
 		&:focus-visible {
-			border-color: var(--color-primary);
+			border-color: var( --color-primary );
 			outline: none;
-			box-shadow: 0 0 0 2px var(--color-primary-10);
+			box-shadow: 0 0 0 2px var( --color-primary-10 );
 			border-radius: 4px;
 		}
 	}
@@ -95,11 +95,11 @@
 	.woopayments-status-column__info-icon {
 		align-items: center;
 		justify-content: center;
-		color: var(--color-neutral-60);
+		color: var( --color-neutral-60 );
 		transition: color 0.2s ease;
 
 		&:hover {
-			color: var(--color-neutral-80);
+			color: var( --color-neutral-80 );
 		}
 	}
 }
@@ -112,7 +112,7 @@
 	.woopayments-status-popover__text {
 		@include body-medium;
 		margin: 0;
-		color: var(--color-text-black);
+		color: var( --color-text-black );
 		line-height: 1.4;
 	}
 
@@ -121,10 +121,10 @@
 		display: inline-flex;
 		justify-content: left;
 		gap: 4px;
-		color: var(--color-primary);
+		color: var( --color-primary );
 
 		&:hover {
-			color: var(--color-primary-dark);
+			color: var( --color-primary-dark );
 		}
 	}
 }

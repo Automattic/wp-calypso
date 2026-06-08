@@ -3,9 +3,8 @@ import { isEnabled } from '@automattic/calypso-config';
 function WordmarkLogo() {
 	return (
 		<svg
-			style={ { display: 'block' } }
-			width="132"
-			height="22"
+			style={ { display: 'block', translate: '0 2px' } }
+			width="170"
 			viewBox="0 0 132 22"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"

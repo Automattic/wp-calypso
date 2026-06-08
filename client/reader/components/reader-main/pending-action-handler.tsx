@@ -3,10 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
+import { getFollowingSource, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getPersistedLastActionPriorToLogin } from 'calypso/state/reader-ui/selectors';
 
@@ -17,6 +17,7 @@ export const ReaderPendingActionHandler = () => {
 	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
 	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutate: likeComment } = useMutation( likeSiteCommentMutation() );
+	const { mutate: followSite } = useFollowSite();
 	const { likePost, unlikePost } = usePostLikeActions();
 
 	useEffect( () => {
@@ -48,7 +49,10 @@ export const ReaderPendingActionHandler = () => {
 					} );
 					break;
 				case 'follow-site':
-					dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
+					followSite( {
+						feedUrl: pendingAction.siteUrl,
+						source: getFollowingSource(),
+					} );
 					break;
 				case 'follow-tag':
 					followTag( pendingAction.tag, {
@@ -65,7 +69,16 @@ export const ReaderPendingActionHandler = () => {
 		}, 2000 );
 
 		dispatch( clearLastActionRequiresLogin() );
-	}, [ isLoggedIn, pendingAction, dispatch, followTag, likePost, unlikePost, likeComment ] );
+	}, [
+		isLoggedIn,
+		pendingAction,
+		dispatch,
+		followTag,
+		likePost,
+		unlikePost,
+		likeComment,
+		followSite,
+	] );
 
 	return null;
 };

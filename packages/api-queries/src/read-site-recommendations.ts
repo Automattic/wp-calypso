@@ -49,6 +49,20 @@ export const getReadSiteRecommendationsInfiniteQueryKey = ( {
 } ): ReadSiteRecommendationsInfiniteQueryKey =>
 	[ ...getReadSiteRecommendationsInfiniteQueryKeyPrefix( { seed } ), number ] as const;
 
+const getNextRecommendationPageParam = (
+	lastPage: ReadSiteRecommendationsResponse,
+	lastPageParam: number,
+	pageSize: number
+) => {
+	const nextPage = Number( lastPage.meta?.next_page );
+
+	if ( Number.isInteger( nextPage ) && nextPage > lastPageParam ) {
+		return nextPage;
+	}
+
+	return lastPage.sites.length > 0 ? lastPageParam + pageSize : undefined;
+};
+
 export const readSiteRecommendationsInfiniteQuery = ( {
 	seed = 0,
 	number = 4,
@@ -71,7 +85,7 @@ export const readSiteRecommendationsInfiniteQuery = ( {
 		initialPageParam: 0,
 		enabled,
 		getNextPageParam: ( lastPage, _allPages, lastPageParam ) =>
-			lastPage.sites.length > 0 ? lastPageParam + number : undefined,
+			getNextRecommendationPageParam( lastPage, lastPageParam, number ),
 		staleTime: READ_SITE_RECOMMENDATIONS_STALE_TIME,
 		meta: { persist: false },
 		refetchOnWindowFocus: false,

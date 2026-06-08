@@ -13,16 +13,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
+	getFollowingSource,
+	useSiteSubscriptions,
+	useFollowSite,
+} from 'calypso/reader/data/site-subscriptions';
+import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { recordFollow } from 'calypso/reader/stats';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
 import InterestsVerificationNudge from './verificationNudge';
@@ -75,7 +78,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const followedTagsRef = useRef< string[] >( [] );
 	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
-	const reduxFollows = useSelector( getReaderFollows );
+	const { subscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
@@ -83,6 +86,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
+	const followSite = useFollowSite();
 
 	// Sync the user's already-followed tags from server once on mount. The
 	// component only mounts while the step is active, so the previous
@@ -117,10 +121,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
-		reduxFollows.some(
-			( f ) =>
-				( blog.feed_ID && f.feed_ID === blog.feed_ID ) ||
-				( blog.site_ID && f.blog_ID === blog.site_ID )
+		subscriptions.some(
+			( subscription ) =>
+				( blog.feed_ID && subscription.feed_ID === blog.feed_ID ) ||
+				( blog.site_ID && subscription.blog_ID === blog.site_ID )
 		);
 
 	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {
@@ -259,13 +263,12 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				if ( isBlogFollowed( blog ) ) {
 					continue;
 				}
-				const followData: { feed_ID: number; blog_ID?: number } = { feed_ID: blog.feed_ID };
-				if ( blog.site_ID && blog.site_ID > 0 ) {
-					followData.blog_ID = blog.site_ID;
-				}
 				// Best effort only: site-specific failures are handled by existing
-				// follow data-layer notices and should not block pack completion.
-				dispatch( follow( blog.feed_URL, followData, null ) );
+				// follow notices and should not block pack completion.
+				followSite.mutate( {
+					feedUrl: blog.feed_URL,
+					source: getFollowingSource(),
+				} );
 				// Mirror how the rest of Reader tracks site follows so pack-blog
 				// follows show up under the standard `calypso_reader_site_followed`
 				// event with a `reader-onboarding-modal` follow source.
