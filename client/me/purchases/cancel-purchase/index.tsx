@@ -97,7 +97,6 @@ import CancelPurchaseFeatureList from './feature-list';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
-import { getCancellationTopNotice } from './which-top-notice';
 import type { UpgradesCancelFeaturesResponse } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
@@ -1437,11 +1436,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
-		const topNotice = getCancellationTopNotice( {
-			showDomainOptionsStep: this.state.showDomainOptionsStep,
-			hasRefund: Boolean( refundAmountString ),
-			displayVariant,
-		} );
 		return (
 			<>
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
@@ -1489,24 +1483,30 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						align="left"
 					/>
 
-					{ topNotice === 'time-remaining' && (
-						<TimeRemainingNotice
-							purchase={ purchase }
-							displayVariant={ displayVariant }
-							intent={ intent ?? null }
-						/>
-					) }
+					{ ! this.state.showDomainOptionsStep &&
+						( ! refundAmountString ||
+							intent === 'auto-renew' ||
+							( intent === 'cancel' && ! this.props.isSplitCancelRemoveEnabled ) ) && (
+							<TimeRemainingNotice
+								purchase={ purchase }
+								displayVariant={ displayVariant }
+								intent={ intent ?? null }
+							/>
+						) }
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
-							{ topNotice === 'refund-eligibility' && refundAmountString && (
-								<RefundEligibilityNotice
-									mode="refund-eligibility"
-									refundAmount={ refundAmountString }
-									purchase={ purchase }
-								/>
-							) }
-							{ topNotice === 'confirmed' && refundAmountString && (
+							{ ! this.state.showDomainOptionsStep &&
+								this.props.isSplitCancelRemoveEnabled &&
+								refundAmountString &&
+								intent === 'cancel' && (
+									<RefundEligibilityNotice
+										mode="refund-eligibility"
+										refundAmount={ refundAmountString }
+										purchase={ purchase }
+									/>
+								) }
+							{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
 								<RefundEligibilityNotice
 									refundAmount={ refundAmountString }
 									mode="confirmed"
