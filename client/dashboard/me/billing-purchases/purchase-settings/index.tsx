@@ -15,6 +15,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -601,6 +602,10 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 
 function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
+
+	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+		return null;
+	}
 
 	if ( ! purchase.is_past_expiry_date || ! purchase.is_plan ) {
 		return null;

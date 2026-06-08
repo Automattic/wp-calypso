@@ -591,6 +591,9 @@ class ManagePurchase extends Component<
 
 	renderChangePlanNavItem() {
 		const { purchase, siteSlug, translate } = this.props;
+		if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+			return null;
+		}
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return null;
 		}
