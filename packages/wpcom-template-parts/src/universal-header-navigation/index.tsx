@@ -111,6 +111,15 @@ const UniversalNavbarHeader = ( {
 					return null;
 				} );
 
+				// Also dismiss the 2026 mobile menu/dialog and return focus to its trigger.
+				setMobileMenuOpen( ( open ) => {
+					if ( open ) {
+						setCurrentDropdown( null );
+						menuTriggerRef.current?.focus();
+					}
+					return false;
+				} );
+
 				const activeElement = document.activeElement;
 				if ( activeElement && activeElement.closest( '[role="menu"], .x-dropdown-content' ) ) {
 					if ( activeElement instanceof HTMLElement ) {
@@ -786,6 +795,7 @@ const UniversalNavbarHeader = ( {
 				) }
 				href={ localizeUrl( '//apps.wordpress.com/get/?campaign=wpcom-log-out-home-global-nav' ) }
 				aria-label={ __( 'Get the Jetpack app', __i18n_text_domain__ ) }
+				tabIndex={ mobileMenuTabIndex }
 			>
 				<span className="x-menu-mobile-app-banner-icons" aria-hidden="true">
 					<svg
@@ -1240,10 +1250,13 @@ const UniversalNavbarHeader = ( {
 									<li className="x-nav-item x-nav-item__narrow" role="none">
 										<button
 											ref={ menuTriggerRef }
+											type="button"
 											role="menuitem"
 											className="x-nav-link x-nav-link__menu x-link"
-											aria-haspopup="dialog"
-											aria-controls="x-mobile-menu-2026"
+											// The dialog + its id only exist on the 2026 path; on the legacy path
+											// the menu is a `role="menu"` without that id, so don't dangle the refs.
+											aria-haspopup={ nav2026 ? 'dialog' : undefined }
+											aria-controls={ nav2026 ? 'x-mobile-menu-2026' : undefined }
 											aria-expanded={ isMobileMenuOpen }
 											onClick={ () => setMobileMenuOpen( true ) }
 										>
@@ -1367,6 +1380,7 @@ const UniversalNavbarHeader = ( {
 												} ) }
 												href={ localizeUrl( '//wordpress.com' ) }
 												target="_self"
+												tabIndex={ mobileMenuTabIndex }
 											>
 												<WordPressWordmark
 													className="x-icon x-icon__logo"
@@ -1376,17 +1390,21 @@ const UniversalNavbarHeader = ( {
 												<span className="x-hidden">WordPress.com</span>
 											</a>
 											<button
+												type="button"
 												className={ clsx( 'x-menu-mobile-back x-link', {
 													'is-hidden': ! activeCategory,
 												} ) }
 												onClick={ () => setCurrentDropdown( null ) }
+												tabIndex={ mobileMenuTabIndex }
 											>
 												<span className="x-menu-mobile-back-chevron" aria-hidden="true" />
 												{ __( 'Back', __i18n_text_domain__ ) }
 											</button>
 											<button
+												type="button"
 												className="x-menu-button x-menu-mobile-close x-link"
 												onClick={ closeMobileMenu }
+												tabIndex={ mobileMenuTabIndex }
 											>
 												<span className="x-hidden">
 													{ __( 'Close menu', __i18n_text_domain__ ) }
@@ -1506,6 +1524,7 @@ const UniversalNavbarHeader = ( {
 											className="x-menu-mobile-user x-link"
 											href={ localizeUrl( '//wordpress.com/me' ) }
 											target="_self"
+											tabIndex={ mobileMenuTabIndex }
 										>
 											<img
 												className="x-menu-mobile-user-avatar"

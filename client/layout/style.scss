@@ -559,7 +559,7 @@ body.is-mobile-app-view {
 	padding-top: var( --masterbar-height );
 }
 
-// The 2026 nav overlays the page (`position: absolute`), so it sits below the admin
+// The 2026 nav overlays the page (`position: fixed`), so it sits below the admin
 // bar by `--nav-2026-admin-offset` — the real admin-bar height when logged in (32px
 // desktop / 46px mobile / etc., never hardcoded), or 0 when logged out (no admin
 // bar). Everything that positions against the admin bar reads this one var.
