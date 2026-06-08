@@ -72,7 +72,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^9.1.20",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^6.19.0",
