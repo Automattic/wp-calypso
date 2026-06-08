@@ -4,6 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	BaseControl,
 	Card,
 	CardBody,
 	CardHeader,
@@ -14,9 +15,8 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { isEqual } from 'lodash';
-import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { Fragment, useState, useEffect, ChangeEvent, FormEvent, ReactNode } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -175,26 +175,22 @@ const AdsFormSettings = () => {
 		}
 
 		return (
-			<>
-				<FormSectionHeading>{ translate( 'Ads Visibility' ) }</FormSectionHeading>
-				<RadioControl
-					label={ String( translate( 'Ads Visibility' ) ) }
-					hideLabelFromVision
-					selected={ settings.show_to_logged_in }
-					options={ [
-						{ label: String( translate( 'Run ads for all users' ) ), value: 'yes' },
-						{
-							label: String( translate( 'Run ads only for logged-out users (less revenue)' ) ),
-							value: 'no',
-						},
-						{ label: String( translate( 'Pause ads (no revenue)' ) ), value: 'pause' },
-					] }
-					onChange={ ( value ) =>
-						setSettings( ( prevState ) => ( { ...prevState, show_to_logged_in: value } ) )
-					}
-					disabled={ isLoading }
-				/>
-			</>
+			<RadioControl
+				label={ String( translate( 'Ads Visibility' ) ) }
+				selected={ settings.show_to_logged_in }
+				options={ [
+					{ label: String( translate( 'Run ads for all users' ) ), value: 'yes' },
+					{
+						label: String( translate( 'Run ads only for logged-out users (less revenue)' ) ),
+						value: 'no',
+					},
+					{ label: String( translate( 'Pause ads (no revenue)' ) ), value: 'pause' },
+				] }
+				onChange={ ( value ) =>
+					setSettings( ( prevState ) => ( { ...prevState, show_to_logged_in: value } ) )
+				}
+				disabled={ isLoading }
+			/>
 		);
 	}
 
@@ -203,8 +199,10 @@ const AdsFormSettings = () => {
 
 		return (
 			<>
-				<FormSectionHeading>{ translate( 'Display ads below posts on' ) }</FormSectionHeading>
-				<FormFieldset>
+				<div>
+					<BaseControl.VisualLabel>
+						{ translate( 'Display ads below posts on' ) }
+					</BaseControl.VisualLabel>
 					<VStack spacing={ 3 }>
 						<ToggleControl
 							checked={ !! settings.display_options?.display_front_page }
@@ -231,9 +229,11 @@ const AdsFormSettings = () => {
 							label={ translate( 'Archives' ) }
 						/>
 					</VStack>
-				</FormFieldset>
-				<FormSectionHeading>{ translate( 'Additional ad placements' ) }</FormSectionHeading>
-				<FormFieldset>
+				</div>
+				<div>
+					<BaseControl.VisualLabel>
+						{ translate( 'Additional ad placements' ) }
+					</BaseControl.VisualLabel>
 					<VStack spacing={ 3 }>
 						<ToggleControl
 							checked={ !! settings.display_options?.enable_header_ad }
@@ -264,45 +264,44 @@ const AdsFormSettings = () => {
 							/>
 						) }
 					</VStack>
-				</FormFieldset>
+				</div>
 			</>
 		);
 	}
 
 	function paymentOptions() {
 		return (
-			<FormFieldset>
-				<TextControl
-					type="email"
-					label={ translate( 'PayPal email address' ) }
-					value={ settings.paypal || '' }
-					onChange={ ( value ) =>
-						setSettings( ( prevState ) => ( { ...prevState, paypal: value } ) )
+			<TextControl
+				type="email"
+				label={ translate( 'PayPal email address' ) }
+				value={ settings.paypal || '' }
+				onChange={ ( value ) =>
+					setSettings( ( prevState ) => ( { ...prevState, paypal: value } ) )
+				}
+				disabled={ isLoading }
+				help={ translate(
+					'Earnings will be paid to the PayPal account on file. A PayPal account in good standing with the ability to accept funds must be maintained in order to receive earnings.' +
+						' You can verify which PayPal features are available to you by looking up your country on the {{a}}PayPal website{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://www.paypal.com/us/webapps/mpp/country-worldwide"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
 					}
-					disabled={ isLoading }
-					help={ translate(
-						'Earnings will be paid to the PayPal account on file. A PayPal account in good standing with the ability to accept funds must be maintained in order to receive earnings.' +
-							' You can verify which PayPal features are available to you by looking up your country on the {{a}}PayPal website{{/a}}.',
-						{
-							components: {
-								a: (
-									<a
-										href="https://www.paypal.com/us/webapps/mpp/country-worldwide"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				/>
-			</FormFieldset>
+				) }
+			/>
 		);
 	}
 
 	function acceptCheckbox() {
 		return (
-			<FormFieldset>
+			<div>
+				<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 				<CheckboxControl
 					checked={ !! settings.tos }
 					onChange={ () => handleCompactToggle( 'tos' ) }
@@ -334,7 +333,7 @@ const AdsFormSettings = () => {
 						) as string
 					}
 				/>
-			</FormFieldset>
+			</div>
 		);
 	}
 
@@ -342,9 +341,8 @@ const AdsFormSettings = () => {
 		const isDisabled = isLoading || Boolean( siteIsJetpack && ! settings.jetpack_module_enabled );
 
 		return (
-			<div>
-				<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
-				<FormFieldset>
+			<VStack spacing={ 6 }>
+				<div>
 					<HStack justify="space-between" alignment="flex-start" spacing={ 4 }>
 						<ToggleControl
 							checked={ !! settings.ccpa_enabled }
@@ -366,57 +364,61 @@ const AdsFormSettings = () => {
 							) }
 						/>
 					</HStack>
-				</FormFieldset>
 
-				{ settings.ccpa_enabled && (
-					<div className="ads__child-settings">
-						<FormFieldset>
-							<FormLabel>{ translate( 'Do Not Sell link' ) }</FormLabel>
-							<VStack spacing={ 2 }>
-								<Text as="p">
-									{ translate(
-										'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
-										{
-											components: {
-												a: (
-													<a href={ widgetsUrl ?? '#' } target="_blank" rel="noopener noreferrer" />
-												),
-												code: <code className="ads__inline-code" />,
-											},
-										}
+					{ settings.ccpa_enabled && (
+						<div className="ads__child-settings">
+							<VStack spacing={ 6 }>
+								<div>
+									<FormLabel>{ translate( 'Do Not Sell link' ) }</FormLabel>
+									<VStack spacing={ 2 }>
+										<Text as="p">
+											{ translate(
+												'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+												{
+													components: {
+														a: (
+															<a
+																href={ widgetsUrl ?? '#' }
+																target="_blank"
+																rel="noopener noreferrer"
+															/>
+														),
+														code: <code className="ads__inline-code" />,
+													},
+												}
+											) }
+										</Text>
+										<Text variant="muted" as="p" size={ 12 }>
+											{ translate(
+												'Failure to add this link will result in non-compliance with privacy laws in some US states.'
+											) }
+										</Text>
+									</VStack>
+								</div>
+
+								<TextControl
+									type="url"
+									label={ translate( 'Privacy policy URL' ) }
+									value={ settings.ccpa_privacy_policy_url || '' }
+									onChange={ ( value ) =>
+										setSettings( ( prevState ) => ( {
+											...prevState,
+											ccpa_privacy_policy_url: value,
+										} ) )
+									}
+									disabled={ isDisabled }
+									placeholder="https://"
+									help={ translate(
+										'Adds a link to your privacy policy to the notice popup triggered by the do not sell link (optional).'
 									) }
-								</Text>
-								<Text variant="muted" as="p" size={ 12 }>
-									{ translate(
-										'Failure to add this link will result in non-compliance with privacy laws in some US states.'
-									) }
-								</Text>
+								/>
 							</VStack>
-						</FormFieldset>
-
-						<FormFieldset>
-							<TextControl
-								type="url"
-								label={ translate( 'Privacy policy URL' ) }
-								value={ settings.ccpa_privacy_policy_url || '' }
-								onChange={ ( value ) =>
-									setSettings( ( prevState ) => ( {
-										...prevState,
-										ccpa_privacy_policy_url: value,
-									} ) )
-								}
-								disabled={ isDisabled }
-								placeholder="https://"
-								help={ translate(
-									'Adds a link to your privacy policy to the notice popup triggered by the do not sell link (optional).'
-								) }
-							/>
-						</FormFieldset>
-					</div>
-				) }
+						</div>
+					) }
+				</div>
 
 				{ siteIsJetpack && (
-					<FormFieldset>
+					<div>
 						<ToggleControl
 							checked={ !! settings.cmp_enabled }
 							disabled={ isDisabled }
@@ -431,9 +433,9 @@ const AdsFormSettings = () => {
 								) }
 							</FormSettingExplanation>
 						</div>
-					</FormFieldset>
+					</div>
 				) }
-			</div>
+			</VStack>
 		);
 	}
 
@@ -443,58 +445,67 @@ const AdsFormSettings = () => {
 		return (
 			<div>
 				<FormSectionHeading>{ translate( 'Ads.txt' ) }</FormSectionHeading>
-				<FormFieldset>
-					<SupportInfo
-						text={ translate(
-							'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
-						) }
-						link="https://jetpack.com/support/ads/"
-					/>
-					<ToggleControl
-						checked={ !! settings.custom_adstxt_enabled }
-						disabled={ isDisabled }
-						onChange={ () => handleCompactToggle( 'custom_adstxt_enabled' ) }
-						label={ translate( 'Customize your ads.txt file' ) }
-					/>
-					{ settings.custom_adstxt_enabled && (
-						<>
-							<div className="ads__child-settings">
-								<FormSettingExplanation>
-									{ translate(
-										'Ads automatically generates a custom {{link1}}ads.txt{{/link1}} tailored for your site. If you need to add additional entries for other networks please add them in the space below, one per line. {{link2}}Check here for more details{{/link2}}.',
-										{
-											components: {
-												link1: (
-													<a
-														href={ siteUrl + '/ads.txt' }
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-												link2: (
-													<a
-														href="https://jetpack.com/2018/11/09/how-jetpack-ads-members-can-increase-their-earnings-with-ads-txt"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-											},
-										}
-									) }
-								</FormSettingExplanation>
-							</div>
-							<div className="ads__child-settings">
-								<FormTextarea
-									name="custom_adstxt"
-									value={ settings.custom_adstxt }
-									onChange={ handleChange }
-									disabled={ isDisabled }
-								/>
-							</div>
-						</>
+				<SupportInfo
+					text={ translate(
+						'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
 					) }
-				</FormFieldset>
+					link="https://jetpack.com/support/ads/"
+				/>
+				<ToggleControl
+					checked={ !! settings.custom_adstxt_enabled }
+					disabled={ isDisabled }
+					onChange={ () => handleCompactToggle( 'custom_adstxt_enabled' ) }
+					label={ translate( 'Customize your ads.txt file' ) }
+				/>
+				{ settings.custom_adstxt_enabled && (
+					<>
+						<div className="ads__child-settings">
+							<FormSettingExplanation>
+								{ translate(
+									'Ads automatically generates a custom {{link1}}ads.txt{{/link1}} tailored for your site. If you need to add additional entries for other networks please add them in the space below, one per line. {{link2}}Check here for more details{{/link2}}.',
+									{
+										components: {
+											link1: (
+												<a
+													href={ siteUrl + '/ads.txt' }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+											link2: (
+												<a
+													href="https://jetpack.com/2018/11/09/how-jetpack-ads-members-can-increase-their-earnings-with-ads-txt"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</FormSettingExplanation>
+						</div>
+						<div className="ads__child-settings">
+							<FormTextarea
+								name="custom_adstxt"
+								value={ settings.custom_adstxt }
+								onChange={ handleChange }
+								disabled={ isDisabled }
+							/>
+						</div>
+					</>
+				) }
 			</div>
+		);
+	}
+
+	function renderCardHeader( title: ReactNode ) {
+		return (
+			<CardHeader>
+				<Text style={ { fontSize: '1.25rem', fontWeight: 500 } }>{ title }</Text>
+				<Button compact primary onClick={ handleSubmit } disabled={ isLoading || ! isWordAds }>
+					{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+				</Button>
+			</CardHeader>
 		);
 	}
 
@@ -506,40 +517,45 @@ const AdsFormSettings = () => {
 		<Fragment>
 			<QueryWordadsSettings siteId={ site.ID } />
 
-			<Card>
-				<CardHeader>
-					<Text style={ { fontSize: '1.25rem', fontWeight: 500 } }>
-						{ translate( 'Ads Settings' ) }
-					</Text>
-					<Button compact primary onClick={ handleSubmit } disabled={ isLoading || ! isWordAds }>
-						{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</CardHeader>
-				<CardBody>
-					<form
-						id="wordads-settings"
-						className="wordads-settings"
-						onSubmit={ handleSubmit }
-						onChange={ () => setIsChanged( true ) }
-					>
-						<ProtectFormGuard isChanged={ isChanged } />
+			<form
+				id="wordads-settings"
+				className="wordads-settings"
+				onSubmit={ handleSubmit }
+				onChange={ () => setIsChanged( true ) }
+			>
+				<ProtectFormGuard isChanged={ isChanged } />
 
-						{ showAdsToOptions() }
+				<VStack spacing={ 6 }>
+					<Card>
+						{ renderCardHeader( translate( 'Ads Settings' ) ) }
+						<CardBody>
+							<VStack spacing={ 6 }>
+								{ showAdsToOptions() }
 
-						{ displayOptions() }
+								{ displayOptions() }
+							</VStack>
+						</CardBody>
+					</Card>
 
-						{ privacy() }
+					<Card>
+						{ renderCardHeader( translate( 'Privacy and Consent' ) ) }
+						<CardBody>{ privacy() }</CardBody>
+					</Card>
 
-						{ siteIsJetpack ? adstxt() : null }
+					<Card>
+						{ renderCardHeader( translate( 'Payments & Terms' ) ) }
+						<CardBody>
+							<VStack spacing={ 6 }>
+								{ siteIsJetpack ? adstxt() : null }
 
-						<FormSectionHeading>{ translate( 'Payment Information' ) }</FormSectionHeading>
-						{ paymentOptions() }
+								{ paymentOptions() }
 
-						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
-						{ acceptCheckbox() }
-					</form>
-				</CardBody>
-			</Card>
+								{ acceptCheckbox() }
+							</VStack>
+						</CardBody>
+					</Card>
+				</VStack>
+			</form>
 		</Fragment>
 	);
 };
