@@ -614,7 +614,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 	return (
 		<ActionList.ActionItem
 			title={ __( 'Change plan' ) }
-			description={ __( 'Switch to a different plan for this site.' ) }
+			description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
 			actions={
 				<Button
 					variant="secondary"
