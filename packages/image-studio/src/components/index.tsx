@@ -447,16 +447,21 @@ const ImageStudioContent = withInstanceId(
 
 		const {
 			isConfirmDialogOpen,
+			isGenerationWarningOpen,
 			isExiting,
 			setIsExiting,
 			handleRequestClose,
 			handleConfirmSave,
 			handleConfirmDiscard,
 			handleConfirmCancel,
+			handleConfirmKeepGenerating,
+			handleConfirmStopAndClose,
 		} = useUnsavedChangesConfirmation( {
 			onSave,
 			onDiscard,
 			onExit,
+			// Closing while a clip renders aborts it — warn first (Feature Clip only).
+			isGenerationInProgress: isVideoMode && isAiProcessing,
 		} );
 
 		// Revert to original functionality
@@ -666,6 +671,32 @@ const ImageStudioContent = withInstanceId(
 						onClose={ handleConfirmCancel }
 					>
 						{ __( 'Do you want to save this image?', __i18n_text_domain__ ) }
+					</ConfirmationDialog>
+				) }
+
+				{ isGenerationWarningOpen && (
+					<ConfirmationDialog
+						isOpen={ isGenerationWarningOpen }
+						title={ __( 'Generation in progress', __i18n_text_domain__ ) }
+						actions={ [
+							{
+								text: __( 'Cancel', __i18n_text_domain__ ),
+								onClick: handleConfirmKeepGenerating,
+								variant: 'secondary',
+							},
+							{
+								text: __( 'Stop and close', __i18n_text_domain__ ),
+								onClick: handleConfirmStopAndClose,
+								variant: 'primary',
+								isDestructive: true,
+							},
+						] }
+						onClose={ handleConfirmKeepGenerating }
+					>
+						{ __(
+							'Your clip is still generating. Closing now will stop it and discard your progress.',
+							__i18n_text_domain__
+						) }
 					</ConfirmationDialog>
 				) }
 			</>
