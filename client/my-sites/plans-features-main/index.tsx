@@ -1,3 +1,8 @@
+import {
+	cancelAndRefundPurchaseMutation,
+	purchaseQuery,
+	userPurchasesQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
@@ -26,6 +31,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -38,6 +44,7 @@ import {
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import {
 	useCallback,
@@ -51,7 +58,7 @@ import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, useTranslate, type TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -61,6 +68,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import {
 	shouldForceDefaultPlansBasedOnIntent,
@@ -71,6 +79,7 @@ import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hook
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -274,6 +283,116 @@ const PlansFeaturesMain = ( {
 		siteId ? getPlansBySiteId( state, siteId )?.data : null
 	);
 	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
+
+	// Refund-window instant downgrade: when the current plan is still within its
+	// initial refund window, a downgrade is performed instantly via the cancel
+	// endpoint instead of routing the user to checkout. This applies regardless of
+	// whether any money would be refunded (e.g. plans paid with credits or free).
+	const reduxDispatch = useReduxDispatch();
+	const queryClient = useQueryClient();
+	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
+	const currentPlanPurchaseId = currentPlan?.purchaseId;
+	const { data: currentPurchase } = useQuery( {
+		...purchaseQuery( currentPlanPurchaseId ?? 0 ),
+		enabled: !! currentPlanPurchaseId,
+	} );
+	const isWithinRefundWindow =
+		config.isEnabled( 'plans/expired-downgrade' ) &&
+		!! currentPurchase &&
+		currentPurchase.is_within_initial_refund_window &&
+		! currentPurchase.is_past_expiry_date;
+	const downgradeMode: 'instant' | 'checkout' = isWithinRefundWindow ? 'instant' : 'checkout';
+
+	// The product the user is downgrading to, and the refund specific to that
+	// downgrade target. `refund_options` carries the per-target refund amount,
+	// which differs from the purchase's full `refund_amount`.
+	const downgradeTargetProductId = pendingDowngradePlanSlug
+		? getPlan( pendingDowngradePlanSlug )?.getProductId()
+		: undefined;
+	const downgradeRefundAmount =
+		currentPurchase?.refund_options?.find(
+			( option ) => option.to_product_id === downgradeTargetProductId
+		)?.refund_amount ?? 0;
+	const downgradeRefundText =
+		currentPurchase && downgradeRefundAmount > 0
+			? formatCurrency( downgradeRefundAmount, currentPurchase.currency_code )
+			: undefined;
+
+	const closeDowngradeModal = () => setPendingDowngradePlanSlug( null );
+
+	// Refund-window mode: perform the downgrade instantly via the cancel endpoint.
+	const confirmInstantDowngrade = () => {
+		const toProductId = downgradeTargetProductId;
+		if ( ! currentPlanPurchaseId || ! toProductId ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_plan_features_downgrade_click', {
+			current_plan: sitePlanSlug,
+			downgrading_to: pendingDowngradePlanSlug,
+			mode: 'instant',
+		} );
+		recordTracksEvent( 'calypso_purchases_downgrade_form_submit' );
+		const blogId = currentPurchase?.blog_id;
+		cancelAndRefundMutation.mutate(
+			{
+				purchaseId: currentPlanPurchaseId,
+				options: { type: 'downgrade', to_product_id: toProductId },
+			},
+			{
+				onSuccess: async () => {
+					closeDowngradeModal();
+					// Honor an explicit redirect target (e.g. from the dashboard / classic
+					// purchase pages) if one was provided.
+					if ( redirectTo ) {
+						window.location.href = redirectTo;
+						return;
+					}
+					// Otherwise refetch purchases and land on the newly-downgraded plan's
+					// settings page, falling back to the plans page.
+					const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
+					const newPurchase = freshPurchases?.find(
+						( p ) =>
+							String( p.product_id ) === String( toProductId ) &&
+							String( p.blog_id ) === String( blogId )
+					);
+					window.location.href =
+						newPurchase && siteSlug
+							? managePurchase( siteSlug, newPurchase.ID )
+							: `/plans/${ siteSlug }?downgraded=true`;
+				},
+				onError: ( error: Error ) => {
+					reduxDispatch( errorNotice( error.message ) );
+				},
+			}
+		);
+	};
+
+	// Checkout mode: route the user to checkout to purchase the downgrade.
+	const confirmCheckoutDowngrade = () => {
+		const planPath = pendingDowngradePlanSlug ? getPlanPath( pendingDowngradePlanSlug ) : null;
+		if ( ! planPath || ! siteSlug ) {
+			return;
+		}
+		closeDowngradeModal();
+		recordTracksEvent( 'calypso_plan_features_downgrade_click', {
+			current_plan: sitePlanSlug,
+			downgrading_to: pendingDowngradePlanSlug,
+			mode: 'checkout',
+		} );
+		// Use a full navigation rather than `page()` because this grid can be rendered
+		// inside the Stepper, where the `page` router is not initialized.
+		window.location.href = addQueryArgs(
+			{
+				...( coupon && { coupon } ),
+				...( redirectTo && { redirect_to: redirectTo } ),
+			},
+			`/checkout/${ siteSlug }/${ planPath }`
+		);
+	};
+
+	const confirmDowngrade = () =>
+		downgradeMode === 'instant' ? confirmInstantDowngrade() : confirmCheckoutDowngrade();
+
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -438,6 +557,18 @@ const PlansFeaturesMain = ( {
 		if (
 			config.isEnabled( 'plans/expired-downgrade' ) &&
 			isPlanExpired &&
+			! isFreePlan( planSlug ) &&
+			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
+		) {
+			setPendingDowngradePlanSlug( planSlug );
+			return true;
+		}
+
+		// For plans still within their refund window, intercept paid-plan downgrades
+		// to show a confirmation modal that performs the downgrade instantly (paid out
+		// of the refund) instead of routing to checkout.
+		if (
+			isWithinRefundWindow &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
@@ -930,29 +1061,11 @@ const PlansFeaturesMain = ( {
 					}
 					targetPlanSlug={ pendingDowngradePlanSlug }
 					purchaseId={ currentPlan?.purchaseId }
-					onClose={ () => setPendingDowngradePlanSlug( null ) }
-					onConfirm={ () => {
-						const planPath = pendingDowngradePlanSlug
-							? getPlanPath( pendingDowngradePlanSlug )
-							: null;
-						if ( ! planPath || ! siteSlug ) {
-							return;
-						}
-						setPendingDowngradePlanSlug( null );
-						recordTracksEvent( 'calypso_plan_features_downgrade_click', {
-							current_plan: sitePlanSlug,
-							downgrading_to: pendingDowngradePlanSlug,
-						} );
-						// Use a full navigation rather than `page()` because this grid can be
-						// rendered inside the Stepper, where the `page` router is not initialized.
-						window.location.href = addQueryArgs(
-							{
-								...( coupon && { coupon } ),
-								...( redirectTo && { redirect_to: redirectTo } ),
-							},
-							`/checkout/${ siteSlug }/${ planPath }`
-						);
-					} }
+					isInstantDowngrade={ downgradeMode === 'instant' }
+					refundText={ downgradeRefundText }
+					isConfirming={ cancelAndRefundMutation.isPending }
+					onClose={ closeDowngradeModal }
+					onConfirm={ confirmDowngrade }
 				/>
 				{ siteId && gridPlansForFeaturesGrid && (
 					<PlanNotice
