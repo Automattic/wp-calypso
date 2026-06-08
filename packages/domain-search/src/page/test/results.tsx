@@ -927,6 +927,83 @@ describe( 'ResultsPage', () => {
 			} );
 		} );
 
+		it( 'fires the onBundleShown event once when a bundle suggestion renders', async () => {
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-shown' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-shown.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleShown } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-shown"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			expect( onBundleShown ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					bundle_group_id: 'mock-bundle-shown-group',
+					domains: expect.arrayContaining( [
+						expect.objectContaining( { domain: 'bundle-shown.com' } ),
+					] ),
+				} )
+			);
+		} );
+
+		it( 'does not fire the onBundleShown event when bundles are disabled', async () => {
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-off' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-off.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch events={ { onBundleShown } } query="bundle-off">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'bundle-off.com' ) ).toBeInTheDocument();
+			expect( onBundleShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'fires the onBundleAddToCart event when the bundle CTA is clicked', async () => {
+			const user = userEvent.setup();
+			const onBundleAddToCart = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-accept' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-accept.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleAddToCart } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-accept"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
+			expect( onBundleAddToCart ).toHaveBeenCalledWith(
+				expect.objectContaining( { bundle_group_id: 'mock-bundle-accept-group' } )
+			);
+		} );
+
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {
 			const onQueryAvailabilityCheck = jest.fn();
 
