@@ -1,5 +1,6 @@
 // packages/ui/src/horizontal-stepper/horizontal-stepper.tsx
 import { forwardRef } from '@wordpress/element';
+import clsx from 'clsx';
 import { Stepper } from '../stepper';
 import { useStepRegistration } from '../stepper/use-step-registration';
 import {
@@ -35,7 +36,7 @@ function HorizontalStepperInner(
 			<Stepper.Root
 				orientation="horizontal"
 				ref={ ref }
-				className={ className ?? styles[ 'root' ] }
+				className={ clsx( styles[ 'root' ], className ) }
 				{ ...props }
 			>
 				<Stepper.List className={ styles[ 'list' ] }>
@@ -46,7 +47,7 @@ function HorizontalStepperInner(
 							status={ step.status }
 							optional={ step.optional }
 							disabled={ step.disabled }
-							className={ step.className ?? styles[ 'step' ] }
+							className={ clsx( styles[ 'step' ], step.className ) }
 						>
 							<Stepper.Trigger className={ styles[ 'trigger' ] }>
 								<Stepper.Indicator>{ step.indicator }</Stepper.Indicator>

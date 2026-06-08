@@ -1,5 +1,6 @@
 // packages/ui/src/vertical-stepper/vertical-stepper.tsx
 import { forwardRef } from '@wordpress/element';
+import clsx from 'clsx';
 import { Stepper } from '../stepper';
 import styles from './style.module.scss';
 import { VerticalStepperStep } from './vertical-stepper-step';
@@ -14,7 +15,7 @@ function VerticalStepperInner(
 		<Stepper.Root
 			orientation="vertical"
 			ref={ ref }
-			className={ className ?? styles[ 'root' ] }
+			className={ clsx( styles[ 'root' ], className ) }
 			{ ...props }
 		>
 			{ children }

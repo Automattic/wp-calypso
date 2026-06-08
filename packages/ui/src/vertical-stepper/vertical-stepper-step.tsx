@@ -1,5 +1,6 @@
 // packages/ui/src/vertical-stepper/vertical-stepper-step.tsx
 import { Stack } from '@wordpress/ui';
+import clsx from 'clsx';
 import { Stepper } from '../stepper';
 import styles from './style.module.scss';
 import type { StepProps } from '../stepper/types';
@@ -26,7 +27,7 @@ export function VerticalStepperStep( {
 			status={ status }
 			optional={ optional }
 			disabled={ disabled }
-			className={ className ?? styles[ 'step' ] }
+			className={ clsx( styles[ 'step' ], className ) }
 		>
 			<Stepper.Trigger className={ styles[ 'trigger' ] }>
 				<span className={ styles[ 'indicator-wrapper' ] }>
