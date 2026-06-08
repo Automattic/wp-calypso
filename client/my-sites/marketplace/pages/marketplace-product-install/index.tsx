@@ -522,13 +522,17 @@ const MarketplaceProductInstall = ( {
 			return (
 				<EmptyContent
 					title={ null }
-					line={ translate( 'An error occurred while installing the plugin.' ) }
-					action={ translate( 'Back' ) }
-					actionURL={
+					line={ translate(
+						'An error occurred while installing the plugin. It may be too large to install from here. Please try uploading it again from WP Admin.'
+					) }
+					secondaryAction={ translate( 'Back' ) }
+					secondaryActionURL={
 						isPluginUploadFlow
 							? `/plugins/upload/${ selectedSiteSlug }`
 							: `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
 					}
+					action={ translate( 'Upload from WP Admin' ) }
+					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);
 		}
