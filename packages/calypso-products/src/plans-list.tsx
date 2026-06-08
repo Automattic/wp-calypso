@@ -2298,6 +2298,43 @@ const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
 	getShortDescription: () =>
 		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
 	getTagline: () => i18n.translate( 'Learn more about everything included with the Student plan.' ),
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+		compact( [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ADVANCED,
+			isLoggedInMonthlyPricing && FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
+			FEATURE_6GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+			isLoggedInMonthlyPricing && FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_REPUBLICIZE,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_UPLOAD_PLUGINS,
+			FEATURE_UPLOAD_THEMES,
+			FEATURE_SFTP_DATABASE,
+			FEATURE_NO_BRANDING,
+			FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		] ),
+	getPromotedFeatures: () => [
+		FEATURE_6GB_STORAGE,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_NO_ADS,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		FEATURE_VIDEO_UPLOADS,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_UPLOAD_THEMES_PLUGINS,
+		FEATURE_6GB_STORAGE,
+		FEATURE_ALL_PREMIUM_FEATURES,
+	],
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 } );
 

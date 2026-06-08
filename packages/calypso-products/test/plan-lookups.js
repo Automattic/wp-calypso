@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
 import {
+	FEATURE_200GB_STORAGE,
+	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ALL_PERSONAL_FEATURES,
@@ -1539,12 +1541,16 @@ describe( 'planHasFeature', () => {
 		const studentPlan = getPlan( PLAN_STUDENT );
 
 		expect( planHasFeature( PLAN_STUDENT, FEATURE_VIDEO_UPLOADS ) ).toBe( true );
-		expect( studentPlan.get2023PricingGridSignupWpcomFeatures() ).toEqual(
-			getPlan( PLAN_BUSINESS ).get2023PricingGridSignupWpcomFeatures()
-		);
-		expect( studentPlan.getStorageFeature() ).toEqual(
-			getPlan( PLAN_PERSONAL ).getStorageFeature()
-		);
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_6GB_STORAGE ) ).toBe( true );
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_50GB_STORAGE ) ).toBe( false );
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_200GB_STORAGE ) ).toBe( false );
+
+		expect( studentPlan.getPlanCompareFeatures() ).toContain( FEATURE_6GB_STORAGE );
+		expect( studentPlan.getPlanCompareFeatures() ).not.toContain( FEATURE_50GB_STORAGE );
+		expect( studentPlan.getPromotedFeatures() ).toContain( FEATURE_6GB_STORAGE );
+		expect( studentPlan.getPromotedFeatures() ).not.toContain( FEATURE_200GB_STORAGE );
+		expect( studentPlan.getPortfolioSignupFeatures() ).toContain( FEATURE_6GB_STORAGE );
+		expect( studentPlan.getPortfolioSignupFeatures() ).not.toContain( FEATURE_200GB_STORAGE );
 		expect( studentPlan.getStorageFeature() ).toEqual( FEATURE_6GB_STORAGE );
 	} );
 } );
