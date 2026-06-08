@@ -154,12 +154,6 @@
 	text-transform: uppercase;
 }
 
-@include breakpoint-deprecated( "<480px" ) {
-	.ads__settings-state {
-		max-width: 75%;
-	}
-}
-
 .theme-jetpack-cloud {
 	.ads__activate-header-title {
 		font-size: $font-title-small;
@@ -201,5 +195,15 @@
 }
 
 .ads__child-settings {
-	margin: 16px 48px 0;
+	margin-block: 16px 0;
+	margin-inline: 40px 0;
+}
+
+.ads__inline-code {
+	font-size: inherit;
+}
+
+.wordads-settings .form-section-heading {
+	font-size: 1rem;
+	margin-block-end: 16px;
 }

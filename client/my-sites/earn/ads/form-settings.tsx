@@ -1,23 +1,26 @@
-import { Button, Card, FormLabel } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Card,
+	CardBody,
+	CardHeader,
+	CheckboxControl,
 	RadioControl,
+	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import SectionHeader from 'calypso/components/section-header';
 import SupportInfo from 'calypso/components/support-info';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -101,15 +104,6 @@ const AdsFormSettings = () => {
 		} ) );
 	}
 
-	function handleToggle( event: ChangeEvent< HTMLInputElement > ) {
-		const name = event.currentTarget.name;
-
-		setSettings( ( prevState ) => ( {
-			...prevState,
-			[ name ]: ! settings[ name as keyof Settings ],
-		} ) );
-	}
-
 	function handleDisplayToggle( name: string ) {
 		setSettings( ( prevState ) => ( {
 			...prevState,
@@ -184,6 +178,8 @@ const AdsFormSettings = () => {
 			<>
 				<FormSectionHeading>{ translate( 'Ads Visibility' ) }</FormSectionHeading>
 				<RadioControl
+					label={ String( translate( 'Ads Visibility' ) ) }
+					hideLabelFromVision
 					selected={ settings.show_to_logged_in }
 					options={ [
 						{ label: String( translate( 'Run ads for all users' ) ), value: 'yes' },
@@ -209,7 +205,7 @@ const AdsFormSettings = () => {
 			<>
 				<FormSectionHeading>{ translate( 'Display ads below posts on' ) }</FormSectionHeading>
 				<FormFieldset>
-					<VStack spacing={ 6 }>
+					<VStack spacing={ 3 }>
 						<ToggleControl
 							checked={ !! settings.display_options?.display_front_page }
 							disabled={ isDisabled }
@@ -238,7 +234,7 @@ const AdsFormSettings = () => {
 				</FormFieldset>
 				<FormSectionHeading>{ translate( 'Additional ad placements' ) }</FormSectionHeading>
 				<FormFieldset>
-					<VStack spacing={ 6 }>
+					<VStack spacing={ 3 }>
 						<ToggleControl
 							checked={ !! settings.display_options?.enable_header_ad }
 							disabled={ isDisabled }
@@ -276,16 +272,15 @@ const AdsFormSettings = () => {
 	function paymentOptions() {
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="paypal">{ translate( 'PayPal email address' ) }</FormLabel>
-				<FormTextInput
-					name="paypal"
-					id="paypal-earn-input"
+				<TextControl
+					type="email"
+					label={ translate( 'PayPal email address' ) }
 					value={ settings.paypal || '' }
-					onChange={ handleChange }
+					onChange={ ( value ) =>
+						setSettings( ( prevState ) => ( { ...prevState, paypal: value } ) )
+					}
 					disabled={ isLoading }
-				/>
-				<FormSettingExplanation>
-					{ translate(
+					help={ translate(
 						'Earnings will be paid to the PayPal account on file. A PayPal account in good standing with the ability to accept funds must be maintained in order to receive earnings.' +
 							' You can verify which PayPal features are available to you by looking up your country on the {{a}}PayPal website{{/a}}.',
 						{
@@ -300,7 +295,7 @@ const AdsFormSettings = () => {
 							},
 						}
 					) }
-				</FormSettingExplanation>
+				/>
 			</FormFieldset>
 		);
 	}
@@ -308,15 +303,14 @@ const AdsFormSettings = () => {
 	function acceptCheckbox() {
 		return (
 			<FormFieldset>
-				<FormLabel>
-					<FormCheckbox
-						name="tos"
-						checked={ !! settings.tos }
-						onChange={ handleToggle }
-						disabled={ isLoading || 'signed' === settings.tos }
-					/>
-					<span>
-						{ translate(
+				<CheckboxControl
+					checked={ !! settings.tos }
+					onChange={ () => handleCompactToggle( 'tos' ) }
+					disabled={ isLoading || 'signed' === settings.tos }
+					// CheckboxControl types `label` as a string, but it renders any ReactNode
+					// inside the <label>, so the cast lets us keep the linked agreement text.
+					label={
+						translate(
 							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}. {{br/}}I agree to post only {{b}}family-friendly content{{/b}} and will not purchase non-human traffic.',
 							{
 								components: {
@@ -337,9 +331,9 @@ const AdsFormSettings = () => {
 									),
 								},
 							}
-						) }
-					</span>
-				</FormLabel>
+						) as string
+					}
+				/>
 			</FormFieldset>
 		);
 	}
@@ -378,41 +372,45 @@ const AdsFormSettings = () => {
 					<div className="ads__child-settings">
 						<FormFieldset>
 							<FormLabel>{ translate( 'Do Not Sell link' ) }</FormLabel>
-							<span>
-								{ translate(
-									'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
-									{
-										components: {
-											a: <a href={ widgetsUrl ?? '#' } target="_blank" rel="noopener noreferrer" />,
-											code: <code />,
-										},
-									}
-								) }
-							</span>
-							<FormSettingExplanation>
-								{ translate(
-									'Failure to add this link will result in non-compliance with privacy laws in some US states.'
-								) }
-							</FormSettingExplanation>
+							<VStack spacing={ 2 }>
+								<Text as="p">
+									{ translate(
+										'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+										{
+											components: {
+												a: (
+													<a href={ widgetsUrl ?? '#' } target="_blank" rel="noopener noreferrer" />
+												),
+												code: <code className="ads__inline-code" />,
+											},
+										}
+									) }
+								</Text>
+								<Text variant="muted" as="p" size={ 12 }>
+									{ translate(
+										'Failure to add this link will result in non-compliance with privacy laws in some US states.'
+									) }
+								</Text>
+							</VStack>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="ccpa-privacy-policy-url">
-								{ translate( 'Privacy policy URL' ) }
-							</FormLabel>
-							<FormTextInput
-								name="ccpa_privacy_policy_url"
-								id="ccpa-privacy-policy-url"
+							<TextControl
+								type="url"
+								label={ translate( 'Privacy policy URL' ) }
 								value={ settings.ccpa_privacy_policy_url || '' }
-								onChange={ handleChange }
+								onChange={ ( value ) =>
+									setSettings( ( prevState ) => ( {
+										...prevState,
+										ccpa_privacy_policy_url: value,
+									} ) )
+								}
 								disabled={ isDisabled }
 								placeholder="https://"
-							/>
-							<FormSettingExplanation>
-								{ translate(
+								help={ translate(
 									'Adds a link to your privacy policy to the notice popup triggered by the do not sell link (optional).'
 								) }
-							</FormSettingExplanation>
+							/>
 						</FormFieldset>
 					</div>
 				) }
@@ -508,34 +506,39 @@ const AdsFormSettings = () => {
 		<Fragment>
 			<QueryWordadsSettings siteId={ site.ID } />
 
-			<SectionHeader label={ translate( 'Ads Settings' ) }>
-				<Button compact primary onClick={ handleSubmit } disabled={ isLoading || ! isWordAds }>
-					{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-				</Button>
-			</SectionHeader>
-
 			<Card>
-				<form
-					id="wordads-settings"
-					onSubmit={ handleSubmit }
-					onChange={ () => setIsChanged( true ) }
-				>
-					<ProtectFormGuard isChanged={ isChanged } />
+				<CardHeader>
+					<Text style={ { fontSize: '1.25rem', fontWeight: 500 } }>
+						{ translate( 'Ads Settings' ) }
+					</Text>
+					<Button compact primary onClick={ handleSubmit } disabled={ isLoading || ! isWordAds }>
+						{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</CardHeader>
+				<CardBody>
+					<form
+						id="wordads-settings"
+						className="wordads-settings"
+						onSubmit={ handleSubmit }
+						onChange={ () => setIsChanged( true ) }
+					>
+						<ProtectFormGuard isChanged={ isChanged } />
 
-					{ showAdsToOptions() }
+						{ showAdsToOptions() }
 
-					{ displayOptions() }
+						{ displayOptions() }
 
-					{ privacy() }
+						{ privacy() }
 
-					{ siteIsJetpack ? adstxt() : null }
+						{ siteIsJetpack ? adstxt() : null }
 
-					<FormSectionHeading>{ translate( 'Payment Information' ) }</FormSectionHeading>
-					{ paymentOptions() }
+						<FormSectionHeading>{ translate( 'Payment Information' ) }</FormSectionHeading>
+						{ paymentOptions() }
 
-					<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
-					{ acceptCheckbox() }
-				</form>
+						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
+						{ acceptCheckbox() }
+					</form>
+				</CardBody>
 			</Card>
 		</Fragment>
 	);
