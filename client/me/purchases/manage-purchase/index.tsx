@@ -604,12 +604,18 @@ class ManagePurchase extends Component<
 	}
 
 	renderChangePlanNavItem() {
-		const { siteSlug, translate } = this.props;
+		const { siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
 		if ( ! this.shouldRenderDowngradeOption() ) {
 			return null;
 		}
+		// Land back on the newly-provisioned plan's manage-purchase page after
+		// checkout with a success notice. The `:purchaseId` placeholder is
+		// substituted by the checkout pending page once the new subscription
+		// appears (analogous to `:receiptId`).
+		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
+		const href = addQueryArgs( { redirect_to: redirectTo }, `/plans/${ siteSlug }` );
 		return (
-			<CompactCard tagName="a" displayAsLink href={ `/plans/${ siteSlug }` }>
+			<CompactCard tagName="a" displayAsLink href={ href }>
 				<Icon icon={ column } className="card__icon" />
 				{ translate( 'Change plan' ) }
 			</CompactCard>
