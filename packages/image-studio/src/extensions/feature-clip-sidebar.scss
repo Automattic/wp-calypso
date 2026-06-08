@@ -48,7 +48,10 @@
 				#1a1a1a;
 			background-size: 200% 100%, 100% 100%;
 			background-repeat: no-repeat;
-			animation: image-studio-feature-clip-shimmer 1.5s ease-in-out infinite;
+
+			@media (prefers-reduced-motion: no-preference) {
+				animation: image-studio-feature-clip-shimmer 1.5s ease-in-out infinite;
+			}
 		}
 	}
 
