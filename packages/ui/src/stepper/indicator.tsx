@@ -1,4 +1,5 @@
 // packages/ui/src/stepper/indicator.tsx
+import { forwardRef } from '@wordpress/element';
 import { check } from '@wordpress/icons';
 import { Path, SVG } from '@wordpress/primitives';
 import { VisuallyHidden } from '@wordpress/ui';
@@ -6,7 +7,7 @@ import clsx from 'clsx';
 import { Icon } from '../icon';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 // Half-circle (dome) icon for the bullet-variant current step.
 // 12×12 viewBox, dome in the bottom half: flat edge at vertical midpoint (y=6),
@@ -26,46 +27,50 @@ const halfCircleIcon = (
 	</SVG>
 );
 
-type StepperIndicatorProps = {
+type StepperIndicatorProps = ComponentProps< 'span' > & {
 	children?: ReactNode;
-	className?: string;
 };
 
-export function StepperIndicator( { children, className }: StepperIndicatorProps ) {
-	const { index, totalSteps, isCurrent, status, isDisabled } = useStepContext();
-	const { formatStepLabel, indicatorVariant } = useStepperContext();
+export const StepperIndicator = forwardRef< HTMLSpanElement, StepperIndicatorProps >(
+	function StepperIndicator( { children, className, ...props }, ref ) {
+		const { index, totalSteps, isCurrent, status, isDisabled } = useStepContext();
+		const { formatStepLabel, indicatorVariant } = useStepperContext();
 
-	const stepNumber = index + 1;
-	// totalSteps is 0 on the initial render before step registration fires.
-	// Guard to avoid announcing "Step 1 of 0" to screen readers.
-	const accessibleLabel = totalSteps > 0 ? formatStepLabel( stepNumber, totalSteps, status ) : null;
+		const stepNumber = index + 1;
+		// totalSteps is 0 on the initial render before step registration fires.
+		// Guard to avoid announcing "Step 1 of 0" to screen readers.
+		const accessibleLabel =
+			totalSteps > 0 ? formatStepLabel( stepNumber, totalSteps, status ) : null;
 
-	let indicator: ReactNode =
-		indicatorVariant === 'number' ? <span aria-hidden="true">{ stepNumber }</span> : null;
-	if ( status === 'completed' ) {
-		indicator = <Icon icon={ check } size={ 14 } />;
-	} else if ( status === 'error' ) {
-		indicator = <span aria-hidden="true">!</span>;
-	} else if ( isCurrent && indicatorVariant === 'bullet' ) {
-		indicator = halfCircleIcon;
+		let indicator: ReactNode =
+			indicatorVariant === 'number' ? <span aria-hidden="true">{ stepNumber }</span> : null;
+		if ( status === 'completed' ) {
+			indicator = <Icon icon={ check } size={ 14 } />;
+		} else if ( status === 'error' ) {
+			indicator = <span aria-hidden="true">!</span>;
+		} else if ( isCurrent && indicatorVariant === 'bullet' ) {
+			indicator = halfCircleIcon;
+		}
+
+		return (
+			<span
+				ref={ ref }
+				{ ...props }
+				data-indicator-variant={ indicatorVariant }
+				className={ clsx( styles.indicator, className, {
+					[ styles[ 'is-current' ] ]: isCurrent,
+					[ styles[ 'is-completed' ] ]: status === 'completed',
+					[ styles[ 'is-error' ] ]: status === 'error',
+					[ styles[ 'is-disabled' ] ]: isDisabled,
+				} ) }
+			>
+				{ accessibleLabel && (
+					<VisuallyHidden render={ <span /> }>{ accessibleLabel }</VisuallyHidden>
+				) }
+
+				{ /* Visual content */ }
+				{ children ? <span aria-hidden="true">{ children }</span> : indicator }
+			</span>
+		);
 	}
-
-	return (
-		<span
-			data-indicator-variant={ indicatorVariant }
-			className={ clsx( styles.indicator, className, {
-				[ styles[ 'is-current' ] ]: isCurrent,
-				[ styles[ 'is-completed' ] ]: status === 'completed',
-				[ styles[ 'is-error' ] ]: status === 'error',
-				[ styles[ 'is-disabled' ] ]: isDisabled,
-			} ) }
-		>
-			{ accessibleLabel && (
-				<VisuallyHidden render={ <span /> }>{ accessibleLabel }</VisuallyHidden>
-			) }
-
-			{ /* Visual content */ }
-			{ children ? <span aria-hidden="true">{ children }</span> : indicator }
-		</span>
-	);
-}
+);
