@@ -142,16 +142,16 @@ export function useFooterHeight( {
 interface UseDropdownFlipArgs {
 	nav2026: boolean;
 	activeDropdown: string | null;
-	dropdownRef: React.RefObject< HTMLDivElement >;
 }
 
 // Desktop dropdown: the panel stays open between triggers and FLIP-eases its height on a
 // switch. `useLayoutEffect` so the measure/pin happens before paint (no auto-height flash).
+// Owns and returns the panel ref to attach to the dropdown element.
 export function useDropdownFlip( {
 	nav2026,
 	activeDropdown,
-	dropdownRef,
-}: UseDropdownFlipArgs ): void {
+}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
+	const dropdownRef = useRef< HTMLDivElement >( null );
 	// FLIP bookkeeping: `prevDropdown` distinguishes first-open from switch; `prevHeight` is the `from`.
 	const prevDropdownRef = useRef< string | null >( null );
 	const prevHeightRef = useRef< number >( 0 );
@@ -260,5 +260,7 @@ export function useDropdownFlip( {
 		return () => {
 			prevHeightRef.current = el.offsetHeight;
 		};
-	}, [ nav2026, activeDropdown, dropdownRef ] );
+	}, [ nav2026, activeDropdown ] );
+
+	return dropdownRef;
 }

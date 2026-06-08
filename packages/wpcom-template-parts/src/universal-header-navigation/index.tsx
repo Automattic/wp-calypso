@@ -48,8 +48,6 @@ const UniversalNavbarHeader = ( {
 	const mobileFooterRef = useRef< HTMLDivElement >( null );
 	// Hamburger button, so closing the mobile menu can return focus to it (not <body>).
 	const menuTriggerRef = useRef< HTMLButtonElement >( null );
-	// FLIP bookkeeping ref, passed to the desktop dropdown panel.
-	const dropdownRef = useRef< HTMLDivElement >( null );
 	const isEnglishLocale = useIsEnglishLocale();
 	// Allow tabbing in mobile version only when the menu is open
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
@@ -65,7 +63,8 @@ const UniversalNavbarHeader = ( {
 		mobilePlatform,
 		footerRef: mobileFooterRef,
 	} );
-	useDropdownFlip( { nav2026, activeDropdown, dropdownRef } );
+	// Owns the FLIP panel ref; we attach it to the desktop dropdown below.
+	const dropdownRef = useDropdownFlip( { nav2026, activeDropdown } );
 
 	const closeMobileMenu = useCallback( () => {
 		setMobileMenuOpen( false );
