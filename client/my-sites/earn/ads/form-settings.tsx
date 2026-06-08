@@ -18,7 +18,6 @@ import { isEqual } from 'lodash';
 import { Fragment, useState, useEffect, ChangeEvent, FormEvent, ReactNode } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import SupportInfo from 'calypso/components/support-info';
@@ -424,15 +423,10 @@ const AdsFormSettings = () => {
 							disabled={ isDisabled }
 							onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
 							label={ translate( 'Enable GDPR Consent Banner' ) }
+							help={ translate(
+								'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
+							) }
 						/>
-
-						<div className="ads__child-settings">
-							<FormSettingExplanation>
-								{ translate(
-									'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
-								) }
-							</FormSettingExplanation>
-						</div>
 					</div>
 				) }
 			</VStack>
@@ -444,7 +438,9 @@ const AdsFormSettings = () => {
 
 		return (
 			<div>
-				<FormSectionHeading>{ translate( 'Ads.txt' ) }</FormSectionHeading>
+				<FormSectionHeading className="ads__adstxt-heading">
+					{ translate( 'Ads.txt' ) }
+				</FormSectionHeading>
 				<SupportInfo
 					text={ translate(
 						'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
@@ -460,7 +456,7 @@ const AdsFormSettings = () => {
 				{ settings.custom_adstxt_enabled && (
 					<>
 						<div className="ads__child-settings">
-							<FormSettingExplanation>
+							<Text variant="muted" as="p" size={ 12 }>
 								{ translate(
 									'Ads automatically generates a custom {{link1}}ads.txt{{/link1}} tailored for your site. If you need to add additional entries for other networks please add them in the space below, one per line. {{link2}}Check here for more details{{/link2}}.',
 									{
@@ -482,7 +478,7 @@ const AdsFormSettings = () => {
 										},
 									}
 								) }
-							</FormSettingExplanation>
+							</Text>
 						</div>
 						<div className="ads__child-settings">
 							<FormTextarea
