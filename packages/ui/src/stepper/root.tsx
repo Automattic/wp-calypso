@@ -93,7 +93,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 		if ( value && steps.length > 0 && ! steps.some( ( s ) => s.value === value ) ) {
 			// eslint-disable-next-line no-console
 			console.warn(
-				`[Stepper] No step found with value '${ value }'. Falling back to the first step.`
+				`[Stepper] No step found with value '${ value }'. Check that the value matches one of the registered step values.`
 			);
 		}
 	}, [ ariaLabel, ariaLabelledBy, steps, value ] );
