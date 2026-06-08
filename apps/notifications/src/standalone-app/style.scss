@@ -1,0 +1,14 @@
+// The src/app UI is built to be sized by a host popover (it targets
+// `.components-popover` in its own stylesheet). In the standalone iframe there
+// is no popover, so size the mount container to fill the frame and let
+// `.wpnc-app` (width/height: 100%) stretch to fit.
+html,
+body {
+	height: 100%;
+	margin: 0;
+}
+
+.wpnc__main {
+	position: fixed;
+	inset: 0;
+}
