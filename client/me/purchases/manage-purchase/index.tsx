@@ -589,19 +589,25 @@ class ManagePurchase extends Component<
 		return `/plans/${ siteSlug }`;
 	}
 
-	renderChangePlanNavItem() {
-		const { purchase, siteSlug, translate } = this.props;
+	shouldRenderDowngradeOption(): boolean {
+		const { purchase } = this.props;
 		if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
-			return null;
+			return false;
 		}
 		if ( ! purchase || ! isPlan( purchase ) ) {
+			return false;
+		}
+		if ( ! isInExpirationGracePeriod( purchase ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	renderChangePlanNavItem() {
+		const { siteSlug, translate } = this.props;
+		if ( ! this.shouldRenderDowngradeOption() ) {
 			return null;
 		}
-
-		if ( ! isExpired( purchase ) && ! isInExpirationGracePeriod( purchase ) ) {
-			return null;
-		}
-
 		return (
 			<CompactCard tagName="a" displayAsLink href={ `/plans/${ siteSlug }` }>
 				<Icon icon={ column } className="card__icon" />
@@ -612,11 +618,17 @@ class ManagePurchase extends Component<
 
 	renderUpgradeNavItem() {
 		const { purchase, translate } = this.props;
+		if ( this.shouldRenderDowngradeOption() ) {
+			return null;
+		}
 		if ( ! purchase ) {
 			return null;
 		}
-
-		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+		if (
+			isJetpackHoldingSitePurchase( purchase ) ||
+			isPartnerPurchase( purchase ) ||
+			isA4ABillingDragonPurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -1561,10 +1573,8 @@ class ManagePurchase extends Component<
 							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
-						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
-						{ ! isJetpackHoldingSitePurchase( purchase ) && this.renderUpgradeNavItem() }
+						{ this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
