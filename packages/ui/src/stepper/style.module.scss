@@ -1,6 +1,4 @@
 // packages/ui/src/stepper/style.module.scss
-@use '@wordpress/base-styles/mixins';
-@use '@wordpress/base-styles/variables';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
@@ -114,14 +112,13 @@ $indicator-size-sm: 16px; // bullet completed + current
 
 .trigger {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
+	justify-content: flex-start;
 	gap: var( --wpds-dimension-gap-sm, 8px );
+	padding: 0;
 	background: none;
 	border: none;
-	padding: 0;
-	cursor: pointer;
-	font-size: var( --wpds-typography-font-size-md, #{ variables.$font-size-medium } );
-	color: var( --wpds-color-fg-content-neutral, #{ theme.$components-color-foreground } );
+	height: auto;
 	text-align: start;
 	width: 100%;
 

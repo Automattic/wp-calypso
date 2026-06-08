@@ -29,7 +29,9 @@ export function VerticalStepperStep( {
 			className={ className ?? styles[ 'step' ] }
 		>
 			<Stepper.Trigger className={ styles[ 'trigger' ] }>
-				<Stepper.Indicator>{ indicator }</Stepper.Indicator>
+				<span className={ styles[ 'indicator-wrapper' ] }>
+					<Stepper.Indicator>{ indicator }</Stepper.Indicator>
+				</span>
 				<Stack direction="column" gap="xs">
 					<Stepper.Title>{ title }</Stepper.Title>
 					{ description && <Stepper.Description>{ description }</Stepper.Description> }

@@ -24,12 +24,12 @@
 .trigger {
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	align-items: center;
 	gap: var( --wpds-dimension-gap-sm, 8px );
 	background: none;
 	border: none;
 	padding: var( --wpds-dimension-padding-md, 12px );
-	cursor: pointer;
+	height: auto;
 	text-align: start;
 }
 

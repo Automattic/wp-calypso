@@ -39,16 +39,20 @@
 	}
 }
 
+.indicator-wrapper {
+	display: flex;
+	align-items: center;
+	// Match the title line-height so the indicator stays optically aligned
+	// with the title text even when a description is present.
+	height: var( --wpds-typography-line-height-sm, 20px );
+	flex-shrink: 0;
+}
+
 .trigger {
 	display: flex;
 	align-items: flex-start;
-	gap: var( --wpds-dimension-gap-sm, 8px );
+	justify-content: flex-start;
 	padding-block: var( --wpds-dimension-padding-sm, 8px );
-	background: none;
-	border: none;
-	cursor: pointer;
-	text-align: start;
-	width: 100%;
 }
 
 .panel {

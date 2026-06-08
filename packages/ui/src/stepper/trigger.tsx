@@ -2,6 +2,7 @@
 import { Accordion } from '@base-ui/react/accordion';
 import { Tabs } from '@base-ui/react/tabs';
 import { createElement, forwardRef, useCallback, useMemo, useRef } from '@wordpress/element';
+import { Button } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
@@ -46,6 +47,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 				<Accordion.Header render={ headerElement } className={ styles[ 'trigger-heading' ] }>
 					<Accordion.Trigger
 						ref={ callbackRef as Ref< HTMLButtonElement > }
+						render={ <Button variant="minimal" /> }
 						aria-current={ isCurrent ? 'step' : undefined }
 						className={ clsx( styles[ 'trigger' ], className ) }
 						{ ...props }
@@ -74,6 +76,7 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 				ref={ callbackRef as Ref< HTMLButtonElement > }
 				value={ value }
 				disabled={ isDisabled }
+				render={ <Button variant="minimal" /> }
 				aria-current={ isCurrent ? 'step' : undefined }
 				className={ clsx( styles[ 'trigger' ], className ) }
 				{ ...props }
