@@ -1050,11 +1050,9 @@ class ManagePurchase extends Component<
 			this.props.siteSlug,
 			id
 		);
-		// Carry the user's intent through to the confirmation screen so it renders
-		// the matching variant: the "Cancel" CTA always means cancel (disable
-		// auto-renew, keep features until expiry), distinct from the "Remove and
-		// refund" action offered by the refund-eligibility notice (intent=remove).
-		const link = `${ baseLink }?intent=cancel`;
+		// Under flag, carry the user's intent through to the confirmation screen so
+		// it renders the matching variant (Cancel copy + disable-auto-renew mutation).
+		const link = isSplitEnabled ? `${ baseLink }?intent=cancel` : baseLink;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 
 		if ( ! canRefund && isDomainTransfer( purchase ) ) {
