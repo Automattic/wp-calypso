@@ -204,3 +204,36 @@ export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
 			'result' in part.data
 	) as DataPart[];
 }
+
+/**
+ * Whether a message's leading text part is a complete tool payload — a JSON
+ * `agentMessage` of the shape `{ tool_id, data }` that a tool returned for the
+ * UI to render (e.g. a picker). Used to decide whether an interim streaming
+ * update carries a renderable component that should be appended to history.
+ *
+ * This deliberately matches only a fully-formed payload (parses to an object
+ * with a string `tool_id`), so partial text from token-streaming agents — which
+ * is plain prose, not JSON — is ignored.
+ *
+ * @param message - The message to inspect.
+ * @return True when the first text part is a `{ tool_id, ... }` JSON payload.
+ */
+export function messageCarriesToolPayload( message?: Message ): boolean {
+	const text = message?.parts?.find(
+		( part ): part is TextPart => part.type === 'text'
+	)?.text;
+	if ( typeof text !== 'string' || text.trim() === '' ) {
+		return false;
+	}
+
+	try {
+		const parsed = JSON.parse( text );
+		return (
+			!! parsed &&
+			typeof parsed === 'object' &&
+			typeof parsed.tool_id === 'string'
+		);
+	} catch ( _error ) {
+		return false;
+	}
+}

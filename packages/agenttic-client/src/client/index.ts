@@ -739,6 +739,40 @@ async function* processAgentResponseStream(
 						text: '',
 					};
 
+					// Surface any agent messages a tool produced (e.g. pickers)
+					// before handing back to the agent, so the component renders
+					// live instead of only after a reload.
+					//
+					// Each message is yielded separately rather than combined: its
+					// text must stay a single, self-contained `{ tool_id, … }`
+					// payload so the consumer can detect it
+					// (`messageCarriesToolPayload`) and append it to history.
+					// Joining multiple payloads into one string would produce
+					// invalid JSON and silently drop the live render.
+					//
+					// Each is a non-final `working` update — never `final` — so it
+					// does not terminate the turn while the agent continuation
+					// streams below, and deliberately carries no `kind` so the
+					// consumer keeps the live bubble open and reconciles it with
+					// the final/history message instead of committing a duplicate.
+					// The consumer appends it without touching tool-call tracking;
+					// returning to the agent still forwards the tool results, so
+					// the agent learns the task completed.
+					for ( const agentMessage of agentMessages ) {
+						const agentText =
+							extractTextFromMessage( agentMessage );
+
+						yield {
+							id: update.id,
+							status: {
+								state: 'working',
+								message: createAgentTextMessage( agentText ),
+							},
+							final: false,
+							text: agentText,
+						};
+					}
+
 					// Continue the task with tool results and stream the continuation
 					const continuedTaskStream = await continueTaskStreamed(
 						update.id,

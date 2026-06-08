@@ -30,6 +30,7 @@ import {
 	createTextMessageWithHistory,
 	extractNewContentFromMessage,
 	extractToolResultsFromMessage,
+	messageCarriesToolPayload,
 } from './conversationUtils';
 
 /**
@@ -678,6 +679,30 @@ function createAgentManager(): AgentManager {
 						managedAgent.conversationHistory =
 							currentConversationHistory;
 						// Persist only if withHistory is true
+						if ( withHistory ) {
+							await persistConversationHistory(
+								key,
+								currentConversationHistory
+							);
+						}
+					} else if (
+						messageCarriesToolPayload( update.status.message )
+					) {
+						// A tool produced a renderable agent message (e.g. a
+						// picker) and the turn is still continuing to the agent.
+						// Append it so it renders live, but deliberately leave
+						// `currentToolCallIds` untouched: the agent continuation
+						// may still echo tool results that must match the
+						// in-flight tool calls.
+						currentConversationHistory = [
+							...currentConversationHistory,
+							extractNewContentFromMessage(
+								update.status.message
+							),
+						];
+
+						managedAgent.conversationHistory =
+							currentConversationHistory;
 						if ( withHistory ) {
 							await persistConversationHistory(
 								key,
