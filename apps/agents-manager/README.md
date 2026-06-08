@@ -29,6 +29,17 @@ Follow the classic Calypso development setup. Run `yarn start` and edit away. No
 3. Sandbox your site and `widgets.wp.com`.
 4. Your changes should be reflected on the site live.
 
+#### Testing local Agenttic changes
+
+Agents Manager uses the published `@automattic/agenttic-client` and `@automattic/agenttic-ui` packages by default. To test unpublished Agenttic changes, clone or symlink the Agenttic repo to `apps/agents-manager/packages/agenttic`, build the Agenttic packages there, and run the dev sync with a local override:
+
+```bash
+cd apps/agents-manager
+LOCAL_AGENTTIC=true yarn dev --sync
+```
+
+Use `LOCAL_AGENTTIC_CLIENT=true` or `LOCAL_AGENTTIC_UI=true` to override only one package.
+
 #### In Atomic sites
 
 If you only interested in making JS and CSS changes, you're in luck; you don't need to worry about running Jetpack. You can follow the same instructions of simple sites.
