@@ -44,11 +44,13 @@ const NoteSummaryIcon = ( { iconUrl, link }: { iconUrl?: string; link?: string }
 // whole title links to the first range's target.
 const NoteSummaryTitle = ( { block, link }: { block: Subject; link?: string } ) => {
 	if ( ( block.ranges?.length ?? 0 ) > 1 ) {
+		// Drop `media` so `html()` doesn't render the avatar inline at full size
+		// (it's already shown by `NoteSummaryIcon`).
 		return (
 			<Text className="wpnc__user-title" weight={ 500 }>
 				<span
 					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: html( block ) } }
+					dangerouslySetInnerHTML={ { __html: html( { text: block.text, ranges: block.ranges } ) } }
 				/>
 			</Text>
 		);
@@ -78,7 +80,7 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 
 	if ( ! header || header.length === 0 ) {
 		return (
-			<HStack justify="flex-start" spacing={ 4 } alignment="top">
+			<HStack justify="flex-start" spacing={ 4 } alignment="center">
 				<NoteSummaryIcon iconUrl={ note.icon } />
 				<VStack className="wpnc__text-summary" spacing={ 0 }>
 					<ExternalLink href={ note.url }>{ note.subject[ 0 ].text }</ExternalLink>
@@ -91,13 +93,21 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 	const snippet = header[ 1 ];
 	const subjectLink = getHeaderLink( subject );
 	const avatarUrl = subject.media?.[ 0 ]?.url;
+	// Skip an empty `header[1]`, which would render a label-less link (just its
+	// trailing icon) and top-align the icon against a single-line header.
+	const hasSnippet = !! snippet?.text?.trim();
 
 	return (
-		<HStack className="wpnc__user" justify="flex-start" spacing={ 4 } alignment="top">
+		<HStack
+			className="wpnc__user"
+			justify="flex-start"
+			spacing={ 4 }
+			alignment={ hasSnippet ? 'top' : 'center' }
+		>
 			<NoteSummaryIcon iconUrl={ avatarUrl } link={ subjectLink } />
 			<VStack className="wpnc__text-summary" spacing={ 0 }>
 				<NoteSummaryTitle block={ subject } link={ subjectLink } />
-				{ snippet && <ExternalLink href={ note.url }>{ snippet.text }</ExternalLink> }
+				{ hasSnippet && <ExternalLink href={ note.url }>{ snippet.text }</ExternalLink> }
 			</VStack>
 		</HStack>
 	);
