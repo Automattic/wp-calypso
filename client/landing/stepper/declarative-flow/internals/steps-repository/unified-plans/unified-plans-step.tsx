@@ -447,6 +447,10 @@ function UnifiedPlansStep( {
 			return translate( 'Pick a plan for your store' );
 		}
 
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate( 'Find your best fit' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -566,11 +570,13 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		if (
-			isOnboardingFlow( flowName ) ||
-			intent === 'plans-upgrade' ||
-			intent === 'plans-upgrade-or-downgrade'
-		) {
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate(
+				'Compare plans and pick the one that works for where your site is headed.'
+			);
+		}
+
+		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
 			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};

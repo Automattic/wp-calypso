@@ -366,10 +366,17 @@ const PlansPageSubheader = ( {
 			return <PlanBenefitHeader />;
 		}
 
-		if (
-			! isUsingStepContainerV2 &&
-			( isOnboarding || intent === 'plans-upgrade' || intent === 'plans-upgrade-or-downgrade' )
-		) {
+		if ( ! isUsingStepContainerV2 && intent === 'plans-upgrade-or-downgrade' ) {
+			return (
+				<Subheader { ...subheaderCommonProps }>
+					{ translate(
+						'Compare plans and pick the one that works for where your site is headed.'
+					) }
+				</Subheader>
+			);
+		}
+
+		if ( ! isUsingStepContainerV2 && ( isOnboarding || intent === 'plans-upgrade' ) ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
