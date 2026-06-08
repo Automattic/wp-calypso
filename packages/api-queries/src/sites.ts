@@ -10,16 +10,13 @@ export const sitesQueryKey = [ 'sites', SITE_FIELDS, SITE_OPTIONS ];
 
 export const sitesQuery = (
 	siteFilters: FetchSiteTypes,
-	fetchSitesOptions: FetchSitesOptions = {
-		site_visibility: 'visible',
-		include_a8c_owned: false,
-		include_staging: false,
-	}
+	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible', include_a8c_owned: false }
 ) => {
-	const { source, ...fetchSitesOptionsKey } = fetchSitesOptions;
+	const withDefaults = { include_staging: false, ...fetchSitesOptions };
+	const { source, ...fetchSitesOptionsKey } = withDefaults;
 	return queryOptions( {
 		queryKey: [ ...sitesQueryKey, siteFilters, fetchSitesOptionsKey ],
-		queryFn: () => fetchSites( siteFilters, fetchSitesOptions ),
+		queryFn: () => fetchSites( siteFilters, withDefaults ),
 	} );
 };
 
@@ -30,10 +27,11 @@ export const paginatedSitesQuery = (
 		include_a8c_owned: false,
 	}
 ) => {
-	const { source, ...fetchSitesOptionsKey } = fetchSitesOptions;
+	const withDefaults = { include_staging: false, ...fetchSitesOptions };
+	const { source, ...fetchSitesOptionsKey } = withDefaults;
 	return queryOptions( {
 		queryKey: [ ...sitesQueryKey, 'paginated', siteFilters, fetchSitesOptionsKey ],
-		queryFn: () => fetchPaginatedSites( siteFilters, fetchSitesOptions ),
+		queryFn: () => fetchPaginatedSites( siteFilters, withDefaults ),
 	} );
 };
 
