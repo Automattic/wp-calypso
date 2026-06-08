@@ -128,8 +128,8 @@ export default function AgentDock( {
 			isSplitScreen,
 		} );
 
-	// WP admin bar integration. Returns whether a trigger button can reopen the chat.
-	const hasAdminBarTrigger = useAdminBarIntegration( {
+	// WP admin bar integration. Returns whether the AI chat entry button can reopen the chat.
+	const hasAiChatEntry = useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
 		maybeOpenChat: () => {
@@ -155,8 +155,8 @@ export default function AgentDock( {
 	// HVM-tagged routing it relies on.
 	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat && sectionName !== 'wooai-admin';
 	// `/support-guides` (the list) also needs the unified agent, and is only
-	// reachable from the WP admin bar trigger.
-	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAdminBarTrigger;
+	// reachable from the AI chat entry button (WP admin bar or Calypso masterbar).
+	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAiChatEntry;
 	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
 	// so unlike the list it isn't tied to the admin bar.
 	const showSupportGuide = ! isReaderChat;
@@ -270,10 +270,10 @@ export default function AgentDock( {
 
 	const chatHeaderOptions = getChatHeaderOptions();
 
-	// With an admin bar trigger, the chat hides on close and can minimize to the
-	// bar. Without one, it stays mounted and collapses to a button instead.
-	const isChatVisible = isPersistedOpen || ! hasAdminBarTrigger;
-	const isMinimizedActive = hasAdminBarTrigger && isMinimized;
+	// With the AI chat entry button, the chat hides on close and can minimize to
+	// the bar. Without one, it stays mounted and collapses to a button instead.
+	const isChatVisible = isPersistedOpen || ! hasAiChatEntry;
+	const isMinimizedActive = hasAiChatEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
 
 	const OrchestratorChatRoute = (

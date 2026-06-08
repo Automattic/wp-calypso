@@ -1,9 +1,10 @@
 import { Button, DropdownMenu } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, lineSolid, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
-import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
@@ -26,9 +27,11 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getIsDocked(),
 		[]
 	);
-	// Minimize only applies to the floating chat reachable from an entry button
-	// (the WP admin bar or the Calypso masterbar).
-	const showMinimize = hasAdminBarTrigger() && ! isDocked;
+	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
+
+	// Minimize only applies to the floating chat reachable from the AI chat button
+	// (WP admin bar or Calypso masterbar).
+	const showMinimize = hasAiChatEntry && ! isDocked;
 
 	return (
 		<div className="agents-manager-chat-header">

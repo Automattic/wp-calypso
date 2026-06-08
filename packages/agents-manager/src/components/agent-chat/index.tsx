@@ -14,7 +14,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
+import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
@@ -214,8 +214,8 @@ export default function AgentChat( {
 		[ mergedComponents, markdownExtensions ]
 	);
 
-	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
-	let floatingChatState: ChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	let floatingChatState: ChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {

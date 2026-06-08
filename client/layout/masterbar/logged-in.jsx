@@ -59,7 +59,9 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
+import { openAgentsManagerChat } from './masterbar-agents-manager/chat-actions';
+import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
@@ -811,7 +813,7 @@ class MasterbarLoggedIn extends Component {
 				<Item
 					className="masterbar__item-agents-manager"
 					tooltip={ translate( 'Help' ) }
-					icon={ <AgentsManagerIcon hasUnread={ false } /> }
+					icon={ <HelpIcon /> }
 				/>
 			);
 
@@ -851,8 +853,27 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	clickAgentsManagerAiChat = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
+		openAgentsManagerChat( '/' );
+	};
+
+	renderAgentsManagerAiChat() {
+		const { translate } = this.props;
+
+		return (
+			<Item
+				className="masterbar__item-agents-manager-ai-chat"
+				onClick={ this.clickAgentsManagerAiChat }
+				icon={ <BigSkyIcon /> }
+				tooltip={ translate( 'Ask AI' ) }
+			/>
+		);
+	}
+
 	render() {
-		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
+		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon, useUnifiedAgent } =
+			this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -875,6 +896,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderCart() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
+					{ useUnifiedAgent && this.renderAgentsManagerAiChat() }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
 				</div>
