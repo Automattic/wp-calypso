@@ -22,7 +22,6 @@ interface Nav2026Item {
 	label: string;
 	url: string;
 	target?: string;
-	badge?: boolean;
 }
 interface Nav2026Group {
 	title: string;
@@ -63,24 +62,19 @@ const UniversalNavbarHeader = ( {
 	// server-side via `is-ios-platform`/`is-android-platform` body classes, which Calypso
 	// (a client SPA) doesn't have — so we sniff the UA here instead.
 	const [ mobilePlatform, setMobilePlatform ] = useState< 'ios' | 'android' | null >( null );
-	// One-shot "panel is opening" phase. While true, the header (logo/close) and footer use
-	// their long, panel-synced reveal delay (first open); cleared after the panel settles so
-	// later drill/BACK swaps use the quick fade. Mirrors the reference's `is-opening` marker.
+	// One-shot "panel is opening" phase: first open uses the long panel-synced reveal delay;
+	// cleared once the panel settles so later drill/BACK swaps use the quick fade.
 	const [ isMenuOpening, setIsMenuOpening ] = useState( false );
 	// Measured footer height, published as a CSS var so the scroller's bottom padding clears
-	// the absolutely-positioned (overlaid) footer. Height varies with banner/auth/safe-area.
+	// the overlaid footer (height varies with banner / auth / safe-area).
 	const mobileFooterRef = useRef< HTMLDivElement >( null );
-	// The hamburger button, so closing the 2026 mobile menu can return focus to it
-	// instead of dropping focus to <body>.
+	// Hamburger button, so closing the mobile menu can return focus to it (not <body>).
 	const menuTriggerRef = useRef< HTMLButtonElement >( null );
-	// 2026 desktop nav: true once the page has scrolled past a small threshold. The nav is
-	// `position: fixed` and transparent over the hero at the top; when scrolled it switches to
-	// the white surface (same treatment as an open dropdown), driven by the `is-scrolled` class.
+	// True once scrolled past the threshold: the fixed nav switches from transparent to the
+	// white surface (same treatment as an open dropdown) via the `is-scrolled` class.
 	const [ isScrolled, setIsScrolled ] = useState( false );
-	// 2026 desktop dropdown: the persistent panel wrapper, plus the bookkeeping for the
-	// height FLIP that eases the panel's height when switching between menus. `prevDropdown`
-	// distinguishes first-open from switch; `prevHeight` is the pre-switch height (captured in
-	// the effect's cleanup, before React commits the new active block), used as the FLIP `from`.
+	// Desktop dropdown FLIP bookkeeping: `prevDropdown` distinguishes first-open from switch;
+	// `prevHeight` is the pre-switch height (the FLIP `from`), captured in the effect cleanup.
 	const dropdownRef = useRef< HTMLDivElement >( null );
 	const prevDropdownRef = useRef< string | null >( null );
 	const prevHeightRef = useRef< number >( 0 );
@@ -163,11 +157,8 @@ const UniversalNavbarHeader = ( {
 		};
 	}, [] );
 
-	// 2026 mobile app banner: detect iOS / Android from the User-Agent so the banner
-	// shows the matching store glyph (and stays hidden on desktop). Mirrors the
-	// reference's `sh_get_platform()` precedence (iPhone/iPad/iPod first, then Android)
-	// and Calypso's own checks in `client/blocks/app-banner` — inlined here because the
-	// package can't import from `client/`.
+	// Detect iOS / Android from the UA so the app banner shows the matching store glyph
+	// (hidden on desktop). iPhone/iPad/iPod take precedence over Android, as in the reference.
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
@@ -194,10 +185,8 @@ const UniversalNavbarHeader = ( {
 		return () => clearTimeout( timer );
 	}, [ nav2026, isMobileMenuOpen ] );
 
-	// Publish the mobile footer's measured height as a CSS var so the scroller can pad its
-	// bottom by exactly that much (the footer is absolutely positioned / overlaid, so the
-	// last nav item would otherwise sit behind it). Height varies with the app banner,
-	// auth state, and the iOS safe-area inset — a ResizeObserver keeps the var in sync.
+	// Publish the overlaid footer's height as a CSS var so the scroller pads its bottom to
+	// clear it (otherwise the last item sits behind it). ResizeObserver keeps it in sync.
 	useEffect( () => {
 		if ( ! nav2026 || typeof ResizeObserver === 'undefined' ) {
 			return;
@@ -255,16 +244,12 @@ const UniversalNavbarHeader = ( {
 		return () => window.removeEventListener( 'resize', updateOffset );
 	}, [ nav2026, nav2026Variant ] );
 
-	// 2026 desktop nav scroll state: toggle `is-scrolled` once the page scrolls past a small
-	// threshold so the fixed nav switches from transparent to the white surface. Throttled via
-	// rAF (one read per frame) and only updates state on an actual boolean change. Reads the
-	// initial scroll position on mount so a refresh / deep-link mid-page starts in the right state.
+	// Toggle `is-scrolled` once the page leaves the top so the fixed nav switches from
+	// transparent to white. rAF-throttled; evaluated on mount so a mid-page load is correct.
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
 		}
-		// Trigger as soon as the page leaves the very top, so the white surface appears
-		// the moment the hero starts sliding under the fixed nav (no perceptible delay).
 		const SCROLL_THRESHOLD = 0;
 		let frame = 0;
 		const evaluate = () => {
@@ -1320,18 +1305,7 @@ const UniversalNavbarHeader = ( {
 																key={ item.url }
 																index={ staggerIndex++ }
 																titleValue=""
-																content={
-																	item.badge ? (
-																		<>
-																			{ item.label }{ ' ' }
-																			<span className="x-dropdown-badge-new">
-																				{ __( 'New', __i18n_text_domain__ ) }
-																			</span>
-																		</>
-																	) : (
-																		item.label
-																	)
-																}
+																content={ item.label }
 																urlValue={ item.url }
 																type="dropdown"
 																target={ item.target }
@@ -1491,18 +1465,7 @@ const UniversalNavbarHeader = ( {
 																>
 																	<ClickableItem
 																		titleValue=""
-																		content={
-																			item.badge ? (
-																				<>
-																					{ item.label }{ ' ' }
-																					<span className="x-dropdown-badge-new">
-																						{ __( 'New', __i18n_text_domain__ ) }
-																					</span>
-																				</>
-																			) : (
-																				item.label
-																			)
-																		}
+																		content={ item.label }
 																		urlValue={ item.url }
 																		type="menu"
 																		typeClassName="x-menu-mobile-dropdown-link x-link"

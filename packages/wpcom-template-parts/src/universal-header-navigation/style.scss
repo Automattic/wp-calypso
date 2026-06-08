@@ -186,7 +186,7 @@ $lp-font-weight-bold: 600;
 $lp-font-weight-semi-bold: 600;
 $lp-font-weight-medium: 500;
 $lp-font-weight-regular: 400;
-$lp-chevron-content-right: '\203A';
+$lp-chevron-content-right: "\203A";
 $lp-chevron-content-down: '\25BE';
 $x-nav-breakpoint-small: $lp-breakpoint-S;
 
@@ -213,7 +213,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	justify-content: space-between;
 	height: $x-nav-height;
 	padding: 0;
-	color: unquote( 'rgb(var(--lp-color-primary, #{$x-nav-item-default-color}))' ); /* 1 */
+	color: unquote("rgb(var(--lp-color-primary, #{$x-nav-item-default-color}))"); /* 1 */
 }
 
 .x-nav-list {
@@ -251,8 +251,8 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 		> .x-dropdown-content {
 			opacity: 1;
 			pointer-events: all;
-			transform: translateY( 0 ) scale( 1 );
-			transition: all 450ms cubic-bezier( 0.5, 1, 0.89, 1 );
+			transform: translateY(0) scale(1);
+			transition: all 450ms cubic-bezier(0.5, 1, 0.89, 1);
 		}
 	}
 }
@@ -267,7 +267,7 @@ button.x-nav-link.x-link {
 }
 
 .x-nav-link {
-	$offset-bottom: round( ( $x-nav-item-height - $x-nav-item-line-height ) * 0.5 );
+	$offset-bottom: round(( $x-nav-item-height - $x-nav-item-line-height ) * 0.5);
 	$offset-top: $x-nav-padding-top +
 		( $x-nav-item-height - $x-nav-item-line-height - $offset-bottom );
 	position: relative;
@@ -322,9 +322,7 @@ button.x-nav-link.x-link {
 .x-nav-link__primary {
 	padding-right: $x-nav-item-padding-x-narrow + $x-nav-padding-x-narrow;
 	padding-left: $x-nav-item-padding-x-narrow * 2;
-	color: unquote(
-		'rgb( var( --lp-color-nav-item-primary, var(--lp-color-primary, #{$x-nav-item-default-color} ) ) )'
-	) !important; /* 1, 2 */
+	color: unquote("rgb( var( --lp-color-nav-item-primary, var(--lp-color-primary, #{$x-nav-item-default-color} ) ) )") !important; /* 1, 2 */
 
 	&:hover,
 	&:active {
@@ -375,7 +373,7 @@ button.x-nav-link.x-link {
 	/* rtl:ignore */
 	text-align: right;
 	white-space: nowrap;
-	transform: translate( -1px, -10px ) scale( 0.65 ); /* 4 */
+	transform: translate(-1px, -10px) scale(0.65); /* 4 */
 	transform-origin: 100% 0;
 }
 
@@ -474,7 +472,7 @@ $x-dropdown-item-line-height: 19px;
 		content: '';
 		position: absolute;
 		top: 0;
-		left: round( ( $x-dropdown-background-width - 36px ) * 0.5 );
+		left: round(( $x-dropdown-background-width - 36px ) * 0.5);
 		border-radius: 2px;
 		background: inherit;
 		width: 36px;
@@ -505,8 +503,8 @@ $x-dropdown-item-line-height: 19px;
 	box-shadow: 0 9px 48px rgb( 16 21 23 / 25% );
 	width: 210px;
 	pointer-events: none;
-	transition: all 150ms cubic-bezier( 0.1, 0.6, 0.2, 1 );
-	transform: translateY( -6px ) scale( 0.9 );
+	transition: all 150ms cubic-bezier(0.1, 0.6, 0.2, 1);
+	transform: translateY(-6px) scale(0.9);
 	transform-origin: 29px 0;
 
 	&[aria-hidden='false'] {
@@ -633,7 +631,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	background: $studio-white;
 	font-size: $x-menu-item-font-size-narrow;
 	line-height: $x-menu-item-line-height-narrow;
-	transform: scale( 0 );
+	transform: scale(0);
 	transform-origin: calc( 100% - 19px ) 15px; /* 2 */
 	pointer-events: none;
 	transition: transform 0.35s ease-in-out;
@@ -650,7 +648,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 
 	.x-menu__open & {
-		transform: scale( 1 );
+		transform: scale(1);
 		pointer-events: all;
 	}
 }
@@ -999,28 +997,13 @@ $x-dropdown-2026-content-padding: 20px 24px 48px;
 $x-menu-2026-admin-bar-desktop: 32px;
 $x-menu-2026-admin-bar-mobile: 46px;
 
-/*
- * Desktop nav bar
- *
- * The same `UniversalNavbarHeader` renders in two contexts: logged-out (the nav
- * floats over the page on a white bar) and logged-in (Calypso boxes it inside a
- * `.masterbar` wrapper that is pinned to 56px and given a per-section background
- * — lavender on /themes, dark on /patterns — with white default nav text). The
- * 2026 redesign must look identical in both, so on the 2026 path we neutralise
- * those per-section masterbar backgrounds back to a plain white bar and let the
- * canonical navy nav text (`.x-nav-item { color: $studio-blue-90 }`) read
- * against it — exactly what the logged-out surface shows.
- *
- * Two ancestor chains exist: `/plugins` nests the wrapper as
- * `.lpc-header-nav-wrapper .masterbar`; the other sections nest it as
- * `.lpc-header-nav-wrapper .lpc-header-nav-container .masterbar-menu .masterbar`.
- * Both are matched here so the override wins over the section rules without
- * `!important`.
- */
-// Overlay the nav over the page so the hero slides beneath it (reference wraps
-// the nav in an absolutely-positioned element). `fixed` keeps it pinned to the
-// viewport top as the page scrolls (the dropdown panel below is already fixed).
-// Transparent at rest; the white appears when a dropdown opens or once scrolled.
+// Desktop nav bar. On the 2026 path, neutralise Calypso's per-section masterbar
+// backgrounds (logged-in) back to a plain white bar so it matches the logged-out
+// surface. Two ancestor chains are matched (`/plugins` vs the rest) so the override
+// wins over the section rules without `!important`.
+//
+// `fixed` overlays the nav so the hero slides beneath it, pinned as the page scrolls.
+// Transparent at rest; turns white when a dropdown opens or once scrolled.
 .lpc-header-nav-wrapper .masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
@@ -1036,22 +1019,16 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	height: $x-nav-2026-height;
 	background: transparent;
 	border-bottom-color: transparent;
-	// Exit transition (white → transparent), used when the `is-scrolled` / dropdown-open
-	// class drops and the bar falls back to this rule. The white *appears* fast via the
-	// rules below; on exit it eases out over this duration after a short delay, so the
-	// surface lingers a beat instead of vanishing the instant you reach the top (and it
-	// stays up while a closing dropdown panel fades). `backdrop-filter` eases in step.
+	// Exit transition (white → transparent) when `is-scrolled` / dropdown-open drops: eases
+	// out after a short delay so the surface lingers a beat instead of snapping at the top.
 	transition:
 		background-color $x-nav-2026-transition 0.12s,
 		box-shadow $x-nav-2026-transition 0.12s,
 		backdrop-filter $x-nav-2026-transition 0.12s;
 }
 
-// When a dropdown is open the nav bar turns white so it forms one continuous white
-// surface with the dropdown panel below it (instead of a gray backdrop band behind
-// the nav). The same white surface appears once the page is scrolled (`is-scrolled`),
-// so the fixed nav stays legible over whatever has scrolled beneath it — a shared
-// selector list, matching the reference's single white-state mechanism.
+// Dropdown-open or scrolled: the nav bar turns white (one continuous surface with the
+// panel below, and legible over scrolled content). Shared selector list for both states.
 .lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 	.masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
@@ -1313,15 +1290,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 }
 
-// Desktop dropdown — ONE persistent panel that stays open while you move between
-// triggers and eases its HEIGHT from one menu's content to the next. The wrapper is the
-// fixed, full-viewport-width white panel; the per-menu content blocks live inside it,
-// the active one (aria-hidden="false") in normal flow so the wrapper auto-sizes to it.
-// The wrapper carries the positioning/background/z that used to live on each block:
-// `position: fixed` + high z escapes section stacking contexts (e.g. `.themes .main`)
-// by positioning against the initial containing block, and spans the viewport via
-// `inset-inline: 0`. Hidden at rest so the full-width fixed element neither intercepts
-// the viewport nor paints a white band; `is-dropdown-open` (JS) reveals it.
+// Desktop dropdown — one persistent panel that stays open while moving between triggers,
+// easing its height from one menu's content to the next. The active content block
+// (aria-hidden="false") sits in normal flow so the wrapper auto-sizes to it. `position:
+// fixed` + high z escapes section stacking contexts (e.g. `.themes .main`); hidden at rest
+// so the full-width element neither intercepts clicks nor paints a band until JS opens it.
 .x-dropdown.x-dropdown--2026 {
 	// Timing for the height morph + per-item slide-in. Exposed as custom props so a host
 	// can tune them and `calc()` can consume them (mirrors the mobile `--x-menu-2026-*`).
@@ -1473,20 +1446,6 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	/* Yellow "New" pill appended to a link label (reference: yellow-20 bg, yellow-80 text). */
-	.x-dropdown-badge-new {
-		display: inline-block;
-		margin-inline-start: 10px;
-		padding: 0 10px;
-		border-radius: 4px;
-		background: $studio-yellow-20;
-		color: $studio-yellow-80;
-		font-size: 10px;
-		font-weight: 400;
-		line-height: 20px;
-		text-transform: none;
-		vertical-align: middle;
-	}
 }
 
 /*
@@ -1915,21 +1874,6 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-weight: $lp-font-weight-regular;
 		line-height: 28px;
 		text-decoration: none;
-	}
-
-	/* "New" pill in the mobile drill-down. */
-	.x-dropdown-badge-new {
-		display: inline-block;
-		margin-inline-start: 10px;
-		padding: 0 10px;
-		border-radius: 4px;
-		background: $studio-yellow-20;
-		color: $studio-yellow-80;
-		font-size: 12px;
-		font-weight: $lp-font-weight-medium;
-		line-height: 20px;
-		text-transform: none;
-		vertical-align: middle;
 	}
 
 	/* Footer overlays the bottom of the scroller (translucent + blurred, matching the
