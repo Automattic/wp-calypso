@@ -5,27 +5,11 @@ import { useCallback, useState } from '@wordpress/element';
 // ---------------------------------------------------------------------------
 
 /**
- * Returns true when `value` is a React element (or similar React object such
- * as a portal or lazy wrapper). React marks all such objects with `$$typeof`.
- *
- * Used in the `updateStep` bail-out so that ReactNode fields — which produce
- * a new object reference on every render — do not prevent the equality check
- * from short-circuiting.
- */
-function isReactLike( value: unknown ): boolean {
-	if ( value === null || typeof value !== 'object' ) {
-		return false;
-	}
-	return '$$typeof' in ( value as Record< string, unknown > );
-}
-
-/**
  * Maintains an ordered list of registered steps for any record type that
  * includes a `value` string. Registration order is the sole source of truth
  * for index and counting.
  *
- * Used by Stepper.Root (with StepMeta) and HorizontalStepper (with
- * HorizontalStepRecord) to share the same dedup / bail-out logic.
+ * Used by Stepper.Root (with StepMeta) to maintain step order and metadata.
  */
 export function useStepRegistration< T extends { value: string } >() {
 	const [ steps, setSteps ] = useState< T[] >( [] );
@@ -56,17 +40,7 @@ export function useStepRegistration< T extends { value: string } >() {
 			const keys = [
 				...new Set( [ ...Object.keys( existing ), ...Object.keys( meta ) ] ),
 			] as ( keyof T )[];
-			const hasChanges = keys.some( ( k ) => {
-				const a = existing[ k ];
-				const b = meta[ k ];
-				// Skip ReactNode fields — they produce new references every render
-				// but are semantically stable between renders.
-				if ( isReactLike( a ) || isReactLike( b ) ) {
-					return false;
-				}
-				return a !== b;
-			} );
-			if ( ! hasChanges ) {
+			if ( keys.every( ( k ) => existing[ k ] === meta[ k ] ) ) {
 				return prev;
 			}
 			return prev.map( ( s ) => ( s.value === meta.value ? meta : s ) );
