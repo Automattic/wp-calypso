@@ -2,39 +2,41 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
 	PLAN_P2_PLUS,
-	getPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { get } from 'lodash';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import type { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
+import type { AppState } from 'calypso/types';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
- * @param  {import('calypso/types').AppState}   state      Global state tree
- * @param  {number}   siteId     The site we're interested in upgrading
- * @param  {string}   planKey    The plan we want to upgrade to
- * @returns {boolean}             True if the site can be upgraded
+ * @param  state      Global state tree
+ * @param  siteId     The site we're interested in upgrading
+ * @param  planKey    The plan we want to upgrade to
+ * @returns           True if the site can be upgraded
  */
-export default function ( state, siteId, planKey ) {
+export default function canUpgradeToPlan(
+	state: AppState,
+	siteId: number,
+	planKey: string
+): boolean {
 	// Which "free plan" should we use to test
 	const freePlan =
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			? PLAN_JETPACK_FREE
 			: PLAN_FREE;
-	const plan = getCurrentPlan( state, siteId );
+	const plan = getCurrentPlan( state, siteId ) as SitePlanData | null;
 	const purchase = plan?.id ? getByPurchaseId( state, plan.id ) : null;
 
-	// TODO: seems like expired isn't being set.
-	// This information isn't currently available from the sites/%s/plans endpoint.
-	const currentPlanSlug = get( plan, [ 'expired' ], false )
-		? freePlan
-		: get( plan, [ 'productSlug' ], freePlan );
+	// An expired (but still active) plan is treated as the free plan for upgrade
+	// purposes. `expired` comes from the endpoint's `is_expired` field.
+	const currentPlanSlug = plan?.expired ? freePlan : plan?.productSlug ?? freePlan;
 
 	// Exception for upgrading Atomic v1 sites to eCommerce
 	const isAtomicV1 =
@@ -57,5 +59,6 @@ export default function ( state, siteId, planKey ) {
 		return false;
 	}
 
-	return get( getPlan( planKey ), [ 'availableFor' ], () => false )( currentPlanSlug );
+	const targetPlan = getSitePlan( state, siteId, planKey ) as SitePlanData | undefined;
+	return targetPlan?.availableForUpgrade ?? false;
 }

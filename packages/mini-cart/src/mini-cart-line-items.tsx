@@ -1,6 +1,8 @@
 import {
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
+	groupBundleLineItems,
+	BundleLineItem,
 	NonProductLineItem,
 	LineItem,
 	canItemBeRemovedFromCart,
@@ -39,20 +41,44 @@ export function MiniCartLineItems( {
 	removeCoupon,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
+	showBundleGrouping = false,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	addProductsToCart: AddProductsToCart;
 	removeCoupon: RemoveCouponFromCart;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
+	showBundleGrouping?: boolean;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 
+	// Bundle grouping is gated behind the `domain-bundling` feature flag, surfaced
+	// here as the `showBundleGrouping` prop (this package stays free of a
+	// calypso-config dependency). When off, every product renders on its own line.
+	const groupedLineItems = showBundleGrouping
+		? groupBundleLineItems( responseCart.products )
+		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+
 	return (
 		<MiniCartLineItemsWrapper className="mini-cart-line-items">
-			{ responseCart.products.map( ( product ) => {
+			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'bundle' ) {
+					return (
+						<MiniCartLineItemWrapper key={ `bundle-${ entry.groupId }` }>
+							<BundleLineItem
+								bundle={ entry }
+								hasDeleteButton={ entry.products.every( ( product ) =>
+									canItemBeRemovedFromCart( product, responseCart )
+								) }
+								removeProductFromCart={ removeProductFromCart }
+							/>
+						</MiniCartLineItemWrapper>
+					);
+				}
+
+				const { product } = entry;
 				return (
 					<MiniCartLineItemWrapper key={ product.uuid }>
 						<LineItem

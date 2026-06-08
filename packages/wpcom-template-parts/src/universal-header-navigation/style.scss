@@ -1,17 +1,18 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
-@import "@automattic/color-studio/dist/color-variables";
-@import "@automattic/color-studio/dist/color-variables-rgb";
-@import "@automattic/typography/styles/variables";
+@import '@automattic/color-studio/dist/color-variables';
+@import '@automattic/color-studio/dist/color-variables-rgb';
+@import '@automattic/typography/styles/variables';
 
-$lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-$lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif, $lp-font-stack-emoji;
+$lp-font-stack-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+$lp-font-stack-default: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica',
+	'Arial', sans-serif, $lp-font-stack-emoji;
 $x-content-font-stack: $lp-font-stack-default;
 $studio-blue-15: #e5f4ff;
 
 .x-hidden {
 	border: 0;
-	clip: rect(0 0 0 0);
+	clip: rect( 0 0 0 0 );
 	height: 1px;
 	margin: -1px;
 	overflow: hidden;
@@ -21,7 +22,7 @@ $studio-blue-15: #e5f4ff;
 }
 
 .is-section-plugins.has-no-sidebar {
-	.lpc-header-nav-wrapper .masterbar {
+	.lpc-header-nav-wrapper .masterbar:not( :has( .x-nav--2026-redesign ) ) {
 		height: 56px;
 		position: relative;
 		background: $studio-blue-15;
@@ -32,7 +33,7 @@ $studio-blue-15: #e5f4ff;
 		margin-top: -32px;
 	}
 
-	&:has(header.masterbar) {
+	&:has( header.masterbar ) {
 		.search-box-header.fixed-top .search-box-header__search {
 			margin-top: 0;
 		}
@@ -47,7 +48,7 @@ $studio-blue-15: #e5f4ff;
 .is-section-themes {
 	&.has-no-sidebar {
 		.masterbar-menu {
-			.masterbar {
+			.masterbar:not( :has( .x-nav--2026-redesign ) ) {
 				height: 56px;
 				position: relative;
 				background: $studio-blue-15;
@@ -59,15 +60,15 @@ $studio-blue-15: #e5f4ff;
 		}
 
 		&.is-theme-showcase-modern {
-			.masterbar-menu .masterbar {
+			.masterbar-menu .masterbar:not( :has( .x-nav--2026-redesign ) ) {
 				background: transparent;
 				border-bottom-color: transparent;
 			}
 
-			.cta-btn-nav {
-				color: var(--studio-gray-100) !important;
+			.masterbar:not( :has( .x-nav--2026-redesign ) ) .cta-btn-nav {
+				color: var( --studio-gray-100 ) !important;
 				background: inherit !important;
-				border: 1px solid var(--studio-gray-100);
+				border: 1px solid var( --studio-gray-100 );
 			}
 		}
 	}
@@ -107,12 +108,12 @@ $studio-blue-15: #e5f4ff;
 		left: 11px;
 		height: 2px;
 		width: 14px;
-		transform: rotate(45deg);
+		transform: rotate( 45deg );
 	}
 }
 
 .x-icon__close span + span {
-	transform: rotate(-45deg);
+	transform: rotate( -45deg );
 }
 
 .x-icon__menu {
@@ -147,9 +148,7 @@ $studio-blue-15: #e5f4ff;
 	color: inherit;
 }
 
-/**
- * Content area
- */
+/* Content area */
 
 $lp-content-width-center-minus: 480px;
 $lp-content-width-center: 576px;
@@ -157,9 +156,7 @@ $lp-content-width-center-plus: 672px;
 $lp-content-width-wide-minus: 960px;
 $lp-content-width-wide: 1152px;
 
-/**
- * Responsive web design
- */
+/* Responsive web design */
 
 $lp-breakpoint-S: $lp-content-width-center-minus;
 $lp-breakpoint-M: 768px;
@@ -177,10 +174,14 @@ $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
 $x-content-min-z-index: 801;
+// One above the nav, in its stacking band, so it never escapes above Calypso modals.
+$x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
 $lp-font-weight-bold: 600;
 $lp-font-weight-semi-bold: 600;
+$lp-font-weight-medium: 500;
+$lp-font-weight-regular: 400;
 $lp-chevron-content-right: "\203A";
-$lp-chevron-content-down: "\25BE";
+$lp-chevron-content-down: '\25BE';
 $x-nav-breakpoint-small: $lp-breakpoint-S;
 
 $x-nav-padding-top: 9px;
@@ -206,7 +207,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	justify-content: space-between;
 	height: $x-nav-height;
 	padding: 0;
-	color: unquote( "rgb(var(--lp-color-primary, #{$x-nav-item-default-color}))" ); /* 1 */
+	color: unquote("rgb(var(--lp-color-primary, #{$x-nav-item-default-color}))"); /* 1 */
 }
 
 .x-nav-list {
@@ -227,7 +228,9 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 		text-decoration: none !important;
 
 		&:focus {
-			box-shadow: inset 0 0 0 1px var(--studio-white), 0 0 0 2px var(--studio-blue-50);
+			box-shadow:
+				inset 0 0 0 1px var( --studio-white ),
+				0 0 0 2px var( --studio-blue-50 );
 			outline: 2px solid transparent;
 		}
 	}
@@ -237,7 +240,8 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	display: none;
 	position: relative;
 
-	&:hover,&:focus-within {
+	&:hover,
+	&:focus-within {
 		> .x-dropdown-content {
 			opacity: 1;
 			pointer-events: all;
@@ -258,7 +262,8 @@ button.x-nav-link.x-link {
 
 .x-nav-link {
 	$offset-bottom: round(( $x-nav-item-height - $x-nav-item-line-height ) * 0.5);
-	$offset-top: $x-nav-padding-top + ( $x-nav-item-height - $x-nav-item-line-height - $offset-bottom );
+	$offset-top: $x-nav-padding-top +
+		( $x-nav-item-height - $x-nav-item-line-height - $offset-bottom );
 	position: relative;
 	display: block;
 	padding: $offset-top $x-nav-item-padding-x-narrow $offset-bottom;
@@ -269,7 +274,8 @@ button.x-nav-link.x-link {
 	line-height: $x-nav-item-line-height;
 	white-space: nowrap;
 
-	&.x-nav-link { /* 2 */
+	&.x-nav-link {
+		/* 2 */
 		border: none;
 		background: 0 0;
 		box-shadow: none;
@@ -286,14 +292,14 @@ button.x-nav-link.x-link {
 		right: 0;
 		bottom: 0;
 		left: 0;
-		border-radius: var(--lp-control-border-radius, 0.25em);
+		border-radius: var( --lp-control-border-radius, 0.25em );
 		opacity: 0.35;
 	}
 
-	&:not(:active):focus:not(.cta-btn-nav)::before {
-		content: "";
+	&:not( :active ):focus:not( .cta-btn-nav )::before {
+		content: '';
 		opacity: 1;
-		border: 2px solid rgba($studio-blue-50, 0.8);
+		border: 2px solid rgba( $studio-blue-50, 0.8 );
 	}
 }
 
@@ -323,7 +329,7 @@ button.x-nav-link.x-link {
 	}
 
 	&::before {
-		content: "";
+		content: '';
 		right: $x-nav-padding-x-narrow;
 		left: $x-nav-item-padding-x-narrow;
 	}
@@ -365,9 +371,7 @@ button.x-nav-link.x-link {
 	transform-origin: 100% 0;
 }
 
-/*
- * Dropdown
- */
+/* Dropdown */
 
 $x-dropdown-attachment-x: 0;
 $x-dropdown-attachment-y: 45px;
@@ -379,7 +383,7 @@ $x-dropdown-background-offset-y: 9px;
 $x-dropdown-shadow-x: 0;
 $x-dropdown-shadow-y: 9px;
 $x-dropdown-shadow-blur: 48px;
-$x-dropdown-shadow-color: rgba($studio-gray-100, 0.25);
+$x-dropdown-shadow-color: rgba( $studio-gray-100, 0.25 );
 
 $x-dropdown-item-font-size: 13px;
 $x-dropdown-item-line-height: 19px;
@@ -397,16 +401,7 @@ $x-dropdown-item-line-height: 19px;
 	transform-origin: 50% 0;
 }
 
-/*
- * Dropdown background
- *
- * 1. The background element is split into 3 parts: top, middle, bottom. The top
- *    one contains the pointer.
- * 2. The middle part covers the rounding error gap that might appear when
- *    dropdown transforms are in place.
- * 3. The bottom part contains the very background that will be animated using
- *    negative translation. Its height will set programatically.
- */
+/* Dropdown background: split into top (pointer), middle (covers rounding-gap from transforms), bottom (JS-sized, animated by negative translation). */
 
 %x-dropdown-background-container {
 	position: absolute;
@@ -416,7 +411,8 @@ $x-dropdown-item-line-height: 19px;
 	overflow: hidden;
 }
 
-.x-dropdown-top { /* 1 */
+.x-dropdown-top {
+	/* 1 */
 	@extend %x-dropdown-background-container;
 	box-sizing: border-box;
 	top: -1 * $x-dropdown-shadow-blur;
@@ -424,7 +420,8 @@ $x-dropdown-item-line-height: 19px;
 	padding-top: $x-dropdown-shadow-blur + $x-dropdown-background-offset-y;
 }
 
-.x-dropdown-middle { /* 2 */
+.x-dropdown-middle {
+	/* 2 */
 	position: absolute;
 	z-index: 1;
 	top: $x-dropdown-shadow-blur - 1px;
@@ -434,7 +431,8 @@ $x-dropdown-item-line-height: 19px;
 	background: $x-dropdown-background-color;
 }
 
-.x-dropdown-bottom { /* 3 */
+.x-dropdown-bottom {
+	/* 3 */
 	@extend %x-dropdown-background-container;
 	top: $x-dropdown-shadow-blur;
 	height: 0; /* 3 */
@@ -444,15 +442,17 @@ $x-dropdown-item-line-height: 19px;
 	position: relative;
 	border-radius: 4px;
 	background: $x-dropdown-background-color;
-	box-shadow: $x-dropdown-shadow-x $x-dropdown-shadow-y $x-dropdown-shadow-blur $x-dropdown-shadow-color;
+	box-shadow: $x-dropdown-shadow-x $x-dropdown-shadow-y $x-dropdown-shadow-blur
+		$x-dropdown-shadow-color;
 }
 
 .x-dropdown-top-fill {
 	@extend %x-dropdown-background-fill;
 	height: 2 * $x-dropdown-shadow-blur;
 
-	&::before { /* 1 */
-		content: "";
+	&::before {
+		/* 1 */
+		content: '';
 		position: absolute;
 		top: 0;
 		left: round(( $x-dropdown-background-width - 36px ) * 0.5);
@@ -460,7 +460,7 @@ $x-dropdown-item-line-height: 19px;
 		background: inherit;
 		width: 36px;
 		height: 36px;
-		transform: rotate(45deg);
+		transform: rotate( 45deg );
 	}
 }
 
@@ -470,9 +470,7 @@ $x-dropdown-item-line-height: 19px;
 	height: 0; /* 3 */
 }
 
-/*
- * Dropdown content
- */
+/* Dropdown content */
 
 .x-dropdown-content {
 	z-index: 901;
@@ -483,14 +481,15 @@ $x-dropdown-item-line-height: 19px;
 	left: -60px;
 	background: #fff;
 	border-radius: 9px; /* stylelint-disable-line scales/radii */
-	box-shadow: 0 9px 48px rgb(16 21 23 / 25%);
+	box-shadow: 0 9px 48px rgb( 16 21 23 / 25% );
 	width: 210px;
 	pointer-events: none;
 	transition: all 150ms cubic-bezier(0.1, 0.6, 0.2, 1);
 	transform: translateY(-6px) scale(0.9);
 	transform-origin: 29px 0;
 
-	&[aria-hidden="false"] { /* 2 */
+	&[aria-hidden='false'] {
+		/* 2 */
 		z-index: 1;
 	}
 
@@ -501,12 +500,12 @@ $x-dropdown-item-line-height: 19px;
 	&::before {
 		background: inherit;
 		border-radius: 2px;
-		content: "";
+		content: '';
 		height: 36px;
 		left: 90px;
 		position: absolute;
 		top: -2px;
-		transform: rotate(45deg);
+		transform: rotate( 45deg );
 		width: 36px;
 		z-index: -1;
 	}
@@ -518,7 +517,8 @@ $x-dropdown-item-line-height: 19px;
 	margin: 9px 0 12px;
 }
 
-.x-dropdown-link.x-dropdown-link { /* 3 */
+.x-dropdown-link.x-dropdown-link {
+	/* 3 */
 	display: block;
 	padding: 6px 12px 6px 24px;
 	font-size: $x-dropdown-item-font-size;
@@ -541,18 +541,7 @@ $x-dropdown-item-line-height: 19px;
 	}
 }
 
-
-/*
- * Mobile menu
- *
- * 1. The line height values are determined based on the `__lp-line-height`
- *    helper function found in Landpack.
- * 2. The transform origin is set approximately to the middle of the menu icon.
- * 3. Increase the specificity due to side effects on older landing pages.
- * 4. The equivalent of 13px/18px without Dynamic Type on.
- * 5. Due to the way Dynamic Type is defined in CSS, some of the properties
- *    have to be overriden by repetition.
- */
+/* Mobile menu. Numbered refs: 1 Landpack `__lp-line-height`; 2 origin ~menu-icon centre; 3 bump specificity past older landing pages; 4 ≈13px/18px sans Dynamic Type; 5 Dynamic Type forces repeated overrides. */
 %x-text {
 	font-family: $x-content-font-stack;
 	text-rendering: optimizelegibility;
@@ -561,7 +550,7 @@ $x-dropdown-item-line-height: 19px;
 }
 
 $lp-transition-properties: 0.15s ease-out;
-$lp-chevron-transform-right: translate3d(0.15em, 0, 0);
+$lp-chevron-transform-right: translate3d( 0.15em, 0, 0 );
 $x-color-content-icon: $studio-gray-30;
 $x-color-content-heading: $studio-gray-50;
 
@@ -585,14 +574,13 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	@extend %x-text;
 }
 
-
 .x-menu-overlay {
 	position: fixed;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background: rgba($studio-gray-100, 0.65);
+	background: rgba( $studio-gray-100, 0.65 );
 	opacity: 0;
 	transition: opacity 0.15s ease-in-out;
 	z-index: 1000000000;
@@ -615,16 +603,16 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	font-size: $x-menu-item-font-size-narrow;
 	line-height: $x-menu-item-line-height-narrow;
 	transform: scale(0);
-	transform-origin: calc(100% - 19px) 15px; /* 2 */
+	transform-origin: calc( 100% - 19px ) 15px; /* 2 */
 	pointer-events: none;
 	transition: transform 0.35s ease-in-out;
 
-	@media (min-width: $x-nav-breakpoint-small) {
+	@media ( min-width: $x-nav-breakpoint-small ) {
 		left: auto;
 		width: $x-menu-width-narrow;
 	}
 
-	@media (min-width: $x-nav-breakpoint-medium) {
+	@media ( min-width: $x-nav-breakpoint-medium ) {
 		width: $x-menu-width-wide;
 		font-size: $x-menu-item-font-size-wide;
 		line-height: $x-menu-item-line-height-wide;
@@ -636,7 +624,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-@media (min-width: 480px) {
+@media ( min-width: 480px ) {
 	.x-menu-content {
 		left: auto;
 		width: 408px;
@@ -654,7 +642,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	padding-top: $x-menu-outer-offset;
 	color: $x-color-content-icon;
 
-	&.x-menu-button { /* 3 */
+	&.x-menu-button {
+		/* 3 */
 		border: none;
 		background: none;
 		box-shadow: none;
@@ -668,7 +657,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		padding-bottom: 18px;
 	}
 
-	@media (min-width: $x-nav-breakpoint-medium) {
+	@media ( min-width: $x-nav-breakpoint-medium ) {
 		padding: 18px;
 
 		&:last-of-type {
@@ -691,7 +680,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	line-height: $x-menu-heading-line-height-small;
 	text-transform: uppercase;
 
-	@media (min-width: $x-nav-breakpoint-medium) {
+	@media ( min-width: $x-nav-breakpoint-medium ) {
 		top: -2px;
 		padding-bottom: 0;
 		font-size: $x-menu-heading-font-size-wide;
@@ -704,12 +693,13 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 
-	:not(.x-menu-list-title) ~ & {
+	:not( .x-menu-list-title ) ~ & {
 		margin-top: -3px;
 	}
 }
 
-.x-menu-link.x-menu-link { /* 3 */
+.x-menu-link.x-menu-link {
+	/* 3 */
 	display: block;
 	padding: 6px 6px 3px;
 	color: $x-color-link;
@@ -734,7 +724,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-@media (min-width: $x-nav-breakpoint-small) {
+@media ( min-width: $x-nav-breakpoint-small ) {
 	.x-nav-link__logo {
 		padding-left: $x-nav-padding-x-wide;
 
@@ -752,7 +742,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-@media (min-width: $x-nav-breakpoint-medium-wide) {
+@media ( min-width: $x-nav-breakpoint-medium-wide ) {
 	.x-nav-item__narrow {
 		display: none;
 	}
@@ -761,7 +751,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		display: block;
 	}
 
-	.x-nav-item:not(:only-child) .x-nav-link__logo { /* 5 */
+	.x-nav-item:not( :only-child ) .x-nav-link__logo {
+		/* 5 */
 		padding-right: $x-nav-item-padding-x-wide;
 
 		&::before {
@@ -770,7 +761,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	}
 }
 
-@media (min-width: $x-nav-breakpoint-wide) {
+@media ( min-width: $x-nav-breakpoint-wide ) {
 	.x-nav-item {
 		.cta-btn-nav {
 			padding: 8px 12px !important;
@@ -778,7 +769,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		}
 	}
 
-	.x-nav-link:not(.x-nav-link__logo):not(.x-nav-link__menu) {
+	.x-nav-link:not( .x-nav-link__logo ):not( .x-nav-link__menu ) {
 		padding-right: $x-nav-item-padding-x-wide;
 		padding-left: $x-nav-item-padding-x-wide;
 	}
@@ -790,7 +781,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 			left: $x-nav-padding-x-wide - $x-nav-item-padding-x-wide;
 		}
 
-		.x-nav-item:not(:only-child) & { /* 5 */
+		.x-nav-item:not( :only-child ) & {
+			/* 5 */
 			padding-right: $x-nav-item-padding-x-wide * 1.5;
 
 			&::before {
@@ -799,7 +791,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		}
 	}
 
-	.x-nav-link.x-nav-link.x-nav-link__primary { /* 6 */
+	.x-nav-link.x-nav-link.x-nav-link__primary {
+		/* 6 */
 		padding-right: $x-nav-item-padding-x-wide + $x-nav-padding-x-wide;
 		padding-left: $x-nav-item-padding-x-wide * 2;
 
@@ -837,14 +830,14 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 			.x-nav-item {
 				height: 66px;
 
-				.x-nav-link.x-link:not(.cta-btn-nav) {
+				.x-nav-link.x-link:not( .cta-btn-nav ) {
 					padding-top: 23px;
 				}
 
 				.x-nav-link.x-link.x-nav-link__logo {
 					padding: 14px 0 0 0;
 
-					@media (max-width: calc($x-nav-breakpoint-small + 1px)) {
+					@media ( max-width: calc($x-nav-breakpoint-small + 1px) ) {
 						display: block;
 						overflow: hidden;
 						padding-left: 1px;
@@ -856,7 +849,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 					color: $studio-gray-100 !important;
 					background: inherit !important;
 					border: 1px solid $studio-gray-100;
-					filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
+					filter: drop-shadow( 0 1px 2px rgba( 0, 0, 0, 0.05 ) );
 					font-size: $font-body-small;
 					font-weight: 500;
 					line-height: $font-title-small;
@@ -949,3 +942,1069 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 /* End monochrome header overrides */
+
+/* 2026 Global Nav redesign — scoped under `x-nav--2026-redesign` / `x-dropdown--2026` / `x-menu--2026` so the flag-off nav is untouched. */
+
+$x-nav-2026-height: 64px;
+// Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
+$x-nav-2026-transition: 0.22s ease-in-out;
+// Backdrop blur behind the nav once scrolled.
+$x-nav-2026-scrolled-blur: 8px;
+$x-nav-2026-content-max-width: 1200px;
+// Dropdown metrics from the live reference's computed styles.
+$x-nav-2026-item-padding-x: 8px;
+$x-dropdown-2026-link-font-size: 18px;
+$x-dropdown-2026-link-line-height: 38px;
+$x-dropdown-2026-column-max-width: 220px;
+$x-dropdown-2026-column-gap: 100px;
+$x-dropdown-2026-subtitle-font-size: 12px;
+$x-dropdown-2026-content-padding: 20px 24px 48px;
+$x-menu-2026-admin-bar-desktop: 32px;
+$x-menu-2026-admin-bar-mobile: 46px;
+
+// Desktop nav bar: fixed overlay, transparent at rest, white when open/scrolled. Two ancestor chains (`/plugins` vs rest) beat the per-section masterbar without `!important`.
+.lpc-header-nav-wrapper .masterbar:has( .x-nav--2026-redesign ),
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign ) {
+	position: fixed;
+	// Below the admin bar when one exists; falls back for non-Calypso consumers.
+	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
+	inset-inline: 0;
+	z-index: $x-content-min-z-index;
+	height: $x-nav-2026-height;
+	background: transparent;
+	border-bottom-color: transparent;
+	// Exit (white → transparent) eases out after a short delay so the surface lingers.
+	transition:
+		background-color $x-nav-2026-transition 0.12s,
+		box-shadow $x-nav-2026-transition 0.12s,
+		backdrop-filter $x-nav-2026-transition 0.12s;
+}
+
+// Dropdown-open or scrolled: nav bar turns white (continuous with the panel below, legible over scrolled content).
+.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.masterbar:has( .x-nav--2026-redesign ),
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign ) {
+	background: $studio-white;
+	// Snap the white surface in quickly when it appears (0.12s, no delay).
+	transition:
+		background-color 0.12s ease-out,
+		box-shadow 0.12s ease-out;
+}
+
+// Scrolled-only (NOT dropdown-open): near-opaque white + backdrop blur + hairline shadow (dropdown-open stays fully solid, above).
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign ) {
+	--x-nav-2026-scrolled-blur: #{$x-nav-2026-scrolled-blur};
+	background: rgba( $studio-white, 0.97 );
+	box-shadow: 0 1px 1px rgba( $studio-black, 0.02 );
+	backdrop-filter: blur( var( --x-nav-2026-scrolled-blur ) );
+}
+
+.lpc-header-nav-wrapper .masterbar .x-nav--2026-redesign,
+.lpc-header-nav-wrapper .lpc-header-nav-container .masterbar-menu .masterbar .x-nav--2026-redesign {
+	height: $x-nav-2026-height;
+	align-items: center;
+	position: relative;
+	top: 0;
+	// Full width so `space-between` pushes the right-hand group to the far edge.
+	width: 100%;
+	background: transparent;
+	color: $studio-gray-100;
+	transition: background-color $x-nav-2026-transition;
+
+	// Vertically centre every item (incl. the shorter "Get started" pill) in the 64px bar.
+	.x-nav-list {
+		align-items: center;
+	}
+
+	// 2026 nav text is black by default (sections set white over dark heroes), overriding the navy base.
+	.x-nav-item {
+		color: $studio-gray-100;
+	}
+
+	.x-nav-link {
+		height: $x-nav-2026-height;
+		font-size: 13px;
+		// `!important` only to beat the legacy base rule's own `font-weight: …!important`.
+		font-weight: $lp-font-weight-medium !important;
+		line-height: 20px;
+		color: inherit;
+		transition: color $x-nav-2026-transition;
+	}
+
+	.x-nav-link__logo svg path {
+		fill: currentcolor;
+	}
+
+	// Triggers are `padding: 0 8px`, centred via height + flex; full shorthand zeroes the base rule's top/bottom offsets.
+	.x-nav-item__wide .x-nav-link:not( .x-nav-link__primary ):not( .x-nav-link__logo ) {
+		display: flex;
+		align-items: center;
+		padding: 0 $x-nav-2026-item-padding-x;
+	}
+
+	// Logo: the 24px start gutter anchors the first nav item + dropdown alignment.
+	.x-nav-link__logo {
+		display: flex;
+		align-items: center;
+		height: $x-nav-2026-height;
+		padding-block: 0;
+		padding-inline-start: 24px;
+		padding-inline-end: 18px;
+	}
+
+	// "Get started" CTA — outlined pill (no fill).
+	.x-nav-link__primary.cta-btn-nav {
+		display: flex;
+		align-items: center;
+		height: 40px;
+		margin-block: 0;
+		margin-inline-start: 12px;
+		margin-inline-end: 15px;
+		padding: 0 20px !important;
+		background: transparent !important;
+		color: inherit !important;
+		border: 1px solid currentcolor;
+		border-radius: 3px;
+		transition: opacity $x-nav-2026-transition;
+
+		&::before {
+			display: none;
+		}
+
+		&:hover,
+		&:focus {
+			opacity: 0.8;
+		}
+	}
+
+	.x-nav-link-chevron {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		opacity: 0.65;
+	}
+
+	.x-nav-link-chevron::before {
+		content: '';
+		display: block;
+		width: 5px;
+		height: 5px;
+		margin-block-start: -2px;
+		border-style: solid;
+		border-color: currentcolor;
+		border-width: 0 1px 1px 0;
+		box-sizing: border-box;
+		transform: rotate( 45deg );
+		transform-origin: 75% 75%;
+		transition:
+			transform $x-nav-2026-transition,
+			border-color $x-nav-2026-transition;
+	}
+
+	// Dropdown triggers (with a chevron) turn blue on hover / when open (aria-expanded).
+	.x-nav-item__wide:hover .x-nav-link:has( .x-nav-link-chevron ),
+	.x-nav-link[aria-expanded='true'] {
+		color: $studio-wordpress-blue-50 !important;
+	}
+
+	.x-nav-item__wide:hover .x-nav-link-chevron::before,
+	.x-nav-link[aria-expanded='true'] .x-nav-link-chevron::before {
+		border-color: $studio-wordpress-blue-50;
+	}
+
+	[aria-expanded='true'] .x-nav-link-chevron::before {
+		transform: scaleY( -1 ) rotate( 45deg );
+	}
+
+	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing colour.
+	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ) {
+		opacity: 0.8;
+	}
+}
+
+// Active content block fades in; `position: relative` restores flow so the fixed wrapper auto-sizes to its height (what the FLIP eases between).
+.x-dropdown--2026.x-dropdown-content[aria-hidden='false'] {
+	position: relative;
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+
+	// Items slide in from the left, staggered by `--stagger-index`. Switch: short delay, no wait.
+	.x-dropdown-subcategory-title,
+	.x-dropdown-link.x-dropdown-link {
+		opacity: 1;
+		transform: translateX( 0 );
+		transition:
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) ),
+			transform var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) );
+	}
+
+	// Links also keep their colour transition for hover.
+	.x-dropdown-link.x-dropdown-link {
+		transition:
+			color $x-nav-2026-transition,
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) ),
+			transform var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing )
+				calc( var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step ) );
+	}
+}
+
+// First open: items wait for the panel to grow before staggering in, so they don't appear in empty space mid-unroll.
+.x-dropdown.x-dropdown--2026.is-dropdown-first-open .x-dropdown-content[aria-hidden='false'] {
+	.x-dropdown-subcategory-title,
+	.x-dropdown-link.x-dropdown-link {
+		transition-delay: calc(
+			( var( --x-dropdown-2026-panel-duration ) - var( --x-dropdown-2026-items-slide-overlap ) ) +
+				var( --stagger-index, 0 ) * var( --x-dropdown-2026-stagger-step )
+		);
+	}
+}
+
+// Per-section nav-text contrast lives in each section's stylesheet, keyed off the same open/scrolled selectors.
+
+// Flip desktop bar ↔ hamburger at 1025px (the base rule shows wide items from 864px).
+@media ( max-width: 1024px ) {
+	.x-nav--2026-redesign {
+		.x-nav-item__wide {
+			display: none;
+		}
+
+		.x-nav-item__narrow {
+			display: block;
+		}
+	}
+}
+
+// Blur behind the open dropdown — nav sibling just below it (z < 801) so the nav's white never covers the blur; starts below the admin bar.
+.x-nav-backdrop {
+	position: fixed;
+	inset-inline: 0;
+	bottom: 0;
+	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
+	z-index: $x-content-min-z-index - 1;
+	background: rgba( $studio-gray-100, 0.3 );
+	backdrop-filter: blur( 4px );
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity $x-nav-2026-transition;
+}
+
+// Show the backdrop whenever a dropdown content block is active.
+.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.x-nav-backdrop {
+	opacity: 1;
+}
+
+// Desktop dropdown — one persistent panel easing its height between menus; active block (aria-hidden="false") sits in flow so the wrapper auto-sizes. `position: fixed` + high z escapes section stacking contexts; hidden at rest so it neither intercepts clicks nor paints until JS opens it.
+.x-dropdown.x-dropdown--2026 {
+	// Height-morph + slide-in timing, exposed as custom props for host tuning + `calc()` (mirrors mobile `--x-menu-2026-*`).
+	--x-dropdown-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
+	--x-dropdown-2026-panel-duration: 0.28s; // wrapper height morph between menus
+	--x-dropdown-2026-link-offset: 16px; // how far each item slides in from the left
+	--x-dropdown-2026-link-duration: 0.26s; // per-item fade + slide duration
+	--x-dropdown-2026-stagger-step: 0.02s; // added per --stagger-index (reading order)
+	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
+
+	position: fixed;
+	// Prefer host-provided `--nav-2026-height` (Calypso's single source of truth); fall back to the package constant standalone.
+	top: calc(
+		var( --nav-2026-admin-offset, var( --masterbar-height, 0px ) ) +
+			var( --nav-2026-height, #{$x-nav-2026-height} )
+	);
+	inset-inline: 0;
+	// Override the legacy `.x-dropdown` base's `bottom: 0` (which would stretch this fixed wrapper full-viewport) so it sizes to the active block's height.
+	bottom: auto;
+	width: auto;
+	height: auto; // at rest; the JS FLIP pins an explicit px height during a switch
+	z-index: $x-nav-2026-dropdown-z-index;
+	background: $studio-white;
+	opacity: 1;
+	visibility: hidden;
+	pointer-events: none;
+	transition: visibility $x-nav-2026-transition;
+
+	// Height morph is desktop-only (below 1025 the wide items are hidden, no dropdown).
+	@media ( min-width: 1025px ) {
+		transition:
+			visibility $x-nav-2026-transition,
+			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing );
+	}
+}
+
+// Open: reveal the panel (its content blocks still manage their own cross-fade).
+.x-dropdown.x-dropdown--2026.is-dropdown-open {
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.x-dropdown--2026.x-dropdown-content {
+	// Hidden blocks pinned out of flow at the panel top; active one flips to `position: relative` (above) to drive auto height. NO `bottom` so each sizes to its own content — panel tracks ONLY the active menu, not the tallest/sum.
+	position: absolute;
+	top: 0;
+	inset-inline: 0;
+	bottom: auto;
+	width: auto;
+	padding: $x-dropdown-2026-content-padding;
+	padding-inline-start: 24px;
+	border-radius: 0;
+	box-shadow: none;
+	transform: none;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition:
+		opacity $x-nav-2026-transition,
+		visibility $x-nav-2026-transition;
+
+	// At >= 1025px, align the content under the first nav item via the JS-set var.
+	@media ( min-width: 1025px ) {
+		padding-inline-start: calc( var( --dropdown-trigger-inline-start, 188px ) + 7px );
+	}
+
+	&::before {
+		display: none;
+	}
+
+	.x-dropdown-subcategories {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $x-dropdown-2026-column-gap;
+		max-width: $x-nav-2026-content-max-width;
+		margin: 0;
+		padding: 0;
+	}
+
+	.x-dropdown-column-group {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+
+		> ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		li {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	// Hidden slide-in base for titles + links: offset left + faded; transform reset is deferred so on close items snap back to the offset rather than sliding rightward out of view.
+	.x-dropdown-subcategory-title,
+	.x-dropdown-link.x-dropdown-link {
+		opacity: 0;
+		transform: translateX( calc( -1 * var( --x-dropdown-2026-link-offset ) ) );
+	}
+
+	.x-dropdown-subcategory-title {
+		margin: 0;
+		padding: 0;
+		font-size: $x-dropdown-2026-subtitle-font-size;
+		font-weight: 400;
+		line-height: 33px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: $studio-gray-30;
+		transition:
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
+			transform 0s linear var( --x-dropdown-2026-link-duration );
+	}
+
+	.x-dropdown-link.x-dropdown-link {
+		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+		padding: 0;
+		font-size: $x-dropdown-2026-link-font-size;
+		font-weight: 400;
+		line-height: $x-dropdown-2026-link-line-height;
+		color: $studio-gray-100;
+		// Never underline, even in sections (e.g. themes) that underline links by default.
+		text-decoration: none;
+		transition:
+			color $x-nav-2026-transition,
+			opacity var( --x-dropdown-2026-link-duration ) var( --x-dropdown-2026-easing ),
+			transform 0s linear var( --x-dropdown-2026-link-duration );
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $studio-wordpress-blue-50;
+		}
+	}
+
+}
+
+/* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
+.x-menu--2026 {
+	/* Drill / reveal timing tokens (from the Landpack reference). drill-fade drives the logo⇄back and nav-list⇄dropdown crossfades; reveal-delay gates the first-open header/footer reveal. */
+	--x-menu-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
+	--x-menu-2026-panel-duration: 0.34s; // panel slide in/out
+	--x-menu-2026-reveal-delay: 0.43s; // gap before header/footer/items fade in on open
+	--x-menu-2026-header-fade-duration: 0.3s; // logo / close / footer reveal duration
+	--x-menu-2026-stagger-offset: 32px; // nav items' left slide-in distance
+	--x-menu-2026-stagger-duration: 0.3s; // each nav item's slide-in duration
+	--x-menu-2026-stagger-step: 0.018s; // per-item delay step (× --stagger-index)
+	--x-menu-2026-drill-fade: opacity 0.27s var( --x-menu-2026-easing ),
+		visibility 0.27s var( --x-menu-2026-easing );
+
+	/* Shared header geometry — title and fading-out nav list both derive their vertical position from these so they can't drift apart (recolour-in-place needs the title to land on the tapped word). */
+	--x-menu-2026-header-pad-block: 12px; // header's vertical padding
+	--x-menu-2026-header-top-height: 36px; // the logo / back / X row
+	--x-menu-2026-title-pad-top: 16px; // drilled-in title's top padding
+	--x-menu-2026-navlink-pad-block: 4px; // each nav link's vertical padding
+
+	/* Blurred overlay behind the menu (reference: blur(8px) over rgba(0,0,0,0.2)). */
+	.x-menu-overlay {
+		position: fixed;
+		inset: 0;
+		// Sit below the admin bar (real height logged-in, 0 logged-out); `body.admin-bar` consumers overridden further down.
+		top: var( --nav-2026-admin-offset, 0 );
+		background: rgba( $studio-gray-100, 0.2 );
+		backdrop-filter: blur( 8px );
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.2s ease-out,
+			visibility 0.2s ease-out;
+	}
+
+	&.x-menu__open .x-menu-overlay {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	/* Pane slides in first (blank), then content fades in (reference: 0.27s fade after the panel transform). */
+	.x-menu-content {
+		position: fixed;
+		inset: 0;
+		// Sit below the admin bar (real height logged-in, 0 logged-out); `body.admin-bar` consumers overridden further down.
+		top: var( --nav-2026-admin-offset, 0 );
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		max-width: 100%;
+		border-radius: 0;
+		background: $studio-white;
+		transform: translateX( 100% );
+		transition: transform var( --x-menu-2026-panel-duration ) var( --x-menu-2026-easing );
+		// Content doesn't scroll — `.x-menu-mobile-main` is the scroller, so the sticky header + overlaid footer stay pinned while the list moves.
+		overflow: hidden;
+		// Block interaction while slid off-screen (closed); the transform keeps it hidden, so no visibility transition (which left content stuck hidden).
+		pointer-events: none;
+
+		// Tablet (480–1024px): right-pinned 414px panel, not full-screen (below 480 stays full-screen; >=1025 the desktop nav takes over).
+		@media ( min-width: 480px ) and ( max-width: 1024px ) {
+			width: 414px;
+			max-width: 414px;
+			inset-inline-start: auto;
+		}
+	}
+
+	&.x-menu__open .x-menu-content {
+		transform: translateX( 0 );
+		pointer-events: auto;
+	}
+
+	/* On open: top-level items slide in from the left + fade, after a reveal-delay lead-in, stepped by --stagger-index (drill-down items fade only, no slide). */
+	&.x-menu__open .x-menu-mobile-nav-item {
+		opacity: 1;
+		transform: translateX( 0 );
+		transition:
+			opacity var( --x-menu-2026-stagger-duration ) var( --x-menu-2026-easing )
+				calc(
+					var( --x-menu-2026-reveal-delay ) + var( --stagger-index, 0 ) *
+						var( --x-menu-2026-stagger-step )
+				),
+			transform var( --x-menu-2026-stagger-duration ) var( --x-menu-2026-easing )
+				calc(
+					var( --x-menu-2026-reveal-delay ) + var( --stagger-index, 0 ) *
+						var( --x-menu-2026-stagger-step )
+				);
+	}
+
+	/* Scroller — sticky header + overlaid footer, nav list scrolls beneath both. Bottom padding clears the footer (real height in --x-menu-2026-footer-height; fallback covers the logged-out banner + CTAs before the observer fires). */
+	.x-menu-mobile-main {
+		position: relative;
+		flex: 1;
+		padding-bottom: var( --x-menu-2026-footer-height, 96px );
+		// Set both: overflow-y alone computes overflow-x to `auto`, producing a spurious horizontal scrollbar.
+		overflow-x: hidden;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		// Don't chain scroll to the page behind when the panel hits its edges.
+		overscroll-behavior: contain;
+	}
+
+	/* Sticky translucent header (logo ⇄ back + close + drilled-in title); 18px inline padding aligns its content with the nav items' 18px gutter. */
+	.x-menu-mobile-header {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		padding-block: var( --x-menu-2026-header-pad-block );
+		// 18px start aligns logo / title with the nav items; 9px end lands the X (which has its own inner padding) on the same right edge as the item chevrons.
+		padding-inline-start: 18px;
+		padding-inline-end: 9px;
+		background: rgba( $studio-white, 0.7 );
+		backdrop-filter: blur( 8px );
+	}
+
+	/* Top row: logo / back (overlaid, crossfading) on the start, close on the end. */
+	.x-menu-mobile-header-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		min-height: var( --x-menu-2026-header-top-height );
+	}
+
+	/* Logo is black in the mobile menu (sits on the white panel). */
+	.x-menu-mobile-logo {
+		display: inline-flex;
+		align-items: center;
+		color: $studio-gray-100;
+		// Hidden until the open-reveal fades it in. Base = snap-out with the panel (0s, panel-slide delay); the BACK swap (.is-hidden) overrides with the quick drill-fade.
+		opacity: 0;
+		transition:
+			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
+			visibility 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
+
+		svg path {
+			fill: currentcolor;
+		}
+
+		/* Drilled in: hide the logo (back button takes its place), pinned absolute so it crossfades with back via the drill-fade instead of reflowing. */
+		&.is-hidden {
+			position: absolute;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+			transition: var( --x-menu-2026-drill-fade );
+		}
+	}
+
+	.x-menu-mobile-back {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		border: none;
+		background: none;
+		padding: 0;
+		// Shift left so the drawn chevron's tip lines up with the content gutter below.
+		margin-inline-start: -6px;
+		color: $studio-gray-100;
+		cursor: pointer;
+		// 14px uppercase label; line-height matches the 36px logo height so the logo ⇄ BACK swap doesn't resize the header row.
+		font-size: 14px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 36px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		transition: var( --x-menu-2026-drill-fade );
+
+		/* Top level: hide the back button (the logo shows instead). */
+		&.is-hidden {
+			position: absolute;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
+	}
+
+	/* Drawn left-chevron — an 8px box of 2px borders rotated 45°, centred in a 24px square so it aligns with the text, not a font baseline. */
+	.x-menu-mobile-back-chevron {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
+
+		&::before {
+			content: '';
+			display: block;
+			width: 7px;
+			height: 7px;
+			// Logical borders so the back arrow points inline-start and auto-flips in RTL.
+			border-inline-start: 1.5px solid currentcolor;
+			border-block-end: 1.5px solid currentcolor;
+			transform: rotate( 45deg );
+		}
+	}
+
+	/* Drilled-in category name. Collapsed to 0 height at top level; on drill-in it fades in fast so the blue reads as the word appearing in place. */
+	.x-menu-mobile-category-title {
+		margin: 0;
+		overflow: hidden;
+		height: 0;
+		opacity: 0;
+		visibility: hidden;
+		color: $studio-wordpress-blue-50;
+		font-size: 26px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 48px;
+		transition: var( --x-menu-2026-drill-fade );
+
+		&.is-visible {
+			height: auto;
+			// Offset to land the title glyph where the tapped nav word sat (nav link's own block padding), so it recolours in place. Shared token with the `.is-hidden` nav-list pin.
+			padding-top: var( --x-menu-2026-title-pad-top );
+			opacity: 1;
+			visibility: visible;
+			// Sit ABOVE the fading black nav word (z 11) and reveal fast (0.12s) so the blue is opaque before the black is gone — reads as a recolour-in-place, not a muddy cross-fade.
+			position: relative;
+			z-index: 12;
+			transition:
+				opacity 0.12s var( --x-menu-2026-easing ),
+				visibility 0s;
+		}
+	}
+
+	/* The close button is positioned statically inside the header, not absolutely. */
+	.x-menu-button.x-menu-mobile-close {
+		position: static;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		color: $studio-gray-100;
+		// Hidden until the open-reveal fades it in; base snaps out with the panel (0s, panel-slide delay).
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
+			visibility 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
+	}
+
+	/* Top-level category list + drill-down lists share the reset. */
+	.x-menu-mobile-nav-list,
+	.x-menu-mobile-dropdown-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	/* Nav list and drill-down panels share one spot. Drill-IN: nav list fades out pinned in place (`.is-hidden`), word recolouring under the blue title. BACK: nav list has no base transition, so it snaps back instantly on top (z 11) of the still-fading dropdown — no muddy cross-fade (the BACK flash). */
+	.x-menu-mobile-nav-list {
+		&.is-hidden {
+			position: absolute;
+			transition: var( --x-menu-2026-drill-fade );
+			// Pin the fading nav list so its first word stays under the blue title. Derived from the SAME shared tokens the title uses (no magic number), so the two glyphs always coincide and the swap never jumps vertically.
+			top: calc(
+				var( --x-menu-2026-header-pad-block ) + var( --x-menu-2026-header-top-height ) +
+					var( --x-menu-2026-title-pad-top ) - var( --x-menu-2026-navlink-pad-block )
+			);
+			inset-inline: 0;
+			z-index: 11;
+			overflow: hidden;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+
+			// Snap items to their resting x (not the -32px slide-in start) so the fading word sits under the title, not 32px to its left.
+			.x-menu-mobile-nav-item {
+				transform: translateX( 0 );
+				transition: none;
+			}
+		}
+	}
+
+	/* Drill-down lists ARE the fading panels (no wrapper). Drilling is a pure opacity fade, no slide; all lists for a category share `data-dropdown-name` and toggle together. */
+	.x-menu-mobile-dropdown-list {
+		position: absolute;
+		top: 16px; // aligns with the scroller's content start when absolute
+		inset-inline: 0;
+		// Hidden lists faded to 0 + out of flow, but kept *rendered* (no visibility/height collapse, which would suppress the transition). No base transition so BACK snaps out instantly under the returning nav list; fade-IN lives on `.is-visible`.
+		opacity: 0;
+		pointer-events: none;
+
+		&.is-visible {
+			position: relative;
+			top: auto;
+			inset-inline: auto;
+			opacity: 1;
+			pointer-events: auto;
+			// Drill-in: fade the items in so they don't pop in over the fading-out nav list.
+			transition: opacity 0.27s var( --x-menu-2026-easing );
+		}
+	}
+
+	/* Top-level nav items slide in from the left + fade sequentially on open: inline `--stagger-index` adds 18ms/item after a 0.43s panel-slide lead-in (drill-down items fade only). */
+	.x-menu-mobile-nav-item {
+		opacity: 0;
+		transform: translateX( calc( -1 * var( --x-menu-2026-stagger-offset ) ) );
+		// Base = snap out with the panel: 0-duration + panel-slide delay, so on close items hold then snap (no fade-out mid-slide). The open-state rule below replaces this with the real slide-in.
+		transition:
+			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
+			transform 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
+	}
+
+	/* Top-level category links: large (26px), no underline, chevron on the right. */
+	.x-menu-mobile-nav-link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		// border-box folds the 18px inline padding into `width: 100%`; content-box would overflow the panel by 36px.
+		box-sizing: border-box;
+		width: 100%;
+		padding-block: var( --x-menu-2026-navlink-pad-block );
+		padding-inline: 18px;
+		border: none;
+		background: none;
+		color: $studio-gray-100;
+		cursor: pointer;
+		font-size: 26px;
+		font-weight: 500;
+		line-height: 48px;
+		text-align: start;
+		text-decoration: none;
+	}
+
+	.x-menu-mobile-nav-chevron::before {
+		content: $lp-chevron-content-right;
+		// Match the item text colour rather than a fixed gray.
+		color: currentcolor;
+	}
+
+	/* Drill-down group: gray uppercase subtitle (12px) + secondary 18px links, smaller than the 26px top-level categories. */
+	.x-menu-mobile-dropdown-subtitle {
+		padding-top: 22px;
+		padding-inline: 18px;
+		font-size: $x-dropdown-2026-subtitle-font-size;
+		font-weight: $lp-font-weight-medium;
+		line-height: 33px;
+		letter-spacing: 0.005em;
+		text-transform: uppercase;
+		color: $studio-gray-30;
+
+		&:first-child {
+			padding-top: 0;
+		}
+	}
+
+	.x-menu-mobile-dropdown-link.x-menu-mobile-dropdown-link {
+		display: block;
+		padding-block: 4px;
+		padding-inline: 18px;
+		color: $studio-gray-100;
+		font-size: 18px;
+		font-weight: $lp-font-weight-regular;
+		line-height: 28px;
+		text-decoration: none;
+	}
+
+	/* Footer overlays the scroller's bottom (translucent + blurred, like the header) so the nav list scrolls beneath; the scroller pads its bottom by the footer's measured height. */
+	.x-menu-mobile-footer {
+		position: absolute;
+		bottom: 0;
+		inset-inline: 0;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-block: 18px;
+		padding-inline: 18px;
+		background: rgba( $studio-white, 0.7 );
+		backdrop-filter: blur( 8px );
+
+		// "Get Jetpack app" banner (iOS / Android) stacks full-width above the user row / CTAs instead of beside them.
+		&:has( .x-menu-mobile-app-banner ) {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+		}
+
+		// Only the footer's CONTENTS fade in on open; the blurred bar stays put so nav items slide behind it. Base snaps out with the panel (0s / panel-delay).
+		> * {
+			opacity: 0;
+			transition: opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
+		}
+	}
+
+	// "Get Jetpack app" banner — whole banner is the link (Download chip decorative). Device targeting via the `--ios` / `--android` modifier (Calypso lacks the reference's platform body classes).
+	.x-menu-mobile-app-banner {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 12px 14px;
+		border-radius: 8px;
+		background: $studio-gray-0;
+		text-decoration: none;
+		color: inherit;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			text-decoration: none;
+			color: inherit;
+		}
+	}
+
+	// Overlapping WordPress + Jetpack badge icons.
+	.x-menu-mobile-app-banner-icons {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.x-menu-mobile-app-banner-icon {
+		display: block;
+		width: 32px;
+		height: 32px;
+
+		// Jetpack badge overlaps the WordPress badge on a white fill so the WP badge doesn't show through.
+		&--jetpack {
+			margin-inline-start: -10px;
+			border-radius: 50%;
+			background: $studio-white;
+		}
+	}
+
+	.x-menu-mobile-app-banner-text {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		flex: 1;
+	}
+
+	.x-menu-mobile-app-banner-title {
+		font-size: 14px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 20px;
+		color: $studio-gray-100;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.x-menu-mobile-app-banner-subtitle {
+		// 12px so the subtitle fits one line next to the badges and Download.
+		font-size: 12px;
+		font-weight: $lp-font-weight-regular;
+		line-height: 20px;
+		color: $studio-gray-60;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	// Download chip — decorative (whole banner is the link), compact so the subtitle fits beside it.
+	.x-menu-mobile-app-banner-download {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex-shrink: 0;
+		height: 36px;
+		padding: 0 8px;
+		// Reference uses 6px; Calypso's radii scale snaps to 8px (visually equivalent).
+		border-radius: 8px;
+		background: $studio-white;
+		border: 1px solid $studio-gray-5;
+		font-size: 13px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 20px;
+		color: $studio-gray-100;
+		white-space: nowrap;
+	}
+
+	.x-menu-mobile-app-banner:hover .x-menu-mobile-app-banner-download,
+	.x-menu-mobile-app-banner:focus .x-menu-mobile-app-banner-download {
+		background: $studio-gray-0;
+	}
+
+	// Store glyphs — only the device's glyph renders; size rules dimension each when present.
+	.x-menu-mobile-app-banner-store-icon {
+		flex-shrink: 0;
+	}
+
+	.x-menu-mobile-app-banner-store-icon--apple {
+		width: 14px;
+		height: 17px;
+	}
+
+	.x-menu-mobile-app-banner-store-icon--google {
+		width: 14px;
+		height: 16px;
+	}
+
+	.x-menu-mobile-footer-actions {
+		display: flex;
+		align-items: stretch;
+		gap: 16px;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	// Each CTA's `<li>` takes an equal half so the two buttons split the width evenly (ClickableItem renders `<li><a>`, so flex must live on the `<li>`).
+	.x-menu-mobile-footer-actions > li {
+		display: flex;
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+	}
+
+	// Logged-out footer CTAs (Log in / Get started) — 48px rounded pills, each filling its half (Log in outlined, Get started filled blue).
+	.x-menu-mobile-footer-actions .x-menu-link.x-menu-link {
+		display: flex;
+		flex: 1;
+		align-items: center;
+		justify-content: center;
+		height: 48px;
+		padding: 0 16px;
+		border-radius: 4px;
+		font-size: 16px;
+		font-weight: $lp-font-weight-medium;
+		line-height: 24px;
+		text-decoration: none;
+	}
+
+	.x-menu-mobile-login.x-menu-link {
+		background: transparent;
+		border: 1px solid $studio-gray-10;
+		color: $studio-blue-100;
+
+		&:hover,
+		&:focus {
+			background: rgba( $studio-black, 0.05 );
+			color: $studio-blue-100;
+			text-decoration: none;
+		}
+	}
+
+	.x-menu-mobile-get-started.x-menu-link {
+		background: $studio-blue-50;
+		border: none;
+		color: $studio-white;
+
+		&:hover,
+		&:focus {
+			background: $studio-blue-60;
+			color: $studio-white;
+			text-decoration: none;
+		}
+	}
+
+	.x-menu-mobile-user {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		text-decoration: none;
+	}
+
+	.x-menu-mobile-user-avatar {
+		flex-shrink: 0;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+	}
+
+	.x-menu-mobile-user-details {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.x-menu-mobile-user-name {
+		color: $studio-gray-100;
+		font-weight: $lp-font-weight-semi-bold;
+	}
+
+	.x-menu-mobile-user-email {
+		color: $studio-gray-30;
+		font-size: $x-menu-item-font-size-narrow;
+	}
+
+	/* Open: logo / close / footer-contents visible via the quick drill-fade by default (so BACK re-shows the logo promptly); the slow panel-synced reveal below applies ONLY during initial open (`.is-opening`). */
+	&.x-menu__open {
+		.x-menu-mobile-logo:not( .is-hidden ),
+		.x-menu-button.x-menu-mobile-close,
+		.x-menu-mobile-footer > * {
+			opacity: 1;
+			visibility: visible;
+			transition: var( --x-menu-2026-drill-fade );
+		}
+
+		&.is-opening {
+			.x-menu-mobile-logo:not( .is-hidden ),
+			.x-menu-button.x-menu-mobile-close,
+			.x-menu-mobile-footer > * {
+				// Delayed past the slide so they stay unpainted until the gap, then fade in.
+				transition:
+					opacity var( --x-menu-2026-header-fade-duration ) var( --x-menu-2026-easing )
+						var( --x-menu-2026-reveal-delay ),
+					visibility var( --x-menu-2026-header-fade-duration ) var( --x-menu-2026-easing )
+						var( --x-menu-2026-reveal-delay );
+			}
+		}
+	}
+}
+
+/* Reduced motion: collapse the mobile menu's panel slide, item stagger and drill crossfades to near-instant. */
+@media ( prefers-reduced-motion: reduce ) {
+	.x-menu--2026 {
+		.x-menu-content,
+		.x-menu-mobile-nav-item,
+		.x-menu-mobile-nav-list,
+		.x-menu-mobile-dropdown-list,
+		.x-menu-mobile-category-title,
+		.x-menu-mobile-logo,
+		.x-menu-mobile-back,
+		.x-menu-button.x-menu-mobile-close,
+		.x-menu-mobile-footer > * {
+			transition-duration: 0.001ms !important;
+			transition-delay: 0s !important;
+		}
+
+		.x-menu-mobile-nav-item {
+			transform: none !important;
+		}
+	}
+
+	// Desktop dropdown: collapse the height morph + item slide-in to near-instant.
+	.x-dropdown.x-dropdown--2026,
+	.x-dropdown--2026.x-dropdown-content,
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-subcategory-title,
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-link.x-dropdown-link {
+		transition-duration: 0.001ms !important;
+		transition-delay: 0s !important;
+	}
+
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-subcategory-title,
+	.x-dropdown--2026.x-dropdown-content .x-dropdown-link.x-dropdown-link {
+		transform: none !important;
+	}
+}
+
+/* Keep the menu + overlay below the admin bar for non-Calypso consumers that signal it via WP's `body.admin-bar` (Calypso uses `--nav-2026-admin-offset`, above). */
+body.admin-bar .x-menu--2026 {
+	.x-menu-content,
+	.x-menu-overlay {
+		top: $x-menu-2026-admin-bar-desktop;
+	}
+
+	@media ( max-width: 782px ) {
+		.x-menu-content,
+		.x-menu-overlay {
+			top: $x-menu-2026-admin-bar-mobile;
+		}
+	}
+}

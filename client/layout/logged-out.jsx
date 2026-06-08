@@ -17,6 +17,7 @@ import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -131,6 +132,7 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const nav2026Props = useNav2026Props();
 	const { partnerConfig } = usePartnerBranding();
 
 	const dashboard =
@@ -284,6 +286,7 @@ const LayoutLoggedOut = ( {
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				className={ className }
+				{ ...nav2026Props }
 				{ ...( isEnabled( 'site-profiler/metrics' ) &&
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',

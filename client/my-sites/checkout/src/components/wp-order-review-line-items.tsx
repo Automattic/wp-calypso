@@ -6,8 +6,10 @@ import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
+	groupBundleLineItems,
 	isWpComProductRenewal,
 	joinClasses,
+	BundleLineItem,
 	CouponLineItem,
 	NonProductLineItem,
 	LineItem,
@@ -45,6 +47,7 @@ import type {
 	RemoveCouponFromCart,
 	AddProductsToCart,
 } from '@automattic/shopping-cart';
+import type { GroupedCartLineItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, RefObject } from 'react';
 
 const WPOrderReviewList = styled.ul`
@@ -122,6 +125,16 @@ export function WPOrderReviewLineItems( {
 	} );
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
+
+	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
+	// every product renders on its own line exactly as before.
+	const groupedLineItems: GroupedCartLineItem[] = config.isEnabled( 'domain-bundling' )
+		? groupBundleLineItems( responseCart.products )
+		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+
+	// Match the single-item path: the WooCommerce mobile app webview hides the
+	// remove action, so a bundle must not surface one either.
+	const isWooMobile = isWcMobileApp();
 
 	const isAkismetProMultipleLicensesCart = useMemo( () => {
 		if ( ! config.isEnabled( 'akismet/checkout-quantity-dropdown' ) ) {
@@ -203,38 +216,59 @@ export function WPOrderReviewLineItems( {
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ responseCart.products.map( ( product ) => (
-				<LineItemWrapper
-					key={ product.uuid }
-					product={ product }
-					isSummary={ isSummary }
-					removeProductFromCart={ removeProductFromCart }
-					onChangeSelection={ onChangeSelection }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					responseCart={ responseCart }
-					isPwpoUser={ isPwpoUser }
-					onRemoveProduct={ onRemoveProduct }
-					onRemoveProductClick={ onRemoveProductClick }
-					onRemoveProductCancel={ onRemoveProductCancel }
-					hasPartnerCoupon={ hasPartnerCoupon }
-					isDisabled={ isDisabled }
-					initialVariantTerm={
-						initialProducts.find( ( initialProduct ) => {
-							return initialProduct.product_variants.find(
-								( variant ) => variant.product_id === product.product_id
-							);
-						} )?.months_per_bill_period
-					}
-					toggleVariantSelector={ handleVariantToggle }
-					variantOpenId={ variantOpenId }
-					isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
-					setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
-					toggleAkQuantityDropdown={ handleAkQuantityToggle }
-					akQuantityOpenId={ akQuantityOpenId }
-					isRenewalPricingExperiment={ isRenewalPricingTreatment( renewalPricingVariation ) }
-				/>
-			) ) }
+			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'bundle' ) {
+					return (
+						<WPOrderReviewListItem key={ `bundle-${ entry.groupId }` }>
+							<BundleLineItem
+								bundle={ entry }
+								isSummary={ isSummary }
+								hasDeleteButton={
+									! isWooMobile &&
+									entry.products.every( ( product ) =>
+										canItemBeRemovedFromCart( product, responseCart )
+									)
+								}
+								removeProductFromCart={ removeProductFromCart }
+							/>
+						</WPOrderReviewListItem>
+					);
+				}
+
+				const { product } = entry;
+				return (
+					<LineItemWrapper
+						key={ product.uuid }
+						product={ product }
+						isSummary={ isSummary }
+						removeProductFromCart={ removeProductFromCart }
+						onChangeSelection={ onChangeSelection }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						responseCart={ responseCart }
+						isPwpoUser={ isPwpoUser }
+						onRemoveProduct={ onRemoveProduct }
+						onRemoveProductClick={ onRemoveProductClick }
+						onRemoveProductCancel={ onRemoveProductCancel }
+						hasPartnerCoupon={ hasPartnerCoupon }
+						isDisabled={ isDisabled }
+						initialVariantTerm={
+							initialProducts.find( ( initialProduct ) => {
+								return initialProduct.product_variants.find(
+									( variant ) => variant.product_id === product.product_id
+								);
+							} )?.months_per_bill_period
+						}
+						toggleVariantSelector={ handleVariantToggle }
+						variantOpenId={ variantOpenId }
+						isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
+						setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+						onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
+						toggleAkQuantityDropdown={ handleAkQuantityToggle }
+						akQuantityOpenId={ akQuantityOpenId }
+						isRenewalPricingExperiment={ isRenewalPricingTreatment( renewalPricingVariation ) }
+					/>
+				);
+			} ) }
 			{ restorableProducts.map( ( product ) => (
 				<RemovedFromCartItem
 					key={ product.uuid }

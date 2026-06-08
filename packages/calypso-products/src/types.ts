@@ -107,21 +107,18 @@ export type FeatureList = {
 /**
  * WPCOM
  */
-const WPCOM_PLAN_STORAGE_FEATURES = < const >[
-	FEATURE_1GB_STORAGE,
-	FEATURE_3GB_STORAGE,
-	FEATURE_6GB_STORAGE,
-	FEATURE_13GB_STORAGE,
-	FEATURE_50GB_STORAGE,
-	FEATURE_100GB_STORAGE,
-	FEATURE_200GB_STORAGE,
-	FEATURE_P2_13GB_STORAGE,
-	FEATURE_P2_3GB_STORAGE,
-];
-
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
-export type WPComPlanStorageFeatureSlug = ( typeof WPCOM_PLAN_STORAGE_FEATURES )[ number ];
+export type WPComPlanStorageFeatureSlug =
+	| typeof FEATURE_1GB_STORAGE
+	| typeof FEATURE_3GB_STORAGE
+	| typeof FEATURE_6GB_STORAGE
+	| typeof FEATURE_13GB_STORAGE
+	| typeof FEATURE_50GB_STORAGE
+	| typeof FEATURE_100GB_STORAGE
+	| typeof FEATURE_200GB_STORAGE
+	| typeof FEATURE_P2_13GB_STORAGE
+	| typeof FEATURE_P2_3GB_STORAGE;
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 
 // WPCOM Space Upgrade Products
@@ -332,7 +329,6 @@ export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2 | typeof GROUP_A4A;
 	type: PlanType;
-	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
 
 	/**
