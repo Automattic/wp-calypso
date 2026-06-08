@@ -438,15 +438,17 @@ const AdsFormSettings = () => {
 
 		return (
 			<div>
-				<FormSectionHeading className="ads__adstxt-heading">
-					{ translate( 'Ads.txt' ) }
-				</FormSectionHeading>
-				<SupportInfo
-					text={ translate(
-						'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
-					) }
-					link="https://jetpack.com/support/ads/"
-				/>
+				<HStack justify="space-between" alignment="center" spacing={ 1 }>
+					<FormSectionHeading className="ads__adstxt-heading">
+						{ translate( 'Ads.txt' ) }
+					</FormSectionHeading>
+					<SupportInfo
+						text={ translate(
+							'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
+						) }
+						link="https://jetpack.com/support/ads/"
+					/>
+				</HStack>
 				<ToggleControl
 					checked={ !! settings.custom_adstxt_enabled }
 					disabled={ isDisabled }
