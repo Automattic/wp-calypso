@@ -1036,18 +1036,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.masterbar-menu
 	.masterbar:has( .x-nav--2026-redesign ) {
 	background: $studio-white;
-	// Snap the white surface in quickly when it appears (scroll / dropdown-open),
-	// matching the reference's white-state reveal (0.12s ease-out, no delay) rather
-	// than the slower default bar transition.
+	// Snap the white surface in quickly when it appears (0.12s, no delay).
 	transition:
 		background-color 0.12s ease-out,
 		box-shadow 0.12s ease-out;
 }
 
-// Scrolled-only treatment (NOT when a dropdown is open): a near-opaque white with a
-// backdrop blur so the content scrolling beneath reads as a faint frost, plus a hairline
-// shadow to lift the fixed bar off the page. The dropdown-open state stays fully solid
-// white (above) so it forms one flat surface with the panel below it.
+// Scrolled-only (NOT dropdown-open): near-opaque white with a backdrop blur and a hairline
+// shadow. Dropdown-open stays fully solid white (above) for one flat surface with the panel.
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container.is-scrolled
 	.masterbar-menu
@@ -1076,9 +1072,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		align-items: center;
 	}
 
-	// The base `.x-nav-item { color: $studio-blue-90 }` (navy) sits between the nav
-	// and the links, so `inherit` below would pick up navy. Override it here so the
-	// 2026 nav text is black by default (white on dark-hero sections, set per-section).
+	// Override the navy base `.x-nav-item` colour so 2026 nav text is black by default
+	// (sections set white over dark heroes).
 	.x-nav-item {
 		color: $studio-gray-100;
 	}
@@ -1086,8 +1081,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-nav-link {
 		height: $x-nav-2026-height;
 		font-size: 13px;
-		// `!important` only to beat the legacy base `.x-nav-link` rule's own
-		// `font-weight: …semi-bold !important` (line ~278); not a new specificity hack.
+		// `!important` only to beat the legacy base rule's own `font-weight: …!important`.
 		font-weight: $lp-font-weight-medium !important;
 		line-height: 20px;
 		color: inherit;
@@ -1109,8 +1103,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding: 0 $x-nav-2026-item-padding-x;
 	}
 
-	// Logo: flex-centred to the 64px nav height; reference padding is 24px inline-start /
-	// 18px inline-end (the start gutter anchors the first nav item + dropdown alignment).
+	// Logo: the 24px start gutter anchors the first nav item + dropdown alignment.
 	.x-nav-link__logo {
 		display: flex;
 		align-items: center;
@@ -1120,8 +1113,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-inline-end: 18px;
 	}
 
-	// "Get started" CTA — outlined pill (no fill). Inline-end margin set so the pill sits
-	// ~15px from the viewport edge, matching the reference.
+	// "Get started" CTA — outlined pill (no fill).
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
@@ -1172,10 +1164,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			border-color $x-nav-2026-transition;
 	}
 
-	// The open trigger (its dropdown active → aria-expanded="true") turns blue, as
-	// does a hovered one. Driven by aria-expanded so it tracks the persistent-panel
-	// active state, not just `:hover`.
-	// Dropdown triggers (those with a chevron) turn blue on hover / when open.
+	// Dropdown triggers (with a chevron) turn blue on hover / when open (aria-expanded).
 	.x-nav-item__wide:hover .x-nav-link:has( .x-nav-link-chevron ),
 	.x-nav-link[aria-expanded='true'] {
 		color: $studio-wordpress-blue-50 !important;
@@ -1197,18 +1186,15 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-// The active dropdown content block fades in; the rest stay hidden (cross-fade).
-// `position: relative` restores it to normal flow so the (fixed) panel wrapper
-// auto-sizes to this block's height — that auto height is what the wrapper's height
-// transition (and the JS FLIP) eases between when switching menus.
+// Active content block fades in; `position: relative` puts it back in flow so the fixed
+// wrapper auto-sizes to its height (what the wrapper height transition / FLIP eases between).
 .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] {
 	position: relative;
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
 
-	// Items slide in from the left, staggered by their reading-order --stagger-index
-	// (set per item in markup). SWITCH regime: short per-item delay, no unroll wait.
+	// Items slide in from the left, staggered by `--stagger-index`. Switch: short delay, no wait.
 	.x-dropdown-subcategory-title,
 	.x-dropdown-link.x-dropdown-link {
 		opacity: 1;
@@ -1231,8 +1217,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-// FIRST OPEN (closed → open): items wait for the panel to grow (panel-duration minus a
-// small overlap) before staggering in, so they don't appear in empty space mid-unroll.
+// First open: items wait for the panel to grow before staggering in (so they don't appear
+// in empty space mid-unroll).
 .x-dropdown.x-dropdown--2026.is-dropdown-first-open .x-dropdown-content[aria-hidden='false'] {
 	.x-dropdown-subcategory-title,
 	.x-dropdown-link.x-dropdown-link {
@@ -1243,18 +1229,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-/*
- * Note: when a dropdown opens (or the page is scrolled) the nav bar turns white so it
- * forms one continuous white surface with the dropdown panel / reads legibly over
- * scrolled content — see the shared white-state rule above (`…[aria-hidden='false']` /
- * `.is-scrolled`). Per-section contrast (white text over the dark patterns hero, dark
- * text on the white surface) is handled in each section's stylesheet, keyed off the
- * same open/scrolled selectors.
- */
+// Per-section nav-text contrast (white over the dark patterns hero, dark on the white bar)
+// lives in each section's stylesheet, keyed off the same open/scrolled selectors.
 
-// Desktop/mobile breakpoint: the reference flips desktop bar ↔ hamburger at 1025px.
-// The base rule shows the wide items from 864px, so on the 2026 path re-hide them
-// (and re-show the hamburger) below 1025px to match.
+// Flip desktop bar ↔ hamburger at 1025px (the base rule shows wide items from 864px).
 @media ( max-width: 1024px ) {
 	.x-nav--2026-redesign {
 		.x-nav-item__wide {
@@ -1267,10 +1245,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-// Blur behind the open dropdown. Rendered as a sibling of the nav (outside
-// `.masterbar`) and below it (z just under the masterbar's 801) so the open-state
-// white nav background never sits over the blur. Starts below the admin bar so it
-// doesn't overlap it.
+// Blur behind the open dropdown. A sibling of the nav, just below it (z < 801) so the
+// nav's white background never sits over the blur. Starts below the admin bar.
 .x-nav-backdrop {
 	position: fixed;
 	inset-inline: 0;

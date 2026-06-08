@@ -50,31 +50,23 @@ const UniversalNavbarHeader = ( {
 	const localizeUrl = useLocalizeUrl();
 	const { __ } = useI18n();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
-	// 2026 mobile menu drill-down: which category is currently expanded (null = top level).
+	// Mobile drill-down: which category is expanded (null = top level).
 	const [ currentDropdown, setCurrentDropdown ] = useState< string | null >( null );
-	// 2026 desktop dropdown: which top-level menu is open (null = none). Drives a single
-	// persistent panel so switching triggers cross-fades the stacked content (no flash).
+	// Desktop dropdown: which top-level menu is open (null = none).
 	const [ activeDropdown, setActiveDropdown ] = useState< string | null >( null );
-	// 2026 mobile "Get Jetpack app" banner: which device the visitor is on, so we show the
-	// matching store glyph (App Store on iOS, Google Play on Android). `null` on desktop /
-	// unknown UA, where the banner stays hidden. Set in an effect so SSR renders nothing
-	// platform-specific (`navigator` is client-only). The wpcom reference detects this
-	// server-side via `is-ios-platform`/`is-android-platform` body classes, which Calypso
-	// (a client SPA) doesn't have — so we sniff the UA here instead.
+	// App-banner platform; `null` on desktop / unknown UA (banner hidden). Set in an effect
+	// since `navigator` is client-only.
 	const [ mobilePlatform, setMobilePlatform ] = useState< 'ios' | 'android' | null >( null );
-	// One-shot "panel is opening" phase: first open uses the long panel-synced reveal delay;
-	// cleared once the panel settles so later drill/BACK swaps use the quick fade.
+	// "Opening" phase: first open uses the long reveal delay; later drill/BACK swaps the quick fade.
 	const [ isMenuOpening, setIsMenuOpening ] = useState( false );
-	// Measured footer height, published as a CSS var so the scroller's bottom padding clears
-	// the overlaid footer (height varies with banner / auth / safe-area).
+	// Footer height, published as a CSS var so the scroller clears the overlaid footer.
 	const mobileFooterRef = useRef< HTMLDivElement >( null );
 	// Hamburger button, so closing the mobile menu can return focus to it (not <body>).
 	const menuTriggerRef = useRef< HTMLButtonElement >( null );
-	// True once scrolled past the threshold: the fixed nav switches from transparent to the
-	// white surface (same treatment as an open dropdown) via the `is-scrolled` class.
+	// True once scrolled: the fixed nav switches from transparent to the white surface.
 	const [ isScrolled, setIsScrolled ] = useState( false );
 	// Desktop dropdown FLIP bookkeeping: `prevDropdown` distinguishes first-open from switch;
-	// `prevHeight` is the pre-switch height (the FLIP `from`), captured in the effect cleanup.
+	// `prevHeight` is the FLIP `from`, captured in the effect cleanup.
 	const dropdownRef = useRef< HTMLDivElement >( null );
 	const prevDropdownRef = useRef< string | null >( null );
 	const prevHeightRef = useRef< number >( 0 );
@@ -171,10 +163,8 @@ const UniversalNavbarHeader = ( {
 		}
 	}, [ nav2026 ] );
 
-	// 2026 mobile menu open phase: mark `is-opening` while the panel slides in so the
-	// header/footer use their delayed reveal once; clear it after the panel settles so
-	// subsequent drill/BACK swaps use the quick fade. Mirrors the reference's
-	// OPENING_PHASE_MS (~1100ms = panel slide 0.34 + reveal delay 0.43 + fade 0.3).
+	// Mark `is-opening` while the panel slides in, then clear it. ~1100ms = panel slide
+	// 0.34 + reveal delay 0.43 + fade 0.3.
 	useEffect( () => {
 		if ( ! nav2026 || ! isMobileMenuOpen ) {
 			setIsMenuOpening( false );
@@ -209,9 +199,8 @@ const UniversalNavbarHeader = ( {
 		return () => observer.disconnect();
 	}, [ nav2026, isMobileMenuOpen, isLoggedIn, mobilePlatform ] );
 
-	// Align the 2026 dropdown content under the first nav item by exposing that
-	// item's inline-start offset as a CSS custom property (RTL-aware). The CSS
-	// consumes it via `calc()` at >= 1025px; below that the panel uses its own padding.
+	// Publish the first nav item's inline-start offset as a CSS var so the dropdown's first
+	// column aligns under it (consumed via `calc()` at >= 1025px).
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
@@ -220,9 +209,8 @@ const UniversalNavbarHeader = ( {
 		const updateOffset = () => {
 			const nav = document.querySelector< HTMLElement >( '.x-nav--2026-redesign' );
 			const firstItem = nav?.querySelector< HTMLElement >( '.x-nav-item__wide .x-nav-link' );
-			// The dropdown panel is a SIBLING of the nav (not a descendant), so the var must
-			// live on a common ancestor to reach it — set it on `.lpc-header-nav-container`,
-			// which wraps both the nav and the dropdown.
+			// The dropdown panel is a SIBLING of the nav, so the var must live on a common
+			// ancestor (`.lpc-header-nav-container`) to reach it.
 			const host = nav?.closest< HTMLElement >( '.lpc-header-nav-container' );
 			if ( ! nav || ! firstItem || ! host ) {
 				return;
@@ -230,8 +218,6 @@ const UniversalNavbarHeader = ( {
 			const isRTL = getComputedStyle( nav ).direction === 'rtl';
 			const hostRect = host.getBoundingClientRect();
 			const itemRect = firstItem.getBoundingClientRect();
-			// Offset of the first nav item from the container edge, so the dropdown's first
-			// column lines up under it (RTL-aware).
 			const inlineStart = isRTL ? hostRect.right - itemRect.right : itemRect.left - hostRect.left;
 			host.style.setProperty(
 				'--dropdown-trigger-inline-start',
@@ -338,14 +324,11 @@ const UniversalNavbarHeader = ( {
 			node.style.height = `${ from }px`;
 			void node.offsetHeight; // force reflow so the next height change transitions
 			node.style.height = `${ to }px`;
-			// `release` snaps the wrapper back to auto height after the morph. It's idempotent
-			// (the `released` guard), so whichever of the transitionend listener or the fallback
-			// timer fires first wins and the other is a harmless no-op.
+			// `release` snaps back to auto height; idempotent (the `released` guard), so whichever
+			// of the transitionend listener or the fallback timer fires first wins.
 			let released = false;
-			// AbortController detaches the listener without naming it — avoids `{ once: true }`,
-			// whose stale one-shot handler would otherwise fire on the *next* morph's
-			// transitionend if this element is still transitioning when a new switch starts,
-			// releasing it prematurely.
+			// AbortController detaches the listener — avoids `{ once: true }`, whose stale handler
+			// could fire on the *next* morph's transitionend and release it prematurely.
 			const listenerAbort = new AbortController();
 			const release = () => {
 				if ( released ) {
@@ -393,8 +376,7 @@ const UniversalNavbarHeader = ( {
 		);
 	}
 
-	// Shared 2026 sub-structures used by both variants (Features group, Resources
-	// dropdown, and the Support/Pricing direct links).
+	// Sub-structures shared by both variants (Features, Resources, Support/Pricing links).
 	const nav2026FeatureItems: Nav2026Item[] = [
 		{
 			label: __( 'Themes', __i18n_text_domain__ ),
@@ -517,11 +499,8 @@ const UniversalNavbarHeader = ( {
 		title: __( 'Pricing', __i18n_text_domain__ ),
 		href: localizeUrl( '//wordpress.com/pricing/' ),
 	};
-	// 2026 nav taxonomies — exact mirror of the shipped Landpack reference
-	// (`hp-2024-jul?nav_2026=1` and `?nav_2026=2`). Each top-level menu is either a
-	// dropdown (with grouped subcategory columns) or a direct link (no `groups`).
-	// Selected by `nav2026Variant`; only used on the `nav2026` path. The flag-OFF
-	// nav keeps Calypso's own taxonomy (rendered separately below), unchanged.
+	// 2026 nav taxonomies, mirroring the Landpack reference (`?nav_2026=1` / `=2`), selected
+	// by `nav2026Variant`. Each menu is a dropdown (with `groups`) or a direct link.
 	const nav2026Menus: Nav2026Menu[] =
 		nav2026Variant === 2
 			? [
@@ -764,10 +743,8 @@ const UniversalNavbarHeader = ( {
 			  ];
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
-	// 2026 "Get Jetpack app" mobile banner. Rendered only on iOS / Android (the whole
-	// banner is the link; the Download chip is decorative), showing the store glyph that
-	// matches the device. Ported from the wpcom Landpack reference; `null` on desktop /
-	// unknown UA, where this returns nothing.
+	// "Get Jetpack app" mobile banner, shown only on iOS / Android with the matching store
+	// glyph (the whole banner is the link). `null` on desktop / unknown UA.
 	const renderAppBanner = () => {
 		if ( ! mobilePlatform ) {
 			return null;
@@ -1275,9 +1252,7 @@ const UniversalNavbarHeader = ( {
 								if ( ! menu.groups ) {
 									return null;
 								}
-								// Reading-order counter shared across this menu's groups: each
-								// subcategory title takes one index, then its links take the next,
-								// so the slide-in staggers title → its links → next title …
+								// Reading-order counter for the slide-in stagger (title, then its links, …).
 								let staggerIndex = 0;
 								return (
 									<div
@@ -1437,10 +1412,8 @@ const UniversalNavbarHeader = ( {
 												.filter( ( menu ) => menu.groups )
 												.flatMap( ( menu ) => {
 													const isActive = activeCategory?.name === menu.name;
-													// Each subcategory group is its own `.x-menu-mobile-dropdown-list`
-													// (no wrapper div — matches the reference's flat structure so the
-													// drill fade works). All lists for the active category share the
-													// same `data-dropdown-name` and toggle `.is-visible` together.
+													// One flat `.x-menu-mobile-dropdown-list` per group (no wrapper); all
+													// lists for the active category toggle `.is-visible` together.
 													return ( menu.groups ?? [] ).map( ( group, groupIndex ) => (
 														<ul
 															className={ clsx( 'x-menu-mobile-dropdown-list', {
