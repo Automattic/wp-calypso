@@ -1,38 +1,74 @@
+import nock from 'nock';
 import { fetchBundleSuggestion } from '..';
+import type { BundleSuggestion } from '../types';
+
+const BASE = 'https://public-api.wordpress.com';
+
+const bundleSuggestion: BundleSuggestion = {
+	sld: 'example',
+	domains: [
+		{
+			domain: 'example.com',
+			cost: '$22.00',
+			raw_price: 22,
+			product_slug: 'domain_reg',
+			supports_privacy: true,
+		},
+		{
+			domain: 'example.net',
+			cost: '$18.00',
+			raw_price: 18,
+			product_slug: 'domain_reg',
+			supports_privacy: true,
+		},
+	],
+	bundle_price: 40,
+	original_price: 50,
+	discount_percent: 20,
+	category: 'business',
+	bundle_id: 'example_business',
+	bundle_group_id: 'signed-group-id',
+	catalogue_version: '1',
+};
 
 describe( 'fetchBundleSuggestion', () => {
-	it( 'returns a bundle suggestion shaped like the with_bundles payload', async () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'requests /domains/suggestions with with_bundles=1 and returns the bundle portion', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( ( query ) => query.with_bundles === '1' && query.query === 'example' )
+			.reply( 200, {
+				domain_suggestions: [],
+				bundle_suggestion: bundleSuggestion,
+			} );
+
 		const bundle = await fetchBundleSuggestion( 'example' );
 
-		expect( bundle ).not.toBeNull();
-		expect( bundle?.sld ).toBe( 'example' );
-		expect( bundle?.domains.length ).toBeGreaterThanOrEqual( 2 );
+		expect( scope.isDone() ).toBe( true );
+		expect( bundle ).toEqual( bundleSuggestion );
+	} );
 
-		bundle?.domains.forEach( ( domain ) => {
-			expect( domain.domain.startsWith( 'example.' ) ).toBe( true );
-			expect( typeof domain.cost ).toBe( 'string' );
-			expect( typeof domain.raw_price ).toBe( 'number' );
-			expect( typeof domain.product_slug ).toBe( 'string' );
+	it( 'lowercases the query before sending it', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( ( query ) => query.query === 'mybrand.com' )
+			.reply( 200, {
+				domain_suggestions: [],
+				bundle_suggestion: bundleSuggestion,
+			} );
+
+		await fetchBundleSuggestion( 'MyBrand.com' );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'returns null when the response carries no bundle suggestion', async () => {
+		nock( BASE ).get( '/rest/v1.1/domains/suggestions' ).query( true ).reply( 200, {
+			domain_suggestions: [],
+			bundle_suggestion: null,
 		} );
 
-		expect( typeof bundle?.bundle_price ).toBe( 'number' );
-		expect( typeof bundle?.original_price ).toBe( 'number' );
-		expect( typeof bundle?.discount_percent ).toBe( 'number' );
-		expect( typeof bundle?.category ).toBe( 'string' );
-		expect( typeof bundle?.bundle_id ).toBe( 'string' );
-		expect( typeof bundle?.bundle_group_id ).toBe( 'string' );
-		expect( typeof bundle?.catalogue_version ).toBe( 'string' );
-	} );
-
-	it( 'derives the sld from a full-domain query', async () => {
-		const bundle = await fetchBundleSuggestion( 'MyBrand.com' );
-
-		expect( bundle?.sld ).toBe( 'mybrand' );
-		expect( bundle?.domains[ 0 ].domain ).toBe( 'mybrand.com' );
-	} );
-
-	it( 'returns null for an empty query', async () => {
-		expect( await fetchBundleSuggestion( '' ) ).toBeNull();
-		expect( await fetchBundleSuggestion( '   ' ) ).toBeNull();
+		expect( await fetchBundleSuggestion( 'example' ) ).toBeNull();
 	} );
 } );
