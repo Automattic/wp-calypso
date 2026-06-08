@@ -34,6 +34,7 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
+		"dashboard/force-opt-in-visibility": true,
 		"dashboard/opt-in-banners": false,
 		"google-my-business": false,
 		"help": true,
