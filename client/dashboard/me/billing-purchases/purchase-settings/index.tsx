@@ -96,6 +96,7 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
@@ -611,7 +612,10 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if ( ! purchase.is_past_expiry_date || ! purchase.is_plan ) {
+	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
+	const isRefundWindowDowngrade = isWithinRefundWindowDowngradeEligible( purchase );
+
+	if ( ! isPastExpiryDowngrade && ! isRefundWindowDowngrade ) {
 		return null;
 	}
 
@@ -626,6 +630,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_change_plan_click', {
 							product_slug: purchase.product_slug,
+							mode: isPastExpiryDowngrade ? 'expired' : 'refund-window',
 						} );
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }
