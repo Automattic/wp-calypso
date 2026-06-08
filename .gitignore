@@ -2,9 +2,6 @@
 .sass-cache
 .babel-cache
 .superpowers/
-# Local agenttic checkout for the agents-manager dev override
-# (see apps/agents-manager/webpack.config.js, LOCAL_AGENTTIC* env flags).
-apps/agents-manager/packages/
 .vagrant
 .unison
 .env
