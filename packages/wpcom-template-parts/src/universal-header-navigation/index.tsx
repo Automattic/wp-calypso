@@ -42,17 +42,15 @@ const UniversalNavbarHeader = ( {
 	const [ currentDropdown, setCurrentDropdown ] = useState< string | null >( null );
 	// Desktop dropdown: which top-level menu is open (null = none).
 	const [ activeDropdown, setActiveDropdown ] = useState< string | null >( null );
-	// "Opening" phase: first open uses the long reveal delay; later drill/BACK swaps the quick fade.
+	// First open uses the long reveal delay; later drill/back uses the quick fade.
 	const [ isMenuOpening, setIsMenuOpening ] = useState( false );
-	// Footer height, published as a CSS var so the scroller clears the overlaid footer.
 	const mobileFooterRef = useRef< HTMLDivElement >( null );
-	// Hamburger button, so closing the mobile menu can return focus to it (not <body>).
+	// Hamburger, so closing the menu can return focus to it.
 	const menuTriggerRef = useRef< HTMLButtonElement >( null );
 	const isEnglishLocale = useIsEnglishLocale();
-	// Allow tabbing in mobile version only when the menu is open
+	// Tabbable only while the menu is open.
 	const mobileMenuTabIndex = isMobileMenuOpen ? undefined : -1;
 
-	// 2026-specific behaviour hooks.
 	const mobilePlatform = useMobilePlatform( nav2026 );
 	const isScrolled = useScrollState( nav2026 );
 	useDropdownOffset( nav2026, nav2026Variant );
@@ -63,18 +61,15 @@ const UniversalNavbarHeader = ( {
 		mobilePlatform,
 		footerRef: mobileFooterRef,
 	} );
-	// Owns the FLIP panel ref; we attach it to the desktop dropdown below.
 	const dropdownRef = useDropdownFlip( { nav2026, activeDropdown } );
 
 	const closeMobileMenu = useCallback( () => {
 		setMobileMenuOpen( false );
 		setCurrentDropdown( null );
-		// Return focus to the trigger so keyboard/screen-reader users aren't dropped to <body>.
 		menuTriggerRef.current?.focus();
 	}, [] );
 
-	// Mark `is-opening` while the panel slides in, then clear it. ~1100ms = panel slide
-	// 0.34 + reveal delay 0.43 + fade 0.3.
+	// `is-opening` while the panel slides in. 1100ms ≈ slide 340 + reveal 430 + fade 300.
 	useEffect( () => {
 		if ( ! nav2026 || ! isMobileMenuOpen ) {
 			setIsMenuOpening( false );
@@ -85,11 +80,11 @@ const UniversalNavbarHeader = ( {
 		return () => clearTimeout( timer );
 	}, [ nav2026, isMobileMenuOpen ] );
 
-	// Handle dropdown management to ensure only one is open at a time
+	// Escape closes whichever is open (desktop dropdown or mobile menu); hover/focus keeps one open.
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
-				// Close the desktop dropdown, returning focus to the open trigger.
+				// Desktop dropdown — return focus to the trigger.
 				setActiveDropdown( ( open ) => {
 					if ( open !== null ) {
 						const trigger = document.querySelector< HTMLElement >(
@@ -100,7 +95,7 @@ const UniversalNavbarHeader = ( {
 					return null;
 				} );
 
-				// Close the mobile menu, returning focus to the hamburger.
+				// Mobile menu — return focus to the hamburger.
 				setMobileMenuOpen( ( open ) => {
 					if ( open ) {
 						setCurrentDropdown( null );
@@ -165,13 +160,9 @@ const UniversalNavbarHeader = ( {
 		);
 	}
 
-	const nav2026Menus = getNav2026Menus( {
-		__,
-		localizeUrl,
-		locale,
-		isLoggedIn,
-		variant: nav2026Variant,
-	} );
+	const nav2026Menus = nav2026
+		? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, variant: nav2026Variant } )
+		: [];
 	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
 	return (
@@ -191,8 +182,7 @@ const UniversalNavbarHeader = ( {
 					onBlur={
 						nav2026
 							? ( event ) => {
-									// Close when keyboard focus leaves the nav+dropdown entirely (tabbing
-									// past the last item), so the dropdown isn't mouse-dismiss-only.
+									// Close when focus leaves the nav entirely (keyboard dismiss).
 									if ( ! event.currentTarget.contains( event.relatedTarget as Node ) ) {
 										setActiveDropdown( null );
 									}
@@ -550,8 +540,7 @@ const UniversalNavbarHeader = ( {
 											type="button"
 											role="menuitem"
 											className="x-nav-link x-nav-link__menu x-link"
-											// The dialog + its id only exist on the 2026 path; on the legacy path
-											// the menu is a `role="menu"` without that id, so don't dangle the refs.
+											// The dialog + its id only exist on the 2026 path; legacy has neither.
 											aria-haspopup={ nav2026 ? 'dialog' : undefined }
 											aria-controls={ nav2026 ? 'x-mobile-menu-2026' : undefined }
 											aria-expanded={ isMobileMenuOpen }
@@ -569,8 +558,7 @@ const UniversalNavbarHeader = ( {
 							</nav>
 						</div>
 					</div>
-					{ /* Full-viewport blur behind the open dropdown. Outside `.masterbar` so the
-					     open-state white nav background never sits over it. */ }
+					{ /* Blur behind the open dropdown; outside `.masterbar` so the white nav never covers it. */ }
 					{ nav2026 && <div className="x-nav-backdrop" aria-hidden="true" /> }
 					{ variant !== 'minimal' && nav2026 && (
 						<Nav2026DesktopDropdown

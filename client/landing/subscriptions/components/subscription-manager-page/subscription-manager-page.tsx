@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
@@ -9,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { TabsSwitcher } from 'calypso/landing/subscriptions/components/tabs-switcher';
 import { useSubheaderText } from 'calypso/landing/subscriptions/hooks';
+import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
@@ -21,6 +21,7 @@ const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const emailAddress = SubscriptionManager.useSubscriberEmailAddress();
+	const nav2026Props = useNav2026Props();
 
 	const startUrl = addQueryArgs(
 		localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn ),
@@ -48,10 +49,7 @@ const SubscriptionManagementPage = () => {
 				isLoggedIn={ isLoggedIn }
 				startUrl={ startUrl }
 				loginUrl={ loginUrl }
-				{ ...( config.isEnabled( 'nav-redesign/2026' ) && {
-					nav2026: true,
-					nav2026Variant: config.isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1,
-				} ) }
+				{ ...nav2026Props }
 			/>
 			<Main className="subscription-manager__container">
 				<FormattedHeader

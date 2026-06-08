@@ -17,10 +17,7 @@ interface GetNav2026MenusArgs {
 	variant: 1 | 2;
 }
 
-/**
- * 2026 nav taxonomies, mirroring the Landpack reference (`?nav_2026=1` / `=2`), selected
- * by `variant`. Each menu is a dropdown (with `groups`) or a direct link.
- */
+// 2026 nav taxonomies (Landpack `?nav_2026=1` / `=2`), picked by `variant`.
 export function getNav2026Menus( {
 	__,
 	localizeUrl,

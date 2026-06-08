@@ -73,13 +73,7 @@
 		}
 	}
 
-	// 2026 redesign: the nav is transparent over the dark patterns hero, so its
-	// text/logo/chevron must be white for contrast (overrides the package default
-	// of black). Logo + CTA follow `currentcolor`.
-	// White nav text/logo over the dark patterns hero. `!important` to beat the
-	// package default (black) regardless of stylesheet load order.
-	// Scoped to the CLOSED state: when a dropdown is open OR the page is scrolled the nav
-	// turns white, so the text must switch back to dark (handled below) to stay legible.
+	// Closed state: transparent nav over the dark hero, so text/logo/chevron go white.
 	.lpc-header-nav-container:not(
 			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 		):not( .is-scrolled )
@@ -87,16 +81,12 @@
 		.x-nav-item {
 		color: var( --studio-white ) !important;
 
-		// Match the chevron arrow to the white text over the dark hero (the package draws
-		// it navy by default). Pairs with the dark flip in the scrolled/open rule below, so
-		// the chevron transitions colour in step with the text in both directions.
 		.x-nav-link-chevron::before {
 			border-color: var( --studio-white );
 		}
 	}
 
-	// Dropdown open or scrolled: the nav bar is white, so logo/text/chevron revert to dark
-	// for contrast against the white surface (matching the light-hero sections).
+	// Open or scrolled: white nav bar, so text/logo/chevron revert to dark.
 	.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] ),
 	.lpc-header-nav-container.is-scrolled {
 		.x-nav--2026-redesign .x-nav-item {
@@ -107,33 +97,21 @@
 			fill: var( --studio-gray-100 );
 		}
 
-		// Flip the chevron arrow dark to match the text on the white bar (it's white at the
-		// top via the closed-state rule above). Setting `border-color` directly lets the
-		// `::before`'s existing `border-color 0.22s` transition animate it in step with the
-		// text. No `!important` — this container-scoped selector out-specifies the package.
+		// `border-color` (not `color`) so it animates with the existing chevron transition.
 		.x-nav--2026-redesign .x-nav-item .x-nav-link-chevron::before {
 			border-color: var( --studio-gray-100 );
 		}
 	}
 
-	// The 2026 nav floats (overlays) the page, so the dark hero band must slide up
-	// underneath it. The generic `.layout__content { padding-top: 64px }` (which
-	// clears the nav elsewhere) would instead push the dark band down and leave a
-	// white strip behind the nav — so on the 2026 path drop that padding and pad the
-	// hero's inner content down by the nav height (64px) instead.
+	// 2026 nav floats over the page; drop the generic clearance and let the hero slide under it.
 	&:has( .x-nav--2026-redesign ) {
 		.layout__content {
 			padding-top: 0;
 		}
 
 		.patterns-header__inner {
-			// The 2026 nav floats (fixed, out of flow), so unlike the legacy in-flow
-			// masterbar the hero must clear it with padding. The hero band already starts
-			// below the admin bar, so it only needs to clear the nav's own height —
-			// `--nav-2026-height`, not the admin-bar-inclusive sticky offset (that would
-			// double-count the admin bar logged-in). Add it on top of legacy's own two-tier
-			// breathing room (105 / 90, from components/header/style.scss) so the nav→heading
-			// gap matches legacy at every breakpoint, with the nav height not duplicated here.
+			// Clear the nav's own height only (the band already starts below the admin bar),
+			// on top of legacy's breathing room so the nav→heading gap matches legacy.
 			padding-top: calc( 105px + var( --nav-2026-height ) );
 
 			@media ( max-width: $break-xlarge ) {

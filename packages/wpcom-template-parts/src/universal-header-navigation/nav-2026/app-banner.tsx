@@ -16,8 +16,7 @@ interface Nav2026AppBannerProps {
 	__: Translate;
 }
 
-// "Get Jetpack app" mobile banner, shown only on iOS / Android with the matching store
-// glyph (the whole banner is the link). `null` on desktop / unknown UA.
+// "Get Jetpack app" mobile banner (whole banner is the link). `null` off iOS / Android.
 export function Nav2026AppBanner( {
 	mobilePlatform,
 	tabIndex,

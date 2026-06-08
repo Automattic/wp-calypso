@@ -148,9 +148,7 @@ $studio-blue-15: #e5f4ff;
 	color: inherit;
 }
 
-/**
- * Content area
- */
+/* Content area */
 
 $lp-content-width-center-minus: 480px;
 $lp-content-width-center: 576px;
@@ -158,9 +156,7 @@ $lp-content-width-center-plus: 672px;
 $lp-content-width-wide-minus: 960px;
 $lp-content-width-wide: 1152px;
 
-/**
- * Responsive web design
- */
+/* Responsive web design */
 
 $lp-breakpoint-S: $lp-content-width-center-minus;
 $lp-breakpoint-M: 768px;
@@ -178,9 +174,7 @@ $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
 $x-content-min-z-index: 801;
-// 2026 dropdown panel: one above the nav bar / dim overlay so it covers the dimmed page
-// while sliding down from under the nav. Sits in the nav's own stacking band (not an
-// arbitrary 900000) so it never escapes above Calypso modals/tooltips.
+// One above the nav, in its stacking band, so it never escapes above Calypso modals.
 $x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
 $lp-font-weight-bold: 600;
 $lp-font-weight-semi-bold: 600;
@@ -377,9 +371,7 @@ button.x-nav-link.x-link {
 	transform-origin: 100% 0;
 }
 
-/*
- * Dropdown
- */
+/* Dropdown */
 
 $x-dropdown-attachment-x: 0;
 $x-dropdown-attachment-y: 45px;
@@ -409,16 +401,7 @@ $x-dropdown-item-line-height: 19px;
 	transform-origin: 50% 0;
 }
 
-/*
- * Dropdown background
- *
- * 1. The background element is split into 3 parts: top, middle, bottom. The top
- *    one contains the pointer.
- * 2. The middle part covers the rounding error gap that might appear when
- *    dropdown transforms are in place.
- * 3. The bottom part contains the very background that will be animated using
- *    negative translation. Its height will set programatically.
- */
+/* Dropdown background: split into top (pointer), middle (covers rounding-gap from transforms), bottom (JS-sized, animated by negative translation). */
 
 %x-dropdown-background-container {
 	position: absolute;
@@ -487,9 +470,7 @@ $x-dropdown-item-line-height: 19px;
 	height: 0; /* 3 */
 }
 
-/*
- * Dropdown content
- */
+/* Dropdown content */
 
 .x-dropdown-content {
 	z-index: 901;
@@ -560,17 +541,7 @@ $x-dropdown-item-line-height: 19px;
 	}
 }
 
-/*
- * Mobile menu
- *
- * 1. The line height values are determined based on the `__lp-line-height`
- *    helper function found in Landpack.
- * 2. The transform origin is set approximately to the middle of the menu icon.
- * 3. Increase the specificity due to side effects on older landing pages.
- * 4. The equivalent of 13px/18px without Dynamic Type on.
- * 5. Due to the way Dynamic Type is defined in CSS, some of the properties
- *    have to be overriden by repetition.
- */
+/* Mobile menu. Numbered refs: 1 Landpack `__lp-line-height`; 2 origin ~menu-icon centre; 3 bump specificity past older landing pages; 4 ≈13px/18px sans Dynamic Type; 5 Dynamic Type forces repeated overrides. */
 %x-text {
 	font-family: $x-content-font-stack;
 	text-rendering: optimizelegibility;
@@ -972,21 +943,15 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 
 /* End monochrome header overrides */
 
-/* ==========================================================================
-   2026 Global Nav redesign
-   Ported from the Landpack `add/global-nav-2026-redesign` work and scoped under
-   the `x-nav--2026-redesign` / `x-dropdown--2026` / `x-menu--2026` classes so the
-   default (flag-off) nav is left untouched.
-   ========================================================================== */
+/* 2026 Global Nav redesign — scoped under `x-nav--2026-redesign` / `x-dropdown--2026` / `x-menu--2026` so the flag-off nav is untouched. */
 
 $x-nav-2026-height: 64px;
 // Transition timing matches the shipped Landpack nav (hp-2024-jul?nav_2026=1).
 $x-nav-2026-transition: 0.22s ease-in-out;
-// Backdrop blur applied behind the nav once scrolled (translucent white surface over
-// the content scrolling beneath). Exposed as a custom prop so it can be tuned per host.
+// Backdrop blur behind the nav once scrolled.
 $x-nav-2026-scrolled-blur: 8px;
 $x-nav-2026-content-max-width: 1200px;
-// Dropdown item + trigger metrics, sourced from the live reference's computed styles.
+// Dropdown metrics from the live reference's computed styles.
 $x-nav-2026-item-padding-x: 8px;
 $x-dropdown-2026-link-font-size: 18px;
 $x-dropdown-2026-link-line-height: 38px;
@@ -997,38 +962,28 @@ $x-dropdown-2026-content-padding: 20px 24px 48px;
 $x-menu-2026-admin-bar-desktop: 32px;
 $x-menu-2026-admin-bar-mobile: 46px;
 
-// Desktop nav bar. On the 2026 path, neutralise Calypso's per-section masterbar
-// backgrounds (logged-in) back to a plain white bar so it matches the logged-out
-// surface. Two ancestor chains are matched (`/plugins` vs the rest) so the override
-// wins over the section rules without `!important`.
-//
-// `fixed` overlays the nav so the hero slides beneath it, pinned as the page scrolls.
-// Transparent at rest; turns white when a dropdown opens or once scrolled.
+// Desktop nav bar: fixed overlay, transparent at rest, white when open/scrolled. Two ancestor chains (`/plugins` vs rest) beat the per-section masterbar without `!important`.
 .lpc-header-nav-wrapper .masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
 	.masterbar:has( .x-nav--2026-redesign ) {
 	position: fixed;
-	// Below the admin bar only when one exists (Calypso sets `--nav-2026-admin-offset`
-	// to the real admin-bar height logged-in, 0 logged-out). Falls back to
-	// `--masterbar-height` then 0 for non-Calypso consumers.
+	// Below the admin bar when one exists; falls back for non-Calypso consumers.
 	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
 	inset-inline: 0;
 	z-index: $x-content-min-z-index;
 	height: $x-nav-2026-height;
 	background: transparent;
 	border-bottom-color: transparent;
-	// Exit transition (white → transparent) when `is-scrolled` / dropdown-open drops: eases
-	// out after a short delay so the surface lingers a beat instead of snapping at the top.
+	// Exit (white → transparent) eases out after a short delay so the surface lingers.
 	transition:
 		background-color $x-nav-2026-transition 0.12s,
 		box-shadow $x-nav-2026-transition 0.12s,
 		backdrop-filter $x-nav-2026-transition 0.12s;
 }
 
-// Dropdown-open or scrolled: the nav bar turns white (one continuous surface with the
-// panel below, and legible over scrolled content). Shared selector list for both states.
+// Dropdown-open or scrolled: nav bar turns white (continuous with the panel below, legible over scrolled content).
 .lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 	.masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
@@ -1042,8 +997,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		box-shadow 0.12s ease-out;
 }
 
-// Scrolled-only (NOT dropdown-open): near-opaque white with a backdrop blur and a hairline
-// shadow. Dropdown-open stays fully solid white (above) for one flat surface with the panel.
+// Scrolled-only (NOT dropdown-open): near-opaque white + backdrop blur + hairline shadow (dropdown-open stays fully solid, above).
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container.is-scrolled
 	.masterbar-menu
@@ -1066,14 +1020,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	color: $studio-gray-100;
 	transition: background-color $x-nav-2026-transition;
 
-	// Vertically centre every item (incl. the shorter "Get started" pill) within
-	// the 64px bar.
+	// Vertically centre every item (incl. the shorter "Get started" pill) in the 64px bar.
 	.x-nav-list {
 		align-items: center;
 	}
 
-	// Override the navy base `.x-nav-item` colour so 2026 nav text is black by default
-	// (sections set white over dark heroes).
+	// 2026 nav text is black by default (sections set white over dark heroes), overriding the navy base.
 	.x-nav-item {
 		color: $studio-gray-100;
 	}
@@ -1092,11 +1044,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		fill: currentcolor;
 	}
 
-	/*
-	 * Reference triggers are `padding: 0 8px` and vertically centred via the
-	 * 64px height + flex. The base rule adds top/bottom offsets, so set the full
-	 * shorthand here to zero them.
-	 */
+	// Triggers are `padding: 0 8px`, centred via height + flex; full shorthand zeroes the base rule's top/bottom offsets.
 	.x-nav-item__wide .x-nav-link:not( .x-nav-link__primary ):not( .x-nav-link__logo ) {
 		display: flex;
 		align-items: center;
@@ -1179,15 +1127,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		transform: scaleY( -1 ) rotate( 45deg );
 	}
 
-	// Non-dropdown items (Support, Pricing, Log in, Get started — no chevron) dim to
-	// 0.8 on hover instead of changing colour.
+	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing colour.
 	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ) {
 		opacity: 0.8;
 	}
 }
 
-// Active content block fades in; `position: relative` puts it back in flow so the fixed
-// wrapper auto-sizes to its height (what the wrapper height transition / FLIP eases between).
+// Active content block fades in; `position: relative` restores flow so the fixed wrapper auto-sizes to its height (what the FLIP eases between).
 .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] {
 	position: relative;
 	opacity: 1;
@@ -1217,8 +1163,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-// First open: items wait for the panel to grow before staggering in (so they don't appear
-// in empty space mid-unroll).
+// First open: items wait for the panel to grow before staggering in, so they don't appear in empty space mid-unroll.
 .x-dropdown.x-dropdown--2026.is-dropdown-first-open .x-dropdown-content[aria-hidden='false'] {
 	.x-dropdown-subcategory-title,
 	.x-dropdown-link.x-dropdown-link {
@@ -1229,8 +1174,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-// Per-section nav-text contrast (white over the dark patterns hero, dark on the white bar)
-// lives in each section's stylesheet, keyed off the same open/scrolled selectors.
+// Per-section nav-text contrast lives in each section's stylesheet, keyed off the same open/scrolled selectors.
 
 // Flip desktop bar ↔ hamburger at 1025px (the base rule shows wide items from 864px).
 @media ( max-width: 1024px ) {
@@ -1245,8 +1189,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-// Blur behind the open dropdown. A sibling of the nav, just below it (z < 801) so the
-// nav's white background never sits over the blur. Starts below the admin bar.
+// Blur behind the open dropdown — nav sibling just below it (z < 801) so the nav's white never covers the blur; starts below the admin bar.
 .x-nav-backdrop {
 	position: fixed;
 	inset-inline: 0;
@@ -1266,14 +1209,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	opacity: 1;
 }
 
-// Desktop dropdown — one persistent panel that stays open while moving between triggers,
-// easing its height from one menu's content to the next. The active content block
-// (aria-hidden="false") sits in normal flow so the wrapper auto-sizes to it. `position:
-// fixed` + high z escapes section stacking contexts (e.g. `.themes .main`); hidden at rest
-// so the full-width element neither intercepts clicks nor paints a band until JS opens it.
+// Desktop dropdown — one persistent panel easing its height between menus; active block (aria-hidden="false") sits in flow so the wrapper auto-sizes. `position: fixed` + high z escapes section stacking contexts; hidden at rest so it neither intercepts clicks nor paints until JS opens it.
 .x-dropdown.x-dropdown--2026 {
-	// Timing for the height morph + per-item slide-in. Exposed as custom props so a host
-	// can tune them and `calc()` can consume them (mirrors the mobile `--x-menu-2026-*`).
+	// Height-morph + slide-in timing, exposed as custom props for host tuning + `calc()` (mirrors mobile `--x-menu-2026-*`).
 	--x-dropdown-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
 	--x-dropdown-2026-panel-duration: 0.28s; // wrapper height morph between menus
 	--x-dropdown-2026-link-offset: 16px; // how far each item slides in from the left
@@ -1282,16 +1220,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-dropdown-2026-items-slide-overlap: 0.12s; // first-open: items start before unroll ends
 
 	position: fixed;
-	// Prefer the host-provided `--nav-2026-height` (Calypso's layout defines it as the
-	// single source of truth); fall back to the package's own constant when used standalone.
+	// Prefer host-provided `--nav-2026-height` (Calypso's single source of truth); fall back to the package constant standalone.
 	top: calc(
 		var( --nav-2026-admin-offset, var( --masterbar-height, 0px ) ) +
 			var( --nav-2026-height, #{$x-nav-2026-height} )
 	);
 	inset-inline: 0;
-	// The legacy `.x-dropdown` base sets `bottom: 0`, which would stretch this fixed
-	// wrapper to fill the whole viewport (painting a full-height white panel). Force
-	// `bottom: auto` so it sizes to its content — the active block's height — instead.
+	// Override the legacy `.x-dropdown` base's `bottom: 0` (which would stretch this fixed wrapper full-viewport) so it sizes to the active block's height.
 	bottom: auto;
 	width: auto;
 	height: auto; // at rest; the JS FLIP pins an explicit px height during a switch
@@ -1317,11 +1252,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 .x-dropdown--2026.x-dropdown-content {
-	// Hidden blocks are out of flow (pinned at the panel top, intrinsic height); the active
-	// one flips to `position: relative` (above) to restore flow and drive the wrapper's auto
-	// height. Only top + inline edges are set (NO `bottom`) so a hidden block sizes to its own
-	// content and never stretches to the container — matching the reference. This is what makes
-	// the panel auto-size to ONLY the active menu's content rather than the tallest/sum.
+	// Hidden blocks pinned out of flow at the panel top; active one flips to `position: relative` (above) to drive auto height. NO `bottom` so each sizes to its own content — panel tracks ONLY the active menu, not the tallest/sum.
 	position: absolute;
 	top: 0;
 	inset-inline: 0;
@@ -1376,9 +1307,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	// Base (hidden) slide-in state for titles + links: offset to the left + faded out.
-	// The transform reset is deferred (`0s … <duration>` delay) so on close the items
-	// snap back to the offset instead of sliding rightward out of view.
+	// Hidden slide-in base for titles + links: offset left + faded; transform reset is deferred so on close items snap back to the offset rather than sliding rightward out of view.
 	.x-dropdown-subcategory-title,
 	.x-dropdown-link.x-dropdown-link {
 		opacity: 0;
@@ -1407,8 +1336,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-weight: 400;
 		line-height: $x-dropdown-2026-link-line-height;
 		color: $studio-gray-100;
-		// Some sections (e.g. themes) underline links by default; the dropdown links
-		// should never be underlined.
+		// Never underline, even in sections (e.g. themes) that underline links by default.
 		text-decoration: none;
 		transition:
 			color $x-nav-2026-transition,
@@ -1424,15 +1352,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 }
 
-/*
- * Mobile menu — full-screen white panel with a header (logo ⇄ back + close),
- * a drill-down category list, and a footer (logged-out CTAs vs logged-in user).
- */
+/* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
 .x-menu--2026 {
-	/* Drill / reveal timing tokens (copied from the Landpack reference). The easing is
-	   the same curve used by the item-stagger entrance; the drill-fade drives the
-	   logo⇄back and nav-list⇄dropdown crossfades; the reveal-delay gates the first-open
-	   header/footer reveal. */
+	/* Drill / reveal timing tokens (from the Landpack reference). drill-fade drives the logo⇄back and nav-list⇄dropdown crossfades; reveal-delay gates the first-open header/footer reveal. */
 	--x-menu-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
 	--x-menu-2026-panel-duration: 0.34s; // panel slide in/out
 	--x-menu-2026-reveal-delay: 0.43s; // gap before header/footer/items fade in on open
@@ -1443,9 +1365,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-menu-2026-drill-fade: opacity 0.27s var( --x-menu-2026-easing ),
 		visibility 0.27s var( --x-menu-2026-easing );
 
-	/* Shared header geometry. The drilled-in title and the fading-out nav list both derive
-	   their vertical position from these, so they can't drift apart (the title must land
-	   exactly where the tapped nav word was for the recolour-in-place effect). */
+	/* Shared header geometry — title and fading-out nav list both derive their vertical position from these so they can't drift apart (recolour-in-place needs the title to land on the tapped word). */
 	--x-menu-2026-header-pad-block: 12px; // header's vertical padding
 	--x-menu-2026-header-top-height: 36px; // the logo / back / X row
 	--x-menu-2026-title-pad-top: 16px; // drilled-in title's top padding
@@ -1455,8 +1375,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-menu-overlay {
 		position: fixed;
 		inset: 0;
-		// Sit below the admin bar (real height logged-in, 0 logged-out), matching the
-		// Landpack reference. Overridden for `body.admin-bar` consumers further down.
+		// Sit below the admin bar (real height logged-in, 0 logged-out); `body.admin-bar` consumers overridden further down.
 		top: var( --nav-2026-admin-offset, 0 );
 		background: rgba( $studio-gray-100, 0.2 );
 		backdrop-filter: blur( 8px );
@@ -1472,16 +1391,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		visibility: visible;
 	}
 
-	/*
-	 * The pane slides in first (blank), then its content fades in. The content
-	 * wrapper starts hidden and fades once the menu is open (reference uses a
-	 * 0.27s content fade after the panel transform).
-	 */
+	/* Pane slides in first (blank), then content fades in (reference: 0.27s fade after the panel transform). */
 	.x-menu-content {
 		position: fixed;
 		inset: 0;
-		// Sit below the admin bar (real height logged-in, 0 logged-out), matching the
-		// Landpack reference. Overridden for `body.admin-bar` consumers further down.
+		// Sit below the admin bar (real height logged-in, 0 logged-out); `body.admin-bar` consumers overridden further down.
 		top: var( --nav-2026-admin-offset, 0 );
 		display: flex;
 		flex-direction: column;
@@ -1491,16 +1405,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		background: $studio-white;
 		transform: translateX( 100% );
 		transition: transform var( --x-menu-2026-panel-duration ) var( --x-menu-2026-easing );
-		// The content itself doesn't scroll — `.x-menu-mobile-main` is the scroller, so the
-		// sticky header and the overlaid (absolute) footer stay pinned while the list moves.
+		// Content doesn't scroll — `.x-menu-mobile-main` is the scroller, so the sticky header + overlaid footer stay pinned while the list moves.
 		overflow: hidden;
-		// Block interaction while slid off-screen (closed); the transform keeps it out of
-		// view, so no visibility transition is needed (which was leaving content stuck hidden).
+		// Block interaction while slid off-screen (closed); the transform keeps it hidden, so no visibility transition (which left content stuck hidden).
 		pointer-events: none;
 
-		// Tablet (480–1024px): the menu is a right-pinned 414px panel, not full-screen —
-		// matching the reference (which caps it at 414px in this range). Below 480 it stays
-		// full-screen; at >=1025 the desktop nav takes over and the menu isn't shown.
+		// Tablet (480–1024px): right-pinned 414px panel, not full-screen (below 480 stays full-screen; >=1025 the desktop nav takes over).
 		@media ( min-width: 480px ) and ( max-width: 1024px ) {
 			width: 414px;
 			max-width: 414px;
@@ -1513,10 +1423,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		pointer-events: auto;
 	}
 
-	/* On open, the top-level items slide in from the left and fade, staggered: a reveal-delay
-	   lead-in that waits for the panel, then each item stepped by its --stagger-index. Only
-	   the top-level items slide; drill-down items fade only (reference: "swap is fade only,
-	   no slide"). */
+	/* On open: top-level items slide in from the left + fade, after a reveal-delay lead-in, stepped by --stagger-index (drill-down items fade only, no slide). */
 	&.x-menu__open .x-menu-mobile-nav-item {
 		opacity: 1;
 		transform: translateX( 0 );
@@ -1533,33 +1440,26 @@ $x-menu-2026-admin-bar-mobile: 46px;
 				);
 	}
 
-	/* Scroller. The header stickies at its top and the footer overlays its bottom, so the
-	   nav list scrolls beneath both. Bottom padding clears the overlaid footer (its real
-	   height is published as --x-menu-2026-footer-height; the fallback covers the
-	   logged-out banner + CTAs before the observer fires). */
+	/* Scroller — sticky header + overlaid footer, nav list scrolls beneath both. Bottom padding clears the footer (real height in --x-menu-2026-footer-height; fallback covers the logged-out banner + CTAs before the observer fires). */
 	.x-menu-mobile-main {
 		position: relative;
 		flex: 1;
 		padding-bottom: var( --x-menu-2026-footer-height, 96px );
-		overflow-x: hidden; // setting only overflow-y would compute overflow-x to `auto`
-		overflow-y: auto; // (CSS rule), producing a spurious horizontal scrollbar.
+		// Set both: overflow-y alone computes overflow-x to `auto`, producing a spurious horizontal scrollbar.
+		overflow-x: hidden;
+		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 		// Don't chain scroll to the page behind when the panel hits its edges.
 		overscroll-behavior: contain;
 	}
 
-	/* Sticky, translucent header (logo ⇄ back + close, plus the drilled-in category title).
-	   18px inline padding aligns the header content (logo / Back / title) with the nav
-	   items, whose links carry the same 18px gutter. The scroller has no horizontal
-	   padding, so the blurred band already spans the full panel width. */
+	/* Sticky translucent header (logo ⇄ back + close + drilled-in title); 18px inline padding aligns its content with the nav items' 18px gutter. */
 	.x-menu-mobile-header {
 		position: sticky;
 		top: 0;
 		z-index: 10;
 		padding-block: var( --x-menu-2026-header-pad-block );
-		// 18px start aligns the logo / title with the nav items; the end is 9px because the
-		// close (X) button carries its own inner padding, so 9px lands the X on the same
-		// right edge as the item chevrons.
+		// 18px start aligns logo / title with the nav items; 9px end lands the X (which has its own inner padding) on the same right edge as the item chevrons.
 		padding-inline-start: 18px;
 		padding-inline-end: 9px;
 		background: rgba( $studio-white, 0.7 );
@@ -1579,9 +1479,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: inline-flex;
 		align-items: center;
 		color: $studio-gray-100;
-		// Hidden until the open-reveal rule fades it in. Base = snap-out with the panel (0s
-		// duration, panel-slide delay) so on close it rides out with the panel rather than
-		// fading. The BACK swap (.is-hidden) overrides this with the quick drill-fade.
+		// Hidden until the open-reveal fades it in. Base = snap-out with the panel (0s, panel-slide delay); the BACK swap (.is-hidden) overrides with the quick drill-fade.
 		opacity: 0;
 		transition:
 			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
@@ -1591,8 +1489,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			fill: currentcolor;
 		}
 
-		/* Drilled in: hide the logo (the back button takes its place). Pinned absolute so it
-		   crossfades with the back button via the quick drill-fade instead of reflowing. */
+		/* Drilled in: hide the logo (back button takes its place), pinned absolute so it crossfades with back via the drill-fade instead of reflowing. */
 		&.is-hidden {
 			position: absolute;
 			opacity: 0;
@@ -1613,8 +1510,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		margin-inline-start: -6px;
 		color: $studio-gray-100;
 		cursor: pointer;
-		// Match the reference: 14px uppercase label, line-height matched to the 36px logo
-		// height so swapping logo ⇄ BACK doesn't change the header row height.
+		// 14px uppercase label; line-height matches the 36px logo height so the logo ⇄ BACK swap doesn't resize the header row.
 		font-size: 14px;
 		font-weight: $lp-font-weight-medium;
 		line-height: 36px;
@@ -1631,8 +1527,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	/* Drawn left-chevron (matching the reference) — an 8px box of 2px borders rotated 45°,
-	   centred in a 24px square so it aligns with the text rather than riding a font baseline. */
+	/* Drawn left-chevron — an 8px box of 2px borders rotated 45°, centred in a 24px square so it aligns with the text, not a font baseline. */
 	.x-menu-mobile-back-chevron {
 		display: flex;
 		align-items: center;
@@ -1653,9 +1548,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	/* Drilled-in category name (e.g. "Hosting"). Hidden at top level (collapsed to 0
-	   height so it takes no space); on drill-in it fades in quickly so the blue reads as
-	   the word appearing in place, matching the reference. */
+	/* Drilled-in category name. Collapsed to 0 height at top level; on drill-in it fades in fast so the blue reads as the word appearing in place. */
 	.x-menu-mobile-category-title {
 		margin: 0;
 		overflow: hidden;
@@ -1670,17 +1563,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 		&.is-visible {
 			height: auto;
-			// Lands the title's text glyph exactly where the tapped nav item's text sat (the
-			// nav link adds its own block padding, so the title carries a matching offset for
-			// the word to read as recolouring to blue in place). Shared token — see the
-			// `.is-hidden` nav-list pin, which derives from the same values.
+			// Offset to land the title glyph where the tapped nav word sat (nav link's own block padding), so it recolours in place. Shared token with the `.is-hidden` nav-list pin.
 			padding-top: var( --x-menu-2026-title-pad-top );
 			opacity: 1;
 			visibility: visible;
-			// Sit ABOVE the black nav-list word fading out beneath (z 11), and reveal fast
-			// (0.12s) so the blue is fully opaque before the black is gone — the swap reads
-			// as the word recolouring to blue in place, not two words cross-fading (which
-			// flashes a muddy black+blue overlap).
+			// Sit ABOVE the fading black nav word (z 11) and reveal fast (0.12s) so the blue is opaque before the black is gone — reads as a recolour-in-place, not a muddy cross-fade.
 			position: relative;
 			z-index: 12;
 			transition:
@@ -1696,8 +1583,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		height: 36px;
 		padding: 0;
 		color: $studio-gray-100;
-		// Hidden until the open-reveal fades it in; base snaps out with the panel on close
-		// (0s duration, panel-slide delay) so it rides out rather than fading.
+		// Hidden until the open-reveal fades it in; base snaps out with the panel (0s, panel-slide delay).
 		opacity: 0;
 		visibility: hidden;
 		transition:
@@ -1713,21 +1599,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		list-style: none;
 	}
 
-	/* The nav list and the drill-down panels occupy the same spot. On drill-IN the nav list
-	   fades OUT pinned where it sat (its `.is-hidden` rule carries the fade), so its word
-	   recolours under the incoming blue title. On drill-OUT (BACK) the base has NO transition,
-	   so the nav list snaps back instantly ON TOP (z-index 11) of the dropdown still fading
-	   out beneath it — covering it cleanly instead of the two cross-fading through a muddy
-	   ~50/50 overlap (the BACK flash). */
+	/* Nav list and drill-down panels share one spot. Drill-IN: nav list fades out pinned in place (`.is-hidden`), word recolouring under the blue title. BACK: nav list has no base transition, so it snaps back instantly on top (z 11) of the still-fading dropdown — no muddy cross-fade (the BACK flash). */
 	.x-menu-mobile-nav-list {
 		&.is-hidden {
 			position: absolute;
 			transition: var( --x-menu-2026-drill-fade );
-			// Pin the fading nav list so its first word stays exactly under the incoming blue
-			// title, which sits below the header-top row. Derived from the SAME shared tokens
-			// the title uses (header block-padding + header-top row + title pad-top, minus the
-			// nav link's own block padding), so the two "Websites" glyphs always coincide and
-			// the swap reads as a recolour-in-place, never a vertical jump — no magic number.
+			// Pin the fading nav list so its first word stays under the blue title. Derived from the SAME shared tokens the title uses (no magic number), so the two glyphs always coincide and the swap never jumps vertically.
 			top: calc(
 				var( --x-menu-2026-header-pad-block ) + var( --x-menu-2026-header-top-height ) +
 					var( --x-menu-2026-title-pad-top ) - var( --x-menu-2026-navlink-pad-block )
@@ -1739,9 +1616,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			visibility: hidden;
 			pointer-events: none;
 
-			// Snap the items to their resting x (not the -32px slide-in start, and with no
-			// delayed transition) so the fading word sits exactly under the title — otherwise
-			// the leftover slide offset shifts the word 32px left of the blue title.
+			// Snap items to their resting x (not the -32px slide-in start) so the fading word sits under the title, not 32px to its left.
 			.x-menu-mobile-nav-item {
 				transform: translateX( 0 );
 				transition: none;
@@ -1749,20 +1624,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	/* Drill-down lists ARE the fading panels (no wrapper — matches the reference's flat
-	   structure). Hidden lists are pinned absolute (out of flow, so no scroll height) and
-	   faded to 0 — but kept *rendered* (no `visibility: hidden` / `height: 0`, which would
-	   suppress the opacity transition and leave it stuck). `.is-visible` drops them back
-	   into flow and fades them in. Drilling is a pure opacity fade — no slide. All lists for
-	   the active category share the same `data-dropdown-name` and toggle together. */
+	/* Drill-down lists ARE the fading panels (no wrapper). Drilling is a pure opacity fade, no slide; all lists for a category share `data-dropdown-name` and toggle together. */
 	.x-menu-mobile-dropdown-list {
 		position: absolute;
 		top: 16px; // aligns with the scroller's content start when absolute
 		inset-inline: 0;
-		// Hidden lists are faded to 0 + out of flow (no scroll height), but kept *rendered*
-		// (no visibility/height collapse, which would suppress the transition). Base has NO
-		// transition, so on BACK the list snaps out instantly (the nav list snaps back over
-		// it) — no slow cross-fade through a muddy overlap. The fade-IN lives on `.is-visible`.
+		// Hidden lists faded to 0 + out of flow, but kept *rendered* (no visibility/height collapse, which would suppress the transition). No base transition so BACK snaps out instantly under the returning nav list; fade-IN lives on `.is-visible`.
 		opacity: 0;
 		pointer-events: none;
 
@@ -1772,24 +1639,16 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			inset-inline: auto;
 			opacity: 1;
 			pointer-events: auto;
-			// Drill-in: fade the items in (matching the reference's --drill-fade) so they
-			// don't pop in over the fading-out nav list.
+			// Drill-in: fade the items in so they don't pop in over the fading-out nav list.
 			transition: opacity 0.27s var( --x-menu-2026-easing );
 		}
 	}
 
-	/*
-	 * Top-level nav items slide in from the left and fade in sequentially on open.
-	 * `--stagger-index` is set inline per item; the delay increments 18ms per item after a
-	 * 0.43s lead-in that waits for the panel slide. (Drill-down items don't slide — they
-	 * fade only, via the panel's drill-fade; see the reference.)
-	 */
+	/* Top-level nav items slide in from the left + fade sequentially on open: inline `--stagger-index` adds 18ms/item after a 0.43s panel-slide lead-in (drill-down items fade only). */
 	.x-menu-mobile-nav-item {
 		opacity: 0;
 		transform: translateX( calc( -1 * var( --x-menu-2026-stagger-offset ) ) );
-		// Base = "snap out with the panel": 0-duration with the panel-slide delay, so on
-		// close the items hold their position until the panel has slid away, then snap (no
-		// fade-out mid-slide). The open-state rule below replaces this with the real slide-in.
+		// Base = snap out with the panel: 0-duration + panel-slide delay, so on close items hold then snap (no fade-out mid-slide). The open-state rule below replaces this with the real slide-in.
 		transition:
 			opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration ),
 			transform 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
@@ -1800,9 +1659,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		// `<a>` items default to content-box, so `width: 100%` + 18px inline padding
-		// overflowed the panel by 36px (horizontal scroll); border-box folds the
-		// padding into the 100% so links fit.
+		// border-box folds the 18px inline padding into `width: 100%`; content-box would overflow the panel by 36px.
 		box-sizing: border-box;
 		width: 100%;
 		padding-block: var( --x-menu-2026-navlink-pad-block );
@@ -1824,8 +1681,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		color: currentcolor;
 	}
 
-	/* Drill-down group: gray uppercase subtitle (12px) + secondary 18px links — matching
-	   the reference, where drilled-in links are smaller than the 26px top-level categories. */
+	/* Drill-down group: gray uppercase subtitle (12px) + secondary 18px links, smaller than the 26px top-level categories. */
 	.x-menu-mobile-dropdown-subtitle {
 		padding-top: 22px;
 		padding-inline: 18px;
@@ -1852,9 +1708,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		text-decoration: none;
 	}
 
-	/* Footer overlays the bottom of the scroller (translucent + blurred, matching the
-	   header) so the nav list scrolls beneath it. The scroller pads its bottom by the
-	   footer's measured height so the last item still clears it. */
+	/* Footer overlays the scroller's bottom (translucent + blurred, like the header) so the nav list scrolls beneath; the scroller pads its bottom by the footer's measured height. */
 	.x-menu-mobile-footer {
 		position: absolute;
 		bottom: 0;
@@ -1868,27 +1722,21 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		background: rgba( $studio-white, 0.7 );
 		backdrop-filter: blur( 8px );
 
-		// When the "Get Jetpack app" banner is present (iOS / Android) it stacks
-		// full-width above the user row / CTAs instead of sitting beside them.
+		// "Get Jetpack app" banner (iOS / Android) stacks full-width above the user row / CTAs instead of beside them.
 		&:has( .x-menu-mobile-app-banner ) {
 			flex-direction: column;
 			align-items: stretch;
 			gap: 16px;
 		}
 
-		// Only the footer's CONTENTS fade in on open; the blurred bar itself stays put so the
-		// nav items slide in behind it. Base snaps out with the panel (0s / panel-delay).
+		// Only the footer's CONTENTS fade in on open; the blurred bar stays put so nav items slide behind it. Base snaps out with the panel (0s / panel-delay).
 		> * {
 			opacity: 0;
 			transition: opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
 		}
 	}
 
-	// "Get Jetpack app" banner (2026 mobile menu). The whole banner is the link; the
-	// Download chip is decorative. Ported from the wpcom Landpack reference. Device
-	// targeting is driven by the `--ios` / `--android` modifier set in the component
-	// (the reference keys off `is-ios-platform` / `is-android-platform` body classes,
-	// which Calypso doesn't have).
+	// "Get Jetpack app" banner — whole banner is the link (Download chip decorative). Device targeting via the `--ios` / `--android` modifier (Calypso lacks the reference's platform body classes).
 	.x-menu-mobile-app-banner {
 		display: flex;
 		align-items: center;
@@ -1919,8 +1767,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		width: 32px;
 		height: 32px;
 
-		// Jetpack badge overlaps the WordPress badge, on a white fill so the WP badge
-		// doesn't show through behind it.
+		// Jetpack badge overlaps the WordPress badge on a white fill so the WP badge doesn't show through.
 		&--jetpack {
 			margin-inline-start: -10px;
 			border-radius: 50%;
@@ -1956,8 +1803,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		text-overflow: ellipsis;
 	}
 
-	// Download chip - decorative (the whole banner is the link). Compact so the
-	// subtitle fits beside it. Reacts to the banner's hover/focus state.
+	// Download chip — decorative (whole banner is the link), compact so the subtitle fits beside it.
 	.x-menu-mobile-app-banner-download {
 		display: flex;
 		align-items: center;
@@ -1981,8 +1827,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		background: $studio-gray-0;
 	}
 
-	// Store glyphs. The component renders only the glyph matching the device, but keep
-	// the size rules so each is correctly dimensioned when present.
+	// Store glyphs — only the device's glyph renders; size rules dimension each when present.
 	.x-menu-mobile-app-banner-store-icon {
 		flex-shrink: 0;
 	}
@@ -2007,9 +1852,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		list-style: none;
 	}
 
-	// Each CTA's `<li>` wrapper takes an equal half of the row, so the two buttons split
-	// the full width evenly (ClickableItem renders `<li><a>`, so the flex sizing must live
-	// on the `<li>`, not just the inner link).
+	// Each CTA's `<li>` takes an equal half so the two buttons split the width evenly (ClickableItem renders `<li><a>`, so flex must live on the `<li>`).
 	.x-menu-mobile-footer-actions > li {
 		display: flex;
 		flex: 1;
@@ -2018,9 +1861,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding: 0;
 	}
 
-	// Logged-out footer CTAs (Log in / Get started) — full-width pills, ported from the
-	// reference: each fills its half of the row, 48px tall, rounded; Log in is outlined,
-	// Get started is the filled blue primary.
+	// Logged-out footer CTAs (Log in / Get started) — 48px rounded pills, each filling its half (Log in outlined, Get started filled blue).
 	.x-menu-mobile-footer-actions .x-menu-link.x-menu-link {
 		display: flex;
 		flex: 1;
@@ -2092,10 +1933,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-size: $x-menu-item-font-size-narrow;
 	}
 
-	/* When open, the logo / close / footer-contents are visible. By DEFAULT they use the
-	   quick drill-fade, so a BACK tap re-shows the logo promptly. The slow panel-synced
-	   reveal (below) applies ONLY during the initial open (`.is-opening`, set by the
-	   component for ~1.1s), so they fade in after the panel settles instead of mid-slide. */
+	/* Open: logo / close / footer-contents visible via the quick drill-fade by default (so BACK re-shows the logo promptly); the slow panel-synced reveal below applies ONLY during initial open (`.is-opening`). */
 	&.x-menu__open {
 		.x-menu-mobile-logo:not( .is-hidden ),
 		.x-menu-button.x-menu-mobile-close,
@@ -2120,8 +1958,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-/* Reduced motion: collapse the mobile menu's panel slide, item stagger and drill
-   crossfades so state still toggles but completes near-instantly. */
+/* Reduced motion: collapse the mobile menu's panel slide, item stagger and drill crossfades to near-instant. */
 @media ( prefers-reduced-motion: reduce ) {
 	.x-menu--2026 {
 		.x-menu-content,
@@ -2157,10 +1994,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
-/* Keep the full-screen menu and overlay below the admin bar when logged in, for
-   non-Calypso consumers that signal the bar via WP's `body.admin-bar` (Calypso uses
-   `--nav-2026-admin-offset` instead — see the `.x-menu-content`/`.x-menu-overlay`
-   `top` rules above). */
+/* Keep the menu + overlay below the admin bar for non-Calypso consumers that signal it via WP's `body.admin-bar` (Calypso uses `--nav-2026-admin-offset`, above). */
 body.admin-bar .x-menu--2026 {
 	.x-menu-content,
 	.x-menu-overlay {

@@ -5,7 +5,7 @@ import { ClickableItem } from '../menu-items';
 import { Nav2026AppBanner } from './app-banner';
 import type { Nav2026Menu } from './types';
 
-// Mystery-person Gravatar, used as the 2026 mobile footer avatar fallback.
+// Mystery-person Gravatar fallback for the mobile footer avatar.
 const DEFAULT_AVATAR_URL = 'https://www.gravatar.com/avatar/?d=mp&s=96';
 
 type LocalizeUrl = (
@@ -78,8 +78,7 @@ export function Nav2026MobileMenu( {
 			<div className="x-menu-overlay" onKeyDown={ closeMobileMenu } onClick={ closeMobileMenu } />
 			<div className="x-menu-content">
 				<div className="x-menu-mobile-main">
-					{ /* Sticky, translucent header (logo ⇄ back + close + category title).
-					   Lives inside the scroller so it stickies as the list scrolls beneath. */ }
+					{ /* Sticky header; inside the scroller so it stickies as the list scrolls. */ }
 					<div className="x-menu-mobile-header">
 						<div className="x-menu-mobile-header-top">
 							<a
@@ -169,8 +168,7 @@ export function Nav2026MobileMenu( {
 								.filter( ( menu ) => menu.groups )
 								.flatMap( ( menu ) => {
 									const isActive = activeCategory?.name === menu.name;
-									// One flat `.x-menu-mobile-dropdown-list` per group (no wrapper); all
-									// lists for the active category toggle `.is-visible` together.
+									// One flat list per group; the active category's lists toggle `.is-visible` together.
 									return ( menu.groups ?? [] ).map( ( group, groupIndex ) => (
 										<ul
 											className={ clsx( 'x-menu-mobile-dropdown-list', {

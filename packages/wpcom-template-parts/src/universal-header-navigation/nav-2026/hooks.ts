@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useIsomorphicLayoutEffect } from './use-isomorphic-layout-effect';
 
-// Detect the platform for the app banner's store glyph (iOS takes precedence over Android).
+// Platform for the app banner's store glyph (iOS wins over Android).
 export function useMobilePlatform( nav2026: boolean ): 'ios' | 'android' | null {
 	const [ mobilePlatform, setMobilePlatform ] = useState< 'ios' | 'android' | null >( null );
 
@@ -20,7 +20,7 @@ export function useMobilePlatform( nav2026: boolean ): 'ios' | 'android' | null 
 	return mobilePlatform;
 }
 
-// Toggle `is-scrolled` once the page leaves the top (transparent nav → white).
+// True once the page leaves the top (drives the transparent → white nav).
 export function useScrollState( nav2026: boolean ): boolean {
 	const [ isScrolled, setIsScrolled ] = useState( false );
 
@@ -54,7 +54,7 @@ export function useScrollState( nav2026: boolean ): boolean {
 	return isScrolled;
 }
 
-// Publish the first nav item's inline-start offset so the dropdown's first column aligns under it.
+// Align the dropdown's first column under the first nav item.
 export function useDropdownOffset( nav2026: boolean, nav2026Variant: 1 | 2 ): void {
 	useEffect( () => {
 		if ( ! nav2026 ) {
@@ -64,8 +64,7 @@ export function useDropdownOffset( nav2026: boolean, nav2026Variant: 1 | 2 ): vo
 		const updateOffset = () => {
 			const nav = document.querySelector< HTMLElement >( '.x-nav--2026-redesign' );
 			const firstItem = nav?.querySelector< HTMLElement >( '.x-nav-item__wide .x-nav-link' );
-			// The dropdown panel is a SIBLING of the nav, so the var must live on a common
-			// ancestor (`.lpc-header-nav-container`) to reach it.
+			// Var lives on the shared ancestor — the panel is a sibling of the nav.
 			const host = nav?.closest< HTMLElement >( '.lpc-header-nav-container' );
 			if ( ! nav || ! firstItem || ! host ) {
 				return;
@@ -108,7 +107,7 @@ interface UseFooterHeightArgs {
 	footerRef: React.RefObject< HTMLDivElement >;
 }
 
-// Publish the overlaid footer's height as a CSS var so the scroller clears it.
+// Publish the overlaid footer's height so the scroller can clear it.
 export function useFooterHeight( {
 	nav2026,
 	isMobileMenuOpen,
@@ -117,7 +116,7 @@ export function useFooterHeight( {
 	footerRef,
 }: UseFooterHeightArgs ): void {
 	useEffect( () => {
-		// Only while the menu is open — no point measuring the off-screen footer otherwise.
+		// Only while the menu is open — the footer is off-screen otherwise.
 		if ( ! nav2026 || ! isMobileMenuOpen || typeof ResizeObserver === 'undefined' ) {
 			return;
 		}
@@ -125,7 +124,7 @@ export function useFooterHeight( {
 		if ( ! footer ) {
 			return;
 		}
-		// Set it on a common ancestor so the scroller inherits it.
+		// On a shared ancestor so the scroller inherits it.
 		const host = footer.closest< HTMLElement >( '.x-menu-content' ) ?? footer;
 		const sync = () => {
 			if ( footer.offsetHeight ) {
@@ -144,15 +143,13 @@ interface UseDropdownFlipArgs {
 	activeDropdown: string | null;
 }
 
-// Desktop dropdown: the panel stays open between triggers and FLIP-eases its height on a
-// switch. `useLayoutEffect` so the measure/pin happens before paint (no auto-height flash).
-// Owns and returns the panel ref to attach to the dropdown element.
+// FLIP-eases the desktop dropdown's height when switching menus. Owns + returns the panel ref.
 export function useDropdownFlip( {
 	nav2026,
 	activeDropdown,
 }: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
 	const dropdownRef = useRef< HTMLDivElement >( null );
-	// FLIP bookkeeping: `prevDropdown` distinguishes first-open from switch; `prevHeight` is the `from`.
+	// `prevDropdown` tells first-open from switch; `prevHeight` is the FLIP `from`.
 	const prevDropdownRef = useRef< string | null >( null );
 	const prevHeightRef = useRef< number >( 0 );
 
@@ -167,21 +164,19 @@ export function useDropdownFlip( {
 		if ( ! el ) {
 			return;
 		}
-		// The height morph is desktop-only (below 1025 the wide triggers / dropdown are hidden).
+		// Desktop-only; below 1025 the wide triggers / dropdown are hidden.
 		if ( window.matchMedia( '( max-width: 1024px )' ).matches ) {
 			return;
 		}
 
-		// Height-morph duration in ms. Read the panel-duration CSS var directly rather than
-		// `transitionDuration` — that property is a comma list (visibility, height) and
-		// `parseFloat` would pick the first (visibility) value, not the height one.
+		// Read the CSS var, not `transitionDuration` — that's a comma list (visibility, height)
+		// and `parseFloat` would grab visibility, not the height value we want.
 		const morphMs = () => {
 			const raw = getComputedStyle( el ).getPropertyValue( '--x-dropdown-2026-panel-duration' );
 			return parseFloat( raw ) * 1000 || 280;
 		};
 
-		// Closed → open: let the panel grow via CSS; flag the unroll so items wait for it. Drop
-		// the flag after the morph so a later switch uses the short stagger.
+		// Closed → open: let CSS grow the panel; flag the unroll so items wait for it.
 		if ( prev === null && next !== null ) {
 			el.classList.add( 'is-dropdown-first-open' );
 			const timer = setTimeout(
@@ -190,21 +185,20 @@ export function useDropdownFlip( {
 			);
 			return () => {
 				clearTimeout( timer );
-				// Stash the current height so the next switch FLIPs from the right `from`.
 				prevHeightRef.current = el.offsetHeight;
 			};
 		}
 
-		// Open → closed: nothing to morph; clear the first-open marker.
+		// Open → closed: nothing to morph.
 		if ( prev !== null && next === null ) {
 			el.classList.remove( 'is-dropdown-first-open' );
 			return;
 		}
 
-		// Open → open (switch): FLIP the wrapper height between the two menus' content.
+		// Open → open: FLIP the wrapper height between the two menus.
 		if ( prev !== null && next !== null && prev !== next ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			// Honor reduced-motion: snap to the new height instead of animating it.
+			// Reduced motion: snap instead of animate.
 			if ( window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
 				return () => {
 					prevHeightRef.current = el.offsetHeight;
@@ -217,17 +211,16 @@ export function useDropdownFlip( {
 					prevHeightRef.current = el.offsetHeight;
 				};
 			}
-			// Non-null alias so the listener/cleanup closures keep `el`'s narrowing.
+			// Alias keeps `el`'s non-null narrowing inside the closures.
 			const node = el;
 			node.style.overflow = 'hidden';
 			node.style.height = `${ from }px`;
-			void node.offsetHeight; // force reflow so the next height change transitions
+			void node.offsetHeight; // force reflow so the height change transitions
 			node.style.height = `${ to }px`;
-			// `release` snaps back to auto height; idempotent (the `released` guard), so whichever
-			// of the transitionend listener or the fallback timer fires first wins.
+			// `release` snaps back to auto height; idempotent, so listener or fallback can win.
 			let released = false;
-			// AbortController detaches the listener — avoids `{ once: true }`, whose stale handler
-			// could fire on the *next* morph's transitionend and release it prematurely.
+			// AbortController over `{ once: true }` — a stale once-handler could fire on the
+			// next morph's transitionend and release it early.
 			const listenerAbort = new AbortController();
 			const release = () => {
 				if ( released ) {
@@ -249,8 +242,7 @@ export function useDropdownFlip( {
 			);
 			const fallback = window.setTimeout( release, morphMs() + 50 );
 			return () => {
-				// Released early if the dropdown changes mid-morph; `to` is the FLIP target (the
-				// settled height) for the next switch, no extra layout read needed.
+				// `to` is the settled height — the next switch's `from`, no re-measure.
 				clearTimeout( fallback );
 				release();
 				prevHeightRef.current = to;

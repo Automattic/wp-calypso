@@ -1,5 +1,4 @@
-// 2026 nav taxonomy shape. A top-level entry is either a dropdown (has `groups`)
-// or a direct link (has `href`).
+// 2026 nav taxonomy. A top-level entry is a dropdown (`groups`) or a link (`href`).
 export interface Nav2026Item {
 	label: string;
 	url: string;

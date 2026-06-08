@@ -9,10 +9,7 @@ interface Nav2026DesktopDropdownProps {
 	nav2026Menus: Nav2026Menu[];
 }
 
-// 2026 desktop dropdown — ONE persistent panel holding all menus' content
-// stacked; the active one (activeDropdown) cross-fades in while the others fade out,
-// so switching triggers never blanks the panel. Hovering the panel keeps it
-// open; leaving the nav area closes it.
+// One persistent panel; the active menu cross-fades in so switching never blanks it.
 export function Nav2026DesktopDropdown( {
 	dropdownRef,
 	activeDropdown,
@@ -29,7 +26,7 @@ export function Nav2026DesktopDropdown( {
 				if ( ! menu.groups ) {
 					return null;
 				}
-				// Reading-order counter for the slide-in stagger (title, then its links, …).
+				// Reading-order counter for the slide-in stagger.
 				let staggerIndex = 0;
 				return (
 					<div
