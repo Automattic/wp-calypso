@@ -46,57 +46,46 @@ export class PurchasesPage {
 
 	/**
 	 * Clicks a cancellation action for the purchase and advances to its
-	 * cancellation survey.
+	 * cancellation survey via the refund-and-remove path.
 	 *
-	 * The "Cancel plan" entry now lands on a cancellation confirmation screen
-	 * (`intent=cancel`) whose primary "Cancel subscription" action only disables
-	 * auto-renew — it no longer issues a refund. To drive the immediate
-	 * refund-and-remove path (the one the plan-cancellation specs assert), the
-	 * flow instead follows the "Remove plan and claim refund." notice link on that
-	 * screen. The link navigates to the same route with `intent=remove`, where the
-	 * primary confirm button reads "Continue removal". Confirming there begins the
-	 * cancellation survey, which fires the refund on completion.
-	 *
-	 * "Cancel subscription" preserves the legacy single-confirm behavior for the
-	 * callers that still rely on it.
+	 * "Cancel plan" / "Cancel subscription" lands on a cancellation confirmation
+	 * screen (`intent=cancel`) whose primary action only disables auto-renew — it
+	 * no longer issues a refund. To drive the immediate refund-and-remove path
+	 * (the one the cancellation specs assert), this follows the "Remove and claim
+	 * refund." notice link on that screen, which navigates to the same route under
+	 * `intent=remove` where the primary confirm button reads "Continue removal".
+	 * Confirming there begins the cancellation survey, which fires the refund on
+	 * completion.
 	 *
 	 * @param {PurchaseActions} action Action link to click on the purchase detail view.
 	 */
 	async cancelPurchase( action: PurchaseActions ) {
 		await this.page.getByRole( 'link', { name: action } ).click();
 
-		if ( action === 'Cancel plan' ) {
-			// Follow the refund-eligibility notice link to switch from the
-			// auto-renew-only `intent=cancel` screen to the refund-and-remove
-			// `intent=remove` screen.
-			await this.page
-				.getByRole( 'button', { name: 'Remove plan and claim refund.', exact: true } )
-				.click();
+		// Follow the refund-eligibility notice link to switch from the
+		// auto-renew-only `intent=cancel` screen to the refund-and-remove
+		// `intent=remove` screen. Matched by a copy-resilient pattern so wording
+		// tweaks to the notice don't break the flow.
+		await this.page.getByRole( 'button', { name: /claim refund/i } ).click();
 
-			// The screen remounts under `intent=remove`. Wait for its primary
-			// "Continue removal" button before interacting.
-			const continueRemovalButton = this.page.getByRole( 'button', {
-				name: 'Continue removal',
-				exact: true,
-			} );
-			await continueRemovalButton.waitFor( { state: 'visible' } );
+		// The screen remounts under `intent=remove`. Wait for its primary
+		// "Continue removal" button before interacting.
+		const continueRemovalButton = this.page.getByRole( 'button', {
+			name: 'Continue removal',
+			exact: true,
+		} );
+		await continueRemovalButton.waitFor( { state: 'visible' } );
 
-			// Under the split-cancel-remove flag the confirm button is gated behind
-			// an "I've reviewed what I'll lose…" checkbox; without the flag there is
-			// no checkbox and the button is enabled immediately. Tick it only when
-			// present so the flow works regardless of the served variant.
-			const confirmCheckbox = this.page.locator( 'label.cancel-purchase__confirm-checkbox input' );
-			if ( ( await confirmCheckbox.count() ) > 0 ) {
-				await confirmCheckbox.check();
-			}
-
-			// Confirm. Clicking "Continue removal" begins the cancellation survey.
-			await continueRemovalButton.click();
-			return;
+		// Under the split-cancel-remove flag the confirm button is gated behind an
+		// "I've reviewed what I'll lose…" checkbox; without the flag there is no
+		// checkbox and the button is enabled immediately. Tick it only when present
+		// so the flow works regardless of the served variant.
+		const confirmCheckbox = this.page.locator( 'label.cancel-purchase__confirm-checkbox input' );
+		if ( ( await confirmCheckbox.count() ) > 0 ) {
+			await confirmCheckbox.check();
 		}
 
-		if ( action === 'Cancel subscription' ) {
-			await this.page.getByRole( 'button', { name: 'Cancel subscription' } ).click();
-		}
+		// Confirm. Clicking "Continue removal" begins the cancellation survey.
+		await continueRemovalButton.click();
 	}
 }
