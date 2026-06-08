@@ -626,7 +626,7 @@ function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }
 				>
-					{ __( 'See plans' ) }
+					{ __( 'View plans' ) }
 				</Button>
 			}
 		/>
