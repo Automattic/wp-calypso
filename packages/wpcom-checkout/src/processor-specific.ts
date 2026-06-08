@@ -80,25 +80,6 @@ export function countrySpecificFieldRules( country: string ): FieldRuleCollectio
 				description: i18n.translate( 'Your Name', { textOnly: true } ),
 				rules: [ 'required' ],
 			},
-			nik: {
-				description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
-					comment: 'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
-					textOnly: true,
-				} ),
-				rules: [ 'validIndonesiaNik' ],
-			},
-
-			pan: {
-				description: i18n.translate( 'PAN - Permanent account number', { textOnly: true } ),
-				rules: [ 'validIndiaPan' ],
-			},
-			gstin: {
-				description: i18n.translate( 'GSTIN - GST identification number', {
-					comment: 'GSTIN: India specific tax id number',
-					textOnly: true,
-				} ),
-				rules: [ 'validIndiaGstin' ],
-			},
 			'postal-code': {
 				description: i18n.translate( 'Postal Code', { textOnly: true } ),
 				rules: [ 'required' ],
