@@ -47,7 +47,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 		<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
 			<p className="cancel-purchase__refund-eligibility-text">
 				{ translate(
-					"You're eligible for a %(refundText)s refund if you remove your plan now. Your features will be unavailable right away.",
+					"You're eligible for a %(refundText)s refund if you remove it now. Your access will end right away.",
 					{
 						args: { refundText: props.refundAmount },
 						context: 'refundText is a monetary amount in the form "[currency-symbol][amount]"',
@@ -58,7 +58,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 					className="cancel-purchase__refund-eligibility-link"
 					onClick={ onRemoveClick }
 				>
-					{ translate( 'Remove plan and claim refund.' ) }
+					{ translate( 'Remove and claim refund.' ) }
 				</Button>
 			</p>
 		</Notice>

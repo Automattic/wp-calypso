@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	type PlanSlug,
 	isFreePlan,
@@ -444,7 +443,8 @@ function getLoggedInPlansAction( {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
 	const isUpgradeFlow =
-		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
+		plansIntent &&
+		[ 'plans-upgrade', 'plans-upgrade-or-downgrade', 'plans-woo-hosted' ].includes( plansIntent );
 	const current =
 		isUpgradeFlow && sitePlanSlug
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
@@ -518,15 +518,6 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase
 	if ( ! availableForPurchase ) {
-		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
-			return {
-				primary: {
-					callback: () => {},
-					text: translate( 'Requires downgrade' ),
-					status: 'disabled',
-				},
-			};
-		}
 		return createLoggedInPlansAction(
 			translate( 'Downgrade', { context: 'verb' } ),
 			'secondary',

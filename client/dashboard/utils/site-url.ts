@@ -101,6 +101,17 @@ export function getUpgradedPurchaseRedirectUrl(): string {
 	return dashboardLink( '/me/billing/purchases/:purchaseId?upgraded=true' );
 }
 
+/**
+ * `redirect_to` URL for the change-plan flow, which can result in either an
+ * upgrade or a downgrade. Unlike `getUpgradedPurchaseRedirectUrl`, it lands on
+ * the purchase-settings page with a neutral "plan changed" notice rather than
+ * an upgrade-specific one. The `:purchaseId` placeholder resolves to the newly
+ * provisioned plan's purchase (see `getUpgradedPurchaseRedirectUrl`).
+ */
+export function getChangedPlanRedirectUrl(): string {
+	return dashboardLink( '/me/billing/purchases/:purchaseId?plan_changed=true' );
+}
+
 export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
 	if ( isAkismetProduct( purchase ) ) {
 		// For the first Iteration of Calypso Akismet checkout we are only suggesting

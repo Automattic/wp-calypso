@@ -1,15 +1,10 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 .dashboard-snackbars {
-	position: fixed;
-	inset-inline-start: 0;
-	bottom: 0;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	margin: $grid-unit-20;
+	@include snackbar-container();
 
 	@include ui-mixins.when-dark-theme {
 		.components-snackbar {
@@ -47,6 +42,8 @@
 	}
 }
 
-body:has( .dashboard-snackbar-back-button ) .dashboard-snackbars {
-	margin-bottom: calc( $grid-unit-20 + 52px );
+@media ( max-width: $break-small ) {
+	body:has( .dashboard-snackbar-back-button ) .dashboard-snackbars {
+		margin-bottom: calc( $grid-unit-20 + 52px );
+	}
 }

@@ -1,8 +1,94 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/colors";
 
 :root {
 	--color-gray-100: #{$gray-100};
 	--color-gray-700: #{$gray-700};
+}
+
+// Wrapper provides the gradient fade — must sit outside the scroll container
+// because overflow clips pseudo-elements.
+.tier-cards-scroll-wrapper {
+	position: relative;
+	margin-inline-start: -4px;
+
+	// Gradient fade hinting there's more content to scroll
+	&::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 0;
+		width: 80px;
+		height: 100%;
+		background: linear-gradient( to right, transparent, var(--color-surface) );
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	html[dir="rtl"] &::after {
+		background: linear-gradient( to left, transparent, var(--color-surface) ) #{"/*rtl:ignore*/"};
+	}
+}
+
+// Tier cards horizontal scroll container
+.tier-cards-container {
+	--tier-card-width: max( 260px, 72vw );
+
+	display: flex;
+	flex-direction: row;
+	gap: 24px;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	// 4px block padding so box-shadows/borders aren't clipped top/bottom.
+	// 4px inline-start padding so box-shadows/borders aren't clipped.
+	padding-block: 4px;
+	padding-inline: 4px 0;
+	// Hide scrollbar visually but keep functionality
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	&::after {
+		content: '';
+		flex: 0 0 max( 80px, calc( 100% - var(--tier-card-width) ) );
+	}
+
+	@media ( min-width: #{ $break-small } ) {
+		--tier-card-width: clamp( 260px, calc( 30% - 12px ), 340px );
+	}
+}
+
+// Individual card wrappers — fixed width so cards never stack.
+// On small screens: 72vw shows the current card fully with the next peeking in.
+// On larger screens: dynamic ~30% width shows ~3 cards with a peek.
+.tier-card-wrapper {
+	width: var(--tier-card-width);
+	min-height: 250px;
+	flex-shrink: 0;
+
+	// Lower (already-passed) tiers are muted
+	&.is-lower-tier {
+		opacity: 0.55;
+		filter: grayscale( 0.65 );
+		transition:
+			opacity 0.2s ease,
+			filter 0.2s ease;
+
+		&:focus-within {
+			opacity: 1;
+			filter: none;
+		}
+
+		// On pointer devices (desktop), reveal on hover
+		@media ( hover: hover ) and ( pointer: fine ) {
+			&:hover {
+				opacity: 1;
+				filter: none;
+			}
+		}
+	}
 }
 
 .agency-tier-overview-revamped {
@@ -30,4 +116,3 @@
 		color: var(--color-primary-60);
 	}
 }
-

@@ -87,6 +87,7 @@ export type PlansIntent =
 	| 'plans-playground'
 	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'plans-upgrade'
+	| 'plans-upgrade-or-downgrade'
 	| 'plans-wordpress-hosting'
 	| 'plans-website-builder'
 	| 'plans-woo-hosted'

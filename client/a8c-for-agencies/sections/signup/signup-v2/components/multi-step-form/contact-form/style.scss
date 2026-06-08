@@ -54,15 +54,6 @@
 	@include body-medium;
 	color: var(--color-neutral-40);
 	margin-top: 16px;
-
-	a {
-		color: var(--color-primary);
-		text-decoration: none;
-	}
-
-	.signup-multi-step-form__terms a:hover {
-		text-decoration: underline;
-	}
 }
 
 .signup-contact-form__a4a-span {
