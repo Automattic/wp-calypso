@@ -51,7 +51,7 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
-	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement | null > } : {};
+	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
 
 	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
 

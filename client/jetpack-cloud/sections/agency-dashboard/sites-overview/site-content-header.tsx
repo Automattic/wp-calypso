@@ -18,7 +18,7 @@ interface Props {
 export default function SiteContentHeader( { content, pageTitle, showStickyContent }: Props ) {
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
-	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement | null > } : {};
+	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
 
 	const translate = useTranslate();
 
