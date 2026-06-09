@@ -151,12 +151,9 @@ export function useDropdownFlip( {
 	const dropdownRef = useRef< HTMLDivElement >( null );
 	// Tells first-open from switch.
 	const prevDropdownRef = useRef< string | null >( null );
-	// Resting height of each panel, captured while it was the active block. The
-	// FLIP `from` must be the OUTGOING panel's height, but by the time this
-	// layout effect runs React has already swapped `aria-hidden`, so the wrapper
-	// already measures the INCOMING panel — reading the DOM for `from` always
-	// yields `to` (and the morph self-cancels as `from === to`). Keying the
-	// height by name and reading the previous name's stored value sidesteps that.
+	// Each panel's resting height, keyed by name. By the time this effect runs the
+	// DOM already shows the incoming panel, so the outgoing height (the FLIP `from`)
+	// has to come from here, not a live measurement.
 	const heightByNameRef = useRef< Record< string, number > >( {} );
 	// Release callback for an in-flight morph, so a rapid re-switch can snap back first.
 	const releaseRef = useRef< ( () => void ) | null >( null );
