@@ -10,7 +10,6 @@ import { Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
@@ -44,7 +43,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		yearlyControlProps,
 	} = props;
 	const translate = useTranslate();
-	const getPlanPathSlug = usePlanPathSlugGetter();
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ],
 		siteId,
@@ -88,15 +86,15 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 			triggerTracksEvent?.( upgradePlanSlug );
 
-			const planPath = getPlanPathSlug( upgradePlanSlug ) ?? '';
-
+			// Checkout accepts the product slug directly, so there's no need to map
+			// it to a plan path slug.
 			const checkoutUrl = isWooExpressPlan( upgradePlanSlug )
-				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
-				: `/checkout/${ siteSlug }/${ planPath }`;
+				? getTrialCheckoutUrl( { productSlug: upgradePlanSlug, siteSlug } )
+				: `/checkout/${ siteSlug }/${ upgradePlanSlug }`;
 
 			page( checkoutUrl );
 		},
-		[ siteSlug, triggerTracksEvent, getPlanPathSlug ]
+		[ siteSlug, triggerTracksEvent ]
 	);
 
 	return (

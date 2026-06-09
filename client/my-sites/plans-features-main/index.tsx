@@ -65,7 +65,6 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -258,7 +257,6 @@ const PlansFeaturesMain = ( {
 	onReady,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const getPlanPathSlug = usePlanPathSlugGetter();
 	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
 		null
 	);
@@ -405,7 +403,9 @@ const PlansFeaturesMain = ( {
 
 	// Checkout mode: route the user to checkout to purchase the downgrade.
 	const confirmCheckoutDowngrade = () => {
-		const planPath = pendingDowngradePlanSlug ? getPlanPathSlug( pendingDowngradePlanSlug ) : null;
+		// Checkout accepts the product slug directly, so there's no need to
+		// map it to a plan path slug.
+		const planPath = pendingDowngradePlanSlug;
 		if ( ! planPath || ! siteSlug ) {
 			return;
 		}

@@ -6,7 +6,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import MigrationPlansGrid from './migration-plans-grid';
 import type { Step as StepType } from '../../types';
 
@@ -29,7 +28,6 @@ const SiteMigrationUpgradePlan: StepType< {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const queryParams = useQuery();
-	const getPlanPathSlug = usePlanPathSlugGetter();
 
 	const handleUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
@@ -38,11 +36,13 @@ const SiteMigrationUpgradePlan: StepType< {
 			if ( planCartItem ) {
 				navigation?.submit?.( {
 					goToCheckout: true,
-					plan: getPlanPathSlug( planCartItem.product_slug ) ?? '',
+					// Checkout accepts the product slug directly, so there's no need
+					// to map it to a plan path slug.
+					plan: planCartItem.product_slug,
 				} );
 			}
 		},
-		[ navigation, getPlanPathSlug ]
+		[ navigation ]
 	);
 
 	if ( ! siteItem || ! siteSlug ) {

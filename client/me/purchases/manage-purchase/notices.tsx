@@ -25,7 +25,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -71,7 +70,6 @@ const eventProperties = ( warning: string ) => ( { warning, position: 'individua
 
 export interface PurchaseNoticeProps {
 	isSplitCancelRemoveEnabled?: boolean;
-	getPlanPathSlug?: ( productSlug: string ) => string;
 	changePaymentMethodPath: string | false;
 	getAddNewPaymentMethodUrlFor: ( siteSlug: string ) => string | undefined;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
@@ -1378,9 +1376,10 @@ class PurchaseNotice extends Component<
 				upgrade_plan_slug: upgradePlanSlug,
 			} );
 
-			const planPath = this.props.getPlanPathSlug?.( upgradePlanSlug ?? '' ) ?? '';
+			// Checkout accepts the product slug directly, so there's no need to map
+			// it to a plan path slug.
 			const checkoutUrl = getTrialCheckoutUrl( {
-				productSlug: planPath,
+				productSlug: upgradePlanSlug ?? '',
 				siteSlug: selectedSiteSlug ?? '',
 			} );
 
@@ -1525,12 +1524,10 @@ const ConnectedPurchaseNotice = connect( null, { recordTracksEvent } )(
 
 function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const getPlanPathSlug = usePlanPathSlugGetter();
 	return (
 		<ConnectedPurchaseNotice
 			{ ...props }
 			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
-			getPlanPathSlug={ getPlanPathSlug }
 		/>
 	);
 }

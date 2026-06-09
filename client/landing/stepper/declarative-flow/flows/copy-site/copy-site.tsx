@@ -1,4 +1,5 @@
 import { DomainSuggestion } from '@automattic/api-core';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -7,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -97,7 +97,6 @@ const copySite: Flow = {
 		const urlQueryParams = useQuery();
 		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
 		const sourceSite = useSite( sourceSiteSlug );
-		const getPlanPathSlug = usePlanPathSlugGetter();
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,
@@ -173,9 +172,10 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
+					// Checkout accepts the product slug directly, so there's no need to
+					// map it to a plan path slug.
 					const plan =
-						urlQueryParams.get( 'plan' ) ??
-						getPlanPathSlug( sourceSite?.plan?.product_slug ?? 'business' );
+						urlQueryParams.get( 'plan' ) ?? sourceSite?.plan?.product_slug ?? PLAN_BUSINESS;
 					return window.location.assign(
 						`/checkout/${ plan }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''

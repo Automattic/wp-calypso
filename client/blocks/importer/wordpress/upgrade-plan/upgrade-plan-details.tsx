@@ -19,7 +19,6 @@ import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { MigrationPlanFeatureList } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-upgrade-plan/migration-plan-feature-list';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
@@ -242,7 +241,6 @@ const preparePlanPriceOfferProps = (
 
 export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const translate = useTranslate();
-	const getPlanPathSlug = usePlanPathSlugGetter();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
 	const [ selectedPlan, setSelectedPlan ] = useState<
@@ -318,9 +316,11 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	useEffect( () => {
 		if ( plan ) {
-			setSelectedPlanSlug( getPlanPathSlug( selectedPlan ) );
+			// Checkout accepts the product slug directly, so there's no need to map
+			// it to a plan path slug.
+			setSelectedPlanSlug( selectedPlan );
 		}
-	}, [ plan, selectedPlan, getPlanPathSlug, setSelectedPlanSlug ] );
+	}, [ plan, selectedPlan, setSelectedPlanSlug ] );
 
 	return (
 		<div className="import__upgrade-plan-details">

@@ -14,7 +14,6 @@ import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
@@ -40,7 +39,6 @@ function useUpgradeHandler( {
 	redirectTo?: string;
 	pluginSlug?: string;
 } ) {
-	const getPlanPathSlug = usePlanPathSlugGetter();
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -60,9 +58,9 @@ function useUpgradeHandler( {
 				return;
 			}
 
-			const planPath = cartItemForPlan?.product_slug
-				? getPlanPathSlug( cartItemForPlan.product_slug )
-				: '';
+			// Checkout accepts the product slug directly, so there's no need to map
+			// it to a plan path slug.
+			const planPath = cartItemForPlan?.product_slug ?? '';
 
 			let checkoutUrl = cartItemForStorageAddOn
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
@@ -83,7 +81,7 @@ function useUpgradeHandler( {
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug, getPlanPathSlug ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
 	);
 
 	return useCallback(

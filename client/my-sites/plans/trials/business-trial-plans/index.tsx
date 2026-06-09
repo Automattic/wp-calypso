@@ -2,7 +2,6 @@ import { PLAN_FREE, PRODUCT_1GB_SPACE, isBusinessPlan } from '@automattic/calyps
 import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -15,7 +14,6 @@ interface BusinessTrialPlansProps {
 
 export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 	const { siteId, siteSlug, triggerTracksEvent } = props;
-	const getPlanPathSlug = usePlanPathSlugGetter();
 
 	const onUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
@@ -23,19 +21,23 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 
 			triggerTracksEvent?.( upgradePlanSlug );
 
-			const planPath = getPlanPathSlug( upgradePlanSlug ) ?? '';
-
 			const cartItemForStorageAddOn = cartItems?.find(
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
 			);
 
+			// Checkout accepts the product slug directly, so there's no need to map
+			// it to a plan path slug.
 			const checkoutUrl = isBusinessPlan( upgradePlanSlug )
-				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug, addOn: cartItemForStorageAddOn } )
-				: `/checkout/${ siteSlug }/${ planPath }`;
+				? getTrialCheckoutUrl( {
+						productSlug: upgradePlanSlug,
+						siteSlug,
+						addOn: cartItemForStorageAddOn,
+				  } )
+				: `/checkout/${ siteSlug }/${ upgradePlanSlug }`;
 
 			page( checkoutUrl );
 		},
-		[ siteSlug, triggerTracksEvent, getPlanPathSlug ]
+		[ siteSlug, triggerTracksEvent ]
 	);
 
 	return (
