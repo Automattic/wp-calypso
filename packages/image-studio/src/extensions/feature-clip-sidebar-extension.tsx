@@ -294,11 +294,16 @@ function FeatureClipPanel(): JSX.Element {
 		if ( ! hasResolvedAttachment ) {
 			return;
 		}
-		// Skip on resolution errors — transient (network, auth) and the reference may still be valid.
-		if ( resolutionError ) {
+		if ( attachment ) {
 			return;
 		}
-		if ( attachment ) {
+		// In real core-data a deleted attachment surfaces as a 404: apiFetch
+		// throws, the resolver finishes with status='error', and getMedia
+		// returns nothing. Only heal on a 404 — skip transient failures
+		// (network, auth) where the reference may still be valid.
+		const err = resolutionError as { data?: { status?: number }; code?: string } | null | undefined;
+		const isNotFound = err?.data?.status === 404 || err?.code === 'rest_post_invalid_id';
+		if ( resolutionError && ! isNotFound ) {
 			return;
 		}
 		if ( lastHealedClipIdRef.current === featureClipId ) {

@@ -321,11 +321,23 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'self-heals stale meta by clearing the clip id when the attachment is gone', () => {
+		// Real @wordpress/core-data: a deleted attachment makes apiFetch
+		// throw a 404, the resolver finishes with status='error', and
+		// getResolutionError returns a truthy error with data.status === 404.
+		// These tests use that realistic shape — earlier they mocked the
+		// unreachable "resolved + no error + no attachment" combination,
+		// which made the heal look like it worked while it never fired in
+		// production.
+		const notFoundError = Object.assign( new Error( 'Invalid post ID.' ), {
+			code: 'rest_post_invalid_id',
+			data: { status: 404 },
+		} );
+
+		it( 'self-heals stale meta when the attachment lookup 404s', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = true;
-			mockResolutionError = null;
+			mockResolutionError = notFoundError;
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
 			expect( mockEditPost ).toHaveBeenCalledWith( {
@@ -333,32 +345,59 @@ describe( 'feature-clip-sidebar-extension', () => {
 			} );
 		} );
 
-		it( 'does not poison the dedupe ref when editPost is unavailable on the first attempt', () => {
+		it( 'self-heals on a 404 detected via the rest_post_invalid_id code alone', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = true;
-			mockResolutionError = null;
+			// Some apiFetch error shapes carry the code without the data.status.
+			mockResolutionError = Object.assign( new Error( 'Invalid post ID.' ), {
+				code: 'rest_post_invalid_id',
+			} );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockEditPost ).toHaveBeenCalledWith( {
+				meta: { _jetpack_feature_clip_id: 0 },
+			} );
+		} );
+
+		it( 'does not poison the dedupe ref when editPost is unavailable on the first 404', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = notFoundError;
 			mockHasEditPost = false;
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			const { rerender } = render( <FeatureClipPanel /> );
 			expect( mockEditPost ).not.toHaveBeenCalled();
 
-			// A dep flickers and editPost becomes available. Because the ref
-			// wasn't set on the failed first attempt, the heal retries for the
-			// same clip id.
+			// A dep flickers (transient error replaces the 404 for a moment)
+			// and editPost becomes available. Because the ref wasn't set on
+			// the failed first attempt, when the 404 returns the heal fires.
 			mockHasEditPost = true;
-			mockResolutionError = new Error( 'transient' );
+			mockResolutionError = new Error( 'network down' );
 			rerender( <FeatureClipPanel /> );
 			expect( mockEditPost ).not.toHaveBeenCalled();
 
-			mockResolutionError = null;
+			mockResolutionError = notFoundError;
 			rerender( <FeatureClipPanel /> );
 			expect( mockEditPost ).toHaveBeenCalledWith( {
 				meta: { _jetpack_feature_clip_id: 0 },
 			} );
 		} );
 
-		it( 'does not self-heal on a resolution error — the reference may still be valid', () => {
+		it( 'does not self-heal on a non-404 error — could be transient (network, auth)', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = Object.assign( new Error( 'Service unavailable' ), {
+				data: { status: 503 },
+			} );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockEditPost ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not self-heal on a bare resolution error with no status hint', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = true;
