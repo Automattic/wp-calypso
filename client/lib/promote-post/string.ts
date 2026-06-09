@@ -222,11 +222,13 @@ const BlazePressStrings = () => {
 	);
 	translate( 'Blaze campaigns are billed in USD.' );
 	translate(
-		'I agree to recurring weekly charges of up to %(maxBudgetFormatted)s per week starting %(formattedDate)s'
+		'I agree to recurring weekly charges of up to %(maxBudgetFormatted)s per week starting %(formattedDate)s.'
 	);
 	translate(
-		'I agree to be charged up to %(maxBudgetFormatted)s starting %(formattedDate)s. Charges may be made in one or more payments, and the campaign'
+		'I agree to be charged up to %(maxBudgetFormatted)s starting %(formattedDate)s. Charges may be made in one or more payments.'
 	);
+	translate( 'Charges continue until I cancel' );
+	translate( 'The campaign can be canceled at any time' );
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
 	translate( 'Content suggested with the help of AI.' );
