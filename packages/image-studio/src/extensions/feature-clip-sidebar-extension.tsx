@@ -214,6 +214,7 @@ function FeatureClipSkeleton(): JSX.Element {
 	return (
 		<div
 			className="image-studio-feature-clip-panel__preview-frame image-studio-feature-clip-panel__preview-frame--loading"
+			role="status"
 			aria-busy="true"
 			aria-label={ __( 'Loading saved clip preview', __i18n_text_domain__ ) }
 		/>

@@ -374,10 +374,12 @@ describe( 'feature-clip-sidebar-extension', () => {
 			mockHasResolvedMedia = false; // first render — getMedia hasn't completed
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			const { container } = render( <FeatureClipPanel /> );
-			// Skeleton is visible (no Generate / Regenerate), and the body is
-			// not blank — the loading placeholder takes its place.
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Regenerate' } ) ).not.toBeInTheDocument();
+			// Skeleton is a status live region so screen readers announce the loading label.
+			const skeleton = screen.getByRole( 'status', { name: 'Loading saved clip preview' } );
+			expect( skeleton ).toBeInTheDocument();
+			expect( skeleton ).toHaveAttribute( 'aria-busy', 'true' );
 			expect(
 				container.querySelector( '.image-studio-feature-clip-panel__preview-frame--loading' )
 			).not.toBeNull();
