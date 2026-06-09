@@ -385,16 +385,6 @@ export function startBlockShimmer(): void {
 
 // ---------- Ability callbacks ----------
 
-/** Block types whose `content` attribute can be safely replaced by a plain text/HTML string. */
-export const SUPPORTED_EDIT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ] as const;
-
-export function isSupportedEditBlockType( blockName?: string | null ): boolean {
-	return (
-		typeof blockName === 'string' &&
-		( SUPPORTED_EDIT_BLOCK_TYPES as readonly string[] ).includes( blockName )
-	);
-}
-
 function countOccurrences( source: string, needle: string ): number {
 	if ( needle === '' ) {
 		return 0;
@@ -411,48 +401,158 @@ function countOccurrences( source: string, needle: string ): number {
 	}
 }
 
-function getEditableBlockContent( block: any ): string {
-	const raw = block.attributes?.content;
-	return typeof raw === 'string' ? raw : raw?.toHTMLString?.() ?? '';
+function normaliseAttributeName( attributeName?: string | null ): string | undefined {
+	return typeof attributeName === 'string' && attributeName.trim() !== ''
+		? attributeName.trim()
+		: undefined;
+}
+
+function getAttributeContent( block: any, attributeName?: string ): string | undefined {
+	if ( ! attributeName ) {
+		return undefined;
+	}
+	const raw = block?.attributes?.[ attributeName ];
+	if ( typeof raw === 'string' ) {
+		return raw;
+	}
+	const richTextHtml = raw?.toHTMLString?.();
+	return typeof richTextHtml === 'string' ? richTextHtml : undefined;
+}
+
+function getStringLikeAttributeNames( block: any ): string[] {
+	if ( ! block?.attributes || typeof block.attributes !== 'object' ) {
+		return [];
+	}
+	return Object.keys( block.attributes ).filter(
+		( attributeName ) => getAttributeContent( block, attributeName ) !== undefined
+	);
+}
+
+function findAttributeByCurrentText( block: any, currentText?: string ): string | undefined {
+	if ( typeof currentText !== 'string' || currentText === '' ) {
+		return undefined;
+	}
+
+	const matches = getStringLikeAttributeNames( block ).filter( ( attributeName ) => {
+		const content = getAttributeContent( block, attributeName ) ?? '';
+		return countOccurrences( content, currentText ) === 1;
+	} );
+
+	return matches.length === 1 ? matches[ 0 ] : undefined;
+}
+
+function findAttributeByExactContent( block: any, expectedContent?: string ): string | undefined {
+	if ( expectedContent === undefined ) {
+		return undefined;
+	}
+
+	const matches = getStringLikeAttributeNames( block ).filter(
+		( attributeName ) => getAttributeContent( block, attributeName ) === expectedContent
+	);
+
+	return matches.length === 1 ? matches[ 0 ] : undefined;
+}
+
+function resolveEditableBlockAttribute(
+	block: any,
+	{
+		attributeName,
+		currentText,
+		expectedContent,
+	}: { attributeName?: string; currentText?: string; expectedContent?: string } = {}
+): string | undefined {
+	const requestedAttribute = normaliseAttributeName( attributeName );
+	if ( requestedAttribute ) {
+		return getAttributeContent( block, requestedAttribute ) !== undefined
+			? requestedAttribute
+			: undefined;
+	}
+
+	const stringLikeAttributes = getStringLikeAttributeNames( block );
+
+	return (
+		findAttributeByCurrentText( block, currentText ) ??
+		findAttributeByExactContent( block, expectedContent ) ??
+		( getAttributeContent( block, 'content' ) !== undefined ? 'content' : undefined ) ??
+		( stringLikeAttributes.length === 1 ? stringLikeAttributes[ 0 ] : undefined )
+	);
+}
+
+export function getEditableBlockContent(
+	block: any,
+	attributeName?: string,
+	currentText?: string
+): string {
+	const resolvedAttribute = resolveEditableBlockAttribute( block, { attributeName, currentText } );
+	if ( ! resolvedAttribute ) {
+		return '';
+	}
+	return getAttributeContent( block, resolvedAttribute ) ?? '';
 }
 
 function getBlockSnapshot(
-	clientId: string
-): { clientId: string; name: string; content: string } | null {
+	clientId: string,
+	attributeName?: string,
+	currentText?: string,
+	expectedContent?: string
+): { clientId: string; name: string; content: string; attributeName?: string } | null {
 	const block = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlock?.( clientId );
 	if ( ! block ) {
 		return null;
 	}
+	const resolvedAttribute = resolveEditableBlockAttribute( block, {
+		attributeName,
+		currentText,
+		expectedContent,
+	} );
 	return {
 		clientId: block.clientId ?? clientId,
 		name: block.name,
-		content: getEditableBlockContent( block ),
+		...( resolvedAttribute ? { attributeName: resolvedAttribute } : {} ),
+		content: resolvedAttribute ? getEditableBlockContent( block, resolvedAttribute ) : '',
 	};
 }
 
-function findBlockSnapshotByCurrentText( currentText: string ): {
-	snapshot?: { clientId: string; name: string; content: string };
+function findBlockSnapshotByCurrentText(
+	currentText: string,
+	attributeName?: string
+): {
+	snapshot?: { clientId: string; name: string; content: string; attributeName: string };
 	error?: string;
 } {
 	const blocks = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlocks?.() ?? [];
-	const matches: Array< { clientId: string; name: string; content: string } > = [];
+	const matches: Array< {
+		clientId: string;
+		name: string;
+		content: string;
+		attributeName: string;
+	} > = [];
 
 	const visit = ( block: any ) => {
 		if ( ! block ) {
 			return;
 		}
-		const snapshot = {
-			clientId: block.clientId,
-			name: block.name,
-			content: getEditableBlockContent( block ),
-		};
-
-		if ( snapshot.clientId && isSupportedEditBlockType( snapshot.name ) ) {
-			const matchCount = countOccurrences( snapshot.content, currentText );
+		const attributeNames = attributeName
+			? [ attributeName ].filter(
+					( candidate ) => getAttributeContent( block, candidate ) !== undefined
+			  )
+			: getStringLikeAttributeNames( block );
+		attributeNames.forEach( ( candidate ) => {
+			if ( ! block.clientId ) {
+				return;
+			}
+			const content = getAttributeContent( block, candidate ) ?? '';
+			const snapshot = {
+				clientId: block.clientId,
+				name: block.name,
+				attributeName: candidate,
+				content,
+			};
+			const matchCount = countOccurrences( content, currentText );
 			for ( let i = 0; i < matchCount; i++ ) {
 				matches.push( snapshot );
 			}
-		}
+		} );
 
 		( block.innerBlocks ?? [] ).forEach( visit );
 	};
@@ -479,6 +579,9 @@ function findBlockSnapshotByCurrentText( currentText: string ): {
  */
 export function handleUpdateBlockContent( input: any ): any {
 	const { clientId, content, summary, currentText, shouldApply } = input;
+	const editableAttribute = normaliseAttributeName(
+		input.editableAttribute ?? input.attributeName
+	);
 	if ( ! clientId || content === undefined || content === null ) {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
@@ -499,10 +602,10 @@ export function handleUpdateBlockContent( input: any ): any {
 
 	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
 	let targetClientId = clientId;
-	let snapshot = getBlockSnapshot( targetClientId );
+	let snapshot = getBlockSnapshot( targetClientId, editableAttribute, currentText );
 	if ( ! snapshot ) {
 		if ( hasCurrentText ) {
-			const fallback = findBlockSnapshotByCurrentText( currentText );
+			const fallback = findBlockSnapshotByCurrentText( currentText, editableAttribute );
 			if ( fallback.error ) {
 				// eslint-disable-next-line no-console
 				console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
@@ -529,10 +632,10 @@ export function handleUpdateBlockContent( input: any ): any {
 			return { success: false, error: 'block not found', returnToAgent: false };
 		}
 	}
-	if ( ! isSupportedEditBlockType( snapshot.name ) ) {
+	if ( ! snapshot.attributeName ) {
 		return {
 			success: false,
-			error: `unsupported block type: ${ snapshot.name }`,
+			error: `unsupported edit target: ${ snapshot.name }`,
 			returnToAgent: false,
 		};
 	}
@@ -573,7 +676,11 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			const latestSnapshot = getBlockSnapshot( targetClientId );
+			const latestSnapshot = getBlockSnapshot(
+				targetClientId,
+				snapshot?.attributeName,
+				currentText
+			);
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -591,8 +698,8 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolveFailure( 'block not found' );
 				return;
 			}
-			if ( ! isSupportedEditBlockType( latestSnapshot.name ) ) {
-				resolveFailure( `unsupported block type: ${ latestSnapshot.name }` );
+			if ( ! latestSnapshot.attributeName ) {
+				resolveFailure( `unsupported edit target: ${ latestSnapshot.name }` );
 				return;
 			}
 
@@ -625,7 +732,9 @@ export function handleUpdateBlockContent( input: any ): any {
 				return;
 			}
 
-			blockEditor.updateBlockAttributes( targetClientId, { content: nextContent } );
+			blockEditor.updateBlockAttributes( targetClientId, {
+				[ latestSnapshot.attributeName ]: nextContent,
+			} );
 			blockEditor.selectBlock?.( targetClientId );
 			rememberedSelectedBlockClientId = targetClientId;
 
@@ -640,6 +749,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				clientId: targetClientId,
 				contentBefore: latestSnapshot.content,
 				contentAfter: nextContent,
+				editableAttribute: latestSnapshot.attributeName,
 				returnToAgent: false,
 				...( summary ? { agentMessage: summary } : {} ),
 			} );
@@ -651,7 +761,7 @@ export function handleUpdateBlockContent( input: any ): any {
  * Apply a mediation-suggested edit. When `currentText` is provided and uniquely
  * matches a span in the block, only that span is replaced. When it is missing or
  * ambiguous, the edit fails safely rather than replacing the whole block. Returns
- * `success: false` for unsupported block types so the UI can show 'failed' rather
+ * `success: false` for unsupported edit targets so the UI can show 'failed' rather
  * than corrupting the block. On success, returns `contentBefore` so the caller can
  * pair it with `clientId` and call `undoBlockEdit` later. The optional shouldApply
  * guard lets callers abort safely if editor context changes while the edit is pending.
@@ -661,17 +771,26 @@ export async function applyReviewEdit(
 	content: string,
 	summary?: string,
 	currentText?: string,
-	shouldApply?: () => boolean
+	shouldApply?: () => boolean,
+	editableAttribute?: string
 ): Promise< {
 	success: boolean;
 	clientId?: string;
 	contentBefore?: string;
 	contentAfter?: string;
+	editableAttribute?: string;
 	agentMessage?: string;
 	error?: string;
 	returnToAgent?: boolean;
 } > {
-	return handleUpdateBlockContent( { clientId, content, summary, currentText, shouldApply } );
+	return handleUpdateBlockContent( {
+		clientId,
+		content,
+		summary,
+		currentText,
+		shouldApply,
+		editableAttribute,
+	} );
 }
 
 /**
@@ -684,7 +803,8 @@ export async function applyReviewEdit(
 export function undoBlockEdit(
 	clientId: string,
 	contentBefore: string,
-	expectedContent?: string
+	expectedContent?: string,
+	editableAttribute?: string
 ): boolean {
 	const blockEditor = ( window as any ).wp?.data?.dispatch?.( 'core/block-editor' );
 	if ( ! blockEditor?.updateBlockAttributes ) {
@@ -692,12 +812,18 @@ export function undoBlockEdit(
 	}
 	try {
 		if ( expectedContent !== undefined ) {
-			const snapshot = getBlockSnapshot( clientId );
+			const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
 			if ( ! snapshot || snapshot.content !== expectedContent ) {
 				return false;
 			}
 		}
-		blockEditor.updateBlockAttributes( clientId, { content: contentBefore } );
+		const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
+		if ( ! snapshot?.attributeName ) {
+			return false;
+		}
+		blockEditor.updateBlockAttributes( clientId, {
+			[ snapshot.attributeName ]: contentBefore,
+		} );
 		return true;
 	} catch {
 		return false;

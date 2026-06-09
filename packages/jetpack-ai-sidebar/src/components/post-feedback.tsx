@@ -19,7 +19,7 @@ import {
 	applyReviewEdit,
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
-	isSupportedEditBlockType,
+	getEditableBlockContent,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
@@ -30,6 +30,7 @@ interface PostFeedbackItem {
 	feedback: string;
 	action: string;
 	block_index: number | null;
+	editable_attribute?: string;
 	current_text?: string;
 	suggested_text?: string;
 	requires_manual?: boolean;
@@ -54,6 +55,7 @@ interface EditSnapshot {
 	clientId: string;
 	contentBefore: string;
 	contentAfter: string;
+	editableAttribute?: string;
 }
 
 type WpCurrentPostStore = { getCurrentPostId?: () => number | null };
@@ -87,17 +89,6 @@ function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
 	};
 	walk( blocks );
 	return out;
-}
-
-function getBlockEditableContent( block: BlockSnapshot | null ): string {
-	const raw = block?.attributes?.content;
-	if ( typeof raw === 'string' ) {
-		return raw;
-	}
-	if ( raw && typeof raw.toHTMLString === 'function' ) {
-		return raw.toHTMLString();
-	}
-	return '';
 }
 
 function countOccurrences( source: string, needle: string ): number {
@@ -155,17 +146,14 @@ function getApplyUnavailableReason(
 	if ( ! block ) {
 		return __( 'Needs manual edit - source block changed.', 'jetpack' );
 	}
-	if ( ! isSupportedEditBlockType( block.name ) ) {
-		return __(
-			'Needs manual edit - block type is not supported for one-click rewrites.',
-			'jetpack'
-		);
-	}
 	if ( ! item.current_text ) {
 		return __( 'Needs manual edit - no exact source text.', 'jetpack' );
 	}
 
-	const occurrences = countOccurrences( getBlockEditableContent( block ), item.current_text );
+	const occurrences = countOccurrences(
+		getEditableBlockContent( block, item.editable_attribute, item.current_text ),
+		item.current_text
+	);
 	if ( occurrences === 0 ) {
 		return __( 'Needs manual edit - source text changed.', 'jetpack' );
 	}
@@ -272,7 +260,8 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 				item.suggested_text,
 				undefined,
 				item.current_text,
-				() => ! isLatestPostContextStale()
+				() => ! isLatestPostContextStale(),
+				item.editable_attribute
 			);
 
 			if (
@@ -285,6 +274,7 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 					clientId: result.clientId,
 					contentBefore: result.contentBefore,
 					contentAfter: result.contentAfter,
+					editableAttribute: result.editableAttribute,
 				};
 				setItemStatus( key, 'accepted' );
 				return;
@@ -305,7 +295,8 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 				const didUndo = undoBlockEdit(
 					snapshot.clientId,
 					snapshot.contentBefore,
-					snapshot.contentAfter
+					snapshot.contentAfter,
+					snapshot.editableAttribute
 				);
 				if ( ! didUndo ) {
 					setItemStatus( key, 'failed' );

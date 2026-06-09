@@ -854,6 +854,9 @@ describe( 'useSuggestions', () => {
 			( suggestion ) => suggestion.id === 'generate-feedback'
 		)?.prompt;
 
+		expect( feedbackPrompt ).toContain( 'saved title and saved block content' );
+		expect( feedbackPrompt ).toContain( 'one-click suggestions when safe' );
+
 		useAbilitiesSetup( {
 			addMessage,
 			clearSuggestions,
@@ -1530,7 +1533,7 @@ describe( 'useCheckpoint', () => {
 function installWpDataMockWithBlockEditor(
 	blocks: Record<
 		string,
-		{ name: string; attributes: { content?: string }; innerBlocks?: any[] }
+		{ name: string; attributes: Record< string, any >; innerBlocks?: any[] }
 	> = {
 		'550e8400-e29b-41d4-a716-446655440000': {
 			name: 'core/paragraph',
@@ -1628,6 +1631,105 @@ describe( 'applyReviewEdit', () => {
 			{
 				clientId: '550e8400-e29b-41d4-a716-446655440000',
 				attrs: { content: 'new text' },
+			},
+		] );
+	} );
+
+	it( 'updates list item content with one-click edits', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/list-item',
+				attributes: { content: 'Register online by 1 May.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'online by 1 June',
+			undefined,
+			'online by 1 May'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Register online by 1 May.',
+			contentAfter: 'Register online by 1 June.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Register online by 1 June.' },
+			},
+		] );
+	} );
+
+	it( 'updates image captions with the caption attribute', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/image',
+				attributes: { caption: 'Outdoor map activity' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Children exploring an outdoor map',
+			undefined,
+			'Outdoor map activity'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Outdoor map activity',
+			contentAfter: 'Children exploring an outdoor map',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { caption: 'Children exploring an outdoor map' },
+			},
+		] );
+	} );
+
+	it( 'updates explicitly targeted string attributes', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/quote',
+				attributes: {
+					value: '<p>Useful quoted text.</p>',
+					citation: 'Old citation',
+				},
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Updated citation',
+			undefined,
+			'Old citation',
+			undefined,
+			'citation'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			editableAttribute: 'citation',
+			contentBefore: 'Old citation',
+			contentAfter: 'Updated citation',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { citation: 'Updated citation' },
 			},
 		] );
 	} );
@@ -1972,11 +2074,11 @@ describe( 'applyReviewEdit', () => {
 		}
 	);
 
-	it( 'fails safely on unsupported block types', async () => {
+	it( 'fails safely when the block has no editable string-like attribute', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor( {
 			'550e8400-e29b-41d4-a716-446655440000': {
-				name: 'core/list',
-				attributes: { content: 'A list item.' },
+				name: 'core/query',
+				attributes: { queryId: 1 },
 			},
 		} );
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
@@ -2036,6 +2138,29 @@ describe( 'applyReviewEdit', () => {
 
 		expect( blocked ).toBe( false );
 		expect( blockUpdates ).toHaveLength( 1 );
+	} );
+
+	it( 'undoBlockEdit restores image captions through the caption attribute', () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/image',
+				attributes: { caption: 'Children exploring an outdoor map' },
+			},
+		} );
+
+		const restored = undoBlockEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'Outdoor map activity',
+			'Children exploring an outdoor map'
+		);
+
+		expect( restored ).toBe( true );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { caption: 'Outdoor map activity' },
+			},
+		] );
 	} );
 } );
 

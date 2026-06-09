@@ -99,7 +99,10 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 const POST_FEEDBACK_SUGGESTION = {
 	id: 'generate-feedback',
 	label: __( 'Generate Feedback', 'jetpack' ),
-	prompt: __( 'Generate feedback for this post', 'jetpack' ),
+	prompt: __(
+		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
+		'jetpack'
+	),
 };
 
 const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
