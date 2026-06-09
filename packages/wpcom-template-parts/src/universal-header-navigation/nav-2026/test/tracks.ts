@@ -30,7 +30,7 @@ describe( 'nav-2026 tracks', () => {
 	describe( 'recordNavItemHover', () => {
 		it( 'fires item_hover with is_2026, is_floating, name, is_dropdown', () => {
 			recordNavItemHover( true, 'websites', true );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_item_hover', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_item_hover', {
 				is_2026: true,
 				is_floating: true,
 				name: 'websites',
@@ -58,7 +58,7 @@ describe( 'nav-2026 tracks', () => {
 	describe( 'submenu show/hide', () => {
 		it( 'fires submenu_show with the name', () => {
 			recordSubmenuShow( false, 'resources' );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_submenu_show', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_submenu_show', {
 				is_2026: true,
 				is_floating: false,
 				name: 'resources',
@@ -67,7 +67,7 @@ describe( 'nav-2026 tracks', () => {
 
 		it( 'fires submenu_hide with the name', () => {
 			recordSubmenuHide( true, 'resources' );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_submenu_hide', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_submenu_hide', {
 				is_2026: true,
 				is_floating: true,
 				name: 'resources',
@@ -78,7 +78,7 @@ describe( 'nav-2026 tracks', () => {
 	describe( 'mobile menu open/close', () => {
 		it( 'fires mobile_menu_open with burger_menu start type + viewport width', () => {
 			recordMobileMenuOpen( false );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_mobile_menu_open', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_mobile_menu_open', {
 				is_2026: true,
 				is_floating: false,
 				start_type: 'burger_menu',
@@ -88,7 +88,7 @@ describe( 'nav-2026 tracks', () => {
 
 		it( 'fires mobile_menu_close with the reason', () => {
 			recordMobileMenuClose( false, 'overlay' );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_mobile_menu_close', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_mobile_menu_close', {
 				is_2026: true,
 				is_floating: false,
 				reason: 'overlay',
@@ -100,7 +100,7 @@ describe( 'nav-2026 tracks', () => {
 	describe( 'mobile category/back', () => {
 		it( 'fires category_select with name + title', () => {
 			recordMobileCategorySelect( false, 'hosting', 'Hosting' );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_mobile_category_select', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_mobile_category_select', {
 				is_2026: true,
 				is_floating: false,
 				name: 'hosting',
@@ -110,7 +110,7 @@ describe( 'nav-2026 tracks', () => {
 
 		it( 'fires back with from_name (nullable)', () => {
 			recordMobileBack( false, 'hosting' );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_mobile_back', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_mobile_back', {
 				is_2026: true,
 				is_floating: false,
 				from_name: 'hosting',
@@ -118,7 +118,7 @@ describe( 'nav-2026 tracks', () => {
 
 			mockRecord.mockClear();
 			recordMobileBack( false, null );
-			expect( mockRecord ).toHaveBeenCalledWith( 'wpcom_global_nav_mobile_back', {
+			expect( mockRecord ).toHaveBeenCalledWith( 'calypso_global_nav_mobile_back', {
 				is_2026: true,
 				is_floating: false,
 				from_name: null,
@@ -147,7 +147,7 @@ describe( 'nav-2026 tracks', () => {
 			);
 			recordNavLinkClick( link );
 			expect( mockRecord ).toHaveBeenCalledWith(
-				'wpcom_global_nav_link_click',
+				'calypso_global_nav_link_click',
 				expect.objectContaining( {
 					is_2026: true,
 					is_floating: true,
@@ -168,7 +168,7 @@ describe( 'nav-2026 tracks', () => {
 			);
 			recordNavLinkClick( link );
 			expect( mockRecord ).toHaveBeenCalledWith(
-				'wpcom_global_nav_link_click',
+				'calypso_global_nav_link_click',
 				expect.objectContaining( {
 					is_2026: true,
 					source: 'mobile_dropdown',
@@ -185,7 +185,7 @@ describe( 'nav-2026 tracks', () => {
 			);
 			recordNavLinkClick( logo );
 			expect( mockRecord ).toHaveBeenCalledWith(
-				'wpcom_global_nav_link_click',
+				'calypso_global_nav_link_click',
 				expect.objectContaining( { is_2026: true, source: 'logo', is_floating: false } )
 			);
 
@@ -195,7 +195,7 @@ describe( 'nav-2026 tracks', () => {
 			);
 			recordNavLinkClick( legacy );
 			expect( mockRecord ).toHaveBeenCalledWith(
-				'wpcom_global_nav_link_click',
+				'calypso_global_nav_link_click',
 				expect.objectContaining( { is_2026: false, source: 'top_level', category: null } )
 			);
 		} );

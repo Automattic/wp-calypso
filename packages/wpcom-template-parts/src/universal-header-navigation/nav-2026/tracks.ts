@@ -1,15 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /*
- * `wpcom_global_nav_*` Tracks events for the 2026 Global Nav. These match the
- * landpack reference (`wp-content/plugins/landpack/src/client/nav/tracks.js`)
- * name-for-name and prop-for-prop, so the React (Calypso) and PHP (landpack)
- * arms of the redesign A/B test feed one unified Tracks dataset. The reference
- * is DOM-event driven; here we fire straight from the React handlers/state.
- *
- * `recordTracksEvent` only emits names prefixed with a known source unless
- * they're listed in `EVENT_NAME_EXCEPTIONS` (packages/calypso-analytics);
- * each `wpcom_global_nav_*` name below is registered there.
+ * `calypso_global_nav_*` Tracks events that measure how people use the global
+ * nav. `is_2026` tags which nav design fired the event so the two can be compared.
  */
 
 type TracksProps = Record< string, string | number | boolean | null | undefined >;
@@ -30,26 +23,26 @@ export function recordNavItemHover( isFloating: boolean, name: string, isDropdow
 		return;
 	}
 	lastHoverName = name;
-	record( 'wpcom_global_nav_item_hover', isFloating, { name, is_dropdown: isDropdown } );
+	record( 'calypso_global_nav_item_hover', isFloating, { name, is_dropdown: isDropdown } );
 }
 
 export function recordSubmenuShow( isFloating: boolean, name: string ): void {
-	record( 'wpcom_global_nav_submenu_show', isFloating, { name } );
+	record( 'calypso_global_nav_submenu_show', isFloating, { name } );
 }
 
 export function recordSubmenuHide( isFloating: boolean, name: string ): void {
-	record( 'wpcom_global_nav_submenu_hide', isFloating, { name } );
+	record( 'calypso_global_nav_submenu_hide', isFloating, { name } );
 }
 
 export function recordMobileMenuOpen( isFloating: boolean ): void {
-	record( 'wpcom_global_nav_mobile_menu_open', isFloating, {
+	record( 'calypso_global_nav_mobile_menu_open', isFloating, {
 		start_type: 'burger_menu',
 		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
 	} );
 }
 
 export function recordMobileMenuClose( isFloating: boolean, reason: string ): void {
-	record( 'wpcom_global_nav_mobile_menu_close', isFloating, {
+	record( 'calypso_global_nav_mobile_menu_close', isFloating, {
 		reason,
 		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
 	} );
@@ -60,11 +53,11 @@ export function recordMobileCategorySelect(
 	name: string,
 	title: string
 ): void {
-	record( 'wpcom_global_nav_mobile_category_select', isFloating, { name, title } );
+	record( 'calypso_global_nav_mobile_category_select', isFloating, { name, title } );
 }
 
 export function recordMobileBack( isFloating: boolean, fromName: string | null ): void {
-	record( 'wpcom_global_nav_mobile_back', isFloating, { from_name: fromName } );
+	record( 'calypso_global_nav_mobile_back', isFloating, { from_name: fromName } );
 }
 
 interface ResolvedLink {
@@ -73,7 +66,6 @@ interface ResolvedLink {
 }
 
 // Resolve which part of the nav a clicked link came from, for the click event.
-// Mirrors `resolveLink()` in the landpack reference.
 function resolveLink( link: HTMLElement ): ResolvedLink {
 	const mobileList = link.closest< HTMLElement >( '.x-menu-mobile-dropdown-list' );
 	if ( mobileList ) {
@@ -97,14 +89,12 @@ function resolveLink( link: HTMLElement ): ResolvedLink {
 }
 
 export function recordNavLinkClick( link: HTMLAnchorElement ): void {
-	// Resolve `is_2026`/`is_floating` from the DOM (not React state) so this works
-	// from a plain click handler and matches the landpack reference, which fires
-	// for both the legacy and 2026 navs with `is_2026` telling them apart.
+	// Resolve from the DOM so this works from a plain click handler on either nav.
 	const is2026 = !! link.closest( '.x-nav--2026-redesign, .x-dropdown--2026, .x-menu--2026' );
 	const isFloating = !! link.closest( '.lpc-header-nav-container.is-scrolled' );
 	const { source, category } = resolveLink( link );
 
-	recordTracksEvent( 'wpcom_global_nav_link_click', {
+	recordTracksEvent( 'calypso_global_nav_link_click', {
 		is_2026: is2026,
 		is_floating: isFloating,
 		href: link.href,
@@ -115,34 +105,29 @@ export function recordNavLinkClick( link: HTMLAnchorElement ): void {
 	} );
 }
 
-/*
- * Legacy (flag-off) nav telemetry for the A/B control arm — the same events with
- * `is_2026: false`. `is_floating` falls back to `scrollY` (the legacy nav has no
- * `is-scrolled` class), matching the reference's `isFloating()`.
- */
+// The same events for the old nav (`is_2026: false`), so both designs are
+// measured. `is_floating` comes from `scrollY` since the old nav has no scrolled class.
 function recordLegacy( name: string, props: TracksProps = {} ): void {
 	const isFloating = typeof window !== 'undefined' && window.scrollY > 0;
 	recordTracksEvent( name, { is_2026: false, is_floating: isFloating, ...props } );
 }
 
 export function recordLegacyMobileMenuOpen(): void {
-	recordLegacy( 'wpcom_global_nav_mobile_menu_open', {
+	recordLegacy( 'calypso_global_nav_mobile_menu_open', {
 		start_type: 'burger_menu',
 		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
 	} );
 }
 
 export function recordLegacyMobileMenuClose( reason: string ): void {
-	recordLegacy( 'wpcom_global_nav_mobile_menu_close', {
+	recordLegacy( 'calypso_global_nav_mobile_menu_close', {
 		reason,
 		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
 	} );
 }
 
-// The legacy nav opens dropdowns via CSS `:hover` (no React state to tap), so —
-// like the reference's `tracks.js` — bind DOM listeners for the hover/submenu
-// events. Returns a cleanup. (The legacy mobile menu IS React-state driven, so
-// its open/close fire from the handlers above, not here.)
+// The old nav opens dropdowns via CSS `:hover` with no React state to tap, so
+// bind DOM listeners to capture its hover/submenu events. Returns a cleanup.
 export function bindLegacyNavTracks( nav: HTMLElement ): () => void {
 	const cleanups: Array< () => void > = [];
 	let legacyLastHover: string | null = null;
@@ -162,7 +147,7 @@ export function bindLegacyNavTracks( nav: HTMLElement ): () => void {
 					return;
 				}
 				legacyLastHover = name;
-				recordLegacy( 'wpcom_global_nav_item_hover', { name, is_dropdown: false } );
+				recordLegacy( 'calypso_global_nav_item_hover', { name, is_dropdown: false } );
 			};
 			item.addEventListener( 'mouseenter', onEnter );
 			cleanups.push( () => item.removeEventListener( 'mouseenter', onEnter ) );
@@ -173,13 +158,13 @@ export function bindLegacyNavTracks( nav: HTMLElement ): () => void {
 		const onEnter = () => {
 			if ( name && name !== legacyLastHover ) {
 				legacyLastHover = name;
-				recordLegacy( 'wpcom_global_nav_item_hover', { name, is_dropdown: true } );
+				recordLegacy( 'calypso_global_nav_item_hover', { name, is_dropdown: true } );
 			}
 			openSubmenu = name;
-			recordLegacy( 'wpcom_global_nav_submenu_show', { name } );
+			recordLegacy( 'calypso_global_nav_submenu_show', { name } );
 		};
 		const onLeave = () => {
-			recordLegacy( 'wpcom_global_nav_submenu_hide', { name: openSubmenu } );
+			recordLegacy( 'calypso_global_nav_submenu_hide', { name: openSubmenu } );
 			openSubmenu = null;
 			legacyLastHover = null;
 		};
@@ -197,7 +182,7 @@ export function bindLegacyNavTracks( nav: HTMLElement ): () => void {
 		const onLogo = () => {
 			if ( legacyLastHover !== 'logo' ) {
 				legacyLastHover = 'logo';
-				recordLegacy( 'wpcom_global_nav_item_hover', { name: 'logo', is_dropdown: false } );
+				recordLegacy( 'calypso_global_nav_item_hover', { name: 'logo', is_dropdown: false } );
 			}
 		};
 		logo.addEventListener( 'mouseenter', onLogo );

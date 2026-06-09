@@ -139,7 +139,7 @@ const UniversalNavbarHeader = ( {
 		setMobileMenuOpen( true );
 	}, [ nav2026 ] );
 
-	// Legacy hamburger open/close, recording for the A/B control arm.
+	// Old-nav hamburger open/close, recording the usage events.
 	const openLegacyMobileMenu = useCallback( () => {
 		recordLegacyMobileMenuOpen();
 		setMobileMenuOpen( true );
@@ -177,10 +177,8 @@ const UniversalNavbarHeader = ( {
 		return () => clearTimeout( timer );
 	}, [ nav2026, isMobileMenuOpen ] );
 
-	// Legacy (control) arm: the 2026 hover/submenu events fire from React state,
-	// but the flag-off nav opens dropdowns via CSS `:hover`, so bind DOM listeners
-	// (like the landpack reference) to emit the same events with `is_2026: false`.
-	// Without this the A/B test's control arm has no engagement telemetry.
+	// The old nav fires its hover/submenu usage events via DOM listeners (it has no
+	// React state to hook); the new nav fires them from its handlers below.
 	useEffect( () => {
 		if ( nav2026 || ! legacyNavRef.current ) {
 			return;

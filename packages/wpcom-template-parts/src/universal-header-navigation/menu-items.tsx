@@ -88,9 +88,8 @@ export const ClickableItem = ( {
 	const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		const target = event.currentTarget;
 		clickNavLinkEvent( target );
-		// Also emit the shared `wpcom_global_nav_link_click` (the landpack arm
-		// fires the same event). It resolves `is_2026`/source from the DOM, so it
-		// reports correctly on both the legacy and 2026 navs.
+		// Also emit the global-nav usage event; it resolves its props from the DOM
+		// so it reports correctly on either nav.
 		recordNavLinkClick( target );
 	};
 	return (

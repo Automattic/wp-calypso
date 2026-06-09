@@ -39,15 +39,6 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wpcom_support_free_migration_request_click',
 	// Help Center Menu Panel
 	'wpcom_help_center_icon_interaction',
-	// Global Nav 2026 — names shared with the landpack arm so both feed one dataset.
-	'wpcom_global_nav_item_hover',
-	'wpcom_global_nav_submenu_show',
-	'wpcom_global_nav_submenu_hide',
-	'wpcom_global_nav_mobile_menu_open',
-	'wpcom_global_nav_mobile_menu_close',
-	'wpcom_global_nav_mobile_category_select',
-	'wpcom_global_nav_mobile_back',
-	'wpcom_global_nav_link_click',
 ];
 
 let _superProps: any; // Added to all Tracks events.
