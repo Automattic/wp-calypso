@@ -8,7 +8,9 @@ export function isAllowedA4ADashboardHostname( hostname?: string ): boolean {
 
 export function buildA4ADashboardLink( path: string = '' ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.a4a.localhost:3000' ).href;
+		const port = config( 'port' ) ?? 3000;
+		return new URL( path, `http://my.a4a.localhost:${ port }` ).href;
 	}
 	// TODO: Add the A4A domain once it's ready.
+	return path;
 }

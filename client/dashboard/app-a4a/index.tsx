@@ -5,6 +5,7 @@ import {
 	dashboardSiteFiltersQuery,
 	domainsQuery,
 } from '@automattic/api-queries';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import { Logo } from './logo';
 import type {

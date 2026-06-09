@@ -6,23 +6,6 @@ type AgencyQueryResult = {
 	hasAgency: boolean;
 };
 
-function maybeRedirectToSignup( agency: AgencyQueryResult ) {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
-
-	if (
-		window.location.pathname === '/signup' ||
-		window.location.pathname.startsWith( '/signup/' )
-	) {
-		return;
-	}
-
-	if ( ! agency.isClientUser && ! agency.hasAgency ) {
-		window.location.replace( '/signup' );
-	}
-}
-
 export const agencyQuery = () =>
 	queryOptions( {
 		queryKey: [ 'agency' ] as const,
@@ -39,10 +22,9 @@ export const agencyQuery = () =>
 				};
 			}
 
-			maybeRedirectToSignup( agency );
-
 			return agency;
 		},
+		// Agency membership rarely changes within a session, so we avoid
+		// refetching on every mount, focus, and route-guard check.
 		staleTime: 5 * 60 * 1000,
-		retry: false,
 	} );
