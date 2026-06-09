@@ -1,13 +1,14 @@
 // packages/ui/src/stepper/style.module.scss
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
+@use './variables' as stepper-vars;
 
 // ---------------------------------------------------------------------------
 // Indicator
 // ---------------------------------------------------------------------------
 
-$indicator-size: 18px;
-$indicator-size-sm: 16px; // bullet completed + current
+$indicator-size: stepper-vars.$indicator-size;
+$indicator-size-sm: stepper-vars.$indicator-size-sm;
 
 .indicator {
 	display: inline-flex;

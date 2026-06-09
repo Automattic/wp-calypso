@@ -3,10 +3,11 @@
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly' as a11y;
 @use '../utils/_theme-variables' as theme;
+@use '../stepper/variables' as stepper-vars;
 
-// Half of the 18px indicator diameter. Used to offset the connector line so
-// it starts/ends at the indicator's edge rather than the step's center.
-$indicator-half: 9px;
+// Half the indicator diameter — offsets the connector line so it starts/ends
+// at the indicator's edge rather than the step's center.
+$indicator-half: stepper-vars.$indicator-size * 0.5;
 
 .root {
 	display: flex;
