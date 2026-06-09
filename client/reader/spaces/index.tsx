@@ -7,4 +7,5 @@ import { spaces } from './controller';
 
 export default function initSpaces() {
 	page( '/reader/spaces', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
+	page( '/reader/spaces/:slug', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 }

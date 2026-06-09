@@ -4,7 +4,7 @@ import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { Icon, commentAuthorAvatar, layout, plus } from '@wordpress/icons';
+import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
@@ -50,6 +50,7 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
+import ReaderSidebarSpaces from './reader-sidebar-spaces';
 import ReaderSidebarTags from './reader-sidebar-tags';
 
 const TrackingKeys = {
@@ -67,11 +68,6 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_discover',
 		gaEvent: 'Clicked Reader Sidebar Discover',
 		tracksEvent: 'calypso_reader_sidebar_discover_clicked',
-	},
-	spaces: {
-		action: 'clicked_reader_sidebar_spaces',
-		gaEvent: 'Clicked Reader Sidebar Spaces',
-		tracksEvent: 'calypso_reader_sidebar_spaces_clicked',
 	},
 	search: {
 		action: 'clicked_reader_sidebar_search',
@@ -169,17 +165,7 @@ export class ReaderSidebar extends Component {
 			<div className="sidebar-menu-container">
 				<AppTitle />
 				<SidebarMenu>
-					{ isEnabled( 'reader/spaces' ) && (
-						<SidebarItem
-							label={ translate( 'Spaces' ) }
-							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.spaces ) }
-							customIcon={ <Icon className="sidebar__menu-icon" icon={ layout } size={ 24 } /> }
-							link="/reader/spaces"
-							className={ ReaderSidebarHelper.itemLinkClass( '/reader/spaces', path, {
-								'sidebar-streams__spaces': true,
-							} ) }
-						/>
-					) }
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<li className="sidebar-streams__following">
 						<ReaderSidebarRecent

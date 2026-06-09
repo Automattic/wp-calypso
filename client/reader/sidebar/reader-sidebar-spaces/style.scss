@@ -1,0 +1,97 @@
+.reader-sidebar-spaces__link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.reader-sidebar-spaces__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 8px;
+}
+
+.reader-sidebar-spaces__icon--blue {
+	background: var(--studio-blue-5);
+	color: var(--studio-blue-50);
+}
+
+.reader-sidebar-spaces__icon--purple {
+	background: var(--studio-purple-5);
+	color: var(--studio-purple-50);
+}
+
+.reader-sidebar-spaces__icon--red {
+	background: var(--studio-red-5);
+	color: var(--studio-red-50);
+}
+
+.reader-sidebar-spaces__icon--orange {
+	background: var(--studio-orange-5);
+	color: var(--studio-orange-40);
+}
+
+.reader-sidebar-spaces__icon--gray {
+	background: var(--studio-gray-5);
+	color: var(--studio-gray-50);
+}
+
+.reader-sidebar-spaces__icon--green {
+	background: var(--studio-green-5);
+	color: var(--studio-green-50);
+}
+
+.reader-sidebar-spaces__icon--celadon {
+	background: var(--studio-celadon-5);
+	color: var(--studio-celadon-50);
+}
+
+.reader-sidebar-spaces__text {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+	flex: 1;
+}
+
+.reader-sidebar-spaces__name {
+	color: var(--color-text);
+	font-weight: 500;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.reader-sidebar-spaces__meta {
+	color: var(--color-text-subtle);
+	font-size: 0.75rem;
+	font-style: italic;
+	line-height: 1.3;
+}
+
+.reader-sidebar-spaces__count {
+	flex-shrink: 0;
+	min-inline-size: 24px;
+	padding-block: 2px;
+	padding-inline: 8px;
+	border-radius: 16px;
+	background: var(--studio-gray-5);
+	color: var(--color-text-subtle);
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-align: center;
+}
+
+// Selected row: highlight the name and turn the count into a filled badge,
+// matching the active-space treatment in the design.
+.reader-sidebar-spaces__item.selected .reader-sidebar-spaces__name {
+	color: var(--color-primary);
+}
+
+.reader-sidebar-spaces__item.selected .reader-sidebar-spaces__count {
+	background: var(--color-primary);
+	color: var(--color-text-inverted);
+}

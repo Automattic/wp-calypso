@@ -19,6 +19,8 @@ export const spaces = ( context: Context, next: () => void ) => {
 	if ( ! ensureSpacesEnabled() ) {
 		return;
 	}
-	context.primary = <AsyncLoad require={ loadSpacesView } placeholder={ null } />;
+	context.primary = (
+		<AsyncLoad require={ loadSpacesView } placeholder={ null } slug={ context.params.slug } />
+	);
 	next();
 };
