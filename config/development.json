@@ -183,6 +183,7 @@
 		"purchases/split-cancel-remove": true,
 		"push-notifications": true,
 		"reader/social": true,
+		"reader/spaces": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,
