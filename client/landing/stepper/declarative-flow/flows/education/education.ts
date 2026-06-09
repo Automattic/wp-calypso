@@ -74,9 +74,14 @@ const education: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
-				case STEPS.EDUCATION_STUDENT_VALIDATION.slug:
+				case STEPS.EDUCATION_STUDENT_VALIDATION.slug: {
+					if ( ! providedDependencies?.inviteCodeValidated ) {
+						throw new Error( 'Education invite code must be validated before continuing' );
+					}
+
 					setPlanCartItem( { product_slug: PLAN_STUDENT } );
 					return navigate( STEPS.DOMAIN_SEARCH.slug );
+				}
 
 				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {

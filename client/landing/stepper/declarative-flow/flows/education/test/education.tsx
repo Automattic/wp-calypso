@@ -80,6 +80,15 @@ describe( 'Education Flow', () => {
 		} );
 	} );
 
+	it( 'does not advance past validation without the validated marker', () => {
+		expect( () =>
+			runNavigation( {
+				from: STEPS.EDUCATION_STUDENT_VALIDATION,
+				dependencies: {},
+			} )
+		).toThrow( 'Education invite code must be validated before continuing' );
+	} );
+
 	it( 'continues from domain search to site creation', () => {
 		const destination = runNavigation( {
 			from: STEPS.DOMAIN_SEARCH,
