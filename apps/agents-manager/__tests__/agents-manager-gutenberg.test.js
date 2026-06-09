@@ -20,12 +20,22 @@ jest.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } 
 
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
 
-describe( 'agents-manager-gutenberg entry', () => {
+const loadRender = () => {
 	let render;
 
-	beforeAll( () => {
+	jest.isolateModules( () => {
 		require( '../agents-manager-gutenberg' );
-		render = mockRegisterPlugin.mock.calls[ 0 ]?.[ 1 ]?.render;
+		render = mockRegisterPlugin.mock.calls.at( -1 )?.[ 1 ]?.render;
+	} );
+
+	return render;
+};
+
+describe( 'agents-manager-gutenberg entry', () => {
+	beforeEach( () => {
+		mockRegisterPlugin.mockClear();
+		delete globalThis.agentsManagerData;
+		delete window._currentSiteType;
 	} );
 
 	afterEach( () => {
@@ -34,6 +44,8 @@ describe( 'agents-manager-gutenberg entry', () => {
 	} );
 
 	it( 'registers the jetpack-agents-manager plugin with a render function', () => {
+		loadRender();
+
 		expect( mockRegisterPlugin ).toHaveBeenCalledWith(
 			'jetpack-agents-manager',
 			expect.objectContaining( { render: expect.any( Function ) } )
@@ -47,6 +59,9 @@ describe( 'agents-manager-gutenberg entry', () => {
 			jetpackAiSidebarPreview: { enabled: true },
 		};
 
+		const render = loadRender();
+
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
 		expect( render() ).toBeNull();
 	} );
 
@@ -58,6 +73,9 @@ describe( 'agents-manager-gutenberg entry', () => {
 			jetpackAiSidebarPreview: { enabled: true },
 		};
 
+		const render = loadRender();
+
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
 		const result = render();
 		expect( result ).not.toBeNull();
 		expect( result.type.name ).toBe( 'AgentsManagerWithProvider' );
