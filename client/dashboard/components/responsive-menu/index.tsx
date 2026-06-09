@@ -288,9 +288,9 @@ function ResponsiveMenu( {
 							return (
 								<RouterLinkMenuItem
 									{ ...child.props }
-									onClick={ () => {
+									onClick={ ( e ) => {
 										onClose();
-										child.props.onClick?.();
+										child.props.onClick?.( e );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: child.props.to ?? '',
 										} );
