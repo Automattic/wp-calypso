@@ -19,10 +19,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 				href={ getSpacePath( space.id ) }
 				onClick={ onClick }
 			>
-				<span
-					className={ `reader-sidebar-spaces__icon reader-sidebar-spaces__icon--${ space.color }` }
-					aria-hidden="true"
-				>
+				<span className="reader-sidebar-spaces__icon" aria-hidden="true">
 					<Icon icon={ space.icon } size={ 18 } />
 				</span>
 				<span className="reader-sidebar-spaces__text">

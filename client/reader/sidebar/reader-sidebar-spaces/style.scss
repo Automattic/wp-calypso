@@ -11,41 +11,8 @@
 	flex-shrink: 0;
 	block-size: 22px;
 	border-radius: 8px;
-}
-
-.reader-sidebar-spaces__icon--blue {
-	background: var(--studio-blue-5);
-	color: var(--studio-blue-50);
-}
-
-.reader-sidebar-spaces__icon--purple {
-	background: var(--studio-purple-5);
-	color: var(--studio-purple-50);
-}
-
-.reader-sidebar-spaces__icon--red {
-	background: var(--studio-red-5);
-	color: var(--studio-red-50);
-}
-
-.reader-sidebar-spaces__icon--orange {
-	background: var(--studio-orange-5);
-	color: var(--studio-orange-40);
-}
-
-.reader-sidebar-spaces__icon--gray {
-	background: var(--studio-gray-5);
-	color: var(--studio-gray-50);
-}
-
-.reader-sidebar-spaces__icon--green {
-	background: var(--studio-green-5);
-	color: var(--studio-green-50);
-}
-
-.reader-sidebar-spaces__icon--celadon {
-	background: var(--studio-celadon-5);
-	color: var(--studio-celadon-50);
+	background: var(--space-color-bg);
+	color: var(--space-color);
 }
 
 .reader-sidebar-spaces__text {
@@ -64,37 +31,46 @@
 	white-space: nowrap;
 }
 
-// Each space carries its own accent colour, exposed as a custom property so
-// the active-row styling can pick it up.
+// Each space exposes its accent colour as two custom properties — `--space-color`
+// (foreground: the icon glyph and the active row's name) and `--space-color-bg`
+// (the icon's surface tint). The modifier classes below only redefine those two
+// values; the icon/name rules above consume them, so colours live in one place.
 .reader-sidebar-spaces__item--blue {
 	--space-color: var(--studio-blue-50);
+	--space-color-bg: var(--studio-blue-5);
 }
 
 .reader-sidebar-spaces__item--purple {
 	--space-color: var(--studio-purple-50);
+	--space-color-bg: var(--studio-purple-5);
 }
 
 .reader-sidebar-spaces__item--red {
 	--space-color: var(--studio-red-50);
+	--space-color-bg: var(--studio-red-5);
 }
 
 .reader-sidebar-spaces__item--orange {
 	--space-color: var(--studio-orange-50);
+	--space-color-bg: var(--studio-orange-5);
 }
 
 .reader-sidebar-spaces__item--gray {
 	--space-color: var(--studio-gray-50);
+	--space-color-bg: var(--studio-gray-5);
 }
 
 .reader-sidebar-spaces__item--green {
 	--space-color: var(--studio-green-50);
+	--space-color-bg: var(--studio-green-5);
 }
 
 .reader-sidebar-spaces__item--celadon {
 	--space-color: var(--studio-celadon-50);
+	--space-color-bg: var(--studio-celadon-5);
 }
 
-// Active row: the name takes on the space's own colour.
+// Active row: the name takes on the space's own foreground colour.
 .reader-sidebar-spaces__item.selected .reader-sidebar-spaces__name {
 	color: var(--space-color);
 }
