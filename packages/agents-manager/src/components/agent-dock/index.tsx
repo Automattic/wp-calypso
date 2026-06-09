@@ -18,7 +18,6 @@ import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-age
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -104,23 +103,13 @@ export default function AgentDock( {
 	const navigate = useNavigate();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
-	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
+	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
 	const agentId = agentConfig!.agentId;
 
-	// Reader-chat runs on public blog frontends where there's no wp-admin
-	// sidebar to dock into. Detect that context so we can hide options that
-	// don't apply and avoid persisting open/close state through the logged-in
-	// Agents Manager REST state endpoint.
+	// Reader chat runs on public blog frontends with no wp-admin sidebar. We
+	// detect it to hide docking options and skip persisting open/close state to
+	// the logged-in REST endpoint.
 	const isReaderChat = isReaderChatAgent( agentId );
-	const showChatHistory =
-		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
-	const showSupportGuides =
-		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
-
-	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
-	// so Zendesk escalation is disabled until routing is in place.
-	const isWooAiAdmin = sectionName === 'wooai-admin';
-	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
 
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
@@ -157,6 +146,21 @@ export default function AgentDock( {
 		},
 		navigate,
 	} );
+
+	// Route visibility. All are hidden in reader chat (public blog frontends);
+	// some add a further requirement, noted below. Ordered to match the routes.
+	//
+	// `/zendesk` also needs the unified agent, and `wooai-admin` sites lack the
+	// HVM-tagged routing it relies on.
+	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat && sectionName !== 'wooai-admin';
+	// `/support-guides` (the list) also needs the unified agent, and is only
+	// reachable from the WP admin bar trigger.
+	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAdminBarTrigger;
+	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
+	// so unlike the list it isn't tied to the admin bar.
+	const showSupportGuide = ! isReaderChat;
+	// `/history` matches the chat header's history button.
+	const showChatHistory = ! isReaderChat;
 
 	useSetupCustomActions( {
 		canDock,
@@ -342,9 +346,9 @@ export default function AgentDock( {
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
 				<Route path="/chat" element={ OrchestratorChatRoute } />
-				{ showSupportGuides && <Route path="/post" element={ SupportGuideRoute } /> }
-				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+				{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
 				{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+				{ showSupportGuide && <Route path="/post" element={ SupportGuideRoute } /> }
 				{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
