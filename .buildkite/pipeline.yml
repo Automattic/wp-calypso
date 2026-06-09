@@ -85,7 +85,7 @@ steps:
     agents:
       queue: windows
     plugins:
-      - automattic/a8c-ci-toolkit#5.7.0
+      - automattic/a8c-ci-toolkit#6.1.0
     command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows-nsis.ps1
     artifact_paths:
       - desktop/release/*.exe
