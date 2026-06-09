@@ -614,7 +614,11 @@ const UniversalNavbarHeader = ( {
 										<ClickableItem
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
-											content={ __( 'Log In', __i18n_text_domain__ ) }
+											content={
+												nav2026
+													? __( 'Log in', __i18n_text_domain__ )
+													: __( 'Log In', __i18n_text_domain__ )
+											}
 											urlValue={
 												loginUrl ||
 												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
@@ -626,7 +630,11 @@ const UniversalNavbarHeader = ( {
 										<ClickableItem
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
-											content={ __( 'Get started', __i18n_text_domain__ ) }
+											content={
+												nav2026
+													? __( 'Get started', __i18n_text_domain__ )
+													: __( 'Get Started', __i18n_text_domain__ )
+											}
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
