@@ -18,7 +18,6 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { getProductCost, getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import type { IAppState } from 'calypso/state/types';
 
@@ -38,9 +37,8 @@ const monthlyPlansMap = {
 const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerProps ) => {
 	const translate = useTranslate();
 	const [ isMonthly, setIsMonthly ] = useState< boolean >( false );
-	const getPlanPathSlug = usePlanPathSlugGetter();
-	// The CTA links to a plan path slug derived from the loaded plans query, so
-	// keep it disabled until that data is available.
+	// The CTA links to a plan path slug from the loaded plans query, so keep it
+	// disabled until that data is available.
 	const { data: plans } = useQuery( plansQuery() );
 
 	const plan = getPlan( planSlug );
@@ -76,7 +74,10 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 
 	const amount = isMonthly ? displayCostMonth : displayCostYear;
 	const period = isMonthly ? translate( '/month' ) : translate( '/year' );
-	const pathSlug = getPlanPathSlug( isMonthly ? monthlyPlanSlug : planSlug );
+	const selectedPlanSlug = isMonthly ? monthlyPlanSlug : planSlug;
+	const pathSlug =
+		plans?.find( ( { product_slug } ) => product_slug === selectedPlanSlug )?.path_slug ||
+		selectedPlanSlug;
 
 	// @ts-ignore - getSignupFeatures is not typed as existing on all plan types, but it is in practice
 	const featureSlugs: string[] = plan.getSignupFeatures();
