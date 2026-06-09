@@ -233,7 +233,7 @@
 @mixin dashboard-dark-theme-dataviews {
 	@include color-scheme-dark-theme-dataviews;
 
-	.dataviews-no-results .components-surface.components-card.dashboard-empty-state__wrapper {
+	.dataviews-no-results .dashboard-empty-state__wrapper {
 		box-shadow: none;
 	}
 
