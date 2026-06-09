@@ -54,7 +54,7 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import { hasQueryArg } from '@wordpress/url';
+import { getQueryArg, hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, useTranslate, type TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -341,23 +341,38 @@ const PlansFeaturesMain = ( {
 			{
 				onSuccess: async () => {
 					closeDowngradeModal();
-					// Honor an explicit redirect target (e.g. from the dashboard / classic
-					// purchase pages) if one was provided.
-					if ( redirectTo ) {
-						window.location.href = redirectTo;
-						return;
-					}
-					// Otherwise refetch purchases and land on the newly-downgraded plan's
-					// settings page, falling back to the plans page.
+					// Refetch purchases so we can resolve the newly-provisioned purchase,
+					// needed both to substitute the `:purchaseId` placeholder below and to
+					// deep-link to its settings page in the fallback.
 					const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
 					const newPurchase = freshPurchases?.find(
 						( p ) =>
 							String( p.product_id ) === String( toProductId ) &&
 							String( p.blog_id ) === String( blogId )
 					);
+
+					// Honor the `redirect_to` the entry point provided so the user returns
+					// to where they came from (e.g. the Dashboard purchase settings) with a
+					// success notice. When this grid renders inside the Stepper the value is
+					// only on the URL, not the `redirectTo` prop, so check both. The target
+					// carries a `:purchaseId` placeholder (as checkout's pending page does),
+					// which we substitute with the newly-provisioned purchase.
+					const redirectTarget = redirectTo ?? getQueryArg( window.location.href, 'redirect_to' );
+					if (
+						typeof redirectTarget === 'string' &&
+						( newPurchase || ! redirectTarget.includes( ':purchaseId' ) )
+					) {
+						window.location.href = newPurchase
+							? redirectTarget.replaceAll( ':purchaseId', String( newPurchase.ID ) )
+							: redirectTarget;
+						return;
+					}
+
+					// Fallback: deep-link to the new plan's settings page (or the plans
+					// page) with a notice.
 					window.location.href =
 						newPurchase && siteSlug
-							? managePurchase( siteSlug, newPurchase.ID )
+							? `${ managePurchase( siteSlug, newPurchase.ID ) }?downgraded=true`
 							: `/plans/${ siteSlug }?downgraded=true`;
 				},
 				onError: ( error: Error ) => {
