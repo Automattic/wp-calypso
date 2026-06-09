@@ -50,8 +50,8 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
-import ReaderSidebarSpaces from './reader-sidebar-spaces';
 import ReaderSidebarTags from './reader-sidebar-tags';
+import ReaderSidebarSpaces from './spaces';
 
 const TrackingKeys = {
 	conversations: {

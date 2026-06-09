@@ -34,7 +34,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( selected[ 0 ].textContent ).toContain( FIRST_SPACE.name );
 		// The active row carries the space's colour class, which drives the
 		// active link colour via the `--space-color` custom property.
-		expect( selected[ 0 ] ).toHaveClass( `reader-sidebar-spaces__item--${ FIRST_SPACE.color }` );
+		expect( selected[ 0 ] ).toHaveClass( `sidebar-spaces__item--${ FIRST_SPACE.color }` );
 	} );
 
 	it( 'does not crash or falsely select on an unexpected space id in the path', () => {
