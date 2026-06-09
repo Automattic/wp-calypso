@@ -38,7 +38,7 @@
 		"@storybook/react-webpack5": "^9.1.20",
 		"postcss": "^8.5.3",
 		"storybook": "^9.1.20",
-		"typescript": "^5.9.3",
+		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {

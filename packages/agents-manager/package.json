@@ -41,8 +41,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.65",
-		"@automattic/agenttic-ui": "^0.1.65",
+		"@automattic/agenttic-client": "^0.1.66",
+		"@automattic/agenttic-ui": "^0.1.66",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -74,8 +74,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/dom": "^10.0.0",
-		"@testing-library/react": "^15.0.0",
+		"@testing-library/dom": "^10.4.1",
+		"@testing-library/react": "^15.0.7",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
@@ -83,7 +83,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"smooch": "^5.7.17",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

@@ -11,12 +11,12 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
 	getFollowingSource,
 	useSiteSubscriptions,
 	useFollowSite,
 } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
@@ -77,7 +77,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
 	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
-	const { data: followedTagsFromState } = useFollowedReaderTags();
+	const { data: followedTagsFromState } = useFollowedTags();
 	const { subscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();

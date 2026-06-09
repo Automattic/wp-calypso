@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "calypso/my-sites/patterns/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import 'calypso/my-sites/patterns/mixins';
 
 .is-section-patterns {
 	.layout__content {
@@ -8,7 +8,7 @@
 
 		.masterbar {
 			// Makes sure the navigation bar header appears below the masterbar and notices
-			z-index: z-index("root", ".main") - 1;
+			z-index: z-index( 'root', '.main' ) - 1;
 		}
 		a {
 			text-decoration: none;
@@ -25,7 +25,7 @@
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;
 
-			@media (max-width: $break-medium) {
+			@media ( max-width: $break-medium ) {
 				padding-top: 46px;
 			}
 		}
@@ -47,26 +47,76 @@
 		}
 	}
 
+	// Pre-2026 design: dark masterbar with white nav text. Gated off the 2026 path.
 	.has-no-sidebar {
 		.masterbar-menu {
-			.masterbar {
-				background: #1d2327;
-				border-bottom: 1px solid #1d2327;
+			.masterbar:not( :has( .x-nav--2026-redesign ) ) {
+				background: var( --studio-gray-90 );
+				border-bottom: 1px solid var( --studio-gray-90 );
 			}
 		}
 	}
 
-	.x-nav-link__logo svg path {
-		fill: var(--studio-white);
+	.masterbar:not( :has( .x-nav--2026-redesign ) ) {
+		.x-nav-link__logo svg path {
+			fill: var( --studio-white );
+		}
+
+		.x-nav-item,
+		.x-nav-link-chevron::before {
+			color: var( --studio-white );
+		}
+
+		.x-nav-item .cta-btn-nav {
+			background: var( --studio-white ) !important;
+			color: var( --studio-black ) !important;
+		}
 	}
 
-	.x-nav-item,
-	.x-nav-link-chevron::before {
-		color: var(--studio-white);
+	// Closed state: transparent nav over the dark hero, so text/logo/chevron go white.
+	.lpc-header-nav-container:not(
+			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+		):not( .is-scrolled )
+		.x-nav--2026-redesign
+		.x-nav-item {
+		color: var( --studio-white ) !important;
+
+		.x-nav-link-chevron::before {
+			border-color: var( --studio-white );
+		}
 	}
 
-	.x-nav-item .cta-btn-nav {
-		background: var(--studio-white) !important;
-		color: var(--studio-black) !important;
+	// Open or scrolled: white nav bar, so text/logo/chevron revert to dark.
+	.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] ),
+	.lpc-header-nav-container.is-scrolled {
+		.x-nav--2026-redesign .x-nav-item {
+			color: var( --studio-gray-100 ) !important;
+		}
+
+		.x-nav-link__logo svg path {
+			fill: var( --studio-gray-100 );
+		}
+
+		// `border-color` (not `color`) so it animates with the existing chevron transition.
+		.x-nav--2026-redesign .x-nav-item .x-nav-link-chevron::before {
+			border-color: var( --studio-gray-100 );
+		}
+	}
+
+	// 2026 nav floats over the page; drop the generic clearance and let the hero slide under it.
+	&:has( .x-nav--2026-redesign ) {
+		.layout__content {
+			padding-top: 0;
+		}
+
+		.patterns-header__inner {
+			// Clear the nav's own height only (the band already starts below the admin bar),
+			// on top of legacy's breathing room so the nav→heading gap matches legacy.
+			padding-top: calc( 105px + var( --nav-2026-height ) );
+
+			@media ( max-width: $break-xlarge ) {
+				padding-top: calc( 90px + var( --nav-2026-height ) );
+			}
+		}
 	}
 }

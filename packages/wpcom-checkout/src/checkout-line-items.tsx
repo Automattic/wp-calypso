@@ -32,6 +32,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { type CartBundleLineItem } from './group-bundle-line-items';
 import {
 	getIntroductoryOfferIntervalDisplay,
 	getItemIntroductoryOfferDisplay,
@@ -410,6 +411,123 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 			} ) }
 		</>
 	);
+}
+
+/**
+ * Render a domain bundle as a single grouped line item: one title and total, the
+ * member domains listed beneath, and a single remove action that clears every
+ * member from the cart at once (matching the backend's all-or-nothing rule).
+ */
+export function BundleLineItem( {
+	bundle,
+	className = null,
+	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+}: {
+	bundle: CartBundleLineItem;
+	className?: string | null;
+	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: RemoveProductFromCart;
+} ) {
+	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+
+	const { products } = bundle;
+	// All members of a bundle are guaranteed to share a currency, so the total can
+	// safely be summed in the smallest unit and rendered under the first member's currency.
+	const currency = products[ 0 ]?.currency ?? 'USD';
+	const bundleTotalInteger = products.reduce(
+		( total, product ) => total + product.item_subtotal_integer,
+		0
+	);
+	const bundleTotalDisplay = formatCurrency( bundleTotalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const bundleLabel = String( translate( 'Domain bundle' ) );
+
+	const removeBundleFromCart = () => {
+		products.forEach( ( product ) => {
+			removeProductFromCart?.( product.uuid );
+		} );
+	};
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<div
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug="domain-bundle"
+			data-product-type="domain-bundle"
+		>
+			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
+
+			<span className="checkout-line-item__price">
+				<LineItemPrice actualAmount={ bundleTotalDisplay } />
+			</span>
+
+			{ products.map( ( product ) => (
+				<LineItemMeta key={ product.uuid }>
+					<span>{ product.meta }</span>
+					<span>
+						{ formatCurrency( product.item_subtotal_integer, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ) }
+					</span>
+				</LineItemMeta>
+			) ) }
+
+			{ hasDeleteButton && removeProductFromCart && (
+				<>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType="text-button"
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: bundleLabel,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
+
+					<CheckoutModal
+						isVisible={ isModalVisible }
+						closeModal={ () => {
+							setIsModalVisible( false );
+						} }
+						secondaryAction={ () => {
+							setIsModalVisible( false );
+						} }
+						primaryAction={ removeBundleFromCart }
+						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+						title={ String( translate( 'Remove domain bundle' ) ) }
+						copy={ String(
+							translate(
+								'Removing this domain bundle will remove its %(domainCount)d domain from your cart.',
+								'Removing this domain bundle will remove all %(domainCount)d domains from your cart.',
+								{
+									count: products.length,
+									args: { domainCount: products.length },
+								}
+							)
+						) }
+					/>
+				</>
+			) }
+		</div>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 interface ModalCopy {

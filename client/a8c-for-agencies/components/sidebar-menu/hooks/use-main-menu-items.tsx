@@ -142,6 +142,34 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
+				? [
+						{
+							icon: plugins,
+							path: '/',
+							link: A4A_PLUGINS_LINK,
+							title: translate( 'Plugins' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Plugins',
+							},
+						},
+				  ]
+				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: (
+					<div className="sidebar-menu-item__title-with-badge">
+						<span>{ translate( 'Reports' ) }</span>
+						<Badge type="info">{ translate( 'Beta' ) }</Badge>
+					</div>
+				),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
@@ -178,34 +206,6 @@ const useMainMenuItems = ( path: string ) => {
 				title: translate( 'WooPayments' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / WooPayments',
-				},
-				withChevron: true,
-			},
-			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
-				? [
-						{
-							icon: plugins,
-							path: '/',
-							link: A4A_PLUGINS_LINK,
-							title: translate( 'Plugins' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Plugins',
-							},
-						},
-				  ]
-				: [] ),
-			{
-				icon: chartBar,
-				path: A4A_REPORTS_LINK,
-				link: A4A_REPORTS_LINK,
-				title: (
-					<div className="sidebar-menu-item__title-with-badge">
-						<span>{ translate( 'Reports' ) }</span>
-						<Badge type="info">{ translate( 'Beta' ) }</Badge>
-					</div>
-				),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
 				},
 				withChevron: true,
 			},

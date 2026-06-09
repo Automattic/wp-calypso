@@ -36,7 +36,7 @@ export default function SnackbarBackButton( { children }: { children: ReactNode 
 			className="dashboard-snackbar-back-button"
 			style={ {
 				position: 'fixed',
-				bottom: '16px',
+				bottom: '24px',
 				insetInlineStart: '16px',
 				zIndex: 3,
 			} }

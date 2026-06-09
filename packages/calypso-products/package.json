@@ -57,7 +57,7 @@
 		"@wordpress/data": "^10.46.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.46.0",

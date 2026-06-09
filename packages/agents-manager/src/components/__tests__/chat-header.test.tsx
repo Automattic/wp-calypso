@@ -73,10 +73,10 @@ function installAdminBarTrigger() {
 	document.body.appendChild( el );
 }
 
-function renderChatHeader() {
+function renderChatHeader( title?: string ) {
 	return render(
 		<MemoryRouter>
-			<ChatHeader onClose={ jest.fn() } options={ [] } />
+			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } />
 		</MemoryRouter>
 	);
 }
@@ -87,6 +87,19 @@ describe( 'ChatHeader', () => {
 		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
 		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
+	} );
+
+	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
+		const title = 'A very long support guides title';
+		renderChatHeader( title );
+
+		expect( screen.getByText( title ) ).toHaveAttribute( 'title', title );
+	} );
+
+	it( 'does not render the title element when no title is provided', () => {
+		const { container } = renderChatHeader();
+
+		expect( container.querySelector( '.agents-manager-chat-header__title' ) ).toBeNull();
 	} );
 
 	it( 'shows the history button by default', () => {

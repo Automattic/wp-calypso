@@ -60,6 +60,11 @@ export default function Notifications( {
 		}
 	}, [ isHelpCenterShown ] );
 
+	// Keep the omnibar button in sync with the panel open state.
+	useEffect( () => {
+		omnibarEvents.notificationsOpen.emit( isOpen );
+	}, [ isOpen ] );
+
 	const handleClose = () => {
 		handleToggle( false );
 	};

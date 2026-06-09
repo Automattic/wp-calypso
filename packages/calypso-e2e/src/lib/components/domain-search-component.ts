@@ -1,5 +1,67 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
+
+type CartResponseDiagnostic = {
+	method: string;
+	status: number;
+	ok: boolean;
+	url: string;
+	products?: string[];
+	errors?: string[];
+	responseError?: string;
+};
+
+const isShoppingCartResponse = ( response: Response ): boolean => {
+	try {
+		return new URL( response.url() ).pathname.includes( '/me/shopping-cart/' );
+	} catch {
+		return response.url().includes( '/me/shopping-cart/' );
+	}
+};
+
+const normalizeText = ( value?: string | null ): string =>
+	( value ?? '' ).replace( /\s+/g, ' ' ).trim();
+
+const formatError = ( error: unknown ): string =>
+	error instanceof Error ? error.message : String( error );
+
+const summarizeCartResponse = async ( response: Response ): Promise< CartResponseDiagnostic > => {
+	const diagnostic: CartResponseDiagnostic = {
+		method: response.request().method(),
+		status: response.status(),
+		ok: response.ok(),
+		url: response.url(),
+	};
+
+	const contentType = response.headers()[ 'content-type' ] ?? '';
+	if ( ! contentType.includes( 'application/json' ) ) {
+		return diagnostic;
+	}
+
+	try {
+		const body = await response.json();
+
+		if ( Array.isArray( body?.products ) ) {
+			diagnostic.products = body.products
+				.map( ( product: { product_slug?: string; meta?: string } ) =>
+					[ product.product_slug, product.meta ].filter( Boolean ).join( ':' )
+				)
+				.slice( 0, 5 );
+		}
+
+		if ( Array.isArray( body?.messages?.errors ) ) {
+			diagnostic.errors = body.messages.errors
+				.map( ( error: { code?: string; message?: string } ) =>
+					[ error.code, error.message ].filter( Boolean ).join( ': ' )
+				)
+				.slice( 0, 5 );
+		}
+	} catch ( error ) {
+		diagnostic.responseError = formatError( error );
+	}
+
+	return diagnostic;
+};
 
 /**
  * Component for the domain search feature.
@@ -172,27 +234,50 @@ export class DomainSearchComponent {
 		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
 		await addToCartButton.waitFor();
 
+		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
+		const trackCartResponse = ( response: Response ) => {
+			if ( ! isShoppingCartResponse( response ) ) {
+				return;
+			}
+
+			cartResponseSummaries.push( summarizeCartResponse( response ) );
+		};
+
+		this.page.on( 'response', trackCartResponse );
+
 		// The add-to-cart API call can sometimes fail, leaving the button in an
 		// error state (domain-suggestion-cta--error) instead of detaching it.
 		// Retry the click up to 3 times when this happens.
 		const maxRetries = 3;
-		for ( let attempt = 1; attempt <= maxRetries; attempt++ ) {
-			await addToCartButton.click();
+		try {
+			for ( let attempt = 1; attempt <= maxRetries; attempt++ ) {
+				await addToCartButton.click();
 
-			try {
-				await addToCartButton.waitFor( { state: 'detached', timeout: 30000 } );
-				break;
-			} catch ( error ) {
-				// Check if the button is in an error state, which means the API
-				// call failed and we can retry.
-				const hasErrorClass = await addToCartButton.evaluate( ( el ) =>
-					el.classList.contains( 'domain-suggestion-cta--error' )
-				);
+				try {
+					await addToCartButton.waitFor( { state: 'detached', timeout: 30000 } );
+					break;
+				} catch ( error ) {
+					// Check if the button is in an error state, which means the API
+					// call failed and we can retry.
+					const hasErrorClass = await addToCartButton.evaluate( ( el ) =>
+						el.classList.contains( 'domain-suggestion-cta--error' )
+					);
 
-				if ( ! hasErrorClass || attempt === maxRetries ) {
-					throw error;
+					if ( ! hasErrorClass || attempt === maxRetries ) {
+						throw new Error(
+							await this.getAddToCartFailureDiagnostics( {
+								row,
+								addToCartButton,
+								selectedDomain,
+								cartResponseSummaries,
+								originalError: error,
+							} )
+						);
+					}
 				}
 			}
+		} finally {
+			this.page.off( 'response', trackCartResponse );
 		}
 
 		if ( waitForContinueButton ) {
@@ -201,6 +286,77 @@ export class DomainSearchComponent {
 		}
 
 		return selectedDomain;
+	}
+
+	/**
+	 * Builds domain-selection diagnostics for stuck Add to cart states.
+	 *
+	 * @param {Object} params Diagnostic inputs.
+	 * @param {Locator} params.row Selected domain suggestion row.
+	 * @param {Locator} params.addToCartButton Add to cart button in the selected row.
+	 * @param {string} params.selectedDomain Domain name being selected.
+	 * @param {Promise<CartResponseDiagnostic>[]} params.cartResponseSummaries Observed shopping cart responses.
+	 * @param {unknown} params.originalError Original Playwright error.
+	 * @returns {Promise<string>} Error message with selected domain, button state, and cart responses.
+	 */
+	private async getAddToCartFailureDiagnostics( {
+		row,
+		addToCartButton,
+		selectedDomain,
+		cartResponseSummaries,
+		originalError,
+	}: {
+		row: Locator;
+		addToCartButton: Locator;
+		selectedDomain: string;
+		cartResponseSummaries: Promise< CartResponseDiagnostic >[];
+		originalError: unknown;
+	} ): Promise< string > {
+		const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map( ( result ) =>
+			result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
+		);
+
+		const allAddToCartButtons = await this.getContainer()
+			.getByRole( 'button', { name: 'Add to cart' } )
+			.evaluateAll( ( buttons ) =>
+				buttons.slice( 0, 10 ).map( ( button ) => ( {
+					className: button.getAttribute( 'class' ),
+					disabled: ( button as HTMLButtonElement ).disabled,
+					ariaDisabled: button.getAttribute( 'aria-disabled' ),
+					ariaBusy: button.getAttribute( 'aria-busy' ),
+				} ) )
+			)
+			.catch( ( error ) => ( { error: formatError( error ) } ) );
+
+		const diagnostics = {
+			selectedDomain,
+			currentUrl: this.page.url(),
+			button: {
+				className: await addToCartButton.getAttribute( 'class' ).catch( formatError ),
+				disabled: await addToCartButton
+					.evaluate( ( button ) => ( button as HTMLButtonElement ).disabled )
+					.catch( () => undefined ),
+				ariaDisabled: await addToCartButton.getAttribute( 'aria-disabled' ).catch( formatError ),
+				ariaBusy: await addToCartButton.getAttribute( 'aria-busy' ).catch( formatError ),
+				text: normalizeText( await addToCartButton.textContent().catch( () => '' ) ),
+			},
+			row: {
+				title: await row.getAttribute( 'title' ).catch( formatError ),
+				text: normalizeText( await row.textContent().catch( () => '' ) ).slice( 0, 500 ),
+				continueButtonCount: await row
+					.getByRole( 'button', { name: 'Continue' } )
+					.count()
+					.catch( () => undefined ),
+			},
+			allAddToCartButtons,
+			cartResponses: cartResponses.slice( -5 ),
+		};
+
+		return [
+			`Failed to select domain suggestion "${ selectedDomain }".`,
+			`Original error: ${ formatError( originalError ) }`,
+			`Diagnostics: ${ JSON.stringify( diagnostics, null, 2 ) }`,
+		].join( '\n' );
 	}
 
 	/**

@@ -479,6 +479,12 @@ $button-border: 4px;
 			top: 16px;
 		}
 
+		// 2026 nav is `position: fixed`; offset the sticky preview column below it
+		// (admin-bar offset + 64px nav) while keeping its 48px breathing room.
+		.is-section-theme:has(.x-nav--2026-redesign) & {
+			top: calc(var(--nav-2026-sticky-offset) + #{$theme-sheet-content-padding-y});
+		}
+
 		&.is-active:hover {
 			cursor: pointer;
 			box-shadow:
