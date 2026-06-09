@@ -48,10 +48,8 @@ function DeploymentsList() {
 		codeDeploymentsQuery( site.ID )
 	);
 
-	// Fetch all deployment runs in parallel, then transform the data to include
-	// deployment info and mark active deployments. The transformation lives in
-	// `combine` (rather than a separate useMemo over the queries result) so the
-	// output stays referentially stable across renders.
+	// Fetch all deployment runs in parallel and then transform the data to include
+	// deployment info and mark active deployments.
 	const { deploymentRuns, isLoadingRuns } = useQueries( {
 		queries: deployments.map( ( deployment: CodeDeploymentData ) => ( {
 			...codeDeploymentRunsQuery( site.ID, deployment.id ),
