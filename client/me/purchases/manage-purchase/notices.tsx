@@ -12,7 +12,6 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	is100Year,
-	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
@@ -26,6 +25,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -71,6 +71,7 @@ const eventProperties = ( warning: string ) => ( { warning, position: 'individua
 
 export interface PurchaseNoticeProps {
 	isSplitCancelRemoveEnabled?: boolean;
+	getPlanPathSlug?: ( productSlug: string ) => string;
 	changePaymentMethodPath: string | false;
 	getAddNewPaymentMethodUrlFor: ( siteSlug: string ) => string | undefined;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
@@ -1377,7 +1378,7 @@ class PurchaseNotice extends Component<
 				upgrade_plan_slug: upgradePlanSlug,
 			} );
 
-			const planPath = getPlanPath( upgradePlanSlug ?? '' ) ?? '';
+			const planPath = this.props.getPlanPathSlug?.( upgradePlanSlug ?? '' ) ?? '';
 			const checkoutUrl = getTrialCheckoutUrl( {
 				productSlug: planPath,
 				siteSlug: selectedSiteSlug ?? '',
@@ -1524,10 +1525,12 @@ const ConnectedPurchaseNotice = connect( null, { recordTracksEvent } )(
 
 function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const getPlanPathSlug = usePlanPathSlugGetter();
 	return (
 		<ConnectedPurchaseNotice
 			{ ...props }
 			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+			getPlanPathSlug={ getPlanPathSlug }
 		/>
 	);
 }
