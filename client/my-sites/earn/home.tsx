@@ -7,7 +7,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
-	getPlanPath,
 	getYearlyPlanByMonthly,
 	isMonthly,
 	planMatches,
@@ -32,6 +31,7 @@ import PromoSection, {
 import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -55,6 +55,7 @@ import './style.scss';
 const Home = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const getPlanPathSlug = usePlanPathSlugGetter();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
 	const [ isPeerReferralCtaDisabled, setPeerReferralCtaDisabled ] = useState( false );
 	const site = useSelector( getSelectedSite );
@@ -408,7 +409,7 @@ const Home = () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
 							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug ? getPlanPath( annualPlanSlug ) : undefined;
+							const planPath = annualPlanSlug ? getPlanPathSlug( annualPlanSlug ) : undefined;
 							if ( planPath ) {
 								page( `/checkout/${ site.slug }/${ planPath }` );
 								return;
