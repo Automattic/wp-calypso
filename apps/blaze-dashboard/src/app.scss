@@ -28,31 +28,6 @@
 			}
 		}
 
-		// Header
-		.promote-post-i2__top-bar {
-			height: 40px;
-			display: flex;
-			align-items: center;
-			margin-bottom: 0;
-
-			.promote-post-i2__top-bar-buttons {
-				height: 36px;
-
-				.inline-support-link {
-					padding: 6px 12px;
-					line-height: 22px;
-					color: var(--color-neutral-70);
-				}
-
-				button {
-					line-height: 1;
-
-					&.posts-list-banner__border-button {
-						color: var(--color-neutral-70);
-					}
-				}
-			}
-		}
 		.promote-post-i2__header-subtitle.promote-post-i2__header-subtitle_mobile {
 			display: none !important;
 		}
@@ -192,19 +167,6 @@ $break-medium-expanded-menu: $break-medium + 272px;
 
 		a:focus {
 			box-shadow: none;
-		}
-
-		// Header
-		.promote-post-i2__top-bar {
-			height: 40px;
-			display: flex;
-			align-items: center;
-
-			.promote-post-i2__top-bar-buttons {
-				button {
-					line-height: rem(22px);
-				}
-			}
 		}
 
 		.promote-post-i2 .post-item__post-promote-button :hover {

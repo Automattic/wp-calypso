@@ -238,49 +238,21 @@ body.is-section-promote-post-i2 {
 				}
 			}
 
-			.advertising__page-header {
-				.formatted-header__title {
-					color: $studio-gray-100;
-					font-weight: 500;
-					font-size: .875rem;
-				}
-			}
 		}
 	}
 }
 
+// The admin-ui Page header is sticky by default, but Blaze renders inside a
+// document-scrolled layout where the Calypso masterbar / wp-admin admin bar
+// are fixed above it — a stuck header slides under those bars, and the search
+// input (higher z-index) paints over it. The header has no stable class
+// (CSS Modules), so anchor structurally: it is always the first child because
+// a title or breadcrumb is always passed.
+.promote-post-i2__page > :first-child {
+	position: static;
+}
+
 .promote-post-i2 {
-	// Shared top-bar layout used by campaign-item-details (the main
-	// dashboard header now renders through @wordpress/admin-ui Page).
-	&__top-bar {
-		align-items: center;
-		display: flex;
-		font-family: $font-sf-pro-text;
-		justify-content: space-between;
-		margin: 0 50px;
-		box-sizing: border-box;
-
-		&-buttons {
-			display: flex;
-			margin-left: 10px;
-
-			.button,
-			.is-primary {
-				border-radius: 4px;
-			}
-
-			.is-primary {
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-			}
-		}
-	}
-
-	// wp-admin's global `dd, li { margin-bottom: 6px }` makes the section-nav
-	// tabs float above the underline. Zero it so the tab text sits on the line.
-	.section-nav-tab {
-		margin-bottom: 0;
-	}
-
 	&__promote-button.is-primary {
 		background-color: #E65054;
 		border-color: #E65054;
@@ -456,6 +428,10 @@ body.is-section-promote-post-i2 {
 	}
 
 	.section-nav-tab {
+		// wp-admin's global `dd, li { margin-bottom: 6px }` makes the section-nav
+		// tabs float above the underline. Zero it so the tab text sits on the line.
+		margin-bottom: 0;
+
 		@media (min-width: 481px) {
 			margin-right: 8px;
 		}
@@ -545,27 +521,6 @@ body.is-section-promote-post-i2 {
 		}
 	}
 
-	&__top-bar-container {
-		background: var(--studio-white);
-		padding: 16px 0;
-
-		@media (max-width: 985px) {
-			padding: 4px;
-			margin-bottom: 16px;
-		}
-	}
-
-	.promote-post-i2__top-bar-title {
-		display: flex;
-		align-items: center;
-		height: 60px;
-		font-weight: 600;
-		font-size: 0.875rem;
-
-		.campaign-item-details-back-button {
-			color: var(--studio-gray-100);
-		}
-	}
 }
 
 
@@ -617,9 +572,8 @@ body.is-section-promote-post-i2 {
 		}
 
 		.layout__content .layout__primary {
-			.promote-post-i2__top-bar,
+			.promote-post-i2__page > :first-child,
 			.promote-post-i2__header-subtitle,
-			.advertising__page-header,
 			.promote-post-i2 .posts-list-banner__container,
 			.promote-post-i2 .section-nav,
 			.promote-post-i2 .post-item__view-link,
@@ -687,27 +641,10 @@ body.is-section-promote-post-i2 {
 				}
 			}
 
-			.advertising__page-header {
-				.formatted-header__title,
-				&_has-banner .formatted-header__title {
-					font-size: 0.875rem;
-					line-height: 1;
-				}
-			}
 		}
 	}
 
 	.promote-post-i2 {
-		&__top-bar {
-			margin: 8px;
-			max-width: 1040px;
-			box-sizing: border-box;
-
-			.posts-list-banner__border-button {
-				display: none;
-			}
-		}
-
 		.promote-post-i2__header-subtitle {
 			&_desktop {
 				display: none;
@@ -775,7 +712,6 @@ $break-medium-expanded-menu: $break-medium + 272px;
 }
 
 @mixin blazepress-huge {
-	.promote-post-i2__top-bar,
 	.section-nav-tabs .section-nav-tabs__list,
 	.promote-post-i2__search-bar-wrapper,
 	.promote-post-i2__table,
