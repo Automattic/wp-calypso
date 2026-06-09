@@ -64,7 +64,7 @@ function HorizontalStepperInner(
 				<Stepper.Panel
 					key={ step.value }
 					value={ step.value }
-					forceMount={ step.forceMount }
+					keepMounted={ step.keepMounted }
 					className={ styles[ 'panel' ] }
 				>
 					{ step.children }

@@ -18,7 +18,7 @@ export function VerticalStepperStep( {
 	optional = false,
 	disabled = false,
 	indicator,
-	forceMount,
+	keepMounted,
 	children,
 	className,
 }: StepProps ) {
@@ -42,7 +42,7 @@ export function VerticalStepperStep( {
 					) }
 				</Stack>
 			</Stepper.Trigger>
-			<Stepper.Panel className={ styles[ 'panel' ] } forceMount={ forceMount }>
+			<Stepper.Panel className={ styles[ 'panel' ] } keepMounted={ keepMounted }>
 				<div className={ styles[ 'panel-content' ] }>{ children }</div>
 			</Stepper.Panel>
 		</Stepper.Step>

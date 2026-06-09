@@ -5,19 +5,10 @@ import { forwardRef, useContext } from '@wordpress/element';
 import clsx from 'clsx';
 import { StepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
-import type { ComponentProps, ReactNode } from 'react';
-
-type StepperPanelProps = ComponentProps< 'div' > & {
-	/** Required in horizontal mode to associate panel with a step */
-	value?: string;
-	/** Keep panel mounted when inactive (works in both orientations) */
-	forceMount?: boolean;
-	children: ReactNode;
-	className?: string;
-};
+import type { StepperPanelProps } from './types';
 
 export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( function StepperPanel(
-	{ value: valueProp, forceMount, children, className, ...props },
+	{ value: valueProp, keepMounted, children, className, ...props },
 	ref
 ) {
 	const { orientation, totalSteps, steps } = useStepperContext();
@@ -55,7 +46,7 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 		return (
 			<Accordion.Panel
 				ref={ ref }
-				keepMounted={ forceMount }
+				keepMounted={ keepMounted }
 				role={ useRegion ? 'region' : undefined }
 				className={ clsx( styles[ 'panel' ], className ) }
 				{ ...props }
@@ -70,7 +61,7 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 		<Tabs.Panel
 			ref={ ref }
 			value={ resolvedValue }
-			keepMounted={ forceMount }
+			keepMounted={ keepMounted }
 			className={ clsx( styles[ 'panel' ], className ) }
 			{ ...props }
 		>

@@ -1,5 +1,5 @@
 // packages/ui/src/stepper/types.ts
-import type { CSSProperties, ReactNode, Ref } from 'react';
+import type { ComponentProps, CSSProperties, ReactNode, Ref } from 'react';
 
 // ---------------------------------------------------------------------------
 // Utility types
@@ -128,7 +128,7 @@ export type StepperRootProps = Omit< StepperBaseProps, 'ref' > &
  *
  * Note: this is distinct from Stepper.Step props — the headless primitive
  * accepts only value/status/optional/disabled/children (no title/description/
- * indicator/forceMount).
+ * indicator/keepMounted).
  */
 export type StepProps = {
 	value: string;
@@ -140,8 +140,21 @@ export type StepProps = {
 	/** Custom indicator content; built-in accessible label is always generated */
 	indicator?: ReactNode;
 	/** Keep panel mounted when inactive (works in both orientations) */
-	forceMount?: boolean;
+	keepMounted?: boolean;
 	/** Panel content */
+	children: ReactNode;
+	className?: string;
+};
+
+// ---------------------------------------------------------------------------
+// Stepper.Panel prop type
+// ---------------------------------------------------------------------------
+
+export type StepperPanelProps = ComponentProps< 'div' > & {
+	/** Required in horizontal mode to associate panel with a step */
+	value?: string;
+	/** Keep panel mounted when inactive (works in both orientations) */
+	keepMounted?: boolean;
 	children: ReactNode;
 	className?: string;
 };

@@ -410,13 +410,13 @@ describe( 'Stepper.Trigger className', () => {
 	} );
 } );
 
-describe( 'Stepper.Panel forceMount', () => {
+describe( 'Stepper.Panel keepMounted', () => {
 	it( 'keeps panel content in the DOM when the step is not current', () => {
 		render(
 			<Stepper.Root orientation="vertical" value="b" aria-label="Test">
 				<Stepper.Step value="a">
 					<Stepper.Trigger>Step A</Stepper.Trigger>
-					<Stepper.Panel forceMount>
+					<Stepper.Panel keepMounted>
 						<div data-testid="force-mounted-content" />
 					</Stepper.Panel>
 				</Stepper.Step>
@@ -428,7 +428,7 @@ describe( 'Stepper.Panel forceMount', () => {
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		// Step A is inactive; forceMount keeps its content in the DOM.
+		// Step A is inactive; keepMounted keeps its content in the DOM.
 		expect( screen.getByTestId( 'force-mounted-content' ) ).toBeInTheDocument();
 	} );
 } );
@@ -691,7 +691,7 @@ describe( 'Stepper.Step disabled in vertical mode', () => {
 	} );
 } );
 
-describe( 'Stepper.Panel forceMount horizontal', () => {
+describe( 'Stepper.Panel keepMounted horizontal', () => {
 	it( 'keeps horizontal panel content in the DOM when the step is not current', () => {
 		render(
 			<Stepper.Root orientation="horizontal" value="b" aria-label="Test">
@@ -703,7 +703,7 @@ describe( 'Stepper.Panel forceMount horizontal', () => {
 						<Stepper.Trigger>Step B</Stepper.Trigger>
 					</Stepper.Step>
 				</Stepper.List>
-				<Stepper.Panel value="a" forceMount>
+				<Stepper.Panel value="a" keepMounted>
 					<div data-testid="force-mounted-h" />
 				</Stepper.Panel>
 				<Stepper.Panel value="b">Panel B content</Stepper.Panel>

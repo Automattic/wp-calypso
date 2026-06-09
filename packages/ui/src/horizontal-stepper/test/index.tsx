@@ -53,18 +53,18 @@ describe( 'HorizontalStepper', () => {
 		expect( tab ).not.toHaveAttribute( 'disabled' );
 	} );
 
-	it( 'keeps inactive panel content in the DOM when forceMount is set', async () => {
+	it( 'keeps inactive panel content in the DOM when keepMounted is set', async () => {
 		render(
 			<HorizontalStepper value="a" aria-label="Test">
 				<HorizontalStepper.Step value="a" title="Step A">
 					<p>Panel A</p>
 				</HorizontalStepper.Step>
-				<HorizontalStepper.Step value="b" title="Step B" forceMount>
+				<HorizontalStepper.Step value="b" title="Step B" keepMounted>
 					<p data-testid="force-mounted">Panel B</p>
 				</HorizontalStepper.Step>
 			</HorizontalStepper>
 		);
-		// Step B is inactive but forceMount keeps its panel in the DOM
+		// Step B is inactive but keepMounted keeps its panel in the DOM
 		expect( await screen.findByTestId( 'force-mounted' ) ).toBeInTheDocument();
 	} );
 
