@@ -1,16 +1,8 @@
 import { Site } from '@automattic/api-core';
-import { useQuery } from '@tanstack/react-query';
-import { useAppContext } from '../../../app/context';
+import { usePluginSites } from '../../hooks/use-plugin-sites';
 
 export const useSitesById = () => {
-	const { queries } = useAppContext();
-	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		queries.sitesQuery( {
-			site_visibility: 'visible',
-			include_a8c_owned: false,
-			include_staging: true,
-		} )
-	);
+	const { data: sites, isLoading: isLoadingSites } = usePluginSites();
 
 	const map = new Map< number, Site >();
 

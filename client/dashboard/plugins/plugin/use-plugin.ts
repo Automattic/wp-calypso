@@ -7,8 +7,8 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
+import { usePluginSites } from '../hooks/use-plugin-sites';
 
 export interface SiteWithPluginData extends Site {
 	actionLinks?: SitePlugin[ 'action_links' ];
@@ -37,20 +37,13 @@ const useMarketplaceSearchIcon = ( pluginSlug: string ) => {
 export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: boolean } = {} ) => {
 	const queryClient = useQueryClient();
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
-	const { queries } = useAppContext();
 	const locale = useLocale();
 	const {
 		data: sitesPlugins,
 		isLoading: isLoadingSitesPlugins,
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( { ...pluginsQuery(), enabled } );
-	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		queries.sitesQuery( {
-			site_visibility: 'visible',
-			include_a8c_owned: false,
-			include_staging: true,
-		} )
-	);
+	const { data: sites, isLoading: isLoadingSites } = usePluginSites();
 	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
 		marketplacePluginsQuery()
 	);
