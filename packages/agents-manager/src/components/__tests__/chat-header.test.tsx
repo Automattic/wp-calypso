@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 let mockIsDocked = false;
 const mockSetIsMinimized = jest.fn();
+const mockHasAdminBarTrigger = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -43,17 +44,11 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	ADMIN_BAR_BUTTON_ID: 'wp-admin-bar-agents-manager',
+	hasAdminBarTrigger: () => mockHasAdminBarTrigger(),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
 import ChatHeader from '../chat-header';
-
-function installAdminBarTrigger() {
-	const el = document.createElement( 'div' );
-	el.id = 'wp-admin-bar-agents-manager';
-	document.body.appendChild( el );
-}
 
 // `isReaderChatHost()` reads the agent ID from this global.
 function installReaderChatHost() {
@@ -71,10 +66,13 @@ function renderChatHeader( title?: string ) {
 }
 
 describe( 'ChatHeader', () => {
+	beforeEach( () => {
+		mockHasAdminBarTrigger.mockReturnValue( false );
+	} );
+
 	afterEach( () => {
 		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
-		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
@@ -106,7 +104,7 @@ describe( 'ChatHeader', () => {
 	} );
 
 	it( 'minimizes the chat when the Minimize button is clicked', () => {
-		installAdminBarTrigger();
+		mockHasAdminBarTrigger.mockReturnValue( true );
 
 		renderChatHeader();
 		fireEvent.click( screen.getByText( 'Minimize' ) );
@@ -121,7 +119,7 @@ describe( 'ChatHeader', () => {
 	} );
 
 	it( 'hides the Minimize button when docked', () => {
-		installAdminBarTrigger();
+		mockHasAdminBarTrigger.mockReturnValue( true );
 		mockIsDocked = true;
 
 		renderChatHeader();

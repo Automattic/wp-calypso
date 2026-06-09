@@ -265,8 +265,8 @@ export default function AgentDock( {
 
 	const chatHeaderOptions = getChatHeaderOptions();
 
-	// The WP admin bar trigger can reopen the chat, so it gates two behaviors:
-	// hide it on close, and minimize it to the bar.
+	// With an admin bar trigger, the chat hides on close and can minimize to the
+	// bar. Without one, it stays mounted and collapses to a button instead.
 	const isChatVisible = isPersistedOpen || ! hasAdminBarTrigger;
 	const isMinimizedActive = hasAdminBarTrigger && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
