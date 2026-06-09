@@ -169,6 +169,18 @@ export class ReaderSidebar extends Component {
 			<div className="sidebar-menu-container">
 				<AppTitle />
 				<SidebarMenu>
+					{ isEnabled( 'reader/spaces' ) && (
+						<SidebarItem
+							label={ translate( 'Spaces' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.spaces ) }
+							customIcon={ <Icon className="sidebar__menu-icon" icon={ layout } size={ 24 } /> }
+							link="/reader/spaces"
+							className={ ReaderSidebarHelper.itemLinkClass( '/reader/spaces', path, {
+								'sidebar-streams__spaces': true,
+							} ) }
+						/>
+					) }
+
 					<li className="sidebar-streams__following">
 						<ReaderSidebarRecent
 							onClick={ this.props.toggleFollowingVisibility }
@@ -195,18 +207,6 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 						link="/discover"
 					/>
-
-					{ isEnabled( 'reader/spaces' ) && (
-						<SidebarItem
-							label={ translate( 'Spaces' ) }
-							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.spaces ) }
-							customIcon={ <Icon className="sidebar__menu-icon" icon={ layout } size={ 24 } /> }
-							link="/reader/spaces"
-							className={ ReaderSidebarHelper.itemLinkClass( '/reader/spaces', path, {
-								'sidebar-streams__spaces': true,
-							} ) }
-						/>
-					) }
 
 					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
 
