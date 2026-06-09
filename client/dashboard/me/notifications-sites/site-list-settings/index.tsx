@@ -18,8 +18,8 @@ export const SiteListSettings = () => {
 	const [ search, setSearch ] = useState< string | undefined >();
 	const { data: sites } = useSuspenseQuery( {
 		...queries.sitesQuery( {
-			include_a8c_owned: true,
 			site_visibility: 'visible',
+			include_a8c_owned: true,
 			include_staging: false,
 		} ),
 	} );
