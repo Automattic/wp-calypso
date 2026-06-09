@@ -114,7 +114,6 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 				currentSection.props.id !== A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID &&
 				! hasCompletedTour
 			) {
-				dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_completed' ) );
 				dispatch( savePreference( A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME, true ) );
 			}
 		}
