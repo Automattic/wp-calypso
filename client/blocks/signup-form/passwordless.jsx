@@ -366,7 +366,9 @@ class PasswordlessSignupForm extends Component {
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="signup-email">{ this.getLabelText() }</FormLabel>
+						<FormLabel htmlFor="signup-email" hasCoreStylesNoCaps={ this.props.hasCoreInputStyles }>
+							{ this.getLabelText() }
+						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"

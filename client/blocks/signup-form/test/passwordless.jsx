@@ -25,7 +25,7 @@ describe( 'createAccountError', () => {
 		expect( document.querySelector( '.connect-screen-action-buttons' ) ).toBeInTheDocument();
 	} );
 
-	it( 'applies core input styles when enabled', () => {
+	it( 'applies core form styles when enabled', () => {
 		const store = mockStore( {} );
 
 		render(
@@ -36,6 +36,27 @@ describe( 'createAccountError', () => {
 
 		expect( screen.getByRole( 'textbox', { name: /email/i } ) ).toHaveClass(
 			'form-text-input-core-styles'
+		);
+		expect( screen.getByText( /enter your email address/i ) ).toHaveClass(
+			'form-label-core-styles',
+			'form-label-core-styles-no-caps'
+		);
+	} );
+
+	it( 'does not apply core form styles by default', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm />
+			</Provider>
+		);
+
+		expect( screen.getByRole( 'textbox', { name: /email/i } ) ).not.toHaveClass(
+			'form-text-input-core-styles'
+		);
+		expect( screen.getByText( /enter your email address/i ) ).not.toHaveClass(
+			'form-label-core-styles'
 		);
 	} );
 
