@@ -41,7 +41,7 @@ describe( 'Education Flow', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'initializes the education steps with required login and preselects Student', async () => {
+	it( 'initializes the education steps with required login and no plan in the cart yet', async () => {
 		const reduxStore = {
 			dispatch: jest.fn(),
 			getState: jest.fn( () => ( {} ) ),
@@ -59,12 +59,12 @@ describe( 'Education Flow', () => {
 			STEPS.ERROR.slug,
 		] );
 		expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
-		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toEqual( {
+		expect( select( ONBOARD_STORE ).getPlanCartItem() ).not.toEqual( {
 			product_slug: PLAN_STUDENT,
 		} );
 	} );
 
-	it( 'continues from education validation to domains', () => {
+	it( 'continues from education validation to domains and adds the Student plan', () => {
 		const destination = runNavigation( {
 			from: STEPS.EDUCATION_STUDENT_VALIDATION,
 			dependencies: { inviteCodeValidated: true },
@@ -73,6 +73,9 @@ describe( 'Education Flow', () => {
 		expect( destination ).toMatchDestination( {
 			step: STEPS.DOMAIN_SEARCH,
 			query: null,
+		} );
+		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toEqual( {
+			product_slug: PLAN_STUDENT,
 		} );
 	} );
 

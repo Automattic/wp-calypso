@@ -28,12 +28,9 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
 
 async function initialize( reduxStore: Store ) {
-	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
+	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	await resetOnboardStore();
-	await setPlanCartItem( {
-		product_slug: PLAN_STUDENT,
-	} );
 
 	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
 	reduxStore.dispatch( setSelectedSiteId( null ) );
@@ -68,6 +65,7 @@ const education: FlowV2< typeof initialize > = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setHideFreePlan,
+			setPlanCartItem,
 			setSignupDomainOrigin,
 			setSiteUrl,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
@@ -77,6 +75,7 @@ const education: FlowV2< typeof initialize > = {
 
 			switch ( slug ) {
 				case STEPS.EDUCATION_STUDENT_VALIDATION.slug:
+					setPlanCartItem( { product_slug: PLAN_STUDENT } );
 					return navigate( STEPS.DOMAIN_SEARCH.slug );
 
 				case STEPS.DOMAIN_SEARCH.slug: {
