@@ -572,7 +572,7 @@ const ImageStudioContent = withInstanceId(
 					],
 				},
 				generation: {
-					title: __( 'Generation in progress', __i18n_text_domain__ ),
+					title: __( 'Video generation in progress', __i18n_text_domain__ ),
 					message: __(
 						'Your clip is still generating. Closing now will stop it and discard your progress.',
 						__i18n_text_domain__
