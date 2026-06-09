@@ -208,6 +208,8 @@ const UniversalNavbarHeader = ( {
 					if ( open ) {
 						if ( nav2026 ) {
 							recordMobileMenuClose( isScrolledRef.current, 'escape' );
+						} else {
+							recordLegacyMobileMenuClose( 'escape' );
 						}
 						setCurrentDropdown( null );
 						menuTriggerRef.current?.focus();
