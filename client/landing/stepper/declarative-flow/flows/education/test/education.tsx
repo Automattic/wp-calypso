@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { select } from '@wordpress/data';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -9,6 +8,8 @@ import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import { runFlowNavigation } from '../../../test/helpers';
 import educationFlow from '../education';
+import type { StepperStep } from '../../../internals/types';
+import type { Store } from 'redux';
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( educationFlow, options, 'forward' );
@@ -45,7 +46,7 @@ describe( 'Education Flow', () => {
 		const reduxStore = {
 			dispatch: jest.fn(),
 			getState: jest.fn( () => ( {} ) ),
-		};
+		} as unknown as Store;
 
 		const steps = await educationFlow.initialize( reduxStore );
 		const slugs = steps.map( ( step ) => step.slug );
@@ -58,7 +59,7 @@ describe( 'Education Flow', () => {
 			STEPS.PROCESSING.slug,
 			STEPS.ERROR.slug,
 		] );
-		expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
+		expect( steps.every( ( step: StepperStep ) => step.requiresLoggedInUser ) ).toBe( true );
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).not.toEqual( {
 			product_slug: PLAN_STUDENT,
 		} );
@@ -140,7 +141,7 @@ describe( 'Education Flow', () => {
 		} );
 
 		const checkoutUrl = new URL(
-			window.location.replace.mock.calls[ 0 ][ 0 ],
+			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
 			'https://wordpress.com'
 		);
 
