@@ -49,17 +49,25 @@ Set-Location "$PSScriptRoot\..\..\desktop"
 Write-Output "--- :yarn: Installing desktop dependencies"
 Invoke-Checked { yarn install --immutable --inline-builds }
 
-# Decrypt the Windows signing cert (resource/certificates/win.p12) and the app
-# secrets. Needs CALYPSO_SECRETS_ENCRYPTION_KEY in the agent env.
-Write-Output "--- :lock: Decrypting signing certificate and secrets"
-Invoke-Checked { yarn run build:secrets }
+# Materialize the org Windows signing certificate from AWS Secrets Manager
+# (writes certificate.pfx). Provided by the CI Toolkit Buildkite plugin and used
+# by every a8c Windows-signing app; WINDOWS_CODE_SIGNING_CERT_PASSWORD is the
+# matching cert password, already on the windows queue.
+Write-Output "--- :lock: Configuring Windows code signing (CI Toolkit cert)"
+Invoke-Checked { & 'setup_windows_code_signing.ps1' }
 
-# Point electron-builder at the decrypted PFX. WIN_CSC_KEY_PASSWORD, if the
-# cert is password-protected, comes from the agent env and is read directly by
-# electron-builder. CSC_FOR_PULL_REQUEST lets it sign on CI PR builds (electron-
-# builder skips signing on PRs otherwise) - needed to exercise signing here.
-$env:WIN_CSC_LINK = (Resolve-Path '.\resource\certificates\win.p12').Path
+if ([string]::IsNullOrEmpty($env:WINDOWS_CODE_SIGNING_CERT_PASSWORD)) {
+    throw "WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set on this agent."
+}
+$certPath = (Convert-Path '.\certificate.pfx')
+$env:WIN_CSC_LINK = $certPath
+$env:WIN_CSC_KEY_PASSWORD = $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD
+# electron-builder skips signing on CI PR builds unless this is set - needed to
+# exercise signing here. Gate to trunk/release before production.
 $env:CSC_FOR_PULL_REQUEST = 'true'
+# Workaround (per simplenote-electron): import the cert so the signer finds it.
+Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root `
+    -Password (ConvertTo-SecureString -String $env:WINDOWS_CODE_SIGNING_CERT_PASSWORD -AsPlainText -Force) | Out-Null
 
 Write-Output "--- :windows: Building signed NSIS installer"
 $env:CONFIG_ENV = 'release'
