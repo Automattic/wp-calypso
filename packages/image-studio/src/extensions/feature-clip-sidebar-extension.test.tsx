@@ -393,9 +393,12 @@ describe( 'feature-clip-sidebar-extension', () => {
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( "Couldn't load your saved clip. Try again or generate a new one." )
-			).toBeInTheDocument();
+			// Error notice is an assertive live region so screen readers
+			// interrupt to announce it.
+			const notice = screen.getByRole( 'alert' );
+			expect( notice ).toHaveTextContent(
+				"Couldn't load your saved clip. Try again or generate a new one."
+			);
 		} );
 
 		it( 'does not show the error notice on a normal empty post', () => {

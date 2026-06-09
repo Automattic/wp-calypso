@@ -185,7 +185,7 @@ function FeatureClipEmptyState( {
 	return (
 		<>
 			{ hasLoadError && (
-				<p className="image-studio-feature-clip-panel__error-notice" role="status">
+				<p className="image-studio-feature-clip-panel__error-notice" role="alert">
 					{ __(
 						"Couldn't load your saved clip. Try again or generate a new one.",
 						__i18n_text_domain__
