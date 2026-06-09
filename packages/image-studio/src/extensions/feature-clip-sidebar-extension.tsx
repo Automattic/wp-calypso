@@ -303,11 +303,14 @@ function FeatureClipPanel(): JSX.Element {
 		if ( lastHealedClipIdRef.current === featureClipId ) {
 			return;
 		}
-		lastHealedClipIdRef.current = featureClipId;
 		const editor = dispatch( 'core/editor' ) as {
 			editPost?: ( data: { meta: Record< string, unknown > } ) => void;
 		};
-		editor.editPost?.( { meta: { [ FEATURE_CLIP_META_KEY ]: 0 } } );
+		if ( typeof editor.editPost !== 'function' ) {
+			return;
+		}
+		editor.editPost( { meta: { [ FEATURE_CLIP_META_KEY ]: 0 } } );
+		lastHealedClipIdRef.current = featureClipId;
 	}, [ featureClipId, hasResolvedAttachment, resolutionError, attachment ] );
 
 	const titleNode = (

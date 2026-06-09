@@ -31,6 +31,7 @@ let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
 let mockResolutionError: unknown = null;
 let mockHasBlockEditor = true;
+let mockHasEditPost = true;
 const mockEditPost = jest.fn();
 let mockReelVisible = false;
 let mockGenericVisible = false;
@@ -94,7 +95,7 @@ jest.mock( '@wordpress/data', () => ( {
 			return mockHasBlockEditor ? { insertBlocks: mockInsertBlocks } : {};
 		}
 		if ( store === 'core/editor' ) {
-			return { editPost: mockEditPost };
+			return mockHasEditPost ? { editPost: mockEditPost } : {};
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
@@ -232,6 +233,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockHasResolvedMedia = true;
 		mockResolutionError = null;
 		mockHasBlockEditor = true;
+		mockHasEditPost = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
 		mockReelIsConfirming = false;
@@ -326,6 +328,31 @@ describe( 'feature-clip-sidebar-extension', () => {
 			mockResolutionError = null;
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
+			expect( mockEditPost ).toHaveBeenCalledWith( {
+				meta: { _jetpack_feature_clip_id: 0 },
+			} );
+		} );
+
+		it( 'does not poison the dedupe ref when editPost is unavailable on the first attempt', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = null;
+			mockHasEditPost = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { rerender } = render( <FeatureClipPanel /> );
+			expect( mockEditPost ).not.toHaveBeenCalled();
+
+			// A dep flickers and editPost becomes available. Because the ref
+			// wasn't set on the failed first attempt, the heal retries for the
+			// same clip id.
+			mockHasEditPost = true;
+			mockResolutionError = new Error( 'transient' );
+			rerender( <FeatureClipPanel /> );
+			expect( mockEditPost ).not.toHaveBeenCalled();
+
+			mockResolutionError = null;
+			rerender( <FeatureClipPanel /> );
 			expect( mockEditPost ).toHaveBeenCalledWith( {
 				meta: { _jetpack_feature_clip_id: 0 },
 			} );
