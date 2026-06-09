@@ -67,12 +67,10 @@ const UniversalNavbarHeader = ( {
 
 	const mobilePlatform = useMobilePlatform( nav2026 );
 	const isScrolled = useScrollState( nav2026 );
-	// Mirror `isScrolled` into a ref so event callbacks (mobile open/close/category/
-	// back) can read the current value for the `is_floating` Tracks prop without
-	// re-subscribing on every scroll.
+	// Mirror `isScrolled` into a ref so event callbacks can read it for the
+	// `is_floating` Tracks prop without re-subscribing on every scroll.
 	const isScrolledRef = useRef( isScrolled );
 	isScrolledRef.current = isScrolled;
-	// Previous category, so a Back tracks event can report which one it left.
 	const prevDropdownRef = useRef< string | null >( null );
 	// The <nav> element, so the legacy arm can bind DOM-listener telemetry.
 	const legacyNavRef = useRef< HTMLElement >( null );
@@ -134,7 +132,6 @@ const UniversalNavbarHeader = ( {
 		}
 	}, [ nav2026, activeDropdown ] );
 
-	// Open the mobile menu (hamburger), recording it.
 	const openMobileMenu = useCallback( () => {
 		if ( nav2026 ) {
 			recordMobileMenuOpen( isScrolledRef.current );
@@ -142,7 +139,12 @@ const UniversalNavbarHeader = ( {
 		setMobileMenuOpen( true );
 	}, [ nav2026 ] );
 
-	// Legacy hamburger menu close, recording the reason for the A/B control arm.
+	// Legacy hamburger open/close, recording for the A/B control arm.
+	const openLegacyMobileMenu = useCallback( () => {
+		recordLegacyMobileMenuOpen();
+		setMobileMenuOpen( true );
+	}, [] );
+
 	const closeLegacyMobileMenu = useCallback( ( reason: string ) => {
 		recordLegacyMobileMenuClose( reason );
 		setMobileMenuOpen( false );
@@ -673,14 +675,7 @@ const UniversalNavbarHeader = ( {
 											aria-haspopup={ nav2026 ? 'dialog' : undefined }
 											aria-controls={ nav2026 ? 'x-mobile-menu-2026' : undefined }
 											aria-expanded={ isMobileMenuOpen }
-											onClick={
-												nav2026
-													? openMobileMenu
-													: () => {
-															recordLegacyMobileMenuOpen();
-															setMobileMenuOpen( true );
-													  }
-											}
+											onClick={ nav2026 ? openMobileMenu : openLegacyMobileMenu }
 										>
 											<span className="x-hidden">{ __( 'Menu', __i18n_text_domain__ ) }</span>
 											<span className="x-icon x-icon__menu">
