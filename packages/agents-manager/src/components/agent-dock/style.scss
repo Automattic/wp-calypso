@@ -747,3 +747,13 @@ body.agents-manager-sidebar-container.is-split-screen {
 		max-inline-size: 100%;
 	}
 }
+
+// BSKY-1402: Fix illegible link color on the site-spec first screen.
+// The widget's big-blue-sky DEFAULT_THEME sets both --color-primary and the
+// background to #030ab2, making .Message-module_message a links invisible.
+// Override to a contrast-safe value (contrast ratio ~9.5:1 on #030ab2).
+body.wp-admin.site-editor-php {
+	.Message-module_message a {
+		color: #d3e1ff;
+	}
+}
