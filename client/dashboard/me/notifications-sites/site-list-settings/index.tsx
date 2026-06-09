@@ -17,11 +17,7 @@ export const SiteListSettings = () => {
 	const { queries } = useAppContext();
 	const [ search, setSearch ] = useState< string | undefined >();
 	const { data: sites } = useSuspenseQuery( {
-		...queries.sitesQuery( {
-			site_visibility: 'visible',
-			include_a8c_owned: true,
-			include_staging: false,
-		} ),
+		...queries.sitesQuery( { include_a8c_owned: true, site_visibility: 'visible' } ),
 	} );
 
 	const deferredSearch = useDeferredValue( search );

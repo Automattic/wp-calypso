@@ -22,13 +22,7 @@ interface Props {
 
 export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 	const { queries } = useAppContext();
-	const { data: allSites = [], isLoading } = useQuery(
-		queries.sitesQuery( {
-			site_visibility: 'visible',
-			include_a8c_owned: false,
-			include_staging: false,
-		} )
-	);
+	const { data: allSites = [], isLoading } = useQuery( queries.sitesQuery() );
 	const sites = useMemo(
 		() => allSites.filter( ( site ) => canManageSite( site ) && site.ID !== attachedSiteId ),
 		[ allSites, attachedSiteId ]
@@ -59,9 +53,7 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 				newSelection.includes( site.ID?.toString() ?? '' )
 			);
 
-			if ( selectedSite ) {
-				onSiteSelect( selectedSite );
-			}
+			selectedSite && onSiteSelect( selectedSite );
 		},
 		[ sites, onSiteSelect ]
 	);
