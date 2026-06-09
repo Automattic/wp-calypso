@@ -1,6 +1,7 @@
-import { getPlanByPathSlug } from '@automattic/calypso-products';
+import { plansQuery } from '@automattic/api-queries';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
@@ -8,6 +9,7 @@ import { getCartProductByBillingIntentId } from 'calypso/data/marketplace/use-ma
 import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useStripProductsFromUrl from './use-strip-products-from-url';
+import type { PlanProduct } from '@automattic/api-core';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
@@ -539,6 +541,10 @@ function useAddProductFromSlug( {
 } ) {
 	const translate = useTranslate();
 
+	// Used to resolve plans referenced by their `path_slug` in the URL back to a
+	// real product slug. The dispatch effect below waits for this to load.
+	const { data: plans } = useQuery( plansQuery() );
+
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
 	// referencing more than one product. Because of this, the rest of this function will
 	// work with an array of products even if `productAliasFromUrl` includes only one.
@@ -550,14 +556,22 @@ function useAddProductFromSlug( {
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
 				.map( ( productAlias ) => {
-					const productSlug = getProductSlugFromAlias( productAlias );
+					const productSlug = getProductSlugFromAlias( productAlias, plans ?? [] );
 					return { productSlug, productAlias };
 				} ) ?? [],
-		[ productAliasFromUrl ]
+		[ productAliasFromUrl, plans ]
 	);
 
 	useEffect( () => {
 		if ( addHandler !== 'addProductFromSlug' ) {
+			return;
+		}
+
+		// A plan may be referenced by its `path_slug` in the URL, which requires
+		// the plans list to resolve to a real product slug. Because this reducer
+		// is first-write-wins, wait for the plans list before dispatching so the
+		// cart is built with the correct slug.
+		if ( ! plans ) {
 			return;
 		}
 
@@ -605,6 +619,7 @@ function useAddProductFromSlug( {
 		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
+		plans,
 		sitelessCheckoutType,
 		dispatch,
 		jetpackSiteSlug,
@@ -659,7 +674,7 @@ export function getProductPartsFromAlias( productAlias: string ): {
 }
 
 // Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
-function getProductSlugFromAlias( productAlias: string ): string {
+function getProductSlugFromAlias( productAlias: string, plans: PlanProduct[] ): string {
 	const { slug: encodedAlias } = getProductPartsFromAlias( productAlias );
 	// Some product slugs contain slashes, so we decode them
 	const decodedAlias = decodeProductFromUrl( encodedAlias );
@@ -672,8 +687,10 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	if ( decodedAlias === 'theme' ) {
 		return 'premium_theme';
 	}
-	const plan = getPlanByPathSlug( decodedAlias );
-	const planSlug = plan?.getStoreSlug();
+	// A plan can be referenced in a checkout URL by its `path_slug` (e.g.
+	// `business`), so map that back to the real product slug (e.g.
+	// `business-bundle`) using the server-provided plans list.
+	const planSlug = plans.find( ( plan ) => plan.path_slug === decodedAlias )?.product_slug;
 	if ( planSlug ) {
 		return planSlug;
 	}
