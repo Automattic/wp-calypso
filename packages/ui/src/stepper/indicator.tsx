@@ -10,8 +10,8 @@ import styles from './style.module.scss';
 import type { ComponentProps, ReactNode } from 'react';
 
 // Half-circle (dome) icon for the bullet-variant current step.
-// 12×12 viewBox, dome in the bottom half: flat edge at vertical midpoint (y=6),
-// arc curving down to y=12. When centred inside the 24px indicator the flat
+// 10×10 viewBox, dome in the bottom half: flat edge at vertical midpoint (y=5),
+// arc curving down to y=10. When centred inside the 18px indicator the flat
 // edge sits exactly on the horizontal centre line of the circle.
 const halfCircleIcon = (
 	<SVG
