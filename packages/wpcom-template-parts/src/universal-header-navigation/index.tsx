@@ -731,10 +731,10 @@ const UniversalNavbarHeader = ( {
 							aria-label={ __( 'WordPress.com Navigation Menu', __i18n_text_domain__ ) }
 							aria-hidden={ ! isMobileMenuOpen }
 						>
-							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+							{ /* Click-outside scrim; Escape is handled by the document keydown listener above. */ }
+							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
 							<div
 								className="x-menu-overlay"
-								onKeyDown={ () => closeLegacyMobileMenu( 'escape' ) }
 								onClick={ () => closeLegacyMobileMenu( 'overlay' ) }
 							/>
 							<div className="x-menu-content">
