@@ -440,6 +440,11 @@ export function BundleLineItem( {
 	// All members of a bundle are guaranteed to share a currency, so the total can
 	// safely be summed in the smallest unit and rendered under the first member's currency.
 	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Raw subtotals (coupon included) are correct on this surface: the order review
+	// shows post-coupon prices on every line item. The order summary's bundle row
+	// (BundleProductAndCostOverridesList in cost-overrides-list.tsx) intentionally
+	// differs — it excludes coupon discounts because that surface lists coupon
+	// savings on a dedicated line. Don't "harmonize" the two.
 	const bundleTotalInteger = products.reduce(
 		( total, product ) => total + product.item_subtotal_integer,
 		0

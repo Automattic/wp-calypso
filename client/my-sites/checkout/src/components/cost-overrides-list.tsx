@@ -632,8 +632,13 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 	// All members of a bundle share a currency, so the total can safely be summed
 	// in the smallest unit and rendered under the first member's currency.
 	const currency = products[ 0 ]?.currency ?? 'USD';
+	// Strip per-member coupon discounts before summing. The order summary shows
+	// coupon savings on a dedicated CouponCostOverride line, so the per-line prices
+	// here must reflect the pre-coupon subtotal or the discount is counted twice
+	// (this mirrors how getLineItemPriceDisplay renders single products on this
+	// surface).
 	const bundleTotalInteger = products.reduce(
-		( total, product ) => total + product.item_subtotal_integer,
+		( total, product ) => total + getItemSubtotalExcludingCoupon( product ),
 		0
 	);
 	const bundleTotalDisplay = formatCurrency( bundleTotalInteger, currency, {
@@ -653,7 +658,7 @@ export function BundleProductAndCostOverridesList( { bundle }: { bundle: CartBun
 					<div className="cost-overrides-list-bundle-member" key={ product.uuid }>
 						<span>{ product.meta }</span>
 						<span>
-							{ formatCurrency( product.item_subtotal_integer, product.currency, {
+							{ formatCurrency( getItemSubtotalExcludingCoupon( product ), product.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
 							} ) }
