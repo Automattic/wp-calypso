@@ -131,9 +131,9 @@
 		}
 
 		// Pull icon color for completed and current steps (SVG/dome use currentColor).
-		// Number-variant upcoming steps keep their neutral number color on hover.
+		// Number-variant current steps keep their original number color on hover.
 		.indicator.is-completed,
-		.indicator.is-current {
+		.indicator.is-current:not( [data-indicator-variant='number'] ) {
 			color: var( --wpds-color-fg-interactive-brand );
 		}
 	}
