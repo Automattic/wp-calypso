@@ -27,7 +27,7 @@
 			position: absolute;
 			// Align with indicator center: half the indicator diameter, rounded up for the 1px line.
 			inset-inline-start: calc( var( --a8c-ui-stepper-indicator-size ) * 0.5 );
-			top: var( --stepper-trigger-height, 40px );
+			top: calc( var( --wpds-dimension-padding-sm ) * 2 + var( --wpds-typography-line-height-sm ) );
 			bottom: 0;
 			width: 1px;
 			background: var( --wpds-color-stroke-surface-neutral-weak );
