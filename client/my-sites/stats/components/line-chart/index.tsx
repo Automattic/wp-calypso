@@ -18,43 +18,48 @@ function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
 
 	useLayoutEffect( () => {
 		const node = ref.current;
-		const parent = node?.parentElement;
-		if ( ! node || ! parent ) {
+		if ( ! node ) {
 			return;
 		}
-
-		// Measure against the parent (visx's TooltipWithBounds wrapper) — its
-		// rect reflects visx's intended position. Our own transform only shifts
-		// this element relative to that parent, so parent.left is stable and
-		// safe to re-evaluate without oscillation. Coordinates are
-		// viewport-relative, so this works under both LTR and RTL.
+		// visx writes its inline `transform` to the `.visx-tooltip` ancestor.
+		// `AccessibleTooltip` from `@automattic/charts` wraps our render
+		// output in an extra `<div role="tooltip">`, so that ancestor is our
+		// grandparent — `parentElement` would land on the a11y wrapper, which
+		// never receives the transform, and a MutationObserver on it never
+		// fires for cursor-driven moves. `closest` reliably lands on the
+		// transformed element regardless of how many wrappers sit in between.
+		const anchor = node.closest< HTMLElement >( '.visx-tooltip' ) ?? node.parentElement;
+		if ( ! anchor ) {
+			return;
+		}
 		const update = () => {
-			const parentRect = parent.getBoundingClientRect();
+			const anchorRect = anchor.getBoundingClientRect();
 			const ownWidth = node.getBoundingClientRect().width;
-			const naturalRight = parentRect.left + ownWidth;
+			const naturalRight = anchorRect.left + ownWidth;
 			const overflowsRight = naturalRight > window.innerWidth - VIEWPORT_EDGE_PAD;
-			const wouldFitFlipped = parentRect.left - ownWidth - FLIP_OFFSET >= VIEWPORT_EDGE_PAD;
+			const wouldFitFlipped = anchorRect.left - ownWidth - FLIP_OFFSET >= VIEWPORT_EDGE_PAD;
 			setFlip( overflowsRight && wouldFitFlipped );
 		};
 
 		update();
 
-		// visx applies its position via inline `transform` on the parent and
-		// updates it asynchronously (withBoundingRects). Re-measure when it
-		// changes so we react to the final placement, not the initial one.
-		const mutationObserver = new MutationObserver( update );
-		mutationObserver.observe( parent, { attributes: true, attributeFilter: [ 'style' ] } );
+		// visx updates the anchor's inline `transform` asynchronously via
+		// `withBoundingRects` setState and on every cursor reposition. Watch
+		// the actually-transformed ancestor so we react to the final
+		// placement, including the post-mount one that arrives without our
+		// children changing.
+		const styleObserver = new MutationObserver( update );
+		styleObserver.observe( anchor, { attributes: true, attributeFilter: [ 'style' ] } );
 
-		// Re-measure when the tooltip's own size changes (e.g. content swap on
-		// a different data point, font load shifting wrap, etc.). The mutation
-		// observer above only fires on parent style changes.
-		const resizeObserver = new ResizeObserver( update );
-		resizeObserver.observe( node );
+		// Content width can change between datums (different number widths,
+		// font load, etc.) without moving the anchor — catch that here.
+		const sizeObserver = new ResizeObserver( update );
+		sizeObserver.observe( node );
 
 		window.addEventListener( 'resize', update );
 		return () => {
-			mutationObserver.disconnect();
-			resizeObserver.disconnect();
+			styleObserver.disconnect();
+			sizeObserver.disconnect();
 			window.removeEventListener( 'resize', update );
 		};
 	}, [] );
