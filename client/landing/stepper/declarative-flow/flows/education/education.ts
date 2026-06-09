@@ -20,6 +20,7 @@ import {
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
+import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { withLocale } from '../../helpers/with-locale';
@@ -49,6 +50,7 @@ const education: FlowV2< typeof initialize > = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const locale = useFlowLocale();
+		const coupon = useQuery().get( 'coupon' );
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -169,6 +171,7 @@ const education: FlowV2< typeof initialize > = {
 								redirect_to: destination,
 								signup: 1,
 								checkoutBackUrl: pathToUrl( checkoutBackUrl ),
+								coupon,
 							} )
 						);
 					}

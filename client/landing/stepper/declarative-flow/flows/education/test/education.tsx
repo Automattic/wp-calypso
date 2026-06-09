@@ -155,6 +155,26 @@ describe( 'Education Flow', () => {
 		);
 	} );
 
+	it( 'forwards the coupon query param to checkout', () => {
+		runNavigation( {
+			from: STEPS.PROCESSING,
+			dependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				siteId: 123,
+				siteSlug: 'school-example.wordpress.com',
+				goToCheckout: true,
+			},
+			query: { coupon: 'EDU50' },
+		} );
+
+		const checkoutUrl = new URL(
+			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			'https://wordpress.com'
+		);
+
+		expect( checkoutUrl.searchParams.get( 'coupon' ) ).toBe( 'EDU50' );
+	} );
+
 	it( 'navigates processing failure to the error step', () => {
 		const destination = runNavigation( {
 			from: STEPS.PROCESSING,
