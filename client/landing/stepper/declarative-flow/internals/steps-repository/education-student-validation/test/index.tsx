@@ -109,7 +109,7 @@ describe( 'EducationStudentValidation', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'locks the submit button after a rejection until the code is edited', async () => {
+	it( 'keeps the code retryable after a rejection and clears the error on edit', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
@@ -121,7 +121,8 @@ describe( 'EducationStudentValidation', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
 
 		expect( await screen.findByText( 'Invitation code not found' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeDisabled();
+		// The same code stays submittable so a transient failure isn't a dead end.
+		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeEnabled();
 
 		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'X' );
 
