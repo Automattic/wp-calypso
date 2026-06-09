@@ -53,6 +53,7 @@ import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits', 'payments' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
@@ -271,7 +272,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 			<Page
 				className="promote-post-i2__page"
 				visual={ <JetpackLogo size={ 24 } monochrome={ false } /> }
-				title={ translate( 'Blaze' ) }
+				title={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Blaze' ) }
 				subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
 				showSidebarToggle={ false }
 				actions={
