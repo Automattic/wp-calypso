@@ -16,18 +16,11 @@ interface Props {
 }
 
 function getActiveSpaceId( path: string ): string | null {
+	// Space ids are URL-safe (base36), so the path segment is the id verbatim —
+	// no decoding is needed, and there is nothing for a bad URL to throw on.
+	// Mirrors getActiveConnection in the Social Feeds section.
 	const match = path.match( /^\/reader\/spaces\/([^/?]+)/ );
-	if ( ! match ) {
-		return null;
-	}
-	try {
-		return decodeURIComponent( match[ 1 ] );
-	} catch {
-		// Malformed percent-encoding in the URL — treat it as "no active
-		// space" rather than letting decodeURIComponent throw and crash the
-		// sidebar render.
-		return null;
-	}
+	return match ? match[ 1 ] : null;
 }
 
 function ReaderSidebarSpaces( { path }: Props ) {

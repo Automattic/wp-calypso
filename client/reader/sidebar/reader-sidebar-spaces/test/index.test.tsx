@@ -37,8 +37,9 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( selected[ 0 ] ).toHaveClass( `reader-sidebar-spaces__item--${ FIRST_SPACE.color }` );
 	} );
 
-	it( 'does not crash on a malformed percent-encoded space id in the path', () => {
-		// `%E0%A4%A` is invalid percent-encoding; decodeURIComponent would throw.
+	it( 'does not crash or falsely select on an unexpected space id in the path', () => {
+		// A segment that matches no space (and isn't URL-safe) must not throw or
+		// mark a row active.
 		const { container } = render( <ReaderSidebarSpaces path="/reader/spaces/%E0%A4%A" /> );
 
 		// Rendered fine, with no row marked active.
