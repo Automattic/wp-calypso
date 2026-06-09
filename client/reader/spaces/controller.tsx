@@ -20,7 +20,7 @@ export const spaces = ( context: Context, next: () => void ) => {
 		return;
 	}
 	context.primary = (
-		<AsyncLoad require={ loadSpacesView } placeholder={ null } slug={ context.params.slug } />
+		<AsyncLoad require={ loadSpacesView } placeholder={ null } id={ context.params.id } />
 	);
 	next();
 };

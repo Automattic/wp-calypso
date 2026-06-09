@@ -3,7 +3,7 @@ import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { SocialAddAccountMenuItem } from 'calypso/reader/sidebar/social';
+import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { SPACES, SPACES_BASE_PATH } from 'calypso/reader/spaces/spaces-data';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -15,7 +15,7 @@ interface Props {
 	path: string;
 }
 
-function getActiveSpaceSlug( path: string ): string | null {
+function getActiveSpaceId( path: string ): string | null {
 	const match = path.match( /^\/reader\/spaces\/([^/?]+)/ );
 	return match ? decodeURIComponent( match[ 1 ] ) : null;
 }
@@ -24,7 +24,7 @@ function ReaderSidebarSpaces( { path }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const activeSlug = getActiveSpaceSlug( path );
+	const activeId = getActiveSpaceId( path );
 	const isOnSpaces = path === SPACES_BASE_PATH || path.startsWith( `${ SPACES_BASE_PATH }/` );
 
 	const [ isOpen, setIsOpen ] = useState( () => isOnSpaces );
@@ -35,8 +35,8 @@ function ReaderSidebarSpaces( { path }: Props ) {
 		}
 	}, [ isOnSpaces ] );
 
-	const recordSpaceClick = ( slug: string ) => {
-		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_space_clicked', { space: slug } ) );
+	const recordSpaceClick = ( id: string ) => {
+		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_space_clicked', { space: id } ) );
 	};
 
 	const recordAddSpaceClick = () => {
@@ -51,7 +51,7 @@ function ReaderSidebarSpaces( { path }: Props ) {
 		// When the user isn't already viewing a specific space, clicking the
 		// header takes them to the Spaces landing route; otherwise it just
 		// opens the menu without yanking them off the page they're on.
-		if ( activeSlug === null && path !== SPACES_BASE_PATH ) {
+		if ( activeId === null && path !== SPACES_BASE_PATH ) {
 			page( SPACES_BASE_PATH );
 		}
 	};
@@ -73,13 +73,13 @@ function ReaderSidebarSpaces( { path }: Props ) {
 			>
 				{ SPACES.map( ( space ) => (
 					<SpaceMenuItem
-						key={ space.slug }
+						key={ space.id }
 						space={ space }
-						isSelected={ activeSlug === space.slug }
-						onClick={ () => recordSpaceClick( space.slug ) }
+						isSelected={ activeId === space.id }
+						onClick={ () => recordSpaceClick( space.id ) }
 					/>
 				) ) }
-				<SocialAddAccountMenuItem
+				<AddMenuItem
 					label={ translate( 'Add a space' ) }
 					href={ SPACES_BASE_PATH }
 					onClick={ recordAddSpaceClick }

@@ -16,7 +16,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 		>
 			<MenuItemLink
 				className="sidebar__menu-link reader-sidebar-spaces__link"
-				href={ getSpacePath( space.slug ) }
+				href={ getSpacePath( space.id ) }
 				onClick={ onClick }
 			>
 				<span

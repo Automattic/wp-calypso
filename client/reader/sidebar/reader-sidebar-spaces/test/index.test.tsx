@@ -13,7 +13,8 @@ jest.mock( '@automattic/calypso-router', () => ( {
 
 // Render on a space route so the expandable menu starts open and its rows are
 // visible (collapsed content is `hidden`, hence not accessible).
-const OPEN_PATH = getSpacePath( 'work' );
+const FIRST_SPACE = SPACES[ 0 ];
+const OPEN_PATH = getSpacePath( FIRST_SPACE.id );
 
 describe( 'ReaderSidebarSpaces', () => {
 	it( 'renders every hard-coded space with a link to its page', () => {
@@ -21,19 +22,19 @@ describe( 'ReaderSidebarSpaces', () => {
 
 		SPACES.forEach( ( space ) => {
 			const link = screen.getByRole( 'link', { name: new RegExp( space.name ) } );
-			expect( link ).toHaveAttribute( 'href', getSpacePath( space.slug ) );
+			expect( link ).toHaveAttribute( 'href', getSpacePath( space.id ) );
 		} );
 	} );
 
 	it( 'marks the active space as selected and tags it with its colour modifier', () => {
-		const { container } = render( <ReaderSidebarSpaces path={ getSpacePath( 'work' ) } /> );
+		const { container } = render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		const selected = container.querySelectorAll( 'li.sidebar__menu-item.selected' );
 		expect( selected ).toHaveLength( 1 );
-		expect( selected[ 0 ].textContent ).toContain( 'Work' );
+		expect( selected[ 0 ].textContent ).toContain( FIRST_SPACE.name );
 		// The active row carries the space's colour class, which drives the
 		// active link colour via the `--space-color` custom property.
-		expect( selected[ 0 ] ).toHaveClass( 'reader-sidebar-spaces__item--blue' );
+		expect( selected[ 0 ] ).toHaveClass( `reader-sidebar-spaces__item--${ FIRST_SPACE.color }` );
 	} );
 
 	it( 'renders an "Add a space" link to the spaces landing route', () => {

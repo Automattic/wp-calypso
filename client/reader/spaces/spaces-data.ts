@@ -13,8 +13,17 @@ import { box, cart, comment, inbox, pages, starFilled, video } from '@wordpress/
 
 export type SpaceColor = 'blue' | 'purple' | 'red' | 'orange' | 'gray' | 'green' | 'celadon';
 
+/**
+ * Generate an opaque, random-ish id for a hard-coded space. Real spaces will
+ * carry server-assigned ids; this just stands in so the rest of the UI can key
+ * and route on an id rather than a human-readable slug.
+ */
+function randomSpaceId(): string {
+	return Math.random().toString( 36 ).slice( 2, 12 );
+}
+
 export interface Space {
-	slug: string;
+	id: string;
 	name: string;
 	/** A `@wordpress/icons` icon. Placeholder glyphs until spaces carry real icons. */
 	icon: JSX.Element;
@@ -30,7 +39,7 @@ export interface Space {
 
 export const SPACES: readonly Space[] = [
 	{
-		slug: 'work',
+		id: randomSpaceId(),
 		name: 'Work',
 		icon: inbox,
 		color: 'blue',
@@ -38,7 +47,7 @@ export const SPACES: readonly Space[] = [
 		lastActivityLabel: '8 min ago',
 	},
 	{
-		slug: 'gaming',
+		id: randomSpaceId(),
 		name: 'Gaming',
 		icon: box,
 		color: 'purple',
@@ -46,7 +55,7 @@ export const SPACES: readonly Space[] = [
 		lastActivityLabel: '35 min ago',
 	},
 	{
-		slug: 'youtube',
+		id: randomSpaceId(),
 		name: 'YouTube',
 		icon: video,
 		color: 'red',
@@ -54,7 +63,7 @@ export const SPACES: readonly Space[] = [
 		lastActivityLabel: '1 hr ago',
 	},
 	{
-		slug: 'humor',
+		id: randomSpaceId(),
 		name: 'Humor',
 		icon: comment,
 		color: 'orange',
@@ -62,7 +71,7 @@ export const SPACES: readonly Space[] = [
 		lastActivityLabel: '2 hr ago',
 	},
 	{
-		slug: 'food',
+		id: randomSpaceId(),
 		name: 'Food',
 		icon: cart,
 		color: 'gray',
@@ -70,7 +79,7 @@ export const SPACES: readonly Space[] = [
 		lastActivityLabel: '1 hr ago',
 	},
 	{
-		slug: 'health',
+		id: randomSpaceId(),
 		name: 'Health',
 		icon: starFilled,
 		color: 'green',
@@ -78,7 +87,7 @@ export const SPACES: readonly Space[] = [
 		lastActivityLabel: '3 hr ago',
 	},
 	{
-		slug: 'cats',
+		id: randomSpaceId(),
 		name: 'Cats',
 		icon: pages,
 		color: 'celadon',
@@ -89,10 +98,10 @@ export const SPACES: readonly Space[] = [
 
 export const SPACES_BASE_PATH = '/reader/spaces';
 
-export function getSpacePath( slug: string ): string {
-	return `${ SPACES_BASE_PATH }/${ slug }`;
+export function getSpacePath( id: string ): string {
+	return `${ SPACES_BASE_PATH }/${ id }`;
 }
 
-export function getSpaceBySlug( slug: string ): Space | undefined {
-	return SPACES.find( ( space ) => space.slug === slug );
+export function getSpaceById( id: string ): Space | undefined {
+	return SPACES.find( ( space ) => space.id === id );
 }

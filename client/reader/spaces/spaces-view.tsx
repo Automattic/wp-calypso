@@ -2,15 +2,15 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { getSpaceBySlug } from './spaces-data';
+import { getSpaceById } from './spaces-data';
 
 interface Props {
-	slug?: string;
+	id?: string;
 }
 
-export function SpacesView( { slug }: Props ) {
+export function SpacesView( { id }: Props ) {
 	const translate = useTranslate();
-	const space = slug ? getSpaceBySlug( slug ) : undefined;
+	const space = id ? getSpaceById( id ) : undefined;
 	const title = space ? space.name : translate( 'Spaces' );
 
 	return (
