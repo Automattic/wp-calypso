@@ -102,6 +102,21 @@ describe( 'useRegenerateAction', () => {
 		expect( registration.actions( message ) ).toEqual( [] );
 	} );
 
+	it( 'does not register the action when the handler getter is unavailable', () => {
+		renderHook( () =>
+			useRegenerateAction( {
+				enabled: true,
+				isProcessing: false,
+				registerMessageActions,
+				unregisterMessageActions,
+				getRegenerateHandler: undefined,
+			} )
+		);
+
+		expect( registerMessageActions ).not.toHaveBeenCalled();
+		expect( unregisterMessageActions ).toHaveBeenCalledWith( 'agents-manager-regenerate' );
+	} );
+
 	it( 'refreshes registration when processing state changes', () => {
 		const { rerender } = renderHook(
 			( { isProcessing } ) =>

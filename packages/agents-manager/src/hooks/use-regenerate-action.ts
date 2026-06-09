@@ -6,12 +6,16 @@ import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client'
 const REGENERATE_ACTION_REGISTRATION_ID = 'agents-manager-regenerate';
 const REGENERATE_ACTION_ORDER = 3.5;
 
+type RegenerateHandlerGetter = (
+	message?: UIMessage
+) => ( () => void | Promise< void > ) | null | undefined;
+
 interface UseRegenerateActionConfig {
 	enabled: boolean;
 	isProcessing: boolean;
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	unregisterMessageActions: UseAgentChatReturn[ 'unregisterMessageActions' ];
-	getRegenerateHandler: UseAgentChatReturn[ 'getRegenerateHandler' ];
+	getRegenerateHandler?: RegenerateHandlerGetter;
 }
 
 /**
@@ -25,7 +29,7 @@ export default function useRegenerateAction( {
 	getRegenerateHandler,
 }: UseRegenerateActionConfig ): void {
 	useEffect( () => {
-		if ( ! enabled ) {
+		if ( ! enabled || typeof getRegenerateHandler !== 'function' ) {
 			unregisterMessageActions( REGENERATE_ACTION_REGISTRATION_ID );
 			return;
 		}
