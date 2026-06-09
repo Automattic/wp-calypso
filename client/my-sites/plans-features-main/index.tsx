@@ -291,6 +291,11 @@ const PlansFeaturesMain = ( {
 	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
+	// Stays true from the moment the instant downgrade is confirmed until the page
+	// navigates away, so the dialog can keep showing a loader across the mutation
+	// AND the subsequent purchases refetch (the mutation's own isPending clears
+	// before that refetch completes). Only reset on error.
+	const [ isDowngrading, setIsDowngrading ] = useState( false );
 	const currentPlanPurchaseId = currentPlan?.purchaseId;
 	const { data: currentPurchase } = useQuery( {
 		...purchaseQuery( currentPlanPurchaseId ?? 0 ),
@@ -318,7 +323,14 @@ const PlansFeaturesMain = ( {
 			? formatCurrency( downgradeRefundAmount, currentPurchase.currency_code )
 			: undefined;
 
-	const closeDowngradeModal = () => setPendingDowngradePlanSlug( null );
+	// Ignore dismiss requests (X/Escape/overlay) while an instant downgrade is in
+	// flight so the loader stays visible until the redirect.
+	const closeDowngradeModal = () => {
+		if ( isDowngrading ) {
+			return;
+		}
+		setPendingDowngradePlanSlug( null );
+	};
 
 	// Refund-window mode: perform the downgrade instantly via the cancel endpoint.
 	const confirmInstantDowngrade = () => {
@@ -333,6 +345,8 @@ const PlansFeaturesMain = ( {
 		} );
 		recordTracksEvent( 'calypso_purchases_downgrade_form_submit' );
 		const blogId = currentPurchase?.blog_id;
+		// Keep the dialog open with its loader until the redirect; only reset on error.
+		setIsDowngrading( true );
 		cancelAndRefundMutation.mutate(
 			{
 				purchaseId: currentPlanPurchaseId,
@@ -340,16 +354,21 @@ const PlansFeaturesMain = ( {
 			},
 			{
 				onSuccess: async () => {
-					closeDowngradeModal();
 					// Refetch purchases so we can resolve the newly-provisioned purchase,
 					// needed both to substitute the `:purchaseId` placeholder below and to
-					// deep-link to its settings page in the fallback.
-					const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
-					const newPurchase = freshPurchases?.find(
-						( p ) =>
-							String( p.product_id ) === String( toProductId ) &&
-							String( p.blog_id ) === String( blogId )
-					);
+					// deep-link to its settings page in the fallback. The dialog stays open
+					// (showing its loader) throughout; the redirect below unmounts it.
+					let newPurchase;
+					try {
+						const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
+						newPurchase = freshPurchases?.find(
+							( p ) =>
+								String( p.product_id ) === String( toProductId ) &&
+								String( p.blog_id ) === String( blogId )
+						);
+					} catch {
+						// Ignore — fall through and navigate without the new purchase id.
+					}
 
 					// Honor the `redirect_to` the entry point provided so the user returns
 					// to where they came from (e.g. the Dashboard purchase settings) with a
@@ -376,6 +395,7 @@ const PlansFeaturesMain = ( {
 							: `/plans/${ siteSlug }?downgraded=true`;
 				},
 				onError: ( error: Error ) => {
+					setIsDowngrading( false );
 					reduxDispatch( errorNotice( error.message ) );
 				},
 			}
@@ -1078,7 +1098,7 @@ const PlansFeaturesMain = ( {
 					purchaseId={ currentPlan?.purchaseId }
 					isInstantDowngrade={ downgradeMode === 'instant' }
 					refundText={ downgradeRefundText }
-					isConfirming={ cancelAndRefundMutation.isPending }
+					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					onClose={ closeDowngradeModal }
 					onConfirm={ confirmDowngrade }
 				/>
