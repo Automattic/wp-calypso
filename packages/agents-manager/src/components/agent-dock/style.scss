@@ -482,6 +482,13 @@ body.post-new-php.agents-manager-sidebar-container {
 		width: 100%;
 	}
 
+	// Override link color: agenttic-ui sets `.Message-module_message a { color: var(--color-primary) }`
+	// which resolves to a near-invisible value on the dark chat background.
+	// #a8c7fa (light blue) achieves ~7.9:1 contrast ratio against the $gray-900 background.
+	.Message-module_message a {
+		color: #a8c7fa;
+	}
+
 	.Suggestions-module_vertical .Suggestions-module_button {
 		white-space: normal;
 		text-align: left;
