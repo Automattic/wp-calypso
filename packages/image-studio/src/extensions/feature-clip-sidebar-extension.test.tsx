@@ -111,16 +111,14 @@ jest.mock( '@wordpress/data', () => ( {
 	},
 } ) );
 
-// Capture React's hooks once, at module-load time, bound to the same React
-// instance @testing-library/react holds. The suite calls jest.resetModules()
-// per test, which would otherwise hand the component a freshly-required
-// React whose hook dispatcher react-dom never populates.
+// Capture React's useEffect once, at module-load time, bound to the same
+// React instance @testing-library/react holds. The suite calls
+// jest.resetModules() per test, which would otherwise hand the component a
+// freshly-required React whose hook dispatcher react-dom never populates.
 const mockUseEffect = jest.requireActual< typeof import('react') >( 'react' ).useEffect;
-const mockUseRef = jest.requireActual< typeof import('react') >( 'react' ).useRef;
 
 jest.mock( '@wordpress/element', () => ( {
 	useEffect: mockUseEffect,
-	useRef: mockUseRef,
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
