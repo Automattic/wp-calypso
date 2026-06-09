@@ -53,9 +53,9 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.46.0",
-		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/i18n": "^6.21.0",
 		"debug": "^4.4.1",
 		"redux": "^5.0.1"
 	},
