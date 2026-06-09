@@ -192,6 +192,9 @@ export function mergeUseSuggestionsHooks(
 	};
 }
 
+/** Provider module path for the Jetpack AI Sidebar; filtered out as a kill switch. */
+const JETPACK_AI_SIDEBAR_PROVIDER_PATH = 'jetpack-ai-sidebar.provider.mjs';
+
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
  *
@@ -206,8 +209,15 @@ export function mergeUseSuggestionsHooks(
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders =
-		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
+	// Kill switch: drop the Jetpack AI Sidebar provider on all site types so its
+	// sidebar surface never loads. Other providers (Block Notes, Big Sky, …) are
+	// unaffected.
+	const agentProviders = (
+		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : []
+	).filter(
+		( provider ) =>
+			typeof provider !== 'string' || ! provider.includes( JETPACK_AI_SIDEBAR_PROVIDER_PATH )
+	);
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
