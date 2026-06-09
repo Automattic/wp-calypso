@@ -7,15 +7,12 @@
 // Indicator
 // ---------------------------------------------------------------------------
 
-$indicator-size: stepper-vars.$indicator-size;
-$indicator-size-sm: stepper-vars.$indicator-size-sm;
-
 .indicator {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: $indicator-size;
-	height: $indicator-size;
+	width: stepper-vars.$indicator-size;
+	height: stepper-vars.$indicator-size;
 	border-radius: 50%;
 	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
 	flex-shrink: 0;
@@ -70,8 +67,8 @@ $indicator-size-sm: stepper-vars.$indicator-size-sm;
 // margin: 1px compensates for the 2px size reduction vs upcoming (18px → 16px)
 // so the indicator centres stay aligned vertically across states.
 .indicator.is-current[data-indicator-variant='bullet'] {
-	width: $indicator-size-sm;
-	height: $indicator-size-sm;
+	width: stepper-vars.$indicator-size-sm;
+	height: stepper-vars.$indicator-size-sm;
 	margin: 1px;
 	border-style: solid;
 	border-color: var( --wpds-color-fg-content-neutral );
@@ -81,8 +78,8 @@ $indicator-size-sm: stepper-vars.$indicator-size-sm;
 
 // Completed: 16px, solid border (color inherited from .indicator.is-completed)
 .indicator.is-completed[data-indicator-variant='bullet'] {
-	width: $indicator-size-sm;
-	height: $indicator-size-sm;
+	width: stepper-vars.$indicator-size-sm;
+	height: stepper-vars.$indicator-size-sm;
 	margin: 1px;
 	border-style: solid;
 }

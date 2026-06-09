@@ -27,7 +27,7 @@
 			content: '';
 			position: absolute;
 			// Align with indicator center: half the indicator diameter, rounded up for the 1px line.
-			inset-inline-start: stepper-vars.$indicator-size * 0.5;
+			inset-inline-start: stepper-vars.$indicator-half;
 			top: var( --stepper-trigger-height, 40px );
 			bottom: 0;
 			width: 1px;
@@ -83,6 +83,6 @@
 }
 
 .panel-content {
-	padding-inline-start: calc( 24px + var( --wpds-dimension-gap-sm ) );
+	padding-inline-start: calc( stepper-vars.$indicator-size + var( --wpds-dimension-gap-sm ) );
 	padding-block-end: var( --wpds-dimension-padding-lg );
 }

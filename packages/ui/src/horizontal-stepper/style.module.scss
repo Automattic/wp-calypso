@@ -5,10 +5,6 @@
 @use '../utils/_theme-variables' as theme;
 @use '../stepper/variables' as stepper-vars;
 
-// Half the indicator diameter — offsets the connector line so it starts/ends
-// at the indicator's edge rather than the step's center.
-$indicator-half: stepper-vars.$indicator-size * 0.5;
-
 .root {
 	display: flex;
 	flex-direction: column;
@@ -67,8 +63,8 @@ $indicator-half: stepper-vars.$indicator-size * 0.5;
 			position: absolute;
 			top: 50%;
 			transform: translateY( -50% );
-			inset-inline-start: calc( 50% + #{ $indicator-half } + var( --wpds-dimension-padding-md ) );
-			inset-inline-end: calc( -50% + #{ $indicator-half } + var( --wpds-dimension-padding-md ) );
+			inset-inline-start: calc( 50% + #{ stepper-vars.$indicator-half } + var( --wpds-dimension-padding-md ) );
+			inset-inline-end: calc( -50% + #{ stepper-vars.$indicator-half } + var( --wpds-dimension-padding-md ) );
 			height: var( --wpds-border-width-xs );
 			background-color: var( --wpds-color-stroke-surface-neutral );
 
