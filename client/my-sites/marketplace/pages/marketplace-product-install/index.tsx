@@ -194,6 +194,7 @@ const MarketplaceProductInstall = ( {
 	useEffect( () => {
 		if ( shouldShowNoDirectAccessError ) {
 			waitFor( 2 ).then( () => {
+				// eslint-disable-next-line  @typescript-eslint/no-unused-expressions
 				shouldShowNoDirectAccessError && setNoDirectAccessError( true );
 			} );
 		}
