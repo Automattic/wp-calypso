@@ -18,7 +18,7 @@ import './style.scss';
 // to also accept a render-prop function and `onClick` to require an event
 // argument, and double-wraps `ref`. ResponsiveMenu only ever treats items as
 // plain menu items, we don't want to support the features provided by TanStack.
-// This type narrows those back to what we actually supports while keeping the
+// This type narrows those back to what we actually support while keeping the
 // rest of the link typing (e.g. the `to` route validation).
 type ResponsiveMenuItemProps = Omit<
 	ComponentProps< typeof RouterLinkMenuItem >,
