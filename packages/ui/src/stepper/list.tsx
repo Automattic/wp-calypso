@@ -2,6 +2,7 @@
 import { Tabs } from '@base-ui/react/tabs';
 import { forwardRef } from '@wordpress/element';
 import clsx from 'clsx';
+import { warning } from '../utils/warning';
 import { useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { ComponentProps, ReactNode } from 'react';
@@ -17,11 +18,8 @@ export const StepperList = forwardRef< HTMLDivElement, StepperListProps >( funct
 ) {
 	const { orientation, activationMode } = useStepperContext();
 
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( orientation !== 'horizontal' ) {
-			// eslint-disable-next-line no-console
-			console.warn( '[Stepper] Stepper.List is only used in horizontal mode. It will be ignored.' );
-		}
+	if ( orientation !== 'horizontal' ) {
+		warning( '[Stepper] Stepper.List is only used in horizontal mode. It will be ignored.' );
 	}
 
 	if ( orientation !== 'horizontal' ) {

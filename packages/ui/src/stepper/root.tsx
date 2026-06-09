@@ -11,6 +11,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import clsx from 'clsx';
+import { warning } from '../utils/warning';
 import { StepperContext, defaultFormatStepLabel } from './context';
 import styles from './style.module.scss';
 import { useStepRegistration } from './use-step-registration';
@@ -73,28 +74,22 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 
 	// Dev warnings: missing accessibility label, duplicate values, missing step
 	useEffect( () => {
-		if ( process.env.NODE_ENV === 'production' ) {
-			return;
-		}
 		if ( ! ariaLabel && ! ariaLabelledBy ) {
-			// eslint-disable-next-line no-console
-			console.warn(
+			warning(
 				"[Stepper] Stepper requires either 'aria-label' or 'aria-labelledby' for accessibility."
 			);
 		}
-		const seen = new Set< string >();
+		const seenValues = new Set< string >();
 		for ( const s of steps ) {
-			if ( seen.has( s.value ) ) {
-				// eslint-disable-next-line no-console
-				console.warn(
+			if ( seenValues.has( s.value ) ) {
+				warning(
 					`[Stepper] Two steps share value '${ s.value }'. Each step must have a unique value.`
 				);
 			}
-			seen.add( s.value );
+			seenValues.add( s.value );
 		}
 		if ( value && steps.length > 0 && ! steps.some( ( s ) => s.value === value ) ) {
-			// eslint-disable-next-line no-console
-			console.warn(
+			warning(
 				`[Stepper] No step found with value '${ value }'. Check that the value matches one of the registered step values.`
 			);
 		}

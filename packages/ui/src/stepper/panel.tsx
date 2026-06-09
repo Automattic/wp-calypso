@@ -3,6 +3,7 @@ import { Accordion } from '@base-ui/react/accordion';
 import { Tabs } from '@base-ui/react/tabs';
 import { forwardRef, useContext } from '@wordpress/element';
 import clsx from 'clsx';
+import { warning } from '../utils/warning';
 import { StepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
 import type { StepperPanelProps } from './types';
@@ -23,17 +24,13 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 	// inside Accordion.Item (rendered by Stepper.Step). resolvedValue is only
 	// needed for the horizontal Tabs.Panel path.
 
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( orientation === 'horizontal' && ! resolvedValue ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				"[Stepper] Stepper.Panel requires a 'value' prop in horizontal mode to associate it with a step."
-			);
-		}
-		if ( resolvedValue && steps.length > 0 && ! steps.some( ( s ) => s.value === resolvedValue ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[Stepper] No step found with value '${ resolvedValue }' for this Panel.` );
-		}
+	if ( orientation === 'horizontal' && ! resolvedValue ) {
+		warning(
+			"[Stepper] Stepper.Panel requires a 'value' prop in horizontal mode to associate it with a step."
+		);
+	}
+	if ( resolvedValue && steps.length > 0 && ! steps.some( ( s ) => s.value === resolvedValue ) ) {
+		warning( `[Stepper] No step found with value '${ resolvedValue }' for this Panel.` );
 	}
 
 	if ( orientation === 'vertical' ) {
