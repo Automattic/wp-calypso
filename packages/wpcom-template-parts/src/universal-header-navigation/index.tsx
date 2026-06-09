@@ -626,7 +626,7 @@ const UniversalNavbarHeader = ( {
 										<ClickableItem
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
-											content={ __( 'Get Started', __i18n_text_domain__ ) }
+											content={ __( 'Get started', __i18n_text_domain__ ) }
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
