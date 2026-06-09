@@ -8,6 +8,7 @@ import {
 /* eslint-enable no-restricted-imports */
 import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
+import { withDashboardSiteDefaults } from '../app/site-query-defaults';
 import Logo from './logo';
 import type {
 	FetchSitesOptions,
@@ -53,9 +54,10 @@ boot( {
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
 	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) =>
+			sitesQuery( 'all', withDashboardSiteDefaults( fetchSiteOptions ) ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( 'all', fetchSiteOptions ),
+			paginatedSitesQuery( 'all', withDashboardSiteDefaults( fetchSiteOptions ) ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 		domainsQuery: () => domainsQuery(),

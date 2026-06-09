@@ -7,6 +7,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
+import { withDashboardSiteDefaults } from '../app/site-query-defaults';
 import { getPostHogConfig } from './posthog';
 import CiabDashboardStepperLogo from './stepper-logo';
 import './translations';
@@ -58,9 +59,9 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
-			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
+			sitesQuery( [ 'commerce-garden' ], withDashboardSiteDefaults( fetchSitesOptions ) ),
 		paginatedSitesQuery: ( fetchSitesOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
+			paginatedSitesQuery( [ 'commerce-garden' ], withDashboardSiteDefaults( fetchSitesOptions ) ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
 		domainsQuery: () => domainsQuery( { garden: 'commerce' } ),

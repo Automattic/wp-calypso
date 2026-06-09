@@ -7,6 +7,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
+import { withDashboardSiteDefaults } from './site-query-defaults';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -108,9 +109,10 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		siteSwitcher: () => Promise.resolve( { default: () => null } ),
 	},
 	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) =>
+			sitesQuery( 'all', withDashboardSiteDefaults( fetchSiteOptions ) ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( 'all', fetchSiteOptions ),
+			paginatedSitesQuery( 'all', withDashboardSiteDefaults( fetchSiteOptions ) ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 		domainsQuery: () => domainsQuery(),
