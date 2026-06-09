@@ -1,5 +1,6 @@
 // packages/ui/src/stepper/context.tsx
 import { createContext, useContext } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import type { StepperContextValue, StepContextValue, StepStatus } from './types';
 
 // ---------------------------------------------------------------------------
@@ -7,14 +8,16 @@ import type { StepperContextValue, StepContextValue, StepStatus } from './types'
 // ---------------------------------------------------------------------------
 
 export function defaultFormatStepLabel( step: number, total: number, status?: StepStatus ): string {
-	let label = `Step ${ step } of ${ total }`;
 	if ( status === 'completed' ) {
-		label += ', completed';
+		// translators: 1: step number, 2: total steps
+		return sprintf( __( 'Step %1$d of %2$d, completed' ), step, total );
 	}
 	if ( status === 'error' ) {
-		label += ', error';
+		// translators: 1: step number, 2: total steps
+		return sprintf( __( 'Step %1$d of %2$d, error' ), step, total );
 	}
-	return label;
+	// translators: 1: step number, 2: total steps
+	return sprintf( __( 'Step %1$d of %2$d' ), step, total );
 }
 
 // ---------------------------------------------------------------------------
