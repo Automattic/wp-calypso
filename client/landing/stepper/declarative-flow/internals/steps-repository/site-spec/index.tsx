@@ -1,12 +1,11 @@
 import config from '@automattic/calypso-config';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import { getCiabSiteSpecConfig, type SiteSpecConfig } from 'calypso/lib/site-spec/utils';
-import { getVegaSiteSpecConfig } from 'calypso/lib/site-spec/vega';
 import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
@@ -98,8 +97,6 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	const vegaConfig = useMemo( () => getVegaSiteSpecConfig(), [] );
-
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
@@ -110,7 +107,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					onSpecConfirm={ handleCiabSpecConfirm }
 				/>
 			) : (
-				<SiteSpecContainer siteSpecConfig={ vegaConfig } />
+				<SiteSpecContainer />
 			) }
 		</>
 	);

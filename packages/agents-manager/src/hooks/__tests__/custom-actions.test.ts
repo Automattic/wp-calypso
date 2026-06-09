@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
 const mockSetIsOpen = jest.fn();
@@ -52,6 +53,7 @@ describe( 'useSetupCustomActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		delete window.__agentsManagerActions;
+		clearSiteEditorActions();
 		mockContext = {
 			getActiveSessionId: jest.fn( () => 'session-123' ),
 			agentConfig: { agentId: 'reader-chat' },
@@ -172,6 +174,16 @@ describe( 'useSetupCustomActions', () => {
 			isOpen: true,
 			isDocked: false,
 			floatingPosition: 'br',
+		} );
+	} );
+
+	it( 'exposes a site editor action recorder on the actions API', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setSiteEditorAction?.( 'colorPickerItemSelected', 'Ruby' );
+
+		expect( getSiteEditorActions() ).toEqual( {
+			colorPickerItemSelected: 'Ruby',
 		} );
 	} );
 } );

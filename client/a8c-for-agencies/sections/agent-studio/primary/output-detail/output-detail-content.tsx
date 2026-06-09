@@ -7,8 +7,10 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { useMemo, useState, type ReactNode } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useAgentStudioCollateral, {
 	type AgentStudioCollateralVariant,
 } from '../../data/use-agent-studio-collateral';
@@ -23,6 +25,8 @@ import {
 	type ServerSocialBrief,
 } from '../../social-design/create-social-assets';
 import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
+import RefineLauncher from './refine-launcher';
+import RefineWithAiDock from './refine-with-ai-dock';
 import SocialAssetsViewer from './social-assets-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
@@ -59,10 +63,51 @@ function StateMessage( { children, spinner }: { children: ReactNode; spinner?: b
 	);
 }
 
+interface RefineSeed {
+	text: string;
+	token: number;
+}
+
 function OnePagerOutputDetail( { output }: Props ) {
+	const dispatch = useDispatch();
 	const run = useAgentStudioRun( output.id );
 	const postId = extractPostId( run.data?.payload );
 	const collateral = useAgentStudioCollateral( postId );
+	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
+	// `token` bumps on every open request so re-opening the same page re-seeds
+	// the dock input even when the seed text is identical.
+	const [ refineSeed, setRefineSeed ] = useState< RefineSeed >( { text: '', token: 0 } );
+
+	const openRefine = useCallback(
+		( seedText: string, source: 'launcher' | 'page', page?: number ) => {
+			setRefineSeed( ( prev ) => ( { text: seedText, token: prev.token + 1 } ) );
+			setIsRefineOpen( true );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_refine_open', {
+					output_id: output.id,
+					source,
+					...( page ? { page } : {} ),
+				} )
+			);
+		},
+		[ dispatch, output.id ]
+	);
+
+	const handleEditPage = useCallback(
+		( pageNumber: number ) => {
+			openRefine(
+				// Trailing space added outside the translatable string.
+				sprintf(
+					/* translators: %d is the 1-based page number, cover included. */
+					__( 'On page %d, make the following edits:' ),
+					pageNumber
+				) + ' ',
+				'page',
+				pageNumber
+			);
+		},
+		[ openRefine ]
+	);
 
 	const variants = useMemo< AgentStudioCollateralVariant[] >(
 		() => collateral.data?.variants ?? [],
@@ -156,8 +201,12 @@ function OnePagerOutputDetail( { output }: Props ) {
 
 	return (
 		<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__content">
-			<HStack className="a4a-agent-studio-output-detail__actions" justify="flex-end" spacing={ 2 }>
-				{ selectedVariant?.pdf_download_url && (
+			{ selectedVariant?.pdf_download_url && (
+				<HStack
+					className="a4a-agent-studio-output-detail__actions"
+					justify="flex-end"
+					spacing={ 2 }
+				>
 					<Button
 						variant="primary"
 						href={ selectedVariant.pdf_download_url }
@@ -166,8 +215,8 @@ function OnePagerOutputDetail( { output }: Props ) {
 					>
 						{ __( 'Download PDF' ) }
 					</Button>
-				) }
-			</HStack>
+				</HStack>
+			) }
 			{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
 				<StateMessage spinner>
 					<Text>{ __( 'Loading preview…' ) }</Text>
@@ -184,6 +233,19 @@ function OnePagerOutputDetail( { output }: Props ) {
 							  }
 							: undefined
 					}
+					onEditPage={ postId ? handleEditPage : undefined }
+				/>
+			) }
+			{ ! isRefineOpen && postId && (
+				<RefineLauncher onClick={ () => openRefine( '', 'launcher' ) } />
+			) }
+			{ isRefineOpen && postId && (
+				<RefineWithAiDock
+					collateralPostId={ postId }
+					totalPages={ pages.length }
+					seedText={ refineSeed.text }
+					seedToken={ refineSeed.token }
+					onClose={ () => setIsRefineOpen( false ) }
 				/>
 			) }
 		</VStack>

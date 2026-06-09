@@ -143,6 +143,12 @@ module.exports = {
 						'lodash-es',
 						'react',
 						'react-dom',
+						// Externalize the JSX runtime alongside react/react-dom so it matches the
+						// React that WordPress provides. Bundling it (the default here, since it is
+						// absent from this allow list) ships an older React's runtime, whose elements
+						// React 19 rejects ("A React Element from an older version of React was rendered").
+						'react/jsx-runtime',
+						'react/jsx-dev-runtime',
 						'@wordpress/api-fetch',
 						'@wordpress/components',
 						'@wordpress/compose',

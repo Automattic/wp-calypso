@@ -113,10 +113,11 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 	} );
 
 	it( 'fetches additional pages through the subkey-aware API path', async () => {
-		const firstPage = Array.from( { length: 200 }, ( _value, index ) =>
+		// The server caps each page at 100 rows, so a full page is 100 items.
+		const firstPage = Array.from( { length: 100 }, ( _value, index ) =>
 			makeApiSubscription( index + 1 )
 		);
-		const secondPage = [ makeApiSubscription( 201 ) ];
+		const secondPage = [ makeApiSubscription( 101 ) ];
 
 		( callApi as jest.Mock ).mockImplementation( ( { path, isLoggedIn } ) => {
 			expect( isLoggedIn ).toBe( false );
@@ -124,18 +125,18 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			if ( path.includes( 'page=1' ) ) {
 				return Promise.resolve( {
 					subscriptions: firstPage,
-					total_subscriptions: 201,
+					total_subscriptions: 101,
 					page: 1,
-					number: 200,
+					number: 100,
 				} );
 			}
 
 			if ( path.includes( 'page=2' ) ) {
 				return Promise.resolve( {
 					subscriptions: secondPage,
-					total_subscriptions: 201,
+					total_subscriptions: 101,
 					page: 2,
-					number: 200,
+					number: 1,
 				} );
 			}
 
@@ -147,7 +148,7 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		} );
 
 		await waitFor( () => expect( callApi ).toHaveBeenCalledTimes( 2 ) );
-		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 201 ) );
+		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 101 ) );
 		expect( ( callApi as jest.Mock ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			apiVersion: '1.2',
 			isLoggedIn: false,

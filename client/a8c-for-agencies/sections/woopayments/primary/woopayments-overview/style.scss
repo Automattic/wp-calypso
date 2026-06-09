@@ -92,18 +92,6 @@ a.components-button.woopayments-overview__button {
 	}
 }
 
-.woopayments-overview__list a,
-.woopayments-overview__demo-link {
-	text-decoration: underline;
-	color: var(--color-text);
-
-	&:hover,
-	&:focus,
-	&:focus-visible {
-		color: var(--color-text);
-	}
-}
-
 .woopayments-overview__list {
 	.simple-list-icon {
 		fill: var(--studio-woocommerce-purple-50);

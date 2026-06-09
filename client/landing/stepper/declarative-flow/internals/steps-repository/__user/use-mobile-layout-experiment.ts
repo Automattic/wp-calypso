@@ -5,7 +5,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 
 // Register the variation names below in ExPlat alongside the experiment slug.
-const MOBILE_LAYOUT_EXPERIMENT_NAME = 'calypso_signup_onboarding_user_mobile_layout_202605';
+const MOBILE_LAYOUT_EXPERIMENT_NAME = 'calypso_signup_onboarding_user_mobile_layout_202606';
 
 type MobileLayoutExperimentVariant = 'control' | 'treatment_tos_bottom' | 'treatment_tos_top';
 

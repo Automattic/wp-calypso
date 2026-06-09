@@ -32,7 +32,7 @@ export default function AgencyTierOverviewContent( {
 				</CardBody>
 			</Card>
 			<TierCards currentAgencyTierId={ currentAgencyTierId } tierStatus={ tierStatus } />
-			<Divider orientation="horizontal" margin={ 4 } style={ { color: '#F0F0F0' } } />
+			<Divider orientation="horizontal" style={ { color: '#F0F0F0' } } />
 			<TierBenefits currentAgencyTierId={ currentAgencyTierId } />
 		</VStack>
 	);

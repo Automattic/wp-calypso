@@ -5,8 +5,8 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -39,7 +39,7 @@ const ReaderOnboarding = ( {
 	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
-	const { data: followedTags } = useFollowedReaderTags();
+	const { data: followedTags } = useFollowedTags();
 	const { subscriptions } = useCachedSiteSubscriptions();
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const hasUserGravatar = useSelector( hasGravatar );

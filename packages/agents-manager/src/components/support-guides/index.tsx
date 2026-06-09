@@ -13,6 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Link, useLocation } from 'react-router-dom';
+import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
 import useHelpSearchQuery from '../../hooks/use-help-search-query';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -24,15 +25,9 @@ interface SearchResultsProps {
 
 function SearchResults( { searchInput }: SearchResultsProps ) {
 	const trimmedInput = searchInput.trim();
+	// An empty input returns recommended guides from the API.
+	const isRecommended = ! trimmedInput;
 	const { data, isFetching, isError, refetch } = useHelpSearchQuery( trimmedInput );
-
-	if ( ! trimmedInput ) {
-		return (
-			<div className="agent-manager-support-guides__status">
-				{ __( 'Search guides to find answers to your questions.', '__i18n_text_domain__' ) }
-			</div>
-		);
-	}
 
 	if ( isFetching ) {
 		return (
@@ -43,6 +38,15 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 	}
 
 	if ( isError ) {
+		// If recommended guides fail to load, show the search prompt instead of an error.
+		if ( isRecommended ) {
+			return (
+				<div className="agent-manager-support-guides__status">
+					{ __( 'Search guides to find answers to your questions.', '__i18n_text_domain__' ) }
+				</div>
+			);
+		}
+
 		return (
 			<div className="agent-manager-support-guides__status">
 				{ __( 'Something went wrong.', '__i18n_text_domain__' ) }{ ' ' }
@@ -66,18 +70,26 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 	}
 
 	return (
-		<ItemGroup isSeparated isBordered isRounded>
-			{ data?.map( ( item ) => (
-				<Item key={ item.post_id }>
-					<Link
-						to={ `/post?link=${ encodeURIComponent( item.link ) }` }
-						state={ { searchQuery: trimmedInput } }
-					>
-						{ item.title }
-					</Link>
-				</Item>
-			) ) }
-		</ItemGroup>
+		<>
+			<h3 className="agent-manager-support-guides__title">
+				{ isRecommended
+					? __( 'Recommended Guides', '__i18n_text_domain__' )
+					: __( 'Search Results', '__i18n_text_domain__' ) }
+			</h3>
+			<ItemGroup isSeparated isBordered isRounded>
+				{ data?.map( ( item ) => (
+					// `post_id` is optional, so fall back to keep keys unique and defined.
+					<Item key={ item.post_id ?? item.link ?? item.title }>
+						<Link
+							to={ `/post?link=${ encodeURIComponent( item.link ) }` }
+							state={ { searchQuery: trimmedInput } }
+						>
+							{ item.title }
+						</Link>
+					</Item>
+				) ) }
+			</ItemGroup>
+		</>
 	);
 }
 
@@ -114,6 +126,9 @@ export default function SupportGuides( {
 		return store.getAgentsManagerState();
 	}, [] );
 
+	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
+
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
@@ -124,7 +139,7 @@ export default function SupportGuides( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -142,6 +157,7 @@ export default function SupportGuides( {
 					justify="stretch"
 				>
 					<SearchControl
+						placeholder={ __( 'Search guides…', '__i18n_text_domain__' ) }
 						onChange={ setSearchInput }
 						// The click event is highjacked by the drag-handlers of the floating chat container.
 						onClick={ ( e ) => e.currentTarget.focus() }
