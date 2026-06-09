@@ -2,7 +2,6 @@ import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	getPlanPath,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -11,6 +10,7 @@ import { Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
+import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
@@ -44,6 +44,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		yearlyControlProps,
 	} = props;
 	const translate = useTranslate();
+	const getPlanPathSlug = usePlanPathSlugGetter();
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ],
 		siteId,
@@ -87,7 +88,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 			triggerTracksEvent?.( upgradePlanSlug );
 
-			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
+			const planPath = getPlanPathSlug( upgradePlanSlug ) ?? '';
 
 			const checkoutUrl = isWooExpressPlan( upgradePlanSlug )
 				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
@@ -95,7 +96,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 			page( checkoutUrl );
 		},
-		[ siteSlug, triggerTracksEvent ]
+		[ siteSlug, triggerTracksEvent, getPlanPathSlug ]
 	);
 
 	return (
