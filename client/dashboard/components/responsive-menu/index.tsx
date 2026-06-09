@@ -165,7 +165,7 @@ function ResponsiveMenu( {
 	if ( isDesktop ) {
 		const inlineMenu = (
 			<Menu>
-				{ React.Children.map( children, ( child ): React.ReactNode => {
+				{ React.Children.map( children, ( child ) => {
 					if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
 						if ( child.props.target === '_blank' ) {
 							return (
