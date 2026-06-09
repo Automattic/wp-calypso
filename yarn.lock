@@ -795,11 +795,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/charts@npm:^1.4.3":
-  version: 1.4.3
-  resolution: "@automattic/charts@npm:1.4.3"
+"@automattic/charts@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "@automattic/charts@npm:1.5.2"
   dependencies:
-    "@automattic/number-formatters": "npm:^1.2.0"
+    "@automattic/number-formatters": "npm:^1.2.2"
     "@babel/runtime": "npm:7.29.2"
     "@react-spring/web": "npm:9.7.5"
     "@visx/annotation": "npm:^3.12.0"
@@ -819,9 +819,9 @@ __metadata:
     "@visx/vendor": "npm:^3.12.0"
     "@visx/xychart": "npm:^3.12.0"
     "@wordpress/i18n": "npm:^6.0.0"
-    "@wordpress/icons": "npm:^12.0.0"
+    "@wordpress/icons": "npm:^13.0.0"
     "@wordpress/theme": "npm:0.13.0"
-    "@wordpress/ui": "npm:0.11.0"
+    "@wordpress/ui": "npm:0.13.0"
     clsx: "npm:2.1.1"
     date-fns: "npm:^4.1.0"
     deepmerge: "npm:4.3.1"
@@ -832,7 +832,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 3fcfcaaed2dd1f2472f6194a664ae5ebc65a798bf3b343be9348fd54632027c85119a27833b1461bba0461c32a5630cf042c1dec6edebfbee2db5b120a11dfae
+  checksum: 39f33e69292d4be85f940647b7d265668ae5241697948b3b5caaa54df281e2ba85983c3285c3fefe6ae13e8792812eb19ba24b22d1350aaa07da871517c95edc
   languageName: node
   linkType: hard
 
@@ -1808,14 +1808,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.1.2, @automattic/number-formatters@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@automattic/number-formatters@npm:1.2.0"
+"@automattic/number-formatters@npm:^1.1.2, @automattic/number-formatters@npm:^1.2.0, @automattic/number-formatters@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@automattic/number-formatters@npm:1.2.2"
   dependencies:
     "@wordpress/date": "npm:^5.19.0"
     debug: "npm:^4.4.0"
     tslib: "npm:^2.5.0"
-  checksum: 30a10a7afcf4e01310fd405de9b0900c5f1eb55243e836b5ecb41b9eaf45121b6c9467ba21ab02c7386f687d7c9d526dc2c6ffb378392029dc22881a091bbb06
+  checksum: 51b53f1a453626445151b3c21e60f4d4d059a0fa71949f5a3486d8ec196d3e5b7442a2c471d51f2d2a44c864bc694c164963170cccd8b10f4527aea6decd57c0
   languageName: node
   linkType: hard
 
@@ -14334,7 +14334,7 @@ __metadata:
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/charts": "npm:^1.4.3"
+    "@automattic/charts": "npm:^1.5.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -33630,7 +33630,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^1.4.3"
+    "@automattic/charts": "npm:^1.5.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"

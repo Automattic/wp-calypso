@@ -968,6 +968,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.lpc-header-nav-container
 	.masterbar-menu
 	.masterbar:has( .x-nav--2026-redesign ) {
+	--x-nav-2026-scrolled-blur: #{$x-nav-2026-scrolled-blur};
 	position: fixed;
 	// Below the admin bar when one exists; falls back for non-Calypso consumers.
 	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
@@ -976,35 +977,66 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	height: $x-nav-2026-height;
 	background: transparent;
 	border-bottom-color: transparent;
-	// Exit (white → transparent) eases out after a short delay so the surface lingers.
-	transition:
-		background-color $x-nav-2026-transition 0.12s,
-		box-shadow $x-nav-2026-transition 0.12s,
-		backdrop-filter $x-nav-2026-transition 0.12s;
+	// The white surface is a ::before opacity layer (matches the reference's
+	// `.x-nav-dropdown-wrapper--2026::before`): opacity reveals it 0 → 0.97
+	// scrolled → 1 dropdown-open/hover, so the nav strip fades as one layer
+	// rather than animating `background-color`. The blur stays on the masterbar
+	// itself — `backdrop-filter` on a `z-index:-1` layer can't sample the page.
+	&::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline: 0;
+		height: $x-nav-2026-height;
+		background-color: rgba( $studio-white, 0.97 );
+		opacity: 0;
+		pointer-events: none;
+		z-index: -1;
+		// Resting state = the fade-OUT (scrolling back to top): hold the white for
+		// 0.22s before it fades so the surface doesn't vanish in the same frame the
+		// page content slides back under the bar.
+		transition: opacity $x-nav-2026-transition 0.22s;
+	}
+	// Exit (blur → none) eases out after a short delay so the surface lingers.
+	transition: backdrop-filter $x-nav-2026-transition 0.12s;
 }
 
-// Dropdown-open or scrolled: nav bar turns white (continuous with the panel below, legible over scrolled content).
+// Scrolled (no dropdown): frosted tint + hairline shadow on the ::before.
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign )::before {
+	opacity: 0.97;
+	box-shadow: 0 1px 1px rgba( $studio-black, 0.02 );
+	// Fade-IN keeps delay 0 so entering the float state stays instant.
+	transition: opacity $x-nav-2026-transition 0s;
+}
+
+// Dropdown-open or trigger-hovered: surface goes fully solid white (the frost
+// tint would let the dropdown panel show through), opacity 1, snapped in quickly.
+.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.masterbar:has( .x-nav--2026-redesign )::before,
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover )::before {
+	background-color: $studio-white;
+	opacity: 1;
+	transition: opacity 0.12s ease-out 0s;
+}
+
+// Blur the page behind the bar — on the masterbar (above the page), since
+// ::before (z-index:-1) can't sample it. Scrolled, dropdown-open, or hovered.
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
+	.masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 	.masterbar:has( .x-nav--2026-redesign ),
 .lpc-header-nav-wrapper
-	.lpc-header-nav-container.is-scrolled
+	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ) {
-	background: $studio-white;
-	// Snap the white surface in quickly when it appears (0.12s, no delay).
-	transition:
-		background-color 0.12s ease-out,
-		box-shadow 0.12s ease-out;
-}
-
-// Scrolled-only (NOT dropdown-open): near-opaque white + backdrop blur + hairline shadow (dropdown-open stays fully solid, above).
-.lpc-header-nav-wrapper
-	.lpc-header-nav-container.is-scrolled
-	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ) {
-	--x-nav-2026-scrolled-blur: #{$x-nav-2026-scrolled-blur};
-	background: rgba( $studio-white, 0.97 );
-	box-shadow: 0 1px 1px rgba( $studio-black, 0.02 );
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover ) {
 	backdrop-filter: blur( var( --x-nav-2026-scrolled-blur ) );
 }
 
@@ -1336,6 +1368,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-weight: 400;
 		line-height: $x-dropdown-2026-link-line-height;
 		color: $studio-gray-100;
+		// The wrapper's white surface owns the background; the legacy
+		// `.x-dropdown-link` base paints a hover background that must not leak here.
+		background: transparent;
 		// Never underline, even in sections (e.g. themes) that underline links by default.
 		text-decoration: none;
 		transition:
@@ -1346,7 +1381,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		&:hover,
 		&:focus,
 		&:active {
-			color: $studio-wordpress-blue-50;
+			// Studio blue (not WordPress blue) + no background, matching the reference.
+			color: $studio-blue-50;
+			background: transparent;
+			opacity: 1;
 		}
 	}
 

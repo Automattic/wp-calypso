@@ -36,7 +36,7 @@ interface Nav2026MobileMenuProps {
 	variant: 'default' | 'minimal';
 	mobilePlatform: 'ios' | 'android' | null;
 	mobileFooterRef: React.RefObject< HTMLDivElement >;
-	closeMobileMenu: () => void;
+	closeMobileMenu: ( reason?: string ) => void;
 	setCurrentDropdown: ( name: string | null ) => void;
 }
 
@@ -75,7 +75,11 @@ export function Nav2026MobileMenu( {
 			aria-hidden={ ! isMobileMenuOpen }
 		>
 			{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
-			<div className="x-menu-overlay" onKeyDown={ closeMobileMenu } onClick={ closeMobileMenu } />
+			<div
+				className="x-menu-overlay"
+				onKeyDown={ () => closeMobileMenu( 'overlay' ) }
+				onClick={ () => closeMobileMenu( 'overlay' ) }
+			/>
 			<div className="x-menu-content">
 				<div className="x-menu-mobile-main">
 					{ /* Sticky header; inside the scroller so it stickies as the list scrolls. */ }
@@ -110,7 +114,7 @@ export function Nav2026MobileMenu( {
 							<button
 								type="button"
 								className="x-menu-button x-menu-mobile-close x-link"
-								onClick={ closeMobileMenu }
+								onClick={ () => closeMobileMenu( 'close_button' ) }
 								tabIndex={ mobileMenuTabIndex }
 							>
 								<span className="x-hidden">{ __( 'Close menu', __i18n_text_domain__ ) }</span>

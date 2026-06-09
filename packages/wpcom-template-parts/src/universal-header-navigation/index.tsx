@@ -4,7 +4,7 @@ import { useLocalizeUrl, useIsEnglishLocale, useLocale } from '@automattic/i18n-
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 import { Nav2026DesktopDropdown } from './nav-2026/desktop-dropdown';
@@ -17,6 +17,20 @@ import {
 } from './nav-2026/hooks';
 import { Nav2026MobileMenu } from './nav-2026/mobile-menu';
 import { getNav2026Menus } from './nav-2026/taxonomy';
+import {
+	recordNavItemHover,
+	recordSubmenuShow,
+	recordSubmenuHide,
+	recordMobileMenuOpen,
+	recordMobileMenuClose,
+	recordMobileCategorySelect,
+	recordMobileBack,
+	recordNavLinkClick,
+	resetNavHoverDedupe,
+	bindLegacyNavTracks,
+	recordLegacyMobileMenuOpen,
+	recordLegacyMobileMenuClose,
+} from './nav-2026/tracks';
 import './style.scss';
 
 const UniversalNavbarHeader = ( {
@@ -53,6 +67,13 @@ const UniversalNavbarHeader = ( {
 
 	const mobilePlatform = useMobilePlatform( nav2026 );
 	const isScrolled = useScrollState( nav2026 );
+	// Mirror `isScrolled` into a ref so event callbacks can read it for the
+	// `is_floating` Tracks prop without re-subscribing on every scroll.
+	const isScrolledRef = useRef( isScrolled );
+	isScrolledRef.current = isScrolled;
+	const prevDropdownRef = useRef< string | null >( null );
+	// The <nav> element, so the legacy arm can bind DOM-listener telemetry.
+	const legacyNavRef = useRef< HTMLElement >( null );
 	useDropdownOffset( nav2026, nav2026Variant );
 	useFooterHeight( {
 		nav2026,
@@ -63,11 +84,87 @@ const UniversalNavbarHeader = ( {
 	} );
 	const dropdownRef = useDropdownFlip( { nav2026, activeDropdown } );
 
-	const closeMobileMenu = useCallback( () => {
-		setMobileMenuOpen( false );
-		setCurrentDropdown( null );
-		menuTriggerRef.current?.focus();
+	const nav2026Menus = useMemo(
+		() =>
+			nav2026
+				? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, variant: nav2026Variant } )
+				: [],
+		[ nav2026, __, localizeUrl, locale, isLoggedIn, nav2026Variant ]
+	);
+	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
+
+	const closeMobileMenu = useCallback(
+		( reason = 'close_button' ) => {
+			setMobileMenuOpen( ( open ) => {
+				if ( open && nav2026 ) {
+					recordMobileMenuClose( isScrolledRef.current, reason );
+				}
+				return false;
+			} );
+			setCurrentDropdown( null );
+			menuTriggerRef.current?.focus();
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		},
+		[ nav2026 ]
+	);
+
+	// Desktop dropdown open/switch/close: emit submenu show for the newly-open
+	// menu and hide for the one it replaced. Driven by `activeDropdown` so it
+	// covers hover, focus, and keyboard dismiss uniformly.
+	useEffect( () => {
+		if ( ! nav2026 ) {
+			return;
+		}
+		const prev = prevDropdownRef.current;
+		const next = activeDropdown;
+		prevDropdownRef.current = next;
+		if ( prev === next ) {
+			return;
+		}
+		if ( prev ) {
+			recordSubmenuHide( isScrolledRef.current, prev );
+		}
+		if ( next ) {
+			recordSubmenuShow( isScrolledRef.current, next );
+		} else {
+			// Fully closed — let the next open of the same item re-emit a hover.
+			resetNavHoverDedupe();
+		}
+	}, [ nav2026, activeDropdown ] );
+
+	const openMobileMenu = useCallback( () => {
+		if ( nav2026 ) {
+			recordMobileMenuOpen( isScrolledRef.current );
+		}
+		setMobileMenuOpen( true );
+	}, [ nav2026 ] );
+
+	// Old-nav hamburger open/close, recording the usage events.
+	const openLegacyMobileMenu = useCallback( () => {
+		recordLegacyMobileMenuOpen();
+		setMobileMenuOpen( true );
 	}, [] );
+
+	const closeLegacyMobileMenu = useCallback( ( reason: string ) => {
+		recordLegacyMobileMenuClose( reason );
+		setMobileMenuOpen( false );
+	}, [] );
+
+	// Mobile drill-down: select a category or go Back, recording either.
+	const selectMobileCategory = useCallback(
+		( name: string | null ) => {
+			if ( nav2026 ) {
+				if ( name ) {
+					const title = nav2026Menus.find( ( menu ) => menu.name === name )?.title ?? '';
+					recordMobileCategorySelect( isScrolledRef.current, name, title );
+				} else {
+					recordMobileBack( isScrolledRef.current, currentDropdown );
+				}
+			}
+			setCurrentDropdown( name );
+		},
+		[ nav2026, currentDropdown, nav2026Menus ]
+	);
 
 	// `is-opening` while the panel slides in. 1100ms ≈ slide 340 + reveal 430 + fade 300.
 	useEffect( () => {
@@ -79,6 +176,15 @@ const UniversalNavbarHeader = ( {
 		const timer = setTimeout( () => setIsMenuOpening( false ), 1100 );
 		return () => clearTimeout( timer );
 	}, [ nav2026, isMobileMenuOpen ] );
+
+	// The old nav fires its hover/submenu usage events via DOM listeners (it has no
+	// React state to hook); the new nav fires them from its handlers below.
+	useEffect( () => {
+		if ( nav2026 || ! legacyNavRef.current ) {
+			return;
+		}
+		return bindLegacyNavTracks( legacyNavRef.current );
+	}, [ nav2026 ] );
 
 	// Escape closes whichever is open (desktop dropdown or mobile menu); hover/focus keeps one open.
 	useEffect( () => {
@@ -98,6 +204,11 @@ const UniversalNavbarHeader = ( {
 				// Mobile menu — return focus to the hamburger.
 				setMobileMenuOpen( ( open ) => {
 					if ( open ) {
+						if ( nav2026 ) {
+							recordMobileMenuClose( isScrolledRef.current, 'escape' );
+						} else {
+							recordLegacyMobileMenuClose( 'escape' );
+						}
 						setCurrentDropdown( null );
 						menuTriggerRef.current?.focus();
 					}
@@ -145,7 +256,7 @@ const UniversalNavbarHeader = ( {
 			document.removeEventListener( 'mouseenter', handleInteraction, true );
 			document.removeEventListener( 'keydown', handleKeyDown );
 		};
-	}, [] );
+	}, [ nav2026 ] );
 
 	if ( ! startUrl ) {
 		const startPaths: Record< string, string > = {
@@ -159,11 +270,6 @@ const UniversalNavbarHeader = ( {
 			sectionName ? { ref: sectionName + '-lp' } : {}
 		);
 	}
-
-	const nav2026Menus = nav2026
-		? getNav2026Menus( { __, localizeUrl, locale, isLoggedIn, variant: nav2026Variant } )
-		: [];
-	const activeCategory = nav2026Menus.find( ( menu ) => menu.name === currentDropdown );
 
 	return (
 		<div
@@ -194,16 +300,24 @@ const UniversalNavbarHeader = ( {
 					<div className="masterbar-menu">
 						<div className="masterbar">
 							<nav
+								ref={ legacyNavRef }
 								className={ clsx( 'x-nav', { 'x-nav--2026-redesign': nav2026 } ) }
 								aria-label="WordPress.com"
 							>
 								<ul className="x-nav-list x-nav-list__left" role="menu">
-									<li className="x-nav-item" role="none">
+									<li
+										className="x-nav-item"
+										role="none"
+										onMouseEnter={
+											nav2026 ? () => recordNavItemHover( isScrolled, 'logo', false ) : undefined
+										}
+									>
 										<a
 											role="menuitem"
 											className="x-nav-link x-nav-link__logo x-link"
 											href={ localizeUrl( '//wordpress.com' ) }
 											target="_self"
+											onClick={ ( event ) => recordNavLinkClick( event.currentTarget ) }
 										>
 											<WordPressWordmark
 												className="x-icon x-icon__logo"
@@ -224,8 +338,14 @@ const UniversalNavbarHeader = ( {
 														className="x-nav-item x-nav-item__wide"
 														role="none"
 														key={ menu.name }
-														onMouseEnter={ () => setActiveDropdown( menu.name ) }
-														onFocus={ () => setActiveDropdown( menu.name ) }
+														onMouseEnter={ () => {
+															recordNavItemHover( isScrolled, menu.name, true );
+															setActiveDropdown( menu.name );
+														} }
+														onFocus={ () => {
+															recordNavItemHover( isScrolled, menu.name, true );
+															setActiveDropdown( menu.name );
+														} }
 													>
 														<NonClickableItem
 															className="x-nav-link x-link"
@@ -243,6 +363,9 @@ const UniversalNavbarHeader = ( {
 														urlValue={ menu.href }
 														type="nav"
 														target="_self"
+														onItemMouseEnter={ () =>
+															recordNavItemHover( isScrolled, menu.name, false )
+														}
 													/>
 												)
 											) }
@@ -516,7 +639,11 @@ const UniversalNavbarHeader = ( {
 										<ClickableItem
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
-											content={ __( 'Log In', __i18n_text_domain__ ) }
+											content={
+												nav2026
+													? __( 'Log in', __i18n_text_domain__ )
+													: __( 'Log In', __i18n_text_domain__ )
+											}
 											urlValue={
 												loginUrl ||
 												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
@@ -528,7 +655,11 @@ const UniversalNavbarHeader = ( {
 										<ClickableItem
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
-											content={ __( 'Get Started', __i18n_text_domain__ ) }
+											content={
+												nav2026
+													? __( 'Get started', __i18n_text_domain__ )
+													: __( 'Get Started', __i18n_text_domain__ )
+											}
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
@@ -544,7 +675,7 @@ const UniversalNavbarHeader = ( {
 											aria-haspopup={ nav2026 ? 'dialog' : undefined }
 											aria-controls={ nav2026 ? 'x-mobile-menu-2026' : undefined }
 											aria-expanded={ isMobileMenuOpen }
-											onClick={ () => setMobileMenuOpen( true ) }
+											onClick={ nav2026 ? openMobileMenu : openLegacyMobileMenu }
 										>
 											<span className="x-hidden">{ __( 'Menu', __i18n_text_domain__ ) }</span>
 											<span className="x-icon x-icon__menu">
@@ -591,7 +722,7 @@ const UniversalNavbarHeader = ( {
 							mobilePlatform={ mobilePlatform }
 							mobileFooterRef={ mobileFooterRef }
 							closeMobileMenu={ closeMobileMenu }
-							setCurrentDropdown={ setCurrentDropdown }
+							setCurrentDropdown={ selectMobileCategory }
 						/>
 					) : (
 						<div
@@ -600,16 +731,16 @@ const UniversalNavbarHeader = ( {
 							aria-label={ __( 'WordPress.com Navigation Menu', __i18n_text_domain__ ) }
 							aria-hidden={ ! isMobileMenuOpen }
 						>
-							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+							{ /* Click-outside scrim; Escape is handled by the document keydown listener above. */ }
+							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
 							<div
 								className="x-menu-overlay"
-								onKeyDown={ () => setMobileMenuOpen( false ) }
-								onClick={ () => setMobileMenuOpen( false ) }
+								onClick={ () => closeLegacyMobileMenu( 'overlay' ) }
 							/>
 							<div className="x-menu-content">
 								<button
 									className="x-menu-button x-link"
-									onClick={ () => setMobileMenuOpen( false ) }
+									onClick={ () => closeLegacyMobileMenu( 'close_button' ) }
 								>
 									<span className="x-hidden">
 										{ __( 'Close the navigation menu', __i18n_text_domain__ ) }

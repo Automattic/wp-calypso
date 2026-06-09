@@ -44,7 +44,6 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
 	A4A_AGENCY_TIER_LINK,
-	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
@@ -81,7 +80,7 @@ const useMainMenuItems = ( path: string ) => {
 			? {
 					icon: moveTo,
 					path: A4A_MIGRATIONS_LINK,
-					link: A4A_MIGRATIONS_OVERVIEW_LINK,
+					link: A4A_MIGRATIONS_LINK,
 					title: translate( 'Migrations' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Migrations',

@@ -5,15 +5,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-type AgentsManagerTestGlobal = typeof globalThis & {
-	agentsManagerData?: {
-		jetpackAiSidebarPreview?: {
-			enabled: boolean;
-			features?: Record< string, boolean >;
-		};
-	};
-};
-
 let mockIsDocked = false;
 const mockSetIsMinimized = jest.fn();
 
@@ -58,19 +49,17 @@ jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
 import ChatHeader from '../chat-header';
 
-function installJetpackAiSidebarPreviewData( features: Record< string, boolean > ) {
-	( globalThis as AgentsManagerTestGlobal ).agentsManagerData = {
-		jetpackAiSidebarPreview: {
-			enabled: true,
-			features,
-		},
-	};
-}
-
 function installAdminBarTrigger() {
 	const el = document.createElement( 'div' );
 	el.id = 'wp-admin-bar-agents-manager';
 	document.body.appendChild( el );
+}
+
+// `isReaderChatHost()` reads the agent ID from this global.
+function installReaderChatHost() {
+	( globalThis as { agentsManagerData?: { agentId?: string } } ).agentsManagerData = {
+		agentId: 'reader-chat',
+	};
 }
 
 function renderChatHeader( title?: string ) {
@@ -83,10 +72,10 @@ function renderChatHeader( title?: string ) {
 
 describe( 'ChatHeader', () => {
 	afterEach( () => {
-		delete ( globalThis as AgentsManagerTestGlobal ).agentsManagerData;
 		mockIsDocked = false;
 		mockSetIsMinimized.mockClear();
 		document.getElementById( 'wp-admin-bar-agents-manager' )?.remove();
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
@@ -108,16 +97,8 @@ describe( 'ChatHeader', () => {
 		expect( screen.getByText( 'View history' ) ).toBeInTheDocument();
 	} );
 
-	it( 'hides the history button when Jetpack AI Sidebar Preview disables chat history', () => {
-		installJetpackAiSidebarPreviewData( { chatHistory: false } );
-
-		renderChatHeader();
-
-		expect( screen.queryByText( 'View history' ) ).toBeNull();
-	} );
-
-	it( 'hides the history button when Jetpack AI Sidebar Preview omits chat history', () => {
-		installJetpackAiSidebarPreviewData( {} );
+	it( 'hides the history button on reader-chat hosts', () => {
+		installReaderChatHost();
 
 		renderChatHeader();
 
