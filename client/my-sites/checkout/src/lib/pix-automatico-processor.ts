@@ -59,6 +59,8 @@ export async function pixAutomaticoProcessor(
 		return makeErrorResponse(
 			translate( 'Your CPF or CNPJ is invalid. Please verify that you have entered it correctly.', {
 				textOnly: true,
+				comment:
+					'Error shown when the Brazilian taxpayer ID (CPF for individuals, CNPJ for companies) entered at checkout fails validation',
 			} )
 		);
 	}
