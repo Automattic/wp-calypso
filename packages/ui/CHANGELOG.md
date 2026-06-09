@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Enhancements
+
+- `Stepper`, `VerticalStepper`, `HorizontalStepper`: Add Stepper component suite with vertical and horizontal orientations, step indicators, linear flow support, and accessible ARIA semantics ([#111036](https://github.com/Automattic/wp-calypso/pull/111036)).
+
 ## 1.0.2
 
 ### Enhancements
