@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { OnboardActions } from '@automattic/data-stores';
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -32,7 +32,7 @@ async function initialize( reduxStore: Store ) {
 
 	await resetOnboardStore();
 	await setPlanCartItem( {
-		product_slug: PLAN_PERSONAL,
+		product_slug: PLAN_STUDENT,
 	} );
 
 	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.

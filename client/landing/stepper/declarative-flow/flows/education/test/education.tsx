@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { select } from '@wordpress/data';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
@@ -41,7 +41,7 @@ describe( 'Education Flow', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'initializes the education steps with required login and preselects Personal', async () => {
+	it( 'initializes the education steps with required login and preselects Student', async () => {
 		const reduxStore = {
 			dispatch: jest.fn(),
 			getState: jest.fn( () => ( {} ) ),
@@ -60,7 +60,7 @@ describe( 'Education Flow', () => {
 		] );
 		expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toEqual( {
-			product_slug: PLAN_PERSONAL,
+			product_slug: PLAN_STUDENT,
 		} );
 	} );
 
