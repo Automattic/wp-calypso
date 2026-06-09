@@ -199,12 +199,11 @@ export function useDropdownFlip( {
 			return () => clearTimeout( timer );
 		}
 
-		// Open → closed: nothing to morph (but keep the last height for re-open).
+		// Open → closed: nothing to morph. Don't re-measure here — the panel content
+		// is already `aria-hidden` / out of flow, so `el.offsetHeight` reads 0; the
+		// cached resting height (stored on open / switch) is the one to keep.
 		if ( prev !== null && next === null ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			if ( prev ) {
-				heightByNameRef.current[ prev ] = el.offsetHeight;
-			}
 			return;
 		}
 
