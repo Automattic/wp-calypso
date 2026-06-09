@@ -25,8 +25,6 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
 			);
 
-			// Checkout accepts the product slug directly, so there's no need to map
-			// it to a plan path slug.
 			const checkoutUrl = isBusinessPlan( upgradePlanSlug )
 				? getTrialCheckoutUrl( {
 						productSlug: upgradePlanSlug,

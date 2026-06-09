@@ -58,8 +58,6 @@ function useUpgradeHandler( {
 				return;
 			}
 
-			// Checkout accepts the product slug directly, so there's no need to map
-			// it to a plan path slug.
 			const planPath = cartItemForPlan?.product_slug ?? '';
 
 			let checkoutUrl = cartItemForStorageAddOn

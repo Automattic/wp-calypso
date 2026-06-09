@@ -316,8 +316,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	useEffect( () => {
 		if ( plan ) {
-			// Checkout accepts the product slug directly, so there's no need to map
-			// it to a plan path slug.
 			setSelectedPlanSlug( selectedPlan );
 		}
 	}, [ plan, selectedPlan, setSelectedPlanSlug ] );

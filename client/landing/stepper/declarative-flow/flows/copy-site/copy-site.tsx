@@ -172,8 +172,6 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
-					// Checkout accepts the product slug directly, so there's no need to
-					// map it to a plan path slug.
 					const plan =
 						urlQueryParams.get( 'plan' ) ?? sourceSite?.plan?.product_slug ?? PLAN_BUSINESS;
 					return window.location.assign(

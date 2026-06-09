@@ -407,7 +407,6 @@ const Home = () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
 							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							// Checkout accepts the product slug directly.
 							const planPath = annualPlanSlug || undefined;
 							if ( planPath ) {
 								page( `/checkout/${ site.slug }/${ planPath }` );

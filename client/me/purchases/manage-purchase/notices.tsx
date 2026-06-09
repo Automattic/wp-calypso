@@ -1376,8 +1376,6 @@ class PurchaseNotice extends Component<
 				upgrade_plan_slug: upgradePlanSlug,
 			} );
 
-			// Checkout accepts the product slug directly, so there's no need to map
-			// it to a plan path slug.
 			const checkoutUrl = getTrialCheckoutUrl( {
 				productSlug: upgradePlanSlug ?? '',
 				siteSlug: selectedSiteSlug ?? '',

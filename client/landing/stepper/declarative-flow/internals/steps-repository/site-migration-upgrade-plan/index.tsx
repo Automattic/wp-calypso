@@ -36,8 +36,6 @@ const SiteMigrationUpgradePlan: StepType< {
 			if ( planCartItem ) {
 				navigation?.submit?.( {
 					goToCheckout: true,
-					// Checkout accepts the product slug directly, so there's no need
-					// to map it to a plan path slug.
 					plan: planCartItem.product_slug,
 				} );
 			}

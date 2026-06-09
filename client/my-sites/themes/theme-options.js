@@ -59,8 +59,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Get the plan slug to use in a checkout URL for the given site and minimum plan.
- * Checkout accepts the product slug directly, so there's no need to map it to a
- * plan path slug.
  * @param {Object} state
  * @param {number} siteId
  * @param {string} minimumPlan

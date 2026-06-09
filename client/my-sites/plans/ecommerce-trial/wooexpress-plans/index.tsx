@@ -86,8 +86,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 			triggerTracksEvent?.( upgradePlanSlug );
 
-			// Checkout accepts the product slug directly, so there's no need to map
-			// it to a plan path slug.
 			const checkoutUrl = isWooExpressPlan( upgradePlanSlug )
 				? getTrialCheckoutUrl( { productSlug: upgradePlanSlug, siteSlug } )
 				: `/checkout/${ siteSlug }/${ upgradePlanSlug }`;

@@ -403,8 +403,6 @@ const PlansFeaturesMain = ( {
 
 	// Checkout mode: route the user to checkout to purchase the downgrade.
 	const confirmCheckoutDowngrade = () => {
-		// Checkout accepts the product slug directly, so there's no need to
-		// map it to a plan path slug.
 		const planPath = pendingDowngradePlanSlug;
 		if ( ! planPath || ! siteSlug ) {
 			return;
