@@ -10,7 +10,10 @@ interface Props {
 
 export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 	return (
-		<MenuItem selected={ isSelected } className="reader-sidebar-spaces__item">
+		<MenuItem
+			selected={ isSelected }
+			className={ `reader-sidebar-spaces__item reader-sidebar-spaces__item--${ space.color }` }
+		>
 			<MenuItemLink
 				className="sidebar__menu-link reader-sidebar-spaces__link"
 				href={ getSpacePath( space.slug ) }
@@ -24,11 +27,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 				</span>
 				<span className="reader-sidebar-spaces__text">
 					<span className="reader-sidebar-spaces__name">{ space.name }</span>
-					<span className="reader-sidebar-spaces__meta">{ space.lastActivityLabel }</span>
 				</span>
-				{ space.unreadCount > 0 && (
-					<span className="reader-sidebar-spaces__count">{ space.unreadCount }</span>
-				) }
 			</MenuItemLink>
 		</MenuItem>
 	);

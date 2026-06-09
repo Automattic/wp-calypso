@@ -9,8 +9,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	inline-size: 32px;
-	block-size: 32px;
+	block-size: 22px;
 	border-radius: 8px;
 }
 
@@ -65,33 +64,37 @@
 	white-space: nowrap;
 }
 
-.reader-sidebar-spaces__meta {
-	color: var(--color-text-subtle);
-	font-size: 0.75rem;
-	font-style: italic;
-	line-height: 1.3;
+// Each space carries its own accent colour, exposed as a custom property so
+// the active-row styling can pick it up.
+.reader-sidebar-spaces__item--blue {
+	--space-color: var(--studio-blue-50);
 }
 
-.reader-sidebar-spaces__count {
-	flex-shrink: 0;
-	min-inline-size: 24px;
-	padding-block: 2px;
-	padding-inline: 8px;
-	border-radius: 16px;
-	background: var(--studio-gray-5);
-	color: var(--color-text-subtle);
-	font-size: 0.75rem;
-	font-weight: 600;
-	text-align: center;
+.reader-sidebar-spaces__item--purple {
+	--space-color: var(--studio-purple-50);
 }
 
-// Selected row: highlight the name and turn the count into a filled badge,
-// matching the active-space treatment in the design.
+.reader-sidebar-spaces__item--red {
+	--space-color: var(--studio-red-50);
+}
+
+.reader-sidebar-spaces__item--orange {
+	--space-color: var(--studio-orange-50);
+}
+
+.reader-sidebar-spaces__item--gray {
+	--space-color: var(--studio-gray-50);
+}
+
+.reader-sidebar-spaces__item--green {
+	--space-color: var(--studio-green-50);
+}
+
+.reader-sidebar-spaces__item--celadon {
+	--space-color: var(--studio-celadon-50);
+}
+
+// Active row: the name takes on the space's own colour.
 .reader-sidebar-spaces__item.selected .reader-sidebar-spaces__name {
-	color: var(--color-primary);
-}
-
-.reader-sidebar-spaces__item.selected .reader-sidebar-spaces__count {
-	background: var(--color-primary);
-	color: var(--color-text-inverted);
+	color: var(--space-color);
 }

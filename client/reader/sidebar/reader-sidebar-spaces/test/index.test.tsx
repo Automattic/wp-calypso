@@ -25,21 +25,15 @@ describe( 'ReaderSidebarSpaces', () => {
 		} );
 	} );
 
-	it( 'shows the unread count for spaces that have one and hides it otherwise', () => {
-		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
-
-		// Work has 14 unread.
-		expect( screen.getByText( '14' ) ).toBeVisible();
-		// Cats has 0 unread — no badge rendered.
-		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'marks the active space as selected', () => {
+	it( 'marks the active space as selected and tags it with its colour modifier', () => {
 		const { container } = render( <ReaderSidebarSpaces path={ getSpacePath( 'work' ) } /> );
 
 		const selected = container.querySelectorAll( 'li.sidebar__menu-item.selected' );
 		expect( selected ).toHaveLength( 1 );
 		expect( selected[ 0 ].textContent ).toContain( 'Work' );
+		// The active row carries the space's colour class, which drives the
+		// active link colour via the `--space-color` custom property.
+		expect( selected[ 0 ] ).toHaveClass( 'reader-sidebar-spaces__item--blue' );
 	} );
 
 	it( 'renders an "Add a space" link to the spaces landing route', () => {
