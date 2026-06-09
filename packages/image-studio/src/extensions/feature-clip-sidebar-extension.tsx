@@ -218,15 +218,20 @@ function FeatureClipPanel(): JSX.Element | null {
 			  }
 			| undefined;
 		return {
-			postType: editor?.getCurrentPostType?.() ?? 'post',
+			// Leave this null when the editor store is absent or the post type
+			// hasn't loaded yet — do NOT fall back to 'post'. A 'post' fallback
+			// would pass the gate below for an unknown type and flash the panel
+			// (plus fire a phantom impression) until the real type resolves.
+			postType: editor?.getCurrentPostType?.() ?? null,
 			postId: editor?.getCurrentPostId?.() ?? null,
 		};
 	}, [] );
 
-	// Bail on unsupported post types before any of the body's hooks run, so the
-	// panel never mounts — and never fires a phantom panel-viewed impression —
-	// on editors like the Jetpack Form editor.
-	if ( ! SUPPORTED_POST_TYPES.includes( postType ) ) {
+	// Bail until the post type is both known and supported, before any of the
+	// body's hooks run — so the panel never mounts (and never fires a phantom
+	// panel-viewed impression) on editors like the Jetpack Form editor, nor in
+	// the transient window before the current post type is available.
+	if ( ! postType || ! SUPPORTED_POST_TYPES.includes( postType ) ) {
 		return null;
 	}
 

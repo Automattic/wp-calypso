@@ -29,7 +29,7 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 	attributes,
 } ) );
 
-let mockPostType = 'post';
+let mockPostType: string | null = 'post';
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
@@ -311,6 +311,19 @@ describe( 'feature-clip-sidebar-extension', () => {
 			mockPostType = 'jetpack_form';
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing while the post type is unknown (null) and does not fall back to post', () => {
+			// getCurrentPostType() returns null transiently before the post
+			// loads (and the editor store may be absent entirely). Treat that
+			// as unsupported — a 'post' fallback would flash the panel and fire
+			// a phantom impression until the real type resolves.
+			mockPostType = null;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockFill ).not.toHaveBeenCalled();
 			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
 		} );
 
