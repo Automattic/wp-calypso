@@ -16,7 +16,7 @@
 
 	.form-label {
 		color: var(--studio-gray-60);
-		margin-bottom: 8px;
+		margin-block-end: 8px;
 	}
 
 	input[type="text"] {
@@ -25,7 +25,8 @@
 		box-sizing: border-box;
 		font-size: 0.875rem;
 		height: 44px;
-		padding: 0.875rem 1rem;
+		padding-block: 0.875rem;
+		padding-inline: 1rem;
 
 		&:focus {
 			border-color: var(--studio-gray-10);
@@ -40,7 +41,7 @@
 	}
 
 	.form-input-validation {
-		margin-top: 8px;
-		padding-bottom: 0;
+		margin-block-start: 8px;
+		padding-block-end: 0;
 	}
 }
