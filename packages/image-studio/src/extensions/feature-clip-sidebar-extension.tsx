@@ -196,7 +196,20 @@ function FeatureClipEmptyState(): JSX.Element {
 	);
 }
 
-function FeatureClipPanel(): JSX.Element {
+/**
+ * Post types the Feature Clip panel is offered on. Mirrors the backend, which
+ * registers the `_jetpack_feature_clip_id` meta for `post` only (see Jetpack's
+ * `register_feature_clip_post_meta` in image-studio.php — "pages can be added
+ * later"). The plugin is registered globally, so its render runs in EVERY
+ * block editor, including the standalone Jetpack Form editor
+ * (`post_type=jetpack_form`), where turning the post into a video makes no
+ * sense and the meta isn't even registered. The post-type gate lives in the
+ * panel render rather than at registration because registration happens once,
+ * up front, before the editor's current post type is known.
+ */
+const SUPPORTED_POST_TYPES = [ 'post' ];
+
+function FeatureClipPanel(): JSX.Element | null {
 	const { postType, postId } = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as
 			| {
@@ -210,6 +223,22 @@ function FeatureClipPanel(): JSX.Element {
 		};
 	}, [] );
 
+	// Bail on unsupported post types before any of the body's hooks run, so the
+	// panel never mounts — and never fires a phantom panel-viewed impression —
+	// on editors like the Jetpack Form editor.
+	if ( ! SUPPORTED_POST_TYPES.includes( postType ) ) {
+		return null;
+	}
+
+	return <FeatureClipPanelBody postType={ postType } postId={ postId } />;
+}
+
+interface FeatureClipPanelBodyProps {
+	postType: string;
+	postId: number | null;
+}
+
+function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps ): JSX.Element {
 	// Pass the post ID explicitly. Without it `useEntityProp` falls back to
 	// EntityProvider context, which isn't set up for sidebar surfaces in every
 	// editor — meta would silently come back undefined and the panel would
