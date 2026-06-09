@@ -57,14 +57,19 @@ Extend the existing hook — it already owns `handleRequestClose`, ESC intercept
 `isExiting`, so centralizing avoids two hooks fighting over the close handler.
 
 - New param: `isGenerationInProgress: boolean`.
-- New state: `isGenerationWarningOpen`.
+- **Reuse the single `isConfirmDialogOpen` boolean for both confirmations** and add a
+  `closeDialogVariant: 'unsaved' | 'generation'` to say which one is showing. The variant is
+  captured when the dialog opens (via `openConfirmDialog( variant )`), **not** derived from
+  live `isGenerationInProgress` — otherwise a generation finishing while the dialog is up
+  would swap its copy.
 - New handlers:
-  - `handleConfirmKeepGenerating` — closes the warning, does **not** exit.
+  - `handleConfirmKeepGenerating` — closes the dialog, does **not** exit.
   - `handleConfirmStopAndClose` — sets `isExiting`, calls `onExit( hasChanges )` (same exit
     path as the no-changes branch; unmount aborts the request), clears `isExiting`.
 - `handleRequestClose` gains a **first-priority branch**: if `isGenerationInProgress`, open
-  the generation warning. This takes precedence over the unsaved-changes dialog — no
-  double-prompt; "Stop and close" exits directly.
+  the dialog in the `generation` variant. This takes precedence over the unsaved-changes
+  variant — no double-prompt; "Stop and close" exits directly. The early-return guard and the
+  ESC interceptor stay a single `isConfirmDialogOpen` check.
 - The ESC interceptor guard broadens from `hasUnsavedChanges` to
   `hasUnsavedChanges || isGenerationInProgress`.
 - Update the hook's doc comment to describe the broader "close confirmation flow" (keep the
@@ -73,8 +78,10 @@ Extend the existing hook — it already owns `handleRequestClose`, ESC intercept
 ### `components/index.tsx`
 
 - Pass `isGenerationInProgress: isVideoMode && isAiProcessing` into the hook.
-- Destructure the new return values.
-- Render a second `ConfirmationDialog` instance gated on `isGenerationWarningOpen`.
+- Destructure `closeDialogVariant` alongside the new handlers.
+- Render **one** `ConfirmationDialog` gated on `isConfirmDialogOpen`, with title/message/
+  actions/onClose chosen from a `closeDialogVariant`-keyed config (`ActionButton` is exported
+  from `confirmation-dialog` to type it). The config is memoized on the stable handlers.
 
 ### Dialog wording (matches the existing destructive "Delete this item" dialog convention)
 
@@ -102,11 +109,12 @@ Wire them in the hook (shown when the warning opens; the other two in the respec
 TDD against the existing `hooks/use-unsaved-changes-confirmation.test.js` (extend in place —
 not adding a new `.test.js`, which the package forbids). New cases:
 
-1. `isGenerationInProgress` true → `handleRequestClose` opens the generation warning (not the
-   unsaved-changes dialog) and does **not** call `onExit`.
-2. Generation warning takes precedence when both `isGenerationInProgress` and
-   `hasUnsavedChanges` are true.
-3. `handleConfirmKeepGenerating` closes the warning and does **not** call `onExit`.
+1. `isGenerationInProgress` true → `handleRequestClose` opens the dialog in the `generation`
+   variant (`isConfirmDialogOpen` true, `closeDialogVariant === 'generation'`) and does
+   **not** call `onExit`.
+2. The `generation` variant wins when both `isGenerationInProgress` and `hasUnsavedChanges`
+   are true.
+3. `handleConfirmKeepGenerating` closes the dialog and does **not** call `onExit`.
 4. `handleConfirmStopAndClose` calls `onExit` and toggles `isExiting`.
 5. `isGenerationInProgress` false → existing behavior unchanged (regression guard).
 
@@ -114,7 +122,7 @@ Full validation: `yarn build && yarn test && yarn lint && yarn typecheck` in the
 
 ## Edge cases
 
-- **Both generation in progress and unsaved changes:** generation warning wins; "Stop and
-  close" exits directly without a second save prompt. Closing already discarded work in this
-  case before this change, so this is no worse and avoids a confusing two-step dialog.
+- **Both generation in progress and unsaved changes:** the `generation` variant wins; "Stop
+  and close" exits directly without a second save prompt. Closing already discarded work in
+  this case before this change, so this is no worse and avoids a confusing two-step dialog.
 - **Non-video modes:** `isGenerationInProgress` is always `false`, so behavior is unchanged.

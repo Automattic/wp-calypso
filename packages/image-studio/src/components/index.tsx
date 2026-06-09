@@ -52,6 +52,14 @@ import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
 import './style.scss';
 
+/** Content for one flavor of the modal's close-confirmation dialog. */
+type CloseDialogConfig = {
+	title: string;
+	message: string;
+	onClose: () => void;
+	actions: ActionButton[];
+};
+
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
 	attachmentId,
@@ -542,50 +550,57 @@ const ImageStudioContent = withInstanceId(
 		) : null;
 
 		// One close-confirmation dialog, parameterized by which flavor is active.
-		const closeDialogs: Record<
-			CloseDialogVariant,
-			{ title: string; message: string; onClose: () => void; actions: ActionButton[] }
-		> = {
-			unsaved: {
-				title: __( 'Unsaved changes', __i18n_text_domain__ ),
-				message: __( 'Do you want to save this image?', __i18n_text_domain__ ),
-				onClose: handleConfirmCancel,
-				actions: [
-					{
-						text: __( 'Discard', __i18n_text_domain__ ),
-						onClick: handleConfirmDiscard,
-						variant: 'secondary',
-						isDestructive: true,
-					},
-					{
-						text: __( 'Save', __i18n_text_domain__ ),
-						onClick: handleConfirmSave,
-						variant: 'primary',
-					},
-				],
-			},
-			generation: {
-				title: __( 'Generation in progress', __i18n_text_domain__ ),
-				message: __(
-					'Your clip is still generating. Closing now will stop it and discard your progress.',
-					__i18n_text_domain__
-				),
-				onClose: handleConfirmKeepGenerating,
-				actions: [
-					{
-						text: __( 'Cancel', __i18n_text_domain__ ),
-						onClick: handleConfirmKeepGenerating,
-						variant: 'secondary',
-					},
-					{
-						text: __( 'Stop and close', __i18n_text_domain__ ),
-						onClick: handleConfirmStopAndClose,
-						variant: 'primary',
-						isDestructive: true,
-					},
-				],
-			},
-		};
+		// Memoized on the (stable) handlers so it isn't rebuilt every render.
+		const closeDialogs = useMemo< Record< CloseDialogVariant, CloseDialogConfig > >(
+			() => ( {
+				unsaved: {
+					title: __( 'Unsaved changes', __i18n_text_domain__ ),
+					message: __( 'Do you want to save this image?', __i18n_text_domain__ ),
+					onClose: handleConfirmCancel,
+					actions: [
+						{
+							text: __( 'Discard', __i18n_text_domain__ ),
+							onClick: handleConfirmDiscard,
+							variant: 'secondary',
+							isDestructive: true,
+						},
+						{
+							text: __( 'Save', __i18n_text_domain__ ),
+							onClick: handleConfirmSave,
+							variant: 'primary',
+						},
+					],
+				},
+				generation: {
+					title: __( 'Generation in progress', __i18n_text_domain__ ),
+					message: __(
+						'Your clip is still generating. Closing now will stop it and discard your progress.',
+						__i18n_text_domain__
+					),
+					onClose: handleConfirmKeepGenerating,
+					actions: [
+						{
+							text: __( 'Cancel', __i18n_text_domain__ ),
+							onClick: handleConfirmKeepGenerating,
+							variant: 'secondary',
+						},
+						{
+							text: __( 'Stop and close', __i18n_text_domain__ ),
+							onClick: handleConfirmStopAndClose,
+							variant: 'primary',
+							isDestructive: true,
+						},
+					],
+				},
+			} ),
+			[
+				handleConfirmCancel,
+				handleConfirmDiscard,
+				handleConfirmSave,
+				handleConfirmKeepGenerating,
+				handleConfirmStopAndClose,
+			]
+		);
 		const activeCloseDialog = closeDialogs[ closeDialogVariant ];
 
 		return (
