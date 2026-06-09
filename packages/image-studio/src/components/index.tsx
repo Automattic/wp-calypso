@@ -580,7 +580,7 @@ const ImageStudioContent = withInstanceId(
 					onClose: handleConfirmKeepGenerating,
 					actions: [
 						{
-							text: __( 'Cancel', __i18n_text_domain__ ),
+							text: __( 'Keep generating', __i18n_text_domain__ ),
 							onClick: handleConfirmKeepGenerating,
 							variant: 'secondary',
 						},

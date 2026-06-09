@@ -42,7 +42,7 @@ flag via `useImageStudioAgentSync`, so it is `true` across the whole clip lifecy
 When the user requests a close while a clip is generating, intercept it and show a
 confirmation dialog instead of closing:
 
-- **Cancel** → dismiss the dialog, modal stays open, generation continues.
+- **Keep generating** → dismiss the dialog, modal stays open, generation continues.
 - **Stop and close** → close the modal (existing unmount logic aborts the request),
   discarding the in-flight clip.
 
@@ -83,23 +83,28 @@ Extend the existing hook — it already owns `handleRequestClose`, ESC intercept
   actions/onClose chosen from a `closeDialogVariant`-keyed config (`ActionButton` is exported
   from `confirmation-dialog` to type it). The config is memoized on the stable handlers.
 
-### Dialog wording (matches the existing destructive "Delete this item" dialog convention)
+### Dialog wording
+
+Button structure follows the existing destructive "Delete this item" dialog (safe action
+first/secondary/auto-focused, destructive action primary + `isDestructive`). The safe label
+uses the repo's "Keep <thing>" convention (`Keep subscription`, `Keep plan`, `Keep Editing`,
+…) rather than a bare "Cancel", which would be ambiguous next to a running generation.
 
 - **Title:** `Generation in progress`
 - **Body:** `Your clip is still generating. Closing now will stop it and discard your progress.`
 - **Actions:**
-  1. `{ text: 'Cancel', variant: 'secondary', onClick: handleConfirmKeepGenerating }` — first, auto-focused, safe default.
+  1. `{ text: 'Keep generating', variant: 'secondary', onClick: handleConfirmKeepGenerating }` — first, auto-focused, safe default.
   2. `{ text: 'Stop and close', variant: 'primary', isDestructive: true, onClick: handleConfirmStopAndClose }`
 - **`onClose`** → `handleConfirmKeepGenerating`
 
-All strings via `__( …, __i18n_text_domain__ )`. Preserve the curly apostrophe in "you'll".
+All strings via `__( …, __i18n_text_domain__ )`.
 
 ### `utils/tracking.ts`
 
 Add three thin events via `recordImageStudioEvent` (naming follows `trackImageStudioFeatureClip*`):
 
 - `trackImageStudioFeatureClipCloseWarningShown()` — warning opened.
-- `trackImageStudioFeatureClipCloseWarningKeptGenerating()` — user chose Cancel.
+- `trackImageStudioFeatureClipCloseWarningKeptGenerating()` — user chose Keep generating.
 - `trackImageStudioFeatureClipCloseWarningStopped()` — user chose Stop and close.
 
 Wire them in the hook (shown when the warning opens; the other two in the respective handlers).
