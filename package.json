@@ -450,7 +450,7 @@
 		"@wordpress/warning": "3.48.0",
 		"@wordpress/widgets": "4.48.0",
 		"@wordpress/wordcount": "4.48.0",
-		"@wordpress/global-styles-ui@npm:^1.13.0": "patch:@wordpress/global-styles-ui@npm%3A1.13.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.13.0-49bd6ccf93.patch",
+		"@wordpress/global-styles-ui": "patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch",
 		"showdown@npm:^1.9.1": "npm:markdown-it@14.2.0"
 	},
 	"packageManager": "yarn@4.0.2",

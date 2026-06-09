@@ -11949,7 +11949,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/global-styles-ui@npm:^1.14.1, @wordpress/global-styles-ui@npm:^1.15.0":
+"@wordpress/global-styles-ui@npm:1.15.0":
   version: 1.15.0
   resolution: "@wordpress/global-styles-ui@npm:1.15.0"
   dependencies:
@@ -11976,6 +11976,36 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 124c7c1b443578ed4f33673bee21ff1f046c23c94084195b502a2dda767251eebdc92ed06d6655a7d15a1a8606afe07b31ea38c4cdf7127428d9d97970eded92
+  languageName: node
+  linkType: hard
+
+"@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch":
+  version: 1.15.0
+  resolution: "@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch::version=1.15.0&hash=ac577c"
+  dependencies:
+    "@wordpress/a11y": "npm:^4.48.0"
+    "@wordpress/api-fetch": "npm:^7.48.0"
+    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/block-editor": "npm:^15.21.0"
+    "@wordpress/blocks": "npm:^15.21.0"
+    "@wordpress/components": "npm:^35.0.0"
+    "@wordpress/compose": "npm:^8.1.0"
+    "@wordpress/core-data": "npm:^7.48.0"
+    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/date": "npm:^5.48.0"
+    "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/global-styles-engine": "npm:^1.15.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/keycodes": "npm:^4.48.0"
+    "@wordpress/private-apis": "npm:^1.48.0"
+    change-case: "npm:^4.1.2"
+    clsx: "npm:^2.1.0"
+    colord: "npm:^2.7.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: ad3c71aebf72b01c36f7f592165663ffb90e601a190eea67ceb9d7dd8ceaab3b2462f674f694dbe2a82c95feacf4fe67524cf6d0f45a0467ef7bfcf920515797
   languageName: node
   linkType: hard
 
