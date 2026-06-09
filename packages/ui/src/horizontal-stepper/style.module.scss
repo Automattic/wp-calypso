@@ -1,6 +1,7 @@
 // packages/ui/src/horizontal-stepper/style.module.scss
 @use '@wordpress/base-styles/breakpoints';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly' as a11y;
 @use '../utils/_theme-variables' as theme;
 
 .root {
@@ -47,7 +48,7 @@
 	}
 
 	.text-block {
-		display: none;
+		@include a11y.hide-content-accessibly;
 	}
 
 	.step {
