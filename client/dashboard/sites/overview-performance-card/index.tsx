@@ -61,7 +61,7 @@ function PerformanceCardContentWithFinishedTests( {
 	} else {
 		const recommendationCount = Object.keys( report.audits ).length;
 		description = sprintf(
-			// translators: %(days) is the number of days until the link expires.
+			// translators: %d is the number of days until the link expires.
 			_n( '%d recommendation available.', '%d recommendations available.', recommendationCount ),
 			recommendationCount
 		);
