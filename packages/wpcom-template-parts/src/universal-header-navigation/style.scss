@@ -1263,17 +1263,37 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	width: auto;
 	height: auto; // at rest; the JS FLIP pins an explicit px height during a switch
 	z-index: $x-nav-2026-dropdown-z-index;
-	background: $studio-white;
+	// The white surface lives on `::after` so it can unroll on open without scaling the content; the panel itself is transparent.
+	background: transparent;
 	opacity: 1;
 	visibility: hidden;
 	pointer-events: none;
 	transition: visibility $x-nav-2026-transition;
+
+	// White surface that unrolls (scaleY) from the nav edge on first open, mirroring the reference's `.x-nav-dropdown-wrapper--2026::after`. `--x-dropdown-2026-unroll` is driven from `useDropdownFlip` so the open commit has a rendered `scaleY(0)` frame to ease from (a CSS-only version can't, since the panel is `visibility: hidden` at rest).
+	&::after {
+		content: '';
+		position: absolute;
+		inset-inline: 0;
+		inset-block: 0;
+		background-color: $studio-white;
+		z-index: -1;
+		pointer-events: none;
+		transform: scaleY( var( --x-dropdown-2026-unroll, 1 ) );
+		transform-origin: top;
+	}
 
 	// Height morph is desktop-only (below 1025 the wide items are hidden, no dropdown).
 	@media ( min-width: 1025px ) {
 		transition:
 			visibility $x-nav-2026-transition,
 			height var( --x-dropdown-2026-panel-duration ) var( --x-dropdown-2026-easing );
+
+		// JS sets the unroll duration only for the first-open ease; switches keep the surface up (no reroll).
+		&::after {
+			transition: transform var( --x-dropdown-2026-unroll-duration, 0s )
+				var( --x-dropdown-2026-easing );
+		}
 	}
 }
 
@@ -1294,6 +1314,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	padding-inline-start: 24px;
 	border-radius: 0;
 	box-shadow: none;
+	// The panel's `::after` owns the white surface (so it can unroll on open); drop the legacy content background that would otherwise paint over it.
+	background: transparent;
 	transform: none;
 	opacity: 0;
 	visibility: hidden;
@@ -2028,6 +2050,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown--2026.x-dropdown-content .x-dropdown-subcategory-title,
 	.x-dropdown--2026.x-dropdown-content .x-dropdown-link.x-dropdown-link {
+		transform: none !important;
+	}
+
+	// No unroll: the white surface is simply present when open, gone when not.
+	.x-dropdown.x-dropdown--2026::after {
 		transform: none !important;
 	}
 }
