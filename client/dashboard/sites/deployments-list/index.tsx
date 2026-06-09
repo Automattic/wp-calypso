@@ -48,8 +48,11 @@ function DeploymentsList() {
 		codeDeploymentsQuery( site.ID )
 	);
 
-	// Fetch all deployment runs in parallel
-	const deploymentRunsQueries = useQueries( {
+	// Fetch all deployment runs in parallel, then transform the data to include
+	// deployment info and mark active deployments. The transformation lives in
+	// `combine` (rather than a separate useMemo over the queries result) so the
+	// output stays referentially stable across renders.
+	const { deploymentRuns, isLoadingRuns } = useQueries( {
 		queries: deployments.map( ( deployment: CodeDeploymentData ) => ( {
 			...codeDeploymentRunsQuery( site.ID, deployment.id ),
 			refetchInterval: 5000,
@@ -57,38 +60,38 @@ function DeploymentsList() {
 				persist: false,
 			},
 		} ) ),
+		combine: ( results ) => {
+			const allRuns: DeploymentRunWithDeploymentInfo[] = [];
+
+			results.forEach( ( query, index ) => {
+				const deployment = deployments[ index ];
+				if ( query.data && deployment ) {
+					const runsWithInfo = query.data.map( ( run: DeploymentRun ) => {
+						const isActiveDeployment =
+							deployment.current_deployment_run?.id === run.id ||
+							( ! deployment.current_deployment_run &&
+								deployment.current_deployed_run?.id === run.id );
+
+						return {
+							...run,
+							repository_name: deployment.repository_name,
+							branch_name: deployment.branch_name,
+							is_automated: deployment.is_automated,
+							is_active_deployment: isActiveDeployment,
+						};
+					} );
+					allRuns.push( ...runsWithInfo );
+				}
+			} );
+
+			return {
+				deploymentRuns: allRuns,
+				isLoadingRuns: results.some( ( query ) => query.isLoading ),
+			};
+		},
 	} );
 
-	// Transform the data to include deployment info and mark active deployments
-	const deploymentRuns: DeploymentRunWithDeploymentInfo[] = useMemo( () => {
-		const allRuns: DeploymentRunWithDeploymentInfo[] = [];
-
-		deploymentRunsQueries.forEach( ( query, index ) => {
-			const deployment = deployments[ index ];
-			if ( query.data && deployment ) {
-				const runsWithInfo = query.data.map( ( run: DeploymentRun ) => {
-					const isActiveDeployment =
-						deployment.current_deployment_run?.id === run.id ||
-						( ! deployment.current_deployment_run &&
-							deployment.current_deployed_run?.id === run.id );
-
-					return {
-						...run,
-						repository_name: deployment.repository_name,
-						branch_name: deployment.branch_name,
-						is_automated: deployment.is_automated,
-						is_active_deployment: isActiveDeployment,
-					};
-				} );
-				allRuns.push( ...runsWithInfo );
-			}
-		} );
-
-		return allRuns;
-	}, [ deployments, deploymentRunsQueries ] );
-
-	const isLoading =
-		isLoadingDeployments || deploymentRunsQueries.some( ( query ) => query.isLoading );
+	const isLoading = isLoadingDeployments || isLoadingRuns;
 
 	const repositoryOptions = useMemo( () => {
 		return Array.from( new Set( deploymentRuns.map( ( item ) => item.repository_name ) ) )
