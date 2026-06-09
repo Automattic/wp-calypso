@@ -2,8 +2,9 @@ import { PLAN_STUDENT } from '@automattic/calypso-products';
 import { OnboardActions } from '@automattic/data-stores';
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { dispatch, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
+import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -16,6 +17,7 @@ import {
 	setSignupCompleteSiteID,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { ONBOARD_STORE } from '../../../stores';
@@ -25,21 +27,8 @@ import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
-import type { Store } from 'redux';
 
-async function initialize( reduxStore: Store ) {
-	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
-
-	await resetOnboardStore();
-
-	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
-	reduxStore.dispatch( setSelectedSiteId( null ) );
-	clearStepPersistedState( EDUCATION_FLOW );
-	clearSignupDestinationCookie();
-	clearSignupCompleteFlowName();
-	clearSignupCompleteSlug();
-	clearSignupCompleteSiteID();
-
+function initialize() {
 	const steps = [
 		STEPS.EDUCATION_STUDENT_VALIDATION,
 		STEPS.DOMAIN_SEARCH,
@@ -190,6 +179,25 @@ const education: FlowV2< typeof initialize > = {
 		};
 
 		return { submit };
+	},
+	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+
+		// Reset only at the flow root, not in `initialize`: the latter re-runs on
+		// every boot (including a mid-flow refresh) and would wipe the persisted
+		// Student plan, silently downgrading the user to a free site.
+		useEffect( () => {
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+				reduxDispatch( setSelectedSiteId( null ) );
+				clearStepPersistedState( EDUCATION_FLOW );
+				clearSignupDestinationCookie();
+				clearSignupCompleteFlowName();
+				clearSignupCompleteSlug();
+				clearSignupCompleteSiteID();
+			}
+		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 	},
 };
 

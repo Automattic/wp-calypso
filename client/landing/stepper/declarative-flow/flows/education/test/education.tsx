@@ -9,7 +9,6 @@ import { ProcessingResult } from '../../../internals/steps-repository/processing
 import { runFlowNavigation } from '../../../test/helpers';
 import educationFlow from '../education';
 import type { StepperStep } from '../../../internals/types';
-import type { Store } from 'redux';
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( educationFlow, options, 'forward' );
@@ -42,13 +41,8 @@ describe( 'Education Flow', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'initializes the education steps with required login and no plan in the cart yet', async () => {
-		const reduxStore = {
-			dispatch: jest.fn(),
-			getState: jest.fn( () => ( {} ) ),
-		} as unknown as Store;
-
-		const steps = await educationFlow.initialize( reduxStore );
+	it( 'initializes the education steps with required login and no plan in the cart yet', () => {
+		const steps = educationFlow.initialize();
 		const slugs = steps.map( ( step ) => step.slug );
 
 		expect( slugs ).toEqual( [
