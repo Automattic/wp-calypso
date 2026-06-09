@@ -379,7 +379,7 @@
 		"@wordpress/blocks": "patch:@wordpress/blocks@^15.21.0#~/.yarn/patches/@wordpress-blocks-npm-15.19.0-e7e40905cf.patch",
 		"@wordpress/browserslist-config": "6.48.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
 		"@wordpress/core-data": "7.48.0",
 		"@wordpress/create-block-tutorial-template": "4.48.0",
 		"@wordpress/create-block": "4.91.0",

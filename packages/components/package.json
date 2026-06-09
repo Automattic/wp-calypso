@@ -58,7 +58,7 @@
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
 		"@wordpress/date": "5.48.0",
 		"@wordpress/html-entities": "4.48.0",
 		"@wordpress/i18n": "^6.21.0",
