@@ -1,5 +1,5 @@
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
-import { isValidCPF } from '@automattic/wpcom-checkout';
+import { isValidBrazilianTaxId } from '@automattic/wpcom-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
@@ -55,9 +55,9 @@ export async function pixProcessor(
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
 
-	if ( ! isValidCPF( submitData.document ) ) {
+	if ( ! isValidBrazilianTaxId( submitData.document ) ) {
 		return makeErrorResponse(
-			translate( 'Your CPF is invalid. Please verify that you have entered it correctly.', {
+			translate( 'Your CPF or CNPJ is invalid. Please verify that you have entered it correctly.', {
 				textOnly: true,
 			} )
 		);

@@ -1,7 +1,6 @@
 import {
 	isValidPostalCode,
-	isValidCPF,
-	isValidCNPJ,
+	isValidBrazilianTaxId,
 	countrySpecificFieldRules,
 } from '@automattic/wpcom-checkout';
 import creditcards from 'creditcards';
@@ -223,7 +222,7 @@ validators.validBrazilTaxId = {
 		if ( ! value ) {
 			return false;
 		}
-		return isValidCPF( value ) || isValidCNPJ( value );
+		return isValidBrazilianTaxId( value );
 	},
 	error: function ( description ) {
 		return i18n.translate(
