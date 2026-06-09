@@ -1,5 +1,4 @@
 import { DomainSuggestion } from '@automattic/api-core';
-import { getPlanPath } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -8,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -97,6 +97,7 @@ const copySite: Flow = {
 		const urlQueryParams = useQuery();
 		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
 		const sourceSite = useSite( sourceSiteSlug );
+		const getPlanPathSlug = usePlanPathSlugGetter();
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,
@@ -174,7 +175,7 @@ const copySite: Flow = {
 					const returnUrl = encodeURIComponent( destination );
 					const plan =
 						urlQueryParams.get( 'plan' ) ??
-						getPlanPath( sourceSite?.plan?.product_slug ?? 'business' );
+						getPlanPathSlug( sourceSite?.plan?.product_slug ?? 'business' );
 					return window.location.assign(
 						`/checkout/${ plan }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''
