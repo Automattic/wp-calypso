@@ -12,7 +12,6 @@ const ApproveButton = ( { isApproved, note, setApproveStatus } ) => {
 
 	return (
 		<ActionButton
-			className="wpnc__action-link--approve"
 			icon={ check }
 			isActive={ isApproved }
 			hotkey="a"
