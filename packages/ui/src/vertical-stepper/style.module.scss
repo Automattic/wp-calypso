@@ -77,7 +77,7 @@
 	}
 
 	@media ( prefers-reduced-motion: no-preference ) {
-		transition: height 200ms ease;
+		transition: height var( --wpds-motion-duration-md ) var( --wpds-motion-easing-balanced );
 	}
 }
 
