@@ -44,7 +44,13 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		isLoading: isLoadingSitesPlugins,
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( { ...pluginsQuery(), enabled } );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: true,
+		} )
+	);
 	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
 		marketplacePluginsQuery()
 	);

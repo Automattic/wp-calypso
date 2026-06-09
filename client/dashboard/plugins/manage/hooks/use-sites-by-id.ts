@@ -4,7 +4,13 @@ import { useAppContext } from '../../../app/context';
 
 export const useSitesById = () => {
 	const { queries } = useAppContext();
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: true,
+		} )
+	);
 
 	const map = new Map< number, Site >();
 
