@@ -5,7 +5,7 @@ const FIELD_NAME_MAPPING: Record< keyof ReferHostingFormData, keyof ReferHosting
 		companyName: 'company_name',
 		address: 'address',
 		country: 'country_code',
-		state: 'state_code_iso',
+		state: 'state',
 		city: 'city',
 		zip: 'zip',
 		firstName: 'first_name',

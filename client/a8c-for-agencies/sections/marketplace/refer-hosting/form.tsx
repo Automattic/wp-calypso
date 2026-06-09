@@ -17,6 +17,10 @@ import useReferHostingForm from './hooks/use-refer-hosting-form';
 import { getReferralFormData } from './lib/get-form-data';
 import { getReferralConfig } from './lib/get-referral-config';
 
+// The downstream HubSpot form only supports states for these countries, so we
+// only collect a state when one of them is selected.
+const STATE_SUPPORTED_COUNTRIES = [ 'US', 'AU', 'CA' ];
+
 type FieldProps = {
 	label: string;
 	name: string;
@@ -143,7 +147,9 @@ export default function ReferHostingForm( {
 		updateValidationError( { [ name ]: '' } );
 	};
 
-	const stateOptions = stateOptionsMap[ formData.country ];
+	const stateOptions = STATE_SUPPORTED_COUNTRIES.includes( formData.country )
+		? stateOptionsMap[ formData.country ]
+		: undefined;
 
 	useEffect( () => {
 		handleInputChange( 'state', '' );
