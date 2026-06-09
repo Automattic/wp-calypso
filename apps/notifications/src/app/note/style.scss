@@ -288,7 +288,8 @@
 	}
 }
 
-.wpnc__action-link.has-icon.has-text {
+// Outweigh WP Button's `.components-button.has-icon.has-text` rule.
+.wpnc__action-link.components-button.has-icon.has-text {
 	// Start each button at its natural (content) width and share the remaining
 	// space from there. This keeps labels centered regardless of which one is
 	// longest, so it stays correct across languages.
