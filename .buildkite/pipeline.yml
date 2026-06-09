@@ -58,10 +58,6 @@ steps:
     artifact_paths:
       - desktop/release/*
 
-  # Unsigned Store .appx only — the Microsoft Store re-signs on ingestion.
-  # The signed NSIS direct-download installer is a separate, later phase.
-  # No `automattic/nvm` plugin here: it's a bash plugin, and the Windows AMI
-  # ships no Node, so the build script bootstraps Node itself.
   - label: ":windows: Build desktop (windows store, unsigned)"
     branches: ainfra-*
     notify:

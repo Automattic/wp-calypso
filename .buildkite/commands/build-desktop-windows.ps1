@@ -20,17 +20,10 @@ function Invoke-Checked {
     }
 }
 
-# The a8c Windows AMI ships bun/go/rust/python and the Windows 10 SDK, but no
-# Node toolchain - unlike the mac/linux agents, which get Node from the
-# `automattic/nvm` Buildkite plugin (a bash plugin that can't run here). So we
-# install the `.nvmrc`-pinned Node ourselves.
 $NodeVersion = (Get-Content "$PSScriptRoot\..\..\.nvmrc").Trim()
 Write-Output "--- :nodejs: Installing Node $NodeVersion"
 Invoke-Checked { choco install nodejs --version=$NodeVersion --yes --no-progress }
 
-# Chocolatey updates the machine PATH, not the current session. Prepend the
-# install dir directly rather than calling `refreshenv`, which is documented to
-# clobber in-session PATH edits (buildkite-ci chocolatey_utils.ps1).
 $env:Path = "C:\Program Files\nodejs;$env:Path"
 Invoke-Checked { node --version }
 
