@@ -57,9 +57,9 @@ boot( {
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},
 	queries: {
-		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
+		sitesQuery: ( fetchSitesOptions?: Partial< FetchSitesOptions > ) =>
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
-		paginatedSitesQuery: ( fetchSitesOptions?: FetchPaginatedSitesOptions ) =>
+		paginatedSitesQuery: ( fetchSitesOptions?: Partial< FetchPaginatedSitesOptions > ) =>
 			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),

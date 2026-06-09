@@ -66,9 +66,11 @@ export type AppConfig = {
 		siteSwitcher: () => Promise< { default: React.FC< any > } >;
 	};
 	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
+		sitesQuery: (
+			fetchSiteOptions?: Partial< FetchSitesOptions >
+		) => ReturnType< typeof sitesQuery >;
 		paginatedSitesQuery: (
-			fetchSiteOptions?: FetchPaginatedSitesOptions
+			fetchSiteOptions?: Partial< FetchPaginatedSitesOptions >
 		) => ReturnType< typeof paginatedSitesQuery >;
 		dashboardSiteFiltersQuery: (
 			field: FetchDashboardSiteFiltersParams[ 'fields' ]
@@ -108,8 +110,9 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		siteSwitcher: () => Promise.resolve( { default: () => null } ),
 	},
 	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+		sitesQuery: ( fetchSiteOptions?: Partial< FetchSitesOptions > ) =>
+			sitesQuery( 'all', fetchSiteOptions ),
+		paginatedSitesQuery: ( fetchSiteOptions?: Partial< FetchPaginatedSitesOptions > ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),

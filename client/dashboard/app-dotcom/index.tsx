@@ -53,8 +53,9 @@ boot( {
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
 	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+		sitesQuery: ( fetchSiteOptions?: Partial< FetchSitesOptions > ) =>
+			sitesQuery( 'all', fetchSiteOptions ),
+		paginatedSitesQuery: ( fetchSiteOptions?: Partial< FetchPaginatedSitesOptions > ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),

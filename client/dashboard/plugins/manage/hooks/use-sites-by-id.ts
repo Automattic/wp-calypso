@@ -4,7 +4,9 @@ import { useAppContext } from '../../../app/context';
 
 export const useSitesById = () => {
 	const { queries } = useAppContext();
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery(
+		queries.sitesQuery( { include_staging: true } )
+	);
 
 	const map = new Map< number, Site >();
 
