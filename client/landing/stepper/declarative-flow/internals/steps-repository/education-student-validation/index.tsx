@@ -37,14 +37,18 @@ const EducationStudentValidation: StepType< {
 	const onSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		if ( ! trimmedCode || isPending ) {
+		if ( ! trimmedCode || isPending || hasError ) {
 			return;
 		}
 
-		setHasError( false );
-
 		try {
-			await validateCode( trimmedCode );
+			const { success } = await validateCode( trimmedCode );
+
+			if ( ! success ) {
+				setHasError( true );
+				return;
+			}
+
 			navigation.submit?.( { inviteCodeValidated: true } );
 		} catch {
 			setHasError( true );
@@ -81,7 +85,7 @@ const EducationStudentValidation: StepType< {
 					</div>
 					<Step.PrimaryButton
 						type="submit"
-						disabled={ isPending || ! trimmedCode }
+						disabled={ isPending || ! trimmedCode || hasError }
 						isBusy={ isPending }
 					>
 						{ isPending ? __( 'Validating' ) : __( 'Validate invite code' ) }

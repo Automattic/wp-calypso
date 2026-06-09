@@ -93,4 +93,39 @@ describe( 'EducationStudentValidation', () => {
 		expect( await screen.findByText( 'Invitation code not found' ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
 	} );
+
+	it( 'shows an error when the code resolves with success: false', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		mockApi()
+			.post( '/wpcom/v2/me/education-student-validation', { code: 'ARCHIVED' } )
+			.reply( 200, { success: false } );
+
+		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'ARCHIVED' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
+
+		expect( await screen.findByText( 'Invitation code not found' ) ).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'locks the submit button after a rejection until the code is edited', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		mockApi()
+			.post( '/wpcom/v2/me/education-student-validation', { code: 'UNKNOWN' } )
+			.reply( 404, { code: 'not_found' } );
+
+		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'UNKNOWN' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
+
+		expect( await screen.findByText( 'Invitation code not found' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeDisabled();
+
+		await userEvent.type( screen.getByLabelText( 'Invitation code' ), 'X' );
+
+		expect( screen.queryByText( 'Invitation code not found' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeEnabled();
+	} );
 } );
