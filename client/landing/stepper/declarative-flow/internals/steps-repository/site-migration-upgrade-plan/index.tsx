@@ -1,4 +1,3 @@
-import { getPlan, type PlanSlug } from '@automattic/calypso-products';
 import { Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { usePlanPathSlugGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import MigrationPlansGrid from './migration-plans-grid';
 import type { Step as StepType } from '../../types';
 
@@ -29,20 +29,20 @@ const SiteMigrationUpgradePlan: StepType< {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const queryParams = useQuery();
+	const getPlanPathSlug = usePlanPathSlugGetter();
 
 	const handleUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const planCartItem = cartItems?.[ 0 ];
 
 			if ( planCartItem ) {
-				const plan = getPlan( planCartItem.product_slug as PlanSlug );
 				navigation?.submit?.( {
 					goToCheckout: true,
-					plan: plan?.getPathSlug ? plan.getPathSlug() : '',
+					plan: getPlanPathSlug( planCartItem.product_slug ) ?? '',
 				} );
 			}
 		},
-		[ navigation ]
+		[ navigation, getPlanPathSlug ]
 	);
 
 	if ( ! siteItem || ! siteSlug ) {
