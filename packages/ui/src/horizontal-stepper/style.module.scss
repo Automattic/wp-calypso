@@ -1,8 +1,6 @@
 // packages/ui/src/horizontal-stepper/style.module.scss
 @use '@wordpress/base-styles/breakpoints';
-@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly' as a11y;
-@use '../utils/_theme-variables' as theme;
 
 .root {
 	display: flex;
@@ -66,10 +64,6 @@
 			inset-inline-end: calc( -50% + var( --a8c-ui-stepper-indicator-size ) * 0.5 + var( --wpds-dimension-padding-md ) );
 			height: var( --wpds-border-width-xs );
 			background-color: var( --wpds-color-stroke-surface-neutral );
-
-			@include ui-mixins.when-dark-theme {
-				background-color: theme.$components-color-gray-700;
-			}
 		}
 	}
 

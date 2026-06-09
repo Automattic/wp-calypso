@@ -1,7 +1,5 @@
 // packages/ui/src/vertical-stepper/style.module.scss
 @use '@wordpress/base-styles/breakpoints';
-@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
-@use '../utils/_theme-variables' as theme;
 
 .root {
 	display: flex;
@@ -31,10 +29,6 @@
 			bottom: 0;
 			width: 1px;
 			background: var( --wpds-color-stroke-surface-neutral-weak );
-
-			@include ui-mixins.when-dark-theme {
-				background: theme.$components-color-gray-700;
-			}
 		}
 	}
 }

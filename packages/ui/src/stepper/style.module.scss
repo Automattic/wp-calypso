@@ -1,6 +1,4 @@
 // packages/ui/src/stepper/style.module.scss
-@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
-@use '../utils/_theme-variables' as theme;
 
 // ---------------------------------------------------------------------------
 // Design tokens — emitted once on the shared root, consumed by all children.
@@ -28,11 +26,6 @@
 	font-weight: 400;
 	color: var( --wpds-color-fg-interactive-neutral );
 	background: var( --wpds-color-bg-surface-neutral-strong );
-
-	@include ui-mixins.when-dark-theme {
-		border-color: theme.$components-color-gray-600;
-		color: theme.$components-color-gray-300;
-	}
 }
 
 // Current step
@@ -199,8 +192,4 @@
 
 .description {
 	color: var( --wpds-color-fg-content-neutral-weak );
-
-	@include ui-mixins.when-dark-theme {
-		color: theme.$components-color-gray-300;
-	}
 }
