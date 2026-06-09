@@ -1,4 +1,5 @@
 // packages/ui/src/vertical-stepper/vertical-stepper-step.tsx
+import { __ } from '@wordpress/i18n';
 import { Stack } from '@wordpress/ui';
 import clsx from 'clsx';
 import { Stepper } from '../stepper';
@@ -36,7 +37,9 @@ export function VerticalStepperStep( {
 				<Stack direction="column" gap="xs">
 					<Stepper.Title>{ title }</Stepper.Title>
 					{ description && <Stepper.Description>{ description }</Stepper.Description> }
-					{ optional && ! description && <Stepper.Description>Optional</Stepper.Description> }
+					{ optional && ! description && (
+						<Stepper.Description>{ __( 'Optional' ) }</Stepper.Description>
+					) }
 				</Stack>
 			</Stepper.Trigger>
 			<Stepper.Panel className={ styles[ 'panel' ] } forceMount={ forceMount }>
