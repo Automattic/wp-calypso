@@ -101,23 +101,31 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 			} );
 	}, [ currentSection?.props, onClose, sections, currentSectionIndex ] );
 
+	const currentSectionPropsId = currentSection?.props?.id;
+
+	// Track a section view whenever the active section changes. Keyed on the
+	// section id alone so saving the completed preference below doesn't refire it.
 	useEffect( () => {
-		if ( currentSection?.props?.id ) {
+		if ( currentSectionPropsId ) {
 			dispatch(
 				recordTracksEvent( 'calypso_onboarding_tour_modal_section_view', {
-					section: currentSection?.props?.id,
+					section: currentSectionPropsId,
 				} )
 			);
-			// Once the user navigates past the welcome section, mark the tour
-			// as completed so the welcome is hidden on subsequent opens.
-			if (
-				currentSection.props.id !== A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID &&
-				! hasCompletedTour
-			) {
-				dispatch( savePreference( A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME, true ) );
-			}
 		}
-	}, [ currentSection, dispatch, hasCompletedTour ] );
+	}, [ currentSectionPropsId, dispatch ] );
+
+	// Once the user navigates past the welcome section, mark the tour as
+	// completed so the welcome is hidden on subsequent opens.
+	useEffect( () => {
+		if (
+			currentSectionPropsId &&
+			currentSectionPropsId !== A4A_ONBOARDING_TOUR_WELCOME_SECTION_ID &&
+			! hasCompletedTour
+		) {
+			dispatch( savePreference( A4A_ONBOARDING_TOUR_COMPLETED_PREFERENCE_NAME, true ) );
+		}
+	}, [ currentSectionPropsId, dispatch, hasCompletedTour ] );
 
 	return (
 		<Modal
