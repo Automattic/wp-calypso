@@ -4,6 +4,10 @@
 @use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly' as a11y;
 @use '../utils/_theme-variables' as theme;
 
+// Half of the 18px indicator diameter. Used to offset the connector line so
+// it starts/ends at the indicator's edge rather than the step's center.
+$indicator-half: 9px;
+
 .root {
 	display: flex;
 	flex-direction: column;
@@ -62,8 +66,8 @@
 			position: absolute;
 			top: 50%;
 			transform: translateY( -50% );
-			inset-inline-start: calc( 50% + 21px );
-			inset-inline-end: calc( -50% + 21px );
+			inset-inline-start: calc( 50% + #{ $indicator-half } + var( --wpds-dimension-padding-md ) );
+			inset-inline-end: calc( -50% + #{ $indicator-half } + var( --wpds-dimension-padding-md ) );
 			height: var( --wpds-border-width-xs );
 			background-color: var( --wpds-color-stroke-surface-neutral );
 
