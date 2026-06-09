@@ -14,6 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
+import { usePlanProductSlugFromPathGetter } from 'calypso/lib/plans/use-plan-path-slug';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -29,7 +30,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import { isRequestingSitePlans, getPlansBySiteId } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -432,8 +433,12 @@ const WrappedUpsellNudge = (
 					product_id: upsellProduct.id,
 			  } )
 			: undefined;
+	// `upgradeItem` may reference a plan by its `path_slug` (e.g. `business`), so
+	// resolve it to the product slug before checking upgrade eligibility.
+	const getProductSlugFromPath = usePlanProductSlugFromPathGetter();
+	const upgradePlanSlug = getProductSlugFromPath( upgradeItem ?? '' );
 	const planSlug = useSelector( ( state ) =>
-		getUpgradePlanSlugFromPath( state, selectedSiteId ?? 0, upgradeItem ?? '' )
+		canUpgradeToPlan( state, selectedSiteId ?? 0, upgradePlanSlug ) ? upgradePlanSlug : undefined
 	);
 	const siteSlug =
 		useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) ) ?? siteSlugParam;
