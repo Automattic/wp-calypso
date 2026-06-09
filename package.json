@@ -451,7 +451,8 @@
 		"@wordpress/widgets": "4.48.0",
 		"@wordpress/wordcount": "4.48.0",
 		"@wordpress/global-styles-ui": "patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch",
-		"showdown@npm:^1.9.1": "npm:markdown-it@14.2.0"
+		"showdown@npm:^1.9.1": "npm:markdown-it@14.2.0",
+		"@emotion/native": "patch:@emotion/native@npm%3A11.11.0#~/.yarn/patches/@emotion-native-npm-11.11.0-8a3c683556.patch"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {

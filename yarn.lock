@@ -4819,7 +4819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/native@npm:^11.11.0":
+"@emotion/native@npm:11.11.0":
   version: 11.11.0
   resolution: "@emotion/native@npm:11.11.0"
   dependencies:
@@ -4827,6 +4827,17 @@ __metadata:
   peerDependencies:
     react-native: ">=0.14.0 <1"
   checksum: 253310af6bf4950949cf1206e5ba1cc805b6e3fc6f452b1dd11fba8eaaf90182de1054c750b4d99692c73071cfce0ab04c827fbba29832433c9d8d6508859a03
+  languageName: node
+  linkType: hard
+
+"@emotion/native@patch:@emotion/native@npm%3A11.11.0#~/.yarn/patches/@emotion-native-npm-11.11.0-8a3c683556.patch":
+  version: 11.11.0
+  resolution: "@emotion/native@patch:@emotion/native@npm%3A11.11.0#~/.yarn/patches/@emotion-native-npm-11.11.0-8a3c683556.patch::version=11.11.0&hash=6e3b02"
+  dependencies:
+    "@emotion/primitives-core": "npm:^11.11.0"
+  peerDependencies:
+    react-native: ">=0.14.0 <1"
+  checksum: 0101f553a03225b59882f0ffe951c423fa38e32a1778074794968d6a0a0b1a91f0bac9b5a3236dc48a29fe25f2be2f9eb471c97816c80119e4dcc7a2ce77037b
   languageName: node
   linkType: hard
 
