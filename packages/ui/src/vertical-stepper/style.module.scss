@@ -2,6 +2,7 @@
 @use '@wordpress/base-styles/breakpoints';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
+@use '../stepper/variables' as stepper-vars;
 
 .root {
 	display: flex;
@@ -25,8 +26,8 @@
 		&:not( :last-child )::after {
 			content: '';
 			position: absolute;
-			// Align with indicator center: ( 18px indicator - 1px line ) / 2 = 8.5px → 9px
-			inset-inline-start: 9px;
+			// Align with indicator center: half the indicator diameter, rounded up for the 1px line.
+			inset-inline-start: stepper-vars.$indicator-size * 0.5;
 			top: var( --stepper-trigger-height, 40px );
 			bottom: 0;
 			width: 1px;
