@@ -18,7 +18,7 @@ import { Button, Fill, PanelBody } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -285,39 +285,6 @@ function FeatureClipPanel(): JSX.Element {
 	useEffect( () => {
 		trackImageStudioFeatureClipPanelViewed();
 	}, [] );
-
-	const lastHealedClipIdRef = useRef< number | null >( null );
-	useEffect( () => {
-		if ( ! featureClipId ) {
-			return;
-		}
-		if ( ! hasResolvedAttachment ) {
-			return;
-		}
-		if ( attachment ) {
-			return;
-		}
-		// In real core-data a deleted attachment surfaces as a 404: apiFetch
-		// throws, the resolver finishes with status='error', and getMedia
-		// returns nothing. Only heal on a 404 — skip transient failures
-		// (network, auth) where the reference may still be valid.
-		const err = resolutionError as { data?: { status?: number }; code?: string } | null | undefined;
-		const isNotFound = err?.data?.status === 404 || err?.code === 'rest_post_invalid_id';
-		if ( resolutionError && ! isNotFound ) {
-			return;
-		}
-		if ( lastHealedClipIdRef.current === featureClipId ) {
-			return;
-		}
-		const editor = dispatch( 'core/editor' ) as {
-			editPost?: ( data: { meta: Record< string, unknown > } ) => void;
-		};
-		if ( typeof editor.editPost !== 'function' ) {
-			return;
-		}
-		editor.editPost( { meta: { [ FEATURE_CLIP_META_KEY ]: 0 } } );
-		lastHealedClipIdRef.current = featureClipId;
-	}, [ featureClipId, hasResolvedAttachment, resolutionError, attachment ] );
 
 	const titleNode = (
 		<span className="image-studio-feature-clip-panel__title">
