@@ -71,3 +71,21 @@ steps:
     command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows.ps1
     artifact_paths:
       - desktop/release/*.appx
+
+  # Signed NSIS direct-download installer — the auto-update path (electron-
+  # updater stays enabled). PFX-signed via the decrypted resource/certificates/
+  # win.p12; needs CALYPSO_SECRETS_ENCRYPTION_KEY (and WIN_CSC_KEY_PASSWORD if
+  # the cert is protected) on the windows queue. This is the PFX→Azure handover
+  # bridge build — see desktop/docs/windows-cert-handover.md.
+  - label: ":windows: Build desktop (windows nsis, signed)"
+    branches: ainfra-*
+    notify:
+      - github_commit_status:
+          context: Desktop / Build (windows nsis, signed)
+    agents:
+      queue: windows
+    command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows-nsis.ps1
+    artifact_paths:
+      - desktop/release/*.exe
+      - desktop/release/*.exe.blockmap
+      - desktop/release/latest.yml
