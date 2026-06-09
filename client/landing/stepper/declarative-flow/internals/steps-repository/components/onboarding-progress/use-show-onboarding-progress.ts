@@ -2,7 +2,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useExperiment } from 'calypso/lib/explat';
 
 // Placeholder experiment name until the real experiment is registered.
-const EXPERIMENT_NAME = 'calypso_onboarding_progress_stepper_v1';
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_progress_bar_202603_v1';
 
 /**
  * Single source of truth for whether the onboarding progress indicator shows.
