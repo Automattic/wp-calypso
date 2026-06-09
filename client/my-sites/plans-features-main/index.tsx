@@ -414,15 +414,25 @@ const PlansFeaturesMain = ( {
 			downgrading_to: pendingDowngradePlanSlug,
 			mode: 'checkout',
 		} );
+		// Every /checkout link must carry redirect_to and cancel_to (per the links
+		// guidelines) so exiting checkout behaves correctly. When this grid renders
+		// inside the Stepper these arrive on the URL rather than as props, so read
+		// both the prop and the current URL.
+		const redirectTarget = redirectTo ?? getQueryArg( window.location.href, 'redirect_to' );
+		const cancelTarget = getQueryArg( window.location.href, 'cancel_to' );
+		const checkoutQuery: Record< string, string > = {};
+		if ( coupon ) {
+			checkoutQuery.coupon = coupon;
+		}
+		if ( typeof redirectTarget === 'string' ) {
+			checkoutQuery.redirect_to = redirectTarget;
+		}
+		if ( typeof cancelTarget === 'string' ) {
+			checkoutQuery.cancel_to = cancelTarget;
+		}
 		// Use a full navigation rather than `page()` because this grid can be rendered
 		// inside the Stepper, where the `page` router is not initialized.
-		window.location.href = addQueryArgs(
-			{
-				...( coupon && { coupon } ),
-				...( redirectTo && { redirect_to: redirectTo } ),
-			},
-			`/checkout/${ siteSlug }/${ planPath }`
-		);
+		window.location.href = addQueryArgs( checkoutQuery, `/checkout/${ siteSlug }/${ planPath }` );
 	};
 
 	const confirmDowngrade = () =>
