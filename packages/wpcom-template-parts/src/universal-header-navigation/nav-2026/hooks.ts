@@ -190,16 +190,15 @@ export function useDropdownFlip( {
 			// Drive the `::after` scaleY here (not pure CSS): the panel is `visibility: hidden` at
 			// rest, so the open commit has no rendered `scaleY(0)` frame to ease from. Pin 0 with no
 			// transition, force a reflow, then ease to 1 — the same trick the height morph uses below.
-			if ( ! window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
-				el.style.setProperty( '--x-dropdown-2026-unroll-duration', '0s' );
-				el.style.setProperty( '--x-dropdown-2026-unroll', '0' );
-				void el.offsetHeight;
-				el.style.setProperty(
-					'--x-dropdown-2026-unroll-duration',
-					'var( --x-dropdown-2026-panel-duration )'
-				);
-				el.style.setProperty( '--x-dropdown-2026-unroll', '1' );
-			}
+			// Reduced motion is handled in CSS (the `::after` transform is reset there), so no guard here.
+			el.style.setProperty( '--x-dropdown-2026-unroll-duration', '0s' );
+			el.style.setProperty( '--x-dropdown-2026-unroll', '0' );
+			void el.offsetHeight;
+			el.style.setProperty(
+				'--x-dropdown-2026-unroll-duration',
+				'var( --x-dropdown-2026-panel-duration )'
+			);
+			el.style.setProperty( '--x-dropdown-2026-unroll', '1' );
 			const timer = setTimeout(
 				() => el.classList.remove( 'is-dropdown-first-open' ),
 				morphMs() + 50
