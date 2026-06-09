@@ -1,7 +1,15 @@
 // packages/ui/src/stepper/style.module.scss
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
-@use './variables' as stepper-vars;
+
+// ---------------------------------------------------------------------------
+// Design tokens — emitted once on the shared root, consumed by all children.
+// ---------------------------------------------------------------------------
+
+.root {
+	--a8c-ui-stepper-indicator-size: 18px;
+	--a8c-ui-stepper-indicator-size-sm: 16px;
+}
 
 // ---------------------------------------------------------------------------
 // Indicator
@@ -11,8 +19,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: stepper-vars.$indicator-size;
-	height: stepper-vars.$indicator-size;
+	width: var( --a8c-ui-stepper-indicator-size );
+	height: var( --a8c-ui-stepper-indicator-size );
 	border-radius: 50%;
 	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
 	flex-shrink: 0;
@@ -67,8 +75,8 @@
 // margin: 1px compensates for the 2px size reduction vs upcoming (18px → 16px)
 // so the indicator centres stay aligned vertically across states.
 .indicator.is-current[data-indicator-variant='bullet'] {
-	width: stepper-vars.$indicator-size-sm;
-	height: stepper-vars.$indicator-size-sm;
+	width: var( --a8c-ui-stepper-indicator-size-sm );
+	height: var( --a8c-ui-stepper-indicator-size-sm );
 	margin: 1px;
 	border-style: solid;
 	border-color: var( --wpds-color-fg-content-neutral );
@@ -78,8 +86,8 @@
 
 // Completed: 16px, solid border (color inherited from .indicator.is-completed)
 .indicator.is-completed[data-indicator-variant='bullet'] {
-	width: stepper-vars.$indicator-size-sm;
-	height: stepper-vars.$indicator-size-sm;
+	width: var( --a8c-ui-stepper-indicator-size-sm );
+	height: var( --a8c-ui-stepper-indicator-size-sm );
 	margin: 1px;
 	border-style: solid;
 }

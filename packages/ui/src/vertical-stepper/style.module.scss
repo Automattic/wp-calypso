@@ -2,7 +2,6 @@
 @use '@wordpress/base-styles/breakpoints';
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
-@use '../stepper/variables' as stepper-vars;
 
 .root {
 	display: flex;
@@ -27,7 +26,7 @@
 			content: '';
 			position: absolute;
 			// Align with indicator center: half the indicator diameter, rounded up for the 1px line.
-			inset-inline-start: stepper-vars.$indicator-half;
+			inset-inline-start: calc( var( --a8c-ui-stepper-indicator-size ) * 0.5 );
 			top: var( --stepper-trigger-height, 40px );
 			bottom: 0;
 			width: 1px;
@@ -83,6 +82,6 @@
 }
 
 .panel-content {
-	padding-inline-start: calc( stepper-vars.$indicator-size + var( --wpds-dimension-gap-sm ) );
+	padding-inline-start: calc( var( --a8c-ui-stepper-indicator-size ) + var( --wpds-dimension-gap-sm ) );
 	padding-block-end: var( --wpds-dimension-padding-lg );
 }
