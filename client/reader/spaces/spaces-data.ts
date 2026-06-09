@@ -17,6 +17,12 @@ export type SpaceColor = 'blue' | 'purple' | 'red' | 'orange' | 'gray' | 'green'
  * Generate an opaque, random-ish id for a hard-coded space. Real spaces will
  * carry server-assigned ids; this just stands in so the rest of the UI can key
  * and route on an id rather than a human-readable slug.
+ *
+ * TEMPORARY: ids are randomised at module load, so they are stable only within
+ * a single page session — a copied `/reader/spaces/<id>` deep link won't
+ * survive a reload, and an SSR'd sidebar could disagree with the client on the
+ * generated value. That's acceptable for this dark-shipped placeholder and goes
+ * away in RSM-4119, which replaces this list with real, server-assigned ids.
  */
 function randomSpaceId(): string {
 	return Math.random().toString( 36 ).slice( 2, 12 );
