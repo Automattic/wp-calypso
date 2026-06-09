@@ -29,7 +29,11 @@ export default function PreferencesPrimarySite() {
 	} );
 
 	const { data: sites, isLoading: isSiteListLoading } = useQuery(
-		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+		queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: false,
+		} )
 	);
 
 	const { mutateAsync: saveUserSettings, isPending: isSavingUserSettings } = useMutation(
