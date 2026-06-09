@@ -91,6 +91,8 @@ function resolveLink( link: HTMLElement ): ResolvedLink {
 export function recordNavLinkClick( link: HTMLAnchorElement ): void {
 	// Resolve from the DOM so this works from a plain click handler on either nav.
 	const is2026 = !! link.closest( '.x-nav--2026-redesign, .x-dropdown--2026, .x-menu--2026' );
+	// Only the new nav floats (sticky-on-scroll); the old nav never does, so the
+	// scrolled class is the right signal — absent on the old nav means not floating.
 	const isFloating = !! link.closest( '.lpc-header-nav-container.is-scrolled' );
 	const { source, category } = resolveLink( link );
 
