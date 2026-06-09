@@ -35,7 +35,7 @@
 		"@automattic/search": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.46.0",
+		"@wordpress/data": "^10.48.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1"
@@ -44,8 +44,8 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.0",
-		"typescript": "^5.9.3"
+		"@testing-library/react": "^16.3.2",
+		"typescript": "^6.0.3"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

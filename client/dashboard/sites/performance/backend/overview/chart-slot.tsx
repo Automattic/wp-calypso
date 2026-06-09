@@ -92,6 +92,7 @@ export default function ChartSlot( {
 						data={ data }
 						stacked
 						curveType="monotone"
+						zoomable
 						showLegend
 						legend={ { interactive: true } }
 						withTooltips

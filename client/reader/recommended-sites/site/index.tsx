@@ -3,8 +3,6 @@ import {
 	recordTrainTracksInteract,
 	type Railcar,
 } from '@automattic/calypso-analytics';
-import { SubscriptionManager } from '@automattic/data-stores';
-import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
@@ -13,12 +11,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { usePrevious } from '@wordpress/compose';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
+import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useSubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import {
@@ -32,6 +28,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import connectSite from 'calypso/lib/reader-connect-site';
 import { useDismissRecommendedSite } from 'calypso/reader/data/recommended-sites';
+import { getFollowingSource, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -41,8 +38,6 @@ import {
 import { getStreamUrl } from 'calypso/reader/route';
 import { Feed } from 'calypso/state/data-layer/wpcom/read/feed/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
-import isReaderFollowFeedLoading from 'calypso/state/reader/follows/selectors/is-reader-follow-feed-loading';
 import { seed as recommendedSitesSeed } from '../constants';
 import { RecommendedSitePlaceholder } from '../placeholder';
 import type { ReadSiteResponse as Site } from '@automattic/api-core';
@@ -60,26 +55,6 @@ const hasTrainTracksRenderRailcar = (
 	hasTrainTracksRailcarId( railcar ) &&
 	typeof railcar.fetch_algo === 'string' &&
 	railcar.fetch_algo.length > 0;
-
-/**
- * This hook invalidates the cache for site subscriptions when the "subscribe" mutation is completed.
- * This is necessary because the site subscriptions list uses react-query for state management, while the reader uses redux with data-layer middleware for its state management.
- * Since these two state management systems are not aware of each other, we need to manually invalidate the cache when the "subscribe" mutation is completed.
- */
-const useInvalidateSiteSubscriptionsCache = ( isSubscribeLoading: boolean ) => {
-	const wasSubscribeLoading = usePrevious( isSubscribeLoading );
-	const siteSubscriptionsCacheKey = SubscriptionManager.useCacheKey( [
-		'read',
-		'site-subscriptions',
-	] );
-	const queryClient = useQueryClient();
-	useEffect( () => {
-		if ( wasSubscribeLoading && ! isSubscribeLoading ) {
-			queryClient.invalidateQueries( { queryKey: siteSubscriptionsCacheKey } );
-		}
-	}, [ isSubscribeLoading, wasSubscribeLoading, queryClient, siteSubscriptionsCacheKey ] );
-};
-
 type RecommendedSiteProps = {
 	siteId: number;
 	feedId?: number; // Used for train-tracks
@@ -109,14 +84,14 @@ const RecommendedSite = ( {
 }: RecommendedSiteProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const isSubscribeLoading: boolean = useSelector( ( state ) =>
-		isReaderFollowFeedLoading( state, siteUrl )
-	);
+	const followSite = useFollowSite( {
+		siteId,
+		seed: recommendedSitesSeed,
+		siteTitle,
+	} );
+	const isSubscribeLoading = followSite.isPending;
 	const { mutate: dismissRecommendedSite, isPending: isDismissSitePending } =
 		useDismissRecommendedSite( { seed: recommendedSitesSeed } );
-
-	useInvalidateSiteSubscriptionsCache( isSubscribeLoading );
 
 	useEffect( () => {
 		if ( hasTrainTracksRenderRailcar( railcar ) ) {
@@ -228,13 +203,10 @@ const RecommendedSite = ( {
 			);
 		}
 
-		dispatch(
-			follow( siteUrl, null, {
-				siteId,
-				seed: recommendedSitesSeed,
-				siteTitle,
-			} ) as AnyAction
-		);
+		followSite.mutate( {
+			feedUrl: siteUrl,
+			source: getFollowingSource(),
+		} );
 	};
 
 	return (

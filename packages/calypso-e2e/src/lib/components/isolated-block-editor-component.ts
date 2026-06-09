@@ -48,7 +48,7 @@ export class IsolatedBlockEditorComponent {
 
 		await firstParagraph.or( defaultBlockButton ).first().waitFor( { state: 'visible' } );
 		if ( await defaultBlockButton.isVisible() ) {
-			await defaultBlockButton.click();
+			await defaultBlockButton.click( { timeout: 5000, noWaitAfter: true } ).catch( () => {} );
 			await firstParagraph.waitFor( { state: 'visible' } );
 		}
 

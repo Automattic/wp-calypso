@@ -41,16 +41,16 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-ui": "^0.1.58",
+		"@automattic/agenttic-ui": "^0.1.65",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/api-fetch": "7.46.0",
-		"@wordpress/data": "^10.46.0",
-		"@wordpress/element": "^6.46.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/icons": "^13.2.0",
+		"@wordpress/api-fetch": "7.48.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0",
 		"autosize": "^6.0.1",
 		"clsx": "^2.1.1",
 		"dompurify": "^3.2.6",
@@ -71,6 +71,6 @@
 		"@types/react": "^18.3.23",
 		"@types/smooch": "^5.6.0",
 		"jest": "^29.7.0",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	}
 }

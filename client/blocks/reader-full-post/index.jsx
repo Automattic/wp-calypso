@@ -32,6 +32,10 @@ import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { withSite } from 'calypso/reader/data/site';
+import {
+	useSiteSubscriptionForFeed,
+	useHasSiteSubscriptionOrganization,
+} from 'calypso/reader/data/site-subscriptions';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -45,10 +49,6 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import {
-	getReaderFollowForFeed,
-	hasReaderFollowOrganization,
-} from 'calypso/state/reader/follows/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
@@ -916,7 +916,6 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 			isSiteWPForTeams( state, blogId ) ||
 			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
-		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 		post,
 		postKey,
 		currentPath,
@@ -925,9 +924,7 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	};
 
 	if ( feedId && feed ) {
-		// Add site icon to feed object so have icon for external feeds
-		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-		props.feed = { ...feed, site_icon: follow?.site_icon };
+		props.feed = feed;
 	}
 	if ( ownProps.referral ) {
 		props.referralPost = ownProps.referralPost;
@@ -1044,5 +1041,15 @@ const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
 
 export default function FullPostContainer( props ) {
 	const { data: feed } = useFeedQuery( props.feedId );
-	return <FullPostWithNavigation { ...props } feed={ feed } />;
+	const follow = useSiteSubscriptionForFeed( props.feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
+	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
+
+	return (
+		<FullPostWithNavigation
+			{ ...props }
+			feed={ feedWithIcon }
+			hasOrganization={ hasOrganization }
+		/>
+	);
 }

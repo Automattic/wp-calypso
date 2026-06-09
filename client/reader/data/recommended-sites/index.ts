@@ -31,19 +31,34 @@ type DismissRecommendedSiteOptions = {
 };
 
 const DEFAULT_NUMBER = 4;
-const removedRecommendedSitesBySeed = new Map<
+type RemovedRecommendedSitesBySeed = Map<
 	number,
 	{
 		blogIds: Set< number >;
 		feedIds: Set< number >;
 	}
->();
+>;
+
+const removedRecommendedSitesByClient = new WeakMap< QueryClient, RemovedRecommendedSitesBySeed >();
+
+const getRemovedRecommendedSitesBySeed = ( queryClient: QueryClient ) => {
+	const removedBySeed = removedRecommendedSitesByClient.get( queryClient ) ?? new Map();
+	removedRecommendedSitesByClient.set( queryClient, removedBySeed );
+
+	return removedBySeed;
+};
 
 const mapPage = ( page: ReadSiteRecommendationsResponse ): RecommendedSite[] =>
 	adaptReadSiteRecommendationsResponse( page );
 
-const rememberRemovedRecommendation = ( seed: number, blogId: number, feedIds: Set< number > ) => {
-	const removed = removedRecommendedSitesBySeed.get( seed ) ?? {
+const rememberRemovedRecommendation = (
+	queryClient: QueryClient,
+	seed: number,
+	blogId: number,
+	feedIds: Set< number >
+) => {
+	const removedBySeed = getRemovedRecommendedSitesBySeed( queryClient );
+	const removed = removedBySeed.get( seed ) ?? {
 		blogIds: new Set< number >(),
 		feedIds: new Set< number >(),
 	};
@@ -53,14 +68,15 @@ const rememberRemovedRecommendation = ( seed: number, blogId: number, feedIds: S
 		removed.feedIds.add( feedId );
 	}
 
-	removedRecommendedSitesBySeed.set( seed, removed );
+	removedBySeed.set( seed, removed );
 };
 
 const filterRemovedRecommendedSites = (
 	sites: RecommendedSite[],
+	queryClient: QueryClient,
 	seed: number
 ): RecommendedSite[] => {
-	const removed = removedRecommendedSitesBySeed.get( seed );
+	const removed = getRemovedRecommendedSitesBySeed( queryClient ).get( seed );
 
 	if ( ! removed ) {
 		return sites;
@@ -84,9 +100,12 @@ const dedupeRecommendedSites = ( sites: RecommendedSite[] ): RecommendedSite[] =
 
 const selectRecommendedSites = (
 	data: InfiniteData< ReadSiteRecommendationsResponse, number >,
+	queryClient: QueryClient,
 	seed: number
 ): RecommendedSite[] =>
-	dedupeRecommendedSites( filterRemovedRecommendedSites( data.pages.flatMap( mapPage ), seed ) );
+	dedupeRecommendedSites(
+		filterRemovedRecommendedSites( data.pages.flatMap( mapPage ), queryClient, seed )
+	);
 
 export const selectVisibleRecommendedSites = (
 	sites: RecommendedSite[],
@@ -142,7 +161,7 @@ export const removeRecommendedSiteFromCache = (
 		}
 	}
 
-	rememberRemovedRecommendation( seed, siteId, feedIdsToRemove );
+	rememberRemovedRecommendation( queryClient, seed, siteId, feedIdsToRemove );
 
 	for ( const [ queryKey ] of entries ) {
 		queryClient.setQueryData< InfiniteData< ReadSiteRecommendationsResponse, number > >(
@@ -203,11 +222,14 @@ export const useRecommendedSites = ( {
 	seed?: number;
 	number?: number;
 	enabled?: boolean;
-} = {} ) =>
-	useInfiniteQuery( {
+} = {} ) => {
+	const queryClient = useQueryClient();
+
+	return useInfiniteQuery( {
 		...readSiteRecommendationsInfiniteQuery( { seed, number, enabled } ),
-		select: ( data ) => selectRecommendedSites( data, seed ),
+		select: ( data ) => selectRecommendedSites( data, queryClient, seed ),
 	} );
+};
 
 export const useDismissRecommendedSite = ( {
 	seed,

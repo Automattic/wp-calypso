@@ -47,7 +47,6 @@ import {
 	saveSignupStep as saveSignupStepAction,
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
@@ -279,8 +278,6 @@ function UnifiedPlansStep( {
 		return dashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
 
-	useSiteGlobalStylesOnPersonal();
-
 	const customerType =
 		customerTypeFromProps ??
 		( parseQs( path?.split( '?' ).pop() ?? '' ).customerType as string ) ??
@@ -450,6 +447,10 @@ function UnifiedPlansStep( {
 			return translate( 'Pick a plan for your store' );
 		}
 
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate( 'Find your best fit' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -567,6 +568,12 @@ function UnifiedPlansStep( {
 
 		if ( deemphasizeFreePlanFromProps ) {
 			return null;
+		}
+
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate(
+				'Compare plans and pick the one that works for where your site is headed.'
+			);
 		}
 
 		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {

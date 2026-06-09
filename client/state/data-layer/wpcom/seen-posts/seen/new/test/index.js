@@ -1,4 +1,4 @@
-import { readFeedQuery } from '@automattic/api-queries';
+import { getSiteSubscriptionsQueryKey, readFeedQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { getCachedFeed } from 'calypso/reader/data/feed';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -84,7 +84,11 @@ describe( 'seen-posts mark-as-seen data layer', () => {
 
 		expect( getCachedFeed( queryClient, 202 )?.unseen_count ).toBe( 1 );
 
+		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
 		onSuccess( action, { status: true } )( jest.fn() );
+		expect( invalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: getSiteSubscriptionsQueryKey(),
+		} );
 		expect( onError( duplicateAction ) ).toEqual( [] );
 
 		expect( getCachedFeed( queryClient, 202 )?.unseen_count ).toBe( 3 );

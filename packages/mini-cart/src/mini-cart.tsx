@@ -135,6 +135,7 @@ export function MiniCart( {
 	onRemoveCoupon,
 	checkoutLabel,
 	emptyCart,
+	showBundleGrouping = false,
 }: {
 	selectedSiteSlug: string;
 	cartKey: number | undefined;
@@ -144,6 +145,7 @@ export function MiniCart( {
 	onRemoveCoupon?: () => void;
 	checkoutLabel?: string;
 	emptyCart?: React.ReactNode;
+	showBundleGrouping?: boolean;
 } ) {
 	const {
 		responseCart,
@@ -198,6 +200,7 @@ export function MiniCart( {
 						removeProductFromCart={ handleRemoveProduct }
 						addProductsToCart={ addProductsToCart }
 						responseCart={ responseCart }
+						showBundleGrouping={ showBundleGrouping }
 					/>
 					{ shouldRenderEmptyCart && emptyCart }
 					{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }

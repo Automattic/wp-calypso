@@ -45,14 +45,45 @@ export function isFailedAutoRenewal( purchase: Purchase ): boolean {
 	);
 }
 
+/**
+ * Returns true if the purchase is still active but headed toward lapsing: it
+ * either requires a manual renewal or is expiring soon without auto-renew.
+ *
+ * Note this also covers purchases that are active but already PAST their expiry
+ * date (in the grace period), because the backend reports those as 'expiring'
+ * rather than 'expired'. It does NOT cover already-lapsed purchases — see
+ * {@link isExpired}. To test specifically for past-expiry, use the
+ * `is_past_expiry_date` flag on the purchase.
+ */
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
+/**
+ * Returns true only if the underlying subscription is no longer active (the
+ * backend `expiry_status` is 'expired').
+ *
+ * Important: this is NOT the same as the purchase being past its expiry date. A
+ * subscription that is still active but past its expiry date (i.e. in its grace
+ * period) reports as 'expiring', not 'expired', so this returns false for it —
+ * see {@link isExpiring} and {@link isInExpirationGracePeriod}. To test whether
+ * the expiry date itself has passed (regardless of active/lapsed state), use the
+ * `is_past_expiry_date` flag on the purchase.
+ */
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
+/**
+ * Returns true if the purchase is past its expiry date but the subscription is
+ * still active — the post-expiry grace period during which it can still be
+ * renewed before fully lapsing.
+ *
+ * This is the "active but already past expiry" case that {@link isExpired} does
+ * NOT cover: such purchases report an `expiry_status` of 'expiring' (or
+ * 'manual-renew'), not 'expired'. Equivalent to `is_past_expiry_date` being
+ * true while {@link isExpired} is false (excluding Akismet free products).
+ */
 export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
 	if ( ! purchase.expiry_date ) {
 		return false;
@@ -680,6 +711,27 @@ export const getIncludedDomainPurchase = (
 
 export function hasAmountAvailableToRefund( purchase: Purchase ) {
 	return purchase.refund_amount > 0;
+}
+
+/**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
+ *
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
+ *
+ * This is distinct from {@link isInExpirationGracePeriod}, which gates the
+ * downgrade-to-checkout flow for plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan &&
+		purchase.is_within_initial_refund_window &&
+		! isExpired( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	);
 }
 
 /**

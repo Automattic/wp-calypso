@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
@@ -45,7 +46,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 				{
 					args: { siteURL: site?.url ?? '' },
 					components: {
-						a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
+						a: <ExternalLink href={ wpOverviewUrl } children={ null } />,
 						developmentTabLink: <a href={ A4A_SITES_LINK_DEVELOPMENT } rel="noreferrer" />,
 					},
 					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
@@ -56,7 +57,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 				{
 					args: { siteURL: site?.url ?? '' },
 					components: {
-						a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
+						a: <ExternalLink href={ wpOverviewUrl } children={ null } />,
 					},
 					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
 				}

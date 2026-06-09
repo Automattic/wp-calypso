@@ -16,7 +16,6 @@ import { useHelpCenter } from '../../app/help-center';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
-import { AI_SITE_BUILDER_SPEC_FLOW } from '../ai-site-builder-spec-flow';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -24,7 +23,7 @@ import './style.scss';
 
 function AddNewSite( {
 	context = 'unknown',
-	aiSiteBuilderPath = `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }`,
+	aiSiteBuilderPath = '/setup/ai-site-builder',
 }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );

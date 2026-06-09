@@ -1,3 +1,4 @@
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { getCachedPost } from 'calypso/reader/data/post/cache';
 import { getCachedStreamItems } from 'calypso/reader/data/stream';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -5,7 +6,6 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_SEEN_MARK_ALL_AS_SEEN_REQUEST } from 'calypso/state/reader/action-types';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import {
@@ -46,10 +46,10 @@ export const onSuccess = ( action, response ) => ( dispatch ) => {
 		const { identifier, feedIds, feedUrls } = action;
 		// re-request unseen status and followed feeds
 		dispatch( requestUnseenStatus() );
-		dispatch( requestFollows() );
 
 		// get stream post identifier
 		const queryClient = getCalypsoQueryClient();
+		queryClient?.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		const globalIds = queryClient
 			? getCachedStreamItems( queryClient, { streamKey: identifier } ).reduce( ( acc, item ) => {
 					const post = getCachedPost( queryClient, item );

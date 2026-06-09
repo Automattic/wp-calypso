@@ -36,6 +36,14 @@ body.is-section-backup {
 	// flex column container would override `align-items: stretch` and shrink
 	// each card to its content width.
 	display: block;
+
+	// The page-layout content column is a flex column and this wrap is one of its
+	// items. The DotPager/Swipeable "tips" carousel sizes its slides from a
+	// ResizeObserver measurement of its own width with no upper bound, so an
+	// uncapped flex item lets that measurement feed back on itself and run the
+	// column out to the layout engine's 2^24px ceiling (huge horizontal scroll).
+	// Capping the item at its container width breaks the loop.
+	max-width: 100%;
 }
 
 .backup__search {

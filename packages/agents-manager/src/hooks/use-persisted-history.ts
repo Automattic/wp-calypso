@@ -170,7 +170,10 @@ export const usePersistedHistory = ( siteKey: string ) => {
 	// Skip restoring history if the site has been inactive beyond the timeout.
 	const isStale = lastActive ? Date.now() - lastActive > getInactivityTimeoutMs() : false;
 	const activeHistory = useMemo( () => {
-		if ( isStale ) {
+		// Staleness only blocks restoration of an old chat. Other routes
+		// (/history, /post, etc.) restore normally even when stale.
+		const lastPath = persistedHistory?.entries?.[ persistedHistory.index ]?.pathname;
+		if ( isStale && lastPath === '/chat' ) {
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Active chat expired for site key "${ siteKey }"` );
 			return;

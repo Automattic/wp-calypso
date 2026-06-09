@@ -218,7 +218,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											url={ site.feed_URL }
 											// Pass the canonical feed URL from onboarding data so
 											// the list item does not derive subscribe URL from
-											// `site_URL` or wait on Redux `getFeedUrl` alone.
+											// `site_URL` alone.
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
