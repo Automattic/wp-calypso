@@ -56,6 +56,24 @@ function recordLegacy( name: string, props: TracksProps = {} ): void {
 	recordTracksEvent( name, { is_2026: false, is_floating: isFloating, ...props } );
 }
 
+// Legacy mobile (hamburger) menu open/close. The legacy menu is React-state
+// driven (`setMobileMenuOpen`), so unlike the desktop hover events these fire
+// straight from the handlers rather than via DOM listeners. The reference's
+// legacy menu has no drill-down, so only open/close (no category/back).
+export function recordLegacyMobileMenuOpen(): void {
+	recordLegacy( 'wpcom_global_nav_mobile_menu_open', {
+		start_type: 'burger_menu',
+		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
+	} );
+}
+
+export function recordLegacyMobileMenuClose( reason: string ): void {
+	recordLegacy( 'wpcom_global_nav_mobile_menu_close', {
+		reason,
+		viewport_width: typeof window !== 'undefined' ? window.innerWidth : 0,
+	} );
+}
+
 export function bindLegacyNavTracks( nav: HTMLElement ): () => void {
 	const cleanups: Array< () => void > = [];
 	let legacyLastHover: string | null = null;

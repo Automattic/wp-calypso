@@ -28,6 +28,8 @@ import {
 	recordNavLinkClick,
 	resetNavHoverDedupe,
 	bindLegacyNavTracks,
+	recordLegacyMobileMenuOpen,
+	recordLegacyMobileMenuClose,
 } from './nav-2026/tracks';
 import './style.scss';
 
@@ -139,6 +141,12 @@ const UniversalNavbarHeader = ( {
 		}
 		setMobileMenuOpen( true );
 	}, [ nav2026 ] );
+
+	// Legacy hamburger menu close, recording the reason for the A/B control arm.
+	const closeLegacyMobileMenu = useCallback( ( reason: string ) => {
+		recordLegacyMobileMenuClose( reason );
+		setMobileMenuOpen( false );
+	}, [] );
 
 	// Mobile drill-down: select a category or go Back, recording either.
 	const selectMobileCategory = useCallback(
@@ -665,7 +673,14 @@ const UniversalNavbarHeader = ( {
 											aria-haspopup={ nav2026 ? 'dialog' : undefined }
 											aria-controls={ nav2026 ? 'x-mobile-menu-2026' : undefined }
 											aria-expanded={ isMobileMenuOpen }
-											onClick={ nav2026 ? openMobileMenu : () => setMobileMenuOpen( true ) }
+											onClick={
+												nav2026
+													? openMobileMenu
+													: () => {
+															recordLegacyMobileMenuOpen();
+															setMobileMenuOpen( true );
+													  }
+											}
 										>
 											<span className="x-hidden">{ __( 'Menu', __i18n_text_domain__ ) }</span>
 											<span className="x-icon x-icon__menu">
@@ -724,13 +739,13 @@ const UniversalNavbarHeader = ( {
 							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 							<div
 								className="x-menu-overlay"
-								onKeyDown={ () => setMobileMenuOpen( false ) }
-								onClick={ () => setMobileMenuOpen( false ) }
+								onKeyDown={ () => closeLegacyMobileMenu( 'escape' ) }
+								onClick={ () => closeLegacyMobileMenu( 'overlay' ) }
 							/>
 							<div className="x-menu-content">
 								<button
 									className="x-menu-button x-link"
-									onClick={ () => setMobileMenuOpen( false ) }
+									onClick={ () => closeLegacyMobileMenu( 'close_button' ) }
 								>
 									<span className="x-hidden">
 										{ __( 'Close the navigation menu', __i18n_text_domain__ ) }
