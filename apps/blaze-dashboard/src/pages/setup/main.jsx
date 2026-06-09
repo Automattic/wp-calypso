@@ -46,7 +46,7 @@ export default function BlazeSetup( { setupInfo } ) {
 
 			<Page
 				className="promote-post-i2__page"
-				visual={ <JetpackLogo size={ 24 } monochrome={ false } /> }
+				visual={ isBlazePlugin ? undefined : <JetpackLogo size={ 24 } monochrome={ false } /> }
 				title={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Blaze' ) }
 				subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
 				showSidebarToggle={ false }
