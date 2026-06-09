@@ -15,7 +15,13 @@ export function SpacesView( { id }: Props ) {
 
 	return (
 		<ReaderMain className="reader-spaces">
-			<DocumentHead title={ translate( '%(title)s ‹ Reader', { args: { title } } ) } />
+			<DocumentHead
+				title={ translate( '%s ‹ Reader', {
+					args: title,
+					comment: '%s is the space name, or "Spaces" for the landing view',
+					textOnly: true,
+				} ) }
+			/>
 			<NavigationHeader title={ title } />
 		</ReaderMain>
 	);

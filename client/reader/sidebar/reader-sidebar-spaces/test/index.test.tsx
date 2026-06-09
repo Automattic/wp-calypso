@@ -37,6 +37,14 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( selected[ 0 ] ).toHaveClass( `reader-sidebar-spaces__item--${ FIRST_SPACE.color }` );
 	} );
 
+	it( 'does not crash on a malformed percent-encoded space id in the path', () => {
+		// `%E0%A4%A` is invalid percent-encoding; decodeURIComponent would throw.
+		const { container } = render( <ReaderSidebarSpaces path="/reader/spaces/%E0%A4%A" /> );
+
+		// Rendered fine, with no row marked active.
+		expect( container.querySelector( 'li.sidebar__menu-item.selected' ) ).toBeNull();
+	} );
+
 	it( 'renders an "Add a space" link to the spaces landing route', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 

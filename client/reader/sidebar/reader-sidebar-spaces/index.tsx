@@ -17,7 +17,17 @@ interface Props {
 
 function getActiveSpaceId( path: string ): string | null {
 	const match = path.match( /^\/reader\/spaces\/([^/?]+)/ );
-	return match ? decodeURIComponent( match[ 1 ] ) : null;
+	if ( ! match ) {
+		return null;
+	}
+	try {
+		return decodeURIComponent( match[ 1 ] );
+	} catch {
+		// Malformed percent-encoding in the URL — treat it as "no active
+		// space" rather than letting decodeURIComponent throw and crash the
+		// sidebar render.
+		return null;
+	}
 }
 
 function ReaderSidebarSpaces( { path }: Props ) {
