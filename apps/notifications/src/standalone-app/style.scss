@@ -1,3 +1,8 @@
+// The src/app note list renders with @wordpress/dataviews, whose styles the
+// app expects its host to provide (e.g. client/dashboard/app/style.scss). The
+// standalone iframe is that host, so load them here.
+@import '@wordpress/dataviews/build-style/style.css';
+
 // The src/app UI is built to be sized by a host popover (it targets
 // `.components-popover` in its own stylesheet). In the standalone iframe there
 // is no popover, so size the mount container to fill the frame and let
@@ -6,9 +11,53 @@ html,
 body {
 	height: 100%;
 	margin: 0;
+	// The closed detail pane is parked off the inline-end edge; keep it clipped.
+	overflow: hidden;
+}
+
+// The app's components carry their own font, but the iframe body has none, so
+// any inherited text (e.g. DataViews content) falls back to the browser default
+// (serif). Set the WordPress system font stack like the other app hosts do.
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .wpnc__main {
 	position: fixed;
 	inset: 0;
+}
+
+// Side-by-side list + detail.
+//
+// `src/app` only lays the two panes out side by side at `@include break-xlarge`
+// (min-width: 1080px), where a host popover sizes it. The standalone iframe is
+// full-bleed and usually narrower than that even when it fills the browser, so
+// the app falls back to the single-column overlay. Re-apply the app's own
+// side-by-side layout at the width where both columns fit: the main list panel
+// is pinned to the inline-end side and sits on top, and the detail sits behind
+// it on the inline-start side. The app's base `translateX(100%)` ↔
+// `translateX(0)` then slides the detail out leftward from behind the list on
+// open and back rightward behind it on close.
+@media ( min-width: 768px ) {
+	// Main list panel: fills the inline-end side, on top.
+	.wpnc-app__list-pane {
+		inset-inline-start: 448px;
+		inset-inline-end: 0;
+		width: auto;
+		z-index: 2;
+		border-inline-start: 1px solid var(--color-border-subtle, #c3c4c7);
+	}
+
+	// Detail: inline-start 448px, behind the list.
+	.wpnc-app__detail-pane {
+		inset-inline-end: auto;
+		width: 448px;
+		z-index: 1;
+	}
+
+	// Keep the list put in side-by-side (cancel the single-column slide-out the
+	// app applies below its own 1080px breakpoint).
+	.wpnc-app__detail-pane.is-open ~ .wpnc-app__list-pane {
+		transform: none;
+	}
 }

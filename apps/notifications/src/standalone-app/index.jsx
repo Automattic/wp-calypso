@@ -77,13 +77,12 @@ const ACTION_HANDLERS = {
 			window.open( href, '_blank' );
 		},
 	],
-	SET_LAYOUT: [
-		( st, { layout } ) =>
-			sendMessage( {
-				action: 'widescreen',
-				widescreen: layout === 'widescreen',
-			} ),
-	],
+	// Note: the host widescreen resize is driven from the detail pane's
+	// `.is-open` class via a MutationObserver in NotesWrapper, not from the
+	// panel's SELECT_NOTE → SET_LAYOUT chain. The app dispatches SELECT_NOTE on
+	// open but never on close (it closes via React state), so SET_LAYOUT only
+	// ever fires 'widescreen' and never 'narrow' — observing the class lets us
+	// resize the iframe both ways and stays in sync with the side-by-side CSS.
 	VIEW_SETTINGS: [ () => window.open( 'https://wordpress.com/me/notifications' ) ],
 	CLOSE_SHORTCUTS_POPOVER: [ () => sendMessage( { action: 'closeShortcutsPopover' } ) ],
 	TOGGLE_SHORTCUTS_POPOVER: [ () => sendMessage( { action: 'toggleShortcutsPopover' } ) ],
@@ -154,10 +153,60 @@ const NotesWrapper = ( { wpcom } ) => {
 		document.addEventListener( 'visibilitychange', handleVisibilityChange );
 		window.addEventListener( 'message', receiveMessage( handleMessages ) );
 
+		// The app toggles `.wpnc-app__detail-pane.is-open` when a note detail
+		// opens or closes, but it doesn't ask the host to resize the iframe (it
+		// tracks the open note in React state, not redux, so the panel's
+		// SELECT_NOTE → setLayout chain never fires on close). Mirror that class
+		// into the host's widescreen resize so the frame widens for the
+		// side-by-side layout on open and narrows again on close — keyed on the
+		// same signal the CSS uses.
+		//
+		// Widen immediately on open, but defer narrowing on close until the
+		// detail has finished sliding back behind the list. Narrowing right away
+		// drops the frame below the side-by-side breakpoint mid-animation, which
+		// hands the close transition to the single-column rule (detail on top)
+		// and makes it slide out over the list instead of behind it.
+		const SLIDE_MS = 300;
+		let lastWidescreen = null;
+		let narrowTimer = 0;
+		const syncWidescreen = () => {
+			const isOpen = !! document.querySelector( '.wpnc-app__detail-pane.is-open' );
+			if ( isOpen === lastWidescreen ) {
+				return;
+			}
+			lastWidescreen = isOpen;
+
+			clearTimeout( narrowTimer );
+			narrowTimer = 0;
+
+			if ( isOpen ) {
+				sendMessage( { action: 'widescreen', widescreen: true } );
+			} else {
+				narrowTimer = setTimeout( () => {
+					narrowTimer = 0;
+					sendMessage( { action: 'widescreen', widescreen: false } );
+				}, SLIDE_MS + 50 );
+			}
+		};
+		const layoutObserver = new MutationObserver( syncWidescreen );
+		const mountNode = document.getElementsByClassName( 'wpnc__main' )[ 0 ];
+		if ( mountNode ) {
+			layoutObserver.observe( mountNode, {
+				subtree: true,
+				attributes: true,
+				attributeFilter: [ 'class' ],
+			} );
+		}
+
 		// Let the host know the iframe has booted and is ready to be toggled.
 		// The app dispatches APP_IS_READY into a transient store created before
 		// our custom enhancer takes over, so we signal readiness directly here.
 		sendMessage( { action: 'iFrameReady' } );
+
+		return () => {
+			clearTimeout( narrowTimer );
+			layoutObserver.disconnect();
+		};
 
 		// Listeners only need to be attached once on mount.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
