@@ -27,6 +27,7 @@ import {
 	recordMobileBack,
 	recordNavLinkClick,
 	resetNavHoverDedupe,
+	bindLegacyNavTracks,
 } from './nav-2026/tracks';
 import './style.scss';
 
@@ -71,6 +72,8 @@ const UniversalNavbarHeader = ( {
 	isScrolledRef.current = isScrolled;
 	// Previous category, so a Back tracks event can report which one it left.
 	const prevDropdownRef = useRef< string | null >( null );
+	// The <nav> element, so the legacy arm can bind DOM-listener telemetry.
+	const legacyNavRef = useRef< HTMLElement >( null );
 	useDropdownOffset( nav2026, nav2026Variant );
 	useFooterHeight( {
 		nav2026,
@@ -163,6 +166,17 @@ const UniversalNavbarHeader = ( {
 		const timer = setTimeout( () => setIsMenuOpening( false ), 1100 );
 		return () => clearTimeout( timer );
 	}, [ nav2026, isMobileMenuOpen ] );
+
+	// Legacy (control) arm: the 2026 hover/submenu events fire from React state,
+	// but the flag-off nav opens dropdowns via CSS `:hover`, so bind DOM listeners
+	// (like the landpack reference) to emit the same events with `is_2026: false`.
+	// Without this the A/B test's control arm has no engagement telemetry.
+	useEffect( () => {
+		if ( nav2026 || ! legacyNavRef.current ) {
+			return;
+		}
+		return bindLegacyNavTracks( legacyNavRef.current );
+	}, [ nav2026 ] );
 
 	// Escape closes whichever is open (desktop dropdown or mobile menu); hover/focus keeps one open.
 	useEffect( () => {
@@ -276,6 +290,7 @@ const UniversalNavbarHeader = ( {
 					<div className="masterbar-menu">
 						<div className="masterbar">
 							<nav
+								ref={ legacyNavRef }
 								className={ clsx( 'x-nav', { 'x-nav--2026-redesign': nav2026 } ) }
 								aria-label="WordPress.com"
 							>

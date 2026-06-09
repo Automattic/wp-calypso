@@ -42,6 +42,85 @@ export function recordSubmenuHide( isFloating: boolean, name: string ): void {
 	record( 'wpcom_global_nav_submenu_hide', isFloating, { name } );
 }
 
+/*
+ * Legacy (flag-off) nav telemetry. The 2026 events above fire from the React
+ * handlers and hardcode `is_2026: true`. The control arm of the A/B test needs
+ * the SAME engagement events with `is_2026: false`, but the legacy nav opens its
+ * dropdowns via CSS `:hover` (no React state to tap), so — like the landpack
+ * reference's `tracks.js` — we bind DOM listeners. `bindLegacyNavTracks` attaches
+ * them and returns a cleanup. `is_floating` falls back to `scrollY` (the legacy
+ * nav has no `is-scrolled` class), matching the reference's `isFloating()`.
+ */
+function recordLegacy( name: string, props: TracksProps = {} ): void {
+	const isFloating = typeof window !== 'undefined' && window.scrollY > 0;
+	recordTracksEvent( name, { is_2026: false, is_floating: isFloating, ...props } );
+}
+
+export function bindLegacyNavTracks( nav: HTMLElement ): () => void {
+	const cleanups: Array< () => void > = [];
+	let legacyLastHover: string | null = null;
+	let openSubmenu: string | null = null;
+
+	// Dropdown items: `<li.x-nav-item__wide>` holding a `.x-dropdown-content[data-dropdown-name]`.
+	nav.querySelectorAll< HTMLElement >( '.x-nav-item__wide' ).forEach( ( item ) => {
+		const content = item.querySelector< HTMLElement >( '.x-dropdown-content[data-dropdown-name]' );
+		if ( ! content ) {
+			// Non-dropdown wide item (Support, Pricing, Log In, Get Started): hover only.
+			const link = item.querySelector< HTMLElement >( '.x-nav-link' );
+			if ( ! link ) {
+				return;
+			}
+			const name = ( link.textContent || '' ).trim();
+			const onEnter = () => {
+				if ( ! name || name === legacyLastHover ) {
+					return;
+				}
+				legacyLastHover = name;
+				recordLegacy( 'wpcom_global_nav_item_hover', { name, is_dropdown: false } );
+			};
+			item.addEventListener( 'mouseenter', onEnter );
+			cleanups.push( () => item.removeEventListener( 'mouseenter', onEnter ) );
+			return;
+		}
+
+		const name = content.dataset.dropdownName || '';
+		const onEnter = () => {
+			if ( name && name !== legacyLastHover ) {
+				legacyLastHover = name;
+				recordLegacy( 'wpcom_global_nav_item_hover', { name, is_dropdown: true } );
+			}
+			openSubmenu = name;
+			recordLegacy( 'wpcom_global_nav_submenu_show', { name } );
+		};
+		const onLeave = () => {
+			recordLegacy( 'wpcom_global_nav_submenu_hide', { name: openSubmenu } );
+			openSubmenu = null;
+			legacyLastHover = null;
+		};
+		item.addEventListener( 'mouseenter', onEnter );
+		item.addEventListener( 'mouseleave', onLeave );
+		cleanups.push( () => {
+			item.removeEventListener( 'mouseenter', onEnter );
+			item.removeEventListener( 'mouseleave', onLeave );
+		} );
+	} );
+
+	// Logo hover (no text → name it explicitly).
+	const logo = nav.querySelector< HTMLElement >( '.x-nav-link__logo' );
+	if ( logo ) {
+		const onLogo = () => {
+			if ( legacyLastHover !== 'logo' ) {
+				legacyLastHover = 'logo';
+				recordLegacy( 'wpcom_global_nav_item_hover', { name: 'logo', is_dropdown: false } );
+			}
+		};
+		logo.addEventListener( 'mouseenter', onLogo );
+		cleanups.push( () => logo.removeEventListener( 'mouseenter', onLogo ) );
+	}
+
+	return () => cleanups.forEach( ( fn ) => fn() );
+}
+
 export function recordMobileMenuOpen( isFloating: boolean ): void {
 	record( 'wpcom_global_nav_mobile_menu_open', isFloating, {
 		start_type: 'burger_menu',
