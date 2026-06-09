@@ -175,10 +175,17 @@ export function useDropdownFlip( {
 		}
 
 		// Read the CSS var, not `transitionDuration` — that's a comma list (visibility, height)
-		// and `parseFloat` would grab visibility, not the height value we want.
+		// and `parseFloat` would grab visibility, not the height value we want. The var is
+		// host-tunable, so honour both `s` and `ms` units rather than assuming seconds.
 		const morphMs = () => {
-			const raw = getComputedStyle( el ).getPropertyValue( '--x-dropdown-2026-panel-duration' );
-			return parseFloat( raw ) * 1000 || 280;
+			const raw = getComputedStyle( el )
+				.getPropertyValue( '--x-dropdown-2026-panel-duration' )
+				.trim();
+			const value = parseFloat( raw );
+			if ( ! value ) {
+				return 280;
+			}
+			return /ms$/.test( raw ) ? value : value * 1000;
 		};
 
 		// Snap any in-flight morph back to `auto` before we measure, so reads are clean.
@@ -216,7 +223,7 @@ export function useDropdownFlip( {
 			el.classList.remove( 'is-dropdown-first-open' );
 			const node = el;
 			const held = heightByNameRef.current[ prev ];
-			if ( ! held ) {
+			if ( held === undefined ) {
 				return;
 			}
 			node.style.overflow = 'hidden';
