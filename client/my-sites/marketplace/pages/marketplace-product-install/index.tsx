@@ -524,7 +524,7 @@ const MarketplaceProductInstall = ( {
 				<EmptyContent
 					title={ null }
 					line={ translate(
-						'An error occurred while installing the plugin. It may be too large to install from here. Please try uploading it again from WP Admin.'
+						'An error occurred while installing the plugin. Please try uploading it again from WP Admin.'
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={
