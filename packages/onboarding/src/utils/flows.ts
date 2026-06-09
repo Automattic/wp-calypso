@@ -184,7 +184,3 @@ export const isDomainFlow = ( flowName: string | null ) => {
 export const isWooHostedPlansFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WOO_HOSTED_PLANS_FLOW ].includes( flowName ) );
 };
-
-export const isEducationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ EDUCATION_FLOW ].includes( flowName ) );
-};
