@@ -12,6 +12,7 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { getAgentProvidersWithJetpackAiSidebarGated } from './gate-jetpack-ai-sidebar-to-simple-sites';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
@@ -206,8 +207,7 @@ export function mergeUseSuggestionsHooks(
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders =
-		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
+	const agentProviders = getAgentProvidersWithJetpackAiSidebarGated();
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).

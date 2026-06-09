@@ -72,6 +72,8 @@ describe( 'loadExternalProviders', () => {
 	afterEach( () => {
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+		delete ( globalThis as typeof globalThis & { _currentSiteType?: unknown } )._currentSiteType;
+		delete ( window as typeof window & { _currentSiteType?: unknown } )._currentSiteType;
 	} );
 
 	it( 'does not merge external editor providers into Reader Chat', async () => {
@@ -89,6 +91,49 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.toolProvider ).toBeUndefined();
 		expect( providers.contextProvider ).toBeUndefined();
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+	} );
+
+	it( 'filters the Jetpack AI Sidebar provider from post-editor providers', async () => {
+		( globalThis as typeof globalThis & { _currentSiteType?: unknown } )._currentSiteType =
+			'atomic';
+		const toolProvider = {
+			getAbilities: jest.fn( async () => [] ),
+			executeAbility: jest.fn(),
+		};
+
+		const agentsManagerData = {
+			sectionName: 'gutenberg',
+			agentProviders: [
+				{ toolProvider },
+				'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs',
+			],
+			jetpackAiSidebarPreview: { enabled: true },
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+		( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.toolProvider ).toBe( toolProvider );
+		expect( toolProvider.getAbilities ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns no providers when the post-editor surface only has Jetpack AI Sidebar', async () => {
+		( globalThis as typeof globalThis & { _currentSiteType?: unknown } )._currentSiteType =
+			'atomic';
+		const agentsManagerData = {
+			sectionName: 'gutenberg',
+			agentProviders: [ 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs' ],
+			jetpackAiSidebarPreview: { enabled: true },
+		};
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+		( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData =
+			agentsManagerData;
+
+		await expect( loadExternalProviders() ).resolves.toEqual( {} );
 	} );
 } );
 

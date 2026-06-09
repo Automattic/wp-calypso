@@ -14,6 +14,7 @@ import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
+import { shouldSuppressAgentsManagerWhenJetpackAiSidebarGated } from '../utils/gate-jetpack-ai-sidebar-to-simple-sites';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import {
 	loadExternalProviders,
@@ -61,6 +62,10 @@ export default function AgentsManager( {
 	}, [] );
 
 	if ( ! isStoreReady ) {
+		return null;
+	}
+
+	if ( shouldSuppressAgentsManagerWhenJetpackAiSidebarGated() ) {
 		return null;
 	}
 

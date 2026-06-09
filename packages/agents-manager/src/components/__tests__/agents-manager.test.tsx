@@ -49,6 +49,13 @@ jest.mock( '../persistent-router', () => ( { PersistentRouter: () => null } ) );
 import AgentsManager from '../agents-manager';
 
 describe( 'AgentsManager', () => {
+	afterEach( () => {
+		capturedProps = null;
+		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
+		delete ( globalThis as typeof globalThis & { _currentSiteType?: unknown } )._currentSiteType;
+		delete ( window as typeof window & { _currentSiteType?: unknown } )._currentSiteType;
+	} );
+
 	it( 'forwards props to the context provider', () => {
 		const mockUser = {
 			ID: 789,
@@ -75,6 +82,51 @@ describe( 'AgentsManager', () => {
 				currentUser: mockUser,
 				site: mockSite,
 				currentRoute: '/sites/fulltest.com',
+				siteKey: '999',
+			} )
+		);
+	} );
+
+	it( 'does not render the post-editor Jetpack AI Sidebar-only surface', () => {
+		( globalThis as typeof globalThis & { _currentSiteType?: unknown } )._currentSiteType =
+			'atomic';
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = {
+			sectionName: 'gutenberg',
+			agentProviders: [ 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs' ],
+			jetpackAiSidebarPreview: { enabled: true },
+		};
+
+		render(
+			<AgentsManager
+				sectionName="gutenberg"
+				site={ { ID: 999, domain: 'non-simple.example.com' } }
+				currentSiteId={ 999 }
+			/>
+		);
+
+		expect( capturedProps ).toBeNull();
+	} );
+
+	it( 'renders other post-editor providers when Jetpack AI Sidebar is gated', () => {
+		const mockSite = { ID: 999, domain: 'non-simple.example.com' };
+
+		( globalThis as typeof globalThis & { _currentSiteType?: unknown } )._currentSiteType =
+			'atomic';
+		( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = {
+			sectionName: 'gutenberg',
+			agentProviders: [
+				'https://example.com/wp-content/plugins/big-sky/build/calypso-agent-provider/index.js',
+				'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs',
+			],
+			jetpackAiSidebarPreview: { enabled: true },
+		};
+
+		render( <AgentsManager sectionName="gutenberg" site={ mockSite } currentSiteId={ 999 } /> );
+
+		expect( capturedProps ).toEqual(
+			expect.objectContaining( {
+				sectionName: 'gutenberg',
+				site: mockSite,
 				siteKey: '999',
 			} )
 		);
