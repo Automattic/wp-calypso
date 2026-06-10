@@ -7,7 +7,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useCreateSpace, useSpaces } from 'calypso/reader/data/spaces';
@@ -99,44 +98,13 @@ function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
 	};
 
 	return (
-		<Modal
-			className="create-space-modal"
-			title={ translate( 'Create a new space' ) }
-			size="large"
-			onRequestClose={ onClose }
-		>
-			<form className="create-space-modal__form" onSubmit={ handleSubmit }>
+		<Modal title={ translate( 'Create a new space' ) } size="large" onRequestClose={ onClose }>
+			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
-					<div className="create-space-modal__intro">
-						<div className="create-space-modal__icon">
-							<Icon icon={ category } size={ 32 } />
-						</div>
-						<p className="create-space-modal__subtitle">
-							{ translate( 'A space bundles sources with its own layout, color and feel.' ) }
-						</p>
-					</div>
-					<div
-						className="create-space-modal__steps"
-						aria-label={ translate( 'Create space steps' ) }
-					>
-						<div className="create-space-modal__step create-space-modal__step--active">
-							<span className="create-space-modal__step-number">1</span>
-							<span>{ translate( 'Identity' ) }</span>
-						</div>
-						<div className="create-space-modal__step" aria-disabled="true">
-							<span className="create-space-modal__step-number">2</span>
-							<span>{ translate( 'Layout' ) }</span>
-						</div>
-						<div className="create-space-modal__step" aria-disabled="true">
-							<span className="create-space-modal__step-number">3</span>
-							<span>{ translate( 'Sources' ) }</span>
-						</div>
-					</div>
-					<div className="create-space-modal__fields">
+					<VStack spacing={ 4 }>
 						<TextControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							className="create-space-modal__field"
 							label={ translate( 'Name' ) }
 							value={ formData.name }
 							placeholder={ translate( 'e.g. Design, News, Recipes…' ) }
@@ -147,8 +115,6 @@ function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
 						/>
 						<FormTokenField
 							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							className="create-space-modal__field"
 							label={ translate( 'Tags' ) }
 							value={ formData.tags }
 							placeholder={ translate( 'Add tags' ) }
@@ -162,7 +128,7 @@ function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
 							}
 							help={ translate( 'Type and press Enter to add; click x to remove.' ) }
 						/>
-					</div>
+					</VStack>
 					{ isNameTouched && nameError ? (
 						<p className="create-space-modal__error" role="alert">
 							{ nameError }
