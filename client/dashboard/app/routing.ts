@@ -1,4 +1,4 @@
-import { isAllowedA4ADashboardHostname } from '../app-a4a/routing';
+import { buildA4ADashboardLink, isAllowedA4ADashboardHostname } from '../app-a4a/routing';
 import {
 	buildCiabDashboardLink,
 	isAllowedCiabDashboardHostname,
@@ -32,14 +32,6 @@ export function isAllowedDashboardRoute( {
 	}
 
 	return false;
-}
-
-export function isAllowedDashboardHostname( hostname?: string ): boolean {
-	return (
-		isAllowedDotcomDashboardHostname( hostname ) ||
-		isAllowedCiabDashboardHostname( hostname ) ||
-		isAllowedA4ADashboardHostname( hostname )
-	);
 }
 
 export function getDashboardFromHostname( hostname?: string ): DashboardType | undefined {
@@ -89,6 +81,9 @@ export function getDashboardFromQuery(): DashboardType | undefined {
 export function buildDashboardLink( dashboard: DashboardType, path: string = '' ) {
 	if ( dashboard === 'ciab' ) {
 		return buildCiabDashboardLink( path );
+	}
+	if ( dashboard === 'a4a' ) {
+		return buildA4ADashboardLink( path );
 	}
 	return buildDotcomDashboardLink( path );
 }

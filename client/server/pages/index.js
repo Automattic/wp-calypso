@@ -1243,7 +1243,7 @@ export default function pages() {
 		);
 		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
 			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
-				isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
