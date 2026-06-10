@@ -98,10 +98,8 @@ export function buildMultiBundleResponseCart(): ResponseCart {
 				meta: 'standalone.blog',
 				item_subtotal_integer: 3000,
 			} ),
-			buildDomainProduct(
-				{ uuid: 'brimnir-info', meta: 'brimnir.info', item_subtotal_integer: 1500 },
-				{ groupId: 'bundle-brimnir', role: 'primary', expectedBundleSize: 3 }
-			),
+			// The brimnir primary is deliberately listed last so ordering tests
+			// exercise the primary-first reordering rather than the input order.
 			buildDomainProduct(
 				{ uuid: 'brimnir-co', meta: 'brimnir.co', item_subtotal_integer: 2500 },
 				{ groupId: 'bundle-brimnir', role: 'companion', expectedBundleSize: 3 }
@@ -109,6 +107,10 @@ export function buildMultiBundleResponseCart(): ResponseCart {
 			buildDomainProduct(
 				{ uuid: 'brimnir-vip', meta: 'brimnir.vip', item_subtotal_integer: 4200 },
 				{ groupId: 'bundle-brimnir', role: 'companion', expectedBundleSize: 3 }
+			),
+			buildDomainProduct(
+				{ uuid: 'brimnir-info', meta: 'brimnir.info', item_subtotal_integer: 1500 },
+				{ groupId: 'bundle-brimnir', role: 'primary', expectedBundleSize: 3 }
 			),
 		],
 	};
