@@ -277,14 +277,13 @@ function StatsLineChart( {
 		( { datum }: EventHandlerParams< DataPointDate > ) => {
 			// datum.date is always in the timezone of the browser, we need to use literal date here.
 			if ( datum && datum.date ) {
-				onClick &&
-					onClick( {
-						data: {
-							period: `${ datum.date.getFullYear() }-${
-								datum.date.getMonth() + 1
-							}-${ datum.date.getDate() }`,
-						},
-					} );
+				onClick?.( {
+					data: {
+						period: `${ datum.date.getFullYear() }-${
+							datum.date.getMonth() + 1
+						}-${ datum.date.getDate() }`,
+					},
+				} );
 			}
 		},
 		[ onClick ]
