@@ -9,12 +9,12 @@ import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
 
-const VIEWPORT_EDGE_PAD = 8;
+const VIEWPORT_EDGE_PAD = 16;
 const FLIP_OFFSET = 24;
 
 function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
 	const ref = useRef< HTMLDivElement >( null );
-	const [ flip, setFlip ] = useState( false );
+	const [ shiftPx, setShiftPx ] = useState( 0 );
 
 	useLayoutEffect( () => {
 		const node = ref.current;
@@ -24,21 +24,38 @@ function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
 		// visx writes its inline `transform` to the `.visx-tooltip` ancestor.
 		// `AccessibleTooltip` from `@automattic/charts` wraps our render
 		// output in an extra `<div role="tooltip">`, so that ancestor is our
-		// grandparent — `parentElement` would land on the a11y wrapper, which
-		// never receives the transform, and a MutationObserver on it never
-		// fires for cursor-driven moves. `closest` reliably lands on the
-		// transformed element regardless of how many wrappers sit in between.
+		// grandparent — `parentElement` would land on the a11y wrapper,
+		// which never receives the transform. `closest` walks past it to
+		// the actually-transformed node.
 		const anchor = node.closest< HTMLElement >( '.visx-tooltip' ) ?? node.parentElement;
 		if ( ! anchor ) {
 			return;
 		}
 		const update = () => {
-			const anchorRect = anchor.getBoundingClientRect();
+			const anchorLeft = anchor.getBoundingClientRect().left;
 			const ownWidth = node.getBoundingClientRect().width;
-			const naturalRight = anchorRect.left + ownWidth;
-			const overflowsRight = naturalRight > window.innerWidth - VIEWPORT_EDGE_PAD;
-			const wouldFitFlipped = anchorRect.left - ownWidth - FLIP_OFFSET >= VIEWPORT_EDGE_PAD;
-			setFlip( overflowsRight && wouldFitFlipped );
+			const maxRight = window.innerWidth - VIEWPORT_EDGE_PAD;
+			const overflow = anchorLeft + ownWidth - maxRight;
+			if ( overflow <= 0 ) {
+				setShiftPx( 0 );
+				return;
+			}
+			// Prefer flipping to the left of the anchor — that mirrors what
+			// visx does against the chart container and leaves comfortable
+			// breathing room from the viewport edge.
+			const flipShift = -( ownWidth + FLIP_OFFSET );
+			if ( anchorLeft + flipShift >= VIEWPORT_EDGE_PAD ) {
+				setShiftPx( flipShift );
+				return;
+			}
+			// Not enough room on the left to flip cleanly. Shift just far
+			// enough to bring the right edge back inside the viewport,
+			// capped so we don't pull the left edge past the padding on
+			// the opposite side. When the tooltip is wider than the
+			// viewport, an unavoidable left overflow is preferable to
+			// clipping the right-aligned values.
+			const maxShift = Math.max( 0, anchorLeft - VIEWPORT_EDGE_PAD );
+			setShiftPx( -Math.min( overflow, maxShift ) );
 		};
 
 		update();
@@ -68,7 +85,7 @@ function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
 		<div
 			ref={ ref }
 			className="stats-line-chart-tooltip"
-			style={ flip ? { transform: `translateX(calc(-100% - ${ FLIP_OFFSET }px))` } : undefined }
+			style={ shiftPx ? { transform: `translateX(${ shiftPx }px)` } : undefined }
 		>
 			{ children }
 		</div>
