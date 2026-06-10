@@ -84,8 +84,8 @@ jobs:
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
           RENOVATE_UID=$(docker run --rm --entrypoint id ghcr.io/renovatebot/renovate:${RENOVATE_VERSION} -u)  
-          sudo chown -R $RENOVATE_UID:root /tmp/renovate/  
-	  ls -R $cache_dir
+          sudo chown -R $RENOVATE_UID:root /tmp/renovate/
+          ls -R $cache_dir
 
       - uses: renovatebot/github-action@23a02fe7be9e93f857a953cc8162e57d2c8401ef # v39.0.1
         with:
