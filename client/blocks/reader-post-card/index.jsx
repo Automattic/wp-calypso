@@ -4,8 +4,7 @@ import clsx from 'clsx';
 import closest from 'component-closest';
 import { flowRight as compose, truncate } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
@@ -61,6 +60,20 @@ class ReaderPostCard extends Component {
 		showBylineSecondarySiteLink: true,
 	};
 
+	cardRef = createRef();
+
+	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
+	// parent list can measure this item's DOM node without `findDOMNode`.
+	setCardRef = ( node ) => {
+		this.cardRef.current = node;
+		const { itemRef } = this.props;
+		if ( typeof itemRef === 'function' ) {
+			itemRef( node );
+		} else if ( itemRef ) {
+			itemRef.current = node;
+		}
+	};
+
 	state = {
 		isSuggestedFollowsModalOpen: false,
 	};
@@ -78,7 +91,7 @@ class ReaderPostCard extends Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this );
+		const rootNode = this.cardRef.current;
 		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
@@ -277,7 +290,7 @@ class ReaderPostCard extends Component {
 
 		const onClick = ! isPostPhoto ? this.handleCardClick : noop;
 		return (
-			<Card className={ classes } onClick={ onClick } tagName="article">
+			<Card ref={ this.setCardRef } className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }

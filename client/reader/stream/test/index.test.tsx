@@ -82,14 +82,16 @@ jest.mock( 'calypso/components/infinite-list', () => {
 		renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
 		renderLoadingPlaceholders?: () => ReactNode;
 	} > {
+		containerRef = ReactLib.createRef< HTMLDivElement >();
 		scrollToTop = jest.fn();
 		getVisibleItemIndexes = jest.fn( () => [] );
+		getDOMNode = () => this.containerRef.current;
 
 		render() {
 			const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = this.props;
 			const showPlaceholders = items.length === 0 && fetchingNextPage;
 			return (
-				<div data-testid="infinite-list" style={ { overflowY: 'auto' } }>
+				<div ref={ this.containerRef } data-testid="infinite-list" style={ { overflowY: 'auto' } }>
 					{ showPlaceholders
 						? renderLoadingPlaceholders?.()
 						: items.map( ( item, idx ) => <div key={ idx }>{ renderItem( item, idx ) }</div> ) }
