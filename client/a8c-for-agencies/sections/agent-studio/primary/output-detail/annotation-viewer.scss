@@ -6,12 +6,6 @@
 	cursor: crosshair;
 }
 
-// Annotate mode owns the page surface: the cover chevrons would otherwise
-// swallow picks.
-.a4a-annotation-viewer.is-annotating .a4a-one-pager-viewer__cover-nav {
-	display: none;
-}
-
 .a4a-annotation-overlay {
 	position: absolute;
 	inset: 0;

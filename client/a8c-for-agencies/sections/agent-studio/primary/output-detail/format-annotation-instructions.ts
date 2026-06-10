@@ -8,11 +8,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import type { PageAnnotation } from './annotation-viewer';
 
-const NEARBY_TEXT_MAX_LENGTH = 120;
-
-const truncate = ( text: string, maxLength: number ): string =>
-	text.length <= maxLength ? text : `${ text.slice( 0, maxLength - 1 ) }…`;
-
 const describeAnnotation = ( annotation: PageAnnotation, index: number ): string => {
 	const nearbyText = annotation.nearbyText.trim();
 	const target = nearbyText
@@ -20,7 +15,7 @@ const describeAnnotation = ( annotation: PageAnnotation, index: number ): string
 				/* translators: %1$s is an HTML tag name, %2$s is the element's visible text. */
 				__( 'the <%1$s> element containing “%2$s”' ),
 				annotation.tag,
-				truncate( nearbyText, NEARBY_TEXT_MAX_LENGTH )
+				nearbyText
 		  )
 		: sprintf(
 				/* translators: %s is an HTML tag name. */
@@ -39,8 +34,7 @@ const describeAnnotation = ( annotation: PageAnnotation, index: number ): string
 
 /**
  * Groups annotations by page (ascending) and returns one refine instruction
- * per page, each led by the same page-scoping phrase the per-page "Edit with
- * AI" seed uses.
+ * per page, each led by the page-scoping phrase the refine endpoint expects.
  */
 export function formatAnnotationInstructions( annotations: PageAnnotation[] ): string[] {
 	const byPage = new Map< number, PageAnnotation[] >();
@@ -50,18 +44,16 @@ export function formatAnnotationInstructions( annotations: PageAnnotation[] ): s
 		byPage.set( annotation.pageNumber, group );
 	}
 
-	return Array.from( byPage.keys() )
-		.sort( ( a, b ) => a - b )
-		.map( ( pageNumber ) => {
-			const group = byPage.get( pageNumber ) as PageAnnotation[];
-			const lines = [
+	return Array.from( byPage.entries() )
+		.sort( ( [ a ], [ b ] ) => a - b )
+		.map( ( [ pageNumber, group ] ) =>
+			[
 				sprintf(
 					/* translators: %d is the 1-based page number, cover included. */
 					__( 'On page %d, make the following edits:' ),
 					pageNumber
 				),
 				...group.map( describeAnnotation ),
-			];
-			return lines.join( '\n' );
-		} );
+			].join( '\n' )
+		);
 }

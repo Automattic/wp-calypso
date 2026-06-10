@@ -27,7 +27,7 @@ import {
 import AnnotationViewer, { type PageAnnotation } from './annotation-viewer';
 import { formatAnnotationInstructions } from './format-annotation-instructions';
 import { type PdfViewerPage } from './pdf-viewer';
-import RefineWithAiDock, { type AutoSubmission } from './refine-with-ai-dock';
+import RefineWithAiDock from './refine-with-ai-dock';
 import SocialAssetsViewer from './social-assets-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
@@ -71,10 +71,10 @@ function OnePagerOutputDetail( { output }: Props ) {
 	const collateral = useAgentStudioCollateral( postId );
 	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
 	const [ isAnnotating, setIsAnnotating ] = useState( false );
-	const [ autoSubmit, setAutoSubmit ] = useState< AutoSubmission >( {
-		instructions: [],
-		token: 0,
-	} );
+	// Each annotate submission produces a fresh array; the dock enqueues it by
+	// identity and reports back so it can be cleared (a remount must not
+	// replay a stale batch).
+	const [ autoSubmitInstructions, setAutoSubmitInstructions ] = useState< string[] >( [] );
 
 	const startAnnotating = useCallback( () => {
 		setIsAnnotating( true );
@@ -94,7 +94,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 		( annotations: PageAnnotation[] ) => {
 			const instructions = formatAnnotationInstructions( annotations );
 			setIsAnnotating( false );
-			setAutoSubmit( ( prev ) => ( { instructions, token: prev.token + 1 } ) );
+			setAutoSubmitInstructions( instructions );
 			setIsRefineOpen( true );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_agent_studio_annotate_submit', {
@@ -107,12 +107,8 @@ function OnePagerOutputDetail( { output }: Props ) {
 		[ dispatch, output.id ]
 	);
 
-	// Keep the token (the dock tracks it across remounts) but drop the
-	// already-enqueued instructions.
 	const handleAutoSubmitConsumed = useCallback( () => {
-		setAutoSubmit( ( prev ) =>
-			prev.instructions.length === 0 ? prev : { ...prev, instructions: [] }
-		);
+		setAutoSubmitInstructions( ( prev ) => ( prev.length === 0 ? prev : [] ) );
 	}, [] );
 
 	const variants = useMemo< AgentStudioCollateralVariant[] >(
@@ -206,7 +202,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 	}
 
 	// Annotating needs at least one body page — the cover can't be refined.
-	const canAnnotate = !! postId && pages.length > 1;
+	const canAnnotate = pages.length > 1;
 
 	return (
 		<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__content">
@@ -258,7 +254,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 				<RefineWithAiDock
 					collateralPostId={ postId }
 					totalPages={ pages.length }
-					autoSubmit={ autoSubmit }
+					autoSubmitInstructions={ autoSubmitInstructions }
 					onAutoSubmitConsumed={ handleAutoSubmitConsumed }
 					onClose={ () => setIsRefineOpen( false ) }
 				/>

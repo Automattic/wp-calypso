@@ -9,12 +9,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 
-const PAGE_CLASS = 'a4a-one-pager-viewer__page';
 const FRAME_WRAP_CLASS = 'a4a-one-pager-viewer__iframe-wrap';
-const COVER_CLASS = 'is-cover';
-// Our own overlay elements (pins, hover box, comment form) are never
-// inspectable targets.
-const OVERLAY_CLASS_PREFIX = 'a4a-annotation';
 
 export interface AnnotationRect {
 	/** Fractions (0–1) of the page frame. */
@@ -33,31 +28,23 @@ export interface AnnotationTarget {
 	rect: AnnotationRect;
 }
 
-const cssEscape = ( value: string ): string =>
-	typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
-		? CSS.escape( value )
-		: value.replace( /[^a-zA-Z0-9_-]/g, ( character ) => `\\${ character }` );
-
 /**
  * Builds a short CSS selector for an element inside a page shadow root.
  * Walks up at most six levels; the walk stops naturally at the shadow
  * boundary, where `parentElement` is null.
  */
 export function buildAnnotationSelector( element: HTMLElement ): string {
-	if ( element.id ) {
-		return `#${ cssEscape( element.id ) }`;
-	}
 	const parts: string[] = [];
 	let current: HTMLElement | null = element;
 	for ( let depth = 0; depth < 6 && current; depth += 1 ) {
 		if ( current.id ) {
-			parts.unshift( `#${ cssEscape( current.id ) }` );
+			parts.unshift( `#${ CSS.escape( current.id ) }` );
 			break;
 		}
 		let part = current.tagName.toLowerCase();
 		const classes = Array.from( current.classList ).slice( 0, 3 );
 		if ( classes.length > 0 ) {
-			part += `.${ classes.map( cssEscape ).join( '.' ) }`;
+			part += `.${ classes.map( ( name ) => CSS.escape( name ) ).join( '.' ) }`;
 		}
 		const parent: HTMLElement | null = current.parentElement;
 		if ( parent ) {
@@ -75,9 +62,16 @@ export function buildAnnotationSelector( element: HTMLElement ): string {
 	return parts.join( ' > ' );
 }
 
+const NEARBY_TEXT_MAX_LENGTH = 120;
+
 /** Collapsed text content of the element, capped for prompt size. */
 export function getNearbyText( element: HTMLElement ): string {
-	return ( element.textContent || '' ).trim().replace( /\s+/g, ' ' ).slice( 0, 200 );
+	// Pre-cap the raw text so hovering a page-sized element doesn't collapse
+	// the whole page's text to keep 120 characters of it.
+	const collapsed = ( element.textContent || '' ).slice( 0, 1000 ).trim().replace( /\s+/g, ' ' );
+	return collapsed.length <= NEARBY_TEXT_MAX_LENGTH
+		? collapsed
+		: `${ collapsed.slice( 0, NEARBY_TEXT_MAX_LENGTH - 1 ) }…`;
 }
 
 const clamp01 = ( value: number ): number => Math.min( 1, Math.max( 0, value ) );
@@ -85,52 +79,42 @@ const clamp01 = ( value: number ): number => Math.min( 1, Math.max( 0, value ) )
 interface ResolvedTarget {
 	element: HTMLElement;
 	page: HTMLElement;
-	frame: HTMLElement;
 }
 
 /**
  * Resolves an event into an inspectable element inside a body page's shadow
- * root, or null (cover page, viewer chrome, our own overlays, outside pages).
+ * root, or null. Only elements inside a page shadow root are inspectable, so
+ * light-DOM viewer chrome and the annotate overlays are excluded by
+ * construction. Pages are recognized by the `data-a4a-page-number` /
+ * `data-a4a-page-role` contract `PdfViewer` stamps on each page wrapper.
  */
-const resolveTarget = ( event: Event, container: HTMLElement ): ResolvedTarget | null => {
+const resolveTarget = ( event: Event ): ResolvedTarget | null => {
 	const path = event.composedPath();
 	let element: HTMLElement | null = null;
-	let page: HTMLElement | null = null;
 	for ( const node of path ) {
 		if ( ! ( node instanceof HTMLElement ) ) {
 			continue;
 		}
-		const classList = node.classList;
-		if ( Array.from( classList ).some( ( name ) => name.startsWith( OVERLAY_CLASS_PREFIX ) ) ) {
-			return null;
-		}
-		// The deepest element inside a shadow root is the annotation target;
-		// light-DOM viewer chrome (buttons, frame) is not.
+		// The deepest element inside a shadow root is the annotation target.
 		if ( ! element && node.getRootNode() instanceof ShadowRoot ) {
 			element = node;
 		}
-		if ( classList.contains( PAGE_CLASS ) ) {
-			page = node;
-			break;
+		if ( node.dataset.a4aPageNumber ) {
+			return element && node.dataset.a4aPageRole !== 'cover' ? { element, page: node } : null;
 		}
 	}
-	if ( ! element || ! page || page.classList.contains( COVER_CLASS ) ) {
-		return null;
-	}
-	const frame = page.querySelector< HTMLElement >( `.${ FRAME_WRAP_CLASS }` );
-	if ( ! frame || ! container.contains( page ) ) {
-		return null;
-	}
-	return { element, page, frame };
+	return null;
 };
 
-const buildTarget = ( resolved: ResolvedTarget, container: HTMLElement ): AnnotationTarget => {
-	const pages = Array.from( container.querySelectorAll( `.${ PAGE_CLASS }` ) );
-	const pageNumber = pages.indexOf( resolved.page ) + 1;
-	const frameRect = resolved.frame.getBoundingClientRect();
+const buildTarget = ( resolved: ResolvedTarget ): AnnotationTarget | null => {
+	const frame = resolved.page.querySelector< HTMLElement >( `.${ FRAME_WRAP_CLASS }` );
+	if ( ! frame ) {
+		return null;
+	}
+	const frameRect = frame.getBoundingClientRect();
 	const targetRect = resolved.element.getBoundingClientRect();
 	return {
-		pageNumber,
+		pageNumber: Number( resolved.page.dataset.a4aPageNumber ),
 		tag: resolved.element.tagName.toLowerCase(),
 		selector: buildAnnotationSelector( resolved.element ),
 		nearbyText: getNearbyText( resolved.element ),
@@ -170,7 +154,7 @@ export function useAnnotationInspector(
 		};
 
 		const handleMouseMove = ( event: MouseEvent ) => {
-			const resolved = resolveTarget( event, container );
+			const resolved = resolveTarget( event );
 			if ( ! resolved ) {
 				if ( hoveredElementRef.current ) {
 					clearHover();
@@ -180,18 +164,24 @@ export function useAnnotationInspector(
 			if ( resolved.element === hoveredElementRef.current ) {
 				return;
 			}
+			const target = buildTarget( resolved );
+			if ( ! target ) {
+				clearHover();
+				return;
+			}
 			hoveredElementRef.current = resolved.element;
-			setHovered( buildTarget( resolved, container ) );
+			setHovered( target );
 		};
 
 		const handleClick = ( event: MouseEvent ) => {
-			const resolved = resolveTarget( event, container );
-			if ( ! resolved ) {
+			const resolved = resolveTarget( event );
+			const target = resolved && buildTarget( resolved );
+			if ( ! target ) {
 				return;
 			}
 			event.preventDefault();
 			event.stopPropagation();
-			onPickRef.current( buildTarget( resolved, container ) );
+			onPickRef.current( target );
 		};
 
 		container.addEventListener( 'mousemove', handleMouseMove, true );

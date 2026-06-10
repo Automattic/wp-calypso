@@ -7,16 +7,10 @@
 import '@automattic/agenttic-ui/index.css';
 import { AgentUI } from '@automattic/agenttic-ui';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-	Button,
-	Icon,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { close, comment } from '@wordpress/icons';
+import { close } from '@wordpress/icons';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
@@ -29,27 +23,21 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 import './refine-with-ai-dock.scss';
 
-/** A batch of composed instructions to auto-submit, one refine run each. */
-export interface AutoSubmission {
-	instructions: string[];
-	/** Bumped on every batch so an identical batch still re-fires. */
-	token: number;
-}
-
 interface Props {
 	collateralPostId: number;
-	/** Total visible pages (cover + body pages). Used in the empty-state hint. */
+	/** Total visible pages (cover + body pages). Used in the input placeholder. */
 	totalPages: number;
 	/**
-	 * Composed instructions (e.g. from annotate mode) submitted automatically,
+	 * Composed instructions (from annotate mode) submitted automatically,
 	 * sequentially — the refine endpoint runs one page-scoped run at a time.
+	 * Each batch is a fresh array; identity marks it as new.
 	 */
-	autoSubmit?: AutoSubmission;
+	autoSubmitInstructions: string[];
 	/**
 	 * Called once a batch is enqueued. The parent clears the instructions so a
 	 * dock remount (close + reopen) can't replay a stale batch.
 	 */
-	onAutoSubmitConsumed?: () => void;
+	onAutoSubmitConsumed: () => void;
 	onClose: () => void;
 }
 
@@ -85,7 +73,7 @@ const agentMessage = ( text: string ): Message => makeMessage( 'agent', text );
 export default function RefineWithAiDock( {
 	collateralPostId,
 	totalPages,
-	autoSubmit,
+	autoSubmitInstructions,
 	onAutoSubmitConsumed,
 	onClose,
 }: Props ) {
@@ -225,18 +213,21 @@ export default function RefineWithAiDock( {
 		await submitInstruction( trimmed );
 	};
 
-	// Enqueue each new auto-submit batch exactly once (tracked by `token`).
-	const handledAutoTokenRef = useRef( 0 );
+	// Enqueue each new auto-submit batch exactly once, tracked by array
+	// identity (the ref also covers a double effect run before the parent's
+	// clear lands).
+	const enqueuedBatchRef = useRef< string[] | null >( null );
 	useEffect( () => {
-		if ( ! autoSubmit || autoSubmit.token === handledAutoTokenRef.current ) {
+		if (
+			autoSubmitInstructions.length === 0 ||
+			enqueuedBatchRef.current === autoSubmitInstructions
+		) {
 			return;
 		}
-		handledAutoTokenRef.current = autoSubmit.token;
-		if ( autoSubmit.instructions.length > 0 ) {
-			setQueuedInstructions( ( current ) => [ ...current, ...autoSubmit.instructions ] );
-			onAutoSubmitConsumed?.();
-		}
-	}, [ autoSubmit, onAutoSubmitConsumed ] );
+		enqueuedBatchRef.current = autoSubmitInstructions;
+		setQueuedInstructions( ( current ) => [ ...current, ...autoSubmitInstructions ] );
+		onAutoSubmitConsumed();
+	}, [ autoSubmitInstructions, onAutoSubmitConsumed ] );
 
 	// Drain the queue one instruction at a time: each run must settle (the
 	// completion effect above clears `activeRun`) before the next page's
@@ -284,20 +275,6 @@ export default function RefineWithAiDock( {
 		Math.max( 2, totalPages )
 	);
 
-	const emptyView = (
-		<VStack className="a4a-refine-with-ai-dock__empty" spacing={ 3 } alignment="center">
-			<Icon className="a4a-refine-with-ai-dock__empty-icon" icon={ comment } size={ 28 } />
-			<Text as="p" weight={ 500 } align="center">
-				{ __( 'Refine your one-pager' ) }
-			</Text>
-			<Text as="p" variant="muted" align="center" className="a4a-refine-with-ai-dock__empty-hint">
-				{ __(
-					'Point me at a page and tell me what to fix, like “page 3 is clipped” or “tighten the intro”. I’ll update that page in place and refresh the preview.'
-				) }
-			</Text>
-		</VStack>
-	);
-
 	return (
 		<aside className="a4a-refine-with-ai-dock" aria-label={ __( 'Refine with AI' ) }>
 			<HStack className="a4a-refine-with-ai-dock__header" justify="space-between" spacing={ 2 }>
@@ -316,7 +293,6 @@ export default function RefineWithAiDock( {
 					isProcessing={ isProcessing }
 					thinkingMessage={ thinkingMessage }
 					placeholder={ placeholderHint }
-					emptyView={ emptyView }
 					inputValue={ inputValue }
 					onInputChange={ setInputValue }
 					onSubmit={ handleSubmit }

@@ -17,7 +17,6 @@ import type { ReactNode } from 'react';
 import './annotation-viewer.scss';
 
 export interface PageAnnotation extends AnnotationTarget {
-	id: string;
 	comment: string;
 }
 
@@ -36,15 +35,6 @@ interface Props {
 	/** Send the collected notes. The parent also exits annotate mode. */
 	onSubmit: ( annotations: PageAnnotation[] ) => void;
 }
-
-let annotationIdCounter = 0;
-const newAnnotationId = (): string => {
-	if ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ) {
-		return crypto.randomUUID();
-	}
-	annotationIdCounter += 1;
-	return `annotation-${ Date.now() }-${ annotationIdCounter }`;
-};
 
 const toPercent = ( fraction: number ): string => `${ fraction * 100 }%`;
 
@@ -87,10 +77,7 @@ export default function AnnotationViewer( {
 		if ( ! pendingPick || ! comment ) {
 			return;
 		}
-		setAnnotations( ( current ) => [
-			...current,
-			{ ...pendingPick, id: newAnnotationId(), comment },
-		] );
+		setAnnotations( ( current ) => [ ...current, { ...pendingPick, comment } ] );
 		cancelPending();
 	}, [ pendingPick, draftComment, cancelPending ] );
 
@@ -114,16 +101,20 @@ export default function AnnotationViewer( {
 		return () => document.removeEventListener( 'keydown', handleKeyDown );
 	}, [ isAnnotating, pendingPick, cancelPending, onExit ] );
 
-	const removeAnnotation = ( id: string ) => {
-		setAnnotations( ( current ) => current.filter( ( annotation ) => annotation.id !== id ) );
+	const removeAnnotation = ( index: number ) => {
+		setAnnotations( ( current ) => current.filter( ( _, idx ) => idx !== index ) );
 	};
 
 	const renderPageOverlay = ( pageNumber: number ): ReactNode => {
-		let highlight = hovered?.pageNumber === pageNumber ? hovered : null;
-		if ( pendingPick ) {
-			highlight = pendingPick.pageNumber === pageNumber ? pendingPick : null;
-		}
-		const pins = annotations.filter( ( annotation ) => annotation.pageNumber === pageNumber );
+		// While the comment form is open the inspector is paused (`hovered` is
+		// null), so the picked element keeps the highlight.
+		const picked = pendingPick ?? hovered;
+		const highlight = picked?.pageNumber === pageNumber ? picked : null;
+		// Pins keep their index in the full list: it is both the removal handle
+		// and the user-facing note number.
+		const pins = annotations
+			.map( ( annotation, index ) => ( { annotation, index } ) )
+			.filter( ( pin ) => pin.annotation.pageNumber === pageNumber );
 		return (
 			<div className="a4a-annotation-overlay">
 				{ highlight && (
@@ -139,23 +130,23 @@ export default function AnnotationViewer( {
 						} }
 					/>
 				) }
-				{ pins.map( ( annotation ) => (
+				{ pins.map( ( { annotation, index } ) => (
 					<button
-						key={ annotation.id }
+						key={ index }
 						type="button"
 						className="a4a-annotation-overlay__pin"
 						style={ {
 							insetInlineStart: toPercent( annotation.rect.x + annotation.rect.width / 2 ),
 							insetBlockStart: toPercent( annotation.rect.y ),
 						} }
-						onClick={ () => removeAnnotation( annotation.id ) }
+						onClick={ () => removeAnnotation( index ) }
 						title={ sprintf(
 							/* translators: %s is the note the user left on this element. */
 							__( 'Remove note: “%s”' ),
 							annotation.comment
 						) }
 					>
-						{ annotations.indexOf( annotation ) + 1 }
+						{ index + 1 }
 					</button>
 				) ) }
 				{ pendingPick?.pageNumber === pageNumber && (
@@ -210,7 +201,9 @@ export default function AnnotationViewer( {
 		>
 			<PdfViewer
 				pages={ pages }
-				coverNavigation={ coverNavigation }
+				// No cover switching while annotating — the chevrons would
+				// swallow picks.
+				coverNavigation={ isAnnotating ? undefined : coverNavigation }
 				renderPageOverlay={ isAnnotating ? renderPageOverlay : undefined }
 			/>
 			{ isAnnotating && (

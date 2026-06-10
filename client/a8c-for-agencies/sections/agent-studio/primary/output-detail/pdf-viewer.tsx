@@ -51,6 +51,8 @@ export default function PdfViewer( { pages, coverNavigation, renderPageOverlay }
 					className={ clsx( 'a4a-one-pager-viewer__page', {
 						'is-cover': page.role === 'cover',
 					} ) }
+					data-a4a-page-number={ idx + 1 }
+					data-a4a-page-role={ page.role }
 				>
 					<div className="a4a-one-pager-viewer__frame">
 						<ShadowPage
