@@ -276,7 +276,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 							showSupportModal={ ! isSelfHosted }
 						/>
 						<Button
-							className="promote-post-i2__promote-button"
 							variant="primary"
 							onClick={ onClickPromote }
 							disabled={ isLoadingBillingSummary || paymentBlocked }
