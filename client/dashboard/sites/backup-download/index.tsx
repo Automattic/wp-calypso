@@ -141,7 +141,20 @@ function SiteBackupDownload() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Download backup' ) }
-					description={ __( 'Download a backup of your site from a specific point in time.' ) }
+					description={ createInterpolateElement(
+						__( 'Download a backup of your site from a specific point in time. <LearnMore />' ),
+						{
+							LearnMore: isSelfHostedJetpackConnected( site ) ? (
+								<ExternalLink href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }>
+									{ __( 'Learn more' ) }
+								</ExternalLink>
+							) : (
+								<InlineSupportLink supportContext="download_backup">
+									{ __( 'Learn more' ) }
+								</InlineSupportLink>
+							),
+						}
+					) }
 				/>
 			}
 		>
@@ -151,22 +164,10 @@ function SiteBackupDownload() {
 						<SectionHeader
 							title={ __( 'Download point' ) }
 							level={ 3 }
-							description={ createInterpolateElement(
-								/* translators: %(downloadPointDate)s: the date of the download point */
-								sprintf( __( '%(downloadPointDate)s. <LearnMore />' ), {
-									downloadPointDate,
-								} ),
-								{
-									LearnMore: isSelfHostedJetpackConnected( site ) ? (
-										<ExternalLink href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }>
-											{ __( 'Learn more' ) }
-										</ExternalLink>
-									) : (
-										<InlineSupportLink supportContext="backups">
-											{ __( 'Learn more' ) }
-										</InlineSupportLink>
-									),
-								}
+							description={ sprintf(
+								/* translators: %(downloadPointDate)s is the date of the download point */
+								__( '%(downloadPointDate)s.' ),
+								{ downloadPointDate }
 							) }
 							decoration={ <Icon icon={ cloud } /> }
 						/>

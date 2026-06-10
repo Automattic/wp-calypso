@@ -79,6 +79,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/settings/discussion-settings/',
 		post_id: 1504,
 	},
+	download_backup: {
+		link: 'https://wordpress.com/support/restore/download-backup/',
+		post_id: 411425,
+	},
 	domains: {
 		link: 'https://wordpress.com/support/domains/',
 		post_id: 1988,

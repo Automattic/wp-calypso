@@ -117,7 +117,24 @@ function SiteBackupRestore() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Site restore' ) }
-					description={ __( 'Restore your site to a previous point in time.' ) }
+					description={ createInterpolateElement(
+						__( 'Restore your site to a previous point in time. <LearnMore />' ),
+						{
+							LearnMore: isSelfHostedJetpackConnected( site ) ? (
+								<ExternalLink
+									href={ localizeUrl(
+										'https://jetpack.com/support/backup/restoring-with-jetpack-backup/'
+									) }
+								>
+									{ __( 'Learn more' ) }
+								</ExternalLink>
+							) : (
+								<InlineSupportLink supportContext="backups">
+									{ __( 'Learn more' ) }
+								</InlineSupportLink>
+							),
+						}
+					) }
 				/>
 			}
 		>
@@ -127,26 +144,10 @@ function SiteBackupRestore() {
 						<SectionHeader
 							title={ __( 'Restore point' ) }
 							level={ 3 }
-							description={ createInterpolateElement(
-								/* translators: %(restorePointDate)s: the date of the restore point */
-								sprintf( __( '%(restorePointDate)s. <LearnMore />' ), {
-									restorePointDate,
-								} ),
-								{
-									LearnMore: isSelfHostedJetpackConnected( site ) ? (
-										<ExternalLink
-											href={ localizeUrl(
-												'https://jetpack.com/support/backup/restoring-with-jetpack-backup/'
-											) }
-										>
-											{ __( 'Learn more' ) }
-										</ExternalLink>
-									) : (
-										<InlineSupportLink supportContext="backups">
-											{ __( 'Learn more' ) }
-										</InlineSupportLink>
-									),
-								}
+							description={ sprintf(
+								/* translators: %(restorePointDate)s is the date of the restore point */
+								__( '%(restorePointDate)s.' ),
+								{ restorePointDate }
 							) }
 							decoration={ <Icon icon={ cloud } /> }
 						/>
