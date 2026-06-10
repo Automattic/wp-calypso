@@ -3,7 +3,7 @@ import type { Field, View } from '@wordpress/dataviews';
 /**
  * Sanitize view by removing any invalid or malformed entries.
  */
-export function sanitizeView( view: View, fields: Field< any >[] ) {
+export function sanitizeView< Item >( view: View, fields: Field< Item >[] ) {
 	// If no sanitization is needed then a reference to the same object should be returned.
 	const sanitized = view;
 	const fieldsSet = new Set( fields.map( ( field ) => field.id ) );

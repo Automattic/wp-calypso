@@ -6,7 +6,7 @@ import { sanitizeView } from '../sanitize-view';
 import type { Field, View } from '@wordpress/dataviews';
 
 describe( 'sanitizeView', () => {
-	const fields: Field< any >[] = [
+	const fields: Field< Record< string, unknown > >[] = [
 		{ id: 'name', enableSorting: true },
 		{ id: 'is_deleted', enableSorting: false },
 		{ id: 'visibility', enableSorting: true },

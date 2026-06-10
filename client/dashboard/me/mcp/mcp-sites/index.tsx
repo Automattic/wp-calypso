@@ -23,7 +23,7 @@ import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
 import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dropdown';
-import type { Site } from '@automattic/api-core';
+import type { McpAbility, Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {
 	const { recordTracksEvent } = useAnalytics();
@@ -38,7 +38,7 @@ export default function McpMcpSites() {
 	const [ selectedSiteId, setSelectedSiteId ] = useState< string | null >( null );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
-	const mcpEnabled = Object.values( mcpAbilities ).some( ( tool: any ) => tool.enabled );
+	const mcpEnabled = Object.values( mcpAbilities ).some( ( tool: McpAbility ) => tool.enabled );
 
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
@@ -86,7 +86,7 @@ export default function McpMcpSites() {
 						},
 					],
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( eventName, { site_id: siteId } );
@@ -101,7 +101,7 @@ export default function McpMcpSites() {
 				mcp_abilities: {
 					sites: [ { blog_id: siteId, site_level_enabled: null } ],
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );

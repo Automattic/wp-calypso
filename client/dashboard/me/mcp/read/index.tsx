@@ -66,7 +66,7 @@ export default function McpRead() {
 						[ toolId ]: enabled,
 					},
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
@@ -92,7 +92,7 @@ export default function McpRead() {
 				mcp_abilities: {
 					account: accountAbilities,
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {

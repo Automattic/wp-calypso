@@ -7,6 +7,14 @@ import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { AnyRouteMatch } from '@tanstack/react-router';
 import type { Filter, View } from '@wordpress/dataviews';
 
+type QueryParams = Record< string, unknown >;
+
+type UseViewNavigate = ( options: {
+	search: QueryParams;
+	replace?: boolean;
+	resetScroll?: boolean;
+} ) => void;
+
 export interface UseViewOptions {
 	/**
 	 * Unique slug to identify the view.
@@ -23,7 +31,7 @@ export interface UseViewOptions {
 	 * The URL query params in the current page.
 	 * If passed, transient properties (`page` and `search`) are synced to the URL query params.
 	 */
-	queryParams?: any;
+	queryParams?: QueryParams;
 
 	/**
 	 * Fields that should become transient filters when present in the URL query params.
@@ -48,7 +56,9 @@ export function usePersistentView( options: UseViewOptions ) {
 
 	return useBasePersistentView( {
 		...options,
-		navigate,
+		// The TanStack navigate function is wider than UseViewNavigate, but its
+		// loosely-typed `search` option rejects plain query param objects.
+		navigate: navigate as unknown as UseViewNavigate,
 		matches,
 	} );
 }
@@ -63,14 +73,7 @@ export function useBasePersistentView( {
 	navigate,
 }: UseViewOptions & {
 	matches?: AnyRouteMatch[];
-	navigate: ( {
-		search,
-		replace,
-	}: {
-		search: any;
-		replace?: boolean;
-		resetScroll?: boolean;
-	} ) => void;
+	navigate: UseViewNavigate;
 } ): {
 	view: View;
 	updateView: ( newView: View ) => void;
@@ -83,8 +86,8 @@ export function useBasePersistentView( {
 
 	const baseView = persistedView ?? defaultView;
 
-	const page = parseInt( queryParams?.page ) || baseView.page || 1;
-	const search = queryParams?.search || baseView.search || '';
+	const page = parseInt( queryParams?.page as string ) || baseView.page || 1;
+	const search = ( queryParams?.search as string ) || baseView.search || '';
 
 	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
 
@@ -95,12 +98,12 @@ export function useBasePersistentView( {
 	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
 		queryParamFilterFields
 			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
-			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+			.map( ( field ) => getTransientFilter( field, queryParams?.[ field ] ) )
 	);
 
 	useEffect( () => {
 		setTransientFilters(
-			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams?.[ field ] ) )
 		);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,7 +116,7 @@ export function useBasePersistentView( {
 
 		let transientQueryParams: Record< string, unknown > = {};
 		transientFilters.forEach( ( { field } ) => {
-			transientQueryParams[ field ] = queryParams[ field ];
+			transientQueryParams[ field ] = queryParams?.[ field ];
 		} );
 		transientQueryParams = mergeQueryParamsWithTransientProperties(
 			transientQueryParams,
@@ -154,7 +157,10 @@ export function useBasePersistentView( {
 					newView.filters?.some(
 						( filter ) =>
 							filter.field === field &&
-							fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
+							fastDeepEqual(
+								filter.value,
+								getTransientFilter( field, queryParams?.[ field ] ).value
+							)
 					)
 			);
 
@@ -247,7 +253,10 @@ function removeEmptyFiltersFromView( view: View ): View {
 	return view;
 }
 
-function clearQueryParamsFromTransientFilters( queryParams: any, transientFilterFields: string[] ) {
+function clearQueryParamsFromTransientFilters(
+	queryParams: QueryParams,
+	transientFilterFields: string[]
+) {
 	const newQueryParams = { ...queryParams };
 
 	transientFilterFields.forEach( ( field ) => {
@@ -258,9 +267,9 @@ function clearQueryParamsFromTransientFilters( queryParams: any, transientFilter
 }
 
 function mergeQueryParamsWithTransientProperties(
-	queryParams: any,
+	queryParams: QueryParams | undefined,
 	{ page, search }: { page?: number; search?: string }
-): any {
+): QueryParams {
 	const newQueryParams = { ...queryParams };
 
 	if ( page === 1 ) {

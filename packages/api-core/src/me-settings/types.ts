@@ -39,6 +39,24 @@ export type McpAbilities = {
 	site_level_enabled_default?: boolean;
 };
 
+export type McpSiteOverrideUpdate = {
+	blog_id: number;
+	account_tools_enabled?: boolean | null;
+	site_level_enabled?: boolean | null;
+	abilities?: Record< string, unknown >;
+};
+
+/**
+ * Update payload for MCP abilities. Unlike the read shape, ability toggles are
+ * sent as booleans keyed by tool ID.
+ */
+export type McpAbilitiesUpdate = {
+	account?: Record< string, boolean >;
+	site?: Record< string, boolean >;
+	sites?: McpSiteOverrideUpdate[];
+	site_level_enabled_default?: boolean;
+};
+
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
@@ -90,6 +108,14 @@ export interface UserSettings {
 	user_email_change_pending?: boolean;
 	new_user_email?: string;
 }
+
+/**
+ * Payload accepted by updateUserSettings. Same as UserSettings except
+ * mcp_abilities also accepts the boolean-toggle update shape.
+ */
+export type UserSettingsUpdate = Omit< Partial< UserSettings >, 'mcp_abilities' > & {
+	mcp_abilities?: McpAbilities | McpAbilitiesUpdate;
+};
 
 export interface PasswordValidationResponse {
 	passed: boolean;

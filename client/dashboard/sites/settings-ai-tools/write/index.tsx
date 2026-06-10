@@ -61,8 +61,7 @@ export default function SiteAIToolsWrite() {
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
 	// enabled state for every tool. True when account MCP is on, false when it's disabled for sites.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
-	const defaultToolEnabled =
-		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
+	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const mcpAbilities = hasSiteAbilityOverrides
 		? mergedAbilities
 		: Object.fromEntries(

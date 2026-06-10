@@ -43,19 +43,20 @@ function createTestWrapper() {
 	return { Wrapper, getRouter: () => router };
 }
 
-function mockGetCalypsoPreferences( preferences: any ) {
+function mockGetCalypsoPreferences( preferences: Record< string, unknown > ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
 		.reply( 200, { calypso_preferences: preferences } );
 }
 
-function mockUpdateCalypsoPreferences( preferences?: any ) {
+function mockUpdateCalypsoPreferences( preferences?: Record< string, unknown > ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.post(
 			'/rest/v1.1/me/preferences',
-			preferences && {
-				calypso_preferences: preferences,
-			}
+			preferences &&
+				( {
+					calypso_preferences: preferences,
+				} as nock.DataMatcherMap )
 		)
 		.reply( 200 );
 }

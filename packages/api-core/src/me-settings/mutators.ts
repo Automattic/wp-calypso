@@ -1,8 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { PasswordValidationResponse, UserSettings } from './types';
+import type { PasswordValidationResponse, UserSettings, UserSettingsUpdate } from './types';
 
 export async function updateUserSettings(
-	data: Partial< UserSettings >
+	data: UserSettingsUpdate
 ): Promise< Partial< UserSettings > > {
 	const saveableKeys: ( keyof UserSettings )[] = [
 		'first_name',

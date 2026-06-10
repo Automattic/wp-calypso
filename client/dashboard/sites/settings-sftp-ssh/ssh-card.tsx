@@ -273,7 +273,7 @@ export default function SshCard( {
 						help={ field.description }
 						options={ field.elements }
 						disabled={ ! hasUserSshKeys }
-						onChange={ ( newValue: any ) =>
+						onChange={ ( newValue: string ) =>
 							onChange( {
 								[ field.id ]: newValue,
 							} )

@@ -2,9 +2,13 @@ import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { sanitizeView } from './sanitize-view';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ComponentType } from 'react';
 
 type WPDataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
+
+// `WPDataViews` declares `getItemId` via a conditional type on `Item`, which TS
+// cannot verify when spreading generic props, so spread through a loose alias.
+const LooseWPDataViews = WPDataViews as unknown as ComponentType< Record< string, unknown > >;
 
 export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
 	isPlaceholderData?: boolean;
@@ -39,7 +43,8 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 
 	const sanitizedView = sanitizeView( view, props.fields );
 
-	return <WPDataViews< Item > view={ sanitizedView } { ...( props as any ) } />;
+	const dataViewsProps = { ...props, view: sanitizedView };
+	return <LooseWPDataViews { ...dataViewsProps } />;
 }
 
 DataViews.Layout = WPDataViews.Layout;

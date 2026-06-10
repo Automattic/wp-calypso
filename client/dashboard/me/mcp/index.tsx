@@ -132,7 +132,7 @@ function McpComponent() {
 					account: accountAbilities,
 					...( sitesToReset.length > 0 && { sites: sitesToReset } ),
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );

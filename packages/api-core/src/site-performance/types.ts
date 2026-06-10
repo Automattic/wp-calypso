@@ -16,12 +16,23 @@ type PerformanceMetricAuditDetailsHeading = {
 	subItemsHeading?: { key: string; valueType?: string };
 };
 
-type PerformanceMetricAuditDetailsItemObject = {
+export type PerformanceMetricAuditDetailsItemObject = {
 	location?: {
 		url: string;
 		line: number;
 		column: number;
 	};
+	boundingRect?: {
+		width: number;
+		height: number;
+		top: number;
+		left: number;
+		right?: number;
+		bottom?: number;
+	};
+	lhId?: string;
+	nodeLabel?: string;
+	snippet?: string;
 } & Record< string, string | number >;
 
 type PerformanceMetricAuditDetailsSubItemObject = {

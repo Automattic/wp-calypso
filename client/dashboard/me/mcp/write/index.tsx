@@ -64,7 +64,7 @@ export default function McpWrite() {
 						[ toolId ]: enabled,
 					},
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', {
@@ -90,7 +90,7 @@ export default function McpWrite() {
 				mcp_abilities: {
 					account: accountAbilities,
 				},
-			} as any,
+			},
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_write_enable_all_toggled', {

@@ -38,12 +38,23 @@ type SitesWithoutThisPluginProps = {
 	sitesWithoutThisPlugin: Site[];
 };
 
-const getPluginInstallErrorCode = ( source: any ): string | undefined =>
-	source?.code ||
-	source?.data?.code ||
-	source?.error ||
-	source?.body?.error ||
-	source?.body?.data?.code;
+type PluginInstallErrorSource = {
+	code?: string;
+	error?: string;
+	data?: { code?: string };
+	body?: { error?: string; data?: { code?: string } };
+};
+
+const getPluginInstallErrorCode = ( source: unknown ): string | undefined => {
+	const errorSource = source as PluginInstallErrorSource | null | undefined;
+	return (
+		errorSource?.code ||
+		errorSource?.data?.code ||
+		errorSource?.error ||
+		errorSource?.body?.error ||
+		errorSource?.body?.data?.code
+	);
+};
 
 const handlePluginAlreadyInstalled = ( {
 	displayPluginName,
@@ -145,7 +156,7 @@ export const SitesWithoutThisPlugin = ( {
 						}
 
 						installPluginMutate( { siteId: site.ID, slug: pluginSlug } )
-							.then( ( response: any ) => {
+							.then( ( response ) => {
 								// In some cases the API can return HTTP 200 with an error code
 								// in the response body (e.g., plugin_already_installed). Detect
 								// that case here and treat it like the error path below.
@@ -175,7 +186,7 @@ export const SitesWithoutThisPlugin = ( {
 								// Invalidate the cache once more to trigger a delayed check to avoid inconsistent states.
 								setTimeout( () => invalidatePlugins(), 2000 );
 							} )
-							.catch( ( error: any ) => {
+							.catch( ( error ) => {
 								const errorCode = getPluginInstallErrorCode( error );
 
 								if ( errorCode === 'plugin_already_installed' ) {

@@ -6,23 +6,25 @@ import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import DomainForwardingForm from '../form';
 import type { FormData } from '../form';
+import type { DomainForwarding } from '@automattic/api-core';
 
 const domainName = 'example.com';
 
 interface TestFormProps {
 	forceSubdomain?: boolean;
-	initialData?: any;
+	initialData?: Partial< DomainForwarding > | null;
 	onSubmit?: ( data: FormData ) => void;
 	isSubmitting?: boolean;
 }
 
-function renderEditForm( props: TestFormProps = {} ) {
+function renderEditForm( { initialData, ...props }: TestFormProps = {} ) {
 	const defaultProps = {
 		domainName,
 		onSubmit: jest.fn(),
 		isSubmitting: false,
 		submitButtonText: 'Update',
 		forceSubdomain: false,
+		initialData: initialData as DomainForwarding | null | undefined,
 		...props,
 	};
 

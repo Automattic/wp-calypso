@@ -7,10 +7,11 @@ import type {
 	SitePerformanceReport,
 	PerformanceMetricAuditDetails,
 	PerformanceMetricAuditDetailsItem,
+	PerformanceMetricAuditDetailsItemObject,
 } from '@automattic/api-core';
 
 const renderNode = (
-	data: { [ key: string ]: any },
+	data: PerformanceMetricAuditDetailsItemObject,
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ]
 ) => {
 	const rect = data.boundingRect;
@@ -19,7 +20,7 @@ const renderNode = (
 		const maxThumbnailSize = { width: 147, height: 100 };
 		return (
 			<InsightScreenshotWithOverlay
-				nodeId={ data.lhId }
+				nodeId={ data.lhId ?? '' }
 				screenshot={ fullPageScreenshot.screenshot }
 				elementRectSC={ rect }
 				maxRenderSizeDC={ maxThumbnailSize }

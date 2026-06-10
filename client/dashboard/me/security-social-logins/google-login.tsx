@@ -12,6 +12,17 @@ import { useAnalytics } from '../../app/analytics';
 import { wpcomLink } from '../../utils/link';
 import type { SocialLoginButtonProps } from './types';
 
+interface GoogleOAuth2 {
+	initCodeClient: ( config: {
+		client_id: string;
+		scope: string;
+		ux_mode: string;
+		redirect_uri: string;
+		state: string;
+		callback: ( response: { error: string; code: string; state: string } ) => void;
+	} ) => { requestCode: () => void };
+}
+
 // This component supports only Social Login from Google.
 // It is used only in the Security page for now to connect and disconnect Google accounts.
 // We can extend other flows in the future.
@@ -30,7 +41,9 @@ export default function GoogleLogin( {
 	const [ showLoading, setShowLoading ] = useState( false );
 
 	const loadGoogleIdentityServicesAPI = async () => {
-		const windowObj = window as unknown as Window & { google: { accounts: { oauth2: any } } };
+		const windowObj = window as unknown as Window & {
+			google?: { accounts?: { oauth2?: GoogleOAuth2 } };
+		};
 
 		if ( ! windowObj?.google?.accounts?.oauth2 ) {
 			try {
