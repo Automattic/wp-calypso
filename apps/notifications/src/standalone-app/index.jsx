@@ -125,6 +125,27 @@ const NotesWrapper = ( { wpcom } ) => {
 		store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	}, [ isShowing, isVisible ] );
 
+	// The card sits inside a wider iframe, so the host can't detect clicks on
+	// the empty area around it. Dismiss from inside instead: close on any click
+	// outside the two panes. (Not gated on `isShowing` — when the panel is
+	// closed the host hides the iframe, so the backdrop receives no clicks.)
+	useEffect( () => {
+		const handleClickOutside = ( event ) => {
+			if ( event.button !== 0 ) {
+				return;
+			}
+			if ( event.target.closest( '.wpnc-app__list-pane, .wpnc-app__detail-pane' ) ) {
+				return;
+			}
+			// Stop the click from starting a text selection on the backdrop.
+			event.preventDefault();
+			store.dispatch( actions.ui.closePanel() );
+		};
+
+		document.addEventListener( 'mousedown', handleClickOutside );
+		return () => document.removeEventListener( 'mousedown', handleClickOutside );
+	}, [] );
+
 	useEffect( () => {
 		const handleMessages = ( { action, hidden, showing } ) => {
 			debug( 'message received', { action, hidden, showing } );
