@@ -81,7 +81,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		justify-content: space-between;
 
 		@media (max-width: $break-medium) {
-			margin: 0 64px;
+			// Keep breathing room above the title — with no top margin it sits
+			// squished against the Page header bar.
+			margin: 24px 64px 0;
 			padding-bottom: 24px;
 		}
 
@@ -1039,25 +1041,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		font-weight: 500;
 	}
 
-	.campaign-item-details__powered-by {
-		align-items: center;
-		color: var(--color-neutral-50);
-		display: flex;
-		font-size: 0.75rem;
-	}
-	.campaign-item-details__powered-by.mobile {
-		margin: 16px 16px;
-	}
-	@media (max-width: $break-wide) {
-		.campaign-item-details__powered-by.desktop {
-			display: none;
-		}
-	}
-	@media (min-width: $break-wide + 1) {
-		.campaign-item-details__powered-by.mobile {
-			display: none;
-		}
-	}
 	.campaign-item-details__flexible-skeleton {
 		border-radius: 4px;
 		display: inline-block;
@@ -1163,10 +1146,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 }
 
-.campaign-item-details__powered-by {
-	margin-top: 16px;
-}
-
 .is-mobile-app-view {
 	.campaign-item__container .campaign-item-header {
 		padding-bottom: 0;
@@ -1181,7 +1160,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-header {
 			@media (max-width: $break-medium) {
-				margin: 0 12px;
+				margin: 24px 12px 0;
 			}
 		}
 

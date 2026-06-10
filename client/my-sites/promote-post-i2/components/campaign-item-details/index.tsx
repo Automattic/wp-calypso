@@ -1553,13 +1553,6 @@ export default function CampaignItemDetails( props: Props ) {
 							) : (
 								[]
 							) }
-							<div className="campaign-item-details__powered-by desktop">
-								{ isWooStore ? (
-									<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
-								) : (
-									<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
-								) }
-							</div>
 						</div>
 						<div className="campaign-item-details__preview">
 							<div className="campaign-item-details__preview-container">
@@ -1631,13 +1624,6 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 									</>
 								) }
-								<div className="campaign-item-details__powered-by mobile">
-									{ isWooStore ? (
-										<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
-									) : (
-										<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
-									) }
-								</div>
 							</div>
 						</div>
 					</section>

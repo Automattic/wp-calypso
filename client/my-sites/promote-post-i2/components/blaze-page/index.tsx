@@ -20,7 +20,10 @@ export function BlazeFooter() {
 	const translate = useTranslate();
 
 	return (
-		<JetpackFooter name={ isBlazePlugin ? ( translate( 'Blaze Ads' ) as string ) : undefined } />
+		<JetpackFooter
+			name={ isBlazePlugin ? ( translate( 'Blaze Ads' ) as string ) : undefined }
+			showLogo={ ! isBlazePlugin }
+		/>
 	);
 }
 

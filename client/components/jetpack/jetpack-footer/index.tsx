@@ -20,12 +20,14 @@ interface JetpackFooterProps {
 	menu?: JetpackFooterMenuItem[];
 	/** Product name shown next to the logo. Defaults to 'Jetpack'. */
 	name?: string;
+	/** Whether to show the Jetpack logo next to the name. Defaults to true. */
+	showLogo?: boolean;
 }
 
 /**
  * JetpackFooter component displays a tiny Jetpack logo with the product name on the left and the Automattic Airline "by line" on the right.
  */
-const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu, name } ) => {
+const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu, name, showLogo = true } ) => {
 	return (
 		<Stack
 			render={ <footer /> }
@@ -39,7 +41,7 @@ const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu, name } ) =>
 			gap="xl"
 		>
 			<Stack className="jetpack-footer__logo" direction="row" gap="sm" align="center">
-				<JetpackLogo size={ 16 } aria-hidden="true" />
+				{ showLogo && <JetpackLogo size={ 16 } aria-hidden="true" /> }
 				<span className="jetpack-footer__logo-text">{ name ?? 'Jetpack' }</span>
 			</Stack>
 			{ menu && menu.length > 0 && (

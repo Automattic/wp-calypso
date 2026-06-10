@@ -11,7 +11,9 @@ body.is-section-promote-post-i2 {
 	.layout__content {
 		position: relative;
 		margin: 0;
-		padding: calc(32px + 24px) 0 32px var(--sidebar-width-max);
+		// No bottom padding: the sticky Jetpack footer at the end of the page
+		// should rest flush against the bottom.
+		padding: calc(32px + 24px) 0 0 var(--sidebar-width-max);
 
 		.main {
 			margin: 0;
