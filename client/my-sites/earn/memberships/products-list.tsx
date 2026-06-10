@@ -212,12 +212,16 @@ function ProductsList() {
 											// Server-rendered (and kses-sanitized) markdown — the same
 											// HTML the subscribe modal shows, for a 1:1 preview.
 											// DOMPurify is defense-in-depth in case the API's
-											// sanitization guarantee ever changes.
+											// sanitization guarantee ever changes. ADD_ATTR keeps the
+											// target="_blank" the server adds to links (DOMPurify
+											// strips `target` by default); `rel` is kept by default.
 											<div
 												className="memberships__products-product-description"
 												// eslint-disable-next-line react/no-danger
 												dangerouslySetInnerHTML={ {
-													__html: DOMPurify.sanitize( currentProduct.description_rendered ),
+													__html: DOMPurify.sanitize( currentProduct.description_rendered, {
+														ADD_ATTR: [ 'target' ],
+													} ),
 												} }
 											/>
 										) : (

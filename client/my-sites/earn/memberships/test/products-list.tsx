@@ -117,6 +117,27 @@ describe( 'ProductsList', () => {
 		expect( description.querySelector( 'strong' ) ).toHaveTextContent( 'Bonus' );
 	} );
 
+	test( 'preserves the server-added target="_blank" on links while stripping unsafe markup', () => {
+		const { container } = renderProductsList( [
+			{
+				...tierWithDescription,
+				description: '[Learn more](https://example.com)',
+				description_rendered:
+					'<p><a href="https://example.com" target="_blank" rel="noopener">Learn more</a></p>' +
+					'<script>alert(1)</script><p onclick="alert(1)">unsafe</p>',
+			},
+		] );
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		const link = description.querySelector( 'a' );
+		// target="_blank" must survive sanitization — links escape the page context.
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener' );
+		// ...while DOMPurify still strips unsafe markup.
+		expect( description.querySelector( 'script' ) ).toBeNull();
+		expect( description.innerHTML ).not.toContain( 'onclick' );
+	} );
+
 	test( 'falls back to the raw description as plain text when no rendered HTML is provided', () => {
 		const { container } = renderProductsList( [
 			{
