@@ -19,19 +19,6 @@
 	}
 
 	.promote-post-i2 {
-		.jetpack-header {
-			padding: 0;
-
-			// Align with navigation.
-			@media (max-width: 660px) {
-				padding-left: 16px;
-			}
-		}
-
-		.promote-post-i2__header-subtitle.promote-post-i2__header-subtitle_mobile {
-			display: none !important;
-		}
-
 		// Navigation bar
 		.section-nav {
 			.section-nav-tabs__list {

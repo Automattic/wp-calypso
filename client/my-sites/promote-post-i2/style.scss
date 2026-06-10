@@ -191,7 +191,6 @@ body.is-section-promote-post-i2 {
 					margin-top: 32px;
 				}
 
-				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
 				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
@@ -288,16 +287,6 @@ body.is-section-promote-post-i2 {
 
 		@media screen and (max-width: ($break-medium + 287px)) {
 			width: calc(100% - 32px);
-		}
-	}
-
-	.promote-post-i2__header-subtitle {
-		&_desktop {
-			display: block;
-		}
-
-		&_mobile {
-			display: none;
 		}
 	}
 
@@ -577,7 +566,6 @@ body.is-section-promote-post-i2 {
 
 		.layout__content .layout__primary {
 			.promote-post-i2__page > :first-child,
-			.promote-post-i2__header-subtitle,
 			.promote-post-i2 .posts-list-banner__container,
 			.promote-post-i2 .section-nav,
 			.promote-post-i2 .post-item__view-link,
@@ -619,7 +607,6 @@ body.is-section-promote-post-i2 {
 					}
 				}
 
-				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
 				.promote-post-i2__debt-notifier,
 				.posts-list__table,
@@ -649,18 +636,6 @@ body.is-section-promote-post-i2 {
 	}
 
 	.promote-post-i2 {
-		.promote-post-i2__header-subtitle {
-			&_desktop {
-				display: none;
-			}
-
-			&_mobile {
-				display: block;
-				font-size: 1rem;
-				line-height: 1.5;
-			}
-		}
-
 		.section-nav-tab {
 			&__link {
 				.section-nav-tab__text {

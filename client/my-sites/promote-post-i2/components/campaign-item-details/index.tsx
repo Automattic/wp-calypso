@@ -880,6 +880,8 @@ export default function CampaignItemDetails( props: Props ) {
 				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
+			{ /* Raw <Page> rather than <BlazePage>: the details view intentionally
+			     drops the Blaze logo/title/subtitle chrome in favor of a back link. */ }
 			<Page
 				className="promote-post-i2__page"
 				ariaLabel={ translate( 'Campaign details' ) as string }
