@@ -205,11 +205,23 @@ function ProductsList() {
 									<div className="memberships__products-product-title">
 										{ currentProduct?.title }
 									</div>
-									{ currentProduct.type === TYPE_TIER && currentProduct.description && (
-										<div className="memberships__products-product-description">
-											{ currentProduct.description }
-										</div>
-									) }
+									{ currentProduct.type === TYPE_TIER &&
+										currentProduct.description &&
+										( currentProduct.description_rendered ? (
+											// Server-rendered (and kses-sanitized) markdown — the same
+											// HTML the subscribe modal shows, for a 1:1 preview.
+											<div
+												className="memberships__products-product-description"
+												// eslint-disable-next-line react/no-danger
+												dangerouslySetInnerHTML={ {
+													__html: currentProduct.description_rendered,
+												} }
+											/>
+										) : (
+											<div className="memberships__products-product-description">
+												{ currentProduct.description }
+											</div>
+										) ) }
 									<sub className="memberships__products-product-price">
 										{ getPriceFromProduct( currentProduct, price ) }
 										{ currentAnnualProduct &&

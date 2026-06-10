@@ -99,4 +99,37 @@ describe( 'ProductsList', () => {
 		expect( screen.getByText( 'Basic Tier' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.memberships__products-product-description' ) ).toBeNull();
 	} );
+
+	test( 'renders the server-rendered markdown HTML when provided', () => {
+		const { container } = renderProductsList( [
+			{
+				...tierWithDescription,
+				description: 'Includes:\n\n- Full archive\n- **Bonus** newsletters',
+				description_rendered:
+					'<p>Includes:</p>\n<ul>\n<li>Full archive</li>\n<li><strong>Bonus</strong> newsletters</li>\n</ul>',
+			},
+		] );
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		const items = description.querySelectorAll( 'ul li' );
+		expect( items ).toHaveLength( 2 );
+		expect( items[ 0 ] ).toHaveTextContent( 'Full archive' );
+		expect( description.querySelector( 'strong' ) ).toHaveTextContent( 'Bonus' );
+	} );
+
+	test( 'falls back to the raw description as plain text when no rendered HTML is provided', () => {
+		const { container } = renderProductsList( [
+			{
+				...tierWithDescription,
+				description: '**not parsed** <img src="x"> plain text',
+				description_rendered: undefined,
+			},
+		] );
+
+		const description = container.querySelector( '.memberships__products-product-description' );
+		// Raw description renders as inert text — no markdown parsing, no HTML.
+		expect( description.querySelector( 'img' ) ).toBeNull();
+		expect( description.querySelector( 'strong' ) ).toBeNull();
+		expect( description ).toHaveTextContent( '**not parsed** <img src="x"> plain text' );
+	} );
 } );

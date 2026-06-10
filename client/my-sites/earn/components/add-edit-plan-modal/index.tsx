@@ -407,7 +407,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						/>
 						<FormSettingExplanation>
 							{ translate(
-								'Optional. Shown to readers when they choose a paid tier on your site.'
+								'Optional. Shown to readers when they choose a paid tier on your site. Markdown is supported — start a line with "-" for a bullet point, or wrap text in ** for bold.'
 							) }
 						</FormSettingExplanation>
 						{ ! isFormValid( 'description' ) && (
