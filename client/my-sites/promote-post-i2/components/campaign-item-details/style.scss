@@ -1341,6 +1341,11 @@ $break-medium-expanded-menu: $break-medium + 272px;
 @mixin blazepress-huge {
 	.campaign-item-header,
 	.campaign-item-details {
+		// These are flex items of the admin-ui <Page> column, where auto
+		// margins shrink each box to its content width and center it
+		// independently — the title drifted off the content column. Force
+		// full width so both share the same centered 1040px column.
+		width: 100%;
 		max-width: 1040px;
 		margin-left: auto;
 		margin-right: auto;
