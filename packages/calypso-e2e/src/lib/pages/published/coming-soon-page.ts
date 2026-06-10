@@ -23,6 +23,6 @@ export class ComingSoonPage {
 	 * Validates the site is in coming soon state.
 	 */
 	async validateComingSoonState(): Promise< void > {
-		await this.page.waitForSelector( selectors.comingSoonText, { state: 'attached' } );
+		await this.page.waitForSelector( selectors.comingSoonText );
 	}
 }

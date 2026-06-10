@@ -128,7 +128,10 @@ export class DomainSearchComponent {
 			};
 
 			const [ response ] = await Promise.all( [
-				page.waitForResponse( /suggestions\?/ ),
+				// The domain lookup service is external and regularly exceeds the
+				// 10s default timeout under load; give it a longer budget instead
+				// of burning reloadAndRetry attempts on a slow-but-healthy service.
+				page.waitForResponse( /suggestions\?/, { timeout: 30 * 1000 } ),
 				searchAndPressEnter(),
 			] );
 

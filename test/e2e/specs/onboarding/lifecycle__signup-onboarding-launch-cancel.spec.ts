@@ -59,7 +59,12 @@ test.describe(
 
 		test( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
 			page,
+			browser,
 		} ) => {
+			// Signup + purchase + launch + cancel stacks a 90s purchase timeout
+			// with several 30s waits; the 120s config default is not enough.
+			test.setTimeout( 240 * 1000 );
+
 			let cartCheckoutPage: CartCheckoutPage;
 			let originalAmount: number;
 
@@ -178,11 +183,14 @@ test.describe(
 			} );
 
 			await test.step( 'Then site is not yet launched', async () => {
-				const tmpPage = await page.context().newPage();
+				// Validate as a logged-out visitor: the coming-soon contract is
+				// about what the public sees, not the authenticated owner.
+				const tmpContext = await browser.newContext();
+				const tmpPage = await tmpContext.newPage();
 				await tmpPage.goto( newSiteDetails!.blog_details.url as string );
 				const comingSoonPage = new ComingSoonPage( tmpPage );
 				await comingSoonPage.validateComingSoonState();
-				await tmpPage.close();
+				await tmpContext.close();
 			} );
 
 			await test.step( 'When I launch site via site settings', async () => {

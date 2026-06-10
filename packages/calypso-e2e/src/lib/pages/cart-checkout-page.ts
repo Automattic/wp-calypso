@@ -244,8 +244,15 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const totalAmountLocator = this.page.locator( selectors.totalAmount );
-		await totalAmountLocator.waitFor( { state: 'attached', timeout: 20 * 1000 } );
+		// The mobile and desktop checkouts render the total in different elements,
+		// and `selectors.totalAmount` resolves its VIEWPORT_NAME ternary at module
+		// load, before Playwright Test sets the per-project viewport name. Match
+		// whichever variant is visible so the check stays a user-visible-price
+		// assertion on both viewports.
+		const totalAmountLocator = this.page
+			.locator( '.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible' )
+			.first();
+		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
 
 		const stringAmount = await totalAmountLocator.innerText();
 		if ( rawString ) {

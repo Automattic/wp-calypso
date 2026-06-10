@@ -56,6 +56,7 @@ test.describe(
 
 		test( 'As a user, I can upgrade a free site to Premium and validate the plan and content', async ( {
 			page,
+			browser,
 		} ) => {
 			test.fixme(
 				true,
@@ -143,7 +144,10 @@ test.describe(
 				await plansPage.validateActivePlan( planName );
 			} );
 
-			const testPage = await page.context().newPage();
+			// Validate published content as a logged-out visitor: the preservation
+			// contract is about what the public sees after the plan change.
+			const testContext = await browser.newContext();
+			const testPage = await testContext.newPage();
 
 			for ( const postTitle of postTitles ) {
 				await test.step( `Post ${ postTitle } is preserved`, async () => {
@@ -155,6 +159,8 @@ test.describe(
 					await publishedPostPage.validateTitle( postTitle );
 				} );
 			}
+
+			await testContext.close();
 
 			await test.step( 'Uploaded media is preserved', async () => {
 				const mediaPage = new MediaPage( page );

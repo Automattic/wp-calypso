@@ -53,6 +53,10 @@ test.describe(
 		} );
 
 		test( 'Signup, purchase, and cancel a Premium theme plan', async ( { page } ) => {
+			// Signup + purchase + atomic cancel stacks a 90s purchase timeout
+			// with several 30s waits; the 120s config default is not enough.
+			test.setTimeout( 240 * 1000 );
+
 			await test.step( 'Set store cookie for USD', async () => {
 				await BrowserManager.setStoreCookie( page, { currency: 'USD' } );
 			} );
