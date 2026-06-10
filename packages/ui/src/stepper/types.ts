@@ -1,5 +1,5 @@
 // packages/ui/src/stepper/types.ts
-import type { ComponentProps, CSSProperties, ReactNode, Ref } from 'react';
+import type { ComponentProps, CSSProperties, ReactNode } from 'react';
 
 // ---------------------------------------------------------------------------
 // Utility types
@@ -108,7 +108,6 @@ export type StepperBaseProps = {
 	children: ReactNode;
 	className?: string;
 	style?: CSSProperties;
-	ref?: Ref< StepperRef >;
 };
 
 export type StepperProps = StepperBaseProps & AriaLabelXOR;
@@ -117,7 +116,7 @@ export type StepperProps = StepperBaseProps & AriaLabelXOR;
 // Tier 2 root prop type (used directly by Stepper.Root)
 // ---------------------------------------------------------------------------
 
-export type StepperRootProps = Omit< StepperBaseProps, 'ref' > &
+export type StepperRootProps = StepperBaseProps &
 	AriaLabelXOR & {
 		orientation: 'vertical' | 'horizontal';
 	};
