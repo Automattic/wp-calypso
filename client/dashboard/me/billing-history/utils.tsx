@@ -392,9 +392,9 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	monthsPerBillPeriodForProduct: number | undefined | null
 ): boolean {
 	if (
-		costOverrides?.some( ( costOverride ) => {
-			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
-		} )
+		costOverrides?.some(
+			( costOverride ) => ! isOverrideCodeIntroductoryOffer( costOverride.override_code )
+		)
 	) {
 		return false;
 	}
