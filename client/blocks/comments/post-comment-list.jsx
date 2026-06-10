@@ -139,17 +139,7 @@ class PostCommentList extends Component {
 		if ( prevState !== this.state && prevProps === this.props ) {
 			return;
 		}
-		// Only re-run initialFetches when one of its inputs changes; running it on
-		// every update can re-enter componentDidUpdate via setState and exceed the
-		// maximum update depth.
-		if (
-			prevProps.isInitialCommentLoading !== this.props.isInitialCommentLoading ||
-			prevProps.startingCommentId !== this.props.startingCommentId ||
-			prevProps.initialComment !== this.props.initialComment ||
-			prevProps.commentsTree !== this.props.commentsTree
-		) {
-			this.initialFetches();
-		}
+		this.initialFetches();
 		if (
 			prevProps.siteId !== this.props.siteId ||
 			prevProps.postId !== this.props.postId ||
