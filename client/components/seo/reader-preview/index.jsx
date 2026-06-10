@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
-import DisplayTypes from 'calypso/state/reader/posts/display-types';
+import DisplayTypes from 'calypso/reader/data/post/display-types';
 
 export class ReaderPreview extends PureComponent {
 	render() {

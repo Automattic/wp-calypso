@@ -75,7 +75,7 @@ export function AppPromoCard( { className, isWoo, clickHandler }: AppPromoCardPr
 				  );
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
-		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
+		// https://github.com/Automattic/wp-calypso/blob/trunk/packages/i18n-calypso/README.md
 		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',

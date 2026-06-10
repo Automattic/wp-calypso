@@ -1,67 +1,52 @@
-import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { Link } from '@tanstack/react-router';
+import { __, sprintf } from '@wordpress/i18n';
+import { cancelPurchaseRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { hasAmountAvailableToRefund } from '../../../utils/purchase';
 import { getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
-import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { Purchase } from '@automattic/api-core';
 
-interface RefundEligibilityNoticePromoProps {
-	purchase: Purchase;
-	mode?: 'promo';
-	onClaimRefund: () => void;
-}
-
-interface RefundEligibilityNoticeConfirmedProps {
-	purchase: Purchase;
-	mode: 'confirmed';
-	onClaimRefund?: never;
-}
-
 type RefundEligibilityNoticeProps =
-	| RefundEligibilityNoticePromoProps
-	| RefundEligibilityNoticeConfirmedProps;
+	| { mode?: 'confirmed'; purchase: Purchase }
+	| { mode: 'refund-eligibility'; purchase: Purchase };
 
 export default function RefundEligibilityNotice( props: RefundEligibilityNoticeProps ) {
-	const { purchase, mode = 'promo' } = props;
-	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
+	const { purchase } = props;
 
 	if ( ! hasAmountAvailableToRefund( purchase ) ) {
 		return null;
 	}
 
-	if ( mode === 'confirmed' ) {
-		// Shown on the Remove confirmation screen when a refund is available.
-		// The user has already expressed remove intent at the button click — no CTA.
-		const refundAmount = RefundAmountString( { purchase, cancelBundledDomain: false } );
-		if ( ! refundAmount ) {
-			return null;
-		}
-		return <Notice variant="info">{ getRefundNoticeCopy( { purchase, refundAmount } ) }</Notice>;
-	}
-
-	// Promo mode is gated by the ExPlat experiment — only shown to treatment arm
-	// users on the flag-off single-button UI.
-	if ( ! showRefundEligibilityNotice ) {
+	const refundAmount = RefundAmountString( { purchase, cancelBundledDomain: false } );
+	if ( ! refundAmount ) {
 		return null;
 	}
 
-	return (
-		<Notice variant="info">
-			{ createInterpolateElement(
-				/* translators: <refundAmount /> is a monetary amount in the form "[currency-symbol][amount]" */
-				__(
-					"You're eligible for a <refundAmount /> refund if you remove your plan now. Your features will be unavailable right away."
-				),
-				{
-					refundAmount: <RefundAmountString purchase={ purchase } cancelBundledDomain={ false } />,
+	if ( props.mode === 'refund-eligibility' ) {
+		return (
+			<Notice
+				variant="info"
+				actions={
+					<Link
+						to={ cancelPurchaseRoute.fullPath }
+						params={ { purchaseId: String( purchase.ID ) } }
+						search={ { intent: 'remove' as const } }
+					>
+						{ __( 'Remove plan and claim refund.' ) }
+					</Link>
 				}
-			) }{ ' ' }
-			<Button variant="link" onClick={ props.onClaimRefund }>
-				{ __( 'Remove plan and claim refund' ) }
-			</Button>
-		</Notice>
-	);
+			>
+				{ sprintf(
+					/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
+					__(
+						'You’re eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away.'
+					),
+					{ refundAmount }
+				) }
+			</Notice>
+		);
+	}
+
+	return <Notice variant="info">{ getRefundNoticeCopy( { purchase, refundAmount } ) }</Notice>;
 }

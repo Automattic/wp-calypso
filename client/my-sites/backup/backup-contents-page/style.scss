@@ -58,6 +58,8 @@
 	}
 
 	&__header {
+		// TODO: migrate this page to the admin-ui <Page>.
+		background: var(--color-surface);
 		padding-left: 2px;
 		padding-right: 2px;
 

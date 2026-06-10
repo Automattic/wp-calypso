@@ -21,6 +21,7 @@ import {
 	siteJetpackSettingsQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
+	sitePostByEmailSettingsQuery,
 	siteCurrentPlanQuery,
 	sitePlansQuery,
 	siteBySlugQuery,
@@ -37,8 +38,8 @@ import {
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
-	queryClient,
 	wpOrgCoreVersionQuery,
+	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
@@ -51,7 +52,7 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
+import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
@@ -216,19 +217,12 @@ export const siteOverviewRoute = createRoute( {
 			}
 		}
 
-		const [ preferences ] = await Promise.all( [
+		await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 
 			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 		] );
-
-		if ( shouldLoadWpVersionNotice( site, preferences ) ) {
-			await Promise.all( [
-				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
-				queryClient.ensureQueryData( wpOrgCoreVersionQuery( 'beta' ) ),
-			] );
-		}
 	},
 } ).lazy( () =>
 	import( '../../sites/overview' ).then( ( d ) =>
@@ -323,10 +317,15 @@ export const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
 	loader: loadSiteLogsRoute,
+	validateSearch: ( search ): { severity?: ( typeof VALUES_SEVERITY )[ number ] } => ( {
+		severity: VALUES_SEVERITY.find( ( v ) => v === search.severity ),
+	} ),
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: () => <d.default logType={ LogType.PHP } />,
+			component: () => (
+				<d.default logType={ LogType.PHP } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -345,7 +344,9 @@ export const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: () => <d.default logType={ LogType.SERVER } />,
+			component: () => (
+				<d.default logType={ LogType.SERVER } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -364,7 +365,9 @@ export const siteLogsActivityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
-			component: () => <d.default logType={ LogType.ACTIVITY } />,
+			component: () => (
+				<d.default logType={ LogType.ACTIVITY } siteSlug={ siteRoute.useParams().siteSlug } />
+			),
 		} )
 	)
 );
@@ -613,10 +616,147 @@ export const sitePerformanceBackendRoute = createRoute( {
 	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
+} );
+
+async function prefetchApmAggregate( siteSlug: string ) {
+	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
+		await Promise.all( [
+			import( '@automattic/api-queries' ),
+			import( '../../sites/performance/backend/timeframe' ),
+		] );
+	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
+}
+
+export const sitePerformanceBackendIndexRoute = createRoute( {
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: '/',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
 	import( '../../sites/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="overview" />,
+		} )
+	)
+);
+
+export const sitePerformanceBackendTransactionsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Transactions' ) : undefined,
+			},
+		],
+	} ),
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: 'transactions',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend-transactions' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="transactions" />,
+		} )
+	)
+);
+
+export const sitePerformanceBackendDatabaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Database' ) : undefined,
+			},
+		],
+	} ),
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: 'database',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend-database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="database" />,
+		} )
+	)
+);
+
+export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'External requests' ) : undefined,
+			},
+		],
+	} ),
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: 'external-requests',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend-external-requests' )( {
+			component: () => (
+				<d.default siteSlug={ siteRoute.useParams().siteSlug } tab="external-requests" />
+			),
+		} )
+	)
+);
+
+export const sitePerformanceBackendWordPressRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'WordPress' ) : undefined,
+			},
+		],
+	} ),
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: 'wordpress',
+	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend-wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="wordpress" />,
+		} )
+	)
+);
+
+export const sitePerformanceBackendRequestDetailRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Request' ) : undefined,
+			},
+		],
+	} ),
+	getParentRoute: () => sitePerformanceBackendRoute,
+	path: 'requests',
+	validateSearch: ( search ): { method: string; route: string; bucket?: string } => ( {
+		method: typeof search.method === 'string' ? search.method : '',
+		route: typeof search.route === 'string' ? search.route : '',
+		bucket: typeof search.bucket === 'string' ? search.bucket : undefined,
+	} ),
+	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
+	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const [ { siteApmDetailQuery }, { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } ] =
+			await Promise.all( [
+				import( '@automattic/api-queries' ),
+				import( '../../sites/performance/backend/timeframe' ),
+			] );
+		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+		await queryClient.ensureQueryData(
+			siteApmDetailQuery( site.ID, { method, route, windowSec } )
+		);
+	},
+} ).lazy( () =>
+	import( '../../sites/performance/backend/request-detail' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend-request-detail' )( {
+			component: () => {
+				const { siteSlug } = siteRoute.useParams();
+				const { method, route, bucket } = sitePerformanceBackendRequestDetailRoute.useSearch();
+				return (
+					<d.default siteSlug={ siteSlug } method={ method } route={ route } bucket={ bucket } />
+				);
+			},
 		} )
 	)
 );
@@ -724,10 +864,13 @@ export const siteSettingsAIToolsRoute = createRoute( {
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await Promise.all( [
-			queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) ),
-			queryClient.ensureQueryData( userSettingsQuery() ),
-		] );
+		const pluginStatus = await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+
+		if ( pluginStatus?.available ) {
+			queryClient.prefetchQuery( sitePostByEmailSettingsQuery( site ) );
+		}
+
+		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
 } );
 
@@ -908,6 +1051,11 @@ export const siteSettingsWordPressRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+			// Fire-and-forget the external wp.org queries so a slow upstream
+			// doesn't hang navigation; the component suspends on them via
+			// useSuspenseQuery and falls back to the route's Suspense boundary.
+			queryClient.prefetchQuery( wpOrgCoreVersionQuery() );
+			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},
@@ -1119,6 +1267,25 @@ export const siteSettingsCachingRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/settings-caching' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-caching' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsApmRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Application Performance Monitoring' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'apm',
+} ).lazy( () =>
+	import( '../../sites/settings-apm' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-apm' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1352,11 +1519,6 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'repositories',
-	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
-		return {
-			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
-		};
-	},
 } );
 
 export const siteSettingsRepositoriesIndexRoute = createRoute( {
@@ -1409,11 +1571,6 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		deploymentId: Number( params.deploymentId ),
 	} ),
-	validateSearch: ( search ): { back_to?: 'site-deployments' } => {
-		return {
-			back_to: search.back_to === 'site-deployments' ? 'site-deployments' : undefined,
-		};
-	},
 	loader: async ( { params: { siteSlug, deploymentId } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
@@ -1654,7 +1811,18 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		sitePerformanceRoute.addChildren( [
 			sitePerformanceIndexRoute,
 			sitePerformanceFrontendRoute,
-			...( isEnabled( 'performance/apm' ) ? [ sitePerformanceBackendRoute ] : [] ),
+			...( isEnabled( 'performance/apm' )
+				? [
+						sitePerformanceBackendRoute.addChildren( [
+							sitePerformanceBackendIndexRoute,
+							sitePerformanceBackendTransactionsRoute,
+							sitePerformanceBackendWordPressRoute,
+							sitePerformanceBackendDatabaseRoute,
+							sitePerformanceBackendExternalRequestsRoute,
+							sitePerformanceBackendRequestDetailRoute,
+						] ),
+				  ]
+				: [] ),
 		] ),
 		siteMonitoringRoute,
 		siteLogsRoute.addChildren( [
@@ -1715,6 +1883,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
 		siteSettingsCachingRoute,
+		...( isEnabled( 'performance/apm' ) ? [ siteSettingsApmRoute ] : [] ),
 
 		// Security
 		siteSettingsWebApplicationFirewallRoute,

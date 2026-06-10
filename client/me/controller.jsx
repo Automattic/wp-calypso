@@ -25,8 +25,8 @@ export function sidebar( context, next ) {
 	next();
 }
 
-export function profile( context, next ) {
-	const ProfileComponent = require( 'calypso/me/profile' ).default;
+export async function profile( context, next ) {
+	const { default: ProfileComponent } = await import( 'calypso/me/profile' );
 	const ProfileTitle = () => {
 		const translate = useTranslate();
 

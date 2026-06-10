@@ -177,6 +177,88 @@ describe( 'PostCardBody', () => {
 			await user.keyboard( '[/MetaLeft]' );
 			expect( pageMock ).not.toHaveBeenCalled();
 		} );
+
+		it( 'passes data-handle as ref.handle separately from data-id (CM-725 Fediverse / Mastodon)', async () => {
+			// When the backend stamps both `data-id` (canonical id — actor URL
+			// for Fediverse, numeric for Mastodon) and `data-handle`
+			// (webfinger), the click handler routes them to distinct fields so
+			// per-protocol resolvers can build a clean user-readable URL from
+			// the handle rather than the raw id.
+			const user = userEvent.setup();
+			const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+				ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
+			);
+			const { getByText } = renderWithAnalytics(
+				'<p><a href="https://example.com/@alice"' +
+					' data-id="https://example.com/users/alice"' +
+					' data-handle="alice@example.com">@alice</a></p>',
+				getProfileUrl
+			);
+			await user.click( getByText( '@alice' ) );
+			expect( getProfileUrl ).toHaveBeenCalledWith( {
+				id: 'https://example.com/users/alice',
+				handle: 'alice@example.com',
+				did: 'https://example.com/users/alice',
+			} );
+			expect( pageMock ).toHaveBeenCalledWith( '/reader/fediverse/7/profile/alice@example.com' );
+		} );
+
+		it( 'routes when only data-handle is present (no data-id) — pure-webfinger anchor', async () => {
+			const user = userEvent.setup();
+			const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+				ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
+			);
+			const { getByText } = renderWithAnalytics(
+				'<p><a href="https://example.com/@alice"' +
+					' data-handle="alice@example.com">@alice</a></p>',
+				getProfileUrl
+			);
+			await user.click( getByText( '@alice' ) );
+			expect( pageMock ).toHaveBeenCalledWith( '/reader/fediverse/7/profile/alice@example.com' );
+		} );
+
+		it( 'includes data_handle on the unresolved Tracks payload when present', async () => {
+			const user = userEvent.setup();
+			const getProfileUrl = jest.fn( () => null );
+			const { getByText } = renderWithAnalytics(
+				'<p><a href="https://example.com/@alice"' +
+					' data-id="https://example.com/users/alice"' +
+					' data-handle="alice@example.com">@alice</a></p>',
+				getProfileUrl
+			);
+			await user.click( getByText( '@alice' ) );
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_mastodon_timeline_mention_unresolved',
+				expect.objectContaining( {
+					connection_id: 7,
+					data_id: 'https://example.com/users/alice',
+					data_handle: 'alice@example.com',
+				} )
+			);
+		} );
+
+		it( 'is a no-op when no analytics provider is in scope (slim layout)', async () => {
+			// Defensive guard: when the body is rendered outside a
+			// `<SocialAnalyticsProvider>` (tests, embedded contexts), the
+			// click handler must short-circuit without throwing. The
+			// optional-chained resolver call already returns null on its own,
+			// but the explicit `if ( ! analytics ) return;` keeps the warn /
+			// tracks path on the safe side of any future refactor that drops
+			// the optional chain on `analytics.source` / `connectionId`.
+			const user = userEvent.setup();
+			const { getByText } = render(
+				<PostCardBody
+					post={ baseHtml(
+						'<p><a href="https://example.com/@alice"' +
+							' data-id="https://example.com/users/alice"' +
+							' data-handle="alice@example.com">@alice</a></p>'
+					) }
+				/>
+			);
+			await user.click( getByText( '@alice' ) );
+			expect( pageMock ).not.toHaveBeenCalled();
+			expect( onClick ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'data-tag hashtag interception', () => {

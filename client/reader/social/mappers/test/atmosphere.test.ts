@@ -44,4 +44,46 @@ describe( 'mapAtmosphereFeedItemToSocialPost', () => {
 		const post = mapAtmosphereFeedItemToSocialPost( FIXTURE );
 		expect( post.counts ).toEqual( { replies: 1, reposts: 2, likes: 3, quotes: 4 } );
 	} );
+
+	it( 'preserves reply_root and reply_parent strong-ref CIDs', () => {
+		const post = mapAtmosphereFeedItemToSocialPost( {
+			...FIXTURE,
+			reply_parent: {
+				uri: 'at://did:plc:b/app.bsky.feed.post/parent',
+				cid: 'cid-parent',
+				author: { did: 'did:plc:b', handle: 'bob.bsky.social' },
+			},
+			reply_root: {
+				uri: 'at://did:plc:c/app.bsky.feed.post/root',
+				cid: 'cid-root',
+				author: { did: 'did:plc:c', handle: 'carol.bsky.social' },
+			},
+		} );
+		expect( post.reply_parent ).toEqual( {
+			uri: 'at://did:plc:b/app.bsky.feed.post/parent',
+			cid: 'cid-parent',
+			author: { handle: 'bob.bsky.social' },
+		} );
+		expect( post.reply_root ).toEqual( {
+			uri: 'at://did:plc:c/app.bsky.feed.post/root',
+			cid: 'cid-root',
+			author: { handle: 'carol.bsky.social' },
+		} );
+	} );
+
+	it( 'tolerates reply refs without a cid (older backend payloads)', () => {
+		const post = mapAtmosphereFeedItemToSocialPost( {
+			...FIXTURE,
+			reply_parent: {
+				uri: 'at://did:plc:b/app.bsky.feed.post/parent',
+				author: { did: 'did:plc:b', handle: 'bob.bsky.social' },
+			},
+			reply_root: {
+				uri: 'at://did:plc:c/app.bsky.feed.post/root',
+				author: { did: 'did:plc:c', handle: 'carol.bsky.social' },
+			},
+		} );
+		expect( post.reply_parent?.cid ).toBeUndefined();
+		expect( post.reply_root?.cid ).toBeUndefined();
+	} );
 } );

@@ -4,6 +4,7 @@ import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
+import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
 import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -20,9 +21,11 @@ export function PerformanceProfilerWrapper( {
 	children: React.ReactNode;
 	isLoggedIn: boolean;
 } ): JSX.Element {
+	const nav2026Props = useNav2026Props();
+
 	return (
 		<>
-			{ isLoggedIn && <UniversalNavbarHeader isLoggedIn /> }
+			{ isLoggedIn && <UniversalNavbarHeader isLoggedIn { ...nav2026Props } /> }
 			<Main fullWidthLayout>{ children }</Main>
 			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
 		</>

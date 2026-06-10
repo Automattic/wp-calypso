@@ -18,6 +18,7 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
@@ -199,6 +200,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
 			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
+			{ isOmnibarEnabled && supports.help && <OmnibarAgentsManager /> }
 			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
 			<PageViewTracker />

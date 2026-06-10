@@ -145,6 +145,7 @@
 			span {
 				margin: auto 0;
 				flex: 1;
+				min-width: 0;
 			}
 
 			.gridicon {
@@ -184,10 +185,7 @@
 
 .cancel-purchase__confirm-buttons {
 	display: flex;
-
-	.form-button {
-		margin-left: 8px;
-	}
+	gap: 16px;
 }
 
 .cancel-purchase__purchase-name {
@@ -249,7 +247,7 @@
 	display: inline;
 }
 
-.cancel-purchase__refund-eligibility-notice .cancel-purchase__button.cancel-purchase__button--link {
+.cancel-purchase__refund-eligibility-notice .cancel-purchase__refund-eligibility-link.cancel-purchase__refund-eligibility-link {
 	margin: 0;
 	background: none;
 	color: var(--color-text-inverted);
@@ -316,6 +314,7 @@
 			span {
 				margin: auto 0;
 				flex: 1;
+				min-width: 0;
 			}
 
 			.gridicon {

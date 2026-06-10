@@ -3,7 +3,8 @@
 }
 
 .critical-error-overview {
-	.critical-error-overview__card {
+	.critical-error-overview__next-steps,
+	.critical-error-overview__recovery-errors {
 		max-width: 480px;
 		margin: 0 auto;
 	}

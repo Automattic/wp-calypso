@@ -31,7 +31,7 @@ jest.mock( '@automattic/calypso-router', () => {
 } );
 
 const listUrl = '/wpcom/v2/reader/atmosphere/connections';
-const threadUrl = '/wpcom/v2/reader/atmosphere/thread';
+const threadUrl = '/wpcom/v2/reader/atmosphere/connections/7/thread';
 
 const DID = 'did:plc:abc234567defghi234567jkl';
 const RKEY = '3kabcdefghijk';

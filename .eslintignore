@@ -8,7 +8,6 @@ dist/
 /vendor/
 node_modules/
 !.eslintrc.js
-/client/server/devdocs/search-index.js
 /packages/webpack-rtl-plugin/test/dist*/
 /packages/wp-babel-makepot/test/examples
 /desktop/build/
@@ -36,8 +35,6 @@ packages/calypso-color-schemes/root-only
 /client/stats.json
 /client/chart.json
 /client/style.json
-/client/server/devdocs/components-usage-stats.json
-/client/server/devdocs/proptypes-index.json
 /client/server/bundler/assets.json
 /cached-requests.json
 /yarn-json-output.json

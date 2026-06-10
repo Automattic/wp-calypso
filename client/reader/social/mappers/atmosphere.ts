@@ -10,6 +10,7 @@ const BSKY_PROFILE_BASE = 'https://bsky.app/profile/';
 export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): SocialPost {
 	return {
 		uri: item.uri,
+		cid: item.cid,
 		permalink: item.bluesky_url,
 		text: item.text,
 		html: item.html,
@@ -24,10 +25,18 @@ export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): S
 			profile_url: BSKY_PROFILE_BASE + item.author.handle,
 		},
 		reply_parent: item.reply_parent
-			? { uri: item.reply_parent.uri, author: { handle: item.reply_parent.author.handle } }
+			? {
+					uri: item.reply_parent.uri,
+					cid: item.reply_parent.cid,
+					author: { handle: item.reply_parent.author.handle },
+			  }
 			: null,
 		reply_root: item.reply_root
-			? { uri: item.reply_root.uri, author: { handle: item.reply_root.author.handle } }
+			? {
+					uri: item.reply_root.uri,
+					cid: item.reply_root.cid,
+					author: { handle: item.reply_root.author.handle },
+			  }
 			: null,
 		reason: item.reason
 			? {
@@ -40,6 +49,7 @@ export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): S
 			  }
 			: null,
 		counts: item.counts,
+		viewer: item.viewer,
 		embed: item.embed ? mapEmbed( item.embed ) : null,
 	};
 }

@@ -1,15 +1,28 @@
 /**
  * @jest-environment jsdom
  */
+import { readerAtmosphereKeys } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useState } from 'react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { atmosphereComposerConfig } from '../composer-config';
 import { TimelinePanel } from '../timeline-panel';
-import type { AtmosphereConnection } from '@automattic/api-core';
+import type {
+	AtmosphereConnection,
+	AtmosphereFeedItem,
+	AtmosphereTimelinePage,
+} from '@automattic/api-core';
+import type { InfiniteData } from '@tanstack/react-query';
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
 
 const connection: AtmosphereConnection = {
 	id: 42,
@@ -46,13 +59,45 @@ function makePost( uri: string, text = 'hello' ) {
 	};
 }
 
+// Pre-seed the connection-details cache (keyed by id) so the panel's
+// useConnectionQuery call is a cache hit and never issues a network
+// request the test isn't nocking. Tests that care about the avatar
+// can override the seeded data per-test.
 function makeQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	client.setQueryData( readerAtmosphereKeys.connection( 42 ), {
+		did: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	client.setQueryData( readerAtmosphereKeys.connection( 7 ), {
+		did: 'did:plc:abc234567defghi234567jklab',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	client.setQueryData( readerAtmosphereKeys.connection( 99 ), {
+		did: 'did:plc:other',
+		handle: 'bob.bsky.social',
+		display_name: 'Bob',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	return client;
 }
 
 describe( 'TimelinePanel', () => {
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
 		jest
@@ -258,6 +303,104 @@ describe( 'TimelinePanel', () => {
 				quoted_uri: 'at://quoted',
 			} )
 		);
+	} );
+
+	it( 'click on like button fires POST, updates count and pressed state', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, {
+				items: [
+					{
+						...makePost( 'at://did:plc:author/app.bsky.feed.post/3kabc', 'likeable post' ),
+						cid: 'bafy-cid',
+						counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+						viewer: { like: null, repost: null },
+					},
+				],
+				cursor: null,
+			} );
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/likes', {
+				post_uri: 'at://did:plc:author/app.bsky.feed.post/3kabc',
+				post_cid: 'bafy-cid',
+			} )
+			.reply( 200, {
+				like: {
+					uri: 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke',
+					cid: 'bafy-like-cid',
+					rkey: '3krkeyrkeyrke',
+				},
+			} );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+		const button = await screen.findByRole( 'button', { name: /like, 5 likes/i } );
+		expect( button ).toHaveTextContent( '5' );
+
+		await user.click( button );
+
+		await waitFor( () => expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ) );
+		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveTextContent( '6' );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'opens the repost menu, fires POST on Repost click, and toggles directly on un-repost', async () => {
+		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3krepost';
+		const REPOST_URI = 'at://did:plc:caller/app.bsky.feed.repost/3krrkeyrkeyrk';
+
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, {
+				items: [
+					{
+						...makePost( POST_URI, 'repostable post' ),
+						cid: 'bafy-cid',
+						counts: { replies: 0, reposts: 5, likes: 0, quotes: 0 },
+						viewer: { like: null, repost: null },
+					},
+				],
+				cursor: null,
+			} );
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts', {
+				post_uri: POST_URI,
+				post_cid: 'bafy-cid',
+			} )
+			.reply( 200, {
+				repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krrkeyrkeyrk' },
+			} );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const trigger = await screen.findByRole( 'button', { name: /repost, 5 reposts/i } );
+		expect( trigger ).toHaveAttribute( 'aria-haspopup', 'menu' );
+		await user.click( trigger );
+
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Repost' } ) );
+
+		const updated = await screen.findByRole( 'button', { name: /undo repost, 6 reposts/i } );
+		expect( updated ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krrkeyrkeyrk' )
+			.reply( 204 );
+
+		await user.click( updated );
+		expect( screen.queryByRole( 'menuitem', { name: 'Repost' } ) ).toBeNull();
+
+		const reverted = await screen.findByRole( 'button', { name: /repost, 5 reposts/i } );
+		expect( reverted ).toHaveAttribute( 'aria-haspopup', 'menu' );
 	} );
 } );
 
@@ -530,5 +673,462 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 				destination: 'in_app',
 			} )
 		);
+	} );
+} );
+
+describe( 'TimelinePanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'opens the composer in quote mode when the quotes count is clicked', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( readerAtmosphereKeys.timeline( 42 ), {
+			pages: [
+				{
+					items: [
+						{
+							...makePost( 'at://parent', 'quotable post' ),
+							cid: 'pcid',
+							counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+						},
+					],
+					cursor: null,
+				},
+			],
+			pageParams: [ undefined ],
+		} );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		const repostButton = await screen.findByRole( 'button', { name: /repost, 3 reposts/i } );
+		await user.click( repostButton );
+		const quoteItem = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		await user.click( quoteItem );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
+	} );
+} );
+
+describe( 'TimelinePanel — reply composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	function makeOnePagePayload(
+		uri: string,
+		cid: string,
+		counts: { replies: number; reposts: number; likes: number; quotes: number }
+	): InfiniteData< AtmosphereTimelinePage > {
+		const item: AtmosphereFeedItem = {
+			...makePost( uri, 'parent post' ),
+			cid,
+			counts,
+		};
+		return {
+			pages: [ { items: [ item ], cursor: null } ],
+			pageParams: [ undefined ],
+		};
+	}
+
+	it( 'opens the reply composer from the replies count and posts on submit', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.timeline( 42 ),
+			makeOnePagePayload( 'at://parent', 'pcid', {
+				replies: 1,
+				reposts: 0,
+				likes: 0,
+				quotes: 0,
+			} )
+		);
+
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', {
+				text: 'great post',
+				reply: {
+					root: { uri: 'at://parent', cid: 'pcid' },
+					parent: { uri: 'at://parent', cid: 'pcid' },
+				},
+			} )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'r' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /reply/i } ) ).toBeVisible();
+		await user.type( screen.getByRole( 'textbox' ), 'great post' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+
+		const timeline = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+			readerAtmosphereKeys.timeline( 42 )
+		);
+		expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 2 );
+	} );
+} );
+
+describe( 'TimelinePanel — reply composer errors', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	function makeOnePagePayload(
+		uri: string,
+		cid: string,
+		counts: { replies: number; reposts: number; likes: number; quotes: number }
+	): InfiniteData< AtmosphereTimelinePage > {
+		const item: AtmosphereFeedItem = {
+			...makePost( uri, 'parent post' ),
+			cid,
+			counts,
+		};
+		return {
+			pages: [ { items: [ item ], cursor: null } ],
+			pageParams: [ undefined ],
+		};
+	}
+
+	const ERROR_CASES = [
+		{
+			status: 400,
+			code: 'atmosphere_bad_request',
+			kind: 'bad_request',
+			copy: /shorten/i,
+		},
+		{
+			status: 401,
+			code: 'atmosphere_auth_required',
+			kind: 'auth_required',
+			copy: /Bluesky connection/i,
+		},
+		{
+			status: 429,
+			code: 'atmosphere_rate_limited',
+			kind: 'rate_limited',
+			copy: /posting too quickly/i,
+		},
+		{
+			status: 502,
+			code: 'atmosphere_upstream_unavailable',
+			kind: 'upstream_unavailable',
+			copy: /taking longer/i,
+		},
+	] as const;
+
+	it.each( ERROR_CASES )(
+		'maps HTTP $status to kind $kind, keeps modal + draft, and fires _error_shown',
+		async ( { status, code, kind, copy } ) => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			const queryClient = makeQueryClient();
+			queryClient.setQueryData(
+				readerAtmosphereKeys.timeline( 42 ),
+				makeOnePagePayload( 'at://parent', 'pcid', {
+					replies: 1,
+					reposts: 0,
+					likes: 0,
+					quotes: 0,
+				} )
+			);
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( status, { error: code } );
+
+			const user = userEvent.setup();
+			renderWithProvider(
+				<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+					<TimelinePanel connection={ connection } />
+					<ComposerModal />
+				</ComposerProvider>,
+				{ queryClient }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hi' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await screen.findByText( copy );
+			expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+			expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_reply_error_shown',
+					expect.objectContaining( {
+						connection_id: 42,
+						parent_uri: 'at://parent',
+						error_kind: kind,
+					} )
+				)
+			);
+		}
+	);
+
+	it( 'auth_required surfaces a connection-error message with no reconnect link', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.timeline( 42 ),
+			makeOnePagePayload( 'at://parent', 'pcid', {
+				replies: 1,
+				reposts: 0,
+				likes: 0,
+				quotes: 0,
+			} )
+		);
+
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 401, { error: 'atmosphere_auth_required' } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		expect( await screen.findByText( /Bluesky connection/i ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /reconnect/i } ) ).toBeNull();
+	} );
+} );
+
+describe( 'TimelinePanel — compose pill', () => {
+	// Match either a curly or straight apostrophe — the production placeholder
+	// uses the curly form (CLAUDE.md preserves it).
+	const PLACEHOLDER_RE = /what['’]s up/i;
+
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'renders the compose pill at the top of the feed and opens the standalone modal on click', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		const pill = await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+		expect( pill ).toBeVisible();
+
+		await user.click( pill );
+
+		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+	} );
+
+	it( 'renders the pill avatar from the connection-details cache, not the list-endpoint shape', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
+
+		// Override the seeded connection-details so avatar is non-null.
+		const queryClient = makeQueryClient();
+		const detailsAvatar = 'https://cdn.example/timeline-avatar.jpg';
+		queryClient.setQueryData( readerAtmosphereKeys.connection( 42 ), {
+			did: 'did:plc:abc',
+			handle: 'alice.bsky.social',
+			display_name: 'Alice',
+			description: '',
+			avatar: detailsAvatar,
+			banner: null,
+			counts: { followers: 0, follows: 0, posts: 0 },
+		} );
+
+		const { container } = renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+
+		const avatarImg = container.querySelector< HTMLImageElement >( '.social-compose-pill__avatar' );
+		expect( avatarImg?.tagName ).toBe( 'IMG' );
+		expect( avatarImg?.getAttribute( 'src' ) ).toBe( detailsAvatar );
+	} );
+} );
+
+describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	function makeOnePagePayload(
+		uri: string,
+		cid: string,
+		counts: { replies: number; reposts: number; likes: number; quotes: number }
+	): InfiniteData< AtmosphereTimelinePage > {
+		const item: AtmosphereFeedItem = {
+			...makePost( uri, 'parent post' ),
+			cid,
+			counts,
+		};
+		return {
+			pages: [ { items: [ item ], cursor: null } ],
+			pageParams: [ undefined ],
+		};
+	}
+
+	it( 'rolls back the optimistic counts.replies bump on 502', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.timeline( 42 ),
+			makeOnePagePayload( 'at://parent', 'pcid', {
+				replies: 1,
+				reposts: 0,
+				likes: 0,
+				quotes: 0,
+			} )
+		);
+
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await screen.findByText( /taking longer/i );
+
+		await waitFor( () => {
+			const timeline = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( 42 )
+			);
+			expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 1 );
+		} );
+	} );
+
+	it( 'submits to the connection that was active when the composer opened, even if the active connection changes mid-flight', async () => {
+		// Seed the timeline cache for connection 42 so the parent post is rendered.
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.timeline( 42 ),
+			makeOnePagePayload( 'at://parent', 'pcid', {
+				replies: 1,
+				reposts: 0,
+				likes: 0,
+				quotes: 0,
+			} )
+		);
+
+		// Only mock /connections/42/posts. If the harness submits to /99 the
+		// request will not be matched and the test will fail.
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'r' } } );
+
+		const connection99: AtmosphereConnection = {
+			id: 99,
+			did: 'did:plc:other',
+			handle: 'bob.bsky.social',
+			display_name: 'Bob',
+			avatar: null,
+		};
+
+		function ConnectionSwitchHarness() {
+			const [ id, setId ] = useState( 42 );
+			const activeConnection = id === 42 ? connection : connection99;
+			return (
+				<>
+					<button onClick={ () => setId( 99 ) }>switch</button>
+					<ComposerProvider connectionId={ id } config={ atmosphereComposerConfig }>
+						<TimelinePanel connection={ activeConnection } />
+						<ComposerModal />
+					</ComposerProvider>
+				</>
+			);
+		}
+
+		const user = userEvent.setup();
+		renderWithProvider( <ConnectionSwitchHarness />, { queryClient } );
+
+		// Open the composer while connection 42 is active. The composer
+		// snapshots `connectionId: 42` into its mode at this point.
+		await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /reply/i } ) ).toBeVisible();
+
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+
+		// Switch the provider's connectionId to 99 mid-flight. The modal
+		// stays open with its snapshotted 42.
+		await user.click( screen.getByText( 'switch' ) );
+		expect( screen.getByRole( 'dialog', { name: /reply/i } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		// nock will only match if the request went to /connections/42/posts.
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 } );

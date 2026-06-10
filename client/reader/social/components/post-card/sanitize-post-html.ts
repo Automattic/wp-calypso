@@ -4,10 +4,13 @@ import type { Config } from 'dompurify';
 const CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a' ],
 	// `data-id` carries the protocol's stable author identifier (DID for
-	// atmosphere, numeric account id for Mastodon) on @-mention anchors,
-	// emitted by the backend so the client can route mentions in-app
-	// without parsing the href.
-	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'data-id', 'data-tag' ],
+	// atmosphere, numeric account id for Mastodon, canonical AP actor URL
+	// for Fediverse) on @-mention anchors, emitted by the backend so the
+	// client can route mentions in-app without parsing the href.
+	// `data-handle` carries a user-readable webfinger handle alongside
+	// `data-id` for Fediverse mentions (CM-725) so the in-app URL surfaces
+	// the readable handle instead of the long actor URL.
+	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'data-id', 'data-handle', 'data-tag' ],
 	// DOMPurify allows every data-* attribute by default; restrict to the
 	// explicit allow-list above so a future backend change can't smuggle
 	// a new data-* attribute (e.g. `data-tracking`) through to the DOM.

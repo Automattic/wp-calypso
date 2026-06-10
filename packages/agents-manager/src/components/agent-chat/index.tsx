@@ -14,15 +14,19 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { isPluginCompassHost } from '../../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
+import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -57,6 +61,11 @@ interface Props {
 	onExpand: () => void;
 	/** Called to clear the suggestions. */
 	clearSuggestions?: () => void;
+	/** Called when a suggestion is clicked. */
+	onSuggestionClick?: (
+		selectedSuggestion: Suggestion | string,
+		availableSuggestions?: Suggestion[]
+	) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -83,6 +92,10 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/** Called when a context card action button is clicked. */
+	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
+	/** Called when a context card's dismiss button is clicked. */
+	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
 }
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
@@ -95,16 +108,22 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Read a string override from `window.agentsManagerData[key]`. Reader-chat
- * hosts can customize the empty-view greeting/help copy by setting these
- * keys before AgentsManager mounts.
+ * Read a string override from `window.agentsManagerData[key]`. Embedded
+ * hosts (reader-chat on blog frontends, Plugin Compass on Calypso's plugins
+ * marketplace) can customize the empty-view greeting/help copy by setting
+ * these keys before AgentsManager mounts.
  */
 function readAgentsManagerDataString(
 	key: 'emptyViewHeading' | 'emptyViewHelp'
 ): string | undefined {
-	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
+	if ( typeof window === 'undefined' ) {
 		return undefined;
 	}
+
+	if ( ! isReaderChatHost() && ! isPluginCompassHost() ) {
+		return undefined;
+	}
+
 	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 		.agentsManagerData;
 	const value = data?.[ key ];
@@ -155,6 +174,7 @@ export default function AgentChat( {
 	onClose,
 	onExpand,
 	clearSuggestions,
+	onSuggestionClick,
 	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -169,6 +189,8 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	alternativeFooter,
+	onContextCardAction,
+	onContextCardDismiss,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
@@ -192,7 +214,8 @@ export default function AgentChat( {
 		[ mergedComponents, markdownExtensions ]
 	);
 
-	let floatingChatState: ChatState = 'collapsed';
+	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
+	let floatingChatState: ChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {
@@ -212,6 +235,7 @@ export default function AgentChat( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
+			onSuggestionClick={ onSuggestionClick }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
@@ -230,6 +254,7 @@ export default function AgentChat( {
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						onSuggestionClick={ onSuggestionClick }
 						icon={ <AI size={ 32 } /> }
 					/>
 				)
@@ -238,6 +263,9 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				{ ( onContextCardAction || onContextCardDismiss ) && (
+					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
+				) }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }

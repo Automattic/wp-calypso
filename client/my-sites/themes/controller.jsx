@@ -13,7 +13,7 @@ import LoggedOutComponent from './logged-out';
 const debug = debugFactory( 'calypso:themes' );
 
 export function getProps( context ) {
-	const { category, tier, filter, vertical, view } = context.params;
+	const { category, tier, filter, vertical, view, site_id } = context.params;
 
 	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
 
@@ -30,6 +30,7 @@ export function getProps( context ) {
 		analyticsPath,
 		search: context.query.s,
 		isCollectionView: view === 'collection',
+		isSiteRoute: !! site_id,
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,
 	};

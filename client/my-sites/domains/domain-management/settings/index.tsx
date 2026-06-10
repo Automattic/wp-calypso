@@ -696,6 +696,19 @@ const Settings = ( {
 		);
 	};
 
+	const renderPendingRegistrationNotice = () => {
+		return (
+			<Notice
+				text={ translate(
+					'Your domain is being registered - this usually takes just a few minutes. Please check back shortly.'
+				) }
+				icon="info"
+				showDismiss={ false }
+				status="is-warning"
+			/>
+		);
+	};
+
 	const renderDomainGlueRecordsSection = () => {
 		// We can only create glue records for domains registered with us through KS_RAM
 		if (
@@ -740,6 +753,14 @@ const Settings = ( {
 			return (
 				<>
 					{ renderPendingRegistrationAtRegistryNotice() }
+					{ renderDetailsSection() }
+				</>
+			);
+		}
+		if ( domain.pendingRegistration ) {
+			return (
+				<>
+					{ renderPendingRegistrationNotice() }
 					{ renderDetailsSection() }
 				</>
 			);

@@ -1,4 +1,12 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .is-reader-page {
+	@include ui-mixins.when-dark-theme {
+		.is-card-view .reader-site-item__link {
+			border-color: var( --color-neutral-20 );
+		}
+	}
+
 	ul.reader-sites-list {
 		margin: 0;
 	}

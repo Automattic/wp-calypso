@@ -562,6 +562,49 @@ describe( 'ResultsPage', () => {
 		expect( screen.getByText( 'Before Results' ) ).toBeInTheDocument();
 	} );
 
+	describe( 'compact banner', () => {
+		it( 'toggles the expanded subtitle when clicked', async () => {
+			const user = userEvent.setup();
+
+			render(
+				<TestDomainSearch slots={ { BeforeResults: () => <div>Before Results</div> } }>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const banner = screen.getByRole( 'button', {
+				name: /Claim your free domain name with a paid plan/,
+			} );
+
+			expect( banner ).toHaveAttribute( 'aria-expanded', 'false' );
+			expect( screen.queryByText( /Choose a domain name/ ) ).not.toBeInTheDocument();
+
+			await user.click( banner );
+
+			expect( banner ).toHaveAttribute( 'aria-expanded', 'true' );
+			expect( screen.getByText( /Choose a domain name/ ) ).toBeInTheDocument();
+
+			await user.click( banner );
+
+			expect( banner ).toHaveAttribute( 'aria-expanded', 'false' );
+			expect( screen.queryByText( /Choose a domain name/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'is not rendered when no BeforeResults slot is passed', () => {
+			render(
+				<TestDomainSearch>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect(
+				screen.queryByRole( 'button', {
+					name: /Claim your free domain name with a paid plan/,
+				} )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 'renders the placeholders while loading', () => {
 		render(
 			<TestDomainSearch>

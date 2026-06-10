@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .comments__comment {
 	list-style-type: none;
 	margin-top: 20px;
@@ -86,11 +88,19 @@
 }
 
 a.comments__comment-username {
-	color: var(--color-primary);
+	color: var(--color-link);
 	height: 21px;
 
 	&:hover {
-		color: var(--color-primary-light);
+		color: var(--color-link-light);
+	}
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
 	}
 }
 
@@ -156,7 +166,7 @@ a.comments__comment-username {
 	margin-left: -2px;
 
 	&:hover {
-		color: var(--color-primary-light);
+		color: var(--color-link-light);
 	}
 }
 

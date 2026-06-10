@@ -1,4 +1,4 @@
-import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
+import { purchaseCancelFeaturesQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useQuery } from '@tanstack/react-query';
@@ -34,6 +34,7 @@ import { Downgrade } from './downgrade';
 import ManagePurchase from './manage-purchase';
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesListDataView from './purchases-list-in-dataviews';
+import SiteActionInterstitial from './site-level-actions';
 import titles from './titles';
 import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
@@ -103,12 +104,18 @@ export function cancelPurchase( context, next ) {
 
 	const purchaseId = parseInt( context.params.purchaseId, 10 );
 
+	// Start fetching cancel features immediately — the useQuery inside
+	// CancelPurchaseWrapper will reuse this in-flight promise.
+	queryClient.prefetchQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+
 	const CancelPurchaseWrapper = localize( () => {
 		// React Query owns the cancellation-features fetch: cancel-on-unmount,
 		// cross-purchase cache invalidation, and error state come for free. The
 		// dashboard side uses the same query at
 		// client/dashboard/me/billing-purchases/cancel-purchase/index.tsx.
-		const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+		const { data: purchaseCancelFeatures, isLoading: isPurchaseCancelFeaturesLoading } = useQuery(
+			purchaseCancelFeaturesQuery( purchaseId )
+		);
 		return (
 			<PurchasesWrapper title={ pageTitle }>
 				<Main wideLayout className="purchases__cancel">
@@ -117,6 +124,7 @@ export function cancelPurchase( context, next ) {
 						siteSlug={ context.params.site }
 						intent={ intent }
 						purchaseCancelFeatures={ purchaseCancelFeatures }
+						isPurchaseCancelFeaturesLoading={ isPurchaseCancelFeaturesLoading }
 					/>
 				</Main>
 			</PurchasesWrapper>
@@ -124,6 +132,36 @@ export function cancelPurchase( context, next ) {
 	} );
 
 	context.primary = <CancelPurchaseWrapper />;
+	next();
+}
+
+export function siteActionInterstitial( context, next ) {
+	const actionType = context.query?.action ?? 'renew';
+
+	let pageTitle;
+	if ( actionType === 'cancel' ) {
+		pageTitle = i18n.translate( 'Cancel subscriptions' );
+	} else if ( actionType === 'remove' ) {
+		pageTitle = i18n.translate( 'Remove upgrades' );
+	} else {
+		pageTitle = i18n.translate( 'Renew subscriptions' );
+	}
+
+	const SiteActionInterstitialWrapper = () => {
+		return (
+			<PurchasesWrapper title={ pageTitle }>
+				<Main wideLayout className="purchases__site-actions">
+					<SiteActionInterstitial
+						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+						siteSlug={ context.params.site }
+						actionType={ actionType }
+					/>
+				</Main>
+			</PurchasesWrapper>
+		);
+	};
+
+	context.primary = <SiteActionInterstitialWrapper />;
 	next();
 }
 
@@ -203,10 +241,16 @@ export function vatDetails( context, next ) {
 			translate( 'tax (VAT/GST/CT)' );
 		const fallbackTaxName = genericTaxName;
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const title = translate( 'Add %s details', {
+		const editVatText = translate( 'Edit %s details', {
 			textOnly: true,
 			args: [ taxName ?? fallbackTaxName ],
 		} );
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const addVatText = translate( 'Add %s details', {
+			textOnly: true,
+			args: [ taxName ?? fallbackTaxName ],
+		} );
+		const title = vatDetailsFromServer.id ? editVatText : addVatText;
 
 		return (
 			<PurchasesWrapper title={ title }>

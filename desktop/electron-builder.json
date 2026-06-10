@@ -41,6 +41,7 @@
 		"artifactName": "wordpress.com-macOS-dmg-${version}-${arch}.${ext}"
 	},
 	"win": {
+		"publisherName": [ "Automattic, Inc.", "Automattic Inc." ],
 		"icon": "./resource/icon.ico",
 		"target": [
 			{

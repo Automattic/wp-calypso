@@ -271,50 +271,35 @@ const Episodes = () => {
 		[ totalItems, totalPages ]
 	);
 
-	const sectionHeader = (
-		<header className="podcast__section-header">
-			<h2 className="podcast__section-heading">{ translate( 'Episodes' ) }</h2>
-			<p className="podcast__section-description">
-				{ translate( 'Manage the posts that make up your podcast feed.' ) }
-			</p>
-		</header>
-	);
-
 	if ( ! resolvedCategoryId ) {
 		return (
-			<>
-				{ sectionHeader }
-				<DataViewsEmptyStateLayout
-					isBorderless
-					title={ translate( 'No podcast episodes yet.' ) as string }
-					description={
-						translate(
-							'Set a podcast category in your podcasting settings to start showing episodes here.'
-						) as string
-					}
-				/>
-			</>
+			<DataViewsEmptyStateLayout
+				isBorderless
+				title={ translate( 'No podcast episodes yet.' ) as string }
+				description={
+					translate(
+						'Set a podcast category in your podcasting settings to start showing episodes here.'
+					) as string
+				}
+			/>
 		);
 	}
 
 	return (
-		<>
-			{ sectionHeader }
-			<DataViewsCard>
-				<DataViews< Episode >
-					data={ episodes }
-					fields={ fields }
-					view={ view }
-					onChangeView={ setView }
-					actions={ actions }
-					paginationInfo={ paginationInfo }
-					getItemId={ ( item ) => String( item.id ) }
-					isLoading={ isLoading }
-					defaultLayouts={ { table: {} } }
-					search
-				/>
-			</DataViewsCard>
-		</>
+		<DataViewsCard>
+			<DataViews< Episode >
+				data={ episodes }
+				fields={ fields }
+				view={ view }
+				onChangeView={ setView }
+				actions={ actions }
+				paginationInfo={ paginationInfo }
+				getItemId={ ( item ) => String( item.id ) }
+				isLoading={ isLoading }
+				defaultLayouts={ { table: {} } }
+				search
+			/>
+		</DataViewsCard>
 	);
 };
 

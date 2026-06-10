@@ -19,6 +19,10 @@ type FollowupWindow = Window & {
 	__jetpackReaderFollowupChips?: Array< { id: string; label: string; prompt?: string } >;
 };
 
+function getSuggestions( result: { current: ReturnType< typeof useReaderFollowupSuggestions > } ) {
+	return result.current?.suggestions ?? [];
+}
+
 describe( 'useReaderFollowupSuggestions', () => {
 	afterEach( () => {
 		// Clean up global state between tests.
@@ -30,7 +34,7 @@ describe( 'useReaderFollowupSuggestions', () => {
 
 		const { result } = renderHook( () => useReaderFollowupSuggestions() );
 
-		expect( result.current.suggestions ).toEqual( [] );
+		expect( getSuggestions( result ) ).toEqual( [] );
 	} );
 
 	it( 'returns existing chips on mount when the global is already populated', () => {
@@ -42,7 +46,7 @@ describe( 'useReaderFollowupSuggestions', () => {
 
 		const { result } = renderHook( () => useReaderFollowupSuggestions() );
 
-		expect( result.current.suggestions ).toEqual( chips );
+		expect( getSuggestions( result ) ).toEqual( chips );
 	} );
 
 	it( 'updates state when the `reader-chat-followups-updated` event fires', () => {
@@ -50,7 +54,7 @@ describe( 'useReaderFollowupSuggestions', () => {
 
 		const { result } = renderHook( () => useReaderFollowupSuggestions() );
 
-		expect( result.current.suggestions ).toEqual( [] );
+		expect( getSuggestions( result ) ).toEqual( [] );
 
 		const newChips = [ { id: 'followup-1', label: 'Go deeper', prompt: 'Expand on this.' } ];
 
@@ -59,7 +63,7 @@ describe( 'useReaderFollowupSuggestions', () => {
 			window.dispatchEvent( new Event( 'reader-chat-followups-updated' ) );
 		} );
 
-		expect( result.current.suggestions ).toEqual( newChips );
+		expect( getSuggestions( result ) ).toEqual( newChips );
 	} );
 
 	it( 'removes the event listener on unmount', () => {
@@ -88,13 +92,13 @@ describe( 'useReaderFollowupSuggestions', () => {
 			window.dispatchEvent( new Event( 'reader-chat-followups-updated' ) );
 		} );
 
-		expect( result.current.suggestions ).toEqual( first );
+		expect( getSuggestions( result ) ).toEqual( first );
 
 		act( () => {
 			( window as FollowupWindow ).__jetpackReaderFollowupChips = second;
 			window.dispatchEvent( new Event( 'reader-chat-followups-updated' ) );
 		} );
 
-		expect( result.current.suggestions ).toEqual( second );
+		expect( getSuggestions( result ) ).toEqual( second );
 	} );
 } );

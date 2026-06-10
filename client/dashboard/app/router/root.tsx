@@ -43,7 +43,11 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
-		if ( optIn?.value === 'opt-in' || optIn?.value === 'forced-opt-in' ) {
+		const isDashboardEnrolled =
+			optIn?.value === 'opt-in' ||
+			optIn?.value === 'forced-opt-in' ||
+			config.isEnabled( 'dashboard/forced-opt-in' );
+		if ( isDashboardEnrolled ) {
 			return;
 		}
 

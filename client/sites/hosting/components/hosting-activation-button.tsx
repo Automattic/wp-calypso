@@ -8,6 +8,7 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ComponentProps } from 'react';
 
@@ -28,6 +29,7 @@ export default function HostingActivationButton( {
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 
 	const siteId = useSelector( getSelectedSiteId );
+	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
 
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
 		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
@@ -45,10 +47,15 @@ export default function HostingActivationButton( {
 			redirect_to: addQueryArgs( redirectUrl, {
 				hosting_features: 'activated',
 			} ),
-			feature: FEATURE_SFTP,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
 		} );
+		// Only ask the post-transfer step to wait for SFTP if the plan actually grants it.
+		// Personal/Premium plans include `atomic` (so the transfer can run) but not SFTP, so
+		// waiting on it would loop forever — see DOTDEV-412.
+		if ( hasSftpFeature ) {
+			params.set( 'feature', FEATURE_SFTP );
+		}
 		page( `/setup/transferring-hosted-site?${ params }` );
 	};
 

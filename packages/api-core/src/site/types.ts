@@ -1,3 +1,13 @@
+export interface JetpackRecoverySessionError {
+	kind: string;
+	slug: string;
+	version?: string;
+	errno: number;
+	message: string;
+	file: string;
+	line: number;
+}
+
 interface SitePlan {
 	product_id: number;
 	product_slug: string;
@@ -31,6 +41,7 @@ export interface SiteOptions {
 		recovery_mode_email_last_sent?: number;
 		recovery_session_entered_at?: number;
 		recovery_session_exited_at?: number;
+		recovery_session_errors?: JetpackRecoverySessionError[];
 	} | null;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
@@ -87,6 +98,7 @@ export interface Site {
 	was_hosting_trial: boolean;
 	was_upgraded_from_trial: boolean;
 	is_garden: boolean;
+	is_multisite?: boolean;
 	garden_name: string | null;
 	garden_partner: string | null;
 	garden_is_provisioned: boolean | null;

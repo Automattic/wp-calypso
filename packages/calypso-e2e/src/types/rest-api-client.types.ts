@@ -20,6 +20,9 @@ export interface SiteDetails {
 export interface NewSiteParams {
 	name: string;
 	title: string;
+	public?: number;
+	find_available_url?: boolean;
+	options?: Record< string, unknown >;
 }
 
 export interface NewPostParams {

@@ -51,6 +51,11 @@ export const ReviewStatusColumn = ( {
 					statusText: translate( 'Ineligible' ),
 					statusType: 'info',
 				};
+			case 'ineligible':
+				return {
+					statusText: translate( 'Ineligible' ),
+					statusType: 'info',
+				};
 			case 'reverification':
 				return {
 					statusText: translate( 'Pending re-verification' ),
@@ -82,7 +87,7 @@ export const ReviewStatusColumn = ( {
 		/>
 	);
 
-	if ( reviewStatus === 'rejected' && rejectionReason ) {
+	if ( ( reviewStatus === 'rejected' || reviewStatus === 'ineligible' ) && rejectionReason ) {
 		return (
 			<span className="commission-columns__rejected-status">
 				{ badge }

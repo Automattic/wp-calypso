@@ -16,9 +16,7 @@ export default class ReaderPostOptionsMenuExample extends Component {
 
 		return (
 			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/reader-post-options-menu">Reader Post Options Menu</a>
-				</h2>
+				<h2>Reader Post Options Menu</h2>
 				<div style={ wrapperStyles }>
 					<ReaderPostOptionsMenu position="bottom left" post={ post } />
 				</div>

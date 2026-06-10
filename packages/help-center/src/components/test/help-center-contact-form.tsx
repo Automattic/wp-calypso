@@ -126,7 +126,7 @@ function renderContactForm( currentUser: unknown ) {
 }
 
 describe( 'HelpCenterContactForm - logged-out user (null currentUser)', () => {
-	it( 'does not throw when currentUser is null (logged-out user on devdocs)', () => {
+	it( 'does not throw when currentUser is null (logged-out user)', () => {
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		expect( () => {

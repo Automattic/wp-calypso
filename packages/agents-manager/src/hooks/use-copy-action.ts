@@ -1,5 +1,9 @@
 import { useEffect } from '@wordpress/element';
 import CopyActionButton from '../components/copy-action-button';
+import {
+	getDisplayMessageFromToolData,
+	isDisplayableToolMessageTool,
+} from '../utils/tool-message-utils';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -29,11 +33,11 @@ function getCopyableText( message: UIMessage ): string {
 					typeof parsed.data === 'string'
 				) {
 					copyableTexts.push( parsed.data.trim() );
-				} else if (
-					parsed.tool_id === 'big_sky__apply_block_edits' &&
-					typeof parsed.data?.summary === 'string'
-				) {
-					copyableTexts.push( parsed.data.summary.trim() );
+				} else if ( isDisplayableToolMessageTool( parsed.tool_id ) ) {
+					const toolMessageText = getDisplayMessageFromToolData( parsed.data );
+					if ( toolMessageText ) {
+						copyableTexts.push( toolMessageText );
+					}
 				}
 				// Other tools: skip (not copyable).
 				continue;

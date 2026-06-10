@@ -45,6 +45,7 @@ boot( {
 			preview: ! isEnabled( 'dashboard/omnibar' ),
 		},
 		colorScheme: isEnabled( 'dark-mode' ),
+		darkMode: isEnabled( 'dark-mode' ),
 	},
 	optIn: true,
 	components: {

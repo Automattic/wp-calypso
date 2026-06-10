@@ -51,7 +51,7 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Commissions Paid' ) }>
+						<ListItemCardContent title={ translate( 'Commissions paid' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
 									<TextPlaceholder />
@@ -62,7 +62,7 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Timeframe Commissions' ) }>
+						<ListItemCardContent title={ translate( 'Timeframe commissions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
 									<TextPlaceholder />

@@ -13,7 +13,21 @@ yarn test-client client/reader/<path>        # Run Reader tests
 yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
 ```
 
+## Linear issues
+
+File Reader issues under the **Reader** Linear team (key `READ`, e.g. `READ-532`) — not the generic `LIN` team. When creating an issue with the Linear MCP tools, pass `team: "Reader"`.
+
+- The Reader team's issue identifiers use the `READ-` prefix. Reference them in PRs as `READ-123` (per the repo-wide rule to use Linear IDs, not full URLs), and link the work with `Closes READ-123` so the issue auto-closes on merge.
+- For a bug, set `labels: ["Bug"]` and an appropriate `priority` (1=Urgent … 4=Low).
+
 ## Architecture decisions
+
+### Dark mode
+
+- Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Prefer adding or reusing values there when the style belongs to shared components outside Reader or affects multiple areas.
+- When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
+- Keep Reader-only dark-mode exceptions close to the Reader stylesheet that owns the surface, and prefer overriding existing CSS custom properties over hardcoded colors.
+- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme`; see `packages/ui/AGENTS.md`.
 
 ### Data fetching migration
 
@@ -21,6 +35,35 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
+
+**Always reach for the idiomatic React Query solution first.** Before hand-rolling effects, manual refetch chains, or imperative cache writes, check what TanStack Query already provides and prefer it:
+
+- Pagination → `useInfiniteQuery` with a correct `getNextPageParam`. Derive the stop condition from the API's real contract (page caps, server-side filtering, `total` counts), not from assumed page sizes. A bug where the org sidebar showed only the first page came from stopping pagination on a short page; see [`packages/api-queries/src/read-follows.ts`](../../packages/api-queries/src/read-follows.ts).
+- Refetch/sync → `staleTime`/`gcTime`, `invalidateQueries`, or `refetch` — not `useEffect` loops driving `fetchNextPage`.
+- Cross-feature refreshes → invalidate the canonical query key on the active `QueryClient` (see the mutation-factory rule below).
+- Loading/error/empty UI → the query's own `isPending`/`isError`/`data` state, not bespoke flags.
+- When unsure, consult the official TanStack Query docs before introducing a custom workaround. Document any deliberate deviation from the idiomatic pattern with a comment explaining why.
+
+Site subscriptions are fully on React Query:
+
+- Endpoint contracts and adapters live in `packages/api-core/src/read-follows/`.
+- Query keys, selectors, mutation factories, and cache patch helpers live in `packages/api-queries/src/read-follows.ts`.
+- Calypso consumers should use `calypso/reader/data/site-subscriptions` for hooks such as `useSiteSubscriptions()`, follow/unfollow mutations, delivery-setting mutations, site-subscription selectors, and organization feed info.
+- Do not reintroduce `state.reader.follows`, `calypso/state/reader/follows`, `SyncReaderFollows`, or `/read/following/mine*` data-layer handlers. For cross-feature refreshes, invalidate `getSiteSubscriptionsQueryKey()` on the active `QueryClient`.
+
+For Reader post data specifically, see [`client/reader/data/post/README.md`](./data/post/README.md).
+The short version: use `usePost()` for request-capable post reads, and use
+`useCachedPost()` / `useCachedPosts()` only when a cache-only read is
+intentional, such as stream list contexts where one full-post request per item
+would create a request waterfall.
+Queries that produce Reader posts should go through `usePostQuery()` /
+`usePostsQuery()` so normalization and canonical cache syncing stay centralized.
+
+### Adding a new data integration
+
+New Reader data fetching follows a three-layer pattern — `api-core` fetchers/mutators → `api-queries` `queryOptions()`/`mutationOptions()` → a consumer hook under `client/reader/data/<domain>/`. Use a query directly (`useQuery( readXxxQuery() )`) for simple reads; add a consumer hook only for shared or non-trivial logic, especially mutations. **Never** add Redux data-layer handlers, reducers, or `QueryReader*` components.
+
+See [`client/reader/data/README.md`](./data/README.md) for the full recipe — naming conventions, `queryKey`/`staleTime` rules, the consumer-`QueryClient` requirement, testing, and reference implementations (`read-sites`, `read-lists`, `read-follows`).
 
 ### Mutation factories must accept the consumer's `QueryClient`
 
@@ -35,12 +78,12 @@ Pattern for any mutation factory whose `onSuccess` (or `onError`/`onMutate`) nee
 import { mutationOptions, type QueryClient } from '@tanstack/react-query';
 
 export const fooMutation = ( queryClient: QueryClient ) =>
-    mutationOptions( {
-        mutationFn: foo,
-        onSuccess: () => {
-            queryClient.invalidateQueries( { queryKey: barQuery().queryKey } );
-        },
-    } );
+	mutationOptions( {
+		mutationFn: foo,
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: barQuery().queryKey } );
+		},
+	} );
 ```
 
 Consumers in the Reader (and any other Calypso classic surface) pass `useQueryClient()` in:
@@ -54,13 +97,56 @@ Query factories (`queryOptions(...)`) do **not** need this — they don't intera
 
 Example: every list mutation in `packages/api-queries/src/read-lists.ts` follows this pattern.
 
+### Optimistic-mutation hardening checklist
+
+Lessons from the Reader social mutations (CM-625 likes / CM-660 boost
+/ CM-658 favorite). When you add a new optimistic mutation that
+patches React Query caches, walk this list:
+
+- **Scope the patcher to the right key namespace.** When wire IDs are
+  protocol-instance-local (Mastodon status_ids are local to a connection's
+  home instance), patching purely on `item.id === foo` across
+  `queryClient.getQueriesData({ queryKey: keysRoot.all })` will
+  cross-pollute. Filter the walk by `connectionId` (or whichever slot
+  scopes the cache key for your protocol). The same applies to
+  `cancelQueries` — pass a `predicate` rather than the broad root key.
+- **Wrap `cancelQueries` in `try`/`catch` inside `onMutate`.** TanStack
+  docs flag it as best-effort; if it rejects (rare — route-change
+  teardown races), `onMutate` resolves to `undefined` and the actual
+  mutationFn never runs. The optimistic patch + mutationFn must still
+  fire if the cancel fails.
+- **Add a `default:` arm to error-message switches.** TypeScript
+  exhaustiveness keeps `MastodonError['kind']` / `AtmosphereError['kind']`
+  switches complete today, but a future widening returns `undefined` →
+  `errorNotice( undefined )` shows an empty toast. Repeat the generic
+  copy in a `default:` arm.
+- **`encodeURIComponent` path-interpolated wire IDs.** Even when the
+  validator says today's IDs are URL-safe (numeric strings, etc.), the
+  validator can widen — and a malformed `post.uri` flowing through a
+  mapper bug shouldn't smuggle path segments. Cheap insurance.
+- **`logToLogstash` lives in the client adapter, not in
+  `packages/api-queries`.** The package can't import
+  `calypso/lib/logstash` (lint-restricted). The pipeline-level error
+  log belongs in the per-protocol adapter's `trackError` (or whatever
+  surfaces the user-visible error notice).
+- **Mock `calypso/lib/logstash` in tests that exercise error paths.**
+  Otherwise it fires real HTTPS requests to wpcom and nock will
+  complain about an unmocked request:
+  ```ts
+  jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+  ```
+- **Connection-scoped state, not global.** When connection identity
+  matters for action-correctness (writing via a user's connected
+  account), pass it explicitly down the panel → provider → button
+  chain. Don't reach into Redux for "the current connection".
+
 ### Stream keys
 
 Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 
-Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId, postId}` (external feed posts). Special variants include `{isGap, from, to}` for temporal gaps in the stream, `{isRecommendationBlock, index}` for recommendation blocks, and `{isPromptBlock, index}` for blogging prompts.
+Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId, postId}` (external feed posts). Special variants include `{isRecommendationBlock, index}` for recommendation blocks and `{isPromptBlock, index}` for blogging prompts.
 
 ### Post cards
 
@@ -68,43 +154,99 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 
 ### Page entrypoints
 
-| Route                                      | Entrypoint                                                                |
-| ------------------------------------------ | ------------------------------------------------------------------------- |
-| `/reader`                                  | `client/reader/following/main.tsx`                                        |
-| `/reader/feeds/:feed_id`                   | `client/reader/feed-stream/`                                              |
-| `/reader/blogs/:blog_id`                   | `client/reader/site-stream/`                                              |
-| `/reader/feeds/:feed/posts/:post`          | `client/reader/full-post/`                                                |
-| `/reader/blogs/:blog/posts/:post`          | `client/reader/full-post/`                                                |
-| `/reader/a8c`                              | `client/reader/a8c/main.jsx`                                              |
-| `/reader/p2`                               | `client/reader/p2/main.jsx`                                               |
-| `/reader/search`                           | `client/reader/search/`                                                   |
-| `/reader/notifications`                    | `client/reader/notifications/`                                            |
-| `/reader/new`                              | `client/reader/new-subscription/`                                         |
-| `/reader/subscriptions`                    | `client/reader/site-subscriptions-manager/`                               |
-| `/reader/subscriptions/comments`           | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
-| `/reader/subscriptions/pending`            | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
-| `/reader/subscriptions/:id`                | `client/reader/site-subscription/`                                        |
-| `/reader/site/subscription/:blog_id`       | `client/reader/site-subscription/`                                        |
-| `/reader/conversations`                    | `client/reader/conversations/`                                            |
-| `/reader/list/*`                           | `client/reader/list/`                                                     |
-| `/discover/*`                              | `client/reader/discover/`                                                 |
-| `/tag/:tag`                                | `client/reader/tag-stream/`                                               |
-| `/tags`                                    | `client/reader/tags/`                                                     |
-| `/activities/likes`                        | `client/reader/liked-stream/`                                             |
-| `/reader/users/*`                          | `client/reader/user-profile/`                                             |
-| `/reader/atmosphere`                       | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
-| `/reader/atmosphere/connect`               | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
-| `/reader/atmosphere/:id`                   | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
-| `/reader/atmosphere/:id/:tab`              | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
-| `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
-| `/reader/atmosphere/:id/profile/:actor`    | `client/reader/atmosphere/author-profile-view.tsx`                        |
-| `/reader/mastodon`                         | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
-| `/reader/mastodon/connect`                 | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
-| `/reader/mastodon/oauth-callback`          | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
-| `/reader/mastodon/:id`                     | `client/reader/mastodon/controller.tsx` (redirect handler)                |
-| `/reader/mastodon/:id/:tab`                | `client/reader/mastodon/mastodon-account-view.tsx`                        |
-| `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
-| `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
+| Route                                             | Entrypoint                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------- |
+| `/reader`                                         | `client/reader/following/main.tsx`                                        |
+| `/reader/feeds/:feed_id`                          | `client/reader/feed-stream/`                                              |
+| `/reader/blogs/:blog_id`                          | `client/reader/site-stream/`                                              |
+| `/reader/feeds/:feed/posts/:post`                 | `client/reader/full-post/`                                                |
+| `/reader/blogs/:blog/posts/:post`                 | `client/reader/full-post/`                                                |
+| `/reader/a8c`                                     | `client/reader/a8c/main.jsx`                                              |
+| `/reader/p2`                                      | `client/reader/p2/main.jsx`                                               |
+| `/reader/search`                                  | `client/reader/search/`                                                   |
+| `/reader/notifications`                           | `client/reader/notifications/`                                            |
+| `/reader/new`                                     | `client/reader/new-subscription/`                                         |
+| `/reader/subscriptions`                           | `client/reader/site-subscriptions-manager/`                               |
+| `/reader/subscriptions/comments`                  | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
+| `/reader/subscriptions/pending`                   | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
+| `/reader/subscriptions/:id`                       | `client/reader/site-subscription/`                                        |
+| `/reader/site/subscription/:blog_id`              | `client/reader/site-subscription/`                                        |
+| `/reader/conversations`                           | `client/reader/conversations/`                                            |
+| `/reader/list/*`                                  | `client/reader/list/`                                                     |
+| `/discover/*`                                     | `client/reader/discover/`                                                 |
+| `/tag/:tag`                                       | `client/reader/tag-stream/`                                               |
+| `/tags`                                           | `client/reader/tags/`                                                     |
+| `/activities/likes`                               | `client/reader/liked-stream/`                                             |
+| `/reader/users/*`                                 | `client/reader/user-profile/`                                             |
+| `/reader/connections`                             | `client/reader/connections/social-overview-view.tsx`                      |
+| `/reader/connections/new`                         | `client/reader/connections/connections-new-view.tsx` (unified chooser)    |
+| `/reader/atmosphere`                              | redirects to `/reader/connections`                                        |
+| `/reader/atmosphere/connect`                      | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
+| `/reader/atmosphere/:id`                          | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
+| `/reader/atmosphere/:id/:tab`                     | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
+| `/reader/atmosphere/:id/thread/:did/:rkey`        | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
+| `/reader/atmosphere/:id/profile/:actor`           | `client/reader/atmosphere/author-profile-view.tsx`                        |
+| `/reader/atmosphere/:id/profile/:actor/followers` | `client/reader/atmosphere/followers-view.tsx`                             |
+| `/reader/atmosphere/:id/profile/:actor/following` | `client/reader/atmosphere/following-view.tsx`                             |
+| `/reader/mastodon`                                | redirects to `/reader/connections`                                        |
+| `/reader/mastodon/connect`                        | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
+| `/reader/mastodon/oauth-callback`                 | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
+| `/reader/mastodon/:id`                            | `client/reader/mastodon/controller.tsx` (redirect handler)                |
+| `/reader/mastodon/:id/:tab`                       | `client/reader/mastodon/mastodon-account-view.tsx`                        |
+| `/reader/mastodon/:id/thread/:status_id`          | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
+| `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                          |
+| `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                               |
+| `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                               |
+| `/reader/fediverse`                               | redirects to `/reader/connections`                                        |
+| `/reader/fediverse/:id`                           | `client/reader/fediverse/controller.tsx` (redirect handler)               |
+| `/reader/fediverse/:id/:tab`                      | `client/reader/fediverse/fediverse-account-view.tsx`                      |
+| `/reader/fediverse/:id/profile/:actor`            | `client/reader/fediverse/author-profile-view.tsx`                         |
+| `/reader/fediverse/:id/profile/:actor/followers`  | `client/reader/fediverse/followers-view.tsx`                              |
+| `/reader/fediverse/:id/profile/:actor/following`  | `client/reader/fediverse/following-view.tsx`                              |
+
+The likes/favorites count on `<SocialPostCard>` becomes an interactive
+`<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
+when the host shell wraps the tree with a `<LikeProvider>` carrying a
+per-protocol adapter hook. ATmosphere panels (timeline / thread / tag-feed)
+wire `makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
+/ thread / tag-feed) wire `makeUseMastodonLikeAction(connection.id)`.
+Surfaces without a provider (quoted-post embeds, the shared
+`SocialAuthorProfilePanel` until it forwards a provider, non-social
+cards) fall back to the static count.
+
+The reposts count likewise becomes an interactive `<RepostButton>` when
+the host shell wraps the tree with `<RepostProvider>` carrying a
+per-protocol adapter hook. ATmosphere panels (timeline / thread / tag-feed)
+wire `makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
+/ thread / tag-feed) wire `makeUseMastodonRepostAction(connection.id)` and
+render the UK-spelled "Boost" label. Surfaces without a provider
+(quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
+forwards a provider, non-social cards) fall back to the static count.
+
+The reply / quote / standalone composer follows the same pattern with
+`<ComposerProvider connectionId={…} config={…}>` from
+`calypso/reader/social/composer`, plus per-protocol
+`composer-config.tsx` files that supply a
+`ComposerConfig<TError, TParams, TResult>`. Each protocol mounts the
+provider once per view (account, thread, author-profile) alongside
+`<ComposerModal />` and `<ComposeFab />`; panels that should render the
+inline `<TimelineComposePill />` opt in via `useOptionalComposer()`. The
+config carries a `useLimit(connectionId)` hook (ATmosphere returns its
+static 300; Mastodon reads `max_characters` from the home instance via
+`useMastodonInstanceConfigQuery` and falls back to 500), supported mode
+kinds (both protocols support `'reply'`, `'quote'`, and `'standalone'`),
+wire-shape `buildParams`, error-message map (with a
+mandatory `default:` arm using `err satisfies never;` — same lesson as
+the like / repost adapters), Tracks event names, success-notice copy,
+optional `logBadRequest` (lives in the per-protocol adapter so
+`packages/api-queries` doesn't need to import
+`calypso/lib/logstash`), and an optional `useMedia` slot for media
+attachments. The reply-button gate at `<PostCardCounts>` is
+`analytics.onReplyClick`-only — the per-panel `onReplyClick` handler is
+responsible for guarding on missing `post.cid` (or any protocol-specific
+preconditions) before calling `openComposer`. See
+`client/reader/social/AGENTS.md` § "Composer (slice 7)" for the full
+contract.
 
 ### SSR file variants
 
@@ -120,11 +262,11 @@ Reuse the URL builders from `client/reader/route/index.js` instead of constructi
 
 ### Post display types
 
-Post display types in `client/state/reader/posts/display-types.js` are **bitwise flags** (not a mutually exclusive enum). They can be combined with XOR (`^=`): `PHOTO_ONLY` (1), `GALLERY` (32), `FEATURED_VIDEO` (512), `X_POST` (1024), etc.
+Post display types in `client/reader/data/post/display-types.js` are **bitwise flags** (not a mutually exclusive enum). They can be combined with XOR (`^=`): `PHOTO_ONLY` (1), `GALLERY` (32), `FEATURED_VIDEO` (512), `X_POST` (1024), etc.
 
 ### Post normalization pipeline
 
-Post normalization (`client/state/reader/posts/normalization-rules.js`) runs in two phases: **fast rules** (synchronous — decoding, HTML stripping, content sanitization) and **slow rules** (asynchronous — waits for images to load, classifies display type, detects Reddit posts). New normalization rules must be added to the correct phase.
+Post normalization (`client/reader/data/post/normalization/index.js`) runs in two phases: **fast rules** (synchronous — decoding, HTML stripping, content sanitization) and **slow rules** (asynchronous — waits for images to load, classifies display type, detects Reddit posts). New normalization rules must be added to the correct phase.
 
 ### Shared code boundaries
 

@@ -9,15 +9,20 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 
 const RENEWAL_PRICING_EXPERIMENT_V2_EN_USD = 'wpcom_renewal_pricing_increase_v2_usd_202604_v1';
+const RENEWAL_PRICING_EXPERIMENT_V2_NON_USD = 'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1';
 
-function useIsEligibleForV1EnUSDExperiment( flowName?: string | null ): [ boolean, string | null ] {
+function useCurrencyFromPlans(): string | undefined {
+	const plans = Plans.usePlans( { coupon: undefined } );
+	const firstPlan = plans.data && Object.values( plans.data )[ 0 ];
+	return firstPlan?.pricing?.currencyCode;
+}
+
+function useIsEligibleForV1EnUSDExperiment(
+	flowName: string | null | undefined,
+	locale: string,
+	currencyCode: string | undefined
+): [ boolean, string | null ] {
 	const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-31T11:00:00Z' );
-
-	function useCurrencyFromPlans(): string | undefined {
-		const plans = Plans.usePlans( { coupon: undefined } );
-		const firstPlan = plans.data && Object.values( plans.data )[ 0 ];
-		return firstPlan?.pricing?.currencyCode;
-	}
 
 	function isNewUserOrLoggedOut( registrationDate: string | null | undefined ): boolean {
 		if ( ! registrationDate ) {
@@ -27,8 +32,6 @@ function useIsEligibleForV1EnUSDExperiment( flowName?: string | null ): [ boolea
 		return new Date( registrationDate ) >= REGISTRATION_DATE_CUTOFF;
 	}
 
-	const locale = useLocale();
-	const currencyCode = useCurrencyFromPlans();
 	const userRegistrationDate = useSelector( getCurrentUserDate );
 
 	const flowFromStorage = getSignupCompleteFlowName();
@@ -75,15 +78,34 @@ function isEligibleForExperiment( flowName?: string | null ): boolean {
 export function useRenewalPricingExperiment(
 	flowName?: string | null
 ): [ boolean, string | null ] {
-	const [ isLoadingV1, v1Variation ] = useIsEligibleForV1EnUSDExperiment( flowName );
+	const locale = useLocale();
+	const currencyCode = useCurrencyFromPlans();
+	const [ isLoadingV1, v1Variation ] = useIsEligibleForV1EnUSDExperiment(
+		flowName,
+		locale,
+		currencyCode
+	);
 	const [ isLoadingV2EnUsd, v2EnUsdAssignment ] = useExperiment(
 		RENEWAL_PRICING_EXPERIMENT_V2_EN_USD,
 		{
-			isEligible: isEligibleForExperiment( flowName ),
+			// EN locale and USD currency required; skip until plans are loaded.
+			isEligible: locale === 'en' && currencyCode === 'USD' && isEligibleForExperiment( flowName ),
 		}
 	);
-	const isLoadingExperiment = isLoadingV1 || isLoadingV2EnUsd;
-	const variationName = v2EnUsdAssignment?.variationName ?? v1Variation;
+	const [ isLoadingV2NonUsd, v2NonUsdAssignment ] = useExperiment(
+		RENEWAL_PRICING_EXPERIMENT_V2_NON_USD,
+		{
+			// Eligible when the user is either non-EN or non-USD. A non-EN locale
+			// is sufficient on its own (no need to wait for plans to load); for EN
+			// users we additionally wait for the currency to confirm it's non-USD.
+			isEligible:
+				( locale !== 'en' || ( currencyCode !== undefined && currencyCode !== 'USD' ) ) &&
+				isEligibleForExperiment( flowName ),
+		}
+	);
+	const isLoadingExperiment = isLoadingV1 || isLoadingV2EnUsd || isLoadingV2NonUsd;
+	const variationName =
+		v2NonUsdAssignment?.variationName ?? v2EnUsdAssignment?.variationName ?? v1Variation;
 	return [ isLoadingExperiment, isLoadingExperiment ? null : variationName ];
 }
 

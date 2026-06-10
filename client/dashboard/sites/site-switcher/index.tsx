@@ -16,7 +16,6 @@ import type { SiteSwitcherProps } from './types';
 const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
-
 	return (
 		<>
 			<SiteSwitcherBase { ...props }>
@@ -42,7 +41,7 @@ const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 					title={ __( 'Add new site' ) }
 					onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 				>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite context="sites-dashboard" aiSiteBuilderPath="/setup/ai-site-builder" />
 				</Modal>
 			) }
 		</>

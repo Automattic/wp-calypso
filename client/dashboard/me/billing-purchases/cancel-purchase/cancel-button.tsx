@@ -1,9 +1,9 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { DisplayVariant } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
 import { getButtonLabels } from './get-confirmation-copy';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -29,7 +29,7 @@ export default function CancelButton( {
 	onClick,
 }: CancelButtonProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
 	// Check if we need atomic revert confirmation
 	const needsAtomicRevertConfirmation = atomicTransfer?.created_at;
@@ -48,11 +48,12 @@ export default function CancelButton( {
 		? __( 'Continue with cancellation' )
 		: getButtonLabels( {
 				purchase,
-				intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+				intent: displayVariant,
 		  } ).primary;
 
 	return (
 		<Button
+			className="cancel-purchase__cancel-button"
 			disabled={ isDisabled }
 			isBusy={ isBusy ?? state.isLoading ?? false }
 			onClick={ onClick }

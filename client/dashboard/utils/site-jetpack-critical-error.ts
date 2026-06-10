@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { Site } from '@automattic/api-core';
+import type { JetpackRecoverySessionError, Site } from '@automattic/api-core';
 
 const FIFTEEN_MINUTES = 15 * 60;
 
@@ -41,6 +41,10 @@ export function isInJetpackCriticalErrorState( site: Site ): boolean {
 	return !! site.__inaccessible_jetpack_error && hasJetpackCriticalError( site );
 }
 
+export function getJetpackRecoverySessionErrors( site: Site ): JetpackRecoverySessionError[] {
+	return site.options?.jetpack_recovery_mode_status?.recovery_session_errors ?? [];
+}
+
 export function getJetpackCriticalErrorMessage( site: Site ): string | null {
 	if ( ! hasJetpackCriticalError( site ) ) {
 		return null;
@@ -48,6 +52,8 @@ export function getJetpackCriticalErrorMessage( site: Site ): string | null {
 
 	const isAdmin = !! site.capabilities?.manage_options;
 	return isAdmin
-		? __( 'There has been a critical error on this site. Here’s what you can try next:' )
+		? __(
+				'There has been a critical error on this website. Here is what we know and what you can do next.'
+		  )
 		: __( 'There has been a critical error on this site. A site administrator has been notified.' );
 }

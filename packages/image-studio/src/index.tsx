@@ -26,6 +26,10 @@ interface ImageStudioData {
 	enabled?: boolean | string;
 	environment?: 'wp-admin' | 'ciab-admin';
 	isDevMode?: boolean;
+	canGenerateVideoClips?: boolean;
+	blogId?: number | string;
+	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
+	isA11n?: boolean;
 }
 
 declare global {

@@ -1,12 +1,15 @@
 /**
  * @jest-environment jsdom
  */
+import { readerAtmosphereKeys } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { atmosphereComposerConfig } from '../composer-config';
 import { ThreadPanel } from '../thread-panel';
 import type { AtmosphereConnection, AtmosphereThreadResponse } from '@automattic/api-core';
 
@@ -27,7 +30,7 @@ const connection: AtmosphereConnection = {
 };
 
 const BASE = 'https://public-api.wordpress.com';
-const PATH = '/wpcom/v2/reader/atmosphere/thread';
+const PATH = `/wpcom/v2/reader/atmosphere/connections/${ connection.id }/thread`;
 
 const DID = 'did:plc:abc234567defghi234567jkl';
 const RKEY = '3kabcdefghijk';
@@ -72,7 +75,7 @@ function makeQueryClient() {
 
 describe( 'ThreadPanel', () => {
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
 		jest
@@ -96,6 +99,7 @@ describe( 'ThreadPanel', () => {
 			0
 		);
 		await waitFor( () => expect( screen.getByText( 'hello world' ) ).toBeVisible() );
+		expect( screen.getByRole( 'button', { name: /^like$/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders the not_found tombstone when root.type === "not_found"', async () => {
@@ -114,7 +118,7 @@ describe( 'ThreadPanel', () => {
 		);
 	} );
 
-	it( 'renders auth_required error with no Retry button', async () => {
+	it( 'renders auth_required error with a Retry button', async () => {
 		nock( BASE )
 			.get( PATH )
 			.query( { uri: TARGET_URI } )
@@ -124,9 +128,9 @@ describe( 'ThreadPanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () =>
-			expect( screen.getAllByText( /Reconnect needed/i ).length ).toBeGreaterThan( 0 )
+			expect( screen.getAllByText( /Couldn't load thread/i ).length ).toBeGreaterThan( 0 )
 		);
-		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders not_found error with no Retry button', async () => {
@@ -144,7 +148,7 @@ describe( 'ThreadPanel', () => {
 		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
 	} );
 
-	it( 'renders the Reconnect-needed empty state for invalid_handle / invalid_credentials / auth_failed', async () => {
+	it( 'renders a retryable empty state for invalid_handle / invalid_credentials / auth_failed', async () => {
 		nock( BASE )
 			.get( PATH )
 			.query( { uri: TARGET_URI } )
@@ -154,9 +158,9 @@ describe( 'ThreadPanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () =>
-			expect( screen.getAllByText( /Reconnect needed/i ).length ).toBeGreaterThan( 0 )
+			expect( screen.getAllByText( /Couldn't load thread/i ).length ).toBeGreaterThan( 0 )
 		);
-		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders the Connection-no-longer-exists empty state for connection_not_found', async () => {
@@ -446,5 +450,65 @@ describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () =>
 				destination: 'in_app',
 			} )
 		);
+	} );
+} );
+
+describe( 'ThreadPanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( "opens the composer in quote mode when the quotes count is clicked on the user's own post in the thread", async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( readerAtmosphereKeys.scopedThread( connection.id, TARGET_URI ), {
+			thread: {
+				type: 'post',
+				post: {
+					uri: TARGET_URI,
+					cid: 'pcid',
+					author: {
+						did: connection.did,
+						handle: connection.handle,
+						display_name: connection.display_name,
+						avatar: null,
+					},
+					created_at: '2026-04-28T10:00:00Z',
+					indexed_at: '2026-04-28T10:00:00Z',
+					text: 'my own post',
+					html: '<p>my own post</p>',
+					lang: [ 'en' ],
+					reply_parent: null,
+					reply_root: null,
+					reason: null,
+					embed: null,
+					counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+					bluesky_url: 'https://bsky.app/profile/viewer.bsky.social/post/3kabcdefghijk',
+				},
+				parent: null,
+				replies: [],
+			},
+		} );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
+				<ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		const repostButton = await screen.findByRole( 'button', { name: /repost, 3 reposts/i } );
+		await user.click( repostButton );
+		const quoteItem = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		await user.click( quoteItem );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );

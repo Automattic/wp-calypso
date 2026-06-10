@@ -5,10 +5,4 @@
 	@include body-medium;
 	margin-block-end: 48px;
 	color: var(--color-neutral-50);
-
-	a,
-	a:visited {
-		color: var(--color-neutral-100);
-		text-decoration: underline;
-	}
 }

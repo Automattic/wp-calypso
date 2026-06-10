@@ -13,7 +13,12 @@ import {
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { getRefundPolicies, getRefundWindows, RefundPolicy } from '../refund-policies';
+import {
+	getRefundPolicies,
+	getRefundWindows,
+	getRefundWindowSummary,
+	RefundPolicy,
+} from '../refund-policies';
 
 function getPlanAndDomainBundle( planSlug: string ) {
 	const cart = getEmptyResponseCart();
@@ -415,5 +420,157 @@ describe( 'getRefundWindows', () => {
 		const refundWindows = getRefundWindows( [ RefundPolicy.NonRefundable ] );
 
 		expect( refundWindows ).toEqual( [] );
+	} );
+} );
+
+describe( 'getRefundWindowSummary', () => {
+	test( 'returns null for a non-refundable cart (DIFM)', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: '-1',
+			item_subtotal_integer: 500,
+			product_slug: WPCOM_DIFM_LITE,
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toBeNull();
+	} );
+
+	test( 'paid-domain-only cart → 4 days, usePlanProductName false', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 4,
+			usePlanProductName: false,
+		} );
+	} );
+
+	test( 'returns null for an empty / free-domain-only cart (no refund window applies)', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			meta: 'free.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toBeNull();
+	} );
+
+	test( 'yearly plan + bundled domain → 14 days, usePlanProductName true', () => {
+		const cart = getPlanAndDomainBundle( PLAN_PERSONAL );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 14,
+			usePlanProductName: true,
+		} );
+	} );
+
+	test( 'biennial plan + bundled domain → 14 days, usePlanProductName true', () => {
+		const cart = getPlanAndDomainBundle( PLAN_PREMIUM_2_YEARS );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 14,
+			usePlanProductName: true,
+		} );
+	} );
+
+	test( 'standalone biennial plan → 14 days, usePlanProductName false', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_BIENNIAL_PERIOD }`,
+			item_subtotal_integer: 35,
+			product_slug: PLAN_PREMIUM_2_YEARS,
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 14,
+			usePlanProductName: false,
+		} );
+	} );
+
+	test( 'standalone monthly plan → 7 days, usePlanProductName false', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
+			item_subtotal_integer: 10,
+			product_slug: PLAN_PREMIUM_MONTHLY,
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 7,
+			usePlanProductName: false,
+		} );
+	} );
+
+	test( 'monthly plan + bundled paid domain → longest window (7), usePlanProductName true', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			item_subtotal_integer: 10,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
+			extra: { domain_to_bundle: 'test.live' },
+			item_subtotal_integer: 10,
+			product_slug: PLAN_PREMIUM_MONTHLY,
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 7,
+			usePlanProductName: true,
+		} );
+	} );
+
+	test( 'yearly plan renewal + domain renewal → longest window (14), usePlanProductName true', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			extra: { purchaseType: 'renewal' },
+			item_subtotal_integer: 10,
+			product_slug: PLAN_PREMIUM,
+		} );
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			extra: { purchaseType: 'renewal' },
+			is_domain_registration: true,
+			item_subtotal_integer: 10,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 14,
+			usePlanProductName: true,
+		} );
+	} );
+
+	test( 'yearly plan + bundled domain + extra paid domain → shortest window (4), usePlanProductName false', () => {
+		const cart = getPlanAndDomainBundle( PLAN_PERSONAL );
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: true,
+			meta: 'test2.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 4,
+			usePlanProductName: false,
+		} );
 	} );
 } );

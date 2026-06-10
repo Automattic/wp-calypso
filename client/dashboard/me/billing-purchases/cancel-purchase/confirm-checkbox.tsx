@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
@@ -12,6 +11,7 @@ import { useHelpCenter } from '../../../app/help-center';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
 import { getCheckboxLabel } from './get-confirmation-copy';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -35,22 +35,36 @@ export default function ConfirmCheckbox( {
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { setNewMessagingChat } = useHelpCenter();
 
-	const supportHeadingText =
-		displayVariant === 'remove'
-			? __( 'Questions before you remove?' )
-			: __( 'Have a question before canceling?' );
+	const getSupportHeadingText = () => {
+		if ( displayVariant === 'remove' ) {
+			return __( 'Questions before you remove?' );
+		}
+		if ( displayVariant === 'auto-renew' ) {
+			return __( 'Have a question before turning off auto-renew?' );
+		}
+		return __( 'Have a question before canceling?' );
+	};
+
+	const getContactInitialMessage = () => {
+		if ( displayVariant === 'remove' ) {
+			return `I have questions about removing my ${ purchase.product_name }. Can I speak with a human?`;
+		}
+		if ( displayVariant === 'auto-renew' ) {
+			return `I have questions about turning off auto-renew for my ${ purchase.product_name }. Can I speak with a human?`;
+		}
+		return `I have questions about canceling my ${ purchase.product_name }. Can I speak with a human?`;
+	};
+
+	const supportHeadingText = getSupportHeadingText();
 
 	const planConfirmationLabel = getCheckboxLabel();
 
 	const handleContactClick = () => {
 		setNewMessagingChat( {
-			initialMessage:
-				displayVariant === 'remove'
-					? `I have questions about removing my ${ purchase.product_name }. Can I speak with a human?`
-					: `I have questions about canceling my ${ purchase.product_name }. Can I speak with a human?`,
+			initialMessage: getContactInitialMessage(),
 			siteUrl: purchase.site_slug,
 			siteId: String( purchase.blog_id ),
 		} );
@@ -82,12 +96,14 @@ export default function ConfirmCheckbox( {
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
 						checked={ state.domainConfirmationConfirmed }
 						onChange={ onDomainConfirmationChange }
+						disabled={ state.isLoading }
 					/>
 				) }
 
 				<CheckboxControl
 					label={ planConfirmationLabel }
 					checked={ state.customerConfirmedUnderstanding }
+					disabled={ state.isLoading }
 					onChange={ ( checked ) => {
 						if ( atomicTransfer?.created_at ) {
 							onCustomerConfirmedUnderstandingChange( checked );

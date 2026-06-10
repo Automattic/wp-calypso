@@ -11,6 +11,7 @@ import {
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -35,13 +36,22 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import {
+	SITE_ACTION_TITLES,
+	getEligiblePurchases,
+	isSiteAction,
+	type SiteAction,
+} from '../../me/billing-purchases/site-level-actions/constants';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
+	getRenewUrlForPurchases,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
+	type CancelIntent,
 } from '../../utils/purchase';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -199,6 +209,7 @@ export const receiptRoute = createRoute( {
 	loader: async ( { params: { receiptId } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
+			queryClient.ensureQueryData( userReceiptsQuery() ),
 			queryClient.ensureQueryData( userTaxDetailsQuery() ),
 			queryClient.ensureQueryData( countryListQuery() ),
 		] );
@@ -233,11 +244,23 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
 		queryClient.prefetchQuery( allSitesQuery() );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+		removed?: string;
+		removedDomain?: string;
+		removedId?: number;
+	} => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'number' ? search.site : undefined,
+			removed: typeof search.removed === 'string' ? search.removed : undefined,
+			removedDomain: typeof search.removedDomain === 'string' ? search.removedDomain : undefined,
+			removedId: typeof search.removedId === 'number' ? search.removedId : undefined,
 		};
 	},
 } ).lazy( () =>
@@ -264,14 +287,29 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true; upgraded?: true; cancelled?: true } => {
+	validateSearch: (
+		search
+	): {
+		refunded?: true;
+		upgraded?: true;
+		cancelled?: true;
+		downgraded?: true;
+		plan_changed?: true;
+		intent?: 'auto-renew';
+	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
 		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
 		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
+		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
+		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
 		return {
 			...( isRefunded ? { refunded: true } : {} ),
 			...( isUpgraded ? { upgraded: true } : {} ),
 			...( isCancelled ? { cancelled: true } : {} ),
+			...( isDowngraded ? { downgraded: true } : {} ),
+			...( isPlanChanged ? { plan_changed: true } : {} ),
+			...( intent ? { intent } : {} ),
 		};
 	},
 } );
@@ -386,7 +424,10 @@ export const cancelPurchaseRoute = createRoute( {
 	head: ( {
 		loaderData,
 	}: {
-		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
+		loaderData?: {
+			purchase?: Purchase;
+			intent?: CancelIntent;
+		};
 	} ) => {
 		// URL intent is authoritative; when absent, fall back to the flow-type
 		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
@@ -403,10 +444,17 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
-		return search.intent === 'cancel' || search.intent === 'remove'
-			? { intent: search.intent }
-			: {};
+	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+		return {
+			...( search.intent === 'cancel' ||
+			search.intent === 'remove' ||
+			search.intent === 'auto-renew'
+				? { intent: search.intent }
+				: {} ),
+			...( typeof search.additionalPurchaseIds === 'string'
+				? { additionalPurchaseIds: search.additionalPurchaseIds }
+				: {} ),
+		};
 	},
 	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
 	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
@@ -420,6 +468,9 @@ export const cancelPurchaseRoute = createRoute( {
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			// Prefetch the default (control) variant; the component refetches
+			// under the 'treatment' key when the split-cancel-remove flag is on.
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
 		return { purchase, intent };
 	},
@@ -428,6 +479,64 @@ export const cancelPurchaseRoute = createRoute( {
 		createLazyRoute( 'cancel-purchase' )( {
 			component: d.default,
 		} )
+	)
+);
+
+export const siteActionsRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: isSiteAction( params.action ) ? SITE_ACTION_TITLES[ params.action ] : '',
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'site-actions/$action',
+	parseParams: ( { action } ): { action: SiteAction } => ( {
+		action: action as SiteAction,
+	} ),
+	stringifyParams: ( { action } ) => ( { action } ),
+	beforeLoad: ( { params } ) => {
+		if ( ! isSiteAction( params.action ) ) {
+			throw dashboardRedirect( {
+				to: purchaseSettingsRoute.fullPath,
+				params: { purchaseId: params.purchaseId },
+			} );
+		}
+	},
+	loader: async ( { parentMatchPromise, params: { action } } ) => {
+		const parentMatch = await parentMatchPromise;
+		const purchase = parentMatch.loaderData?.purchase;
+		if ( ! purchase ) {
+			throw dashboardRedirect( { to: purchasesRoute.fullPath } );
+		}
+
+		const allPurchases = await queryClient.ensureQueryData( userPurchasesQuery() );
+		const eligiblePurchases = getEligiblePurchases( allPurchases, purchase, action as SiteAction );
+
+		if ( purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1 ) {
+			if ( action === 'renew' ) {
+				throw dashboardRedirect( { href: getRenewUrlForPurchases( [ purchase ] ) } );
+			}
+
+			let intent: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+			if ( action === 'remove' ) {
+				intent = 'remove';
+			} else if ( action === 'auto-renew' ) {
+				intent = 'auto-renew';
+			}
+			throw dashboardRedirect( {
+				to: cancelPurchaseRoute.fullPath,
+				params: { purchaseId: String( purchase.ID ) },
+				search: { intent },
+			} );
+		}
+
+		return { action };
+	},
+} ).lazy( () =>
+	import( '../../me/billing-purchases/site-level-actions' ).then( ( d ) =>
+		createLazyRoute( 'site-level-actions' )( { component: d.default } )
 	)
 );
 
@@ -896,6 +1005,33 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const appearanceRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Appearance' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'appearance',
+	beforeLoad: ( { context } ) => {
+		if (
+			! context.config.supports.darkMode ||
+			! context.config.supports.colorScheme ||
+			isDashboardBackport()
+		) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/appearance' ).then( ( d ) =>
+		createLazyRoute( 'appearance' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const languageRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1115,6 +1251,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
 	}
+	if ( config.supports.darkMode && config.supports.colorScheme ) {
+		preferencesChildren.push( appearanceRoute );
+	}
 	if ( isEnabled( 'mcp-settings' ) ) {
 		preferencesChildren.push(
 			mcpRoute.addChildren( [
@@ -1156,6 +1295,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
+					siteActionsRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),

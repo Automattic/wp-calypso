@@ -99,7 +99,7 @@ export class StartImportFlow {
 	async validateImportPage(): Promise< void > {
 		await this.page
 			.locator( selectors.startBuildingHeader( 'Your content is ready for its brand new home' ) )
-			.waitFor();
+			.waitFor( { timeout: 30_000 } );
 	}
 
 	/**

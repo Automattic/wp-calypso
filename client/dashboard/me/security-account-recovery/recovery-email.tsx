@@ -119,7 +119,7 @@ export default function RecoveryEmail() {
 				label: __( 'Email address' ),
 				description:
 					/* translators: %s: email address */
-					sprintf( __( 'Your primary email address is %s.' ), serverData?.user_email ),
+					sprintf( __( 'Your primary email address is %s.' ), serverData?.user_email ?? '' ),
 				type: 'email',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
@@ -175,7 +175,10 @@ export default function RecoveryEmail() {
 								<DataForm< SecurityEmailFormData >
 									data={ formData }
 									fields={ fields }
-									form={ { layout: { type: 'regular' as const }, fields } }
+									form={ {
+										layout: { type: 'regular' as const },
+										fields: fields.map( ( field ) => field.id ),
+									} }
 									onChange={ ( edits: Partial< SecurityEmailFormData > ) => {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }

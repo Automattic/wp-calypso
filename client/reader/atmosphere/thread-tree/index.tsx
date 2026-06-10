@@ -10,9 +10,10 @@ const PARENT_WALK_LIMIT = 80;
 interface ThreadTreeProps {
 	root: AtmosphereThreadNode;
 	targetUri: string;
+	connectionId: number;
 }
 
-export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
+export function ThreadTree( { root, targetUri, connectionId }: ThreadTreeProps ) {
 	const targetRef = useRef< HTMLDivElement >( null );
 	const parents = useMemo( () => flattenParents( root ), [ root ] );
 
@@ -36,6 +37,7 @@ export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 					depth={ 0 }
 					highlighted={ false }
 					renderReplies={ false }
+					connectionId={ connectionId }
 				/>
 			) ) }
 			<ThreadNode
@@ -45,6 +47,7 @@ export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 				highlighted={ root.type === 'post' && root.post.uri === targetUri }
 				expandedVideo
 				prominentTimestamp
+				connectionId={ connectionId }
 			/>
 		</VStack>
 	);

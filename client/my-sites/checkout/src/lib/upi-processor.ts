@@ -1,8 +1,4 @@
-import {
-	makeErrorResponse,
-	makeRedirectResponse,
-	makeSuccessResponse,
-} from '@automattic/composite-checkout';
+import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
@@ -103,7 +99,6 @@ export default async function upiProcessor(
 		paymentMethodId,
 		{
 			...submitData,
-			name: submitData.name ?? '',
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
@@ -150,14 +145,6 @@ export default async function upiProcessor(
 				genericErrorMessage
 			);
 
-			const pendingPageUrl = addUrlToPendingPageRedirect( thankYouUrl, {
-				siteSlug,
-				fromSiteSlug,
-				fromExternalCheckout,
-				orderId: response.order_id,
-				urlType: 'absolute',
-			} );
-
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
@@ -179,11 +166,10 @@ export default async function upiProcessor(
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
 			}
-			if ( orderStatus === 'payment-confirmed' ) {
-				safeDismissModal();
-				return makeRedirectResponse( pendingPageUrl );
-			}
-			if ( orderStatus !== 'success' ) {
+			// `payment-confirmed` is treated as success: Stripe has accepted the payment
+			// but order finalization can still take a while. Hand off to the framework's
+			// pending page rather than keeping the user waiting in the modal.
+			if ( orderStatus !== 'success' && orderStatus !== 'payment-confirmed' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
@@ -221,7 +207,7 @@ async function getRedirectUrl(
 	if ( message && typeof message === 'object' && 'setup_intent_client_secret' in message ) {
 		return confirmUpiSetupIntent(
 			String( ( message as { setup_intent_client_secret: string } ).setup_intent_client_secret ),
-			submitData.name ?? '',
+			submitData.name,
 			options,
 			genericErrorMessage
 		);
@@ -345,9 +331,17 @@ function displayModal( {
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is StripeUpiTransactionRequest {
-	const data = submitData as StripeUpiTransactionRequest;
-	if ( ! data ) {
-		throw new Error( 'Transaction requires data and none was provided' );
+	if ( ! submitData || typeof submitData !== 'object' ) {
+		return false;
 	}
-	return true;
+	const data = submitData as StripeUpiTransactionRequest;
+	return (
+		typeof data.name === 'string' &&
+		typeof data.address === 'string' &&
+		typeof data.streetNumber === 'string' &&
+		typeof data.city === 'string' &&
+		typeof data.state === 'string' &&
+		typeof data.postalCode === 'string' &&
+		typeof data.country === 'string'
+	);
 }

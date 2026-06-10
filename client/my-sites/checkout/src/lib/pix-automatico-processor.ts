@@ -106,6 +106,13 @@ export async function pixAutomaticoProcessor(
 	);
 
 	const root = getRenderRoot( genericErrorMessage );
+	let rootUnmounted = false;
+	const safeDismissModal = () => {
+		if ( ! rootUnmounted ) {
+			rootUnmounted = true;
+			hideModal( root );
+		}
+	};
 
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
@@ -135,12 +142,12 @@ export async function pixAutomaticoProcessor(
 				priceInteger: responseCart.total_cost_integer,
 				priceCurrency: responseCart.currency,
 				cancel: () => {
-					hideModal( root );
+					safeDismissModal();
 					isModalActive = false;
 					explicitClosureMessage = translate( 'Payment cancelled.' );
 				},
 				error: () => {
-					hideModal( root );
+					safeDismissModal();
 					isModalActive = false;
 					explicitClosureMessage = genericErrorMessage;
 				},
@@ -157,6 +164,8 @@ export async function pixAutomaticoProcessor(
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
+			safeDismissModal();
+
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
 				success: true,
 				order_id: response.order_id,
@@ -164,7 +173,7 @@ export async function pixAutomaticoProcessor(
 			return makeSuccessResponse( responseData );
 		} )
 		.catch( ( error ) => {
-			hideModal( root );
+			safeDismissModal();
 			return makeErrorResponse( error.message );
 		} );
 }
@@ -257,9 +266,19 @@ function displayModal( {
 function isValidEbanxCardTransactionData(
 	submitData: unknown
 ): submitData is EbanxCardTransactionRequest {
-	const data = submitData as EbanxCardTransactionRequest;
-	if ( ! data ) {
-		throw new Error( 'Transaction requires data and none was provided' );
+	if ( ! submitData || typeof submitData !== 'object' ) {
+		return false;
 	}
-	return true;
+	const data = submitData as EbanxCardTransactionRequest;
+	return (
+		typeof data.name === 'string' &&
+		typeof data.countryCode === 'string' &&
+		typeof data.state === 'string' &&
+		typeof data.city === 'string' &&
+		typeof data.postalCode === 'string' &&
+		typeof data.address === 'string' &&
+		typeof data.streetNumber === 'string' &&
+		typeof data.phoneNumber === 'string' &&
+		typeof data.document === 'string'
+	);
 }

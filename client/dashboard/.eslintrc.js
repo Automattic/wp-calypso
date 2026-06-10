@@ -13,8 +13,8 @@ module.exports = {
 							'calypso/data/*',
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
-							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/explat
+							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
 							// Allowed: calypso/lib/logstash
@@ -57,6 +57,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
@@ -68,7 +69,6 @@ module.exports = {
 							'!@automattic/load-script',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
-							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
 							'!@automattic/calypso-url',
 							'!@automattic/composite-checkout',
@@ -96,6 +96,12 @@ module.exports = {
 					{
 						name: '@automattic/calypso-analytics',
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
+					},
+					{
+						name: 'calypso/lib/color-scheme',
+						importNames: [ 'ClassicColorSchemeProvider' ],
+						message:
+							'Dashboard must use the query-backed color scheme provider, not the Classic Redux provider.',
 					},
 					{
 						name: '@automattic/components',

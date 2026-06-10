@@ -1,10 +1,12 @@
 import { useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { atmosphereComposerConfig } from './composer-config';
 import { ThreadPanel } from './thread-panel';
 
 interface Props {
@@ -47,20 +49,25 @@ export function AtmosphereThreadView( { connectionId, did, rkey }: Props ) {
 		return (
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( 'Thread ‹ ATmosphere ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
 	}
 
 	return (
-		<ReaderMain className="atmosphere-view">
-			<DocumentHead
-				title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: connection.handle } ) }
-			/>
-			<ThreadPanel connection={ connection } did={ did } rkey={ rkey } />
-		</ReaderMain>
+		<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
+			<ReaderMain className="atmosphere-view">
+				<DocumentHead
+					title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: connection.handle } ) }
+				/>
+				<ThreadPanel connection={ connection } did={ did } rkey={ rkey } />
+			</ReaderMain>
+			<ComposeFab />
+			<ComposerModal />
+		</ComposerProvider>
 	);
 }
 

@@ -5,7 +5,7 @@ import { ItemVariationRadioButtons } from './item-variation-radio-buttons';
 import type { ItemVariationPickerProps } from './types';
 
 /**
- * A fascade component to allow using different types of variant pickers (eg:
+ * A facade component to allow using different types of variant pickers (eg:
  * radio buttons vs. dropdown).
  */
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( props ) => {

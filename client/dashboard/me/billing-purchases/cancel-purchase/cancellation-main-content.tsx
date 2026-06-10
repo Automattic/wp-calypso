@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
@@ -11,11 +10,13 @@ import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import GSuiteAccessMessage from './gsuite-access-message';
 import PlanProductRevertContent from './plan-product-revert-content';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
 	Domain,
 	AtomicTransfer,
+	Site,
 	UpgradesCancelFeaturesResponse,
 } from '@automattic/api-core';
 
@@ -25,8 +26,12 @@ interface CancellationMainContentProps {
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
+	site?: Site;
+	wpcomDomain?: string | null;
+	activeMarketplaceSubscriptions?: Purchase[];
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
+	isBusy?: boolean;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
@@ -54,8 +59,12 @@ export default function CancellationMainContent( {
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
+	site,
+	wpcomDomain,
+	activeMarketplaceSubscriptions,
 	state,
 	purchaseCancelFeatures,
+	isBusy,
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
@@ -67,6 +76,7 @@ export default function CancellationMainContent( {
 	const isAkismet = isAkismetProduct( purchase );
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	const atomicRevertChanges = [
 		{
@@ -102,11 +112,105 @@ export default function CancellationMainContent( {
 		defaultChanges.push( ...atomicRevertChanges );
 	}
 
+	if ( isSplitCancelRemoveEnabled ) {
+		// Non-primary domain forwarding: plan cancellation on a site with a custom primary domain.
+		if ( purchase.is_plan && site?.URL && wpcomDomain ) {
+			const primaryDomain = new URL( site.URL ).hostname;
+			if ( primaryDomain !== wpcomDomain ) {
+				defaultChanges.push(
+					{
+						getSlug: () => 'domainForwarding',
+						getTitle: () =>
+							sprintf(
+								/* translators: %(primaryDomain)s is the custom domain, %(wpcomDomain)s is the WordPress.com subdomain */
+								__( '%(primaryDomain)s will start forwarding to %(wpcomDomain)s.' ),
+								{ primaryDomain, wpcomDomain }
+							),
+					},
+					{
+						getSlug: () => 'domainVisible',
+						getTitle: () =>
+							sprintf(
+								/* translators: %(wpcomDomain)s is the WordPress.com subdomain */
+								__(
+									'%(wpcomDomain)s will become the address people see when they visit your site.'
+								),
+								{ wpcomDomain }
+							),
+					}
+				);
+			}
+		}
+
+		// WordAds ineligibility: plan cancellation on a site enrolled in WordAds.
+		if ( purchase.is_plan && site?.options?.wordads ) {
+			defaultChanges.push( {
+				getSlug: () => 'wordAdsIneligible',
+				getTitle: () => __( 'You will become ineligible for the WordAds program.' ),
+			} );
+		}
+
+		// Marketplace subscription cascade: plan cancellation with active marketplace subscriptions.
+		if ( activeMarketplaceSubscriptions && activeMarketplaceSubscriptions.length > 0 ) {
+			for ( const sub of activeMarketplaceSubscriptions ) {
+				defaultChanges.push( {
+					getSlug: () => `marketplace-${ sub.ID }`,
+					getTitle: () =>
+						sprintf(
+							/* translators: %(productName)s is the name of a marketplace subscription */
+							__( '%(productName)s will also be removed.' ),
+							{ productName: sub.product_name }
+						),
+				} );
+			}
+		}
+
+		// Domain deletion consequences: removing a domain registration.
+		if ( isDomainRegistrationPurchase ) {
+			defaultChanges.push(
+				{
+					getSlug: () => 'domainServicesUnreachable',
+					getTitle: () =>
+						sprintf(
+							/* translators: %(domain)s is the domain name being deleted */
+							__(
+								'All services connected to %(domain)s will become unreachable, including email and website.'
+							),
+							{ domain: purchase.meta ?? '' }
+						),
+				},
+				{
+					getSlug: () => 'domainAvailable',
+					getTitle: () =>
+						sprintf(
+							/* translators: %(domain)s is the domain name being deleted */
+							__( '%(domain)s will become available for someone else to register.' ),
+							{ domain: purchase.meta ?? '' }
+						),
+				}
+			);
+
+			if ( selectedDomain?.is_gravatar_restricted_domain ) {
+				defaultChanges.push( {
+					getSlug: () => 'gravatarDomain',
+					getTitle: () =>
+						__(
+							'This domain is provided at no cost for your Gravatar profile. If you delete it, you will have to pay full price for another.'
+						),
+				} );
+			}
+		}
+	}
+
 	// Get features from the API endpoint for this product
 	const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 	let showDefaultChanges = false;
 	if ( ! isJetpack && ! isAkismet && ! isGSuite && ! isDomainRegistrationPurchase ) {
+		showDefaultChanges = true;
+	}
+	// Under the flag, domain registrations also have warning bullets in defaultChanges.
+	if ( isSplitCancelRemoveEnabled && isDomainRegistrationPurchase ) {
 		showDefaultChanges = true;
 	}
 
@@ -137,7 +241,7 @@ export default function CancellationMainContent( {
 
 			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
-			{ isGSuite && ! config.isEnabled( 'purchases/split-cancel-remove' ) && (
+			{ isGSuite && ! isSplitCancelRemoveEnabled && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 
@@ -154,6 +258,7 @@ export default function CancellationMainContent( {
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }
+				isBusy={ isBusy }
 				onDomainConfirmationChange={ onDomainConfirmationChange }
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 				onCustomerConfirmedUnderstandingAtomicPlanRevert={

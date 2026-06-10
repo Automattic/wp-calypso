@@ -228,6 +228,25 @@
 	}
 }
 
+.manage-purchase__feature-list-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	transform: translateX( -4px );
+}
+
+.manage-purchase__feature-list-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-block: 2px;
+}
+
+.manage-purchase__feature-icon {
+	fill: var( --color-success );
+	flex-shrink: 0;
+}
+
 .manage-purchase__refund-text {
 	display: block;
 	font-size: $font-body-extra-small;

@@ -102,6 +102,14 @@ describe( 'getProductCategory', () => {
 } );
 
 describe( 'getCancellationHeading', () => {
+	test( 'Auto-renew intent returns "Turn off auto-renew"', () => {
+		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
+			const purchase = makePurchaseForCategory( category );
+			expect( getCancellationHeading( { purchase, intent: 'auto-renew' } ) ).toBe(
+				'Turn off auto-renew'
+			);
+		}
+	} );
 	test( 'Cancel intent is always "Cancel subscription" regardless of product', () => {
 		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
 			const purchase = makePurchaseForCategory( category );
@@ -162,6 +170,15 @@ describe( 'getTopNoticeCopy', () => {
 	test( 'returns null for Remove intent', () => {
 		expect( getTopNoticeCopy( { purchase: makePurchase(), intent: 'remove' } ) ).toBeNull();
 	} );
+	test( 'auto-renew intent returns non-null for a plan with a future expiry', () => {
+		const copy = getTopNoticeCopy( {
+			purchase: makePurchaseForCategory( 'plan', {
+				expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
+			} ),
+			intent: 'auto-renew',
+		} );
+		expect( copy ).toMatch( /^Your plan features will be available for another /i );
+	} );
 	test( 'returns null with no expiry date', () => {
 		expect(
 			getTopNoticeCopy( {
@@ -217,6 +234,15 @@ describe( 'getCheckboxLabel', () => {
 } );
 
 describe( 'getButtonLabels', () => {
+	test( 'Auto-renew intent returns "Turn off auto-renew" / "Keep auto-renew on"', () => {
+		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
+			const purchase = makePurchaseForCategory( category );
+			expect( getButtonLabels( { purchase, intent: 'auto-renew' } ) ).toEqual( {
+				primary: 'Turn off auto-renew',
+				secondary: 'Keep auto-renew on',
+			} );
+		}
+	} );
 	test( 'Cancel intent always uses "Cancel subscription" / "Keep subscription"', () => {
 		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'one-time', 'other' ] ) {
 			const purchase = makePurchaseForCategory( category );
@@ -226,16 +252,16 @@ describe( 'getButtonLabels', () => {
 			} );
 		}
 	} );
-	test( 'Remove uses category labels', () => {
+	test( 'Remove primary is "Continue removal"; secondary stays per-category', () => {
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'plan' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove plan', secondary: 'Keep plan' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep plan' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'domain' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove domain', secondary: 'Keep domain' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep domain' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'email' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove email', secondary: 'Keep email' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep email' } );
 	} );
 } );
 

@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useAgentsManagerContext } from '../contexts';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { getSessionId } from '../utils/agent-session';
+import { generateUUID } from '../utils/generate-uuid';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -11,14 +12,14 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  * Saves the chat route so the conversation can be restored later.
  */
 function saveNewChatRoute( sessionId: string, siteKey: string ): void {
-	const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
+	const store = select( AGENTS_MANAGER_STORE ) as unknown as AgentsManagerSelect;
 	const current = store.getRouterHistory( siteKey );
 
 	const entry = {
 		pathname: '/chat',
 		search: '',
 		hash: '',
-		key: crypto.randomUUID(),
+		key: generateUUID(),
 		state: { sessionId },
 	};
 

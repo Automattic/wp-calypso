@@ -3,6 +3,7 @@ import {
 	Button,
 	Card,
 	CardBody,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -11,7 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFeedUrl } from '../hooks/use-feed-url';
+import { useSubmissionIssues } from '../hooks/use-submission-issues';
 import {
 	LogoAmazon,
 	LogoApple,
@@ -20,6 +24,7 @@ import {
 	LogoSpotify,
 	LogoYouTube,
 } from './logos';
+import ReadinessBanner from './readiness-banner';
 import SubmitModal from './submit-modal';
 import type { ComponentType } from 'react';
 
@@ -28,6 +33,9 @@ type Directory = {
 	name: string;
 	submitUrl: string;
 	learnMoreUrl?: string;
+	// Hostnames a saved show URL is allowed to live on (lowercase, no `www.`).
+	// Mirrors SHOW_URL_HOSTS in wp-content/mu-plugins/podcasting/settings-rest-api.php.
+	showHosts: string[];
 	Logo: ComponentType;
 };
 
@@ -37,6 +45,7 @@ const DIRECTORIES: Directory[] = [
 		name: 'Pocket Casts',
 		submitUrl: 'https://pocketcasts.com/submit',
 		learnMoreUrl: 'https://support.pocketcasts.com/knowledge-base/submitting-podcasts/',
+		showHosts: [ 'pca.st', 'pocketcasts.com' ],
 		Logo: LogoPocketCasts,
 	},
 	{
@@ -44,6 +53,7 @@ const DIRECTORIES: Directory[] = [
 		name: 'Apple Podcasts',
 		submitUrl: 'https://podcastsconnect.apple.com/',
 		learnMoreUrl: 'https://podcasters.apple.com/support/897-submit-a-show',
+		showHosts: [ 'podcasts.apple.com' ],
 		Logo: LogoApple,
 	},
 	{
@@ -52,6 +62,7 @@ const DIRECTORIES: Directory[] = [
 		submitUrl: 'https://creators.spotify.com/',
 		learnMoreUrl:
 			'https://support.spotify.com/creators/article/claiming-your-podcast-on-spotify-for-creators/',
+		showHosts: [ 'open.spotify.com' ],
 		Logo: LogoSpotify,
 	},
 	{
@@ -59,49 +70,75 @@ const DIRECTORIES: Directory[] = [
 		name: 'YouTube',
 		submitUrl: 'https://studio.youtube.com',
 		learnMoreUrl: 'https://support.google.com/youtube/answer/13973017',
+		showHosts: [ 'youtube.com', 'm.youtube.com', 'youtu.be', 'music.youtube.com' ],
 		Logo: LogoYouTube,
 	},
 	{
 		id: 'amazon',
 		name: 'Amazon Music',
 		submitUrl: 'https://podcasters.amazon.com',
+		showHosts: [
+			'music.amazon.com',
+			'music.amazon.co.uk',
+			'music.amazon.de',
+			'music.amazon.co.jp',
+			'music.amazon.com.au',
+			'music.amazon.fr',
+			'music.amazon.ca',
+			'music.amazon.es',
+		],
 		Logo: LogoAmazon,
 	},
 	{
 		id: 'podcastindex',
 		name: 'Podcast Index',
 		submitUrl: 'https://podcastindex.org/add',
+		showHosts: [ 'podcastindex.org' ],
 		Logo: LogoPodcastIndex,
 	},
 ];
 
-function Distribution() {
+function Distribution( { onGoToSettings }: { onGoToSettings?: () => void } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const feedUrl = useFeedUrl();
+	const { issues, isPodcastingEnabled, isLoading } = useSubmissionIssues();
 	const [ activeId, setActiveId ] = useState< string | null >( null );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const activeDirectory = DIRECTORIES.find( ( d ) => d.id === activeId ) ?? null;
 	const prefersReducedMotion =
 		typeof window !== 'undefined' &&
 		window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const hasIssues = issues.length > 0;
+	const isSubmitBlocked = hasIssues || isLoading;
+
+	const openSubmitModal = ( directoryId: string ) => {
+		if ( isSubmitBlocked ) {
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_podcast_submit_modal_opened', {
+				directory: directoryId,
+			} )
+		);
+		setActiveId( directoryId );
+	};
 
 	return (
 		<>
-			<header className="podcast__section-header">
-				<h2 className="podcast__section-heading">{ translate( 'Distribution' ) }</h2>
-				<p className="podcast__section-description">
-					{ translate(
-						'Submit your feed to podcast directories and track where your show is listed.'
-					) }
-				</p>
-			</header>
+			<ReadinessBanner
+				issues={ issues }
+				isPodcastingEnabled={ isPodcastingEnabled }
+				onEditSettings={ onGoToSettings }
+				className="podcast__distribution"
+			/>
 
-			<Card className="site-settings__card podcast__card">
+			<Card className="site-settings__card podcast__card podcast__distribution">
 				<CardBody>
 					<VStack spacing={ 8 }>
 						<VStack spacing={ 4 }>
 							<VStack spacing={ 1 }>
-								<h3 className="podcast__card-title">{ translate( 'RSS feed' ) }</h3>
+								<Heading level={ 3 }>{ translate( 'RSS feed' ) }</Heading>
 								<Text variant="muted">
 									{ translate(
 										'Copy this URL, then submit it to each directory below to publish your podcast.'
@@ -120,7 +157,7 @@ function Distribution() {
 						</VStack>
 						<VStack spacing={ 4 }>
 							<VStack spacing={ 1 }>
-								<h3 className="podcast__card-title">{ translate( 'Podcast directories' ) }</h3>
+								<Heading level={ 3 }>{ translate( 'Podcast directories' ) }</Heading>
 								<Text variant="muted">
 									{ translate(
 										'Submit your podcast to the directories below where you want it to appear. Most take a few days to go live.'
@@ -147,7 +184,24 @@ function Distribution() {
 											</span>
 											<Text weight={ 500 }>{ name }</Text>
 										</HStack>
-										<Button variant="primary" size="compact" onClick={ () => setActiveId( id ) }>
+										<Button
+											variant={ isSubmitBlocked ? 'secondary' : 'primary' }
+											size="compact"
+											onClick={ () => openSubmitModal( id ) }
+											disabled={ isSubmitBlocked }
+											accessibleWhenDisabled
+											aria-label={
+												isSubmitBlocked
+													? ( translate(
+															'Submit to %(service)s (finish setting up your podcast first).',
+															{
+																args: { service: name },
+																comment: '%(service)s is a podcast directory name, e.g. "Spotify".',
+															}
+													  ) as string )
+													: undefined
+											}
+										>
 											{ translate( 'Submit' ) }
 										</Button>
 									</HStack>
@@ -166,6 +220,7 @@ function Distribution() {
 						name: activeDirectory.name,
 						submitUrl: activeDirectory.submitUrl,
 						learnMoreUrl: activeDirectory.learnMoreUrl,
+						showHosts: activeDirectory.showHosts,
 					} }
 					onClose={ () => setActiveId( null ) }
 					onFirstSave={ () => setShowConfetti( true ) }

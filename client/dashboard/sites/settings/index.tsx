@@ -11,6 +11,7 @@ import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
+import ApmSettingsSummary from '../settings-apm/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import CrontabSettingsSummary from '../settings-crontab/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
@@ -80,6 +81,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<PrimaryDataCenterSettingsSummary site={ site } />
 						<StaticFile404SettingsSummary site={ site } />
 						<CachingSettingsSummary site={ site } />
+						{ isEnabled( 'performance/apm' ) ? <ApmSettingsSummary site={ site } /> : null }
 					</SummaryButtonList>
 				</VStack>
 			) }

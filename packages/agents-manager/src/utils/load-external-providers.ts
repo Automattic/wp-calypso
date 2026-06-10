@@ -59,6 +59,7 @@ export type AbilitiesSetupHook = ( actions: {
 	clearMessages: () => void;
 	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
 	getAgentManager: typeof getAgentManager;
+	isProcessing?: boolean;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
@@ -70,9 +71,12 @@ export type AbilitiesSetupHook = ( actions: {
  * Suggestions hook type - for providing dynamic suggestions based on context
  * (e.g., selected block in editor). Returns an array of suggestions.
  */
-export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
+export type UseSuggestionsHook = (
+	maxSuggestions?: number,
+	options?: { suggestionsVisible?: boolean }
+) => {
 	suggestions: Suggestion[];
-};
+} | void;
 
 export type SiteBuildUtils = {
 	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
@@ -161,11 +165,44 @@ export interface LoadedProviders {
 	capabilities?: ProviderCapabilities;
 }
 
+export function mergeUseSuggestionsHooks(
+	hooks: UseSuggestionsHook[]
+): UseSuggestionsHook | undefined {
+	if ( hooks.length === 0 ) {
+		return undefined;
+	}
+
+	if ( hooks.length === 1 ) {
+		return hooks[ 0 ];
+	}
+
+	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
+		const combined: Suggestion[] = [];
+		const seenIds = new Set< string >();
+		for ( const hook of hooks ) {
+			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
+			for ( const s of suggestions ) {
+				if ( ! seenIds.has( s.id ) ) {
+					seenIds.add( s.id );
+					combined.push( s );
+				}
+			}
+		}
+		return { suggestions: combined };
+	};
+}
+
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
  *
- * Each provider module ID is dynamically imported using WordPress's script module
+ * Providers can be dynamically imported using WordPress's script module
  * system. Modules should export { toolProvider, contextProvider }.
+ *
+ * Alternatively, an already-loaded provider object can be passed in.
+ *
+ * Both shapes feed the same downstream merge: any of `toolProvider`,
+ * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
+ * up from each entry and merged across all entries.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
@@ -183,11 +220,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				?.agentId
 		);
 
+	if ( registerReaderFollowups ) {
+		// Reader Chat runs on the public frontend and should not inherit editor providers
+		// such as the Jetpack AI sidebar.
+		return { useSuggestions: useReaderFollowupSuggestions };
+	}
+
 	if ( agentProviders.length === 0 ) {
-		// Even with no external agentProviders, register the reader-chat
-		// follow-up hook if this host is reader-chat. Previously this path
-		// early-returned an empty object, so the hook never registered.
-		return registerReaderFollowups ? { useSuggestions: useReaderFollowupSuggestions } : {};
+		return {};
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
@@ -198,7 +238,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
-	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
@@ -212,26 +251,24 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
 
-	// Also add reader-chat hook to the merge path when there ARE other
-	// providers.
-	if ( registerReaderFollowups ) {
-		allUseSuggestions.push( useReaderFollowupSuggestions );
-	}
-
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
 	const loadedModules = await Promise.all(
-		agentProviders.map( async ( moduleId ) => {
+		agentProviders.map( async ( providerEntry ) => {
+			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
+				return providerEntry;
+			}
+
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = await import( /* webpackIgnore: true */ moduleId );
+				const module = await import( /* webpackIgnore: true */ providerEntry );
 				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
+				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
 				return module;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
+				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
 				return null;
 			}
 		} )
@@ -371,24 +408,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	}
 
 	// Merge useSuggestions: combine from all providers, dedupe by id.
-	if ( allUseSuggestions.length === 1 ) {
-		mergedUseSuggestions = allUseSuggestions[ 0 ];
-	} else if ( allUseSuggestions.length > 1 ) {
-		mergedUseSuggestions = ( ( maxSuggestions?: number ) => {
-			const combined: Suggestion[] = [];
-			const seenIds = new Set< string >();
-			for ( const hook of allUseSuggestions ) {
-				const { suggestions } = hook( maxSuggestions );
-				for ( const s of suggestions ) {
-					if ( ! seenIds.has( s.id ) ) {
-						seenIds.add( s.id );
-						combined.push( s );
-					}
-				}
-			}
-			return { suggestions: combined };
-		} ) as UseSuggestionsHook;
-	}
+	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {

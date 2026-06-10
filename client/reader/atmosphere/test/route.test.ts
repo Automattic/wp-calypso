@@ -1,4 +1,11 @@
-import { getBlueskyProfileUrl, getProfileUrl, getThreadUrl, getTimelineUrl } from '../route';
+import {
+	getBlueskyProfileUrl,
+	getProfileUrl,
+	getTagFeedUrl,
+	getThreadUrl,
+	getTimelineUrl,
+	isValidHashtag,
+} from '../route';
 
 describe( 'getTimelineUrl', () => {
 	it( 'returns the connection-scoped timeline path', () => {
@@ -109,5 +116,65 @@ describe( 'getBlueskyProfileUrl', () => {
 	it( 'percent-encodes characters that would otherwise mangle the path', () => {
 		expect( getBlueskyProfileUrl( 'foo/bar' ) ).toBe( 'https://bsky.app/profile/foo%2Fbar' );
 		expect( getBlueskyProfileUrl( 'a?b' ) ).toBe( 'https://bsky.app/profile/a%3Fb' );
+	} );
+} );
+
+describe( 'isValidHashtag', () => {
+	it( 'accepts ASCII letters, digits, underscore', () => {
+		expect( isValidHashtag( 'rust' ) ).toBe( true );
+		expect( isValidHashtag( 'rust2024' ) ).toBe( true );
+		expect( isValidHashtag( 'foo_bar' ) ).toBe( true );
+	} );
+
+	it( 'accepts Unicode letters and marks', () => {
+		expect( isValidHashtag( '日本語' ) ).toBe( true );
+		expect( isValidHashtag( 'café' ) ).toBe( true );
+	} );
+
+	it( 'rejects hyphens, dots, slashes, spaces', () => {
+		expect( isValidHashtag( 'tag-with-hyphen' ) ).toBe( false );
+		expect( isValidHashtag( 'tag.with.dot' ) ).toBe( false );
+		expect( isValidHashtag( '../foo' ) ).toBe( false );
+		expect( isValidHashtag( 'has space' ) ).toBe( false );
+	} );
+
+	it( 'rejects empty and 65-char tags', () => {
+		expect( isValidHashtag( '' ) ).toBe( false );
+		expect( isValidHashtag( 'a'.repeat( 65 ) ) ).toBe( false );
+		expect( isValidHashtag( 'a'.repeat( 64 ) ) ).toBe( true );
+	} );
+} );
+
+describe( 'getTagFeedUrl', () => {
+	it( 'returns the in-app tag-feed path for a valid hashtag', () => {
+		expect( getTagFeedUrl( 7, 'rust' ) ).toBe( '/reader/atmosphere/7/tag/rust' );
+	} );
+
+	it( 'lowercases and percent-encodes Unicode tags', () => {
+		expect( getTagFeedUrl( 7, 'Rust' ) ).toBe( '/reader/atmosphere/7/tag/rust' );
+		expect( getTagFeedUrl( 7, '日本語' ) ).toBe(
+			'/reader/atmosphere/7/tag/' + encodeURIComponent( '日本語' )
+		);
+	} );
+
+	it( 'strips a leading # before validating', () => {
+		expect( getTagFeedUrl( 7, '#rust' ) ).toBe( '/reader/atmosphere/7/tag/rust' );
+	} );
+
+	it( 'returns null for malformed hashtags', () => {
+		expect( getTagFeedUrl( 7, 'has spaces' ) ).toBeNull();
+		expect( getTagFeedUrl( 7, '../foo' ) ).toBeNull();
+		expect( getTagFeedUrl( 7, '' ) ).toBeNull();
+		expect( getTagFeedUrl( 7, 'tag-with-hyphen' ) ).toBeNull();
+	} );
+
+	it( 'returns null on a 65-char hashtag', () => {
+		expect( getTagFeedUrl( 7, 'a'.repeat( 65 ) ) ).toBeNull();
+	} );
+
+	it( 'returns null for invalid connection ids', () => {
+		expect( getTagFeedUrl( 0, 'rust' ) ).toBeNull();
+		expect( getTagFeedUrl( -1, 'rust' ) ).toBeNull();
+		expect( getTagFeedUrl( Number.NaN, 'rust' ) ).toBeNull();
 	} );
 } );

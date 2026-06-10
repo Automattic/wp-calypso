@@ -1,5 +1,6 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/components/src/styles/typography';
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 @import "@wordpress/base-styles/breakpoints";
 @import '@wordpress/base-styles/mixins';
@@ -452,7 +453,7 @@ $feedback-button-size: 28px;
 $custom-border-corner-size: 16px;
 
 .odie-gradient-to-white {
-	background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50% );
+	background: linear-gradient( 180deg, rgba( 255, 255, 255, 0 ) 0%, var( --color-surface, #fff ) 50% );
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -685,7 +686,7 @@ $custom-border-corner-size: 16px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	z-index: 10;
 	opacity: 0;
 	pointer-events: none;

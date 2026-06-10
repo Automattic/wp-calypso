@@ -24,6 +24,18 @@ Two source patterns migrate into it:
 | Component tests | `client/components/data/query-reader-{name}/test/index.test.tsx` |
 | Redux to remove | `client/state/data-layer/wpcom/read/{name}/index.js`, `client/state/reader/{name}/{actions,reducer}.{ts,js}`, `client/state/reader/action-types.ts` |
 
+### Naming conventions (must follow)
+
+Every Reader fetcher / query / mutation / response type carries the `Read` prefix — the rest of `api-core` and `api-queries` does this consistently and breaking the pattern stands out in code review.
+
+| Kind | Pattern | Examples |
+|------|---------|----------|
+| Fetcher | `fetchRead{Name}` | `fetchReadFeed`, `fetchReadSubscriptionDetails` |
+| Query factory | `read{Name}Query` | `readFeedQuery`, `readSubscriptionDetailsQuery` |
+| Mutation factory | `{verb}Read{Name}Mutation` | `addReadListFeedMutation`, `unfollowReadTagMutation` |
+| Response types | `Read{Name}Response`, `Read{Name}ErrorResponse` | `ReadFeedSearchResponse`, `ReadSubscriptionDetailsResponse` |
+| Args/params types | `Read{Name}Args`, `FetchRead{Name}Params` | `ReadSubscriptionDetailsArgs` |
+
 ## Workflow (Required)
 
 ```dot
@@ -87,6 +99,24 @@ ls packages/api-core/src/ | grep -i {name}
 
 If a fetcher exists: **reuse** (import from `@automattic/api-core`) or **extend** (add to existing folder, not a parallel one).
 
+### Cache-key consumers (mandatory check)
+**Before changing or replacing a query key, find every other piece of code reading or writing it.** Mutations and shared helpers commonly do optimistic `setQueryData` / `invalidateQueries` against the old key — change the key without updating them and they silently no-op, leaving the user looking at stale data after every action.
+
+```bash
+# Find every reference to the existing key.
+grep -rn "['\"]{old-key-segment}['\"]" packages/ client/ --include="*.ts" --include="*.tsx"
+
+# Also check the shared helpers, which often centralize optimistic logic.
+grep -rn "alter{Name}\|invalidate{Name}" packages/data-stores/src/reader/helpers/
+```
+
+For every match, decide:
+- **Update to the new key** (preferred — small follow-up patch in the same PR, or co-located mutation migration).
+- **Migrate the consumer too** (when it's a mutation that should join this migration anyway).
+- **Bridge** (last resort: keep the old key alive in parallel until the consumer is migrated).
+
+Document the decision per match in the plan. The trap: when the only consumer of the old key is a mutation's optimistic write, deleting the data-stores hook *looks* clean — `grep` for the hook name finds nothing — but the mutation still operates on a phantom cache that no live query reads, and the visible page never updates after the user acts.
+
 ## Step 2: Bridge decision
 
 The `QueryReader*` bridge dispatches `RECEIVE` so the rest of Calypso keeps reading from Redux. **It's not the long-term target.** Evaluate removing it in this migration before defaulting to keeping it.
@@ -128,6 +158,46 @@ Find `method`, `path`, `apiVersion`, and `query`/`body` in the existing data-lay
 
 Add types in `types.ts`, barrel-export from `index.ts`, then export the module from `packages/api-core/src/index.ts`.
 
+#### Subkey-auth fallback (logged-out subscription-management endpoints)
+
+Some Reader endpoints (`/read/sites/{blogId}/subscription-details`, `/read/subscriptions/{id}`, anything reachable from the public `/subscriptions/...` landing pages) accept logged-out callers via an `X-WPSUBKEY` header. The legacy data-stores `callApi` helper handles this; `wpcom.req.get` does not, because `wpcom-proxy-request` requires a session.
+
+Trigger: the source hook calls `callApi` with an `isLoggedIn` arg, or imports `getSubkey`, or the consumer renders under a `/subscriptions/...` route.
+
+Before designing the fork, confirm with backend:
+- Does the endpoint accept **both** cookie auth and `X-WPSUBKEY`?
+- If both arrive, which wins? (Calypso ships the cookie unconditionally for logged-in users, so the answer affects whether the subkey path is safe to take preemptively.)
+- When is `window.currentUser.subscriptionManagementSubkey` populated? (Today: only the logged-out subscriptions bootstrap.)
+
+Pattern when both auth modes are accepted and cookie wins server-side — the bifurcation becomes pure transport, not URL or auth strategy:
+
+```typescript
+const getSubkey = (): string | undefined =>
+  ( window as typeof window & { currentUser?: { subscriptionManagementSubkey?: string } } )
+    .currentUser?.subscriptionManagementSubkey;
+
+export const fetchReadXxx = async ( params ): Promise< ReadXxxResponse< string > > => {
+  const path = `/read/...`;
+  const subkey = getSubkey();
+
+  if ( subkey ) {
+    const response = await fetch( `https://public-api.wordpress.com/wpcom/v2${ path }`, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        Authorization: `X-WPSUBKEY ${ encodeURIComponent( subkey ) }`,
+        'Content-Type': 'application/json',
+      },
+    } );
+    return response.json();
+  }
+
+  return wpcom.req.get( { path, apiNamespace: 'wpcom/v2', apiVersion: '2' } );
+};
+```
+
+Use raw `fetch` rather than `@wordpress/api-fetch` — avoids adding the dep to `api-core` and the subkey path needs none of `apiFetch`'s middleware. The `client/lib/request-with-subkey-fallback/` helper does the same thing for non-Reader code, but **don't import it from `api-core`** (wrong direction); inline the logic.
+
 ### Create the query options (`api-queries`)
 
 ```typescript
@@ -144,7 +214,7 @@ export const readXxxQuery = ( param?: string | null ) =>
   } );
 ```
 
-`queryKey`: `['read', '{domain}', ...params]`. `staleTime`: ~1min for feeds, ~5min for lists. `enabled`: when params can be null.
+`queryKey`: `['read', '{domain}', ...params]`. `staleTime`: ~1min for data with external change events (payments, renewals, server-side mutations), ~5min for slowly-changing lists. Confirm change-rate with backend when unsure. `enabled`: when params can be null.
 
 When migrating from `data-stores`, **preserve the same `queryKey`** for cache compatibility mid-session.
 
@@ -176,7 +246,7 @@ If the legacy code dispatched success/failure actions, mirror both via `isSucces
 
 See [test-scaffolding.md](test-scaffolding.md) for the full template (`createTestStore`, `renderWithProviders`, `nock` setup).
 
-nock URL: `https://public-api.wordpress.com/rest/v{apiVersion}/{path}`. Run with `yarn test-client client/components/data/query-reader-{name}/test/`.
+nock URL: `https://public-api.wordpress.com/rest/v{apiVersion}/{path}` for `wpcom.req.get` calls, `https://public-api.wordpress.com/wpcom/v2{path}` for `apiNamespace: 'wpcom/v2'` v2 calls. Run with `yarn test-client client/components/data/query-reader-{name}/test/`.
 
 ### Mutations
 
@@ -219,6 +289,7 @@ If you catch yourself doing any of these, stop and reconsider:
 - About to put navigation / notice dispatch inside the mutation's `onSuccess` in `api-queries` → side effects belong in the **consumer**'s `onSuccess`.
 - About to rewrite a class component to a function component as part of this migration → out of scope; use an HOC instead.
 - About to change the `queryKey` when migrating from `data-stores` → preserve it for mid-session cache compatibility.
+- About to delete or rename a query key without grepping for **every** consumer (mutations, optimistic-update helpers, selectors, other queries that prefix-invalidate it) → grep first; mutations referencing a now-orphan key silently no-op and the visible page stops updating after user actions.
 
 ## Common Mistakes
 
@@ -237,3 +308,5 @@ If you catch yourself doing any of these, stop and reconsider:
 | Skipping `onSettled` invalidation in optimistic mutation | Optimistic value drifts from server truth |
 | Leaving `connect()` HOC after request state moved to React Query | Convert to hooks, remove HOC entirely (function components only) |
 | Leaving the old `data-stores` hook exported | Delete file AND remove from Reader barrel |
+| Naming the fetcher / query without the `Read` prefix | Match other modules: `fetchRead{Name}`, `read{Name}Query`, `Read{Name}Response` |
+| Importing `client/lib/request-with-subkey-fallback/` from `api-core` | Wrong dependency direction — inline the subkey + `X-WPSUBKEY` logic in the fetcher |

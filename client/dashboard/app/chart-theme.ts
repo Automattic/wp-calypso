@@ -15,8 +15,10 @@ export const dashboardChartTheme: Partial< ChartTheme > = {
 	xTickLineStyles: {
 		stroke: 'var(--dashboard-surface__border-color)',
 	},
-	legendLabelStyles: {
-		color: 'var(--dashboard__text-muted-color)',
+	legend: {
+		labelStyles: {
+			color: 'var(--dashboard__text-muted-color)',
+		},
 	},
 	svgLabelSmall: {
 		fill: 'var(--dashboard__text-muted-color)',

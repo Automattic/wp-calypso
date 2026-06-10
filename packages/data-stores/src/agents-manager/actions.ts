@@ -10,6 +10,7 @@ import type { APIFetchOptions } from '../shared-types';
 type AgentsManagerState = {
 	isOpen?: boolean;
 	isDocked?: boolean;
+	isMinimized?: boolean;
 	floatingPosition?: 'left' | 'right';
 	routerHistory?: null; // Only used to clear history
 };
@@ -35,6 +36,10 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 
 	if ( typeof state.isDocked === 'boolean' ) {
 		saveState.agents_manager_docked = state.isDocked;
+	}
+
+	if ( typeof state.isMinimized === 'boolean' ) {
+		saveState.agents_manager_minimized = state.isMinimized;
 	}
 
 	if ( state.floatingPosition === 'left' || state.floatingPosition === 'right' ) {
@@ -94,6 +99,17 @@ export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	} as const;
 }
 
+export function* setIsMinimized( isMinimized: boolean, shouldSave: boolean = true ) {
+	if ( shouldSave ) {
+		yield saveAgentsManagerState( { isMinimized } );
+	}
+
+	return {
+		type: 'AGENTS_MANAGER_SET_MINIMIZED',
+		isMinimized,
+	} as const;
+}
+
 export function* setFloatingPosition(
 	floatingPosition: 'left' | 'right',
 	shouldSave: boolean = true
@@ -123,8 +139,9 @@ export function setIsLoading( isLoading: boolean ) {
 }
 
 /**
- * Set split-screen mode (docked sidebar grows to cover ~50% of the viewport).
- * Session-scoped — intentionally not persisted to user prefs.
+ * Toggle split-screen mode (docked sidebar grows to cover ~50% of the
+ * viewport). Session-scoped — intentionally not persisted to user prefs so
+ * the expanded layout doesn't follow the user into unrelated contexts.
  */
 export function setIsSplitScreen( isSplitScreen: boolean ) {
 	return {
@@ -148,4 +165,5 @@ export type AgentsManagerAction =
 	| ReturnType< typeof setIsSplitScreen >
 	| GeneratorReturnType< typeof setIsOpen >
 	| GeneratorReturnType< typeof setIsDocked >
+	| GeneratorReturnType< typeof setIsMinimized >
 	| GeneratorReturnType< typeof setFloatingPosition >;

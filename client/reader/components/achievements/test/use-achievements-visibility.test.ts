@@ -6,11 +6,7 @@ import useAchievementsVisibility from '../use-achievements-visibility';
 
 const mockUseQuery = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: ( ...args: unknown[] ) => mockUseQuery( ...args ),
-} ) );
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => true,
+	useQuery: ( options: unknown ) => mockUseQuery( options ),
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
@@ -27,15 +23,32 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: ( state: unknown ) => mockGetCurrentUser( state ),
 } ) );
 
+type QueryOptions = { queryKey: unknown[]; enabled?: boolean };
+type QueryResult = { data?: unknown; isLoading?: boolean };
+
+function setupUseQuery( response: QueryResult = {} ) {
+	mockUseQuery.mockImplementation( ( options: QueryOptions ) => {
+		if ( options.enabled === false ) {
+			return { data: undefined, isLoading: false };
+		}
+		return { data: response.data, isLoading: response.isLoading ?? false };
+	} );
+}
+
+function findCall( mock: jest.Mock, predicate: ( options: QueryOptions ) => boolean ) {
+	return mock.mock.calls.find( ( [ options ] ) => predicate( options as QueryOptions ) ) as
+		| [ QueryOptions ]
+		| undefined;
+}
+
 describe( 'useAchievementsVisibility', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseQuery.mockReturnValue( { data: undefined, isLoading: false } );
+		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
+		setupUseQuery();
 	} );
 
-	test( 'should return isOwnProfile and isVisible true for own profile', () => {
-		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
-
+	test( 'returns isOwnProfile and isVisible true for own profile', () => {
 		const { result } = renderHook( () => useAchievementsVisibility( 'myself' ) );
 
 		expect( result.current.isOwnProfile ).toBe( true );
@@ -43,19 +56,23 @@ describe( 'useAchievementsVisibility', () => {
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	test( 'should not fetch settings for own profile', () => {
-		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
-
+	test( 'does not fetch settings for own profile', () => {
 		renderHook( () => useAchievementsVisibility( 'myself' ) );
 
-		expect( mockUseQuery ).toHaveBeenCalledWith( expect.objectContaining( { enabled: false } ) );
+		const settingsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'achievements' );
+		expect( settingsCall?.[ 0 ].enabled ).toBe( false );
 	} );
 
-	test( 'should return isVisible true when other user has public achievements', () => {
-		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
-		mockUseQuery.mockReturnValue( {
+	test( 'does not fetch settings when profileUserLogin is undefined', () => {
+		renderHook( () => useAchievementsVisibility( undefined ) );
+
+		const settingsCall = findCall( mockUseQuery, ( o ) => o.queryKey[ 1 ] === 'achievements' );
+		expect( settingsCall?.[ 0 ].enabled ).toBe( false );
+	} );
+
+	test( 'returns isVisible true when other user has public achievements', () => {
+		setupUseQuery( {
 			data: { settings: { 'achievements-visibility': 'public' } },
-			isLoading: false,
 		} );
 
 		const { result } = renderHook( () => useAchievementsVisibility( 'other_user' ) );
@@ -65,11 +82,9 @@ describe( 'useAchievementsVisibility', () => {
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	test( 'should return isVisible false when other user has private achievements', () => {
-		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
-		mockUseQuery.mockReturnValue( {
+	test( 'returns isVisible false when other user has private achievements', () => {
+		setupUseQuery( {
 			data: { settings: { 'achievements-visibility': 'private' } },
-			isLoading: false,
 		} );
 
 		const { result } = renderHook( () => useAchievementsVisibility( 'other_user' ) );
@@ -78,9 +93,8 @@ describe( 'useAchievementsVisibility', () => {
 		expect( result.current.isVisible ).toBe( false );
 	} );
 
-	test( 'should return isLoading true while fetching other user settings', () => {
-		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
-		mockUseQuery.mockReturnValue( { data: undefined, isLoading: true } );
+	test( 'returns isLoading true while fetching other user settings', () => {
+		setupUseQuery( { isLoading: true } );
 
 		const { result } = renderHook( () => useAchievementsVisibility( 'other_user' ) );
 

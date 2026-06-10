@@ -2,6 +2,7 @@ import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import type { JSX } from 'react';
 
 export type BrandMeta = {
 	brand: string;

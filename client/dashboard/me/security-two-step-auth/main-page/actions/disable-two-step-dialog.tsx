@@ -181,7 +181,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 					<DataForm< TwoStepAuthAppFormData >
 						data={ formData }
 						fields={ [ field ] }
-						form={ { layout: { type: 'regular' as const }, fields: [ field ] } }
+						form={ { layout: { type: 'regular' as const }, fields: [ field.id ] } }
 						onChange={ ( edits: Partial< TwoStepAuthAppFormData > ) => {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }

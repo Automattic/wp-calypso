@@ -36,10 +36,10 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 	);
 
 	let page: Page;
+	let siteSlug: string;
 	let editorPage: EditorPage;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
-	let pageTemplateToSelect: string;
 	let pageTemplateFirstTextContent: string;
 
 	beforeAll( async () => {
@@ -47,15 +47,16 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	it( 'Visit Pages page', async function () {
 		pagesPage = new PagesPage( page );
-		await pagesPage.visit();
+		await pagesPage.visit( { siteSlug } );
 	} );
 
 	it( 'Start a new page', async function () {
-		await pagesPage.addNewPage();
+		await pagesPage.addNewPage( { siteSlug } );
 	} );
 
 	it( 'Select page template', async function () {
@@ -88,8 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 				.textContent() ) || '';
 
 		pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
-		pageTemplateToSelect = ( await selectedPatternLocator.getAttribute( 'aria-label' ) ) ?? '';
-		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
+		await editorPage.selectTemplate( selectedPatternLocator, { timeout: 15 * 1000 } );
 	} );
 
 	it( 'Template content loads into editor', async function () {

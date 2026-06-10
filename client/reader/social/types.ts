@@ -8,6 +8,12 @@ export interface SocialAuthor {
 
 export interface SocialReplyRef {
 	uri: string;
+	// Strong-ref CID for the referenced record. Optional because not every
+	// protocol exposes one (Mastodon has no native CIDs) and the atmosphere
+	// backend may omit it during the rollout window for `reply_root` /
+	// `reply_parent`. Reply-to-reply submission paths fall back to the
+	// surrounding post's `cid` when this is missing.
+	cid?: string;
 	author: { id?: string; handle: string };
 }
 
@@ -139,6 +145,7 @@ export interface SocialContentWarning {
 
 export interface SocialPost {
 	uri: string;
+	cid?: string;
 	permalink: string;
 	text: string;
 	html: string;
@@ -151,6 +158,10 @@ export interface SocialPost {
 	reason: SocialReason | null;
 	embed: SocialEmbed | null;
 	counts: SocialCounts;
+	viewer?: {
+		like: string | null;
+		repost: string | null;
+	};
 	// Optional content warning — undefined for protocols that don't
 	// expose them (atmosphere) or for posts that aren't flagged.
 	content_warning?: SocialContentWarning;

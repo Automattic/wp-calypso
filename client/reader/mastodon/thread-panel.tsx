@@ -10,16 +10,22 @@ import {
 	SocialAnalyticsProvider,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
 import { MastodonThreadTree } from './thread-tree';
 import { MastodonThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
+import { makeUseMastodonRepostAction } from './use-mastodon-repost-action';
 import type {
 	MastodonConnection,
 	MastodonError,
 	MastodonThreadResponse,
 } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface ThreadPanelProps {
@@ -128,6 +134,35 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'mastodon' as const,
@@ -136,25 +171,50 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
+		[
+			connection.id,
+			onClickAnalytics,
+			getThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseMastodonRepostAction( connection.id ),
+		[ connection.id ]
 	);
 
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				{ renderBody( {
-					translate,
-					data,
-					instance: connection.instance,
-					isPending,
-					isFetching,
-					isError,
-					error: error ?? null,
-					handleRetry,
-					targetUri: statusId,
-				} ) }
+				<LikeProvider value={ useLikeAction }>
+					<RepostProvider value={ useRepostAction }>
+						{ renderBody( {
+							translate,
+							data,
+							instance: connection.instance,
+							connectionId: connection.id,
+							isPending,
+							isFetching,
+							isError,
+							error: error ?? null,
+							handleRetry,
+							targetUri: statusId,
+						} ) }
+					</RepostProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);
@@ -164,6 +224,7 @@ function renderBody( {
 	translate,
 	data,
 	instance,
+	connectionId,
 	isPending,
 	isFetching,
 	isError,
@@ -174,6 +235,7 @@ function renderBody( {
 	translate: ReturnType< typeof useTranslate >;
 	data: MastodonThreadResponse | undefined;
 	instance: string;
+	connectionId: number;
 	isPending: boolean;
 	isFetching: boolean;
 	isError: boolean;
@@ -203,7 +265,7 @@ function renderBody( {
 		);
 	}
 	const root = mapMastodonThreadResponseToSocialThreadNode( data, { instance } );
-	return <MastodonThreadTree root={ root } targetUri={ targetUri } />;
+	return <MastodonThreadTree root={ root } targetUri={ targetUri } connectionId={ connectionId } />;
 }
 
 function renderError( {

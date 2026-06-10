@@ -21,6 +21,7 @@ import {
 	FLEX_SITE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
+	DIRECT_TO_CART_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -29,6 +30,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
 		),
+
+	[ DIRECT_TO_CART_FLOW ]: () =>
+		import( /* webpackChunkName: "direct-to-cart-flow" */ './flows/direct-to-cart/direct-to-cart' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),

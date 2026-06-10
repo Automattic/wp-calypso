@@ -1,6 +1,16 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .list-stream__header-title-privacy {
 	margin-inline-start: 2px;
 	margin-top: 1px;
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-text-subtle );
+
+		svg {
+			fill: currentColor;
+		}
+	}
 }
 
 .list-stream__header-follow {
@@ -14,11 +24,11 @@
 		z-index: z-index(".list-stream__header-follow", ".follow-button");
 
 		.gridicon {
-			fill: var(--color-primary);
+			fill: var(--color-link);
 		}
 
 		.follow-button__label {
-			color: var(--color-primary);
+			color: var(--color-link);
 		}
 
 		&.is-following {
@@ -50,6 +60,23 @@
 
 	.list-stream__header-action-icon .gridicon {
 		fill: var(--color-neutral-dark);
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.button {
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text-subtle );
+		}
+
+		.button:hover,
+		.button:focus {
+			border-color: var( --color-link );
+			color: var( --color-link );
+		}
+
+		.list-stream__header-action-icon .gridicon {
+			fill: currentColor;
+		}
 	}
 }
 

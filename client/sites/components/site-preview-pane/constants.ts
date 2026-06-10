@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-
 export const OVERVIEW = 'overview';
 export const MONITORING = 'monitoring';
 export const LOGS_PHP = 'logs-php';
@@ -20,9 +18,7 @@ export const SETTINGS_PERFORMANCE = 'settings-performance';
 export const PLAN = 'plan';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
-	[ OVERVIEW ]: isEnabled( 'dashboard/v2/backport/site-overview' )
-		? 'sites/:site'
-		: 'overview/:site',
+	[ OVERVIEW ]: 'sites/:site',
 	[ MONITORING ]: 'site-monitoring/:site',
 	[ LOGS_PHP ]: 'site-logs/:site/php',
 	[ LOGS_WEB ]: 'site-logs/:site/web',

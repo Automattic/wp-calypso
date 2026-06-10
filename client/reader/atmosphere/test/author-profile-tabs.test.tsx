@@ -118,6 +118,7 @@ describe( 'AuthorProfileTabs', () => {
 			<AuthorProfileTabs
 				connectionId={ 42 }
 				actor="alice.bsky.social"
+				basePath="/reader/atmosphere/42/profile/alice.bsky.social"
 				activeFilter="posts_no_replies"
 				{ ...props }
 			/>
@@ -193,6 +194,22 @@ describe( 'AuthorProfileTabs', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'Media' } ) ).toBeVisible();
 		const postsTab = screen.getByRole( 'menuitem', { name: 'Posts' } );
 		expect( postsTab.closest( 'li' ) ).toHaveClass( 'is-selected' );
+	} );
+
+	it( 'builds tab hrefs from basePath alone (no actor segment)', () => {
+		renderTabs( { basePath: '/reader/atmosphere/42/profile' } );
+		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toHaveAttribute(
+			'href',
+			'/reader/atmosphere/42/profile?tab=posts'
+		);
+		expect( screen.getByRole( 'menuitem', { name: 'Replies' } ) ).toHaveAttribute(
+			'href',
+			'/reader/atmosphere/42/profile?tab=replies'
+		);
+		expect( screen.getByRole( 'menuitem', { name: 'Media' } ) ).toHaveAttribute(
+			'href',
+			'/reader/atmosphere/42/profile?tab=media'
+		);
 	} );
 
 	it( 'modifier-click does not call preventDefault — native browser handling kicks in', async () => {

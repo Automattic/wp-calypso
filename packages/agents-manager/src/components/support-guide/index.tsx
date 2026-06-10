@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
@@ -22,6 +23,8 @@ interface SupportGuideProps {
 	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
+	/** Called when the chat is expanded (floating mode). */
+	onExpand: () => void;
 }
 
 export default function SupportGuide( {
@@ -30,6 +33,7 @@ export default function SupportGuide( {
 	isDocked,
 	onAbort,
 	onClose,
+	onExpand,
 }: SupportGuideProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
@@ -40,6 +44,8 @@ export default function SupportGuide( {
 		return store.getAgentsManagerState();
 	}, [] );
 
+	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
 	const isFromChat = !! ( state?.sessionId || state?.conversationId );
 
 	// Navigate back to the source route, preserving relevant state.
@@ -63,8 +69,9 @@ export default function SupportGuide( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			onClose={ onClose }
+			onExpand={ onExpand }
 			onStop={ onAbort }
 			expandOnHover={ false }
 		>

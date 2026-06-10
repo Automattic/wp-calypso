@@ -1,4 +1,5 @@
 import type { AtmosphereAuthorFeedFilter } from './types';
+import type { NotificationsFilter } from '../reader-social/notifications-filter';
 
 export const readerAtmosphereKeys = {
 	all: [ 'reader', 'atmosphere' ] as const,
@@ -6,10 +7,32 @@ export const readerAtmosphereKeys = {
 	connection: ( id: number | null ) => [ ...readerAtmosphereKeys.all, 'connection', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerAtmosphereKeys.all, 'timeline', connectionId ] as const,
+	notifications: ( connectionId: number, filter: NotificationsFilter ) =>
+		[ ...readerAtmosphereKeys.all, 'notifications', connectionId, filter ] as const,
 	thread: ( uri: string ) => [ ...readerAtmosphereKeys.all, 'thread', uri ] as const,
+	scopedThread: ( connectionId: number, uri: string ) =>
+		[ ...readerAtmosphereKeys.all, 'scoped-thread', connectionId, uri ] as const,
 	profile: ( actor: string ) => [ ...readerAtmosphereKeys.all, 'profile', actor ] as const,
+	scopedProfile: ( connectionId: number, actor: string ) =>
+		[ ...readerAtmosphereKeys.all, 'scoped-profile', connectionId, actor ] as const,
 	authorFeed: ( actor: string, filter?: AtmosphereAuthorFeedFilter ) =>
 		filter
 			? ( [ ...readerAtmosphereKeys.all, 'author-feed', actor, filter ] as const )
 			: ( [ ...readerAtmosphereKeys.all, 'author-feed', actor ] as const ),
+	scopedAuthorFeed: ( connectionId: number, actor: string, filter?: AtmosphereAuthorFeedFilter ) =>
+		filter
+			? ( [
+					...readerAtmosphereKeys.all,
+					'scoped-author-feed',
+					connectionId,
+					actor,
+					filter,
+			  ] as const )
+			: ( [ ...readerAtmosphereKeys.all, 'scoped-author-feed', connectionId, actor ] as const ),
+	actorFollowers: ( connectionId: number, actor: string ) =>
+		[ ...readerAtmosphereKeys.all, 'actor-followers', connectionId, actor ] as const,
+	actorFollows: ( connectionId: number, actor: string ) =>
+		[ ...readerAtmosphereKeys.all, 'actor-follows', connectionId, actor ] as const,
+	tagFeed: ( connectionId: number, hashtag: string ) =>
+		[ ...readerAtmosphereKeys.all, 'tag-feed', connectionId, hashtag ] as const,
 };

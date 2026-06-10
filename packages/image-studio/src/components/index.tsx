@@ -24,6 +24,7 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
 import {
 	ImageStudioEntryPoint,
 	type ImageStudioActions,
@@ -38,6 +39,7 @@ import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
+import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -73,6 +75,13 @@ function ImageStudioAgentChat( {
 
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
+	// Drives which suggestion-chip flavor the video-clip hook produces:
+	// Cinematic → cinematography prompts for the Veo render path,
+	// Highlights → editorial framing hints for the cloud-rendered recap.
+	const selectedVideoStyle = useSelect( ( select ) => {
+		return select( videoStudioStore ).getSelectedStyle();
+	}, [] );
+
 	useEffect( () => {
 		return () => {
 			// When the component unmounts, abort any ongoing requests
@@ -98,15 +107,27 @@ function ImageStudioAgentChat( {
 		placeholder = __( 'Describe your image', __i18n_text_domain__ );
 	}
 
-	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
-		useImageStudioSuggestions( {
-			registerSuggestions: agentChatProps.registerSuggestions,
-			clearSuggestions: agentChatProps.clearSuggestions,
-			messages: displayMessages,
-			mode,
-			inputValue,
-			disabled: isVideoMode,
-		} );
+	const imageSuggestions = useImageStudioSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		mode,
+		inputValue,
+		disabled: isVideoMode,
+	} );
+
+	const videoSuggestions = useVideoClipSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		inputValue,
+		disabled: ! isVideoMode,
+		style: selectedVideoStyle,
+	} );
+
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
+		? videoSuggestions
+		: imageSuggestions;
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {
@@ -187,7 +208,7 @@ function ImageStudioAgentChat( {
 				inputValue={ inputValue }
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
-				maxInputLength={ 1000 }
+				maxInputLength={ isVideoMode ? 2000 : 1000 }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
@@ -216,21 +237,10 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'All generated videos will be automatically saved to your media library.',
+							'Clips are saved to your Media Library as 9:16 vertical MP4 files.',
 							__i18n_text_domain__
 						) }
 					</em>
-					{ isVideoGeneratingPhase && (
-						<>
-							<br />
-							<em>
-								{ __(
-									"You can close this — we'll save it when it's ready.",
-									__i18n_text_domain__
-								) }
-							</em>
-						</>
-					) }
 				</p>
 			) }
 		</>
@@ -342,7 +352,7 @@ const ImageStudioContent = withInstanceId(
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
-			displayImageUrl,
+			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
 			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 		} );
 
@@ -555,6 +565,12 @@ const ImageStudioContent = withInstanceId(
 							hasNextImage={ hasNextImage }
 						/>
 
+						{ isVideoMode && (
+							<div className="image-studio-modal__experimental-tag">
+								<ExperimentalBadge variant="dark" />
+							</div>
+						) }
+
 						{ mode === ImageStudioMode.Edit ? (
 							<EditLayout
 								isRenderedImageLoaded={ isRenderedImageLoaded }
@@ -575,6 +591,8 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessing={ isAiProcessing }
 								isPromptSent={ isPromptSent }
 								videoUrl={ isVideoMode ? currentVideoUrl : null }
+								onFeedback={ handleFeedback }
+								onSubmitFeedbackText={ handleSubmitFeedbackText }
 							/>
 						) }
 

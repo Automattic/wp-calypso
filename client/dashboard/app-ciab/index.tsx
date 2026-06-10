@@ -49,6 +49,7 @@ boot( {
 			preview: true,
 		},
 		colorScheme: false,
+		darkMode: false,
 	},
 	optIn: false,
 	components: {

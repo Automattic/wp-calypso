@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { SubscriptionBillPeriod, type CancellationFeature } from '@automattic/api-core';
+import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -55,17 +56,9 @@ import {
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import { useQuery } from '@tanstack/react-query';
 import { hasTranslation } from '@wordpress/i18n';
-import {
-	column,
-	download,
-	Icon,
-	payment,
-	reusableBlock,
-	tool,
-	trash,
-	upload,
-} from '@wordpress/icons';
+import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -84,6 +77,7 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -105,6 +99,8 @@ import {
 	isPaidWithCredits,
 	canAutoRenewBeTurnedOff,
 	isExpired,
+	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
@@ -129,7 +125,6 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
-	getDowngradeUrlFor,
 } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -164,7 +159,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -205,7 +200,6 @@ export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
 	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
-	getDowngradeUrlFor?: typeof getDowngradeUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isSiteLevel?: boolean;
@@ -221,6 +215,8 @@ export interface ManagePurchaseProps {
 }
 
 export interface ManagePurchaseConnectedProps {
+	isSplitCancelRemoveEnabled: boolean;
+	cancellationFeatures: CancellationFeature[] | null;
 	hasCustomPrimaryDomain?: boolean | null;
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
@@ -318,16 +314,16 @@ class ManagePurchase extends Component<
 
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
-		const options = redirectTo ? { redirectTo } : undefined;
-		const isSitelessRenewal =
-			purchase &&
-			( isAkismetHoldingSitePurchase( purchase ) ||
-				isMarketplaceHoldingSitePurchase( purchase ) ||
-				isA4AHoldingSitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
 		}
+
+		const options = redirectTo ? { redirectTo } : undefined;
+		const isSitelessRenewal =
+			isAkismetHoldingSitePurchase( purchase ) ||
+			isMarketplaceHoldingSitePurchase( purchase ) ||
+			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
 		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
@@ -594,13 +590,55 @@ class ManagePurchase extends Component<
 		return `/plans/${ siteSlug }`;
 	}
 
+	shouldRenderDowngradeOption(): boolean {
+		const { purchase } = this.props;
+		if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+			return false;
+		}
+		if ( ! purchase || ! isPlan( purchase ) ) {
+			return false;
+		}
+		if (
+			! isInExpirationGracePeriod( purchase ) &&
+			! isWithinRefundWindowDowngradeEligible( purchase )
+		) {
+			return false;
+		}
+		return true;
+	}
+
+	renderChangePlanNavItem() {
+		const { siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
+		if ( ! this.shouldRenderDowngradeOption() ) {
+			return null;
+		}
+		// Land back on the newly-provisioned plan's manage-purchase page after
+		// checkout with a success notice. The `:purchaseId` placeholder is
+		// substituted by the checkout pending page once the new subscription
+		// appears (analogous to `:receiptId`).
+		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
+		const href = addQueryArgs( { redirect_to: redirectTo }, `/plans/${ siteSlug }` );
+		return (
+			<CompactCard tagName="a" displayAsLink href={ href }>
+				<Icon icon={ column } className="card__icon" />
+				{ translate( 'Change plan' ) }
+			</CompactCard>
+		);
+	}
+
 	renderUpgradeNavItem() {
 		const { purchase, translate } = this.props;
+		if ( this.shouldRenderDowngradeOption() ) {
+			return null;
+		}
 		if ( ! purchase ) {
 			return null;
 		}
-
-		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+		if (
+			isJetpackHoldingSitePurchase( purchase ) ||
+			isPartnerPurchase( purchase ) ||
+			isA4ABillingDragonPurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -774,17 +812,17 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
 
 		// Visibility:
 		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → show when the subscription is already off (auto-renew off,
-		//              expired), OR when auto-renew is still on and a refund is
-		//              available (the new dual-button case alongside Cancel).
+		//   On flag  → Remove only when auto-renew is already off. The refund-eligible
+		//              case is surfaced inside the cancel flow via
+		//              RefundEligibilityNotice instead of a parallel Remove CTA.
 		if ( isSplitEnabled ) {
-			if ( autoRenewOn && ! canRefund ) {
+			if ( autoRenewOn ) {
 				return null;
 			}
 		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
@@ -1025,7 +1063,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const { id } = purchase;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
@@ -1044,9 +1082,11 @@ class ManagePurchase extends Component<
 			this.props.siteSlug,
 			id
 		);
-		// Under flag, carry the user's intent through to the confirmation screen so
-		// it renders the matching variant (Cancel copy + disable-auto-renew mutation).
-		const link = isSplitEnabled ? `${ baseLink }?intent=cancel` : baseLink;
+		// Carry the user's intent through to the confirmation screen so it renders
+		// the matching variant: the "Cancel" CTA always means cancel (disable
+		// auto-renew, keep features until expiry), distinct from the "Remove and
+		// refund" action offered by the refund-eligibility notice (intent=remove).
+		const link = `${ baseLink }?intent=cancel`;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 
 		if ( ! canRefund && isDomainTransfer( purchase ) ) {
@@ -1084,7 +1124,7 @@ class ManagePurchase extends Component<
 				this.showWordAdsEligibilityWarningDialog( link );
 			}
 
-			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+			if ( ! isSplitEnabled && this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
 			}
@@ -1105,30 +1145,6 @@ class ManagePurchase extends Component<
 								} )
 							)
 					  ) }
-			</CompactCard>
-		);
-	}
-
-	renderDowngradeNavItem() {
-		const { purchase, translate } = this.props;
-		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
-			return null;
-		}
-
-		const link = ( this.props.getDowngradeUrlFor ?? downgradePurchase )(
-			this.props.siteSlug,
-			purchase.id
-		);
-
-		return (
-			<CompactCard href={ link }>
-				<Icon icon={ download } className="card__icon" />
-				{ translate( 'Downgrade plan' ) }
-				{ this.renderActionDetails() }
 			</CompactCard>
 		);
 	}
@@ -1290,7 +1306,8 @@ class ManagePurchase extends Component<
 	}
 
 	renderPurchaseDescription() {
-		const { purchase, site, translate } = this.props;
+		const { purchase, site, translate, isSplitCancelRemoveEnabled, cancellationFeatures } =
+			this.props;
 
 		if ( ! purchase ) {
 			return null;
@@ -1298,6 +1315,23 @@ class ManagePurchase extends Component<
 
 		if ( isMarketplaceHoldingSitePurchase( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 			return null;
+		}
+
+		// When the split flag is on and the API has returned features for this
+		// purchase, show the feature list instead of the description.
+		if ( isSplitCancelRemoveEnabled && cancellationFeatures && cancellationFeatures.length > 0 ) {
+			return (
+				<div className="manage-purchase__content">
+					<ul className="manage-purchase__feature-list-items">
+						{ cancellationFeatures.map( ( feature ) => (
+							<li key={ feature.feature_id } className="manage-purchase__feature-list-item">
+								<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
+								<span>{ feature.title }</span>
+							</li>
+						) ) }
+					</ul>
+				</div>
+			);
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
@@ -1543,6 +1577,7 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
+						{ this.renderChangePlanNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1550,17 +1585,12 @@ class ManagePurchase extends Component<
 							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
-						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
-						{ ! isJetpackHoldingSitePurchase( purchase ) && this.renderUpgradeNavItem() }
+						{ this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
 						<div className="manage-purchase__downgrade-products">
-							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
-								? this.renderDowngradeNavItem()
-								: null }
 							{ this.renderCancelPurchaseNavItem() }
 							{ this.renderRemovePurchaseNavItem() }
 							{ this.renderCancelSurvey() }
@@ -1662,7 +1692,7 @@ class ManagePurchase extends Component<
 						renewableSitePurchases={ renewableSitePurchases }
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? false }
 						willAtomicSiteRevert={ willAtomicSiteRevert }
 						getAddNewPaymentMethodUrlFor={
 							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
@@ -1869,7 +1899,7 @@ const WrappedManagePurchase = (
 	);
 };
 
-export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
+const ConnectedManagePurchase = connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 
 	const purchaseAttachedTo =
@@ -1951,6 +1981,26 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 		),
 	};
 }
+
+function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { data: cancelFeaturesResponse } = useQuery( {
+		...purchaseCancelFeaturesQuery( props.purchaseId, 'treatment' ),
+		enabled: isSplitCancelRemoveEnabled,
+	} );
+	const cancellationFeatures = isSplitCancelRemoveEnabled
+		? cancelFeaturesResponse?.features ?? null
+		: null;
+	return (
+		<ConnectedManagePurchase
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+			cancellationFeatures={ cancellationFeatures }
+		/>
+	);
+}
+
+export default ManagePurchaseWithExperiment;
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,

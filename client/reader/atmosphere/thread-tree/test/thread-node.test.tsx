@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThreadNode } from '../thread-node';
 import type { AtmosphereThreadNode, AtmosphereFeedItem } from '@automattic/api-core';
 
@@ -38,7 +39,7 @@ describe( 'ThreadNode', () => {
 			parent: null,
 			replies: [],
 		};
-		render( <ThreadNode node={ node } depth={ 0 } highlighted /> );
+		renderWithProvider( <ThreadNode connectionId={ 42 } node={ node } depth={ 0 } highlighted /> );
 		const article = screen.getByRole( 'article' );
 		expect( article ).toHaveAttribute( 'aria-current', 'location' );
 		expect( article.classList.contains( 'is-target' ) ).toBe( true );
@@ -51,7 +52,9 @@ describe( 'ThreadNode', () => {
 			parent: null,
 			replies: [],
 		};
-		render( <ThreadNode node={ node } depth={ 0 } highlighted={ false } /> );
+		renderWithProvider(
+			<ThreadNode connectionId={ 42 } node={ node } depth={ 0 } highlighted={ false } />
+		);
 		expect( screen.getByRole( 'article' ) ).not.toHaveAttribute( 'aria-current' );
 	} );
 
@@ -69,7 +72,7 @@ describe( 'ThreadNode', () => {
 				},
 			],
 		};
-		render( <ThreadNode node={ node } depth={ 0 } highlighted /> );
+		renderWithProvider( <ThreadNode connectionId={ 42 } node={ node } depth={ 0 } highlighted /> );
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 2 );
 		expect(
 			screen.getAllByRole( 'article' )[ 1 ].classList.contains( 'thread-node--depth-1' )
@@ -85,8 +88,8 @@ describe( 'ThreadNode', () => {
 		};
 		// Depths 0–4 stay uncapped.
 		for ( const depth of [ 0, 4 ] ) {
-			const { container, unmount } = render(
-				<ThreadNode node={ node } depth={ depth } highlighted={ false } />
+			const { container, unmount } = renderWithProvider(
+				<ThreadNode connectionId={ 42 } node={ node } depth={ depth } highlighted={ false } />
 			);
 			const article = container.querySelector( '[role="article"]' )!;
 			expect( article.classList.contains( 'thread-node--capped' ) ).toBe( false );
@@ -97,8 +100,8 @@ describe( 'ThreadNode', () => {
 		}
 		// Depths 5, 6, 7, 12 all share the same capped indentation.
 		for ( const depth of [ 5, 6, 7, 12 ] ) {
-			const { container, unmount } = render(
-				<ThreadNode node={ node } depth={ depth } highlighted={ false } />
+			const { container, unmount } = renderWithProvider(
+				<ThreadNode connectionId={ 42 } node={ node } depth={ depth } highlighted={ false } />
 			);
 			const article = container.querySelector( '[role="article"]' )!;
 			expect( article.classList.contains( 'thread-node--capped' ) ).toBe( true );
@@ -121,8 +124,14 @@ describe( 'ThreadNode', () => {
 				},
 			],
 		};
-		render(
-			<ThreadNode node={ node } depth={ 0 } highlighted={ false } renderReplies={ false } />
+		renderWithProvider(
+			<ThreadNode
+				connectionId={ 42 }
+				node={ node }
+				depth={ 0 }
+				highlighted={ false }
+				renderReplies={ false }
+			/>
 		);
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 1 );
 		expect( screen.queryByText( 'child reply' ) ).toBeNull();
@@ -130,7 +139,9 @@ describe( 'ThreadNode', () => {
 
 	it( 'renders a not_found tombstone for not_found nodes', () => {
 		const node: AtmosphereThreadNode = { type: 'not_found', uri: 'at://gone' };
-		render( <ThreadNode node={ node } depth={ 1 } highlighted={ false } /> );
+		renderWithProvider(
+			<ThreadNode connectionId={ 42 } node={ node } depth={ 1 } highlighted={ false } />
+		);
 		expect( screen.getByRole( 'note' ) ).toHaveTextContent( 'Post unavailable' );
 		expect( screen.queryByRole( 'article' ) ).toBeNull();
 	} );
@@ -141,7 +152,9 @@ describe( 'ThreadNode', () => {
 			uri: 'at://blocked',
 			author: { did: 'did:plc:blk' },
 		};
-		render( <ThreadNode node={ node } depth={ 1 } highlighted={ false } /> );
+		renderWithProvider(
+			<ThreadNode connectionId={ 42 } node={ node } depth={ 1 } highlighted={ false } />
+		);
 		expect( screen.getByRole( 'note' ) ).toHaveTextContent( 'Post is from a blocked author' );
 	} );
 } );

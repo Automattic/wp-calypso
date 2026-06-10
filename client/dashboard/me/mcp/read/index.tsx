@@ -142,9 +142,12 @@ export default function McpRead() {
 
 		const order = SUB_CATEGORY_ORDER[ categoryName ] ?? [];
 		const subGroups = order.filter( ( sub ) => subGrouped[ sub ] && subGrouped[ sub ].length > 0 );
+		// Tools with no sub-category are appended at the end so they are never silently dropped.
+		const ungrouped = subGrouped[ '' ] ?? [];
+		const allGroups = ungrouped.length > 0 ? [ ...subGroups, '' ] : subGroups;
 
-		return subGroups.map( ( subName, index ) => (
-			<Fragment key={ subName }>
+		return allGroups.map( ( subName, index ) => (
+			<Fragment key={ subName || '__ungrouped__' }>
 				{ index > 0 && (
 					<CardBody style={ { padding: 'calc(4px * 2) calc(4px * 6)' } }>
 						<hr

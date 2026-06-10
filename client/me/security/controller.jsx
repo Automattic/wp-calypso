@@ -29,8 +29,8 @@ export function password( context, next ) {
 	next();
 }
 
-export function twoStep( context, next ) {
-	const TwoStepComponent = require( 'calypso/me/two-step' ).default;
+export async function twoStep( context, next ) {
+	const { default: TwoStepComponent } = await import( 'calypso/me/two-step' );
 
 	context.primary = createElement( TwoStepComponent, {
 		path: context.path,
@@ -96,5 +96,11 @@ export function dolly( context, next ) {
 
 export function sshKey( context, next ) {
 	context.primary = <SecuritySSHKey queryParams={ context.query } />;
+	next();
+}
+
+export function qrCodeAppLogin( context, next ) {
+	const QRCodeAppLoginPage = require( 'calypso/me/qr-code-app-login' ).default;
+	context.primary = createElement( QRCodeAppLoginPage, {} );
 	next();
 }

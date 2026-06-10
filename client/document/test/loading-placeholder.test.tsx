@@ -23,8 +23,6 @@ const baseProps: DocumentProps = {
 	clientData: null,
 	commitChecksum: '',
 	commitSha: '',
-	devDocs: false,
-	devDocsURL: '',
 	entrypoint: {
 		js: [],
 		'css.ltr': [],
@@ -51,12 +49,12 @@ const baseProps: DocumentProps = {
 	renderedLayout: null,
 	sectionGroup: '',
 	sectionName: 'stepper',
+	path: '/',
 	storeSandboxHelper: false,
 	target: 'evergreen',
 	user: null,
 	useTranslationChunks: false,
 	showStepContainerV2Loader: true,
-	darkModeHelper: false,
 };
 
 describe( 'Document LoadingPlaceholder', () => {
@@ -74,9 +72,18 @@ describe( 'Document LoadingPlaceholder', () => {
 		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
-	it( 'renders the dark mode helper placeholder when enabled', () => {
-		const html = renderToStaticMarkup( <Document { ...baseProps } badge="dev" darkModeHelper /> );
+	it( 'hides the WordPress boot logo on the WooCommerce QR login auth-check route', () => {
+		const html = renderToStaticMarkup(
+			<Document
+				{ ...baseProps }
+				path="/me/security/qr-login"
+				query={ { origin: 'woocommerce' } }
+				sectionName="me"
+				showStepContainerV2Loader={ false }
+			/>
+		);
 
-		expect( html ).toContain( 'environment is-dark-mode' );
+		expect( html ).not.toContain( 'wpcom-site__logo' );
+		expect( html ).toContain( 'wpcom-loading__boot' );
 	} );
 } );

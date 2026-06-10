@@ -6,7 +6,6 @@ import {
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -35,6 +34,7 @@ import {
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
@@ -47,23 +47,53 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded, upgraded, cancelled } = purchaseSettingsRoute.useSearch();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { refunded, upgraded, cancelled, downgraded, plan_changed, intent } =
+		purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
 	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
+	const [ cancelledIntent ] = useState( () => ( cancelled ? intent : undefined ) );
 	useEffect( () => {
 		if ( cancelled ) {
 			navigate( {
 				search: ( prev: Record< string, unknown > ) => {
-					const { cancelled: _cancelled, ...rest } = prev;
+					const { cancelled: _cancelled, intent: _intent, ...rest } = prev;
 					return rest;
 				},
 				replace: true,
 			} );
 		}
 	}, [ cancelled, navigate ] );
+	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( Boolean( downgraded ) );
+	useEffect( () => {
+		if ( downgraded ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { downgraded: _downgraded, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ downgraded, navigate ] );
+	// Transient success notice shown after a change-plan checkout (upgrade or
+	// downgrade) redirects back here with `?plan_changed=true`. The param is
+	// stripped immediately so it doesn't survive a refresh or back navigation.
+	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState( Boolean( plan_changed ) );
+	useEffect( () => {
+		if ( plan_changed ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { plan_changed: _plan_changed, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ plan_changed, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -110,12 +140,33 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	// Transient cancelled success notice — suppresses every other notice until
 	// dismissed, refreshed, or navigated-away-and-back. Gated on the
 	// `?cancelled=true` search param set by the cancel redirect.
-	if ( config.isEnabled( 'purchases/split-cancel-remove' ) && showCancelledNotice ) {
+	if ( isSplitCancelRemoveEnabled && showCancelledNotice ) {
 		return (
 			<PurchaseCancelledNotice
 				purchase={ purchase }
+				intent={ cancelledIntent }
 				onClose={ () => setShowCancelledNotice( false ) }
 			/>
+		);
+	}
+
+	if ( showDowngradedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowDowngradedNotice( false ) }>
+				{ __( 'You\u2019ve switched to monthly billing.' ) }
+			</Notice>
+		);
+	}
+
+	if ( showPlanChangedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowPlanChangedNotice( false ) }>
+				{ sprintf(
+					// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+					__( 'Your plan has been updated to %s.' ),
+					purchase.product_name
+				) }
+			</Notice>
 		);
 	}
 
@@ -427,7 +478,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 					daysToExpiry
 				),
 				{
-					expiry: daysToExpiry,
+					expiry: String( daysToExpiry ),
 					productType: productType as string,
 				}
 		  )
@@ -486,9 +537,9 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	const cardDetails = {
-		cardType: purchase.payment_card_type,
-		cardNumber: purchase.payment_card_id,
-		cardExpiry: purchase.payment_expiry,
+		cardType: purchase.payment_card_type ?? '',
+		cardNumber: Number( purchase.payment_card_id ) || 0,
+		cardExpiry: purchase.payment_expiry ?? '',
 	};
 
 	const linkComponent = {

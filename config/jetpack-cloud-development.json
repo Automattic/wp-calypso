@@ -33,7 +33,6 @@
 		"always_use_logout_url": true,
 		"checkout/checkout-version": false,
 		"checkout/google-pay": false,
-		"checkout/razorpay": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"dev/auth-helper": true,

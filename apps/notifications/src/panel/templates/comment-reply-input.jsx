@@ -1,8 +1,10 @@
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import repliesCache from '../comment-replies-cache';
 import { modifierKeyIsActive } from '../helpers/input';
+import { recordTracksEvent } from '../helpers/stats';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
 import actions from '../state/actions';
@@ -10,8 +12,8 @@ import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcu
 import Suggestions from '../suggestions';
 import { formatString, validURL } from './functions';
 import Spinner from './spinner';
-const debug = require( 'debug' )( 'notifications:reply' );
-const { recordTracksEvent } = require( '../helpers/stats' );
+
+const debug = debugFactory( 'notifications:reply' );
 
 function stopEvent( event ) {
 	event.stopPropagation();

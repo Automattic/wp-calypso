@@ -89,7 +89,7 @@ export const PaymentMethodDeleteDialog = ( {
 										{ isInExpirationGracePeriod( purchase )
 											? __( 'Pending renewal' )
 											: sprintf(
-													// translators: date is a formatted renewal date
+													// translators: %(date)s: a formatted renewal date
 													__( 'Renews on %(date)s' ),
 													{
 														date: formatDate( new Date( purchase.renew_date ), locale, {

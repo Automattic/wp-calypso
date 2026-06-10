@@ -493,10 +493,9 @@ export default function CampaignItemDetails( props: Props ) {
 		? `$${ formatCents( total_budget_used || 0, 2 ) }`
 		: '- ';
 
-	// Both the classic (html5_v2) and AI-generated (html5_v3) responsive WP
-	// placements ship a renderable HTML doc — anything else has no preview,
-	// just dimensions.
-	const isWpcomHtmlFormat = format === 'html5_v2' || format === 'html5_v3';
+	// Responsive WPCOM placements ship a renderable HTML doc — anything else
+	// has no preview, just dimensions.
+	const isWpcomHtmlFormat = [ 'html5_v2', 'html5_v3', 'html5_v4' ].includes( format || '' );
 
 	const adPreviewLabel = isWpcomHtmlFormat ? (
 		<div className="campaign-item-details__preview-header-preview-button">

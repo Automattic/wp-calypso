@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -115,7 +116,6 @@ export class Login extends Component {
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
 			'isFromJetpackConnector',
-			'isUnifiedConnectionFlow',
 			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
@@ -222,12 +222,12 @@ export class Login extends Component {
 
 	getSupportLink() {
 		return (
-			<a
+			<ExternalLink
 				className="one-login__footer-link"
 				href="/support/category/manage-your-account/account-settings/"
 			>
 				{ this.props.translate( 'Support' ) }
-			</a>
+			</ExternalLink>
 		);
 	}
 
@@ -374,11 +374,11 @@ export class Login extends Component {
 					<OneLoginLayout
 						isJetpack={ isJetpack }
 						isFromJetpackConnector={ this.props.isFromJetpackConnector }
-						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
+						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 					>
 						{ mainContent }
 					</OneLoginLayout>
@@ -445,6 +445,8 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
 	} );
 
 	return {
@@ -483,8 +485,6 @@ export default connect(
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
 		const connectorFromParam = redirectParams.get( 'from' ) || get( currentQuery, 'from' );
 		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
-		const isUnifiedConnectionFlow =
-			isFromJetpackConnector || connectorFromParam === 'jetpack-onboarding';
 		const connectorPlugins = isFromJetpackConnector
 			? ( redirectParams.get( 'plugins' ) || get( currentQuery, 'plugins' ) || '' )
 					.split( ',' )
@@ -531,7 +531,6 @@ export default connect(
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isFromJetpackConnector,
-			isUnifiedConnectionFlow,
 			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),

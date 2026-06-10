@@ -5,7 +5,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import React from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 type Props = {
 	children?: JSX.Element;
@@ -20,7 +20,7 @@ function MenuItem( {
 	title,
 	icon,
 	...buttonProps
-}: Props & React.ComponentProps< typeof Button > ) {
+}: Props & ComponentProps< typeof Button > ) {
 	return (
 		<Button
 			className="dashboard-add-new-site__menu-item"
@@ -33,7 +33,7 @@ function MenuItem( {
 					<Icon className="dashboard-add-new-site__menu-item-icon" icon={ icon } />
 				</div>
 				<VStack>
-					<Text>{ title }</Text>
+					<Text weight="medium">{ title }</Text>
 					<Text variant="muted" as="p">
 						{ description }
 					</Text>

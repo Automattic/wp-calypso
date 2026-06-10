@@ -35,6 +35,7 @@ const selectors = {
 
 	// Within the editor body.
 	blockWarning: '.block-editor-warning',
+	editorBlock: '.block-editor-block-list__block',
 
 	// Toast
 	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
@@ -42,6 +43,164 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
+
+type PublishResponseBody = {
+	ID?: number | string;
+	id?: number | string;
+	link?: string;
+	slug?: string;
+	status?: string;
+	type?: string;
+	body?: {
+		ID?: number | string;
+		id?: number | string;
+		link?: string;
+		slug?: string;
+		status?: string;
+		type?: string;
+	};
+};
+
+type ResponseDiagnostic = {
+	action: string;
+	method?: string;
+	status?: number;
+	url: string;
+	headers?: Record< string, string >;
+};
+
+type PublishDiagnostics = {
+	publishedURL: string;
+	publishResponse: ResponseDiagnostic;
+	postId?: number | string;
+	postSlug?: string;
+	postStatus?: string;
+	postType?: string;
+};
+
+const diagnosticHeaderNames = [ 'x-ac', 'x-nc', 'server-timing' ];
+
+/**
+ * Removes query strings and hashes before writing URLs to failure output.
+ */
+function sanitizeURLForDiagnostics( url: string ): string {
+	try {
+		const parsedURL = new URL( url );
+		return `${ parsedURL.origin }${ parsedURL.pathname }`;
+	} catch {
+		return url.replace( /[?#].*$/, '' );
+	}
+}
+
+/**
+ * Builds a small, safe response summary for publish/read-after-write failures.
+ */
+function getResponseDiagnostic( response: Response | null, action: string ): ResponseDiagnostic {
+	if ( ! response ) {
+		return {
+			action,
+			url: 'no response',
+		};
+	}
+
+	const headers = response.headers();
+	const diagnosticHeaders = Object.fromEntries(
+		diagnosticHeaderNames
+			.map( ( name ) => [ name, headers[ name ] ] as const )
+			.filter( ( entry ): entry is readonly [ string, string ] => Boolean( entry[ 1 ] ) )
+	);
+
+	const diagnostic: ResponseDiagnostic = {
+		action,
+		method: response.request().method(),
+		status: response.status(),
+		url: sanitizeURLForDiagnostics( response.url() ),
+	};
+
+	if ( Object.keys( diagnosticHeaders ).length > 0 ) {
+		diagnostic.headers = diagnosticHeaders;
+	}
+
+	return diagnostic;
+}
+
+/**
+ * Extracts the publish response fields needed to debug public 404s after publish.
+ */
+function getPublishDiagnostics(
+	response: Response,
+	body: PublishResponseBody,
+	publishedURL: string
+): PublishDiagnostics {
+	const publishedContent = body.body ?? body;
+
+	return {
+		publishedURL: sanitizeURLForDiagnostics( publishedURL ),
+		publishResponse: getResponseDiagnostic( response, 'publish' ),
+		postId: publishedContent.id ?? publishedContent.ID,
+		postSlug: publishedContent.slug,
+		postStatus: publishedContent.status,
+		postType: publishedContent.type,
+	};
+}
+
+/**
+ * Formats one response diagnostic for the thrown error message.
+ */
+function formatResponseDiagnostic( response: ResponseDiagnostic ): string {
+	const status = response.status ?? 'no status';
+	const method = response.method ?? 'unknown method';
+	const headers = response.headers ? ` headers=${ JSON.stringify( response.headers ) }` : '';
+
+	return `${ response.action }: ${ method } ${ status } ${ response.url }${ headers }`;
+}
+
+/**
+ * Formats post/page identifiers from the publish response.
+ */
+function formatPublishedContentDiagnostic( diagnostics?: PublishDiagnostics ): string {
+	if ( ! diagnostics ) {
+		return 'not captured';
+	}
+
+	const values = [
+		[ 'id', diagnostics.postId ],
+		[ 'type', diagnostics.postType ],
+		[ 'status', diagnostics.postStatus ],
+		[ 'slug', diagnostics.postSlug ],
+	]
+		.filter( ( [ , value ] ) => value !== undefined && value !== '' )
+		.map( ( [ key, value ] ) => `${ key }=${ value }` );
+
+	return values.length > 0 ? values.join( ' ' ) : 'no id/type/status/slug captured';
+}
+
+/**
+ * Builds the post-publish 404 error with enough context for log correlation.
+ */
+function getPublishedPost404Message( {
+	publishDiagnostics,
+	publicResponses,
+}: {
+	publishDiagnostics?: PublishDiagnostics;
+	publicResponses: ResponseDiagnostic[];
+} ): string {
+	return [
+		'Post not found - 404 error displayed',
+		`Published URL: ${ publishDiagnostics?.publishedURL ?? 'not captured' }`,
+		`Published content: ${ formatPublishedContentDiagnostic( publishDiagnostics ) }`,
+		`Publish response: ${
+			publishDiagnostics
+				? formatResponseDiagnostic( publishDiagnostics.publishResponse )
+				: 'not captured'
+		}`,
+		`Public responses: ${
+			publicResponses.length > 0
+				? publicResponses.map( formatResponseDiagnostic ).join( '; ' )
+				: 'not captured'
+		}`,
+	].join( '\n' );
+}
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -236,14 +395,18 @@ export class EditorPage {
 	/**
 	 * Select a template from the grid of options.
 	 *
-	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param {string|Locator} template Template label or already-located template option.
 	 * @param param1 Keyed object parameter.
 	 * @param {number} param1.timeout Timeout to apply.
 	 */
 	async selectTemplate(
-		label: string,
+		template: string | Locator,
 		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
 	) {
+		if ( typeof template !== 'string' ) {
+			return await template.click( { timeout } );
+		}
+
 		const editor = await this.getEditorParent();
 		const inserterSelector = await editor.getByRole( 'listbox', { name: 'All' } );
 		const modalSelector = await editor.getByRole( 'listbox', {
@@ -251,7 +414,7 @@ export class EditorPage {
 		} );
 		return await inserterSelector
 			.or( modalSelector )
-			.getByRole( 'option', { name: label, exact: true } )
+			.getByRole( 'option', { name: template, exact: true } )
 			.first()
 			.click( { timeout: timeout } );
 	}
@@ -284,7 +447,7 @@ export class EditorPage {
 		const enteredText = await this.editorGutenbergComponent.getText();
 
 		if ( text !== enteredText ) {
-			`Failed to verify entered text: got ${ enteredText }, expected ${ text }`;
+			throw new Error( `Failed to verify entered text: got ${ enteredText }, expected ${ text }` );
 		}
 	}
 
@@ -431,7 +594,7 @@ export class EditorPage {
 			// If it is not present, exit early.
 			try {
 				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
-			} catch ( e ) {
+			} catch {
 				// Probably doesn't exist. That's ok.
 			}
 
@@ -510,6 +673,8 @@ export class EditorPage {
 		exactMatch = true
 	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
+		const editorCanvas = await this.editor.canvas();
+		const editorBlockCountBefore = await editorCanvas.locator( selectors.editorBlock ).count();
 
 		await inserter.searchBlockInserter( patternName );
 		const locator = await inserter.selectBlockInserterResult( patternName, {
@@ -526,7 +691,21 @@ export class EditorPage {
 		const insertConfirmationToastLocator = editorParent.locator(
 			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
 		);
-		await insertConfirmationToastLocator.waitFor();
+		const insertedBlockLocator = editorCanvas
+			.locator( selectors.editorBlock )
+			.nth( editorBlockCountBefore );
+
+		try {
+			await Promise.any( [
+				insertConfirmationToastLocator.waitFor( { timeout: 15 * 1000 } ),
+				insertedBlockLocator.waitFor( { timeout: 15 * 1000 } ),
+			] );
+		} catch ( error ) {
+			throw new Error(
+				`Timed out waiting for pattern "${ actualPatternName }" to finish inserting.`,
+				{ cause: error }
+			);
+		}
 		return locator;
 	}
 
@@ -862,15 +1041,18 @@ export class EditorPage {
 			...actionsArray,
 		] );
 
-		const json = await response.json();
+		const json = ( await response.json() ) as PublishResponseBody;
 		// AT and Simple sites have slightly differing response from the API.
 		const publishedURL = json.link || json.body?.link;
 		if ( ! publishedURL ) {
 			throw new Error( 'No published article URL found in response.' );
 		}
+		// `response` is the Promise.race winner — either the POST (Atomic) or the PUT (Simple).
+		// The `publishResponse.method` field in diagnostics will reflect whichever verb won.
+		const publishDiagnostics = getPublishDiagnostics( response, json, publishedURL );
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL, { timeout: timeout } );
+			await this.visitPublishedPost( publishedURL, { timeout: timeout, publishDiagnostics } );
 		}
 
 		return new URL( publishedURL );
@@ -903,8 +1085,15 @@ export class EditorPage {
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
 		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
-		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+
+		// The "Post reverted to draft" snackbar auto-dismisses after ~5s, so
+		// waiting on its dismiss button races the timer. Instead wait for the
+		// toolbar primary button to revert from "Update" to "Publish", which is
+		// only committed once the draft transition has been persisted.
+		await editorParent
+			.locator( '.editor-post-publish-button__button' )
+			.getByText( 'Publish', { exact: true } )
+			.waitFor();
 	}
 
 	/**
@@ -949,8 +1138,13 @@ export class EditorPage {
 	 */
 	private async visitPublishedPost(
 		url: string,
-		{ timeout }: { timeout?: number } = {}
+		{
+			timeout,
+			publishDiagnostics,
+		}: { timeout?: number; publishDiagnostics?: PublishDiagnostics } = {}
 	): Promise< void > {
+		const publicResponses: ResponseDiagnostic[] = [];
+
 		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
 		// panel to close immediately and leave the post in the unsaved state for
 		// some reason. Since the post state is unsaved, the warning dialog will be
@@ -962,9 +1156,21 @@ export class EditorPage {
 		// this listener can be removed.
 		this.allowLeavingWithoutSaving();
 
-		await this.page.goto( url, { waitUntil: 'domcontentloaded', timeout: timeout } );
+		const response = await this.page.goto( url, {
+			waitUntil: 'domcontentloaded',
+			timeout: timeout,
+		} );
+		publicResponses.push( getResponseDiagnostic( response, 'published-url-goto' ) );
 
-		await reloadAndRetry( this.page, confirmPostShown );
+		// `onReload` is called only when retrying (retries > 1). On the final attempt,
+		// `reloadAndRetry` re-throws without reloading, so the response for the last
+		// page load before the error is not captured — `publicResponses` reflects all
+		// attempts up to but not including the final failing check.
+		await reloadAndRetry( this.page, confirmPostShown, {
+			onReload: ( response ) => {
+				publicResponses.push( getResponseDiagnostic( response, 'published-url-reload' ) );
+			},
+		} );
 
 		/**
 		 * Closure to confirm that post is shown on screen as expected.
@@ -985,7 +1191,12 @@ export class EditorPage {
 			const error404 = main.locator( 'div.error-404' );
 			if ( ( await error404.count() ) > 0 ) {
 				await page.waitForTimeout( 1000 ); // Give it a second before retrying.
-				throw new Error( 'Post not found - 404 error displayed' );
+				throw new Error(
+					getPublishedPost404Message( {
+						publishDiagnostics,
+						publicResponses,
+					} )
+				);
 			}
 		}
 	}

@@ -11,13 +11,13 @@ import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import DisplayTypes from 'calypso/reader/data/post/display-types';
+import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
-import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import PostByline from './byline';
@@ -49,6 +49,7 @@ class ReaderPostCard extends Component {
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
+		showBylineSecondarySiteLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,6 +58,7 @@ class ReaderPostCard extends Component {
 		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
+		showBylineSecondarySiteLink: true,
 	};
 
 	state = {
@@ -206,6 +208,7 @@ class ReaderPostCard extends Component {
 				showFollow
 				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
+				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
 			/>
 		);
 
@@ -300,7 +303,7 @@ class ReaderPostCard extends Component {
 	}
 }
 
-export default compose(
+const ConnectedReaderPostCard = compose(
 	withReaderTeams,
 	connect(
 		( state, ownProps ) => ( {
@@ -308,12 +311,24 @@ export default compose(
 			isWPForTeamsItem:
 				ownProps.postKey &&
 				( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
-					isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-			hasOrganization:
-				ownProps.postKey &&
-				hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
+					( ownProps.feed?.blog_ID ? isSiteWPForTeams( state, ownProps.feed.blog_ID ) : false ) ),
 			isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		} ),
 		{ expandCard: expandCardAction }
 	)
 )( ReaderPostCard );
+
+export default function ReaderPostCardContainer( props ) {
+	const feedId = props.postKey?.feedId ?? props.post?.feed_ID;
+	const blogId = props.postKey?.blogId ?? props.post?.site_ID;
+	const { data: fetchedFeed } = useFeedQuery( feedId );
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+
+	return (
+		<ConnectedReaderPostCard
+			{ ...props }
+			feed={ props.feed ?? fetchedFeed }
+			hasOrganization={ hasOrganization }
+		/>
+	);
+}

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { clearOauthState, readOauthState, saveOauthState } from '../oauth-state';
+import { clearOauthState, isSafeReturnPath, readOauthState, saveOauthState } from '../oauth-state';
 
 const STORAGE_KEY = 'reader.mastodon.oauthState';
 
@@ -91,17 +91,99 @@ describe( 'oauth-state', () => {
 	} );
 
 	describe( 'saveOauthState failure modes', () => {
-		it( 'swallows QuotaExceededError from setItem', () => {
+		it( 'returns false (and does not throw) when setItem throws', () => {
 			const spy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 				throw new Error( 'QuotaExceededError' );
 			} );
 			try {
-				expect( () =>
-					saveOauthState( { state: 'abc', instance: 'mastodon.social' } )
-				).not.toThrow();
+				expect( saveOauthState( { state: 'abc', instance: 'mastodon.social' } ) ).toBe( false );
 			} finally {
 				spy.mockRestore();
 			}
+		} );
+
+		it( 'returns true on a successful save', () => {
+			expect( saveOauthState( { state: 'abc', instance: 'mastodon.social' } ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'optional reconnect fields', () => {
+		it( 'round-trips returnPath and reconnectingConnectionId', () => {
+			saveOauthState( {
+				state: 'abc',
+				instance: 'mastodon.social',
+				returnPath: '/reader/mastodon/42/timeline?tab=posts',
+				reconnectingConnectionId: 42,
+			} );
+			expect( readOauthState() ).toEqual( {
+				state: 'abc',
+				instance: 'mastodon.social',
+				returnPath: '/reader/mastodon/42/timeline?tab=posts',
+				reconnectingConnectionId: 42,
+			} );
+		} );
+
+		it.each( [
+			[ 'protocol-relative', '//evil.example/foo' ],
+			[ 'absolute https URL', 'https://evil.example/foo' ],
+			[ 'non-leading-slash path', 'reader/mastodon/42' ],
+			[ 'empty string', '' ],
+		] )( 'drops unsafe returnPath: %s', ( _label, hostile ) => {
+			window.sessionStorage.setItem(
+				STORAGE_KEY,
+				JSON.stringify( {
+					state: 'abc',
+					instance: 'mastodon.social',
+					returnPath: hostile,
+				} )
+			);
+			expect( readOauthState() ).toEqual( {
+				state: 'abc',
+				instance: 'mastodon.social',
+			} );
+		} );
+
+		it.each( [
+			[ 'NaN', NaN ],
+			[ 'zero', 0 ],
+			[ 'negative', -1 ],
+			[ 'fractional', 1.5 ],
+			[ 'string', '42' ],
+		] )( 'drops invalid reconnectingConnectionId: %s', ( _label, bad ) => {
+			window.sessionStorage.setItem(
+				STORAGE_KEY,
+				JSON.stringify( {
+					state: 'abc',
+					instance: 'mastodon.social',
+					reconnectingConnectionId: bad,
+				} )
+			);
+			expect( readOauthState() ).toEqual( {
+				state: 'abc',
+				instance: 'mastodon.social',
+			} );
+		} );
+	} );
+
+	describe( 'isSafeReturnPath', () => {
+		it.each( [
+			[ '/reader/mastodon/42/timeline', true ],
+			[ '/reader/mastodon/42/timeline?tab=posts', true ],
+			[ '//evil.example/foo', false ],
+			[ 'https://evil.example/foo', false ],
+			[ 'reader/mastodon/42', false ],
+			[ '', false ],
+			// Backslash-prefixed paths normalise to `//evil` in some browsers,
+			// so they have to be rejected at the safety check too.
+			[ '/\\evil.example/foo', false ],
+			// Whitespace and control bytes never appear in legitimate Reader
+			// paths (they are URL-encoded if present); raw bytes only show up
+			// when the storage value has been tampered with.
+			[ '/reader\nevil', false ],
+			[ '/reader evil', false ],
+			[ '/reader\tevil', false ],
+		] )( '%s → %s', ( path, expected ) => {
+			expect( isSafeReturnPath( path ) ).toBe( expected );
 		} );
 	} );
 

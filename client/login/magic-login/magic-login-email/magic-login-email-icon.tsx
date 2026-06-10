@@ -1,9 +1,6 @@
 import AsyncLoad from 'calypso/components/async-load';
+import AppleIcon from 'calypso/components/social-icons/apple';
 
-const loadApple = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-components-social-icons-apple" */ 'calypso/components/social-icons/apple'
-	);
 const loadGmail = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-social-icons-gmail" */ 'calypso/components/social-icons/gmail'
@@ -28,7 +25,9 @@ interface MagicLoginEmailIconProps {
 export function MagicLoginEmailIcon( { icon }: MagicLoginEmailIconProps ) {
 	switch ( icon ) {
 		case 'apple':
-			return <AsyncLoad require={ loadApple } placeholder={ null } />;
+			// No async import because AppleIcon is already in the login bundle via
+			// social-buttons/apple, so AsyncLoad cannot split it.
+			return <AppleIcon />;
 		case 'gmail':
 			return <AsyncLoad require={ loadGmail } placeholder={ null } />;
 		case 'outlook':

@@ -1,15 +1,16 @@
-import config from '@automattic/calypso-config';
 import { TextareaControl, TextControl, SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toSelectOption } from '../to-select-options';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 interface Props {
 	isPlan: boolean;
 	isOnlyStep?: boolean;
 	adventureOptions: string[];
-	intent?: 'cancel' | 'remove';
+	intent?: DisplayVariant;
 	onChangeText?: ( text: string ) => void;
 	onSelectNextAdventure?: ( nextAdventure: string ) => void;
 	onChangeNextAdventureDetails?: ( details: string ) => void;
@@ -19,7 +20,7 @@ interface Props {
 export default function NextAdventureStep( props: Props ) {
 	const translate = useTranslate();
 	const { isPlan, isOnlyStep, intent, onValidationChange } = props;
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const isCancelPostMutation = isSplitEnabled && intent !== 'remove';
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
@@ -94,9 +95,13 @@ export default function NextAdventureStep( props: Props ) {
 			context: 'This is the last step before cancelling the plan.',
 		} );
 	} else if ( isOnlyStep ) {
-		headerText = isCancelPostMutation
-			? translate( 'Cancellation confirmed' )
-			: translate( 'Share your feedback' );
+		if ( isCancelPostMutation && intent === 'auto-renew' ) {
+			headerText = translate( 'Auto-renew disabled' );
+		} else {
+			headerText = isCancelPostMutation
+				? translate( 'Cancellation confirmed' )
+				: translate( 'Share your feedback' );
+		}
 		subHeaderText = translate(
 			'Before you go, please answer a quick question to help us improve WordPress.com.'
 		);

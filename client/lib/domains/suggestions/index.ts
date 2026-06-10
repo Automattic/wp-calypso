@@ -11,6 +11,7 @@ interface DomainSuggestionsVendorOptions {
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
 	isCiab?: boolean;
+	isWooHostingSolutions?: boolean;
 	flowName?: string;
 }
 
@@ -21,18 +22,23 @@ interface DomainSuggestionsVendorOptions {
  * @param {boolean} [options.isDomainOnly] Flag to indicate that we're in a domain-only context
  * @param {boolean} [options.isPremium] Flag to show premium domains.
  * @param {boolean} [options.isCiab] Flag to indicate that we're in a Commerce in a Box context.
+ * @param {boolean} [options.isWooHostingSolutions] Flag to indicate that the search was reached via the woo-hosting-solutions referrer.
  * @param {string} [options.flowName] The flow name (used to determine the vender).
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
 export const getSuggestionsVendor = ( {
 	isPremium = true,
 	isCiab,
+	isWooHostingSolutions,
 	flowName,
 	isSignup,
 	isDomainOnly,
 }: DomainSuggestionsVendorOptions = {} ): DomainSuggestionQueryVendor => {
 	if ( isCiab ) {
 		return 'ciab';
+	}
+	if ( isWooHostingSolutions ) {
+		return 'ecommerce';
 	}
 	if ( isDomainForGravatarFlow( flowName ) ) {
 		return 'gravatar';

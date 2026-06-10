@@ -13,6 +13,10 @@ interface FeedListEmptyProps {
 	protocolLabel: string;
 	protocolHomeURL: string;
 	protocolHomeLabel: string;
+	// Protocols without a working reconnect flow (Bluesky, Fediverse) pass
+	// this to replace the default "Reconnect needed" + protocol-home link
+	// with generic copy + a Retry button.
+	authRequiredCopy?: { title: string; line: string };
 }
 
 export function FeedListEmpty( {
@@ -25,6 +29,7 @@ export function FeedListEmpty( {
 	protocolLabel,
 	protocolHomeURL,
 	protocolHomeLabel,
+	authRequiredCopy,
 }: FeedListEmptyProps ) {
 	const translate = useTranslate();
 
@@ -41,6 +46,19 @@ export function FeedListEmpty( {
 
 	switch ( error.kind ) {
 		case 'auth_required':
+			if ( authRequiredCopy ) {
+				return (
+					<EmptyContent
+						title={ authRequiredCopy.title }
+						line={ authRequiredCopy.line }
+						action={
+							<Button variant="primary" onClick={ onRetry }>
+								{ translate( 'Retry' ) }
+							</Button>
+						}
+					/>
+				);
+			}
 			return (
 				<EmptyContent
 					title={ translate( 'Reconnect needed' ) }

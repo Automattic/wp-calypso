@@ -19,6 +19,8 @@ const ExpandableSidebarHeading = ( {
 	hideExpandableIcon,
 	inlineText,
 	expandableIconClick,
+	prependContent,
+	appendContent,
 	...props
 } ) => {
 	const translate = useTranslate();
@@ -28,6 +30,7 @@ const ExpandableSidebarHeading = ( {
 			aria-expanded={ expanded ? 'true' : 'false' }
 			{ ...props }
 		>
+			{ prependContent }
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
 			{ materialIcon && (
 				<MaterialIcon
@@ -42,6 +45,7 @@ const ExpandableSidebarHeading = ( {
 				{ undefined !== count && <Count count={ count } /> }
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
+			{ appendContent }
 			{ ! hideExpandableIcon &&
 				( expandableIconClick ? (
 					<Button
@@ -79,6 +83,8 @@ ExpandableSidebarHeading.propTypes = {
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
 	expandableIconClick: PropTypes.func,
+	prependContent: PropTypes.node,
+	appendContent: PropTypes.node,
 };
 
 export default ExpandableSidebarHeading;

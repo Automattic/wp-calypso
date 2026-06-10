@@ -24,7 +24,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
@@ -53,7 +53,7 @@ interface ConnectRepositoryFormProps {
 	initialValues: ConnectRepositoryFormData;
 	submitText: string;
 	successMessage: string;
-	errorMessage: string;
+	errorMessage: ( reason: string ) => string;
 	navigateFrom: NavigateOptions[ 'from' ];
 }
 
@@ -435,7 +435,7 @@ export const ConnectRepositoryForm = ( {
 				navigate( { to: '/sites/$siteSlug/settings/repositories' } );
 			},
 			onError: ( error ) => {
-				createErrorNotice( sprintf( errorMessage, { reason: error.message } ), {
+				createErrorNotice( errorMessage( error.message ), {
 					type: 'snackbar',
 				} );
 			},

@@ -5,6 +5,10 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 	const object: Purchase = {
 		id: Number( purchase.ID ),
 		amount: Number( purchase.amount ),
+		advertisedTotalUploadSpaceInGb:
+			purchase.advertised_total_upload_space_in_gb == null
+				? null
+				: Number( purchase.advertised_total_upload_space_in_gb ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		autoRenewCouponCode: purchase.auto_renew_coupon_code,
 		autoRenewCouponDiscountPercentage: Number( purchase.auto_renew_coupon_discount_percentage ),

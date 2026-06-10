@@ -36,24 +36,32 @@ export function useMastodonAuthorFeedFilter(): MastodonAuthorFeedFilter {
 interface MastodonAuthorProfileTabsProps {
 	connectionId: number;
 	actor: string;
+	// Caller-supplied URL prefix for the filter tabs. The connected-user
+	// /profile view passes `/reader/mastodon/<id>/profile`; the third-party
+	// /profile/<actor> view passes
+	// `/reader/mastodon/<id>/profile/<encoded-actor>`. The `?tab=` query
+	// param is appended to whichever base path the caller supplies, so the
+	// tabs stay within their current route rather than jumping to the
+	// other.
+	basePath: string;
 	activeFilter: MastodonAuthorFeedFilter;
 }
 
-function buildPath( connectionId: number, actor: string, slug: string ): string {
-	const base = `/reader/mastodon/${ connectionId }/profile/${ encodeURIComponent( actor ) }`;
+function buildPath( basePath: string, slug: string ): string {
 	if ( typeof window === 'undefined' ) {
-		return `${ base }?tab=${ slug }`;
+		return `${ basePath }?tab=${ slug }`;
 	}
 	// Preserve any other query params and the fragment when switching tabs.
 	const params = new URLSearchParams( window.location.search );
 	params.set( 'tab', slug );
 	const hash = window.location.hash;
-	return `${ base }?${ params.toString() }${ hash }`;
+	return `${ basePath }?${ params.toString() }${ hash }`;
 }
 
 export function MastodonAuthorProfileTabs( {
 	connectionId,
 	actor,
+	basePath,
 	activeFilter,
 }: MastodonAuthorProfileTabsProps ) {
 	const translate = useTranslate();
@@ -64,20 +72,20 @@ export function MastodonAuthorProfileTabs( {
 			{
 				slug: 'posts',
 				title: translate( 'Posts' ) as TranslateResult,
-				path: buildPath( connectionId, actor, 'posts' ),
+				path: buildPath( basePath, 'posts' ),
 			},
 			{
 				slug: 'replies',
 				title: translate( 'Replies' ) as TranslateResult,
-				path: buildPath( connectionId, actor, 'replies' ),
+				path: buildPath( basePath, 'replies' ),
 			},
 			{
 				slug: 'media',
 				title: translate( 'Media' ) as TranslateResult,
-				path: buildPath( connectionId, actor, 'media' ),
+				path: buildPath( basePath, 'media' ),
 			},
 		],
-		[ connectionId, actor, translate ]
+		[ basePath, translate ]
 	);
 
 	const activeSlug = FILTER_TO_SLUG[ activeFilter ];

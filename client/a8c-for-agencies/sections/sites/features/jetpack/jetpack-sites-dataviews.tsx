@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-fa
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { SitesDataViewsProps } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
+import { DataViews } from 'calypso/components/dataviews';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
@@ -150,7 +152,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__site-header sites-dataview__site-header--sort"
-							ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setIntroRef( ref as HTMLElement | null );
+							} }
 						>
 							{ translate( 'Site' ).toUpperCase() }
 						</span>
@@ -194,7 +198,9 @@ export const JetpackSitesDataViews = ( {
 					<div>
 						<span
 							className="sites-dataview__stats-header"
-							ref={ ( ref ) => setStatsRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setStatsRef( ref as HTMLElement | null );
+							} }
 						>
 							STATS
 						</span>
@@ -217,7 +223,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__boost-header"
-							ref={ ( ref ) => setBoostRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setBoostRef( ref as HTMLElement | null );
+							} }
 						>
 							BOOST
 						</span>
@@ -240,7 +248,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__backup-header"
-							ref={ ( ref ) => setBackupRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setBackupRef( ref as HTMLElement | null );
+							} }
 						>
 							BACKUP
 						</span>
@@ -263,7 +273,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__monitor-header"
-							ref={ ( ref ) => setMonitorRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setMonitorRef( ref as HTMLElement | null );
+							} }
 						>
 							MONITOR
 						</span>
@@ -286,7 +298,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__scan-header"
-							ref={ ( ref ) => setScanRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setScanRef( ref as HTMLElement | null );
+							} }
 						>
 							SCAN
 						</span>
@@ -309,7 +323,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__plugins-header"
-							ref={ ( ref ) => setPluginsRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setPluginsRef( ref as HTMLElement | null );
+							} }
 						>
 							PLUGINS
 						</span>
@@ -470,7 +486,25 @@ export const JetpackSitesDataViews = ( {
 		} ) );
 	}, [ fields, dataViewsState, setDataViewsState, data, actions ] );
 
-	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className } />;
+	return (
+		<ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className }>
+			<HStack
+				className="dataviews__view-actions"
+				alignment="top"
+				justify="space-between"
+				spacing={ 2 }
+			>
+				<HStack className="dataviews__search" justify="start" spacing={ 2 } expanded={ false }>
+					<DataViews.Search label={ translate( 'Search for sites' ) } />
+					<DataViews.FiltersToggle />
+				</HStack>
+				<DataViews.ViewConfig />
+			</HStack>
+			<DataViews.FiltersToggled className="dataviews-filters__container" />
+			<DataViews.Layout />
+			<DataViews.Footer />
+		</ItemsDataViews>
+	);
 };
 
 export default JetpackSitesDataViews;

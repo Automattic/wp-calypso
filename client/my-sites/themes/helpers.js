@@ -211,3 +211,7 @@ export function constructThemeShowcaseUrl( {
 export function shouldSelectSite( { isLoggedIn, siteCount, siteId } ) {
 	return isLoggedIn && ! siteId && siteCount > 1;
 }
+
+export function shouldEnableThemesColorScheme( { isSiteRoute, isLoggedIn, dashboardOptIn } ) {
+	return ! isSiteRoute && isLoggedIn && dashboardOptIn;
+}

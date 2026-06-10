@@ -1,3 +1,7 @@
+import type { getFilters } from '../panel/templates/filters';
+
+export type FilterName = keyof ReturnType< typeof getFilters >;
+
 type Range = {
 	type: string;
 	indices: [ number, number ];
@@ -21,7 +25,7 @@ type Media = {
 	width?: string | number;
 };
 
-type Subject = {
+export type Subject = {
 	text: string;
 	ranges?: Range[];
 	media?: Media[];
@@ -143,6 +147,7 @@ export interface Client {
 	getNotesList: () => void;
 	updateLastSeenTime: ( proposedTime: number, fromStorage: boolean ) => boolean;
 	loadMore: () => void;
+	hasMoreNotes: () => boolean;
 	refreshNotes: () => void;
 	setVisibility: ( { isShowing, isVisible }: { isShowing: boolean; isVisible: boolean } ) => void;
 }
