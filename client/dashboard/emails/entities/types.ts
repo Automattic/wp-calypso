@@ -95,7 +95,7 @@ interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
 	lastName: TextMailboxFormField;
 }
 
-interface ITitanMailboxFormFields extends IBaseMailboxFormFields {}
+type ITitanMailboxFormFields = IBaseMailboxFormFields;
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
 	readonly domain = new DataMailboxFormField( FIELD_DOMAIN );
