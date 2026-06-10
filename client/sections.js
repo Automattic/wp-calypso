@@ -115,6 +115,10 @@ const sections = [
 		paths: [ '/me/legacy-contact' ],
 		module: 'calypso/me/legacy-contact',
 		group: 'me',
+		// Dev-only surface (mirrors the `me/legacy-contact` feature flag). Restricting the
+		// envId keeps the route from being registered — and its chunk from being lazy-loaded —
+		// in non-development environments.
+		envId: [ 'development' ],
 	},
 	// This should be the last section for `/me` paths as it would otherwise have precedence over
 	// the other sub `/me/*` sections when resolving the requested path
