@@ -427,7 +427,7 @@ function PaymentMethodExpiry( { paymentMethod }: { paymentMethod: StoredPaymentM
 			<VStack>
 				<Text>
 					{ sprintf(
-						// translators: date is a formatted credit card expiration date, eg: 10/25
+						// translators: %(date)s: a formatted credit card expiration date, eg: 10/25
 						__( 'Expires %(date)s' ),
 						{
 							// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813

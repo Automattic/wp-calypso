@@ -1,11 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
+import { isShallowEqualArrays } from '@wordpress/is-shallow-equal';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 import { usePagination } from '../use-pagination';
+import { defaultDataViewsState } from './constants';
 import { useFieldDefinitions } from './hooks/use-field-definitions';
 import { useReceiptActions } from './hooks/use-receipt-actions';
 import { useTransactionsFiltering } from './hooks/use-transactions-filtering';
@@ -27,9 +29,24 @@ export default function BillingHistoryListDataView( {
 	siteId,
 }: BillingHistoryListProps ) {
 	const transactions = useSelector( getPastBillingTransactions );
-	const fields = useFieldDefinitions( transactions, getReceiptUrlFor );
 	const isLoading = useSelector( isRequestingBillingTransactions );
+	const [ visibleFields, setVisibleFields ] = useState< string[] >(
+		( defaultDataViewsState.fields as string[] ) ?? []
+	);
+	const fields = useFieldDefinitions( transactions, getReceiptUrlFor, visibleFields );
 	const viewState = useViewStateUpdate( fields );
+	// `visibleFields` cannot be derived directly from `viewState.view.fields`:
+	// `viewState` depends on `fields`, which depends on `visibleFields`, so reading
+	// the view here would be a declaration cycle. Instead we mirror the view's
+	// fields into state after each update. The field ids passed to
+	// `useViewStateUpdate` are stable regardless of visibility, so this does not
+	// loop.
+	useEffect( () => {
+		const nextFields = ( viewState.view.fields as string[] ) ?? [];
+		setVisibleFields( ( current ) =>
+			isShallowEqualArrays( current, nextFields ) ? current : nextFields
+		);
+	}, [ viewState.view.fields ] );
 	const receiptActions = useReceiptActions( getReceiptUrlFor );
 
 	const actions = receiptActions.map( ( action ) => ( {

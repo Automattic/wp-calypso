@@ -1,3 +1,4 @@
+import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 
 interface MenuItemProps extends React.HTMLAttributes< HTMLLIElement > {
@@ -41,5 +42,27 @@ export const MenuList = ( { children, className, ...props }: MenuListProps ) => 
 		<ul { ...props } className={ clsx( 'sidebar__menu-list', className ) }>
 			{ children }
 		</ul>
+	);
+};
+
+interface AddMenuItemProps {
+	label: string;
+	href: string;
+	icon?: React.ComponentProps< typeof Icon >[ 'icon' ];
+	onClick?: () => void;
+}
+
+/**
+ * A "+ Add …" footer row for a sidebar menu section. Renders a non-selected
+ * menu item with a leading icon (a plus by default) and a label.
+ */
+export const AddMenuItem = ( { label, href, icon = plus, onClick }: AddMenuItemProps ) => {
+	return (
+		<MenuItem selected={ false } className="sidebar__menu-add-item">
+			<MenuItemLink className="sidebar__menu-link" href={ href } onClick={ onClick }>
+				<Icon icon={ icon } size={ 22 } />
+				<div className="sidebar__menu-item-title">{ label }</div>
+			</MenuItemLink>
+		</MenuItem>
 	);
 };

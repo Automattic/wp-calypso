@@ -6,8 +6,10 @@ module.exports = [
 		accelerator: 'Shift+CmdOrCtrl+R',
 		click: function () {
 			const window = BrowserWindow.getFocusedWindow();
-			const view = window.getBrowserView();
-			view.webContents.reloadIgnoringCache();
+			const view = window && window.getBrowserView();
+			if ( view ) {
+				view.webContents.reloadIgnoringCache();
+			}
 		},
 	},
 	{
@@ -15,8 +17,10 @@ module.exports = [
 		accelerator: 'Alt+CmdOrCtrl+I',
 		click: function () {
 			const window = BrowserWindow.getFocusedWindow();
-			const view = window.getBrowserView();
-			view.webContents.openDevTools( { mode: 'right' } );
+			const view = window && window.getBrowserView();
+			if ( view ) {
+				view.webContents.openDevTools( { mode: 'right' } );
+			}
 		},
 	},
 ];

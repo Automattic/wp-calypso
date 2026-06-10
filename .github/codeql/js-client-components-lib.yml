@@ -1,0 +1,7 @@
+name: CodeQL JavaScript client components and libraries
+
+paths:
+  - client/components
+  - client/data
+  - client/layout
+  - client/lib

@@ -1,6 +1,6 @@
-import { useArgs } from '@storybook/preview-api';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import { useArgs } from 'storybook/preview-api';
+import { fn } from 'storybook/test';
 import { ExperienceControl } from './index';
 
 const meta: Meta< typeof ExperienceControl > = {

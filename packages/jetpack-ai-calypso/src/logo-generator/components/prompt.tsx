@@ -211,7 +211,9 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 							{ sprintf(
 								// translators: %u is the number of requests
 								__( '%u requests remaining.', 'jetpack' ),
-								requestsRemaining
+								// `%u` renders fine at runtime (tannin) but the typed-sprintf parser
+								// only knows %s/%d/%f, so it types this arg as `never`. Cast past it.
+								requestsRemaining as unknown as never
 							) }
 						</div>
 						{ hasNextTier && (

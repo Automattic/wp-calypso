@@ -8,7 +8,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useAgentStudioCollateral, {
 	type AgentStudioCollateralVariant,
 } from '../../data/use-agent-studio-collateral';
@@ -22,7 +24,10 @@ import {
 	composeSocialAssetsFromBrief,
 	type ServerSocialBrief,
 } from '../../social-design/create-social-assets';
-import PdfViewer, { type PdfViewerPage } from './pdf-viewer';
+import AnnotationViewer, { type PageAnnotation } from './annotation-viewer';
+import { formatAnnotationInstructions } from './format-annotation-instructions';
+import { type PdfViewerPage } from './pdf-viewer';
+import RefineWithAiDock from './refine-with-ai-dock';
 import SocialAssetsViewer from './social-assets-viewer';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
@@ -60,9 +65,51 @@ function StateMessage( { children, spinner }: { children: ReactNode; spinner?: b
 }
 
 function OnePagerOutputDetail( { output }: Props ) {
+	const dispatch = useDispatch();
 	const run = useAgentStudioRun( output.id );
 	const postId = extractPostId( run.data?.payload );
 	const collateral = useAgentStudioCollateral( postId );
+	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
+	const [ isAnnotating, setIsAnnotating ] = useState( false );
+	// Each annotate submission produces a fresh array; the dock enqueues it by
+	// identity and reports back so it can be cleared (a remount must not
+	// replay a stale batch).
+	const [ autoSubmitInstructions, setAutoSubmitInstructions ] = useState< string[] >( [] );
+
+	const startAnnotating = useCallback( () => {
+		setIsAnnotating( true );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agent_studio_annotate_open', { output_id: output.id } )
+		);
+	}, [ dispatch, output.id ] );
+
+	const exitAnnotating = useCallback( () => {
+		setIsAnnotating( false );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agent_studio_annotate_cancel', { output_id: output.id } )
+		);
+	}, [ dispatch, output.id ] );
+
+	const handleAnnotationsSubmit = useCallback(
+		( annotations: PageAnnotation[] ) => {
+			const instructions = formatAnnotationInstructions( annotations );
+			setIsAnnotating( false );
+			setAutoSubmitInstructions( instructions );
+			setIsRefineOpen( true );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_annotate_submit', {
+					output_id: output.id,
+					annotation_count: annotations.length,
+					page_count: instructions.length,
+				} )
+			);
+		},
+		[ dispatch, output.id ]
+	);
+
+	const handleAutoSubmitConsumed = useCallback( () => {
+		setAutoSubmitInstructions( ( prev ) => ( prev.length === 0 ? prev : [] ) );
+	}, [] );
 
 	const variants = useMemo< AgentStudioCollateralVariant[] >(
 		() => collateral.data?.variants ?? [],
@@ -154,26 +201,40 @@ function OnePagerOutputDetail( { output }: Props ) {
 		);
 	}
 
+	// Annotating needs at least one body page — the cover can't be refined.
+	const canAnnotate = pages.length > 1;
+
 	return (
 		<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__content">
-			<HStack className="a4a-agent-studio-output-detail__actions" justify="flex-end" spacing={ 2 }>
-				{ selectedVariant?.pdf_download_url && (
-					<Button
-						variant="primary"
-						href={ selectedVariant.pdf_download_url }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ __( 'Download PDF' ) }
-					</Button>
-				) }
-			</HStack>
+			{ ( selectedVariant?.pdf_download_url || canAnnotate ) && (
+				<HStack
+					className="a4a-agent-studio-output-detail__actions"
+					justify="flex-end"
+					spacing={ 2 }
+				>
+					{ canAnnotate && (
+						<Button variant="secondary" onClick={ startAnnotating } disabled={ isAnnotating }>
+							{ __( 'Annotate' ) }
+						</Button>
+					) }
+					{ selectedVariant?.pdf_download_url && (
+						<Button
+							variant="primary"
+							href={ selectedVariant.pdf_download_url }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ __( 'Download PDF' ) }
+						</Button>
+					) }
+				</HStack>
+			) }
 			{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
 				<StateMessage spinner>
 					<Text>{ __( 'Loading preview…' ) }</Text>
 				</StateMessage>
 			) : (
-				<PdfViewer
+				<AnnotationViewer
 					pages={ pages }
 					coverNavigation={
 						variants.length > 1
@@ -184,6 +245,18 @@ function OnePagerOutputDetail( { output }: Props ) {
 							  }
 							: undefined
 					}
+					isAnnotating={ isAnnotating }
+					onExit={ exitAnnotating }
+					onSubmit={ handleAnnotationsSubmit }
+				/>
+			) }
+			{ isRefineOpen && postId && (
+				<RefineWithAiDock
+					collateralPostId={ postId }
+					totalPages={ pages.length }
+					autoSubmitInstructions={ autoSubmitInstructions }
+					onAutoSubmitConsumed={ handleAutoSubmitConsumed }
+					onClose={ () => setIsRefineOpen( false ) }
 				/>
 			) }
 		</VStack>

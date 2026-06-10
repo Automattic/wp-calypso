@@ -152,7 +152,7 @@ function SiteBackupDownload() {
 							title={ __( 'Download point' ) }
 							level={ 3 }
 							description={ createInterpolateElement(
-								/* translators: %s is the date of the download point */
+								/* translators: %(downloadPointDate)s: the date of the download point */
 								sprintf( __( '%(downloadPointDate)s. <LearnMore />' ), {
 									downloadPointDate,
 								} ),

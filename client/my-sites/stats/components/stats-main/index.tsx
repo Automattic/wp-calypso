@@ -136,6 +136,9 @@ export default function StatsMain( {
 			{ ! isWPAdminAndNotSimpleSite && <QuerySiteFeatures siteIds={ [ siteId ] } /> }
 			<QuerySiteSettings siteId={ siteId } />
 			<Page
+				// Restore a stable styling hook lost when @wordpress/admin-ui 2.x moved Page
+				// internals to CSS Modules. Stats SCSS overrides target `.admin-ui-page`.
+				className="admin-ui-page"
 				showSidebarToggle={ false }
 				title={ <JetpackTitle title={ titleContent } /> }
 				subTitle={ breadcrumbs ? undefined : pageSubTitle }

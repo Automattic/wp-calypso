@@ -17,10 +17,35 @@ body.is-section-jetpack-monetize {
 
 .earn-navigation {
 	.section-nav {
-		background: none;
 		box-shadow: none;
-		padding: 0 var(--wpds-dimension-padding-2xl, 24px);
 		border-bottom: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
+	}
+
+	// Keep the nav transparent on the earn page surface: the base bar, the
+	// minimal-variation mobile dropdown header, and the expanded mobile panel
+	// each paint their own background that we don't want here.
+	.section-nav,
+	.section-nav.minimal .section-nav__mobile-header,
+	.section-nav.is-open .section-nav__panel {
+		background: none;
+	}
+
+	// In the tabs view, keep the first tab's label flush with the page content
+	// instead of carrying the tab's own inline-start padding.
+	@include break-mobile {
+		.section-nav-tab:first-child .section-nav-tab__link {
+			padding-inline-start: 0;
+		}
+	}
+
+	// Drop the overflow fade mask — the tabs fit, and the left fade otherwise
+	// dims the flush-aligned first tab label.
+	.section-nav-tabs:not( .is-dropdown ) .section-nav-tabs__list {
+		&.is-overflowing-first,
+		&.is-overflowing-last,
+		&.is-overflowing-first.is-overflowing-last {
+			mask-image: none;
+		}
 	}
 }
 
@@ -159,23 +184,28 @@ body.is-section-jetpack-monetize {
 		background: none;
 	}
 
-	.section-nav-tab {
-		&:hover:not(.is-selected) {
-			border-bottom-color: transparent;
-		}
-		&.is-selected {
-			border-bottom: none;
-			.section-nav-tab__link {
-				color: var(--color-text);
+	// Desktop tab styling only. On mobile the nav collapses to a dropdown, so
+	// these link colors/padding would override the default dropdown styling and
+	// leave the selected item dark-on-blue.
+	@include breakpoint-deprecated( ">480px" ) {
+		.section-nav-tab {
+			&:hover:not(.is-selected) {
+				border-bottom-color: transparent;
+			}
+			&.is-selected {
+				border-bottom: none;
+				.section-nav-tab__link {
+					color: var(--color-text);
+				}
 			}
 		}
-	}
-	.section-nav-tab__link {
-		padding: 0 20px 10px 0;
-		color: var(--color-link);
-		&:hover {
-			background-color: transparent;
+		.section-nav-tab__link {
+			padding: 0 20px 10px 0;
 			color: var(--color-link);
+			&:hover {
+				background-color: transparent;
+				color: var(--color-link);
+			}
 		}
 	}
 }
@@ -212,35 +242,6 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 h3.highlight-cards-heading,
 h3.ads__table-header-title {
 	font-size: 18px;
-}
-body:not(.theme-jetpack-cloud) {
-	.earn__ads-header {
-		margin: 20px 0;
-
-		h2.formatted-header__title {
-			margin: 0 0 12px;
-			font-size: $font-size-header-small;
-		}
-
-		.section-nav {
-			box-shadow: none;
-		}
-
-		.section-nav-tab {
-			&:hover:not(.is-selected) {
-				border-bottom-color: transparent;
-			}
-			&.is-selected {
-				border-bottom: none;
-			}
-			.section-nav-tab__link {
-				padding: 0 20px 10px 0;
-				&:hover {
-					background-color: transparent;
-				}
-			}
-		}
-	}
 }
 
 .earn__cancel-dialog {

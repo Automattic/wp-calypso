@@ -141,14 +141,14 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 	}
 	if ( parts.length === 2 ) {
 		return sprintf(
-			/* translators: joins two duration parts, e.g. "1 month and 11 days" */
+			/* translators: %1$s and %2$s are duration parts, e.g. "1 month and 11 days" */
 			__( '%1$s and %2$s' ),
 			parts[ 0 ],
 			parts[ 1 ]
 		);
 	}
 	return sprintf(
-		/* translators: joins three duration parts, e.g. "2 years, 3 months, and 14 days" */
+		/* translators: %1$s, %2$s and %3$s are duration parts, e.g. "2 years, 3 months, and 14 days" */
 		__( '%1$s, %2$s, and %3$s' ),
 		parts[ 0 ],
 		parts[ 1 ],

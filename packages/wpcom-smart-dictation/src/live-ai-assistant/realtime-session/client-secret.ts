@@ -24,6 +24,7 @@ interface DictationEndpointRequest {
 export interface DictationRemainingTime {
 	remainingTimeSeconds: number;
 	totalTimeSeconds: number;
+	canUpgrade: boolean;
 	activeSession: {
 		sessionId: string;
 		startedAt: number;
@@ -70,6 +71,7 @@ function extractRemainingTime( data: unknown ): DictationRemainingTime {
 		seconds_used?: number;
 		seconds_remaining?: number;
 		remaining_time_seconds?: number;
+		can_upgrade?: boolean;
 		active_session?: {
 			session_id?: string;
 			started_at?: number;
@@ -95,6 +97,7 @@ function extractRemainingTime( data: unknown ): DictationRemainingTime {
 	return {
 		remainingTimeSeconds,
 		totalTimeSeconds: secondsUsed + secondsRemaining,
+		canUpgrade: Boolean( body.can_upgrade ),
 		activeSession,
 	};
 }

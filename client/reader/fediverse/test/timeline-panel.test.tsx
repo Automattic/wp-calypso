@@ -67,7 +67,7 @@ function seedCache( client: QueryClient, items: FediverseFeedItem[] ) {
 
 describe( 'TimelinePanel — composer optimistic placeholder', () => {
 	beforeEach( () => {
-		// `recordReaderTracksEvent` is a thunk that reads `state.reader.follows`.
+		// `recordReaderTracksEvent` is a thunk that reads the follows query cache.
 		// Stub to a no-op action so dispatch() doesn't throw in the test store.
 		jest
 			.spyOn( analytics, 'recordReaderTracksEvent' )

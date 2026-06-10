@@ -117,27 +117,27 @@ export function getRelativeTimeString( date: Date ): string {
 			case 'year':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s year ago', '%(value)s years ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'month':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s month ago', '%(value)s months ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'day':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s day ago', '%(value)s days ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'hour':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s hour ago', '%(value)s hours ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			case 'minute':
 				// translators: value is a number
 				return sprintf( _n( '%(value)s minute ago', '%(value)s minutes ago', value ), {
-					value,
+					value: String( value ),
 				} );
 			default:
 				return __( 'just now' );
@@ -147,27 +147,27 @@ export function getRelativeTimeString( date: Date ): string {
 		case 'year':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s year', 'in %(value)s years', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'month':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s month', 'in %(value)s months', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'day':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s day', 'in %(value)s days', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'hour':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s hour', 'in %(value)s hours', value ), {
-				value,
+				value: String( value ),
 			} );
 		case 'minute':
 			// translators: value is a number
 			return sprintf( _n( 'in %(value)s minute', 'in %(value)s minutes', value ), {
-				value,
+				value: String( value ),
 			} );
 		default:
 			return __( 'just now' );

@@ -20,6 +20,7 @@
 		"isolatedModules": true,
 
 		"moduleResolution": "node",
+		"ignoreDeprecations": "6.0",
 		"types": [],
 		"forceConsistentCasingInFileNames": true
 	}

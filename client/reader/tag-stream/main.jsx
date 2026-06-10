@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import titleCase from 'to-title-case';
-import { useFollowedReaderTags, useReaderTagBySlug } from 'calypso/data/reader/use-reader-tags';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useFollowedTags, useTagBySlug } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
@@ -174,8 +174,8 @@ class TagStream extends Component {
 
 function withReaderTags( Inner ) {
 	return function WithReaderTags( props ) {
-		const { data: followedTags } = useFollowedReaderTags();
-		const { data: currentTag, isNotFound } = useReaderTagBySlug( props.decodedTagSlug );
+		const { data: followedTags } = useFollowedTags();
+		const { data: currentTag, isNotFound } = useTagBySlug( props.decodedTagSlug );
 
 		// Annotate the active tag with isFollowing so the existing isSubscribed()
 		// check on the class works against the same shape as the followed list.

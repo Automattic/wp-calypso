@@ -1,0 +1,47 @@
+// The src/app note list renders with @wordpress/dataviews, whose styles the
+// app expects its host to provide (e.g. client/dashboard/app/style.scss). The
+// standalone iframe is that host, so load them here.
+@import '@wordpress/dataviews/build-style/style.css';
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+html,
+body {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+// The app's components carry their own typography, but text that inherits from
+// `body` (the note detail body, list content) otherwise falls back to the
+// browser defaults (serif, 16px). Match the body typography the other app hosts
+// set (e.g. client/dashboard/app + app-dotcom) so the detail renders the same.
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+	color: $gray-900;
+}
+
+.wpnc__main {
+	position: fixed;
+	inset: 0;
+}
+
+.wpnc-app {
+	max-width: 448px;
+	margin-inline-start: auto;
+	box-sizing: border-box;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+
+	@include break-large {
+		max-width: 896px;
+		border: 0;
+		box-shadow: none;
+	}
+}

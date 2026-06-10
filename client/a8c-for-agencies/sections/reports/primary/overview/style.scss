@@ -1,8 +1,11 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
+@import 'calypso/a8c-for-agencies/style';
 
 .reports-overview {
+	@include a4a-overview-header;
+
 	.hosting-dashboard-layout__header-actions {
 		display: flex;
 		flex-direction: column;
@@ -19,21 +22,6 @@
 	.hosting-dashboard-layout__body {
 		padding-block-end: 0;
 	}
-}
-
-.reports-overview__content {
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-
-	img {
-		width: max-content;
-	}
-}
-
-.reports-overview__heading {
-	@include heading-2x-large;
-	margin-block-end: 8px;
 }
 
 .reports-overview__description {
@@ -57,6 +45,19 @@
 		&.components-button {
 			width: 100%;
 			text-wrap: balance;
+		}
+	}
+
+	// The container only renders inside the dark-teal banner, so the secondary
+	// CTA needs a light treatment to read against that background.
+	.components-button.is-secondary {
+		&,
+		&:hover:not(:disabled),
+		&:focus:not(:disabled),
+		&:focus-visible:not(:disabled) {
+			color: var(--color-text-white);
+			box-shadow: inset 0 0 0 1px var(--color-text-white);
+			background: transparent;
 		}
 	}
 

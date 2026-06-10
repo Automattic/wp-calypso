@@ -22,8 +22,7 @@ const NonRefundableDomainMappingMessage = ( {
 				{ sprintf(
 					/* translators: %(mappedDomain)s is a domain name */
 					__(
-						'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.'
+						'This plan includes the custom domain mapping for %(mappedDomain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.'
 					),
 					{
 						mappedDomain: includedDomainPurchase.meta,
@@ -50,8 +49,7 @@ const CancelableDomainMappingMessage = ( {
 				{ sprintf(
 					/* translators: %(mappedDomain)s is a domain name */
 					__(
-						'This plan includes mapping for the domain %(mappedDomain)s. ' +
-							"Cancelling will remove all the plan's features from your site, including the domain."
+						"This plan includes mapping for the domain %(mappedDomain)s. Cancelling will remove all the plan's features from your site, including the domain."
 					),
 					{
 						mappedDomain: includedDomainPurchase.meta,
@@ -60,7 +58,7 @@ const CancelableDomainMappingMessage = ( {
 			</p>
 			<p>
 				{ sprintf(
-					/* translators: %(mappedDomain)s and %(wordpressSiteUrl) are both domain names */
+					/* translators: %(mappedDomain)s and %(wordpressSiteUrl)s are both domain names */
 					__(
 						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s'
 					),
@@ -74,8 +72,7 @@ const CancelableDomainMappingMessage = ( {
 				{ sprintf(
 					/* translators: %(mappedDomain)s is a domain name */
 					__(
-						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
-							'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.'
+						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.'
 					),
 					{
 						mappedDomain: includedDomainPurchase.meta,
@@ -124,11 +121,10 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 					{ sprintf(
 						/* translators: %(refundAmount)s, %(planCost)s and %(domainCost)s are all monetary amounts */
 						__(
-							'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-								'minus %(domainCost)s for the domain.'
+							'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan minus %(domainCost)s for the domain.'
 						),
 						{
-							domainCost: includedDomainPurchase.cost_to_unbundle_display,
+							domainCost: includedDomainPurchase.cost_to_unbundle_display ?? '',
 							planCost: planPurchase.total_refund_text,
 							refundAmount: planPurchase.refund_text,
 						}
@@ -286,13 +282,11 @@ const CancelPurchaseDomainOptions = ( {
 							description: sprintf(
 								/* translators: %(refundAmount)s and %(domainCost)s are both monetary amounts. %(productName)s is the name of the product */
 								__(
-									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
-										'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
-										"registration, and you're free to use it on WordPress.com or transfer it elsewhere."
+									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s plan, minus %(domainCost)s for the domain. There will be no change to your domain registration, and you're free to use it on WordPress.com or transfer it elsewhere."
 								),
 								{
 									productName: purchase.product_name,
-									domainCost: includedDomainPurchase.cost_to_unbundle_display,
+									domainCost: includedDomainPurchase.cost_to_unbundle_display ?? '',
 									refundAmount: purchase.refund_text,
 								}
 							),
@@ -309,8 +303,7 @@ const CancelPurchaseDomainOptions = ( {
 							description: sprintf(
 								/* translators: %(planCost)s is the monetary amount that the customer will receive in the form of a refund */
 								__(
-									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
-										"you'll lose it permanently."
+									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible you'll lose it permanently."
 								),
 								{
 									planCost: purchase.total_refund_text,

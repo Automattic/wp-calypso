@@ -73,10 +73,11 @@ export default function Notifications( { user, className }: { user: User; classN
 	return (
 		<Dropdown
 			popoverProps={ {
-				className: 'dashboard-notifications',
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
+				flip: false,
+				shift: true,
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
@@ -92,24 +93,14 @@ export default function Notifications( { user, className }: { user: User; classN
 				/>
 			) }
 			renderContent={ () => (
-				<div
-					style={ {
-						width: '100vw',
-						height: '100vh',
-						maxWidth: ! isMobileViewport ? '448px' : undefined,
-						maxHeight: 'inherit',
-						margin: '-8px',
-					} }
-				>
-					<Suspense fallback={ null }>
-						<AsyncNotificationApp
-							locale={ user.language }
-							isDismissible={ isMobileViewport }
-							actionHandlers={ actionHandlers }
-							wpcom={ wpcom }
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={ null }>
+					<AsyncNotificationApp
+						locale={ user.language }
+						isDismissible={ isMobileViewport }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
 			) }
 		/>
 	);

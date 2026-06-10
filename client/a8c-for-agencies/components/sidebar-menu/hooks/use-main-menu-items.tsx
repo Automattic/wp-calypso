@@ -44,7 +44,6 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
 	A4A_AGENCY_TIER_LINK,
-	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
@@ -81,7 +80,7 @@ const useMainMenuItems = ( path: string ) => {
 			? {
 					icon: moveTo,
 					path: A4A_MIGRATIONS_LINK,
-					link: A4A_MIGRATIONS_OVERVIEW_LINK,
+					link: A4A_MIGRATIONS_LINK,
 					title: translate( 'Migrations' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Migrations',
@@ -142,6 +141,34 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
+				? [
+						{
+							icon: plugins,
+							path: '/',
+							link: A4A_PLUGINS_LINK,
+							title: translate( 'Plugins' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Plugins',
+							},
+						},
+				  ]
+				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: (
+					<div className="sidebar-menu-item__title-with-badge">
+						<span>{ translate( 'Reports' ) }</span>
+						<Badge type="info">{ translate( 'Beta' ) }</Badge>
+					</div>
+				),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
@@ -178,34 +205,6 @@ const useMainMenuItems = ( path: string ) => {
 				title: translate( 'WooPayments' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / WooPayments',
-				},
-				withChevron: true,
-			},
-			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
-				? [
-						{
-							icon: plugins,
-							path: '/',
-							link: A4A_PLUGINS_LINK,
-							title: translate( 'Plugins' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Plugins',
-							},
-						},
-				  ]
-				: [] ),
-			{
-				icon: chartBar,
-				path: A4A_REPORTS_LINK,
-				link: A4A_REPORTS_LINK,
-				title: (
-					<div className="sidebar-menu-item__title-with-badge">
-						<span>{ translate( 'Reports' ) }</span>
-						<Badge type="info">{ translate( 'Beta' ) }</Badge>
-					</div>
-				),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
 				},
 				withChevron: true,
 			},

@@ -32,7 +32,7 @@ const ItemsDataViews = ( {
 	children,
 }: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
-	const scrollContainerRef = useRef< HTMLElement >();
+	const scrollContainerRef = useRef< HTMLElement >( undefined );
 	const previousDataViewsState = usePrevious( data.dataViewsState );
 
 	useLayoutEffect( () => {

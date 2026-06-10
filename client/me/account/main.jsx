@@ -90,12 +90,6 @@ const INTERFACE_FIELDS = [
 ];
 
 class Account extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.props.removeUnsavedUserSetting( 'user_login' );
-	}
-
 	state = {
 		redirect: false,
 		showConfirmUsernameForm: false,
@@ -114,6 +108,8 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
+		this.props.removeUnsavedUserSetting( 'user_login' );
+
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
 			this.props.successNotice( this.props.translate( 'Username changed successfully!' ), {

@@ -1,7 +1,7 @@
 import { Button, Badge } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import React from 'react';
+import React, { type JSX } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import StatusBadge from './status-badge';
 import type { TranslateResult } from 'i18n-calypso';

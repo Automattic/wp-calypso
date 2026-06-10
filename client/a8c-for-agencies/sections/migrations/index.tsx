@@ -47,5 +47,11 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( A4A_MIGRATIONS_LINK, () => page.redirect( A4A_MIGRATIONS_OVERVIEW_LINK ) );
+	page(
+		A4A_MIGRATIONS_LINK,
+		requireAccessContext,
+		controller.migrationsLandingContext,
+		makeLayout,
+		clientRender
+	);
 }

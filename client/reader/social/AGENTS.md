@@ -595,7 +595,26 @@ Per-protocol `ComposerConfig` supplies:
   and Mastodon both wire it as `calypso_reader_<protocol>_overflow_handoff_{shown,editor_opened}`
   with `connection_id` + `mode_kind` props (plus `site_id` on the
   click event).
-- `copy.{title, placeholder}` — per-mode strings.
+- `copy.{title, placeholder}` — per-mode strings. `copy.title( mode, t,
+  handle )` is called by the modal with the resolved `useAuthorHandle`
+  value (or `null` when the hook is omitted / pending) so each protocol
+  can render "New post · @handle" — the destination context the issue
+  CM-799 surfaced. All three protocols (atmosphere, mastodon, fediverse)
+  wire this; fediverse's handle is the webfinger identity of the source
+  blog (e.g. `@myblog@myblog.wordpress.com`).
+- `headerIcon?` — optional `ReactElement` rendered before the modal
+  title via `<Modal icon>`. Atmosphere passes `<ReaderBlueskyIcon
+  filled />`, Mastodon passes `<ReaderMastodonIcon />`, Fediverse passes
+  `<ReaderFediverseIcon />`. Together with the `· @handle` title suffix
+  this communicates "you're posting to Bluesky as @jordesign.bsky.social"
+  without a destination picker.
+- `useAuthorHandle?` — optional hook returning the connected account's
+  handle for the given `connectionId` (or `null` for `null` / pending /
+  missing). Called unconditionally inside `<ComposerModal>` (rules of
+  hooks) — same contract as `useLimit`. Atmosphere reads it from
+  `useConnectionsQuery`, Mastodon from `useMastodonConnectionsQuery`,
+  Fediverse from `useFediverseConnectionsQuery`, all running the result
+  through `normalizeHandle()` so the leading `@` doesn't double up.
 - `logBadRequest?` — fire-and-forget hook for the `bad_request` body
   log. Lives in the per-protocol adapter so `calypso/lib/logstash`
   doesn't have to be imported from `packages/api-queries` (which is

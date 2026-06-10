@@ -90,7 +90,7 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 
-	if ( site.is_wpcom_staging_site ) {
+	if ( site.is_wpcom_staging_site || site.is_a4a_dev_site ) {
 		return null;
 	}
 

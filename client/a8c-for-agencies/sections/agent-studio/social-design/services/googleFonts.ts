@@ -9,7 +9,10 @@ export type GoogleFont = {
 };
 
 export const GOOGLE_FONTS: GoogleFont[] = [
-	{ family: 'Inter', category: 'sans', weights: [ 400, 700, 900 ] },
+	// Weights span what the Bea renderer asks for (body 400, headline/stat
+	// 600) plus the 500/700/900 the capture stylesheet requests, so the
+	// browser fit and the Browserless render resolve identical faces.
+	{ family: 'Inter', category: 'sans', weights: [ 400, 500, 600, 700, 900 ] },
 	{ family: 'Space Grotesk', category: 'sans', weights: [ 400, 500, 700 ] },
 	{ family: 'Manrope', category: 'sans', weights: [ 400, 700, 800 ] },
 	{ family: 'Archivo Black', category: 'display', weights: [ 400 ] },
@@ -75,8 +78,14 @@ async function primeCanvasFont( family: string ) {
 	try {
 		await Promise.all( [
 			document.fonts.load( `400 24px "${ family }"` ),
+			document.fonts.load( `500 24px "${ family }"` ),
+			document.fonts.load( `600 24px "${ family }"` ),
 			document.fonts.load( `700 24px "${ family }"` ),
 			document.fonts.load( `400 60px "${ family }"` ),
+			// The stat-hero fitter measures at the headline weight (600) via
+			// canvas measureText; without priming that weight the canvas falls
+			// back to a generic face and the measured width is wrong.
+			document.fonts.load( `600 84px "${ family }"` ),
 			document.fonts.load( `700 84px "${ family }"` ),
 			document.fonts.load( `400 108px "${ family }"` ),
 			document.fonts.load( `700 120px "${ family }"` ),

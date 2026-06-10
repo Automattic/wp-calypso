@@ -7,16 +7,37 @@ import {
 import { throttle, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, menu } from '@wordpress/icons';
-import React, { useEffect, useRef, useState, ComponentProps, CSSProperties } from 'react';
+import React, { useEffect, useRef, useState, type ComponentProps, type CSSProperties } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Menu from '../menu';
 import RouterLinkMenuItem from '../router-link-menu-item';
 
 import './style.scss';
 
+// <RouterLinkButton> uses `createLink` from TanStack, which widens `children`
+// to also accept a render-prop function and `onClick` to require an event
+// argument, and double-wraps `ref`. ResponsiveMenu only ever treats items as
+// plain menu items, we don't want to support the features provided by TanStack.
+// This type narrows those back to what we actually support while keeping the
+// rest of the link typing (e.g. the `to` route validation).
+type ResponsiveMenuItemProps = Omit<
+	ComponentProps< typeof RouterLinkMenuItem >,
+	'children' | 'onClick' | 'ref'
+> & {
+	children: React.ReactNode;
+	onClick?: ( event?: React.MouseEvent< HTMLButtonElement > ) => void;
+};
+
+// The children of ResponsiveMenu can be any usual ReactNode, but if it _is_ an element
+// with props, then those props must be ResponsiveMenu.Item props.
+type ResponsiveMenuChildNode =
+	| Exclude< React.ReactNode, React.ReactElement | Iterable< React.ReactNode > >
+	| React.ReactElement< ResponsiveMenuItemProps >
+	| Iterable< ResponsiveMenuChildNode >;
+
 type ResponsiveMenuProps = {
 	prefix?: React.ReactNode;
-	children: React.ReactNode;
+	children: ResponsiveMenuChildNode;
 	icon?: React.ReactElement;
 	label?: string;
 	dropdownPlacement?: 'bottom-end' | 'bottom-start' | 'bottom';
@@ -152,8 +173,8 @@ function ResponsiveMenu( {
 									className="dashboard-menu__item"
 									variant="tertiary"
 									{ ...child.props }
-									onClick={ () => {
-										child.props.onClick?.();
+									onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+										child.props.onClick?.( e );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: child.props.href ?? '',
 										} );
@@ -170,8 +191,8 @@ function ResponsiveMenu( {
 						return (
 							<Menu.Item
 								{ ...child.props }
-								onClick={ () => {
-									child.props.onClick?.();
+								onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+									child.props.onClick?.( e );
 									recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 										to: child.props.to ?? '',
 									} );
@@ -267,9 +288,9 @@ function ResponsiveMenu( {
 							return (
 								<RouterLinkMenuItem
 									{ ...child.props }
-									onClick={ () => {
+									onClick={ ( e ) => {
 										onClose();
-										child.props.onClick?.();
+										child.props.onClick?.( e );
 										recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 											to: child.props.to ?? '',
 										} );
@@ -288,7 +309,7 @@ function ResponsiveMenu( {
 
 ResponsiveMenu.Item = function MenuItem(
 	// eslint-disable-next-line -- The props are not used because this is just a placeholder component.
-	props: ComponentProps< typeof RouterLinkMenuItem >
+	_props: ResponsiveMenuItemProps
 ) {
 	// This is going to be replaced with the right menu item depending on the screen size.
 	return null;

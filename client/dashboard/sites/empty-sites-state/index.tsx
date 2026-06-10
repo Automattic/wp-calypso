@@ -8,7 +8,6 @@ import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
-import { AI_SITE_BUILDER_SPEC_FLOW } from '../ai-site-builder-spec-flow';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
@@ -57,7 +56,7 @@ function CreateAndBuildActions() {
 				actions={
 					<Button
 						variant="secondary"
-						href={ addQueryArgs( wpcomLink( `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` ), {
+						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
 							source: CONTEXT,
 							ref: EMPTY_STATE_REF,
 						} ) }
