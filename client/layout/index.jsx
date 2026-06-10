@@ -468,9 +468,7 @@ class Layout extends Component {
 	}
 }
 
-// `Layout` is a class component, so the 2026 Global Nav hook lives in this
-// wrapper. The hook resolves the config-flag force-on and the ExPlat experiment
-// assignment into the props the universal header expects (or `{}` for the old nav).
+// Hook wrapper — `Layout` is a class component.
 function LayoutWithNav2026Props( props ) {
 	const nav2026Props = useNav2026Props();
 	return <Layout { ...props } nav2026Props={ nav2026Props } />;

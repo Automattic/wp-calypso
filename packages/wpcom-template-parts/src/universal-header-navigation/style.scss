@@ -1832,8 +1832,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	// Top-level screen only. Fades + collapses on drill; browsers without
-	// allow-discrete snap instead.
+	// Top-level screen only; fades + collapses on drill (is-hidden).
 	.x-menu-mobile-footer > .x-menu-mobile-app-banner {
 		transition:
 			opacity var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),

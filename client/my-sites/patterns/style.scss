@@ -73,9 +73,7 @@
 		}
 	}
 
-	// Closed state: transparent nav over the dark hero, so text/logo/chevron go
-	// white — and the Get started hover swap inverts with the ink (white fill,
-	// dark label), via the hooks the shared nav stylesheet exposes.
+	// Closed over the dark hero: white nav ink, inverted CTA hover swap.
 	.lpc-header-nav-container:not(
 			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 		):not( .is-scrolled )
