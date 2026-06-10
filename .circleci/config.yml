@@ -547,13 +547,16 @@ workflows:
                 - trunk
                 - /release\/.*/
                 - /desktop\/.*/
+      # Unlike wp-desktop-mac, the linux and windows jobs are excluded from
+      # trunk on purpose: building them on every trunk commit is what #103588
+      # set out to stop. They still run on desktop/release/circleci branches
+      # and on desktop-v* tags (see the wp-desktop-release workflow below).
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets
           filters:
             branches:
               only:
-                - trunk
                 - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
@@ -563,7 +566,6 @@ workflows:
           filters:
             branches:
               only:
-                - trunk
                 - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
