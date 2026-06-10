@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { rawUserPreferencesQuery, userPreferencesMutation } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
@@ -41,11 +42,9 @@ jest.mock(
 );
 
 function renderPreferencesDefaultLanding() {
-	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
-
 	// Mock rawUserPreferencesQuery to return the API response
 	// This is required because the component uses useSuspenseQuery which needs data immediately
-	rawUserPreferencesQuery.mockReturnValue( {
+	( rawUserPreferencesQuery as jest.Mock ).mockReturnValue( {
 		queryKey: [ 'me', 'preferences' ],
 		queryFn: () =>
 			Promise.resolve( {
@@ -64,8 +63,7 @@ function renderPreferencesDefaultLanding() {
 }
 
 afterEach( () => {
-	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
-	rawUserPreferencesQuery.mockClear();
+	( rawUserPreferencesQuery as jest.Mock ).mockClear();
 } );
 
 test( 'save button is disabled when form is not dirty', async () => {
@@ -112,8 +110,7 @@ test( 'saves preferences successfully', async () => {
 	} );
 
 	// Override the mock to make mutationFn return a resolved promise
-	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	userPreferencesMutation.mockReturnValue( {
+	( userPreferencesMutation as jest.Mock ).mockReturnValue( {
 		mutationFn: jest.fn( () =>
 			Promise.resolve( {
 				'sites-landing-page': {
@@ -162,8 +159,7 @@ test( 'handles save error gracefully', async () => {
 
 	// Override the mock to make mutationFn return a rejected promise
 	// This simulates an API error
-	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	userPreferencesMutation.mockReturnValue( {
+	( userPreferencesMutation as jest.Mock ).mockReturnValue( {
 		mutationFn: jest.fn( () => Promise.reject( new Error( 'Server error' ) ) ),
 	} );
 
@@ -206,8 +202,7 @@ test( 'disables save button while saving', async () => {
 
 	// Override the mock to make mutationFn return a delayed promise
 	// This simulates an async operation that takes time, making isPending true
-	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	userPreferencesMutation.mockReturnValue( {
+	( userPreferencesMutation as jest.Mock ).mockReturnValue( {
 		mutationFn: jest.fn( () => {
 			return new Promise( ( resolve ) => {
 				setTimeout( () => {
