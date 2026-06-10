@@ -24,22 +24,52 @@ export function FailedPurchasePage() {
 		return <Loading />;
 	}
 
-	const purchases = receipt?.items.map( ( item ) => ( {
-		productId: item.id,
-		productName: item.product,
-		meta: item.variation,
-	} ) );
+	const failedItems = receipt?.failed_purchases
+		? Object.values( receipt.failed_purchases ).flat()
+		: [];
+
+	// A failed line item still lives in `receipt.items` — the refund is recorded on a
+	// separate cancellation receipt, so the original line persists here. Exclude
+	// anything that also appears in `failed_purchases` (and any domain connection
+	// orphaned by a failed domain) from the "added successfully" list, so a failed
+	// item isn't shown as both succeeded and failed.
+	const failedItemKeys = new Set(
+		failedItems.map( ( item ) => `${ item.product_slug }:${ item.product_meta }` )
+	);
+	const failedDomains = new Set(
+		failedItems.map( ( item ) => item.product_meta ).filter( Boolean )
+	);
+
+	const purchases = receipt?.items
+		.filter( ( item ) => {
+			if ( failedItemKeys.has( `${ item.wpcom_product_slug }:${ item.domain ?? '' }` ) ) {
+				return false;
+			}
+			// `domain_map` is a connection to a domain; if that domain failed to register,
+			// the connection is orphaned and shouldn't be listed as a success.
+			if (
+				item.wpcom_product_slug === 'domain_map' &&
+				item.domain &&
+				failedDomains.has( item.domain )
+			) {
+				return false;
+			}
+			return true;
+		} )
+		.map( ( item ) => ( {
+			productId: item.id,
+			productName: item.variation || item.product,
+			meta: item.domain ?? '',
+		} ) );
 
 	const failedPurchases = receipt?.failed_purchases
-		? Object.values( receipt.failed_purchases )
-				.flat()
-				.map( ( item ) => ( {
-					productId: item.product_id,
-					productName: item.product_name,
-					productSlug: item.product_slug,
-					productCost: item.product_cost,
-					meta: item.product_meta,
-				} ) )
+		? failedItems.map( ( item ) => ( {
+				productId: item.product_id,
+				productName: item.product_name,
+				productSlug: item.product_slug,
+				productCost: item.product_cost,
+				meta: item.product_meta,
+		  } ) )
 		: undefined;
 
 	return (

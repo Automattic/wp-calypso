@@ -79,13 +79,18 @@ describe( 'FailedPurchasePage', () => {
 		} );
 	} );
 
-	it( 'maps successful items and flattens failed purchases across sites', () => {
+	it( 'labels successful items by their variation and flattens failed purchases across sites', () => {
 		setSearch( '?receipt_id=12345' );
 		setupUseQuery( {
 			data: {
 				items: [
-					{ id: 1, product: 'WordPress.com Personal', variation: 'Annual' },
-					{ id: 2, product: 'Domain', variation: 'example.com' },
+					{
+						id: 1,
+						product: 'wp-bundles',
+						variation: 'WordPress.com Premium',
+						wpcom_product_slug: 'value_bundle',
+						domain: 'example.wordpress.com',
+					},
 				],
 				failed_purchases: {
 					100: [
@@ -114,8 +119,7 @@ describe( 'FailedPurchasePage', () => {
 
 		expect( mockFailedPurchaseDetails ).toHaveBeenCalledWith( {
 			purchases: [
-				{ productId: 1, productName: 'WordPress.com Personal', meta: 'Annual' },
-				{ productId: 2, productName: 'Domain', meta: 'example.com' },
+				{ productId: 1, productName: 'WordPress.com Premium', meta: 'example.wordpress.com' },
 			],
 			failedPurchases: [
 				{
@@ -136,18 +140,90 @@ describe( 'FailedPurchasePage', () => {
 		} );
 	} );
 
-	it( 'passes undefined failedPurchases when the receipt reports none', () => {
-		setSearch( '?receipt_id=12345' );
+	it( 'excludes a failed item and its orphaned domain connection from the success list', () => {
+		// Mirrors a real partial-failure receipt: a plan succeeds, the .blog
+		// registration fails, and its domain connection is left orphaned. The failed
+		// registration and connection still appear in `items`, so both must be filtered.
+		setSearch( '?receipt_id=20691080' );
 		setupUseQuery( {
 			data: {
-				items: [ { id: 1, product: 'WordPress.com Personal', variation: 'Annual' } ],
+				items: [
+					{
+						id: 1,
+						product: 'wp-bundles',
+						variation: 'WordPress.com Premium',
+						wpcom_product_slug: 'value_bundle',
+						domain: 'eamartin.wordpress.com',
+					},
+					{
+						id: 2,
+						product: 'Domain',
+						variation: '.blog Domain Registration',
+						wpcom_product_slug: 'dotblog_domain',
+						domain: 'eamartin.blog',
+					},
+					{
+						id: 3,
+						product: 'Domain',
+						variation: 'Domain Connection',
+						wpcom_product_slug: 'domain_map',
+						domain: 'eamartin.blog',
+					},
+				],
+				failed_purchases: {
+					6144760: [
+						{
+							product_id: 76,
+							product_name: '.blog Domain Registration',
+							product_slug: 'dotblog_domain',
+							product_cost: 21,
+							product_meta: 'eamartin.blog',
+						},
+					],
+				},
 			},
 		} );
 
 		render( <FailedPurchasePage /> );
 
 		expect( mockFailedPurchaseDetails ).toHaveBeenCalledWith( {
-			purchases: [ { productId: 1, productName: 'WordPress.com Personal', meta: 'Annual' } ],
+			purchases: [
+				{ productId: 1, productName: 'WordPress.com Premium', meta: 'eamartin.wordpress.com' },
+			],
+			failedPurchases: [
+				{
+					productId: 76,
+					productName: '.blog Domain Registration',
+					productSlug: 'dotblog_domain',
+					productCost: 21,
+					meta: 'eamartin.blog',
+				},
+			],
+		} );
+	} );
+
+	it( 'passes undefined failedPurchases when the receipt reports none', () => {
+		setSearch( '?receipt_id=12345' );
+		setupUseQuery( {
+			data: {
+				items: [
+					{
+						id: 1,
+						product: 'wp-bundles',
+						variation: 'WordPress.com Premium',
+						wpcom_product_slug: 'value_bundle',
+						domain: 'example.wordpress.com',
+					},
+				],
+			},
+		} );
+
+		render( <FailedPurchasePage /> );
+
+		expect( mockFailedPurchaseDetails ).toHaveBeenCalledWith( {
+			purchases: [
+				{ productId: 1, productName: 'WordPress.com Premium', meta: 'example.wordpress.com' },
+			],
 			failedPurchases: undefined,
 		} );
 	} );
