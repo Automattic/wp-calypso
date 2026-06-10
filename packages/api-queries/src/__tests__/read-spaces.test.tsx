@@ -76,6 +76,17 @@ describe( 'read space source mutations', () => {
 		expect( spaces?.[ 0 ].sources ).toHaveLength( 1 );
 	} );
 
+	it( 'does not clear the spaces cache when adding before the list is cached', async () => {
+		const queryClient = new QueryClient();
+		const subscription = makeSubscription();
+		const mutation = addReadSpaceSourceMutation( queryClient );
+
+		await mutation.mutationFn!( { spaceId: SPACE_ID, subscription } );
+		mutation.onSuccess?.( undefined, { spaceId: SPACE_ID, subscription } );
+
+		expect( queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [] );
+	} );
+
 	it( 'deletes a subscription from the matching space cache entry', async () => {
 		const queryClient = new QueryClient();
 		const subscription = makeSubscription();
@@ -100,5 +111,16 @@ describe( 'read space source mutations', () => {
 
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
 		expect( spaces?.[ 0 ].sources ).toEqual( [] );
+	} );
+
+	it( 'does not clear the spaces cache when deleting before the list is cached', async () => {
+		const queryClient = new QueryClient();
+		const subscription = makeSubscription();
+		const mutation = deleteReadSpaceSourceMutation( queryClient );
+
+		await mutation.mutationFn!( { spaceId: SPACE_ID, subscription } );
+		mutation.onSuccess?.( undefined, { spaceId: SPACE_ID, subscription } );
+
+		expect( queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [] );
 	} );
 } );

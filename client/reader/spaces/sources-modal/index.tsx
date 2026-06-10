@@ -1,3 +1,8 @@
+import {
+	getReadSpaceSourceKey,
+	getSiteSubscriptionSourceKey,
+	type SiteSubscriptionItem,
+} from '@automattic/api-core';
 import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	Button,
@@ -15,7 +20,6 @@ import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { SourceSubscription } from './subscription';
-import type { SiteSubscriptionItem, SpaceSource } from '@automattic/api-core';
 import type { CSSProperties } from 'react';
 
 import './style.scss';
@@ -35,33 +39,6 @@ type SourceRowRendererProps = {
 	index: number;
 	key: string;
 	style: CSSProperties;
-};
-
-const normalizeSubscriptionUrl = ( url?: string | null ): string =>
-	( url ?? '' ).trim().toLowerCase().replace( /\/+$/, '' );
-
-const getSelectedSubscriptionKey = (
-	subscription: Pick< SpaceSource, 'feedId' | 'blogId' | 'feedUrl' >
-): string => {
-	if ( subscription.feedId !== null && typeof subscription.feedId !== 'undefined' ) {
-		return `feed:${ subscription.feedId }`;
-	}
-	if ( subscription.blogId !== null && typeof subscription.blogId !== 'undefined' ) {
-		return `blog:${ subscription.blogId }`;
-	}
-	return `url:${ normalizeSubscriptionUrl( subscription.feedUrl ) }`;
-};
-
-const getSiteSubscriptionKey = (
-	subscription: Pick< SiteSubscriptionItem, 'feed_ID' | 'blog_ID' | 'feed_URL' >
-): string => {
-	if ( subscription.feed_ID !== null && typeof subscription.feed_ID !== 'undefined' ) {
-		return `feed:${ subscription.feed_ID }`;
-	}
-	if ( subscription.blog_ID !== null && typeof subscription.blog_ID !== 'undefined' ) {
-		return `blog:${ subscription.blog_ID }`;
-	}
-	return `url:${ normalizeSubscriptionUrl( subscription.feed_URL ) }`;
 };
 
 const getSubscriptionSearchText = ( subscription: SiteSubscriptionItem ): string =>
@@ -96,8 +73,7 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 	}, [ isOpen, spaceId ] );
 
 	const selectedKeys = useMemo(
-		() =>
-			new Set( ( space?.sources ?? [] ).map( ( source ) => getSelectedSubscriptionKey( source ) ) ),
+		() => new Set( ( space?.sources ?? [] ).map( ( source ) => getReadSpaceSourceKey( source ) ) ),
 		[ space?.sources ]
 	);
 
@@ -105,7 +81,7 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 		const normalizedSearch = search.trim().toLowerCase();
 
 		return siteSubscriptions.subscriptions.filter( ( subscription ) => {
-			const isSelected = selectedKeys.has( getSiteSubscriptionKey( subscription ) );
+			const isSelected = selectedKeys.has( getSiteSubscriptionSourceKey( subscription ) );
 
 			if ( filter === 'selected' && ! isSelected ) {
 				return false;
@@ -157,7 +133,7 @@ export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 				return null;
 			}
 
-			const isAdded = selectedKeys.has( getSiteSubscriptionKey( subscription ) );
+			const isAdded = selectedKeys.has( getSiteSubscriptionSourceKey( subscription ) );
 
 			return (
 				<div

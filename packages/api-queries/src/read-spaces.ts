@@ -3,6 +3,8 @@ import {
 	createReadSpace,
 	deleteReadSpaceSource,
 	fetchReadSpaces,
+	getReadSpaceSourceKey,
+	getSiteSubscriptionSourceKey,
 	type ReadSpace,
 	type ReadSpaceSourceMutationParams,
 	type SpaceSource,
@@ -42,31 +44,6 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 		},
 	} );
 
-const normalizeSubscriptionUrl = ( url?: string | null ): string =>
-	( url ?? '' ).trim().toLowerCase().replace( /\/+$/, '' );
-
-const getSourceKey = ( source: Pick< SpaceSource, 'feedId' | 'blogId' | 'feedUrl' > ): string => {
-	if ( source.feedId !== null && typeof source.feedId !== 'undefined' ) {
-		return `feed:${ source.feedId }`;
-	}
-	if ( source.blogId !== null && typeof source.blogId !== 'undefined' ) {
-		return `blog:${ source.blogId }`;
-	}
-	return `url:${ normalizeSubscriptionUrl( source.feedUrl ) }`;
-};
-
-const getSiteSubscriptionKey = (
-	subscription: Pick< SiteSubscriptionItem, 'feed_ID' | 'blog_ID' | 'feed_URL' >
-): string => {
-	if ( subscription.feed_ID !== null && typeof subscription.feed_ID !== 'undefined' ) {
-		return `feed:${ subscription.feed_ID }`;
-	}
-	if ( subscription.blog_ID !== null && typeof subscription.blog_ID !== 'undefined' ) {
-		return `blog:${ subscription.blog_ID }`;
-	}
-	return `url:${ normalizeSubscriptionUrl( subscription.feed_URL ) }`;
-};
-
 const createSpaceSource = ( subscription: SiteSubscriptionItem ): SpaceSource => ( {
 	feedId: subscription.feed_ID ?? null,
 	blogId: subscription.blog_ID ?? null,
@@ -81,29 +58,27 @@ export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 		mutationFn: addReadSpaceSource,
 		onSuccess: ( _data, { spaceId, subscription } ) => {
 			const source = createSpaceSource( subscription );
-			const sourceKey = getSourceKey( source );
+			const sourceKey = getReadSpaceSourceKey( source );
 
-			queryClient.setQueryData< ReadSpace[] >(
-				readSpacesQuery().queryKey,
-				( previous ) =>
-					previous?.map( ( space ) => {
-						if ( space.id !== spaceId ) {
-							return space;
-						}
+			queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) =>
+				( previous ?? [] ).map( ( space ) => {
+					if ( space.id !== spaceId ) {
+						return space;
+					}
 
-						if (
-							space.sources.some(
-								( existingSource ) => getSourceKey( existingSource ) === sourceKey
-							)
-						) {
-							return space;
-						}
+					if (
+						space.sources.some(
+							( existingSource ) => getReadSpaceSourceKey( existingSource ) === sourceKey
+						)
+					) {
+						return space;
+					}
 
-						return {
-							...space,
-							sources: [ ...space.sources, source ],
-						};
-					} )
+					return {
+						...space,
+						sources: [ ...space.sources, source ],
+					};
+				} )
 			);
 		},
 	} );
@@ -112,23 +87,21 @@ export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< void, Error, ReadSpaceSourceMutationParams >( {
 		mutationFn: deleteReadSpaceSource,
 		onSuccess: ( _data, { spaceId, subscription } ) => {
-			const subscriptionKey = getSiteSubscriptionKey( subscription );
+			const subscriptionKey = getSiteSubscriptionSourceKey( subscription );
 
-			queryClient.setQueryData< ReadSpace[] >(
-				readSpacesQuery().queryKey,
-				( previous ) =>
-					previous?.map( ( space ) => {
-						if ( space.id !== spaceId ) {
-							return space;
-						}
+			queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) =>
+				( previous ?? [] ).map( ( space ) => {
+					if ( space.id !== spaceId ) {
+						return space;
+					}
 
-						return {
-							...space,
-							sources: space.sources.filter(
-								( existingSource ) => getSourceKey( existingSource ) !== subscriptionKey
-							),
-						};
-					} )
+					return {
+						...space,
+						sources: space.sources.filter(
+							( existingSource ) => getReadSpaceSourceKey( existingSource ) !== subscriptionKey
+						),
+					};
+				} )
 			);
 		},
 	} );
