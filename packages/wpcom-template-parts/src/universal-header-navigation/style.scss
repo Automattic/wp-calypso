@@ -1093,7 +1093,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-inline-end: 18px;
 	}
 
-	// "Get started" CTA — outlined pill (no fill).
+	// Hamburger: centre the trigger in the 64px bar (the legacy block layout
+	// positioned it for the taller old bar). The icon keeps its legacy 10px
+	// inner offset — that leaves the bars 1px above true centre, close enough.
+	.x-nav-link__menu {
+		display: flex;
+		align-items: center;
+		height: $x-nav-2026-height;
+		padding-block: 0;
+	}
+
+	// "Get started" CTA — outlined pill (no fill). Hover flips it to a filled
+	// pill: ink fill, inverted label. Sections that recolour the nav ink over
+	// dark heroes can override the flip pair via the two custom properties.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
@@ -1106,7 +1118,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		color: inherit !important;
 		border: 1px solid currentcolor;
 		border-radius: 3px;
-		transition: opacity $x-nav-2026-transition;
+		transition:
+			background-color $x-nav-2026-transition,
+			color $x-nav-2026-transition;
 
 		&::before {
 			display: none;
@@ -1114,7 +1128,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 		&:hover,
 		&:focus {
-			opacity: 0.8;
+			background: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
+			color: var( --x-nav-2026-cta-hover-ink, #{$studio-white} ) !important;
+			border-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} );
 		}
 	}
 
@@ -1159,8 +1175,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		transform: scaleY( -1 ) rotate( 45deg );
 	}
 
-	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing colour.
-	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ) {
+	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing
+	// colour. The "Get started" CTA is excluded: it flips to a filled pill above.
+	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ):not( .x-nav-link__primary ) {
 		opacity: 0.8;
 	}
 }
