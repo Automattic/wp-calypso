@@ -1,4 +1,5 @@
 import wpcomRequest from 'wpcom-proxy-request';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { uploadExportFile } from 'calypso/state/imports/actions';
 import { fromApi, toApi } from 'calypso/state/imports/api';
 import { appStates } from 'calypso/state/imports/constants';
@@ -69,6 +70,9 @@ export async function importPlaygroundSite(
 	}
 
 	const importId: string = importer.importId;
+	const importStartedAt = Date.now();
+
+	recordTracksEvent( 'calypso_playground_woo_import_started', { site_id: siteId } );
 
 	// Poll until the import completes. After uploadSuccess, send the start trigger
 	// — the backup_import job requires an explicit POST before beginning the
@@ -88,10 +92,19 @@ export async function importPlaygroundSite(
 		const status = fromApi( raw );
 
 		if ( status.importerState === appStates.IMPORT_FAILURE ) {
+			recordTracksEvent( 'calypso_playground_woo_import_failed', {
+				site_id: siteId,
+				reason: 'import_failure',
+				duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
+			} );
 			throw new Error( 'Import failed on WordPress.com.' );
 		}
 
 		if ( status.importerState === appStates.IMPORT_SUCCESS ) {
+			recordTracksEvent( 'calypso_playground_woo_import_succeeded', {
+				site_id: siteId,
+				duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
+			} );
 			return;
 		}
 
@@ -107,5 +120,10 @@ export async function importPlaygroundSite(
 		}
 	}
 
+	recordTracksEvent( 'calypso_playground_woo_import_failed', {
+		site_id: siteId,
+		reason: 'timeout',
+		duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
+	} );
 	throw new Error( 'Import timed out.' );
 }
