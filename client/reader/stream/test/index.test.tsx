@@ -79,13 +79,28 @@ jest.mock( 'calypso/components/infinite-list', () => {
 	return class InfiniteList extends ReactLib.Component< {
 		items: Array< { postId: number } >;
 		fetchingNextPage?: boolean;
-		renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
+		// Mirror the real signature: the third argument is the callback ref the
+		// list hands to consumers so they can register their item's DOM node.
+		renderItem: (
+			postKey: { postId: number },
+			idx: number,
+			registerItemRef: ( node: HTMLElement | null ) => void
+		) => ReactNode;
 		renderLoadingPlaceholders?: () => ReactNode;
 	} > {
 		containerRef = ReactLib.createRef< HTMLDivElement >();
+		itemRefs = new Map< number, HTMLElement >();
 		scrollToTop = jest.fn();
 		getVisibleItemIndexes = jest.fn( () => [] );
 		getDOMNode = () => this.containerRef.current;
+
+		setItemRef = ( key: number ) => ( node: HTMLElement | null ) => {
+			if ( node ) {
+				this.itemRefs.set( key, node );
+			} else {
+				this.itemRefs.delete( key );
+			}
+		};
 
 		render() {
 			const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = this.props;
@@ -94,7 +109,9 @@ jest.mock( 'calypso/components/infinite-list', () => {
 				<div ref={ this.containerRef } data-testid="infinite-list" style={ { overflowY: 'auto' } }>
 					{ showPlaceholders
 						? renderLoadingPlaceholders?.()
-						: items.map( ( item, idx ) => <div key={ idx }>{ renderItem( item, idx ) }</div> ) }
+						: items.map( ( item, idx ) => (
+								<div key={ idx }>{ renderItem( item, idx, this.setItemRef( idx ) ) }</div>
+						  ) ) }
 				</div>
 			);
 		}

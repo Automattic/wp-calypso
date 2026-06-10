@@ -49,6 +49,10 @@ export default class InfiniteList extends Component {
 	// Maps an item key (from `getItemRef`) to its rendered DOM node. Populated via
 	// callback refs passed to `renderItem`, replacing the removed string refs.
 	itemRefs = new Map();
+	// Caches the callback ref per item key so its identity stays stable across
+	// renders. An unstable ref would re-run on every render and, when forwarded as
+	// a prop, would defeat consumers' own-props memoization (e.g. the Reader stream).
+	itemRefCallbacks = new Map();
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
@@ -338,14 +342,24 @@ export default class InfiniteList extends Component {
 	// to read layout/scroll information (replaces the removed `findDOMNode`).
 	getDOMNode = () => this.containerRef.current;
 
-	// Callback-ref factory that records the DOM node for a given item key. Passed
-	// to `renderItem` so consumers can attach it to their item's root element.
-	setItemRef = ( itemKey ) => ( node ) => {
-		if ( node ) {
-			this.itemRefs.set( itemKey, node );
-		} else {
-			this.itemRefs.delete( itemKey );
+	// Returns a stable callback ref (one per item key) that records the DOM node
+	// for that key. Passed to `renderItem` so consumers can attach it to their
+	// item's root element. The identity is cached so it doesn't change between
+	// renders (see `itemRefCallbacks`).
+	setItemRef = ( itemKey ) => {
+		let callback = this.itemRefCallbacks.get( itemKey );
+		if ( ! callback ) {
+			callback = ( node ) => {
+				if ( node ) {
+					this.itemRefs.set( itemKey, node );
+				} else {
+					this.itemRefs.delete( itemKey );
+					this.itemRefCallbacks.delete( itemKey );
+				}
+			};
+			this.itemRefCallbacks.set( itemKey, callback );
 		}
+		return callback;
 	};
 
 	boundsForRef = ( ref ) => {
