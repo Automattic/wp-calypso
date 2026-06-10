@@ -1,10 +1,12 @@
 import { Button, Gravatar } from '@automattic/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -26,6 +28,8 @@ type DropdownMenuProps = {
 const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const user = useSelector( getCurrentUser );
+	const agency = useSelector( getActiveAgency );
 
 	const onGetHelp = useCallback( () => {
 		setMenuExpanded( false );
@@ -51,6 +55,24 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 
 	return (
 		<ul className="a4a-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
+			{ user?.display_name && (
+				<li className="a4a-sidebar__profile-dropdown-greeting">
+					<Text className="a4a-sidebar__profile-dropdown-greeting-welcome" weight={ 600 }>
+						{ translate( 'Welcome, %(name)s!', {
+							args: { name: user.display_name },
+							comment: '%(name)s is the name of the logged-in user',
+						} ) }
+					</Text>
+					{ agency?.name && (
+						<Text
+							className="a4a-sidebar__profile-dropdown-greeting-agency"
+							color="var(--color-text-subtle)"
+						>
+							{ agency.name }
+						</Text>
+					) }
+				</li>
+			) }
 			{
 				// Show the "Contact support" button if the user is not a client
 				! isClient && (
