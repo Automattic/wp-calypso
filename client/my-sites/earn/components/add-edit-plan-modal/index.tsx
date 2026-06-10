@@ -1,4 +1,5 @@
 import { Dialog, FormInputValidation, FormLabel, FoldableCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -407,7 +408,20 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						/>
 						<FormSettingExplanation>
 							{ translate(
-								'Optional. Shown to readers when they choose a paid tier on your site. Markdown is supported — start a line with "-" for a bullet point, or wrap text in ** for bold.'
+								'Optional. Shown to readers when they choose a paid tier on your site. {{a}}Markdown{{/a}} is supported.',
+								{
+									components: {
+										a: (
+											<a
+												href={ localizeUrl(
+													'https://wordpress.com/support/markdown-quick-reference/'
+												) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
 							) }
 						</FormSettingExplanation>
 						{ ! isFormValid( 'description' ) && (
