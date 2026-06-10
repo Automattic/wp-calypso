@@ -97,6 +97,15 @@ $z-index: 999;
 			background-color: var(--studio-gray-70);
 			color: var(--color-text-inverted);
 		}
+
+		&.is-rtl-css-disabled {
+			color: var(--studio-yellow-100);
+			background-color: var(--studio-yellow-10);
+		}
+	}
+
+	&.hovered .environment.is-rtl-css-disabled {
+		display: none;
 	}
 
 	.notouch & {
@@ -105,6 +114,14 @@ $z-index: 999;
 				border-radius: 2px;
 			}
 		}
+	}
+}
+
+html[dir="rtl"] .environment-badge,
+.rtl .environment-badge {
+	.environment.is-rtl-css-disabled,
+	&.hovered .environment.is-rtl-css-disabled {
+		display: inline-block;
 	}
 }
 

@@ -1,5 +1,5 @@
 import { DomainSuggestion } from '@automattic/api-core';
-import { getPlanPath } from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -173,8 +173,7 @@ const copySite: Flow = {
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 					const plan =
-						urlQueryParams.get( 'plan' ) ??
-						getPlanPath( sourceSite?.plan?.product_slug ?? 'business' );
+						urlQueryParams.get( 'plan' ) ?? sourceSite?.plan?.product_slug ?? PLAN_BUSINESS;
 					return window.location.assign(
 						`/checkout/${ plan }/${ encodeURIComponent(
 							( siteSlug as string ) ?? ''

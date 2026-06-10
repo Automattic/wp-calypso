@@ -1,8 +1,8 @@
 /**
- * Multipart upload to `POST /agency/<id>/profile/logo` with
- * `purpose=agent_media`. The `purpose` param switches the server to a
- * UUID filename and the richer payload below; without it the server
- * returns the Partner Directory logo shape (`{ logo_url }`).
+ * Multipart upload to `POST /agency/<id>/media` with
+ * `asset_type=agent_media`. The `asset_type` param switches the server to a
+ * UUID filename; `partner_directory_logo` instead yields a predictable,
+ * overwriting name. Both return the normalized payload below.
  * Backend rules: jpeg/png only, 10 MB max, field name `media`.
  */
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 export interface UploadAgentMediaResponse {
+	asset_type: string;
 	attachment_id: number;
 	url: string;
 	mime: string;
@@ -26,10 +27,10 @@ export const uploadAgentMedia = (
 		wpcom.req.post(
 			{
 				apiNamespace: 'wpcom/v2',
-				path: `/agency/${ agencyId }/profile/logo`,
+				path: `/agency/${ agencyId }/media`,
 				formData: [
 					[ 'media', file ],
-					[ 'purpose', 'agent_media' ],
+					[ 'asset_type', 'agent_media' ],
 				],
 			},
 			( error: Error | null, response: UploadAgentMediaResponse ) => {

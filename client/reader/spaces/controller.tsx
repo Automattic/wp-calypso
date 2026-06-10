@@ -4,8 +4,8 @@ import AsyncLoad from 'calypso/components/async-load';
 
 const loadSpacesView = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-reader-spaces-view" */ 'calypso/reader/spaces/spaces-view'
-	);
+		/* webpackChunkName: "async-load-calypso-reader-spaces-view" */ 'calypso/reader/spaces/view'
+	).then( ( { SpacesView } ) => ( { default: SpacesView } ) );
 
 function ensureSpacesEnabled(): boolean {
 	if ( ! isEnabled( 'reader/spaces' ) ) {

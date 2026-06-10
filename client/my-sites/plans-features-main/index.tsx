@@ -7,7 +7,6 @@ import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
-	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
@@ -404,7 +403,7 @@ const PlansFeaturesMain = ( {
 
 	// Checkout mode: route the user to checkout to purchase the downgrade.
 	const confirmCheckoutDowngrade = () => {
-		const planPath = pendingDowngradePlanSlug ? getPlanPath( pendingDowngradePlanSlug ) : null;
+		const planPath = pendingDowngradePlanSlug;
 		if ( ! planPath || ! siteSlug ) {
 			return;
 		}

@@ -1019,7 +1019,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover )::before {
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover .x-nav-link-chevron )::before {
 	background-color: $studio-white;
 	opacity: 1;
 	transition: opacity 0.12s ease-out 0s;
@@ -1036,7 +1036,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover ) {
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover .x-nav-link-chevron ) {
 	backdrop-filter: blur( var( --x-nav-2026-scrolled-blur ) );
 }
 
@@ -1093,7 +1093,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-inline-end: 18px;
 	}
 
-	// "Get started" CTA — outlined pill (no fill).
+	// Hamburger: centre the trigger in the 64px bar (the legacy block layout
+	// positioned it for the taller old bar). The icon keeps its legacy 10px
+	// inner offset — that leaves the bars 1px above true centre, close enough.
+	.x-nav-link__menu {
+		display: flex;
+		align-items: center;
+		height: $x-nav-2026-height;
+		padding-block: 0;
+	}
+
+	// "Get started" CTA — outlined pill (no fill). Hover flips it to a filled
+	// pill: ink fill, inverted label. Sections that recolour the nav ink over
+	// dark heroes can override the flip pair via the two custom properties.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
@@ -1102,11 +1114,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		margin-inline-start: 12px;
 		margin-inline-end: 15px;
 		padding: 0 20px !important;
-		background: transparent !important;
+		background-color: transparent !important;
 		color: inherit !important;
 		border: 1px solid currentcolor;
 		border-radius: 3px;
-		transition: opacity $x-nav-2026-transition;
+		transition:
+			background-color $x-nav-2026-transition,
+			border-color $x-nav-2026-transition,
+			color $x-nav-2026-transition;
 
 		&::before {
 			display: none;
@@ -1114,7 +1129,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 		&:hover,
 		&:focus {
-			opacity: 0.8;
+			background-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
+			color: var( --x-nav-2026-cta-hover-ink, #{$studio-white} ) !important;
+			border-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} );
 		}
 	}
 
@@ -1159,8 +1176,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		transform: scaleY( -1 ) rotate( 45deg );
 	}
 
-	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing colour.
-	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ) {
+	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing
+	// colour. The "Get started" CTA is excluded: it flips to a filled pill above.
+	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ):not( .x-nav-link__primary ) {
 		opacity: 0.8;
 	}
 }
@@ -1813,6 +1831,32 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			text-decoration: none;
 			color: inherit;
 		}
+	}
+
+	// Top-level screen only; collapses on drill (is-hidden). Fades where
+	// `allow-discrete` is supported, otherwise snaps shut.
+	.x-menu-mobile-footer > .x-menu-mobile-app-banner {
+		// Fade declared on its own first so the opacity/visibility transition
+		// survives in browsers that drop the `display … allow-discrete` item.
+		transition:
+			opacity var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
+			visibility var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing );
+		transition:
+			opacity var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
+			visibility var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
+			display var( --x-menu-2026-header-fade-duration, 0.3s ) allow-discrete;
+
+		@starting-style {
+			opacity: 0;
+		}
+	}
+
+	.x-menu-mobile-footer > .x-menu-mobile-app-banner.is-hidden {
+		display: none;
+		opacity: 0;
+		visibility: hidden;
+		// allow-discrete defers display:none, so block clicks during fade-out.
+		pointer-events: none;
 	}
 
 	// Overlapping WordPress + Jetpack badge icons.
