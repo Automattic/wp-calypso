@@ -3,14 +3,12 @@ import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
-import { Page } from '@wordpress/admin-ui';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import Notice from 'calypso/components/notice';
 import {
 	BlazablePost,
@@ -46,6 +44,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import BlazePage from './components/blaze-page';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CampaignsTotalStats from './components/campaigns-total-stats';
 import MainWrapper from './components/main-wrapper';
@@ -53,7 +52,6 @@ import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits', 'payments' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
-const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
@@ -269,12 +267,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
-			<Page
-				className="promote-post-i2__page"
-				visual={ isBlazePlugin ? undefined : <JetpackLogo size={ 24 } monochrome={ false } /> }
-				title={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Blaze' ) }
-				subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
-				showSidebarToggle={ false }
+			<BlazePage
 				actions={
 					<>
 						<InlineSupportLink
@@ -439,7 +432,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 							</>
 						) }
 				</div>
-			</Page>
+			</BlazePage>
 		</MainWrapper>
 	);
 }

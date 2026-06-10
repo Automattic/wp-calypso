@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
-import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackLogo from 'calypso/components/jetpack-logo';
+import BlazePage from 'calypso/my-sites/promote-post-i2/components/blaze-page';
 import BlazePageViewTracker from 'calypso/my-sites/promote-post-i2/components/blaze-page-view-tracker';
 import MainWrapper from 'calypso/my-sites/promote-post-i2/components/main-wrapper';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
@@ -44,15 +43,9 @@ export default function BlazeSetup( { setupInfo } ) {
 				title="Advertising > Setup"
 			/>
 
-			<Page
-				className="promote-post-i2__page"
-				visual={ isBlazePlugin ? undefined : <JetpackLogo size={ 24 } monochrome={ false } /> }
-				title={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Blaze' ) }
-				subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
-				showSidebarToggle={ false }
-			>
+			<BlazePage>
 				<div className="promote-post-i2__outer-wrapper">{ renderSetupComponent( setupInfo ) }</div>
-			</Page>
+			</BlazePage>
 		</MainWrapper>
 	);
 }

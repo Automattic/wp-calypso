@@ -2,6 +2,10 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
+// Blaze brand red (same color as the Blaze flame logo in posts-list-banner).
+$blaze-red: #e65054;
+$blaze-red-dark: #cc4347;
+
 @mixin promote-post-i2-font {
 	color: $studio-gray-60;
 	font-family: $font-sf-pro-text;
@@ -254,20 +258,20 @@ body.is-section-promote-post-i2 {
 
 .promote-post-i2 {
 	&__promote-button.is-primary {
-		background-color: #E65054;
-		border-color: #E65054;
+		background-color: $blaze-red;
+		border-color: $blaze-red;
 
 		&:hover:not(:disabled),
 		&:focus:not(:disabled) {
-			background-color: #CC4347;
-			border-color: #CC4347;
-			box-shadow: 0 0 0 2px rgba(230, 80, 84, 0.3);
+			background-color: $blaze-red-dark;
+			border-color: $blaze-red-dark;
+			box-shadow: 0 0 0 2px rgba($blaze-red, 0.3);
 		}
 
 		&:disabled,
 		&[aria-disabled="true"] {
-			background-color: #E65054;
-			border-color: #E65054;
+			background-color: $blaze-red;
+			border-color: $blaze-red;
 			opacity: 0.5;
 		}
 	}
