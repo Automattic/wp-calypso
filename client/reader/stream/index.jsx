@@ -440,7 +440,9 @@ class ReaderStream extends Component {
 
 		// If the currently selected item is too far away in scroll position to be rendered by the
 		// infinite list, lets fall back to the magic selection functionality noted below.
-		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
+		// Query the list's own DOM node: `listContext` is `false` when the stream scrolls
+		// with the window, and `false?.querySelector` throws instead of short-circuiting.
+		const selectedItem = this.listRef.current?.getDOMNode()?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey && selectedItem ) {
 			this.props.selectNextPost();

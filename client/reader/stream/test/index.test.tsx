@@ -435,6 +435,29 @@ describe( 'Stream — keyboard navigation', () => {
 		expect( getByTestId( 'post-30' ) ).not.toHaveClass( 'is-selected' );
 	} );
 
+	it( 'j advances the selection when the stream scrolls with the window', async () => {
+		// Regression test: when no ancestor is a scroll container the stream's
+		// `listContext` resolves to `false`, and `false?.querySelector` throws a
+		// TypeError instead of short-circuiting — `j` must still advance the
+		// selection by querying the list's own DOM node.
+		const origGetComputedStyle = window.getComputedStyle.bind( window );
+		const spy = jest.spyOn( window, 'getComputedStyle' ).mockImplementation( ( el, pseudo ) => {
+			const style = origGetComputedStyle( el, pseudo );
+			if ( el instanceof HTMLElement && el.dataset.testid === 'infinite-list' ) {
+				return { ...style, overflowY: 'visible' } as CSSStyleDeclaration;
+			}
+			return style;
+		} );
+
+		try {
+			const { getByTestId } = await setupAndSelectFirst();
+			fireEvent.keyDown( document, { key: 'j' } );
+			await waitFor( () => expect( getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
+		} finally {
+			spy.mockRestore();
+		}
+	} );
+
 	it( 'ArrowRight is an alias for j', async () => {
 		const { getByTestId } = await setupAndSelectFirst();
 		fireEvent.keyDown( document, { key: 'ArrowRight' } );
