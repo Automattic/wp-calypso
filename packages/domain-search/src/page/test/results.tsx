@@ -944,6 +944,10 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-error' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-error.com' } ) ],
 			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-error' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-error' ),
+			} );
 
 			// Scoped to the render container because the error Notice also announces
 			// the message through the a11y-speak live region on document.body.
@@ -976,6 +980,10 @@ describe( 'ResultsPage', () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-fallback' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fallback.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-fallback' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fallback' ),
 			} );
 
 			const { container } = render(
@@ -1010,6 +1018,10 @@ describe( 'ResultsPage', () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-retry' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-retry.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-retry' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-retry' ),
 			} );
 
 			const { container } = render(
@@ -1046,9 +1058,17 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-stale' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-stale.com' } ) ],
 			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-stale' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-stale' ),
+			} );
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-fresh' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fresh.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-fresh' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fresh' ),
 			} );
 
 			const { container, rerender } = render(
@@ -1100,6 +1120,10 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-pending' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-pending.com' } ) ],
 			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-pending' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-pending' ),
+			} );
 
 			render(
 				<TestDomainSearch
@@ -1133,6 +1157,10 @@ describe( 'ResultsPage', () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-supersede' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-supersede.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test-bundle-supersede' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-supersede' ),
 			} );
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test-bundle-supersede.com' },
