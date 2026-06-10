@@ -1835,6 +1835,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	// Top-level screen only; fades + collapses on drill (is-hidden).
 	.x-menu-mobile-footer > .x-menu-mobile-app-banner {
+		// Fade declared on its own first so the opacity/visibility transition
+		// survives in browsers that drop the `display … allow-discrete` item.
+		transition:
+			opacity var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
+			visibility var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing );
 		transition:
 			opacity var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
 			visibility var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
