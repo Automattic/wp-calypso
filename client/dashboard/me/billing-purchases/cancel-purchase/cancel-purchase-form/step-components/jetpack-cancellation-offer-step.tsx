@@ -67,13 +67,13 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 				);
 				if ( 1 === periods ) {
 					offerHeadline = sprintf(
-						/* translators: %(discount)d: a discount percentage like 15 or 20, %(name)s: the product name, %(periods)d: the number of renewal periods */
+						/* translators: %(discount)d: a discount percentage like 15 or 20, %(name)s: the product name */
 						__( 'Get %(discount)d%% off %(name)s for your next two-year renewal' ),
 						headlineOptions.args
 					);
 					renewalCopy = createInterpolateElement(
 						sprintf(
-							/* translators: %(renewalPrice)s: the discounted renewal price, %(fullPrice)s: the regular renewal price, %(periods)d: the number of renewal periods */
+							/* translators: %(renewalPrice)s: the discounted renewal price, %(fullPrice)s: the regular renewal price */
 							__(
 								'Your subscription renews every two years. It will renew at <strong>%(renewalPrice)s / two years</strong> for the next two years. It will then renew at <strong>%(fullPrice)s/ two years</strong> each following two-year renewal.'
 							),
@@ -101,13 +101,13 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 				);
 				if ( 1 === periods ) {
 					offerHeadline = sprintf(
-						/* translators: %(discount)d: a discount percentage like 15 or 20, %(name)s: the product name, %(periods)d: the number of renewal periods */
+						/* translators: %(discount)d: a discount percentage like 15 or 20, %(name)s: the product name */
 						__( 'Get %(discount)d%% off %(name)s for the next year' ),
 						headlineOptions.args
 					);
 					renewalCopy = createInterpolateElement(
 						sprintf(
-							/* translators: %(renewalPrice)s: the discounted renewal price, %(fullPrice)s: the regular renewal price, %(periods)d: the number of renewal periods */
+							/* translators: %(renewalPrice)s: the discounted renewal price, %(fullPrice)s: the regular renewal price */
 							__(
 								'Your annual subscription will renew at <strong>%(renewalPrice)s/year</strong> for the next year. It will then renew at <strong>%(fullPrice)s/year</strong> each following year.'
 							),
@@ -135,13 +135,13 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 				);
 				if ( 1 === periods ) {
 					offerHeadline = sprintf(
-						/* translators: %(discount)d: a discount percentage like 15 or 20, %(name)s: the product name, %(periods)d: the number of renewal periods */
+						/* translators: %(discount)d: a discount percentage like 15 or 20, %(name)s: the product name */
 						__( 'Get %(discount)d%% off %(name)s for the next month' ),
 						headlineOptions.args
 					);
 					renewalCopy = createInterpolateElement(
 						sprintf(
-							/* translators: %(renewalPrice)s: the discounted renewal price, %(fullPrice)s: the regular renewal price, %(periods)d: the number of renewal periods */
+							/* translators: %(renewalPrice)s: the discounted renewal price, %(fullPrice)s: the regular renewal price */
 							__(
 								'Your monthly subscription will renew at <strong>%(renewalPrice)s/month</strong> for the next month. It will then renew at <strong>%(fullPrice)s/month</strong> each following month.'
 							),
