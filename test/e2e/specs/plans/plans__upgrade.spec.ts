@@ -21,16 +21,13 @@ import { apiDeleteSite } from '../shared';
 
 const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
 
-// .fixme: two setup-side blockers found this round. (1) createSite was rejected
-// with "blog_name_invalid" for the raw generated blog name — fixed below by
-// passing find_available_url: true (matching apiCreateFreeSiteForUser). (2) With
-// that fix, createSite now returns "user_get_blocked: The user is blocked from
-// creating a new site" for the simpleSiteFreePlanUser account, which did not
-// clear after waiting. That account appears to be at its free-site limit (likely
-// from accumulated, uncleaned E2E sites); it needs account-side cleanup/
-// provisioning before the upgrade flow can be exercised. The find_available_url
-// fix is kept so that, once the account can create sites again, only the UI flow
-// needs re-validation. See TESTOPS-49.
+// Quarantined: createSite returns "user_get_blocked: The user is blocked from
+// creating a new site" for the simpleSiteFreePlanUser account. Deleting the 23
+// leaked e2eflowtesting<epoch> sites accumulated on the account (2026-06-10)
+// did NOT clear the block, so this is an account-side flag/limit that needs
+// provisioning intervention, not a test or product defect. The
+// find_available_url fix below is kept so that, once the account can create
+// sites again, only the UI flow needs re-validation. See TESTOPS-49.
 test.describe(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade existing WordPress.com Free site to WordPress.com Premium'
@@ -60,6 +57,11 @@ test.describe(
 		test( 'As a user, I can upgrade a free site to Premium and validate the plan and content', async ( {
 			page,
 		} ) => {
+			test.fixme(
+				true,
+				'simpleSiteFreePlanUser is blocked from creating new sites (user_get_blocked); needs account-side unblock/provisioning. See TESTOPS-49.'
+			);
+
 			await test.step( 'Setup: create test site and content via API', async () => {
 				const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 				restAPIClient = new RestAPIClient( credentials );
