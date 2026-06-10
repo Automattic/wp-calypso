@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -210,11 +211,13 @@ function ProductsList() {
 										( currentProduct.description_rendered ? (
 											// Server-rendered (and kses-sanitized) markdown — the same
 											// HTML the subscribe modal shows, for a 1:1 preview.
+											// DOMPurify is defense-in-depth in case the API's
+											// sanitization guarantee ever changes.
 											<div
 												className="memberships__products-product-description"
 												// eslint-disable-next-line react/no-danger
 												dangerouslySetInnerHTML={ {
-													__html: currentProduct.description_rendered,
+													__html: DOMPurify.sanitize( currentProduct.description_rendered ),
 												} }
 											/>
 										) : (
