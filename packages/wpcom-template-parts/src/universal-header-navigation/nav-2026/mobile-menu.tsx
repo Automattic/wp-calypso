@@ -213,12 +213,15 @@ export function Nav2026MobileMenu( {
 					) }
 				</div>
 				<div className="x-menu-mobile-footer" ref={ mobileFooterRef }>
-					<Nav2026AppBanner
-						mobilePlatform={ mobilePlatform }
-						tabIndex={ mobileMenuTabIndex }
-						localizeUrl={ localizeUrl }
-						__={ __ }
-					/>
+					{ /* The app banner belongs to the menu's top-level screen only. */ }
+					{ ! activeCategory && (
+						<Nav2026AppBanner
+							mobilePlatform={ mobilePlatform }
+							tabIndex={ mobileMenuTabIndex }
+							localizeUrl={ localizeUrl }
+							__={ __ }
+						/>
+					) }
 					{ isLoggedIn ? (
 						<a
 							className="x-menu-mobile-user x-link"
