@@ -129,10 +129,13 @@ Do not use inline `require()` to load a mocked module "after" `jest.mock()` is s
 ```tsx
 // ❌ Bad: lazy require to "get the mock"
 test( 'saves preferences', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const { userPreferencesMutation } = require( '@automattic/api-queries' );
 	userPreferencesMutation.mockReturnValue( /* … */ );
 } );
+```
 
+```tsx
 // ✅ Good: top-level import + cast
 import { userPreferencesMutation } from '@automattic/api-queries';
 
