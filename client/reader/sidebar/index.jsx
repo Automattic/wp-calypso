@@ -51,7 +51,7 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import ReaderSidebarSpaces from './spaces';
+import { ReaderSidebarSpaces } from './spaces';
 
 const TrackingKeys = {
 	conversations: {

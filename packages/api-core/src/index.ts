@@ -87,6 +87,7 @@ export * from './read-post';
 export * from './read-related-posts';
 export * from './read-site-recommendations';
 export * from './read-sites';
+export * from './read-spaces';
 export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';
