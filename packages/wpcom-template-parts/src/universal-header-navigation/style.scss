@@ -1019,7 +1019,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover )::before {
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover .x-nav-link-chevron )::before {
 	background-color: $studio-white;
 	opacity: 1;
 	transition: opacity 0.12s ease-out 0s;
@@ -1036,7 +1036,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover ) {
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover .x-nav-link-chevron ) {
 	backdrop-filter: blur( var( --x-nav-2026-scrolled-blur ) );
 }
 
