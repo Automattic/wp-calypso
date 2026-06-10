@@ -141,6 +141,15 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
 		},
 		buildSteps = {
+			// These two steps post the build result as a *threaded reply* under the
+			// corresponding Gutenberg version announcement in Slack. They are only relevant
+			// when this build was kicked off by Gutenbot's `announce.sh`, which injects the
+			// announcement's `GB_E2E_ANNOUNCEMENT_THREAD_TS` (and channel/token).
+			//
+			// They run on every build (one per success/failure), but the helper script exits
+			// early and posts nothing when `GB_E2E_ANNOUNCEMENT_THREAD_TS` is empty — i.e. on
+			// normal scheduled or manual runs. This is separate from the `#gutenberg-e2e`
+			// channel notifications handled by the built-in notifier in `buildFeatures` below.
 			exec {
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
@@ -480,8 +489,7 @@ private object GutenbergPlaywrightTests : BuildType({
 				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
 			))
 		}
-		// TODO: temporary for testing notifications — revert to ("#gutenberg-e2e") before merge.
-		notifyAllFailuresAndFirstSuccess("#notif-test", "+:*")
+		notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 	}
 
 	triggers {

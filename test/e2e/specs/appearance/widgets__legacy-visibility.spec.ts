@@ -1,4 +1,4 @@
-import { tags, test, expect } from '../../lib/pw-base';
+import { tags, test } from '../../lib/pw-base';
 
 // Mobile viewport is skipped due to https://github.com/Automattic/wp-calypso/issues/64536. Remove DESKTOP_ONLY when fixed.
 test.describe(
@@ -12,12 +12,6 @@ test.describe(
 			componentBlockWidgetEditor,
 			environment,
 		} ) => {
-			// TODO: TEMPORARY — intentional failure to verify the E2E failure Slack
-			// notification (TESTOPS-134). Revert this step before merge.
-			await test.step( 'Intentionally failing to test failure notifications', async function () {
-				expect( true ).toBe( false );
-			} );
-
 			test.skip(
 				environment.TEST_ON_ATOMIC,
 				'Skipping for Atomic sites as the themes do not support widgets'
