@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
@@ -29,6 +30,7 @@ export default function BlazePage( { actions, children }: Props ) {
 			actions={ actions }
 		>
 			{ children }
+			<JetpackFooter />
 		</Page>
 	);
 }

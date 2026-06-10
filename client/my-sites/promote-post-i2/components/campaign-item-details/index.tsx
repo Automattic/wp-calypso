@@ -14,6 +14,7 @@ import moment from 'moment/moment';
 import { useEffect, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
@@ -1641,6 +1642,7 @@ export default function CampaignItemDetails( props: Props ) {
 						</div>
 					</section>
 				</Main>
+				<JetpackFooter />
 			</Page>
 		</div>
 	);
