@@ -1462,7 +1462,7 @@ function CancelPurchaseInner() {
 		recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	const createdErrorNoticeForRedirect = useRef< boolean >();
+	const createdErrorNoticeForRedirect = useRef< boolean >( undefined );
 
 	const isDataLoading =
 		siteFeaturesQueryIsPending ||

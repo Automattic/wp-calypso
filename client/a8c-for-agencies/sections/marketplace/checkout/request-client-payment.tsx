@@ -174,11 +174,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					setIsUploadingLogo( true );
 					try {
 						const result = await uploadLogo( agencyId, referralLogo.file );
-						if ( result?.logo_url ) {
-							logoUrl = result.logo_url;
+						if ( result?.url ) {
+							logoUrl = result.url;
 							setLastUploadedFile( {
 								...fileSignature,
-								logoUrl: result.logo_url,
+								logoUrl: result.url,
 							} );
 						}
 					} catch ( error ) {

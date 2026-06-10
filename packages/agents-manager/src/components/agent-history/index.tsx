@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { hasAdminBarTrigger } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -45,6 +46,9 @@ export default function AgentHistory( {
 	}, [] );
 	const navigate = useNavigate();
 
+	// Without an admin bar trigger, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = hasAdminBarTrigger() ? 'minimized' : 'collapsed';
+
 	const handleBack = () => {
 		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
 	};
@@ -59,7 +63,7 @@ export default function AgentHistory( {
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }

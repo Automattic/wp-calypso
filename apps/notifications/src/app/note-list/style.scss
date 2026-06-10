@@ -35,6 +35,11 @@
 				color: var(--dashboard__text-muted-color, var(--color-text-subtle));
 			}
 		}
+
+		&:hover .wpnc__excerpt,
+		&:focus-within .wpnc__excerpt {
+			color: inherit;
+		}
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

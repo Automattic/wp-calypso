@@ -134,6 +134,7 @@
 		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
 		"reader/social": true,
+		"reader/spaces": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,

@@ -42,8 +42,8 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.0.0#~/.yarn/patches/@wordpress-compose-npm-8.0.0-14fd3b56ad.patch",
-		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/i18n": "^6.21.0",
 		"react": "^18.3.1",
 		"tslib": "^2.8.1"
 	},

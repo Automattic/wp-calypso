@@ -765,6 +765,28 @@ export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 }
 
 /**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
+ *
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
+ *
+ * The caller is responsible for confirming the purchase is a plan (see `isPlan`
+ * from `@automattic/calypso-products`). This is distinct from
+ * `isInExpirationGracePeriod`, which gates the downgrade-to-checkout flow for
+ * plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.isWithinInitialRefundWindow &&
+		! isExpired( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	);
+}
+
+/**
  * Checks whether the specified purchase can be removed from a user account.
  * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can be removed, false otherwise

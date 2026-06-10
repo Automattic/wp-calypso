@@ -107,6 +107,7 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"reader/social": true,
+		"reader/spaces": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,

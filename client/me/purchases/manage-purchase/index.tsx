@@ -100,6 +100,7 @@ import {
 	canAutoRenewBeTurnedOff,
 	isExpired,
 	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
@@ -597,7 +598,10 @@ class ManagePurchase extends Component<
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
-		if ( ! isInExpirationGracePeriod( purchase ) ) {
+		if (
+			! isInExpirationGracePeriod( purchase ) &&
+			! isWithinRefundWindowDowngradeEligible( purchase )
+		) {
 			return false;
 		}
 		return true;

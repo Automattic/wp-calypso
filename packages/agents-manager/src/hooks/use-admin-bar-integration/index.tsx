@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import './style.scss';
 
 // Admin bar element selectors
-export const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
+const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
 const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
@@ -22,6 +22,13 @@ interface UseAdminBarIntegrationOptions {
 	sectionName: string;
 	maybeOpenChat: () => void;
 	navigate: ( route: string, options?: { state?: object } ) => void;
+}
+
+/**
+ * Whether the WP admin bar trigger button is on the page.
+ */
+export function hasAdminBarTrigger(): boolean {
+	return !! document.getElementById( ADMIN_BAR_BUTTON_ID );
 }
 
 /**
@@ -46,7 +53,7 @@ export default function useAdminBarIntegration( {
 	maybeOpenChatRef.current = maybeOpenChat;
 
 	// Whether the WP admin bar trigger button is on the page.
-	const [ hasButton ] = useState( () => !! document.getElementById( ADMIN_BAR_BUTTON_ID ) );
+	const hasButton = hasAdminBarTrigger();
 
 	// Update admin bar button active state based on isOpen
 	useEffect( () => {
