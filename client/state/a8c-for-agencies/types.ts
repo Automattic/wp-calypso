@@ -29,6 +29,25 @@ export interface TitanUsage {
 }
 
 export type AgencyTierStatus = 'early_access' | 'tier_protected';
+
+export type PaymentNoticeState = 'card_expiry' | 'renewal_failure';
+
+export type PaymentNoticeSeverity = 'warning' | 'error';
+
+export interface PaymentNotice {
+	state: PaymentNoticeState;
+	severity: PaymentNoticeSeverity;
+	source?: string;
+	title?: string;
+	content?: string;
+	action_label?: string;
+	action_url?: string;
+	failed_at?: string;
+	grace_period_ends_at?: string;
+	affected_subscription_ids?: number[];
+	can_current_user_manage_payment_method?: boolean;
+}
+
 export interface Agency {
 	id: number;
 	name: string;
@@ -129,6 +148,7 @@ export interface Agency {
 	approval_status: ApprovalStatus | '';
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
+	payment_notice?: PaymentNotice | null;
 }
 
 export type UserBillingType = 'legacy' | 'billingdragon';

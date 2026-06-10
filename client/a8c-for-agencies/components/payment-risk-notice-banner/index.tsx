@@ -12,7 +12,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isPaymentRiskNoticeBannerEnabled } from './constants';
+import usePaymentRiskNotice from './use-payment-risk-notice';
 
 import './style.scss';
 
@@ -30,44 +30,59 @@ export default function PaymentRiskNoticeBanner( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const isPaymentRiskNoticeEnabled = isPaymentRiskNoticeBannerEnabled();
+	const paymentNotice = usePaymentRiskNotice();
 	const ctaUrl = isEnabled( 'a4a-bd-checkout' )
 		? EXTERNAL_WPCOM_PAYMENT_METHODS_URL
 		: A4A_PAYMENT_METHODS_LINK;
 
 	useEffect( () => {
-		if ( isPaymentRiskNoticeEnabled ) {
+		if ( paymentNotice ) {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_view', {
 					source,
+					state: paymentNotice.state,
+					severity: paymentNotice.severity,
 				} )
 			);
 		}
-	}, [ dispatch, isPaymentRiskNoticeEnabled, source ] );
+	}, [ dispatch, paymentNotice, source ] );
 
 	const onCtaClick = useCallback( () => {
+		if ( ! paymentNotice ) {
+			return;
+		}
+
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_cta_click', {
 				source,
+				state: paymentNotice.state,
+				severity: paymentNotice.severity,
 			} )
 		);
-	}, [ dispatch, source ] );
+	}, [ dispatch, paymentNotice, source ] );
 
 	const onContactUsClick = useCallback(
 		( event: MouseEvent< HTMLAnchorElement > ) => {
 			event.preventDefault();
+
+			if ( ! paymentNotice ) {
+				return;
+			}
+
 			setShowHelpCenter( true );
 			setNavigateToRoute( '/contact-form' );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_contact_us_click', {
 					source,
+					state: paymentNotice.state,
+					severity: paymentNotice.severity,
 				} )
 			);
 		},
-		[ dispatch, setNavigateToRoute, setShowHelpCenter, source ]
+		[ dispatch, paymentNotice, setNavigateToRoute, setShowHelpCenter, source ]
 	);
 
-	if ( ! isPaymentRiskNoticeEnabled ) {
+	if ( ! paymentNotice ) {
 		return null;
 	}
 
@@ -101,17 +116,21 @@ export default function PaymentRiskNoticeBanner( {
 		<LayoutBanner
 			isFullWidth={ isFullWidth }
 			className="a4a-payment-risk-notice-banner"
-			level="error"
-			title={ translate( 'Action required: We’re unable to renew your subscription(s)' ) }
+			level={ paymentNotice.severity }
+			title={
+				paymentNotice.title ??
+				translate( 'Action required: We’re unable to renew your subscription(s)' )
+			}
 			actions={ [ fixPaymentMethodCta, contactUsCta ] }
 			hideCloseButton
 			allowTemporaryDismissal
 			preferenceName="a4a-payment-risk-notice-banner-temporary-dismissed"
 		>
 			<div>
-				{ translate(
-					'We couldn’t process payment for one or more of your subscriptions with the payment method we have on file. If this isn’t resolved, your subscriptions will be cancelled and your sites may go offline. Please update your payment method to stay covered.'
-				) }
+				{ paymentNotice.content ??
+					translate(
+						'We couldn’t process payment for one or more of your subscriptions with the payment method we have on file. If this isn’t resolved, your subscriptions will be cancelled and your sites may go offline. Please update your payment method to stay covered.'
+					) }
 			</div>
 		</LayoutBanner>
 	);
