@@ -23,23 +23,30 @@ describe( 'useShowOnboardingProgress', () => {
 		mockExperiment.mockReset();
 	} );
 
-	it( 'shows on desktop onboarding when assignment is null (temporary control = show)', () => {
+	it( 'shows on desktop onboarding for the progress_bar treatment', () => {
 		mockViewport.mockReturnValue( true );
-		mockExperiment.mockReturnValue( [ false, null ] );
+		mockExperiment.mockReturnValue( [ false, { variationName: 'progress_bar' } ] );
 		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
 		expect( result.current ).toBe( true );
 	} );
 
-	it( 'hides when not onboarding flow', () => {
+	it( 'hides for the control assignment (null)', () => {
 		mockViewport.mockReturnValue( true );
 		mockExperiment.mockReturnValue( [ false, null ] );
+		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
+		expect( result.current ).toBe( false );
+	} );
+
+	it( 'hides when not onboarding flow', () => {
+		mockViewport.mockReturnValue( true );
+		mockExperiment.mockReturnValue( [ false, { variationName: 'progress_bar' } ] );
 		const { result } = renderHook( () => useShowOnboardingProgress( false ) );
 		expect( result.current ).toBe( false );
 	} );
 
 	it( 'hides on mobile', () => {
 		mockViewport.mockReturnValue( false );
-		mockExperiment.mockReturnValue( [ false, null ] );
+		mockExperiment.mockReturnValue( [ false, { variationName: 'progress_bar' } ] );
 		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
 		expect( result.current ).toBe( false );
 	} );
@@ -47,13 +54,6 @@ describe( 'useShowOnboardingProgress', () => {
 	it( 'hides while the experiment assignment is still loading', () => {
 		mockViewport.mockReturnValue( true );
 		mockExperiment.mockReturnValue( [ true, null ] );
-		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
-		expect( result.current ).toBe( false );
-	} );
-
-	it( 'hides for the treatment assignment (future live state)', () => {
-		mockViewport.mockReturnValue( true );
-		mockExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
 		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
 		expect( result.current ).toBe( false );
 	} );
