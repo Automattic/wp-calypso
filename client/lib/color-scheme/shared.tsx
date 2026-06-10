@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef, createContext, useContext } from 'react';
+import { WPDSThemeProvider, useResolvedColorScheme } from './wpds-theme';
 import type { ReactNode } from 'react';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
@@ -17,8 +18,21 @@ export interface ColorSchemeContextType {
 
 const ColorSchemeContext = createContext< ColorSchemeContextType | undefined >( undefined );
 
-function useDocumentColorScheme(
-	colorScheme: ColorScheme,
+/**
+ * Transitional bridge: mirror the *resolved* light/dark mode onto the document
+ * root as `data-theme="light|dark"`.
+ *
+ * The WPDS `ThemeProvider` is the source of truth for theming now — it sets the
+ * actual `--wpds-*` token values. This attribute exists only so the SCSS that
+ * has not yet been migrated to WPDS tokens (the legacy `when-dark-theme` mixin
+ * and the per-surface `*-dark-theme`/`*-dark-mode` override sheets) keeps working
+ * during the migration. Unlike the old implementation it never writes the raw
+ * `system` value: the OS preference is resolved in JS, so downstream CSS only
+ * needs to match `dark`. Each surface that adopts WPDS tokens removes its
+ * dependency on this attribute, and the final migration step deletes it entirely.
+ */
+function useResolvedThemeAttribute(
+	resolvedScheme: 'light' | 'dark',
 	isReady: boolean,
 	restoreOnUnmount: boolean
 ) {
@@ -54,8 +68,8 @@ function useDocumentColorScheme(
 			hasAppliedTheme.current = true;
 		}
 
-		document.documentElement.dataset.theme = colorScheme;
-	}, [ colorScheme, isReady, restoreOnUnmount ] );
+		document.documentElement.dataset.theme = resolvedScheme;
+	}, [ resolvedScheme, isReady, restoreOnUnmount ] );
 }
 
 export function ColorSchemeContextProvider( {
@@ -73,7 +87,9 @@ export function ColorSchemeContextProvider( {
 	setColorScheme: ColorSchemeContextType[ 'setColorScheme' ];
 	waitForReady: boolean;
 } ) {
-	useDocumentColorScheme( colorScheme, isReady, restoreOnUnmount );
+	const resolvedScheme = useResolvedColorScheme( colorScheme );
+
+	useResolvedThemeAttribute( resolvedScheme, isReady, restoreOnUnmount );
 
 	if ( waitForReady && ! isReady ) {
 		return null;
@@ -81,7 +97,7 @@ export function ColorSchemeContextProvider( {
 
 	return (
 		<ColorSchemeContext.Provider value={ { colorScheme, setColorScheme } }>
-			{ children }
+			<WPDSThemeProvider resolvedScheme={ resolvedScheme }>{ children }</WPDSThemeProvider>
 		</ColorSchemeContext.Provider>
 	);
 }
