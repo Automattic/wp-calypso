@@ -41,6 +41,8 @@ object WPComTests : Project({
 		}
 	}
 
+	// Legacy per-leg Gutenberg build types stay addressable for Gutenbot/manual REST triggers.
+	// Do not schedule them here; the GutenbergPlaywrightTests matrix owns daily coverage.
 	// Gutenberg Simple
 	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c", atomic=false, edge=false));
 	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada", atomic=false, edge=false));
@@ -166,18 +168,6 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 		},
 		buildFeatures = {
 			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
-		},
-		buildTriggers = {
-			schedule {
-				schedulingPolicy = daily {
-					hour = 4
-				}
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-				triggerBuild = always()
-				withPendingChangesOnly = false
-			}
 		}
 	)
 }
