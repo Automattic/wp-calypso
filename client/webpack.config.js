@@ -46,17 +46,16 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
-const isRunningInCi =
-	process.env.CI === 'true' || process.env.CIRCLECI === 'true' || process.env.BUILDKITE === 'true';
+const shouldBuildRtlCss = ! isDevelopment;
+const shouldUseConditionalSassPrelude =
+	process.env.CONDITIONAL_SASS_PRELUDE === 'true' ||
+	( process.env.CONDITIONAL_SASS_PRELUDE !== 'false' && isDevelopment );
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
-const shouldUsePersistentCache =
-	process.env.PERSISTENT_CACHE === 'true' ||
-	( process.env.PERSISTENT_CACHE !== 'false' && ! isRunningInCi );
-const webpackCacheCompression = isRunningInCi ? 'brotli' : false;
+const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 
 // NOTE: We reverted some of these changes, but in the future, we will need to avoid
 // using the readonly cache again if we generate the cache image inline on trunk.
@@ -109,11 +108,7 @@ const webpackCacheBuildDependencies = [
 	path.resolve( __dirname, '../.yarnrc.yml' ),
 ];
 
-const cacheFlavorParts = [
-	`mode=${ bundleEnv }`,
-	`devtool=${ sourceMapType || 'none' }`,
-	`compression=${ webpackCacheCompression || 'none' }`,
-];
+const cacheFlavorParts = [ `mode=${ bundleEnv }`, `devtool=${ sourceMapType || 'none' }` ];
 const webpackCacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
 
 // Inputs that should invalidate a cache flavor.
@@ -308,6 +303,7 @@ const webpackConfig = {
 					plugins: [ autoprefixerPlugin() ],
 				},
 				prelude: `@use 'calypso/assets/stylesheets/shared/_utils.scss' as *;`,
+				conditionalPrelude: shouldUseConditionalSassPrelude,
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -373,6 +369,7 @@ const webpackConfig = {
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
+			rtl: shouldBuildRtlCss,
 		} ),
 		new AssetsWriter( {
 			filename: `assets.json`,
