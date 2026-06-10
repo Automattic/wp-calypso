@@ -83,7 +83,7 @@ jobs:
           # Unfortunately, the permissions expected within renovate's docker container
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
-          sudo chown -R runneradmin:root /tmp/renovate/
+          sudo chown -R $USER:root /tmp/renovate/
           ls -R $cache_dir
 
       - uses: renovatebot/github-action@23a02fe7be9e93f857a953cc8162e57d2c8401ef # v39.0.1
