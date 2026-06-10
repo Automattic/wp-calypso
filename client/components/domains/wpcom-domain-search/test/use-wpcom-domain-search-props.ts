@@ -3,6 +3,11 @@
  */
 
 import {
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	HUNDRED_YEAR_DOMAIN_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+} from '@automattic/onboarding';
+import {
 	getEmptyResponseCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
@@ -21,6 +26,12 @@ jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),
 	useShoppingCart: jest.fn(),
 } ) );
+
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => 'development';
+	config.isEnabled = ( flag: string ) => flag === 'domain-bundling';
+	return config;
+} );
 
 jest.mock( '../analytics', () => ( {
 	...jest.requireActual( '../analytics' ),
@@ -857,7 +868,20 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		};
 
 		it( 'adds one product per bundle member, with the server-issued bundle extras, in a single cart call', async () => {
-			const replaceProductsInCart = jest.fn().mockResolvedValue( { products: [] } );
+			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+				products: [
+					{
+						meta: 'example.com',
+						product_slug: 'domain_reg',
+						extra: { domain_bundle_group_id: 'server-issued-group-id' },
+					},
+					{
+						meta: 'example.net',
+						product_slug: 'dotnet_domain',
+						extra: { domain_bundle_group_id: 'server-issued-group-id' },
+					},
+				],
+			} );
 
 			mockUseShoppingCart.mockReturnValue(
 				buildShoppingCart( {
@@ -874,7 +898,14 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				} )
 			);
 
-			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const onContinue = jest.fn();
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
 
 			await result.current.cart.onAddBundle?.( bundle );
 
@@ -903,6 +934,61 @@ describe( 'useWPCOMDomainSearchProps', () => {
 					},
 				},
 				expect.objectContaining( { meta: 'my-existing-domain.com', product_slug: 'domain' } ),
+			] );
+
+			expect( onContinue ).not.toHaveBeenCalled();
+		} );
+
+		it( 'drops a standalone copy of a bundle member so the bundle-tagged product wins', async () => {
+			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+				products: [
+					{
+						meta: 'example.com',
+						product_slug: 'domain_reg',
+						extra: { domain_bundle_group_id: 'server-issued-group-id' },
+					},
+					{
+						meta: 'example.net',
+						product_slug: 'dotnet_domain',
+						extra: { domain_bundle_group_id: 'server-issued-group-id' },
+					},
+				],
+			} );
+
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							// Already in the cart as a standalone registration; the
+							// backend dedupe keeps the last occurrence, so passing this
+							// through would strip the bundle extras from the member.
+							buildProduct( {
+								meta: 'example.com',
+								product_slug: 'domain_reg',
+								is_domain_registration: true,
+							} ),
+							buildProduct( {
+								meta: 'my-existing-domain.com',
+								product_slug: 'domain',
+								is_domain_registration: true,
+							} ),
+						],
+					},
+					replaceProductsInCart,
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			await result.current.cart.onAddBundle?.( bundle );
+
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( [
+				expect.objectContaining( {
+					meta: 'example.com',
+					extra: expect.objectContaining( { domain_bundle_group_id: 'server-issued-group-id' } ),
+				} ),
+				expect.objectContaining( { meta: 'example.net' } ),
+				expect.objectContaining( { meta: 'my-existing-domain.com' } ),
 			] );
 		} );
 
@@ -939,6 +1025,56 @@ describe( 'useWPCOMDomainSearchProps', () => {
 
 			expect( onContinue ).toHaveBeenCalledWith( bundleCartProducts );
 		} );
+
+		it( 'throws and does not call onContinue when the synced cart comes back without the full bundle', async () => {
+			// The backend all-or-nothing invariant strips an incomplete bundle
+			// group from the cart silently, so the replace resolves without the
+			// bundle members rather than rejecting.
+			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+				products: [ { meta: 'unrelated.com', product_slug: 'domain' } ],
+			} );
+
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+			const onContinue = jest.fn();
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					flowAllowsMultipleDomainsInCart: false,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await expect( result.current.cart.onAddBundle?.( bundle ) ).rejects.toThrow(
+				'The domain bundle could not be added to the cart.'
+			);
+
+			expect( onContinue ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'showBundleSuggestions', () => {
+		it( 'is enabled for a regular flow when the domain-bundling flag is on', () => {
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			expect( result.current.config.showBundleSuggestions ).toBe( true );
+		} );
+
+		it.each( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW, DOMAIN_FOR_GRAVATAR_FLOW ] )(
+			'is disabled for the %s flow',
+			( flowName ) => {
+				mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+				const { result } = renderHookWithProvider( () =>
+					useWPCOMDomainSearchProps( { ...defaultProps, flowName } )
+				);
+
+				expect( result.current.config.showBundleSuggestions ).toBe( false );
+			}
+		);
 	} );
 
 	it( 'prepends products in the cart when adding a new domain', async () => {
