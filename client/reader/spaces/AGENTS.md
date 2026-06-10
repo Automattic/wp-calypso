@@ -51,18 +51,18 @@ RSM-4110); creating a space only writes the React Query cache for now.
 - The create form is a **single component**, `create-modal/index.tsx` — fields,
   validation, mutation, and actions inline. There is no generic/base form yet:
   **do not abstract one until edit (RSM-4117) actually needs it**, then extract
-  the shared parts knowing their real shape. (We had a speculative `BaseSpaceForm`
-  + wrapper split and deliberately collapsed it — resist re-adding it early.)
-- Validation: name required, ≤ `MAX_SPACE_NAME_LENGTH`, and case-insensitive
+  the shared parts knowing their real shape. (We had a speculative
+  `BaseSpaceForm`/wrapper split and deliberately collapsed it — resist
+  re-adding it early.)
+- Validation: name required, <= `MAX_SPACE_NAME_LENGTH`, and case-insensitive
   duplicate against the existing names. The duplicate message is rendered
   manually (`<p className="create-space-modal__error">`); we intentionally do
-  not pass `validity` to `DataForm`.
+  not wire validation through a form abstraction.
 - On success: append to the cache (via the mutation), fire a
   `calypso_reader_*` Tracks event, show a `successNotice`, then close.
 - `TODO(RSM-4139)`: when the real backend lands, map its error kinds to copy
   where the generic `createSpace.isError` message is shown today.
-- Forms use `DataForm` + `useFormValidity` from `@wordpress/dataviews` and
-  `useTranslate` from `i18n-calypso`.
+- Forms use WordPress components and `useTranslate` from `i18n-calypso`.
 
 ### Data
 

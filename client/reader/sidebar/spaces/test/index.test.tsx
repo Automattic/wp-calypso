@@ -72,6 +72,6 @@ describe( 'ReaderSidebarSpaces', () => {
 
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).toBeVisible();
-		expect( screen.getByRole( 'heading', { name: 'Create a space' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 } );
