@@ -1,6 +1,6 @@
 // packages/ui/src/stepper/list.tsx
 import { Tabs } from '@base-ui/react/tabs';
-import { forwardRef } from '@wordpress/element';
+import { forwardRef, useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { warning } from '../utils/warning';
 import { useStepperContext } from './context';
@@ -17,12 +17,16 @@ export const StepperList = forwardRef< HTMLDivElement, StepperListProps >( funct
 	ref
 ) {
 	const { orientation, activationMode } = useStepperContext();
+	const isHorizontal = orientation === 'horizontal';
 
-	if ( orientation !== 'horizontal' ) {
-		warning( '[Stepper] Stepper.List is only used in horizontal mode. It will be ignored.' );
-	}
+	// Warn from an effect (not during render) to stay safe under Concurrent Mode.
+	useEffect( () => {
+		if ( ! isHorizontal ) {
+			warning( '[Stepper] Stepper.List is only used in horizontal mode. It will be ignored.' );
+		}
+	}, [ isHorizontal ] );
 
-	if ( orientation !== 'horizontal' ) {
+	if ( ! isHorizontal ) {
 		return null;
 	}
 

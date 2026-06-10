@@ -8,6 +8,7 @@ export type {
 	IndicatorVariant,
 	StepperProps,
 	StepperRef,
+	StepperRootProps,
 	StepProps,
 	StepStatus,
 } from './stepper/types';

@@ -3,13 +3,14 @@ import { Accordion } from '@base-ui/react/accordion';
 import { forwardRef, useContext, useEffect, useLayoutEffect } from '@wordpress/element';
 import { StepContext, StepperContext } from './context';
 import type { StepContextValue, StepStatus } from './types';
+import type { ReactNode } from 'react';
 
 type StepperStepProps = {
 	value: string;
 	status?: StepStatus;
 	optional?: boolean;
 	disabled?: boolean;
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
 };
 

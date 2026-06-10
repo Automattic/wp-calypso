@@ -620,6 +620,26 @@ describe( 'Stepper.Panel dev warnings', () => {
 		} );
 		warn.mockRestore();
 	} );
+
+	// NOTE: warning() dedupes messages process-wide, so this test relies on being
+	// the only place in this file that triggers the missing-`value` message.
+	it( 'warns when a horizontal Panel has no value prop and no StepContext', async () => {
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		render(
+			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
+				<Stepper.List>
+					<Stepper.Step value="a">
+						<Stepper.Trigger>Step A</Stepper.Trigger>
+					</Stepper.Step>
+				</Stepper.List>
+				<Stepper.Panel>Content</Stepper.Panel>
+			</Stepper.Root>
+		);
+		await waitFor( () => {
+			expect( warn ).toHaveBeenCalledWith( expect.stringMatching( /value/ ) );
+		} );
+		warn.mockRestore();
+	} );
 } );
 
 describe( 'Stepper indicatorVariant', () => {

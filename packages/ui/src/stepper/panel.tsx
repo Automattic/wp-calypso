@@ -1,7 +1,7 @@
 // packages/ui/src/stepper/panel.tsx
 import { Accordion } from '@base-ui/react/accordion';
 import { Tabs } from '@base-ui/react/tabs';
-import { forwardRef, useContext } from '@wordpress/element';
+import { forwardRef, useContext, useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import { warning } from '../utils/warning';
 import { StepContext, useStepperContext } from './context';
@@ -24,14 +24,17 @@ export const StepperPanel = forwardRef< HTMLDivElement, StepperPanelProps >( fun
 	// inside Accordion.Item (rendered by Stepper.Step). resolvedValue is only
 	// needed for the horizontal Tabs.Panel path.
 
-	if ( orientation === 'horizontal' && ! resolvedValue ) {
-		warning(
-			"[Stepper] Stepper.Panel requires a 'value' prop in horizontal mode to associate it with a step."
-		);
-	}
-	if ( resolvedValue && steps.length > 0 && ! steps.some( ( s ) => s.value === resolvedValue ) ) {
-		warning( `[Stepper] No step found with value '${ resolvedValue }' for this Panel.` );
-	}
+	// Warn from an effect (not during render) to stay safe under Concurrent Mode.
+	useEffect( () => {
+		if ( orientation === 'horizontal' && ! resolvedValue ) {
+			warning(
+				"[Stepper] Stepper.Panel requires a 'value' prop in horizontal mode to associate it with a step."
+			);
+		}
+		if ( resolvedValue && steps.length > 0 && ! steps.some( ( s ) => s.value === resolvedValue ) ) {
+			warning( `[Stepper] No step found with value '${ resolvedValue }' for this Panel.` );
+		}
+	}, [ orientation, resolvedValue, steps ] );
 
 	if ( orientation === 'vertical' ) {
 		// Apply role="region" only when step count is small enough to avoid landmark noise.

@@ -39,7 +39,7 @@ export const StepperRoot = forwardRef< StepperRef, StepperRootProps >( function 
 	// Controlled/uncontrolled value
 	const [ internalValue, setInternalValue ] = useState< string >( defaultValue ?? '' );
 	const isControlled = valueProp !== undefined;
-	const value = isControlled ? ( valueProp as string ) : internalValue;
+	const value = valueProp ?? internalValue;
 
 	const handleValueChange = useCallback(
 		( next: string ) => {

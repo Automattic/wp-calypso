@@ -114,4 +114,55 @@ describe( 'VerticalStepper behavioral', () => {
 		);
 		await waitFor( () => expect( screen.getByText( 'Panel B' ) ).toBeVisible() );
 	} );
+
+	it( 'keeps inactive panel content in the DOM when keepMounted is set', async () => {
+		render(
+			<VerticalStepper value="b" aria-label="Test">
+				<VerticalStepper.Step value="a" title="Step A" keepMounted>
+					<p data-testid="force-mounted">Panel A</p>
+				</VerticalStepper.Step>
+				<VerticalStepper.Step value="b" title="Step B">
+					<p>Panel B</p>
+				</VerticalStepper.Step>
+			</VerticalStepper>
+		);
+		// Step A is inactive but keepMounted keeps its panel in the DOM
+		expect( await screen.findByTestId( 'force-mounted' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'VerticalStepper linear mode', () => {
+	it( 'does not navigate to a non-completed step', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<VerticalStepper value="a" linear onValueChange={ onValueChange } aria-label="Test">
+				<VerticalStepper.Step value="a" title="Step A">
+					<p>Panel A</p>
+				</VerticalStepper.Step>
+				<VerticalStepper.Step value="b" title="Step B">
+					<p>Panel B</p>
+				</VerticalStepper.Step>
+			</VerticalStepper>
+		);
+		await user.click( screen.getByRole( 'button', { name: /step b/i } ) );
+		expect( onValueChange ).not.toHaveBeenCalled();
+	} );
+
+	it( 'navigates to a completed past-step', async () => {
+		const onValueChange = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<VerticalStepper value="b" linear onValueChange={ onValueChange } aria-label="Test">
+				<VerticalStepper.Step value="a" title="Step A" status="completed">
+					<p>Panel A</p>
+				</VerticalStepper.Step>
+				<VerticalStepper.Step value="b" title="Step B">
+					<p>Panel B</p>
+				</VerticalStepper.Step>
+			</VerticalStepper>
+		);
+		await user.click( screen.getByRole( 'button', { name: /step a/i } ) );
+		expect( onValueChange ).toHaveBeenCalledWith( 'a' );
+	} );
 } );
