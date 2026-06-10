@@ -6,7 +6,6 @@ import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/compone
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, cloud } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -168,7 +167,6 @@ function SiteBackupDownload() {
 									),
 								}
 							) }
-							decoration={ <Icon icon={ cloud } /> }
 						/>
 					</CardHeader>
 					<CardBody>
