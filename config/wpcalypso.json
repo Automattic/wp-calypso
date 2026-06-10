@@ -104,6 +104,7 @@
 		"mcp-settings": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
+		"me/legacy-contact": false,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
 		"nav-redesign/2026": false,
