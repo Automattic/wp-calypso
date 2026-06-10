@@ -22,6 +22,7 @@ import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-util
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
+import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
@@ -39,12 +40,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import PluginCompassAgentLoader from 'calypso/my-sites/plugins/plugin-compass-agent-loader';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
-import {
-	getCurrentUser,
-	getCurrentUserDisplayName,
-	getCurrentUserEmail,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
@@ -289,13 +285,7 @@ class Layout extends Component {
 					<UniversalNavbarHeader
 						isLoggedIn={ this.props.isLoggedIn }
 						sectionName={ this.props.sectionName }
-						{ ...( this.props.nav2026 && {
-							nav2026: true,
-							nav2026Variant: this.props.nav2026Variant,
-							userAvatar: this.props.userAvatar,
-							userName: this.props.userName,
-							userEmail: this.props.userEmail,
-						} ) }
+						{ ...this.props.nav2026Props }
 					/>
 				) }
 				<MasterbarComponent
@@ -478,6 +468,14 @@ class Layout extends Component {
 	}
 }
 
+// `Layout` is a class component, so the 2026 Global Nav hook lives in this
+// wrapper. The hook resolves the config-flag force-on and the ExPlat experiment
+// assignment into the props the universal header expects (or `{}` for the old nav).
+function LayoutWithNav2026Props( props ) {
+	const nav2026Props = useNav2026Props();
+	return <Layout { ...props } nav2026Props={ nav2026Props } />;
+}
+
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 		const dashboard = getDashboardFromHostname( window?.location?.hostname );
@@ -628,11 +626,6 @@ export default withCurrentRoute(
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
 			hasUniversalHeader,
-			nav2026: config.isEnabled( 'nav-redesign/2026' ),
-			nav2026Variant: config.isEnabled( 'nav-redesign/2026-variant-2' ) ? 2 : 1,
-			userAvatar: getCurrentUser( state )?.avatar_URL,
-			userName: getCurrentUserDisplayName( state ),
-			userEmail: getCurrentUserEmail( state ),
 		};
-	} )( Layout )
+	} )( LayoutWithNav2026Props )
 );

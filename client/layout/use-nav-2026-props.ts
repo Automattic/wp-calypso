@@ -47,8 +47,11 @@ export function useNav2026Props(): Nav2026Props {
 	const userEmail = useSelector( getCurrentUserEmail );
 
 	// Hooks must run unconditionally; the assignment is ignored when forced on.
+	// SSR is ineligible: the server-side ExPlat dummy client logs an error on
+	// every render-time read and can never produce an assignment anyway. The
+	// browser refetches on hydration, where eligibility flips true.
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( NAV_2026_EXPERIMENT, {
-		isEligible: ! forcedOn,
+		isEligible: ! forcedOn && typeof window !== 'undefined',
 	} );
 
 	// Resolve the variant: the config flag forces it on for staff/dev, otherwise
