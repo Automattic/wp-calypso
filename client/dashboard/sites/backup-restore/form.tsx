@@ -125,7 +125,7 @@ function SiteBackupRestoreForm( {
 						sprintf(
 							/* translators: %(restorePointDate)s is the date and time of the backup */
 							__(
-								'Choose the items you wish to restore from your <strong>%(restorePointDate)s</strong> backup:'
+								'Choose what to restore from your <strong>%(restorePointDate)s</strong> backup:'
 							),
 							{ restorePointDate }
 						),

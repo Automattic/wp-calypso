@@ -85,8 +85,8 @@ function SiteBackupGranularRestoreForm( {
 						sprintf(
 							/* translators: %(restorePointDate)s is the date and time of the backup */
 							_n(
-								'The following item will be restored from your <strong>%(restorePointDate)s</strong> backup:',
-								'All the following selected items will be restored from your <strong>%(restorePointDate)s</strong> backup:',
+								'Restoring the following item from your <strong>%(restorePointDate)s</strong> backup:',
+								'Restoring the following items from your <strong>%(restorePointDate)s</strong> backup:',
 								browserCheckList.totalItems
 							),
 							{ restorePointDate }

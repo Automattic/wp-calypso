@@ -116,7 +116,7 @@ function SiteBackupDownloadForm( {
 						sprintf(
 							/* translators: %(downloadPointDate)s is the date and time of the backup */
 							__(
-								'Choose the items you wish to include in the download from your <strong>%(downloadPointDate)s</strong> backup:'
+								'Choose what to download from your <strong>%(downloadPointDate)s</strong> backup:'
 							),
 							{ downloadPointDate }
 						),
