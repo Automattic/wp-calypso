@@ -95,6 +95,7 @@ interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
 	lastName: TextMailboxFormField;
 }
 
+// Titan has no extra fields.
 type ITitanMailboxFormFields = IBaseMailboxFormFields;
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
