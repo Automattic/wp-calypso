@@ -46,7 +46,7 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
-const shouldBuildRtlCss = ! isDevelopment;
+const shouldBuildRtlCss = ! isDevelopment || process.env.BUILD_RTL_CSS === 'true';
 const shouldUseConditionalSassPrelude =
 	process.env.CONDITIONAL_SASS_PRELUDE === 'true' ||
 	( process.env.CONDITIONAL_SASS_PRELUDE !== 'false' && isDevelopment );
