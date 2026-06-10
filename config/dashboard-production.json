@@ -29,6 +29,7 @@
 		"dashboard/omnibar": true,
 		"dashboard/wp-beta-program": true,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": false,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"onboarding/interval-dropdown": true,

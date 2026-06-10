@@ -46,6 +46,7 @@
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": false,
 		"google-my-business": true,
 		"help": true,
 		"help-center/logged-out": true,

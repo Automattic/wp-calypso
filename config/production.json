@@ -47,6 +47,7 @@
 		"dolly/telegram": true,
 		"domain-bundling": false,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": false,
 		"google-my-business": true,
 		"help": true,
 		"help-center/logged-out-fab": true,

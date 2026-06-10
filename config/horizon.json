@@ -36,6 +36,7 @@
 		"design-picker/use-assembler-styles": true,
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
+		"emails/titan-tiers": false,
 		"google-my-business": false,
 		"help": true,
 		"help-center/logged-out-fab": true,
