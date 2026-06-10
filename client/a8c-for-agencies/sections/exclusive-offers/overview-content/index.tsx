@@ -80,12 +80,17 @@ function PartnerOfferCard( { item }: { item: PartnerOffer } ) {
 							gap: '16px',
 						} }
 					>
-						<Button variant="secondary" href={ item.cta.url } onClick={ handleCTAClick }>
+						<Button
+							variant="secondary"
+							href={ item.cta.url }
+							target={ item.cta.external ? '_blank' : undefined }
+							onClick={ handleCTAClick }
+						>
 							{ item.cta.label }
 						</Button>
 						<Button
 							variant="link"
-							href="https://automattic.com/for-agencies/program-incentives"
+							href={ item.termsUrl ?? 'https://automattic.com/for-agencies/program-incentives' }
 							target="_blank"
 							onClick={ handleViewTermsClick }
 						>

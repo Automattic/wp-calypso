@@ -26,7 +26,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	}
 }
 
-@include break-xlarge {
+@include break-large {
 	// At xlarge each pane carries its own chrome, so the popover goes
 	// transparent and lets the combined card show through. The popover
 	// is sized for both panes (896px) at all times; without this the
@@ -123,7 +123,14 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 // Below xlarge: single column. List slides toward the inline-start edge
 // (left in LTR, right in RTL) while the detail slides in from inline-end.
-@media (max-width: #{$break-xlarge - 1px}) {
+@media (max-width: #{$break-large - 1px}) {
+	// Clip the panes that slide off-screen (the closed detail sits at
+	// translateX(100%), past the inline-end edge) so they don't cause horizontal
+	// overflow. The panes carry no shadow at this breakpoint, so nothing is cut.
+	.wpnc-app {
+		overflow: hidden;
+	}
+
 	.wpnc-app__detail-pane.is-open ~ .wpnc-app__list-pane {
 		transform: translateX(-100%);
 
@@ -135,7 +142,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 // At xlarge: side-by-side. List pinned right, detail pinned left, sharing the
 // list's left border as the divider (so detail has no right border).
-@include break-xlarge {
+@include break-large {
 	.wpnc-app__list-pane {
 		inset-inline-start: auto;
 		width: $wpnc-pane-width;
@@ -161,16 +168,9 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		}
 	}
 
-	// When open, the wrapper carries the shared shadow so both panes look like
-	// a single card.
-	.wpnc-app:has(.wpnc-app__detail-pane.is-open) {
-		border-radius: $wpnc-pane-radius;
-		box-shadow: $wpnc-pane-shadow;
-
-		.wpnc-app__list-pane {
-			border-start-start-radius: 0;
-			border-end-start-radius: 0;
-			box-shadow: none;
-		}
+	.wpnc-app:has(.wpnc-app__detail-pane.is-open) .wpnc-app__list-pane {
+		border-start-start-radius: 0;
+		border-end-start-radius: 0;
+		box-shadow: none;
 	}
 }

@@ -159,8 +159,8 @@ jest.mock( '../use-refresh-following-streams', () => ( {
 
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
-jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: jest.fn( () => ( { data: [], isPending: false } ) ),
+jest.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: jest.fn( () => ( { data: [], isPending: false } ) ),
 } ) );
 
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
@@ -192,8 +192,8 @@ beforeEach( () => {
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
 
-	const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
-		useFollowedReaderTags: jest.Mock;
+	const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
+		useFollowedTags: jest.Mock;
 	};
 	const { useSiteSubscriptions: useCachedSiteSubscriptions } = jest.requireMock(
 		'calypso/reader/data/site-subscriptions'
@@ -206,7 +206,7 @@ beforeEach( () => {
 	const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
 		getCurrentUserDate: jest.Mock;
 	};
-	useFollowedReaderTags.mockImplementation( () => ( { data: [], isPending: false } ) );
+	useFollowedTags.mockImplementation( () => ( { data: [], isPending: false } ) );
 	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
 	useSiteSubscriptions.mockImplementation( () => ( {
 		isLoading: false,
@@ -605,11 +605,11 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 	} );
 
 	it( 'records completed with followed_tags_count and followed_non_self_sites_count reflecting the user\u2019s current follows', async () => {
-		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
-			useFollowedReaderTags: jest.Mock;
+		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
+			useFollowedTags: jest.Mock;
 		};
 
-		useFollowedReaderTags.mockImplementation( () => ( {
+		useFollowedTags.mockImplementation( () => ( {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
@@ -705,8 +705,8 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		const { useSiteSubscriptions } = jest.requireMock(
 			'../../following/use-site-subscriptions'
 		) as { useSiteSubscriptions: jest.Mock };
-		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
-			useFollowedReaderTags: jest.Mock;
+		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
+			useFollowedTags: jest.Mock;
 		};
 
 		// Counts above both thresholds; rely on forceShow (default mock has
@@ -718,7 +718,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			hasNonSelfSubscriptions: false,
 			nonSelfSubscriptionsCount: 4,
 		} ) );
-		useFollowedReaderTags.mockReturnValue( {
+		useFollowedTags.mockReturnValue( {
 			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
 		} );
 
@@ -758,8 +758,8 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		hasNonSelfSubscriptions?: boolean;
 		userRegistrationDate?: string | null;
 	} = {} ) => {
-		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
-			useFollowedReaderTags: jest.Mock;
+		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
+			useFollowedTags: jest.Mock;
 		};
 		const { useSiteSubscriptions } = jest.requireMock(
 			'../../following/use-site-subscriptions'
@@ -768,7 +768,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			getCurrentUserDate: jest.Mock;
 		};
 
-		useFollowedReaderTags.mockImplementation( () => ( {
+		useFollowedTags.mockImplementation( () => ( {
 			data: tags.data ?? [],
 			isPending: tags.isPending ?? false,
 		} ) );
@@ -934,10 +934,10 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 	// is controlled per-test via the `useSiteSubscriptions` mock's
 	// `nonSelfSubscriptionsCount` (always seeded >= 4 here).
 	const seedAboveEligibilityThresholds = () => {
-		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
-			useFollowedReaderTags: jest.Mock;
+		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
+			useFollowedTags: jest.Mock;
 		};
-		useFollowedReaderTags.mockImplementation( () => ( {
+		useFollowedTags.mockImplementation( () => ( {
 			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
 			isPending: false,
 		} ) );
@@ -1070,7 +1070,7 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		// Discover task is now reachable from the checklist even though
-		// `useFollowedReaderTags` is still empty (default mock).
+		// `useFollowedTags` is still empty (default mock).
 		expect( screen.getByTestId( 'checklist-item-discover-sites' ) ).toHaveAttribute(
 			'data-disabled',
 			'false'

@@ -266,7 +266,9 @@ function useGenerateActionCallback( {
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				( ! flowName || flowName === WOO_HOSTED_PLANS_FLOW ) &&
+				( ! flowName ||
+					flowName === WOO_HOSTED_PLANS_FLOW ||
+					intent === 'plans-upgrade-or-downgrade' ) &&
 				intent !== 'plans-p2' &&
 				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase

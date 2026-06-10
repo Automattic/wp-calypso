@@ -152,7 +152,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__site-header sites-dataview__site-header--sort"
-							ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setIntroRef( ref as HTMLElement | null );
+							} }
 						>
 							{ translate( 'Site' ).toUpperCase() }
 						</span>
@@ -196,7 +198,9 @@ export const JetpackSitesDataViews = ( {
 					<div>
 						<span
 							className="sites-dataview__stats-header"
-							ref={ ( ref ) => setStatsRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setStatsRef( ref as HTMLElement | null );
+							} }
 						>
 							STATS
 						</span>
@@ -219,7 +223,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__boost-header"
-							ref={ ( ref ) => setBoostRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setBoostRef( ref as HTMLElement | null );
+							} }
 						>
 							BOOST
 						</span>
@@ -242,7 +248,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__backup-header"
-							ref={ ( ref ) => setBackupRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setBackupRef( ref as HTMLElement | null );
+							} }
 						>
 							BACKUP
 						</span>
@@ -265,7 +273,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__monitor-header"
-							ref={ ( ref ) => setMonitorRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setMonitorRef( ref as HTMLElement | null );
+							} }
 						>
 							MONITOR
 						</span>
@@ -288,7 +298,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__scan-header"
-							ref={ ( ref ) => setScanRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setScanRef( ref as HTMLElement | null );
+							} }
 						>
 							SCAN
 						</span>
@@ -311,7 +323,9 @@ export const JetpackSitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__plugins-header"
-							ref={ ( ref ) => setPluginsRef( ref as HTMLElement | null ) }
+							ref={ ( ref ) => {
+								setPluginsRef( ref as HTMLElement | null );
+							} }
 						>
 							PLUGINS
 						</span>

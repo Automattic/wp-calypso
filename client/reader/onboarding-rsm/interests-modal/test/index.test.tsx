@@ -48,8 +48,8 @@ jest.mock( 'calypso/data/reader/use-reader-interest-tags', () => ( {
 	useReaderInterestTags: () => [],
 } ) );
 
-jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: () => ( { data: [] } ),
+jest.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: () => ( { data: [] } ),
 } ) );
 
 // ── Internal helpers / child components ─────────────────────────────────────

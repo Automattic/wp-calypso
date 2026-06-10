@@ -138,7 +138,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 										} }
 									>
 										{ sprintf(
-											/* translators: %d: number of threats */
+											/* translators: %(threatsCount)d: number of threats */
 											_n(
 												'Auto-fix %(threatsCount)d threat',
 												'Auto-fix %(threatsCount)d threats',
