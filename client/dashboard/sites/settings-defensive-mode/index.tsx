@@ -17,6 +17,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { wpcomLink } from '../../utils/link';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -149,7 +150,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 								),
 								{
 									// @ts-expect-error children prop is injected by createInterpolateElement
-									link: <ExternalLink href="/help/contact" />,
+									link: <ExternalLink href={ wpcomLink( '/support/contact' ) } />,
 								}
 							) }
 						</Text>

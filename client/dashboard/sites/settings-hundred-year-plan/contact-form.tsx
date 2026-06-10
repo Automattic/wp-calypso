@@ -5,6 +5,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { wpcomLink } from '../../utils/link';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -63,7 +64,7 @@ export default function ContactForm( { site, settings }: { site: Site; settings:
 									'Choose someone to look after your site when you pass away. To take ownership of the site, we ask that the person you designate contacts us at <link>wordpress.com/help</link> with a copy of the death certificate.'
 								),
 								{
-									link: <ExternalLink href="/help" children={ null } />,
+									link: <ExternalLink href={ wpcomLink( '/support' ) } children={ null } />,
 								}
 							) }
 							level={ 3 }

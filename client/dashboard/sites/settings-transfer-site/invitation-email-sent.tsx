@@ -8,6 +8,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { wpcomLink } from '../../utils/link';
 import Notice from '../../components/notice';
 import type { Site, SiteOwnerTransferConfirmation } from '@automattic/api-core';
 
@@ -77,7 +78,7 @@ export function InvitationEmailSent( {
 					{
 						link: (
 							// @ts-expect-error children prop is injected by createInterpolateElement
-							<ExternalLink href="/help" />
+							<ExternalLink href={ wpcomLink( '/support' ) } />
 						),
 					}
 				) }
