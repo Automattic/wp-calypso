@@ -124,6 +124,13 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // Below xlarge: single column. List slides toward the inline-start edge
 // (left in LTR, right in RTL) while the detail slides in from inline-end.
 @media (max-width: #{$break-large - 1px}) {
+	// Clip the panes that slide off-screen (the closed detail sits at
+	// translateX(100%), past the inline-end edge) so they don't cause horizontal
+	// overflow. The panes carry no shadow at this breakpoint, so nothing is cut.
+	.wpnc-app {
+		overflow: hidden;
+	}
+
 	.wpnc-app__detail-pane.is-open ~ .wpnc-app__list-pane {
 		transform: translateX(-100%);
 

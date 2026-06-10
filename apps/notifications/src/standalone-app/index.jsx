@@ -1,4 +1,5 @@
 import '@automattic/calypso-polyfills';
+import { useViewportMatch } from '@wordpress/compose';
 import { setLocaleData } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
@@ -103,6 +104,7 @@ const ACTION_HANDLERS = {
 const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	if ( locale && 'en' !== locale ) {
 		fetchLocale( locale );
@@ -167,12 +169,39 @@ const NotesWrapper = ( { wpcom } ) => {
 			actionHandlers={ ACTION_HANDLERS }
 			locale={ locale }
 			wpcom={ wpcom }
+			isDismissible={ isMobileViewport }
 		/>
+	);
+};
+
+// The src/app components consume the wp-admin theme variables (directly and via
+// DataViews). WP-admin provides them globally, but this standalone iframe is the
+// host, so we must supply them — matching client/dashboard/app-dotcom (default
+// blue admin color). They're set on the document root via JS rather than in CSS
+// because this app's postcss runs `postcss-custom-properties` with
+// `preserve: false`, which strips `:root` custom-property declarations from the
+// built stylesheet. Setting them on `documentElement` keeps them on `:root`, so
+// they also cascade to popovers/dropdowns that portal to the iframe body.
+const WP_ADMIN_THEME_VARS = {
+	'--wp-admin-theme-color': '#3858e9',
+	'--wp-admin-theme-color--rgb': '56, 88, 233',
+	'--wp-admin-theme-color-darker-10': '#2145e6',
+	'--wp-admin-theme-color-darker-10--rgb': '33, 69, 230',
+	'--wp-admin-theme-color-darker-20': '#183ad6',
+	'--wp-admin-theme-color-darker-20--rgb': '24, 58, 214',
+	'--wp-admin-border-width-focus': '2px',
+};
+
+const applyAdminThemeVars = () => {
+	const { style } = document.documentElement;
+	Object.entries( WP_ADMIN_THEME_VARS ).forEach( ( [ name, value ] ) =>
+		style.setProperty( name, value )
 	);
 };
 
 const render = ( wpcom ) => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
+	applyAdminThemeVars();
 
 	const root = createRoot( document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
 	root.render( <NotesWrapper wpcom={ wpcom } /> );
