@@ -99,7 +99,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 // Qualified with the parent class so these rules out-specify the Text
 // component's own (emotion) styles; otherwise white-space: nowrap loses the
 // cascade and the lines wrap. display: block lets text-overflow engage.
-.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-welcome,
+.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-name,
 .a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-agency {
 	display: block;
 	max-width: 100%;
@@ -108,7 +108,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	text-overflow: ellipsis;
 }
 
-.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-welcome {
+.a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-name {
 	color: var(--color-text);
 }
 

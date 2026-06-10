@@ -57,11 +57,8 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 		<ul className="a4a-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
 			{ user?.display_name && (
 				<li className="a4a-sidebar__profile-dropdown-greeting">
-					<Text className="a4a-sidebar__profile-dropdown-greeting-welcome" weight={ 600 }>
-						{ translate( 'Welcome, %(name)s!', {
-							args: { name: user.display_name },
-							comment: '%(name)s is the name of the logged-in user',
-						} ) }
+					<Text className="a4a-sidebar__profile-dropdown-greeting-name" weight={ 600 }>
+						{ user.display_name }
 					</Text>
 					{ agency?.name && (
 						<Text
