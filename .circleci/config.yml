@@ -374,7 +374,9 @@ jobs:
           name: Install NVM
           # Pinned: the nvm.install 1.2.2.20251229 package hangs in silent mode
           # when Node.js is preinstalled on the image, timing out the job.
-          command: choco install -y nvm --version 1.1.12
+          # The pin must be on nvm.install — `nvm` is a meta-package whose
+          # dependency range still resolves to the latest nvm.install.
+          command: choco install -y nvm.install --version 1.1.12
       - run:
           name: Install Node environment
           command: |
