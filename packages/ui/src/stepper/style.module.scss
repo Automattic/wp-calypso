@@ -126,7 +126,9 @@
 			color: var( --wpds-color-fg-interactive-brand );
 		}
 
-		.indicator {
+		// Number-variant current step has a solid filled circle — skip border change
+		// to avoid an accent ring appearing against the dark background on hover.
+		.indicator:not( .is-current[data-indicator-variant='number'] ) {
 			border-color: var( --wpds-color-fg-interactive-brand );
 		}
 
