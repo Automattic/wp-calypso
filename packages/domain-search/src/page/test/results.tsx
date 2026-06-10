@@ -1,4 +1,4 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
@@ -6,11 +6,30 @@ import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
+	mockGetBundleSuggestionQuery,
 	mockGetFreeSuggestionQuery,
 	mockGetSuggestionsQuery,
 } from '../../test-helpers/queries/suggestions';
 import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
+
+// Mirrors the retired mock fetcher's fixture shape (mock-<sld>-group ids) so
+// assertions written against it keep reading naturally.
+const buildBundleSuggestion = ( sld: string ): BundleSuggestion => ( {
+	sld,
+	domains: [
+		{ domain: `${ sld }.com`, cost: '$22.00', raw_price: 22, product_slug: 'domain_reg' },
+		{ domain: `${ sld }.net`, cost: '$18.00', raw_price: 18, product_slug: 'domain_reg' },
+		{ domain: `${ sld }.org`, cost: '$20.00', raw_price: 20, product_slug: 'domain_reg' },
+	],
+	bundle_price: 48,
+	original_price: 60,
+	discount_percent: 20,
+	category: 'business',
+	bundle_id: `mock-${ sld }`,
+	bundle_group_id: `mock-${ sld }-group`,
+	catalogue_version: 'mock',
+} );
 
 describe( 'ResultsPage', () => {
 	it( 'renders the search bar, filters and cart', () => {
@@ -934,6 +953,10 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-shown' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-shown.com' } ) ],
 			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-shown' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-shown' ),
+			} );
 
 			render(
 				<TestDomainSearch
@@ -984,6 +1007,10 @@ describe( 'ResultsPage', () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-accept' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-accept.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-accept' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-accept' ),
 			} );
 
 			render(
