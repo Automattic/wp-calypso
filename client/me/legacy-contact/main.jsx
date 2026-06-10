@@ -21,7 +21,7 @@ class LegacyContact extends Component {
 				<Card className="legacy-contact__intro">
 					<p>
 						{ translate(
-							'A legacy contact is someone you choose to manage your account if you become unable to do so.'
+							'A legacy contact is someone you trust to have access to your account after your death.'
 						) }
 					</p>
 				</Card>
