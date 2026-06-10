@@ -128,10 +128,11 @@ export default function AgentDock( {
 			isSplitScreen,
 		} );
 
-	// WP admin bar integration. Returns whether the AI chat entry button can reopen the chat.
+	// WP admin bar integration. Returns whether the AI chat entry button is present.
 	const hasAiChatEntry = useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
+		// Open/un-minimize the chat panel, leaving the route unchanged.
 		maybeOpenChat: () => {
 			if ( isMinimized ) {
 				setIsMinimized( false );
@@ -145,7 +146,6 @@ export default function AgentDock( {
 				}
 			}
 		},
-		navigate,
 	} );
 
 	// Route visibility. All are hidden in reader chat (public blog frontends);
@@ -202,8 +202,8 @@ export default function AgentDock( {
 			setOpenState( true );
 		}
 
-		// Return to the active chat, resuming its session — unless already
-		// on a live chat/Zendesk view.
+		// Return to the active chat, resuming its session — unless already on a
+		// live chat/Zendesk view.
 		if ( pathname !== '/chat' && pathname !== '/zendesk' ) {
 			navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
 		}

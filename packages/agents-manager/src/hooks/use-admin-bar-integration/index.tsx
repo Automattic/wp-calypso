@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect, useRef, useState } from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import './style.scss';
 
 // Admin bar element selectors
@@ -8,8 +10,8 @@ const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 
-// The AI chat button is the chat's entry point: it opens a new chat, and the chat
-// hides to it on close. Calypso uses its masterbar equivalent.
+// The standalone AI chat button — the chat's entry point, separate from the Help
+// menu. The wp-admin bar exposes it by ID; Calypso's masterbar by class.
 const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
 const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
 
@@ -36,7 +38,6 @@ interface UseAdminBarIntegrationOptions {
 	isOpen: boolean;
 	sectionName: string;
 	maybeOpenChat: () => void;
-	navigate: ( route: string, options?: { state?: object } ) => void;
 }
 
 /**
@@ -53,11 +54,19 @@ export default function useAdminBarIntegration( {
 	isOpen,
 	sectionName,
 	maybeOpenChat,
-	navigate,
 }: UseAdminBarIntegrationOptions ): boolean {
-	// Ref to avoid re-attaching DOM event listeners when the caller passes a new `maybeOpenChat` reference.
+	const navigate = useNavigate();
+	const { getActiveSessionId } = useAgentsManagerContext();
+
+	// Reopen the chat on its conversation view, resuming the active session.
+	// Non-reader chats only resume via router state, so pass the session id.
+	const resumeChat = () => navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+
+	// Refs keep the latest callbacks without re-attaching DOM listeners each render.
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
+	const resumeChatRef = useRef( resumeChat );
+	resumeChatRef.current = resumeChat;
 
 	// Whether the AI chat entry button is present (captured once on mount).
 	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
@@ -111,7 +120,7 @@ export default function useAdminBarIntegration( {
 		};
 	}, [] );
 
-	// The standalone AI button opens a new chat and records its own event.
+	// The standalone AI button reopens the chat, resuming the active conversation.
 	useEffect( () => {
 		const aiChatButton = document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID );
 		if ( ! aiChatButton ) {
@@ -122,34 +131,41 @@ export default function useAdminBarIntegration( {
 			recordTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
 				section: sectionName || 'wp-admin',
 			} );
-			navigate( '/' );
+			resumeChatRef.current();
 			maybeOpenChatRef.current();
 		};
 
 		aiChatButton.addEventListener( 'click', handleClick );
 		return () => aiChatButton.removeEventListener( 'click', handleClick );
-	}, [ navigate, sectionName ] );
+	}, [ sectionName ] );
 
-	// Wire the Help menu items to switch routes and open the chat.
+	// Wire the Help menu items to open the chat (resume, or navigate to their route).
 	useEffect( () => {
 		const chatItem = document.getElementById( ADMIN_BAR_CHAT_ITEM_ID );
 		const historyItem = document.getElementById( ADMIN_BAR_HISTORY_ITEM_ID );
 		const guidesItem = document.getElementById( ADMIN_BAR_GUIDES_ITEM_ID );
 
-		const createMenuItemHandler = ( destination: string, route: string ) => {
+		const createMenuItemHandler = ( destination: string, openChat: () => void ) => {
 			return () => {
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
 				} );
-				navigate( route );
+				openChat();
 				maybeOpenChatRef.current();
 			};
 		};
 
-		const handleChatClick = createMenuItemHandler( DESTINATION_CHAT, '/' ); // This starts a new chat
-		const handleHistoryClick = createMenuItemHandler( DESTINATION_HISTORY, '/history' );
-		const handleGuidesClick = createMenuItemHandler( DESTINATION_GUIDES, '/support-guides' );
+		// Chat Support resumes the active conversation, matching the AI button.
+		const handleChatClick = createMenuItemHandler( DESTINATION_CHAT, () =>
+			resumeChatRef.current()
+		);
+		const handleHistoryClick = createMenuItemHandler( DESTINATION_HISTORY, () =>
+			navigate( '/history' )
+		);
+		const handleGuidesClick = createMenuItemHandler( DESTINATION_GUIDES, () =>
+			navigate( '/support-guides' )
+		);
 
 		chatItem?.addEventListener( 'click', handleChatClick );
 		historyItem?.addEventListener( 'click', handleHistoryClick );

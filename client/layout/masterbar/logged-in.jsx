@@ -855,7 +855,8 @@ class MasterbarLoggedIn extends Component {
 
 	clickAgentsManagerAiChat = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked' );
-		openAgentsManagerChat( '/' );
+		// Reopen and resume the active conversation rather than start a new one.
+		openAgentsManagerChat();
 	};
 
 	renderAgentsManagerAiChat() {

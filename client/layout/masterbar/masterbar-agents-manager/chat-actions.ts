@@ -1,6 +1,12 @@
+import type { NavigateFunction } from 'react-router-dom';
+
+// Minimal view of the package's runtime `window.__agentsManagerActions` global
+// (full type: `AgentsManagerActions` in @automattic/agents-manager) — only the
+// actions the masterbar calls, kept local to stay decoupled across the bundle.
 interface AgentsManagerActions {
-	chatNavigate: ( path: string ) => void;
+	chatNavigate: NavigateFunction;
 	setChatOpen: ( isOpen: boolean ) => void;
+	getSessionId?: () => string;
 	isReady?: boolean;
 }
 
@@ -8,12 +14,20 @@ const getAgentsManagerActions = (): AgentsManagerActions | undefined =>
 	( window as unknown as { __agentsManagerActions?: AgentsManagerActions } ).__agentsManagerActions;
 
 /**
- * Open the agents-manager chat at the given path. Its actions load asynchronously,
- * so if they aren't ready yet, wait for the one-time `agents-manager-ready` event.
+ * Open the agents-manager chat. With a `path`, navigate there first (the Help menu's
+ * history/guides items). Without a path, resume the active conversation rather than
+ * start a new one — used by both the AI entry button and the "Chat Support" item.
+ * Non-reader chats resume via router state, so we pass the active session id. Actions
+ * load asynchronously, so if they aren't ready yet, wait for the one-time
+ * `agents-manager-ready` event.
  */
-export const openAgentsManagerChat = ( path: string ): void => {
+export const openAgentsManagerChat = ( path?: string ): void => {
 	const openChat = ( actions: AgentsManagerActions | undefined ) => {
-		actions?.chatNavigate( path );
+		if ( path !== undefined ) {
+			actions?.chatNavigate( path );
+		} else {
+			actions?.chatNavigate( '/chat', { state: { sessionId: actions?.getSessionId?.() ?? '' } } );
+		}
 		actions?.setChatOpen( true );
 	};
 
