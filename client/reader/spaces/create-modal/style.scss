@@ -1,3 +1,124 @@
+.create-space-modal {
+	.components-modal__frame {
+		border-radius: 8px;
+		width: min( 96vw, 960px );
+	}
+
+	.components-modal__header {
+		border-bottom: 1px solid var(--color-neutral-5);
+		height: auto;
+		padding: 28px 32px;
+	}
+
+	.components-modal__header-heading {
+		font-size: 1.75rem;
+		font-weight: 600;
+		line-height: 1.2;
+	}
+
+	.components-modal__content {
+		padding: 0;
+	}
+
+	.components-modal__children-container {
+		padding: 28px 32px 32px;
+	}
+}
+
+.create-space-modal__form {
+	margin: 0;
+}
+
+.create-space-modal__intro {
+	display: grid;
+	grid-template-columns: 48px 1fr;
+	gap: 0 20px;
+	align-items: center;
+	margin-top: -104px;
+	margin-right: 48px;
+	min-height: 76px;
+	pointer-events: none;
+}
+
+.create-space-modal__icon {
+	display: grid;
+	place-items: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 8px;
+	color: var(--color-surface);
+	background: var(--studio-celadon-50, #0e9fab);
+}
+
+.create-space-modal__subtitle {
+	grid-column: 2;
+	margin: 32px 0 0;
+	color: var(--color-neutral-60);
+	font-size: 1.25rem;
+	line-height: 1.4;
+}
+
+.create-space-modal__steps {
+	display: flex;
+	gap: 32px;
+	align-items: center;
+	margin-top: 28px;
+}
+
+.create-space-modal__step {
+	display: inline-flex;
+	gap: 12px;
+	align-items: center;
+	color: var(--color-neutral-40);
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.create-space-modal__step-number {
+	display: inline-grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	color: var(--color-neutral-60);
+	background: var(--color-neutral-0);
+}
+
+.create-space-modal__step--active {
+	color: var(--color-neutral-100);
+
+	.create-space-modal__step-number {
+		color: var(--color-surface);
+		background: var(--color-neutral-100);
+	}
+}
+
+.create-space-modal__fields {
+	display: grid;
+	gap: 28px;
+}
+
+.create-space-modal__field {
+	.components-base-control__label,
+	.components-form-token-field__label {
+		margin-bottom: 10px;
+		color: var(--color-neutral-50);
+		font-size: 0.875rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	.components-text-control__input,
+	.components-form-token-field__input-container {
+		min-height: 56px;
+		border-color: var(--color-neutral-10);
+		border-radius: 8px;
+		font-size: 1.25rem;
+	}
+}
+
 .create-space-modal__error {
 	margin: 0;
 	color: var(--color-error);

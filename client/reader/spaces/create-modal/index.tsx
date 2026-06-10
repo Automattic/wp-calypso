@@ -7,7 +7,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { DataForm, useFormValidity, type Field } from '@wordpress/dataviews';
+import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useCreateSpace, useSpaces } from 'calypso/reader/data/spaces';
@@ -70,63 +70,8 @@ function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
 
 	const existingNames = useMemo( () => spaces.map( ( space ) => space.name ), [ spaces ] );
 
-	const fields: Field< CreateSpaceFormData >[] = useMemo(
-		() => [
-			{
-				id: 'name',
-				label: translate( 'Name' ),
-				type: 'text',
-				Edit: ( { field, data, onChange, hideLabelFromVision } ) => (
-					<TextControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ field.label }
-						hideLabelFromVision={ hideLabelFromVision }
-						value={ data.name }
-						placeholder={ translate( 'e.g. Work, Photography, Recipes' ) }
-						onChange={ ( value ) => {
-							setIsNameTouched( true );
-							onChange( { name: value } );
-						} }
-					/>
-				),
-				isValid: {
-					custom: ( data: CreateSpaceFormData ) =>
-						validateName( data.name, existingNames, translate ),
-				},
-			},
-			{
-				id: 'tags',
-				label: translate( 'Tags' ),
-				Edit: ( { field, data, onChange } ) => (
-					<FormTokenField
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ field.label }
-						value={ data.tags }
-						placeholder={ translate( 'Add tags' ) }
-						onChange={ ( tokens ) =>
-							onChange( {
-								tags: tokens.map( ( token ) =>
-									typeof token === 'string' ? token : token.value
-								),
-							} )
-						}
-						help=""
-					/>
-				),
-			},
-		],
-		[ translate, existingNames ]
-	);
-
-	const form = {
-		layout: { type: 'regular' as const },
-		fields: [ 'name', 'tags' ],
-	};
-
-	const { isValid } = useFormValidity( formData, fields, form );
 	const nameError = validateName( formData.name, existingNames, translate );
+	const isValid = ! nameError;
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
@@ -154,15 +99,70 @@ function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
 	};
 
 	return (
-		<Modal title={ translate( 'Create a space' ) } size="medium" onRequestClose={ onClose }>
-			<form onSubmit={ handleSubmit }>
+		<Modal
+			className="create-space-modal"
+			title={ translate( 'Create a new space' ) }
+			size="large"
+			onRequestClose={ onClose }
+		>
+			<form className="create-space-modal__form" onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
-					<DataForm< CreateSpaceFormData >
-						data={ formData }
-						fields={ fields }
-						form={ form }
-						onChange={ ( edits ) => setFormData( ( data ) => ( { ...data, ...edits } ) ) }
-					/>
+					<div className="create-space-modal__intro">
+						<div className="create-space-modal__icon">
+							<Icon icon={ category } size={ 32 } />
+						</div>
+						<p className="create-space-modal__subtitle">
+							{ translate( 'A space bundles sources with its own layout, color and feel.' ) }
+						</p>
+					</div>
+					<div
+						className="create-space-modal__steps"
+						aria-label={ translate( 'Create space steps' ) }
+					>
+						<div className="create-space-modal__step create-space-modal__step--active">
+							<span className="create-space-modal__step-number">1</span>
+							<span>{ translate( 'Identity' ) }</span>
+						</div>
+						<div className="create-space-modal__step" aria-disabled="true">
+							<span className="create-space-modal__step-number">2</span>
+							<span>{ translate( 'Layout' ) }</span>
+						</div>
+						<div className="create-space-modal__step" aria-disabled="true">
+							<span className="create-space-modal__step-number">3</span>
+							<span>{ translate( 'Sources' ) }</span>
+						</div>
+					</div>
+					<div className="create-space-modal__fields">
+						<TextControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							className="create-space-modal__field"
+							label={ translate( 'Name' ) }
+							value={ formData.name }
+							placeholder={ translate( 'e.g. Design, News, Recipes…' ) }
+							onChange={ ( value ) => {
+								setIsNameTouched( true );
+								setFormData( ( data ) => ( { ...data, name: value } ) );
+							} }
+						/>
+						<FormTokenField
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							className="create-space-modal__field"
+							label={ translate( 'Tags' ) }
+							value={ formData.tags }
+							placeholder={ translate( 'Add tags' ) }
+							onChange={ ( tokens ) =>
+								setFormData( ( data ) => ( {
+									...data,
+									tags: tokens.map( ( token ) =>
+										typeof token === 'string' ? token : token.value
+									),
+								} ) )
+							}
+							help={ translate( 'Type and press Enter to add; click x to remove.' ) }
+						/>
+					</div>
 					{ isNameTouched && nameError ? (
 						<p className="create-space-modal__error" role="alert">
 							{ nameError }

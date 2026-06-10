@@ -37,6 +37,19 @@ describe( 'CreateSpaceModal', () => {
 		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeEnabled();
 	} );
 
+	it( 'shows the identity step with name and tags fields only', () => {
+		setup();
+
+		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'A space bundles sources with its own layout, color and feel.' )
+		).toBeVisible();
+		expect( screen.getByText( 'Identity' ) ).toBeVisible();
+		expect( screen.getByLabelText( 'Name' ) ).toBeVisible();
+		expect( screen.getByLabelText( 'Tags' ) ).toBeVisible();
+		expect( screen.queryByLabelText( 'Description' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'shows a required error once the name is cleared', async () => {
 		const { user } = setup();
 
