@@ -3,11 +3,13 @@ import { Icon, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { useSpaces } from 'calypso/reader/data/spaces';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
-import { SPACES, SPACES_BASE_PATH } from 'calypso/reader/spaces/spaces-data';
+import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
+import { SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { SpaceMenuItem } from './space-menu-item';
+import { SpaceMenuItem } from './menu-item';
 
 import './style.scss';
 
@@ -23,14 +25,16 @@ function getActiveSpaceId( path: string ): string | null {
 	return match ? match[ 1 ] : null;
 }
 
-function ReaderSidebarSpaces( { path }: Props ) {
+export function ReaderSidebarSpaces( { path }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const spaces = useSpaces();
 
 	const activeId = getActiveSpaceId( path );
 	const isOnSpaces = path === SPACES_BASE_PATH || path.startsWith( `${ SPACES_BASE_PATH }/` );
 
 	const [ isOpen, setIsOpen ] = useState( () => isOnSpaces );
+	const [ isCreateModalOpen, setIsCreateModalOpen ] = useState( false );
 
 	useEffect( () => {
 		if ( isOnSpaces ) {
@@ -42,8 +46,9 @@ function ReaderSidebarSpaces( { path }: Props ) {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_space_clicked', { space: id } ) );
 	};
 
-	const recordAddSpaceClick = () => {
+	const handleAddSpaceClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_spaces_add_clicked' ) );
+		setIsCreateModalOpen( true );
 	};
 
 	const handleMainClick = () => {
@@ -74,7 +79,7 @@ function ReaderSidebarSpaces( { path }: Props ) {
 				materialIcon={ null }
 				materialIconStyle={ null }
 			>
-				{ SPACES.map( ( space ) => (
+				{ spaces.map( ( space ) => (
 					<SpaceMenuItem
 						key={ space.id }
 						space={ space }
@@ -82,14 +87,12 @@ function ReaderSidebarSpaces( { path }: Props ) {
 						onClick={ () => recordSpaceClick( space.id ) }
 					/>
 				) ) }
-				<AddMenuItem
-					label={ translate( 'Add a space' ) }
-					href={ SPACES_BASE_PATH }
-					onClick={ recordAddSpaceClick }
-				/>
+				<AddMenuItem label={ translate( 'Add a space' ) } onClick={ handleAddSpaceClick } />
 			</ExpandableSidebarMenu>
+			<CreateSpaceModal
+				isOpen={ isCreateModalOpen }
+				onClose={ () => setIsCreateModalOpen( false ) }
+			/>
 		</li>
 	);
 }
-
-export default ReaderSidebarSpaces;

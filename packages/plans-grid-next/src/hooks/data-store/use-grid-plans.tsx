@@ -477,10 +477,11 @@ const useGridPlans: UseGridPlansType = ( {
 			}
 		}
 
-		const productNameShort =
-			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
-				? planConstantObj.getPathSlug()
-				: planObject?.productNameShort ?? null;
+		// The enterprise plan isn't returned by the plans endpoint, so it has no
+		// server-provided product name; fall back to its fixed path slug.
+		const productNameShort = isWpcomEnterpriseGridPlan( planSlug )
+			? 'enterprise'
+			: planObject?.productNameShort ?? null;
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =

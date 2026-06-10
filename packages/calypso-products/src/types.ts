@@ -153,7 +153,6 @@ export interface WPComPlan extends Plan {
 	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getSenseiHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
@@ -221,7 +220,6 @@ export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getWhatIsIncluded: () => Array< TranslateResult >;
 	getBenefits: () => Array< TranslateResult >;
 	getRecommendedFor: () => Array< JetpackTag >;
@@ -390,7 +388,6 @@ export type Plan = BillingTerm & {
 		isCurrentPlan?: boolean
 	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
-	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
