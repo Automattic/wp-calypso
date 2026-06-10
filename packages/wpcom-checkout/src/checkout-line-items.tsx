@@ -456,6 +456,17 @@ export function BundleLineItem( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+	// The backend applies the bundle discount as a cost override on each member, so
+	// the pre-discount group price is the sum of the members' original subtotals.
+	const bundleOriginalInteger = products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const bundleOriginalDisplay = formatCurrency( bundleOriginalInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
 	const bundleLabel = String( translate( 'Domain bundle' ) );
 
 	const removeBundleFromCart = () => {
@@ -475,7 +486,10 @@ export function BundleLineItem( {
 			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ bundleTotalDisplay } />
+				<LineItemPrice
+					actualAmount={ bundleTotalDisplay }
+					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+				/>
 			</span>
 
 			{ products.map( ( product ) => (
