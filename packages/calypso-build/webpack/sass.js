@@ -278,12 +278,7 @@ module.exports.plugins = ( { chunkFilename, filename, rtl = true } ) =>
 			attributes: {
 				'data-webpack': true,
 			},
-			// v2 auto-enables importModule on webpack 5.33.2+, but CSS extraction
-			// fails with "window is not defined" because DefinePlugin replaces
-			// `global` with `window` which doesn't exist in the Node.js execution
-			// context used by importModule. Falling back to the child compiler
-			// approach used by v1.
-			experimentalUseImportModule: false,
+			experimentalUseImportModule: true,
 		} ),
 		new MiniCSSRuntimeFullHashPlugin(),
 		rtl && new MiniCSSWithRTLPlugin(),
