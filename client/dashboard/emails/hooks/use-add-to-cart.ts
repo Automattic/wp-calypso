@@ -1,4 +1,4 @@
-import { useParams, useRouter } from '@tanstack/react-router';
+import { useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -17,9 +17,10 @@ export const useAddToCart = () => {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { provider, interval } = useParams( { strict: false } );
+	const { tier } = useSearch( { strict: false } );
 	const { domain, domainName, site } = useDomainFromUrlParam();
 
-	const emailProduct = useEmailProduct( provider, interval, domain );
+	const emailProduct = useEmailProduct( provider, interval, domain, tier );
 	const router = useRouter();
 
 	const addToCart = async ( {
