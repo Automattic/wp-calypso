@@ -12,11 +12,25 @@ const memoryStore: Preferences[ 'calypso_preferences' ] = {
 	help_center_router_history: null,
 };
 
+/**
+ * Identifies the app/product the Help Center is running inside (e.g. 'a4a').
+ *
+ */
+let helpCenterAppId: string | undefined;
+
+export function setHelpCenterAppId( appId: string | undefined ): void {
+	helpCenterAppId = appId;
+}
+
+function scopedKey< T extends keyof Preferences[ 'calypso_preferences' ] >( key: T ): T {
+	return ( helpCenterAppId ? `${ key }_${ helpCenterAppId }` : key ) as T;
+}
+
 export function deleteValuesSafely(): void {
 	try {
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_open' );
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_minimized' );
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_router_history' );
+		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_open' ) );
+		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_minimized' ) );
+		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_router_history' ) );
 	} catch ( error ) {
 		memoryStore.help_center_open = undefined;
 		memoryStore.help_center_minimized = false;
@@ -29,7 +43,7 @@ export function persistValueSafely< T extends keyof Preferences[ 'calypso_prefer
 	value: Preferences[ 'calypso_preferences' ][ T ]
 ): void {
 	try {
-		window.localStorage.setItem( PREFERENCES_KEY + key, JSON.stringify( value ) );
+		window.localStorage.setItem( PREFERENCES_KEY + scopedKey( key ), JSON.stringify( value ) );
 	} catch ( error ) {
 		memoryStore[ key ] = value;
 	}
@@ -39,7 +53,11 @@ export function retrieveValueSafely< T extends keyof Preferences[ 'calypso_prefe
 	key: T
 ): Preferences[ 'calypso_preferences' ][ T ] | undefined {
 	try {
-		const value = window.localStorage.getItem( PREFERENCES_KEY + key );
+		// Prefer this app's scoped value, falling back to the shared (unscoped)
+		// one when it hasn't stored its own yet. Mapped onto the original key.
+		const value =
+			window.localStorage.getItem( PREFERENCES_KEY + scopedKey( key ) ) ??
+			window.localStorage.getItem( PREFERENCES_KEY + key );
 		return value ? JSON.parse( value ) : undefined;
 	} catch ( error ) {
 		return memoryStore[ key ];
@@ -77,7 +95,8 @@ export async function getPersistedPreference<
 
 	if ( isLoggedIn ) {
 		const preferences = await getCalypsoPreferences();
-		return preferences[ key ];
+		const scopedValue = preferences[ scopedKey( key ) ];
+		return scopedValue ?? preferences[ key ];
 	}
 
 	return retrieveValueSafely( key );
@@ -96,7 +115,7 @@ export function persistPreference< T extends keyof Preferences[ 'calypso_prefere
 		return;
 	}
 
-	const newPreferences = { [ preference ]: value };
+	const newPreferences = { [ scopedKey( preference ) ]: value };
 
 	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
