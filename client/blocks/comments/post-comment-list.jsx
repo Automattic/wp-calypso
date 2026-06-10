@@ -139,7 +139,19 @@ class PostCommentList extends Component {
 		if ( prevState !== this.state && prevProps === this.props ) {
 			return;
 		}
-		this.initialFetches();
+		// Only re-run the initial fetches when one of their inputs actually
+		// changes. Running on every update can loop: `initialFetches` calls
+		// `setState`, which (under React 19's stricter update accounting) can
+		// re-enter `componentDidUpdate` and trigger another fetch, exceeding the
+		// maximum update depth.
+		if (
+			prevProps.isInitialCommentLoading !== this.props.isInitialCommentLoading ||
+			prevProps.startingCommentId !== this.props.startingCommentId ||
+			prevProps.initialComment !== this.props.initialComment ||
+			prevProps.commentsTree !== this.props.commentsTree
+		) {
+			this.initialFetches();
+		}
 		if (
 			prevProps.siteId !== this.props.siteId ||
 			prevProps.postId !== this.props.postId ||
