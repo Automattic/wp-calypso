@@ -119,7 +119,7 @@ export function MasterbarCartButton( {
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveBundle={ ( groupId, memberCount ) => {
 							reduxDispatch(
-								recordTracksEvent( 'bundle_removed_from_cart', {
+								recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
 									domain_bundle_group_id: groupId,
 									domain_count: memberCount,
 								} )

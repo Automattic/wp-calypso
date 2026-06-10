@@ -225,13 +225,13 @@ export const useWPCOMDomainSearchEvents = ( {
 				);
 			},
 			onBundleShown: ( bundle ) => {
-				recordTracksEvent( 'bundle_shown', {
+				recordTracksEvent( 'calypso_domain_bundle_shown', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 				} );
 			},
 			onBundleAddToCart: ( bundle ) => {
-				recordTracksEvent( 'bundle_accepted', {
+				recordTracksEvent( 'calypso_domain_bundle_accepted', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 				} );

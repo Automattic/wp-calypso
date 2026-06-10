@@ -58,7 +58,7 @@ export const ResultsPage = () => {
 
 	useRequestTracking();
 
-	// Fire `bundle_shown` once per distinct bundle that actually renders. Keyed on
+	// Fire `onBundleShown` once per distinct bundle that actually renders. Keyed on
 	// the group id so a new bundle (different query/experiment arm) re-fires, but
 	// re-renders of the same bundle do not.
 	const shownBundleGroupId =
