@@ -492,6 +492,12 @@ export function BundleLineItem( {
 				/>
 			</span>
 
+			{ isBundleDiscounted && (
+				<LineItemMeta>
+					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
+				</LineItemMeta>
+			) }
+
 			{ products.map( ( product ) => (
 				<LineItemMeta key={ product.uuid }>
 					<span>{ product.meta }</span>

@@ -78,10 +78,11 @@ describe( 'BundleLineItem', () => {
 		expect( screen.getByText( /\$40\b/ ) ).toBeVisible();
 	} );
 
-	test( 'shows no crossed-out price when the bundle is not discounted', () => {
+	test( 'shows no crossed-out price or discount callout when the bundle is not discounted', () => {
 		const { container } = renderBundle();
 
 		expect( container.querySelector( 's' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Discount for first year' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the summed original price crossed out when the bundle is discounted', () => {
@@ -93,6 +94,7 @@ describe( 'BundleLineItem', () => {
 		const crossedOut = screen.getByText( /\$129\b/ );
 		expect( crossedOut ).toBeVisible();
 		expect( crossedOut.tagName ).toBe( 'S' );
+		expect( screen.getByText( 'Discount for first year' ) ).toBeVisible();
 	} );
 
 	test( 'shows no remove button without hasDeleteButton', () => {
