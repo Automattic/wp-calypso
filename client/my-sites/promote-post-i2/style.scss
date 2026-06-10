@@ -275,6 +275,11 @@ body.is-section-promote-post-i2 {
 	}
 }
 
+// Breathing room between the last content block and the sticky footer.
+.promote-post-i2__page-body {
+	padding-bottom: 32px;
+}
+
 .promote-post-i2 {
 	&__promote-button.is-primary {
 		background-color: $blaze-red;

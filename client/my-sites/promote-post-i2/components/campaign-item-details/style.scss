@@ -4,10 +4,11 @@
 @import "../../style";
 
 body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
-	margin: 0 64px;
+	// The bottom margin keeps the last content block clear of the sticky footer.
+	margin: 0 64px 32px;
 
 	@media (max-width: $break-medium) {
-		margin: 0;
+		margin: 0 0 32px;
 	}
 }
 
