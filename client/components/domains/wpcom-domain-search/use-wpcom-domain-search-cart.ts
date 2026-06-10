@@ -167,17 +167,37 @@ export const useWPCOMDomainSearchCart = ( {
 					} )
 				);
 
+				// A bundle member may already sit in the cart as a standalone
+				// product. The backend dedupes by product+meta keeping the last
+				// occurrence, which would strip the bundle extras from the member —
+				// so drop the standalone copy and let the bundle-tagged one win.
+				const isBundleMember = ( product: ResponseCartProduct ) =>
+					bundle.domains.some(
+						( member ) =>
+							member.product_slug === product.product_slug && member.domain === product.meta
+					);
+
 				const cartItems = await replaceProductsInCart( [
 					...bundleProducts,
-					...responseCart.products,
+					...responseCart.products.filter( ( product ) => ! isBundleMember( product ) ),
 				] );
 
+				// The backend enforces bundle integrity by silently stripping an
+				// incomplete group from the cart (e.g. a member became unavailable
+				// between suggestion and add) rather than returning a cart error, so
+				// the promise resolves even when the bundle didn't make it in. Turn
+				// that absence into an error so the mutation captures the failure
+				// instead of reporting success or continuing with a partial bundle.
+				const bundleItemsInCart = cartItems.products.filter(
+					( item ) => item.extra?.domain_bundle_group_id === bundle.bundle_group_id
+				);
+
+				if ( bundleItemsInCart.length < bundle.domains.length ) {
+					throw new Error( 'The domain bundle could not be added to the cart.' );
+				}
+
 				if ( ! flowAllowsMultipleDomainsInCart ) {
-					return onContinue(
-						cartItems.products.filter(
-							( item ) => item.extra?.domain_bundle_group_id === bundle.bundle_group_id
-						)
-					);
+					return onContinue( bundleItemsInCart );
 				}
 
 				return cartItems;
