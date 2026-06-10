@@ -98,7 +98,7 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use( webpackMiddleware( compiler ) );
+	app.use( webpackMiddleware( compiler, { stats: 'errors-warnings' } ) );
 	app.use( hotMiddleware( compiler ) );
 }
 

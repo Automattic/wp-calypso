@@ -1,23 +1,39 @@
 /**
  * @jest-environment jsdom
  */
+import { readSpacesQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
-import { SPACES, SPACES_BASE_PATH, getSpacePath } from 'calypso/reader/spaces/spaces-data';
-import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
-import ReaderSidebarSpaces from '../index';
+import userEvent from '@testing-library/user-event';
+import { getSpacePath } from 'calypso/reader/spaces/routes';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ReaderSidebarSpaces } from '../index';
+import type { ReadSpace } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );
 
+const SPACES: ReadSpace[] = [
+	{ id: 'work', name: 'Work', tags: [], color: 'blue', icon: 'inbox' },
+	{ id: 'gaming', name: 'Gaming', tags: [], color: 'purple', icon: 'box' },
+];
+
 // Render on a space route so the expandable menu starts open and its rows are
 // visible (collapsed content is `hidden`, hence not accessible).
 const FIRST_SPACE = SPACES[ 0 ];
 const OPEN_PATH = getSpacePath( FIRST_SPACE.id );
 
+function render( ui: React.ReactElement ) {
+	// Seed the spaces list so `useSpaces()` resolves synchronously.
+	const queryClient = new QueryClient();
+	queryClient.setQueryData( readSpacesQuery().queryKey, [ ...SPACES ] );
+	return renderWithProvider( ui, { queryClient } );
+}
+
 describe( 'ReaderSidebarSpaces', () => {
-	it( 'renders every hard-coded space with a link to its page', () => {
+	it( 'renders every space with a link to its page', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		SPACES.forEach( ( space ) => {
@@ -46,12 +62,16 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( container.querySelector( 'li.sidebar__menu-item.selected' ) ).toBeNull();
 	} );
 
-	it( 'renders an "Add a space" link to the spaces landing route', () => {
+	it( 'opens the create-space modal from the "Add a space" button', async () => {
+		const user = userEvent.setup();
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
-		expect( screen.getByRole( 'link', { name: 'Add a space' } ) ).toHaveAttribute(
-			'href',
-			SPACES_BASE_PATH
-		);
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+
+		const dialog = await screen.findByRole( 'dialog' );
+		expect( dialog ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
 	} );
 } );

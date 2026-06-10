@@ -179,10 +179,7 @@ function FeatureClipEmptyState(): JSX.Element {
 	return (
 		<>
 			<p className="image-studio-feature-clip-panel__description">
-				{ __(
-					'Turn this post into a short vertical video. Powered by your site guidelines.',
-					__i18n_text_domain__
-				) }
+				{ __( 'Turn this post into a short vertical video.', __i18n_text_domain__ ) }
 			</p>
 			<Button
 				variant="secondary"

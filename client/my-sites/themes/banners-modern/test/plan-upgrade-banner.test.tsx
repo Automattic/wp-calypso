@@ -16,6 +16,20 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( () => '$96' ),
 } ) );
 
+// The banner resolves the plan path slug from the `/plans` query and keeps its
+// CTA disabled until that data loads, so provide it.
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: () => ( {
+		data: [
+			{ product_slug: 'business-bundle', path_slug: 'business' },
+			{ product_slug: 'business-bundle-monthly', path_slug: 'business-monthly' },
+			{ product_slug: 'value_bundle', path_slug: 'premium' },
+			{ product_slug: 'value_bundle_monthly', path_slug: 'premium-monthly' },
+		],
+	} ),
+} ) );
+
 describe( 'PlanUpgradeBanner', () => {
 	beforeEach( () => {
 		mockRecordTracksEvent.mockClear();

@@ -213,8 +213,10 @@ export function Nav2026MobileMenu( {
 					) }
 				</div>
 				<div className="x-menu-mobile-footer" ref={ mobileFooterRef }>
+					{ /* Top-level screen only; hidden while a category is drilled into. */ }
 					<Nav2026AppBanner
 						mobilePlatform={ mobilePlatform }
+						isHidden={ !! activeCategory }
 						tabIndex={ mobileMenuTabIndex }
 						localizeUrl={ localizeUrl }
 						__={ __ }

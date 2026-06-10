@@ -1,9 +1,11 @@
 import { Icon } from '@wordpress/icons';
 import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
-import { getSpacePath, type Space } from 'calypso/reader/spaces/spaces-data';
+import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
+import { getSpacePath } from 'calypso/reader/spaces/routes';
+import type { ReadSpace } from '@automattic/api-core';
 
 interface Props {
-	space: Space;
+	space: ReadSpace;
 	isSelected: boolean;
 	onClick: () => void;
 }
@@ -20,7 +22,7 @@ export function SpaceMenuItem( { space, isSelected, onClick }: Props ) {
 				onClick={ onClick }
 			>
 				<span className="sidebar-spaces__icon" aria-hidden="true">
-					<Icon icon={ space.icon } size={ 18 } />
+					<Icon icon={ SPACE_ICONS[ space.icon ] } size={ 18 } />
 				</span>
 				<span className="sidebar-spaces__text">
 					<span className="sidebar-spaces__name">{ space.name }</span>

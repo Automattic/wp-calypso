@@ -5,6 +5,8 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
 import { spaces } from './controller';
 
+// Default export required: the section loader invokes `module.default`
+// (see `client/sections-middleware.js`).
 export default function initSpaces() {
 	page( '/reader/spaces', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );
 	page( '/reader/spaces/:id', sidebar, setBeforePrimary, spaces, makeLayout, clientRender );

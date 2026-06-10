@@ -3049,7 +3049,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => i18n.translate( 'No expiration date' ),
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
-		getPathSlug: () => 'beginner',
 	},
 
 	[ PLAN_BLOGGER ]: {
@@ -3058,7 +3057,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1010,
 		getStoreSlug: () => PLAN_BLOGGER,
-		getPathSlug: () => 'blogger',
 	},
 
 	[ PLAN_BLOGGER_2_YEARS ]: {
@@ -3067,7 +3065,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		getProductId: () => 1030,
 		getStoreSlug: () => PLAN_BLOGGER_2_YEARS,
-		getPathSlug: () => 'blogger-2-years',
 	},
 
 	[ PLAN_PERSONAL_MONTHLY ]: {
@@ -3075,7 +3072,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 1019,
 		getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
-		getPathSlug: () => 'personal-monthly',
 	},
 
 	[ PLAN_PERSONAL ]: {
@@ -3084,7 +3080,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
-		getPathSlug: () => 'personal',
 	},
 
 	[ PLAN_PERSONAL_2_YEARS ]: {
@@ -3093,7 +3088,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		getProductId: () => 1029,
 		getStoreSlug: () => PLAN_PERSONAL_2_YEARS,
-		getPathSlug: () => 'personal-2-years',
 	},
 
 	[ PLAN_PERSONAL_3_YEARS ]: {
@@ -3102,7 +3096,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
 		getProductId: () => 1049,
 		getStoreSlug: () => PLAN_PERSONAL_3_YEARS,
-		getPathSlug: () => 'personal-3-years',
 	},
 
 	[ PLAN_STUDENT ]: {
@@ -3111,7 +3104,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1090,
 		getStoreSlug: () => PLAN_STUDENT,
-		getPathSlug: () => 'student',
 	},
 
 	[ PLAN_PREMIUM_MONTHLY ]: {
@@ -3119,7 +3111,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 1013,
 		getStoreSlug: () => PLAN_PREMIUM_MONTHLY,
-		getPathSlug: () => 'premium-monthly',
 	},
 
 	[ PLAN_PREMIUM ]: {
@@ -3128,7 +3119,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1003,
 		getStoreSlug: () => PLAN_PREMIUM,
-		getPathSlug: () => 'premium',
 	},
 
 	[ PLAN_PREMIUM_2_YEARS ]: {
@@ -3137,7 +3127,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		getProductId: () => 1023,
 		getStoreSlug: () => PLAN_PREMIUM_2_YEARS,
-		getPathSlug: () => 'premium-2-years',
 	},
 
 	[ PLAN_PREMIUM_3_YEARS ]: {
@@ -3146,7 +3135,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
 		getProductId: () => 1043,
 		getStoreSlug: () => PLAN_PREMIUM_3_YEARS,
-		getPathSlug: () => 'premium-3-years',
 	},
 
 	[ PLAN_BUSINESS_MONTHLY ]: {
@@ -3154,7 +3142,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
-		getPathSlug: () => 'business-monthly',
 	},
 
 	[ PLAN_BUSINESS ]: {
@@ -3163,7 +3150,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
-		getPathSlug: () => 'business',
 	},
 
 	[ PLAN_BUSINESS_2_YEARS ]: {
@@ -3172,7 +3158,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
-		getPathSlug: () => 'business-2-years',
 	},
 
 	[ PLAN_BUSINESS_3_YEARS ]: {
@@ -3181,7 +3166,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
 		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
-		getPathSlug: () => 'business-3-years',
 	},
 
 	[ PLAN_A4A_BUSINESS ]: {
@@ -3190,7 +3174,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 3300,
 		getStoreSlug: () => PLAN_A4A_BUSINESS,
-		getPathSlug: () => 'a4a-business',
 	},
 
 	[ PLAN_A4A_BUSINESS_MONTHLY ]: {
@@ -3198,7 +3181,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 3301,
 		getStoreSlug: () => PLAN_A4A_BUSINESS_MONTHLY,
-		getPathSlug: () => 'a4a-business-monthly',
 	},
 
 	[ PLAN_100_YEARS ]: {
@@ -3220,7 +3202,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1061,
 		getStoreSlug: () => PLAN_100_YEARS,
-		getPathSlug: () => 'wp_bundle_hundred_year',
 	},
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
@@ -3228,7 +3209,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
-		getPathSlug: () => 'ecommerce-monthly',
 	},
 
 	[ PLAN_ECOMMERCE ]: {
@@ -3237,7 +3217,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
-		getPathSlug: () => 'ecommerce',
 	},
 
 	[ PLAN_ECOMMERCE_2_YEARS ]: {
@@ -3246,7 +3225,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
-		getPathSlug: () => 'ecommerce-2-years',
 	},
 
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
@@ -3256,7 +3234,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => translate( 'per month' ),
 		getProductId: () => 1053,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-		getPathSlug: () => 'wooexpress-medium-monthly',
 	},
 
 	[ PLAN_WOOEXPRESS_MEDIUM ]: {
@@ -3266,7 +3243,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOOEXPRESS_MEDIUM,
 		getProductId: () => 1055,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
-		getPathSlug: () => 'wooexpress-medium-yearly',
 	},
 
 	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
@@ -3276,7 +3252,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => translate( 'per month' ),
 		getProductId: () => 1054,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,
-		getPathSlug: () => 'wooexpress-small-monthly',
 	},
 
 	[ PLAN_WOOEXPRESS_SMALL ]: {
@@ -3286,7 +3261,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		getProductId: () => 1056,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL,
-		getPathSlug: () => 'wooexpress-small-yearly',
 	},
 
 	// Not a real plan. This is used to show the Plus offering in the Woo Express plans grid
@@ -3307,7 +3281,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
 		getProductId: () => 4005,
 		getStoreSlug: () => PLAN_WOO_HOSTED_FREE,
-		getPathSlug: () => 'woo-hosted-free',
 	},
 
 	[ PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ]: {
@@ -3323,7 +3296,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getTagline: () => 'Learn more about everything included with Woo Free Trial.',
 		getProductId: () => 4006,
 		getStoreSlug: () => PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
-		getPathSlug: () => 'woo-hosted-free-trial-monthly',
 	},
 
 	[ PLAN_WOO_HOSTED_BASIC_MONTHLY ]: {
@@ -3332,7 +3304,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOO_HOSTED_BASIC,
 		getProductId: () => 4001,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC_MONTHLY,
-		getPathSlug: () => 'woo-hosted-basic-monthly',
 	},
 
 	[ PLAN_WOO_HOSTED_BASIC ]: {
@@ -3341,7 +3312,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOO_HOSTED_BASIC,
 		getProductId: () => 4002,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC,
-		getPathSlug: () => 'woo-hosted-basic',
 	},
 
 	[ PLAN_WOO_HOSTED_PRO_MONTHLY ]: {
@@ -3350,7 +3320,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOO_HOSTED_PRO,
 		getProductId: () => 4003,
 		getStoreSlug: () => PLAN_WOO_HOSTED_PRO_MONTHLY,
-		getPathSlug: () => 'woo-hosted-pro-monthly',
 	},
 
 	[ PLAN_WOO_HOSTED_PRO ]: {
@@ -3359,7 +3328,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_WOO_HOSTED_PRO,
 		getProductId: () => 4004,
 		getStoreSlug: () => PLAN_WOO_HOSTED_PRO,
-		getPathSlug: () => 'woo-hosted-pro',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in
@@ -3370,7 +3338,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => '',
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
-		getPathSlug: () => 'enterprise',
 	},
 	[ PLAN_ECOMMERCE_3_YEARS ]: {
 		...getPlanEcommerceDetails(),
@@ -3378,7 +3345,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
 		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
-		getPathSlug: () => 'ecommerce-3-years',
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
@@ -3448,7 +3414,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getProductId: () => 2000,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM,
-		getPathSlug: () => 'premium',
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -3456,7 +3421,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 2003,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM_MONTHLY,
-		getPathSlug: () => 'premium-monthly',
 	},
 
 	[ PLAN_JETPACK_PERSONAL ]: {
@@ -3464,7 +3428,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getProductId: () => 2005,
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL,
-		getPathSlug: () => 'jetpack-personal',
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -3472,7 +3435,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 2006,
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL_MONTHLY,
-		getPathSlug: () => 'jetpack-personal-monthly',
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
@@ -3480,7 +3442,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getProductId: () => 2001,
 		getStoreSlug: () => PLAN_JETPACK_BUSINESS,
-		getPathSlug: () => 'professional',
 	},
 
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -3488,7 +3449,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 2004,
 		getStoreSlug: () => PLAN_JETPACK_BUSINESS_MONTHLY,
-		getPathSlug: () => 'professional-monthly',
 	},
 
 	[ PLAN_JETPACK_SECURITY_DAILY ]: {
@@ -3496,7 +3456,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getMonthlySlug: () => PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_DAILY,
-		getPathSlug: () => 'security-daily',
 		getProductId: () => 2010,
 	},
 
@@ -3505,7 +3464,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getAnnualSlug: () => PLAN_JETPACK_SECURITY_DAILY,
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-		getPathSlug: () => 'security-daily-monthly',
 		getProductId: () => 2011,
 	},
 
@@ -3514,7 +3472,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getMonthlySlug: () => PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_REALTIME,
-		getPathSlug: () => 'security-realtime',
 		getProductId: () => 2012,
 	},
 
@@ -3523,7 +3480,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getAnnualSlug: () => PLAN_JETPACK_SECURITY_REALTIME,
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-		getPathSlug: () => 'security-realtime-monthly',
 		getProductId: () => 2013,
 	},
 
@@ -3531,7 +3487,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackCompleteDetails(),
 		...getBiAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_BI_YEARLY,
-		getPathSlug: () => 'complete-bi-yearly',
 		getProductId: () => 2035,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -3566,7 +3521,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackCompleteDetails(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
-		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
 		getMonthlySlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getProductsIncluded: () => [
@@ -3602,7 +3556,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackCompleteDetails(),
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
-		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
 		getAnnualSlug: () => PLAN_JETPACK_COMPLETE,
 		getProductsIncluded: () => [
@@ -3638,7 +3591,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackSecurityT1Details(),
 		...getBiAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
-		getPathSlug: () => 'security-20gb-bi-yearly',
 		getProductId: () => 2034,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
@@ -3659,7 +3611,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackSecurityT1Details(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
-		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
@@ -3680,7 +3631,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackSecurityT1Details(),
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
-		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
@@ -3701,7 +3651,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackSecurityT2Details(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
-		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -3734,7 +3683,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackSecurityT2Details(),
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
-		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
@@ -3767,7 +3715,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackStarterDetails(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_STARTER_YEARLY,
-		getPathSlug: () => 'starter-yearly',
 		getProductId: () => 2030,
 		getProductsIncluded: () => [ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_ANTI_SPAM ],
 		getWhatIsIncluded: () => [
@@ -3783,7 +3730,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanJetpackStarterDetails(),
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_STARTER_MONTHLY,
-		getPathSlug: () => 'starter-monthly',
 		getProductId: () => 2031,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
@@ -3803,7 +3749,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 2021,
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
-		getPathSlug: () => 'growth-monthly',
 		getProductsIncluded: () => [ PRODUCT_JETPACK_STATS_MONTHLY, PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ],
 	},
 
@@ -3812,7 +3757,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getProductId: () => 2022,
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_YEARLY,
-		getPathSlug: () => 'growth-yearly',
 		getMonthlySlug: () => PLAN_JETPACK_GROWTH_MONTHLY,
 		getProductsIncluded: () => [ PRODUCT_JETPACK_STATS_YEARLY, PRODUCT_JETPACK_SOCIAL_V1_YEARLY ],
 	},
@@ -3822,7 +3766,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getBiAnnualTimeframe(),
 		getProductId: () => 2023,
 		getStoreSlug: () => PLAN_JETPACK_GROWTH_BI_YEARLY,
-		getPathSlug: () => 'growth-bi-yearly',
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
@@ -3834,7 +3777,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getAnnualTimeframe(),
 		getMonthlySlug: () => PLAN_JETPACK_GOLDEN_TOKEN,
 		getStoreSlug: () => PLAN_JETPACK_GOLDEN_TOKEN,
-		getPathSlug: () => 'golden-token',
 		getProductId: () => 2900,
 	},
 
@@ -3888,7 +3830,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		getProductId: () => 1040,
 		getStoreSlug: () => PLAN_P2_PLUS,
-		getPathSlug: () => 'p2-plus',
 		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
 };
@@ -3928,7 +3869,6 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getTitle: () => i18n.translate( 'WordPress Starter' ),
 	getProductId: () => 1033,
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
-	getPathSlug: () => 'starter',
 	getDescription: () =>
 		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
 	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
@@ -3964,7 +3904,6 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	term: TERM_ANNUALLY,
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
-	getPathSlug: () => 'pro',
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 };
 
@@ -3973,7 +3912,6 @@ PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
 	...getMonthlyTimeframe(),
 	getProductId: () => 1034,
 	getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
-	getPathSlug: () => 'pro-monthly',
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO_2_YEARS ] = {
@@ -3981,7 +3919,6 @@ PLANS_LIST[ PLAN_WPCOM_PRO_2_YEARS ] = {
 	term: TERM_BIENNIALLY,
 	getProductId: () => 1035,
 	getStoreSlug: () => PLAN_WPCOM_PRO_2_YEARS,
-	getPathSlug: () => 'pro-2-years',
 	getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 };
 
@@ -3990,7 +3927,6 @@ PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	type: TYPE_ECOMMERCE,
 	group: GROUP_WPCOM,
 	getProductId: () => 1052,
-	getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -4005,7 +3941,6 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 		type: TYPE_BUSINESS,
 		group: GROUP_WPCOM,
 		getProductId: () => 1057,
-		getPathSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
 		term: TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
@@ -4019,7 +3954,6 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
-	getPathSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'Try it for 3 days' ),
 	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
@@ -4033,7 +3967,6 @@ PLANS_LIST[ PLAN_PERSONAL_TRIAL_MONTHLY ] = {
 	...getMonthlyTimeframe(),
 	getProductId: () => 1059,
 	getStoreSlug: () => PLAN_PERSONAL_TRIAL_MONTHLY,
-	getPathSlug: () => 'personal-trial-monthly',
 	getPlanCompareFeatures: () =>
 		compact(
 			[

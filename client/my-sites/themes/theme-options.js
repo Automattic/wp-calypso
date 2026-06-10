@@ -58,18 +58,16 @@ import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
- * Get the checkout path slug for the given site and minimum plan.
+ * Get the plan slug to use in a checkout URL for the given site and minimum plan.
  * @param {Object} state
  * @param {number} siteId
  * @param {string} minimumPlan
  * @returns
  */
-function getPlanPathSlugForThemes( state, siteId, minimumPlan ) {
+function getPlanSlugForThemes( state, siteId, minimumPlan ) {
 	const currentPlanSlug = getSitePlanSlug( state, siteId );
 	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
-	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
-	const mappedPlan = getPlan( requiredPlanSlug );
-	return mappedPlan?.getPathSlug();
+	return findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
 }
 
 function getAllThemeOptions( { translate, isFSEActive } ) {
@@ -95,9 +93,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 
-			const planPathSlug = getPlanPathSlugForThemes( state, siteId, tierMinimumUpsellPlan );
+			const planSlug = getPlanSlugForThemes( state, siteId, tierMinimumUpsellPlan );
 
-			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
@@ -183,9 +181,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
+			const planSlug = getPlanSlugForThemes( state, siteId, PLAN_BUSINESS );
 
-			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
@@ -222,13 +220,13 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const currentPlanSlug = getSitePlanSlug( state, siteId );
 			const isEcommerceTrialMonthly = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
-			const planPathSlug = getPlanPathSlugForThemes(
+			const planSlug = getPlanSlugForThemes(
 				state,
 				siteId,
 				isEcommerceTrialMonthly ? PLAN_ECOMMERCE : PLAN_BUSINESS
 			);
 
-			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
