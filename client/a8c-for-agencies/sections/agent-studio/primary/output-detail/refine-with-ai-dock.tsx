@@ -15,7 +15,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { close, comment } from '@wordpress/icons';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -254,13 +254,28 @@ export default function RefineWithAiDock( {
 	const isProcessing = activeRun !== null || refine.isPending || queuedInstructions.length > 0;
 
 	// Plain strings — primitives compared by value, so memoizing buys nothing.
-	const thinkingMessage = activeRun
-		? sprintf(
-				/* translators: %d is the 1-based page number being refined. */
-				__( 'Updating page %d…' ),
-				activeRun.userFacingPage
-		  )
-		: undefined;
+	// With a batch in flight (annotate mode), surface how many edits still wait
+	// behind the active run so the user knows the work isn't done yet.
+	const queuedCount = queuedInstructions.length;
+	let thinkingMessage: string | undefined;
+	if ( activeRun && queuedCount > 0 ) {
+		thinkingMessage = sprintf(
+			/* translators: %1$d is the 1-based page number being refined, %2$d is the number of edits still waiting in the queue. */
+			_n(
+				'Updating page %1$d… %2$d more edit queued.',
+				'Updating page %1$d… %2$d more edits queued.',
+				queuedCount
+			),
+			activeRun.userFacingPage,
+			queuedCount
+		);
+	} else if ( activeRun ) {
+		thinkingMessage = sprintf(
+			/* translators: %d is the 1-based page number being refined. */
+			__( 'Updating page %d…' ),
+			activeRun.userFacingPage
+		);
+	}
 
 	// totalPages includes the cover; the lowest refinable page is 2.
 	const placeholderHint = sprintf(
