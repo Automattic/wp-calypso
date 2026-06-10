@@ -4,6 +4,7 @@ import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
@@ -26,6 +27,31 @@ const entrepreneurFlow: Flow = {
 	isSignupFlow: true,
 
 	useSteps() {
+		const [ searchParams ] = useSearchParams();
+		const SESSION_KEY = 'entrepreneur_from_playground_publish';
+		const SESSION_PG_KEY = 'entrepreneur_playground_id';
+		if ( searchParams.get( 'from' ) === 'playground-publish' ) {
+			sessionStorage.setItem( SESSION_KEY, '1' );
+		}
+		const playgroundId = searchParams.get( 'playground' );
+		if ( playgroundId ) {
+			sessionStorage.setItem( SESSION_PG_KEY, playgroundId );
+		}
+		const isPlaygroundPublish = sessionStorage.getItem( SESSION_KEY ) === '1';
+
+		// When launched from the Playground publish flow skip straight to site
+		// creation — the WC trial is provisioned in SITE_CREATION_STEP regardless.
+		if ( isPlaygroundPublish ) {
+			return stepsWithRequiredLogin( [
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.WAIT_FOR_ATOMIC,
+				STEPS.WAIT_FOR_PLUGIN_INSTALL,
+				STEPS.IMPORTER_PLAYGROUND,
+				STEPS.ERROR,
+			] );
+		}
+
 		// Replacing the `segmentation-survey` slug with `start` as having the
 		// word `survey` in the address bar might discourage users from continuing.
 		const surveyStep = {
@@ -33,7 +59,7 @@ const entrepreneurFlow: Flow = {
 			...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
 		} as StepperStep;
 
-		const steps: StepperStep[] = [
+		return [
 			surveyStep,
 			...stepsWithRequiredLogin( [
 				STEPS.TRIAL_ACKNOWLEDGE,
@@ -44,8 +70,6 @@ const entrepreneurFlow: Flow = {
 				STEPS.ERROR,
 			] ),
 		];
-
-		return steps;
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -134,6 +158,19 @@ const entrepreneurFlow: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
+						const storedPlaygroundId = sessionStorage.getItem( 'entrepreneur_playground_id' );
+						if (
+							sessionStorage.getItem( 'entrepreneur_from_playground_publish' ) === '1' &&
+							storedPlaygroundId
+						) {
+							return navigateWithSiteId(
+								addQueryArgs( STEPS.IMPORTER_PLAYGROUND.slug, {
+									siteSlug: siteSlug || siteSlugDependency,
+									playground: storedPlaygroundId,
+								} )
+							);
+						}
+
 						if ( isMigrationFlow ) {
 							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
 							const migrationFlowUrl = addQueryArgs(
@@ -180,6 +217,14 @@ const entrepreneurFlow: Flow = {
 						siteId: siteId || siteIdDependency,
 						siteSlug: siteSlug || siteSlugDependency,
 					} );
+				}
+
+				case STEPS.IMPORTER_PLAYGROUND.slug: {
+					// Import complete — go to the new site's wp-admin.
+					if ( siteAdminUrl ) {
+						return window.location.assign( siteAdminUrl );
+					}
+					return window.location.assign( `/home/${ siteId }` );
 				}
 			}
 			return providedDependencies;

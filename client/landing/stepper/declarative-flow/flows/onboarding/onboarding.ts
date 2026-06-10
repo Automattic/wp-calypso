@@ -333,6 +333,15 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'playground':
 				case 'blueprint': {
+					if ( new URLSearchParams( window.location.search ).get( 'intent' ) === 'woocommerce' ) {
+						const playgroundId = new URLSearchParams( window.location.search ).get( 'playground' );
+						return window.location.assign(
+							addQueryArgs( '/setup/entrepreneur', {
+								from: 'playground-publish',
+								...( playgroundId ? { playground: playgroundId } : {} ),
+							} )
+						);
+					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
