@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { readSpacesQuery } from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -12,12 +13,26 @@ import type { ReadSpace } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
 } ) );
 
 const SPACES: ReadSpace[] = [
-	{ id: 'work', name: 'Work', tags: [], color: 'blue', icon: 'inbox' },
-	{ id: 'gaming', name: 'Gaming', tags: [], color: 'purple', icon: 'box' },
+	{
+		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+		name: 'Work',
+		tags: [],
+		color: 'blue',
+		icon: 'inbox',
+		sources: [],
+	},
+	{
+		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
+		name: 'Gaming',
+		tags: [],
+		color: 'purple',
+		icon: 'box',
+		sources: [],
+	},
 ];
 
 // Render on a space route so the expandable menu starts open and its rows are
@@ -33,6 +48,11 @@ function render( ui: React.ReactElement ) {
 }
 
 describe( 'ReaderSidebarSpaces', () => {
+	beforeEach( () => {
+		jest.mocked( page ).mockClear();
+		jest.mocked( page.replace ).mockClear();
+	} );
+
 	it( 'renders every space with a link to its page', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
@@ -73,5 +93,26 @@ describe( 'ReaderSidebarSpaces', () => {
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Create a new space' } ) ).toBeVisible();
+	} );
+
+	it( 'redirects to the new space sources action after creating a space', async () => {
+		const user = userEvent.setup();
+		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a space' } ) );
+		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		expect( page ).toHaveBeenCalledWith(
+			expect.stringMatching( /^\/reader\/spaces\/.+#action=manage-sources$/ )
+		);
+	} );
+
+	it( 'does not render the sources modal from the sidebar', () => {
+		render( <ReaderSidebarSpaces path={ `${ OPEN_PATH }#action=manage-sources` } /> );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'Sources for “Work”' } )
+		).not.toBeInTheDocument();
 	} );
 } );

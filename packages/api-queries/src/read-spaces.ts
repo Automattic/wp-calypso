@@ -1,9 +1,12 @@
 import {
-	DEFAULT_SPACE_COLOR,
-	DEFAULT_SPACE_ICON,
+	addReadSpaceSource,
+	createReadSpace,
+	deleteReadSpaceSource,
 	fetchReadSpaces,
-	type CreateReadSpaceParams,
 	type ReadSpace,
+	type ReadSpaceSourceMutationParams,
+	type SpaceSource,
+	type SiteSubscriptionItem,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
 
@@ -22,33 +25,6 @@ export const readSpacesQuery = () =>
 		meta: { persist: false },
 	} );
 
-/**
- * Create a space.
- *
- * TODO(RSM-4139): call the real `POST` (with server-side validation and
- * duplicate-name rejection) once the create endpoint exists. For now the space
- * is constructed locally with a generated id — no network request — and the
- * mutation only writes the React Query cache below.
- */
-function createReadSpace( params: CreateReadSpaceParams ): Promise< ReadSpace > {
-	return Promise.resolve( {
-		id: generateSpaceId(),
-		name: params.name,
-		tags: params.tags,
-		color: DEFAULT_SPACE_COLOR,
-		icon: DEFAULT_SPACE_ICON,
-	} );
-}
-
-function generateSpaceId(): string {
-	// `crypto.randomUUID` is available in all supported browsers; fall back to a
-	// random base36 string in non-secure or test contexts where it is undefined.
-	if ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ) {
-		return crypto.randomUUID();
-	}
-	return Math.random().toString( 36 ).slice( 2, 12 );
-}
-
 // Calypso boots its own QueryClient (see `client/state/query-client.ts`) instead
 // of the singleton from this package, so the mutation factory accepts the
 // caller's QueryClient and uses it to write the cache. Pass `useQueryClient()`
@@ -63,5 +39,96 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 				...( previous ?? [] ),
 				space,
 			] );
+		},
+	} );
+
+const normalizeSubscriptionUrl = ( url?: string | null ): string =>
+	( url ?? '' ).trim().toLowerCase().replace( /\/+$/, '' );
+
+const getSourceKey = ( source: Pick< SpaceSource, 'feedId' | 'blogId' | 'feedUrl' > ): string => {
+	if ( source.feedId !== null && typeof source.feedId !== 'undefined' ) {
+		return `feed:${ source.feedId }`;
+	}
+	if ( source.blogId !== null && typeof source.blogId !== 'undefined' ) {
+		return `blog:${ source.blogId }`;
+	}
+	return `url:${ normalizeSubscriptionUrl( source.feedUrl ) }`;
+};
+
+const getSiteSubscriptionKey = (
+	subscription: Pick< SiteSubscriptionItem, 'feed_ID' | 'blog_ID' | 'feed_URL' >
+): string => {
+	if ( subscription.feed_ID !== null && typeof subscription.feed_ID !== 'undefined' ) {
+		return `feed:${ subscription.feed_ID }`;
+	}
+	if ( subscription.blog_ID !== null && typeof subscription.blog_ID !== 'undefined' ) {
+		return `blog:${ subscription.blog_ID }`;
+	}
+	return `url:${ normalizeSubscriptionUrl( subscription.feed_URL ) }`;
+};
+
+const createSpaceSource = ( subscription: SiteSubscriptionItem ): SpaceSource => ( {
+	feedId: subscription.feed_ID ?? null,
+	blogId: subscription.blog_ID ?? null,
+	feedUrl: subscription.feed_URL,
+	siteUrl: subscription.URL || subscription.feed_URL,
+	name: subscription.name || subscription.URL || subscription.feed_URL,
+	siteIcon: subscription.site_icon ?? null,
+} );
+
+export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
+	mutationOptions< void, Error, ReadSpaceSourceMutationParams >( {
+		mutationFn: addReadSpaceSource,
+		onSuccess: ( _data, { spaceId, subscription } ) => {
+			const source = createSpaceSource( subscription );
+			const sourceKey = getSourceKey( source );
+
+			queryClient.setQueryData< ReadSpace[] >(
+				readSpacesQuery().queryKey,
+				( previous ) =>
+					previous?.map( ( space ) => {
+						if ( space.id !== spaceId ) {
+							return space;
+						}
+
+						if (
+							space.sources.some(
+								( existingSource ) => getSourceKey( existingSource ) === sourceKey
+							)
+						) {
+							return space;
+						}
+
+						return {
+							...space,
+							sources: [ ...space.sources, source ],
+						};
+					} )
+			);
+		},
+	} );
+
+export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
+	mutationOptions< void, Error, ReadSpaceSourceMutationParams >( {
+		mutationFn: deleteReadSpaceSource,
+		onSuccess: ( _data, { spaceId, subscription } ) => {
+			const subscriptionKey = getSiteSubscriptionKey( subscription );
+
+			queryClient.setQueryData< ReadSpace[] >(
+				readSpacesQuery().queryKey,
+				( previous ) =>
+					previous?.map( ( space ) => {
+						if ( space.id !== spaceId ) {
+							return space;
+						}
+
+						return {
+							...space,
+							sources: space.sources.filter(
+								( existingSource ) => getSourceKey( existingSource ) !== subscriptionKey
+							),
+						};
+					} )
+			);
 		},
 	} );

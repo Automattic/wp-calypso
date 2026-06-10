@@ -1,3 +1,5 @@
+import type { SiteSubscriptionItem } from '../read-follows';
+
 /**
  * Reader Spaces — a Space groups subscriptions under a name plus optional tags.
  * v0 has a name and tags only, no description (see RSM-4110).
@@ -25,9 +27,24 @@ export interface ReadSpace {
 	tags: string[];
 	color: SpaceColor;
 	icon: SpaceIcon;
+	sources: SpaceSource[];
 }
 
 export interface CreateReadSpaceParams {
 	name: string;
 	tags: string[];
+}
+
+export interface SpaceSource {
+	feedId?: number | string | null;
+	blogId?: number | string | null;
+	feedUrl: string;
+	siteUrl: string;
+	name: string;
+	siteIcon?: string | null;
+}
+
+export interface ReadSpaceSourceMutationParams {
+	spaceId: string;
+	subscription: SiteSubscriptionItem;
 }

@@ -1,4 +1,9 @@
-import { createReadSpaceMutation, readSpacesQuery } from '@automattic/api-queries';
+import {
+	addReadSpaceSourceMutation,
+	createReadSpaceMutation,
+	deleteReadSpaceSourceMutation,
+	readSpacesQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReadSpace } from '@automattic/api-core';
 
@@ -21,4 +26,14 @@ export function useSpaces(): ReadSpace[] {
 export function useCreateSpace() {
 	const queryClient = useQueryClient();
 	return useMutation( createReadSpaceMutation( queryClient ) );
+}
+
+export function useAddSpaceSource() {
+	const queryClient = useQueryClient();
+	return useMutation( addReadSpaceSourceMutation( queryClient ) );
+}
+
+export function useDeleteSpaceSource() {
+	const queryClient = useQueryClient();
+	return useMutation( deleteReadSpaceSourceMutation( queryClient ) );
 }
