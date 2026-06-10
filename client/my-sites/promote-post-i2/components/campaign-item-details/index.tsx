@@ -14,7 +14,6 @@ import moment from 'moment/moment';
 import { useEffect, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
@@ -31,6 +30,7 @@ import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-pos
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import { BlazeFooter } from 'calypso/my-sites/promote-post-i2/components/blaze-page';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/CampaignDownloadStats';
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
@@ -1642,7 +1642,7 @@ export default function CampaignItemDetails( props: Props ) {
 						</div>
 					</section>
 				</Main>
-				<JetpackFooter />
+				<BlazeFooter />
 			</Page>
 		</div>
 	);

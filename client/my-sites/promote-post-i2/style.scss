@@ -255,6 +255,24 @@ body.is-section-promote-post-i2 {
 	position: static;
 }
 
+// Keep the Jetpack footer pinned to the viewport bottom, like the other
+// Jetpack admin pages (they pin it with position: fixed inside their
+// fixed-primary layout). Blaze scrolls the document instead, so let the
+// page fill the viewport and stick the footer: pinned while scrolling,
+// resting at the end of the content once fully scrolled.
+.promote-post-i2__page {
+	min-height: calc(100vh - var(--masterbar-height, 32px) - 64px);
+
+	.jetpack-footer {
+		position: sticky;
+		bottom: 0;
+		margin-top: auto;
+		background-color: var(--wpds-color-bg-surface-neutral);
+		// Above the posts/campaigns search input (z-index 20+).
+		z-index: 30;
+	}
+}
+
 .promote-post-i2 {
 	&__promote-button.is-primary {
 		background-color: $blaze-red;

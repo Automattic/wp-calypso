@@ -13,6 +13,18 @@ interface Props {
 }
 
 /**
+ * The Blaze flavor of the Jetpack admin footer: the standalone Blaze Ads
+ * plugin is labelled with its own name, every other surface says Jetpack.
+ */
+export function BlazeFooter() {
+	const translate = useTranslate();
+
+	return (
+		<JetpackFooter name={ isBlazePlugin ? ( translate( 'Blaze Ads' ) as string ) : undefined } />
+	);
+}
+
+/**
  * The shared Blaze admin page chrome: an admin-ui <Page> with the Blaze
  * header (logo + title + subtitle). The standalone Blaze Ads plugin shows
  * its own name and no logo, matching its admin menu label.
@@ -30,7 +42,7 @@ export default function BlazePage( { actions, children }: Props ) {
 			actions={ actions }
 		>
 			{ children }
-			<JetpackFooter />
+			<BlazeFooter />
 		</Page>
 	);
 }
