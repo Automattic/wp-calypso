@@ -10,7 +10,6 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { rotateLeft, download } from '@wordpress/icons';
 import { useCallback } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
@@ -111,7 +110,6 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			<Button
 				variant="tertiary"
 				size={ isSmallViewport ? 'default' : 'compact' }
-				icon={ download }
 				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
 				style={ { justifyContent: 'center' } }
 				disabled={ granularDownloadRequest.isPending }
@@ -124,7 +122,6 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			<Button
 				variant="primary"
 				size={ isSmallViewport ? 'default' : 'compact' }
-				icon={ rotateLeft }
 				onClick={ handleRestoreClick }
 				style={ { justifyContent: 'center' } }
 			>
