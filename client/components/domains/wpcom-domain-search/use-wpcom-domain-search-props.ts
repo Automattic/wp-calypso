@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { DomainSearch } from '@automattic/domain-search';
+import {
+	isDomainForGravatarFlow,
+	isHundredYearDomainFlow,
+	isHundredYearPlanFlow,
+} from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -74,15 +79,24 @@ export const useWPCOMDomainSearchProps = ( {
 	} );
 
 	const config = useMemo( () => {
+		// Bundles are fixed one-year registrations of multiple TLDs, so they
+		// don't fit flows that sell a single special-purpose registration —
+		// and those flows' beforeAddDomainToCart transforms (100-year term,
+		// Gravatar extras) are not applied to bundle members.
+		const flowSupportsBundles =
+			! isHundredYearPlanFlow( flowName ) &&
+			! isHundredYearDomainFlow( flowName ) &&
+			! isDomainForGravatarFlow( flowName );
+
 		return {
 			...externalConfig,
-			showBundleSuggestions: isEnabled( 'domain-bundling' ),
+			showBundleSuggestions: isEnabled( 'domain-bundling' ) && flowSupportsBundles,
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree ] );
+	}, [ externalConfig, isNextDomainFree, flowName ] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,
