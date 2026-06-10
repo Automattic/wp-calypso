@@ -819,15 +819,11 @@ const CheckoutSummaryAmountWrapper = styled.div`
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	display: flex;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 4px;
-
-	& > *:last-child {
-		white-space: nowrap;
-	}
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 
@@ -857,8 +853,6 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 		display: flex;
 		flex: 0 0 auto;
 		gap: 4px;
-		flex-wrap: wrap;
-		justify-content: flex-end;
 		margin-left: auto;
 
 		.rtl & {
