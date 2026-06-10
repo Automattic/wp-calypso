@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
@@ -82,16 +82,12 @@ function SiteBackupGranularRestoreForm( {
 			<VStack spacing={ 4 }>
 				<Text>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(restorePointDate)s is the date and time of the backup */
-							_n(
-								'Restoring the following item from your <strong>%(restorePointDate)s</strong> backup:',
-								'Restoring the following items from your <strong>%(restorePointDate)s</strong> backup:',
-								browserCheckList.totalItems
-							),
-							{ restorePointDate }
+						_n(
+							'Restoring the following item from your <restorePointDate /> backup:',
+							'Restoring the following items from your <restorePointDate /> backup:',
+							browserCheckList.totalItems
 						),
-						{ strong: <strong /> }
+						{ restorePointDate: <strong>{ restorePointDate }</strong> }
 					) }
 				</Text>
 				<Panel>

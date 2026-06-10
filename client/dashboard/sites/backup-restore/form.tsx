@@ -4,7 +4,7 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
@@ -122,14 +122,8 @@ function SiteBackupRestoreForm( {
 			<VStack spacing={ 4 }>
 				<p>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(restorePointDate)s is the date and time of the backup */
-							__(
-								'Choose what to restore from your <strong>%(restorePointDate)s</strong> backup:'
-							),
-							{ restorePointDate }
-						),
-						{ strong: <strong /> }
+						__( 'Choose what to restore from your <restorePointDate /> backup:' ),
+						{ restorePointDate: <strong>{ restorePointDate }</strong> }
 					) }
 				</p>
 				<DataForm< RestoreConfig >

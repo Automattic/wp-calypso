@@ -4,7 +4,7 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
@@ -113,14 +113,8 @@ function SiteBackupDownloadForm( {
 			<VStack spacing={ 4 }>
 				<p>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(downloadPointDate)s is the date and time of the backup */
-							__(
-								'Choose what to download from your <strong>%(downloadPointDate)s</strong> backup:'
-							),
-							{ downloadPointDate }
-						),
-						{ strong: <strong /> }
+						__( 'Choose what to download from your <downloadPointDate /> backup:' ),
+						{ downloadPointDate: <strong>{ downloadPointDate }</strong> }
 					) }
 				</p>
 				<DataForm< DownloadConfig >
