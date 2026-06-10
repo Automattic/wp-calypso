@@ -884,6 +884,49 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'bundle suggestion', () => {
+		it( 'calls cart.onAddBundle once with the bundle suggestion when "Get bundle" is clicked', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockResolvedValue( undefined );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test' },
+				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			// The mock fetcher issues the bundle for the searched SLD; the whole
+			// suggestion (including the server-issued group id) is handed to the
+			// app layer untouched.
+			expect( onAddBundle ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					sld: 'test',
+					bundle_group_id: 'mock-test-group',
+					domains: expect.arrayContaining( [
+						expect.objectContaining( { domain: 'test.com' } ),
+						expect.objectContaining( { domain: 'test.net' } ),
+						expect.objectContaining( { domain: 'test.org' } ),
+					] ),
+				} )
+			);
+		} );
+	} );
+
 	describe( 'tracking', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
 			const onSuggestionsReceive = jest.fn();

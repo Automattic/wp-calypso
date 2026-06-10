@@ -5,6 +5,7 @@ export const buildCart = ( overrides: Partial< DomainSearchCart > = {} ): Domain
 		items: [],
 		total: '$0',
 		onAddItem: jest.fn(),
+		onAddBundle: jest.fn(),
 		onRemoveItem: jest.fn(),
 		hasItem: jest.fn(),
 		...overrides,
