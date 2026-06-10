@@ -829,6 +829,118 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( onContinue ).not.toHaveBeenCalled();
 	} );
 
+	describe( 'onAddBundle', () => {
+		const bundle = {
+			sld: 'example',
+			domains: [
+				{
+					domain: 'example.com',
+					cost: '$22.00',
+					raw_price: 22,
+					product_slug: 'domain_reg',
+					supports_privacy: true,
+				},
+				{
+					domain: 'example.net',
+					cost: '$18.00',
+					raw_price: 18,
+					product_slug: 'dotnet_domain',
+				},
+			],
+			bundle_price: 32,
+			original_price: 40,
+			discount_percent: 20,
+			category: 'business',
+			bundle_id: 'example_business',
+			bundle_group_id: 'server-issued-group-id',
+			catalogue_version: '3',
+		};
+
+		it( 'adds one product per bundle member, with the server-issued bundle extras, in a single cart call', async () => {
+			const replaceProductsInCart = jest.fn().mockResolvedValue( { products: [] } );
+
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								meta: 'my-existing-domain.com',
+								product_slug: 'domain',
+								is_domain_registration: true,
+							} ),
+						],
+					},
+					replaceProductsInCart,
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			await result.current.cart.onAddBundle?.( bundle );
+
+			expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_reg',
+					meta: 'example.com',
+					extra: {
+						privacy_available: true,
+						privacy: true,
+						flow_name: 'flow-name',
+						domain_bundle_group_id: 'server-issued-group-id',
+						domain_bundle_role: 'primary',
+						expected_bundle_size: '2',
+					},
+				},
+				{
+					product_slug: 'dotnet_domain',
+					meta: 'example.net',
+					extra: {
+						flow_name: 'flow-name',
+						domain_bundle_group_id: 'server-issued-group-id',
+						domain_bundle_role: 'companion',
+						expected_bundle_size: '2',
+					},
+				},
+				expect.objectContaining( { meta: 'my-existing-domain.com', product_slug: 'domain' } ),
+			] );
+		} );
+
+		it( 'calls onContinue with the bundle items if flowAllowsMultipleDomainsInCart is false', async () => {
+			const bundleCartProducts = [
+				{
+					meta: 'example.com',
+					product_slug: 'domain_reg',
+					extra: { domain_bundle_group_id: 'server-issued-group-id' },
+				},
+				{
+					meta: 'example.net',
+					product_slug: 'dotnet_domain',
+					extra: { domain_bundle_group_id: 'server-issued-group-id' },
+				},
+			];
+			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+				products: [ ...bundleCartProducts, { meta: 'unrelated.com', product_slug: 'domain' } ],
+			} );
+
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+			const onContinue = jest.fn();
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					flowAllowsMultipleDomainsInCart: false,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddBundle?.( bundle );
+
+			expect( onContinue ).toHaveBeenCalledWith( bundleCartProducts );
+		} );
+	} );
+
 	it( 'prepends products in the cart when adding a new domain', async () => {
 		const replaceProductsInCart = jest.fn();
 

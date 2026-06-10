@@ -9,6 +9,7 @@ import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	DomainAvailabilityStatus,
 	DomainSuggestion,
@@ -29,6 +30,12 @@ export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
 	onAddItem: ( item: DomainSuggestion ) => Promise< unknown >;
+	/**
+	 * Add every member of a bundle suggestion to the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * bundle CTA is a no-op.
+	 */
+	onAddBundle?: ( bundle: BundleSuggestion ) => Promise< unknown >;
 	onRemoveItem: ( uuid: string ) => Promise< unknown >;
 	hasItem: ( domainName: string ) => boolean;
 }

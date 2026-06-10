@@ -143,6 +143,45 @@ export const useWPCOMDomainSearchCart = ( {
 
 				return cartItems;
 			},
+			onAddBundle: async ( bundle ) => {
+				// One product per bundle member, added in a single cart call so the
+				// add is all-or-nothing. The bundle metadata is server-issued and
+				// passed through verbatim — the backend cart validator verifies the
+				// group id and applies the discount; no price math happens here.
+				// Members arrive primary-first from the backend (the searched
+				// SLD+TLD anchors the bundle), so the first member is the primary.
+				const bundleProducts: MinimalRequestCartProduct[] = bundle.domains.map(
+					( member, index ) => ( {
+						product_slug: member.product_slug,
+						meta: member.domain,
+						extra: {
+							...( member.supports_privacy && {
+								privacy_available: member.supports_privacy,
+								privacy: member.supports_privacy,
+							} ),
+							...( flowName && { flow_name: flowName } ),
+							domain_bundle_group_id: bundle.bundle_group_id,
+							domain_bundle_role: index === 0 ? ( 'primary' as const ) : ( 'companion' as const ),
+							expected_bundle_size: String( bundle.domains.length ),
+						},
+					} )
+				);
+
+				const cartItems = await replaceProductsInCart( [
+					...bundleProducts,
+					...responseCart.products,
+				] );
+
+				if ( ! flowAllowsMultipleDomainsInCart ) {
+					return onContinue(
+						cartItems.products.filter(
+							( item ) => item.extra?.domain_bundle_group_id === bundle.bundle_group_id
+						)
+					);
+				}
+
+				return cartItems;
+			},
 			onRemoveItem: ( uuid ) => removeProductFromCart( uuid ),
 		};
 
