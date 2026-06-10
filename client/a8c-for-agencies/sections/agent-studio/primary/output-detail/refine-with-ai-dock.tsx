@@ -29,19 +29,27 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 import './refine-with-ai-dock.scss';
 
+/** A batch of composed instructions to auto-submit, one refine run each. */
+export interface AutoSubmission {
+	instructions: string[];
+	/** Bumped on every batch so an identical batch still re-fires. */
+	token: number;
+}
+
 interface Props {
 	collateralPostId: number;
 	/** Total visible pages (cover + body pages). Used in the empty-state hint. */
 	totalPages: number;
-	/** Text to seed the input with (empty opens an empty input). */
-	seedText: string;
 	/**
-	 * Bumped on every open request. The per-page "Edit with AI" button can be
-	 * re-clicked while the dock is already open — and after a submit clears the
-	 * input — so re-seeding the same `seedText` must still fire. The token is
-	 * the trigger; `seedText` alone wouldn't change.
+	 * Composed instructions (e.g. from annotate mode) submitted automatically,
+	 * sequentially — the refine endpoint runs one page-scoped run at a time.
 	 */
-	seedToken: number;
+	autoSubmit?: AutoSubmission;
+	/**
+	 * Called once a batch is enqueued. The parent clears the instructions so a
+	 * dock remount (close + reopen) can't replay a stale batch.
+	 */
+	onAutoSubmitConsumed?: () => void;
 	onClose: () => void;
 }
 
@@ -77,37 +85,28 @@ const agentMessage = ( text: string ): Message => makeMessage( 'agent', text );
 export default function RefineWithAiDock( {
 	collateralPostId,
 	totalPages,
-	seedText,
-	seedToken,
+	autoSubmit,
+	onAutoSubmitConsumed,
 	onClose,
 }: Props ) {
 	const [ messages, setMessages ] = useState< Message[] >( [] );
 	const [ activeRun, setActiveRun ] = useState< ActiveRun | null >( null );
 	const [ inputValue, setInputValue ] = useState( '' );
-	const rootRef = useRef< HTMLElement >( null );
+	const [ queuedInstructions, setQueuedInstructions ] = useState< string[] >( [] );
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const refine = useRefineCollateralPage();
 
-	// Seed the input on each open request (tracked by `seedToken`), then move
-	// the caret to the end of AgentUI's internal textarea. `seedText` is left
-	// out of the deps so re-clicking the same page's Edit button re-seeds.
-	useEffect( () => {
-		setInputValue( seedText );
-		const raf = requestAnimationFrame( () => {
-			const textarea = rootRef.current?.querySelector( 'textarea' );
-			if ( textarea ) {
-				textarea.focus();
-				const end = textarea.value.length;
-				textarea.setSelectionRange( end, end );
-			}
-		} );
-		return () => cancelAnimationFrame( raf );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ seedToken ] );
-
 	// `useAgentStudioRun` self-polls while non-terminal; undefined keeps it idle.
 	const run = useAgentStudioRun( activeRun?.runId );
+
+	// Synchronous in-flight gate for the queue drain. State guards alone are
+	// unreliable here: react-query's `isPending` notification can render via
+	// `useSyncExternalStore` before the batched `setActiveRun` flushes, opening
+	// a window where both look idle and the drain double-fires (observed:
+	// the first run got orphaned mid-batch). True from submission until the
+	// run settles (completion effect below) or the request fails.
+	const inFlightRef = useRef( false );
 
 	// Post the success/failure reply once per run, not on every poll re-render.
 	const handledRunIdRef = useRef< string | null >( null );
@@ -166,33 +165,32 @@ export default function RefineWithAiDock( {
 			);
 		}
 		setActiveRun( null );
+		inFlightRef.current = false;
 	}, [ activeRun, run.data, queryClient, dispatch ] );
 
-	const handleSubmit = async ( instruction: string ): Promise< void > => {
-		const trimmed = instruction.trim();
-		if ( '' === trimmed || activeRun ) {
-			return;
-		}
-		// Input is controlled, so clear it ourselves once the message is sent.
-		setInputValue( '' );
-		setMessages( ( current ) => [ ...current, userMessage( trimmed ) ] );
+	const submitInstruction = async ( instruction: string ): Promise< void > => {
+		inFlightRef.current = true;
+		setMessages( ( current ) => [ ...current, userMessage( instruction ) ] );
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agent_studio_refine_submit', {
 				collateral_post_id: collateralPostId,
-				instruction_length: trimmed.length,
+				instruction_length: instruction.length,
 			} )
 		);
 
 		try {
 			const response = await refine.mutateAsync( {
 				collateralPostId,
-				instruction: trimmed,
+				instruction,
 			} );
 			setActiveRun( {
 				runId: String( response.run_id ),
 				userFacingPage: response.page,
 			} );
 		} catch ( err: unknown ) {
+			// No run was created, so the gate lifts here rather than in the
+			// completion effect.
+			inFlightRef.current = false;
 			const clarification = getRefineClarificationMessage( err );
 			if ( clarification ) {
 				// Server asked for clarification (no run created); show it inline.
@@ -217,7 +215,43 @@ export default function RefineWithAiDock( {
 		}
 	};
 
-	const isProcessing = activeRun !== null || refine.isPending;
+	const handleSubmit = async ( instruction: string ): Promise< void > => {
+		const trimmed = instruction.trim();
+		if ( '' === trimmed || activeRun || inFlightRef.current ) {
+			return;
+		}
+		// Input is controlled, so clear it ourselves once the message is sent.
+		setInputValue( '' );
+		await submitInstruction( trimmed );
+	};
+
+	// Enqueue each new auto-submit batch exactly once (tracked by `token`).
+	const handledAutoTokenRef = useRef( 0 );
+	useEffect( () => {
+		if ( ! autoSubmit || autoSubmit.token === handledAutoTokenRef.current ) {
+			return;
+		}
+		handledAutoTokenRef.current = autoSubmit.token;
+		if ( autoSubmit.instructions.length > 0 ) {
+			setQueuedInstructions( ( current ) => [ ...current, ...autoSubmit.instructions ] );
+			onAutoSubmitConsumed?.();
+		}
+	}, [ autoSubmit, onAutoSubmitConsumed ] );
+
+	// Drain the queue one instruction at a time: each run must settle (the
+	// completion effect above clears `activeRun`) before the next page's
+	// instruction goes out.
+	useEffect( () => {
+		if ( queuedInstructions.length === 0 || inFlightRef.current || activeRun || refine.isPending ) {
+			return;
+		}
+		const [ head, ...rest ] = queuedInstructions;
+		setQueuedInstructions( rest );
+		void submitInstruction( head );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- `submitInstruction` is recreated every render; the queue, run, and pending flags are the real triggers.
+	}, [ queuedInstructions, activeRun, refine.isPending ] );
+
+	const isProcessing = activeRun !== null || refine.isPending || queuedInstructions.length > 0;
 
 	// Plain strings — primitives compared by value, so memoizing buys nothing.
 	const thinkingMessage = activeRun
@@ -250,11 +284,7 @@ export default function RefineWithAiDock( {
 	);
 
 	return (
-		<aside
-			ref={ rootRef }
-			className="a4a-refine-with-ai-dock"
-			aria-label={ __( 'Refine with AI' ) }
-		>
+		<aside className="a4a-refine-with-ai-dock" aria-label={ __( 'Refine with AI' ) }>
 			<HStack className="a4a-refine-with-ai-dock__header" justify="space-between" spacing={ 2 }>
 				<strong>{ __( 'Refine with AI' ) }</strong>
 				<Button
