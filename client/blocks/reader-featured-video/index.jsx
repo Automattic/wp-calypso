@@ -43,8 +43,7 @@ class ReaderFeaturedVideo extends Component {
 		className: '',
 	};
 
-	// The component's root element is the parent of the embed node. This was
-	// previously obtained via `findDOMNode( this )`, which React 19 removed.
+	// Root element is the embed node's parent.
 	getRootNode = () => this.videoEmbedRef?.parentNode ?? null;
 
 	setVideoSizingStrategy = ( videoEmbed ) => {

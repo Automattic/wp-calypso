@@ -62,8 +62,7 @@ class ReaderPostCard extends Component {
 
 	cardRef = createRef();
 
-	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
-	// parent list can measure this item's DOM node without `findDOMNode`.
+	// Forward the node to an optional itemRef from InfiniteList so the list can measure it.
 	setCardRef = ( node ) => {
 		this.cardRef.current = node;
 		const { itemRef } = this.props;
