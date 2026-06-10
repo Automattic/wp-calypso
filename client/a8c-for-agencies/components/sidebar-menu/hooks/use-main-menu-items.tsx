@@ -54,6 +54,7 @@ const useMainMenuItems = ( path: string ) => {
 
 	const agency = useSelector( getActiveAgency );
 	const paymentNotice = usePaymentRiskNotice();
+	const paymentNoticeSeverity = paymentNotice?.severity;
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -180,10 +181,10 @@ const useMainMenuItems = ( path: string ) => {
 				icon: currencyDollar,
 				path: A4A_PURCHASES_LINK,
 				link: A4A_LICENSES_LINK,
-				title: paymentNotice ? (
+				title: paymentNoticeSeverity ? (
 					<span className="a4a-payment-risk-notice-menu-title">
 						<span>{ translate( 'Purchases' ) }</span>
-						<PaymentRiskNoticeMenuIndicator severity={ paymentNotice.severity } />
+						<PaymentRiskNoticeMenuIndicator severity={ paymentNoticeSeverity } />
 					</span>
 				) : (
 					translate( 'Purchases' )
@@ -244,7 +245,7 @@ const useMainMenuItems = ( path: string ) => {
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, path, paymentNotice, translate ] );
+	}, [ agency, path, paymentNoticeSeverity, translate ] );
 	return menuItems;
 };
 

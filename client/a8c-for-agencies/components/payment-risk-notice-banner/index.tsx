@@ -31,41 +31,43 @@ export default function PaymentRiskNoticeBanner( {
 	const dispatch = useDispatch();
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const paymentNotice = usePaymentRiskNotice();
+	const noticeState = paymentNotice?.state;
+	const noticeSeverity = paymentNotice?.severity;
 	const ctaUrl = isEnabled( 'a4a-bd-checkout' )
 		? EXTERNAL_WPCOM_PAYMENT_METHODS_URL
 		: A4A_PAYMENT_METHODS_LINK;
 
 	useEffect( () => {
-		if ( paymentNotice ) {
+		if ( noticeState && noticeSeverity ) {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_view', {
 					source,
-					state: paymentNotice.state,
-					severity: paymentNotice.severity,
+					state: noticeState,
+					severity: noticeSeverity,
 				} )
 			);
 		}
-	}, [ dispatch, paymentNotice, source ] );
+	}, [ dispatch, noticeState, noticeSeverity, source ] );
 
 	const onCtaClick = useCallback( () => {
-		if ( ! paymentNotice ) {
+		if ( ! noticeState || ! noticeSeverity ) {
 			return;
 		}
 
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_cta_click', {
 				source,
-				state: paymentNotice.state,
-				severity: paymentNotice.severity,
+				state: noticeState,
+				severity: noticeSeverity,
 			} )
 		);
-	}, [ dispatch, paymentNotice, source ] );
+	}, [ dispatch, noticeState, noticeSeverity, source ] );
 
 	const onContactUsClick = useCallback(
 		( event: MouseEvent< HTMLAnchorElement > ) => {
 			event.preventDefault();
 
-			if ( ! paymentNotice ) {
+			if ( ! noticeState || ! noticeSeverity ) {
 				return;
 			}
 
@@ -74,15 +76,15 @@ export default function PaymentRiskNoticeBanner( {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_contact_us_click', {
 					source,
-					state: paymentNotice.state,
-					severity: paymentNotice.severity,
+					state: noticeState,
+					severity: noticeSeverity,
 				} )
 			);
 		},
-		[ dispatch, paymentNotice, setNavigateToRoute, setShowHelpCenter, source ]
+		[ dispatch, noticeState, noticeSeverity, setNavigateToRoute, setShowHelpCenter, source ]
 	);
 
-	if ( ! paymentNotice ) {
+	if ( ! paymentNotice || ! noticeState || ! noticeSeverity ) {
 		return null;
 	}
 
@@ -116,7 +118,7 @@ export default function PaymentRiskNoticeBanner( {
 		<LayoutBanner
 			isFullWidth={ isFullWidth }
 			className="a4a-payment-risk-notice-banner"
-			level={ paymentNotice.severity }
+			level={ noticeSeverity }
 			title={
 				paymentNotice.title ??
 				translate( 'Action required: We’re unable to renew your subscription(s)' )

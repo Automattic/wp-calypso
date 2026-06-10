@@ -144,6 +144,22 @@ describe( 'PaymentRiskNoticeBanner', () => {
 		expect( mockDispatch ).not.toHaveBeenCalled();
 	} );
 
+	it( 'does not record another view event when the same notice is refetched', () => {
+		const getViewEventCalls = () =>
+			mockedRecordTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_a4a_payment_risk_notice_banner_view'
+			);
+
+		const { rerender } = render( <PaymentRiskNoticeBanner source="overview" /> );
+
+		expect( getViewEventCalls() ).toHaveLength( 1 );
+
+		mockPaymentNotice = { ...mockPaymentNotice! };
+		rerender( <PaymentRiskNoticeBanner source="overview" /> );
+
+		expect( getViewEventCalls() ).toHaveLength( 1 );
+	} );
+
 	it( 'renders the API notice and records view and CTA click events', async () => {
 		const user = userEvent.setup();
 		mockPaymentNotice = {
