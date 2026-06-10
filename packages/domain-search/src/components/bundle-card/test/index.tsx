@@ -184,7 +184,13 @@ describe( 'BundleCard', () => {
 	it( 'does not render an error notice when errorMessage is not provided', () => {
 		const { container } = render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } /> );
 
-		expect( container.querySelector( '.bundle-card__error' ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.domain-search-notice' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'marks the CTA busy and disabled while an add-to-cart is in flight', () => {
+		render( <BundleCard suggestion={ buildSuggestion( twoDomains ) } isBusy disabled /> );
+
+		expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeDisabled();
 	} );
 
 	it( 'renders a placeholder with no CTA or domain rows for a null suggestion', () => {

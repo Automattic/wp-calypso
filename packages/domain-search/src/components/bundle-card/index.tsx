@@ -1,6 +1,5 @@
 import {
 	Button,
-	Notice,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,7 +7,7 @@ import {
 import { sprintf } from '@wordpress/i18n';
 import { arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { DomainSuggestionBadge } from '../../ui';
+import { DomainSearchNotice, DomainSuggestionBadge } from '../../ui';
 import type { BundleSuggestion } from '@automattic/api-core';
 
 import './style.scss';
@@ -18,6 +17,8 @@ interface BundleCardProps {
 	onAddToCart?: ( bundle: BundleSuggestion ) => void;
 	isAddedToCart?: boolean;
 	onContinue?: () => void;
+	isBusy?: boolean;
+	disabled?: boolean;
 	errorMessage?: string;
 }
 
@@ -26,6 +27,8 @@ export const BundleCard = ( {
 	onAddToCart,
 	isAddedToCart,
 	onContinue,
+	isBusy,
+	disabled,
 	errorMessage,
 }: BundleCardProps ) => {
 	const { __ } = useI18n();
@@ -91,11 +94,7 @@ export const BundleCard = ( {
 					</Text>
 				) }
 
-				{ errorMessage && (
-					<Notice className="bundle-card__error" status="error" isDismissible={ false }>
-						{ errorMessage }
-					</Notice>
-				) }
+				{ errorMessage && <DomainSearchNotice status="error">{ errorMessage }</DomainSearchNotice> }
 
 				{ isAddedToCart ? (
 					<Button
@@ -105,6 +104,7 @@ export const BundleCard = ( {
 						__next40pxDefaultSize
 						icon={ arrowRight }
 						label={ __( 'Continue' ) }
+						disabled={ disabled }
 						onClick={ () => onContinue?.() }
 					>
 						{ __( 'Continue' ) }
@@ -114,6 +114,8 @@ export const BundleCard = ( {
 						className="bundle-card__cta"
 						variant="primary"
 						__next40pxDefaultSize
+						isBusy={ isBusy }
+						disabled={ disabled }
 						onClick={ () => onAddToCart?.( suggestion ) }
 					>
 						{ __( 'Get bundle' ) }

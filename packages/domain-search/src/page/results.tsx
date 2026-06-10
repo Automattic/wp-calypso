@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -49,7 +49,7 @@ const StickyCompactBanner = () => {
 
 export const ResultsPage = () => {
 	const { __ } = useI18n();
-	const { slots, config, events, cart } = useDomainSearch();
+	const { slots, config, events, cart, query } = useDomainSearch();
 
 	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
 
@@ -57,7 +57,12 @@ export const ResultsPage = () => {
 	// all-or-nothing operation. The cart mutation itself lives at the app layer
 	// (cart.onAddBundle); the mutation wrapper mirrors the single-domain
 	// add-to-cart path so failures are captured the same way.
-	const { mutate: addBundleToCart, error: addBundleError } = useMutation( {
+	const {
+		mutate: addBundleToCart,
+		error: addBundleError,
+		isPending: isAddingBundle,
+		reset: resetAddBundle,
+	} = useMutation( {
 		meta: {
 			mutationId,
 		},
@@ -67,6 +72,14 @@ export const ResultsPage = () => {
 		networkMode: 'always',
 		retry: false,
 	} );
+
+	const isMutating = !! useIsMutating();
+
+	// A failed add shouldn't follow the user to a different search: a new
+	// query produces a new bundle suggestion, so drop the stale error.
+	useEffect( () => {
+		resetAddBundle();
+	}, [ query, resetAddBundle ] );
 
 	// The cart rejects with the server's first cart message (a CartActionError),
 	// which is already user-facing copy. Fall back when it's missing. Clicking
@@ -156,6 +169,8 @@ export const ResultsPage = () => {
 							cart.hasItem( domain )
 						) }
 						onContinue={ events.onContinue }
+						isBusy={ isAddingBundle }
+						disabled={ isMutating }
 						errorMessage={ bundleErrorMessage }
 					/>
 				) }

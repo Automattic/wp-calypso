@@ -1036,6 +1036,136 @@ describe( 'ResultsPage', () => {
 
 			expect( onAddBundle ).toHaveBeenCalledTimes( 2 );
 		} );
+
+		it( 'clears the error when the search query changes', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Stale bundle error' ) );
+			const cart = buildCart( { onAddBundle } );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-stale' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-stale.com' } ) ],
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-fresh' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fresh.com' } ) ],
+			} );
+
+			const { container, rerender } = render(
+				<TestDomainSearch
+					cart={ cart }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-stale"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( getByText( container, 'Stale bundle error' ) ).toBeInTheDocument();
+			} );
+
+			// A new search renders a new bundle suggestion; the old failure
+			// shouldn't be pinned to it.
+			rerender(
+				<TestDomainSearch
+					cart={ cart }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-fresh"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( queryByText( container, 'Stale bundle error' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+		} );
+
+		it( 'disables the CTA while the bundle add is pending', async () => {
+			const user = userEvent.setup();
+			let resolveAdd = () => {};
+			const onAddBundle = jest.fn().mockImplementation(
+				() =>
+					new Promise< void >( ( resolve ) => {
+						resolveAdd = resolve;
+					} )
+			);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-pending' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-pending.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-pending"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeDisabled();
+			} );
+
+			resolveAdd();
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+			} );
+
+			expect( onAddBundle ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'yields the bundle error when another add-to-cart mutation starts', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-supersede' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-supersede.com' } ) ],
+			} );
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-bundle-supersede.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-bundle-supersede.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-supersede"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( getByText( container, 'Bundle add failed' ) ).toBeInTheDocument();
+			} );
+
+			// The most recent mutation owns the error surface: starting a
+			// single-domain add supersedes the bundle failure.
+			await user.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => {
+				expect( queryByText( container, 'Bundle add failed' ) ).not.toBeInTheDocument();
+			} );
+		} );
 	} );
 
 	describe( 'bundle continue state', () => {
