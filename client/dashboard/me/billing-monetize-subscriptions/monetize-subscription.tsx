@@ -31,6 +31,11 @@ import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
+import type {
+	MonetizeSubscriptionAutoRenewResponse,
+	MonetizeSubscriptionStopResponse,
+} from '@automattic/api-core';
+import type { UseMutateFunction } from '@tanstack/react-query';
 
 import './style.scss';
 
@@ -42,8 +47,8 @@ function AutoRenewButton( {
 	isProduct,
 	subscription,
 }: {
-	disableAutoRenew: ( data: any, variables?: object ) => void;
-	enableAutoRenew: ( data: any, variables?: object ) => void;
+	disableAutoRenew: UseMutateFunction< MonetizeSubscriptionAutoRenewResponse, Error, void >;
+	enableAutoRenew: UseMutateFunction< MonetizeSubscriptionAutoRenewResponse, Error, void >;
 	isUpdating: boolean;
 	isAutoRenewing: boolean;
 	isProduct: boolean;
@@ -82,7 +87,7 @@ function AutoRenewButton( {
 				const locale = useLocale();
 				const helpText = ( () => {
 					if ( isAutoRenewing ) {
-						// translators: date is a formatted date string
+						// translators: %(date)s: a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( Date.parse( data?.end_date ?? '' ) ), locale, {
 								dateStyle: 'long',
@@ -99,8 +104,8 @@ function AutoRenewButton( {
 						disabled={ isUpdating }
 						onChange={ () =>
 							isAutoRenewing
-								? disableAutoRenew( null, { onError: onError } )
-								: enableAutoRenew( null, { onError: onError } )
+								? disableAutoRenew( undefined, { onError: onError } )
+								: enableAutoRenew( undefined, { onError: onError } )
 						}
 						help={ helpText }
 					/>
@@ -129,9 +134,11 @@ function AutoRenewButton( {
 					data={ subscription }
 					form={ form }
 					onChange={ () => {
-						isAutoRenewing
-							? disableAutoRenew( null, { onError: onError } )
-							: enableAutoRenew( null, { onError: onError } );
+						if ( isAutoRenewing ) {
+							disableAutoRenew( undefined, { onError: onError } );
+						} else {
+							enableAutoRenew( undefined, { onError: onError } );
+						}
 					} }
 				/>
 			</CardBody>
@@ -144,7 +151,7 @@ function StopSubscriptionButton( {
 	isProduct,
 	subscription,
 }: {
-	stopSubscription: ( data: any, variables: object ) => void;
+	stopSubscription: UseMutateFunction< MonetizeSubscriptionStopResponse, Error, void >;
 	isProduct: boolean;
 	subscription: MonetizeSubscription;
 } ) {
@@ -165,7 +172,7 @@ function StopSubscriptionButton( {
 					isDestructive
 					size="compact"
 					onClick={ () => {
-						stopSubscription( null, {
+						stopSubscription( undefined, {
 							onSuccess: () => {
 								createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
 								navigate( { to: monetizeSubscriptionsRoute.fullPath } );
