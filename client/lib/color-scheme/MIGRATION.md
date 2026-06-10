@@ -181,7 +181,7 @@ exploration is meant to avoid.
 `client/dashboard/app/style.scss`, `client/reader/color-scheme/dark-mode.scss`,
 `client/my-sites/themes/_dark-mode.scss`, `client/dashboard/app/chart-theme.ts`.
 
-**`when-dark-theme` consumers (~38)** — dashboard: `sites/add-new-site`,
+**`when-dark-theme` consumers (~35)** — dashboard: `sites/add-new-site`,
 `me/billing-purchases` (+ `payment-methods/credit-card-fields`),
 `components/logs-activity/activity-event`, `components/offer-card`,
 `sites/site-launch-celebration-modal`, `sites/settings-ai-tools`,
@@ -217,3 +217,43 @@ stage,wpcalypso,horizon}.json`, `client/dashboard/app-dotcom/index.tsx`,
   verify no layout/`:root`-height assumptions break, especially under the Node
   loading screen.
 - **Bundle dedupe.** A duplicated `@wordpress/private-apis` would break `unlock()`.
+
+## 8. Estimated size & why this must be split
+
+A single PR doing the entire eradication would be large, and — more importantly —
+unreviewable and impossible to visually verify as one unit.
+
+Grounded in the current code:
+
+- **Deletions (mechanical):** the engine + surface sheets total **~1,900 lines** —
+  `dark-theme.scss` (875), dashboard `_dark-theme.scss` (468), Reader
+  `dark-mode.scss` (229), Themes `_dark-mode.scss` (258), the shared
+  `when-dark-theme` mixin (21), `chart-theme.ts` (26).
+- **Conversions (the hard part):** **~35 consumer stylesheets** each carry a
+  dark-only `when-dark-theme { … }` override that must be re-pointed to `--wpds-*`
+  tokens. Reader and Themes additionally consume *generated ramp indices*
+  (`--studio-blue-70`, `--color-accent-80`, `--color-neutral-50`, …) that have no
+  one-to-one semantic token and need design-led replacements.
+- **Plumbing:** ~8 config/flag files, 2 `AGENTS.md`, the unit tests, the app-wide
+  token-CSS import, and the PostCSS/Stylelint build wiring.
+
+All-in this is roughly **~55 files, on the order of +800 / −2,200 (~3,000 lines
+touched)**.
+
+But raw size understates the cost. This is fundamentally a **visual** migration:
+WPDS-generated dark ramps will not be pixel-identical to the hand-tuned values, so
+**every surface needs design QA in light, dark, and system modes.** That review
+burden — not the line count — is the reason `when-dark-theme` and the engine are
+removed *last*, only after each surface's components have been moved onto WPDS
+tokens and signed off.
+
+**Recommended split** (each PR ~10–20 files, independently shippable + QA-able):
+
+1. Foundation — *(this PR)*.
+2. Phase 0 tooling — token CSS app-wide + fallback/Stylelint plugins.
+3. Dashboard surface.
+4. Reader surface.
+5. Themes surface.
+6. `@wordpress/ui` adoption.
+7. Final eradication — delete the engine, the `when-dark-theme` mixin, the
+   `data-theme` bridge, and the bridge file; revisit the `dark-mode` flag.
