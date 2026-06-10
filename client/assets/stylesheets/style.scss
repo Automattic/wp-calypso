@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 // Declare the `reset` layer first so it sits at the bottom of the layer order.
 // Layers declared by styles that load later (e.g. `@wordpress/ui`) are appended
 // after it, so their defaults override our reset, while unlayered styles

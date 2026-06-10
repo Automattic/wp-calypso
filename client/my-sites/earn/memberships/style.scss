@@ -1,7 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/extends";
+@import "@automattic/color-studio/dist/color-variables";
 
 body.is-section-earn.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);

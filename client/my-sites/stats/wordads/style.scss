@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @include breakpoint-deprecated( ">480px" ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;

@@ -1,4 +1,5 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@automattic/typography/styles/variables";
 
 // Add a New Comment Form
 .comments__form {
