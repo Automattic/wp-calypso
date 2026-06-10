@@ -28,7 +28,11 @@ export const ALL_TIERS: TierItem[] = [
 		level: 0,
 		id: 'emerging-partner',
 		name: __( 'Account activated' ),
-		description: __( 'Joining the program' ),
+		description: sprintf(
+			/* translators: %s is the influenced revenue */
+			__( 'Under %s influenced revenue' ),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
+		),
 		heading: __( 'Essential benefits' ),
 		subheading: __( 'Tools, earning opportunities, support & training and more' ),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
@@ -118,10 +122,10 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( '2 additional benefits unlocked' ),
-		subheading: __( 'Directory visibility, early access' ),
+		subheading: __( 'Directory inclusion, early access to product & feature improvements' ),
 		progressCardDescription: __(
 			"You're making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits."
 		),
@@ -161,7 +165,9 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
+				stripZeros: true,
+			} )
 		),
 		heading: __( '3 additional benefits unlocked' ),
 		subheading: __( 'Co-Marketing, qualified leads, partner manager & more' ),
@@ -206,7 +212,9 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue and invitation to the tier.' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ], 'USD', {
+				stripZeros: true,
+			} )
 		),
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: __( 'Higher VIP referral commissions, annual credits' ),
@@ -238,7 +246,7 @@ export const ALL_TIERS: TierItem[] = [
 		description: sprintf(
 			/* translators: %s is the influenced revenue */
 			__( '%s+ influenced revenue and invitation to the tier.' ),
-			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD' )
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( '2 premium benefits' ),
 		subheading: __( 'Parse.ly trial, marketing funds' ),

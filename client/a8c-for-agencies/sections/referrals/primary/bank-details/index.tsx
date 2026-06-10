@@ -1,4 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -138,15 +139,14 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 					</div>
 					<div className="bank-details__subheading">
 						{ translate(
-							'Enter your bank details to start receiving payments through {{a}}Tipalti{{/a}}↗, our secure payments platform.',
+							'Enter your bank details to start receiving payments through {{a}}Tipalti{{/a}}, our secure payments platform.',
 							{
 								components: {
 									a: (
-										<a
+										<ExternalLink
 											className="referrals-overview__link"
 											href="https://tipalti.com/"
-											target="_blank"
-											rel="noopener noreferrer"
+											children={ null }
 										/>
 									),
 								},

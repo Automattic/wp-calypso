@@ -199,6 +199,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
+	PLAN_STUDENT,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
@@ -228,6 +229,7 @@ import {
 	TYPE_100_YEAR,
 	TYPE_PRO,
 	TYPE_STARTER,
+	TYPE_STUDENT,
 	TYPE_GOLDEN_TOKEN,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_SCAN,
@@ -2274,6 +2276,68 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PRIORITY_24_7_SUPPORT,
 	],
 } );
+
+const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanBusinessDetails(),
+	type: TYPE_STUDENT,
+	getTitle: () => i18n.translate( 'Student' ),
+	getAudience: () => i18n.translate( 'Best for students' ),
+	getBlogAudience: () => i18n.translate( 'Best for students' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
+	getStoreAudience: () => i18n.translate( 'Best for students' ),
+	getPlanTagline: () => i18n.translate( 'Build your site with student-friendly tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Create, share, and grow your work with a custom domain.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate( 'Take the next step with an ad-free site and room to grow.' ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for students:{{/strong}} Build your online presence with a custom domain and an ad-free experience.',
+			plansDescriptionHeadingComponent
+		),
+	getShortDescription: () =>
+		i18n.translate( 'Build your online presence with a custom domain and an ad-free experience.' ),
+	getTagline: () => i18n.translate( 'Learn more about everything included with the Student plan.' ),
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+		compact( [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ADVANCED,
+			isLoggedInMonthlyPricing && FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
+			FEATURE_6GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+			isLoggedInMonthlyPricing && FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_REPUBLICIZE,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_UPLOAD_PLUGINS,
+			FEATURE_UPLOAD_THEMES,
+			FEATURE_SFTP_DATABASE,
+			FEATURE_NO_BRANDING,
+			FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		] ),
+	getPromotedFeatures: () => [
+		FEATURE_6GB_STORAGE,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_NO_ADS,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		FEATURE_VIDEO_UPLOADS,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_UPLOAD_THEMES_PLUGINS,
+		FEATURE_6GB_STORAGE,
+		FEATURE_ALL_PREMIUM_FEATURES,
+	],
+	getStorageFeature: () => FEATURE_6GB_STORAGE,
+} );
+
 const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -3039,6 +3103,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1049,
 		getStoreSlug: () => PLAN_PERSONAL_3_YEARS,
 		getPathSlug: () => 'personal-3-years',
+	},
+
+	[ PLAN_STUDENT ]: {
+		...getPlanStudentDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getProductId: () => 1090,
+		getStoreSlug: () => PLAN_STUDENT,
+		getPathSlug: () => 'student',
 	},
 
 	[ PLAN_PREMIUM_MONTHLY ]: {

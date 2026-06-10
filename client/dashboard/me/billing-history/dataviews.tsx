@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';

@@ -1,7 +1,7 @@
 import { map, sampleSize, times } from 'lodash';
 import { Component } from 'react';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';
 
 function createRandomId( randomBytesLength = 9 ) {
@@ -114,7 +114,7 @@ const SuggestionsProvider = ( Element, count = 3 ) => {
 	}
 
 	return function SuggestionsProviderWrapper( props ) {
-		const { data: followedTags } = useFollowedReaderTags();
+		const { data: followedTags } = useFollowedTags();
 		return <SuggestionsClass { ...props } followedTags={ followedTags } />;
 	};
 };

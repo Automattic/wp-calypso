@@ -13,7 +13,7 @@ type HelpCenterDispatch = HelpCenterDispatchObject[ 'dispatch' ];
 const HELP_CENTER_STORE = 'automattic/help-center';
 
 export function useHelpCenter() {
-	const loadingPromiseRef = useRef< Promise< unknown > >();
+	const loadingPromiseRef = useRef< Promise< unknown > >( undefined );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const isShown = useSelect(
 		( select ) => !! ( select( HELP_CENTER_STORE ) as HelpCenterSelect )?.isHelpCenterShown?.(),

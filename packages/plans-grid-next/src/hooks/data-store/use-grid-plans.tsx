@@ -221,6 +221,15 @@ export const usePlanTypesWithIntent = ( {
 			}
 			break;
 		}
+		case 'plans-upgrade-or-downgrade': {
+			// Show all plans — used when the current plan is expired and the user
+			// may want to downgrade as well as upgrade.
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( isEnterpriseAvailable ) {
+				planTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;

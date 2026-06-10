@@ -3,6 +3,7 @@ import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Button,
+	ExternalLink,
 	TextControl,
 	TextareaControl,
 	__experimentalVStack as VStack,
@@ -329,10 +330,9 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 											{
 												components: {
 													a: (
-														<a
+														<ExternalLink
 															href="https://automattic.com/for-agencies/program-incentives/"
-															target="_blank"
-															rel="noopener noreferrer"
+															children={ null }
 														/>
 													),
 												},
@@ -454,7 +454,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 							{
 								components: {
 									a: (
-										<a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />
+										<ExternalLink
+											href="https://wordpress.com/me"
+											style={ { color: 'var(--color-text-inverted)' } }
+											children={ null }
+										/>
 									),
 								},
 							}

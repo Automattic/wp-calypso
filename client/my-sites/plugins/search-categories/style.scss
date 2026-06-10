@@ -103,6 +103,14 @@ $search-categories-height: 40px;
 		top: 0;
 		z-index: 20;
 
+		// 2026 nav is `position: fixed`; stick the category filter below it (admin-bar
+		// offset + 64px nav) instead of at `top: 0`, where it would hide behind the nav.
+		// The `.plugins-browser--site-view` fixed-top fallback below is logged-in
+		// site-view only (no 2026 nav, which requires no selected site), so it's untouched.
+		.is-section-plugins:has(.x-nav--2026-redesign) & {
+			top: var(--nav-2026-sticky-offset);
+		}
+
 		&.fixed-top {
 			padding: $search-categories-padding-block 32px;
 			margin: 0 -32px;

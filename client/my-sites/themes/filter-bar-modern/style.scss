@@ -31,6 +31,13 @@
 	}
 }
 
+// 2026 nav is `position: fixed`, so the sticky filter bar must stick below it
+// (admin-bar offset + 64px nav) instead of at `top: 0`, where it would hide behind the
+// nav. Scoped to the 2026 path via the `:has()` ancestor on the layout root.
+.is-section-themes:has(.x-nav--2026-redesign) .filter-bar-modern {
+	top: var(--nav-2026-sticky-offset);
+}
+
 .filter-bar-modern__content {
 	align-items: center;
 	display: flex;
