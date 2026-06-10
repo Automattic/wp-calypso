@@ -157,6 +157,25 @@ export class CartCheckoutPage {
 	}
 
 	/**
+	 * Asserts that the cart contains no WordPress.com plan line item.
+	 *
+	 * Checkout tags plan rows with `data-product-type="plan"`
+	 * (see `packages/wpcom-checkout/src/checkout-line-items.tsx`), which lets us
+	 * express the "plan was skipped" contract directly instead of relying on a
+	 * strict cart count: a count check can fail on unrelated entries such as
+	 * free-domain entitlement rows auto-added for the site slug.
+	 */
+	async validateNoPlanInCart(): Promise< void > {
+		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		const planItem = this.page.locator( `${ selectors.cartItems }[data-product-type="plan"]` );
+		if ( await planItem.count() ) {
+			const planLabel = ( await planItem.first().innerText() ).split( '\n' )[ 0 ];
+			throw new Error( `Expected no plan in cart, but found: ${ planLabel }` );
+		}
+	}
+
+	/**
 	 * Obtains the text content of the payment button.
 	 *
 	 * @returns {string} Content of the payment button.
@@ -226,7 +245,7 @@ export class CartCheckoutPage {
 		number | string
 	> {
 		const totalAmountLocator = this.page.locator( selectors.totalAmount );
-		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
+		await totalAmountLocator.waitFor( { state: 'attached', timeout: 20 * 1000 } );
 
 		const stringAmount = await totalAmountLocator.innerText();
 		if ( rawString ) {

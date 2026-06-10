@@ -778,20 +778,27 @@ export class EditorPage {
 		const editorBlockCountBefore = await editorCanvas.locator( selectors.editorBlock ).count();
 
 		await inserter.searchBlockInserter( patternName );
+
+		const insertConfirmationToastLocator = exactMatch
+			? editorParent.locator(
+					`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+			  )
+			: editorParent
+					.locator( '.components-snackbar__content', {
+						hasText: /^Block pattern ".+" inserted\.$/,
+					} )
+					.first();
+
 		const locator = await inserter.selectBlockInserterResult( patternName, {
 			type: 'pattern',
 			exactMatch,
 		} );
 
-		// For partial matches, get the actual pattern name from the selected element.
-		let actualPatternName = patternName;
-		if ( ! exactMatch ) {
-			actualPatternName = ( await locator.getAttribute( 'aria-label' ) ) ?? '';
-		}
-
-		const insertConfirmationToastLocator = editorParent.locator(
-			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
-		);
+		// Wait for either the insertion confirmation toast or the inserted block
+		// to appear. The click uses noWaitAfter for patterns, resolving
+		// immediately after firing, so we race the toast against the block
+		// actually landing in the canvas to avoid missing a fast toast. The
+		// precomputed toast locator already handles exact and partial matches.
 		const insertedBlockLocator = editorCanvas
 			.locator( selectors.editorBlock )
 			.nth( editorBlockCountBefore );
@@ -802,10 +809,9 @@ export class EditorPage {
 				insertedBlockLocator.waitFor( { timeout: 15 * 1000 } ),
 			] );
 		} catch ( error ) {
-			throw new Error(
-				`Timed out waiting for pattern "${ actualPatternName }" to finish inserting.`,
-				{ cause: error }
-			);
+			throw new Error( `Timed out waiting for pattern "${ patternName }" to finish inserting.`, {
+				cause: error,
+			} );
 		}
 		return locator;
 	}
