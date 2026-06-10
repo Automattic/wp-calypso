@@ -9,6 +9,8 @@
 // override the package's own intended internal layer ordering.
 @layer reset;
 
+@import "shared/variables";
+
 // External Dependencies
 @import "vendor";
 

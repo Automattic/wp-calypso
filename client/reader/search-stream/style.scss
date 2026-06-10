@@ -1,4 +1,7 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
