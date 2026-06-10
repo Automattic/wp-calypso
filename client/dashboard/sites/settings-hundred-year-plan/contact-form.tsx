@@ -5,11 +5,11 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { wpcomLink } from '../../utils/link';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
+import { wpcomLink } from '../../utils/link';
 import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, FormField } from '@wordpress/dataviews';
 

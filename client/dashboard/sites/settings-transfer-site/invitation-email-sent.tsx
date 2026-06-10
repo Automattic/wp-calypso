@@ -8,8 +8,8 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { wpcomLink } from '../../utils/link';
 import Notice from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import type { Site, SiteOwnerTransferConfirmation } from '@automattic/api-core';
 
 export function InvitationEmailSent( {
