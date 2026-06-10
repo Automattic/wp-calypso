@@ -10,11 +10,11 @@ import type { ReactNode } from 'react';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn();
-	config.isEnabled = jest.fn( ( feature: string ) => feature === 'reader/spaces' );
+	const isEnabledMock = jest.fn( ( feature: string ) => feature === 'reader/spaces' );
 	return {
 		__esModule: true,
-		default: config,
-		isEnabled: config.isEnabled,
+		default: Object.assign( config, { isEnabled: isEnabledMock } ),
+		isEnabled: isEnabledMock,
 	};
 } );
 
