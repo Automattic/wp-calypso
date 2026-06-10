@@ -59,4 +59,37 @@ describe( 'BundleLineItem', () => {
 		expect( removeProductFromCart ).toHaveBeenCalledWith( 'primary' );
 		expect( removeProductFromCart ).toHaveBeenCalledWith( 'companion' );
 	} );
+
+	test( 'fires onRemoveBundle once with the group id and member count on confirmed removal', async () => {
+		const user = userEvent.setup();
+		const onRemoveBundle = jest.fn();
+
+		renderBundle( {
+			hasDeleteButton: true,
+			removeProductFromCart: jest.fn(),
+			onRemoveBundle,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: /Remove Domain bundle from cart/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( onRemoveBundle ).toHaveBeenCalledTimes( 1 );
+		expect( onRemoveBundle ).toHaveBeenCalledWith( 'bundle-abc', 2 );
+	} );
+
+	test( 'does not fire onRemoveBundle when the removal is cancelled', async () => {
+		const user = userEvent.setup();
+		const onRemoveBundle = jest.fn();
+
+		renderBundle( {
+			hasDeleteButton: true,
+			removeProductFromCart: jest.fn(),
+			onRemoveBundle,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: /Remove Domain bundle from cart/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+		expect( onRemoveBundle ).not.toHaveBeenCalled();
+	} );
 } );

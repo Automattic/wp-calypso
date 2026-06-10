@@ -424,12 +424,20 @@ export function BundleLineItem( {
 	isSummary,
 	hasDeleteButton,
 	removeProductFromCart,
+	onRemoveBundle,
 }: {
 	bundle: CartBundleLineItem;
 	className?: string | null;
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
+	/**
+	 * Fired once when a bundle group is removed from the cart (after the user
+	 * confirms the removal modal). Threaded from the app layer so this package
+	 * stays free of a direct analytics dependency. Receives the bundle's group id
+	 * and its member count.
+	 */
+	onRemoveBundle?: ( groupId: string, memberCount: number ) => void;
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
@@ -454,6 +462,7 @@ export function BundleLineItem( {
 		products.forEach( ( product ) => {
 			removeProductFromCart?.( product.uuid );
 		} );
+		onRemoveBundle?.( bundle.groupId, products.length );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
