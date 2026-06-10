@@ -356,7 +356,6 @@ function useRedirectOnTransactionSuccess( {
 		translate,
 		fromSiteSlug,
 		resolvedPurchaseId,
-		receipt,
 	] );
 
 	return { headingText };
