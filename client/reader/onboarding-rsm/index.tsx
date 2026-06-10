@@ -15,12 +15,14 @@ import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/read
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
+	READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
+import { EmailSettingsModal } from 'calypso/reader/onboarding-rsm/email-settings-modal';
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
 import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
@@ -43,10 +45,11 @@ import './style.scss';
 // them feel seamless (no close/open animation between steps). The active
 // step's body is rendered as the only child of the shared modal; the
 // per-step CSS class on the modal frame keeps existing styles working.
-type Step = 'welcome' | 'interests' | 'discover';
+type Step = 'welcome' | 'email-settings' | 'interests' | 'discover';
 
 const STEP_FRAME_CLASS: Record< Step, string > = {
 	welcome: 'reader-welcome-modal',
+	'email-settings': 'email-settings-modal',
 	interests: 'interests-modal',
 	discover: 'subscribe-modal',
 };
@@ -106,6 +109,9 @@ const ReaderOnboardingRsm = ( {
 	);
 	const hasSeenOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
+	);
+	const hasCompletedEmailSettingsStep: boolean | null = useSelector( ( state ) =>
+		getPreference( state, READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY )
 	);
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) >= READER_ONBOARDING_MIN_FOLLOWED_TAGS;
@@ -253,6 +259,8 @@ const ReaderOnboardingRsm = ( {
 	const recordStepClose = ( step: Step ) => {
 		if ( step === 'welcome' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
+		} else if ( step === 'email-settings' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }email_settings_modal_close` );
 		} else if ( step === 'interests' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 		} else if ( step === 'discover' ) {
@@ -263,6 +271,8 @@ const ReaderOnboardingRsm = ( {
 	const recordStepOpen = ( step: Step ) => {
 		if ( step === 'welcome' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_open` );
+		} else if ( step === 'email-settings' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }email_settings_modal_open` );
 		} else if ( step === 'interests' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
 		} else if ( step === 'discover' ) {
@@ -286,8 +296,26 @@ const ReaderOnboardingRsm = ( {
 	const handleWelcomeContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue` );
 		runStepSideEffects( 'welcome' );
+		recordStepOpen( 'email-settings' );
+		setCurrentStep( 'email-settings' );
+	};
+
+	const handleEmailSettingsContinue = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }email_settings_modal_continue` );
+		runStepSideEffects( 'email-settings' );
+		// Continue marks the step's checklist task complete; the settings
+		// themselves are auto-saved by the step as they change.
+		if ( ! hasCompletedEmailSettingsStep ) {
+			dispatch( savePreference( READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY, true ) );
+		}
 		recordStepOpen( 'interests' );
 		setCurrentStep( 'interests' );
+	};
+
+	const handleEmailSettingsBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }email_settings_modal_back` );
+		runStepSideEffects( 'email-settings' );
+		openStep( 'welcome' );
 	};
 
 	const handleInterestsContinue = () => {
@@ -300,7 +328,7 @@ const ReaderOnboardingRsm = ( {
 	const handleInterestsBack = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
 		runStepSideEffects( 'interests' );
-		openStep( 'welcome' );
+		openStep( 'email-settings' );
 	};
 
 	const handleDiscoverBack = () => {
@@ -381,6 +409,13 @@ const ReaderOnboardingRsm = ( {
 			disabled: false,
 		},
 		{
+			id: 'email-settings',
+			title: translate( 'Choose your delivery settings' ),
+			actionDispatch: () => openStep( 'email-settings' ),
+			completed: !! hasCompletedEmailSettingsStep,
+			disabled: false,
+		},
+		{
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
 			actionDispatch: () => openStep( 'interests' ),
@@ -400,7 +435,17 @@ const ReaderOnboardingRsm = ( {
 	];
 
 	let modalBackButton = null;
-	if ( currentStep === 'interests' ) {
+	if ( currentStep === 'email-settings' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleEmailSettingsBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	} else if ( currentStep === 'interests' ) {
 		modalBackButton = (
 			<Button
 				size="compact"
@@ -460,6 +505,9 @@ const ReaderOnboardingRsm = ( {
 				>
 					{ currentStep === 'welcome' && (
 						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
+					) }
+					{ currentStep === 'email-settings' && (
+						<EmailSettingsModal onContinue={ handleEmailSettingsContinue } />
 					) }
 					{ currentStep === 'interests' && (
 						<InterestsModal

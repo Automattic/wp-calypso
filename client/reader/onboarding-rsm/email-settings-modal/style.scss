@@ -1,0 +1,38 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// Frame sizing, the WP modal flex layout, the VStack scroll region, and the
+// footer of `.email-settings-modal` are shared with the other onboarding-rsm
+// modals; see `client/reader/onboarding-rsm/style.scss`.
+
+.email-settings-modal__content {
+	padding: 4px 32px 12px;
+}
+
+.email-settings-modal__title {
+	font-family: Recoleta, sans-serif;
+	font-size: 2.75rem;
+	font-weight: 400;
+	text-align: center;
+
+	@media ( max-width: $break-medium ) {
+		font-size: 1.5rem;
+	}
+}
+
+.email-settings-modal__subtitle {
+	text-align: center;
+	margin: 0 auto;
+	max-width: 640px;
+}
+
+.email-settings-modal__form,
+.email-settings-modal__error-notice {
+	width: 100%;
+	max-width: 420px;
+	margin-inline: auto;
+}
+
+.email-settings-modal__loading {
+	padding-block: 32px;
+}

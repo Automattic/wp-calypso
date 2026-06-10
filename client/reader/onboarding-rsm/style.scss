@@ -60,11 +60,13 @@ html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
 	}
 }
 
-// Shared layout for all reader-onboarding-rsm modals (welcome, interests,
-// subscribe). All three share the same overall size, the same flex-column
-// scroll/footer architecture, and the same footer styling. Per-modal
-// stylesheets only handle modal-specific content, padding, and visuals.
+// Shared layout for all reader-onboarding-rsm modals (welcome, email
+// settings, interests, subscribe). They all share the same overall size, the
+// same flex-column scroll/footer architecture, and the same footer styling.
+// Per-modal stylesheets only handle modal-specific content, padding, and
+// visuals.
 .reader-welcome-modal,
+.email-settings-modal,
 .interests-modal,
 .subscribe-modal {
 	// Frame size: 980 × 740 max, clamped to the viewport in either axis when
@@ -122,9 +124,11 @@ html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
 	}
 }
 
-// VStack-based modals (welcome, interests) make the inner content the scroll
-// region. Padding differs per-modal and stays in the per-modal stylesheets.
+// VStack-based modals (welcome, email settings, interests) make the inner
+// content the scroll region. Padding differs per-modal and stays in the
+// per-modal stylesheets.
 .reader-welcome-modal,
+.email-settings-modal,
 .interests-modal {
 	&__content {
 		flex: 1 1 auto;
@@ -146,6 +150,7 @@ html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
 // content scrolls from the top. The doubled selector raises specificity
 // above WP's emotion-injected single-class rule.
 .reader-welcome-modal__content.reader-welcome-modal__content,
+.email-settings-modal__content.email-settings-modal__content,
 .interests-modal__content.interests-modal__content {
 	justify-content: flex-start;
 }

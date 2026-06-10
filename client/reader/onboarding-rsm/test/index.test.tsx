@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
+	READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
@@ -101,6 +102,15 @@ jest.mock( 'calypso/reader/onboarding-rsm/welcome-modal', () => ( {
 	default: ( { onContinue }: { onContinue: () => void } ) => (
 		<div data-testid="welcome-modal-content">
 			<button onClick={ onContinue }>Pick your topics</button>
+		</div>
+	),
+} ) );
+
+jest.mock( 'calypso/reader/onboarding-rsm/email-settings-modal', () => ( {
+	__esModule: true,
+	EmailSettingsModal: ( { onContinue }: { onContinue: () => void } ) => (
+		<div data-testid="email-settings-modal-content">
+			<button onClick={ onContinue }>Continue</button>
 		</div>
 	),
 } ) );
@@ -226,14 +236,14 @@ describe( 'ReaderOnboardingRsm – back button navigation', () => {
 		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows a back button on the interests step that navigates back to the welcome step', async () => {
+	it( 'shows a back button on the email settings step that navigates back to the welcome step', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 
-		expect( await screen.findByTestId( 'interests-modal-content' ) ).toBeVisible();
+		expect( await screen.findByTestId( 'email-settings-modal-content' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
@@ -242,12 +252,31 @@ describe( 'ReaderOnboardingRsm – back button navigation', () => {
 		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'shows a back button on the interests step that navigates back to the email settings step', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( await screen.findByTestId( 'interests-modal-content' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( await screen.findByTestId( 'email-settings-modal-content' ) ).toBeVisible();
+	} );
+
 	it( 'shows a back button on the subscribe step that navigates back to the interests step', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
@@ -267,6 +296,8 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
 		expect( mockRefreshFollowingStreams ).not.toHaveBeenCalled();
@@ -282,6 +313,8 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -320,6 +353,8 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -361,6 +396,8 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
 		invalidateSpy.mockClear();
@@ -377,13 +414,15 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 	it( 'invalidates the subscription queries when Back is clicked on the interests step', async () => {
 		// Back from interests still leaves the step, so the same close
 		// side-effects (including invalidation) must run — otherwise a user
-		// could subscribe to a pack, go Back to welcome, and close from there
+		// could subscribe to a pack, go Back, and close from there
 		// without ever refreshing the cached subscription counts.
 		const user = userEvent.setup();
 		const { invalidateSpy } = renderWithInvalidateSpy( <ReaderOnboardingRsm /> );
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
 		invalidateSpy.mockClear();
@@ -405,6 +444,8 @@ describe( 'ReaderOnboardingRsm – subscription query invalidation on step close
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -450,6 +491,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
 		jest.mocked( recordTracksEvent ).mockClear();
@@ -467,6 +510,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
 		jest.mocked( recordTracksEvent ).mockClear();
@@ -484,6 +529,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -503,6 +550,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -535,6 +584,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
 		jest.mocked( recordTracksEvent ).mockClear();
@@ -549,6 +600,8 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -568,6 +621,8 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 	const navigateToSubscribeStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -731,6 +786,119 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.anything()
 		);
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – email settings step', () => {
+	const navigateToEmailSettingsStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+	};
+
+	it( 'shows the email settings step between welcome and interests', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEmailSettingsStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( await screen.findByTestId( 'interests-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'saves the email-settings completion preference when Continue is clicked', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEmailSettingsStep( user );
+
+		expect( savePreference ).not.toHaveBeenCalledWith(
+			READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY,
+			true
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( savePreference ).toHaveBeenCalledWith(
+			READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY,
+			true
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }email_settings_modal_continue`
+		);
+	} );
+
+	it( 'does not save the completion preference when the step is dismissed without Continue', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEmailSettingsStep( user );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( savePreference ).not.toHaveBeenCalledWith(
+			READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY,
+			true
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }email_settings_modal_close`
+		);
+	} );
+
+	it( 'does not re-save the completion preference when the step was already completed', async () => {
+		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+			getPreference: jest.Mock;
+		};
+		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+			key === READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY ? true : null
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEmailSettingsStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( savePreference ).not.toHaveBeenCalledWith(
+			READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY,
+			true
+		);
+
+		getPreference.mockReturnValue( null );
+	} );
+
+	it( 'renders an email-settings checklist task that completes via the saved preference', async () => {
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		expect( screen.getByTestId( 'checklist-item-email-settings' ) ).toHaveAttribute(
+			'data-completed',
+			'false'
+		);
+		expect( screen.getByTestId( 'checklist-item-email-settings' ) ).toHaveAttribute(
+			'data-disabled',
+			'false'
+		);
+	} );
+
+	it( 'marks the email-settings checklist task complete when the preference is set', async () => {
+		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+			getPreference: jest.Mock;
+		};
+		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+			key === READER_ONBOARDING_EMAIL_SETTINGS_PREFERENCE_KEY ? true : null
+		);
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		expect( screen.getByTestId( 'checklist-item-email-settings' ) ).toHaveAttribute(
+			'data-completed',
+			'true'
+		);
+
+		getPreference.mockReturnValue( null );
 	} );
 } );
 
@@ -991,6 +1159,8 @@ describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
 		await screen.findByTestId( 'welcome-modal-content' );
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
@@ -1027,6 +1197,8 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 		// Open interests; initial hasFollowed is false (no prior subscribe).
 		await screen.findByTestId( 'welcome-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		const interestsContent = await screen.findByTestId( 'interests-modal-content' );
 		expect( interestsContent ).toHaveAttribute( 'data-has-followed', 'false' );
 
@@ -1065,6 +1237,8 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 
 		// Open interests, simulate any subscribe action, and close.
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Mark followed' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
@@ -1088,6 +1262,8 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 		);
 
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'email-settings-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 

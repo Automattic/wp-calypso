@@ -161,7 +161,7 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue } ) 
 
 			<div className="reader-onboarding-modal__footer">
 				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-					<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
+					<StepIndicator totalSteps={ 4 } currentStep={ 1 } />
 					<HStack
 						spacing={ 2 }
 						justify="right"

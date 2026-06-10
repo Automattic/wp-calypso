@@ -298,7 +298,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 			</div>
 			<div className="reader-onboarding-modal__footer">
 				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-					<StepIndicator totalSteps={ 3 } currentStep={ 3 } />
+					<StepIndicator totalSteps={ 4 } currentStep={ 4 } />
 					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
 						<Button
 							__next40pxDefaultSize
