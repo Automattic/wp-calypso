@@ -50,7 +50,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	);
 
 	// Granular backup download mutation
-	const granularDownloadRequest = useMutation(
+	const { mutate: granularDownloadMutate, isPending: isGranularDownloadPending } = useMutation(
 		siteGranularBackupDownloadInitiateMutation( site.ID )
 	);
 
@@ -78,7 +78,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 
 		recordTracksEvent( 'calypso_dashboard_backup_granular_download_request' );
 
-		granularDownloadRequest.mutate(
+		granularDownloadMutate(
 			{
 				rewindId: backup.rewind_id,
 				includePaths,
@@ -98,7 +98,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	}, [
 		fileBrowserState,
 		recordTracksEvent,
-		granularDownloadRequest,
+		granularDownloadMutate,
 		backup.rewind_id,
 		router,
 		site.slug,
@@ -112,8 +112,8 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 				size={ isSmallViewport ? 'default' : 'compact' }
 				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
 				style={ { justifyContent: 'center' } }
-				disabled={ granularDownloadRequest.isPending }
-				isBusy={ granularDownloadRequest.isPending }
+				disabled={ isGranularDownloadPending }
+				isBusy={ isGranularDownloadPending }
 			>
 				{ hasSelectedFiles
 					? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
