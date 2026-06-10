@@ -1,5 +1,6 @@
 import {
 	Button,
+	Notice,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -17,6 +18,7 @@ interface BundleCardProps {
 	onAddToCart?: ( bundle: BundleSuggestion ) => void;
 	isAddedToCart?: boolean;
 	onContinue?: () => void;
+	errorMessage?: string;
 }
 
 export const BundleCard = ( {
@@ -24,6 +26,7 @@ export const BundleCard = ( {
 	onAddToCart,
 	isAddedToCart,
 	onContinue,
+	errorMessage,
 }: BundleCardProps ) => {
 	const { __ } = useI18n();
 
@@ -86,6 +89,12 @@ export const BundleCard = ( {
 							'Premium domains are subject to different pricing and may not be eligible for promotions.'
 						) }
 					</Text>
+				) }
+
+				{ errorMessage && (
+					<Notice className="bundle-card__error" status="error" isDismissible={ false }>
+						{ errorMessage }
+					</Notice>
 				) }
 
 				{ isAddedToCart ? (

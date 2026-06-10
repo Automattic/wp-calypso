@@ -1,5 +1,5 @@
 import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
-import { render, screen, waitFor } from '@testing-library/react';
+import { getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
@@ -928,6 +928,113 @@ describe( 'ResultsPage', () => {
 					] ),
 				} )
 			);
+		} );
+
+		it( 'shows the server error message on the bundle card when adding the bundle fails', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest
+				.fn()
+				.mockRejectedValue(
+					new Error(
+						'We can’t determine the availability of the domain you’re trying to register.'
+					)
+				);
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-error' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-error.com' } ) ],
+			} );
+
+			// Scoped to the render container because the error Notice also announces
+			// the message through the a11y-speak live region on document.body.
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-error"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect(
+					getByText(
+						container,
+						'We can’t determine the availability of the domain you’re trying to register.'
+					)
+				).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'shows a generic error message when the rejection has no usable message', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest.fn().mockRejectedValue( new Error( '' ) );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-fallback' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fallback.com' } ) ],
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-fallback"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect(
+					getByText(
+						container,
+						'Sorry, we couldn’t add the bundle to your cart. Please try again.'
+					)
+				).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'clears the error when retrying succeeds', async () => {
+			const user = userEvent.setup();
+			const onAddBundle = jest
+				.fn()
+				.mockRejectedValueOnce( new Error( 'Transient bundle error' ) )
+				.mockResolvedValueOnce( undefined );
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-bundle-retry' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-retry.com' } ) ],
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( { onAddBundle } ) }
+					config={ { showBundleSuggestions: true } }
+					query="test-bundle-retry"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( getByText( container, 'Transient bundle error' ) ).toBeInTheDocument();
+			} );
+
+			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => {
+				expect( queryByText( container, 'Transient bundle error' ) ).not.toBeInTheDocument();
+			} );
+
+			expect( onAddBundle ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 

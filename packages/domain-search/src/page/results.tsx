@@ -11,6 +11,7 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
+import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { useDomainSearch } from './context';
@@ -47,19 +48,34 @@ const StickyCompactBanner = () => {
 };
 
 export const ResultsPage = () => {
+	const { __ } = useI18n();
 	const { slots, config, events, cart } = useDomainSearch();
+
+	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
 
 	// Accepting a bundle adds every member domain to the cart in one
 	// all-or-nothing operation. The cart mutation itself lives at the app layer
 	// (cart.onAddBundle); the mutation wrapper mirrors the single-domain
 	// add-to-cart path so failures are captured the same way.
-	const { mutate: addBundleToCart } = useMutation( {
+	const { mutate: addBundleToCart, error: addBundleError } = useMutation( {
+		meta: {
+			mutationId,
+		},
 		mutationFn: async ( bundle: BundleSuggestion ) => {
 			await cart.onAddBundle?.( bundle );
 		},
 		networkMode: 'always',
 		retry: false,
 	} );
+
+	// The cart rejects with the server's first cart message (a CartActionError),
+	// which is already user-facing copy. Fall back when it's missing. Clicking
+	// "Get bundle" again re-fires the mutation, which clears the error state.
+	const bundleErrorMessage =
+		isCurrentMutation && addBundleError
+			? addBundleError.message ||
+			  __( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
+			: undefined;
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -140,6 +156,7 @@ export const ResultsPage = () => {
 							cart.hasItem( domain )
 						) }
 						onContinue={ events.onContinue }
+						errorMessage={ bundleErrorMessage }
 					/>
 				) }
 				{ isLoadingSuggestions ? (
