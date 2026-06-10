@@ -139,6 +139,8 @@ test( 'saves preferences', () => {
 // ✅ Good: top-level import + cast
 import { userPreferencesMutation } from '@automattic/api-queries';
 
+jest.mock( '@automattic/api-queries' );
+
 test( 'saves preferences', () => {
 	( userPreferencesMutation as jest.Mock ).mockReturnValue( /* … */ );
 } );
