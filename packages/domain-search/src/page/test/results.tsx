@@ -893,6 +893,10 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test' },
 				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
 			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'test' },
+				bundleSuggestion: buildBundleSuggestion( 'test' ),
+			} );
 
 			render(
 				<TestDomainSearch
