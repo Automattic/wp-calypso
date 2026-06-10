@@ -3,6 +3,12 @@
  * the `refine` endpoint that page-scopes edits to a rendered one-pager.
  * Uses `AgentUI` directly (driven from local state) rather than the
  * agenttic-client stack. Thread state is ephemeral by design.
+ *
+ * Every instruction — typed in the input or batched from annotate mode —
+ * goes through one sequential queue. A single `drain()` loop owns the whole
+ * per-instruction lifecycle (submit → poll the run to a terminal status →
+ * post the reply), so there is no cross-render state machine to race: the
+ * only gate is a synchronous "already draining" flag.
  */
 import '@automattic/agenttic-ui/index.css';
 import { AgentUI } from '@automattic/agenttic-ui';
@@ -14,7 +20,7 @@ import { close } from '@wordpress/icons';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAgentStudioCollateralQueryKey } from '../../data/use-agent-studio-collateral';
-import useAgentStudioRun, { NON_TERMINAL_RUN_STATUSES } from '../../data/use-agent-studio-run';
+import { useAgentStudioRunPoller } from '../../data/use-agent-studio-run';
 import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-variant-html';
 import useRefineCollateralPage, {
 	getRefineClarificationMessage,
@@ -41,9 +47,11 @@ interface Props {
 	onClose: () => void;
 }
 
-interface ActiveRun {
-	runId: string;
-	userFacingPage: number;
+interface BatchProgress {
+	/** Page being updated; null while the refine request is still in flight. */
+	page: number | null;
+	/** Instructions waiting behind the current one. */
+	remaining: number;
 }
 
 // Stable message id (agenttic-ui keys its list off `Message.id`).
@@ -78,144 +86,146 @@ export default function RefineWithAiDock( {
 	onClose,
 }: Props ) {
 	const [ messages, setMessages ] = useState< Message[] >( [] );
-	const [ activeRun, setActiveRun ] = useState< ActiveRun | null >( null );
 	const [ inputValue, setInputValue ] = useState( '' );
-	const [ queuedInstructions, setQueuedInstructions ] = useState< string[] >( [] );
+	const [ progress, setProgress ] = useState< BatchProgress | null >( null );
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const refine = useRefineCollateralPage();
+	const pollRun = useAgentStudioRunPoller();
 
-	// `useAgentStudioRun` self-polls while non-terminal; undefined keeps it idle.
-	const run = useAgentStudioRun( activeRun?.runId );
+	// The queue and its consumer live in refs: `enqueue` is callable from any
+	// render, and `drain` is the single consumer behind a synchronous gate.
+	const queueRef = useRef< string[] >( [] );
+	const isDrainingRef = useRef( false );
+	const isUnmountedRef = useRef( false );
+	useEffect(
+		() => () => {
+			isUnmountedRef.current = true;
+		},
+		[]
+	);
 
-	// Synchronous in-flight gate for the queue drain. State guards alone are
-	// unreliable here: react-query's `isPending` notification can render via
-	// `useSyncExternalStore` before the batched `setActiveRun` flushes, opening
-	// a window where both look idle and the drain double-fires (observed:
-	// the first run got orphaned mid-batch). True from submission until the
-	// run settles (completion effect below) or the request fails.
-	const inFlightRef = useRef( false );
+	const postReply = ( text: string ) =>
+		setMessages( ( current ) => [ ...current, agentMessage( text ) ] );
 
-	// Post the success/failure reply once per run, not on every poll re-render.
-	const handledRunIdRef = useRef< string | null >( null );
-	useEffect( () => {
-		if ( ! activeRun || ! run.data ) {
+	const drain = async (): Promise< void > => {
+		if ( isDrainingRef.current ) {
 			return;
 		}
-		// Settled once the run leaves the non-terminal set — same signal the
-		// hook uses to stop polling.
-		const status = run.data.status;
-		if ( NON_TERMINAL_RUN_STATUSES.has( status ) ) {
-			return;
-		}
-		if ( handledRunIdRef.current === activeRun.runId ) {
-			return;
-		}
-		handledRunIdRef.current = activeRun.runId;
-
-		if ( status === 'a4a_completed' ) {
-			setMessages( ( current ) => [
-				...current,
-				agentMessage(
-					sprintf(
-						/* translators: %d is the 1-based page number the user pointed at. */
-						__( 'Updated page %d.' ),
-						activeRun.userFacingPage
-					)
-				),
-			] );
-			// Refresh the preview: invalidate the variant-html and collateral
-			// queries by prefix (refine may also bump html_url on the collateral).
-			void queryClient.invalidateQueries( {
-				queryKey: getAgentStudioVariantHtmlQueryKey( undefined ).slice( 0, 1 ),
-			} );
-			void queryClient.invalidateQueries( {
-				queryKey: getAgentStudioCollateralQueryKey( undefined, undefined ).slice( 0, 1 ),
-			} );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_agent_studio_refine_complete', {
-					run_id: activeRun.runId,
-					page: activeRun.userFacingPage,
-					status,
-				} )
-			);
-		} else {
-			setMessages( ( current ) => [
-				...current,
-				agentMessage( __( "I couldn't update that page. Try rephrasing your request." ) ),
-			] );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_agent_studio_refine_error', {
-					run_id: activeRun.runId,
-					page: activeRun.userFacingPage,
-					status,
-				} )
-			);
-		}
-		setActiveRun( null );
-		inFlightRef.current = false;
-	}, [ activeRun, run.data, queryClient, dispatch ] );
-
-	const submitInstruction = async ( instruction: string ): Promise< void > => {
-		inFlightRef.current = true;
-		setMessages( ( current ) => [ ...current, userMessage( instruction ) ] );
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_agent_studio_refine_submit', {
-				collateral_post_id: collateralPostId,
-				instruction_length: instruction.length,
-			} )
-		);
-
+		isDrainingRef.current = true;
 		try {
-			const response = await refine.mutateAsync( {
-				collateralPostId,
-				instruction,
-			} );
-			setActiveRun( {
-				runId: String( response.run_id ),
-				userFacingPage: response.page,
-			} );
-		} catch ( err: unknown ) {
-			// No run was created, so the gate lifts here rather than in the
-			// completion effect.
-			inFlightRef.current = false;
-			const clarification = getRefineClarificationMessage( err );
-			if ( clarification ) {
-				// Server asked for clarification (no run created); show it inline.
-				setMessages( ( current ) => [ ...current, agentMessage( clarification ) ] );
+			while ( ! isUnmountedRef.current ) {
+				const instruction = queueRef.current.shift();
+				if ( instruction === undefined ) {
+					return;
+				}
+				setProgress( { page: null, remaining: queueRef.current.length } );
+				setMessages( ( current ) => [ ...current, userMessage( instruction ) ] );
 				dispatch(
-					recordTracksEvent( 'calypso_a4a_agent_studio_refine_clarification', {
+					recordTracksEvent( 'calypso_a4a_agent_studio_refine_submit', {
 						collateral_post_id: collateralPostId,
+						instruction_length: instruction.length,
 					} )
 				);
-				return;
+
+				let runId: string;
+				let page: number;
+				try {
+					const response = await refine.mutateAsync( { collateralPostId, instruction } );
+					runId = String( response.run_id );
+					page = response.page;
+				} catch ( err: unknown ) {
+					const clarification = getRefineClarificationMessage( err );
+					if ( clarification ) {
+						// Server asked for clarification (no run created); show it inline.
+						postReply( clarification );
+						dispatch(
+							recordTracksEvent( 'calypso_a4a_agent_studio_refine_clarification', {
+								collateral_post_id: collateralPostId,
+							} )
+						);
+					} else {
+						postReply( __( 'Something went wrong. Please try again in a moment.' ) );
+						dispatch(
+							recordTracksEvent( 'calypso_a4a_agent_studio_refine_error', {
+								collateral_post_id: collateralPostId,
+								reason: 'request_failed',
+							} )
+						);
+					}
+					continue;
+				}
+
+				setProgress( { page, remaining: queueRef.current.length } );
+				const status = await pollRun( runId, () => isUnmountedRef.current );
+				if ( status === null ) {
+					// Unmounted mid-run: the server keeps working, but there is
+					// no surface left to report to; queued edits are dropped.
+					return;
+				}
+				if ( status === 'a4a_completed' ) {
+					postReply(
+						sprintf(
+							/* translators: %d is the 1-based page number the user pointed at. */
+							__( 'Updated page %d.' ),
+							page
+						)
+					);
+					// Refresh the preview: invalidate the variant-html and collateral
+					// queries by prefix (refine may also bump html_url on the collateral).
+					void queryClient.invalidateQueries( {
+						queryKey: getAgentStudioVariantHtmlQueryKey( undefined ).slice( 0, 1 ),
+					} );
+					void queryClient.invalidateQueries( {
+						queryKey: getAgentStudioCollateralQueryKey( undefined, undefined ).slice( 0, 1 ),
+					} );
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_agent_studio_refine_complete', {
+							run_id: runId,
+							page,
+							status,
+						} )
+					);
+				} else {
+					postReply( __( "I couldn't update that page. Try rephrasing your request." ) );
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_agent_studio_refine_error', {
+							run_id: runId,
+							page,
+							status,
+						} )
+					);
+				}
 			}
-			setMessages( ( current ) => [
-				...current,
-				agentMessage( __( 'Something went wrong. Please try again in a moment.' ) ),
-			] );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_agent_studio_refine_error', {
-					collateral_post_id: collateralPostId,
-					reason: 'request_failed',
-				} )
-			);
+		} finally {
+			isDrainingRef.current = false;
+			if ( ! isUnmountedRef.current ) {
+				setProgress( null );
+			}
 		}
 	};
 
-	const handleSubmit = async ( instruction: string ): Promise< void > => {
+	const enqueue = ( instructions: string[] ) => {
+		queueRef.current.push( ...instructions );
+		// Keep the "N more queued" hint live when a batch lands mid-run.
+		setProgress( ( current ) =>
+			current ? { ...current, remaining: queueRef.current.length } : current
+		);
+		void drain();
+	};
+
+	const handleSubmit = ( instruction: string ): void => {
 		const trimmed = instruction.trim();
-		if ( '' === trimmed || activeRun || inFlightRef.current ) {
+		if ( trimmed === '' ) {
 			return;
 		}
 		// Input is controlled, so clear it ourselves once the message is sent.
 		setInputValue( '' );
-		await submitInstruction( trimmed );
+		enqueue( [ trimmed ] );
 	};
 
-	// Enqueue each new auto-submit batch exactly once, tracked by array
-	// identity (the ref also covers a double effect run before the parent's
-	// clear lands).
+	// Enqueue each auto-submit batch exactly once, tracked by array identity
+	// (the ref also covers a double effect run before the parent's clear lands).
 	const enqueuedBatchRef = useRef< string[] | null >( null );
 	useEffect( () => {
 		if (
@@ -225,46 +235,32 @@ export default function RefineWithAiDock( {
 			return;
 		}
 		enqueuedBatchRef.current = autoSubmitInstructions;
-		setQueuedInstructions( ( current ) => [ ...current, ...autoSubmitInstructions ] );
+		enqueue( autoSubmitInstructions );
 		onAutoSubmitConsumed();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- `enqueue` is recreated every render; the batch identity is the real trigger.
 	}, [ autoSubmitInstructions, onAutoSubmitConsumed ] );
 
-	// Drain the queue one instruction at a time: each run must settle (the
-	// completion effect above clears `activeRun`) before the next page's
-	// instruction goes out.
-	useEffect( () => {
-		if ( queuedInstructions.length === 0 || inFlightRef.current || activeRun || refine.isPending ) {
-			return;
-		}
-		const [ head, ...rest ] = queuedInstructions;
-		setQueuedInstructions( rest );
-		void submitInstruction( head );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- `submitInstruction` is recreated every render; the queue, run, and pending flags are the real triggers.
-	}, [ queuedInstructions, activeRun, refine.isPending ] );
-
-	const isProcessing = activeRun !== null || refine.isPending || queuedInstructions.length > 0;
-
 	// Plain strings — primitives compared by value, so memoizing buys nothing.
-	// With a batch in flight (annotate mode), surface how many edits still wait
-	// behind the active run so the user knows the work isn't done yet.
-	const queuedCount = queuedInstructions.length;
+	// While the page is unknown (refine request in flight) AgentUI shows its
+	// default thinking indicator; once known, surface the page and how many
+	// edits still wait behind it.
 	let thinkingMessage: string | undefined;
-	if ( activeRun && queuedCount > 0 ) {
+	if ( progress?.page != null && progress.remaining > 0 ) {
 		thinkingMessage = sprintf(
 			/* translators: %1$d is the 1-based page number being refined, %2$d is the number of edits still waiting in the queue. */
 			_n(
 				'Updating page %1$d… %2$d more edit queued.',
 				'Updating page %1$d… %2$d more edits queued.',
-				queuedCount
+				progress.remaining
 			),
-			activeRun.userFacingPage,
-			queuedCount
+			progress.page,
+			progress.remaining
 		);
-	} else if ( activeRun ) {
+	} else if ( progress?.page != null ) {
 		thinkingMessage = sprintf(
 			/* translators: %d is the 1-based page number being refined. */
 			__( 'Updating page %d…' ),
-			activeRun.userFacingPage
+			progress.page
 		);
 	}
 
@@ -290,7 +286,7 @@ export default function RefineWithAiDock( {
 				<AgentUI
 					variant="embedded"
 					messages={ messages }
-					isProcessing={ isProcessing }
+					isProcessing={ progress !== null }
 					thinkingMessage={ thinkingMessage }
 					placeholder={ placeholderHint }
 					inputValue={ inputValue }

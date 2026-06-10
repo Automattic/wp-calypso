@@ -20,6 +20,12 @@ export interface PageAnnotation extends AnnotationTarget {
 	comment: string;
 }
 
+/** A picked element whose note is still being typed. */
+interface DraftNote {
+	target: AnnotationTarget;
+	comment: string;
+}
+
 interface CoverNavigation {
 	count: number;
 	activeIndex: number;
@@ -38,6 +44,94 @@ interface Props {
 
 const toPercent = ( fraction: number ): string => `${ fraction * 100 }%`;
 
+// Keep the comment form inside the page frame when the picked element sits
+// near the frame's trailing or bottom edge.
+const FORM_MAX_X_FRACTION = 0.55;
+const FORM_MAX_Y_FRACTION = 0.82;
+
+function AnnotationCommentForm( {
+	draft,
+	onChange,
+	onCancel,
+	onAdd,
+}: {
+	draft: DraftNote;
+	onChange: ( comment: string ) => void;
+	onCancel: () => void;
+	onAdd: () => void;
+} ) {
+	const { rect } = draft.target;
+	return (
+		<div
+			className="a4a-annotation-overlay__form"
+			style={ {
+				insetInlineStart: toPercent( Math.min( rect.x, FORM_MAX_X_FRACTION ) ),
+				insetBlockStart: toPercent( Math.min( rect.y + rect.height, FORM_MAX_Y_FRACTION ) ),
+			} }
+		>
+			<TextareaControl
+				__nextHasNoMarginBottom
+				autoFocus // eslint-disable-line jsx-a11y/no-autofocus -- the form opens from an explicit click on the element being annotated.
+				label={ __( 'What should change here?' ) }
+				hideLabelFromVision
+				placeholder={ __( 'e.g. “Make this headline shorter”' ) }
+				rows={ 2 }
+				value={ draft.comment }
+				onChange={ onChange }
+				onKeyDown={ ( event ) => {
+					if ( event.key === 'Enter' && ! event.shiftKey ) {
+						event.preventDefault();
+						onAdd();
+					}
+				} }
+			/>
+			<div className="a4a-annotation-overlay__form-actions">
+				<Button size="small" variant="tertiary" onClick={ onCancel }>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					size="small"
+					variant="primary"
+					disabled={ ! draft.comment.trim() }
+					onClick={ onAdd }
+				>
+					{ __( 'Add note' ) }
+				</Button>
+			</div>
+		</div>
+	);
+}
+
+function AnnotationToolbar( {
+	noteCount,
+	onCancel,
+	onSend,
+}: {
+	noteCount: number;
+	onCancel: () => void;
+	onSend: () => void;
+} ) {
+	return (
+		<div className="a4a-annotation-toolbar">
+			<span className="a4a-annotation-toolbar__hint">
+				{ noteCount > 0
+					? sprintf(
+							/* translators: %d is the number of notes collected so far. */
+							_n( '%d note', '%d notes', noteCount ),
+							noteCount
+					  )
+					: __( 'Click anything on a page to leave a note. The cover can’t be edited.' ) }
+			</span>
+			<Button size="small" variant="tertiary" onClick={ onCancel }>
+				{ __( 'Cancel' ) }
+			</Button>
+			<Button size="small" variant="primary" disabled={ noteCount === 0 } onClick={ onSend }>
+				{ __( 'Send to AI' ) }
+			</Button>
+		</div>
+	);
+}
+
 export default function AnnotationViewer( {
 	pages,
 	coverNavigation,
@@ -47,39 +141,34 @@ export default function AnnotationViewer( {
 }: Props ) {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ annotations, setAnnotations ] = useState< PageAnnotation[] >( [] );
-	const [ pendingPick, setPendingPick ] = useState< AnnotationTarget | null >( null );
-	const [ draftComment, setDraftComment ] = useState( '' );
+	const [ draft, setDraft ] = useState< DraftNote | null >( null );
 
 	// Leaving annotate mode always discards in-progress state.
 	useEffect( () => {
 		if ( ! isAnnotating ) {
 			setAnnotations( [] );
-			setPendingPick( null );
-			setDraftComment( '' );
+			setDraft( null );
 		}
 	}, [ isAnnotating ] );
 
 	const handlePick = useCallback( ( target: AnnotationTarget ) => {
-		setPendingPick( target );
-		setDraftComment( '' );
+		setDraft( { target, comment: '' } );
 	}, [] );
 
 	// Pause inspection while the comment form is open so clicks land on it.
-	const hovered = useAnnotationInspector( containerRef, isAnnotating && ! pendingPick, handlePick );
+	const hovered = useAnnotationInspector( containerRef, isAnnotating && ! draft, handlePick );
 
-	const cancelPending = useCallback( () => {
-		setPendingPick( null );
-		setDraftComment( '' );
-	}, [] );
-
-	const addPending = useCallback( () => {
-		const comment = draftComment.trim();
-		if ( ! pendingPick || ! comment ) {
+	const addDraft = () => {
+		if ( ! draft ) {
 			return;
 		}
-		setAnnotations( ( current ) => [ ...current, { ...pendingPick, comment } ] );
-		cancelPending();
-	}, [ pendingPick, draftComment, cancelPending ] );
+		const comment = draft.comment.trim();
+		if ( ! comment ) {
+			return;
+		}
+		setAnnotations( ( current ) => [ ...current, { ...draft.target, comment } ] );
+		setDraft( null );
+	};
 
 	// Esc backs out one level: comment form first, then the whole mode.
 	useEffect( () => {
@@ -90,16 +179,18 @@ export default function AnnotationViewer( {
 			if ( event.key !== 'Escape' ) {
 				return;
 			}
+			// Annotate mode owns Esc; don't let an enclosing surface also
+			// react to the same keypress.
 			event.stopPropagation();
-			if ( pendingPick ) {
-				cancelPending();
+			if ( draft ) {
+				setDraft( null );
 			} else {
 				onExit();
 			}
 		};
 		document.addEventListener( 'keydown', handleKeyDown );
 		return () => document.removeEventListener( 'keydown', handleKeyDown );
-	}, [ isAnnotating, pendingPick, cancelPending, onExit ] );
+	}, [ isAnnotating, draft, onExit ] );
 
 	const removeAnnotation = ( index: number ) => {
 		setAnnotations( ( current ) => current.filter( ( _, idx ) => idx !== index ) );
@@ -108,7 +199,7 @@ export default function AnnotationViewer( {
 	const renderPageOverlay = ( pageNumber: number ): ReactNode => {
 		// While the comment form is open the inspector is paused (`hovered` is
 		// null), so the picked element keeps the highlight.
-		const picked = pendingPick ?? hovered;
+		const picked = draft?.target ?? hovered;
 		const highlight = picked?.pageNumber === pageNumber ? picked : null;
 		// Pins keep their index in the full list: it is both the removal handle
 		// and the user-facing note number.
@@ -120,7 +211,7 @@ export default function AnnotationViewer( {
 				{ highlight && (
 					<div
 						className={ clsx( 'a4a-annotation-overlay__highlight', {
-							'is-pending': !! pendingPick,
+							'is-pending': !! draft,
 						} ) }
 						style={ {
 							insetInlineStart: toPercent( highlight.rect.x ),
@@ -149,46 +240,15 @@ export default function AnnotationViewer( {
 						{ index + 1 }
 					</button>
 				) ) }
-				{ pendingPick?.pageNumber === pageNumber && (
-					<div
-						className="a4a-annotation-overlay__form"
-						style={ {
-							insetInlineStart: toPercent( Math.min( pendingPick.rect.x, 0.55 ) ),
-							insetBlockStart: toPercent(
-								Math.min( pendingPick.rect.y + pendingPick.rect.height, 0.82 )
-							),
-						} }
-					>
-						<TextareaControl
-							__nextHasNoMarginBottom
-							autoFocus // eslint-disable-line jsx-a11y/no-autofocus -- the form opens from an explicit click on the element being annotated.
-							label={ __( 'What should change here?' ) }
-							hideLabelFromVision
-							placeholder={ __( 'e.g. “Make this headline shorter”' ) }
-							rows={ 2 }
-							value={ draftComment }
-							onChange={ setDraftComment }
-							onKeyDown={ ( event ) => {
-								if ( event.key === 'Enter' && ! event.shiftKey ) {
-									event.preventDefault();
-									addPending();
-								}
-							} }
-						/>
-						<div className="a4a-annotation-overlay__form-actions">
-							<Button size="small" variant="tertiary" onClick={ cancelPending }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button
-								size="small"
-								variant="primary"
-								disabled={ ! draftComment.trim() }
-								onClick={ addPending }
-							>
-								{ __( 'Add note' ) }
-							</Button>
-						</div>
-					</div>
+				{ draft?.target.pageNumber === pageNumber && (
+					<AnnotationCommentForm
+						draft={ draft }
+						onChange={ ( comment ) =>
+							setDraft( ( current ) => current && { ...current, comment } )
+						}
+						onCancel={ () => setDraft( null ) }
+						onAdd={ addDraft }
+					/>
 				) }
 			</div>
 		);
@@ -207,28 +267,11 @@ export default function AnnotationViewer( {
 				renderPageOverlay={ isAnnotating ? renderPageOverlay : undefined }
 			/>
 			{ isAnnotating && (
-				<div className="a4a-annotation-toolbar">
-					<span className="a4a-annotation-toolbar__hint">
-						{ annotations.length > 0
-							? sprintf(
-									/* translators: %d is the number of notes collected so far. */
-									_n( '%d note', '%d notes', annotations.length ),
-									annotations.length
-							  )
-							: __( 'Click anything on a page to leave a note. The cover can’t be edited.' ) }
-					</span>
-					<Button size="small" variant="tertiary" onClick={ onExit }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						size="small"
-						variant="primary"
-						disabled={ annotations.length === 0 }
-						onClick={ () => onSubmit( annotations ) }
-					>
-						{ __( 'Send to AI' ) }
-					</Button>
-				</div>
+				<AnnotationToolbar
+					noteCount={ annotations.length }
+					onCancel={ onExit }
+					onSend={ () => onSubmit( annotations ) }
+				/>
 			) }
 		</div>
 	);
