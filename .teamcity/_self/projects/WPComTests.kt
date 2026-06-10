@@ -453,7 +453,8 @@ private object GutenbergPlaywrightTests : BuildType({
 				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
 			))
 		}
-		notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
+		// TODO: temporary for testing notifications — revert to ("#gutenberg-e2e") before merge.
+		notifyAllFailuresAndFirstSuccess("#notif-test", "+:*")
 	}
 
 	triggers {
