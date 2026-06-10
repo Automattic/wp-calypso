@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getStreamUrl } from 'calypso/reader/route';
+import type { JSX } from 'react';
 
 interface UserTopSitesProps {
 	userId: number;

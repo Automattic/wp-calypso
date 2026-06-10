@@ -1,7 +1,7 @@
 import './style.scss';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, type JSX } from 'react';
 import GravatarIcon from 'calypso/assets/images/icons/gravatar.svg';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import AutoDirection from 'calypso/components/auto-direction';

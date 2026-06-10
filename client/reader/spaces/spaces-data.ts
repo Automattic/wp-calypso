@@ -1,4 +1,5 @@
 import { box, cart, comment, inbox, pages, starFilled, video } from '@wordpress/icons';
+import type { JSX } from 'react';
 
 /**
  * Hard-coded Spaces used to prototype the v0 UI.

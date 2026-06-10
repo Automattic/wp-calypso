@@ -7,6 +7,7 @@ import AchievementsPrivacyNotice from './achievements-privacy-notice';
 import AchievementsSettings from './achievements-settings';
 import { ActivityStreak } from './activity-streak';
 import type { ReaderUser } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 import './style.scss';
 
