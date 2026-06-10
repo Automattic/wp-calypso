@@ -21,13 +21,14 @@ import { apiDeleteSite } from '../shared';
 
 const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
 
-// Quarantined: createSite returns "user_get_blocked: The user is blocked from
-// creating a new site" for the simpleSiteFreePlanUser account. Deleting the 23
-// leaked e2eflowtesting<epoch> sites accumulated on the account (2026-06-10)
-// did NOT clear the block, so this is an account-side flag/limit that needs
-// provisioning intervention, not a test or product defect. The
-// find_available_url fix below is kept so that, once the account can create
-// sites again, only the UI flow needs re-validation. See TESTOPS-49.
+// Known issue: createSite can return "user_get_blocked: The user is blocked
+// from creating a new site" for the simpleSiteFreePlanUser account. Observed
+// in local runs on 2026-06-10 (the account's leaked e2eflowtesting<epoch>
+// sites were cleaned up the same day without clearing the block locally);
+// possibly IP/throttling-related. If CI reproduces it, the account needs
+// provisioning intervention. The find_available_url option below replaces the
+// raw generated blog name, which the API rejects with "blog_name_invalid".
+// See TESTOPS-49.
 test.describe(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade existing WordPress.com Free site to WordPress.com Premium'
@@ -58,11 +59,6 @@ test.describe(
 			page,
 			browser,
 		} ) => {
-			test.fixme(
-				true,
-				'simpleSiteFreePlanUser is blocked from creating new sites (user_get_blocked); needs account-side unblock/provisioning. See TESTOPS-49.'
-			);
-
 			await test.step( 'Setup: create test site and content via API', async () => {
 				const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 				restAPIClient = new RestAPIClient( credentials );
