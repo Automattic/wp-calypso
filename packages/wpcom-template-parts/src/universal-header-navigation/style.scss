@@ -1832,6 +1832,25 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
+	// Top-level screen only. Fades + collapses on drill; browsers without
+	// allow-discrete snap instead.
+	.x-menu-mobile-footer > .x-menu-mobile-app-banner {
+		transition:
+			opacity var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
+			visibility var( --x-menu-2026-header-fade-duration, 0.3s ) var( --x-menu-2026-easing ),
+			display var( --x-menu-2026-header-fade-duration, 0.3s ) allow-discrete;
+
+		@starting-style {
+			opacity: 0;
+		}
+	}
+
+	.x-menu-mobile-footer > .x-menu-mobile-app-banner.is-hidden {
+		display: none;
+		opacity: 0;
+		visibility: hidden;
+	}
+
 	// Overlapping WordPress + Jetpack badge icons.
 	.x-menu-mobile-app-banner-icons {
 		display: flex;
