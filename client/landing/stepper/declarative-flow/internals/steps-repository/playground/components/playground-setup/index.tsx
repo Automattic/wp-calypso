@@ -78,7 +78,12 @@ export const PlaygroundSetupStep: Step< {
 			return;
 		}
 
-		await importPlaygroundSite( client, siteId );
+		// When launched from the Playground publish flow (entrepreneur) there is no
+		// surrounding Redux importer machinery to handle the start trigger and
+		// polling — so importPlaygroundSite must block until the import completes.
+		const waitForCompletion =
+			sessionStorage.getItem( 'entrepreneur_from_playground_publish' ) === '1';
+		await importPlaygroundSite( client, siteId, { waitForCompletion } );
 		submit( {
 			siteSlug,
 			siteId,

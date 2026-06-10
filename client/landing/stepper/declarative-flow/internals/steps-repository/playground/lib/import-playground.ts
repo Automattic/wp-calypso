@@ -1,5 +1,7 @@
 import wpcomRequest from 'wpcom-proxy-request';
 import { uploadExportFile } from 'calypso/state/imports/actions';
+import { fromApi, toApi } from 'calypso/state/imports/api';
+import { appStates } from 'calypso/state/imports/constants';
 import { PLAYGROUND_HOST } from './constants';
 import type { PlaygroundClient } from './types';
 
@@ -40,71 +42,67 @@ foreach ( $plugins as $slug ) {
 	} );
 }
 
+/**
+ * Export the current Playground state and import it to a wp.com site.
+ *
+ * Pass waitForCompletion: true when the caller has no surrounding Redux
+ * importer machinery to handle the uploadSuccess → startImporting trigger
+ * (e.g. the entrepreneur flow). Leave false (default) for flows that route
+ * to importerWordpress afterwards — that step's Redux monitoring handles it.
+ */
 export async function importPlaygroundSite(
 	playground: PlaygroundClient,
-	siteId: number
+	siteId: number,
+	{ waitForCompletion = false }: { waitForCompletion?: boolean } = {}
 ): Promise< void > {
 	await removeSandboxPlugins( playground );
 
 	const siteZip = await getSiteZip( playground );
 
-	const importStatus = {
-		importStatus: 'importer-ready-for-upload',
-		siteId,
-		type: 'wordpress',
-	};
-
 	const importer = await uploadExportFile( siteId, {
-		importStatus,
+		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
 		file: siteZip,
 	} );
 
+	if ( ! waitForCompletion ) {
+		return;
+	}
+
 	const importId: string = importer.importId;
 
-	// Poll until uploadSuccess, then trigger the restore, then poll to completion.
-	// Playground (full-site backup) imports require an explicit POST after
-	// uploadSuccess before the backup_import job begins the Atomic restore.
+	// Poll until the import completes. After uploadSuccess, send the start trigger
+	// — the backup_import job requires an explicit POST before beginning the
+	// Atomic restore. Uses fromApi/toApi/appStates to match the rest of the
+	// importer codebase rather than comparing raw API strings.
 	let started = false;
 
 	for ( let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++ ) {
 		await new Promise( ( resolve ) => setTimeout( resolve, POLL_INTERVAL_MS ) );
 
-		const status = await wpcomRequest< {
-			importId: string;
-			importStatus: string;
-			type: string;
-			siteId: number;
-		} >( {
+		const raw = await wpcomRequest< Record< string, unknown > >( {
 			path: `/sites/${ siteId }/imports/${ importId }`,
 			apiVersion: '1.1',
 			method: 'GET',
 		} );
 
-		if ( status.importStatus === 'importFailure' ) {
+		const status = fromApi( raw );
+
+		if ( status.importerState === appStates.IMPORT_FAILURE ) {
 			throw new Error( 'Import failed on WordPress.com.' );
 		}
 
-		if ( status.importStatus === 'importSuccess' ) {
+		if ( status.importerState === appStates.IMPORT_SUCCESS ) {
 			return;
 		}
 
-		if ( status.importStatus === 'uploadSuccess' && ! started ) {
+		if ( status.importerState === appStates.UPLOAD_SUCCESS && ! started ) {
 			started = true;
+			const startPayload = toApi( { ...status, importerState: appStates.IMPORTING } );
 			await wpcomRequest( {
 				path: `/sites/${ siteId }/imports/${ importId }`,
 				apiVersion: '1.1',
 				method: 'POST',
-				formData: [
-					[
-						'importStatus',
-						JSON.stringify( {
-							importerId: importId,
-							importStatus: 'importing',
-							type: status.type,
-							siteId: status.siteId,
-						} ),
-					],
-				],
+				formData: [ [ 'importStatus', JSON.stringify( startPayload ) ] ],
 			} );
 		}
 	}
