@@ -1,3 +1,16 @@
+/*
+ * ⚠️ DEPRECATED — bespoke dark-mode palette engine.
+ *
+ * This 800+ line library hand-rolls a dark color system and re-points Calypso's
+ * design variables at it. It is being replaced by the official WordPress Design
+ * System via `@wordpress/theme`'s `ThemeProvider` (see `./wpds-theme.tsx`) plus
+ * the lean variable bridge in `./_wpds-bridge.scss`.
+ *
+ * Do NOT add new mixins or token overrides here. New themed surfaces must consume
+ * `--wpds-*` tokens (or `@wordpress/ui` components) directly. This file is kept
+ * only so the not-yet-migrated surface override sheets keep compiling, and is
+ * deleted surface-by-surface in the phases described in `./MIGRATION.md`.
+ */
 @import '@automattic/color-studio/dist/color-variables';
 
 /*
