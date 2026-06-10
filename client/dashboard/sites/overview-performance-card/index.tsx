@@ -61,7 +61,7 @@ function PerformanceCardContentWithFinishedTests( {
 	} else {
 		const recommendationCount = Object.keys( report.audits ).length;
 		description = sprintf(
-			// translators: %d is the number of performance recommendations available.
+			// translators: %d: the number of performance recommendations available.
 			_n( '%d recommendation available.', '%d recommendations available.', recommendationCount ),
 			recommendationCount
 		);
