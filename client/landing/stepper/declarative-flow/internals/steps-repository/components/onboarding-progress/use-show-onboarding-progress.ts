@@ -1,7 +1,8 @@
 import { useViewportMatch } from '@wordpress/compose';
 import { useExperiment } from 'calypso/lib/explat';
 
-const EXPERIMENT_NAME = 'calypso_signup_onboarding_progress_bar_202606_v1';
+export const ONBOARDING_PROGRESS_EXPERIMENT_NAME =
+	'calypso_signup_onboarding_progress_bar_202606_v1';
 
 /**
  * Single source of truth for whether the onboarding progress indicator shows.
@@ -15,7 +16,7 @@ const EXPERIMENT_NAME = 'calypso_signup_onboarding_progress_bar_202606_v1';
  */
 export function useShowOnboardingProgress( isOnboardingFlow: boolean ): boolean {
 	const isDesktop = useViewportMatch( 'large' );
-	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME );
+	const [ isLoading, assignment ] = useExperiment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
 	const isTreatment = assignment?.variationName === 'progress_bar';
 
 	if ( isLoading ) {

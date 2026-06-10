@@ -32,6 +32,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { ONBOARDING_PROGRESS_EXPERIMENT_NAME } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -397,6 +398,11 @@ const onboarding: FlowV2< typeof initialize > = {
 		// Preload the visual split experiment
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
+		}, [] );
+
+		// Preload the onboarding progress bar experiment
+		useEffect( () => {
+			loadExperimentAssignment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
 		}, [] );
 	},
 };
