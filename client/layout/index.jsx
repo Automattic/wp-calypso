@@ -282,10 +282,9 @@ class Layout extends Component {
 		return (
 			<>
 				{ this.props.hasUniversalHeader && (
-					<UniversalNavbarHeader
+					<Nav2026UniversalHeader
 						isLoggedIn={ this.props.isLoggedIn }
 						sectionName={ this.props.sectionName }
-						{ ...this.props.nav2026Props }
 					/>
 				) }
 				<MasterbarComponent
@@ -468,10 +467,17 @@ class Layout extends Component {
 	}
 }
 
-// Hook wrapper — `Layout` is a class component.
-function LayoutWithNav2026Props( props ) {
+// Resolves the 2026 nav experiment only where the universal header renders,
+// so non-universal-header routes don't fetch an unused ExPlat assignment.
+function Nav2026UniversalHeader( { isLoggedIn, sectionName } ) {
 	const nav2026Props = useNav2026Props();
-	return <Layout { ...props } nav2026Props={ nav2026Props } />;
+	return (
+		<UniversalNavbarHeader
+			isLoggedIn={ isLoggedIn }
+			sectionName={ sectionName }
+			{ ...nav2026Props }
+		/>
+	);
 }
 
 export default withCurrentRoute(
@@ -625,5 +631,5 @@ export default withCurrentRoute(
 			isGravatarDomain,
 			hasUniversalHeader,
 		};
-	} )( LayoutWithNav2026Props )
+	} )( Layout )
 );

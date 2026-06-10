@@ -37,6 +37,7 @@ export function Nav2026AppBanner( {
 			) }
 			href={ localizeUrl( '//apps.wordpress.com/get/?campaign=wpcom-log-out-home-global-nav' ) }
 			tabIndex={ isHidden ? -1 : tabIndex }
+			aria-hidden={ isHidden || undefined }
 		>
 			<span className="x-menu-mobile-app-banner-icons" aria-hidden="true">
 				<svg

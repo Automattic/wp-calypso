@@ -1114,12 +1114,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		margin-inline-start: 12px;
 		margin-inline-end: 15px;
 		padding: 0 20px !important;
-		background: transparent !important;
+		background-color: transparent !important;
 		color: inherit !important;
 		border: 1px solid currentcolor;
 		border-radius: 3px;
 		transition:
 			background-color $x-nav-2026-transition,
+			border-color $x-nav-2026-transition,
 			color $x-nav-2026-transition;
 
 		&::before {
@@ -1128,7 +1129,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 		&:hover,
 		&:focus {
-			background: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
+			background-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
 			color: var( --x-nav-2026-cta-hover-ink, #{$studio-white} ) !important;
 			border-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} );
 		}
@@ -1848,6 +1849,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: none;
 		opacity: 0;
 		visibility: hidden;
+		// allow-discrete defers display:none, so block clicks during fade-out.
+		pointer-events: none;
 	}
 
 	// Overlapping WordPress + Jetpack badge icons.
