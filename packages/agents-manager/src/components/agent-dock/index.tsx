@@ -76,7 +76,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, sectionName, agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { siteKey, sectionName, agentConfig, resumeActiveChat } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -202,10 +202,10 @@ export default function AgentDock( {
 			setOpenState( true );
 		}
 
-		// Return to the active chat, resuming its session — unless already on a
-		// live chat/Zendesk view.
+		// Return to the active chat, resuming its session — unless already on the
+		// `/chat` or `/zendesk` view.
 		if ( pathname !== '/chat' && pathname !== '/zendesk' ) {
-			navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+			resumeActiveChat();
 		}
 	};
 

@@ -19,17 +19,12 @@ jest.mock( '@tanstack/react-query', () => ( {
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 } ) );
 
-// Intercept context provider to capture forwarded props
+// Intercept context provider to capture forwarded props. Return null so
+// `AgentSetup` (its child) never mounts and pulls in heavy dependencies.
 jest.mock( '../../contexts', () => ( {
-	AgentsManagerContextProvider: ( {
-		value,
-		children,
-	}: {
-		value: Record< string, unknown >;
-		children: React.ReactNode;
-	} ) => {
+	AgentsManagerContextProvider: ( { value }: { value: Record< string, unknown > } ) => {
 		capturedProps = value;
-		return children;
+		return null;
 	},
 } ) );
 
@@ -43,8 +38,10 @@ jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {} ) );
 jest.mock( '../agent-dock', () => ( { __esModule: true, default: () => null } ) );
 jest.mock( 'react-router-dom', () => ( {} ) );
 
-// Render nothing so `AgentSetup` never mounts
-jest.mock( '../persistent-router', () => ( { PersistentRouter: () => null } ) );
+// Render children so the (mocked) context provider nested inside it is reached.
+jest.mock( '../persistent-router', () => ( {
+	PersistentRouter: ( { children }: { children: React.ReactNode } ) => children,
+} ) );
 
 import AgentsManager from '../agents-manager';
 

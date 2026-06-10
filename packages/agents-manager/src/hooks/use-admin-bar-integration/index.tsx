@@ -56,17 +56,13 @@ export default function useAdminBarIntegration( {
 	maybeOpenChat,
 }: UseAdminBarIntegrationOptions ): boolean {
 	const navigate = useNavigate();
-	const { getActiveSessionId } = useAgentsManagerContext();
-
-	// Reopen the chat on its conversation view, resuming the active session.
-	// Non-reader chats only resume via router state, so pass the session id.
-	const resumeChat = () => navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+	const { resumeActiveChat } = useAgentsManagerContext();
 
 	// Refs keep the latest callbacks without re-attaching DOM listeners each render.
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
-	const resumeChatRef = useRef( resumeChat );
-	resumeChatRef.current = resumeChat;
+	const resumeActiveChatRef = useRef( resumeActiveChat );
+	resumeActiveChatRef.current = resumeActiveChat;
 
 	// Whether the AI chat entry button is present (captured once on mount).
 	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
@@ -105,11 +101,7 @@ export default function useAdminBarIntegration( {
 		const button = document.getElementById( ADMIN_BAR_BUTTON_ID );
 
 		const handleClickOutside = ( event: MouseEvent ) => {
-			if (
-				button &&
-				! button.contains( event.target as Node ) &&
-				button.classList.contains( OPEN_CLICK_CLASS )
-			) {
+			if ( button && ! button.contains( event.target as Node ) ) {
 				button.classList.remove( OPEN_CLICK_CLASS );
 			}
 		};
@@ -131,7 +123,7 @@ export default function useAdminBarIntegration( {
 			recordTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
 				section: sectionName || 'wp-admin',
 			} );
-			resumeChatRef.current();
+			resumeActiveChatRef.current();
 			maybeOpenChatRef.current();
 		};
 
@@ -139,42 +131,47 @@ export default function useAdminBarIntegration( {
 		return () => aiChatButton.removeEventListener( 'click', handleClick );
 	}, [ sectionName ] );
 
-	// Wire the Help menu items to open the chat (resume, or navigate to their route).
+	// Wire each Help menu item's click: track it, go to its view, then open the chat.
 	useEffect( () => {
-		const chatItem = document.getElementById( ADMIN_BAR_CHAT_ITEM_ID );
-		const historyItem = document.getElementById( ADMIN_BAR_HISTORY_ITEM_ID );
-		const guidesItem = document.getElementById( ADMIN_BAR_GUIDES_ITEM_ID );
+		const menuItems = [
+			// Chat Support resumes the active conversation, matching the AI button.
+			{
+				id: ADMIN_BAR_CHAT_ITEM_ID,
+				destination: DESTINATION_CHAT,
+				action: () => resumeActiveChatRef.current(),
+			},
+			{
+				id: ADMIN_BAR_HISTORY_ITEM_ID,
+				destination: DESTINATION_HISTORY,
+				action: () => navigate( '/history' ),
+			},
+			{
+				id: ADMIN_BAR_GUIDES_ITEM_ID,
+				destination: DESTINATION_GUIDES,
+				action: () => navigate( '/support-guides' ),
+			},
+		];
 
-		const createMenuItemHandler = ( destination: string, openChat: () => void ) => {
-			return () => {
+		const listeners = menuItems.map( ( { id, destination, action } ) => {
+			const element = document.getElementById( id );
+
+			const handleClick = () => {
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
 				} );
-				openChat();
+				action();
 				maybeOpenChatRef.current();
 			};
-		};
 
-		// Chat Support resumes the active conversation, matching the AI button.
-		const handleChatClick = createMenuItemHandler( DESTINATION_CHAT, () =>
-			resumeChatRef.current()
-		);
-		const handleHistoryClick = createMenuItemHandler( DESTINATION_HISTORY, () =>
-			navigate( '/history' )
-		);
-		const handleGuidesClick = createMenuItemHandler( DESTINATION_GUIDES, () =>
-			navigate( '/support-guides' )
-		);
-
-		chatItem?.addEventListener( 'click', handleChatClick );
-		historyItem?.addEventListener( 'click', handleHistoryClick );
-		guidesItem?.addEventListener( 'click', handleGuidesClick );
+			element?.addEventListener( 'click', handleClick );
+			return { element, handleClick };
+		} );
 
 		return () => {
-			chatItem?.removeEventListener( 'click', handleChatClick );
-			historyItem?.removeEventListener( 'click', handleHistoryClick );
-			guidesItem?.removeEventListener( 'click', handleGuidesClick );
+			listeners.forEach(
+				( { element, handleClick } ) => element?.removeEventListener( 'click', handleClick )
+			);
 		};
 	}, [ navigate, sectionName ] );
 

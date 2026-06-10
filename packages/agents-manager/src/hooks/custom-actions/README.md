@@ -29,6 +29,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                              |
 | `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                            |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).   |
+| `resumeChat`               | `() => void`                                            | Reopen the chat, resuming the active conversation (not a new one).        |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
@@ -79,6 +80,9 @@ window.__agentsManagerActions.chatNavigate( '/chat', {
 	replace: true,
 } );
 window.__agentsManagerActions.chatNavigate( '/history' );
+
+// Reopen the chat, resuming the active conversation
+window.__agentsManagerActions.resumeChat();
 
 // Attach context to the next chat message
 window.__agentsManagerActions.setContextEntry( {

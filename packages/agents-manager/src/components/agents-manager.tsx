@@ -67,15 +67,15 @@ export default function AgentsManager( {
 	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
 
 	return (
-		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
-		>
-			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter siteKey={ siteKey }>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter siteKey={ siteKey }>
+				<AgentsManagerContextProvider
+					value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+				>
 					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
-				</PersistentRouter>
-			</QueryClientProvider>
-		</AgentsManagerContextProvider>
+				</AgentsManagerContextProvider>
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 

@@ -45,7 +45,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 			return window.open( destination, '_blank', 'noopener,noreferrer' );
 		}
 
-		// '/chat' resumes the active conversation (no path), matching the AI
+		// `/chat` resumes the active conversation (no path), matching the AI
 		// button; other items open the chat at their own route.
 		openAgentsManagerChat( destination === '/chat' ? undefined : destination );
 
