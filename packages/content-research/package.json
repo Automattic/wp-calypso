@@ -42,12 +42,12 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/api-fetch": "^7.46.0",
-		"@wordpress/components": "^33.1.0",
-		"@wordpress/i18n": "^6.19.0",
-		"@wordpress/icons": "^13.2.0",
-		"@wordpress/ui": "^0.13.0",
-		"@wordpress/url": "^4.46.0",
+		"@wordpress/api-fetch": "^7.48.0",
+		"@wordpress/components": "^35.0.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0",
+		"@wordpress/ui": "^0.15.0",
+		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
 		"wpcom-proxy-request": "workspace:^"
 	},
@@ -59,8 +59,8 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.46.0",
-		"@wordpress/element": "^6.46.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

@@ -6,11 +6,10 @@ import {
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, type JSX, type PropsWithChildren } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { RenderItem } from './types';
 import type { View, Field } from '@wordpress/dataviews';
-import type { PropsWithChildren } from 'react';
 
 export default function SwitcherContent< T >( {
 	itemClassName,

@@ -53,6 +53,8 @@ export interface ClickableItemProps extends MenuItemProps {
 	tabIndex?: number;
 	/** Reading-order position, published as `--stagger-index` for the dropdown slide-in. */
 	index?: number;
+	/** Fires when the pointer enters the item's `<li>` (2026 nav hover tracking). */
+	onItemMouseEnter?: () => void;
 }
 
 export type LanguageOptions = Record< string, string >;
