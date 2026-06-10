@@ -22,6 +22,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
+	PLAN_STUDENT,
 } from '../src/constants';
 
 describe( 'planLevelsMatch', () => {
@@ -53,6 +54,7 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_PREMIUM, PLAN_PREMIUM ],
 			[ PLAN_PREMIUM_2_YEARS, PLAN_PREMIUM_2_YEARS ],
 			[ PLAN_PREMIUM_3_YEARS, PLAN_PREMIUM_3_YEARS ],
+			[ PLAN_STUDENT, PLAN_STUDENT ],
 		];
 		testPlansArrayIndependentOfOrder( identicalPlans, 'true' );
 	} );
@@ -101,6 +103,9 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_JETPACK_PREMIUM, PLAN_BLOGGER_2_YEARS ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_PREMIUM ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_PREMIUM_2_YEARS ],
+			[ PLAN_STUDENT, PLAN_PERSONAL ],
+			[ PLAN_STUDENT, PLAN_PREMIUM ],
+			[ PLAN_STUDENT, PLAN_BUSINESS ],
 		];
 		testPlansArrayIndependentOfOrder( nonMatchingPlans, 'false' );
 	} );

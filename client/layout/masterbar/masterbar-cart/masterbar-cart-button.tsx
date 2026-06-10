@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
@@ -119,6 +120,7 @@ export function MasterbarCartButton( {
 						onRemoveCoupon={ onRemoveCoupon }
 						checkoutLabel={ checkoutLabel }
 						emptyCart={ emptyCart }
+						showBundleGrouping={ config.isEnabled( 'domain-bundling' ) }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>

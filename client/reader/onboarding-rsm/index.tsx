@@ -11,8 +11,8 @@ import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
@@ -69,7 +69,7 @@ const ReaderOnboardingRsm = ( {
 		nonSelfSubscriptionsCount,
 	} = useSiteSubscriptions();
 
-	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
+	const { data: followedTags, isPending: tagsPending } = useFollowedTags();
 	// Used in the `completed` event for an instant in-session site-follow
 	// count: follows mutations update this query cache, whereas
 	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` can lag until

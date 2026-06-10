@@ -109,15 +109,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return tabs;
 	};
 
-	const getEarnSelectedText = () => {
-		const selected = find( getEarnTabs(), { path: path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	};
-
 	const getAdSelectedText = () => {
 		const selected = find( getAdTabs(), { path: path } );
 		if ( selected ) {
@@ -186,6 +177,14 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		}
 
 		return tabItem.path === currentPath;
+	};
+
+	// Mirror the visible tab selection so the mobile dropdown header always
+	// reflects the active tab (including ads sub-sections, which map to the
+	// "Ads" tab, and paths carrying a query string).
+	const getEarnSelectedText = () => {
+		const selected = getEarnTabs().find( isEarnTabSelected );
+		return selected ? selected.title : '';
 	};
 
 	const getEarnSectionNav = () => {

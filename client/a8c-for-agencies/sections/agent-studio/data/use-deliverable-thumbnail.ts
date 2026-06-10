@@ -8,12 +8,9 @@
  * - Social → the run's brief composed client-side into tiles, of which the
  *   representative landscape tile is shown.
  *
- * `useAgentStudioRun` is already fetched by `useDeliverableTitle` for the same
- * output, so React Query dedupes it. The one-pager path adds only the
- * collateral request (the HTML itself is loaded by the iframe, not fetched
- * here); social composes client-side. Both only once the deliverable is
- * `ready`. The social composition shares its query key with the detail view,
- * so opening a deliverable reuses the warmed cache.
+ * `useAgentStudioRun` is shared with the detail view (React Query dedupes).
+ * The one-pager path adds only the collateral request; social composes
+ * client-side. Both only once the deliverable is `ready`.
  */
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';

@@ -67,7 +67,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 				}
 			>
 				{ sprintf(
-					// translators: "used" and "available" amounts data including a unit, e.g. "2.03 MB" or "1.5 GB".
+					// translators: %(used)s: amount of storage used, %(available)s: the storage limit, each including a unit, e.g. "2.03 MB" or "1.5 GB".
 					__(
 						'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
 					),

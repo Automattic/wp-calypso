@@ -1,5 +1,5 @@
 import { SearchableDropdown } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useMemo } from 'react';
@@ -439,12 +439,10 @@ export default function PersonalizationForm( {
 										" Depending on what you are looking for, you may want to check out one of our individual products, like {{wp}}WordPress.com{{/wp}}, {{pressable}}Pressable.com{{/pressable}}, {{woo}}Woo.com{{/woo}}, {{jetpack}}Jetpack.com{{/jetpack}}. If you really aren't sure where to go, feel free to contact us at {{email}}partnerships@automattic.com{{/email}} and we'll point you in the right direction.",
 									{
 										components: {
-											wp: <a href="https://wordpress.com" target="_blank" rel="noreferrer" />,
-											pressable: (
-												<a href="https://pressable.com" target="_blank" rel="noreferrer" />
-											),
-											woo: <a href="https://woocommerce.com" target="_blank" rel="noreferrer" />,
-											jetpack: <a href="https://jetpack.com" target="_blank" rel="noreferrer" />,
+											wp: <ExternalLink href="https://wordpress.com" children={ null } />,
+											pressable: <ExternalLink href="https://pressable.com" children={ null } />,
+											woo: <ExternalLink href="https://woocommerce.com" children={ null } />,
+											jetpack: <ExternalLink href="https://jetpack.com" children={ null } />,
 											email: <a href="mailto:partnerships@automattic.com" />,
 										},
 									}

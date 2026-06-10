@@ -18,7 +18,6 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DarkModeAnnouncement } from '../components/dark-mode-announcement';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
@@ -70,6 +69,9 @@ const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
+		// Exclude staging sites from the standalone dashboard list; the classic
+		// Calypso backport keeps them (the API includes them by default).
+		...( ! isDashboardBackport() && { include_staging: false } ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -239,12 +241,7 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						{ ! isDashboardBackport() &&
-							( shouldShowOptInSurvey ? (
-								<OptInSurvey />
-							) : (
-								<DarkModeAnnouncement tracksContext="sites" />
-							) ) }
+						{ ! isDashboardBackport() && shouldShowOptInSurvey && <OptInSurvey /> }
 					</>
 				}
 			>

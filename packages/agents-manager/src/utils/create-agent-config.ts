@@ -12,6 +12,7 @@ import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -21,7 +22,7 @@ export interface CreateAgentConfigOptions {
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	environment?: 'calypso' | 'wp-admin';
+	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
@@ -49,6 +50,16 @@ export function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[]
 			return entryWithoutGetData;
 		}
 	} );
+}
+
+function getContextSiteEditorActions(
+	siteEditorActions: unknown
+): Record< string, string | number | boolean | null > {
+	if ( typeof siteEditorActions !== 'object' || siteEditorActions === null ) {
+		return {};
+	}
+
+	return siteEditorActions as Record< string, string | number | boolean | null >;
 }
 
 /**
@@ -99,7 +110,9 @@ async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
 	siteId?: number,
 	agentId?: string,
-	version?: string
+	version?: string,
+	environment?: string,
+	currentRoute?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
@@ -115,6 +128,11 @@ async function createWrappedContextProvider(
 				: pluginContext;
 
 			const externalEntries = getExternalContextEntries();
+			const siteEditorActions = getSiteEditorActions();
+			const mergedSiteEditorActions = {
+				...getContextSiteEditorActions( resolvedContext.siteEditorActions ),
+				...siteEditorActions,
+			};
 			if ( externalEntries.length ) {
 				resolvedContext = {
 					...resolvedContext,
@@ -133,8 +151,12 @@ async function createWrappedContextProvider(
 				},
 				...( resolvedSiteId &&
 					! resolvedContext.selectedSiteId && { selectedSiteId: resolvedSiteId } ),
+				...( Object.keys( mergedSiteEditorActions ).length > 0 && {
+					siteEditorActions: mergedSiteEditorActions,
+				} ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
+					...getClientConstructorArguments( environment, currentRoute ),
 					...( version && { version } ),
 				},
 			};
@@ -165,11 +187,16 @@ async function createDefaultContextProvider(
 						.agentsManagerData ?? {}
 				: {};
 			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
+			const siteEditorActions = getSiteEditorActions();
 
 			const externalEntries = getExternalContextEntries();
 			const contextEntries = externalEntries.length
 				? resolveContextEntries( externalEntries )
 				: undefined;
+			const constructorArguments = {
+				...getClientConstructorArguments( environment, currentRoute ),
+				...( version && { version } ),
+			};
 
 			return {
 				url: window.location.href,
@@ -180,12 +207,13 @@ async function createDefaultContextProvider(
 				// Match Odie's context shape so the server can read current_screen.url
 				currentScreen: { url: window.location.href },
 				...( resolvedSiteId && { selectedSiteId: resolvedSiteId } ),
+				...( Object.keys( siteEditorActions ).length > 0 && { siteEditorActions } ),
 				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
-				...( version && { constructorArguments: { version } } ),
+				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};
 		},
 	};
@@ -231,7 +259,9 @@ export async function createAgentConfig(
 			contextProvider,
 			siteId,
 			agentId,
-			version
+			version,
+			environment,
+			currentRoute
 		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(

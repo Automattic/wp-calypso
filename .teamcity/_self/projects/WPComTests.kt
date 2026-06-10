@@ -136,9 +136,20 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
 			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
 			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+			// Set by an external trigger (Gutenbot's `announce.sh`) to thread the result under
+			// the corresponding GB version announcement. When empty, the helper script exits early.
 			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
 		},
 		buildSteps = {
+			// These two steps post the build result as a *threaded reply* under the
+			// corresponding Gutenberg version announcement in Slack. They are only relevant
+			// when this build was kicked off by Gutenbot's `announce.sh`, which injects the
+			// announcement's `GB_E2E_ANNOUNCEMENT_THREAD_TS` (and channel/token).
+			//
+			// They run on every build (one per success/failure), but the helper script exits
+			// early and posts nothing when `GB_E2E_ANNOUNCEMENT_THREAD_TS` is empty — i.e. on
+			// normal scheduled or manual runs. This is separate from the `#gutenberg-e2e`
+			// channel notifications handled by the built-in notifier in `buildFeatures` below.
 			exec {
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
@@ -154,20 +165,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			}
 		},
 		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
-			}
+			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 		},
 		buildTriggers = {
 			schedule {
@@ -491,19 +489,7 @@ private object GutenbergPlaywrightTests : BuildType({
 				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
 			))
 		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#gutenberg-e2e"
-				messageFormat = verboseMessageFormat {
-					addBranch = true
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailed = true
-			buildFinishedSuccessfully = true
-		}
+		notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 	}
 
 	triggers {

@@ -9,11 +9,11 @@ import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { fetchPaginatedStream, getStreamInfiniteQueryKeyPrefix } from 'calypso/reader/data/stream';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
@@ -59,7 +59,7 @@ interface StreamProps {
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const { data: followedTags } = useFollowedReaderTags();
+	const { data: followedTags } = useFollowedTags();
 
 	const followedTagSlugs = useMemo(
 		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],

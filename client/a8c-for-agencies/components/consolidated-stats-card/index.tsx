@@ -14,7 +14,7 @@ import './style.scss';
 interface CardInfoProps {
 	title?: string;
 	children?: React.ReactNode;
-	wrapperRef: React.RefObject< HTMLElement >;
+	wrapperRef: React.RefObject< HTMLElement | null >;
 	footerText: string;
 	footerAction?: React.ReactNode;
 }

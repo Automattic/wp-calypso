@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import type { AgentsManagerContextType } from '../../contexts';
 
@@ -18,15 +18,6 @@ let mockAgentsManagerState: {
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
 let mockShouldUseUnifiedAgent = false;
-
-type AgentsManagerTestGlobal = typeof globalThis & {
-	agentsManagerData?: {
-		jetpackAiSidebarPreview?: {
-			enabled: boolean;
-			features?: Record< string, boolean >;
-		};
-	};
-};
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -154,15 +145,6 @@ function renderAgentDock( initialEntry = '/chat' ) {
 	);
 }
 
-function installJetpackAiSidebarPreviewData( features: Record< string, boolean > ) {
-	( globalThis as AgentsManagerTestGlobal ).agentsManagerData = {
-		jetpackAiSidebarPreview: {
-			enabled: true,
-			features,
-		},
-	};
-}
-
 // A regular (non-reader) agent running in wp-admin.
 function useWpAdminAgent() {
 	mockContext = {
@@ -189,10 +171,6 @@ describe( 'AgentDock', () => {
 			},
 			getActiveSessionId: () => 'session-123',
 		} as Partial< AgentsManagerContextType >;
-	} );
-
-	afterEach( () => {
-		delete ( globalThis as AgentsManagerTestGlobal ).agentsManagerData;
 	} );
 
 	it( 'hides the chat when closed if the WP admin bar trigger is present', () => {
@@ -269,8 +247,8 @@ describe( 'AgentDock', () => {
 	} );
 
 	it( 'resumes the active session when expanding from the support guides view', () => {
-		installJetpackAiSidebarPreviewData( { supportGuides: true } );
 		useWpAdminAgent();
+		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
@@ -280,6 +258,27 @@ describe( 'AgentDock', () => {
 		const location = screen.getByTestId( 'location' );
 		expect( location.textContent ).toBe( '/chat' );
 		expect( location.dataset.sessionId ).toBe( 'session-123' );
+	} );
+
+	it( 'hides the support guides list without the WP admin bar trigger', () => {
+		// `mockHasAdminBar` stays false, so the list route is unavailable and
+		// unknown paths fall back to `/chat`.
+		useWpAdminAgent();
+
+		renderAgentDock( '/support-guides' );
+
+		expect( screen.queryByTestId( 'support-guides' ) ).toBeNull();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
+	} );
+
+	it( 'keeps the /post viewer available without the WP admin bar trigger', () => {
+		// `/post` is opened from in-chat links and sources, so it must not depend
+		// on the admin bar.
+		useWpAdminAgent();
+
+		renderAgentDock( '/post' );
+
+		expect( screen.getByTestId( 'support-guide' ) ).toBeInTheDocument();
 	} );
 
 	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
@@ -292,24 +291,6 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand Zendesk' ) );
 
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
-	} );
-
-	it( 'hides history route when Jetpack AI Sidebar Preview disables chat history', async () => {
-		installJetpackAiSidebarPreviewData( { chatHistory: false } );
-		useWpAdminAgent();
-
-		renderAgentDock( '/history' );
-
-		await waitFor( () => expect( screen.queryByTestId( 'agent-history' ) ).toBeNull() );
-	} );
-
-	it( 'treats missing Jetpack AI Sidebar Preview features as disabled', async () => {
-		installJetpackAiSidebarPreviewData( {} );
-		useWpAdminAgent();
-
-		renderAgentDock( '/history' );
-
-		await waitFor( () => expect( screen.queryByTestId( 'agent-history' ) ).toBeNull() );
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {

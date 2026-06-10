@@ -14,12 +14,27 @@ const CSV_LINE_ENDING = '\r\n';
 const UTF8_BOM = '\uFEFF';
 
 /**
+ * Characters that spreadsheet applications (Excel, Google Sheets, etc.) treat as the
+ * start of a formula. A field beginning with one of these can execute on open, so we
+ * neutralize it. Includes tab and carriage return, which some parsers strip before
+ * evaluating the remaining formula.
+ */
+const FORMULA_TRIGGERS = [ '=', '+', '-', '@', '\t', '\r' ];
+
+/**
  * Escapes a value for CSV format.
+ * Neutralizes formula injection by prefixing a single quote to fields that begin with a
+ * formula trigger character (spreadsheets render the leading quote-prefixed value as a literal string).
  * Wraps in quotes if the value contains commas, quotes, or newlines.
  * Doubles any existing quotes.
  */
 function csvEscape( value: unknown ): string {
-	const str = value == null ? '' : String( value );
+	let str = value == null ? '' : String( value );
+	// A lone trigger character (e.g. the '-' placeholder used for missing values) is not a
+	// formula, so only neutralize when there is content after the trigger.
+	if ( str.length > 1 && FORMULA_TRIGGERS.some( ( char ) => str.startsWith( char ) ) ) {
+		str = `'${ str }`;
+	}
 	const needsQuotes = /[",\n]/.test( str );
 	const escaped = str.replace( /"/g, '""' );
 	return needsQuotes ? `"${ escaped }"` : escaped;

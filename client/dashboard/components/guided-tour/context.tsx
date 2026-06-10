@@ -1,8 +1,16 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { createContext, useCallback, useMemo, useState, useEffect, useRef } from 'react';
+import {
+	createContext,
+	useCallback,
+	useMemo,
+	useState,
+	useEffect,
+	useRef,
+	type JSX,
+	type ReactNode,
+} from 'react';
 import { useAnalytics } from '../../app/analytics';
-import type { ReactNode } from 'react';
 
 export type TourStep = {
 	id: string;

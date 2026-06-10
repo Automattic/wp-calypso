@@ -13,6 +13,13 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 	padding: $hero-modern-navbar-height 0 0;
 	background: linear-gradient(150deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
 
+	// 2026 path: pull the gradient up behind the fixed nav and re-pad content down by the
+	// same, so the nav floats over the hero. Legacy pull-up above is untouched.
+	.layout:has(.x-nav--2026-redesign) & {
+		margin-top: calc(-1 * var(--nav-2026-sticky-offset));
+		padding-top: var(--nav-2026-sticky-offset);
+	}
+
 	.full-width-section__content {
 		max-width: 1220px;
 		padding: 48px 0;

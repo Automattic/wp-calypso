@@ -141,7 +141,7 @@ export default function ContactForm( {
 					<Text as="p">
 						{ createInterpolateElement(
 							sprintf(
-								/* translators: %1$s: ICANN acronym */
+								/* translators: %s: ICANN acronym */
 								__(
 									'<external>%s</external> requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.'
 								),

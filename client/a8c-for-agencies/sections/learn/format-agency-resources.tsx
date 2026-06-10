@@ -5,6 +5,7 @@ import WooLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview
 import WordPressDotComLogo from 'calypso/a8c-for-agencies/sections/exclusive-offers/overview-content/images/wordpressdotcom.svg';
 import type { APIAgencyResource } from 'calypso/a8c-for-agencies/data/learn/types';
 import type { ResourceItem } from 'calypso/a8c-for-agencies/sections/learn/resource-center/overview-content/types';
+import type { JSX } from 'react';
 
 /**
  * Get logo JSX element based on related product

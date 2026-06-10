@@ -2,6 +2,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
+import { BundleCard } from '../components/bundle-card';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
 import { SearchBar } from '../components/search-bar';
@@ -50,6 +51,7 @@ export const ResultsPage = () => {
 		isLoading: isLoadingSuggestions,
 		featuredSuggestions,
 		regularSuggestions,
+		bundleSuggestion,
 	} = useSuggestionsList();
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
@@ -95,6 +97,9 @@ export const ResultsPage = () => {
 					<FeaturedSearchResults.Placeholder />
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
+				) }
+				{ ! isLoadingSuggestions && bundleSuggestion && (
+					<BundleCard suggestion={ bundleSuggestion } />
 				) }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />
