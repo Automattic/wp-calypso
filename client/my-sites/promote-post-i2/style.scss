@@ -263,7 +263,11 @@ body.is-section-promote-post-i2 {
 // page fill the viewport and stick the footer: pinned while scrolling,
 // resting at the end of the content once fully scrolled.
 .promote-post-i2__page {
-	min-height: calc(100vh - var(--masterbar-height, 32px) - 64px);
+	// Fill the viewport so the footer lands at the bottom even on short
+	// pages: subtract the fixed masterbar and the .layout__content top
+	// padding (32px, set above). wp-admin gets its own formula in the
+	// blaze-dashboard app's wp-admin.scss.
+	min-height: calc(100vh - var(--masterbar-height, 32px) - 32px);
 
 	.jetpack-footer {
 		position: sticky;
