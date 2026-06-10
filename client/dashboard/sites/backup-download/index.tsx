@@ -1,23 +1,18 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
-import { Card, CardBody, CardHeader } from '../../components/card';
+import { Card, CardBody } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
-import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import SiteBackupDownloadError from './error';
 import SiteBackupDownloadForm from './form';
 import SiteBackupDownloadProgress from './progress';
@@ -96,6 +91,7 @@ function SiteBackupDownload() {
 	const downloadPointDate = useFormattedTime(
 		new Date( parseFloat( rewindId ) * 1000 ).toISOString(),
 		{
+			dateStyle: 'medium',
 			timeStyle: 'short',
 		},
 		timezoneString,
@@ -108,6 +104,7 @@ function SiteBackupDownload() {
 				return (
 					<SiteBackupDownloadForm
 						siteId={ site.ID }
+						downloadPointDate={ downloadPointDate }
 						onDownloadInitiate={ handleDownloadInitiate }
 					/>
 				);
@@ -146,29 +143,6 @@ function SiteBackupDownload() {
 		>
 			{ currentStep !== 'success' ? (
 				<Card>
-					<CardHeader>
-						<SectionHeader
-							title={ __( 'Download point' ) }
-							level={ 3 }
-							description={ createInterpolateElement(
-								/* translators: %(downloadPointDate)s: the date of the download point */
-								sprintf( __( '%(downloadPointDate)s. <LearnMore />' ), {
-									downloadPointDate,
-								} ),
-								{
-									LearnMore: isSelfHostedJetpackConnected( site ) ? (
-										<ExternalLink href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }>
-											{ __( 'Learn more' ) }
-										</ExternalLink>
-									) : (
-										<InlineSupportLink supportContext="backups">
-											{ __( 'Learn more' ) }
-										</InlineSupportLink>
-									),
-								}
-							) }
-						/>
-					</CardHeader>
 					<CardBody>
 						<VStack spacing={ 4 }>{ renderStep() }</VStack>
 					</CardBody>
