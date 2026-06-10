@@ -1,10 +1,9 @@
 /**
- * Annotate mode for the one-pager viewer, modeled on Studio Code's
- * `/annotate` feedback loop: click an element on a rendered page, leave a
- * short note in place, repeat, then send all notes to the refine agent in
- * one batch. Wraps `PdfViewer` and draws pins / highlight / comment form
- * inside each page frame via `renderPageOverlay`, so everything tracks the
- * responsive page scale for free.
+ * Annotate mode for the one-pager viewer: click an element on a rendered
+ * page, leave a short note in place, repeat, then send all notes to the
+ * refine agent in one batch. Wraps `PdfViewer` and draws pins / highlight /
+ * comment form inside each page frame via `renderPageOverlay`, so everything
+ * tracks the responsive page scale for free.
  */
 import { Button, TextareaControl } from '@wordpress/components';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';

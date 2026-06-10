@@ -1,7 +1,7 @@
 /**
- * Element inspector for annotate mode, modeled on Studio Code's `/annotate`
- * inspector. Listens on the viewer container in the capture phase and uses
- * `composedPath()` to reach elements inside the open `ShadowPage` roots.
+ * Element inspector for annotate mode. Listens on the viewer container in
+ * the capture phase and uses `composedPath()` to reach elements inside the
+ * open `ShadowPage` roots.
  * Hovering reports the element under the cursor; clicking picks it. All
  * geometry is returned as fractions of the page frame so overlays keep
  * tracking the page through responsive rescaling.

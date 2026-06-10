@@ -1,9 +1,9 @@
 /**
  * Serializes collected annotations into refine instructions, one per page
  * (the refine endpoint is page-scoped: it parses the page number out of the
- * instruction and dispatches one run per page). The element context (tag,
- * visible text, selector) mirrors what Studio Code's `/annotate` sends so
- * the agent can locate the element in the page HTML.
+ * instruction and dispatches one run per page). Each annotation carries its
+ * element context (tag, visible text, selector) so the agent can locate the
+ * element in the page HTML.
  */
 import { __, sprintf } from '@wordpress/i18n';
 import type { PageAnnotation } from './annotation-viewer';
