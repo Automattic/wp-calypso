@@ -11,6 +11,8 @@ const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeActiveChat = jest.fn();
+const mockCloseSidebar = jest.fn();
+let mockLayoutIsDocked = false;
 let mockContext: Partial< AgentsManagerContextType > = {};
 let mockAgentsManagerState: {
 	isOpen?: boolean;
@@ -49,6 +51,10 @@ jest.mock( '@wordpress/icons', () => ( {
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
 } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 	__esModule: true,
 	default: () => mockHasAdminBar,
@@ -56,12 +62,12 @@ jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) => {
 	mockUseAgentLayoutManager( options );
 	return {
-		isDocked: false,
-		canDock: false,
+		isDocked: mockLayoutIsDocked,
+		canDock: mockLayoutIsDocked,
 		dock: jest.fn(),
 		undock: jest.fn(),
 		openSidebar: jest.fn(),
-		closeSidebar: jest.fn(),
+		closeSidebar: mockCloseSidebar,
 		createAgentPortal: ( children: React.ReactNode ) => children,
 	};
 } );
@@ -82,14 +88,17 @@ jest.mock( '../orchestrator-chat', () => ( {
 		chatHeaderOptions,
 		isOpen,
 		onExpand,
+		onClose,
 	}: {
 		chatHeaderOptions: { title: string }[];
 		isOpen: boolean;
 		onExpand: () => void;
+		onClose: () => void;
 	} ) => (
 		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
 			{ chatHeaderOptions.map( ( option ) => option.title ).join( '|' ) }
 			<button onClick={ onExpand }>Expand chat</button>
+			<button onClick={ onClose }>Close chat</button>
 		</div>
 	),
 } ) );
@@ -126,6 +135,9 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
+
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
 	const { pathname } = useLocation();
@@ -159,6 +171,7 @@ describe( 'AgentDock', () => {
 		jest.clearAllMocks();
 		mockHasAdminBar = false;
 		mockShouldUseUnifiedAgent = false;
+		mockLayoutIsDocked = false;
 		mockAgentsManagerState = { isOpen: true, isDocked: false };
 		mockContext = {
 			siteKey: 'site-1',
@@ -305,6 +318,33 @@ describe( 'AgentDock', () => {
 		expect( mockUseAgentLayoutManager ).toHaveBeenCalledWith(
 			expect.objectContaining( { defaultDocked: false } )
 		);
+	} );
+
+	it( 'fires only dock_back_button_click when closing while undocked', () => {
+		useWpAdminAgent();
+		mockLayoutIsDocked = false;
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+
+		// Undocked close collapses the floating panel and tracks the back button.
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'dock_back_button_click' );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'sidebar_close_click' );
+		expect( mockCloseSidebar ).not.toHaveBeenCalled();
+		expect( mockSetIsOpen ).toHaveBeenCalledWith( false, true );
+	} );
+
+	it( 'collapses the sidebar without dock_back_button_click when closing while docked', () => {
+		useWpAdminAgent();
+		mockLayoutIsDocked = true;
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+
+		// Docked close goes through closeSidebar, which fires sidebar_close_click
+		// via onCloseSidebar — so dock_back_button_click must not fire here.
+		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'dock_back_button_click' );
 	} );
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {

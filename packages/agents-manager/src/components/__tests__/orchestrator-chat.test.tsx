@@ -35,6 +35,10 @@ jest.mock( '../../contexts', () => ( {
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: () => {},
 } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-conversation', () => () => ( { isLoading: false } ) );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );

@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FoldableCard } from '@automattic/components';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -7,6 +6,7 @@ import { Icon, chevronRight, page } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import './style.scss';
 
 interface Source {
@@ -44,7 +44,7 @@ export default function SourcesDisplay( { sources }: Props ) {
 			} );
 		}
 
-		recordTracksEvent( 'calypso_agents_manager_link_click', {
+		recordAgentsManagerTracksEvent( 'link_click', {
 			href: url,
 			type: isSupportArticle ? 'support_article' : 'external',
 			source: isFromOrchestrator ? 'orchestrator' : 'zendesk',

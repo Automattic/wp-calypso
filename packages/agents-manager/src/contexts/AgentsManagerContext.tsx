@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { getSessionId } from '../utils/agent-session';
+import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -82,6 +83,9 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const resumeActiveChat = useCallback( () => {
 		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
 	}, [ navigate, getActiveSessionId ] );
+
+	// Publish the resolved agent id for non-React callers
+	setResolvedAgentId( agentConfig?.agentId );
 
 	return (
 		<AgentsManagerContext.Provider

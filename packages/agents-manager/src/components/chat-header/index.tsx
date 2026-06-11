@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -68,7 +69,10 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					<Button
 						className="agents-manager-chat-header__history-btn"
 						icon={ backup }
-						onClick={ () => navigate( '/history' ) }
+						onClick={ () => {
+							recordAgentsManagerTracksEvent( 'chat_history_open' );
+							navigate( '/history' );
+						} }
 						label={ __( 'View history', '__i18n_text_domain__' ) }
 						size="small"
 					/>
@@ -77,7 +81,10 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					<Button
 						className="agents-manager-chat-header__minimize-btn"
 						icon={ lineSolid }
-						onClick={ () => setIsMinimized( true ) }
+						onClick={ () => {
+							recordAgentsManagerTracksEvent( 'chat_minimize' );
+							setIsMinimized( true );
+						} }
 						label={ __( 'Minimize', '__i18n_text_domain__' ) }
 						size="small"
 					/>

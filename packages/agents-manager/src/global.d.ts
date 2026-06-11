@@ -15,6 +15,8 @@ declare const agentsManagerData:
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
+			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
+			isDevMode?: boolean;
 	  }
 	| undefined;
 
@@ -123,4 +125,11 @@ interface AgentsManagerActions {
  */
 interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
+	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
+	bigSkyInitialState?: {
+		bigSkyVersion?: string;
+		isFreeTrial?: boolean;
+		isDevMode?: boolean;
+		currentScreen?: { screen?: string };
+	};
 }

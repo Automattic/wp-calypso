@@ -39,6 +39,10 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 	hasAiChatEntryButton: () =>
 		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
