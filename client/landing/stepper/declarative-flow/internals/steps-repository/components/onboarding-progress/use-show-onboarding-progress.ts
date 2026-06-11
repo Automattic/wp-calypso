@@ -16,7 +16,9 @@ export const ONBOARDING_PROGRESS_EXPERIMENT_NAME =
  */
 export function useShowOnboardingProgress( isOnboardingFlow: boolean ): boolean {
 	const isDesktop = useViewportMatch( 'large' );
-	const [ isLoading, assignment ] = useExperiment( ONBOARDING_PROGRESS_EXPERIMENT_NAME );
+	const [ isLoading, assignment ] = useExperiment( ONBOARDING_PROGRESS_EXPERIMENT_NAME, {
+		isEligible: isDesktop,
+	} );
 	const isTreatment = assignment?.variationName === 'progress_bar';
 
 	if ( isLoading ) {
