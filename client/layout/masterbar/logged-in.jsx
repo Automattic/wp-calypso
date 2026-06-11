@@ -1,3 +1,4 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -23,7 +24,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -98,6 +98,7 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
+		loadAgentsManager: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
@@ -873,8 +874,14 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon, useUnifiedAgent } =
-			this.props;
+		const {
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			loadAgentsManager,
+			useUnifiedAgent,
+		} = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -897,7 +904,9 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderCart() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
-					{ useUnifiedAgent && this.renderAgentsManagerAiChat() }
+					{ /* Show the AI button only where the chat dock is mounted (same two
+					     conditions the dock loads on), so clicking it always opens the chat. */ }
+					{ useUnifiedAgent && loadAgentsManager && this.renderAgentsManagerAiChat() }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
 				</div>
@@ -908,7 +917,7 @@ class MasterbarLoggedIn extends Component {
 
 export { MasterbarLoggedIn };
 
-export default connect(
+const ConnectedMasterbarLoggedIn = connect(
 	( state, { siteId } ) => {
 		const sectionGroup = getSectionGroup( state );
 
@@ -959,7 +968,6 @@ export default connect(
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
-			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
 		};
 	},
 	{
@@ -972,3 +980,11 @@ export default connect(
 		redirectToLogout,
 	}
 )( localize( MasterbarLoggedIn ) );
+
+// Source the unified-experience flag from `useShouldUseUnifiedAgent` so the masterbar
+// stays in sync with the rest of the agents-manager UI. A hook can't run in the
+// connected class, hence this thin wrapper.
+export default function MasterbarLoggedInWithUnifiedAgent( props ) {
+	const useUnifiedAgent = useShouldUseUnifiedAgent();
+	return <ConnectedMasterbarLoggedIn { ...props } useUnifiedAgent={ !! useUnifiedAgent } />;
+}
