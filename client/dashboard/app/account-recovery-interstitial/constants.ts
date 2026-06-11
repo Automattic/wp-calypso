@@ -48,5 +48,8 @@ export const RECOVERY_INTERSTITIAL_TRACKS = {
 	dismiss: 'calypso_account_recovery_interstitial_dismiss',
 } as const;
 
-/** Where the primary CTA sends the user. */
-export const RECOVERY_INTERSTITIAL_CTA_ROUTE = '/me/security/account-recovery';
+/** Where the CTAs send the user (MSD `/me/security` routes). */
+export const RECOVERY_INTERSTITIAL_ROUTES = {
+	accountRecovery: '/me/security/account-recovery',
+	twoStepAuth: '/me/security/two-step-auth',
+} as const;

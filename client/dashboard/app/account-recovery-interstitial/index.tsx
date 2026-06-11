@@ -7,20 +7,21 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { useEffect, useRef, useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
+import { _n, sprintf } from '@wordpress/i18n';
+import { Icon, lock } from '@wordpress/icons';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
 import { computeEligibility } from './compute-eligibility';
 import {
-	RECOVERY_INTERSTITIAL_CTA_ROUTE,
 	RECOVERY_INTERSTITIAL_FLAG,
 	RECOVERY_INTERSTITIAL_QA_PARAM,
 	RECOVERY_INTERSTITIAL_SNOOZE_META,
 	RECOVERY_INTERSTITIAL_TRACKS,
 } from './constants';
 import { getInterstitialCopy } from './copy';
+import type { InterstitialCta } from './copy';
+import './style.scss';
 
 const DAY_IN_SECONDS = 86400;
 
@@ -44,6 +45,7 @@ export default function AccountRecoveryInterstitial() {
 	const isFeatureEnabled = isEnabled( RECOVERY_INTERSTITIAL_FLAG );
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
+	const titleId = useId();
 
 	const { data: accountRecovery, isSuccess: isAccountRecoveryLoaded } = useQuery( {
 		...accountRecoveryQuery(),
@@ -85,8 +87,9 @@ export default function AccountRecoveryInterstitial() {
 	}
 
 	const copy = getInterstitialCopy()[ securityLevel ];
+	const { primaryCta, secondaryCta } = copy;
 
-	const handleDismiss = () => {
+	const handleSnooze = () => {
 		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.dismiss, { security_level: securityLevel } );
 		snoozeMutation.mutate( {
 			[ RECOVERY_INTERSTITIAL_SNOOZE_META ]: now + snoozeDays * DAY_IN_SECONDS,
@@ -94,33 +97,62 @@ export default function AccountRecoveryInterstitial() {
 		setIsDismissed( true );
 	};
 
-	const handleAddRecoveryMethod = () => {
+	const handleCtaClick = ( cta: InterstitialCta ) => {
 		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.ctaClick, {
 			security_level: securityLevel,
-			cta_id: 'add_recovery_method',
+			cta_id: cta.id,
 		} );
 		setIsDismissed( true );
-		router.navigate( { to: RECOVERY_INTERSTITIAL_CTA_ROUTE } );
+		router.navigate( { to: cta.route } );
 	};
+
+	const remindLabel = sprintf(
+		// translators: %d is the number of days until the reminder reappears.
+		_n( 'Remind me in %d day', 'Remind me in %d days', snoozeDays ),
+		snoozeDays
+	);
 
 	return (
 		<Modal
-			title={ copy.title }
-			size="medium"
-			closeButtonLabel={ __( 'Close' ) }
-			onRequestClose={ handleDismiss }
+			__experimentalHideHeader
+			isDismissible={ false }
+			aria={ { labelledby: titleId } }
+			onRequestClose={ handleSnooze }
 			className="account-recovery-interstitial"
 		>
-			<VStack spacing={ 8 }>
-				<Text>{ copy.description }</Text>
-				<ButtonStack justify="flex-end">
-					<Button __next40pxDefaultSize variant="tertiary" onClick={ handleDismiss }>
-						{ copy.dismissCta }
+			<div className="account-recovery-interstitial__hero" aria-hidden="true">
+				<div className="account-recovery-interstitial__hero-icon">
+					<Icon icon={ lock } size={ 48 } />
+				</div>
+			</div>
+			<VStack className="account-recovery-interstitial__body" spacing={ 6 }>
+				<VStack spacing={ 2 }>
+					<Text id={ titleId } as="h1" className="account-recovery-interstitial__title">
+						{ copy.title }
+					</Text>
+					<Text variant="muted">{ copy.description }</Text>
+				</VStack>
+				<VStack className="account-recovery-interstitial__actions" spacing={ 3 }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ () => handleCtaClick( primaryCta ) }
+					>
+						{ primaryCta.label }
 					</Button>
-					<Button __next40pxDefaultSize variant="primary" onClick={ handleAddRecoveryMethod }>
-						{ copy.primaryCta }
+					{ secondaryCta && (
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							onClick={ () => handleCtaClick( secondaryCta ) }
+						>
+							{ secondaryCta.label }
+						</Button>
+					) }
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ handleSnooze }>
+						{ remindLabel }
 					</Button>
-				</ButtonStack>
+				</VStack>
 			</VStack>
 		</Modal>
 	);

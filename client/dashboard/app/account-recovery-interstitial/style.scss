@@ -1,0 +1,52 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.account-recovery-interstitial {
+	// Clip the full-bleed hero to the modal's rounded corners.
+	overflow: hidden;
+
+	@include break-small {
+		width: 409px;
+	}
+
+	// Let the hero bleed to the modal edges instead of sitting inside the default padding.
+	.components-modal__content {
+		margin-top: 0;
+		padding: 0;
+	}
+}
+
+// Placeholder hero artwork until Brand delivers the final illustration (plan §8 #3).
+.account-recovery-interstitial__hero {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 200px;
+	background-color: var( --wp-admin-theme-color, #3858e9 );
+}
+
+.account-recovery-interstitial__hero-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 96px;
+	height: 96px;
+	color: var( --wp-admin-theme-color, #3858e9 );
+	background: var( --color-surface, #fff );
+	border-radius: 24px;
+}
+
+.account-recovery-interstitial__body {
+	padding: $grid-unit-40 $grid-unit-40 $grid-unit-30;
+}
+
+.account-recovery-interstitial__title {
+	@include heading-large;
+}
+
+.account-recovery-interstitial__actions {
+	.components-button {
+		width: 100%;
+		justify-content: center;
+	}
+}

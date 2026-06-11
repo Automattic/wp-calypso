@@ -8,32 +8,52 @@
  * locale at render time.
  */
 import { __ } from '@wordpress/i18n';
+import { RECOVERY_INTERSTITIAL_ROUTES } from './constants';
 import type { SecurityLevel } from './constants';
+
+export interface InterstitialCta {
+	/** Tracks `cta_id` dimension. */
+	id: string;
+	label: string;
+	/** MSD route the CTA navigates to. */
+	route: string;
+}
 
 export interface InterstitialCopy {
 	title: string;
 	description: string;
-	primaryCta: string;
-	dismissCta: string;
+	primaryCta: InterstitialCta;
+	/** Optional second CTA, shown as an outline button under the primary one. */
+	secondaryCta?: InterstitialCta;
 }
 
 export function getInterstitialCopy(): Record< SecurityLevel, InterstitialCopy > {
+	const setUpRecoveryCta: InterstitialCta = {
+		id: 'set_up_recovery',
+		label: __( 'Set up recovery email or phone' ),
+		route: RECOVERY_INTERSTITIAL_ROUTES.accountRecovery,
+	};
+	const addTwoFactorCta: InterstitialCta = {
+		id: 'add_two_factor',
+		label: __( 'Add 2FA and backup codes' ),
+		route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
+	};
+
 	return {
 		none: {
-			title: __( 'Add a recovery method in case you get locked out' ),
+			title: __( 'Add a way back into your account' ),
 			description: __(
-				'You don’t have a way to recover your account if you lose access. Add a recovery email or phone number so you can always get back in.'
+				'Set a recovery email or phone number so you don’t lose access to your account. It takes less than 2 minutes to set up.'
 			),
-			primaryCta: __( 'Add a recovery method' ),
-			dismissCta: __( 'Remind me later' ),
+			primaryCta: setUpRecoveryCta,
+			secondaryCta: addTwoFactorCta,
 		},
 		partial: {
-			title: __( 'Protect your account with two-step authentication' ),
+			title: __( 'Add an extra layer of protection' ),
 			description: __(
-				'Add two-step authentication for an extra layer of security, so only you can access your account.'
+				'Turn on two-step authentication and save your backup codes, so only you can get back into your account.'
 			),
-			primaryCta: __( 'Enable two-step authentication' ),
-			dismissCta: __( 'Remind me later' ),
+			primaryCta: addTwoFactorCta,
 		},
 		// Not shown in Phase 1 (fully-covered users are excluded); kept for type completeness.
 		strong: {
@@ -41,8 +61,7 @@ export function getInterstitialCopy(): Record< SecurityLevel, InterstitialCopy >
 			description: __(
 				'It’s a good time to check that your recovery email, phone number, and two-step authentication are still up to date.'
 			),
-			primaryCta: __( 'Review recovery options' ),
-			dismissCta: __( 'Remind me later' ),
+			primaryCta: setUpRecoveryCta,
 		},
 	};
 }

@@ -59,10 +59,13 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
 		const dialog = await screen.findByRole( 'dialog', {
-			name: 'Add a recovery method in case you get locked out',
+			name: 'Add a way back into your account',
 		} );
 		expect( dialog ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Add a recovery method' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add 2FA and backup codes' } ) ).toBeVisible();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_interstitial_impression',
@@ -97,7 +100,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		} );
 	} );
 
-	test( 'snoozes (writes the meta field and closes) when "Remind me later" is clicked', async () => {
+	test( 'snoozes (writes the meta field and closes) when the reminder link is clicked', async () => {
 		const user = userEvent.setup();
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
@@ -114,7 +117,8 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
 		await screen.findByRole( 'dialog' );
-		await user.click( screen.getByRole( 'button', { name: 'Remind me later' } ) );
+		// none-tier window is 14 days, surfaced in the reminder label.
+		await user.click( screen.getByRole( 'button', { name: 'Remind me in 14 days' } ) );
 
 		await waitFor( () => {
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
