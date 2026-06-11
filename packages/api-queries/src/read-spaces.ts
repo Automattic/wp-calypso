@@ -53,55 +53,87 @@ const createSpaceSource = ( subscription: SiteSubscriptionItem ): SpaceSource =>
 	siteIcon: subscription.site_icon ?? null,
 } );
 
+type ReadSpaceSourceMutationContext = {
+	previousSpaces?: ReadSpace[];
+};
+
+// Patch the cached spaces list and return the pre-patch snapshot so `onError`
+// can roll back. We deliberately don't invalidate on settle: the list has no
+// real endpoint yet (RSM-4145) — it lives in-memory with `staleTime: Infinity`,
+// so a refetch would clobber the optimistic state.
+const patchCachedSpaces = (
+	queryClient: QueryClient,
+	updateSpace: ( space: ReadSpace ) => ReadSpace
+): ReadSpaceSourceMutationContext => {
+	const previousSpaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
+
+	queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) =>
+		( previous ?? [] ).map( updateSpace )
+	);
+
+	return { previousSpaces };
+};
+
+const rollbackCachedSpaces = (
+	queryClient: QueryClient,
+	context?: ReadSpaceSourceMutationContext
+) => {
+	if ( context?.previousSpaces ) {
+		queryClient.setQueryData( readSpacesQuery().queryKey, context.previousSpaces );
+	}
+};
+
 export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< void, Error, ReadSpaceSourceMutationParams >( {
+	mutationOptions< void, Error, ReadSpaceSourceMutationParams, ReadSpaceSourceMutationContext >( {
 		mutationFn: addReadSpaceSource,
-		onSuccess: ( _data, { spaceId, subscription } ) => {
+		// Optimistically append the source so the modal reflects the change at
+		// once; `onError` rolls back if the (future, RSM-4139) endpoint rejects.
+		onMutate: ( { spaceId, subscription } ) => {
 			const source = createSpaceSource( subscription );
 			const sourceKey = getReadSpaceSourceKey( source );
 
-			queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) =>
-				( previous ?? [] ).map( ( space ) => {
-					if ( space.id !== spaceId ) {
-						return space;
-					}
+			return patchCachedSpaces( queryClient, ( space ) => {
+				if ( space.id !== spaceId ) {
+					return space;
+				}
 
-					if (
-						space.sources.some(
-							( existingSource ) => getReadSpaceSourceKey( existingSource ) === sourceKey
-						)
-					) {
-						return space;
-					}
+				if (
+					space.sources.some(
+						( existingSource ) => getReadSpaceSourceKey( existingSource ) === sourceKey
+					)
+				) {
+					return space;
+				}
 
-					return {
-						...space,
-						sources: [ ...space.sources, source ],
-					};
-				} )
-			);
+				return {
+					...space,
+					sources: [ ...space.sources, source ],
+				};
+			} );
 		},
+		onError: ( _error, _params, context ) => rollbackCachedSpaces( queryClient, context ),
 	} );
 
 export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< void, Error, ReadSpaceSourceMutationParams >( {
+	mutationOptions< void, Error, ReadSpaceSourceMutationParams, ReadSpaceSourceMutationContext >( {
 		mutationFn: deleteReadSpaceSource,
-		onSuccess: ( _data, { spaceId, subscription } ) => {
+		// Optimistically remove the source; `onError` restores it if the
+		// (future, RSM-4139) endpoint rejects.
+		onMutate: ( { spaceId, subscription } ) => {
 			const subscriptionKey = getSiteSubscriptionSourceKey( subscription );
 
-			queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) =>
-				( previous ?? [] ).map( ( space ) => {
-					if ( space.id !== spaceId ) {
-						return space;
-					}
+			return patchCachedSpaces( queryClient, ( space ) => {
+				if ( space.id !== spaceId ) {
+					return space;
+				}
 
-					return {
-						...space,
-						sources: space.sources.filter(
-							( existingSource ) => getReadSpaceSourceKey( existingSource ) !== subscriptionKey
-						),
-					};
-				} )
-			);
+				return {
+					...space,
+					sources: space.sources.filter(
+						( existingSource ) => getReadSpaceSourceKey( existingSource ) !== subscriptionKey
+					),
+				};
+			} );
 		},
+		onError: ( _error, _params, context ) => rollbackCachedSpaces( queryClient, context ),
 	} );
