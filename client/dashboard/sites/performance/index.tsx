@@ -10,7 +10,6 @@ import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { SitesNoticeArbiter } from '../notice-arbiter';
 import { SiteLaunchButton } from '../site-launch-button';
 import { getPerformanceCalloutProps } from './performance-callout';
 
@@ -34,14 +33,12 @@ function SitePerformance() {
 						/>
 					}
 					notices={
-						<SitesNoticeArbiter>
-							<Notice
-								title={ __( 'Launch your site to start measuring performance' ) }
-								actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
-							>
-								{ __( 'Performance statistics are only available for public sites.' ) }
-							</Notice>
-						</SitesNoticeArbiter>
+						<Notice
+							title={ __( 'Launch your site to start measuring performance' ) }
+							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
+						>
+							{ __( 'Performance statistics are only available for public sites.' ) }
+						</Notice>
 					}
 				/>
 			) : (
