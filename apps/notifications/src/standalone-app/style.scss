@@ -28,16 +28,23 @@ body {
 .wpnc__main {
 	position: fixed;
 	inset: 0;
+
+	@include break-small {
+		inset: 8px;
+	}
 }
 
 .wpnc-app {
-	max-width: 448px;
 	margin-inline-start: auto;
 	box-sizing: border-box;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 	overflow: hidden;
+
+	@include break-small {
+		max-width: 448px;
+	}
 
 	@include break-large {
 		max-width: 896px;
