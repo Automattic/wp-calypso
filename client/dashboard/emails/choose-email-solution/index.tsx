@@ -1,4 +1,5 @@
 import { EmailSubscription, Product } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -35,6 +36,8 @@ import { isEligibleForIntroductoryOffer } from '../utils/is-eligible-for-introdu
 import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { getTitanTierFromSlug } from '../utils/titan-tiers';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
+import { GoogleWorkspaceCard } from './components/google-workspace-card';
+import { TitanPlanGrid } from './components/titan-plan-grid';
 
 import './style.scss';
 
@@ -43,6 +46,8 @@ const getTrialMonths = ( product?: Product ) =>
 
 export default function ChooseEmailSolution() {
 	const { domain, domainName } = useDomainFromUrlParam();
+
+	const isTitanPlanSelectionEnabled = config.isEnabled( 'emails/titan-tiers' );
 
 	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >(
 		IntervalLength.Annually
@@ -176,128 +181,184 @@ export default function ChooseEmailSolution() {
 		},
 	};
 
+	const pageHeader = (
+		<PageHeader
+			prefix={ <Breadcrumbs length={ 2 } /> }
+			description={ __(
+				'Choose between Professional Email and Google Workspace for your domain.'
+			) }
+		/>
+	);
+
+	const pageNotices = (
+		<>
+			{ ! canAddEmail && <EmailNonDomainOwnerNotice domain={ domain } /> }
+			{ hasEmailForwards( domain ) && <ExistingForwardsNotice /> }
+		</>
+	);
+
+	const intervalSelector = (
+		<ToggleGroupControl
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			isBlock
+			label={ __( 'Billing interval' ) }
+			hideLabelFromVision
+			value={ billingInterval }
+			onChange={ ( newBillingInterval ) =>
+				setBillingInterval( newBillingInterval as IntervalLength )
+			}
+		>
+			<ToggleGroupControlOption label={ __( 'Monthly' ) } value={ IntervalLength.Monthly } />
+			<ToggleGroupControlOption
+				/* translators: %d is the annual savings percentage. */
+				label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
+				value={ IntervalLength.Annually }
+			/>
+		</ToggleGroupControl>
+	);
+
 	return (
 		<PageLayout
 			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					description={ __(
-						'Choose between Professional Email and Google Workspace for your domain.'
-					) }
-				/>
+				// Same narrow-header/wide-content pattern as client/dashboard/sites/site-plans.
+				isTitanPlanSelectionEnabled ? (
+					<div className="choose-email-solution-narrow">{ pageHeader }</div>
+				) : (
+					pageHeader
+				)
 			}
-			size="small"
+			size={ isTitanPlanSelectionEnabled ? 'large' : 'small' }
 			notices={
-				<>
-					{ ! canAddEmail && <EmailNonDomainOwnerNotice domain={ domain } /> }
-					{ hasEmailForwards( domain ) && <ExistingForwardsNotice /> }
-				</>
+				isTitanPlanSelectionEnabled ? (
+					<div className="choose-email-solution-narrow">{ pageNotices }</div>
+				) : (
+					pageNotices
+				)
 			}
 		>
 			{ /* Billing interval selector */ }
-			<ToggleGroupControl
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				isBlock
-				label={ __( 'Billing interval' ) }
-				hideLabelFromVision
-				value={ billingInterval }
-				onChange={ ( newBillingInterval ) =>
-					setBillingInterval( newBillingInterval as IntervalLength )
-				}
-			>
-				<ToggleGroupControlOption label={ __( 'Monthly' ) } value={ IntervalLength.Monthly } />
-				<ToggleGroupControlOption
-					/* translators: %d is the annual savings percentage. */
-					label={ sprintf( __( 'Annually (save up to %d%%)' ), bestAnnualSavings ) }
-					value={ IntervalLength.Annually }
-				/>
-			</ToggleGroupControl>
+			{ isTitanPlanSelectionEnabled ? (
+				<div className="choose-email-solution-narrow">{ intervalSelector }</div>
+			) : (
+				intervalSelector
+			) }
+
+			{ isTitanPlanSelectionEnabled && (
+				<VStack className="choose-email-solution-wide" spacing={ 6 }>
+					<TitanPlanGrid
+						domain={ domain }
+						domainName={ domainName }
+						interval={ billingInterval }
+						available={ isTitanAvailable }
+						hasProFreeTrial={ hasTitanFreeTrial }
+						proTrialMonths={ getTrialMonths( titanProduct ) }
+					/>
+					<GoogleWorkspaceCard
+						product={ googleProduct }
+						interval={ billingInterval }
+						available={ isGoogleAvailable }
+						hasFreeTrial={ hasGoogleFreeTrial }
+						onSelect={ () =>
+							navigate( {
+								to: addMailboxRoute.to,
+								params: {
+									domain: domainName,
+									provider: MailboxProvider.Google,
+									interval: billingInterval,
+								},
+							} )
+						}
+					/>
+				</VStack>
+			) }
 
 			{ /* Split card for providers */ }
-			<div className="email-providers">
-				{ Object.entries( providers ).map( ( [ providerId, provider ] ) => (
-					<VStack className="email-provider" key={ `provider-${ providerId }` } spacing={ 4 }>
-						<Icon icon={ provider.logo } size={ 30 } className="email-provider-logo" />
-						<Text as="h2" size={ 28 } lineHeight="40px" className="email-provider-name">
-							{ provider.name }
-						</Text>
-						<Text>{ provider.description }</Text>
-						<VStack
-							spacing={ 2 }
-							justify="flex-start"
-							style={ { minHeight: hasFreeTrial ? '96px' : '76px' } }
-						>
-							{ provider.available ? (
-								<>
-									<HStack alignment="bottomLeft">
-										<PriceDisplay
-											price={ provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0 }
-											currency={ provider.product?.currency_code ?? 'USD' }
-										/>
-										{ provider.hasFreeTrial && (
+			{ ! isTitanPlanSelectionEnabled && (
+				<div className="email-providers">
+					{ Object.entries( providers ).map( ( [ providerId, provider ] ) => (
+						<VStack className="email-provider" key={ `provider-${ providerId }` } spacing={ 4 }>
+							<Icon icon={ provider.logo } size={ 30 } className="email-provider-logo" />
+							<Text as="h2" size={ 28 } lineHeight="40px" className="email-provider-name">
+								{ provider.name }
+							</Text>
+							<Text>{ provider.description }</Text>
+							<VStack
+								spacing={ 2 }
+								justify="flex-start"
+								style={ { minHeight: hasFreeTrial ? '96px' : '76px' } }
+							>
+								{ provider.available ? (
+									<>
+										<HStack alignment="bottomLeft">
 											<PriceDisplay
-												price={ provider.product?.cost ?? 0 }
+												price={ provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0 }
 												currency={ provider.product?.currency_code ?? 'USD' }
-												discounted
 											/>
+											{ provider.hasFreeTrial && (
+												<PriceDisplay
+													price={ provider.product?.cost ?? 0 }
+													currency={ provider.product?.currency_code ?? 'USD' }
+													discounted
+												/>
+											) }
+										</HStack>
+										<Text variant="muted">
+											{ billingInterval === 'annually'
+												? __( 'per year, per mailbox, excl. taxes.' )
+												: __( 'per month, per mailbox, excl. taxes.' ) }
+										</Text>
+										{ provider.hasFreeTrial && (
+											<div className="email-provider-trial">
+												{ provider.trialMonths === 12
+													? sprintf(
+															/* translators: %d is the number of free trial months. */
+															__( '%d month free trial' ),
+															provider.trialMonths
+													  )
+													: __( '3 month free trial' ) }
+											</div>
 										) }
-									</HStack>
-									<Text variant="muted">
-										{ billingInterval === 'annually'
-											? __( 'per year, per mailbox, excl. taxes.' )
-											: __( 'per month, per mailbox, excl. taxes.' ) }
+									</>
+								) : (
+									<Text size={ 20 } weight={ 500 }>
+										{ __( 'Not available for this domain name' ) }
 									</Text>
-									{ provider.hasFreeTrial && (
-										<div className="email-provider-trial">
-											{ provider.trialMonths === 12
-												? sprintf(
-														/* translators: %d is the number of free trial months. */
-														__( '%d month free trial' ),
-														provider.trialMonths
-												  )
-												: __( '3 month free trial' ) }
-										</div>
-									) }
-								</>
-							) : (
-								<Text size={ 20 } weight={ 500 }>
-									{ __( 'Not available for this domain name' ) }
-								</Text>
+								) }
+							</VStack>
+							<Button
+								className="email-provider-action"
+								variant="primary"
+								disabled={ ! provider.available }
+								onClick={ () =>
+									navigate( {
+										to: addMailboxRoute.to,
+										params: {
+											domainName: domainName,
+											provider: providerId,
+											interval: billingInterval,
+										},
+									} )
+								}
+							>
+								{ provider.action }
+							</Button>
+							<ul className="email-provider-features">
+								{ provider.features.map( ( feature, featureIndex ) => (
+									<li key={ `feature-${ providerId }-${ featureIndex }` }>{ feature }</li>
+								) ) }
+							</ul>
+							{ provider.poweredBy && (
+								<img
+									className="email-provider-powered-by"
+									src={ provider.poweredBy.logo }
+									alt={ provider.poweredBy.text }
+								/>
 							) }
 						</VStack>
-						<Button
-							className="email-provider-action"
-							variant="primary"
-							disabled={ ! provider.available }
-							onClick={ () =>
-								navigate( {
-									to: addMailboxRoute.to,
-									params: {
-										domainName: domainName,
-										provider: providerId,
-										interval: billingInterval,
-									},
-								} )
-							}
-						>
-							{ provider.action }
-						</Button>
-						<ul className="email-provider-features">
-							{ provider.features.map( ( feature, featureIndex ) => (
-								<li key={ `feature-${ providerId }-${ featureIndex }` }>{ feature }</li>
-							) ) }
-						</ul>
-						{ provider.poweredBy && (
-							<img
-								className="email-provider-powered-by"
-								src={ provider.poweredBy.logo }
-								alt={ provider.poweredBy.text }
-							/>
-						) }
-					</VStack>
-				) ) }
-			</div>
+					) ) }
+				</div>
+			) }
 		</PageLayout>
 	);
 }

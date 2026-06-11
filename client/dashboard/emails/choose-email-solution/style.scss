@@ -19,7 +19,7 @@
 	padding: 20px;
 	justify-content: flex-start;
 
-	&:not(:first-child) {
+	&:not( :first-child ) {
 		border-top: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 
 		@include break-small {
@@ -52,6 +52,34 @@
 	justify-content: center;
 }
 
+// Narrow header column centered above the wide plan grid, mirroring
+// the pattern in client/dashboard/sites/site-plans.
+.choose-email-solution-narrow {
+	width: 100%;
+	max-width: 660px;
+	margin-inline: auto;
+}
+
+.choose-email-solution-wide {
+	width: 100%;
+	max-width: 1032px;
+	margin-inline: auto;
+}
+
+// Equal-width columns so the price blocks and CTAs align across tiers.
+.email-titan-plan {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.email-titan-plan-description {
+	min-height: 72px;
+}
+
+.email-titan-plan-price {
+	min-height: 120px;
+}
+
 .email-provider-features {
 	padding: 0;
 	line-height: 28px;
@@ -60,4 +88,17 @@
 
 .email-provider-powered-by {
 	width: 145px;
+}
+
+// Keep the description row at text height: the 40px CTA overlaps the
+// 20px line symmetrically instead of inflating the row and the gaps
+// around it.
+.google-workspace-card-action {
+	margin-block: -10px;
+}
+
+// Pin the logo to the card bottom so it aligns across tiers with
+// different feature list lengths.
+.email-titan-plan .email-provider-powered-by {
+	margin-block-start: auto;
 }
