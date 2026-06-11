@@ -4,7 +4,7 @@ import {
 	userSettingsMutation,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { _n, sprintf } from '@wordpress/i18n';
@@ -45,7 +45,6 @@ function isQaForced() {
 export default function AccountRecoveryInterstitial() {
 	const isFeatureEnabled = isEnabled( RECOVERY_INTERSTITIAL_FLAG );
 	const router = useRouter();
-	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const titleId = useId();
 
@@ -110,13 +109,6 @@ export default function AccountRecoveryInterstitial() {
 	const snooze = () => {
 		const snoozeUntil = now + snoozeDays * DAY_IN_SECONDS;
 		snoozeMutation.mutate( { [ RECOVERY_INTERSTITIAL_SNOOZE_META ]: snoozeUntil } );
-		// Optimistically patch only the snooze field in the cached settings so eligibility
-		// recomputes as "snoozed" on the next mount/navigation without re-showing the modal.
-		// (The mutation's own onSuccess merges the server echo too, but that only carries the
-		// snooze key once the backend allowlist deploys — §5a.)
-		queryClient.setQueryData< UserSettings >( userSettingsQuery().queryKey, ( old ) =>
-			old ? { ...old, [ RECOVERY_INTERSTITIAL_SNOOZE_META ]: snoozeUntil } : old
-		);
 		setIsDismissed( true );
 	};
 
