@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
@@ -42,8 +44,8 @@
 		position: absolute;
 		height: $height;
 		width: $width;
-		top: -$height / 2;
-		right: -$width / 2;
+		top: math.div( -$height, 2 );
+		right: math.div( -$width, 2 );
 		margin: 0;
 		padding: 0;
 
