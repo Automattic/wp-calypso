@@ -142,7 +142,6 @@ function normalizePlanProducts(
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
 			rawPrice: planProduct.raw_price,
-			// Not all plans returned from /plans have a `path_slug` (e.g. monthly plans don't have)
 			pathSlug: planProduct.path_slug,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0

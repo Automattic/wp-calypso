@@ -2,8 +2,11 @@
  * @jest-environment jsdom
  */
 
-// Paired with jest.resetModules() to reset the module-level pluginRegistered flag per test.
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-require-imports --
+   Every test re-`require()`s the module after `jest.resetModules()` (see
+   `beforeEach`) so module-level state — the `pluginRegistered` idempotency
+   flag, and the React instance `mockUseEffect` binds to — is fresh per test.
+   Static `import` would defeat that isolation, so `require()` is intentional. */
 
 // eslint-disable-next-line import/order
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -26,6 +29,7 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 	attributes,
 } ) );
 
+let mockPostType: string | null = 'post';
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
@@ -97,7 +101,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
 		return selector( ( name: string ) => {
 			if ( name === 'core/editor' ) {
-				return { getCurrentPostType: () => 'post', getCurrentPostId: () => 7 };
+				return { getCurrentPostType: () => mockPostType, getCurrentPostId: () => 7 };
 			}
 			if ( name === 'core' ) {
 				return {
@@ -220,6 +224,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
+		mockPostType = 'post';
 		mockMeta = {};
 		mockMedia = null;
 		mockHasResolvedMedia = true;
@@ -292,6 +297,51 @@ describe( 'feature-clip-sidebar-extension', () => {
 			// Both wrappers share one FeatureClipPanel mount, so the
 			// impression must not double-count.
 			expect( mockTrackPanelViewed ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'post-type gating', () => {
+		it( 'renders nothing on an unsupported post type (jetpack_form)', () => {
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			// Neither sidebar surface is wired up on an unsupported editor.
+			expect( mockFill ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not fire the panel-viewed impression on an unsupported post type', () => {
+			mockPostType = 'jetpack_form';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing while the post type is unknown (null) and does not fall back to post', () => {
+			// getCurrentPostType() returns null transiently before the post
+			// loads (and the editor store may be absent entirely). Treat that
+			// as unsupported — a 'post' fallback would flash the panel and fire
+			// a phantom impression until the real type resolves.
+			mockPostType = null;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockFill ).not.toHaveBeenCalled();
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
+		} );
+
+		it( 'renders nothing on a page (pages are unsupported for now)', () => {
+			mockPostType = 'page';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( 'renders the panel on the post post type', () => {
+			mockPostType = 'post';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 	} );
 

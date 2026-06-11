@@ -1,7 +1,7 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BundleCard } from '../components/bundle-card';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
@@ -45,7 +45,7 @@ const StickyCompactBanner = () => {
 };
 
 export const ResultsPage = () => {
-	const { slots, config } = useDomainSearch();
+	const { slots, config, events } = useDomainSearch();
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -57,6 +57,23 @@ export const ResultsPage = () => {
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 
 	useRequestTracking();
+
+	// Fire `onBundleShown` once per distinct bundle that actually renders. Keyed on
+	// the group id so a new bundle (different query/experiment arm) re-fires, but
+	// re-renders of the same bundle do not.
+	const shownBundleGroupId =
+		! isLoadingSuggestions && bundleSuggestion && bundleSuggestion.domains.length > 0
+			? bundleSuggestion.bundle_group_id
+			: undefined;
+
+	useEffect( () => {
+		if ( shownBundleGroupId && bundleSuggestion ) {
+			events.onBundleShown( bundleSuggestion );
+		}
+		// Intentionally keyed only on the group id: we want exactly one event per
+		// bundle that appears, not one per render or per `events`/object identity change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ shownBundleGroupId ] );
 
 	const showCompactBanner = !! slots?.BeforeResults;
 
@@ -99,7 +116,10 @@ export const ResultsPage = () => {
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
 				{ ! isLoadingSuggestions && bundleSuggestion && (
-					<BundleCard suggestion={ bundleSuggestion } />
+					<BundleCard
+						suggestion={ bundleSuggestion }
+						onAddToCart={ ( bundle ) => events.onBundleAddToCart( bundle ) }
+					/>
 				) }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />

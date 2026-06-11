@@ -11,7 +11,7 @@ import {
 import { rss } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {

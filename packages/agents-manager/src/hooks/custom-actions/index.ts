@@ -10,6 +10,7 @@ import {
 	setExternalContextEntry,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { setSiteEditorAction } from '../../utils/site-editor-context';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
@@ -185,6 +186,7 @@ export function useSetupCustomActions( {
 		removeContextEntry: removeExternalContextEntry,
 		setContextCard: setExternalContextCard,
 		removeContextCard: removeExternalContextCard,
+		setSiteEditorAction,
 		chatNavigate: navigate,
 		isReady: true,
 	} );

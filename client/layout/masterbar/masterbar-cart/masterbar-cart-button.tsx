@@ -117,6 +117,14 @@ export function MasterbarCartButton( {
 						goToCheckout={ goToCheckout }
 						closeCart={ onClose }
 						onRemoveProduct={ onRemoveProduct }
+						onRemoveBundle={ ( groupId, memberCount ) => {
+							reduxDispatch(
+								recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
+									domain_bundle_group_id: groupId,
+									domain_count: memberCount,
+								} )
+							);
+						} }
 						onRemoveCoupon={ onRemoveCoupon }
 						checkoutLabel={ checkoutLabel }
 						emptyCart={ emptyCart }

@@ -1,0 +1,76 @@
+.sidebar-spaces__link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sidebar-spaces__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	block-size: 22px;
+	border-radius: 8px;
+	background: var(--space-color-bg);
+	color: var(--space-color);
+}
+
+.sidebar-spaces__text {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+	flex: 1;
+}
+
+.sidebar-spaces__name {
+	color: var(--color-text);
+	font-weight: 500;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// Each space exposes its accent colour as two custom properties — `--space-color`
+// (foreground: the icon glyph and the active row's name) and `--space-color-bg`
+// (the icon's surface tint). The modifier classes below only redefine those two
+// values; the icon/name rules above consume them, so colours live in one place.
+.sidebar-spaces__item--blue {
+	--space-color: var(--studio-blue-50);
+	--space-color-bg: var(--studio-blue-5);
+}
+
+.sidebar-spaces__item--purple {
+	--space-color: var(--studio-purple-50);
+	--space-color-bg: var(--studio-purple-5);
+}
+
+.sidebar-spaces__item--red {
+	--space-color: var(--studio-red-50);
+	--space-color-bg: var(--studio-red-5);
+}
+
+.sidebar-spaces__item--orange {
+	--space-color: var(--studio-orange-50);
+	--space-color-bg: var(--studio-orange-5);
+}
+
+.sidebar-spaces__item--gray {
+	--space-color: var(--studio-gray-50);
+	--space-color-bg: var(--studio-gray-5);
+}
+
+.sidebar-spaces__item--green {
+	--space-color: var(--studio-green-50);
+	--space-color-bg: var(--studio-green-5);
+}
+
+.sidebar-spaces__item--celadon {
+	--space-color: var(--studio-celadon-50);
+	--space-color-bg: var(--studio-celadon-5);
+}
+
+// Active row: the name takes on the space's own foreground colour.
+.sidebar-spaces__item.selected .sidebar-spaces__name {
+	color: var(--space-color);
+}

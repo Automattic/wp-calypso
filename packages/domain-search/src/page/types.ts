@@ -9,6 +9,7 @@ import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type { FeaturedSuggestionReason } from '../helpers/partition-suggestions';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	DomainAvailabilityStatus,
 	DomainSuggestion,
@@ -75,6 +76,8 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
+	onBundleShown: ( bundle: BundleSuggestion ) => void;
+	onBundleAddToCart: ( bundle: BundleSuggestion ) => void;
 }
 
 export interface DomainSearchConfig {

@@ -51,6 +51,7 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
+import { ReaderSidebarSpaces } from './spaces';
 
 const TrackingKeys = {
 	conversations: {
@@ -171,6 +172,8 @@ export class ReaderSidebar extends Component {
 							path={ path }
 						/>
 					</li>
+
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__search', {

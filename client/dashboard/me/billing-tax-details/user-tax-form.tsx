@@ -89,7 +89,7 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 		! canUserEdit &&
 		createInterpolateElement(
 			sprintf(
-				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+				/* translators: %(taxName)s: the name of taxes in the country (eg: "VAT" or "GST"). */
 				__(
 					'To change your %(taxName)s ID, <contactSupportLink>please contact support</contactSupportLink>.'
 				),

@@ -46,6 +46,7 @@ export default class InfiniteList extends Component {
 	isScrolling = false;
 	_isMounted = false;
 	smartSetState = smartSetState;
+	containerRef = createRef();
 	topPlaceholderRef = createRef();
 	bottomPlaceholderRef = createRef();
 
@@ -340,6 +341,9 @@ export default class InfiniteList extends Component {
 		return null;
 	};
 
+	// Instance method that is called externally (via a ref) by a parent component
+	getDOMNode = () => this.containerRef.current;
+
 	getTopPlaceholderBounds = () =>
 		this.topPlaceholderRef.current && this.topPlaceholderRef.current.getBoundingClientRect();
 
@@ -357,7 +361,7 @@ export default class InfiniteList extends Component {
 	 * @returns {Array} This list of indexes
 	 */
 	getVisibleItemIndexes( options ) {
-		const container = ReactDom.findDOMNode( this );
+		const container = this.containerRef.current;
 		const visibleItemIndexes = [];
 		const firstIndex = this.state.firstRenderedIndex;
 		const lastIndex = this.state.lastRenderedIndex;
@@ -423,7 +427,7 @@ export default class InfiniteList extends Component {
 		}
 
 		return (
-			<div className={ this.props.className }>
+			<div className={ this.props.className } ref={ this.containerRef }>
 				<div
 					ref={ this.topPlaceholderRef }
 					className={ spacerClassName }

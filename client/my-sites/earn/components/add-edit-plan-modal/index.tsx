@@ -282,8 +282,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						translate( 'Added "%s" tier payment plan.', { args: editedProductName } )
 					)
 				);
-				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
-				recordTracksEvent( 'calypso_earn_page_payment_added', annualProductDetails );
+				dispatch( recordTracksEvent( 'calypso_earn_page_payment_added', productDetails ) );
+				dispatch( recordTracksEvent( 'calypso_earn_page_payment_added', annualProductDetails ) );
 			} else {
 				dispatch(
 					requestAddProduct(
@@ -292,7 +292,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						translate( 'Added "%s" payment plan.', { args: editedProductName } )
 					)
 				);
-				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
+				dispatch( recordTracksEvent( 'calypso_earn_page_payment_added', productDetails ) );
 			}
 		} else if ( reason === 'submit' && product && product.ID ) {
 			productDetails.ID = product.ID;
@@ -330,7 +330,15 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const editing = product && product.ID;
 
-	recordTracksEvent( 'calypso_earn_page_payment_modal_show', { editing: editing } );
+	// Record the "modal shown" event once on mount rather than on every render.
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_earn_page_payment_modal_show', {
+				editing: product && product.ID,
+			} )
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
 		<Dialog

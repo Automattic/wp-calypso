@@ -77,7 +77,7 @@ type NoteProps = {
 
 const Note = ( { isDismissible, noteId, setSelectedNoteId }: NoteProps ) => {
 	const dispatch = useDispatch();
-	const isLargeScreen = useViewportMatch( 'xlarge' );
+	const isLargeScreen = useViewportMatch( 'large' );
 	const goBack = () => setSelectedNoteId( undefined );
 
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );

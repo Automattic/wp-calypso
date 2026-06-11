@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useMemo } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
@@ -79,12 +80,11 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 						},
 						components: {
 							link: (
-								<a
+								<ExternalLink
 									href={ localizeUrl(
 										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
 									) }
-									target="_blank"
-									rel="noopener noreferrer"
+									children={ null }
 								/>
 							),
 						},
@@ -202,12 +202,11 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 					{ translate( '{{link}}Learn more{{/link}} about how product cancellations work.', {
 						components: {
 							link: (
-								<a
+								<ExternalLink
 									href={ localizeUrl(
 										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
 									) }
-									target="_blank"
-									rel="noopener noreferrer"
+									children={ null }
 								/>
 							),
 						},

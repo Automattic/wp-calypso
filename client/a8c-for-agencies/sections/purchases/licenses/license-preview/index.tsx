@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -67,10 +68,8 @@ export const ManageInPressable = ( { attachedAt }: { attachedAt: string | null }
 	const isOwner = useSelector( isAgencyOwner );
 
 	return isOwner ? (
-		<a
+		<ExternalLink
 			className="license-preview__product-pressable-link"
-			target="_blank"
-			rel="norefferer noopener noreferrer"
 			href={ EXTERNAL_PRESSABLE_AUTH_URL }
 			onClick={ () => {
 				if ( ! isFeedbackShown ) {
@@ -86,8 +85,8 @@ export const ManageInPressable = ( { attachedAt }: { attachedAt: string | null }
 				}
 			} }
 		>
-			{ translate( 'Manage in Pressable ↗' ) }
-		</a>
+			{ translate( 'Manage in Pressable' ) }
+		</ExternalLink>
 	) : (
 		translate( 'Managed by agency owner' )
 	);

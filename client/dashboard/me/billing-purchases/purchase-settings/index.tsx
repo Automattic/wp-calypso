@@ -15,6 +15,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -95,11 +96,16 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import {
+	getChangedPlanRedirectUrl,
+	getSitePurchaseUpgradeUrl,
+	getUpgradedPurchaseRedirectUrl,
+} from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -144,7 +150,8 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
-		redirect_to: getUpgradedPurchaseRedirectUrl(),
+		redirect_to: getChangedPlanRedirectUrl(),
+		allow_downgrade: 'true',
 	} );
 }
 
@@ -434,9 +441,29 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
+/**
+ * Whether the "Change plan" action should be offered for this purchase: either
+ * the plan is past expiry (downgrade-to-checkout) or still within its refund
+ * window (instant downgrade). Gated by the `plans/expired-downgrade` flag.
+ */
+function shouldShowChangePlan( purchase: Purchase ): boolean {
+	if ( ! config.isEnabled( 'plans/expired-downgrade' ) ) {
+		return false;
+	}
+	return (
+		( purchase.is_past_expiry_date && purchase.is_plan ) ||
+		isWithinRefundWindowDowngradeEligible( purchase )
+	);
+}
+
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	if ( ! purchase.is_upgradable ) {
+		return null;
+	}
+	// When "Change plan" is offered (downgrade-eligible), it supersedes the
+	// upgrade action — matching the classic purchases page.
+	if ( shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
@@ -598,6 +625,38 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	if ( ! shouldShowChangePlan( purchase ) ) {
+		return null;
+	}
+
+	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Change plan' ) }
+			description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_change_plan_click', {
+							product_slug: purchase.product_slug,
+							mode: isPastExpiryDowngrade ? 'expired' : 'refund-window',
+						} );
+						window.location.href = getExpiredNewPlanUrl( purchase );
+					} }
+				>
+					{ __( 'View plans' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
@@ -613,6 +672,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return (
 			<VStack spacing={ 4 }>
 				<ActionList>
+					<ChangePlanActionItem purchase={ purchase } />
 					<ReSubscribeActionButton purchase={ purchase } />
 				</ActionList>
 			</VStack>
@@ -626,6 +686,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
 				<ReSubscribeActionButton purchase={ purchase } />
+				<ChangePlanActionItem purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>

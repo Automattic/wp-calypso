@@ -233,6 +233,10 @@
 @mixin dashboard-dark-theme-dataviews {
 	@include color-scheme-dark-theme-dataviews;
 
+	.dataviews-no-results .dashboard-empty-state__wrapper {
+		box-shadow: none;
+	}
+
 	.dataviews-view-list__media-wrapper:has( .dashboard-backups__list-icon ) {
 		background-color: var( --wp-components-color-gray-200 );
 
