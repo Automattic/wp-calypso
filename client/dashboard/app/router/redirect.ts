@@ -12,11 +12,6 @@ import { redirect } from '@tanstack/react-router';
 export const dashboardRedirect: typeof redirect = ( options ) =>
 	redirect( { ...options, viewTransition: false } );
 
-/**
- * A `dashboardRedirect()` that also sets the `route-not-allowed` flash param, so
- * the destination can show a "you don't have permission" snackbar via a
- * `<FlashMessage id="route-not-allowed" />`. Use it in `beforeLoad` guards.
- */
 export function redirectAsNotAllowed( options: {
 	to: string;
 	params?: Record< string, string >;
