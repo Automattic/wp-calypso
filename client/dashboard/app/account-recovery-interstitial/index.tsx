@@ -34,7 +34,7 @@ function isQaForced() {
 }
 
 /**
- * Account-recovery interstitial (Phase 1).
+ * Account-recovery interstitial
  *
  * App-level overlay mounted in the dashboard shell. Shows a single modal to users with
  * incomplete account-recovery setup, nudging them to add a recovery method. Renders

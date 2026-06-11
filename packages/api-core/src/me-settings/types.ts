@@ -91,8 +91,7 @@ export interface UserSettings {
 	new_user_email?: string;
 
 	// Account-recovery interstitial snooze: a unix timestamp (seconds) until which the
-	// interstitial is snoozed. 0/unset means "never snoozed". Backed by a user-meta field
-	// allowlisted on /me/settings. See client/dashboard/app/account-recovery-interstitial.
+	// interstitial is snoozed. 0/unset means "never snoozed".
 	account_recovery_interstitial_snoozed_until?: number;
 }
 
