@@ -4,32 +4,32 @@
 
 This folder publishes `window.__agentsManagerActions` so code outside the React tree (other bundles, external scripts) can drive the Agents Manager.
 
-| Hook                       | Role                                                                                                |
-| -------------------------- | --------------------------------------------------------------------------------------------------- |
-| `useSetupCustomActions`    | Mounted with the agent dock. Registers the built-in actions and fires `agents-manager-ready`.       |
-| `useRegisterCustomActions` | Lets any component publish its own actions onto the global. Used internally; also for new actions.  |
+| Hook                       | Role                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| `useSetupCustomActions`    | Mounted with the agent dock. Registers the built-in actions and fires `agents-manager-ready`.      |
+| `useRegisterCustomActions` | Lets any component publish its own actions onto the global. Used internally; also for new actions. |
 
 Consuming the API? See [Public API](#public-api). Adding a new action? See [Adding a new action](#adding-a-new-action).
 
 ## Public API
 
-| Method                     | Signature                                               | Description                                                                  |
-| -------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.            |
-| `getSessionId`             | `() => string`                                          | Active session ID.                                                           |
-| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat.                                                      |
-| `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                     |
-| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable or disable chat rendering.                                            |
-| `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                         |
-| `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.       |
-| `setChatInput` *           | `(value: string) => void`                               | Set the chat input value and focus it.                                       |
-| `submitChatMessage` *      | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input.    |
-| `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry sent with the next chat message.              |
-| `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too.    |
-| `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                                 |
-| `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                               |
-| `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).      |
-| `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                     |
+| Method                     | Signature                                               | Description                                                               |
+| -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
+| `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
+| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
+| `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                  |
+| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable or disable chat rendering.                                         |
+| `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                      |
+| `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.    |
+| `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                    |
+| `submitChatMessage` \*     | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input. |
+| `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry sent with the next chat message.           |
+| `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too. |
+| `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                              |
+| `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                            |
+| `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).   |
+| `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 

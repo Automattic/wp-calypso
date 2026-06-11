@@ -20,6 +20,7 @@ const mockTrackOpened = jest.fn();
 const mockTrackAddedToPost = jest.fn();
 const mockTrackPanelViewed = jest.fn();
 const mockFill = jest.fn();
+const mockNotice = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -33,6 +34,7 @@ let mockPostType: string | null = 'post';
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
+let mockResolutionError: unknown = null;
 let mockHasBlockEditor = true;
 let mockReelVisible = false;
 let mockGenericVisible = false;
@@ -72,6 +74,21 @@ jest.mock( '@wordpress/components', () => ( {
 		return null;
 	},
 	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
+	// Like the real Notice: no ARIA role on the wrapper (announcement happens
+	// via wp.a11y speak()), so tests assert on text + recorded status.
+	Notice: ( {
+		children,
+		status,
+		className,
+	}: {
+		children: React.ReactNode;
+		status?: string;
+		className?: string;
+	} ) => {
+		mockNotice( status );
+		return <div className={ className }>{ children }</div>;
+	},
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
@@ -106,6 +123,7 @@ jest.mock( '@wordpress/data', () => ( {
 				return {
 					getMedia: () => mockMedia,
 					hasFinishedResolution: () => mockHasResolvedMedia,
+					getResolutionError: () => mockResolutionError,
 				};
 			}
 			return undefined;
@@ -210,6 +228,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockTrackAddedToPost.mockClear();
 		mockTrackPanelViewed.mockClear();
 		mockFill.mockClear();
+		mockNotice.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -226,6 +245,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockMeta = {};
 		mockMedia = null;
 		mockHasResolvedMedia = true;
+		mockResolutionError = null;
 		mockHasBlockEditor = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
@@ -359,14 +379,44 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'holds the panel body blank while the attachment is still resolving', () => {
+		it( 'renders a loading skeleton while the attachment is still resolving', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null;
 			mockHasResolvedMedia = false; // first render — getMedia hasn't completed
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
+			const { container } = render( <FeatureClipPanel /> );
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Regenerate' } ) ).not.toBeInTheDocument();
+			// Skeleton is a status live region so screen readers announce the loading label.
+			const skeleton = screen.getByRole( 'status', { name: 'Loading saved clip preview' } );
+			expect( skeleton ).toBeInTheDocument();
+			expect( skeleton ).toHaveAttribute( 'aria-busy', 'true' );
+			expect(
+				container.querySelector( '.image-studio-feature-clip-panel__preview-frame--loading' )
+			).not.toBeNull();
+		} );
+
+		it( 'renders the empty state with an error notice when the resolver failed', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = true;
+			mockResolutionError = new Error( 'REST failure' );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( "Couldn't load your saved clip. Generate a new one below." )
+			).toBeInTheDocument();
+			// status=error makes core Notice announce assertively via speak().
+			expect( mockNotice ).toHaveBeenCalledWith( 'error' );
+		} );
+
+		it( 'does not show the error notice on a normal empty post', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect(
+				screen.queryByText( "Couldn't load your saved clip. Generate a new one below." )
+			).not.toBeInTheDocument();
 		} );
 
 		it( 'opens Image Studio with the post-editor entry point on click', async () => {

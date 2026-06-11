@@ -69,3 +69,49 @@ export function buildBundleResponseCart(): ResponseCart {
 		],
 	};
 }
+
+/**
+ * Build a mock responseCart containing two distinct domain bundles interleaved
+ * with a standalone domain registration, mirroring a multi-bundle cart from the
+ * design mockups. The "thalasso" bundle holds .com/.org/.net and the "brimnir"
+ * bundle holds .info/.co/.vip, with a standalone domain sitting between them.
+ * @returns A ResponseCart with two bundle groups plus an ungrouped product.
+ */
+export function buildMultiBundleResponseCart(): ResponseCart {
+	return {
+		...getEmptyResponseCart(),
+		products: [
+			buildDomainProduct(
+				{ uuid: 'thalasso-com', meta: 'thalasso.com', item_subtotal_integer: 2200 },
+				{ groupId: 'bundle-thalasso', role: 'primary', expectedBundleSize: 3 }
+			),
+			buildDomainProduct(
+				{ uuid: 'thalasso-org', meta: 'thalasso.org', item_subtotal_integer: 2000 },
+				{ groupId: 'bundle-thalasso', role: 'companion', expectedBundleSize: 3 }
+			),
+			buildDomainProduct(
+				{ uuid: 'thalasso-net', meta: 'thalasso.net', item_subtotal_integer: 1800 },
+				{ groupId: 'bundle-thalasso', role: 'companion', expectedBundleSize: 3 }
+			),
+			buildDomainProduct( {
+				uuid: 'standalone',
+				meta: 'standalone.blog',
+				item_subtotal_integer: 3000,
+			} ),
+			// The brimnir primary is deliberately listed last so ordering tests
+			// exercise the primary-first reordering rather than the input order.
+			buildDomainProduct(
+				{ uuid: 'brimnir-co', meta: 'brimnir.co', item_subtotal_integer: 2500 },
+				{ groupId: 'bundle-brimnir', role: 'companion', expectedBundleSize: 3 }
+			),
+			buildDomainProduct(
+				{ uuid: 'brimnir-vip', meta: 'brimnir.vip', item_subtotal_integer: 4200 },
+				{ groupId: 'bundle-brimnir', role: 'companion', expectedBundleSize: 3 }
+			),
+			buildDomainProduct(
+				{ uuid: 'brimnir-info', meta: 'brimnir.info', item_subtotal_integer: 1500 },
+				{ groupId: 'bundle-brimnir', role: 'primary', expectedBundleSize: 3 }
+			),
+		],
+	};
+}
