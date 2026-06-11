@@ -25,6 +25,14 @@ const STRONG_RECOVERY = {
 	phone_validated: false,
 } as AccountRecovery;
 
+// Has a validated recovery email but (paired with two_step_enabled: false) no 2FA.
+const EMAIL_ONLY_RECOVERY = {
+	email: 'recovery@example.com',
+	email_validated: true,
+	phone: null,
+	phone_validated: false,
+} as AccountRecovery;
+
 function mockAccountRecovery( data: AccountRecovery ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/account-recovery' )
@@ -69,13 +77,73 @@ describe( '<AccountRecoveryInterstitial>', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_interstitial_impression',
-			{ security_level: 'none' }
+			{ security_level: 'none', recovery_status: 'none' }
+		);
+	} );
+
+	test( 'shows the "add 2FA" copy for a user with a recovery method but no 2FA', async () => {
+		mockAccountRecovery( EMAIL_ONLY_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Take your security further' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Set up two-factor authentication' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
+		).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_account_recovery_interstitial_impression',
+			{ security_level: 'partial', recovery_status: 'add-two-factor' }
+		);
+	} );
+
+	test( 'shows the "add a recovery method" copy for a user with 2FA but no recovery method', async () => {
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: true } );
+
+		render( <AccountRecoveryInterstitial /> );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Don’t get locked out of your account' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Set up recovery email or phone' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Review 2FA and add backup codes' } )
+		).toBeVisible();
+	} );
+
+	test( 'shows the "download backup codes" copy when 2FA + recovery are set but backup codes are not', async () => {
+		mockAccountRecovery( STRONG_RECOVERY );
+		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: false } );
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Don’t get locked out of your account' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Review 2FA and download backup codes' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: 'Review recovery email or phone' } )
+		).toBeVisible();
+		// Coarse tier stays 'strong'; the fine-grained dimension captures the missing backup codes.
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_account_recovery_interstitial_impression',
+			{ security_level: 'strong', recovery_status: 'add-backup-codes' }
 		);
 	} );
 
 	test( 'shows the strong-tier modal with masked recovery details for a fully-covered user', async () => {
 		mockAccountRecovery( STRONG_RECOVERY );
-		mockUserSettings( { two_step_enabled: true } );
+		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
@@ -88,14 +156,14 @@ describe( '<AccountRecoveryInterstitial>', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_interstitial_impression',
-			{ security_level: 'strong' }
+			{ security_level: 'strong', recovery_status: 'strong' }
 		);
 	} );
 
 	test( 'confirming "Yes, all good" snoozes for the strong window and records a cta_click', async () => {
 		const user = userEvent.setup();
 		mockAccountRecovery( STRONG_RECOVERY );
-		mockUserSettings( { two_step_enabled: true } );
+		mockUserSettings( { two_step_enabled: true, two_step_backup_codes_printed: true } );
 
 		let snoozedValue: number | undefined;
 		const savePost = nock( 'https://public-api.wordpress.com' )
@@ -119,7 +187,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) + 300 * 86400 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_interstitial_cta_click',
-			{ security_level: 'strong', cta_id: 'confirm_recovery' }
+			{ security_level: 'strong', recovery_status: 'strong', cta_id: 'confirm_recovery' }
 		);
 	} );
 
@@ -166,7 +234,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_interstitial_dismiss',
-			{ security_level: 'none' }
+			{ security_level: 'none', recovery_status: 'none' }
 		);
 	} );
 } );

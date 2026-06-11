@@ -19,7 +19,7 @@ import {
 	RECOVERY_INTERSTITIAL_SNOOZE_META,
 	RECOVERY_INTERSTITIAL_TRACKS,
 } from './constants';
-import { getInterstitialCopy } from './copy';
+import { getInterstitialCopy, getInterstitialVariant } from './copy';
 import type { InterstitialCta } from './copy';
 import './style.scss';
 
@@ -71,6 +71,16 @@ export default function AccountRecoveryInterstitial() {
 		now,
 	} );
 
+	const hasRecoveryMethod =
+		!! accountRecovery?.email_validated || !! accountRecovery?.phone_validated;
+	// Fine-grained setup state (5-way), recorded on Tracks as `recovery_status` alongside the
+	// coarse 3-tier `security_level`. Also selects the copy variant.
+	const variant = getInterstitialVariant(
+		hasRecoveryMethod,
+		!! userSettings?.two_step_enabled,
+		!! userSettings?.two_step_backup_codes_printed
+	);
+
 	const shouldDisplay = isFeatureEnabled && ! isDismissed && ( isQaForced() || isEligible );
 
 	useEffect( () => {
@@ -78,9 +88,10 @@ export default function AccountRecoveryInterstitial() {
 			hasRecordedImpression.current = true;
 			recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.impression, {
 				security_level: securityLevel,
+				recovery_status: variant,
 			} );
 		}
-	}, [ shouldDisplay, securityLevel, recordTracksEvent ] );
+	}, [ shouldDisplay, securityLevel, variant, recordTracksEvent ] );
 
 	if ( ! shouldDisplay ) {
 		return null;
@@ -91,7 +102,7 @@ export default function AccountRecoveryInterstitial() {
 		recoveryPhoneNumber: accountRecovery?.phone_validated
 			? accountRecovery.phone?.number
 			: undefined,
-	} )[ securityLevel ];
+	} )[ variant ];
 	const { primaryCta, secondaryCta } = copy;
 
 	const snooze = () => {
@@ -102,13 +113,17 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const handleSnooze = () => {
-		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.dismiss, { security_level: securityLevel } );
+		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.dismiss, {
+			security_level: securityLevel,
+			recovery_status: variant,
+		} );
 		snooze();
 	};
 
 	const handleCtaClick = ( cta: InterstitialCta ) => {
 		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.ctaClick, {
 			security_level: securityLevel,
+			recovery_status: variant,
 			cta_id: cta.id,
 		} );
 		if ( cta.route ) {
