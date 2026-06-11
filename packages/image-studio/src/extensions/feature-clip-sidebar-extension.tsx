@@ -14,7 +14,7 @@
  * preview, a share row mirroring the modal, and a Regenerate button.
  */
 import { createBlock } from '@wordpress/blocks';
-import { Button, Fill, PanelBody } from '@wordpress/components';
+import { Button, Fill, PanelBody, VisuallyHidden } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
@@ -208,13 +208,16 @@ function FeatureClipEmptyState( {
 }
 
 function FeatureClipSkeleton(): JSX.Element {
+	const label = __( 'Loading saved clip preview', __i18n_text_domain__ );
 	return (
 		<div
 			className="image-studio-feature-clip-panel__preview-frame image-studio-feature-clip-panel__preview-frame--loading"
 			role="status"
 			aria-busy="true"
-			aria-label={ __( 'Loading saved clip preview', __i18n_text_domain__ ) }
-		/>
+			aria-label={ label }
+		>
+			<VisuallyHidden>{ label }</VisuallyHidden>
+		</div>
 	);
 }
 

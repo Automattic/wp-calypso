@@ -73,6 +73,7 @@ jest.mock( '@wordpress/components', () => ( {
 		return null;
 	},
 	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
