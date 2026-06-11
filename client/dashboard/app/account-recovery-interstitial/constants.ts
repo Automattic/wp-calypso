@@ -52,5 +52,4 @@ export const RECOVERY_INTERSTITIAL_TRACKS = {
 export const RECOVERY_INTERSTITIAL_ROUTES = {
 	accountRecovery: '/me/security/account-recovery',
 	twoStepAuth: '/me/security/two-step-auth',
-	backupCodes: '/me/security/two-step-auth/backup-codes',
 } as const;

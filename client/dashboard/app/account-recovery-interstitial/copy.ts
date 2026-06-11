@@ -183,8 +183,10 @@ export function getInterstitialCopy(
 			),
 			primaryCta: {
 				id: 'download_backup_codes',
+				// Routes to the 2FA page (not the backup-codes page, which regenerates codes for
+				// users who already have them) — the user reviews 2FA and downloads from there.
 				label: __( 'Review 2FA and download backup codes' ),
-				route: RECOVERY_INTERSTITIAL_ROUTES.backupCodes,
+				route: RECOVERY_INTERSTITIAL_ROUTES.twoStepAuth,
 			},
 			secondaryCta: {
 				id: 'review_recovery',
