@@ -74,3 +74,19 @@ const PLACEHOLDER_SPACES: ReadSpace[] = [
 export async function fetchReadSpaces(): Promise< ReadSpace[] > {
 	return PLACEHOLDER_SPACES.map( ( space ) => ( { ...space } ) );
 }
+
+/**
+ * Fetch a single space's details.
+ *
+ * TODO(RSM-4145): replace with the real `GET /spaces/{id}` once it exists.
+ * Until then it resolves the matching placeholder space. Spaces created in the
+ * session aren't in the placeholder set — the create mutation seeds their
+ * detail cache directly, so this fetcher never runs for them.
+ */
+export async function fetchReadSpace( spaceId: string ): Promise< ReadSpace > {
+	const space = PLACEHOLDER_SPACES.find( ( item ) => item.id === spaceId );
+	if ( ! space ) {
+		throw new Error( `Space not found: ${ spaceId }` );
+	}
+	return { ...space };
+}

@@ -1,5 +1,12 @@
-import { fetchReadSpaces } from '../fetchers';
+import { fetchReadSpace, fetchReadSpaces } from '../fetchers';
 
+// NOTE: these fetchers currently resolve the hard-coded placeholder set with no
+// network call, so there's nothing to intercept yet. Once the real list/detail
+// endpoints land (RSM-4145) and these issue `wpcom.req` GETs, mock the HTTP
+// layer with `nock` — `nock( BASE ).get( '/…/spaces' ).reply( 200, … )` for the
+// happy path and a 4xx/5xx reply for the "not found"/error path — instead of
+// asserting against the placeholder data. See the sibling
+// `read-site-recommendations` / `read-feeds` fetcher tests for the pattern.
 describe( 'read spaces fetchers', () => {
 	it( 'returns placeholder spaces with opaque stable ids instead of name slugs', async () => {
 		const spaces = await fetchReadSpaces();
@@ -19,5 +26,15 @@ describe( 'read spaces fetchers', () => {
 		expect( spaces.map( ( space ) => space.id ) ).not.toEqual(
 			spaces.map( ( space ) => space.name.toLowerCase() )
 		);
+	} );
+
+	it( 'resolves a single placeholder space by id', async () => {
+		await expect( fetchReadSpace( '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21' ) ).resolves.toEqual(
+			expect.objectContaining( { id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21', name: 'Work' } )
+		);
+	} );
+
+	it( 'rejects when the space id is unknown', async () => {
+		await expect( fetchReadSpace( 'does-not-exist' ) ).rejects.toThrow( 'Space not found' );
 	} );
 } );

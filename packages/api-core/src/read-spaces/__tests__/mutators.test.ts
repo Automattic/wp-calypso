@@ -17,6 +17,13 @@ const makeSubscription = (
 	...overrides,
 } );
 
+// NOTE: these mutators are placeholders that resolve locally without any
+// network call, so there's nothing to intercept yet. Once the real endpoints
+// land (create: RSM-4139; add/remove source) and these issue `wpcom.req`
+// requests, mock the HTTP layer with `nock` — replying 200 for the success
+// cases and a 4xx/5xx for the error cases — instead of asserting on the
+// resolved value. See the sibling `read-site-recommendations` / `read-feeds`
+// fetcher tests for the `nock( BASE ).post( … ).reply( … )` pattern.
 describe( 'read spaces mutators', () => {
 	it( 'creates a local read space until the create endpoint exists', async () => {
 		const space = await createReadSpace( {

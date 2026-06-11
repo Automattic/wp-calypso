@@ -2,6 +2,7 @@ import {
 	addReadSpaceSourceMutation,
 	createReadSpaceMutation,
 	deleteReadSpaceSourceMutation,
+	readSpaceQuery,
 	readSpacesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -16,6 +17,18 @@ import type { ReadSpace } from '@automattic/api-core';
 export function useSpaces(): ReadSpace[] {
 	const { data = [] } = useQuery( readSpacesQuery() );
 	return data;
+}
+
+/**
+ * A single space's details, loaded on demand (e.g. by the sources modal).
+ * Disabled until an id is known. The add/delete source mutations patch this
+ * query optimistically, so consumers see source changes immediately.
+ */
+export function useSpace( spaceId: string | null | undefined ) {
+	return useQuery( {
+		...readSpaceQuery( spaceId ?? '' ),
+		enabled: Boolean( spaceId ),
+	} );
 }
 
 /**

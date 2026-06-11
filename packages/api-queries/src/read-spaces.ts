@@ -2,6 +2,7 @@ import {
 	addReadSpaceSource,
 	createReadSpace,
 	deleteReadSpaceSource,
+	fetchReadSpace,
 	fetchReadSpaces,
 	getReadSpaceSourceKey,
 	getSiteSubscriptionSourceKey,
@@ -14,6 +15,8 @@ import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react
 
 const readSpacesListKey = [ 'read', 'spaces', 'list' ] as const;
 
+const readSpaceDetailKey = ( spaceId: string ) => [ 'read', 'spaces', 'detail', spaceId ] as const;
+
 export const readSpacesQuery = () =>
 	queryOptions( {
 		queryKey: readSpacesListKey,
@@ -24,6 +27,15 @@ export const readSpacesQuery = () =>
 		// Keep the placeholder data out of Calypso's persisted query cache:
 		// with `staleTime: Infinity` a dehydrated copy would survive reloads for
 		// days and mask the real list once the endpoint ships.
+		meta: { persist: false },
+	} );
+
+export const readSpaceQuery = ( spaceId: string ) =>
+	queryOptions( {
+		queryKey: readSpaceDetailKey( spaceId ),
+		queryFn: () => fetchReadSpace( spaceId ),
+		// Same in-memory placeholder caveats as the list query above (RSM-4145).
+		staleTime: Infinity,
 		meta: { persist: false },
 	} );
 
@@ -41,6 +53,10 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 				...( previous ?? [] ),
 				space,
 			] );
+			// Seed the detail cache too so the sources modal can open the freshly
+			// created space without hitting `fetchReadSpace` (which only knows the
+			// placeholder set).
+			queryClient.setQueryData< ReadSpace >( readSpaceQuery( space.id ).queryKey, space );
 		},
 	} );
 
@@ -55,31 +71,48 @@ const createSpaceSource = ( subscription: SiteSubscriptionItem ): SpaceSource =>
 
 type ReadSpaceSourceMutationContext = {
 	previousSpaces?: ReadSpace[];
+	previousSpace?: ReadSpace;
 };
 
-// Patch the cached spaces list and return the pre-patch snapshot so `onError`
-// can roll back. We deliberately don't invalidate on settle: the list has no
-// real endpoint yet (RSM-4145) — it lives in-memory with `staleTime: Infinity`,
-// so a refetch would clobber the optimistic state.
-const patchCachedSpaces = (
+// Optimistically patch a space's sources in both the list and the single-space
+// detail caches, returning the pre-patch snapshots so `onError` can roll back.
+// We deliberately don't invalidate on settle: spaces have no real endpoint yet
+// (RSM-4145) — they live in-memory with `staleTime: Infinity`, so a refetch
+// would clobber the optimistic state.
+const patchSpaceSources = (
 	queryClient: QueryClient,
-	updateSpace: ( space: ReadSpace ) => ReadSpace
+	spaceId: string,
+	updateSources: ( sources: SpaceSource[] ) => SpaceSource[]
 ): ReadSpaceSourceMutationContext => {
-	const previousSpaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
+	const listKey = readSpacesQuery().queryKey;
+	const detailKey = readSpaceQuery( spaceId ).queryKey;
 
-	queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) =>
-		( previous ?? [] ).map( updateSpace )
+	const previousSpaces = queryClient.getQueryData< ReadSpace[] >( listKey );
+	const previousSpace = queryClient.getQueryData< ReadSpace >( detailKey );
+
+	const applyToSpace = ( space: ReadSpace ): ReadSpace =>
+		space.id === spaceId ? { ...space, sources: updateSources( space.sources ) } : space;
+
+	queryClient.setQueryData< ReadSpace[] >( listKey, ( previous ) =>
+		( previous ?? [] ).map( applyToSpace )
+	);
+	queryClient.setQueryData< ReadSpace >( detailKey, ( previous ) =>
+		previous ? applyToSpace( previous ) : previous
 	);
 
-	return { previousSpaces };
+	return { previousSpaces, previousSpace };
 };
 
-const rollbackCachedSpaces = (
+const rollbackSpaceSources = (
 	queryClient: QueryClient,
+	spaceId: string,
 	context?: ReadSpaceSourceMutationContext
 ) => {
 	if ( context?.previousSpaces ) {
 		queryClient.setQueryData( readSpacesQuery().queryKey, context.previousSpaces );
+	}
+	if ( context?.previousSpace ) {
+		queryClient.setQueryData( readSpaceQuery( spaceId ).queryKey, context.previousSpace );
 	}
 };
 
@@ -92,26 +125,14 @@ export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 			const source = createSpaceSource( subscription );
 			const sourceKey = getReadSpaceSourceKey( source );
 
-			return patchCachedSpaces( queryClient, ( space ) => {
-				if ( space.id !== spaceId ) {
-					return space;
-				}
-
-				if (
-					space.sources.some(
-						( existingSource ) => getReadSpaceSourceKey( existingSource ) === sourceKey
-					)
-				) {
-					return space;
-				}
-
-				return {
-					...space,
-					sources: [ ...space.sources, source ],
-				};
-			} );
+			return patchSpaceSources( queryClient, spaceId, ( sources ) =>
+				sources.some( ( existingSource ) => getReadSpaceSourceKey( existingSource ) === sourceKey )
+					? sources
+					: [ ...sources, source ]
+			);
 		},
-		onError: ( _error, _params, context ) => rollbackCachedSpaces( queryClient, context ),
+		onError: ( _error, { spaceId }, context ) =>
+			rollbackSpaceSources( queryClient, spaceId, context ),
 	} );
 
 export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
@@ -122,18 +143,12 @@ export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 		onMutate: ( { spaceId, subscription } ) => {
 			const subscriptionKey = getSiteSubscriptionSourceKey( subscription );
 
-			return patchCachedSpaces( queryClient, ( space ) => {
-				if ( space.id !== spaceId ) {
-					return space;
-				}
-
-				return {
-					...space,
-					sources: space.sources.filter(
-						( existingSource ) => getReadSpaceSourceKey( existingSource ) !== subscriptionKey
-					),
-				};
-			} );
+			return patchSpaceSources( queryClient, spaceId, ( sources ) =>
+				sources.filter(
+					( existingSource ) => getReadSpaceSourceKey( existingSource ) !== subscriptionKey
+				)
+			);
 		},
-		onError: ( _error, _params, context ) => rollbackCachedSpaces( queryClient, context ),
+		onError: ( _error, { spaceId }, context ) =>
+			rollbackSpaceSources( queryClient, spaceId, context ),
 	} );
