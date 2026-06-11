@@ -211,8 +211,6 @@ export class SiteSelector extends Component {
 	};
 
 	onSiteSelect = ( event, siteId ) => {
-		const selectedSite = this.props.sites.find( ( site ) => site.ID === siteId );
-
 		if ( siteId !== ALL_SITES ) {
 			const visibleSites = this.visibleSites.filter( ( ID ) => ID !== ALL_SITES );
 			this.props.recordTracksEvent( 'calypso_switch_site_click_item', {
@@ -221,9 +219,10 @@ export class SiteSelector extends Component {
 				is_searching: this.state.searchTerm.length > 0,
 				sort_key: this.props.sitesSorting.sortKey,
 				sort_order: this.props.sitesSorting.sortOrder,
-				is_staging_site: selectedSite?.is_wpcom_staging_site ?? false,
 			} );
 		}
+
+		const selectedSite = this.props.sites.find( ( site ) => site.ID === siteId );
 		const handledByHost = this.props.onSiteSelect( siteId, selectedSite );
 		this.props.onClose( event, siteId );
 
