@@ -130,7 +130,6 @@ export type WPComSpaceUpgradeProductSlug = ( typeof WPCOM_SPACE_UPGRADE_PRODUCTS
 export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 
 export interface WPComPlan extends Plan {
-	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
 	getBlogOnboardingTagLine?: () => TranslateResult;
 	getPlanCompareFeatures?: (

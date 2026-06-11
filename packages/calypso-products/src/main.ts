@@ -724,7 +724,6 @@ export type FilteredPlan = Plan &
 		WPComPlan,
 		| 'getPlanCompareFeatures'
 		| 'getAnnualPlansOnlyFeatures'
-		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
 		| 'getBlogOnboardingTagLine'
 		| 'getVisualSplitBusinessFeatures'

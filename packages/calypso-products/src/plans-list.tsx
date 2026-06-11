@@ -2348,8 +2348,6 @@ const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_WOO_EXPRESS_PLUS,
 	getTitle: () => i18n.translate( 'Plus' ),
-	getPlanTagline: () =>
-		i18n.translate( 'For fast-growing businesses that need access to the most powerful tools.' ),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
@@ -2363,8 +2361,6 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ENTERPRISE_GRID_WPCOM,
 	getTitle: () => i18n.translate( 'Enterprise' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Level up to bespoke Enterprise-grade performance and security.' ),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
@@ -3745,11 +3741,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
 	group: GROUP_P2,
-	getPlanTagline: () =>
-		i18n.translate(
-			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
-			plansDescriptionHeadingComponent
-		),
 	getTitle: () => i18n.translate( 'P2 Free' ),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_P2_3GB_STORAGE,
