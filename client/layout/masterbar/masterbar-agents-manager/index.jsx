@@ -82,7 +82,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 				label: (
 					<div className="masterbar__agents-manager-menu-item">
 						<Icon icon={ comment } size={ 24 } />
-						<span>{ translate( 'Chat Support' ) }</span>
+						<span>{ translate( 'Chat support' ) }</span>
 					</div>
 				),
 				onClick: () => handleMenuClick( '/' ),
