@@ -1,9 +1,6 @@
 /**
  * Copy for the account-recovery interstitial.
  *
- * Strings are the approved copy from the copy spreadsheet (plan §3a). Do not invent
- * additional copy; update here when the spreadsheet changes.
- *
  * Copy is keyed by a finer-grained *variant* than the 3-tier `SecurityLevel` used for snooze
  * windows / Tracks: the `partial` tier splits into two messages depending on which half the
  * user is missing (push 2FA vs. push a recovery method). Returned from a function (not a
