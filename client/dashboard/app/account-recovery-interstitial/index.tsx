@@ -168,7 +168,7 @@ export default function AccountRecoveryInterstitial() {
 			<img className="account-recovery-interstitial__hero" src={ heroIllustration } alt="" />
 			<VStack className="account-recovery-interstitial__body" spacing={ 6 }>
 				<VStack spacing={ 2 }>
-					<Text id={ titleId } as="h1" className="account-recovery-interstitial__title">
+					<Text id={ titleId } as="h1" size={ 20 } weight={ 500 }>
 						{ copy.title }
 					</Text>
 					<Text variant="muted">{ copy.description }</Text>

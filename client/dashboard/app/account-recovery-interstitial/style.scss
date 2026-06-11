@@ -27,10 +27,6 @@
 	padding: $grid-unit-40 $grid-unit-40 $grid-unit-30;
 }
 
-.account-recovery-interstitial__title {
-	@include heading-large;
-}
-
 .account-recovery-interstitial__actions {
 	.components-button {
 		width: 100%;
