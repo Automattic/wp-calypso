@@ -12,10 +12,6 @@ const memoryStore: Preferences[ 'calypso_preferences' ] = {
 	help_center_router_history: null,
 };
 
-/**
- * Identifies the app/product the Help Center is running inside (e.g. 'a4a').
- *
- */
 let helpCenterAppId: string | undefined;
 
 export function setHelpCenterAppId( appId: string | undefined ): void {
