@@ -8,11 +8,11 @@ interface OneLoginFooterProps {
 	/**
 	 * When `isLoginView` is true, this is the "lost password" link.
 	 */
-	lostPasswordLink?: JSX.Element;
+	lostPasswordLink?: React.JSX.Element;
 	/**
 	 * When `isLoginView` is false, this is the "back to login" link.
 	 */
-	loginLink?: JSX.Element;
+	loginLink?: React.JSX.Element;
 	/**
 	 * The content of the footer. If provided, it will be rendered instead of the default links.
 	 */
@@ -20,7 +20,7 @@ interface OneLoginFooterProps {
 	/**
 	 * When `isLoginView` is false, this is the "support" link.
 	 */
-	supportLink?: JSX.Element;
+	supportLink?: React.JSX.Element;
 	/**
 	 * When true, this is the footer for the main login screen.
 	 */
