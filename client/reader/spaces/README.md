@@ -22,6 +22,11 @@ interface ReadSpace {
 	id: string;
 	name: string;
 	tags: string[];
+	layout: SpaceLayout;
+}
+
+// Presentation settings, grouped so they can grow beyond color/icon.
+interface SpaceLayout {
 	color: SpaceColor; // 'blue'|'purple'|'red'|'orange'|'gray'|'green'|'celadon'
 	icon: SpaceIcon; // 'inbox'|'box'|'video'|'comment'|'cart'|'star'|'pages'|'category'
 }
@@ -74,7 +79,7 @@ returns `sources`.
 
 - **Request body:** `CreateReadSpaceParams` → `{ name, tags }`
 - **Response `201`:** `ReadSpaceDetails` (server-generated `id`, defaults applied:
-  `color: 'blue'`, `icon: 'category'`, `sources: []`).
+  `layout: { color: 'blue', icon: 'category' }`, `sources: []`).
 - **Response `422`:** empty name / name over `MAX_SPACE_NAME_LENGTH`.
 - Placeholder: `createReadSpace()` builds the space locally with a generated id.
 
