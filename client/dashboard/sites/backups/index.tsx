@@ -198,7 +198,6 @@ export function BackupsListPage() {
 
 	const isMobileDetailsView = isSmallViewport && selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
-	const shouldShowNotices = ! isMobileDetailsView;
 
 	const actions = (
 		<>
@@ -231,18 +230,16 @@ export function BackupsListPage() {
 				/>
 			}
 			notices={
-				shouldShowNotices ? (
-					<SitesNoticeArbiter>
-						{ backupState.status !== 'idle' && (
-							<BackupNotices
-								backupState={ backupState }
-								site={ site }
-								timezoneString={ timezoneString }
-								gmtOffset={ gmtOffset }
-							/>
-						) }
-					</SitesNoticeArbiter>
-				) : undefined
+				<SitesNoticeArbiter>
+					{ ! isMobileDetailsView && backupState.status !== 'idle' && (
+						<BackupNotices
+							backupState={ backupState }
+							site={ site }
+							timezoneString={ timezoneString }
+							gmtOffset={ gmtOffset }
+						/>
+					) }
+				</SitesNoticeArbiter>
 			}
 		>
 			{ hasBackups && (
