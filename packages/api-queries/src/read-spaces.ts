@@ -7,6 +7,7 @@ import {
 	getReadSpaceSourceKey,
 	getSiteSubscriptionSourceKey,
 	type ReadSpace,
+	type ReadSpaceDetails,
 	type ReadSpaceSourceMutationParams,
 	type SpaceSource,
 	type SiteSubscriptionItem,
@@ -47,16 +48,21 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: createReadSpace,
 		onSuccess: ( space ) => {
-			// No network round-trip yet (RSM-4139): the created space is appended
-			// straight to the cached list so it shows up in the sidebar at once.
+			// No network round-trip yet (RSM-4139). Append the list-shaped space
+			// (sources live only on the detail cache) so the sidebar reflects it at
+			// once...
+			const { sources, ...listSpace } = space;
 			queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) => [
 				...( previous ?? [] ),
-				space,
+				listSpace,
 			] );
-			// Seed the detail cache too so the sources modal can open the freshly
+			// ...and seed the detail cache so the sources modal can open the freshly
 			// created space without hitting `fetchReadSpace` (which only knows the
 			// placeholder set).
-			queryClient.setQueryData< ReadSpace >( readSpaceQuery( space.id ).queryKey, space );
+			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, {
+				...listSpace,
+				sources,
+			} );
 		},
 	} );
 
@@ -70,37 +76,27 @@ const createSpaceSource = ( subscription: SiteSubscriptionItem ): SpaceSource =>
 } );
 
 type ReadSpaceSourceMutationContext = {
-	previousSpaces?: ReadSpace[];
-	previousSpace?: ReadSpace;
+	previousSpace?: ReadSpaceDetails;
 };
 
-// Optimistically patch a space's sources in both the list and the single-space
-// detail caches, returning the pre-patch snapshots so `onError` can roll back.
-// We deliberately don't invalidate on settle: spaces have no real endpoint yet
-// (RSM-4145) — they live in-memory with `staleTime: Infinity`, so a refetch
-// would clobber the optimistic state.
+// Optimistically patch a space's sources in the single-space detail cache
+// (sources only live there, not in the list), returning the pre-patch snapshot
+// so `onError` can roll back. We deliberately don't invalidate on settle: spaces
+// have no real endpoint yet (RSM-4145) — the detail lives in-memory with
+// `staleTime: Infinity`, so a refetch would clobber the optimistic state.
 const patchSpaceSources = (
 	queryClient: QueryClient,
 	spaceId: string,
 	updateSources: ( sources: SpaceSource[] ) => SpaceSource[]
 ): ReadSpaceSourceMutationContext => {
-	const listKey = readSpacesQuery().queryKey;
 	const detailKey = readSpaceQuery( spaceId ).queryKey;
+	const previousSpace = queryClient.getQueryData< ReadSpaceDetails >( detailKey );
 
-	const previousSpaces = queryClient.getQueryData< ReadSpace[] >( listKey );
-	const previousSpace = queryClient.getQueryData< ReadSpace >( detailKey );
-
-	const applyToSpace = ( space: ReadSpace ): ReadSpace =>
-		space.id === spaceId ? { ...space, sources: updateSources( space.sources ) } : space;
-
-	queryClient.setQueryData< ReadSpace[] >( listKey, ( previous ) =>
-		( previous ?? [] ).map( applyToSpace )
-	);
-	queryClient.setQueryData< ReadSpace >( detailKey, ( previous ) =>
-		previous ? applyToSpace( previous ) : previous
+	queryClient.setQueryData< ReadSpaceDetails >( detailKey, ( previous ) =>
+		previous ? { ...previous, sources: updateSources( previous.sources ) } : previous
 	);
 
-	return { previousSpaces, previousSpace };
+	return { previousSpace };
 };
 
 const rollbackSpaceSources = (
@@ -108,9 +104,6 @@ const rollbackSpaceSources = (
 	spaceId: string,
 	context?: ReadSpaceSourceMutationContext
 ) => {
-	if ( context?.previousSpaces ) {
-		queryClient.setQueryData( readSpacesQuery().queryKey, context.previousSpaces );
-	}
 	if ( context?.previousSpace ) {
 		queryClient.setQueryData( readSpaceQuery( spaceId ).queryKey, context.previousSpace );
 	}

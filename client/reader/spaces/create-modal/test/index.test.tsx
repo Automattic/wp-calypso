@@ -15,7 +15,6 @@ const WORK: ReadSpace = {
 	tags: [],
 	color: 'blue',
 	icon: 'inbox',
-	sources: [],
 };
 
 function setup( { existing = [] as ReadSpace[], onCreated = jest.fn() } = {} ) {
@@ -84,9 +83,9 @@ describe( 'CreateSpaceModal', () => {
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 
 		const spaces = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces ).toEqual( [
-			expect.objectContaining( { name: 'Reading', tags: [], sources: [] } ),
-		] );
+		expect( spaces ).toEqual( [ expect.objectContaining( { name: 'Reading', tags: [] } ) ] );
+		// Sources live only on the single-space detail cache, not on list items.
+		expect( spaces?.[ 0 ] ).not.toHaveProperty( 'sources' );
 		expect( onClose ).toHaveBeenCalled();
 	} );
 
@@ -97,9 +96,7 @@ describe( 'CreateSpaceModal', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
 		await waitFor( () =>
-			expect( onCreated ).toHaveBeenCalledWith(
-				expect.objectContaining( { name: 'Reading', sources: [] } )
-			)
+			expect( onCreated ).toHaveBeenCalledWith( expect.objectContaining( { name: 'Reading' } ) )
 		);
 	} );
 

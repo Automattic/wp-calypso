@@ -1,14 +1,19 @@
 import { DEFAULT_SPACE_COLOR, DEFAULT_SPACE_ICON } from './constants';
-import type { CreateReadSpaceParams, ReadSpace, ReadSpaceSourceMutationParams } from './types';
+import type {
+	CreateReadSpaceParams,
+	ReadSpaceDetails,
+	ReadSpaceSourceMutationParams,
+} from './types';
 
 /**
  * Create a space.
  *
  * TODO(RSM-4139): call the real POST endpoint once it exists. For now the space
  * is constructed locally and the api-query layer writes it to the React Query
- * cache.
+ * cache. Returns the detail shape (with an empty source list) so the create
+ * flow can seed the single-space cache.
  */
-export function createReadSpace( params: CreateReadSpaceParams ): Promise< ReadSpace > {
+export function createReadSpace( params: CreateReadSpaceParams ): Promise< ReadSpaceDetails > {
 	return Promise.resolve( {
 		id: generateSpaceId(),
 		name: params.name,

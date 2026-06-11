@@ -8,7 +8,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SpacesView } from '../view';
-import type { ReadSpace } from '@automattic/api-core';
+import type { ReadSpaceDetails } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -45,7 +45,7 @@ jest.mock( '@automattic/react-virtualized', () => ( {
 	),
 } ) );
 
-const WORK: ReadSpace = {
+const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
 	tags: [],

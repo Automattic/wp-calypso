@@ -28,9 +28,19 @@ describe( 'read spaces fetchers', () => {
 		);
 	} );
 
-	it( 'resolves a single placeholder space by id', async () => {
+	it( 'omits sources from the list (they belong to the detail endpoint)', async () => {
+		const spaces = await fetchReadSpaces();
+
+		expect( spaces[ 0 ] ).not.toHaveProperty( 'sources' );
+	} );
+
+	it( 'resolves a single placeholder space by id, with its sources', async () => {
 		await expect( fetchReadSpace( '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21' ) ).resolves.toEqual(
-			expect.objectContaining( { id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21', name: 'Work' } )
+			expect.objectContaining( {
+				id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+				name: 'Work',
+				sources: [],
+			} )
 		);
 	} );
 

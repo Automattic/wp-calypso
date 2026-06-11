@@ -27,6 +27,14 @@ export interface ReadSpace {
 	tags: string[];
 	color: SpaceColor;
 	icon: SpaceIcon;
+}
+
+/**
+ * A space plus its sources. Sources are only returned by the single-space
+ * endpoint (`GET /read/spaces/{id}`), not by the list endpoint — so the list
+ * deals in `ReadSpace` and the detail view deals in `ReadSpaceDetails`.
+ */
+export interface ReadSpaceDetails extends ReadSpace {
 	sources: SpaceSource[];
 }
 

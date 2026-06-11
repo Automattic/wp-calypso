@@ -7,7 +7,7 @@ import {
 	readSpaceQuery,
 	readSpacesQuery,
 } from '../read-spaces';
-import type { ReadSpace, SiteSubscriptionItem } from '@automattic/api-core';
+import type { ReadSpace, ReadSpaceDetails, SiteSubscriptionItem } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
@@ -56,7 +56,7 @@ const STRATECHERY_SOURCE = {
 	siteIcon: 'https://stratechery.com/icon.png',
 };
 
-const makeSpace = ( overrides: Partial< ReadSpace > = {} ): ReadSpace => ( {
+const makeSpace = ( overrides: Partial< ReadSpaceDetails > = {} ): ReadSpaceDetails => ( {
 	id: SPACE_ID,
 	name: 'Work',
 	tags: [],
@@ -82,156 +82,13 @@ const makeSubscription = (
 
 const rejectingMutationFn = () => Promise.reject( new Error( 'nope' ) );
 
+// Sources live only on the single-space detail cache, so the add/delete
+// mutations patch `readSpaceQuery`, not the list.
+const detailSources = ( client: QueryClient ) =>
+	client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )?.sources;
+
 describe( 'read space source mutations', () => {
-	it( 'optimistically adds a source from a site subscription to the matching space cache entry', async () => {
-		const client = newClient();
-		client.setQueryData( readSpacesQuery().queryKey, [ makeSpace() ] );
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
-			expect.objectContaining( { id: SPACE_ID, sources: [ STRATECHERY_SOURCE ] } ),
-		] );
-	} );
-
-	it( 'does not add the same subscription twice', async () => {
-		const client = newClient();
-		const subscription = makeSubscription();
-		client.setQueryData( readSpacesQuery().queryKey, [ makeSpace() ] );
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription,
-		} );
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription,
-		} );
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces?.[ 0 ].sources ).toHaveLength( 1 );
-	} );
-
-	it( 'does not clear the spaces cache when adding before the list is cached', async () => {
-		const client = newClient();
-
-		await runMutation( client, addReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [] );
-	} );
-
-	it( 'rolls back the optimistic add when the request fails', async () => {
-		const client = newClient();
-		client.setQueryData( readSpacesQuery().queryKey, [ makeSpace() ] );
-
-		await runMutation(
-			client,
-			{ ...addReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
-			{ spaceId: SPACE_ID, subscription: makeSubscription() }
-		);
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces?.[ 0 ].sources ).toEqual( [] );
-	} );
-
-	it( 'optimistically deletes a subscription from the matching space cache entry', async () => {
-		const client = newClient();
-		client.setQueryData( readSpacesQuery().queryKey, [
-			makeSpace( { sources: [ STRATECHERY_SOURCE ] } ),
-		] );
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces?.[ 0 ].sources ).toEqual( [] );
-	} );
-
-	it( 'deletes a source matched only by blog id', async () => {
-		const client = newClient();
-		client.setQueryData( readSpacesQuery().queryKey, [
-			makeSpace( { sources: [ { ...STRATECHERY_SOURCE, feedId: null } ] } ),
-		] );
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription( { feed_ID: null } ),
-		} );
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces?.[ 0 ].sources ).toEqual( [] );
-	} );
-
-	it( 'deletes a source matched only by feed url', async () => {
-		const client = newClient();
-		client.setQueryData( readSpacesQuery().queryKey, [
-			makeSpace( { sources: [ { ...STRATECHERY_SOURCE, feedId: null, blogId: null } ] } ),
-		] );
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription( { feed_ID: null, blog_ID: null } ),
-		} );
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces?.[ 0 ].sources ).toEqual( [] );
-	} );
-
-	it( 'does not clear the spaces cache when deleting before the list is cached', async () => {
-		const client = newClient();
-
-		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-			spaceId: SPACE_ID,
-			subscription: makeSubscription(),
-		} );
-
-		expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [] );
-	} );
-
-	it( 'rolls back the optimistic delete when the request fails', async () => {
-		const client = newClient();
-		client.setQueryData( readSpacesQuery().queryKey, [
-			makeSpace( { sources: [ STRATECHERY_SOURCE ] } ),
-		] );
-
-		await runMutation(
-			client,
-			{ ...deleteReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
-			{ spaceId: SPACE_ID, subscription: makeSubscription() }
-		);
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces?.[ 0 ].sources ).toEqual( [ STRATECHERY_SOURCE ] );
-	} );
-} );
-
-describe( 'read space detail cache', () => {
-	const detailSources = ( client: QueryClient ) =>
-		client.getQueryData< ReadSpace >( readSpaceQuery( SPACE_ID ).queryKey )?.sources;
-
-	it( 'seeds the list and detail caches when a space is created', async () => {
-		const client = newClient();
-
-		await runMutation( client, createReadSpaceMutation( client ), { name: 'New', tags: [] } );
-
-		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
-		expect( spaces ).toHaveLength( 1 );
-
-		const created = spaces![ 0 ];
-		expect( client.getQueryData< ReadSpace >( readSpaceQuery( created.id ).queryKey ) ).toEqual(
-			created
-		);
-	} );
-
-	it( 'optimistically patches the detail cache when adding a source', async () => {
+	it( 'optimistically adds a source from a site subscription to the detail cache', async () => {
 		const client = newClient();
 		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
 
@@ -243,7 +100,50 @@ describe( 'read space detail cache', () => {
 		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
 	} );
 
-	it( 'optimistically patches the detail cache when deleting a source', async () => {
+	it( 'does not add the same subscription twice', async () => {
+		const client = newClient();
+		const subscription = makeSubscription();
+		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
+
+		await runMutation( client, addReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription,
+		} );
+		await runMutation( client, addReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription,
+		} );
+
+		expect( detailSources( client ) ).toHaveLength( 1 );
+	} );
+
+	it( 'leaves the detail cache untouched when adding before it is cached', async () => {
+		const client = newClient();
+
+		await runMutation( client, addReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription: makeSubscription(),
+		} );
+
+		expect(
+			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )
+		).toBeUndefined();
+	} );
+
+	it( 'rolls back the optimistic add when the request fails', async () => {
+		const client = newClient();
+		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
+
+		await runMutation(
+			client,
+			{ ...addReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
+			{ spaceId: SPACE_ID, subscription: makeSubscription() }
+		);
+
+		expect( detailSources( client ) ).toEqual( [] );
+	} );
+
+	it( 'optimistically deletes a subscription from the detail cache', async () => {
 		const client = newClient();
 		client.setQueryData(
 			readSpaceQuery( SPACE_ID ).queryKey,
@@ -258,16 +158,80 @@ describe( 'read space detail cache', () => {
 		expect( detailSources( client ) ).toEqual( [] );
 	} );
 
-	it( 'rolls back the detail cache when the request fails', async () => {
+	it( 'deletes a source matched only by blog id', async () => {
 		const client = newClient();
-		client.setQueryData( readSpaceQuery( SPACE_ID ).queryKey, makeSpace() );
+		client.setQueryData(
+			readSpaceQuery( SPACE_ID ).queryKey,
+			makeSpace( { sources: [ { ...STRATECHERY_SOURCE, feedId: null } ] } )
+		);
+
+		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription: makeSubscription( { feed_ID: null } ),
+		} );
+
+		expect( detailSources( client ) ).toEqual( [] );
+	} );
+
+	it( 'deletes a source matched only by feed url', async () => {
+		const client = newClient();
+		client.setQueryData(
+			readSpaceQuery( SPACE_ID ).queryKey,
+			makeSpace( { sources: [ { ...STRATECHERY_SOURCE, feedId: null, blogId: null } ] } )
+		);
+
+		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription: makeSubscription( { feed_ID: null, blog_ID: null } ),
+		} );
+
+		expect( detailSources( client ) ).toEqual( [] );
+	} );
+
+	it( 'leaves the detail cache untouched when deleting before it is cached', async () => {
+		const client = newClient();
+
+		await runMutation( client, deleteReadSpaceSourceMutation( client ), {
+			spaceId: SPACE_ID,
+			subscription: makeSubscription(),
+		} );
+
+		expect(
+			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( SPACE_ID ).queryKey )
+		).toBeUndefined();
+	} );
+
+	it( 'rolls back the optimistic delete when the request fails', async () => {
+		const client = newClient();
+		client.setQueryData(
+			readSpaceQuery( SPACE_ID ).queryKey,
+			makeSpace( { sources: [ STRATECHERY_SOURCE ] } )
+		);
 
 		await runMutation(
 			client,
-			{ ...addReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
+			{ ...deleteReadSpaceSourceMutation( client ), mutationFn: rejectingMutationFn },
 			{ spaceId: SPACE_ID, subscription: makeSubscription() }
 		);
 
-		expect( detailSources( client ) ).toEqual( [] );
+		expect( detailSources( client ) ).toEqual( [ STRATECHERY_SOURCE ] );
+	} );
+} );
+
+describe( 'create space cache seeding', () => {
+	it( 'appends a list item without sources and seeds the detail cache with sources', async () => {
+		const client = newClient();
+
+		await runMutation( client, createReadSpaceMutation( client ), { name: 'New', tags: [] } );
+
+		const spaces = client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
+		expect( spaces ).toHaveLength( 1 );
+
+		const listItem = spaces![ 0 ];
+		expect( listItem ).not.toHaveProperty( 'sources' );
+
+		expect(
+			client.getQueryData< ReadSpaceDetails >( readSpaceQuery( listItem.id ).queryKey )
+		).toEqual( { ...listItem, sources: [] } );
 	} );
 } );

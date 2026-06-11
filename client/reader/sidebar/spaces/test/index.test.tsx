@@ -23,7 +23,6 @@ const SPACES: ReadSpace[] = [
 		tags: [],
 		color: 'blue',
 		icon: 'inbox',
-		sources: [],
 	},
 	{
 		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
@@ -31,7 +30,6 @@ const SPACES: ReadSpace[] = [
 		tags: [],
 		color: 'purple',
 		icon: 'box',
-		sources: [],
 	},
 ];
 

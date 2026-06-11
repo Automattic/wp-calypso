@@ -14,7 +14,7 @@ import userEvent from '@testing-library/user-event';
 import { successNotice } from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SourcesModal } from '../index';
-import type { ReadSpace, SiteSubscriptionItem } from '@automattic/api-core';
+import type { ReadSpaceDetails, SiteSubscriptionItem } from '@automattic/api-core';
 
 jest.mock( 'calypso/state/notices/actions', () => ( {
 	successNotice: jest.fn( ( text, options ) => ( {
@@ -48,7 +48,7 @@ jest.mock( '@automattic/react-virtualized', () => ( {
 	),
 } ) );
 
-const WORK: ReadSpace = {
+const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 	name: 'Work',
 	tags: [],
@@ -105,7 +105,7 @@ function setup( {
 	space = WORK,
 	subscriptions = [ STRATECHERY, VERGE ],
 }: {
-	space?: ReadSpace;
+	space?: ReadSpaceDetails;
 	subscriptions?: SiteSubscriptionItem[];
 } = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -199,7 +199,7 @@ describe( 'SourcesModal', () => {
 
 		await waitFor( () =>
 			expect(
-				queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey )?.[ 0 ].sources
+				queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( WORK.id ).queryKey )?.sources
 			).toEqual( [
 				expect.objectContaining( {
 					feedId: 456,
@@ -216,7 +216,7 @@ describe( 'SourcesModal', () => {
 
 		await waitFor( () =>
 			expect(
-				queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey )?.[ 0 ].sources
+				queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( WORK.id ).queryKey )?.sources
 			).toEqual( [] )
 		);
 	} );
