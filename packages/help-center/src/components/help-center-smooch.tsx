@@ -35,11 +35,9 @@ const initSmooch = async (
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
 
 				// Refresh the exact query the component subscribes to via
-				// useAuthenticateZendeskMessaging( allowChat, 'messenger' ) — same type
-				// ('messenger') and initializeWidget (true). The refreshed JWT then flows
-				// back into authData → authJwtRef, so the next Smooch re-init uses a valid
-				// token. A mismatched key would only update an orphan cache entry and leave
-				// the component holding the expired JWT, breaking re-initialization.
+				// useAuthenticateZendeskMessaging( allowChat, 'messenger' ).
+				// The refreshed JWT then flows back into authData → authJwtRef, so the next
+				// Smooch re-init uses a valid token.
 				const queryKey = [ 'getMessagingAuth', 'messenger', isTestMode, true ];
 				await queryClient.invalidateQueries( { queryKey } );
 				const authData = await queryClient.fetchQuery( {
