@@ -635,6 +635,26 @@ export const test = base.extend<
 			{ username: testUser.username, password: testUser.password },
 			newUserDetails.body.bearer_token
 		);
+		// The bearer token minted by the signup flow is not always accepted by the API
+		// immediately (observed as `invalid_token` on the first authenticated call in CI).
+		// Poll a read-only endpoint until the token is honoured so the mutating
+		// `createSite` call below stays single-shot and cannot leak a site.
+		await expect
+			.poll(
+				async () => {
+					try {
+						await restAPIClient.getMyAccountInformation();
+						return true;
+					} catch {
+						return false;
+					}
+				},
+				{
+					message: `Bearer token for ${ testUser.email } was not accepted by the API after signup.`,
+					timeout: 30 * 1000,
+				}
+			)
+			.toBe( true );
 		const site = await restAPIClient.createSite( {
 			name: siteName,
 			title: siteName,
@@ -647,6 +667,16 @@ export const test = base.extend<
 		const links = await clientEmail.getLinksFromMessage( message );
 		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
 		await page.goto( activationLink );
+		// Activation is processed asynchronously on the backend: the redirect can land
+		// before `email_verified` is readable by later page loads, and specs using this
+		// fixture depend on a verified email (e.g. My Home hides the domain-upsell card
+		// for unverified users). Wait for the flag instead of failing further down.
+		await expect
+			.poll( async () => ( await restAPIClient.getMyAccountInformation() ).email_verified, {
+				message: `Email verification for ${ testUser.email } did not propagate after visiting the activation link.`,
+				timeout: 30 * 1000,
+			} )
+			.toBe( true );
 		await use( site );
 		await restAPIClient.deleteSite( {
 			id: site.blog_details.blogid,
