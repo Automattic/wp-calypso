@@ -379,8 +379,8 @@ export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof De
 						) ) }
 					</Wrapper>
 				) }
-				<Wrapper spacing={ 2 } justify="flex-start">
-					<Text as="p" variant="muted" lineHeight="20px">
+				<HStack spacing={ 2 } justify="flex-start" alignment="center" wrap>
+					<Text as="p" variant="muted" lineHeight="20px" style={ { flexShrink: 0 } }>
 						{ downloadEntries.length === 0 ? __( 'Available for:' ) : __( 'Also available for:' ) }
 					</Text>
 					{ alsoAvailableEntries.map( ( [ key, config ] ) => (
@@ -398,7 +398,7 @@ export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof De
 							{ config.name }
 						</Button>
 					) ) }
-				</Wrapper>
+				</HStack>
 			</VStack>
 		</AppsCard>
 	);
