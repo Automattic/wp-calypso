@@ -303,6 +303,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'calypso.localhost',
 		'my.localhost',
 		'my.woo.localhost',
+		'my.a4a.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
 		'jetpack.com',

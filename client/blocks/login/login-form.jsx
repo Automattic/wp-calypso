@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
@@ -339,7 +338,7 @@ export class LoginForm extends Component {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
-			const usernameOrEmail = ReactDom.findDOMNode( this.usernameOrEmail ).value;
+			const usernameOrEmail = this.usernameOrEmail.value;
 
 			this.props.getAuthAccountType( usernameOrEmail );
 
@@ -794,7 +793,7 @@ export class LoginForm extends Component {
 						onChange={ this.onChangeUsernameOrEmailField }
 						id="usernameOrEmail"
 						name="usernameOrEmail"
-						ref={ this.saveUsernameOrEmailRef }
+						inputRef={ this.saveUsernameOrEmailRef }
 						value={ this.state.usernameOrEmail }
 						disabled={ isEmailOrUsernameInputDisabled }
 						hasCoreStyles

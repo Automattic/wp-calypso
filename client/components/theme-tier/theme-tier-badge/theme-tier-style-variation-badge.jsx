@@ -21,7 +21,7 @@ export default function ThemeTierStyleVariationBadge() {
 						'Unlock this style, and tons of other features, by upgrading to a <Link>%(upgradePlanName)s plan</Link>.',
 						{ args: { upgradePlanName: upgradeToPlan?.getTitle() } }
 					),
-					{ Link: <ThemeTierBadgeCheckoutLink plan={ upgradeToPlan?.getPathSlug() } /> }
+					{ Link: <ThemeTierBadgeCheckoutLink plan={ PLAN_PERSONAL } /> }
 				) }
 			</div>
 		</>

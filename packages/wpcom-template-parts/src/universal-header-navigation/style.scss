@@ -1019,7 +1019,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover )::before {
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover .x-nav-link-chevron )::before {
 	background-color: $studio-white;
 	opacity: 1;
 	transition: opacity 0.12s ease-out 0s;
@@ -1036,7 +1036,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container
 	.masterbar-menu
-	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover ) {
+	.masterbar:has( .x-nav--2026-redesign ):has( .x-nav-item__wide:hover .x-nav-link-chevron ) {
 	backdrop-filter: blur( var( --x-nav-2026-scrolled-blur ) );
 }
 
@@ -1093,7 +1093,23 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding-inline-end: 18px;
 	}
 
-	// "Get started" CTA — outlined pill (no fill).
+	// Hamburger: centre the trigger in the 64px bar (the legacy block layout
+	// positioned it for the taller old bar). The icon keeps its legacy 10px
+	// inner offset — that leaves the bars 1px above true centre, close enough.
+	.x-nav-link__menu {
+		display: flex;
+		align-items: center;
+		height: $x-nav-2026-height;
+		padding-block: 0;
+
+		&::before {
+			bottom: 8px;
+		}
+	}
+
+	// "Get started" CTA — outlined pill (no fill). Hover flips it to a filled
+	// pill: ink fill, inverted label. Sections that recolour the nav ink over
+	// dark heroes can override the flip pair via the two custom properties.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
@@ -1102,11 +1118,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		margin-inline-start: 12px;
 		margin-inline-end: 15px;
 		padding: 0 20px !important;
-		background: transparent !important;
+		background-color: transparent !important;
 		color: inherit !important;
 		border: 1px solid currentcolor;
 		border-radius: 3px;
-		transition: opacity $x-nav-2026-transition;
+		transition:
+			background-color $x-nav-2026-transition,
+			border-color $x-nav-2026-transition,
+			color $x-nav-2026-transition;
 
 		&::before {
 			display: none;
@@ -1114,7 +1133,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 		&:hover,
 		&:focus {
-			opacity: 0.8;
+			background-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
+			color: var( --x-nav-2026-cta-hover-ink, #{$studio-white} ) !important;
+			border-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} );
 		}
 	}
 
@@ -1159,8 +1180,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		transform: scaleY( -1 ) rotate( 45deg );
 	}
 
-	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing colour.
-	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ) {
+	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing
+	// colour. The "Get started" CTA is excluded: it flips to a filled pill above.
+	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ):not( .x-nav-link__primary ) {
 		opacity: 0.8;
 	}
 }
@@ -1414,11 +1436,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
 .x-menu--2026 {
-	/* Drill / reveal timing tokens (from the Landpack reference). drill-fade drives the logo⇄back and nav-list⇄dropdown crossfades; reveal-delay gates the first-open header/footer reveal. */
+	/* Drill / reveal timing tokens (from the Landpack reference). drill-fade drives the logo⇄back and nav-list⇄dropdown crossfades; reveal-delay gates the first-open content reveal. */
 	--x-menu-2026-easing: cubic-bezier( 0.45, 0.85, 0.9, 1 );
 	--x-menu-2026-panel-duration: 0.34s; // panel slide in/out
-	--x-menu-2026-reveal-delay: 0.43s; // gap before header/footer/items fade in on open
-	--x-menu-2026-header-fade-duration: 0.3s; // logo / close / footer reveal duration
+	--x-menu-2026-reveal-delay: 0.43s; // lead-in before content appears after the panel slide
 	--x-menu-2026-stagger-offset: 32px; // nav items' left slide-in distance
 	--x-menu-2026-stagger-duration: 0.3s; // each nav item's slide-in duration
 	--x-menu-2026-stagger-step: 0.018s; // per-item delay step (× --stagger-index)
@@ -1790,7 +1811,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 
 		// Only the footer's CONTENTS fade in on open; the blurred bar stays put so nav items slide behind it. Base snaps out with the panel (0s / panel-delay).
-		> * {
+		> *:not( .x-menu-mobile-app-banner ) {
 			opacity: 0;
 			transition: opacity 0s var( --x-menu-2026-easing ) var( --x-menu-2026-panel-duration );
 		}
@@ -1813,6 +1834,19 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			text-decoration: none;
 			color: inherit;
 		}
+	}
+
+	// Top-level screen only; fades in, snaps out on drill (is-hidden).
+	.x-menu-mobile-footer > .x-menu-mobile-app-banner {
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.27s var( --x-menu-2026-easing );
+	}
+
+	.x-menu-mobile-footer > .x-menu-mobile-app-banner.is-hidden {
+		opacity: 0;
+		pointer-events: none;
+		transition: none;
 	}
 
 	// Overlapping WordPress + Jetpack badge icons.
@@ -1993,26 +2027,32 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		font-size: $x-menu-item-font-size-narrow;
 	}
 
-	/* Open: logo / close / footer-contents visible via the quick drill-fade by default (so BACK re-shows the logo promptly); the slow panel-synced reveal below applies ONLY during initial open (`.is-opening`). */
+	/* Open: logo / close / footer-contents reveal immediately except during initial open, where they wait for the panel slide. */
 	&.x-menu__open {
 		.x-menu-mobile-logo:not( .is-hidden ),
 		.x-menu-button.x-menu-mobile-close,
-		.x-menu-mobile-footer > * {
+		.x-menu-mobile-footer > *:not( .x-menu-mobile-app-banner ) {
 			opacity: 1;
 			visibility: visible;
 			transition: var( --x-menu-2026-drill-fade );
 		}
 
+		.x-menu-mobile-footer > .x-menu-mobile-app-banner:not( .is-hidden ) {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
 		&.is-opening {
 			.x-menu-mobile-logo:not( .is-hidden ),
 			.x-menu-button.x-menu-mobile-close,
-			.x-menu-mobile-footer > * {
-				// Delayed past the slide so they stay unpainted until the gap, then fade in.
+			.x-menu-mobile-footer > *:not( .x-menu-mobile-app-banner ) {
 				transition:
-					opacity var( --x-menu-2026-header-fade-duration ) var( --x-menu-2026-easing )
-						var( --x-menu-2026-reveal-delay ),
-					visibility var( --x-menu-2026-header-fade-duration ) var( --x-menu-2026-easing )
-						var( --x-menu-2026-reveal-delay );
+					opacity 0.27s var( --x-menu-2026-easing ) var( --x-menu-2026-reveal-delay ),
+					visibility 0.27s var( --x-menu-2026-easing ) var( --x-menu-2026-reveal-delay );
+			}
+
+			.x-menu-mobile-footer > .x-menu-mobile-app-banner:not( .is-hidden ) {
+				transition: opacity 0.27s var( --x-menu-2026-easing ) var( --x-menu-2026-reveal-delay );
 			}
 		}
 	}

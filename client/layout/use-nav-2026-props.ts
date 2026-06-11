@@ -46,9 +46,9 @@ export function useNav2026Props(): Nav2026Props {
 	const userName = useSelector( getCurrentUserDisplayName );
 	const userEmail = useSelector( getCurrentUserEmail );
 
-	// Hooks must run unconditionally; the assignment is ignored when forced on.
+	// SSR is ineligible (no assignment server-side); the browser refetches on hydration.
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( NAV_2026_EXPERIMENT, {
-		isEligible: ! forcedOn,
+		isEligible: ! forcedOn && typeof window !== 'undefined',
 	} );
 
 	// Resolve the variant: the config flag forces it on for staff/dev, otherwise

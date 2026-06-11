@@ -1,5 +1,6 @@
 export * from './query-client';
 
+export * from './agency';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
@@ -77,6 +78,7 @@ export * from './read-post';
 export * from './read-related-posts';
 export * from './read-site-recommendations';
 export * from './read-site';
+export * from './read-spaces';
 export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';

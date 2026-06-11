@@ -130,18 +130,6 @@ export function getPlan( planKey: string | Plan ): Plan | JetpackPlan | WPComPla
 	return PLANS_LIST[ planKey ];
 }
 
-export function getPlanByPathSlug( pathSlug: string, group?: string ): Plan | undefined {
-	let plans: Plan[] = Object.values( PLANS_LIST );
-	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
-	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );
-}
-
-export function getPlanPath( plan: string ): string | undefined {
-	const retrievedPlan = getPlan( plan );
-	const slug = retrievedPlan?.getPathSlug || ( () => undefined );
-	return slug();
-}
-
 export function getPlanClass( planKey: string ): string {
 	if ( isFreePlan( planKey ) ) {
 		return 'is-free-plan';

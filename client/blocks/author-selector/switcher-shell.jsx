@@ -3,7 +3,6 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
-import ReactDom from 'react-dom';
 import AsyncLoad from 'calypso/components/async-load';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -101,7 +100,7 @@ class AuthorSwitcherShell extends Component {
 
 	setListContext = ( infiniteListInstance ) => {
 		this.setState( {
-			listContext: ReactDom.findDOMNode( infiniteListInstance ),
+			listContext: infiniteListInstance?.getDOMNode(),
 		} );
 	};
 
@@ -127,7 +126,7 @@ class AuthorSwitcherShell extends Component {
 	};
 
 	onClose = ( event ) => {
-		const toggleElement = ReactDom.findDOMNode( this.authorSelectorToggleRef.current );
+		const toggleElement = this.authorSelectorToggleRef.current;
 
 		if ( event && toggleElement.contains( event.target ) ) {
 			// let toggleShowAuthor() handle this case

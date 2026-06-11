@@ -831,7 +831,9 @@ body.is-section-plugins:has(.is-full-width-layout) {
 			height: 0;
 		}
 
-		.x-nav-item, .x-dropdown-link, .x-menu-link {
+		.x-nav-item,
+		.x-dropdown-link,
+		.x-menu-link:not(.cta-btn-nav) {
 			color: var(--studio-gray-100);
 		}
 		.x-dropdown-link {

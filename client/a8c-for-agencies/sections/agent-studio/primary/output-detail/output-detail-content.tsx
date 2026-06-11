@@ -8,6 +8,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -205,51 +206,57 @@ function OnePagerOutputDetail( { output }: Props ) {
 	const canAnnotate = pages.length > 1;
 
 	return (
-		<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__content">
-			{ ( selectedVariant?.pdf_download_url || canAnnotate ) && (
-				<HStack
-					className="a4a-agent-studio-output-detail__actions"
-					justify="flex-end"
-					spacing={ 2 }
-				>
-					{ canAnnotate && (
-						<Button variant="secondary" onClick={ startAnnotating } disabled={ isAnnotating }>
-							{ __( 'Annotate' ) }
-						</Button>
-					) }
-					{ selectedVariant?.pdf_download_url && (
-						<Button
-							variant="primary"
-							href={ selectedVariant.pdf_download_url }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ __( 'Download PDF' ) }
-						</Button>
-					) }
-				</HStack>
-			) }
-			{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
-				<StateMessage spinner>
-					<Text>{ __( 'Loading preview…' ) }</Text>
-				</StateMessage>
-			) : (
-				<AnnotationViewer
-					pages={ pages }
-					coverNavigation={
-						variants.length > 1
-							? {
-									count: variants.length,
-									activeIndex: safeIndex,
-									onSelect: setActiveIndex,
-							  }
-							: undefined
-					}
-					isAnnotating={ isAnnotating }
-					onExit={ exitAnnotating }
-					onSubmit={ handleAnnotationsSubmit }
-				/>
-			) }
+		<div
+			className={ clsx( 'a4a-agent-studio-output-detail__content', {
+				'is-refine-open': isRefineOpen && !! postId,
+			} ) }
+		>
+			<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__main">
+				{ ( selectedVariant?.pdf_download_url || canAnnotate ) && (
+					<HStack
+						className="a4a-agent-studio-output-detail__actions"
+						justify="flex-end"
+						spacing={ 2 }
+					>
+						{ canAnnotate && (
+							<Button variant="secondary" onClick={ startAnnotating } disabled={ isAnnotating }>
+								{ __( 'Annotate' ) }
+							</Button>
+						) }
+						{ selectedVariant?.pdf_download_url && (
+							<Button
+								variant="primary"
+								href={ selectedVariant.pdf_download_url }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ __( 'Download PDF' ) }
+							</Button>
+						) }
+					</HStack>
+				) }
+				{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
+					<StateMessage spinner>
+						<Text>{ __( 'Loading preview…' ) }</Text>
+					</StateMessage>
+				) : (
+					<AnnotationViewer
+						pages={ pages }
+						coverNavigation={
+							variants.length > 1
+								? {
+										count: variants.length,
+										activeIndex: safeIndex,
+										onSelect: setActiveIndex,
+								  }
+								: undefined
+						}
+						isAnnotating={ isAnnotating }
+						onExit={ exitAnnotating }
+						onSubmit={ handleAnnotationsSubmit }
+					/>
+				) }
+			</VStack>
 			{ isRefineOpen && postId && (
 				<RefineWithAiDock
 					collateralPostId={ postId }
@@ -259,7 +266,7 @@ function OnePagerOutputDetail( { output }: Props ) {
 					onClose={ () => setIsRefineOpen( false ) }
 				/>
 			) }
-		</VStack>
+		</div>
 	);
 }
 

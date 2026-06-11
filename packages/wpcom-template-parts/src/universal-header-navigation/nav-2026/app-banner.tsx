@@ -11,6 +11,7 @@ type Translate = ( text: string, domain?: string ) => string;
 
 interface Nav2026AppBannerProps {
 	mobilePlatform: 'ios' | 'android' | null;
+	isHidden?: boolean;
 	tabIndex: number | undefined;
 	localizeUrl: LocalizeUrl;
 	__: Translate;
@@ -19,6 +20,7 @@ interface Nav2026AppBannerProps {
 // "Get Jetpack app" mobile banner (whole banner is the link). `null` off iOS / Android.
 export function Nav2026AppBanner( {
 	mobilePlatform,
+	isHidden,
 	tabIndex,
 	localizeUrl,
 	__,
@@ -30,10 +32,12 @@ export function Nav2026AppBanner( {
 		<a
 			className={ clsx(
 				'x-menu-mobile-app-banner',
-				`x-menu-mobile-app-banner--${ mobilePlatform }`
+				`x-menu-mobile-app-banner--${ mobilePlatform }`,
+				{ 'is-hidden': isHidden }
 			) }
 			href={ localizeUrl( '//apps.wordpress.com/get/?campaign=wpcom-log-out-home-global-nav' ) }
-			tabIndex={ tabIndex }
+			tabIndex={ isHidden ? -1 : tabIndex }
+			aria-hidden={ isHidden || undefined }
 		>
 			<span className="x-menu-mobile-app-banner-icons" aria-hidden="true">
 				<svg

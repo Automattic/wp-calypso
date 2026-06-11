@@ -62,4 +62,15 @@ EnvironmentBadge.propTypes = {
 	children: node,
 };
 
+export function RtlCssDisabledHelper() {
+	return (
+		<span
+			className="environment is-rtl-css-disabled"
+			title="RTL CSS is disabled. Set BUILD_RTL_CSS=true before starting Calypso to build RTL CSS."
+		>
+			RTLCSS off: set BUILD_RTL_CSS=true
+		</span>
+	);
+}
+
 export default EnvironmentBadge;

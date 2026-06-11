@@ -1,17 +1,31 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .a4a-refine-with-ai-dock {
 	// Calypso doesn't set border-box globally here; without it the padded
 	// header overflows and pushes the close button off the edge.
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	position: fixed;
-	inset-block: 0;
-	inset-inline-end: 0;
-	width: min(400px, 100vw);
-	z-index: 100;
-	background: var(--color-surface);
-	border-inline-start: 1px solid var(--color-border-subtle);
-	box-shadow: -2px 0 12px rgba(0, 0, 0, 0.08);
+	width: 100%;
+	// On mobile the dock stacks below the preview; cap its height so the
+	// transcript scrolls internally and the input stays pinned.
+	height: min( 480px, 70vh );
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	overflow: hidden;
+
+	// Desktop: the dock is inset beside the preview as a fixed-width column
+	// (reflowing the content, not overlaying it) and sticks within the
+	// scrolling layout body so it stays in view as the preview scrolls.
+	@include break-medium {
+		flex: 0 0 auto;
+		width: min( 380px, 100% );
+		position: sticky;
+		inset-block-start: 16px;
+		height: calc( 100vh - 130px );
+	}
 }
 
 .a4a-refine-with-ai-dock__header {
@@ -19,7 +33,7 @@
 	flex-shrink: 0;
 	padding-block: 12px;
 	padding-inline: 16px;
-	border-block-end: 1px solid var(--color-border-subtle);
+	border-block-end: 1px solid var( --color-border-subtle );
 }
 
 .a4a-refine-with-ai-dock__header strong {
@@ -45,4 +59,3 @@
 		padding-block-end: 16px;
 	}
 }
-

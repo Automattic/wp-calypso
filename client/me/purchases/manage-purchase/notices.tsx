@@ -12,7 +12,6 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	is100Year,
-	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
@@ -1377,9 +1376,8 @@ class PurchaseNotice extends Component<
 				upgrade_plan_slug: upgradePlanSlug,
 			} );
 
-			const planPath = getPlanPath( upgradePlanSlug ?? '' ) ?? '';
 			const checkoutUrl = getTrialCheckoutUrl( {
-				productSlug: planPath,
+				productSlug: upgradePlanSlug ?? '',
 				siteSlug: selectedSiteSlug ?? '',
 			} );
 
