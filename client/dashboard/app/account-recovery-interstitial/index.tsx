@@ -145,6 +145,10 @@ export default function AccountRecoveryInterstitial() {
 		<Modal
 			__experimentalHideHeader
 			isDismissible={ false }
+			// Focus the primary button rather than the scroll container: when the content
+			// overflows, the container becomes tabbable and would otherwise grab focus on
+			// mount, painting the modal's `is-scrollable:focus-visible` inset ring.
+			focusOnMount="firstContentElement"
 			aria={ { labelledby: titleId } }
 			onRequestClose={ handleSnooze }
 			className="account-recovery-interstitial"
