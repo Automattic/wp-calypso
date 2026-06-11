@@ -1,8 +1,8 @@
 /**
  * Copy for the account-recovery interstitial.
  *
- * ⚠️ Placeholder strings — final copy lives in the copy spreadsheet (plan §3a / §8 #?).
- * Swap these for the approved strings before launch; do not invent additional copy.
+ * Strings are the approved copy from the copy spreadsheet (plan §3a). Do not invent
+ * additional copy; update here when the spreadsheet changes.
  *
  * Copy is keyed by a finer-grained *variant* than the 3-tier `SecurityLevel` used for snooze
  * windows / Tracks: the `partial` tier splits into two messages depending on which half the
