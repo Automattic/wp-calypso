@@ -22,6 +22,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import { BackupDetails } from './backup-details';
 import { BackupDetailsSkeleton } from './backup-details-skeleton';
 import { BackupNotices } from './backup-notices';
@@ -231,12 +232,16 @@ export function BackupsListPage() {
 			}
 			notices={
 				shouldShowNotices ? (
-					<BackupNotices
-						backupState={ backupState }
-						site={ site }
-						timezoneString={ timezoneString }
-						gmtOffset={ gmtOffset }
-					/>
+					<SitesNoticeArbiter>
+						{ backupState.status !== 'idle' && (
+							<BackupNotices
+								backupState={ backupState }
+								site={ site }
+								timezoneString={ timezoneString }
+								gmtOffset={ gmtOffset }
+							/>
+						) }
+					</SitesNoticeArbiter>
 				) : undefined
 			}
 		>

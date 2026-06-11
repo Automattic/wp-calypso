@@ -14,9 +14,12 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardHeader, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import TimeMismatchNotice from '../../components/time-mismatch-notice';
+import TimeMismatchNotice, {
+	useShouldShowTimeMismatchNotice,
+} from '../../components/time-mismatch-notice';
 import { useTimeSince } from '../../components/time-since';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import { ActiveThreatsDataViews } from '../scan-active';
 import { ScanHistoryDataViews } from '../scan-history';
 import { BulkFixThreatsModal } from './components/bulk-fix-threats-modal';
@@ -62,6 +65,12 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const lastScanTime = scan?.most_recent?.timestamp;
 	const lastScanRelativeTime = useTimeSince( lastScanTime || '' );
 	const threatCount = scan?.threats?.length || 0;
+
+	const showScanNotices = status === 'error' || status === 'success';
+	const showTimeMismatchNotice = useShouldShowTimeMismatchNotice( {
+		siteTime: gmtOffset,
+		siteId: site.ID,
+	} );
 
 	const getPageDescription = () => {
 		if ( lastScanTime && lastScanRelativeTime ) {
@@ -155,14 +164,16 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					/>
 				}
 				notices={
-					<>
-						<TimeMismatchNotice
-							settingsUrl={ settingsUrl }
-							siteTime={ gmtOffset }
-							siteId={ site.ID }
-						/>
-						<ScanNotices status={ status } threatCount={ threatCount } />
-					</>
+					<SitesNoticeArbiter>
+						{ showScanNotices && <ScanNotices status={ status } threatCount={ threatCount } /> }
+						{ showTimeMismatchNotice && (
+							<TimeMismatchNotice
+								settingsUrl={ settingsUrl }
+								siteTime={ gmtOffset }
+								siteId={ site.ID }
+							/>
+						) }
+					</SitesNoticeArbiter>
 				}
 			>
 				<Card>

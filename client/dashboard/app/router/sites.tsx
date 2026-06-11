@@ -1,6 +1,7 @@
 import { HostingFeatures, DotcomFeatures, LogType, fetchTwoStep } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
+	bulkDomainUpdateStatusQuery,
 	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
@@ -11,6 +12,7 @@ import {
 	siteLastFiveActivityLogEntriesQuery,
 	siteBackupActivityLogEntriesQuery,
 	siteBackupActivityLogGroupCountsQuery,
+	siteBackupsQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -177,9 +179,13 @@ export const siteRoute = createRoute( {
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
 			? site.options?.wpcom_production_blog_id
 			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
-		if ( otherEnvironmentSiteId ) {
-			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
-		}
+		await Promise.all( [
+			otherEnvironmentSiteId &&
+				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
+
+			// The notice arbiter's shared candidates read user preferences on every site page.
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 
 		return { site };
 	},
@@ -456,7 +462,13 @@ export const siteBackupsRoute = createRoute( {
 			queryClient.prefetchQuery( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
 
-		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+
+			// Settle backup notice eligibility before first paint.
+			hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) &&
+				queryClient.ensureQueryData( siteBackupsQuery( site.ID ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
@@ -553,6 +565,17 @@ export const siteDomainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'domains',
+	loader: async ( { context, params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
+		// Settle notice eligibility (pending primary domain, redirect, bulk
+		// update progress) before first paint to avoid notices popping in.
+		await Promise.all( [
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
+			queryClient.ensureQueryData( bulkDomainUpdateStatusQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../sites/domains' ).then( ( d ) =>
 		createLazyRoute( 'site-domains' )( {
