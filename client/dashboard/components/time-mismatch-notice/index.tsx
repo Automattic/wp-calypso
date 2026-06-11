@@ -29,12 +29,14 @@ export function useShouldShowTimeMismatchNotice( {
 		userPreferenceQuery( `hosting-dashboard-time-mismatch-warning-dismissed-${ siteId }` )
 	);
 
-	const offsetHours = -new Date().getTimezoneOffset() / 60;
+	const date = new Date();
+	const offsetHours = -date.getTimezoneOffset() / 60;
 	let savedOffset: number | null = null;
 
 	if ( typeof dismissedPref === 'string' ) {
 		try {
-			savedOffset = JSON.parse( dismissedPref ).offsetHours;
+			const parsed = JSON.parse( dismissedPref );
+			savedOffset = parsed.offsetHours;
 		} catch {
 			savedOffset = null;
 		}
