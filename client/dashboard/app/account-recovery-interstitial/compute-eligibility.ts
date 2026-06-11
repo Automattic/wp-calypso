@@ -58,10 +58,10 @@ export function computeEligibility( {
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 	const isSnoozed = !! snoozeUntil && now < snoozeUntil;
 
-	// Phase 1 only nudges users whose recovery setup is incomplete (`none`/`partial`).
-	// Fully-covered (`strong`) users are not shown — a yearly periodic re-check is deferred
-	// to Phase 2.
-	const isEligible = isLoaded && securityLevel !== 'strong' && ! isSnoozed;
+	// Every user is nudged once their snooze (if any) has elapsed. Incomplete setups
+	// (`none`/`partial`) are prompted to add a method; fully-covered (`strong`) users get a
+	// yearly periodic re-check via the 365-day snooze window (SNOOZE_DAYS.strong).
+	const isEligible = isLoaded && ! isSnoozed;
 
 	return { isEligible, securityLevel, snoozeDays };
 }

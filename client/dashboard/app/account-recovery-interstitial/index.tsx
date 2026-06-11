@@ -86,15 +86,24 @@ export default function AccountRecoveryInterstitial() {
 		return null;
 	}
 
-	const copy = getInterstitialCopy()[ securityLevel ];
+	const copy = getInterstitialCopy( {
+		recoveryEmail: accountRecovery?.email_validated ? accountRecovery.email : undefined,
+		recoveryPhoneNumber: accountRecovery?.phone_validated
+			? accountRecovery.phone?.number
+			: undefined,
+	} )[ securityLevel ];
 	const { primaryCta, secondaryCta } = copy;
 
-	const handleSnooze = () => {
-		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.dismiss, { security_level: securityLevel } );
+	const snooze = () => {
 		snoozeMutation.mutate( {
 			[ RECOVERY_INTERSTITIAL_SNOOZE_META ]: now + snoozeDays * DAY_IN_SECONDS,
 		} );
 		setIsDismissed( true );
+	};
+
+	const handleSnooze = () => {
+		recordTracksEvent( RECOVERY_INTERSTITIAL_TRACKS.dismiss, { security_level: securityLevel } );
+		snooze();
 	};
 
 	const handleCtaClick = ( cta: InterstitialCta ) => {
@@ -102,8 +111,13 @@ export default function AccountRecoveryInterstitial() {
 			security_level: securityLevel,
 			cta_id: cta.id,
 		} );
-		setIsDismissed( true );
-		router.navigate( { to: cta.route } );
+		if ( cta.route ) {
+			setIsDismissed( true );
+			router.navigate( { to: cta.route } );
+			return;
+		}
+		// No route → a positive confirmation ("Yes, all good"); snooze for this level's window.
+		snooze();
 	};
 
 	const remindLabel = sprintf(

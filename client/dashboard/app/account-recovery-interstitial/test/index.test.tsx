@@ -73,16 +73,54 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		);
 	} );
 
-	test( 'does not show for a fully-covered user', async () => {
+	test( 'shows the strong-tier modal with masked recovery details for a fully-covered user', async () => {
 		mockAccountRecovery( STRONG_RECOVERY );
 		mockUserSettings( { two_step_enabled: true } );
 
-		render( <AccountRecoveryInterstitial /> );
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
-		// Give the queries a chance to resolve, then assert nothing renders.
+		const dialog = await screen.findByRole( 'dialog', { name: 'Still have access to these?' } );
+		expect( dialog ).toBeVisible();
+		// Recovery email is masked in the body copy.
+		expect( screen.getByText( /r••••@example\.com/ ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Yes, all good' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Update recovery information' } ) ).toBeVisible();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_account_recovery_interstitial_impression',
+			{ security_level: 'strong' }
+		);
+	} );
+
+	test( 'confirming "Yes, all good" snoozes for the strong window and records a cta_click', async () => {
+		const user = userEvent.setup();
+		mockAccountRecovery( STRONG_RECOVERY );
+		mockUserSettings( { two_step_enabled: true } );
+
+		let snoozedValue: number | undefined;
+		const savePost = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => {
+				snoozedValue = body[ RECOVERY_INTERSTITIAL_SNOOZE_META ];
+				return typeof snoozedValue === 'number';
+			} )
+			.query( true )
+			.reply( 200, {} );
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await screen.findByRole( 'dialog', { name: 'Still have access to these?' } );
+		await user.click( screen.getByRole( 'button', { name: 'Yes, all good' } ) );
+
 		await waitFor( () => {
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
+		expect( savePost.isDone() ).toBe( true );
+		// strong-tier window is 365 days into the future.
+		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) + 300 * 86400 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_account_recovery_interstitial_cta_click',
+			{ security_level: 'strong', cta_id: 'confirm_recovery' }
+		);
 	} );
 
 	test( 'does not show when the user is currently snoozed', async () => {

@@ -55,10 +55,13 @@ describe( 'computeEligibility', () => {
 		} );
 	} );
 
-	test( 'not eligible for a fully-covered user (strong) — excluded in Phase 1', () => {
+	test( 'eligible for a fully-covered user (strong) — periodic yearly re-check', () => {
 		const result = computeEligibility( input( { hasRecoveryEmail: true, hasTwoFactor: true } ) );
-		expect( result.securityLevel ).toBe( 'strong' );
-		expect( result.isEligible ).toBe( false );
+		expect( result ).toEqual( {
+			isEligible: true,
+			securityLevel: 'strong',
+			snoozeDays: SNOOZE_DAYS.strong,
+		} );
 	} );
 
 	test( 'not eligible while an active snooze is in the future', () => {
