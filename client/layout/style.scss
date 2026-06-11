@@ -66,6 +66,13 @@ body.is-focus-sites {
 		// against the viewport. Global `overflow: hidden` above breaks sticky.
 		overflow: visible;
 	}
+
+	// `overflow: hidden` above breaks the subnav baton-pass sticky; let it pin.
+	.is-section-themes:has( .x-nav--2026-redesign ) &,
+	.is-section-patterns:has( .x-nav--2026-redesign ) &,
+	.is-section-plugins:has( .x-nav--2026-redesign ) & {
+		overflow: visible;
+	}
 	// Note that we have to use a 0,0,3,1 specificity selector to override the
 	// one in `client/my-sites/sidebar/style.scss` which has 0,0,3,0 in case it
 	// loads second, which happens if checkout is not the first page of calypso
@@ -589,3 +596,4 @@ body.is-mobile-app-view {
 .layout.is-section-plugins:not( .is-logged-in ):has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
+
