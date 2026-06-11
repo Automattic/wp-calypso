@@ -1,5 +1,5 @@
 import { legacyContactsQuery } from '@automattic/api-queries';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -12,7 +12,7 @@ import './style.scss';
 export default function LegacyContact() {
 	const translate = useTranslate();
 
-	const { data: [ contact ] = [] } = useQuery( legacyContactsQuery() );
+	const { data: [ contact ] = [], isLoading } = useQuery( legacyContactsQuery() );
 
 	return (
 		<Main wideLayout className="legacy-contact">
@@ -27,14 +27,24 @@ export default function LegacyContact() {
 					) }
 				</p>
 
-				{ contact && (
-					<p>
-						{ translate( 'Your legacy contact is {{strong}}%(email)s{{/strong}}.', {
-							args: { email: contact.email },
-							components: { strong: <strong /> },
-						} ) }
-					</p>
-				) }
+				{ ! isLoading &&
+					( contact ? (
+						<p>
+							{ translate( 'Your legacy contact is {{strong}}%(email)s{{/strong}}.', {
+								args: { email: contact.email },
+								components: { strong: <strong /> },
+							} ) }
+						</p>
+					) : (
+						<Button
+							primary
+							onClick={ () => {
+								// TODO: open the legacy contact setup flow.
+							} }
+						>
+							{ translate( 'Set up legacy contact' ) }
+						</Button>
+					) ) }
 			</Card>
 		</Main>
 	);
