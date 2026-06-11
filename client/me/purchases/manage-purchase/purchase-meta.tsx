@@ -10,7 +10,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type JSX } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
