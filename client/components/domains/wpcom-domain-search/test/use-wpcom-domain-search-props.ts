@@ -1153,6 +1153,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				item_subtotal_integer: 13_00,
 				extra: {
 					domain_bundle_group_id: 'v1.test.deadbeef',
+					domain_bundle_role: 'primary',
 				},
 			} ),
 			buildProduct( {
@@ -1165,6 +1166,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				item_subtotal_integer: 18_00,
 				extra: {
 					domain_bundle_group_id: 'v1.test.deadbeef',
+					domain_bundle_role: 'companion',
 				},
 			} ),
 		];
@@ -1194,11 +1196,11 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			expect( result.current.cart.items ).toEqual( [
 				expect.objectContaining( {
 					uuid: 'bundle-net',
-					bundle: { groupId: 'v1.test.deadbeef', price: '$31' },
+					bundle: { groupId: 'v1.test.deadbeef', price: '$31', isPrimary: false },
 				} ),
 				expect.objectContaining( {
 					uuid: 'bundle-com',
-					bundle: { groupId: 'v1.test.deadbeef', price: '$31' },
+					bundle: { groupId: 'v1.test.deadbeef', price: '$31', isPrimary: true },
 				} ),
 				expect.objectContaining( { uuid: 'standalone', bundle: undefined } ),
 			] );

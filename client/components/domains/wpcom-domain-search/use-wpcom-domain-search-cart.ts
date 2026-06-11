@@ -17,7 +17,7 @@ import { ComponentProps, useMemo } from 'react';
 const wpcomCartToDomainSearchCart = (
 	domain: ResponseCartProduct,
 	isEffectivelyFree: boolean,
-	bundle?: { groupId: string; price: string }
+	bundle?: { groupId: string; price: string; isPrimary: boolean }
 ) => {
 	const [ domainName, ...tld ] = domain.meta.split( '.' );
 
@@ -146,6 +146,7 @@ export const useWPCOMDomainSearchCart = ( {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ),
+				isPrimary: item.extra?.domain_bundle_role === 'primary',
 			};
 		};
 

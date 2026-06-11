@@ -40,6 +40,30 @@ describe( 'groupCartItems', () => {
 		] );
 	} );
 
+	it( 'lists the primary member first even when a companion precedes it in cart order', () => {
+		const companion = buildCartItem( {
+			uuid: '1',
+			domain: 'example',
+			tld: 'net',
+			bundle: { groupId: 'group-1', price: '$40', isPrimary: false },
+		} );
+		const primary = buildCartItem( {
+			uuid: '2',
+			domain: 'example',
+			tld: 'com',
+			bundle: { groupId: 'group-1', price: '$40', isPrimary: true },
+		} );
+
+		expect( groupCartItems( [ companion, primary ] ) ).toEqual( [
+			{
+				type: 'bundle',
+				groupId: 'group-1',
+				price: '$40',
+				members: [ primary, companion ],
+			},
+		] );
+	} );
+
 	it( 'keeps distinct bundle groups separate', () => {
 		const firstGroupMembers = [
 			buildCartItem( { uuid: '1', bundle: { groupId: 'group-1', price: '$40' } } ),

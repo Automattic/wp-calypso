@@ -10,7 +10,8 @@ export interface SingleCartEntry {
 
 /**
  * A set of cart items that belong to the same domain bundle, rendered as one
- * grouped row with a single summed price and a single remove action.
+ * grouped row with a single summed price and a single remove action. `members`
+ * is ordered primary-first, then companions in their original cart order.
  */
 export interface BundleCartEntry {
 	type: 'bundle';
@@ -26,7 +27,8 @@ export type CartEntry = SingleCartEntry | BundleCartEntry;
  * leaving every other item untouched.
  *
  * The result preserves cart order: a bundle group appears at the position of
- * its first member, and ungrouped items stay exactly where they were.
+ * its first member, and ungrouped items stay exactly where they were. Within a
+ * group, the primary member is listed first, then companions in cart order.
  *
  * A "group" of fewer than two surviving members is degenerate (the backend
  * enforces all-or-nothing membership, so it shouldn't happen) and is rendered
@@ -55,28 +57,43 @@ export function groupCartItems( items: SelectedDomain[] ): CartEntry[] {
 	const emittedGroups = new Set< string >();
 
 	for ( const item of items ) {
-		const groupId = item.bundle?.groupId;
-		const members = groupId ? membersByGroup.get( groupId ) ?? [] : [];
+		const bundle = item.bundle;
+		const members = bundle ? membersByGroup.get( bundle.groupId ) ?? [] : [];
 
 		// Group ids that ended up with a single member fall back to plain items.
-		if ( ! groupId || members.length < 2 ) {
+		if ( ! bundle || members.length < 2 ) {
 			entries.push( { type: 'item', item } );
 			continue;
 		}
 
 		// Emit the whole bundle once, at the position of its first member.
-		if ( emittedGroups.has( groupId ) ) {
+		if ( emittedGroups.has( bundle.groupId ) ) {
 			continue;
 		}
 
-		emittedGroups.add( groupId );
+		emittedGroups.add( bundle.groupId );
 		entries.push( {
 			type: 'bundle',
-			groupId,
-			price: item.bundle?.price ?? item.price,
-			members,
+			groupId: bundle.groupId,
+			price: bundle.price,
+			members: orderBundleMembers( members ),
 		} );
 	}
 
 	return entries;
+}
+
+/**
+ * Order a bundle's members primary-first, preserving the original cart order
+ * for everything else, mirroring `orderBundleMembers` in wpcom-checkout's
+ * `groupBundleLineItems` so the panel lists members in the same order as the
+ * masterbar mini-cart and checkout surfaces.
+ * @param members The bundle's members, in cart order.
+ * @returns The members with the primary role moved to the front.
+ */
+function orderBundleMembers( members: SelectedDomain[] ): SelectedDomain[] {
+	const primaries = members.filter( ( member ) => member.bundle?.isPrimary );
+	const rest = members.filter( ( member ) => ! member.bundle?.isPrimary );
+
+	return [ ...primaries, ...rest ];
 }

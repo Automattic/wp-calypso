@@ -404,6 +404,55 @@ describe( 'FullCart', () => {
 			expect( await screen.findAllByRole( 'button', { name: 'Remove' } ) ).toHaveLength( 2 );
 		} );
 
+		it( 'renders two bundles as two separate grouped rows', async () => {
+			render(
+				<TestDomainSearchWithCart
+					initialCartItems={ [
+						...buildBundleMembers(),
+						buildCartItem( {
+							uuid: '3',
+							domain: 'other',
+							tld: 'com',
+							salePrice: undefined,
+							price: '$12',
+							bundle: { groupId: 'group-2', price: '$25' },
+						} ),
+						buildCartItem( {
+							uuid: '4',
+							domain: 'other',
+							tld: 'net',
+							salePrice: undefined,
+							price: '$13',
+							bundle: { groupId: 'group-2', price: '$25' },
+						} ),
+					] }
+				>
+					<OpenFullCart />
+					<FullCart />
+				</TestDomainSearchWithCart>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Cart' ) ).toBeVisible();
+			} );
+
+			const bundleRows = await screen.findAllByTitle( 'Domain bundle' );
+			expect( bundleRows ).toHaveLength( 2 );
+
+			const [ firstBundle, secondBundle ] = bundleRows;
+
+			expect( getByLabelText( firstBundle, 'example.com' ) ).toBeInTheDocument();
+			expect( getByLabelText( firstBundle, 'example.net' ) ).toBeInTheDocument();
+			expect( getByLabelText( firstBundle, 'Price: $40' ) ).toBeInTheDocument();
+
+			expect( getByLabelText( secondBundle, 'other.com' ) ).toBeInTheDocument();
+			expect( getByLabelText( secondBundle, 'other.net' ) ).toBeInTheDocument();
+			expect( getByLabelText( secondBundle, 'Price: $25' ) ).toBeInTheDocument();
+
+			// One remove action per bundle.
+			expect( await screen.findAllByRole( 'button', { name: 'Remove' } ) ).toHaveLength( 2 );
+		} );
+
 		it( 'removes the whole bundle, and only the bundle, with a single remove action', async () => {
 			const fireEvent = userEvent.setup();
 

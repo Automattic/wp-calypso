@@ -30,11 +30,14 @@ export interface SelectedDomain {
 	 * passed through verbatim by the app layer; items sharing a `groupId` are
 	 * rendered as a single grouped cart row. `price` is the formatted sum of
 	 * the bundle members' current prices, computed and formatted at the app
-	 * layer (the same value for every member of the group).
+	 * layer (the same value for every member of the group). `isPrimary` marks
+	 * the bundle's anchor domain so the grouped row can list it first,
+	 * matching the masterbar mini-cart and checkout member ordering.
 	 */
 	bundle?: {
 		groupId: string;
 		price: string;
+		isPrimary?: boolean;
 	};
 }
 
@@ -52,7 +55,10 @@ export interface DomainSearchCart {
 	/**
 	 * Remove every member of a bundle group from the cart in a single,
 	 * all-or-nothing operation. Implemented at the app layer; when absent the
-	 * grouped cart row falls back to removing each member individually.
+	 * grouped cart row falls back to removing each member individually. That
+	 * fallback is not all-or-nothing — a failed member removal can leave the
+	 * rest of the group orphaned in the cart — so consumers should provide
+	 * this callback whenever their cart backend can batch the removal.
 	 */
 	onRemoveBundle?: ( bundleGroupId: string ) => Promise< unknown >;
 	hasItem: ( domainName: string ) => boolean;
