@@ -537,7 +537,6 @@ import {
 	getPlanPremiumTitle,
 	getPlanBusinessTrialTitle,
 	getPlanCommerceTrialTitle,
-	getPlanBusinessTrialTagline,
 } from './plans';
 import type {
 	BillingTerm,
@@ -619,7 +618,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_FREE,
 	getTitle: () => i18n.translate( 'Free' ),
-	getPlanTagline: () => i18n.translate( 'Get started with all the basics.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
 	getBlogOnboardingTagLine: () =>
@@ -841,7 +839,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: getPlanPersonalTitle,
-	getPlanTagline: () => i18n.translate( 'Make your mark with a custom domain.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
 	getBlogOnboardingTagLine: () =>
@@ -1032,8 +1029,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
 	getTitle: getPlanEcommerceTitle,
-	getPlanTagline: () =>
-		i18n.translate( 'Grow your online store with commerce-optimized extensions.' ),
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for online stores:{{/strong}} Sell confidently with zero transaction fees and full flexibility.',
@@ -1423,7 +1418,6 @@ const getWooExpressPlanCompareFeatures = (): string[] => [
 const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	getTitle: () => i18n.translate( 'Performance' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_200GB_STORAGE,
 		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
@@ -1467,8 +1461,6 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Essential' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
@@ -1536,7 +1528,6 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
-	getPlanTagline: () => i18n.translate( 'Everything you need to build and run your online store.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
@@ -1581,8 +1572,6 @@ const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 	getStorageFeature: () => FEATURE_100GB_STORAGE,
 	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () =>
-		i18n.translate( 'For businesses selling anywhere, reaching more customers, and growing fast.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
@@ -1594,8 +1583,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: getPlanPremiumTitle,
-	getPlanTagline: () =>
-		i18n.translate( 'Step up site customization with premium design features.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getBlogOnboardingTagLine: () =>
@@ -1859,19 +1846,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
 	getTitle: getPlanBusinessTitle,
-	getPlanTagline: () => {
-		if (
-			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
-			i18n.hasTranslation(
-				'Unlock business tools, priority support, developer power with predictable costs.'
-			)
-		) {
-			return i18n.translate(
-				'Unlock business tools, priority support, developer power with predictable costs.'
-			);
-		}
-		return i18n.translate( 'Unlock next-level WordPress with all custom plugins and themes.' );
-	},
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
@@ -2241,7 +2215,6 @@ const getPlanStudentDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanBusinessDetails(),
 	type: TYPE_STUDENT,
 	getTitle: () => i18n.translate( 'Student' ),
-	getPlanTagline: () => i18n.translate( 'Build your site with student-friendly tools.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Create, share, and grow your work with a custom domain.' ),
 	getBlogOnboardingTagLine: () =>
@@ -3142,7 +3115,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_100_YEAR,
 		// Todo: ¯\_(ツ)_/¯ on the copy.
 		getTitle: () => i18n.translate( '100-Year Plan' ),
-		getPlanTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getBlogOnboardingTagLine: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
@@ -3235,7 +3207,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getMonthlyTimeframe(),
 		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => 'Free Trial',
-		getPlanTagline: () => "Get a taste of the world's most popular eCommerce software.",
 		getDescription: () =>
 			i18n.translate(
 				'Try Woo Hosted for free and explore all the features before committing to a plan.'
@@ -3733,11 +3704,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		type: TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
 		getDescription: () => '',
-		getPlanTagline: () =>
-			i18n.translate(
-				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
-				plansDescriptionHeadingComponent
-			),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_P2_13GB_STORAGE,
 			FEATURE_P2_ADVANCED_SEARCH,
@@ -3892,7 +3858,6 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 
 PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
-	getPlanTagline: getPlanBusinessTrialTagline,
 	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
