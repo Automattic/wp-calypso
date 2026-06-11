@@ -250,7 +250,9 @@ export class CartCheckoutPage {
 		// whichever variant is visible so the check stays a user-visible-price
 		// assertion on both viewports.
 		const totalAmountLocator = this.page
-			.locator( '.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible' )
+			.locator(
+				'.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible'
+			)
 			.first();
 		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
 
