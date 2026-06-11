@@ -55,9 +55,8 @@ describe( 'PostCommentList update-depth guard', () => {
 	it( 'does not re-run initial fetches when an unrelated prop changes', () => {
 		const fetchEarlierComments = jest.fn();
 		const commentsTree = { children: [] };
-		const props = deepLinkProps( { fetchEarlierComments, commentsTree } );
 
-		const { rerenderList } = renderList( props );
+		const { rerenderList } = renderList( deepLinkProps( { fetchEarlierComments, commentsTree } ) );
 
 		// Mounting kicks off the initial fetch for the unloaded starting comment.
 		expect( fetchEarlierComments ).toHaveBeenCalledTimes( 1 );
@@ -75,9 +74,10 @@ describe( 'PostCommentList update-depth guard', () => {
 
 	it( 'still re-runs initial fetches when a fetch input changes', () => {
 		const fetchEarlierComments = jest.fn();
-		const props = deepLinkProps( { fetchEarlierComments, commentsTree: { children: [] } } );
 
-		const { rerenderList } = renderList( props );
+		const { rerenderList } = renderList(
+			deepLinkProps( { fetchEarlierComments, commentsTree: { children: [] } } )
+		);
 
 		expect( fetchEarlierComments ).toHaveBeenCalledTimes( 1 );
 		fetchEarlierComments.mockClear();
