@@ -13,6 +13,7 @@ import { useCreateSpace, useSpaces } from 'calypso/reader/data/spaces';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import type { ReadSpace } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -48,17 +49,24 @@ function validateName(
 interface Props {
 	isOpen: boolean;
 	onClose: () => void;
+	onCreated?: ( space: ReadSpace ) => void;
 }
 
-export function CreateSpaceModal( { isOpen, onClose }: Props ) {
+export function CreateSpaceModal( { isOpen, onClose, onCreated }: Props ) {
 	// Mount the content fresh each time the modal opens so its form state resets.
 	if ( ! isOpen ) {
 		return null;
 	}
-	return <CreateSpaceModalContent onClose={ onClose } />;
+	return <CreateSpaceModalContent onClose={ onClose } onCreated={ onCreated } />;
 }
 
-function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
+function CreateSpaceModalContent( {
+	onClose,
+	onCreated,
+}: {
+	onClose: () => void;
+	onCreated?: ( space: ReadSpace ) => void;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const spaces = useSpaces();
@@ -91,6 +99,7 @@ function CreateSpaceModalContent( { onClose }: { onClose: () => void } ) {
 							duration: 5000,
 						} )
 					);
+					onCreated?.( space );
 					onClose();
 				},
 			}

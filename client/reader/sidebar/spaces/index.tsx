@@ -6,10 +6,11 @@ import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { useSpaces } from 'calypso/reader/data/spaces';
 import { AddMenuItem } from 'calypso/reader/sidebar/menu';
 import { CreateSpaceModal } from 'calypso/reader/spaces/create-modal';
-import { SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
+import { getManageSourcesPath, SPACES_BASE_PATH } from 'calypso/reader/spaces/routes';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { SpaceMenuItem } from './menu-item';
+import type { ReadSpace } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -49,6 +50,10 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 	const handleAddSpaceClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_spaces_add_clicked' ) );
 		setIsCreateModalOpen( true );
+	};
+
+	const handleSpaceCreated = ( space: ReadSpace ) => {
+		page( getManageSourcesPath( space.id ) );
 	};
 
 	const handleMainClick = () => {
@@ -92,6 +97,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 			<CreateSpaceModal
 				isOpen={ isCreateModalOpen }
 				onClose={ () => setIsCreateModalOpen( false ) }
+				onCreated={ handleSpaceCreated }
 			/>
 		</li>
 	);

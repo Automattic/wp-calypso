@@ -4,6 +4,9 @@ Spaces group subscriptions under a name plus optional tags. v0 is dark-shipped
 behind the `reader/spaces` feature flag and has **no backend yet** (epic
 RSM-4110); creating a space only writes the React Query cache for now.
 
+> See [`README.md`](./README.md) for the endpoints and contracts the client
+> expects once the backend lands (and the placeholder-vs-real caching strategy).
+
 ## Layout
 
 - **Model & data** — `@automattic/api-core` → `read-spaces/`: `ReadSpace`,
@@ -40,9 +43,11 @@ RSM-4110); creating a space only writes the React Query cache for now.
 
 ### Model & presentation
 
-- `ReadSpace` is serializable: `color` and `icon` are **string keys**, never
-  rendered glyphs. Map `icon` → a `@wordpress/icons` element via `SPACE_ICONS`
-  in `icons.ts`; `color` selects a CSS variant.
+- `ReadSpace` is serializable. Presentation settings live grouped under
+  `layout` (a `SpaceLayout`) so they can grow beyond color/icon; `layout.color`
+  and `layout.icon` are **string keys**, never rendered glyphs. Map
+  `layout.icon` → a `@wordpress/icons` element via `SPACE_ICONS` in `icons.ts`;
+  `layout.color` selects a CSS variant.
 - Build Spaces URLs with `routes.ts` (`SPACES_BASE_PATH`, `getSpacePath`) —
   never hand-concatenate paths.
 
