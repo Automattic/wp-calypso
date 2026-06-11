@@ -1,4 +1,5 @@
 import { DateRangePickerShortcut } from 'calypso/components/date-range/shortcuts';
+import type { JSX } from 'react';
 
 interface DateControlProps {
 	onApplyButtonClick: ( startDate: Moment, endDate: Moment, selectedShortcutId?: string ) => void;

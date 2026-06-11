@@ -2,7 +2,7 @@ import { Button, Tooltip } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
+import React, { type JSX } from 'react';
 
 const ICON_SIZE = 32;
 
