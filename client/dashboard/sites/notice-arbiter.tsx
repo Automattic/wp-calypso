@@ -18,9 +18,9 @@ function useSharedCandidate(): ReactNode {
 	const shouldShowOptInWelcome = useShouldShowOptInWelcome();
 	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
+	// State is used here solely to latch the pick on mount. The pick itself is derived.
 	const [ pick ] = useState( () => {
 		if ( isDashboardBackport() ) {
-			// Engagement prompts should not appear in the backported dashboard.
 			return null;
 		}
 		if ( shouldShowOptInWelcome ) {

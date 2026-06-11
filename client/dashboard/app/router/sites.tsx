@@ -182,8 +182,6 @@ export const siteRoute = createRoute( {
 		await Promise.all( [
 			otherEnvironmentSiteId &&
 				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
-
-			// The notice arbiter's shared candidates read user preferences on every site page.
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 
@@ -464,8 +462,6 @@ export const siteBackupsRoute = createRoute( {
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-
-			// Settle backup notice eligibility before first paint.
 			hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) &&
 				queryClient.ensureQueryData( siteBackupsQuery( site.ID ) ),
 		] );
@@ -568,8 +564,6 @@ export const siteDomainsRoute = createRoute( {
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
-		// Settle notice eligibility (pending primary domain, redirect, bulk
-		// update progress) before first paint to avoid notices popping in.
 		await Promise.all( [
 			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
