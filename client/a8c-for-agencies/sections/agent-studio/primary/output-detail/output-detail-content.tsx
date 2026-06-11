@@ -8,7 +8,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useAgentStudioCollateral, {
@@ -29,6 +29,7 @@ import { formatAnnotationInstructions } from './format-annotation-instructions';
 import { type PdfViewerPage } from './pdf-viewer';
 import RefineWithAiDock from './refine-with-ai-dock';
 import SocialAssetsViewer from './social-assets-viewer';
+import { paginateDeck } from './paginate-deck';
 import { splitIntoPages, wrapAsDocument } from './split-pages';
 import type { AgentStudioOutput } from '../../types';
 
@@ -138,12 +139,25 @@ function OnePagerOutputDetail( { output }: Props ) {
 		return split[ 0 ] ? wrapAsDocument( split[ 0 ] ) : undefined;
 	}, [ selectedVariantHtml.data ] );
 
-	const bodySrcDocs = useMemo< string[] >( () => {
+	// Body pages come from the whole base deck, paginated once (reflow →
+	// continuation pages) so the preview shows the same page set the PDF will
+	// — see paginate-deck.ts. Async because fitting needs a layout pass; until
+	// it resolves only the cover renders.
+	const [ bodySrcDocs, setBodySrcDocs ] = useState< string[] >( [] );
+	useEffect( () => {
 		if ( ! baseVariantHtml.data ) {
-			return [];
+			setBodySrcDocs( [] );
+			return;
 		}
-		const split = splitIntoPages( baseVariantHtml.data );
-		return split.slice( 1 ).map( ( page ) => wrapAsDocument( page ) );
+		let cancelled = false;
+		paginateDeck( baseVariantHtml.data ).then( ( pages ) => {
+			if ( ! cancelled ) {
+				setBodySrcDocs( pages.slice( 1 ).map( ( page ) => wrapAsDocument( page ) ) );
+			}
+		} );
+		return () => {
+			cancelled = true;
+		};
 	}, [ baseVariantHtml.data ] );
 
 	const pages = useMemo< PdfViewerPage[] >( () => {

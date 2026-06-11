@@ -95,7 +95,7 @@ export default function PdfViewer( { pages, coverNavigation, renderPageOverlay }
 // Inside a shadow tree there is no `html`, `body`, or `:root` — they're
 // outside the boundary. The variant CSS targets the document root for
 // width / font / color, so rewrite those selectors to `:host`.
-const rewriteRootSelectors = ( css: string ): string =>
+export const rewriteRootSelectors = ( css: string ): string =>
 	css
 		.replace( /\bhtml\s*,\s*body\b/g, ':host' )
 		.replace( /(^|[\s,{}])html(?=[\s,{[:.])/g, '$1:host' )
@@ -114,7 +114,7 @@ const rewriteRootSelectors = ( css: string ): string =>
 // payload) does not register the same face N times.
 const hoistedFontFaces = new Set< string >();
 
-function hoistFontFaces( css: string ): string {
+export function hoistFontFaces( css: string ): string {
 	return css.replace( /@font-face\s*\{[^}]*\}/g, ( rule ) => {
 		if ( ! hoistedFontFaces.has( rule ) ) {
 			hoistedFontFaces.add( rule );
