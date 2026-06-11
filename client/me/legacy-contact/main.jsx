@@ -37,6 +37,7 @@ export default function LegacyContact() {
 						</p>
 					) : (
 						<Button
+							className="legacy-contact__action"
 							primary
 							onClick={ () => {
 								// TODO: open the legacy contact setup flow.
