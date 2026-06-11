@@ -1,3 +1,5 @@
+import { wpcom } from '../wpcom-fetcher';
+import { adaptReadSpace, type ReadSpaceApiItem } from './adapters';
 import type { ReadSpace, ReadSpaceDetails } from './types';
 
 /**
@@ -54,29 +56,29 @@ const PLACEHOLDER_SPACES: ReadSpace[] = [
 ];
 
 /**
- * Fetch the current user's spaces.
- *
- * TODO(RSM-4145): replace with the real `GET` once the list endpoint exists.
- * Until then it resolves the hard-coded placeholder set; spaces created in the
- * session are appended to the React Query cache by the create mutation.
+ * Fetch the current user's spaces from the wpcom/v2 `GET /reader/spaces`
+ * endpoint, adapting each item from the snake_case wire shape (`title`,
+ * `layout_color`/`layout_icon`) to the client `ReadSpace` via `adaptReadSpace`.
  */
 export async function fetchReadSpaces(): Promise< ReadSpace[] > {
-	// Return fully independent copies (including nested `tags`/`layout`) so a
-	// consumer can't mutate the shared `PLACEHOLDER_SPACES`.
-	return PLACEHOLDER_SPACES.map( ( space ) => ( {
-		...space,
-		tags: [ ...space.tags ],
-		layout: { ...space.layout },
-	} ) );
+	const response = await wpcom.req.get( {
+		path: '/reader/spaces',
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	const items: ReadSpaceApiItem[] = Array.isArray( response ) ? response : [];
+	return items.map( adaptReadSpace );
 }
 
 /**
  * Fetch a single space's details, including its sources.
  *
- * TODO(RSM-4145): replace with the real `GET /spaces/{id}` once it exists.
- * Until then it resolves the matching placeholder space with an empty source
- * list. Spaces created in the session aren't in the placeholder set — the
- * create mutation seeds their detail cache directly, so this never runs for them.
+ * TODO(RSM-4145): the detail endpoint isn't wired yet — this still resolves the
+ * matching placeholder space with an empty source list. The create mutation
+ * seeds the detail cache for spaces created this session, but the live list now
+ * returns real spaces this set doesn't contain, so opening one's sources after a
+ * reload (which clears the seeded cache) currently throws. Wiring the real
+ * `GET /reader/spaces/{id}` closes that gap.
  */
 export async function fetchReadSpace( spaceId: string ): Promise< ReadSpaceDetails > {
 	const space = PLACEHOLDER_SPACES.find( ( item ) => item.id === spaceId );

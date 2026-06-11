@@ -1,20 +1,21 @@
 # Reader Spaces — expected endpoints
 
-Spaces are dark-shipped behind the `reader/spaces` flag and have **no backend
-yet** (epic RSM-4110). Today the data layer resolves a hard-coded placeholder
-set and mutates the React Query cache in-memory. This document lists the
-endpoints the client already expects, and the contract each one needs to honor
-so the placeholders can be swapped for real requests with no changes above the
-`@automattic/api-core` layer.
+Spaces are dark-shipped behind the `reader/spaces` flag (epic RSM-4110). The
+**list, create, and delete** endpoints are now live on `wpcom/v2`; the
+**single-space (detail) and source** endpoints are still hard-coded placeholders
+that mutate the React Query cache in-memory. This document lists every endpoint
+the client expects and the contract each honors.
 
-> No endpoints are implemented yet — every REST path below is **proposed**. The
-> request/response shapes are defined by the client; the paths are not pinned.
+> Endpoints are marked **live** or **proposed** below. Live paths are pinned to
+> the real `wpcom/v2` routes; proposed paths are the shapes the client expects
+> and are not yet pinned.
 
 ## Data shapes
 
 These types live in `@automattic/api-core` → `read-spaces/types.ts`. The wire
-JSON will likely be snake_case; if so, the fetchers adapt it to these shapes
-(as `read-follows` already does for subscriptions).
+JSON is snake_case (`title`, `layout_color`, `layout_icon`, numeric `id`); the
+fetchers adapt it to these shapes in `read-spaces/adapters.ts` (as `read-follows`
+does for subscriptions).
 
 ```ts
 // List shape — NO sources. Returned by the list endpoint.
@@ -57,15 +58,15 @@ and must stay in sync with the backend (RSM-4139).
 
 ## Endpoints
 
-### 1. List spaces — `GET /read/spaces` · RSM-4145
+### 1. List spaces — `GET /reader/spaces` · RSM-4145 · **live**
 
 Returns the user's spaces **without** their sources.
 
 - **Request:** none (authenticated user).
-- **Response `200`:** `ReadSpace[]`
-- Placeholder: `fetchReadSpaces()` → in-memory set, stripped of sources.
+- **Response `200`:** array of wire items (snake_case), adapted to `ReadSpace[]`.
+- Wired: `fetchReadSpaces()` → real `GET`, mapped via `adaptReadSpace`.
 
-### 2. Get one space — `GET /read/spaces/{id}` · RSM-4145
+### 2. Get one space — `GET /reader/spaces/{id}` · RSM-4145 · **proposed**
 
 Returns a single space **with** its sources. This is the only endpoint that
 returns `sources`.
@@ -73,22 +74,25 @@ returns `sources`.
 - **Request:** path param `id`.
 - **Response `200`:** `ReadSpaceDetails`
 - **Response `404`:** unknown id.
-- Placeholder: `fetchReadSpace(id)` → matching placeholder space + `sources: []`.
+- Placeholder: `fetchReadSpace(id)` still resolves the in-memory set + `sources: []`.
 
-### 3. Create space — `POST /read/spaces` · RSM-4139
+### 3. Create space — `POST /reader/spaces/new` · RSM-4139 · **live**
 
-- **Request body:** `CreateReadSpaceParams` → `{ name, tags }`
-- **Response `201`:** `ReadSpaceDetails` (server-generated `id`, defaults applied:
-  `layout: { color: 'blue', icon: 'category' }`, `sources: []`).
-- **Response `422`:** empty name / name over `MAX_SPACE_NAME_LENGTH`.
-- Placeholder: `createReadSpace()` builds the space locally with a generated id.
+- **Request body:** `{ title, tags }` (the create form sends only these; the
+  endpoint also accepts optional `sites`, `layout_color`, `layout_icon`).
+- **Response `201`:** the created space (snake_case wire item), adapted to
+  `ReadSpaceDetails`. Server defaults a random palette `layout_color`/`layout_icon`
+  when omitted, and `sources: []`.
+- **Errors:** `403 rest_forbidden`, `400 reader_spaces_invalid_title`,
+  `400 reader_spaces_invalid_tag`, `409 reader_spaces_duplicate_slug`.
+- Wired: `createReadSpace()` → real `POST`, mapped via `adaptReadSpaceDetails`.
 
 > The create flow is **not** optimistic — the cache is written in `onSuccess`
 > using the returned space, so the list always carries the backend id (no temp-id
 > reconciliation). On success the list gets a `ReadSpace` (sources stripped) and
 > the detail cache is seeded with the full `ReadSpaceDetails`.
 
-### 4. Add a source to a space — `POST /read/spaces/{id}/sources` · ticket TBD
+### 4. Add a source to a space — `POST /reader/spaces/{id}/sources` · ticket TBD · **proposed**
 
 - **Request body:** a source identifier — at least one of
   `{ feed_id?: number; blog_id?: number; feed_url?: string }`.
@@ -96,11 +100,27 @@ returns `sources`.
   reconcile), or `204`.
 - Placeholder: `addReadSpaceSource()` is a no-op; the cache patch is optimistic.
 
-### 5. Remove a source from a space — `DELETE /read/spaces/{id}/sources/{sourceId}` · ticket TBD
+### 5. Remove a source from a space — `DELETE /reader/spaces/{id}/sources/{sourceId}` · ticket TBD · **proposed**
 
 - **Request:** identify the source by `feed_id`/`blog_id`/`feed_url` (path or query).
 - **Response `200`/`204`.**
 - Placeholder: `deleteReadSpaceSource()` is a no-op; the cache patch is optimistic.
+
+### 6. Delete a space — `POST /reader/spaces/{id}/delete` · RSM-4110 · **live**
+
+Permanently deletes a space (hard delete — no trash/undo). Owner-only, enforced
+server-side.
+
+- **Request:** path param `id`, no body.
+- **Response `200`:** `{ deleted: true, id }`.
+- **Response `403`:** `rest_forbidden` — logged out / not an Automattician.
+- **Response `404`:** `reader_spaces_not_found` — gone **or** not yours
+  (intentionally indistinguishable; we don't reveal other users' spaces, so the
+  UI must treat both the same).
+- **Response `500`:** `reader_spaces_delete_failed` — yours, but deletion failed.
+- Wired: `deleteReadSpace( id )` → real `POST`; `deleteReadSpaceMutation` removes
+  the space from the list cache and discards its detail cache `onSuccess`. No UI
+  consumer yet — `useDeleteSpace()` is ready for a (confirm-gated) delete control.
 
 ## Caching strategy (placeholder vs real)
 

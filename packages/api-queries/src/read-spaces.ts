@@ -1,12 +1,14 @@
 import {
 	addReadSpaceSource,
 	createReadSpace,
+	deleteReadSpace,
 	deleteReadSpaceSource,
 	fetchReadSpace,
 	fetchReadSpaces,
 	getReadSpaceSourceKey,
 	getSiteSubscriptionSourceKey,
 	type ReadSpace,
+	type ReadSpaceDeletionResult,
 	type ReadSpaceDetails,
 	type ReadSpaceSourceMutationParams,
 	type SpaceSource,
@@ -22,12 +24,13 @@ export const readSpacesQuery = () =>
 	queryOptions( {
 		queryKey: readSpacesListKey,
 		queryFn: () => fetchReadSpaces(),
-		// No real list endpoint yet (RSM-4145). The list is seeded and mutated
-		// in-memory, so never refetch it out from under the create flow.
+		// The list endpoint is real, but the create flow patches this cache
+		// directly and the detail endpoint is still a placeholder (RSM-4145), so
+		// hold refetches off to avoid clobbering those in-memory writes.
 		staleTime: Infinity,
-		// Keep the placeholder data out of Calypso's persisted query cache:
-		// with `staleTime: Infinity` a dehydrated copy would survive reloads for
-		// days and mask the real list once the endpoint ships.
+		// Keep this out of Calypso's persisted query cache so a reload always
+		// refetches a fresh list from the server rather than rehydrating a stale
+		// dehydrated copy.
 		meta: { persist: false },
 	} );
 
@@ -35,7 +38,9 @@ export const readSpaceQuery = ( spaceId: string ) =>
 	queryOptions( {
 		queryKey: readSpaceDetailKey( spaceId ),
 		queryFn: () => fetchReadSpace( spaceId ),
-		// Same in-memory placeholder caveats as the list query above (RSM-4145).
+		// The single-space/detail endpoint isn't wired yet (RSM-4145): its data is
+		// seeded by the create mutation and patched by the source mutations in
+		// memory, so never refetch it out from under those writes.
 		staleTime: Infinity,
 		meta: { persist: false },
 	} );
@@ -48,29 +53,47 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: createReadSpace,
 		onSuccess: ( space ) => {
-			// TODO(RSM-4145): once the real list endpoint exists, replace these
-			// manual cache writes with `queryClient.invalidateQueries( readSpacesQuery() )`
-			// so the list refetches the canonical server state (real id, ordering)
-			// instead of relying on the locally-written entry — and drop the
-			// `staleTime: Infinity` / `meta: { persist: false }` on the queries.
-			// We can't invalidate today because `fetchReadSpaces` is a placeholder
-			// that would wipe the just-created space.
+			// Create hits the real POST and returns the canonical space, so append
+			// it straight to the list cache for instant feedback — the same entry
+			// comes back on the next real list fetch, so there's no temp-id
+			// reconciliation to do. Append the list-shaped space (sources live only
+			// on the detail cache) so the sidebar reflects it at once...
 			//
-			// No network round-trip yet (RSM-4139). Append the list-shaped space
-			// (sources live only on the detail cache) so the sidebar reflects it at
-			// once...
+			// TODO(RSM-4145): once the detail endpoint is also real, switch these
+			// manual writes to `queryClient.invalidateQueries( readSpacesQuery() )`
+			// and drop the `staleTime: Infinity` / `meta: { persist: false }` so the
+			// list and detail reconcile against canonical server state.
 			const { sources, ...listSpace } = space;
 			queryClient.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, ( previous ) => [
 				...( previous ?? [] ),
 				listSpace,
 			] );
 			// ...and seed the detail cache so the sources modal can open the freshly
-			// created space without hitting `fetchReadSpace` (which only knows the
-			// placeholder set).
+			// created space without hitting `fetchReadSpace`, which is still a
+			// placeholder that only knows the seeded set (RSM-4145).
 			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, {
 				...listSpace,
 				sources,
 			} );
+		},
+	} );
+
+// Delete a space, then drop it from the caches. Like the other factories this
+// takes the consumer's QueryClient (Calypso boots its own — see above). Not
+// wired to any UI yet; a delete control can adopt it via a `useDeleteSpace()`
+// consumer hook. The server hard-deletes (no undo), so the caller should
+// confirm before mutating.
+export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
+	mutationOptions< ReadSpaceDeletionResult, unknown, string >( {
+		mutationFn: deleteReadSpace,
+		onSuccess: ( _result, spaceId ) => {
+			// Remove the deleted space from the cached list...
+			queryClient.setQueryData< ReadSpace[] >(
+				readSpacesQuery().queryKey,
+				( previous ) => previous?.filter( ( space ) => space.id !== spaceId )
+			);
+			// ...and discard its now-defunct detail cache.
+			queryClient.removeQueries( { queryKey: readSpaceQuery( spaceId ).queryKey } );
 		},
 	} );
 

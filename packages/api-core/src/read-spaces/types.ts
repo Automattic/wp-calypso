@@ -51,6 +51,15 @@ export interface CreateReadSpaceParams {
 	tags: string[];
 }
 
+/**
+ * Result of `POST /reader/spaces/{id}/delete`. Deletion is a permanent hard
+ * delete — there is no trash/undo.
+ */
+export interface ReadSpaceDeletionResult {
+	deleted: boolean;
+	id: number;
+}
+
 export interface SpaceSource {
 	feedId?: number | string | null;
 	blogId?: number | string | null;

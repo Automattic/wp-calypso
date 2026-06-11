@@ -1,6 +1,7 @@
 import {
 	addReadSpaceSourceMutation,
 	createReadSpaceMutation,
+	deleteReadSpaceMutation,
 	deleteReadSpaceSourceMutation,
 	readSpaceQuery,
 	readSpacesQuery,
@@ -44,6 +45,17 @@ export function useSpace(
 export function useCreateSpace() {
 	const queryClient = useQueryClient();
 	return useMutation( createReadSpaceMutation( queryClient ) );
+}
+
+/**
+ * Delete-space mutation wired to Calypso's QueryClient. On success the space is
+ * removed from the cached list and its detail cache is discarded. Not used by
+ * any UI yet — a delete control (with a confirm, since it's a hard delete) can
+ * adopt this hook when one is built.
+ */
+export function useDeleteSpace() {
+	const queryClient = useQueryClient();
+	return useMutation( deleteReadSpaceMutation( queryClient ) );
 }
 
 export function useAddSpaceSource() {
