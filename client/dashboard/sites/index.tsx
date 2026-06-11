@@ -245,7 +245,6 @@ export default function Sites() {
 				}
 				notices={
 					<SitesNoticeArbiter>
-						{ /* Notices should not appear in the backported sites list. */ }
 						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
 					</SitesNoticeArbiter>
 				}
