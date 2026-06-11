@@ -405,7 +405,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			render( <FeatureClipPanel /> );
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
 			expect(
-				screen.getByText( "Couldn't load your saved clip. Try again or generate a new one." )
+				screen.getByText( "Couldn't load your saved clip. Generate a new one below." )
 			).toBeInTheDocument();
 			// status=error makes core Notice announce assertively via speak().
 			expect( mockNotice ).toHaveBeenCalledWith( 'error' );
@@ -415,7 +415,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
 			expect(
-				screen.queryByText( "Couldn't load your saved clip. Try again or generate a new one." )
+				screen.queryByText( "Couldn't load your saved clip. Generate a new one below." )
 			).not.toBeInTheDocument();
 		} );
 

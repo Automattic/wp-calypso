@@ -190,10 +190,7 @@ function FeatureClipEmptyState( {
 					isDismissible={ false }
 					className="image-studio-feature-clip-panel__error-notice"
 				>
-					{ __(
-						"Couldn't load your saved clip. Try again or generate a new one.",
-						__i18n_text_domain__
-					) }
+					{ __( "Couldn't load your saved clip. Generate a new one below.", __i18n_text_domain__ ) }
 				</Notice>
 			) }
 			<p className="image-studio-feature-clip-panel__description">
