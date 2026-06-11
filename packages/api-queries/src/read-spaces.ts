@@ -48,6 +48,14 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: createReadSpace,
 		onSuccess: ( space ) => {
+			// TODO(RSM-4145): once the real list endpoint exists, replace these
+			// manual cache writes with `queryClient.invalidateQueries( readSpacesQuery() )`
+			// so the list refetches the canonical server state (real id, ordering)
+			// instead of relying on the locally-written entry — and drop the
+			// `staleTime: Infinity` / `meta: { persist: false }` on the queries.
+			// We can't invalidate today because `fetchReadSpaces` is a placeholder
+			// that would wipe the just-created space.
+			//
 			// No network round-trip yet (RSM-4139). Append the list-shaped space
 			// (sources live only on the detail cache) so the sidebar reflects it at
 			// once...

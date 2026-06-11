@@ -4,6 +4,9 @@ Spaces group subscriptions under a name plus optional tags. v0 is dark-shipped
 behind the `reader/spaces` feature flag and has **no backend yet** (epic
 RSM-4110); creating a space only writes the React Query cache for now.
 
+> See [`README.md`](./README.md) for the endpoints and contracts the client
+> expects once the backend lands (and the placeholder-vs-real caching strategy).
+
 ## Layout
 
 - **Model & data** — `@automattic/api-core` → `read-spaces/`: `ReadSpace`,
