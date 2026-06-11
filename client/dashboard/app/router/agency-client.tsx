@@ -4,14 +4,11 @@ import { redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 
 /**
- * Guard for client-only routes. A4A agency users have no access to client
- * surfaces (subscriptions, etc.), so we bounce them to their agency area.
- *
- * Attach as a route's `beforeLoad`. The `agencyQuery` is already primed in the
- * root route's `beforeLoad` for A4A, so this resolves from cache.
+ * Block A4A agency users from client-only routes. `agencyQuery` is primed by the
+ * root route's `beforeLoad`, so this resolves from cache.
  */
 async function requireClientUser( { cause }: { cause: string } ) {
-	// Hover/intent preloads shouldn't trigger redirects.
+	// Preloads (hover/intent) shouldn't trigger redirects.
 	if ( cause === 'preload' ) {
 		return;
 	}

@@ -13,10 +13,9 @@ export const dashboardRedirect: typeof redirect = ( options ) =>
 	redirect( { ...options, viewTransition: false } );
 
 /**
- * A `dashboardRedirect()` that also sets the `route-not-allowed` flash param,
- * so the destination can surface a "you don't have permission" snackbar (via a
- * `<FlashMessage id="route-not-allowed" />`). Use this whenever a `beforeLoad`
- * guard bounces a user away from a page they aren't allowed to access.
+ * A `dashboardRedirect()` that also sets the `route-not-allowed` flash param, so
+ * the destination can show a "you don't have permission" snackbar via a
+ * `<FlashMessage id="route-not-allowed" />`. Use it in `beforeLoad` guards.
  */
 export function redirectAsNotAllowed( options: {
 	to: string;
