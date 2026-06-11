@@ -12,6 +12,14 @@
 @import './dataviews-overrides.scss';
 
 // Global Styles
+:root {
+	--masterbar-height: 46px;
+
+	@media only screen and (min-width: 782px) {
+		--masterbar-height: 32px;
+	}
+}
+
 html,
 body,
 #wpcom {

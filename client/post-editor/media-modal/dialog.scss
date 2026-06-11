@@ -1,4 +1,6 @@
 @import "calypso/assets/stylesheets/shared/functions/z-index";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
 
 .editor-media-modal.dialog.card {
 	position: absolute;
