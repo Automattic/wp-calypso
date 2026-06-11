@@ -200,10 +200,6 @@ function synthesizeHostManifest( providerIndex: number ): ResolvedProviderManife
 }
 
 /**
- * The first claim two guests disagree about, as a human-readable string, or
- * undefined when their claims are disjoint.
- */
-/**
  * Whether two claimed namespaces overlap: equal after normalization, or one
  * is a `/`-boundary (double-underscore) prefix of the other. Sibling
  * namespaces that merely share a hyphenated prefix (`wpcom` vs
@@ -217,6 +213,10 @@ function namespacesOverlap( firstNamespace: string, secondNamespace: string ): b
 	);
 }
 
+/**
+ * The first claim two guests disagree about, as a human-readable string, or
+ * undefined when their claims are disjoint.
+ */
 function findClaimConflict(
 	first: ResolvedProviderManifest,
 	second: ResolvedProviderManifest
@@ -241,7 +241,21 @@ function findClaimConflict(
 	return undefined;
 }
 
-export function getAgentIdFromInlineData(): string | undefined {
+/**
+ * The synchronous agent-id overrides: the `?agent=` URL param (testing
+ * override), then inline `agentsManagerData.agentId` (host-level override).
+ * Shared with `useAgentConfig`, which layers the host prop above and the
+ * async unified-experience toggle below — keep the priority order in sync
+ * with that hook's chain.
+ */
+export function getAgentIdOverride(): string | undefined {
+	const agentIdParam =
+		typeof window !== 'undefined'
+			? new URLSearchParams( window.location.search ).get( 'agent' )
+			: null;
+	if ( agentIdParam ) {
+		return agentIdParam;
+	}
 	if ( typeof agentsManagerData === 'undefined' ) {
 		return undefined;
 	}
@@ -251,20 +265,21 @@ export function getAgentIdFromInlineData(): string | undefined {
 /**
  * The agent id guest gating should compare against. Callers that already know
  * the effective agent (resolved by `useAgentConfig`'s full priority chain,
- * including the unified-experience toggle) pass it in; otherwise this mirrors
- * the synchronous parts of that chain: `?agent=` URL param, then inline data,
- * then the orchestrator default — never undefined, so a guest is not dropped
- * just because no override was set.
+ * including the unified-experience toggle) pass it in; otherwise the
+ * synchronous overrides apply, then the orchestrator default — never
+ * undefined, so a guest is not dropped just because no override was set.
  */
 export function resolveEffectiveAgentId( knownAgentId?: string ): string {
-	if ( knownAgentId ) {
-		return knownAgentId;
-	}
-	const agentIdParam =
-		typeof window !== 'undefined'
-			? new URLSearchParams( window.location.search ).get( 'agent' )
-			: null;
-	return agentIdParam || getAgentIdFromInlineData() || ORCHESTRATOR_AGENT_ID;
+	return knownAgentId || getAgentIdOverride() || ORCHESTRATOR_AGENT_ID;
+}
+
+/**
+ * Every spelling a tool call may use for one ability name:
+ * raw (`big-sky/show-component`), normalized (`big_sky__show_component`),
+ * and the orchestrator's flattened tool id (`big-sky-show-component`).
+ */
+export function abilityNameAliases( name: string ): string[] {
+	return [ ...new Set( [ name, normalizeAbilityName( name ), name.replace( /\//g, '-' ) ] ) ];
 }
 
 /**

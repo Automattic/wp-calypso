@@ -14,15 +14,14 @@
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import {
-	abilityMatchesClaim,
+	abilityNameAliases,
 	findAbilityClaimant,
-	findComponentClaimant,
 	normalizeAbilityName,
 	resolveEffectiveAgentId,
 	resolveProviderComposition,
 	writeProviderCompositionDebugSummary,
-	type ComposedProviderEntry,
 	type ProviderCompositionManifest,
+	type ProviderCompositionPolicy,
 	type ResolvedProviderManifest,
 } from './provider-composition';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
@@ -518,23 +517,42 @@ export async function loadExternalProviders(
 		} )
 	);
 
+	// The dynamically imported modules are LoadedProviders-shaped; one cast
+	// here types the whole policy for the merge below.
 	const policy = resolveProviderComposition(
 		loadedModules,
 		resolveEffectiveAgentId( effectiveAgentId )
-	);
+	) as ProviderCompositionPolicy< LoadedProviders >;
 	for ( const notice of policy.notices ) {
 		// eslint-disable-next-line no-console
 		console.warn( notice );
 	}
 	writeProviderCompositionDebugSummary( policy );
-	const guests = policy.guests as Array< ComposedProviderEntry< LoadedProviders > >;
+	const guests = policy.guests;
+
+	// Ability names and claims are immutable after load; memoize name → claimant
+	// so the per-call abilities refresh and executeAbility don't re-run the
+	// namespace matching for the same names.
+	const abilityClaimantCache = new Map< string, ( typeof guests )[ number ] | undefined >();
+	const getAbilityClaimant = ( abilityName: string ) => {
+		if ( ! abilityClaimantCache.has( abilityName ) ) {
+			abilityClaimantCache.set( abilityName, findAbilityClaimant( guests, abilityName ) );
+		}
+		return abilityClaimantCache.get( abilityName );
+	};
+	const warnRoutingDropOnce = ( dropKey: string, message: string ) => {
+		if ( loggedAbilityRoutingDrops.has( dropKey ) ) {
+			return;
+		}
+		loggedAbilityRoutingDrops.add( dropKey );
+		// eslint-disable-next-line no-console
+		console.warn( message );
+	};
 
 	// Hosts may translate the args of any call that crosses to a guest (see
 	// ResolveOutgoingArgs). A failing translator is logged and skipped so a
 	// host bug cannot break a guest's tools.
-	const hostArgTranslators = (
-		policy.providers as Array< ComposedProviderEntry< LoadedProviders > >
-	 )
+	const hostArgTranslators = policy.providers
 		.filter(
 			( entry ) =>
 				entry.manifest.role === 'host' && typeof entry.module.resolveOutgoingArgs === 'function'
@@ -584,27 +602,26 @@ export async function loadExternalProviders(
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
 		}
 
-		// First-write-wins for singleton exports.
-		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
-			mergedMarkdownComponents = module.markdownComponents;
-		}
-		if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
-			mergedMarkdownExtensions = module.markdownExtensions;
-		}
-		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
-			mergedNavigationContinuation = module.useNavigationContinuation;
-		}
-		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
-			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.useImageUpload && ! mergedImageUpload ) {
-			mergedImageUpload = module.useImageUpload;
-		}
 		if ( module.useCheckpoint ) {
 			allUseCheckpoints.push( { hook: module.useCheckpoint, manifest } );
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
+	}
+
+	// Singleton exports: the host's copy wins regardless of registration order;
+	// among same-role providers the first registered wins, matching the
+	// unclaimed-ability rule.
+	const singletonProviderOrder = [
+		...policy.providers.filter( ( entry ) => entry.manifest.role === 'host' ),
+		...policy.providers.filter( ( entry ) => entry.manifest.role === 'guest' ),
+	];
+	for ( const { module } of singletonProviderOrder ) {
+		mergedMarkdownComponents ??= module.markdownComponents;
+		mergedMarkdownExtensions ??= module.markdownExtensions;
+		mergedNavigationContinuation ??= module.useNavigationContinuation;
+		mergedSiteBuildUtils ??= module.siteBuildUtils;
+		mergedImageUpload ??= module.useImageUpload;
 	}
 
 	// Checkpoints: every provider's hook runs, so module-level side effects
@@ -614,18 +631,17 @@ export async function loadExternalProviders(
 	if ( allUseCheckpoints.length === 1 ) {
 		mergedUseCheckpoint = allUseCheckpoints[ 0 ].hook;
 	} else if ( allUseCheckpoints.length > 1 ) {
-		const primaryIndex = Math.max(
-			allUseCheckpoints.findIndex( ( entry ) => entry.manifest.role === 'host' ),
-			0
-		);
+		const primary =
+			allUseCheckpoints.find( ( entry ) => entry.manifest.role === 'host' ) ??
+			allUseCheckpoints[ 0 ];
 		mergedUseCheckpoint = () => {
 			let primaryReturn: UseCheckpointReturn | undefined;
-			allUseCheckpoints.forEach( ( entry, index ) => {
+			for ( const entry of allUseCheckpoints ) {
 				const hookReturn = entry.hook();
-				if ( index === primaryIndex ) {
+				if ( entry === primary ) {
 					primaryReturn = hookReturn;
 				}
-			} );
+			}
 			return primaryReturn as UseCheckpointReturn;
 		};
 	}
@@ -656,14 +672,6 @@ export async function loadExternalProviders(
 		const nextAbilityProviderMap = new Map< string, AbilityProviderEntry >();
 		const seenAbilities = new Map< string, unknown >();
 
-		// A tool call can arrive under any of three spellings of the same
-		// ability name; every ability is indexed under all of them so lookups
-		// resolve regardless of which form the caller uses:
-		//   raw:        big-sky/show-component
-		//   normalized: big_sky__show_component  (AM converts `/` → `__`, `-` → `_`)
-		//   agenttic:   big-sky-show-component   (the orchestrator's `/` → `-` tool id)
-		const toAgentticToolId = ( name: string ) => name.replace( /\//g, '-' );
-
 		for ( let i = 0; i < allToolProviders.length; i++ ) {
 			const providerEntry = allToolProviders[ i ];
 			for ( const ability of allAbilityResults[ i ] ) {
@@ -674,44 +682,36 @@ export async function loadExternalProviders(
 				// Claims decide ownership: a guest contributes only abilities its
 				// manifest claims, and hosts cannot serve guest-claimed names.
 				// Either kind of drop is logged so a missing tool is debuggable.
+				const claimant = getAbilityClaimant( ability.name );
 				if ( providerEntry.manifest.role === 'guest' ) {
-					const ownClaims = providerEntry.manifest.claims.abilities;
-					if (
-						! ownClaims.some( ( namespace ) => abilityMatchesClaim( namespace, ability.name ) )
-					) {
-						const dropKey = `guest:${ providerEntry.manifest.providerId }:${ ability.name }`;
-						if ( ! loggedAbilityRoutingDrops.has( dropKey ) ) {
-							loggedAbilityRoutingDrops.add( dropKey );
-							// eslint-disable-next-line no-console
-							console.warn(
-								`[AgentsManager] Guest provider "${ providerEntry.manifest.providerId }" ability "${ ability.name }" ignored: not covered by its claims.`
-							);
-						}
+					if ( claimant?.manifest !== providerEntry.manifest ) {
+						warnRoutingDropOnce(
+							`guest:${ providerEntry.manifest.providerId }:${ ability.name }`,
+							`[AgentsManager] Guest provider "${ providerEntry.manifest.providerId }" ability "${ ability.name }" ignored: not covered by its claims.`
+						);
 						continue;
 					}
-				} else {
-					const claimant = findAbilityClaimant( guests, ability.name );
-					if ( claimant ) {
-						const dropKey = `host:${ providerEntry.manifest.providerId }:${ ability.name }`;
-						if ( ! loggedAbilityRoutingDrops.has( dropKey ) ) {
-							loggedAbilityRoutingDrops.add( dropKey );
-							// eslint-disable-next-line no-console
-							console.warn(
-								`[AgentsManager] Host ability "${ ability.name }" suppressed: namespace claimed by guest "${ claimant.manifest.providerId }".`
-							);
-						}
-						continue;
-					}
+				} else if ( claimant ) {
+					warnRoutingDropOnce(
+						`host:${ providerEntry.manifest.providerId }:${ ability.name }`,
+						`[AgentsManager] Host ability "${ ability.name }" suppressed: namespace claimed by guest "${ claimant.manifest.providerId }".`
+					);
+					continue;
 				}
 
 				// Unclaimed names keep the legacy rule: the first-registered
 				// provider wins, and later duplicates only fill in alias
-				// spellings the winner has not already indexed.
+				// spellings (see abilityNameAliases) the winner has not already
+				// indexed.
 				const normalized = normalizeAbilityName( ability.name );
-				const aliases = [ ability.name, normalized, toAgentticToolId( ability.name ) ];
-				const existingEntry = aliases
-					.map( ( alias ) => nextAbilityProviderMap.get( alias ) )
-					.find( Boolean );
+				const aliases = abilityNameAliases( ability.name );
+				let existingEntry: AbilityProviderEntry | undefined;
+				for ( const alias of aliases ) {
+					existingEntry = nextAbilityProviderMap.get( alias );
+					if ( existingEntry ) {
+						break;
+					}
+				}
 				const entry = existingEntry ?? {
 					provider: providerEntry.toolProvider,
 					abilityName: ability.name,
@@ -749,9 +749,12 @@ export async function loadExternalProviders(
 				// Rebuild at execution time because some provider abilities are
 				// registered by setup hooks after the provider module is imported.
 				await refreshProviderAbilities();
-				const claimant = findAbilityClaimant( guests, name );
-				const outgoingArgs = claimant ? translateGuestArgs( name, args ) : args;
 				const entry = abilityProviderMap.get( name );
+				// Claim ownership is checked on the canonical registered name when
+				// the map knows it, so a flattened caller spelling cannot dodge or
+				// misattribute a claim.
+				const claimant = getAbilityClaimant( entry?.abilityName ?? name );
+				const outgoingArgs = claimant ? translateGuestArgs( name, args ) : args;
 				if ( entry ) {
 					return entry.provider.executeAbility( entry.abilityName, outgoingArgs );
 				}
@@ -794,18 +797,26 @@ export async function loadExternalProviders(
 		: hostMergedContextProvider;
 
 	// Components: a type claimed by a guest renders with that guest; everything
-	// else renders with the first host that returns a component.
+	// else renders with the first host that returns a component. Claims are
+	// validated non-overlapping, so a type-keyed map is unambiguous and saves
+	// a per-render scan.
+	const componentClaimants = new Map< string, GetChatComponent >();
+	for ( const guest of guests ) {
+		const guestGetChatComponent = guest.module.getChatComponent;
+		if ( ! guestGetChatComponent ) {
+			continue;
+		}
+		for ( const type of guest.manifest.claims.components ) {
+			componentClaimants.set( type, guestGetChatComponent );
+		}
+	}
 	if ( allGetChatComponents.length === 1 ) {
 		mergedGetChatComponent = allGetChatComponents[ 0 ].getChatComponent;
 	} else if ( allGetChatComponents.length > 1 ) {
 		mergedGetChatComponent = ( ( type: string, context?: GetChatComponentContext ) => {
-			const claimantGetChatComponent = findComponentClaimant( guests, type )?.module
-				.getChatComponent;
-			if ( claimantGetChatComponent ) {
-				const claimed = claimantGetChatComponent( type, context );
-				if ( claimed ) {
-					return claimed;
-				}
+			const claimed = componentClaimants.get( type )?.( type, context );
+			if ( claimed ) {
+				return claimed;
 			}
 			for ( const entry of allGetChatComponents ) {
 				if ( entry.manifest.role !== 'host' ) {
