@@ -12,8 +12,7 @@ import './style.scss';
 export default function LegacyContact() {
 	const translate = useTranslate();
 
-	const { data: contacts = [], isLoading } = useQuery( legacyContactsQuery() );
-	const contact = contacts[ 0 ];
+	const { data: [ contact ] = [] } = useQuery( legacyContactsQuery() );
 
 	return (
 		<Main wideLayout className="legacy-contact">
@@ -28,8 +27,8 @@ export default function LegacyContact() {
 					) }
 				</p>
 
-				{ ! isLoading && contact && (
-					<p className="legacy-contact__current">
+				{ contact && (
+					<p>
 						{ translate( 'Your legacy contact is {{strong}}%(email)s{{/strong}}.', {
 							args: { email: contact.email },
 							components: { strong: <strong /> },
