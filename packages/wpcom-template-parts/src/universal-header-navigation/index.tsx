@@ -135,6 +135,7 @@ const UniversalNavbarHeader = ( {
 	const openMobileMenu = useCallback( () => {
 		if ( nav2026 ) {
 			recordMobileMenuOpen( isScrolledRef.current );
+			setIsMenuOpening( true );
 		}
 		setMobileMenuOpen( true );
 	}, [ nav2026 ] );
