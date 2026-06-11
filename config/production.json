@@ -127,6 +127,7 @@
 		"plans/personal-plan": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
+		"plugins/jetpack-seo-hint": false,
 		"plugins/plugin-compass": false,
 		"plugins/universal-header": true,
 		"post-editor/checkout-overlay": true,

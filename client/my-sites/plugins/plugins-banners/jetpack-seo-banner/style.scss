@@ -1,0 +1,36 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.jetpack-seo-banner {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	align-items: flex-start;
+	margin-block: 16px;
+	padding: 24px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background-color: var( --color-surface );
+
+	@media ( min-width: $break-small ) {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+.jetpack-seo-banner__title {
+	font-size: rem( 18px );
+	font-weight: 600;
+	margin: 0 0 4px;
+}
+
+.jetpack-seo-banner__description {
+	font-size: $font-body;
+	color: var( --color-text-subtle );
+	margin: 0;
+}
+
+.jetpack-seo-banner__cta {
+	flex-shrink: 0;
+}

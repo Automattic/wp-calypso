@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,11 +8,17 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
 import MarketplaceAIBanner from 'calypso/my-sites/plugins/marketplace-ai-experience/banner';
 import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/business-plan-banner';
+import JetpackSeoBanner, {
+	isSeoSearch,
+} from 'calypso/my-sites/plugins/plugins-banners/jetpack-seo-banner';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { UNLISTED_PLUGINS } from '../constants';
 import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
@@ -46,6 +53,16 @@ const PluginsSearchResultPage = ( {
 	const translate = useTranslate();
 
 	const showCompassBanner = isLoggedIn && isEnabled( 'plugins/plugin-compass' );
+
+	const isSeoModuleActive = useSelector( ( state ) =>
+		siteId ? isJetpackModuleActive( state, siteId, 'seo-tools' ) : false
+	);
+
+	const hasAdvancedSeo = useSelector( ( state ) =>
+		siteId ? siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) : false
+	);
+
+	const showSeoHint = isEnabled( 'plugins/jetpack-seo-hint' ) && isSeoSearch( searchTerm );
 
 	/*
 	 * Syncs the internal value of is fetching to share it with the search header
@@ -134,7 +151,23 @@ const PluginsSearchResultPage = ( {
 							<ClearSearchButton />
 						</>
 					}
-					afterHeader={ showCompassBanner ? <MarketplaceAIBanner variant="slim" /> : null }
+					afterHeader={
+						showSeoHint || showCompassBanner ? (
+							<>
+								{ showSeoHint && (
+									<JetpackSeoBanner
+										siteId={ siteId }
+										siteSlug={ siteSlug }
+										searchTerm={ searchTerm }
+										isSeoModuleActive={ isSeoModuleActive }
+										hasAdvancedSeo={ hasAdvancedSeo }
+										onEnableSeo={ () => dispatch( activateModule( siteId, 'seo-tools' ) ) }
+									/>
+								) }
+								{ showCompassBanner && <MarketplaceAIBanner variant="slim" /> }
+							</>
+						) : null
+					}
 					showReset
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }

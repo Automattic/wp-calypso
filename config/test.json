@@ -86,6 +86,7 @@
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
+		"plugins/jetpack-seo-hint": true,
 		"plugins/plugin-compass": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
