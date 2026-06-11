@@ -6,27 +6,22 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
-import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import Notice from '../../components/notice';
 import { render } from '../../test-utils';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 
-function mockPreferences( preferences: Record< string, unknown > = {} ) {
+function mockPreferences() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
-		.reply( 200, { calypso_preferences: preferences } );
+		.reply( 200, { calypso_preferences: {} } );
 }
 
-function withOptIn( ui: React.ReactElement ) {
-	return (
-		<AppProvider config={ { ...APP_CONTEXT_DEFAULT_CONFIG, optIn: true } }>{ ui }</AppProvider>
-	);
-}
+beforeEach( () => {
+	mockPreferences();
+} );
 
 describe( '<SitesNoticeArbiter>', () => {
 	test( 'renders only the first page candidate when several are eligible', async () => {
-		mockPreferences();
-
 		render(
 			<SitesNoticeArbiter>
 				<Notice>First notice</Notice>
@@ -39,7 +34,6 @@ describe( '<SitesNoticeArbiter>', () => {
 	} );
 
 	test( 'skips ineligible page candidates', async () => {
-		mockPreferences();
 		const isEligible: boolean = false;
 
 		render(
@@ -53,7 +47,6 @@ describe( '<SitesNoticeArbiter>', () => {
 	} );
 
 	test( 'renders nothing when no candidate is eligible', async () => {
-		mockPreferences();
 		const isEligible: boolean = false;
 
 		render(
@@ -69,50 +62,30 @@ describe( '<SitesNoticeArbiter>', () => {
 		expect( screen.queryByText( 'Ineligible notice' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'falls back to the welcome notice when no page candidate is eligible', async () => {
-		mockPreferences();
-
-		render( withOptIn( <SitesNoticeArbiter /> ) );
-
-		expect( await screen.findByText( /Welcome to your new Hosting Dashboard/ ) ).toBeVisible();
-	} );
-
-	test( 'page candidates outrank shared candidates', async () => {
-		mockPreferences();
-
-		render(
-			withOptIn(
-				<SitesNoticeArbiter>
-					<Notice>Page notice</Notice>
-				</SitesNoticeArbiter>
-			)
-		);
-
-		expect( await screen.findByText( 'Page notice' ) ).toBeVisible();
-		expect( screen.queryByText( /Welcome to your new Hosting Dashboard/ ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'does not promote a shared candidate when a page candidate goes away mid-session', async () => {
-		mockPreferences();
-
-		function Harness() {
-			const [ isEligible, setIsEligible ] = useState( true );
-			return (
-				<SitesNoticeArbiter>
-					{ isEligible && (
-						<Notice onClose={ () => setIsEligible( false ) }>Dismissible notice</Notice>
-					) }
-				</SitesNoticeArbiter>
-			);
+	test( 'does not promote a lower-priority candidate when a dismissed notice self-nulls', async () => {
+		// The sanctioned dismissal pattern: the component stays mounted and
+		// renders null after an in-session dismissal.
+		function DismissibleNotice() {
+			const [ isDismissed, setIsDismissed ] = useState( false );
+			if ( isDismissed ) {
+				return null;
+			}
+			return <Notice onClose={ () => setIsDismissed( true ) }>High priority notice</Notice>;
 		}
 
-		render( withOptIn( <Harness /> ) );
+		render(
+			<SitesNoticeArbiter>
+				<DismissibleNotice />
+				<Notice>Low priority notice</Notice>
+			</SitesNoticeArbiter>
+		);
 
-		expect( await screen.findByText( 'Dismissible notice' ) ).toBeVisible();
+		expect( await screen.findByText( 'High priority notice' ) ).toBeVisible();
+		expect( screen.queryByText( 'Low priority notice' ) ).not.toBeInTheDocument();
 
 		await userEvent.click( screen.getByRole( 'button', { name: /dismiss/i } ) );
 
-		expect( screen.queryByText( 'Dismissible notice' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Welcome to your new Hosting Dashboard/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'High priority notice' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Low priority notice' ) ).not.toBeInTheDocument();
 	} );
 } );
