@@ -5,6 +5,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
+import { arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { DomainSuggestionBadge } from '../../ui';
 import type { BundleSuggestion } from '@automattic/api-core';
@@ -89,9 +90,12 @@ export const BundleCard = ( {
 
 				{ isAddedToCart ? (
 					<Button
-						className="bundle-card__cta"
-						variant="primary"
+						className="bundle-card__cta bundle-card__cta--continue"
+						isPressed
+						aria-pressed="mixed"
 						__next40pxDefaultSize
+						icon={ arrowRight }
+						label={ __( 'Continue' ) }
 						onClick={ () => onContinue?.() }
 					>
 						{ __( 'Continue' ) }
