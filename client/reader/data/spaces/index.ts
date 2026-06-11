@@ -21,13 +21,18 @@ export function useSpaces(): ReadSpace[] {
 
 /**
  * A single space's details, loaded on demand (e.g. by the sources modal).
- * Disabled until an id is known. The add/delete source mutations patch this
- * query optimistically, so consumers see source changes immediately.
+ * Disabled until an id is known; pass `enabled: false` to also hold it off
+ * while the consumer (e.g. a closed modal) doesn't need it yet. The add/delete
+ * source mutations patch this query optimistically, so consumers see source
+ * changes immediately.
  */
-export function useSpace( spaceId: string | null | undefined ) {
+export function useSpace(
+	spaceId: string | null | undefined,
+	{ enabled = true }: { enabled?: boolean } = {}
+) {
 	return useQuery( {
 		...readSpaceQuery( spaceId ?? '' ),
-		enabled: Boolean( spaceId ),
+		enabled: enabled && Boolean( spaceId ),
 	} );
 }
 

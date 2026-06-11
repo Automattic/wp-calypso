@@ -133,6 +133,27 @@ describe( 'SourcesModal', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'does not fetch subscriptions or space details while closed', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		renderWithProvider(
+			<SourcesModal isOpen={ false } spaceId={ WORK.id } onClose={ jest.fn() } />,
+			{
+				queryClient,
+				initialState: { currentUser: { id: 1 } },
+			}
+		);
+
+		// Disabled queries stay idle (no background pagination / fetch) when the
+		// modal is closed.
+		expect(
+			queryClient.getQueryState( getSiteSubscriptionsQueryKey() )?.fetchStatus ?? 'idle'
+		).toBe( 'idle' );
+		expect(
+			queryClient.getQueryState( readSpaceQuery( WORK.id ).queryKey )?.fetchStatus ?? 'idle'
+		).toBe( 'idle' );
+	} );
+
 	it( 'renders a skeleton while subscriptions are loading', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		queryClient.setQueryData( readSpacesQuery().queryKey, [ WORK ] );

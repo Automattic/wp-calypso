@@ -70,8 +70,16 @@ const getSourcesContentState = ( {
 export function SourcesModal( { isOpen, spaceId, onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: space, isLoading: isSpaceLoading, isError: isSpaceError } = useSpace( spaceId );
-	const siteSubscriptions = useSiteSubscriptions( { fetchAllPages: true } );
+	// Only fetch while the modal is open — `view.tsx` keeps this mounted with
+	// `isOpen` toggling, so gating avoids background pagination when it's closed.
+	const {
+		data: space,
+		isLoading: isSpaceLoading,
+		isError: isSpaceError,
+	} = useSpace( spaceId, {
+		enabled: isOpen,
+	} );
+	const siteSubscriptions = useSiteSubscriptions( { fetchAllPages: true, enabled: isOpen } );
 	const { mutate: addSpaceSource } = useAddSpaceSource();
 	const { mutate: deleteSpaceSource } = useDeleteSpaceSource();
 
