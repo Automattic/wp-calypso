@@ -74,12 +74,19 @@ const JetpackSeoBanner = ( {
 	const { __ } = useI18n();
 
 	useEffect( () => {
+		// Only count an impression when the banner actually renders ( see the
+		// siteSlug guard below ), otherwise we'd inflate impressions on surfaces
+		// with no site context.
+		if ( ! siteSlug ) {
+			return;
+		}
+
 		recordTracksEvent( 'calypso_plugins_jetpack_seo_hint_impression', {
 			blog_id: siteId,
 			search_term: searchTerm,
 			seo_active: isSeoModuleActive,
 		} );
-	}, [ siteId, searchTerm, isSeoModuleActive ] );
+	}, [ siteId, siteSlug, searchTerm, isSeoModuleActive ] );
 
 	let cta: SeoHintCta = 'upsell';
 	if ( isSeoModuleActive ) {

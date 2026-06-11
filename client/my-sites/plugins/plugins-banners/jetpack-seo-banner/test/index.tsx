@@ -1,7 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-import { isSeoSearch } from '..';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import JetpackSeoBanner, { isSeoSearch } from '..';
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+const baseProps = {
+	siteId: 123,
+	siteSlug: 'example.wordpress.com',
+	searchTerm: 'seo',
+	isSeoModuleActive: false,
+	hasAdvancedSeo: true,
+};
 
 describe( 'isSeoSearch', () => {
 	it( 'matches generic and feature SEO terms', () => {
@@ -26,5 +41,106 @@ describe( 'isSeoSearch', () => {
 		expect( isSeoSearch( '' ) ).toBe( false );
 		expect( isSeoSearch( null ) ).toBe( false );
 		expect( isSeoSearch( undefined ) ).toBe( false );
+	} );
+} );
+
+describe( 'JetpackSeoBanner', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'renders the heading and description', () => {
+		render( <JetpackSeoBanner { ...baseProps } /> );
+		expect( screen.getByText( 'Jetpack already includes SEO tools' ) ).toBeVisible();
+		expect( screen.getByText( /Optimize titles, meta descriptions, sitemaps/ ) ).toBeVisible();
+	} );
+
+	it( 'links the CTA to the native Calypso SEO settings route', () => {
+		render( <JetpackSeoBanner { ...baseProps } /> );
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute(
+			'href',
+			'/marketing/traffic/example.wordpress.com'
+		);
+	} );
+
+	it( 'shows "Manage SEO settings" when the module is active', () => {
+		render( <JetpackSeoBanner { ...baseProps } isSeoModuleActive /> );
+		expect( screen.getByRole( 'link', { name: 'Manage SEO settings' } ) ).toBeVisible();
+	} );
+
+	it( 'shows "Enable Jetpack SEO" when off but the plan supports it', () => {
+		render( <JetpackSeoBanner { ...baseProps } isSeoModuleActive={ false } hasAdvancedSeo /> );
+		expect( screen.getByRole( 'link', { name: 'Enable Jetpack SEO' } ) ).toBeVisible();
+	} );
+
+	it( 'shows "Set up Jetpack SEO" when the plan does not include SEO', () => {
+		render(
+			<JetpackSeoBanner { ...baseProps } isSeoModuleActive={ false } hasAdvancedSeo={ false } />
+		);
+		expect( screen.getByRole( 'link', { name: 'Set up Jetpack SEO' } ) ).toBeVisible();
+	} );
+
+	it( 'records an impression event on mount', () => {
+		render( <JetpackSeoBanner { ...baseProps } /> );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_plugins_jetpack_seo_hint_impression',
+			expect.objectContaining( { blog_id: 123, search_term: 'seo', seo_active: false } )
+		);
+	} );
+
+	it( 'renders nothing and records no impression without a site slug', () => {
+		const { container } = render( <JetpackSeoBanner { ...baseProps } siteSlug={ null } /> );
+		expect( container ).toBeEmptyDOMElement();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'enables SEO and records the click in the enable state', async () => {
+		const onEnableSeo = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<JetpackSeoBanner
+				{ ...baseProps }
+				isSeoModuleActive={ false }
+				hasAdvancedSeo
+				onEnableSeo={ onEnableSeo }
+			/>
+		);
+		await user.click( screen.getByRole( 'link', { name: 'Enable Jetpack SEO' } ) );
+		expect( onEnableSeo ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_plugins_jetpack_seo_hint_click',
+			expect.objectContaining( { cta: 'enable_seo' } )
+		);
+	} );
+
+	it( 'does not enable SEO when the module is already active', async () => {
+		const onEnableSeo = jest.fn();
+		const user = userEvent.setup();
+		render( <JetpackSeoBanner { ...baseProps } isSeoModuleActive onEnableSeo={ onEnableSeo } /> );
+		await user.click( screen.getByRole( 'link', { name: 'Manage SEO settings' } ) );
+		expect( onEnableSeo ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_plugins_jetpack_seo_hint_click',
+			expect.objectContaining( { cta: 'manage_seo' } )
+		);
+	} );
+
+	it( 'does not enable SEO in the upsell state', async () => {
+		const onEnableSeo = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<JetpackSeoBanner
+				{ ...baseProps }
+				isSeoModuleActive={ false }
+				hasAdvancedSeo={ false }
+				onEnableSeo={ onEnableSeo }
+			/>
+		);
+		await user.click( screen.getByRole( 'link', { name: 'Set up Jetpack SEO' } ) );
+		expect( onEnableSeo ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_plugins_jetpack_seo_hint_click',
+			expect.objectContaining( { cta: 'upsell' } )
+		);
 	} );
 } );

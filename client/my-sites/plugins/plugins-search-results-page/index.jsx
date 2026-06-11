@@ -62,7 +62,8 @@ const PluginsSearchResultPage = ( {
 		siteId ? siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) : false
 	);
 
-	const showSeoHint = isEnabled( 'plugins/jetpack-seo-hint' ) && isSeoSearch( searchTerm );
+	const showSeoHint =
+		isEnabled( 'plugins/jetpack-seo-hint' ) && !! siteSlug && isSeoSearch( searchTerm );
 
 	/*
 	 * Syncs the internal value of is fetching to share it with the search header
