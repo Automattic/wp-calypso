@@ -60,8 +60,7 @@ const makeSpace = ( overrides: Partial< ReadSpaceDetails > = {} ): ReadSpaceDeta
 	id: SPACE_ID,
 	name: 'Work',
 	tags: [],
-	color: 'blue',
-	icon: 'inbox',
+	layout: { color: 'blue', icon: 'inbox' },
 	sources: [],
 	...overrides,
 } );

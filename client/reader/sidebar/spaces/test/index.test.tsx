@@ -21,15 +21,13 @@ const SPACES: ReadSpace[] = [
 		id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
 		name: 'Work',
 		tags: [],
-		color: 'blue',
-		icon: 'inbox',
+		layout: { color: 'blue', icon: 'inbox' },
 	},
 	{
 		id: '5cc71d31-97d1-4b7d-93c7-42a5ce9d4cf1',
 		name: 'Gaming',
 		tags: [],
-		color: 'purple',
-		icon: 'box',
+		layout: { color: 'purple', icon: 'box' },
 	},
 ];
 
@@ -68,7 +66,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		expect( selected[ 0 ].textContent ).toContain( FIRST_SPACE.name );
 		// The active row carries the space's colour class, which drives the
 		// active link colour via the `--space-color` custom property.
-		expect( selected[ 0 ] ).toHaveClass( `sidebar-spaces__item--${ FIRST_SPACE.color }` );
+		expect( selected[ 0 ] ).toHaveClass( `sidebar-spaces__item--${ FIRST_SPACE.layout.color }` );
 	} );
 
 	it( 'does not crash or falsely select on an unexpected space id in the path', () => {

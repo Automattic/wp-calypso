@@ -34,8 +34,7 @@ describe( 'read spaces mutators', () => {
 		expect( space ).toMatchObject( {
 			name: 'Work',
 			tags: [ 'business', 'design' ],
-			color: 'blue',
-			icon: 'category',
+			layout: { color: 'blue', icon: 'category' },
 			sources: [],
 		} );
 		expect( space.id ).toEqual( expect.any( String ) );

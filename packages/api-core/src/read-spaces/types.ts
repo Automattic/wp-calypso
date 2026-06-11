@@ -21,12 +21,20 @@ export type SpaceIcon =
 	| 'pages'
 	| 'category';
 
+/**
+ * Presentation settings for a space, grouped so they can grow beyond color and
+ * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
+ */
+export interface SpaceLayout {
+	color: SpaceColor;
+	icon: SpaceIcon;
+}
+
 export interface ReadSpace {
 	id: string;
 	name: string;
 	tags: string[];
-	color: SpaceColor;
-	icon: SpaceIcon;
+	layout: SpaceLayout;
 }
 
 /**

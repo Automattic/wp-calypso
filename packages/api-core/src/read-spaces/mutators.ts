@@ -1,4 +1,4 @@
-import { DEFAULT_SPACE_COLOR, DEFAULT_SPACE_ICON } from './constants';
+import { DEFAULT_SPACE_LAYOUT } from './constants';
 import type {
 	CreateReadSpaceParams,
 	ReadSpaceDetails,
@@ -18,8 +18,7 @@ export function createReadSpace( params: CreateReadSpaceParams ): Promise< ReadS
 		id: generateSpaceId(),
 		name: params.name,
 		tags: params.tags,
-		color: DEFAULT_SPACE_COLOR,
-		icon: DEFAULT_SPACE_ICON,
+		layout: { ...DEFAULT_SPACE_LAYOUT },
 		sources: [],
 	} );
 }
