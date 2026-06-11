@@ -519,12 +519,12 @@ class MasterbarLoggedIn extends Component {
 		const menuItems = [
 			{
 				label: translate( 'Visit Site' ),
+				url: siteUrl,
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_visit_site_clicked', {
 						site_id: this.props.siteId,
 						site_slug: siteSlug,
 					} );
-					window.location.href = siteUrl;
 				},
 			},
 		];
@@ -675,6 +675,7 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				className="masterbar__item-my-site-actions"
+				url={ siteSlug ? newPostUrl : '/post' }
 				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
 				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }

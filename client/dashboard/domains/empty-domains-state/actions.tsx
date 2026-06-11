@@ -78,7 +78,7 @@ function ConnectDomainActionItem() {
 					} ) }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_dashboard_domains_empty_state_action_click', {
-							action: 'transfer-domain',
+							action: 'connect-domain',
 						} )
 					}
 					size="compact"

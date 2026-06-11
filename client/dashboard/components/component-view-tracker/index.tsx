@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 
 export default function ComponentViewTracker( {
@@ -9,13 +9,13 @@ export default function ComponentViewTracker( {
 	properties?: Record< string, unknown >;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasTracked = useRef( false );
 
 	useEffect( () => {
-		const key = `component_view_tracker_${ eventName }_${ JSON.stringify( properties ) }`;
-		if ( sessionStorage.getItem( key ) ) {
+		if ( hasTracked.current ) {
 			return;
 		}
-		sessionStorage.setItem( key, '1' );
+		hasTracked.current = true;
 		recordTracksEvent( eventName, properties );
 	}, [ recordTracksEvent, eventName, JSON.stringify( properties ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
