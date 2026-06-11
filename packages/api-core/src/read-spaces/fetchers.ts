@@ -61,7 +61,13 @@ const PLACEHOLDER_SPACES: ReadSpace[] = [
  * session are appended to the React Query cache by the create mutation.
  */
 export async function fetchReadSpaces(): Promise< ReadSpace[] > {
-	return PLACEHOLDER_SPACES.map( ( space ) => ( { ...space } ) );
+	// Return fully independent copies (including nested `tags`/`layout`) so a
+	// consumer can't mutate the shared `PLACEHOLDER_SPACES`.
+	return PLACEHOLDER_SPACES.map( ( space ) => ( {
+		...space,
+		tags: [ ...space.tags ],
+		layout: { ...space.layout },
+	} ) );
 }
 
 /**
@@ -77,5 +83,7 @@ export async function fetchReadSpace( spaceId: string ): Promise< ReadSpaceDetai
 	if ( ! space ) {
 		throw new Error( `Space not found: ${ spaceId }` );
 	}
-	return { ...space, sources: [] };
+	// Independent copy (nested `tags`/`layout` cloned, fresh `sources`) so callers
+	// can't mutate the shared `PLACEHOLDER_SPACES`.
+	return { ...space, tags: [ ...space.tags ], layout: { ...space.layout }, sources: [] };
 }

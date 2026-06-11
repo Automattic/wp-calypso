@@ -34,6 +34,16 @@ describe( 'read spaces fetchers', () => {
 		expect( spaces[ 0 ] ).not.toHaveProperty( 'sources' );
 	} );
 
+	it( 'returns independent copies that cannot mutate the shared placeholders', async () => {
+		const first = await fetchReadSpaces();
+		first[ 0 ].tags.push( 'mutated' );
+		first[ 0 ].layout.color = 'red';
+
+		const second = await fetchReadSpaces();
+		expect( second[ 0 ].tags ).toEqual( [] );
+		expect( second[ 0 ].layout.color ).not.toBe( 'red' );
+	} );
+
 	it( 'resolves a single placeholder space by id, with its sources', async () => {
 		await expect( fetchReadSpace( '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21' ) ).resolves.toEqual(
 			expect.objectContaining( {
