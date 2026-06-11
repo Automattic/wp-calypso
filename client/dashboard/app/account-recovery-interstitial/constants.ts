@@ -1,13 +1,9 @@
 /**
  * Account-recovery interstitial — shared constants.
- *
- * Phase 1: a single modal shown in the MSD to users with incomplete account-recovery
- * setup, nudging them to add a recovery method. No experiment, no alert variant — see
- * the plan (DOTOBRD-372). The experiment + alert arrive in Phase 2.
  */
 
 /**
- * Feature flag gating the whole interstitial. Off in production until launch (PR 2);
+ * Feature flag gating the whole interstitial. Off in production until launch;
  * enabled in development config so it can be exercised locally.
  */
 export const RECOVERY_INTERSTITIAL_FLAG = 'dashboard/account-recovery-interstitial';
@@ -32,14 +28,12 @@ export const RECOVERY_INTERSTITIAL_QA_PARAM = 'account-recovery-interstitial';
 export type SecurityLevel = 'none' | 'partial' | 'strong';
 
 /**
- * Snooze windows (days) by security level — from i2. `strong` is unused in Phase 1
- * (fully-covered users aren't shown; a periodic re-check is deferred to Phase 2) but kept
- * for completeness and a single source of truth.
+ * Snooze windows (days) by security level
  */
 export const SNOOZE_DAYS: Record< SecurityLevel, number > = {
 	none: 14, // nothing set up
 	partial: 30, // a recovery method but no 2FA
-	strong: 365, // fully set up -> yearly periodic check (Phase 2)
+	strong: 365, // fully set up -> yearly periodic check
 };
 
 export const RECOVERY_INTERSTITIAL_TRACKS = {
