@@ -1,8 +1,4 @@
-import {
-	siteBySlugQuery,
-	siteMediaStorageQuery,
-	userPreferenceQuery,
-} from '@automattic/api-queries';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -23,7 +19,6 @@ import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guid
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { getStorageAlertLevel } from '../../utils/site-storage';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
@@ -44,7 +39,7 @@ import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
-import { StorageWarningBanner } from './storage-warning-banner';
+import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
 
@@ -186,10 +181,6 @@ function SiteOverview( {
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
-	const { data: isDismissedStorageNotice } = useSuspenseQuery(
-		userPreferenceQuery( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
-	);
 	const { supports } = useAppContext();
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
@@ -205,10 +196,7 @@ function SiteOverview( {
 	const { recordTracksEvent } = useAnalytics();
 	const wpAdminButtonRef = useRef( null );
 
-	const storageAlertLevel = getStorageAlertLevel( mediaStorage );
-	const isStorageWarningVisible =
-		storageAlertLevel !== 'none' &&
-		! ( storageAlertLevel === 'warning' && isDismissedStorageNotice );
+	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
