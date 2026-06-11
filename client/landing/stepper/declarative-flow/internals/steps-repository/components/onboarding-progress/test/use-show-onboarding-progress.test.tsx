@@ -51,6 +51,26 @@ describe( 'useShowOnboardingProgress', () => {
 		expect( result.current ).toBe( false );
 	} );
 
+	it( 'passes isEligible: true to useExperiment on desktop', () => {
+		mockViewport.mockReturnValue( true );
+		mockExperiment.mockReturnValue( [ false, { variationName: 'progress_bar' } ] );
+		renderHook( () => useShowOnboardingProgress( true ) );
+		expect( mockExperiment ).toHaveBeenCalledWith(
+			expect.any( String ),
+			expect.objectContaining( { isEligible: true } )
+		);
+	} );
+
+	it( 'passes isEligible: false to useExperiment on mobile', () => {
+		mockViewport.mockReturnValue( false );
+		mockExperiment.mockReturnValue( [ false, null ] );
+		renderHook( () => useShowOnboardingProgress( true ) );
+		expect( mockExperiment ).toHaveBeenCalledWith(
+			expect.any( String ),
+			expect.objectContaining( { isEligible: false } )
+		);
+	} );
+
 	it( 'hides while the experiment assignment is still loading', () => {
 		mockViewport.mockReturnValue( true );
 		mockExperiment.mockReturnValue( [ true, null ] );
