@@ -89,8 +89,14 @@ export const useWPCOMDomainSearchCart = ( {
 			return b.item_subtotal_integer - a.item_subtotal_integer;
 		} );
 
+		// Bundle members never receive the free-domain promo: the server excludes
+		// them from plan free-domain credit (the bundle discount doesn't stack),
+		// so displaying one as free here would promise a price checkout won't honor.
 		const firstNonPremiumDomain = domainItems.find(
-			( item ) => ! isDomainMoveInternal( item ) && ! item.extra?.premium
+			( item ) =>
+				! isDomainMoveInternal( item ) &&
+				! item.extra?.premium &&
+				! item.extra?.domain_bundle_group_id
 		);
 		const freeDomainName = forceFirstNonPremiumDomainToBeFree
 			? firstNonPremiumDomain?.meta

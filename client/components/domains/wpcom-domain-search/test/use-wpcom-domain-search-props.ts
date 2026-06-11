@@ -322,6 +322,93 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 		} );
 
+		it( 'does not render a bundle member as free even when it is the most expensive domain', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'bundle-net',
+								product_slug: 'dotnet_domain',
+								meta: 'my-bundle.net',
+								is_domain_registration: true,
+								item_original_cost_integer: 18_00,
+								item_original_subtotal_integer: 18_00,
+								item_subtotal_integer: 18_00,
+								extra: {
+									domain_bundle_group_id: 'v1.test.deadbeef',
+								},
+							} ),
+							buildProduct( {
+								uuid: 'standalone',
+								product_slug: 'dotcom_domain',
+								meta: 'my-standalone.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 10_00,
+								item_original_subtotal_integer: 10_00,
+								item_subtotal_integer: 10_00,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			// The free promo skips the bundle member (the server excludes bundle
+			// domains from plan credit) and lands on the standalone domain.
+			expect( result.current.cart.items ).toEqual( [
+				expect.objectContaining( { uuid: 'bundle-net', salePrice: undefined, price: '$18' } ),
+				expect.objectContaining( { uuid: 'standalone', salePrice: '$0', price: '$10' } ),
+			] );
+		} );
+
+		it( 'does not render any domain as free when the cart holds only bundle members', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'bundle-com',
+								product_slug: 'dotcom_domain',
+								meta: 'my-bundle.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 13_00,
+								item_original_subtotal_integer: 13_00,
+								item_subtotal_integer: 13_00,
+								extra: {
+									domain_bundle_group_id: 'v1.test.deadbeef',
+								},
+							} ),
+							buildProduct( {
+								uuid: 'bundle-net',
+								product_slug: 'dotnet_domain',
+								meta: 'my-bundle.net',
+								is_domain_registration: true,
+								item_original_cost_integer: 18_00,
+								item_original_subtotal_integer: 18_00,
+								item_subtotal_integer: 18_00,
+								extra: {
+									domain_bundle_group_id: 'v1.test.deadbeef',
+								},
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.cart.items ).toEqual( [
+				expect.objectContaining( { uuid: 'bundle-net', salePrice: undefined, price: '$18' } ),
+				expect.objectContaining( { uuid: 'bundle-com', salePrice: undefined, price: '$13' } ),
+			] );
+		} );
+
 		it( 'renders the first non-premium domain as free if config.priceRules.freeForFirstYear is true and there is a premium domain in the cart', () => {
 			mockUseShoppingCart.mockReturnValue(
 				buildShoppingCart( {
