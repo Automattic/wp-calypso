@@ -136,6 +136,10 @@ export const ResultsPage = () => {
 							events.onBundleAddToCart( bundle );
 							addBundleToCart( bundle );
 						} }
+						isAddedToCart={ bundleSuggestion.domains.every( ( { domain } ) =>
+							cart.hasItem( domain )
+						) }
+						onContinue={ events.onContinue }
 					/>
 				) }
 				{ isLoadingSuggestions ? (

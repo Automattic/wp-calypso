@@ -14,9 +14,16 @@ import './style.scss';
 interface BundleCardProps {
 	suggestion: BundleSuggestion | null;
 	onAddToCart?: ( bundle: BundleSuggestion ) => void;
+	isAddedToCart?: boolean;
+	onContinue?: () => void;
 }
 
-export const BundleCard = ( { suggestion, onAddToCart }: BundleCardProps ) => {
+export const BundleCard = ( {
+	suggestion,
+	onAddToCart,
+	isAddedToCart,
+	onContinue,
+}: BundleCardProps ) => {
 	const { __ } = useI18n();
 
 	if ( ! suggestion || suggestion.domains.length === 0 ) {
@@ -80,14 +87,25 @@ export const BundleCard = ( { suggestion, onAddToCart }: BundleCardProps ) => {
 					</Text>
 				) }
 
-				<Button
-					className="bundle-card__cta"
-					variant="primary"
-					__next40pxDefaultSize
-					onClick={ () => onAddToCart?.( suggestion ) }
-				>
-					{ __( 'Get bundle' ) }
-				</Button>
+				{ isAddedToCart ? (
+					<Button
+						className="bundle-card__cta"
+						variant="primary"
+						__next40pxDefaultSize
+						onClick={ () => onContinue?.() }
+					>
+						{ __( 'Continue' ) }
+					</Button>
+				) : (
+					<Button
+						className="bundle-card__cta"
+						variant="primary"
+						__next40pxDefaultSize
+						onClick={ () => onAddToCart?.( suggestion ) }
+					>
+						{ __( 'Get bundle' ) }
+					</Button>
+				) }
 			</VStack>
 		</div>
 	);
