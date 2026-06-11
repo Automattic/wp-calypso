@@ -29,7 +29,7 @@ export default function LegacyContact() {
 
 				{ ! isLoading &&
 					( contact ? (
-						<p>
+						<p className="legacy-contact__current">
 							{ translate( 'Your legacy contact is {{strong}}%(email)s{{/strong}}.', {
 								args: { email: contact.email },
 								components: { strong: <strong /> },
