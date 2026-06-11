@@ -79,6 +79,11 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 		plans?.find( ( { product_slug } ) => product_slug === selectedPlanSlug )?.path_slug ||
 		selectedPlanSlug;
 
+	// Prefer the server-provided plan tagline (from the /plans endpoint). Fall
+	// back to the bundled getPlanTagline() until the server field is populated
+	// for every plan in production.
+	const serverTagline = plans?.find( ( { product_slug } ) => product_slug === planSlug )?.tagline;
+
 	// @ts-ignore - getSignupFeatures is not typed as existing on all plan types, but it is in practice
 	const featureSlugs: string[] = plan.getSignupFeatures();
 	const features = featureSlugs.map( getFeatureByKey ).filter( Boolean );
@@ -97,7 +102,7 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 				<p className="banner-modern__description plan-upgrade-banner__description">
 					{
 						// @ts-ignore - getPlanTagline is not typed as existing on all plan types, but it is in practice
-						preventWidows( plan.getPlanTagline() )
+						preventWidows( serverTagline ?? plan.getPlanTagline() )
 					}
 				</p>
 			</div>
