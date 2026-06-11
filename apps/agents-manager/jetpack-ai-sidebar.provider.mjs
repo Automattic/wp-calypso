@@ -38,3 +38,10 @@ export const capabilities = new Proxy(
 	{},
 	{ get: ( _, prop ) => window.__JetpackAIProvider?.capabilities?.[ prop ] }
 );
+// `compositionManifest` declares this provider as a guest with claims (see
+// provider-composition.ts in @automattic/agents-manager). Plain data, but
+// lazy-proxied like the others so a late-evaluating IIFE still resolves.
+export const compositionManifest = new Proxy(
+	{},
+	{ get: ( _, prop ) => window.__JetpackAIProvider?.compositionManifest?.[ prop ] }
+);
