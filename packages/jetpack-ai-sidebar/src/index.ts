@@ -55,6 +55,17 @@ import type { ComponentType } from 'react';
 // Re-export block-action helpers as part of the package's public surface.
 export { applyReviewEdit, findBlockElement, findBlockListLayout };
 
+export const compositionManifest = {
+	providerId: 'jetpack-ai-sidebar',
+	role: 'guest' as const,
+	supportedAgentIds: [ 'wp-orchestrator', 'wpcom-workflow-unified_chat' ],
+	claims: {
+		abilities: [ 'jetpack_ai' ],
+		components: [ 'title-picker', 'review-mediation' ],
+		context: [ 'titleSuggestionCount' ],
+	},
+};
+
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;

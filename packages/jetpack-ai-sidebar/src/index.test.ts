@@ -19,6 +19,7 @@ import {
 	findBlockListLayout,
 	getChatComponent,
 	getEmptyViewSuggestions,
+	compositionManifest,
 	contextProvider,
 	toolProvider,
 	useAbilitiesSetup,
@@ -189,6 +190,21 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+	} );
+} );
+
+describe( 'compositionManifest', () => {
+	it( 'declares the Jetpack AI guest contract for Agents Manager composition', () => {
+		expect( compositionManifest ).toEqual( {
+			providerId: 'jetpack-ai-sidebar',
+			role: 'guest',
+			supportedAgentIds: [ 'wp-orchestrator', 'wpcom-workflow-unified_chat' ],
+			claims: {
+				abilities: [ 'jetpack_ai' ],
+				components: [ 'title-picker', 'review-mediation' ],
+				context: [ 'titleSuggestionCount' ],
+			},
+		} );
 	} );
 } );
 
