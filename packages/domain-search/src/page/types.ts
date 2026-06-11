@@ -24,6 +24,18 @@ export interface SelectedDomain {
 	tld: string;
 	salePrice?: string;
 	price: string;
+	/**
+	 * Bundle membership, present only when the item was added to the cart as
+	 * part of a domain bundle. `groupId` is the server-issued bundle group id,
+	 * passed through verbatim by the app layer; items sharing a `groupId` are
+	 * rendered as a single grouped cart row. `price` is the formatted sum of
+	 * the bundle members' current prices, computed and formatted at the app
+	 * layer (the same value for every member of the group).
+	 */
+	bundle?: {
+		groupId: string;
+		price: string;
+	};
 }
 
 export interface DomainSearchCart {
@@ -37,6 +49,12 @@ export interface DomainSearchCart {
 	 */
 	onAddBundle?: ( bundle: BundleSuggestion ) => Promise< unknown >;
 	onRemoveItem: ( uuid: string ) => Promise< unknown >;
+	/**
+	 * Remove every member of a bundle group from the cart in a single,
+	 * all-or-nothing operation. Implemented at the app layer; when absent the
+	 * grouped cart row falls back to removing each member individually.
+	 */
+	onRemoveBundle?: ( bundleGroupId: string ) => Promise< unknown >;
 	hasItem: ( domainName: string ) => boolean;
 }
 
