@@ -62,6 +62,7 @@ export const useGetCombinedChat = (
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const previousOdieIdRef = useRef< string | null | undefined >();
+	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
@@ -88,6 +89,27 @@ export const useGetCombinedChat = (
 			} ) );
 		}
 	}, [ connectionStatus, setRefreshingAfterReconnect ] );
+
+	useEffect( () => {
+		const isReinitialized = ! wasChatLoadedRef.current && isChatLoaded;
+		wasChatLoadedRef.current = isChatLoaded;
+
+		// When Smooch re-initializes, `isChatLoaded` flips false → true (it is set
+		// false right before `Smooch.destroy()` and true once `Smooch.init()`
+		// resolves). The WebSocket is down for that whole window, so any agent
+		// messages that arrive are never delivered through `message:received`.
+		// The `connected` event above only refreshes when there was a prior
+		// disconnect, so a React-driven re-init would otherwise silently drop them.
+		// Force a conversation re-fetch on every re-init to recover the gap; the
+		// merge in the main effect dedupes and preserves the user's queued messages.
+		if ( isReinitialized && conversationId ) {
+			setRefreshingAfterReconnect( true );
+			setMainChatState( ( chat ) => ( {
+				...chat,
+				status: 'loading',
+			} ) );
+		}
+	}, [ isChatLoaded, conversationId, setRefreshingAfterReconnect ] );
 
 	useEffect( () => {
 		// Logged out chats don't have interactions. Only direct odie IDs.
