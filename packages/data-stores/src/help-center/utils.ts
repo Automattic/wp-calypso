@@ -22,8 +22,22 @@ export function setHelpCenterAppId( appId: string | undefined ): void {
 	helpCenterAppId = appId;
 }
 
-function scopedKey< T extends keyof Preferences[ 'calypso_preferences' ] >( key: T ): T {
-	return ( helpCenterAppId ? `${ key }_${ helpCenterAppId }` : key ) as T;
+function scopedKey( key: string ): string {
+	return helpCenterAppId ? `${ key }_${ helpCenterAppId }` : key;
+}
+
+/**
+ * Reads the app-scoped preference, falling back to the shared (unscoped) one.
+ */
+function readScoped< T extends keyof Preferences[ 'calypso_preferences' ] >(
+	preferences: Preferences[ 'calypso_preferences' ],
+	key: T
+): Preferences[ 'calypso_preferences' ][ T ] | undefined {
+	// The scoped key is dynamic, so the cast is confined here to keep callers typed.
+	const scoped = (
+		preferences as unknown as Record< string, Preferences[ 'calypso_preferences' ][ T ] >
+	 )[ scopedKey( key ) ];
+	return scoped ?? preferences[ key ];
 }
 
 export function deleteValuesSafely(): void {
@@ -54,7 +68,7 @@ export function retrieveValueSafely< T extends keyof Preferences[ 'calypso_prefe
 ): Preferences[ 'calypso_preferences' ][ T ] | undefined {
 	try {
 		// Prefer this app's scoped value, falling back to the shared (unscoped)
-		// one when it hasn't stored its own yet. Mapped onto the original key.
+		// one when it hasn't stored its own yet.
 		const value =
 			window.localStorage.getItem( PREFERENCES_KEY + scopedKey( key ) ) ??
 			window.localStorage.getItem( PREFERENCES_KEY + key );
@@ -95,8 +109,7 @@ export async function getPersistedPreference<
 
 	if ( isLoggedIn ) {
 		const preferences = await getCalypsoPreferences();
-		const scopedValue = preferences[ scopedKey( key ) ];
-		return scopedValue ?? preferences[ key ];
+		return readScoped( preferences, key );
 	}
 
 	return retrieveValueSafely( key );
